@@ -12,6 +12,7 @@ using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers;

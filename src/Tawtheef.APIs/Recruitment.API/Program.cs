@@ -5,7 +5,9 @@ using reCAPTCHA.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Tawtheef.Application;
 using Tawtheef.Application.Extensions;
+using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Middlewares;
 
@@ -35,8 +37,8 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 );
 
 // ----- Services -----
-builder.Services.AddApplicationLayer();
 builder.Services.AddInfrastructureLayer(builder.Configuration);
+builder.Services.AddApplicationLayer();
 builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 
 builder.Services.AddControllers()

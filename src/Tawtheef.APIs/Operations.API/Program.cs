@@ -5,7 +5,9 @@ using reCAPTCHA.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Tawtheef.Application;
 using Tawtheef.Application.Extensions;
+using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Middlewares;
 

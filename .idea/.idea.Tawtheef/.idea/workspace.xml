@@ -29,10 +29,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69f1439a-77fb-4152-8c30-fefdf4edb270" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Application/Common/Interfaces/Services/ILocalizationService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Application/Common/Mappers/LookupProfile.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Application/Common/Mappers/ResourceProfile.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Application/Common/Mappers/UserProfile.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Application/Extensions/PaginatedResultExtensions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Domain/Entities/Resource.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Services/LocalizationService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tawtheef.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Tawtheef.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Application.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Behaviours/UnhandledExceptionBehaviour.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/LookupsProfile.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/PaginationProfile.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/Utils/Converters/LookupBaseConverter.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/Utils/Converters/PaginatedListConverter.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/Utils/Resolvers/LocalizedDescriptionResolver.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/Utils/Resolvers/LocalizedNameResolver.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Models/DropdownOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Common/Models/DropdownOptions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Common/Models/Pagination/PaginatedResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Common/Models/Pagination/PaginatedResult.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/DependencyInjectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Domain/Common/LookupBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/Common/LookupBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Infrastructure/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Infrastructure/DependencyInjectionExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/angular.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/aspnetcore-https.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/proxy.conf.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/angular.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/aspnetcore-https.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/proxy.conf.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,8 +73,17 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/2c9a7938d6de4f32b60aa56c134c84b414b220/81/39b2f3be/BlobServiceClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3e286f5bc98449449892808c6bd12b212000/3c/43ee8752/ServiceMapper.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3e286f5bc98449449892808c6bd12b212000/f4/34f6cb1d/TypeAdapterExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/99afbc8d096f4832b495a99918b5f7a829a00/b8/ccdeb921/TypeAdapterConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/99afbc8d096f4832b495a99918b5f7a829a00/dc/3a069cad/TypeAdapterSetter`2.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/56b5e122ae4fd723ecae7aec5bf0c71d9181bebd75b4e96887f832e7d81c84/PhysicalFileProvider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/60f0e4b3a7fb5462c2d01dc23c0c05173c92e8351d71b923d7e29e9a5164e5/RuntimeType.ActivatorCache.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/621526284d3e4868b98948aff942206525763e57e194a27623b66c384466/ServiceProviderServiceExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ce37be1a06b16c6faa02038d2cc477dd3bca5b217ceeb41c5f2ad45c1bf9/ServiceProvider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fc2027f7e776fc105cddb56b1a25eeb3895b3ae6f3aac854d786e63bd01f75e2/CallSiteFactory.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Application/Common/Mappers/LookupProfile.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Application/Extensions/PaginatedResultExtensions.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="Toolset" />
@@ -54,6 +92,9 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="34KNYoR2lPGJdtOcQo279hzh2pu" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -75,6 +116,7 @@
     "nodejs_package_manager_path": "npm",
     "npm.recruitment-website: start.executor": "Debug",
     "settings.editor.selected.configurable": "HotReloadSettingsPage",
+    "ts.external.directory.path": "C:\\Users\\t-a.jaber\\RiderProjects\\Tawtheef\\src\\Tawtheef.Websites\\Operations.Web\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -115,7 +157,8 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Add Bicep and pipeline configurations for AI-related and core infrastructure resources" />
     <MESSAGE value="Add foundational Authentication, User, and Domain entities and configurations. Includes a token validation handler, domain interfaces, constants, and structured classes for user management and lookup data." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add foundational Authentication, User, and Domain entities and configurations. Includes a token validation handler, domain interfaces, constants, and structured classes for user management and lookup data." />
+    <MESSAGE value="Remove `specification.json` and clean up unused references under `Recruitment.API`. Namespace adjustments and `RootNamespace`/`AssemblyName` deletions ensure consistency." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove `specification.json` and clean up unused references under `Recruitment.API`. Namespace adjustments and `RootNamespace`/`AssemblyName` deletions ensure consistency." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

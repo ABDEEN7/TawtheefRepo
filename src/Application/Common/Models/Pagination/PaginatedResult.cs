@@ -2,6 +2,7 @@
 
 namespace Tawtheef.Application.Common.Models.Pagination;
 
+
 public class PaginatedResult<T>(List<T> items, int totalCount, int pageNumber, int pageSize)
 {
     public List<T> Items { get; } = items;

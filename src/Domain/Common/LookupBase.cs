@@ -2,7 +2,7 @@
 
 namespace Tawtheef.Domain.Common;
 
-public abstract class LookupBase : EventEntity, ILocalizedName, ILocalizedDescription
+public class LookupBase : EventEntity, ILocalizedName, ILocalizedDescription
 {
     public required string BackendName { get; set; }
     public required string NameAr { get; set; }

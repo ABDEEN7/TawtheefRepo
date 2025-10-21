@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using CSharpFunctionalExtensions;
+using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -8,10 +10,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
+using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
+using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Recruitment.API.Controllers
@@ -20,6 +26,34 @@ namespace Recruitment.API.Controllers
     [Route("api/[controller]")]
     public class AuthController(IMediator mediator) : ControllerBase
     {
+    
+        [HttpPost("test-name")]
+        public IActionResult TestNameLookup([FromServices] IMapper mapper)
+        {
+            var item = new Gender()
+            {
+                BackendName = "Test",
+                NameAr = "اختبار",
+                NameEn = "Test",
+                DescriptionAr = "وصف الاختبار",
+                DescriptionEn = "Test Description"
+            };
+            
+            return Ok(mapper.Map<string>(item));
+        }
+        [HttpPost("test")]
+        public IActionResult TestLookup([FromServices] IMapper mapper)
+        {
+            var item = new Gender()
+            {
+                BackendName = "Test",
+                NameAr = "اختبار",
+                NameEn = "Test",
+                DescriptionAr = "وصف الاختبار",
+                DescriptionEn = "Test Description"
+            };
+            return Ok(mapper.Map<DropdownOptions>(item));
+        }
         private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
         {
             null => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier),

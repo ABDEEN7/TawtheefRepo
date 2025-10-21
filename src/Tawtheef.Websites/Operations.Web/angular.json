@@ -74,7 +74,6 @@
               "buildTarget": "tawtheef:build:production"
             },
             "development": {
-              "proxyConfig": "proxy.conf.js",
               "buildTarget": "tawtheef:build:development"
             }
           },
