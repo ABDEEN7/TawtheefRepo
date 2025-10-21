@@ -4,8 +4,6 @@
         <SpaRoot>ClientApp\</SpaRoot>
         <SpaProxyServerUrl>https://localhost:44447</SpaProxyServerUrl>
         <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
-        <RootNamespace>Tawtheef.Web</RootNamespace>
-        <AssemblyName>Tawtheef.Web</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -33,5 +31,9 @@
       <Folder Include="Controllers\Admin\" />
       <Folder Include="Controllers\Applicant\" />
       <Folder Include="Controllers\Employee\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\api\specification.json" />
     </ItemGroup>
 </Project>

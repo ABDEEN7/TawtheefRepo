@@ -1,8 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text.Json;
-using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,7 +15,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
 
-namespace Tawtheef.Web.Controllers;
+namespace Operations.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]/profile")]

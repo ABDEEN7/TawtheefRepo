@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text.Json;
-using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,11 +11,10 @@ using Microsoft.Extensions.Options;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
 
-namespace Tawtheef.Web.Controllers;
+namespace Operations.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
