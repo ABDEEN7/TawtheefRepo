@@ -1,0 +1,79 @@
+﻿<div class="login-page">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="title">{{ 'auth.login.title' | translate }}</h1>
+      <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate aria-labelledby="loginTitle">
+      <div class="form-row">
+        <label for="email">{{ 'auth.login.emailLabel' | translate }}</label>
+        <input id="email" type="email" formControlName="email" placeholder="{{ 'auth.login.emailPlaceholder' | translate }}" autocomplete="email"
+               [attr.aria-invalid]="f.email.invalid && (f.email.touched || f.email.dirty)" />
+        <div class="error" *ngIf="f.email.invalid && (f.email.touched || f.email.dirty)">
+          <small *ngIf="f.email.errors?.['required']">{{ 'validation.requiredEmail' | translate }}</small>
+          <small *ngIf="f.email.errors?.['email']">{{ 'validation.invalidEmail' | translate }}</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="password">{{ 'auth.login.passwordLabel' | translate }}</label>
+        <div class="password-wrapper">
+          <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+                 placeholder="{{ 'auth.login.passwordPlaceholder' | translate }}" autocomplete="current-password"
+                 [attr.aria-invalid]="f.password.invalid && (f.password.touched || f.password.dirty)" />
+          <button type="button" class="toggle"
+                  (click)="hidePassword = !hidePassword">
+            {{ hidePassword ? ('auth.login.showPassword' | translate) : ('auth.login.hidePassword' | translate) }}
+          </button>
+        </div>
+        <div class="error" *ngIf="f.password.invalid && (f.password.touched || f.password.dirty)">
+          <small *ngIf="f.password.errors?.['required']">{{ 'validation.requiredPassword' | translate }}</small>
+          <small *ngIf="f.password.errors?.['minlength']">{{ 'validation.minLengthPassword' | translate:{min:6} }}</small>
+        </div>
+      </div>
+
+      <div class="form-row actions">
+        <label class="remember">
+          <input type="checkbox" formControlName="remember" /> {{ 'auth.login.rememberMe' | translate }}
+        </label>
+        <a class="link" (click)="onForgotPassword()">{{ 'auth.login.forgotPassword' | translate }}</a>
+      </div>
+
+      <div class="form-row">
+        <button class="btn primary" type="submit" [disabled]="loading">
+          <span *ngIf="!loading">{{ 'auth.login.submit' | translate }}</span>
+          <span *ngIf="loading">{{ 'auth.login.loading' | translate }}</span>
+        </button>
+      </div>
+
+      <div class="divider"><span>{{ 'auth.login.or' | translate }}</span></div>
+
+      <div class="socials">
+        <button type="button" class="btn social google" (click)="loginWithProvider('google')">
+          <img src="assets/icons/google.svg" alt="" /> {{ 'auth.login.google' | translate }}
+        </button>
+
+        <button type="button" class="btn social microsoft" (click)="loginWithProvider('microsoft')">
+          <img src="assets/icons/microsoft.svg" alt="" /> {{ 'auth.login.outlook' | translate }}
+        </button>
+
+        <button type="button" class="btn social azure" (click)="loginWithProvider('azure')">
+          <img src="assets/icons/azure.svg" alt="" /> {{ 'auth.login.azure' | translate }}
+        </button>
+
+        <button type="button" class="btn social sso" (click)="loginWithProvider('sso')">
+          <img src="assets/icons/sso.svg" alt="" /> {{ 'auth.login.sso' | translate }}
+        </button>
+      </div>
+
+      <div class="form-row">
+        <div class="error global" *ngIf="errorMessage">{{ errorMessage }}</div>
+      </div>
+
+      <div class="card-footer">
+        <p>{{ 'auth.login.noAccount' | translate }} <a routerLink="/register">{{ 'auth.login.registerNow' | translate }}</a></p>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<div class="error-box">
+  <img src="assets/img/error/img-01.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-01"/>
+  <img src="assets/img/error/img-02.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-02"/>
+  <img src="assets/img/error/img-03.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-03"/>
+  <img src="assets/img/error/img-04.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-04"/>
+  <img src="assets/img/error/img-05.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-05"/>
+  <img src="assets/img/error/img-06.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-06"/>
+  <div class="error-logo">
+    <a [routerLink]="routes.home">
+      <img src="assets/img/logo.svg" class="img-fluid" [alt]="'logoAltText' | translate"/>
+    </a>
+  </div>
+  <div class="error-box-img">
+    <img src="assets/img/error/error-02.svg" [alt]="'serverErrorImage' | translate" class="img-fluid"/>
+  </div>
+  <h3 class="h2 mb-3">
+    {{ 'app.error500.oops500Error1' | translate }}<span
+    class="text-secondary ms-1">{{ 'app.error500.oops500Error2' | translate }}</span>
+  </h3>
+  <p class="h4 font-weight-normal">
+    {{ 'app.error500.serverErrorMessage' | translate }}
+  </p>
+  <a
+    [routerLink]="routes.home"
+    class="btn back-to-home-btn d-inline-flex align-items-center"
+  ><i class="isax isax-arrow-left-2 me-1"></i> {{ 'app.error500.backToHome' | translate }}</a
+  >
+</div>

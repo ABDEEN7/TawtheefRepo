@@ -1,0 +1,78 @@
+﻿<div class="login-page">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="title">تسجيل الدخول</h1>
+      <p class="subtitle">سجّل الدخول إلى حسابك للوصول إلى الدورات</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate aria-labelledby="loginTitle">
+      <div class="form-row">
+        <label for="email">البريد الإلكتروني</label>
+        <input id="email" type="email" formControlName="email" placeholder="email@example.com" autocomplete="email"
+               [attr.aria-invalid]="f.email.invalid && (f.email.touched || f.email.dirty)" />
+        <div class="error" *ngIf="f.email.invalid && (f.email.touched || f.email.dirty)">
+          <small *ngIf="f.email.errors?.['required']">البريد الإلكتروني مطلوب.</small>
+          <small *ngIf="f.email.errors?.['email']">أدخل بريدًا إلكترونيًا صالحًا.</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="password">كلمة المرور</label>
+        <div class="password-wrapper">
+          <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+                 placeholder="********" autocomplete="current-password"
+                 [attr.aria-invalid]="f.password.invalid && (f.password.touched || f.password.dirty)" />
+          <button type="button" class="toggle" aria-label="عرض/إخفاء كلمة المرور" (click)="hidePassword = !hidePassword">
+            {{ hidePassword ? 'إظهار' : 'إخفاء' }}
+          </button>
+        </div>
+        <div class="error" *ngIf="f.password.invalid && (f.password.touched || f.password.dirty)">
+          <small *ngIf="f.password.errors?.['required']">كلمة المرور مطلوبة.</small>
+          <small *ngIf="f.password.errors?.['minlength']">يجب أن تكون كلمة المرور 6 أحرف على الأقل.</small>
+        </div>
+      </div>
+
+      <div class="form-row actions">
+        <label class="remember">
+          <input type="checkbox" formControlName="remember" /> تذكّرني
+        </label>
+        <a class="link" (click)="onForgotPassword()">نسيت كلمة المرور؟</a>
+      </div>
+
+      <div class="form-row">
+        <button class="btn primary" type="submit" [disabled]="loading">
+          <span *ngIf="!loading">دخول</span>
+          <span *ngIf="loading">جاري الدخول...</span>
+        </button>
+      </div>
+
+      <div class="divider"><span>أو</span></div>
+
+      <div class="socials">
+        <button type="button" class="btn social google" (click)="loginWithProvider('google')" aria-label="تسجيل الدخول عبر جوجل">
+          <img src="assets/icons/google.svg" alt="" /> تسجيل مع Google
+        </button>
+
+        <button type="button" class="btn social microsoft" (click)="loginWithProvider('microsoft')" aria-label="تسجيل الدخول عبر مايكروسوفت">
+          <img src="assets/icons/microsoft.svg" alt="" /> تسجيل مع Outlook
+        </button>
+
+        <button type="button" class="btn social azure" (click)="loginWithProvider('azure')" aria-label="تسجيل الدخول عبر Azure AD">
+          <img src="assets/icons/azure.svg" alt="" /> تسجيل مع Azure AD
+        </button>
+
+        <button type="button" class="btn social sso" (click)="loginWithProvider('sso')" aria-label="تسجيل الدخول عبر SSO">
+          <img src="assets/icons/sso.svg" alt="" /> تسجيل عبر SSO
+        </button>
+      </div>
+
+      <div class="form-row">
+        <div class="error global" *ngIf="errorMessage">{{ errorMessage }}</div>
+      </div>
+
+      <div class="card-footer">
+        <p>ليس لديك حساب؟ <a routerLink="/register">سجّل الآن</a></p>
+      </div>
+    </form>
+  </div>
+</div>

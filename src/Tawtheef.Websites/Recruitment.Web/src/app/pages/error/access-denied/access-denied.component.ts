@@ -1,0 +1,30 @@
+import {Component, OnInit} from '@angular/core';
+import {Router, RouterLink} from "@angular/router";
+import {routes} from "../../../routes/routes";
+import {AuthService} from "../../../core/auth/auth.service";
+import {TranslatePipe} from "@ngx-translate/core";
+
+@Component({
+  selector: 'app-access-denied',
+  templateUrl: './access-denied.component.html',
+  styleUrl: './access-denied.component.scss',
+  imports: [
+    TranslatePipe,
+    RouterLink
+  ],
+  standalone: true
+})
+export class AccessDeniedComponent implements OnInit{
+  public routes = routes;
+  public previousUrl: string = '/';
+
+  constructor(
+    protected authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    // Get the previous URL from state or default home
+    this.previousUrl = this.router.getCurrentNavigation()?.extras?.state?.['previousUrl'] || '/';
+  }
+}
