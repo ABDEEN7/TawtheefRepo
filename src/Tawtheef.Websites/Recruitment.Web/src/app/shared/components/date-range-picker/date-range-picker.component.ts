@@ -3,8 +3,7 @@ import {Component, EventEmitter, Output} from '@angular/core';
 @Component({
     selector: 'app-date-range-picker',
     templateUrl: './date-range-picker.component.html',
-    styleUrl: './date-range-picker.component.scss',
-    standalone: false
+    styleUrl: './date-range-picker.component.scss'
 })
 export class DateRangePickerComponent {
   @Output() rangeChange = new EventEmitter<{from?: Date, to?: Date}>();

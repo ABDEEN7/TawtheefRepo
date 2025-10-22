@@ -1,8 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'capitalizeWords',
-  standalone: false
+  name: 'capitalizeWords'
 })
 export class CapitalizeWordsPipe implements PipeTransform {
 
