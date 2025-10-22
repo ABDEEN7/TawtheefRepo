@@ -31,15 +31,16 @@
       <Folder Include="Common\Mappers\ApplicantProfiles\" />
       <Folder Include="Common\Mappers\EmployeePorfiles\" />
       <Folder Include="Common\Mappers\Utils\" />
-      <Folder Include="Features\Admin\" />
-      <Folder Include="Features\Applicant\" />
       <Folder Include="Features\Authenticator\Commands\" />
       <Folder Include="Features\Authenticator\DTOs\" />
       <Folder Include="Features\Authenticator\Handlers\Commands\" />
       <Folder Include="Features\Authenticator\Handlers\Queries\" />
       <Folder Include="Features\Authenticator\Queries\" />
       <Folder Include="Features\Common\" />
-      <Folder Include="Features\Employee\" />
+      <Folder Include="Features\Operations\Admin\" />
+      <Folder Include="Features\Operations\Applicant\" />
+      <Folder Include="Features\Operations\Employee\" />
+      <Folder Include="Features\Recruitment\Website\" />
     </ItemGroup>
 
 </Project>

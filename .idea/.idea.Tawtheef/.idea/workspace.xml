@@ -29,39 +29,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69f1439a-77fb-4152-8c30-fefdf4edb270" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Application/Common/Interfaces/Services/ILocalizationService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Application/Common/Mappers/LookupProfile.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Application/Common/Mappers/ResourceProfile.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Application/Common/Mappers/UserProfile.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Application/Extensions/PaginatedResultExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Domain/Entities/Resource.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Services/LocalizationService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tawtheef.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Tawtheef.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Application/Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Application.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Behaviours/UnhandledExceptionBehaviour.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/LookupsProfile.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/PaginationProfile.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/Utils/Converters/LookupBaseConverter.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/Utils/Converters/PaginatedListConverter.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/Utils/Resolvers/LocalizedDescriptionResolver.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Mappers/Utils/Resolvers/LocalizedNameResolver.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Models/DropdownOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Common/Models/DropdownOptions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Common/Models/Pagination/PaginatedResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Common/Models/Pagination/PaginatedResult.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/DependencyInjectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/Common/LookupBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/Common/LookupBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Infrastructure/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Infrastructure/DependencyInjectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/angular.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/aspnetcore-https.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/proxy.conf.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/angular.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/aspnetcore-https.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/proxy.conf.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,7 +126,8 @@
     <MESSAGE value="Add Bicep and pipeline configurations for AI-related and core infrastructure resources" />
     <MESSAGE value="Add foundational Authentication, User, and Domain entities and configurations. Includes a token validation handler, domain interfaces, constants, and structured classes for user management and lookup data." />
     <MESSAGE value="Remove `specification.json` and clean up unused references under `Recruitment.API`. Namespace adjustments and `RootNamespace`/`AssemblyName` deletions ensure consistency." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove `specification.json` and clean up unused references under `Recruitment.API`. Namespace adjustments and `RootNamespace`/`AssemblyName` deletions ensure consistency." />
+    <MESSAGE value="Remove unused files and references (`aspnetcore-https.js`, `proxy.conf.js`, mappers, behaviors, and converters). Introduce `Mapster` configurations, streamline dependency injection, and add `Resource` and `User` domain models alongside their mappers." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove unused files and references (`aspnetcore-https.js`, `proxy.conf.js`, mappers, behaviors, and converters). Introduce `Mapster` configurations, streamline dependency injection, and add `Resource` and `User` domain models alongside their mappers." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
