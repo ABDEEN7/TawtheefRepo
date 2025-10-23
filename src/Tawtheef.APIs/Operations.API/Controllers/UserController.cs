@@ -47,7 +47,7 @@ public class UserController(IMediator mediator) : ControllerBase
     }
     [HttpGet("external-link/init")]
     public async Task<IActionResult> InitiateExternalLink(
-        [AllowedValues("Google", "Outlook", ErrorMessage = "Invalid provider. Supported providers: Google, Outlook")] 
+        [AllowedValues("Google", "AzureAD", ErrorMessage = "Invalid provider. Supported providers: Google, AzureAD")] 
         [FromQuery] string provider)
     {
         if (UserId.IsFailure)
@@ -145,16 +145,5 @@ public class UserController(IMediator mediator) : ControllerBase
                        </script>
                        """;
         return Content(htmlOk, "text/html");
-    }
-
-    [HttpDelete("unlink-social/{provider}")]
-    public async Task<IActionResult> UnlinkSocialAccount(
-        [AllowedValues("Google", "Outlook", ErrorMessage = "Invalid provider. Supported providers: Google, Outlook")] 
-        string provider)
-    {
-        if (UserId.IsFailure)
-            return Unauthorized(UserId.Error);
-        var result = await mediator.Send(new UnlinkSocialAccountCommand(UserId.Value, provider));
-        return result.ToActionResult();
     }
 }

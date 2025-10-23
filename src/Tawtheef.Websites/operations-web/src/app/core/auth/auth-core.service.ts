@@ -6,7 +6,7 @@ import {UserService} from "./user.service";
 import {AuthStateService} from "./auth-state.service";
 import {NavigationService} from "./navigation.service";
 import {catchError, map} from "rxjs/operators";
-import {LoginResponse} from "../../features/auth/login/models/login.model";
+import {AuthResponse} from "../../features/auth/login/models/auth-response.model";
 import {EndpointsService} from "../http/endpoints.service";
 import {UserInfoModel} from "../../shared/models/user-info.model";
 import {TokenModel} from "../../features/auth/login/models/token.model";
@@ -28,27 +28,11 @@ export class AuthCoreService {
     return this.tokenService.getToken();
   }
 
-
-  login(email: string, password: string): Observable<boolean> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
-    return this.http.post<LoginResponse>(
-      this.endpoints.auth.login,
-      { email, password },
-      { headers }
-    ).pipe(
-      switchMap(res => this.handleAuthResponse(res)),
-      catchError(_ => {
-        return of(false);
-      })
-    );
-  }
-
-  externalLogin(data: LoginResponse): Observable<boolean> {
+  externalLogin(data: AuthResponse): Observable<boolean> {
     return this.handleAuthResponse(data);
   }
 
-  private handleAuthResponse(res: LoginResponse): Observable<boolean> {
+  private handleAuthResponse(res: AuthResponse): Observable<boolean> {
     const accessToken = res.token?.accessToken;
     if (!accessToken) return of(false);
 

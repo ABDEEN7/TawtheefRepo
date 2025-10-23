@@ -1,6 +1,6 @@
 ﻿namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
-public record LoginResponse(
+public record AuthResponse(
     UserInfoResponse? User = null,
     TokenResponse? Token = null,
     bool RequiresEmailVerification = false,

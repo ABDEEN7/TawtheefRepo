@@ -1,9 +1,10 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from "../../../../core/auth/auth.service";
 import {NgIf} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
+import {ExternalLoginService} from '../../external-login';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,6 @@ import {TranslatePipe} from "@ngx-translate/core";
   imports: [
     NgIf,
     ReactiveFormsModule,
-    RouterLink,
     TranslatePipe,
   ],
   standalone: true
@@ -26,7 +26,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private external: ExternalLoginService,
   ) {}
 
   ngOnInit(): void {
@@ -37,38 +38,17 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  get f() { return this.loginForm.controls; }
-
-  onSubmit() {
-    this.errorMessage = null;
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-
-    this.loading = true;
-    this.auth.login(this.f['email'].value,this.f['password'].value).subscribe({
-      next: () => {
-        // Navigate to home or intended URL
-        this.router.navigateByUrl('/');
-      },
-      error: (err) => {
-        console.error(err);
-        // Customize userModel-friendly messages based on error.status / body
-        this.errorMessage = err?.error?.message || 'فشل تسجيل الدخول. تحقق من البيانات وحاول مرة أخرى.';
-        this.loading = false;
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
-  }
-
-  // Social / SSO login
   loginWithProvider(provider: 'google' | 'microsoft' | 'azure' | 'sso') {
-    // Option: open popup or redirect - here we redirect
-    //this.auth.externalLogin();
+    switch (provider) {
+      case 'azure':
+        this.external.signInWithAzure();
+        break;
+      case 'google':
+        this.external.signInWithGoogle();
+        break;
+    }
   }
+  get f() { return this.loginForm.controls; }
 
   onForgotPassword() {
     // navigate to forgot password page

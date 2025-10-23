@@ -2,7 +2,7 @@
 
 namespace Tawtheef.Application.Features.Authenticator.DTOs;
 
-public record UserSocialAccounts(SocialAccounts Google, SocialAccounts Outlook);
+public record UserSocialAccounts(SocialAccounts Google, SocialAccounts AzureAD);
 
 
 public record SocialAccounts

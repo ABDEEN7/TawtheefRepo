@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
+using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -138,154 +139,29 @@ namespace Tawtheef.Infrastructure
         /// </summary>
         private static void AddAuthorizationAndAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            // Read Azure AD settings
-            var azureInstance = configuration["AzureAd:Instance"];
-            var azureTenantId = configuration["AzureAd:TenantId"];
-            var azureClientId = configuration["AzureAd:ClientId"];
-            var azureAuthority = !string.IsNullOrEmpty(azureTenantId) && !string.IsNullOrEmpty(azureInstance)
-                ? $"{azureInstance.TrimEnd('/')}/{azureTenantId}/v2.0"
-                : null;
-
-            ConfigureAuthentication(services, configuration, azureAuthority, azureClientId);
+            ConfigureAuthentication(services, configuration);
             ConfigureRateLimitingPolicies(services);
             ConfigureAuthorizationPolicies(services);
         }
 
-        private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration, string? azureAuthority, string? azureClientId)
+        private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = "Smart";
-                options.DefaultAuthenticateScheme = "Smart";
-                options.DefaultChallengeScheme = "Smart";
-            })
-            .AddPolicyScheme("Smart", "JWT or Cookies", opt =>
-            {
-                opt.ForwardDefaultSelector = ctx =>
-                    ctx.Request.Headers.ContainsKey("Authorization") &&
-                    ctx.Request.Headers.Authorization.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
-                        ? JwtBearerDefaults.AuthenticationScheme
-                        : IdentityConstants.ApplicationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                // Azure AD issued tokens case
-                if (!string.IsNullOrEmpty(azureAuthority) && !string.IsNullOrEmpty(azureClientId))
+            services.AddAuthentication("Smart")
+                .AddPolicyScheme("Smart", "JWT or Cookies", opt =>
                 {
-                    options.Authority = azureAuthority;
-                    options.Audience = azureClientId;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        ValidateIssuer = true,
-                        // Allow middleware to validate via metadata
-                        ValidAudience = configuration["Jwt:Audience"] ?? azureClientId,
-                        ValidateAudience = true,
-                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                    };
-                }
-                else
+                    opt.ForwardDefaultSelector = ctx =>
+                        ctx.Request.Headers.ContainsKey("Authorization") &&
+                        ctx.Request.Headers.Authorization.ToString().StartsWith("Bearer ")
+                            ? JwtBearerDefaults.AuthenticationScheme
+                            : IdentityConstants.ApplicationScheme;
+                })
+                .AddGoogle(o =>
                 {
-                    // Local symmetric-key tokens
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? string.Empty)),
-                        ValidateIssuer = true,
-                        ValidIssuer = configuration["Jwt:Issuer"],
-                        ValidateAudience = true,
-                        ValidAudience = configuration["Jwt:Audience"],
-                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                    };
-                }
-
-                // Prevent redirects -> return JSON 401/403 for API clients
-                options.Events = new JwtBearerEvents
-                {
-                    OnAuthenticationFailed = ctx =>
-                    {
-                        Console.WriteLine($"Auth failed: {ctx.Exception}");
-                        return Task.CompletedTask;
-                    },
-                    OnChallenge = async context =>
-                    {
-                        Console.WriteLine($"JWT Challenge: {context.Error}");
-                        context.HandleResponse();
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(JsonSerializer.Serialize(new
-                        {
-                            StatusCode = 401,
-                            Message = "Unauthorized: Invalid or expired token."
-                        }));
-                    },
-                    OnForbidden = async context =>
-                    {
-                        Console.WriteLine($"JWT Forbidden: {context.Result}");
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(JsonSerializer.Serialize(new
-                        {
-                            StatusCode = 403,
-                            Message = "Forbidden: You don't have permission."
-                        }));
-                    }
-                };
-            })
-            .AddOpenIdConnect("AzureAD", options =>
-            {
-                if (string.IsNullOrEmpty(azureAuthority) || string.IsNullOrEmpty(azureClientId))
-                    throw new InvalidOperationException("AzureAd configuration missing.");
-
-                options.Authority = azureAuthority;
-                options.ClientId = azureClientId;
-                options.CallbackPath = configuration["AzureAd:CallbackPath"] ?? "/signin-oidc";
-                options.ResponseType = "code";
-                options.SaveTokens = true;
-                options.SignInScheme = IdentityConstants.ApplicationScheme;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                };
-
-                // Return JSON 401 for API requests instead of redirecting
-                options.Events = new OpenIdConnectEvents
-                {
-                    OnRedirectToIdentityProvider = ctx =>
-                    {
-                        if (IsApiRequest(ctx.Request))
-                        {
-                            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            ctx.Response.ContentType = "application/json";
-                            ctx.HandleResponse();
-                            var payload = JsonSerializer.Serialize(new { StatusCode = 401, Message = "Unauthorized: interactive login required." });
-                            return ctx.Response.WriteAsync(payload);
-                        }
-                        return Task.CompletedTask;
-                    },
-                    OnRedirectToIdentityProviderForSignOut = ctx =>
-                    {
-                        if (IsApiRequest(ctx.Request))
-                        {
-                            ctx.Response.StatusCode = StatusCodes.Status200OK;
-                            ctx.HandleResponse();
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-            })
-            .AddGoogle(o =>
-            {
-                o.ClientId = configuration["Authentication:Google:ClientId"] ?? string.Empty;
-                o.ClientSecret = configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
-                o.SignInScheme = IdentityConstants.ExternalScheme;
-            })
-            .AddMicrosoftAccount(microsoftOptions =>
-            {
-                microsoftOptions.ClientId = configuration["Authentication:Microsoft:ClientId"] ?? string.Empty;
-                microsoftOptions.ClientSecret = configuration["Authentication:Microsoft:ClientSecret"] ?? string.Empty;
-                microsoftOptions.SignInScheme = IdentityConstants.ExternalScheme;
-            });
+                    o.ClientId = configuration["Authentication:Google:ClientId"]!;
+                    o.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
+                    o.SignInScheme = IdentityConstants.ExternalScheme;
+                })
+                .AddMicrosoftIdentityWebApi(configuration.GetSection("Authentication:AzureAd"));
         }
 
         /// <summary>

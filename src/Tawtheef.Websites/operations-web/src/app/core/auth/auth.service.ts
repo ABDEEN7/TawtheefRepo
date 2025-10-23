@@ -4,14 +4,18 @@ import {AuthStateService} from "./auth-state.service";
 import {UserService} from "./user.service";
 import {Observable, of} from "rxjs";
 import {UserInfoModel} from "../../shared/models/user-info.model";
-import {LoginResponse} from "../../features/auth/login/models/login.model";
+import {AuthResponse} from "../../features/auth/login/models/auth-response.model";
+import {MsalService} from '@azure/msal-angular';
+import {environment} from '../../../environments/environment';
 
+declare var google: any;
 @Injectable({providedIn: 'root'})
 export class AuthService {
   constructor(
-    public core: AuthCoreService,
-    public state: AuthStateService,
-    public user: UserService
+    protected core: AuthCoreService,
+    protected state: AuthStateService,
+    protected user: UserService,
+    protected msalService: MsalService,
   ) {
     this.state.checkAuthState(false);
   }
@@ -33,16 +37,8 @@ export class AuthService {
     return () => this.user.getCurrentUser()?.userType || '';
   }
 
-  login(email: string, password: string): Observable<boolean> {
-    return this.core.login(email, password);
-  }
-
-  externalLogin(data: LoginResponse) {
+  externalLogin(data: AuthResponse) {
     return this.core.externalLogin(data);
-  }
-
-  register(fullName: string, email: string, gender: string, password: string, type: string): Observable<boolean> {
-    return this.core.register(fullName, email, gender, password, type);
   }
 
   logout(): void {

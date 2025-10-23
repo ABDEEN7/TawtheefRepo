@@ -2,10 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {EndpointsService} from "../http/endpoints.service";
 import {HttpService} from "../http/http.service";
+import {Observable} from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class LoggerService {
-  constructor(private http: HttpService, private endpoints: EndpointsService) {
+  constructor() {
   }
   logError(context: string, error: any, metadata?: any): void {
     const timestamp = new Date().toISOString();
@@ -36,6 +37,6 @@ export class LoggerService {
 
   private sendToBackend(errorData: any) {
     // Implement your backend error logging endpoint
-    return this.http.post(this.endpoints.base + '/api/errors', errorData).pipe()
+    return new Observable();
   }
 }

@@ -22,16 +22,16 @@ public class ExternalCallbackLoginCommandHandler(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService
-) : IRequestHandler<ExternalCallbackLoginCommand, Result<LoginResponse>>
+) : IRequestHandler<ExternalCallbackLoginCommand, Result<AuthResponse>>
 {
-    public async Task<Result<LoginResponse>> Handle(ExternalCallbackLoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthResponse>> Handle(ExternalCallbackLoginCommand request, CancellationToken cancellationToken)
     {
         if (request.RemoteError != null)
-            return Result.Failure<LoginResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
+            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
 
         var info = await signInManager.GetExternalLoginInfoAsync();
         if (info == null)
-            return Result.Failure<LoginResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
+            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
 
         // If already linked, sign in directly
         var result = await signInManager.ExternalLoginSignInAsync(
@@ -41,7 +41,7 @@ public class ExternalCallbackLoginCommandHandler(
         {
             var user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (user == null)
-                return Result.Failure<LoginResponse>(ErrorsCodes.ExternalLoginUserNotFound);
+                return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginUserNotFound);
 
             // Update tokens from provider & upsert claims
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
@@ -53,7 +53,7 @@ public class ExternalCallbackLoginCommandHandler(
             var accessToken  = tokenService.GenerateAccessToken(user);
             var refreshToken = tokenService.GenerateRefreshToken(user.Id);
 
-            return Result.Success(new LoginResponse(
+            return Result.Success(new AuthResponse(
                 new UserInfoResponse(user.Id, user.FirstName, user.LastName, user.Email!, user.Avatar),
                 new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
             ));
@@ -62,18 +62,18 @@ public class ExternalCallbackLoginCommandHandler(
         // Not linked yet: use email to attach or create a new user
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
         if (string.IsNullOrWhiteSpace(email))
-            return Result.Failure<LoginResponse>(ErrorsCodes.ExternalLoginEmailNotFound);
+            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginEmailNotFound);
 
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser != null)
         {
             var duplicate = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (duplicate != null && duplicate.Id != existingUser.Id)
-                return Result.Failure<LoginResponse>(ErrorsCodes.ExternalLoginAlreadyLinked);
+                return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginAlreadyLinked);
 
             var addLoginResult = await userManager.AddLoginAsync(existingUser, info);
             if (!addLoginResult.Succeeded)
-                return Result.Failure<LoginResponse>(string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
+                return Result.Failure<AuthResponse>(string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
 
             // Update provider tokens & claims snapshot
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
@@ -84,13 +84,13 @@ public class ExternalCallbackLoginCommandHandler(
             var accessToken  = tokenService.GenerateAccessToken(existingUser);
             var refreshToken = tokenService.GenerateRefreshToken(existingUser.Id);
 
-            return Result.Success(new LoginResponse(
+            return Result.Success(new AuthResponse(
                 new UserInfoResponse(existingUser.Id, existingUser.FirstName, existingUser.LastName, existingUser.Email!, existingUser.Avatar),
                 new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
             ));
         }
 
-        // Create new user from claims (names can be missing for Google/Outlook on later logins)
+        // Create new user from claims (names can be missing for Google/AzureAD on later logins)
         var givenName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
         var surname   = info.Principal.FindFirstValue(ClaimTypes.Surname);
         var fullName  = info.Principal.FindFirstValue(ClaimTypes.Name);
@@ -123,13 +123,13 @@ public class ExternalCallbackLoginCommandHandler(
 
         var createResult = await userManager.CreateAsync(newUser);
         if (!createResult.Succeeded)
-            return Result.Failure<LoginResponse>(string.Join(", ", createResult.Errors.Select(e => e.Description)));
+            return Result.Failure<AuthResponse>(string.Join(", ", createResult.Errors.Select(e => e.Description)));
 
         var addLogin = await userManager.AddLoginAsync(newUser, info);
         if (!addLogin.Succeeded)
         {
             var errors = addLogin.Errors.Select(e => e.Description);
-            return Result.Failure<LoginResponse>(string.Join(", ", errors));
+            return Result.Failure<AuthResponse>(string.Join(", ", errors));
         }
 
         // Save tokens & claims
@@ -137,7 +137,7 @@ public class ExternalCallbackLoginCommandHandler(
         await UpsertProviderClaimsAsync(userManager, newUser, info);
 
         // Your policy requires admin approval for new external accounts
-        return Result.Failure<LoginResponse>(ErrorsCodes.YourAccountRequiresAdminApproval);
+        return Result.Failure<AuthResponse>(ErrorsCodes.YourAccountRequiresAdminApproval);
     }
 
     private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, ExternalLoginInfo info)

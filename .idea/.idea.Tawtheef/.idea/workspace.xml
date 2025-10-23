@@ -31,12 +31,72 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69f1439a-77fb-4152-8c30-fefdf4edb270" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/ExternalLoginWithTokenCommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/DTOs/ExternalTokenDto.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/ExternalLoginWithTokenHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/api-config.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/config/msal-config.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/api-config.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/dialog-helper.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/external-login.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tawtheef.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Tawtheef.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Application.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/ExternalCallbackLoginCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/ExternalCallbackLoginCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/ExternalLinkCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/ExternalLinkCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/ExternalLoginCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/ExternalLoginCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/LoginCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/LoginCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/UnlinkSocialAccountCommand.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/VerifyLockPasswordCommand.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/VerifyOtpCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/VerifyOtpCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/DTOs/GetUserSocialAccountsDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/DTOs/GetUserSocialAccountsDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/DTOs/Responses/LoginResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/DTOs/Responses/AuthResponse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/ExternalCallbackLoginCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/ExternalCallbackLoginCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/LoginCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/LoginCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/UnlinkSocialAccountCommandHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/VerifyLockPasswordHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/VerifyOtpCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/VerifyOtpCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Queries/GetUserSocialAccountsQueryHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Queries/GetUserSocialAccountsQueryHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Domain/Constants/ErrorsCodes.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/Constants/ErrorsCodes.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Domain/Entities/Users/SocialProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/Entities/Users/SocialProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Domain/Entities/Users/UserEmail.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/Entities/Users/UserEmail.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Infrastructure/DependencyInjectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Infrastructure/DependencyInjectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Infrastructure/Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Infrastructure/Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/AuthController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Operations.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Operations.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Recruitment.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Recruitment.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/core/services/logger.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/core/services/logger.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/auth-core.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/auth-core.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/auth.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/social-auth.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/http/endpoints.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/http/endpoints.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/logger.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/logger.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/models/login.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/models/auth-response.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="repository" />
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -47,13 +107,17 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3e286f5bc98449449892808c6bd12b212000/f4/34f6cb1d/TypeAdapterExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/99afbc8d096f4832b495a99918b5f7a829a00/b8/ccdeb921/TypeAdapterConfig.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/99afbc8d096f4832b495a99918b5f7a829a00/dc/3a069cad/TypeAdapterSetter`2.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/aaf9117a8ed94789b1253f4d4206667c16920/15/b72c3f31/AuthenticationSchemeProvider.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/56b5e122ae4fd723ecae7aec5bf0c71d9181bebd75b4e96887f832e7d81c84/PhysicalFileProvider.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/60f0e4b3a7fb5462c2d01dc23c0c05173c92e8351d71b923d7e29e9a5164e5/RuntimeType.ActivatorCache.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/621526284d3e4868b98948aff942206525763e57e194a27623b66c384466/ServiceProviderServiceExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ce37be1a06b16c6faa02038d2cc477dd3bca5b217ceeb41c5f2ad45c1bf9/ServiceProvider.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fc2027f7e776fc105cddb56b1a25eeb3895b3ae6f3aac854d786e63bd01f75e2/CallSiteFactory.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Application/Common/Mappers/LookupProfile.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Application/Extensions/PaginatedResultExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Application/Features/Authenticator/DTOs/ExternalTokenDto.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Application/Features/Authenticator/Handlers/Commands/ExternalLoginWithTokenHandler.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="Toolset" />
@@ -69,28 +133,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.Recruitment.API: development.executor&quot;: &quot;Debug&quot;,
-    &quot;.NET Launch Settings Profile.Web: development.executor&quot;: &quot;Debug&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.recruitment-website: start.executor&quot;: &quot;Debug&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;HotReloadSettingsPage&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\t-a.jaber\\RiderProjects\\Tawtheef\\src\\Tawtheef.Websites\\Operations.Web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.Recruitment.API: development.executor": "Debug",
+    ".NET Launch Settings Profile.Web: development.executor": "Debug",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "false",
+    "XThreadsFramesViewSplitterKey": "0.5007825",
+    "git-widget-placeholder": "Development",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.recruitment-website: start.executor": "Debug",
+    "settings.editor.selected.configurable": "HotReloadSettingsPage",
+    "ts.external.directory.path": "C:\\Users\\t-a.jaber\\RiderProjects\\Tawtheef\\src\\Tawtheef.Websites\\recruitment-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Compound.Recruitment">
+}]]></component>
+  <component name="RunManager" selected=".NET Launch Settings Profile.Recruitment.API: development">
     <configuration name="operations-web: start" type="js.build_tools.npm" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/package.json" />
       <command value="start" />
@@ -136,6 +201,17 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>
       <path value="$PROJECT_DIR$/.." />
@@ -164,6 +240,32 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs</url>
+          <line>138</line>
+          <properties documentPath="C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Tawtheef.APIs\Recruitment.API\Controllers\AuthController.cs" containingFunctionPresentation="Method 'ExternalLoginWithToken'">
+            <startOffsets>
+              <option value="5819" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5820" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs</url>
+          <line>230</line>
+          <properties documentPath="C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Tawtheef.APIs\Recruitment.API\Controllers\AuthController.cs" containingFunctionPresentation="Method 'ExternalLoginCallback'">
+            <startOffsets>
+              <option value="10341" />
+            </startOffsets>
+            <endOffsets>
+              <option value="10342" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

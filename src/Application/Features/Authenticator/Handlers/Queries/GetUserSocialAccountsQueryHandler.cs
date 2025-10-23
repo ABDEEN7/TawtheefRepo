@@ -40,16 +40,16 @@ public class GetUserSocialAccountsQueryHandler(IUnitOfWork uow, UserManager<User
         // var googlePic   = C("google", "picture");
 
         // Outlook projection
-        var outlookLogin = logins.FirstOrDefault(l => l.LoginProvider == "Outlook");
-        var outlookEmail = C("outlook", "email") ?? user.Email; // often null if not granted
-        var outlookName  = C("outlook", "name");
+        var outlookLogin = logins.FirstOrDefault(l => l.LoginProvider == "AzureAD");
+        var azureADEmail = C("azureAD", "email") ?? user.Email; // often null if not granted
+        var azureADName  = C("azureAD", "name");
 
         // Build your response
         // Assuming SocialAccounts(string? providerLogin, string? emailOrName) as in your DTO;
         // If you want richer data, extend the DTO to include Name/Picture per provider.
         var googleDto   = new SocialAccounts(googleLogin, googleEmail ?? googleName ?? user.Email);
-        var outlookDto = new SocialAccounts(outlookLogin, outlookEmail ?? outlookName ?? user.Email);
+        var azureADDto = new SocialAccounts(outlookLogin, azureADEmail ?? azureADName ?? user.Email);
 
-        return Result.Success(new UserSocialAccounts(googleDto, outlookDto));
+        return Result.Success(new UserSocialAccounts(googleDto, azureADDto));
     }
 }
