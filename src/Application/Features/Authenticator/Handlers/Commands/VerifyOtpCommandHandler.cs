@@ -18,20 +18,20 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
      IUnitOfWork uow,TimeProvider time,
      UserManager<User> userManager,
      ITokenService tokenService)
-     : IRequestHandler<VerifyOtpCommand, Result<LoginResponse>>
+     : IRequestHandler<VerifyOtpCommand, Result<AuthResponse>>
  {
-     public async Task<Result<LoginResponse>> Handle(VerifyOtpCommand request, CancellationToken cancellationToken)
+     public async Task<Result<AuthResponse>> Handle(VerifyOtpCommand request, CancellationToken cancellationToken)
         {
             var user = await userManager.Users.Include(u=> u.UserType)
                 .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken: cancellationToken);
             if (user == null)
-                return Result.Failure<LoginResponse>(ErrorsCodes.UserNotFound);
+                return Result.Failure<AuthResponse>(ErrorsCodes.UserNotFound);
 
             if (user.OtpExpiry < time.GetLocalNow().DateTime)
-                return Result.Failure<LoginResponse>(ErrorsCodes.VerificationCodeExpired);
+                return Result.Failure<AuthResponse>(ErrorsCodes.VerificationCodeExpired);
 
             if (user.OtpAttempts >= 3)
-                return Result.Failure<LoginResponse>(ErrorsCodes.TooManyAttempts);
+                return Result.Failure<AuthResponse>(ErrorsCodes.TooManyAttempts);
 
             if (user.OtpCode != request.Otp)
             {
@@ -39,7 +39,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
                 await uow.GetUserRepository<User>().UpdateAsync(user);
                 await uow.SaveChangesAsync(cancellationToken);
 
-                return Result.Failure<LoginResponse>(ErrorsCodes.InvalidVerificationCode);
+                return Result.Failure<AuthResponse>(ErrorsCodes.InvalidVerificationCode);
             }
 
             user.OtpCode = null;
@@ -57,7 +57,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
             await uow.GetUserRepository<User>().UpdateAsync(user);
             await uow.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(new LoginResponse(
+            return Result.Success(new AuthResponse(
                 new UserInfoResponse(
                     user.Id,
                     user.FirstName,

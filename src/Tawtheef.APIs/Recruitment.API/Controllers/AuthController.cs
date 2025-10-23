@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text.Json;
 using CSharpFunctionalExtensions;
 using Mapster;
@@ -10,8 +11,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
+using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Constants;
@@ -26,34 +29,6 @@ namespace Recruitment.API.Controllers
     [Route("api/[controller]")]
     public class AuthController(IMediator mediator) : ControllerBase
     {
-    
-        [HttpPost("test-name")]
-        public IActionResult TestNameLookup([FromServices] IMapper mapper)
-        {
-            var item = new Gender()
-            {
-                BackendName = "Test",
-                NameAr = "اختبار",
-                NameEn = "Test",
-                DescriptionAr = "وصف الاختبار",
-                DescriptionEn = "Test Description"
-            };
-            
-            return Ok(mapper.Map<string>(item));
-        }
-        [HttpPost("test")]
-        public IActionResult TestLookup([FromServices] IMapper mapper)
-        {
-            var item = new Gender()
-            {
-                BackendName = "Test",
-                NameAr = "اختبار",
-                NameEn = "Test",
-                DescriptionAr = "وصف الاختبار",
-                DescriptionEn = "Test Description"
-            };
-            return Ok(mapper.Map<DropdownOptions>(item));
-        }
         private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
         {
             null => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier),
@@ -108,13 +83,6 @@ namespace Recruitment.API.Controllers
             var result = await mediator.Send(command);
             return result.ToActionResult();
         }
-    
-        [HttpPost("verify-lock-password")]
-        public async Task<IActionResult> VerifyLockPassword([FromBody] VerifyLockPasswordCommand command)
-        {
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
 
         [HttpPost("revoke-token")]
         public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenCommand command)
@@ -164,6 +132,98 @@ namespace Recruitment.API.Controllers
             var redirectUrl = Url.ActionLink(nameof(ExternalLoginCallback), controller: null, values: new { returnUrl }, protocol: Request.Scheme);
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
+        }
+
+        [HttpPost("external-login/token")]
+        public async Task<IActionResult> ExternalLoginWithToken([FromBody] ExternalTokenDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.Provider) || string.IsNullOrEmpty(dto.IdToken))
+                return BadRequest(ErrorsCodes.InvalidRequest);
+
+            var provider = dto.Provider.Trim().ToLowerInvariant();
+            ClaimsPrincipal principal;
+
+            try
+            {
+                if (provider == "azure" || provider == "azuread" || provider == "microsoft")
+                {
+                    principal = await ValidateAzureIdToken(dto.IdToken, HttpContext.RequestServices);
+                }
+                else
+                {
+                    return BadRequest(ErrorsCodes.ExternalLoginProviderNotSupported);
+                }
+            }
+            catch (Exception)
+            {
+                // log ex if you have logging
+                return BadRequest(ErrorsCodes.ExternalLoginInvalidToken);
+            }
+
+            // Extract standard claims (adjust names as needed)
+            var providerKey = principal.FindFirst("sub")?.Value ?? principal.FindFirst("oid")?.Value;
+            var email = principal.FindFirst(ClaimTypes.Email)?.Value ??
+                        principal.FindFirst("preferred_username")?.Value;
+            var name = principal.FindFirst(ClaimTypes.Name)?.Value ?? principal.FindFirst("name")?.Value;
+
+            if (string.IsNullOrEmpty(providerKey))
+                return BadRequest(ErrorsCodes.ExternalLoginMissingProviderKey);
+
+            // Convert claims to simple KVP
+            var claims = principal.Claims.Select(c => new KeyValuePair<string, string>(c.Type, c.Value));
+
+            // Build MediatR command - adapt to your existing command/response types
+            var cmd = new ExternalLoginWithTokenCommand(
+                Provider: dto.Provider,
+                ProviderKey: providerKey,
+                Email: email ?? string.Empty,
+                DisplayName: name ?? string.Empty,
+                Claims: claims,
+                RawIdToken: dto.IdToken,
+                ClientIp: HttpContext.GetClientIpAddress() ?? "Unknown IP Address"
+            );
+
+            var result = await mediator.Send(cmd);
+
+            return result.ToActionResult();
+            async Task<ClaimsPrincipal> ValidateAzureIdToken(string idToken, IServiceProvider services)
+            {
+                var config = services.GetService<IConfiguration>();
+                // You may want to use a specific tenant id or "common" depending on your setup
+                var tenant = config!["AzureAd:TenantId"] ?? "common";
+                // Use v2.0 endpoint for tokens
+                var authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
+                var metadataAddress = $"{authority}/.well-known/openid-configuration";
+
+                var documentRetriever = new Microsoft.IdentityModel.Protocols.HttpDocumentRetriever { RequireHttps = true };
+                var configManager = new Microsoft.IdentityModel.Protocols.ConfigurationManager<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>(
+                    metadataAddress,
+                    new Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever(),
+                    documentRetriever);
+
+                var openIdConfig = await configManager.GetConfigurationAsync();
+
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidIssuers = ["https://login.microsoftonline.com/" + tenant + "/v2.0", "https://sts.windows.net/" + tenant + "/"
+                    ],
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKeys = openIdConfig.SigningKeys,
+                    ValidateAudience = true,
+                    ValidAudiences =
+                    [
+                        config["AzureAd:ClientId"]  // the client id of your SPA or API depending on which token you expect
+                    ],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(2)
+                };
+
+                var handler = new JwtSecurityTokenHandler();
+                var principal = handler.ValidateToken(idToken, validationParameters, out var validatedToken);
+
+                return principal;
+            }
         }
 
         [HttpGet("/ExternalLoginCallback")]

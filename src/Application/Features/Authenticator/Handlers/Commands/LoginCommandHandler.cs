@@ -20,23 +20,23 @@ public class LoginCommandHandler(
     ITokenService tokenService,
     IUnitOfWork uow,TimeProvider time,
     IVerificationService verificationService)
-    : IRequestHandler<LoginCommand, Result<LoginResponse>>
+    : IRequestHandler<LoginCommand, Result<AuthResponse>>
 {
-    public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.Users.Include(u => u.UserType)
             .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
         if (user is null)
-            return Result.Failure<LoginResponse>(ErrorsCodes.InvalidCredentials);
+            return Result.Failure<AuthResponse>(ErrorsCodes.InvalidCredentials);
         
         if (!await userManager.CheckPasswordAsync(user, request.Password))
-            return Result.Failure<LoginResponse>(ErrorsCodes.InvalidCredentials);
+            return Result.Failure<AuthResponse>(ErrorsCodes.InvalidCredentials);
 
         if (!user.EmailConfirmed)
         {
             await verificationService.LogVerificationAttempt(user.Email!);
 
-            return Result.Success(new LoginResponse
+            return Result.Success(new AuthResponse
             {
                 RequiresEmailVerification = true,
                 UnverifiedEmail = new UnverifiedEmailData(
@@ -47,7 +47,7 @@ public class LoginCommandHandler(
         }
 
         if (string.IsNullOrWhiteSpace(request.DeviceId))
-            return Result.Failure<LoginResponse>(ErrorsCodes.InvalidDeviceId);
+            return Result.Failure<AuthResponse>(ErrorsCodes.InvalidDeviceId);
         
 
         var accessToken = tokenService.GenerateAccessToken(user);
@@ -61,7 +61,7 @@ public class LoginCommandHandler(
         await userManager.UpdateAsync(user);
         await uow.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(new LoginResponse(
+        return Result.Success(new AuthResponse(
             new UserInfoResponse(
                 user.Id,
                 user.FirstName,

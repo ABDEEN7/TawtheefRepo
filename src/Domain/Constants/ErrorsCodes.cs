@@ -53,8 +53,6 @@ public class ErrorsCodes
     public const string UserHasNotEmail = "USER_HAS_NOT_EMAIL";
     #endregion
 
-
-
     #region Update Profile Errors
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";
@@ -71,6 +69,10 @@ public class ErrorsCodes
     public const string ExternalLoginProviderRequired = "EXTERNAL_LOGIN_PROVIDER_REQUIRED";
     public const string ExternalLoginAlreadyLinked = "EXTERNAL_LOGIN_USER_ALREADY_LINKED";
     public const string ExternalLoginProviderAlreadyLinked = "EXTERNAL_LOGIN_PROVIDER_ALREADY_LINKED";
+    public const string ExternalLoginProviderNotSupported = "";
+    public const string ExternalLoginInvalidToken = "";
+    public const string ExternalLoginMissingProviderKey = "";
+    public const string InvalidRequest = "";
     #endregion
 
     #region Reset Password Errors

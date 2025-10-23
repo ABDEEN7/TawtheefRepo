@@ -1,36 +1,39 @@
 ﻿import { Injectable } from '@angular/core';
-import {environment} from "../../../environments/environment";
+import {ApiConfigService} from '../services/api-config.service';
+import {CaseUtils} from '../utils/case-utils';
 
 @Injectable({ providedIn: 'root' })
 export class EndpointsService {
-  constructor() {}
+  constructor(private apiConfig: ApiConfigService) {}
 
-  get base() { return environment.apiBaseUrl; }
+  private getFullUrl(endpoint: string): string {
+    return `${this.apiConfig?.baseUrl}${endpoint}`;
+  }
 
   auth = {
-    me: `${this.base}/auth/me`,
-    login: `${this.base}/auth/login`,
-    register: `${this.base}/auth/register`,
-    refresh: `${this.base}/auth/refresh`,
-    externalLogin: (provider: string) => `${this.base}/auth/external/${provider}`,
-    logout: `${this.base}/auth/logout`,
-    exchangeCode: `${this.base}/auth/exchange-code`,
-    verifyOtp: `${this.base}/auth/verify-otp`,
-    forgotPassword: `${this.base}/auth/forgot-password`,
-    resetPassword: `${this.base}/auth/reset-password`,
-    resendOtp: `${this.base}/auth/resend-otp`,
+    me: this.getFullUrl(this.getFullUrl(`/auth/me`)),
+    login: this.getFullUrl(`/auth/login`),
+    register: this.getFullUrl(`/auth/register`),
+    refresh: this.getFullUrl(`/auth/refresh`),
+    externalLogin: (provider: string, returnUrl: string | null = null) =>
+      this.getFullUrl(`/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''}`),
+    externalLoginUsingToken: this.getFullUrl(`/auth/external-login/token`),
+    logout: this.getFullUrl(`/auth/logout`),
+    exchangeCode: this.getFullUrl(`/auth/exchange-code`),
+    verifyOtp: this.getFullUrl(`/auth/verify-otp`),
+    forgotPassword: this.getFullUrl(`/auth/forgot-password`),
+    resetPassword: this.getFullUrl(`/auth/reset-password`),
+    resendOtp: this.getFullUrl(`/auth/resend-otp`),
   };
 
   user= {
     profile: {
-      socialAccounts: `${this.base}/user/profile/social-accounts`,
+      socialAccounts: this.getFullUrl(`/user/profile/social-accounts`),
     }
   };
 
   files = {
-    upload: `${this.base}/files/upload`,
-    download: (id: string) => `${this.base}/files/${id}/download`
+    upload: this.getFullUrl(`/files/upload`),
+    download: (id: string) => this.getFullUrl(`/files/${id}/download`)
   };
-
-  // add other grouped endpoints here
 }

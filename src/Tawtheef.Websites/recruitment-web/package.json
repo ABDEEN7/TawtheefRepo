@@ -29,6 +29,8 @@
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@auth0/angular-jwt": "^5.2.0",
+    "@azure/msal-angular": "^4.0.20",
+    "@azure/msal-browser": "^4.25.1",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "ngx-bootstrap": "^20.0.2",

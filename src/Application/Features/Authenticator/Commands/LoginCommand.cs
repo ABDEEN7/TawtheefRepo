@@ -4,7 +4,7 @@ using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
 namespace Tawtheef.Application.Features.Authenticator.Commands;
 
-public record LoginCommand : IRequest<Result<LoginResponse>>
+public record LoginCommand : IRequest<Result<AuthResponse>>
 {
     public required string Email { get; init; }
     public required string Password { get; init; }

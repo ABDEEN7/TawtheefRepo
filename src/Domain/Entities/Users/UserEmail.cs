@@ -9,7 +9,7 @@ public class UserEmail: EventEntity
     public required string Email { get; init; }
     public bool IsVerified { get; init; }
     /// <summary>
-    /// "UserProvided","google","outlook"...
+    /// "UserProvided","google","AzureAD"...
     /// </summary>
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public required string Source { get; init; }

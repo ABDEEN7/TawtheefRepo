@@ -75,13 +75,6 @@ public class AuthController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command);
         return result.ToActionResult();
     }
-    
-    [HttpPost("verify-lock-password")]
-    public async Task<IActionResult> VerifyLockPassword([FromBody] VerifyLockPasswordCommand command)
-    {
-        var result = await mediator.Send(command);
-        return result.ToActionResult();
-    }
 
     [HttpPost("revoke-token")]
     public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenCommand command)
