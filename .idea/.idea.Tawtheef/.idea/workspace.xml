@@ -31,8 +31,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69f1439a-77fb-4152-8c30-fefdf4edb270" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,5 +166,9 @@
         </breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
