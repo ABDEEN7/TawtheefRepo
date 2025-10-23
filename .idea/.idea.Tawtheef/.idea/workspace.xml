@@ -29,128 +29,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69f1439a-77fb-4152-8c30-fefdf4edb270" name="Changes" comment="Add core application structure with authentication, routing, and language support">
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/auth-core.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/auth-state.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/auth.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/navigation.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/profile.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/social-auth.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/token.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/user.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/auth/verification-actions.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/core.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/guards/auth.guard.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/http/endpoints.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/http/http.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/interceptors/auth.interceptor.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/interceptors/error.interceptor.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/interceptors/loading.interceptor.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/interceptors/refresh.interceptor.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/rxjs/retry-backoff.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/file.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/keyboard.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/language.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/loading.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/logger.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/notification.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/services/version.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/utils/case-utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/utils/date-utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/utils/file-utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/utils/guid-utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/utils/object-extensions.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/utils/password-manager.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/core/utils/string-utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/auth-routing.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/auth.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/callback/callback.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/callback/callback.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/models/login.model.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/models/token.model.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/models/unverified-email-data.model.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/access-denied/access-denied.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/access-denied/access-denied.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/access-denied/access-denied.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/come-soon/come-soon.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/come-soon/come-soon.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/come-soon/come-soon.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error-routing.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error404/error404.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error404/error404.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error404/error404.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error500/error500.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error500/error500.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/error500/error500.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/under-construction/under-construction.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/under-construction/under-construction.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/error/under-construction/under-construction.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/home/home-routing.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/home/home.component.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/home/home.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/home/home.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/pages/home/home.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/routes/auth-routes.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/routes/dashboard-routes.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/routes/error-routes.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/routes/routes.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/date-range-picker/date-range-picker.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/date-range-picker/date-range-picker.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/date-range-picker/date-range-picker.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/date-range-picker/date-range-picker.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/progress-bar/progress-bar.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/progress-bar/progress-bar.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/progress-bar/progress-bar.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/toasts/toasts.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/components/toasts/toasts.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/dialogs/confirmation-dialog/confirmation-dialog.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/dialogs/confirmation-dialog/confirmation-dialog.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/directives/localized.directive.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/models/dropdown-options.model.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/models/resource.model.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/models/sort-direction.model.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/models/user-info.model.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/models/user-type.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/models/user.model.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/pipes/bytes.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/pipes/capitalize-words.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/pipes/pascal-case.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/pipes/safe-html.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/pipes/sort.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/pipes/truncate.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/shared.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/validator/confirm-password-validator.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/validator/date-range.validator.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/shared/validator/file-image.validator.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/store/auth/auth.action.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/store/auth/auth.effects.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/store/auth/auth.reducer.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/store/auth/auth.selectors.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/i18n/ar.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/i18n/ar/auth.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/i18n/en.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/i18n/en/auth.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.prod.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/.editorconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/FILETREE.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/angular.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/karma.conf.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/app.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/app.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/app.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/components/date-range-picker/date-range-picker.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/components/date-range-picker/date-range-picker.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/components/date-range-picker/date-range-picker.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/components/date-range-picker/date-range-picker.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/components/progress-bar/progress-bar.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/components/progress-bar/progress-bar.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/components/toasts/toasts.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/components/toasts/toasts.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/shared.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/Recruitment.Web/src/app/shared/shared.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.gemini/GEMINI.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.github/copilot-instructions.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.junie/guidelines.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.vscode/extensions.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.vscode/launch.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.vscode/tasks.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/angular.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/public/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/app.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/tsconfig.app.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/tsconfig.spec.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.gemini/GEMINI.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.github/copilot-instructions.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.junie/guidelines.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.vscode/extensions.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.vscode/launch.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.vscode/tasks.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/angular.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/public/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/app.config.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/app.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/app.routes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/app.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/app.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/styles.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/tsconfig.app.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/tsconfig.spec.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,7 +128,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Compound.Recruitment">
     <list>
       <item itemvalue=".NET Launch Settings Profile.Operations.API: IIS Express" />
       <item itemvalue=".NET Launch Settings Profile.Operations.API: development" />
