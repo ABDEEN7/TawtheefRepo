@@ -4,11 +4,12 @@ import {MessageService} from 'primeng/api';
 import {EndpointsService} from '../../core/http/endpoints.service';
 import {TranslateService} from '@ngx-translate/core';
 import {LoadingService} from '../../core/services/loading.service';
-import {msalInstance} from '../../core/config/msal-config';
 import {AuthenticationResult, PopupRequest} from '@azure/msal-browser';
 import {environment} from '../../../environments/environment';
 import {AuthResponse} from './login/models/auth-response.model';
 import {HttpClient} from '@angular/common/http';
+import {MsalService} from '@azure/msal-angular';
+import {msalInstance} from '../../core/config/msal-config';
 
 @Injectable({providedIn: 'root'})
 export class ExternalLoginService implements OnDestroy {
@@ -19,9 +20,10 @@ export class ExternalLoginService implements OnDestroy {
   private popupCloseListener: any;
 
   loading = false;
-  protected constructor(loadingService: LoadingService, public authService: AuthService,
-                        public messageService: MessageService, public endpoints: EndpointsService,
-                        public translate: TranslateService, public http: HttpClient) {
+  protected constructor(loadingService: LoadingService, private authService: AuthService,
+                        private msalService: MsalService,
+                        private messageService: MessageService, private endpoints: EndpointsService,
+                        private translate: TranslateService, private http: HttpClient) {
     loadingService.loading$.subscribe(loading => {
       this.loading = loading;
     });
@@ -71,11 +73,17 @@ export class ExternalLoginService implements OnDestroy {
     };
     window.addEventListener('message', this.popupCloseListener);
   }
-  public signInWithAzure(): void {
+
+  async initializeMsal() {
+    await msalInstance.initialize(); // ✅ Must be awaited
+  }
+  public async signInWithAzure() {
+    await this.initializeMsal();
     if (this.popup) {
       this.popup.close();
       this.popup = null;
     }
+
     const azureLoginRequest: PopupRequest = {
       scopes: ["openid", "profile", "email"]
     };
@@ -92,7 +100,7 @@ export class ExternalLoginService implements OnDestroy {
           } : null
         };
         this.ngZone.run(() => {
-          this.http.post<AuthResponse>(this.endpoints.auth.externalLoginUsingToken, data).subscribe((user)=>{
+          this.http.post<AuthResponse>(this.endpoints.auth.externalLoginUsingToken, data).subscribe((user) => {
             this.authService.externalLogin(user).subscribe({
               next: (success) => {
                 if (!success) {
@@ -114,15 +122,16 @@ export class ExternalLoginService implements OnDestroy {
             });
           })
         });
-      })
-      .catch((error) => {
-        console.error('Azure login popup error', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Login Failed',
-          detail: (error && error.errorMessage) ? error.errorMessage : 'Azure authentication failed'
-        });
+      }).catch((error) => {
+      console.error('Azure login popup error', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Login Failed',
+        detail: (error && error.errorMessage) ? error.errorMessage : 'Azure authentication failed'
       });
+    });
+
+
   }
 
   private cleanupPopup(): void {

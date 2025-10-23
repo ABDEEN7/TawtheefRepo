@@ -27,14 +27,6 @@ public class AuthController(IMediator mediator) : ControllerBase
         var id when Guid.TryParse(id, out var guid) => Result.Success(guid),
         _ => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier)
     };
-    
-    [HttpPost("register")]
-    public Task<IActionResult> RegisterStudent([FromBody] RegisterUserCommand command)
-    {
-        // var result = await mediator.Send(command with { UserType = nameof(UserTypeIds.Student) });
-        // return result.ToActionResult();
-        throw new NotImplementedException();
-    }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command)

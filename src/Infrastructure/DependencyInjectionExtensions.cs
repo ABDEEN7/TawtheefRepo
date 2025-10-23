@@ -145,7 +145,7 @@ namespace Tawtheef.Infrastructure
         }
 
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
-        {
+        {            
             services.AddAuthentication("Smart")
                 .AddPolicyScheme("Smart", "JWT or Cookies", opt =>
                 {
@@ -188,8 +188,8 @@ namespace Tawtheef.Infrastructure
                 // Apply discount code policy (per user or anonymous)
                 options.AddPolicy(LimitsPolicyKeys.ApplyDiscountCodePolicy, context =>
                 {
-                    var studentId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    if (string.IsNullOrEmpty(studentId))
+                    var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (string.IsNullOrEmpty(userId))
                     {
                         return RateLimitPartition.GetSlidingWindowLimiter(
                             partitionKey: "anonymous",
@@ -202,7 +202,7 @@ namespace Tawtheef.Infrastructure
                     }
 
                     return RateLimitPartition.GetSlidingWindowLimiter(
-                        partitionKey: studentId,
+                        partitionKey: userId,
                         factory: _ => new SlidingWindowRateLimiterOptions
                         {
                             PermitLimit = 5,

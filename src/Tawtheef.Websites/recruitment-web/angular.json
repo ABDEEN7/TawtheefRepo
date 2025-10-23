@@ -27,7 +27,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets"
             ],
             "styles": [
               "src/styles.scss"
@@ -67,7 +68,10 @@
               "buildTarget": "recruitment-web:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 5029
+          }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n"
@@ -85,7 +89,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets",
             ],
             "styles": [
               "src/styles.scss"
