@@ -18,6 +18,8 @@
     <projectFile profileName="stage">src/Tawtheef.APIs/Recruitment.API/Recruitment.API.csproj</projectFile>
     <projectFile kind="EcmaScript">src/Tawtheef.Websites/Operations.Web/operations-web.esproj</projectFile>
     <projectFile kind="EcmaScript">src/Tawtheef.Websites/Recruitment.Web/recruitment-web.esproj</projectFile>
+    <projectFile kind="EcmaScript">src/Tawtheef.Websites/operations-web/operations-web.esproj</projectFile>
+    <projectFile kind="EcmaScript">src/Tawtheef.Websites/recruitment-web/recruitment-web.esproj</projectFile>
     <projectFile profileName="IIS Express">src/Web/Web.csproj</projectFile>
     <projectFile profileName="Swagger">src/Web/Web.csproj</projectFile>
     <projectFile profileName="development">src/Web/Web.csproj</projectFile>
@@ -28,7 +30,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="69f1439a-77fb-4152-8c30-fefdf4edb270" name="Changes" comment="Add core application structure with authentication, routing, and language support" />
+    <list default="true" id="69f1439a-77fb-4152-8c30-fefdf4edb270" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.gitignore" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -142,7 +147,8 @@
     <MESSAGE value="Remove `specification.json` and clean up unused references under `Recruitment.API`. Namespace adjustments and `RootNamespace`/`AssemblyName` deletions ensure consistency." />
     <MESSAGE value="Remove unused files and references (`aspnetcore-https.js`, `proxy.conf.js`, mappers, behaviors, and converters). Introduce `Mapster` configurations, streamline dependency injection, and add `Resource` and `User` domain models alongside their mappers." />
     <MESSAGE value="Refactor project structure by renaming feature folders to improve organization and clarity. Update workspace configuration to reflect these changes." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor project structure by renaming feature folders to improve organization and clarity. Update workspace configuration to reflect these changes." />
+    <MESSAGE value="Add core application structure with authentication, routing, and language support" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add core application structure with authentication, routing, and language support" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
