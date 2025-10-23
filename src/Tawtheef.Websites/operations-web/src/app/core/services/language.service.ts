@@ -1,0 +1,13 @@
+﻿import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+
+
+@Injectable({ providedIn: 'root' })
+export class LanguageService {
+  constructor(private translate: TranslateService) {
+    translate.addLangs(['en','ar']);
+    translate.setDefaultLang('ar');
+  }
+  get current() { return this.translate.currentLang || this.translate.defaultLang; }
+  use(lang: string) { this.translate.use(lang); }
+}

@@ -1,0 +1,10 @@
+<div class="input-icon position-relative input-range-picker ngx-dates">
+  <span class="input-icon-addon">
+      <i class="isax isax-calendar"></i>
+  </span>
+  <input type="text" class="form-control date-range bookingrange"
+         container=".ngx-dates" placeholder="dd/mm/yyyy - dd/mm/yyyy"
+         bsDaterangepicker [(ngModel)]="bsRangeValue" name="time"
+         [bsConfig]="{ adaptivePosition: true }"
+         (bsValueChange)="onRangeChanged({from: $event?.[0], to: $event?.[1] })">
+</div>
