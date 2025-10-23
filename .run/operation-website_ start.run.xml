@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="operation-website: start" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/src/Tawtheef.Websites/Operations.Web/package.json" />
+    <command value="start" />
+    <node-interpreter value="$USER_HOME$/AppData/Roaming/JetBrains/WebStorm2025.2/node/versions/22.20.0/node" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

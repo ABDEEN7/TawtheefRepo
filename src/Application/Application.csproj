@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>Tawtheef.Application</RootNamespace>
+        <AssemblyName>Tawtheef.Application</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="Mapster" />
+        <PackageReference Include="Mapster.DependencyInjection" />
+        <PackageReference Include="Microsoft.AspNetCore.Http" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Serilog.Enrichers.Environment" />
+        <PackageReference Include="Serilog.Exceptions" />
+        <PackageReference Include="Serilog.Settings.Configuration" />
+        <PackageReference Include="Serilog.Sinks.Seq" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\Behaviours\" />
+      <Folder Include="Common\Events\" />
+      <Folder Include="Common\Mappers\AdminProfiles\" />
+      <Folder Include="Common\Mappers\ApplicantProfiles\" />
+      <Folder Include="Common\Mappers\EmployeePorfiles\" />
+      <Folder Include="Common\Mappers\Utils\" />
+      <Folder Include="Features\Authenticator\Commands\" />
+      <Folder Include="Features\Authenticator\DTOs\" />
+      <Folder Include="Features\Authenticator\Handlers\Commands\" />
+      <Folder Include="Features\Authenticator\Handlers\Queries\" />
+      <Folder Include="Features\Authenticator\Queries\" />
+      <Folder Include="Features\Common\" />
+      <Folder Include="Features\Operations\Admin\" />
+      <Folder Include="Features\Operations\Applicant\" />
+      <Folder Include="Features\Operations\Employee\" />
+      <Folder Include="Features\Recruitment\Website\" />
+    </ItemGroup>
+
+</Project>

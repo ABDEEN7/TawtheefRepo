@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Operation" type="CompoundRunConfigurationType">
+    <toRun name="Operations.API: development" type="LaunchSettings" />
+    <toRun name="operation-website: start" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,0 +1,34 @@
+/* Basic Progress Line */
+.progress-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+}
+
+.progress-line {
+  height: 100%;
+  background: linear-gradient(90deg, #FF4667 0%, #764ba2 100%);
+  transition: width 0.3s ease;
+  border-radius: 0 2px 2px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .step-progress-container {
+    padding: 10px 15px;
+  }
+
+  .step {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .step-progress {
+    max-width: 100%;
+  }
+}
