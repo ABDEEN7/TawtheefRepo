@@ -3,6 +3,6 @@ export const environment = {
   apiBaseUrl: 'https://api.dev.example.com',
   auth: {
     clientId: 'YOUR_CLIENT_ID',
-    redirectUri: 'http://localhost:4200/auth-callback'
+    redirectUri: 'http://localhost:5029/auth-callback'
   }
 };
