@@ -481,4 +481,4 @@ $RECYCLE.BIN/
 *.swp
 .azure
 
-\Tawtheef.Websites\operations-web\package-lock.json
+package-lock.json
