@@ -481,4 +481,7 @@ $RECYCLE.BIN/
 *.swp
 .azure
 
-package-lock.json
+*/package-lock.json
+Tawtheef.sln.DotSettings.user
+Tawtheef.sln.DotSettings
+.vscode/
