@@ -31,44 +31,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69f1439a-77fb-4152-8c30-fefdf4edb270" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/assets/icons/azure.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/assets/icons/google.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/assets/icons/sso.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/icons/azure.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/icons/google.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/icons/sso.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tawtheef/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/RegisterUserCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Features/Authenticator/Commands/RegisterUserCommand.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Infrastructure/DependencyInjectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Infrastructure/DependencyInjectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/appsettings.Development.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/.vscode/launch.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/angular.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/public/i18n/ar/auth.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/public/i18n/en/auth.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/features/auth/login/components/login.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/features/auth/login/components/login.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/access-denied/access-denied.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/access-denied/access-denied.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/come-soon/come-soon.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/come-soon/come-soon.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/error404/error404.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/error404/error404.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/error500/error500.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/error500/error500.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/under-construction/under-construction.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/app/pages/error/under-construction/under-construction.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/assets/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/environments/environment.prod.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/environments/environment.prod.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/environments/environment.stage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/environments/environment.stage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/environments/environment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/operations-web/src/environments/environment.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/.vscode/launch.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/angular.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/public/i18n/ar/auth.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/public/i18n/en/auth.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/external-login.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/external-login.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/app/features/auth/login/components/login.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/assets/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.prod.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.prod.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.stage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.stage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tawtheef.Websites/recruitment-web/src/environments/environment.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,7 +173,8 @@
     <MESSAGE value="Remove unused files and references (`aspnetcore-https.js`, `proxy.conf.js`, mappers, behaviors, and converters). Introduce `Mapster` configurations, streamline dependency injection, and add `Resource` and `User` domain models alongside their mappers." />
     <MESSAGE value="Refactor project structure by renaming feature folders to improve organization and clarity. Update workspace configuration to reflect these changes." />
     <MESSAGE value="Add core application structure with authentication, routing, and language support" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add core application structure with authentication, routing, and language support" />
+    <MESSAGE value="Add AzureAD authentication support and update related configurations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add AzureAD authentication support and update related configurations" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -229,26 +193,26 @@
         </breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs</url>
-          <line>138</line>
+          <line>130</line>
           <properties documentPath="C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Tawtheef.APIs\Recruitment.API\Controllers\AuthController.cs" containingFunctionPresentation="Method 'ExternalLoginWithToken'">
             <startOffsets>
-              <option value="5819" />
+              <option value="5470" />
             </startOffsets>
             <endOffsets>
-              <option value="5820" />
+              <option value="5471" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/src/Tawtheef.APIs/Recruitment.API/Controllers/AuthController.cs</url>
-          <line>230</line>
+          <line>222</line>
           <properties documentPath="C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Tawtheef.APIs\Recruitment.API\Controllers\AuthController.cs" containingFunctionPresentation="Method 'ExternalLoginCallback'">
             <startOffsets>
-              <option value="10341" />
+              <option value="9992" />
             </startOffsets>
             <endOffsets>
-              <option value="10342" />
+              <option value="9993" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="6" />
