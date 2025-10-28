@@ -15,6 +15,7 @@ public class ApplicationUserConfiguration<T> : IEntityTypeConfiguration<T> where
         builder.HasOne(u => u.UserType)
             .WithMany()
             .HasForeignKey(u => u.UserTypeId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
