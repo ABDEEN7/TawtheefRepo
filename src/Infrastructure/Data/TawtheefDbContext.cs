@@ -47,6 +47,8 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Nationality> Nationalities { get; set; }
     public DbSet<SkillType> SkillTypes { get; set; }
     public DbSet<University> Universities { get; set; }
+    public DbSet<ApplicationStatus> ApplicationStatuses { get; set; }
+    public DbSet<JobStatus> JobStatuses { get; set; }
 
     // Base User Tables
     public DbSet<AdminUser> Admins { get; set; }
