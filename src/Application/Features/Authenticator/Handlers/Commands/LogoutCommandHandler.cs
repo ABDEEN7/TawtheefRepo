@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,25 +10,30 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
 
-public class LogoutHandler(IUnitOfWork uow, SignInManager<User> signInManager) : IRequestHandler<LogoutCommand, Result<Unit>>
+public class LogoutCommandHandler(
+    IUnitOfWork uow,
+    TimeProvider time,
+    UserManager<User> userManager,
+    SignInManager<User> signInManager) : IRequestHandler<LogoutCommand, Result<Unit>>
 {
     public async Task<Result<Unit>> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
-        // Find the user by ID
-        var user = await uow.GetUserRepository<User>().DbSet
-            .Include(nameof(User.RefreshTokens))
+        var user = await userManager.Users
+            .Include(u => u.RefreshTokens)
             .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
-        if (user == null)
+
+        if (user is null)
             return Result.Failure<Unit>(ErrorsCodes.UserNotFound);
 
-        uow.GetEntityRepository<RefreshToken>().DbSet
-            .RemoveRange(user.RefreshTokens.Where(rt => rt.IsActive));
+
+        var activeTokens = await uow.GetEntityRepository<RefreshToken>().DbSet
+            .Where(rt => rt.UserId == user.Id).ToListAsync(cancellationToken);
+        activeTokens.ForEach(rt=> rt.Revoked(time.GetUtcNow().UtcDateTime, "User logout"));
         
-        // Sign out the user
+        await userManager.UpdateSecurityStampAsync(user);
+        await uow.SaveChangesAsync(cancellationToken);
+        
         await signInManager.SignOutAsync();
-
-        // Optionally, you can clear any session or token data here if needed
-
         return Result.Success(Unit.Value);
     }
 }

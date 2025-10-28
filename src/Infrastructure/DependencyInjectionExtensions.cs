@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.RateLimiting;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
@@ -154,6 +156,35 @@ namespace Tawtheef.Infrastructure
                         ctx.Request.Headers.Authorization.ToString().StartsWith("Bearer ")
                             ? JwtBearerDefaults.AuthenticationScheme
                             : IdentityConstants.ApplicationScheme;
+                    opt.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async ctx =>
+                        {
+                            var userManager = ctx.HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
+
+                            var userId = ctx.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                                         ?? ctx.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                            var tokenSid = ctx.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sid);
+                            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(tokenSid))
+                            {
+                                ctx.Fail("Invalid token claims.");
+                                return;
+                            }
+
+                            var userGuid = Guid.Parse(userId);
+                            var user = await userManager.Users
+                                .Where(u => u.Id == userGuid)
+                                .Select(u => new { u.CurrentSessionId })
+                                .FirstOrDefaultAsync();
+
+                            if (user?.CurrentSessionId is null || !string.Equals(user.CurrentSessionId.ToString(), tokenSid, StringComparison.OrdinalIgnoreCase))
+                            {
+                                ctx.Fail("Session revoked.");
+                                return;
+                            }
+                        }
+                    };
                 })
                 .AddGoogle(o =>
                 {

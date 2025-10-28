@@ -36,7 +36,6 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
             if (user.OtpCode != request.Otp)
             {
                 user.OtpAttempts++;
-                await uow.GetUserRepository<User>().UpdateAsync(user);
                 await uow.SaveChangesAsync(cancellationToken);
 
                 return Result.Failure<AuthResponse>(ErrorsCodes.InvalidVerificationCode);
@@ -54,7 +53,6 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
             user.AddRefreshToken(refreshToken.Token, refreshToken.Expires);
             user.RemoveOldRefreshTokens(5);
             
-            await uow.GetUserRepository<User>().UpdateAsync(user);
             await uow.SaveChangesAsync(cancellationToken);
 
             return Result.Success(new AuthResponse(

@@ -36,21 +36,6 @@ public class UnitOfWork(TawtheefDbContext dbContext, IMediator mediator) : IUnit
 
         return (IGenericRepository<T>) _repositories[type]!;
     }
-    public IGenericRepository<T> GetUserRepository<T>() where T : User
-    {
-        _repositories ??= new Hashtable();
- 
-        var type = typeof(T).Name;
-
-        if (_repositories.ContainsKey(type)) return (IGenericRepository<T>)_repositories[type]!;
-        var repositoryType = typeof(GenericRepository<>);
- 
-        var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _dbContext);
- 
-        _repositories.Add(type, repositoryInstance);
-
-        return (IGenericRepository<T>) _repositories[type]!;
-    }
 
     public void Remove<T>(T? entity) where T : EventEntity
     {

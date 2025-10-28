@@ -10,7 +10,6 @@ namespace Tawtheef.Application.Common.Interfaces.Repositories.Base;
 public interface IUnitOfWork : IDisposable
 {
     IGenericRepository<T> GetEntityRepository<T>() where T : EventEntity;
-    IGenericRepository<T> GetUserRepository<T>() where T : User;
     void Remove<T>(T? entity) where T : EventEntity;
     void RemoveRange<T>(IList<T>? entities) where T : EventEntity;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

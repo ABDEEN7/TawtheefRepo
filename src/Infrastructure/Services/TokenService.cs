@@ -22,7 +22,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
         jwtSettings.Value.Key ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
 
-    public (string Token, DateTime Expires) GenerateAccessToken(User user)
+    public (string Token, DateTime Expires) GenerateAccessToken(User user, IEnumerable<Claim>? extraClaims = null)
     {
         if(user.UserType is null)
             throw new ArgumentException("User type is null. Cannot generate access token.");
@@ -35,9 +35,12 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
             new(JwtRegisteredClaimNames.Email, user.Email!),
             new("userType", user.UserType.BackendName),
             new(ClaimTypes.Role, user.UserType.BackendName),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Sid, (user.CurrentSessionId ?? Guid.Empty).ToString())
         };
-
+        if (extraClaims is not null)
+            claims.AddRange(extraClaims);
+        
         var expires = time.GetLocalNow().DateTime.AddMinutes(
             jwtSettings.Value.ExpiryMinutes ?? 15);
 
@@ -85,9 +88,9 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
 
     public async Task RevokeRefreshToken(RefreshToken token, string? ipAddress, string? reason = null, string? replacedByToken = null)
     {
-        token.Revoked = time.GetLocalNow().DateTime;
+        token.RevokedAt = time.GetLocalNow().DateTime;
         token.RevokedByIp = ipAddress;
-        token.ReasonRevoked = reason;
+        token.RevokedReason = reason;
         token.ReplacedByToken = replacedByToken;
         
         await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);

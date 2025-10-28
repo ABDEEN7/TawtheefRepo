@@ -36,23 +36,6 @@ namespace Recruitment.API.Controllers
             _ => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier)
         };
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginCommand command)
-        {
-            var headers = HttpContext.Request.Headers;
-        
-            var result = await mediator.Send(command with {
-                DeviceId = headers["x-device-id"].FirstOrDefault(),
-                UserAgent = headers.UserAgent.FirstOrDefault(),
-                Timezone = headers["x-device-tz"].FirstOrDefault(),
-                Screen = headers["x-device-screen"].FirstOrDefault(),
-                Browser = headers["x-device-platform"].FirstOrDefault(),
-                DisplayName = headers["x-device-model"].FirstOrDefault(),
-                Os = headers["x-device-os"].FirstOrDefault(),
-                IpAddress = HttpContext.GetClientIpAddress() ?? "Unknown IP Address"
-            });
-            return result.ToActionResult();
-        }
     
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
@@ -60,28 +43,6 @@ namespace Recruitment.API.Controllers
             command = command with { IpAddress = HttpContext.GetClientIpAddress() ?? "Unknown IP Address" };
             var result = await mediator.Send(command);
             return result.ToActionResult();
-        }
-    
-        [HttpPost("forget-password")]
-        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordCommand command)
-        {
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
-    
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
-        {
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
-
-        [HttpPost("revoke-token")]
-        public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenCommand command)
-        {
-            command = command with { IpAddress = HttpContext.GetClientIpAddress() ?? "Unknown IP Address" };
-            await mediator.Send(command);
-            return NoContent();
         }
     
         [HttpPost("verify-otp")]
@@ -98,29 +59,15 @@ namespace Recruitment.API.Controllers
             var result = await mediator.Send(command);
             return result.ToActionResult();
         }
-    
-        [HttpPost("resend-email")]
-        public async Task<IActionResult> ResendVerificationEmail([FromBody] ResendVerificationEmailCommand command)
-        {
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
-
-        [HttpPost("via-sms")]
-        public async Task<IActionResult> VerifyViaSms([FromBody] VerifyEmailViaSmsCommand command)
-        {
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
 
         [HttpGet("external-login")]
-        public IActionResult ExternalLogin([FromQuery] ExternalLoginCommand command, [FromServices] SignInManager<User> signInManager)
+        public IActionResult ExternalLogin([FromQuery] ExternalLoginRequest request, [FromServices] SignInManager<User> signInManager)
         {
-            var provider = command.Provider;
+            var provider = request.Provider;
             if (string.IsNullOrEmpty(provider))
                 return BadRequest(ErrorsCodes.ExternalLoginProviderRequired);
         
-            var returnUrl = command.ReturnUrl ?? Url.Content("~/");
+            var returnUrl = request.ReturnUrl ?? Url.Content("~/");
             var redirectUrl = Url.ActionLink(nameof(ExternalLoginCallback), controller: null, values: new { returnUrl }, protocol: Request.Scheme);
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);

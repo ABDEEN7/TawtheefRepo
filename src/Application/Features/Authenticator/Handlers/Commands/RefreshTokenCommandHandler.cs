@@ -28,16 +28,17 @@ public class RefreshTokenCommandHandler(
 {
     public async Task<Result<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        // 1. Validate input tokens
+        // Validate input tokens
         if (string.IsNullOrEmpty(request.AccessToken))
             return Result.Failure<TokenResponse>(ErrorsCodes.AccessTokenRequired);
         if (string.IsNullOrEmpty(request.RefreshToken))
             return Result .Failure<TokenResponse>(ErrorsCodes.RefreshTokenRequired);
 
-        // 2. Get principal from an expired access token
+        // Get principal from an expired access token
         var principalResult = GetPrincipalFromExpiredToken(request.AccessToken);
         if(principalResult.IsFailure)
             return Result .Failure<TokenResponse>(principalResult.Error);
+        
         var principal = principalResult.Value;
         var nameIdentifier = principal.FindFirstValue(ClaimTypes.NameIdentifier);
         if( string.IsNullOrEmpty(nameIdentifier))
@@ -46,7 +47,7 @@ public class RefreshTokenCommandHandler(
         if (!Guid.TryParse(nameIdentifier, out var userId))
             return Result .Failure<TokenResponse>(ErrorsCodes.InvalidUserIdentifier);
 
-        // 3. Fetch user with refresh tokens
+        // Fetch user with refresh tokens
         var user = await userManager.Users
             .Include(u => u.UserType)
             .Include(u => u.RefreshTokens)
@@ -54,7 +55,10 @@ public class RefreshTokenCommandHandler(
         if (user == null)
             return Result .Failure<TokenResponse>(ErrorsCodes.UserNotFound);
 
-        // 4. Validate refresh token
+        if (user.CurrentSessionId is null)
+            return Result.Failure<TokenResponse>(ErrorsCodes.SessionExpired);
+        
+        // Validate refresh token
         var refreshToken = user.RefreshTokens
             .FirstOrDefault(rt => rt.Token == request.RefreshToken);
         if (refreshToken == null)
@@ -63,17 +67,17 @@ public class RefreshTokenCommandHandler(
         if (!refreshToken.IsActive)
             return Result .Failure<TokenResponse>(ErrorsCodes.InactiveRefreshToken);
 
-        // 5. Generate new tokens
+        // Generate new tokens
         var newRefreshToken = tokenService.GenerateRefreshToken(user.Id, request.IpAddress);
         await tokenService.RevokeRefreshToken(refreshToken, request.IpAddress, "Replaced by new token", newRefreshToken.Token);
 
-        // 6. Update user tokens
+        // Update user tokens
         user.AddRefreshToken(newRefreshToken.Token, newRefreshToken.Expires, request.IpAddress);
         user.RemoveOldRefreshTokens(jwtSettings.Value.RefreshTokenRetentionCount ?? 5);
 
         await userManager.UpdateAsync(user);
 
-        // 7. Generate a new access token
+        // Generate a new access token
         var accessToken = tokenService.GenerateAccessToken(user);
 
         return Result.Success(new TokenResponse(
