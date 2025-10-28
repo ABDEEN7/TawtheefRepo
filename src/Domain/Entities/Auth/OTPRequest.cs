@@ -4,7 +4,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Auth;
 
-public class RequestOTP: EventEntity
+public class OTPRequest: EventEntity
 {
     public Guid UserId { get; set; }
     public virtual User? User { get; set; }
