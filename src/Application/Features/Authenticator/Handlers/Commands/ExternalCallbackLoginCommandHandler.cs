@@ -50,7 +50,7 @@ public class ExternalCallbackLoginCommandHandler(
             var refreshToken = tokenService.GenerateRefreshToken(user.Id);
 
             return Result.Success(new AuthResponse(
-                new UserInfoResponse(user.Id, user.FirstName, user.LastName, user.Email!, user.Avatar),
+                new UserInfoResponse(user.Id, user.GivenNameEn, user.FamilyNameEn, user.Email!, user.Avatar),
                 new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
             ));
         }
@@ -81,7 +81,7 @@ public class ExternalCallbackLoginCommandHandler(
             var refreshToken = tokenService.GenerateRefreshToken(existingUser.Id);
 
             return Result.Success(new AuthResponse(
-                new UserInfoResponse(existingUser.Id, existingUser.FirstName, existingUser.LastName, existingUser.Email!, existingUser.Avatar),
+                new UserInfoResponse(existingUser.Id, existingUser.GivenNameEn, existingUser.FamilyNameEn, existingUser.Email!, existingUser.Avatar),
                 new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
             ));
         }
@@ -108,15 +108,11 @@ public class ExternalCallbackLoginCommandHandler(
             }
         }
 
-        var newUser = new User
-        {
-            UserName        = email,
-            Email           = email,
-            FirstName       = givenName,
-            LastName        = surname,
-            UserTypeId      = UserTypeIds.Applicant
-        };
-
+        var newUserResult = User.Register(email,$"{givenName} {surname}".Trim(), nameof(UserTypeIds.Applicant));
+        if(newUserResult.IsFailure)
+            return Result.Failure<AuthResponse>(newUserResult.Error);
+        
+        var newUser = newUserResult.Value;
         var createResult = await userManager.CreateAsync(newUser);
         if (!createResult.Succeeded)
             return Result.Failure<AuthResponse>(string.Join(", ", createResult.Errors.Select(e => e.Description)));
@@ -140,24 +136,24 @@ public class ExternalCallbackLoginCommandHandler(
     {
         // Reuse the same helper as in the Link handler
         // You can extract this method to a shared static class if you like.
-        var email       = info.Principal.FindFirstValue(ClaimTypes.Email);
-        var givenName   = info.Principal.FindFirstValue(ClaimTypes.GivenName);
-        var surname     = info.Principal.FindFirstValue(ClaimTypes.Surname);
-        var fullName    = info.Principal.FindFirstValue(ClaimTypes.Name);
-        var picture     = info.Principal.FindFirst("picture")?.Value;
-        var profile     = info.Principal.FindFirst("profile")?.Value;
-        var locale      = info.Principal.FindFirst("locale")?.Value;
+        var email= info.Principal.FindFirstValue(ClaimTypes.Email);
+        var givenName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+        var surname = info.Principal.FindFirstValue(ClaimTypes.Surname);
+        var fullName = info.Principal.FindFirstValue(ClaimTypes.Name);
+        var picture = info.Principal.FindFirst("picture")?.Value;
+        var profile = info.Principal.FindFirst("profile")?.Value;
+        var locale = info.Principal.FindFirst("locale")?.Value;
         var emailVerStr = info.Principal.FindFirst("email_verified")?.Value;
         var emailVerified = string.Equals(emailVerStr, "true", StringComparison.OrdinalIgnoreCase);
 
-        if (string.IsNullOrWhiteSpace(user.FirstName) && !string.IsNullOrWhiteSpace(givenName)) user.FirstName = givenName;
-        if (string.IsNullOrWhiteSpace(user.LastName)  && !string.IsNullOrWhiteSpace(surname))   user.LastName  = surname;
+        if (string.IsNullOrWhiteSpace(user.GivenNameEn) && !string.IsNullOrWhiteSpace(givenName)) user.GivenNameEn = givenName;
+        if (string.IsNullOrWhiteSpace(user.FamilyNameEn)  && !string.IsNullOrWhiteSpace(surname))   user.FamilyNameEn  = surname;
 
-        if ((string.IsNullOrWhiteSpace(user.FirstName) || string.IsNullOrWhiteSpace(user.LastName)) && !string.IsNullOrWhiteSpace(fullName))
+        if ((string.IsNullOrWhiteSpace(user.GivenNameEn) || string.IsNullOrWhiteSpace(user.FamilyNameEn)) && !string.IsNullOrWhiteSpace(fullName))
         {
             var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (string.IsNullOrWhiteSpace(user.FirstName) && parts.Length >= 1) user.FirstName = parts[0];
-            if (string.IsNullOrWhiteSpace(user.LastName)  && parts.Length >= 2) user.LastName  = string.Join(' ', parts.Skip(1));
+            if (string.IsNullOrWhiteSpace(user.GivenNameEn) && parts.Length >= 1) user.GivenNameEn = parts[0];
+            if (string.IsNullOrWhiteSpace(user.FamilyNameEn)  && parts.Length >= 2) user.FamilyNameEn  = string.Join(' ', parts.Skip(1));
         }
 
         if (string.IsNullOrWhiteSpace(user.Avatar) && !string.IsNullOrWhiteSpace(picture))

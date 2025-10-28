@@ -2,8 +2,6 @@
 using System.Security.Claims;
 using System.Text.Json;
 using CSharpFunctionalExtensions;
-using Mapster;
-using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -15,10 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs;
-using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
@@ -159,9 +155,7 @@ namespace Recruitment.API.Controllers
                 };
 
                 var handler = new JwtSecurityTokenHandler();
-                var principal = handler.ValidateToken(idToken, validationParameters, out var validatedToken);
-
-                return principal;
+                return handler.ValidateToken(idToken, validationParameters, out var validatedToken);
             }
         }
 

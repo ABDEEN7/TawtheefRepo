@@ -7,18 +7,7 @@ public class NotificationTypeConfiguration : LookupBaseConfiguration<Notificatio
 {
     public override void Configure(EntityTypeBuilder<NotificationType> builder)
     {
-        builder.HasData(
-            new NotificationType
-            {
-                Id = NotificationTypeIds.EnrollmentApproved,
-                BackendName = nameof(NotificationTypeIds.EnrollmentApproved),
-                NameEn = "Enrollment Approved",
-                NameAr = "التحاق مقبول",
-                DescriptionEn = "Your enrollment has been approved",
-                DescriptionAr = "تم قبول التحاقك",
-                DisplayOrder = 1
-            }
-        );
+        builder.HasData();
         base.Configure(builder);
     }
 }

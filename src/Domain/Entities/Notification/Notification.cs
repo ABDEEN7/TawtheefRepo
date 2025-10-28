@@ -1,10 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Domain.Entities;
+namespace Tawtheef.Domain.Entities.Notification;
 
 public class Notification : EventEntity
 {

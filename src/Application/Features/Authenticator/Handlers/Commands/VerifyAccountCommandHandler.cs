@@ -25,7 +25,7 @@ public class VerifyAccountCommandHandler(IEmailService emailService, UserManager
         if (!result.Succeeded)
             return Result.Failure<bool>(ErrorsCodes.InvalidTokenOrEmail);
         // Send a confirmation email
-        await emailService.SendEmailVerificationEmailSuccessAsync(user.Email!, user.FirstName);
+        await emailService.SendEmailVerificationEmailSuccessAsync(user.Email!, user.GivenNameEn);
         
         return Result.Success(true);
     }

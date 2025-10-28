@@ -1,9 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Domain.Entities;
+namespace Tawtheef.Domain.Entities.Auth;
 
 public class RefreshToken : EventEntity
 {

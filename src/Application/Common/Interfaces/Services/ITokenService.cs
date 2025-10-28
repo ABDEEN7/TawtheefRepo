@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Tawtheef.Domain.Entities;
+using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Common.Interfaces.Services;

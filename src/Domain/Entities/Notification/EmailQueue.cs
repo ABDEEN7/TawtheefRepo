@@ -1,7 +1,6 @@
-﻿using System;
-using Tawtheef.Domain.Common;
+﻿using Tawtheef.Domain.Common;
 
-namespace Tawtheef.Domain.Entities;
+namespace Tawtheef.Domain.Entities.Notification;
 
 public class EmailQueue : EventEntity
 {
