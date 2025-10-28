@@ -10,4 +10,5 @@ public static class DefaultConfig
     public const int DefaultPageSize = 10;
     public const int MaxPageSize = 100;
     public const string DefaultImagePath = "/images/default.png";
+    public static DateTime DefaultCreatedDate = new DateTime(1900, 1, 1);
 }

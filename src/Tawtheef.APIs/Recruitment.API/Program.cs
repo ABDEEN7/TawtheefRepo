@@ -123,6 +123,7 @@ app.UseMiddleware<ResponseLoggingMiddleware>();
 
 app.UseCors(myCors);
 app.UseAuthentication();
+app.UseMiddleware<SingleSessionMiddleware>();
 app.UseAuthorization();
 
 

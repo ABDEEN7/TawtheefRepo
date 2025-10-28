@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Configurations\Entities\Users\" />
       <Folder Include="Events\" />
       <Folder Include="ValueObjects\" />
     </ItemGroup>

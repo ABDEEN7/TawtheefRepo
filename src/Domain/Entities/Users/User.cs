@@ -10,7 +10,6 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Events.User;
 using Tawtheef.Domain.ValueObjects.User;
-using Gender = Tawtheef.Domain.Entities.Lookups.Gender;
 
 namespace Tawtheef.Domain.Entities.Users;
 
@@ -22,19 +21,15 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public required string LastName { get; set; }
     [NotMapped]
     public string FullName => $"{FirstName} {LastName}";
+    public DateTime? LastLoginDate { get; set; }
+    
     [StringLength(2048)]
     public string? Avatar { get; set; }
-    [StringLength(2048)]
-    public string? Bio { get; set; }
-    public DateTime? LastLoginDate { get; set; }
-    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
-    public string? CurrentAuthToken { get; set; }
-    
-    public Guid GenderId { get; set; }
-    public Gender? Gender { get; init; }
-    
     public Guid UserTypeId { get; set; }
     public UserType? UserType { get; set; }
+    
+    public Guid? ProfileId { get; set; }
+    public UserProfile? Profile { get; set; }
     
     public Guid? CreatedById { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
@@ -44,16 +39,20 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public Guid? DeletedById { get; set; }
     public DateTimeOffset? DeletedDate { get; set; }
     
-    public ICollection<Notification>? Notifications { get; set; }
-    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+    public ICollection<Notification>? Notifications { get; init; }
+    
+    private readonly List<RefreshToken> _refreshTokens = [];
+    public IReadOnlyCollection<RefreshToken> RefreshTokens  => _refreshTokens.AsReadOnly();
     public DateTime? OtpExpiry { get; set; }
     [MaxLength(length: 6)]
     public string? OtpCode { get; set; }
     public int OtpAttempts { get; set; }
     
-    public ICollection<UserSocialAccount>? SocialAccounts { get; init; }
-    public ICollection<UserEmail>? Emails { get; init; }
-
+    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
+    public string? CurrentAuthToken { get; set; }
+    public Guid? CurrentSessionId { get; private set; }
+    [MaxLength(length: 128)]
+    public string? ActiveDeviceId { get; private set; }
     private readonly List<BaseEvent> _domainEvents = [];
 
     [NotMapped]
@@ -62,25 +61,32 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public void AddDomainEvent(BaseEvent e) => _domainEvents.Add(e);
     public void RemoveDomainEvent(BaseEvent e) => _domainEvents.Remove(e);
     public void ClearDomainEvents() => _domainEvents.Clear();
-    
-        public void AddRefreshToken(string token, DateTime expires, string? createdByIp = null)
+    public void StartNewExclusiveSession(string deviceId, Guid sessionId)
     {
-        RefreshTokens.Add(new RefreshToken
+        CurrentSessionId = sessionId;
+        ActiveDeviceId = deviceId;
+    }
+    public void AddRefreshToken(string token, DateTime expires, string? ip = null, string? userDeviceId = null)
+    {
+        _refreshTokens.Add(new RefreshToken
         {
             Token = token,
             Expires = expires,
             CreatedDate = DateTime.UtcNow,
-            CreatedByIp = createdByIp,
-            UserId = Id
+            CreatedByIp = ip,
+            UserId = Id,
+            UserDeviceId = userDeviceId
         });
     }
-    public void RemoveOldRefreshTokens(int maxRefreshTokens)
+    public void RemoveOldRefreshTokens(int keepCount)
     {
-        // Remove old refresh tokens, keeping the most recent ones
-        RefreshTokens = RefreshTokens
-            .OrderByDescending(x => x.CreatedDate)
-            .Take(maxRefreshTokens)
+        var old = _refreshTokens
+            .Where(rt => !rt.IsActive)
+            .OrderByDescending(rt => rt.CreatedDate)
+            .Skip(keepCount)
             .ToList();
+
+        foreach (var o in old) _refreshTokens.Remove(o);
     }
     public void UpdateLoginInfo(string authToken, DateTime loginDate)
     {
@@ -114,7 +120,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         user.UserTypeId = userType.Value;
         
         var typeName = userTypeNameResolver(user.UserTypeId);
-        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.FirstName, typeName, user.GenderId, DateTime.Now));
+        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.FirstName, typeName, DateTime.Now));
 
         return Result.Success(user);
     }

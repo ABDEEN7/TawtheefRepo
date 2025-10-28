@@ -27,8 +27,7 @@ public class ApplicantUser : User
             Email = email,
             UserName = email,
             FirstName = name.Value.First,
-            LastName = name.Value.Last,
-            GenderId = gender.Value,
+            LastName = name.Value.Last
         };
 
         return Result.Success(user as User);

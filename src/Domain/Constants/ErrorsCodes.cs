@@ -8,6 +8,8 @@ public class ErrorsCodes
     public const string EmailRequired = "EMAIL_REQUIRED";
     public const string UserNameRequired = "USER_NAME_REQUIRED";
     public const string PhoneNumberRequired = "PHONE_NUMBER_REQUIRED";
+    public const string ConcurrencyFailure = "CONCURRENCY_FAILURE";
+    public const string LoginFailed = "LOGIN_FAILED";
     #endregion
 
     #region Validation Token Errors
@@ -24,6 +26,7 @@ public class ErrorsCodes
     #region Login Errors
     public const string InvalidCredentials = "INVALID_CREDENTIALS_PROVICED";
     public const string UserNotFound = "USER_NOT_FOUND";
+    public const string SessionExpired = "SESSION_EXPIRED";
     public const string EmailNotVerified = "EMAIL_NOT_VERIFIED";
     public const string YourAccountRequiresAdminApproval = "YOUR_ACCOUNT_REQUIRES_ADMIN_APPROVAL";
     public const string SocialAccountNotLinked = "SOCIAL_ACCOUNT_NOT_LINKED";
