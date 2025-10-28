@@ -146,7 +146,7 @@ namespace Tawtheef.Infrastructure
 
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
         {            
-            services.AddAuthentication("Smart")
+            var authSchema = services.AddAuthentication("Smart")
                 .AddPolicyScheme("Smart", "JWT or Cookies", opt =>
                 {
                     opt.ForwardDefaultSelector = ctx =>
@@ -160,8 +160,11 @@ namespace Tawtheef.Infrastructure
                     o.ClientId = configuration["Authentication:Google:ClientId"]!;
                     o.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
                     o.SignInScheme = IdentityConstants.ExternalScheme;
-                })
-                .AddMicrosoftIdentityWebApi(configuration.GetSection("Authentication:AzureAd"));
+                });
+            
+            var azureConfig = configuration.GetSection("Authentication:AzureAd");
+                if(!string.IsNullOrEmpty(azureConfig.Value))
+                    authSchema.AddMicrosoftIdentityWebApi(azureConfig);
         }
 
         /// <summary>
