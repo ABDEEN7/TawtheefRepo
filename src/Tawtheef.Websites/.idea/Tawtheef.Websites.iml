@@ -5,6 +5,17 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/operations-web/.gemini" />
+      <excludeFolder url="file://$MODULE_DIR$/operations-web/.github" />
+      <excludeFolder url="file://$MODULE_DIR$/operations-web/.junie" />
+      <excludeFolder url="file://$MODULE_DIR$/operations-web/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/operations-web/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/recruitment-web/.gemini" />
+      <excludeFolder url="file://$MODULE_DIR$/recruitment-web/.github" />
+      <excludeFolder url="file://$MODULE_DIR$/recruitment-web/.junie" />
+      <excludeFolder url="file://$MODULE_DIR$/recruitment-web/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/recruitment-web/obj" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
