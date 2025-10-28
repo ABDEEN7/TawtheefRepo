@@ -16,7 +16,7 @@ public class LocalizationService(IHttpContextAccessor httpContextAccessor) : ILo
         if (source == null) return string.Empty;
         return source.GetLocalizedName(GetCurrentLanguage());
     }
-    public string GetLocalizedDescription(ILocalizedDescription? source)
+    public string? GetLocalizedDescription(ILocalizedDescription? source)
     {
         if (source == null) return string.Empty;
         return source.GetLocalizedDescription(GetCurrentLanguage());

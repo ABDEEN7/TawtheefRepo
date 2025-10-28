@@ -58,8 +58,8 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
             return Result.Success(new AuthResponse(
                 new UserInfoResponse(
                     user.Id,
-                    user.FirstName,
-                    user.LastName,
+                    user.GivenNameEn,
+                    user.FamilyNameEn,
                     user.Email!,
                     user.Avatar
                 ),

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Events.User;
 using Tawtheef.Domain.ValueObjects.User;
@@ -16,20 +17,24 @@ namespace Tawtheef.Domain.Entities.Users;
 public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
 {
     [Required, StringLength(50)]
-    public required string FirstName { get; set; }
+    public required string GivenNameEn { get; set; }
     [Required, StringLength(50)]
-    public required string LastName { get; set; }
-    [NotMapped]
-    public string FullName => $"{FirstName} {LastName}";
+    public required string FamilyNameEn { get; set; }
+    [StringLength(50)]
+    public string? GivenNameAr  { get; set; }
+    [StringLength(50)]
+    public string? FamilyNameAr { get; set; }
+
+    [NotMapped] public string FullNameEn => $"{this.GivenNameEn} {this.FamilyNameEn}".Trim();
+    [NotMapped] public string FullNameAr => $"{this.GivenNameAr} {this.FamilyNameAr}".Trim();
     public DateTime? LastLoginDate { get; set; }
     
     [StringLength(2048)]
     public string? Avatar { get; set; }
+    public string? PreferredUiLang { get; set; }
+    public string? ProviderSource    { get; set; }
     public Guid UserTypeId { get; set; }
     public UserType? UserType { get; set; }
-    
-    public Guid? ProfileId { get; set; }
-    public UserProfile? Profile { get; set; }
     
     public Guid? CreatedById { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
@@ -39,7 +44,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public Guid? DeletedById { get; set; }
     public DateTimeOffset? DeletedDate { get; set; }
     
-    public ICollection<Notification>? Notifications { get; init; }
+    public ICollection<Notification.Notification>? Notifications { get; init; }
     
     private readonly List<RefreshToken> _refreshTokens = [];
     public IReadOnlyCollection<RefreshToken> RefreshTokens  => _refreshTokens.AsReadOnly();
@@ -61,6 +66,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public void AddDomainEvent(BaseEvent e) => _domainEvents.Add(e);
     public void RemoveDomainEvent(BaseEvent e) => _domainEvents.Remove(e);
     public void ClearDomainEvents() => _domainEvents.Clear();
+
     public void StartNewExclusiveSession(string deviceId, Guid sessionId)
     {
         CurrentSessionId = sessionId;
@@ -96,31 +102,25 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public static Result<User> Register(
         string email,
         string displayName,
-        string genderRaw,
-        string userTypeRaw,
-        Func<Guid, string> userTypeNameResolver
+        string userTypeRaw
     )
     {
         var name = ValueObjects.User.FullName.TryParse(displayName);
         if (name.IsFailure) return name.ConvertFailure<User>();
 
-        var gender = ValueObjects.User.Gender.TryFrom(genderRaw);
-        if (gender.IsFailure) return gender.ConvertFailure<User>();
-
         var userType = UserTypeParser.TryFrom(userTypeRaw);
         if (userType.IsFailure) return userType.ConvertFailure<User>();
 
         var userResult = userType.Value == UserTypeIds.Applicant
-            ? ApplicantUser.Register(email, displayName, genderRaw, userTypeRaw)
-            : EmployeeUser.Register(email, displayName, genderRaw, userTypeRaw);
+            ? ApplicantUser.Register(email, displayName)
+            : EmployeeUser.Register(email, displayName);
 
         if (userResult.IsFailure) return userResult;
         
         var user = userResult.Value;
         user.UserTypeId = userType.Value;
         
-        var typeName = userTypeNameResolver(user.UserTypeId);
-        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.FirstName, typeName, DateTime.Now));
+        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.GivenNameEn, userType.Value, DateTime.Now));
 
         return Result.Success(user);
     }

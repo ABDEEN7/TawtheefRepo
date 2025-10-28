@@ -1,6 +1,6 @@
 ﻿using Tawtheef.Domain.Common;
 
-namespace Tawtheef.Domain.Entities;
+namespace Tawtheef.Domain.Entities.Notification;
 
 public class EmailTemplate : EventEntity
 {

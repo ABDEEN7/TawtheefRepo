@@ -13,6 +13,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Entities;
+using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Infrastructure.Services;

@@ -39,9 +39,6 @@ export class LoginComponent implements OnInit {
 
   loginWithProvider(provider: 'google' | 'microsoft' | 'azure' | 'sso') {
     switch (provider) {
-      case 'azure':
-        this.external.signInWithAzure();
-        break;
       case 'google':
         this.external.signInWithGoogle();
         break;

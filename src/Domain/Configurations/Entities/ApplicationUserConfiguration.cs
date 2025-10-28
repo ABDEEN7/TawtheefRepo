@@ -8,8 +8,8 @@ public class ApplicationUserConfiguration<T> : IEntityTypeConfiguration<T> where
 {
     public virtual void Configure(EntityTypeBuilder<T> builder)
     {
-        builder.Property(u => u.FirstName).HasMaxLength(100).IsRequired();
-        builder.Property(u => u.LastName).HasMaxLength(100).IsRequired();
+        builder.Property(u => u.GivenNameEn).HasMaxLength(100).IsRequired();
+        builder.Property(u => u.FamilyNameEn).HasMaxLength(100).IsRequired();
         builder.HasIndex(u => u.Email).IsUnique();
                   
         builder.HasOne(u => u.UserType)

@@ -8,7 +8,7 @@ public class UserProfile: IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<User, DropdownOptions>()
-            .Map(dest => dest.Name, src => src.FullName);
+        // config.NewConfig<User, DropdownOptions>()
+        //     .Map(dest => dest.Name, src => src.DisplayName);
     }
 }
