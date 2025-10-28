@@ -485,3 +485,6 @@ $RECYCLE.BIN/
 Tawtheef.sln.DotSettings.user
 Tawtheef.sln.DotSettings
 .vscode/
+.idea/
+src/.idea/
+src/Tawtheef.Websites/.idea/
