@@ -8,7 +8,7 @@ public static class LanguageIds
     public static Guid English = Guid.Parse("8672c4c2-f635-4d26-843a-223fba3a6322");
 }
 
-[Table(nameof(Language), Schema = "lkp")]
+[Table(nameof(Language), Schema = Schemas.Lookup)]
 public class Language : LookupBase
 {
 }

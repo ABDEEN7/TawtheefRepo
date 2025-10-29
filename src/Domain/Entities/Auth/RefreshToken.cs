@@ -8,10 +8,10 @@ public class RefreshToken : EventEntity
 {
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public required string Token { get; init; }
-    public DateTime Expires { get; init; }
+    public DateTimeOffset Expires { get; init; }
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? CreatedByIp { get; init; }
-    public DateTime? RevokedAt { get; set; }
+    public DateTimeOffset? RevokedAt { get; set; }
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? RevokedByIp { get; set; }
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
@@ -19,7 +19,7 @@ public class RefreshToken : EventEntity
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? RevokedReason { get; set; }
     
-    public bool IsExpired => DateTime.UtcNow >= Expires;
+    public bool IsExpired => DateTimeOffset.UtcNow >= Expires;
     public bool IsRevoked => RevokedAt != null;
     public bool IsActive => !IsRevoked && !IsExpired;
     
@@ -28,7 +28,7 @@ public class RefreshToken : EventEntity
     public Guid UserId { get; init; }
     public User? User { get; init; }
 
-    public void Revoked(DateTime now, string? revokedReason = null)
+    public void Revoked(DateTimeOffset now, string? revokedReason = null)
     {
         RevokedAt = now;
         RevokedReason = revokedReason;

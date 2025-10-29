@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
+[Table(nameof(Qualification), Schema = Schemas.Applicant)]
 public class Qualification : EventEntity
 {
     public Guid LevelId { get; set; }

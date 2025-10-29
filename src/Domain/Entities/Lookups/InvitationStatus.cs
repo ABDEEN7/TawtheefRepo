@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Lookups;
-public static class ApplicationStatusIds
+public static class InvitationStatusIds
 {
     public static readonly Guid Submitted               = Guid.Parse("3F0B7DAB-7C9F-4B3F-8A5F-1F8D2B7F2C11");
     public static readonly Guid Returned                = Guid.Parse("A1B923D2-2C7E-4E1A-9B14-0B6D2F5C7E90");
@@ -14,7 +14,7 @@ public static class ApplicationStatusIds
     public static readonly Guid HiringProcessing        = Guid.Parse("6A5B4C3D-2E1F-4A6B-9C8D-1E2F3A4B5C60");
     public static readonly Guid FinalApprovalProcessing = Guid.Parse("1C2D3E4F-5A6B-7C8D-9E1F-2A3B4C5D6E20");
 }
-[Table(nameof(ApplicationStatus), Schema = "lkp")]
-public class ApplicationStatus : LookupBase
+[Table(nameof(InvitationStatus), Schema = Schemas.Lookup)]
+public class InvitationStatus : LookupBase
 {
 }

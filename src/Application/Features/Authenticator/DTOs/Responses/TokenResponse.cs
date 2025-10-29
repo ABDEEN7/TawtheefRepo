@@ -4,7 +4,7 @@ namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
 public record TokenResponse(
     string AccessToken,
-    DateTime AccessTokenExpires,
+    DateTimeOffset AccessTokenExpires,
     string RefreshToken,
-    DateTime RefreshTokenExpires
+    DateTimeOffset RefreshTokenExpires
 );

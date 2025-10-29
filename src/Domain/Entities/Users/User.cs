@@ -72,13 +72,13 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         CurrentSessionId = sessionId;
         ActiveDeviceId = deviceId;
     }
-    public void AddRefreshToken(string token, DateTime expires, string? ip = null, string? userDeviceId = null)
+    public void AddRefreshToken(string token, DateTimeOffset expires, string? ip = null, string? userDeviceId = null)
     {
         _refreshTokens.Add(new RefreshToken
         {
             Token = token,
             Expires = expires,
-            CreatedDate = DateTime.UtcNow,
+            CreatedDate = DateTimeOffset.UtcNow,
             CreatedByIp = ip,
             UserId = Id,
             UserDeviceId = userDeviceId
