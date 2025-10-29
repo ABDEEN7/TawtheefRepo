@@ -9,7 +9,7 @@ public static class StudyTypeIds
     public static Guid Affiliation = Guid.Parse("29754e1d-9125-4582-a998-68a72b8f8443");
 }
 
-[Table(nameof(StudyType), Schema = "lkp")]
+[Table(nameof(StudyType), Schema = Schemas.Lookup)]
 public class StudyType : LookupBase
 {
 }

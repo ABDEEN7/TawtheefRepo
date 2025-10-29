@@ -8,7 +8,7 @@ public static class SkillTypeIds
     public static Guid Leadership = Guid.Parse("77777777-0000-0000-0000-000000000002");
     public static Guid TimeManagement = Guid.Parse("77777777-0000-0000-0000-000000000003");
 }
-[Table(nameof(SkillType), Schema = "lkp")]
+[Table(nameof(SkillType), Schema = Schemas.Lookup)]
 public class SkillType : LookupBase
 {
 }

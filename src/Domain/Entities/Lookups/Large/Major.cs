@@ -10,7 +10,7 @@ public static class MajorIds
     public static Guid BusinessAdministration = Guid.Parse("10101010-0000-0000-0000-000000000004");
     public static Guid Engineering = Guid.Parse("10101010-0000-0000-0000-000000000005");
 }
-[Table(nameof(Major), Schema = "lkp")]
+[Table(nameof(Major), Schema = Schemas.Lookup)]
 public class Major : LookupBase
 {
 }

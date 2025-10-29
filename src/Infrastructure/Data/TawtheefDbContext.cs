@@ -16,6 +16,7 @@ using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data.Interceptors;
 using EmailQueue = Tawtheef.Infrastructure.Services.NotificationServices.EmailQueue;
@@ -43,12 +44,15 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<StudyType> StudyTypes { get; set; }
     public DbSet<TargetEntity> TargetEntities { get; set; }
     public DbSet<Country> Countries { get; set; }
+    public DbSet<City> Cities { get; set; }
     public DbSet<Major> Majors { get; set; }
     public DbSet<Nationality> Nationalities { get; set; }
     public DbSet<SkillType> SkillTypes { get; set; }
     public DbSet<University> Universities { get; set; }
-    public DbSet<ApplicationStatus> ApplicationStatuses { get; set; }
     public DbSet<JobStatus> JobStatuses { get; set; }
+    public DbSet<Sector> Sectors { get; set; }
+    public DbSet<WorkType> WorkTypes { get; set; }
+    public DbSet<InvitationStatus> InvitationStatuses { get; set; }
 
     // Base User Tables
     public DbSet<AdminUser> Admins { get; set; }
@@ -61,11 +65,15 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     // Applicant Tables
     public DbSet<Experience> Experiences { get; set; }
     public DbSet<Qualification> Qualifications { get; set; }
-    public DbSet<ApplicantSkill> ApplicantSkills { get; set; }
-    public DbSet<LanguageProficiency> LanguageProficiencies { get; set; }
+    public DbSet<ProfileSkill> ApplicantSkills { get; set; }
+    public DbSet<ProfileLanguage> LanguageProficiencies { get; set; }
     public DbSet<ResidenceAddress> ResidenceAddresses { get; set; }
     public DbSet<TrainingCourse> TrainingCourses { get; set; }
-    public DbSet<AdditionalAttachmentApplicant> AdditionalAttachmentApplicants { get; set; }
+    public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicants { get; set; }
+    
+    // Recruitment Tables
+    public DbSet<Job> Jobs { get; set; }
+    public DbSet<Invitations> Invitations { get; set; }
     
     // Notification Tables
     public DbSet<EmailQueue> EmailQueues { get; set; }

@@ -11,7 +11,7 @@ public static class QualificationLevelIds
     public static Guid HighSchool = Guid.Parse("78292166-dff6-416f-ab04-0547331cbfee");
 }
 
-[Table(nameof(QualificationLevel), Schema = "lkp")]
+[Table(nameof(QualificationLevel), Schema = Schemas.Lookup)]
 public class QualificationLevel : LookupBase
 {
 }

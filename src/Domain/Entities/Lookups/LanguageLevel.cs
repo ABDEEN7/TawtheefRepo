@@ -9,7 +9,7 @@ public static class LanguageLevelIds
     public static Guid Advanced = Guid.Parse("9aa2c1bc-2040-40e1-86a2-72cac90928e1");
     public static Guid Native = Guid.Parse("c7d8b159-c9dc-48a1-be6d-26493423f8a9");
 }
-[Table(nameof(LanguageLevel), Schema = "lkp")]
+[Table(nameof(LanguageLevel), Schema = Schemas.Lookup)]
 public class LanguageLevel : LookupBase
 {
 }

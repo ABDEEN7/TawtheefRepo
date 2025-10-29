@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
+[Table(nameof(TrainingCourse), Schema = Schemas.Applicant)]
 public class TrainingCourse : EventEntity
 {
     public required string Organization { get; set; }

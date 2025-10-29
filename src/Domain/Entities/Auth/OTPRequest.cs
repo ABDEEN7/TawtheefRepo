@@ -11,7 +11,7 @@ public class OTPRequest: EventEntity
     
     [MaxLength(6)]
     public required string Otp { get; set; }
-    public DateTime ExpiryDate { get; set; }
+    public DateTimeOffset ExpiryDate { get; set; }
     public bool IsUsed { get; set; } = false;
     public bool IsActive { get; set; } = true;
 }

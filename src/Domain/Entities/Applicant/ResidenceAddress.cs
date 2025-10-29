@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
+[Table(nameof(ResidenceAddress), Schema = Schemas.Applicant)]
 public class ResidenceAddress : EventEntity
 {
     public required string Address { get; set; }

@@ -1,10 +1,12 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
-public class LanguageProficiency : EventEntity
+[Table(nameof(ProfileLanguage), Schema = Schemas.Applicant)]
+public class ProfileLanguage : EventEntity
 {
     public Guid LanguageId { get; set; }
     public Language? Language { get; set; }

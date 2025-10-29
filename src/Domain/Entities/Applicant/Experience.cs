@@ -1,13 +1,17 @@
-using Tawtheef.Domain.Entities.Lookups;
+using System.ComponentModel.DataAnnotations.Schema;
+using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
+[Table(nameof(Experience), Schema = Schemas.Applicant)]
 public class Experience : TrainingCourse
 {
     /// <summary>
-    /// list of achievements split by unique line '\n'
+    /// list of achievements  separated by unique line '\n'
     /// </summary>
     public required string Achievements { get; set; }
+    [NotMapped]
+    public IReadOnlyList<string> AchievementsList => Achievements.Split('\n').ToList();
     
     public void AddAchievement(string achievement)
     {

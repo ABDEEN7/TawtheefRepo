@@ -11,7 +11,7 @@ public static class NationalityIds
     public static Guid Egypt = Guid.Parse("42345678-1234-1234-1234-123456789012");
     public static Guid Sudan = Guid.Parse("52345678-1234-1234-1234-123456789012");
 }
-[Table(nameof(Nationality), Schema = "lkp")]
+[Table(nameof(Nationality), Schema = Schemas.Lookup)]
 public class Nationality : LookupBase
 {
     
