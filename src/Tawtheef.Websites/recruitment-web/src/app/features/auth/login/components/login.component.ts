@@ -23,10 +23,10 @@ export class LoginComponent {
   loginWithProvider(provider: 'google' | 'qatar-pass') {
     switch (provider) {
       case 'google':
-        this.external.singInPopup('Google');
+        this.external.loginUsingGoogle('Google');
         break;
       case 'qatar-pass':
-        this.external.singInPopup('QatarPass');
+        this.external.loginUsingQatarPass();
         break;
     }
   }

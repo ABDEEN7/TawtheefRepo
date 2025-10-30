@@ -31,6 +31,10 @@ public class ErrorsCodes
     public const string YourAccountRequiresAdminApproval = "YOUR_ACCOUNT_REQUIRES_ADMIN_APPROVAL";
     public const string SocialAccountNotLinked = "SOCIAL_ACCOUNT_NOT_LINKED";
     public const string UnlinkSocialAccountFailed = "UNLINK_SOCIAL_ACCOUNT_FAILED";
+    public static string ExternalLoginCreateUserFailed(IEnumerable<Microsoft.AspNetCore.Identity.IdentityError> error) =>
+        $"EXTERNAL_LOGIN_CREATE_USER_FAILED: {error}";
+    public static string ExternalLoginLinkFailed(IEnumerable<Microsoft.AspNetCore.Identity.IdentityError> error) =>
+        $"EXTERNAL_LOGIN_LINK_FAILED: {error}";
     #endregion
 
     #region Registration Errors

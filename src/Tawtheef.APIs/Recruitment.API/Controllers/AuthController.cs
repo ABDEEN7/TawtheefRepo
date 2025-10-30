@@ -64,103 +64,61 @@ namespace Recruitment.API.Controllers
                 return BadRequest(ErrorsCodes.ExternalLoginProviderRequired);
         
             var returnUrl = request.ReturnUrl ?? Url.Content("~/");
-            var redirectUrl = Url.ActionLink(nameof(ExternalLoginCallback), controller: null, values: new { returnUrl }, protocol: Request.Scheme);
+            var redirectUrl = Url.ActionLink("GoogleExternalLoginCallback", controller: null, values: new { returnUrl }, protocol: Request.Scheme);
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
 
-        [HttpPost("external-login/token")]
-        public async Task<IActionResult> ExternalLoginWithToken([FromBody] ExternalTokenDto dto)
+        [HttpGet("google/external-login-callback", Name = "GoogleExternalLoginCallback")]
+        public async Task<IActionResult> GoogleExternalLoginCallback([FromQuery] GoogleExternalCallbackLoginCommand command, [FromServices] IOptions<AppConfigSettings> appConfig)
         {
-            if (string.IsNullOrEmpty(dto.Provider) || string.IsNullOrEmpty(dto.IdToken))
-                return BadRequest(ErrorsCodes.InvalidRequest);
-
-            var provider = dto.Provider.Trim().ToLowerInvariant();
-            ClaimsPrincipal principal;
-
-            try
+            var frontEndOrigin = appConfig.Value.FrontendUrl;
+            var result = await mediator.Send(command);
+        
+            var serializedError = JsonSerializer.Serialize(result.Error);
+            var encodedOrigin = JsonSerializer.Serialize(frontEndOrigin);
+            if (result.IsFailure)
             {
-                if (provider == "azure" || provider == "azuread" || provider == "microsoft")
-                {
-                    principal = await ValidateAzureIdToken(dto.IdToken, HttpContext.RequestServices);
-                }
-                else
-                {
-                    return BadRequest(ErrorsCodes.ExternalLoginProviderNotSupported);
-                }
+                var htmlError = $$"""
+                                      <!doctype html><meta charset="utf-8">
+                                      <script>
+                                        (function() {
+                                          try {
+                                            if (window.opener) {
+                                              window.opener.postMessage({
+                                                type: 'EXTERNAL_LOGIN_ERROR',
+                                                message: {{serializedError}}
+                                              }, '{{encodedOrigin}}');
+                                            }
+                                          } catch (e) { console.error(e); }
+                                          window.close();
+                                        })();
+                                      </script>
+                                  """;
+                return Content(htmlError, "text/html");
             }
-            catch (Exception)
-            {
-                // log ex if you have logging
-                return BadRequest(ErrorsCodes.ExternalLoginInvalidToken);
-            }
 
-            // Extract standard claims (adjust names as needed)
-            var providerKey = principal.FindFirst("sub")?.Value ?? principal.FindFirst("oid")?.Value;
-            var email = principal.FindFirst(ClaimTypes.Email)?.Value ??
-                        principal.FindFirst("preferred_username")?.Value;
-            var name = principal.FindFirst(ClaimTypes.Name)?.Value ?? principal.FindFirst("name")?.Value;
-
-            if (string.IsNullOrEmpty(providerKey))
-                return BadRequest(ErrorsCodes.ExternalLoginMissingProviderKey);
-
-            // Convert claims to simple KVP
-            var claims = principal.Claims.Select(c => new KeyValuePair<string, string>(c.Type, c.Value));
-
-            // Build MediatR command - adapt to your existing command/response types
-            var cmd = new ExternalLoginWithTokenCommand(
-                Provider: dto.Provider,
-                ProviderKey: providerKey,
-                Email: email ?? string.Empty,
-                DisplayName: name ?? string.Empty,
-                Claims: claims,
-                RawIdToken: dto.IdToken,
-                ClientIp: HttpContext.GetClientIpAddress() ?? "Unknown IP Address"
-            );
-
-            var result = await mediator.Send(cmd);
-
-            return result.ToActionResult();
-            async Task<ClaimsPrincipal> ValidateAzureIdToken(string idToken, IServiceProvider services)
-            {
-                var config = services.GetService<IConfiguration>();
-                // You may want to use a specific tenant id or "common" depending on your setup
-                var tenant = config!["AzureAd:TenantId"] ?? "common";
-                // Use v2.0 endpoint for tokens
-                var authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
-                var metadataAddress = $"{authority}/.well-known/openid-configuration";
-
-                var documentRetriever = new Microsoft.IdentityModel.Protocols.HttpDocumentRetriever { RequireHttps = true };
-                var configManager = new Microsoft.IdentityModel.Protocols.ConfigurationManager<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>(
-                    metadataAddress,
-                    new Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever(),
-                    documentRetriever);
-
-                var openIdConfig = await configManager.GetConfigurationAsync();
-
-                var validationParameters = new TokenValidationParameters
-                {
-                    ValidIssuers = ["https://login.microsoftonline.com/" + tenant + "/v2.0", "https://sts.windows.net/" + tenant + "/"
-                    ],
-                    ValidateIssuer = true,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKeys = openIdConfig.SigningKeys,
-                    ValidateAudience = true,
-                    ValidAudiences =
-                    [
-                        config["AzureAd:ClientId"]  // the client id of your SPA or API depending on which token you expect
-                    ],
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(2)
-                };
-
-                var handler = new JwtSecurityTokenHandler();
-                return handler.ValidateToken(idToken, validationParameters, out var validatedToken);
-            }
+            var serializedUser = JsonSerializer.Serialize(result.Value, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            var htmlOk = $$"""
+                               <!doctype html><meta charset="utf-8">
+                               <script>
+                                 (function() {
+                                   try {
+                                     if (window.opener) {
+                                       window.opener.postMessage({
+                                         type: 'EXTERNAL_LOGIN_SUCCESS',
+                                         userData: {{serializedUser}}
+                                       }, '{{encodedOrigin}}');
+                                     }
+                                   } catch (e) { console.error(e); }
+                                   window.close();
+                                 })();
+                               </script>
+                           """;
+            return Content(htmlOk, "text/html");
         }
-
-        [HttpGet("/ExternalLoginCallback")]
-        public async Task<IActionResult> ExternalLoginCallback([FromQuery] ExternalCallbackLoginCommand command, [FromServices] IOptions<AppConfigSettings> appConfig)
+        [HttpGet("qatar-pass/external-login-callback", Name = "QatarPassExternalLoginCallBack")]
+        public async Task<IActionResult> QatarPassExternalLoginCallBack([FromQuery] QatarPassExternalCallbackLoginCommand command, [FromServices] IOptions<AppConfigSettings> appConfig)
         {
             var frontEndOrigin = appConfig.Value.FrontendUrl;
             var result = await mediator.Send(command);

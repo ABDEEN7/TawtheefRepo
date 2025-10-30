@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
 
-public class VerifyAccountCommandHandler(IEmailService emailService, UserManager<User> userManager)
+public class VerifyAccountHandler(IEmailService emailService, UserManager<User> userManager)
     : IRequestHandler<VerifyAccountCommand, Result<bool>>
 {
     public async Task<Result<bool>> Handle(VerifyAccountCommand request, CancellationToken cancellationToken)

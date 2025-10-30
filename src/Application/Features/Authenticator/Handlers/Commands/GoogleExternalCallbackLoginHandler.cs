@@ -13,14 +13,14 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
 
-public class ExternalCallbackLoginCommandHandler(
+public class GoogleExternalCallbackLoginHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService
-) : IRequestHandler<ExternalCallbackLoginCommand, Result<AuthResponse>>
+) : IRequestHandler<GoogleExternalCallbackLoginCommand, Result<AuthResponse>>
 {
-    public async Task<Result<AuthResponse>> Handle(ExternalCallbackLoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthResponse>> Handle(GoogleExternalCallbackLoginCommand request, CancellationToken cancellationToken)
     {
         if (request.RemoteError != null)
             return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));

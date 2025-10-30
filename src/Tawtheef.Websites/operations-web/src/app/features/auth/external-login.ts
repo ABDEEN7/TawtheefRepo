@@ -41,6 +41,7 @@ export class ExternalLoginService implements OnDestroy {
     const azureLoginRequest: PopupRequest = {
       scopes: ["openid", "profile", "email"]
     };
+
     msalInstance.loginPopup(azureLoginRequest)
       .then((result: AuthenticationResult) => {
         const idToken = result.idToken;

@@ -20,7 +20,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
 
-public class RefreshTokenCommandHandler(
+public class RefreshTokenHandler(
     UserManager<User> userManager,
     ITokenService tokenService,
     IOptions<JwtSettings> jwtSettings)

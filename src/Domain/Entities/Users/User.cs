@@ -44,7 +44,8 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public Guid? DeletedById { get; set; }
     public DateTimeOffset? DeletedDate { get; set; }
     
-    public ICollection<Notification.Notification>? Notifications { get; init; }
+    public ICollection<UserLogin> Logins { get; set; } = [];
+    public ICollection<Notification.Notification> Notifications { get; init; } = [];
     
     private readonly List<RefreshToken> _refreshTokens = [];
     public IReadOnlyCollection<RefreshToken> RefreshTokens  => _refreshTokens.AsReadOnly();
@@ -66,7 +67,6 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public void AddDomainEvent(BaseEvent e) => _domainEvents.Add(e);
     public void RemoveDomainEvent(BaseEvent e) => _domainEvents.Remove(e);
     public void ClearDomainEvents() => _domainEvents.Clear();
-
     public void StartNewExclusiveSession(string deviceId, Guid sessionId)
     {
         CurrentSessionId = sessionId;

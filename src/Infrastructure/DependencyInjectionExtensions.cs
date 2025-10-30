@@ -1,9 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -312,7 +314,8 @@ namespace Tawtheef.Infrastructure
                 var containerClient = serviceClient.GetBlobContainerClient(containerName);
                 return containerClient;
             });
-
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
             services.AddScoped<IFileStorageService, AzureBlobStorageService>();
             services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 

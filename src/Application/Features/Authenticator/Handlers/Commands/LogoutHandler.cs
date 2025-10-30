@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
 
-public class LogoutCommandHandler(
+public class LogoutHandler(
     IUnitOfWork uow,
     TimeProvider time,
     UserManager<User> userManager,

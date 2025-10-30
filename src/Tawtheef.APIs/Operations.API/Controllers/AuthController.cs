@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text.Json;
 using CSharpFunctionalExtensions;
 using MediatR;
@@ -8,8 +9,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
+using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
@@ -51,67 +54,17 @@ public class AuthController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command);
         return result.ToActionResult();
     }
-
-    [HttpGet("external-login")]
-    public IActionResult ExternalLogin([FromQuery] ExternalLoginRequest request, [FromServices] SignInManager<User> signInManager)
+    [HttpPost("azure/external-login-callback", Name = "ExternalLoginWithToken")]
+    public async Task<IActionResult> ExternalLoginWithToken([FromBody] AzureExternalCallbackLoginCommand body)
     {
-        var provider = request.Provider;
-        if (string.IsNullOrEmpty(provider))
-            return BadRequest(ErrorsCodes.ExternalLoginProviderRequired);
-        
-        var returnUrl = request.ReturnUrl ?? Url.Content("~/");
-        var redirectUrl = Url.ActionLink(nameof(ExternalLoginCallback), controller: null, values: new { returnUrl }, protocol: Request.Scheme);
-        var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-        return new ChallengeResult(provider, properties);
-    }
-
-    [HttpGet("/ExternalLoginCallback")]
-    public async Task<IActionResult> ExternalLoginCallback([FromQuery] ExternalCallbackLoginCommand command, [FromServices] IOptions<AppConfigSettings> appConfig)
-    {
-        var frontEndOrigin = appConfig.Value.FrontendUrl;
-        var result = await mediator.Send(command);
-        
-        var serializedError = JsonSerializer.Serialize(result.Error);
-        var encodedOrigin = JsonSerializer.Serialize(frontEndOrigin);
-        if (result.IsFailure)
+        var cmd = body with
         {
-            var htmlError = $$"""
-                                  <!doctype html><meta charset="utf-8">
-                                  <script>
-                                    (function() {
-                                      try {
-                                        if (window.opener) {
-                                          window.opener.postMessage({
-                                            type: 'EXTERNAL_LOGIN_ERROR',
-                                            message: {{serializedError}}
-                                          }, '{{encodedOrigin}}');
-                                        }
-                                      } catch (e) { console.error(e); }
-                                      window.close();
-                                    })();
-                                  </script>
-                              """;
-            return Content(htmlError, "text/html");
-        }
+            ClientIp = HttpContext.GetClientIpAddress() ?? "Unknown IP Address",
+            UserAgent = Request.Headers.UserAgent.ToString()
+        };
 
-        var serializedUser = JsonSerializer.Serialize(result.Value, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        var htmlOk = $$"""
-                           <!doctype html><meta charset="utf-8">
-                           <script>
-                             (function() {
-                               try {
-                                 if (window.opener) {
-                                   window.opener.postMessage({
-                                     type: 'EXTERNAL_LOGIN_SUCCESS',
-                                     userData: {{serializedUser}}
-                                   }, '{{encodedOrigin}}');
-                                 }
-                               } catch (e) { console.error(e); }
-                               window.close();
-                             })();
-                           </script>
-                       """;
-        return Content(htmlOk, "text/html");
+        var result = await mediator.Send(cmd);
+        return result.ToActionResult(); // your existing extension that maps Result<T> to IActionResult
     }
     
     

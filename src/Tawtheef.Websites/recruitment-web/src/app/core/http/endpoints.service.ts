@@ -17,7 +17,6 @@ export class EndpointsService {
     refresh: this.getFullUrl(`/auth/refresh`),
     externalLogin: (provider: string, returnUrl: string | null = null) =>
       this.getFullUrl(`/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''}`),
-    externalLoginUsingToken: this.getFullUrl(`/auth/external-login/token`),
     logout: this.getFullUrl(`/auth/logout`),
     exchangeCode: this.getFullUrl(`/auth/exchange-code`),
     verifyOtp: this.getFullUrl(`/auth/verify-otp`),
