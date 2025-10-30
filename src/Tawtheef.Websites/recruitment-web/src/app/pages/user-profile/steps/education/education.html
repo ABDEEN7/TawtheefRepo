@@ -1,1 +1,26 @@
-<p>education works!</p>
+<div class="card border-0 shadow rounded-4 p-4 mb-3">
+  <h6 class="fw-bold mb-3" style="color:var(--brand)">المؤهلات</h6>
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+      <tr><th>الدرجة</th><th>التخصص</th><th>الجامعة</th><th>السنة</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (d of degrees; track d.year + d.university) {
+          <tr>
+            <td><input class="form-control" [(ngModel)]="d.degree"></td>
+            <td><input class="form-control" [(ngModel)]="d.major"></td>
+            <td><input class="form-control" [(ngModel)]="d.university"></td>
+            <td><input class="form-control" [(ngModel)]="d.year"></td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-danger" (click)="removeDegree(degrees.indexOf(d))">حذف</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="text-center">لا توجد مؤهلات</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <button class="btn btn-outline-primary rounded-pill mt-2" (click)="addDegree()">إضافة مؤهل</button>
+</div>

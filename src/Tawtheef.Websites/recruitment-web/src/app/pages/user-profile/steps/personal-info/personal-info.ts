@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-personal-info',
@@ -7,5 +7,14 @@ import { Component } from '@angular/core';
   styleUrl: './personal-info.scss',
 })
 export class PersonalInfo {
+  form = {
+    fullNameAr: '',
+    fullNameEn: '',
+    qid: '',
+    dob: '',
+    nationality: '',
+    gender: ''
+  };
 
+  countries = ['قطر', 'السعودية', 'الإمارات', 'الكويت', 'الأردن', 'مصر'];
 }

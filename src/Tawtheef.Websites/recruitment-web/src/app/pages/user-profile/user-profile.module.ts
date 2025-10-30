@@ -14,6 +14,7 @@ import { Review } from './steps/review/review';
 import { TraningCourseModal } from './modals/traning-course-modal/traning-course-modal';
 import { DegreeModal } from './modals/degree-modal/degree-modal';
 import { ExperienceModal } from './modals/experience-modal/experience-modal';
+import { UserProfileRoutingModule} from './user-profile-routing.module';
 
 
 @NgModule({
@@ -28,9 +29,10 @@ import { ExperienceModal } from './modals/experience-modal/experience-modal';
     Review,
     TraningCourseModal,
     DegreeModal,
-    ExperienceModal
+    ExperienceModal,
+
   ],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, UserProfileRoutingModule],
   exports: [UserProfileWizard]
 })
 export class ProfileModule {}

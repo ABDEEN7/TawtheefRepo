@@ -1,1 +1,24 @@
-<p>contact-info works!</p>
+<div class="card border-0 shadow rounded-4 p-4 mb-3">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">الدولة</label>
+      <select class="form-select" [(ngModel)]="form.country">
+        @for (c of countries; track c) {
+          <option [value]="c">{{ c }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">رقم الجوال</label>
+      <input class="form-control" [(ngModel)]="form.phone" placeholder="رقم الهاتف">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">البريد الإلكتروني</label>
+      <input class="form-control" type="email" [(ngModel)]="form.email" placeholder="example@email.com">
+    </div>
+    <div class="col-md-12">
+      <label class="form-label">العنوان</label>
+      <input class="form-control" [(ngModel)]="form.address" placeholder="المدينة - المنطقة - الشارع - المبنى">
+    </div>
+  </div>
+</div>

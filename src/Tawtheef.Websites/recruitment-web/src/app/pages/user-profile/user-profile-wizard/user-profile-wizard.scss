@@ -1,0 +1,51 @@
+.wizard {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+.btn-brand {
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: all .25s;
+}
+.btn-brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(123,30,58,.3);
+}
+
+.progress-circle {
+  --val: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: conic-gradient(var(--brand) calc(var(--val)*1%), #e7eaf1 0);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: var(--brand);
+}
+.progress-circle span {
+  font-size: .9rem;
+}
+
+.stepper .nav-link {
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  padding: .55rem 1rem;
+  margin: .25rem;
+  color: var(--muted);
+  font-weight: 700;
+  transition: .25s;
+}
+.stepper .nav-link.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(123,30,58,.25);
+}

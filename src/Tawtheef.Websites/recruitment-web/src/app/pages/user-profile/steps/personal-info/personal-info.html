@@ -1,1 +1,35 @@
-<p>personal-info works!</p>
+<div class="card border-0 shadow rounded-4 p-4 mb-3">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">الاسم بالعربية</label>
+      <input class="form-control" [(ngModel)]="form.fullNameAr" placeholder="الاسم كما في الهوية">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">الاسم بالإنجليزية</label>
+      <input class="form-control" [(ngModel)]="form.fullNameEn" placeholder="Full Name in English">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">رقم البطاقة الشخصية</label>
+      <input class="form-control" [(ngModel)]="form.qid" placeholder="12345678901">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">تاريخ الميلاد</label>
+      <input type="date" class="form-control" [(ngModel)]="form.dob">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">الجنسية</label>
+      <select class="form-select" [(ngModel)]="form.nationality">
+        @for (c of countries; track c) {
+          <option [value]="c">{{ c }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">الجنس</label>
+      <select class="form-select" [(ngModel)]="form.gender">
+        <option>ذكر</option>
+        <option>أنثى</option>
+      </select>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,71 @@
-<p>user-profile-wizard works!</p>
+<div class="lang-toggle" (click)="toggleLanguage()">
+  {{ currentLang === 'ar' ? 'English' : 'عربي' }}
+</div>
+
+<header>
+  <h1>
+    {{ currentLang === 'ar' ? 'نظام التوظيف – الملف الشخصي' : 'Recruitment System – Profile' }}
+  </h1>
+</header>
+
+<div class="container">
+  <div class="wizard">
+    <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="progress flex-grow-1" style="height:10px;border-radius:999px;background:#e7eaf1;width:520px;max-width:60vw">
+          <div class="progress-bar" [style.width.%]="progressValue"></div>
+        </div>
+        <span class="small text-muted">{{ progressValue }}%</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <div class="progress-circle" [style.--val]="progressValue">
+          <span>{{ progressValue }}%</span>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="availabilitySwitch" [(ngModel)]="isAvailable">
+          <label class="form-check-label fw-bold" for="availabilitySwitch">
+            {{ currentLang === 'ar' ? 'متاح للتعيين' : 'Available for hiring' }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav nav-pills flex-wrap stepper mb-3">
+      @for (step of steps; track step.icon) {
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="currentStep === (steps.indexOf(step) + 1)" (click)="setStep(steps.indexOf(step) + 1)">
+            <i class="fa" [class]="step.icon"></i>
+            {{ step.label[currentLang] }}
+          </a>
+        </li>
+      }
+    </ul>
+
+    @switch(currentStep) {
+      @case (1) { <app-personal-info></app-personal-info> }
+      @case (2) { <app-contact-info></app-contact-info> }
+      @case (3) { <app-education></app-education> }
+      @case (4) { <app-experience></app-experience> }
+      @case (5) { <app-skills></app-skills> }
+      @case (6) { <app-attachments></app-attachments> }
+      @case (7) { <app-review></app-review> }
+    }
+
+    <div class="text-end mt-3">
+      @if (currentStep > 1) {
+        <button class="btn btn-outline-secondary me-2" (click)="prevStep()">
+          <i class="fa fa-arrow-right me-1"></i>
+          {{ currentLang === 'ar' ? 'السابق' : 'Previous' }}
+        </button>
+      }
+      @if (currentStep < steps.length) {
+        <button class="btn btn-brand" (click)="nextStep()">
+          {{ currentLang === 'ar' ? 'التالي' : 'Next' }}
+          <i class="fa fa-arrow-left ms-1"></i>
+        </button>
+      }
+    </div>
+  </div>
+
+  <footer>© وزارة التربية والتعليم والتعليم العالي – إدارة نظم المعلومات</footer>
+</div>

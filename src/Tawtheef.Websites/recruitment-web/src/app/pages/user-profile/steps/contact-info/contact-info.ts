@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-contact-info',
@@ -7,5 +7,12 @@ import { Component } from '@angular/core';
   styleUrl: './contact-info.scss',
 })
 export class ContactInfo {
+  form = {
+    country: '',
+    phone: '',
+    email: '',
+    address: ''
+  };
 
+  countries = ['قطر', 'السعودية', 'الإمارات', 'الكويت', 'الأردن', 'مصر'];
 }
