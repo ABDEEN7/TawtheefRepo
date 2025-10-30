@@ -1,7 +1,5 @@
-﻿import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
-import {AuthService} from "../../../../core/auth/auth.service";
+﻿import {Component} from '@angular/core';
+import {ReactiveFormsModule} from '@angular/forms';
 import {NgIf} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
 import {ExternalLoginService} from '../../external-login';
@@ -17,37 +15,19 @@ import {ExternalLoginService} from '../../external-login';
   ],
   standalone: true
 })
-export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
+export class LoginComponent {
   loading = false;
   errorMessage: string | null = null;
-  hidePassword = true;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private external: ExternalLoginService,
-  ) {}
-
-  ngOnInit(): void {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      remember: [false]
-    });
-  }
-
-  loginWithProvider(provider: 'google' | 'microsoft' | 'azure' | 'sso') {
+  constructor(private external: ExternalLoginService) {}
+  loginWithProvider(provider: 'google' | 'qatar-pass') {
     switch (provider) {
       case 'google':
-        this.external.signInWithGoogle();
+        this.external.singInPopup('Google');
+        break;
+      case 'qatar-pass':
+        this.external.singInPopup('QatarPass');
         break;
     }
-  }
-  get f() { return this.loginForm.controls; }
-
-  onForgotPassword() {
-    // navigate to forgot password page
-    this.router.navigate(['/forgot-password']);
   }
 }

@@ -2,10 +2,8 @@
 import {AuthService} from '../../core/auth/auth.service';
 import {MessageService} from 'primeng/api';
 import {EndpointsService} from '../../core/http/endpoints.service';
-import {TranslateService} from '@ngx-translate/core';
 import {LoadingService} from '../../core/services/loading.service';
 import {environment} from '../../../environments/environment';
-import {HttpClient} from '@angular/common/http';
 
 @Injectable({providedIn: 'root'})
 export class ExternalLoginService implements OnDestroy {
@@ -24,8 +22,8 @@ export class ExternalLoginService implements OnDestroy {
     window.addEventListener('message', this.handlePopupMessage.bind(this), false);
   }
 
-  public signInWithGoogle(): void {
-    const url = this.endpoints.auth.externalLogin('Google');
+  public singInPopup(provider: string): void {
+    const url = this.endpoints.auth.externalLogin(provider);
 
     // Close any existing popup
     if (this.popup) {
@@ -67,7 +65,6 @@ export class ExternalLoginService implements OnDestroy {
     };
     window.addEventListener('message', this.popupCloseListener);
   }
-
   private cleanupPopup(): void {
     if (this.popupCloseListener) {
       window.removeEventListener('message', this.popupCloseListener);

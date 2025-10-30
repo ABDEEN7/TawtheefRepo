@@ -13,69 +13,23 @@ import {msalInstance} from '../../core/config/msal-config';
 
 @Injectable({providedIn: 'root'})
 export class ExternalLoginService implements OnDestroy {
-  private readonly popupWidth: number = 600;
-  private readonly popupHeight: number = 800;
   private ngZone: NgZone = inject(NgZone);
   private popup: Window | null = null;
   private popupCloseListener: any;
 
   loading = false;
   protected constructor(loadingService: LoadingService, private authService: AuthService,
-                        private msalService: MsalService,
                         private messageService: MessageService, private endpoints: EndpointsService,
-                        private translate: TranslateService, private http: HttpClient) {
+                        private translate: TranslateService,
+                        private http: HttpClient) {
     loadingService.loading$.subscribe(loading => {
       this.loading = loading;
     });
     window.addEventListener('message', this.handlePopupMessage.bind(this), false);
   }
 
-  public signInWithGoogle(): void {
-    const url = this.endpoints.auth.externalLogin('Google');
-
-    // Close any existing popup
-    if (this.popup) {
-      this.popup.close();
-      this.popup = null;
-    }
-
-    // Calculate centered position
-    const left = (window.screen.width - this.popupWidth) / 2;
-    const top = (window.screen.height - this.popupHeight) / 2;
-
-    // Add state parameter for security
-    const state = Math.random().toString(36).substring(2);
-    localStorage.setItem('oauth_state', state);
-    const urlWithState = `${url}&state=${state}`;
-
-    // Open popup
-    this.popup = window.open(
-      urlWithState,
-      'ExternalLogin',
-      `width=${this.popupWidth},height=${this.popupHeight},top=${top},left=${left}`
-    );
-
-    // Check if popup was blocked
-    if (!this.popup || this.popup.closed || typeof this.popup.closed === 'undefined') {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Popup Blocked',
-        detail: 'Please allow popups for this site to continue with external login'
-      });
-      return;
-    }
-
-    // Use content-based approach to detect popup closing
-    this.popupCloseListener = (event: MessageEvent) => {
-      if (event.data === 'EXTERNAL_POPUP_CLOSED') {
-        this.cleanupPopup();
-      }
-    };
-    window.addEventListener('message', this.popupCloseListener);
-  }
-
   async initializeMsal() {
-    await msalInstance.initialize(); // ✅ Must be awaited
+    await msalInstance.initialize();
   }
   public async signInWithAzure() {
     await this.initializeMsal();
