@@ -30,16 +30,18 @@
       </div>
     </div>
 
-    <ul class="nav nav-pills flex-wrap stepper mb-3">
-      @for (step of steps; track step.icon) {
-        <li class="nav-item">
-          <a class="nav-link" [class.active]="currentStep === (steps.indexOf(step) + 1)" (click)="setStep(steps.indexOf(step) + 1)">
-            <i class="fa" [class]="step.icon"></i>
-            {{ step.label[currentLang] }}
-          </a>
-        </li>
-      }
-    </ul>
+    <div class="stepper mb-2">
+      <ul class="nav nav-pills flex-wrap mb-3">
+        @for (step of steps; track step.icon) {
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="currentStep === (steps.indexOf(step) + 1)" (click)="setStep(steps.indexOf(step) + 1)">
+              <i class="fa" [class]="step.icon"></i>
+              {{ step.label[currentLang] }}
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
 
     @switch(currentStep) {
       @case (1) { <app-personal-info></app-personal-info> }
