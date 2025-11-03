@@ -13,10 +13,6 @@
       <input class="form-control" [(ngModel)]="form.qid" placeholder="12345678901">
     </div>
     <div class="col-md-4">
-      <label class="form-label">تاريخ الميلاد</label>
-      <input type="date" class="form-control" [(ngModel)]="form.dob">
-    </div>
-    <div class="col-md-4">
       <label class="form-label">الجنسية</label>
       <select class="form-select" [(ngModel)]="form.nationality">
         @for (c of countries; track c) {
@@ -30,6 +26,48 @@
         <option>ذكر</option>
         <option>أنثى</option>
       </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">تاريخ الميلاد</label>
+      <input type="date" class="form-control" [(ngModel)]="form.dob">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">الديانة</label>
+      <select id="religion" class="form-select sel2" placeholder="اختر الديانة"></select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">الحالة الاجتماعية</label>
+      <select id="marital" class="form-select sel2"></select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">عدد الأبناء</label>
+      <input id="children" type="number" class="form-control" min="0"></div>
+  </div>
+
+  <div class="col-12 mt-2">
+    <div class="review-card">
+      <div class="review-title mb-2"><i class="fa fa-clipboard-check"></i> تم استيفاء المتطلبات القبلية</div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">نوع المرشح</label>
+          <div id="candTypeView" class="disabled-field">—</div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">الجهة المستهدفة</label>
+          <div id="targetEntityView" class="disabled-field">—</div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">السيرة الذاتية</label>
+          <div id="cvView" class="disabled-field">—</div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">البطاقة الشخصية</label>
+          <div id="idView" class="disabled-field">—</div>
+        </div>
+      </div>
+      <div class="mt-2 text-end">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill" id="editPreReq"><i class="fa fa-pen"></i> تعديل المتطلبات</button>
+      </div>
     </div>
   </div>
 </div>

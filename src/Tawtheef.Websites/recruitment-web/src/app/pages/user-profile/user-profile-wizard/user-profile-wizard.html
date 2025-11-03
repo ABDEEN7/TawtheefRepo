@@ -1,13 +1,3 @@
-<div class="lang-toggle" (click)="toggleLanguage()">
-  {{ currentLang === 'ar' ? 'English' : 'عربي' }}
-</div>
-
-<header>
-  <h1>
-    {{ currentLang === 'ar' ? 'نظام التوظيف – الملف الشخصي' : 'Recruitment System – Profile' }}
-  </h1>
-</header>
-
 <div class="container">
   <div class="wizard">
     <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
@@ -18,16 +8,21 @@
         <span class="small text-muted">{{ progressValue }}%</span>
       </div>
       <div class="d-flex align-items-center gap-3">
-        <div class="progress-circle" [style.--val]="progressValue">
-          <span>{{ progressValue }}%</span>
-        </div>
         <div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" id="availabilitySwitch" [(ngModel)]="isAvailable">
           <label class="form-check-label fw-bold" for="availabilitySwitch">
-            {{ currentLang === 'ar' ? 'متاح للتعيين' : 'Available for hiring' }}
+            متاح للتعيين
           </label>
         </div>
       </div>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center gap-3">
+        <img id="avatarPreview" src="https://images.ctfassets.net/2h1qowfuxkq7/6IZZ7GVuIBI5KaIKaAb05t/32690a36b850e8356def983f74dcb219/Qatari_men_need_to_become_teachers_-_QF_-_V1.jpg?w=438&amp;h=599&amp;fl=progressive&amp;q=85&amp;fm=jpg&amp;fit=fill" class="candidate-avatar" alt="avatar">
+        <div><div class="fw-bold">الملف الشخصي</div><div class="small text-muted">أكمل ملفك لرفع نسبة الترشيح</div></div>
+      </div>
+      <div id="prereqStatus" class="badge text-bg-warning">لم تُستوفَ المتطلبات</div>
     </div>
 
     <div class="stepper mb-2">
@@ -36,7 +31,7 @@
           <li class="nav-item">
             <a class="nav-link" [class.active]="currentStep === (steps.indexOf(step) + 1)" (click)="setStep(steps.indexOf(step) + 1)">
               <i class="fa" [class]="step.icon"></i>
-              {{ step.label[currentLang] }}
+              {{ step.label}}
             </a>
           </li>
         }
@@ -53,16 +48,16 @@
       @case (7) { <app-review></app-review> }
     }
 
-    <div class="text-end mt-3">
+    <div class="text-end">
       @if (currentStep > 1) {
         <button class="btn btn-outline-secondary me-2" (click)="prevStep()">
           <i class="fa fa-arrow-right me-1"></i>
-          {{ currentLang === 'ar' ? 'السابق' : 'Previous' }}
+          السابق
         </button>
       }
       @if (currentStep < steps.length) {
-        <button class="btn btn-brand" (click)="nextStep()">
-          {{ currentLang === 'ar' ? 'التالي' : 'Next' }}
+        <button class="btn btn-brand next" (click)="nextStep()">
+          التالي
           <i class="fa fa-arrow-left ms-1"></i>
         </button>
       }

@@ -1,3 +1,15 @@
+:root {
+  --brand:#7b1e3a;
+  --accent:#a9445f;
+  --border:rgba(0,0,0,.08);
+  --muted:#6b7280;
+  --text:#1e1b2c;
+}
+
 body {
+  background:#fff;
+  color:var(--text);
+  font-family:'Cairo', sans-serif;
+  line-height:1.65;
   font-family: 'Cairo', sans-serif;
 }

@@ -1,9 +1,14 @@
 import { Component } from '@angular/core';
 import {of} from 'rxjs';
 
-interface Step {
+interface Step1 {
   icon: string;
   label: { ar: string; en: string };
+}
+
+interface Step {
+  icon: string;
+  label: string;
 }
 @Component({
   selector: 'app-user-profile-wizard',
@@ -12,11 +17,10 @@ interface Step {
   styleUrl: './user-profile-wizard.scss',
 })
 export class UserProfileWizard {
-  currentLang: 'ar' | 'en' = 'ar';
   currentStep = 1;
   isAvailable = false;
 
-  steps: Step[] = [
+  steps1: Step1[] = [
     { icon: 'fa-user', label: { ar: 'البيانات الشخصية', en: 'Personal' } },
     { icon: 'fa-house', label: { ar: 'الاتصال والسكن', en: 'Contact' } },
     { icon: 'fa-graduation-cap', label: { ar: 'المؤهلات', en: 'Education' } },
@@ -26,14 +30,18 @@ export class UserProfileWizard {
     { icon: 'fa-check-circle', label: { ar: 'المراجعة', en: 'Review' } }
   ];
 
+  steps: Step[] = [
+    { icon: 'fa-user', label: 'البيانات الشخصية' },
+    { icon: 'fa-house', label: 'الاتصال والسكن' },
+    { icon: 'fa-graduation-cap', label:  'المؤهلات' },
+    { icon: 'fa-briefcase', label: 'الخبرات' },
+    { icon: 'fa-language', label: 'المهارات واللغات' },
+    { icon: 'fa-paperclip', label: 'المرفقات' },
+    { icon: 'fa-check-circle', label: 'المراجعة' }
+  ];
+
   get progressValue(): number {
     return Math.round((this.currentStep / this.steps.length) * 100);
-  }
-
-  toggleLanguage(): void {
-    this.currentLang = this.currentLang === 'ar' ? 'en' : 'ar';
-    document.documentElement.lang = this.currentLang;
-    document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
   }
 
   setStep(step: number): void {

@@ -1,1 +1,19 @@
 .form-label { font-weight: 700; }
+
+.review-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.review-title {
+  color:var(--brand);
+  font-weight:800
+}
+
+.disabled-field {
+  background: #f8f9fb;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: .65rem .9rem;
+}
