@@ -15,8 +15,8 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.Callback
 public sealed class AzureExternalCallbackLoginHandler(
     IExternalIdTokenValidator azureTokenValidator,
     IUnitOfWork uow,
-    UserManager<EmployeeUser> userManager,
-    SignInManager<EmployeeUser> signInManager,
+    UserManager<User> userManager,
+    SignInManager<User> signInManager,
     ITokenService tokenService
 ) : BaseExternalCallbackLoginHandler, IRequestHandler<AzureExternalCallbackLoginCommand, Result<AuthResponse>>
 {
@@ -138,7 +138,7 @@ public sealed class AzureExternalCallbackLoginHandler(
         // Fall back to sub (works for MSA/personal accounts too)
         return oid ?? p.FindFirst("sub")?.Value;
     }
-    private static async Task UpsertProviderClaimsAsync(UserManager<EmployeeUser> userManager, EmployeeUser user, string provider, ClaimsPrincipal principal)
+    private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, string provider, ClaimsPrincipal principal)
     {
         var email        = principal.FindFirstValue(ClaimTypes.Email) ?? principal.FindFirst("preferred_username")?.Value;
         var givenName    = principal.FindFirstValue(ClaimTypes.GivenName) ?? principal.FindFirst("given_name")?.Value;

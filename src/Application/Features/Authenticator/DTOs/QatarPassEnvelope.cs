@@ -6,7 +6,7 @@ public sealed class QatarPassEnvelope
 {
     [JsonPropertyName("IsSuccess")] public bool IsSuccess { get; set; }
     [JsonPropertyName("Message")] public string? Message { get; set; }
-    [JsonPropertyName("ResponseData")] public List<QatarPassAccount>? ResponseData { get; set; }
+    [JsonPropertyName("ResponseData")] public List<QatarPassAccount> Account { get; set; } = [];
 }
 public sealed class QatarPassAccount
 {

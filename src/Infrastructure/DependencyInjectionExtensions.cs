@@ -25,6 +25,7 @@ using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
@@ -154,10 +155,10 @@ namespace Tawtheef.Infrastructure
         }
         private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHttpClient<QatarPassClient>(c =>
-            {
-                c.BaseAddress = new Uri(configuration["Authentication:QatarPass:BaseUrl"]!);
-            });
+            services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
+            services.AddHttpClient<IQatarPassClient, QatarPassClient>();
+            services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
+            services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>();
         }
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
         {
@@ -351,6 +352,10 @@ namespace Tawtheef.Infrastructure
             services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddHostedService<EmailDispatcher>();
+            
+            services.AddScoped<ISmsSender, HodhodSmsSender>();
+            services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
+            services.AddHostedService<NotificationDispatcher>();
         }
 
         /// <summary>
@@ -374,7 +379,6 @@ namespace Tawtheef.Infrastructure
             services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IVerificationService, VerificationService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 

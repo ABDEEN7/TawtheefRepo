@@ -17,6 +17,7 @@ using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data.Interceptors;
 using EmailQueue = Tawtheef.Infrastructure.Services.NotificationServices.EmailQueue;
@@ -31,27 +32,30 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<EntityLog> EntityLogs { get; set; }
 
     // Lookup Tables
-    public DbSet<UserType> UserTypes { get; set; }
-    public DbSet<NotificationType> NotificationTypes { get; set; }
     public DbSet<CandidateType> CandidateTypes { get; set; }
+    public DbSet<Degree> Degrees { get; set; }
+    public DbSet<Department> Departments { get; set; }
     public DbSet<Gender> Genders { get; set; }
+    public DbSet<InvitationStatus> InvitationStatuses { get; set; }
+    public DbSet<JobCategory> JobCategories { get; set; }
+    public DbSet<JobStatus> JobStatuses { get; set; }
     public DbSet<Language> Languages { get; set; }
     public DbSet<LanguageLevel> LanguageLevels { get; set; }
     public DbSet<MaritalStatus> MaritalStatuses { get; set; }
     public DbSet<QualificationLevel> QualificationLevels { get; set; }
     public DbSet<RatingGrade> RatingGrades { get; set; }
     public DbSet<Religion> Religions { get; set; }
+    public DbSet<Sector> Sectors { get; set; }
     public DbSet<StudyType> StudyTypes { get; set; }
     public DbSet<TargetEntity> TargetEntities { get; set; }
-    public DbSet<Country> Countries { get; set; }
+    public DbSet<UserType> UserTypes { get; set; }
+    public DbSet<WorkType> WorkTypes { get; set; }
+    
     public DbSet<City> Cities { get; set; }
+    public DbSet<Country> Countries { get; set; }
     public DbSet<Major> Majors { get; set; }
     public DbSet<SkillType> SkillTypes { get; set; }
     public DbSet<University> Universities { get; set; }
-    public DbSet<JobStatus> JobStatuses { get; set; }
-    public DbSet<Sector> Sectors { get; set; }
-    public DbSet<WorkType> WorkTypes { get; set; }
-    public DbSet<InvitationStatus> InvitationStatuses { get; set; }
 
     // Base User Tables
     public DbSet<AdminUser> Admins { get; set; }
@@ -73,6 +77,10 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     // Recruitment Tables
     public DbSet<Job> Jobs { get; set; }
     public DbSet<Invitation> Invitations { get; set; }
+    public DbSet<JobCondition> JobConditions { get; set; }
+    public DbSet<JobDegree> JobDegrees { get; set; }
+    public DbSet<JobQuota> JobQuotas { get; set; }
+    public DbSet<JobSkill> JobSkill { get; set; }
     
     // Notification Tables
     public DbSet<EmailQueue> EmailQueues { get; set; }

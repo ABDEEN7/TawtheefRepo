@@ -31,25 +31,28 @@ namespace Recruitment.API.Controllers
             _ => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier)
         };
 
-
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
         {
-            command = command with { IpAddress = HttpContext.GetClientIpAddress() ?? "Unknown IP Address" };
             var result = await mediator.Send(command);
             return result.ToActionResult();
         }
 
-        [HttpPost("verify-otp")]
-        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpCommand command)
+        [HttpPost("send-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] SendOtpCommand command)
         {
             var result = await mediator.Send(command);
             return result.ToActionResult();
         }
-
+        [HttpPost("resend-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] ResendOtpCommand command)
+        {
+            var result = await mediator.Send(command);
+            return result.ToActionResult();
+        }
         [EnableRateLimiting(LimitsPolicyKeys.VerificationPolicy)]
-        [HttpGet("verify-account")]
-        public async Task<IActionResult> VerifyAccount([FromQuery] VerifyAccountCommand command)
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpCommand command)
         {
             var result = await mediator.Send(command);
             return result.ToActionResult();
