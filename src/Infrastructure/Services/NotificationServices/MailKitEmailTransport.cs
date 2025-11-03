@@ -16,6 +16,7 @@ using Serilog;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Models.Notification;
 using Tawtheef.Domain.Configurations;
+using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
