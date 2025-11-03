@@ -21,6 +21,8 @@ using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -226,29 +228,31 @@ namespace Tawtheef.Infrastructure
             var azureConfig = configuration.GetSection("Authentication:Azure");
             if (azureConfig.Exists())
             {
-                services.AddAuthentication(options => {
-                    options.DefaultScheme = "AppCookie";
-                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                })
-                .AddCookie("AppCookie", o => {
-                    o.Cookie.Name = ".tawtheef.auth";
-                    o.Cookie.SameSite = SameSiteMode.None;
-                    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                })
-                .AddMicrosoftIdentityWebApp(
-                    configuration: configuration,
-                    configSectionName: "Authentication:Azure",
-                    openIdConnectScheme: "Azure",
-                    cookieScheme: null,
-                    subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: false,
-                    displayName: "Azure");
-                
-                services.PostConfigure<OpenIdConnectOptions>("Azure", o =>
+                services
+                    .AddAuthentication(options =>
+                    {
+                        options.DefaultScheme          = AuthSchemes.AppCookie;
+                        options.DefaultChallengeScheme = AuthSchemes.AzureOidc;
+                    })
+                    .AddCookie(AuthSchemes.AppCookie, o =>
+                    {
+                        o.Cookie.Name         = ".tawtheef.auth";
+                        o.Cookie.SameSite     = SameSiteMode.None;  // cross-site popup
+                        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                        o.SlidingExpiration   = true;
+                    })
+                    .AddMicrosoftIdentityWebApp(configuration, "Authentication:Azure",
+                        openIdConnectScheme: AuthSchemes.AzureOidc,
+                        cookieScheme: null,
+                        subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: false,
+                        displayName: "Azure");
+
+                services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o =>
                 {
-                    o.SignInScheme = "AppCookie";
+                    o.SignInScheme = AuthSchemes.AppCookie;
                     o.ResponseType = OpenIdConnectResponseType.Code;
-                    o.SaveTokens = true;
-                    
+                    o.SaveTokens   = true;
+
                     o.Scope.Add("openid");
                     o.Scope.Add("profile");
                     o.Scope.Add("email");
@@ -383,6 +387,7 @@ namespace Tawtheef.Infrastructure
             services.AddScoped<IVerificationService, VerificationService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+            services.AddScoped<IExternalTokenReader, CookieExternalTokenReader>();
             services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
 
             services.AddHttpClient<IRecaptchaService, RecaptchaService>();
