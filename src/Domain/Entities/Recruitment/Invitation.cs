@@ -5,7 +5,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
-public class Invitations : EventEntity
+public class Invitation : EventEntity
 {
     public Guid JobId { get; set; }
     public Job? Job { get; set; }
@@ -28,7 +28,7 @@ public class Invitations : EventEntity
 public class HistoryInvitations : EventEntity
 {
     public Guid InvitationId { get; set; }
-    public Invitations? Invitation { get; set; }
+    public Invitation? Invitation { get; set; }
     
     public Guid InvitationStatusId { get; set; }
     public InvitationStatus? InvitationStatus { get; set; }

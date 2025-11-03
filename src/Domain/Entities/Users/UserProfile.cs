@@ -31,7 +31,7 @@ public class UserProfile : EventEntity
     public int Age => DateTime.Now.Year - BirthDate.Year;
     
     public Guid NationalityId { get; set; }
-    public Nationality? Nationality { get; set; }
+    public Country? Nationality { get; set; }
     
     public Guid? GenderId { get; set; }
     public Gender? Gender { get; init; }

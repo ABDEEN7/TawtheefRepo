@@ -12,8 +12,6 @@ public class ApplicantUser : User
     public Guid? ProfileId { get; set; }
     public UserProfile? Profile { get; set; }
     
-    public string? NationalId { get; set; }
-    
     public ICollection<Qualification> Qualifications { get; set; } = [];
     public ICollection<Experience> Experiences { get; set; } = [];
     public ICollection<TrainingCourse> TrainingCourses { get; set; } = [];
@@ -22,7 +20,7 @@ public class ApplicantUser : User
     public ICollection<ProfileAdditionalAttachment> AdditionalAttachments { get; set; } = [];
     
 
-    public ICollection<Invitations> Invitations { get; init; } = [];
+    public ICollection<Invitation> Invitations { get; init; } = [];
     public static Result<User> Register(string email,string displayName)
     {
         var name = ValueObjects.User.FullName.TryParse(displayName);

@@ -143,7 +143,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         await Upsert("code", data.Code);
         await Upsert("accessTokenExpiration", data.AccessTokenExpiration);
         
-        user.NationalId = data.UserQid;
+        // user.NationalId = data.UserQid;
         user.EmailConfirmed = true;
         await userManager.UpdateAsync(user);
     }

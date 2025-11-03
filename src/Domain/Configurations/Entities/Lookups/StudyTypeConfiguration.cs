@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Domain.Configurations.Entities.Enums;
+namespace Tawtheef.Domain.Configurations.Entities.Lookups;
 
 public class StudyTypeConfiguration : LookupBaseConfiguration<StudyType>
 {
