@@ -14,8 +14,8 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.Callback
 
 public class GoogleExternalCallbackLoginHandler(
     IUnitOfWork uow,
-    UserManager<ApplicantUser> userManager,
-    SignInManager<ApplicantUser> signInManager,
+    UserManager<User> userManager,
+    SignInManager<User> signInManager,
     ITokenService tokenService
 ) : BaseExternalCallbackLoginHandler, IRequestHandler<GoogleExternalCallbackLoginCommand, Result<AuthResponse>>
 {
@@ -115,7 +115,7 @@ public class GoogleExternalCallbackLoginHandler(
         return await IssueTokensAsync(newUser, userManager, tokenService, uow, cancellationToken);
     }
 
-    private static async Task UpsertProviderClaimsAsync(UserManager<ApplicantUser> userManager, ApplicantUser user, ExternalLoginInfo info)
+    private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, ExternalLoginInfo info)
     {
         // Reuse the same helper as in the Link handler
         // You can extract this method to a shared static class if you like.

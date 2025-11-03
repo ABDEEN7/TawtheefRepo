@@ -46,23 +46,32 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     
     private readonly List<RefreshToken> _refreshTokens = [];
     public IReadOnlyCollection<RefreshToken> RefreshTokens  => _refreshTokens.AsReadOnly();
-    public DateTime? OtpExpiry { get; set; }
-    [MaxLength(length: 6)]
-    public string? OtpCode { get; set; }
-    public int OtpAttempts { get; set; }
     
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? CurrentAuthToken { get; set; }
     [MaxLength(length: 128)]
     public string? ActiveDeviceId { get; private set; }
-    private readonly List<BaseEvent> _domainEvents = [];
+    
+    public string? OtpReference { get; private set; }
+    public DateTime? OtpExpiry { get; private set; }
+    public int OtpAttempts { get; set; }
+    public int OtpSends { get; private set; }       // for resend throttle
 
-    [NotMapped]
-    public IReadOnlyCollection<BaseEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public void SetOtp(string otpReference, DateTime expiryUtc)
+    {
+        OtpReference = otpReference;
+        OtpExpiry = expiryUtc;
+        OtpAttempts = 0;
+        OtpSends++;
+    }
 
-    public void AddDomainEvent(BaseEvent e) => _domainEvents.Add(e);
-    public void RemoveDomainEvent(BaseEvent e) => _domainEvents.Remove(e);
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    public void ClearOtp()
+    {
+        OtpReference = null;
+        OtpExpiry = null;
+        OtpAttempts = 0;
+        OtpSends = 0;
+    }
     public void AddRefreshToken(string token, DateTimeOffset expires, string sid, string? ip = null, string? userDeviceId = null)
     {
         _refreshTokens.Add(new RefreshToken
@@ -110,16 +119,14 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         return Result.Success(user);
     }
     
-    public Result RequestPasswordReset(DateTime whenUtc)
-    {
-        if (!EmailConfirmed)
-            return Result.Failure(ErrorsCodes.EmailNotVerified);
+    //--------------------------------------------
+    
+    private readonly List<BaseEvent> _domainEvents = [];
 
-        AddDomainEvent(new UserPasswordResetRequestedEvent(
-            UserId: Id,
-            Email: Email ?? string.Empty,
-            OccurredOn: whenUtc));
+    [NotMapped]
+    public IReadOnlyCollection<BaseEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-        return Result.Success();
-    }
+    public void AddDomainEvent(BaseEvent e) => _domainEvents.Add(e);
+    public void RemoveDomainEvent(BaseEvent e) => _domainEvents.Remove(e);
+    public void ClearDomainEvents() => _domainEvents.Clear();
 }

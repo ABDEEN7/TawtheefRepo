@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
@@ -17,9 +18,9 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.Callback
 
 public sealed class QatarPassExternalCallbackLoginHandler(
     IUnitOfWork uow,
-    UserManager<ApplicantUser> userManager,
+    UserManager<User> userManager,
     ITokenService tokenService,
-    IHttpClientFactory factory
+    IQatarPassClient qatarPassClient
 ) : BaseExternalCallbackLoginHandler, IRequestHandler<QatarPassExternalCallbackLoginCommand, Result<AuthResponse>>
 {
     private const string Provider = "QatarPass";
@@ -54,7 +55,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
 
         // 3) Try to attach to an existing local account (heuristics)
         //    a) by normalized phone (if you trust it to be unique)
-        ApplicantUser? candidate = null;
+        User? candidate = null;
         var normalizedPhone = NormalizePhone(data.MobileNumber);
         if (!string.IsNullOrWhiteSpace(normalizedPhone))
         {
@@ -103,20 +104,13 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     // --- External call ---
     private async Task<Result<QatarPassAccount>> FetchQatarPassDataAsync(string authtoken, CancellationToken ct)
     {
-        var client = factory.CreateClient("QatarPass");
-        using var res = await client.GetAsync($"api/Services/GetData?Code={authtoken}", ct);
-        if (!res.IsSuccessStatusCode)
-            return Result.Failure<QatarPassAccount>($"QatarPass API error: {(int)res.StatusCode}");
+        var res = await qatarPassClient.GetDataAsync(authtoken, ct);
+        if (res.IsFailure) return Result.Failure<QatarPassAccount>(res.Error);
 
-        var payload = await res.Content.ReadFromJsonAsync<QatarPassEnvelope>(cancellationToken: ct);
-        if (payload is null || payload.IsSuccess != true || payload.ResponseData is null ||
-            payload.ResponseData.Count == 0)
-            return Result.Failure<QatarPassAccount>("QatarPass: empty/invalid response.");
-
-        return Result.Success(payload.ResponseData[0]);
+        return res.Value.Account[0];
     }
     
-    private static async Task UpsertQatarPassClaimsAsync(UserManager<ApplicantUser> userManager, ApplicantUser user, QatarPassAccount data)
+    private static async Task UpsertQatarPassClaimsAsync(UserManager<User> userManager, User user, QatarPassAccount data)
     {
         var existing = await userManager.GetClaimsAsync(user);
 

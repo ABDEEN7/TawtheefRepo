@@ -59,7 +59,8 @@ public class ErrorsCodes
     public const string InvalidVerificationCode = "INVALID_VERIFICATION_CODE";
     public const string ResendCooldownActive = "RESEND_COOLDOWN_ACTIVE";
     public const string EmailAlreadyVerified = "EMAIL_ALREADY_VERIFIED";
-    public const string UserHasNotEmail = "USER_HAS_NOT_EMAIL";
+    public const string SendOtpLimitReached = "SEND_OTP_LIMIT_REACHED";
+    public const string UserPhoneRequired = "USER_PHONE_REQUIRED";
     #endregion
 
     #region Update Profile Errors

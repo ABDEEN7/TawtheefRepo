@@ -33,7 +33,6 @@ namespace Recruitment.API.Controllers
             _ => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier)
         };
 
-
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
         {
@@ -41,22 +40,7 @@ namespace Recruitment.API.Controllers
             var result = await mediator.Send(command);
             return result.ToActionResult();
         }
-
-        [HttpPost("verify-otp")]
-        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpCommand command)
-        {
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
-
-        [EnableRateLimiting(LimitsPolicyKeys.VerificationPolicy)]
-        [HttpGet("verify-account")]
-        public async Task<IActionResult> VerifyAccount([FromQuery] VerifyAccountCommand command)
-        {
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
-
+        
          [HttpGet("external-login")]
          public IActionResult ExternalLogin([FromQuery] ExternalLoginRequest request,
              [FromServices] SignInManager<User> signInManager)
