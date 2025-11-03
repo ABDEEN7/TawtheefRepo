@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Domain.Configurations;
+using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 

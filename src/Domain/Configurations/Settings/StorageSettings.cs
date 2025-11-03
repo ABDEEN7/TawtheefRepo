@@ -1,4 +1,4 @@
-﻿namespace Tawtheef.Domain.Configurations;
+﻿namespace Tawtheef.Domain.Configurations.Settings;
 
 public sealed class StorageSettings
 {
