@@ -18,6 +18,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Utils;
 
 namespace Recruitment.API.Controllers
 {
@@ -80,50 +81,22 @@ namespace Recruitment.API.Controllers
              [FromServices] IOptions<AppConfigSettings> appConfig)
          {
              var result = await mediator.Send(command);
-
              var frontEndOrigin = appConfig.Value.FrontendUrl;
-             var serializedError = JsonSerializer.Serialize(result.Error);
-             var encodedOrigin = JsonSerializer.Serialize(frontEndOrigin);
              if (result.IsFailure)
              {
-                 var htmlError = $$"""
-                                       <!doctype html><meta charset="utf-8">
-                                       <script>
-                                         (function() {
-                                           try {
-                                             if (window.opener) {
-                                               window.opener.postMessage({
-                                                 type: 'EXTERNAL_LOGIN_ERROR',
-                                                 message: {{serializedError}}
-                                               }, '{{encodedOrigin}}');
-                                             }
-                                           } catch (e) { console.error(e); }
-                                           window.close();
-                                         })();
-                                       </script>
-                                   """;
-                 return Content(htmlError, "text/html");
+                 var message = new
+                 {
+                     type = "EXTERNAL_LOGIN_ERROR",
+                     message = result.Error
+                 };
+                 return HtmlPopupCloseScript.Create(message, frontEndOrigin);
              }
-
-             var serializedUser = JsonSerializer.Serialize(result.Value,
-                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-             var htmlOk = $$"""
-                                <!doctype html><meta charset="utf-8">
-                                <script>
-                                  (function() {
-                                    try {
-                                      if (window.opener) {
-                                        window.opener.postMessage({
-                                          type: 'EXTERNAL_LOGIN_SUCCESS',
-                                          userData: {{serializedUser}}
-                                        }, '{{encodedOrigin}}');
-                                      }
-                                    } catch (e) { console.error(e); }
-                                    window.close();
-                                  })();
-                                </script>
-                            """;
-             return Content(htmlOk, "text/html");
+             var messageOk  = new
+             {
+                 type = "EXTERNAL_LOGIN_SUCCESS",
+                 userData = result.Value
+             };
+             return HtmlPopupCloseScript.Create(messageOk , frontEndOrigin);
          }
 
          [HttpGet("qatar-pass/external-login-callback", Name = nameof(QatarPassExternalLoginCallBack))]
@@ -133,49 +106,21 @@ namespace Recruitment.API.Controllers
          {
              var frontEndOrigin = appConfig.Value.FrontendUrl;
              var result = await mediator.Send(command);
-
-             var serializedError = JsonSerializer.Serialize(result.Error);
-             var encodedOrigin = JsonSerializer.Serialize(frontEndOrigin);
              if (result.IsFailure)
              {
-                 var htmlError = $$"""
-                                       <!doctype html><meta charset="utf-8">
-                                       <script>
-                                         (function() {
-                                           try {
-                                             if (window.opener) {
-                                               window.opener.postMessage({
-                                                 type: 'EXTERNAL_LOGIN_ERROR',
-                                                 message: {{serializedError}}
-                                               }, '{{encodedOrigin}}');
-                                             }
-                                           } catch (e) { console.error(e); }
-                                           window.close();
-                                         })();
-                                       </script>
-                                   """;
-                 return Content(htmlError, "text/html");
+                 var message = new
+                 {
+                     type = "EXTERNAL_LOGIN_ERROR",
+                     message = result.Error
+                 };
+                 return HtmlPopupCloseScript.Create(message, frontEndOrigin);
              }
-
-             var serializedUser = JsonSerializer.Serialize(result.Value,
-                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-             var htmlOk = $$"""
-                                <!doctype html><meta charset="utf-8">
-                                <script>
-                                  (function() {
-                                    try {
-                                      if (window.opener) {
-                                        window.opener.postMessage({
-                                          type: 'EXTERNAL_LOGIN_SUCCESS',
-                                          userData: {{serializedUser}}
-                                        }, '{{encodedOrigin}}');
-                                      }
-                                    } catch (e) { console.error(e); }
-                                    window.close();
-                                  })();
-                                </script>
-                            """;
-             return Content(htmlOk, "text/html");
+             var messageOk  = new
+             {
+                 type = "EXTERNAL_LOGIN_SUCCESS",
+                 userData = result.Value
+             };
+             return HtmlPopupCloseScript.Create(messageOk , frontEndOrigin);
          }
 
 

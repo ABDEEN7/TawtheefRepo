@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
+using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs;
@@ -20,6 +22,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Utils;
 
 namespace Recruitment.API.Controllers
 {
@@ -61,60 +64,30 @@ namespace Recruitment.API.Controllers
          public async Task<IActionResult> AzureExternalLoginCallback(
              [FromRoute] AzureExternalCallbackLoginCommand command,
              [FromServices] IHttpContextAccessor http,
+             [FromServices] IExternalTokenReader tokenReader,
              [FromServices] IOptions<AppConfigSettings> appConfig)
          {
-             var authenticateResult = await http.HttpContext!.AuthenticateAsync("AppCookie");
-             if (!authenticateResult.Succeeded)
-                 return BadRequest(authenticateResult.Failure);
-             
-             var tokens = authenticateResult.Properties?.GetTokens().ToList();
-             var idToken = tokens?.FirstOrDefault(t => t.Name == "id_token")?.Value;
-             var accessToken = tokens?.FirstOrDefault(t => t.Name == "access_token")?.Value;
+             var (idToken, accessToken) = await tokenReader.ReadAsync(http.HttpContext!, AuthSchemes.AppCookie);
+             if (string.IsNullOrWhiteSpace(idToken))
+                 return BadRequest("No id token found");
              
              var result = await mediator.Send(command with {IdToken = idToken, AccessToken = accessToken});
              var frontEndOrigin = appConfig.Value.FrontendUrl;
-             var serializedError = JsonSerializer.Serialize(result.Error);
-             var encodedOrigin = JsonSerializer.Serialize(frontEndOrigin);
              if (result.IsFailure)
              {
-                 var htmlError = $$"""
-                                       <!doctype html><meta charset="utf-8">
-                                       <script>
-                                         (function() {
-                                           try {
-                                             if (window.opener) {
-                                               window.opener.postMessage({
-                                                 type: 'EXTERNAL_LOGIN_ERROR',
-                                                 message: {{serializedError}}
-                                               }, '{{encodedOrigin}}');
-                                             }
-                                           } catch (e) { console.error(e); }
-                                           window.close();
-                                         })();
-                                       </script>
-                                   """;
-                 return Content(htmlError, "text/html");
+                 var message = new
+                 {
+                     type = "EXTERNAL_LOGIN_ERROR",
+                     message = result.Error
+                 };
+                 return HtmlPopupCloseScript.Create(message, frontEndOrigin);
              }
-
-             var serializedUser = JsonSerializer.Serialize(result.Value,
-                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-             var htmlOk = $$"""
-                                <!doctype html><meta charset="utf-8">
-                                <script>
-                                  (function() {
-                                    try {
-                                      if (window.opener) {
-                                        window.opener.postMessage({
-                                          type: 'EXTERNAL_LOGIN_SUCCESS',
-                                          userData: {{serializedUser}}
-                                        }, '{{encodedOrigin}}');
-                                      }
-                                    } catch (e) { console.error(e); }
-                                    window.close();
-                                  })();
-                                </script>
-                            """;
-             return Content(htmlOk, "text/html");
+             var messageOk  = new
+             {
+                 type = "EXTERNAL_LOGIN_SUCCESS",
+                 userData = result.Value
+             };
+             return HtmlPopupCloseScript.Create(messageOk , frontEndOrigin);
          }
 
 
