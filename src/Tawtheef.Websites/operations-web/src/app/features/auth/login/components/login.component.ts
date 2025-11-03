@@ -17,40 +17,13 @@ import {ExternalLoginService} from '../../external-login';
   ],
   standalone: true
 })
-export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
+export class LoginComponent {
   loading = false;
   errorMessage: string | null = null;
-  hidePassword = true;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private external: ExternalLoginService,
-  ) {}
+  constructor(private external: ExternalLoginService,) {}
 
-  ngOnInit(): void {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      remember: [false]
-    });
-  }
-
-  loginWithProvider(provider: 'google' | 'microsoft' | 'azure' | 'sso') {
-    switch (provider) {
-      case 'azure':
-        this.external.signInWithAzure();
-        break;
-      case 'google':
-        this.external.signInWithGoogle();
-        break;
-    }
-  }
-  get f() { return this.loginForm.controls; }
-
-  onForgotPassword() {
-    // navigate to forgot password page
-    this.router.navigate(['/forgot-password']);
+  loginWithProvider() {
+    this.external.signInWithAzure().then(r => {});
   }
 }

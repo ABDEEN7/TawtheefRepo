@@ -14,8 +14,7 @@ export class AuthService {
   constructor(
     protected core: AuthCoreService,
     protected state: AuthStateService,
-    protected user: UserService,
-    protected msalService: MsalService,
+    protected user: UserService
   ) {
     this.state.checkAuthState(false);
   }

@@ -31,8 +31,6 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     
     [StringLength(2048)]
     public string? Avatar { get; set; }
-    public string? PreferredUiLang { get; set; }
-    public string? ProviderSource    { get; set; }
     public Guid UserTypeId { get; set; }
     public UserType? UserType { get; set; }
     
@@ -44,7 +42,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public Guid? DeletedById { get; set; }
     public DateTimeOffset? DeletedDate { get; set; }
     
-    public ICollection<Notification.Notification>? Notifications { get; init; }
+    public ICollection<Notification.Notification> Notifications { get; init; } = [];
     
     private readonly List<RefreshToken> _refreshTokens = [];
     public IReadOnlyCollection<RefreshToken> RefreshTokens  => _refreshTokens.AsReadOnly();
@@ -55,7 +53,6 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? CurrentAuthToken { get; set; }
-    public Guid? CurrentSessionId { get; private set; }
     [MaxLength(length: 128)]
     public string? ActiveDeviceId { get; private set; }
     private readonly List<BaseEvent> _domainEvents = [];
@@ -66,13 +63,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public void AddDomainEvent(BaseEvent e) => _domainEvents.Add(e);
     public void RemoveDomainEvent(BaseEvent e) => _domainEvents.Remove(e);
     public void ClearDomainEvents() => _domainEvents.Clear();
-
-    public void StartNewExclusiveSession(string deviceId, Guid sessionId)
-    {
-        CurrentSessionId = sessionId;
-        ActiveDeviceId = deviceId;
-    }
-    public void AddRefreshToken(string token, DateTimeOffset expires, string? ip = null, string? userDeviceId = null)
+    public void AddRefreshToken(string token, DateTimeOffset expires, string sid, string? ip = null, string? userDeviceId = null)
     {
         _refreshTokens.Add(new RefreshToken
         {
@@ -81,7 +72,8 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
             CreatedDate = DateTimeOffset.UtcNow,
             CreatedByIp = ip,
             UserId = Id,
-            UserDeviceId = userDeviceId
+            UserDeviceId = userDeviceId,
+            SecurityStamp = sid
         });
     }
     public void RemoveOldRefreshTokens(int keepCount)
@@ -99,28 +91,21 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         CurrentAuthToken = authToken;
         LastLoginDate = loginDate;
     }
-    public static Result<User> Register(
-        string email,
-        string displayName,
-        string userTypeRaw
-    )
+    public static Result<User> Register(string email, string displayName, Guid userTypeId)
     {
-        var name = ValueObjects.User.FullName.TryParse(displayName);
+        var name = FullName.TryParse(displayName);
         if (name.IsFailure) return name.ConvertFailure<User>();
 
-        var userType = UserTypeParser.TryFrom(userTypeRaw);
-        if (userType.IsFailure) return userType.ConvertFailure<User>();
-
-        var userResult = userType.Value == UserTypeIds.Applicant
+        var userResult = userTypeId == UserTypeIds.Applicant
             ? ApplicantUser.Register(email, displayName)
             : EmployeeUser.Register(email, displayName);
 
         if (userResult.IsFailure) return userResult;
         
         var user = userResult.Value;
-        user.UserTypeId = userType.Value;
+        user.UserTypeId = userTypeId;
         
-        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.GivenNameEn, userType.Value, DateTime.Now));
+        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.GivenNameEn, userTypeId, DateTime.Now));
 
         return Result.Success(user);
     }

@@ -46,7 +46,6 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Country> Countries { get; set; }
     public DbSet<City> Cities { get; set; }
     public DbSet<Major> Majors { get; set; }
-    public DbSet<Nationality> Nationalities { get; set; }
     public DbSet<SkillType> SkillTypes { get; set; }
     public DbSet<University> Universities { get; set; }
     public DbSet<JobStatus> JobStatuses { get; set; }
@@ -73,7 +72,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     
     // Recruitment Tables
     public DbSet<Job> Jobs { get; set; }
-    public DbSet<Invitations> Invitations { get; set; }
+    public DbSet<Invitation> Invitations { get; set; }
     
     // Notification Tables
     public DbSet<EmailQueue> EmailQueues { get; set; }

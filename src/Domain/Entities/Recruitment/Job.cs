@@ -4,69 +4,48 @@ using CSharpFunctionalExtensions;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
 [Table(nameof(Job), Schema = Schemas.Hr)]
-public class Job : Entity
+public class Job : EventEntity
 {
-    [Required, MaxLength(250)] 
+    public Guid RequestingDepartmentId { get; set; }
+    public Department? RequestingDepartment { get; set; }
+
+    [Required, MaxLength(250)]
     public required string Title { get; set; }
-    public required string Description { get; set; }
+
+    public Guid JobCategoryId { get; set; }
+    public JobCategory? JobCategory { get; set; }
+
+    public Guid? GenderId { get; set; }
+    public Gender? Gender { get; set; }
+
+    public Guid WorkLocationId { get; set; }
+    public Sector? WorkLocation { get; set; }
+
+    public Guid MajorId { get; set; }
+    public Major? Major { get; set; }
+
+    public Guid WorkTypeId { get; set; }
+    public WorkType? WorkType { get; set; }
+
+    public int Vacancies { get; set; }
+    public DateTimeOffset Deadline { get; set; }
+
+    public ICollection<JobDegree> Degrees { get; init; } = new List<JobDegree>();
+    public ICollection<JobQuota> Quotas { get; init; } = new List<JobQuota>();
+    public ICollection<JobCondition> Conditions { get; init; } = new List<JobCondition>();
+    public ICollection<JobSkill> Skills { get; init; } = new List<JobSkill>();
+    public string? Description { get; set; }
+    public string? Benefits { get; set; }
     
-    public Guid? CountryId { get; set; }
-    public Country? Country { get; set; }
-    
-    public Guid? CityId { get; set; }
-    public City? City { get; set; }
+    public DateTimeOffset? PublishAt { get; set; }
 
     public Guid StatusId { get; set; }
     public JobStatus? Status { get; set; }
-
-    /// <summary>
-    /// list of responsibilities separated by unique line '\n'
-    /// </summary>
-    public required string Responsibilities { get; set; }
-    [NotMapped]
-    public IReadOnlyList<string> ResponsibilitiesList => Responsibilities.Split('\n').ToList();
-
-    public DateTimeOffset? PublishAt { get; set; }
-    public DateTimeOffset? ApplicationDeadline { get; set; }
-    
-    public Guid SectorId { get; set; }
-    public Sector? Sector { get; set; }
-    
-    public Guid WorkTypeId { get; set; }
-    public WorkType? WorkType { get; set; }
-    
-    /// <summary>
-    /// list of qualifications separated by unique line '\n'
-    /// </summary>
-    public required string Qualification { get; set; }
-    [NotMapped]
-    public IReadOnlyList<string> QualificationList => Qualification.Split('\n').ToList();
-    
-    /// <summary>
-    /// list of benefits separated by unique line '\n'
-    /// </summary>
-    public required string Benefits { get; set; }
-    [NotMapped]
-    public IReadOnlyList<string> BenefitsList => Benefits.Split('\n').ToList();
-
-    public required string OrganizationDescription { get; set; }
-
-    public ICollection<Invitations> Invitations { get; init; } = [];
-
-    /// <summary>
-    /// Check if the job matches the profile.
-    /// </summary>
-    /// <param name="profile"></param>
-    /// <returns></returns>
-    public bool Matches(UserProfile profile)
-    {
-        return true;
-    }
-    
-    
+    public ICollection<Invitation> Invitations { get; init; } = new List<Invitation>();
 }

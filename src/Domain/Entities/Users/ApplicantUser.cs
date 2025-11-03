@@ -20,7 +20,7 @@ public class ApplicantUser : User
     public ICollection<ProfileAdditionalAttachment> AdditionalAttachments { get; set; } = [];
     
 
-    public ICollection<Invitations> Invitations { get; init; } = [];
+    public ICollection<Invitation> Invitations { get; init; } = [];
     public static Result<User> Register(string email,string displayName)
     {
         var name = ValueObjects.User.FullName.TryParse(displayName);
