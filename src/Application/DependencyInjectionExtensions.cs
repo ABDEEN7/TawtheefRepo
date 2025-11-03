@@ -3,6 +3,7 @@ using FluentValidation;
 using Mapster;
 using MapsterMapper;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application.Common.Behaviours;
 
@@ -33,7 +34,7 @@ namespace Tawtheef.Application
             // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
         }
 
-        #region Private registrations
+        #region Private registrations 
         private static void RegisterMapster(IServiceCollection services)
         {
             var config = TypeAdapterConfig.GlobalSettings;

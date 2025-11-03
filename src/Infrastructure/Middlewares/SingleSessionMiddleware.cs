@@ -10,45 +10,32 @@ namespace Tawtheef.Infrastructure.Middlewares;
 
 public class SingleSessionMiddleware(RequestDelegate next)
 {
-    public async Task Invoke(HttpContext context, UserManager<User> userManager)
+    public async Task InvokeAsync(HttpContext ctx, UserManager<User> userManager)
     {
-        var path = context.Request.Path.Value?.ToLowerInvariant() ?? "";
-        if (path.StartsWith("/api/auth/login") || path.StartsWith("/api/auth/refresh") || path.StartsWith("/api/website/"))
+        var principal = ctx.User;
+        if (principal?.Identity?.IsAuthenticated == true)
         {
-            await next(context);
-            return;
+            var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var sid = principal.FindFirst(JwtRegisteredClaimNames.Sid)?.Value;
+
+            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(sid))
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                var currentStamp = user?.SecurityStamp;
+
+                if (string.IsNullOrEmpty(currentStamp) || !string.Equals(currentStamp, sid, StringComparison.Ordinal))
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    await ctx.Response.WriteAsJsonAsync(new
+                    {
+                        error = "session_revoked",
+                        message = "Your session is no longer valid. You may have signed in elsewhere."
+                    });
+                    return;
+                }
+            }
         }
 
-        var userPrincipal = context.User;
-        if (userPrincipal.Identity?.IsAuthenticated != true)
-        {
-            await next(context);
-            return;
-        }
-
-        var userIdStr = userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                        userPrincipal.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        var sidClaim = userPrincipal.FindFirstValue(JwtRegisteredClaimNames.Sid);
-
-        if (!Guid.TryParse(userIdStr, out var userId) || !Guid.TryParse(sidClaim, out var sidFromToken))
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsync("Invalid token claims.");
-            return;
-        }
-
-        var currentSid = await userManager.Users
-            .Where(u => u.Id == userId)
-            .Select(u => u.CurrentSessionId)
-            .FirstOrDefaultAsync(context.RequestAborted);
-
-        if (currentSid is null || currentSid.Value != sidFromToken)
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsync("Session expired or signed in elsewhere.");
-            return;
-        }
-
-        await next(context);
+        await next(ctx);
     }
 }

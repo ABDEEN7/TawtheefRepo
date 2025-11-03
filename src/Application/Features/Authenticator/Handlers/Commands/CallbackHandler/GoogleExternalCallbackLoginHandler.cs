@@ -2,7 +2,6 @@
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
@@ -11,14 +10,14 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
+namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
 public class GoogleExternalCallbackLoginHandler(
     IUnitOfWork uow,
-    UserManager<User> userManager,
-    SignInManager<User> signInManager,
+    UserManager<ApplicantUser> userManager,
+    SignInManager<ApplicantUser> signInManager,
     ITokenService tokenService
-) : IRequestHandler<GoogleExternalCallbackLoginCommand, Result<AuthResponse>>
+) : BaseExternalCallbackLoginHandler, IRequestHandler<GoogleExternalCallbackLoginCommand, Result<AuthResponse>>
 {
     public async Task<Result<AuthResponse>> Handle(GoogleExternalCallbackLoginCommand request, CancellationToken cancellationToken)
     {
@@ -35,24 +34,15 @@ public class GoogleExternalCallbackLoginHandler(
 
         if (result.Succeeded)
         {
-            var user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-            if (user == null)
+            var linkedUser = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (linkedUser == null)
                 return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginUserNotFound);
 
             // Update tokens from provider & upsert claims
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
-            await UpsertProviderClaimsAsync(userManager, user, info);
+            await UpsertProviderClaimsAsync(userManager, linkedUser, info);
 
-            user.UserType = await uow.GetEntityRepository<UserType>().DbSet
-                .FirstAsync(t => t.Id == user.UserTypeId, cancellationToken);
-
-            var accessToken  = tokenService.GenerateAccessToken(user);
-            var refreshToken = tokenService.GenerateRefreshToken(user.Id);
-
-            return Result.Success(new AuthResponse(
-                new UserInfoResponse(user.Id, user.GivenNameEn, user.FamilyNameEn, user.Email!, user.Avatar),
-                new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
-            ));
+            return await IssueTokensAsync(linkedUser, userManager, tokenService, uow, cancellationToken);
         }
 
         // Not linked yet: use email to attach or create a new user
@@ -76,14 +66,8 @@ public class GoogleExternalCallbackLoginHandler(
             await UpsertProviderClaimsAsync(userManager, existingUser, info);
 
             await signInManager.SignInAsync(existingUser, isPersistent: false);
-
-            var accessToken  = tokenService.GenerateAccessToken(existingUser);
-            var refreshToken = tokenService.GenerateRefreshToken(existingUser.Id);
-
-            return Result.Success(new AuthResponse(
-                new UserInfoResponse(existingUser.Id, existingUser.GivenNameEn, existingUser.FamilyNameEn, existingUser.Email!, existingUser.Avatar),
-                new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
-            ));
+            
+            return await IssueTokensAsync(existingUser, userManager, tokenService, uow, cancellationToken);
         }
 
         // Create new user from claims (names can be missing for Google/AzureAD on later logins)
@@ -108,11 +92,11 @@ public class GoogleExternalCallbackLoginHandler(
             }
         }
 
-        var newUserResult = User.Register(email,$"{givenName} {surname}".Trim(), nameof(UserTypeIds.Applicant));
+        var newUserResult = User.Register(email,$"{givenName} {surname}".Trim(), UserTypeIds.Applicant);
         if(newUserResult.IsFailure)
             return Result.Failure<AuthResponse>(newUserResult.Error);
         
-        var newUser = newUserResult.Value;
+        var newUser = (ApplicantUser)newUserResult.Value;
         var createResult = await userManager.CreateAsync(newUser);
         if (!createResult.Succeeded)
             return Result.Failure<AuthResponse>(string.Join(", ", createResult.Errors.Select(e => e.Description)));
@@ -128,11 +112,10 @@ public class GoogleExternalCallbackLoginHandler(
         await signInManager.UpdateExternalAuthenticationTokensAsync(info);
         await UpsertProviderClaimsAsync(userManager, newUser, info);
 
-        // Your policy requires admin approval for new external accounts
-        return Result.Failure<AuthResponse>(ErrorsCodes.YourAccountRequiresAdminApproval);
+        return await IssueTokensAsync(newUser, userManager, tokenService, uow, cancellationToken);
     }
 
-    private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, ExternalLoginInfo info)
+    private static async Task UpsertProviderClaimsAsync(UserManager<ApplicantUser> userManager, ApplicantUser user, ExternalLoginInfo info)
     {
         // Reuse the same helper as in the Link handler
         // You can extract this method to a shared static class if you like.
@@ -143,8 +126,6 @@ public class GoogleExternalCallbackLoginHandler(
         var picture = info.Principal.FindFirst("picture")?.Value;
         var profile = info.Principal.FindFirst("profile")?.Value;
         var locale = info.Principal.FindFirst("locale")?.Value;
-        var emailVerStr = info.Principal.FindFirst("email_verified")?.Value;
-        var emailVerified = string.Equals(emailVerStr, "true", StringComparison.OrdinalIgnoreCase);
 
         if (string.IsNullOrWhiteSpace(user.GivenNameEn) && !string.IsNullOrWhiteSpace(givenName)) user.GivenNameEn = givenName;
         if (string.IsNullOrWhiteSpace(user.FamilyNameEn)  && !string.IsNullOrWhiteSpace(surname))   user.FamilyNameEn  = surname;
@@ -181,10 +162,7 @@ public class GoogleExternalCallbackLoginHandler(
         await Upsert("picture", picture);
         await Upsert("profile", profile);
         await Upsert("locale", locale);
-        await Upsert("email_verified", emailVerified ? "true" : "false");
-
-        if (!user.EmailConfirmed && emailVerified && string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase))
-            user.EmailConfirmed = true;
+        user.EmailConfirmed = true;
 
         await userManager.UpdateAsync(user);
     }

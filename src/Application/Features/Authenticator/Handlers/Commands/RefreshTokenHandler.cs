@@ -1,10 +1,6 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -18,111 +14,139 @@ using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
-
-public class RefreshTokenHandler(
-    UserManager<User> userManager,
-    ITokenService tokenService,
-    IOptions<JwtSettings> jwtSettings)
-    : IRequestHandler<RefreshTokenCommand, Result<TokenResponse>>
+namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
 {
-    public async Task<Result<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+    public class RefreshTokenHandler(
+        UserManager<User> userManager,
+        ITokenService tokenService,
+        IOptions<JwtSettings> jwtSettings)
+        : IRequestHandler<RefreshTokenCommand, Result<TokenResponse>>
     {
-        // Validate input tokens
-        if (string.IsNullOrEmpty(request.AccessToken))
-            return Result.Failure<TokenResponse>(ErrorsCodes.AccessTokenRequired);
-        if (string.IsNullOrEmpty(request.RefreshToken))
-            return Result .Failure<TokenResponse>(ErrorsCodes.RefreshTokenRequired);
-
-        // Get principal from an expired access token
-        var principalResult = GetPrincipalFromExpiredToken(request.AccessToken);
-        if(principalResult.IsFailure)
-            return Result .Failure<TokenResponse>(principalResult.Error);
-        
-        var principal = principalResult.Value;
-        var nameIdentifier = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        if( string.IsNullOrEmpty(nameIdentifier))
-            return Result .Failure<TokenResponse>(ErrorsCodes.InvalidAccessToken);
-
-        if (!Guid.TryParse(nameIdentifier, out var userId))
-            return Result .Failure<TokenResponse>(ErrorsCodes.InvalidUserIdentifier);
-
-        // Fetch user with refresh tokens
-        var user = await userManager.Users
-            .Include(u => u.UserType)
-            .Include(u => u.RefreshTokens)
-            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-        if (user == null)
-            return Result .Failure<TokenResponse>(ErrorsCodes.UserNotFound);
-
-        if (user.CurrentSessionId is null)
-            return Result.Failure<TokenResponse>(ErrorsCodes.SessionExpired);
-        
-        // Validate refresh token
-        var refreshToken = user.RefreshTokens
-            .FirstOrDefault(rt => rt.Token == request.RefreshToken);
-        if (refreshToken == null)
-            return Result .Failure<TokenResponse>(ErrorsCodes.RefreshTokenNotFound);
-
-        if (!refreshToken.IsActive)
-            return Result .Failure<TokenResponse>(ErrorsCodes.InactiveRefreshToken);
-
-        // Generate new tokens
-        var newRefreshToken = tokenService.GenerateRefreshToken(user.Id, request.IpAddress);
-        await tokenService.RevokeRefreshToken(refreshToken, request.IpAddress, "Replaced by new token", newRefreshToken.Token);
-
-        // Update user tokens
-        user.AddRefreshToken(newRefreshToken.Token, newRefreshToken.Expires, request.IpAddress);
-        user.RemoveOldRefreshTokens(jwtSettings.Value.RefreshTokenRetentionCount ?? 5);
-
-        await userManager.UpdateAsync(user);
-
-        // Generate a new access token
-        var accessToken = tokenService.GenerateAccessToken(user);
-
-        return Result.Success(new TokenResponse(
-            accessToken.Token,
-            accessToken.Expires,
-            newRefreshToken.Token,
-            newRefreshToken.Expires
-        ));
-    }
-
-    private Result<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
-    {
-        var tokenValidationParameters = new TokenValidationParameters
+        public async Task<Result<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            ValidAudience = jwtSettings.Value.Audience,
-            ValidIssuer = jwtSettings.Value.Issuer,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Value.Key)),
-            ValidateLifetime = false, // Allow expired tokens
-            ClockSkew = TimeSpan.FromMinutes(1)
-        };
+            // Validate inputs
+            if (string.IsNullOrWhiteSpace(request.AccessToken))
+                return Result.Failure<TokenResponse>(ErrorsCodes.AccessTokenRequired);
+            if (string.IsNullOrWhiteSpace(request.RefreshToken))
+                return Result.Failure<TokenResponse>(ErrorsCodes.RefreshTokenRequired);
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-    
-        try
-        {
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-        
-            if (securityToken is not JwtSecurityToken jwtSecurityToken)
-                return Result.Failure<ClaimsPrincipal>(ErrorsCodes.InvalidAccessToken);
+            // Read principal from expired access token (no lifetime check)
+            var principalResult = GetPrincipalFromExpiredToken(request.AccessToken);
+            if (principalResult.IsFailure)
+                return Result.Failure<TokenResponse>(principalResult.Error);
 
-            // Check for both algorithm formats
-            var isAlgorithmValid = 
-                jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase) ||
-                jwtSecurityToken.Header.Alg.Equals("http://www.w3.org/2001/04/xmldsig-more#hmac-sha256", StringComparison.InvariantCultureIgnoreCase);
+            var principal = principalResult.Value;
 
-            return !isAlgorithmValid ? Result.Failure<ClaimsPrincipal>(ErrorsCodes.InvalidAlgorithm) : principal;
+            var nameIdentifier = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(nameIdentifier))
+                return Result.Failure<TokenResponse>(ErrorsCodes.InvalidAccessToken);
+
+            if (!Guid.TryParse(nameIdentifier, out var userId))
+                return Result.Failure<TokenResponse>(ErrorsCodes.InvalidUserIdentifier);
+
+            // Load user and their refresh tokens
+            var user = await userManager.Users
+                .Include(u => u.UserType)
+                .Include(u => u.RefreshTokens)
+                .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+
+            if (user is null)
+                return Result.Failure<TokenResponse>(ErrorsCodes.UserNotFound);
+
+            // Validate refresh token existence + activity
+            var refreshToken = user.RefreshTokens.FirstOrDefault(rt => rt.Token == request.RefreshToken);
+            if (refreshToken is null)
+                return Result.Failure<TokenResponse>(ErrorsCodes.RefreshTokenNotFound);
+
+            if (!refreshToken.IsActive)
+                return Result.Failure<TokenResponse>(ErrorsCodes.InactiveRefreshToken);
+
+            // Single-session checks using SecurityStamp
+
+            // Access token SID must match the refresh token’s stored stamp (prevents mixing)
+            var sidFromAccess =
+                principal.FindFirstValue(JwtRegisteredClaimNames.Sid) ??
+                principal.FindFirstValue("sid"); // some libs emit "sid" short name
+
+            if (string.IsNullOrWhiteSpace(sidFromAccess))
+                return Result.Failure<TokenResponse>(ErrorsCodes.InvalidAccessToken);
+
+            if (!string.Equals(sidFromAccess, refreshToken.SecurityStamp, StringComparison.Ordinal))
+                return Result.Failure<TokenResponse>(ErrorsCodes.SessionRevoked);
+
+            // Refresh token must match the user's current stamp
+            var currentStamp = await userManager.GetSecurityStampAsync(user);
+            if (!string.Equals(refreshToken.SecurityStamp, currentStamp, StringComparison.Ordinal))
+                return Result.Failure<TokenResponse>(ErrorsCodes.SessionRevoked);
+
+            // Rotate refresh token (do NOT rotate SecurityStamp here)
+            var newRefreshToken = tokenService.GenerateRefreshToken(user.Id, currentStamp, request.IpAddress);
+            await tokenService.RevokeRefreshToken(refreshToken, request.IpAddress, "Replaced by new token", newRefreshToken.Token);
+
+            user.AddRefreshToken(newRefreshToken.Token, newRefreshToken.Expires, currentStamp, request.IpAddress);
+            user.RemoveOldRefreshTokens(jwtSettings.Value.RefreshTokenRetentionCount ?? 5);
+
+            await userManager.UpdateAsync(user);
+
+            // Mint new access token with the SAME current stamp
+            var accessToken = tokenService.GenerateAccessToken(
+                user,
+                [new Claim(JwtRegisteredClaimNames.Sid, currentStamp)]
+            );
+
+            return Result.Success(new TokenResponse(
+                accessToken.Token,
+                accessToken.Expires,
+                newRefreshToken.Token,
+                newRefreshToken.Expires
+            ));
         }
-        catch (SecurityTokenException ex)
+
+        private Result<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
         {
-            return Result.Failure<ClaimsPrincipal>($"Token validation failed: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            return Result.Failure<ClaimsPrincipal>($"An error occurred while validating the token: {ex.Message}");
+            var settings = jwtSettings.Value;
+            if (string.IsNullOrWhiteSpace(settings.Key))
+                return Result.Failure<ClaimsPrincipal>("JWT key is missing");
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidAudience = settings.Audience,
+                ValidIssuer = settings.Issuer,
+                ValidateIssuer = true,           // ensure issuer matches
+                ValidateAudience = true,         // ensure audience matches
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Key)),
+                ValidateLifetime = false,        // allow expired tokens (we’re just reading claims)
+                ClockSkew = TimeSpan.FromMinutes(1)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+
+                if (securityToken is not JwtSecurityToken jwtSecurityToken)
+                    return Result.Failure<ClaimsPrincipal>(ErrorsCodes.InvalidAccessToken);
+
+                // Accept common alg ids
+                var alg = jwtSecurityToken.Header.Alg;
+                var isAlgorithmValid =
+                    alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase) ||
+                    alg.Equals("http://www.w3.org/2001/04/xmldsig-more#hmac-sha256", StringComparison.OrdinalIgnoreCase);
+
+                return !isAlgorithmValid
+                    ? Result.Failure<ClaimsPrincipal>(ErrorsCodes.InvalidAlgorithm)
+                    : principal;
+            }
+            catch (SecurityTokenException ex)
+            {
+                return Result.Failure<ClaimsPrincipal>($"Token validation failed: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure<ClaimsPrincipal>($"An error occurred while validating the token: {ex.Message}");
+            }
         }
     }
 }

@@ -2,47 +2,47 @@ using System.Security.Claims;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Features.Authenticator.DTOs;
+using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
+namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
 public sealed class AzureExternalCallbackLoginHandler(
-    IExternalIdTokenValidator azureTokenValidator, // bound to Azure impl
+    IExternalIdTokenValidator azureTokenValidator,
     IUnitOfWork uow,
-    UserManager<User> userManager,
-    SignInManager<User> signInManager,
+    UserManager<EmployeeUser> userManager,
+    SignInManager<EmployeeUser> signInManager,
     ITokenService tokenService
-) : IRequestHandler<AzureExternalCallbackLoginCommand, Result<AuthResponse>>
+) : BaseExternalCallbackLoginHandler, IRequestHandler<AzureExternalCallbackLoginCommand, Result<AuthResponse>>
 {
     public async Task<Result<AuthResponse>> Handle(AzureExternalCallbackLoginCommand request, CancellationToken ct)
     {
-        if (!string.IsNullOrWhiteSpace(request.RemoteError))
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
+        if (!string.IsNullOrWhiteSpace(request.Error))
+            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.Error));
+        if (string.IsNullOrWhiteSpace(request.IdToken))
+            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
 
-        // 1) Validate Azure ID token → ClaimsPrincipal
         var principalResult = await azureTokenValidator.ValidateAsync(request.IdToken, ct);
         if (principalResult.IsFailure)
             return principalResult.ConvertFailure<AuthResponse>();
 
         var principal = principalResult.Value;
 
-        // 2) Extract claims
-        var provider = NormalizeProvider(request.Provider);               // "Azure"
-        var providerKey = principal.FindFirst("sub")?.Value
-                          ?? principal.FindFirst("oid")?.Value;
+        // Extract claims
+        var provider = "Azure";
+        var providerKey = GetProviderKey(principal);
 
         if (string.IsNullOrWhiteSpace(providerKey))
             return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginMissingProviderKey);
 
-        var email = principal.FindFirst(ClaimTypes.Email)?.Value
-                    ?? principal.FindFirst("preferred_username")?.Value;
+        var email = principal.FindFirst(ClaimTypes.Email)?.Value ??
+                    principal.FindFirst("preferred_username")?.Value ??
+                    principal.FindFirst("emails")?.Value;
 
         var givenName = principal.FindFirst(ClaimTypes.GivenName)?.Value
                         ?? principal.FindFirst("given_name")?.Value;
@@ -50,35 +50,20 @@ public sealed class AzureExternalCallbackLoginHandler(
         var surname   = principal.FindFirst(ClaimTypes.Surname)?.Value
                         ?? principal.FindFirst("family_name")?.Value;
 
-        var fullName  = principal.FindFirst(ClaimTypes.Name)?.Value
-                        ?? principal.FindFirst("name")?.Value;
+        var fullName  = principal.FindFirst(ClaimTypes.Name)?.Value ??
+                        principal.FindFirst("name")?.Value ??
+                        $"{principal.FindFirst(ClaimTypes.GivenName)?.Value} {principal.FindFirst(ClaimTypes.Surname)?.Value}".Trim();
 
-        // 3) If already linked, sign-in directly
+        // If already linked, sign-in directly
         var linkedUser = await userManager.FindByLoginAsync(provider, providerKey);
         if (linkedUser is not null)
         {
             await UpsertProviderClaimsAsync(userManager, linkedUser, provider, principal);
-
-            // No ExternalLoginInfo here; just sign-in cookie if you rely on it
             await signInManager.SignInAsync(linkedUser, isPersistent: false);
-
-            // Load required nav (e.g., UserType) if you display it
-            if (linkedUser.UserTypeId != default)
-            {
-                linkedUser.UserType = await uow.GetEntityRepository<UserType>().DbSet
-                    .FirstAsync(t => t.Id == linkedUser.UserTypeId, ct);
-            }
-
-            var access  = tokenService.GenerateAccessToken(linkedUser);
-            var refresh = tokenService.GenerateRefreshToken(linkedUser.Id);
-
-            return Result.Success(new AuthResponse(
-                new UserInfoResponse(linkedUser.Id, linkedUser.GivenNameEn, linkedUser.FamilyNameEn, linkedUser.Email!, linkedUser.Avatar),
-                new TokenResponse(access.Token, access.Expires, refresh.Token, refresh.Expires)
-            ));
+            return await IssueTokensAsync(linkedUser, userManager, tokenService, uow, ct);
         }
 
-        // 4) Not linked: attach to existing by email, or create new
+        // Not linked: attach to existing by email, or create new
         if (string.IsNullOrWhiteSpace(email))
             return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginEmailNotFound);
 
@@ -98,16 +83,11 @@ public sealed class AzureExternalCallbackLoginHandler(
             await UpsertProviderClaimsAsync(userManager, existingUser, provider, principal);
             await signInManager.SignInAsync(existingUser, isPersistent: false);
 
-            var access  = tokenService.GenerateAccessToken(existingUser);
-            var refresh = tokenService.GenerateRefreshToken(existingUser.Id);
-
-            return Result.Success(new AuthResponse(
-                new UserInfoResponse(existingUser.Id, existingUser.GivenNameEn, existingUser.FamilyNameEn, existingUser.Email!, existingUser.Avatar),
-                new TokenResponse(access.Token, access.Expires, refresh.Token, refresh.Expires)
-            ));
+            
+            return await IssueTokensAsync(existingUser, userManager, tokenService, uow, ct);
         }
 
-        // 5) Create user from claims
+        // Create user from claims
         if (string.IsNullOrWhiteSpace(givenName) || string.IsNullOrWhiteSpace(surname))
         {
             if (!string.IsNullOrWhiteSpace(fullName))
@@ -123,11 +103,11 @@ public sealed class AzureExternalCallbackLoginHandler(
             }
         }
 
-        var createUserRes = User.Register(email, $"{givenName} {surname}".Trim(), nameof(UserTypeIds.Applicant));
+        var createUserRes = User.Register(email, $"{givenName} {surname}".Trim(), UserTypeIds.Employee);
         if (createUserRes.IsFailure)
             return Result.Failure<AuthResponse>(createUserRes.Error);
 
-        var newUser = createUserRes.Value;
+        var newUser = (EmployeeUser)createUserRes.Value;
         var createRes = await userManager.CreateAsync(newUser);
         if (!createRes.Succeeded)
             return Result.Failure<AuthResponse>(string.Join(", ", createRes.Errors.Select(e => e.Description)));
@@ -138,31 +118,35 @@ public sealed class AzureExternalCallbackLoginHandler(
             return Result.Failure<AuthResponse>(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
 
         await UpsertProviderClaimsAsync(userManager, newUser, provider, principal);
-
-        // Your policy: require admin approval for brand-new external accounts
-        return Result.Failure<AuthResponse>(ErrorsCodes.YourAccountRequiresAdminApproval);
+        return await IssueTokensAsync(newUser, userManager, tokenService, uow, ct);
     }
+    private static string? GetProviderKey(ClaimsPrincipal p)
+    {
+        // Prefer Azure AD object id (oid). When mapping is ON it shows as the URI.
+        var oid =
+            p.FindFirst("oid")?.Value ??
+            p.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value ??
+            p.FindFirst(ClaimTypes.NameIdentifier)?.Value; // last-ditch
 
-    private static string NormalizeProvider(string provider)
-        => provider.Trim().ToLowerInvariant() switch
-        {
-            "azure" or "azuread" or "microsoft" => "Azure",
-            _ => provider
-        };
+        // For multi-tenant apps, pair with tid to be truly unique across tenants
+        var tid = p.FindFirst("tid")?.Value ??
+                  p.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid")?.Value;
 
-    // Mirrors your Google UpsertProviderClaimsAsync but works with ClaimsPrincipal
-    private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, string provider, ClaimsPrincipal principal)
+        if (!string.IsNullOrWhiteSpace(oid) && !string.IsNullOrWhiteSpace(tid))
+            return $"{tid}:{oid}"; // stable across tenants
+
+        // Fall back to sub (works for MSA/personal accounts too)
+        return oid ?? p.FindFirst("sub")?.Value;
+    }
+    private static async Task UpsertProviderClaimsAsync(UserManager<EmployeeUser> userManager, EmployeeUser user, string provider, ClaimsPrincipal principal)
     {
         var email        = principal.FindFirstValue(ClaimTypes.Email) ?? principal.FindFirst("preferred_username")?.Value;
         var givenName    = principal.FindFirstValue(ClaimTypes.GivenName) ?? principal.FindFirst("given_name")?.Value;
         var surname      = principal.FindFirstValue(ClaimTypes.Surname)   ?? principal.FindFirst("family_name")?.Value;
         var fullName     = principal.FindFirstValue(ClaimTypes.Name)      ?? principal.FindFirst("name")?.Value;
-        var picture      = principal.FindFirst("picture")?.Value;     // may not exist in Azure
-        var profile      = principal.FindFirst("profile")?.Value;     // may not exist in Azure
-        var locale       = principal.FindFirst("locale")?.Value;      // may not exist in Azure
-        var emailVerStr  = principal.FindFirst("email_verified")?.Value
-                           ?? principal.FindFirst("emails:verified")?.Value;
-        var emailVerified = string.Equals(emailVerStr, "true", StringComparison.OrdinalIgnoreCase);
+        var picture      = principal.FindFirst("picture")?.Value;
+        var profile      = principal.FindFirst("profile")?.Value;
+        var locale       = principal.FindFirst("locale")?.Value;
 
         if (string.IsNullOrWhiteSpace(user.GivenNameEn) && !string.IsNullOrWhiteSpace(givenName)) user.GivenNameEn = givenName;
         if (string.IsNullOrWhiteSpace(user.FamilyNameEn) && !string.IsNullOrWhiteSpace(surname))  user.FamilyNameEn = surname;
@@ -199,13 +183,7 @@ public sealed class AzureExternalCallbackLoginHandler(
         await Upsert("picture", picture);
         await Upsert("profile", profile);
         await Upsert("locale", locale);
-        await Upsert("email_verified", emailVerified ? "true" : "false");
-
-        if (!user.EmailConfirmed && emailVerified && !string.IsNullOrWhiteSpace(email) &&
-            string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase))
-        {
-            user.EmailConfirmed = true;
-        }
+        user.EmailConfirmed = true;
 
         await userManager.UpdateAsync(user);
     }

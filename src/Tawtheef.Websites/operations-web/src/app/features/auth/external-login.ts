@@ -4,18 +4,16 @@ import {MessageService} from 'primeng/api';
 import {EndpointsService} from '../../core/http/endpoints.service';
 import {TranslateService} from '@ngx-translate/core';
 import {LoadingService} from '../../core/services/loading.service';
-import {AuthenticationResult, PopupRequest} from '@azure/msal-browser';
 import {environment} from '../../../environments/environment';
-import {AuthResponse} from './login/models/auth-response.model';
 import {HttpClient} from '@angular/common/http';
-import {MsalService} from '@azure/msal-angular';
-import {msalInstance} from '../../core/config/msal-config';
 
 @Injectable({providedIn: 'root'})
 export class ExternalLoginService implements OnDestroy {
   private ngZone: NgZone = inject(NgZone);
   private popup: Window | null = null;
   private popupCloseListener: any;
+  private readonly popupWidth: number = 600;
+  private readonly popupHeight: number = 800;
 
   loading = false;
   protected constructor(loadingService: LoadingService, private authService: AuthService,
@@ -28,65 +26,43 @@ export class ExternalLoginService implements OnDestroy {
     window.addEventListener('message', this.handlePopupMessage.bind(this), false);
   }
 
-  async initializeMsal() {
-    await msalInstance.initialize();
-  }
   public async signInWithAzure() {
-    await this.initializeMsal();
+    const url = this.endpoints.auth.externalLogin("Azure");
+
+    // Close any existing popup
     if (this.popup) {
       this.popup.close();
       this.popup = null;
     }
 
-    const azureLoginRequest: PopupRequest = {
-      scopes: ["openid", "profile", "email"]
-    };
+    // Calculate centered position
+    const left = (window.screen.width - this.popupWidth) / 2;
+    const top = (window.screen.height - this.popupHeight) / 2;
 
-    msalInstance.loginPopup(azureLoginRequest)
-      .then((result: AuthenticationResult) => {
-        const idToken = result.idToken;
-        const data = {
-          provider: 'AzureAD',
-          idToken, // send id token to backend
-          account: result.account ? {
-            username: result.account.username,
-            homeAccountId: result.account.homeAccountId,
-            name: (result.account.idTokenClaims && (result.account.idTokenClaims as any).name) || ''
-          } : null
-        };
-        this.ngZone.run(() => {
-          this.http.post<AuthResponse>(this.endpoints.auth.externalLoginUsingToken, data).subscribe((user) => {
-            this.authService.externalLogin(user).subscribe({
-              next: (success) => {
-                if (!success) {
-                  this.messageService.add({
-                    severity: 'error',
-                    summary: 'Login Failed',
-                    detail: 'Could not authenticate with Azure AD'
-                  });
-                }
-              },
-              error: (err) => {
-                console.error('External login error', err);
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'Error',
-                  detail: 'An error occurred during authentication'
-                });
-              }
-            });
-          })
-        });
-      }).catch((error) => {
-      console.error('Azure login popup error', error);
+    // Open popup
+    this.popup = window.open(
+      url,
+      '_blank',
+      `width=${this.popupWidth},height=${this.popupHeight},top=${top},left=${left}`
+    );
+
+    // Check if popup was blocked
+    if (!this.popup || this.popup.closed || typeof this.popup.closed === 'undefined') {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Login Failed',
-        detail: (error && error.errorMessage) ? error.errorMessage : 'Azure authentication failed'
+        severity: 'warn',
+        summary: 'Popup Blocked',
+        detail: 'Please allow popups for this site to continue with external login'
       });
-    });
+      return;
+    }
 
-
+    // Use content-based approach to detect popup closing
+    this.popupCloseListener = (event: MessageEvent) => {
+      if (event.data === 'EXTERNAL_POPUP_CLOSED') {
+        this.cleanupPopup();
+      }
+    };
+    window.addEventListener('message', this.popupCloseListener);
   }
 
   private cleanupPopup(): void {

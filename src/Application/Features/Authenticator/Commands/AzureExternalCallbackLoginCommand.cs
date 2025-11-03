@@ -2,12 +2,11 @@ using CSharpFunctionalExtensions;
 using MediatR;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
-namespace Tawtheef.Application.Features.Authenticator.DTOs;
+namespace Tawtheef.Application.Features.Authenticator.Commands;
 
 public sealed record AzureExternalCallbackLoginCommand(
-    string Provider,
-    string IdToken,
-    string? ClientIp = null,
-    string? UserAgent = null,
-    string? RemoteError = null
+    string? IdToken = null,
+    string? AccessToken = null,
+    string? ReturnUrl = null,
+    string? Error = null
 ) : IRequest<Result<AuthResponse>>;

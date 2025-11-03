@@ -24,6 +24,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.FeatureManagement" />
         <PackageReference Include="Microsoft.Identity.Web" />
+        <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" />
         <PackageReference Include="Polly" />
         <PackageReference Include="RazorLight" />
         <PackageReference Include="Swashbuckle.AspNetCore" />

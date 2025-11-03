@@ -43,7 +43,7 @@ export class ExternalLoginService implements OnDestroy {
     // Open popup
     this.popup = window.open(
       urlWithState,
-      'ExternalLogin',
+      '_blank',
       `width=${this.popupWidth},height=${this.popupHeight},top=${top},left=${left}`
     );
 

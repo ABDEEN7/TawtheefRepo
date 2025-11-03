@@ -34,10 +34,10 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email!),
-            new("userType", user.UserType.BackendName),
+            new(nameof(user.UserType), user.UserType.BackendName),
             new(ClaimTypes.Role, user.UserType.BackendName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sid, (user.CurrentSessionId ?? Guid.Empty).ToString())
+            new(JwtRegisteredClaimNames.Sid, user.SecurityStamp ?? string.Empty)
         };
         if (extraClaims is not null)
             claims.AddRange(extraClaims);
@@ -57,7 +57,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
         return (new JwtSecurityTokenHandler().WriteToken(token), expires);
     }
     
-    public RefreshToken GenerateRefreshToken(Guid userId, string? ipAddress)
+    public RefreshToken GenerateRefreshToken(Guid userId, string sid, string? ipAddress)
     {
         return new RefreshToken
         {
@@ -66,6 +66,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
             CreatedDate = time.GetLocalNow().DateTime,
             UserId = userId,
             CreatedByIp = ipAddress,
+            SecurityStamp = sid   
         };
     }
 
@@ -96,5 +97,17 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
         
         await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);
         await uow.SaveChangesAsync(cancellationToken: CancellationToken.None);
+    }
+    
+    public async Task RevokeAllAsync(Guid userId, CancellationToken ct)
+    {
+        var refreshTokens = await uow.GetEntityRepository<RefreshToken>().DbSet
+            .Where(x => x.UserId == userId && x.RevokedAt == null)
+            .ToListAsync(ct);
+        
+        foreach (var token in refreshTokens)
+        {
+            await RevokeRefreshToken(token, null, "User logged out", null);
+        }
     }
 }
