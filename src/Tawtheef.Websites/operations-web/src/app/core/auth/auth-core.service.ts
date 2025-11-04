@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {UserService} from "./user.service";
 import {AuthStateService} from "./auth-state.service";
-import {NavigationService} from "./navigation.service";
+import {NavigationService} from "../services/navigation.service";
 import {catchError, map} from "rxjs/operators";
 import {AuthResponse} from "../models/auth-response.model";
 import {EndpointsService} from "../http/endpoints.service";

@@ -14,6 +14,6 @@ export let routes = {
     }
   },
   ...dashboardRoutes,
-  ...authRoutes,
+  auth:{...authRoutes},
   ...errorRoutes,
 };
