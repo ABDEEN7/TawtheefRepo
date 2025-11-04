@@ -1,4 +1,60 @@
 ﻿{
+  "app": {
+    "underConstruction": {
+      "websiteUnderConstruction1": "الموقع تحت",
+      "websiteUnderConstruction2": "التطوير",
+      "constructionMessage": "نحن نعمل على إصلاح المشكلة. سنعود قريباً",
+      "backToHome": "العودة إلى الصفحة الرئيسية"
+    },
+    "error500": {
+      "decorativeElement": "عنصر زخرفي",
+      "logoAltText": "شعار الشركة",
+      "serverErrorImage": "صورة توضيحية لخطأ في الخادم",
+      "oops500Error1": "عذراً! خطأ 500 داخلي",
+      "oops500Error2": "في الخادم",
+      "serverErrorMessage": "نعتذر ونعمل على إصلاح المشكلة. يرجى المحاولة مرة أخرى في وقت لاحق",
+      "backToHome": "العودة إلى الصفحة الرئيسية"
+    },
+    "error404": {
+      "decorativeElement": "عنصر زخرفي",
+      "logoAltText": "شعار الشركة",
+      "notFoundImage": "صورة توضيحية لصفحة غير موجودة",
+      "ohNoError": "أوه لا! خطأ",
+      "pageNotFoundMessage": "الصفحة التي طلبتها غير موجودة. ربما تكون القوة معك!",
+      "backToHome": "العودة للصفحة الرئيسية"
+    },
+    "comeSoon": {
+      "decorativeElement": "عنصر زخرفي",
+      "logoAltText": "شعار الشركة",
+      "comingSoon1": "سنصل",
+      "comingSoon2": " قريباً!!!",
+      "stayTunedMessage": "ترقبوا شيئاً رائعاً",
+      "daysAbbr": "يوم",
+      "hoursAbbr": "ساعة",
+      "minutesAbbr": "دقيقة",
+      "secondsAbbr": "ثانية",
+      "comingSoonImage": "صورة توضيحية للقريب العاجل",
+      "notifyMeTitle": "أخبرني عند إطلاق الموقع",
+      "enterEmailPlaceholder": "أدخل بريدك الإلكتروني",
+      "notifyMeButton": "أخبرني!"
+    },
+    "accessDenied": {
+      "decorativeElement": "عنصر زخرفي",
+      "logoAltText": "شعار الشركة",
+      "accessDeniedImage": "صورة توضيحية للوصول المرفوض",
+      "accessDeniedTitle": "تم رفض الوصول",
+      "accessDeniedMessage": "عذرًا، ليس لديك الإذن للوصول إلى هذه الصفحة.",
+      "goHome": "العودة إلى الصفحة الرئيسية",
+      "goDashboard": "الذهاب إلى لوحة التحكم",
+      "title1": "تم رفض الوصول",
+      "title2": "ليس لديك الإذن للوصول إلى هذه الصفحة.",
+      "content": "إذا كنت تعتقد أن هذا خطأ، يرجى الاتصال بالمسؤول.",
+      "contactAdmin": "اتصل بالمسؤول",
+      "login": "تسجيل الدخول",
+      "needHelp": "تحتاج مساعدة؟",
+      "contactSupport": "اتصل بالدعم"
+    }
+  },
   "auth": {
     "azure": {
       "title": "تسجيل الدخول - Azure",
