@@ -16,11 +16,8 @@ namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
 public partial class EmailService(
     IEmailQueue emailQueue,
-    IOptions<EmailSettings> emailSettings, 
     IEmailTemplateRenderer renderer) : IEmailService
 {
-    private readonly EmailSettings _emailSettings = emailSettings.Value;
-
     private async Task EnqueueUsingTemplate<T>(
         string templateKey, string subject,
         List<string> to, T model, List<string>? cc = null,
@@ -53,6 +50,16 @@ public partial class EmailService(
     public Task SendResetPassword(string email, string link)
         => EnqueueUsingTemplate("ResetPassword", "🔐 Reset Your Password",
             [email], new ResetPasswordModel(link));
+    
+    public Task SendTemplateAsync(
+        string templateKey, string subject, List<string> to, object model,
+        List<string>? cc = null, CancellationToken ct = default)
+        => EnqueueUsingTemplate(templateKey, subject, to, model, cc, ct);
+
+    public Task SendHtmlAsync(
+        string subject, List<string> to, string html,
+        List<string>? cc = null, CancellationToken ct = default)
+        => EnqueueUsingHtml(html, subject, to, cc, ct);
     
     [GeneratedRegex("<.*?>")]
     private static partial Regex HtmlAgilityPackRegex();

@@ -13,7 +13,7 @@ export let routes = {
         return '/';
     }
   },
+  auth: {...authRoutes},
   ...dashboardRoutes,
-  ...authRoutes,
   ...errorRoutes,
 };

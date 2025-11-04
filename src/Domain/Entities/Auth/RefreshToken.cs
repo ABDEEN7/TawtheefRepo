@@ -27,6 +27,7 @@ public class RefreshToken : EventEntity
     public string? UserDeviceId { get; init; }
     public Guid UserId { get; init; }
     public User? User { get; init; }
+    public required string SecurityStamp { get; set; }
 
     public void Revoked(DateTimeOffset now, string? revokedReason = null)
     {

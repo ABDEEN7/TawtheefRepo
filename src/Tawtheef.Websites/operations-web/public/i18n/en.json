@@ -1,25 +1,139 @@
 ﻿{
+  "app": {
+    "underConstruction": {
+      "websiteUnderConstruction1": "The Website is Under",
+      "websiteUnderConstruction2": "Construction",
+      "constructionMessage": "We are working on fixing the problem. We'll be back soon",
+      "backToHome": "Back to Home"
+    },
+    "error500": {
+      "decorativeElement": "Decorative element",
+      "logoAltText": "Company Logo",
+      "serverErrorImage": "Server Error Illustration",
+      "oops500Error1": "Oops! 500 Internal",
+      "oops500Error2": "Server Error",
+      "serverErrorMessage": "We apologize and are fixing the problem. Please try again at a later stage",
+      "backToHome": "Back to Home"
+    },
+    "error404": {
+      "decorativeElement": "Decorative element",
+      "logoAltText": "Company Logo",
+      "notFoundImage": "Page Not Found Illustration",
+      "ohNoError": "Oh No! Error",
+      "pageNotFoundMessage": "The page you requested could not be found. May the force be with you!",
+      "backToHome": "Back to Home"
+    },
+    "comeSoon": {
+      "decorativeElement": "Decorative element",
+      "logoAltText": "Company Logo",
+      "comingSoon1": "We are Coming",
+      "comingSoon2": " Soon!!!",
+      "stayTunedMessage": "Stay tuned for something amazing",
+      "daysAbbr": "days",
+      "hoursAbbr": "Hrs",
+      "minutesAbbr": "Min",
+      "secondsAbbr": "Sec",
+      "comingSoonImage": "Coming Soon Illustration",
+      "notifyMeTitle": "Notify me when the website is launched",
+      "enterEmailPlaceholder": "Enter your email",
+      "notifyMeButton": "Notify Me!"
+    },
+    "accessDenied": {
+      "decorativeElement": "Decorative element",
+      "logoAltText": "Company Logo",
+      "accessDeniedImage": "Access denied illustration",
+      "accessDeniedTitle": "Access Denied",
+      "accessDeniedMessage": "Sorry, you don't have permission to access this page.",
+      "goHome": "Go to Home",
+      "goDashboard": "Go to Dashboard",
+      "title1": "Access Denied",
+      "title2": "You don't have permission to access this page.",
+      "content": "If you think this is a mistake, please contact administrator.",
+      "contactAdmin": "Contact Administrator",
+      "login": "Login",
+      "needHelp": "Need Help?",
+      "contactSupport": "Contact Support"
+    }
+  },
+  "home": {
+    "title": "Tawtheef",
+    "nav": {
+      "about": "About",
+      "tracks": "Career Paths",
+      "why": "Why Us",
+      "success": "Success Stories",
+      "faq": "FAQ",
+      "login": "Login"
+    },
+    "hero": {
+      "kicker": "Qatar • Education Careers",
+      "title": "We attract talents to build Qatar’s educational future",
+      "subtitle": "The official recruitment platform of the Ministry of Education and Higher Education — a seamless digital experience.",
+      "cta1": "Explore Paths",
+      "cta2": "Login"
+    },
+    "about": {
+      "title": "About the Platform",
+      "desc": "A unified gateway for recruiting educators and administrators — with fairness, transparency, and a smooth digital journey."
+    },
+    "tracks": {
+      "title": "Career Paths",
+      "desc": "Choose the path that fits your expertise — Schools or Ministry departments.",
+      "cta": "Explore",
+      "items": {
+        "schools": {
+          "title": "Schools",
+          "desc": "Teaching and administrative roles in public schools — curricula, supervision, and more."
+        },
+        "ministry": {
+          "title": "Ministry",
+          "desc": "Specialized roles across MOEHE departments — IT, teacher affairs, planning & evaluation."
+        }
+      }
+    },
+    "why": {
+      "title": "Why Us",
+      "desc": "A fair, transparent, fully digital hiring journey.",
+      "items": {
+        "fair": { "title": "Fair Selection", "desc": "Clear criteria and equal opportunity." },
+        "digital": { "title": "Digital Journey", "desc": "Apply and track applications in one place." },
+        "transparent": { "title": "Transparency", "desc": "Real-time status updates and accurate notifications." },
+        "support": { "title": "Live Support", "desc": "Helpdesk ready to answer your questions." }
+      }
+    },
+    "success": {
+      "title": "Success Stories",
+      "desc": "Tangible results that demonstrate the platform’s impact.",
+      "placementRate": "Candidate placement rate",
+      "avgReviewTime": "Average review time",
+      "partners": "Education partners"
+    },
+    "faq": {
+      "title": "FAQ",
+      "desc": "Answers to common questions about registration and applications.",
+      "q1": "How do I create an account and start applying?",
+      "a1": "Click “Login”, complete your basic details, then open Jobs, pick a role, and submit your application.",
+      "q2": "Can I edit my application after submitting?",
+      "a2": "You can update your profile anytime. Submitted applications can’t be edited, but you may withdraw and reapply.",
+      "q3": "How long does review take?",
+      "a3": "We target an initial review within 48 hours. You’ll receive updates via email and your dashboard.",
+      "q4": "Are Qataris prioritized?",
+      "a4": "Selection follows MOEHE criteria with workforce localization considered whenever the required skills are available."
+    },
+    "footer": {
+      "rights": "All rights reserved © 2025",
+      "ministry": "Ministry of Education and Higher Education — State of Qatar"
+    }
+  },
   "auth": {
+    "azure": {
+      "title": "Sign in - Azure",
+      "hint": "Please use your organization account via Azure to sign in.",
+      "cta": "Sign in with Azure"
+    },
     "login": {
-      "title": "Login",
-      "subtitle": "Log in to your account to access courses",
-      "emailLabel": "Email",
-      "emailPlaceholder": "email@example.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "********",
-      "showPassword": "Show",
-      "hidePassword": "Hide",
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot password?",
-      "submit": "Login",
-      "loading": "Logging in...",
-      "or": "Or",
-      "google": "Sign in with Google",
-      "outlook": "Sign in with Outlook",
-      "azure": "Sign in with Azure AD",
-      "sso": "Sign in with SSO",
-      "noAccount": "Don't have an account?",
-      "registerNow": "Register now"
+      "ministry_name": "Ministry of Education and Higher Education",
+      "footer_owner": "Ministry of Education and Higher Education – IT Department"
     }
   },
   "validation": {

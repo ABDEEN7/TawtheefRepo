@@ -1,0 +1,77 @@
+@use '../../../../styles/utilities' as util;
+
+.seg-btn.active {
+  @include util.gradient-brand;
+}
+
+.login-shell {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100dvh;
+  display: grid; place-items: center;
+}
+
+.brand-card { overflow: hidden; }
+
+.brand-head {
+  @extend .u-gradient-brand;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 20px 22px;
+
+  .fw-bold { letter-spacing: 1px; }
+}
+
+.lang-switch {
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.3);
+  color: #fff; padding: .25rem .9rem; margin-top: 10px;
+  font-weight: 700; cursor: pointer; border-radius: var(--radius-pill);
+
+  &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+}
+
+.brand-body { padding: 22px; background: var(--card); }
+
+.hint { color: var(--muted); margin-bottom: 12px; }
+
+/* Base button */
+.btn-login {
+  width: 100%;
+  border: none; border-radius: 14px;
+  padding: 12px 14px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: .6rem; text-decoration: none;
+  transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+
+  .icon { width: 22px; height: 22px; display: inline-block; }
+
+  &:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+  &:focus-visible { outline: 3px solid rgba(0,0,0,.2); outline-offset: 2px; }
+  &:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+}
+
+/* Azure branding (#0078D4) with hover/active shades */
+.btn-azure {
+  background: #0078D4;
+  color: #fff;
+
+  .icon { filter: brightness(0) invert(1); } /* ensure white logo if svg is colored */
+
+  &:hover { background: #006CBE; }
+  &:active { background: #005FA8; transform: translateY(0); }
+}
+
+.footer { color: #6b7280; text-align: center; margin-top: 14px; }
+
+.logo {
+  height: 90px; display: block; margin: 0 auto 8px;
+  filter: grayscale(40%);
+}
+
+/* Optional dark tweak */
+@media (prefers-color-scheme: dark) {
+  .brand-body { background: var(--card); }
+}

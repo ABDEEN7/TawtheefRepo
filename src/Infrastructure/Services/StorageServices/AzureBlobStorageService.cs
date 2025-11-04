@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Serilog;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations;
+using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Infrastructure.Services.StorageServices;

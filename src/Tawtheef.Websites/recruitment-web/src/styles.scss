@@ -1,15 +1,16 @@
-:root {
-  --brand:#7b1e3a;
-  --accent:#a9445f;
-  --border:rgba(0,0,0,.08);
-  --muted:#6b7280;
-  --text:#1e1b2c;
-}
+@use 'styles/tokens';
+@import "aos/dist/aos.css";
 
 body {
-  background:#fff;
-  color:var(--text);
-  font-family:'Cairo', sans-serif;
-  line-height:1.65;
+  background:
+    radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%),
+    #fff;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+[dir="rtl"] .me-2 { margin-left: .5rem; margin-right: 0; }
+[dir="ltr"] .me-2 { margin-right: .5rem; margin-left: 0; }
+body {
   font-family: 'Cairo', sans-serif;
 }

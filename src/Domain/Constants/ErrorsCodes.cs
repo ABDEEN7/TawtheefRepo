@@ -31,6 +31,11 @@ public class ErrorsCodes
     public const string YourAccountRequiresAdminApproval = "YOUR_ACCOUNT_REQUIRES_ADMIN_APPROVAL";
     public const string SocialAccountNotLinked = "SOCIAL_ACCOUNT_NOT_LINKED";
     public const string UnlinkSocialAccountFailed = "UNLINK_SOCIAL_ACCOUNT_FAILED";
+    public const string ExternalLoginMissingTokens = "EXTERNAL_LOGIN_MISSING_TOKENS";
+    public static string ExternalLoginCreateUserFailed(IEnumerable<Microsoft.AspNetCore.Identity.IdentityError> error) =>
+        $"EXTERNAL_LOGIN_CREATE_USER_FAILED: {error}";
+    public static string ExternalLoginLinkFailed(IEnumerable<Microsoft.AspNetCore.Identity.IdentityError> error) =>
+        $"EXTERNAL_LOGIN_LINK_FAILED: {error}";
     #endregion
 
     #region Registration Errors
@@ -44,6 +49,7 @@ public class ErrorsCodes
     public const string InvalidUserIdentifier = "INVALID_USER_IDENTIFIER";
     public const string RefreshTokenNotFound = "REFRESH_TOKEN_NOT_FOUND";
     public const string InactiveRefreshToken = "INACTIVE_REFRESH_TOKEN";
+    public const string SessionRevoked = "SESSION_REVOKED";
     #endregion
 
     #region Verification Errors
@@ -53,7 +59,8 @@ public class ErrorsCodes
     public const string InvalidVerificationCode = "INVALID_VERIFICATION_CODE";
     public const string ResendCooldownActive = "RESEND_COOLDOWN_ACTIVE";
     public const string EmailAlreadyVerified = "EMAIL_ALREADY_VERIFIED";
-    public const string UserHasNotEmail = "USER_HAS_NOT_EMAIL";
+    public const string SendOtpLimitReached = "SEND_OTP_LIMIT_REACHED";
+    public const string UserPhoneRequired = "USER_PHONE_REQUIRED";
     #endregion
 
     #region Update Profile Errors

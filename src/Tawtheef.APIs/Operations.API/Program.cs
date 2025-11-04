@@ -37,6 +37,16 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 );
 
 // ----- Services -----
+builder.Services.Configure<ForwardedHeadersOptions>(o =>
+{
+    o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    
+    // Ensure KnownNetworks/KnownProxies are NOT blocking the internal traffic.
+    // In many cases, clearing them (as you did) is enough.
+    o.KnownNetworks.Clear();
+    o.KnownProxies.Clear();
+});
+
 builder.Services.AddApplicationLayer();
 builder.Services.AddInfrastructureLayer(builder.Configuration);
 builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
@@ -120,9 +130,17 @@ app.UseHttpsRedirection();
     app.UseExceptionHandler();
 #endif
 app.UseMiddleware<ResponseLoggingMiddleware>(); 
+app.Use(async (context, next) =>
+{
+    context.Request.Scheme = "https";
+    await next();
+});
+app.UseForwardedHeaders();
 
 app.UseCors(myCors);
+app.UseCookiePolicy(); 
 app.UseAuthentication();
+app.UseMiddleware<SingleSessionMiddleware>();
 app.UseAuthorization();
 
 

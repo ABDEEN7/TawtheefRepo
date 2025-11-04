@@ -1,10 +1,13 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
+using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -16,12 +19,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Domain.Configurations;
+using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
@@ -29,6 +37,7 @@ using Tawtheef.Infrastructure.Data.Interceptors;
 using Tawtheef.Infrastructure.Repositories;
 using Tawtheef.Infrastructure.Repositories.Base;
 using Tawtheef.Infrastructure.Services;
+using Tawtheef.Infrastructure.Services.HttpClients;
 using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.StorageServices;
 
@@ -73,6 +82,8 @@ namespace Tawtheef.Infrastructure
 
             // Authentication & Authorization
             services.AddAuthorizationAndAuthentication(configuration);
+            
+            RegisterHttpClients(services, configuration);
         }
 
         #region Configuration Helpers
@@ -145,57 +156,108 @@ namespace Tawtheef.Infrastructure
             ConfigureRateLimitingPolicies(services);
             ConfigureAuthorizationPolicies(services);
         }
-
+        private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
+            services.AddHttpClient<IQatarPassClient, QatarPassClient>();
+            services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
+            services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>();
+        }
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
-        {            
-            var authSchema = services.AddAuthentication("Smart")
-                .AddPolicyScheme("Smart", "JWT or Cookies", opt =>
+        {
+            services.Configure<CookiePolicyOptions>(options => {
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.OnAppendCookie = ctx =>
                 {
-                    opt.ForwardDefaultSelector = ctx =>
-                        ctx.Request.Headers.ContainsKey("Authorization") &&
-                        ctx.Request.Headers.Authorization.ToString().StartsWith("Bearer ")
-                            ? JwtBearerDefaults.AuthenticationScheme
-                            : IdentityConstants.ApplicationScheme;
-                    opt.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = async ctx =>
-                        {
-                            var userManager = ctx.HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
-
-                            var userId = ctx.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
-                                         ?? ctx.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                            var tokenSid = ctx.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sid);
-                            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(tokenSid))
-                            {
-                                ctx.Fail("Invalid token claims.");
-                                return;
-                            }
-
-                            var userGuid = Guid.Parse(userId);
-                            var user = await userManager.Users
-                                .Where(u => u.Id == userGuid)
-                                .Select(u => new { u.CurrentSessionId })
-                                .FirstOrDefaultAsync();
-
-                            if (user?.CurrentSessionId is null || !string.Equals(user.CurrentSessionId.ToString(), tokenSid, StringComparison.OrdinalIgnoreCase))
-                            {
-                                ctx.Fail("Session revoked.");
-                                return;
-                            }
-                        }
-                    };
-                })
-                .AddGoogle(o =>
+                    if (ctx.CookieOptions.SameSite == SameSiteMode.Lax)
+                        ctx.CookieOptions.SameSite = SameSiteMode.None;
+                    ctx.CookieOptions.Secure = true;
+                };
+                options.OnDeleteCookie = ctx =>
                 {
-                    o.ClientId = configuration["Authentication:Google:ClientId"]!;
-                    o.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
-                    o.SignInScheme = IdentityConstants.ExternalScheme;
-                });
+                    if (ctx.CookieOptions.SameSite == SameSiteMode.Lax)
+                        ctx.CookieOptions.SameSite = SameSiteMode.None;
+                    ctx.CookieOptions.Secure = true;
+                };
+            });
             
-            var azureConfig = configuration.GetSection("Authentication:AzureAd");
-                if(!string.IsNullOrEmpty(azureConfig.Value))
-                    authSchema.AddMicrosoftIdentityWebApi(azureConfig);
+            services
+            .AddAuthentication(options => {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+            })
+            .AddJwtBearer(options => {
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async ctx =>
+                    {
+                        var sidFromToken = ctx.Principal?.FindFirst("sid")?.Value;
+                        var userId = ctx.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                        if (string.IsNullOrEmpty(sidFromToken) || string.IsNullOrEmpty(userId))
+                        {
+                            ctx.Fail("Missing sid or user id.");
+                            return;
+                        }
+
+                        var sessionService =
+                            ctx.HttpContext.RequestServices.GetRequiredService<ISessionService>();
+                        var currentSid =
+                            await sessionService.GetCurrentAsync(userId, ctx.HttpContext.RequestAborted);
+
+                        if (!string.Equals(currentSid, sidFromToken, StringComparison.Ordinal))
+                        {
+                            ctx.Fail("Session changed. Please sign in again.");
+                        }
+                    }
+                };
+            });
+            
+            var googleConfig = configuration.GetSection("Authentication:Google");
+            if (googleConfig.Exists()) {
+                services.AddAuthentication()
+                .AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
+                    options.ClientId = googleConfig["ClientId"]!;
+                    options.ClientSecret = googleConfig["ClientSecret"]!;
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                    options.SaveTokens = true;
+                    options.Scope.Add("email");
+                    options.Scope.Add("profile");
+                });
+            }
+            
+            var azureConfig = configuration.GetSection("Authentication:Azure");
+            if (azureConfig.Exists())
+            {
+                services
+                    .AddAuthentication(options =>
+                    {
+                        options.DefaultScheme          = AuthSchemes.AppCookie;
+                        options.DefaultChallengeScheme = AuthSchemes.AzureOidc;
+                    })
+                    .AddCookie(AuthSchemes.AppCookie, o =>
+                    {
+                        o.Cookie.Name         = ".tawtheef.auth";
+                        o.Cookie.SameSite     = SameSiteMode.None;  // cross-site popup
+                        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                        o.SlidingExpiration   = true;
+                    })
+                    .AddMicrosoftIdentityWebApp(configuration, "Authentication:Azure",
+                        openIdConnectScheme: AuthSchemes.AzureOidc,
+                        cookieScheme: null,
+                        subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: false,
+                        displayName: "Azure");
+
+                services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o =>
+                {
+                    o.SignInScheme = AuthSchemes.AppCookie;
+                    o.ResponseType = OpenIdConnectResponseType.Code;
+                    o.SaveTokens   = true;
+
+                    o.Scope.Add("openid");
+                    o.Scope.Add("profile");
+                    o.Scope.Add("email");
+                });
+            }
         }
 
         /// <summary>
@@ -295,6 +357,10 @@ namespace Tawtheef.Infrastructure
             services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddHostedService<EmailDispatcher>();
+            
+            services.AddScoped<ISmsSender, HodhodSmsSender>();
+            services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
+            services.AddHostedService<NotificationDispatcher>();
         }
 
         /// <summary>
@@ -312,15 +378,16 @@ namespace Tawtheef.Infrastructure
                 var containerClient = serviceClient.GetBlobContainerClient(containerName);
                 return containerClient;
             });
-
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
             services.AddScoped<IFileStorageService, AzureBlobStorageService>();
             services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IVerificationService, VerificationService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+            services.AddScoped<IExternalTokenReader, CookieExternalTokenReader>();
             services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
 
             services.AddHttpClient<IRecaptchaService, RecaptchaService>();

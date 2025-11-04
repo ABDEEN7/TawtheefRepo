@@ -31,8 +31,6 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     
     [StringLength(2048)]
     public string? Avatar { get; set; }
-    public string? PreferredUiLang { get; set; }
-    public string? ProviderSource    { get; set; }
     public Guid UserTypeId { get; set; }
     public UserType? UserType { get; set; }
     
@@ -44,35 +42,37 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public Guid? DeletedById { get; set; }
     public DateTimeOffset? DeletedDate { get; set; }
     
-    public ICollection<Notification.Notification>? Notifications { get; init; }
+    public ICollection<Notification.Notification> Notifications { get; init; } = [];
     
     private readonly List<RefreshToken> _refreshTokens = [];
     public IReadOnlyCollection<RefreshToken> RefreshTokens  => _refreshTokens.AsReadOnly();
-    public DateTime? OtpExpiry { get; set; }
-    [MaxLength(length: 6)]
-    public string? OtpCode { get; set; }
-    public int OtpAttempts { get; set; }
     
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? CurrentAuthToken { get; set; }
-    public Guid? CurrentSessionId { get; private set; }
     [MaxLength(length: 128)]
     public string? ActiveDeviceId { get; private set; }
-    private readonly List<BaseEvent> _domainEvents = [];
+    
+    public string? OtpReference { get; private set; }
+    public DateTime? OtpExpiry { get; private set; }
+    public int OtpAttempts { get; set; }
+    public int OtpSends { get; private set; }       // for resend throttle
 
-    [NotMapped]
-    public IReadOnlyCollection<BaseEvent> DomainEvents => _domainEvents.AsReadOnly();
-
-    public void AddDomainEvent(BaseEvent e) => _domainEvents.Add(e);
-    public void RemoveDomainEvent(BaseEvent e) => _domainEvents.Remove(e);
-    public void ClearDomainEvents() => _domainEvents.Clear();
-
-    public void StartNewExclusiveSession(string deviceId, Guid sessionId)
+    public void SetOtp(string otpReference, DateTime expiryUtc)
     {
-        CurrentSessionId = sessionId;
-        ActiveDeviceId = deviceId;
+        OtpReference = otpReference;
+        OtpExpiry = expiryUtc;
+        OtpAttempts = 0;
+        OtpSends++;
     }
-    public void AddRefreshToken(string token, DateTimeOffset expires, string? ip = null, string? userDeviceId = null)
+
+    public void ClearOtp()
+    {
+        OtpReference = null;
+        OtpExpiry = null;
+        OtpAttempts = 0;
+        OtpSends = 0;
+    }
+    public void AddRefreshToken(string token, DateTimeOffset expires, string sid, string? ip = null, string? userDeviceId = null)
     {
         _refreshTokens.Add(new RefreshToken
         {
@@ -81,7 +81,8 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
             CreatedDate = DateTimeOffset.UtcNow,
             CreatedByIp = ip,
             UserId = Id,
-            UserDeviceId = userDeviceId
+            UserDeviceId = userDeviceId,
+            SecurityStamp = sid
         });
     }
     public void RemoveOldRefreshTokens(int keepCount)
@@ -99,42 +100,33 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         CurrentAuthToken = authToken;
         LastLoginDate = loginDate;
     }
-    public static Result<User> Register(
-        string email,
-        string displayName,
-        string userTypeRaw
-    )
+    public static Result<User> Register(string email, string displayName, Guid userTypeId)
     {
-        var name = ValueObjects.User.FullName.TryParse(displayName);
+        var name = FullName.TryParse(displayName);
         if (name.IsFailure) return name.ConvertFailure<User>();
 
-        var userType = UserTypeParser.TryFrom(userTypeRaw);
-        if (userType.IsFailure) return userType.ConvertFailure<User>();
-
-        var userResult = userType.Value == UserTypeIds.Applicant
+        var userResult = userTypeId == UserTypeIds.Applicant
             ? ApplicantUser.Register(email, displayName)
             : EmployeeUser.Register(email, displayName);
 
         if (userResult.IsFailure) return userResult;
         
         var user = userResult.Value;
-        user.UserTypeId = userType.Value;
+        user.UserTypeId = userTypeId;
         
-        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.GivenNameEn, userType.Value, DateTime.Now));
+        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.GivenNameEn, userTypeId, DateTime.Now));
 
         return Result.Success(user);
     }
     
-    public Result RequestPasswordReset(DateTime whenUtc)
-    {
-        if (!EmailConfirmed)
-            return Result.Failure(ErrorsCodes.EmailNotVerified);
+    //--------------------------------------------
+    
+    private readonly List<BaseEvent> _domainEvents = [];
 
-        AddDomainEvent(new UserPasswordResetRequestedEvent(
-            UserId: Id,
-            Email: Email ?? string.Empty,
-            OccurredOn: whenUtc));
+    [NotMapped]
+    public IReadOnlyCollection<BaseEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-        return Result.Success();
-    }
+    public void AddDomainEvent(BaseEvent e) => _domainEvents.Add(e);
+    public void RemoveDomainEvent(BaseEvent e) => _domainEvents.Remove(e);
+    public void ClearDomainEvents() => _domainEvents.Clear();
 }

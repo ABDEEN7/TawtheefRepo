@@ -3,6 +3,7 @@ import {Router, RouterLink} from "@angular/router";
 import {routes} from "../../../routes/routes";
 import {AuthService} from "../../../core/auth/auth.service";
 import {TranslatePipe} from "@ngx-translate/core";
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-access-denied',
@@ -10,7 +11,8 @@ import {TranslatePipe} from "@ngx-translate/core";
   styleUrl: './access-denied.component.scss',
   imports: [
     TranslatePipe,
-    RouterLink
+    RouterLink,
+    NgIf
   ],
   standalone: true
 })
