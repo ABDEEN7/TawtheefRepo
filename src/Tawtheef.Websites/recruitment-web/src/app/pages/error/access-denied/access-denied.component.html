@@ -41,7 +41,7 @@
       {{ 'app.accessDenied.goDashboard' | translate }}
     </a>
 
-    <a *ngIf="!(authService.isLoggedIn())" [routerLink]="routes.login" [queryParams]="{returnUrl: previousUrl}"
+    <a *ngIf="!(authService.isLoggedIn())" [routerLink]="routes.auth.login" [queryParams]="{returnUrl: previousUrl}"
        class="btn btn-outline-primary">
       <i class="fas fa-sign-in-alt me-2"></i>
       {{ 'app.accessDenied.login' | translate }}

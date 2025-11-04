@@ -4,12 +4,12 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {UserService} from "./user.service";
 import {AuthStateService} from "./auth-state.service";
-import {NavigationService} from "./navigation.service";
+import {NavigationService} from "../services/navigation.service";
 import {catchError, map} from "rxjs/operators";
-import {AuthResponse} from "../../features/auth/login/models/auth-response.model";
+import {AuthResponse} from "../models/auth/auth-response.model";
 import {EndpointsService} from "../http/endpoints.service";
 import {UserInfoModel} from "../../shared/models/user-info.model";
-import {TokenModel} from "../../features/auth/login/models/token.model";
+import {TokenModel} from "../models/auth/token.model";
 import {HttpService} from "../http/http.service";
 
 @Injectable({providedIn: 'root'})

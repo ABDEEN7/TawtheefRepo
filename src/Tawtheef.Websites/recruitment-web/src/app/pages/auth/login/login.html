@@ -1,0 +1,69 @@
+<div class="login-shell">
+  <div class="brand-card u-card">
+    <div class="brand-head u-gradient-brand">
+      <div class="w-100 text-center">
+        <img class="logo mb-2" src="assets/img/logo.png" alt="{{ 'auth.login.ministry_name' | translate }}">
+        <div class="fw-bold fs-4 text-white">{{ 'auth.login.tawtheef' | translate }}</div>
+      </div>
+
+      <button type="button"
+              class="lang-switch u-pill"
+              (click)="toggleLang()">
+        {{ currentLang === 'ar' ? 'English' : 'عربي' }}
+      </button>
+    </div>
+
+    <div class="brand-body">
+      <div class="mb-2 hint">{{ 'auth.login.choose_residency' | translate }}</div>
+
+      <div class="segment"
+           role="tablist"
+           aria-label="Residency selector"
+           tabindex="0"
+           (keydown)="onSegmentKey($event)">
+
+        <button type="button"
+                class="seg-btn"
+                [class.active]="residencyMode==='resident'"
+                (click)="setMode('resident')">
+          <i class="fa-solid fa-house me-2"></i>
+          {{ 'auth.login.mode_resident' | translate }}
+        </button>
+
+        <button type="button"
+                class="seg-btn"
+                [class.active]="residencyMode==='nonresident'"
+                (click)="setMode('nonresident')">
+          <i class="fa-solid fa-plane me-2"></i>
+          {{ 'auth.login.mode_nonresident' | translate }}
+        </button>
+      </div>
+
+      <div class="row g-3 mt-2">
+        <!-- Resident (Tawtheeq) -->
+        <div class="col-12" *ngIf="residencyMode==='resident'">
+          <button type="button"
+                  class="btn-login btn-tawtheeq"
+                  (click)="startLogin('tawtheeq')">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>{{ 'auth.login.tawtheeq_cta' | translate }}</span>
+          </button>
+        </div>
+
+        <!-- Non-resident (Google) -->
+        <div class="col-12" *ngIf="residencyMode==='nonresident'">
+          <button type="button"
+                  class="btn-login btn-google"
+                  (click)="startLogin('google')">
+            <i class="fa-brands fa-google"></i>
+            <span>{{ 'auth.login.google_cta' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="footer small">
+        © {{ 'auth.login.footer_owner' | translate }}
+      </div>
+    </div>
+  </div>
+</div>

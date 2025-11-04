@@ -1,0 +1,31 @@
+<div class="login-shell">
+  <div class="brand-card u-card">
+    <div class="brand-head u-gradient-brand">
+      <div class="w-100 text-center">
+        <img class="logo mb-2" src="assets/img/logo.png" alt="{{ 'auth.login.ministry_name' | translate }}">
+        <div class="fw-bold fs-4 text-white">{{ 'auth.azure.title' | translate }}</div>
+      </div>
+
+      <button type="button"
+              class="lang-switch u-pill"
+              (click)="toggleLang()">
+        {{ currentLang === 'ar' ? 'English' : 'عربي' }}
+      </button>
+    </div>
+
+    <div class="brand-body">
+      <p class="hint">{{ 'auth.azure.hint' | translate }}</p>
+
+      <button type="button"
+              class="btn-login btn-azure"
+              (click)="startAzure()">
+        <img class="icon" src="assets/icons/azure.svg" alt="">
+        <span>{{ 'auth.azure.cta' | translate }}</span>
+      </button>
+
+      <div class="footer small">
+        © {{ 'auth.login.footer_owner' | translate }}
+      </div>
+    </div>
+  </div>
+</div>

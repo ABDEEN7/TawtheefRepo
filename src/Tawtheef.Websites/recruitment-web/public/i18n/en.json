@@ -1,25 +1,84 @@
 ﻿{
   "auth": {
     "login": {
-      "title": "Login",
-      "subtitle": "Log in to your account to access courses",
-      "emailLabel": "Email",
-      "emailPlaceholder": "email@example.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "********",
-      "showPassword": "Show",
-      "hidePassword": "Hide",
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot password?",
-      "submit": "Login",
-      "loading": "Logging in...",
-      "or": "Or",
-      "google": "Sign in with Google",
-      "outlook": "Sign in with Outlook",
-      "azure": "Sign in with Azure AD",
-      "sso": "Sign in with SSO",
-      "noAccount": "Don't have an account?",
-      "registerNow": "Register now"
+      "ministry_name": "Ministry of Education and Higher Education",
+      "tawtheef": "Tawtheef",
+      "choose_residency": "Please select your status:",
+      "mode_resident": "I reside in Qatar",
+      "mode_nonresident": "I am not residing in Qatar",
+      "tawtheeq_cta": "Login via National Authentication (Residents in Qatar)",
+      "google_cta": "Sign in with Google (Non-residents)",
+      "footer_owner": "Ministry of Education and Higher Education – IT Department"
+    }
+  },
+  "home": {
+    "title": "Tawtheef",
+    "nav": {
+      "about": "About",
+      "tracks": "Career Paths",
+      "why": "Why Us",
+      "success": "Success Stories",
+      "faq": "FAQ",
+      "login": "Login"
+    },
+    "hero": {
+      "kicker": "Qatar • Education Careers",
+      "title": "We attract talents to build Qatar’s educational future",
+      "subtitle": "The official recruitment platform of the Ministry of Education and Higher Education — a seamless digital experience.",
+      "cta1": "Explore Paths",
+      "cta2": "Login"
+    },
+    "about": {
+      "title": "About the Platform",
+      "desc": "A unified gateway for recruiting educators and administrators — with fairness, transparency, and a smooth digital journey."
+    },
+    "tracks": {
+      "title": "Career Paths",
+      "desc": "Choose the path that fits your expertise — Schools or Ministry departments.",
+      "cta": "Explore",
+      "items": {
+        "schools": {
+          "title": "Schools",
+          "desc": "Teaching and administrative roles in public schools — curricula, supervision, and more."
+        },
+        "ministry": {
+          "title": "Ministry",
+          "desc": "Specialized roles across MOEHE departments — IT, teacher affairs, planning & evaluation."
+        }
+      }
+    },
+    "why": {
+      "title": "Why Us",
+      "desc": "A fair, transparent, fully digital hiring journey.",
+      "items": {
+        "fair": { "title": "Fair Selection", "desc": "Clear criteria and equal opportunity." },
+        "digital": { "title": "Digital Journey", "desc": "Apply and track applications in one place." },
+        "transparent": { "title": "Transparency", "desc": "Real-time status updates and accurate notifications." },
+        "support": { "title": "Live Support", "desc": "Helpdesk ready to answer your questions." }
+      }
+    },
+    "success": {
+      "title": "Success Stories",
+      "desc": "Tangible results that demonstrate the platform’s impact.",
+      "placementRate": "Candidate placement rate",
+      "avgReviewTime": "Average review time",
+      "partners": "Education partners"
+    },
+    "faq": {
+      "title": "FAQ",
+      "desc": "Answers to common questions about registration and applications.",
+      "q1": "How do I create an account and start applying?",
+      "a1": "Click “Login”, complete your basic details, then open Jobs, pick a role, and submit your application.",
+      "q2": "Can I edit my application after submitting?",
+      "a2": "You can update your profile anytime. Submitted applications can’t be edited, but you may withdraw and reapply.",
+      "q3": "How long does review take?",
+      "a3": "We target an initial review within 48 hours. You’ll receive updates via email and your dashboard.",
+      "q4": "Are Qataris prioritized?",
+      "a4": "Selection follows MOEHE criteria with workforce localization considered whenever the required skills are available."
+    },
+    "footer": {
+      "rights": "All rights reserved © 2025",
+      "ministry": "Ministry of Education and Higher Education — State of Qatar"
     }
   },
   "validation": {
