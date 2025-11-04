@@ -1,3 +1,15 @@
+@use 'styles/tokens';
+
+body {
+  background:
+    radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%),
+    #fff;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+[dir="rtl"] .me-2 { margin-left: .5rem; margin-right: 0; }
+[dir="ltr"] .me-2 { margin-right: .5rem; margin-left: 0; }
 body {
   font-family: 'Cairo', sans-serif;
 }

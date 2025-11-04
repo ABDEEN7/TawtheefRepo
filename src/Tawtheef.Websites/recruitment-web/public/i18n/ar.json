@@ -1,25 +1,14 @@
 ﻿{
   "auth": {
     "login": {
-      "title": "تسجيل الدخول",
-      "subtitle": "سجّل الدخول إلى حسابك للوصول إلى الدورات",
-      "emailLabel": "البريد الإلكتروني",
-      "emailPlaceholder": "email@example.com",
-      "passwordLabel": "كلمة المرور",
-      "passwordPlaceholder": "********",
-      "showPassword": "إظهار",
-      "hidePassword": "إخفاء",
-      "rememberMe": "تذكّرني",
-      "forgotPassword": "نسيت كلمة المرور؟",
-      "submit": "دخول",
-      "loading": "جاري الدخول...",
-      "or": "أو",
-      "google": "تسجيل مع Google",
-      "outlook": "تسجيل مع Outlook",
-      "azure": "تسجيل مع Azure AD",
-      "sso": "تسجيل عبر SSO",
-      "noAccount": "ليس لديك حساب؟",
-      "registerNow": "سجّل الآن"
+      "ministry_name": "وزارة التربية والتعليم والتعليم العالي",
+      "tawtheef": "توظيف",
+      "choose_residency": "يرجى تحديد حالتك:",
+      "mode_resident": "أنا مقيم في قطر",
+      "mode_nonresident": "لست مقيمًا في قطر",
+      "tawtheeq_cta": "الدخول عبر نظام التوثيق الوطني (مقيمون داخل قطر)",
+      "google_cta": "تسجيل الدخول بحساب Google (لغير المقيمين)",
+      "footer_owner": "وزارة التربية والتعليم والتعليم العالي – إدارة نظم المعلومات"
     }
   },
   "validation": {

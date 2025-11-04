@@ -1,0 +1,149 @@
+@use '../../../../styles/utilities' as util;
+
+.seg-btn.active {
+  @include util.gradient-brand;
+}
+
+.login-shell {
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+}
+
+.brand-card {
+  overflow: hidden;
+}
+
+.brand-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px;
+  flex-direction: column; /* stacked on all sizes; tweak if needed */
+  text-align: center;
+
+  .fw-bold {
+    letter-spacing: 1px;
+  }
+}
+
+.lang-switch {
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.3);
+  color: #fff;
+  padding: .25rem .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.brand-body {
+  padding: 22px;
+  background: var(--card);
+}
+
+.segment {
+  display: flex;
+  gap: 10px;
+  background: #f5f5f8;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.seg-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  color: #374151;
+  transition: transform .15s ease;
+
+  &.active {
+    @extend .u-gradient-brand;
+    box-shadow: 0 8px 18px rgba(123, 30, 58, .25);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.hint {
+  color: var(--muted);
+  font-size: .95rem;
+  margin-bottom: 10px;
+}
+.btn-login {
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+  background: #eef0f6;
+  color: #111;
+  text-decoration: none;
+
+  .icon {
+    width: 22px; height: 22px; display: inline-block;
+  }
+
+  i { color: inherit; } /* for Font Awesome if used */
+
+  &:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+  &:focus-visible { outline: 3px solid rgba(0,0,0,.2); outline-offset: 2px; }
+  &:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+}
+
+/* Tawtheeq / SSO button — exact brand gradient + white content */
+.btn-tawtheeq {
+  background: linear-gradient(135deg, #7b1e3a, #a9445f); /* lock to design */
+  color: #fff;
+
+  /* ensure white icon even if source SVG is colored */
+  .icon { filter: brightness(0) invert(1); }
+  i { color: #fff; }
+
+  &:hover { filter: brightness(1.03); }
+  &:active { filter: brightness(.97); transform: translateY(0); }
+}
+
+/* Google button — official red + full-color Google icon */
+.btn-google {
+  background: #DB4437;
+  color: #fff;
+
+  /* keep Google SVG colors intact */
+  .icon { filter: none; }
+
+  &:hover { background: #C33D32; }
+  &:active { background: #B0372D; transform: translateY(0); }
+}
+
+.footer {
+  color: #6b7280;
+  text-align: center;
+  margin-top: 14px;
+}
+
+.logo {
+  height: 100px;
+  display: block;
+  margin: 0 auto 8px;
+  filter: grayscale(40%);
+}

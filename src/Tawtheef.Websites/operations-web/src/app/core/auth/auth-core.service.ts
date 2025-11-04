@@ -6,10 +6,10 @@ import {UserService} from "./user.service";
 import {AuthStateService} from "./auth-state.service";
 import {NavigationService} from "./navigation.service";
 import {catchError, map} from "rxjs/operators";
-import {AuthResponse} from "../../features/auth/login/models/auth-response.model";
+import {AuthResponse} from "../models/auth-response.model";
 import {EndpointsService} from "../http/endpoints.service";
 import {UserInfoModel} from "../../shared/models/user-info.model";
-import {TokenModel} from "../../features/auth/login/models/token.model";
+import {TokenModel} from "../models/token.model";
 import {HttpService} from "../http/http.service";
 
 @Injectable({providedIn: 'root'})

@@ -4,7 +4,7 @@ import {AuthStateService} from "./auth-state.service";
 import {UserService} from "./user.service";
 import {Observable, of} from "rxjs";
 import {UserInfoModel} from "../../shared/models/user-info.model";
-import {AuthResponse} from "../../features/auth/login/models/auth-response.model";
+import {AuthResponse} from "../models/auth/auth-response.model";
 
 declare var google: any;
 @Injectable({providedIn: 'root'})

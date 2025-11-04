@@ -1,25 +1,14 @@
 ﻿{
   "auth": {
     "login": {
-      "title": "Login",
-      "subtitle": "Log in to your account to access courses",
-      "emailLabel": "Email",
-      "emailPlaceholder": "email@example.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "********",
-      "showPassword": "Show",
-      "hidePassword": "Hide",
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot password?",
-      "submit": "Login",
-      "loading": "Logging in...",
-      "or": "Or",
-      "google": "Sign in with Google",
-      "outlook": "Sign in with Outlook",
-      "azure": "Sign in with Azure AD",
-      "sso": "Sign in with SSO",
-      "noAccount": "Don't have an account?",
-      "registerNow": "Register now"
+      "ministry_name": "Ministry of Education and Higher Education",
+      "tawtheef": "Tawtheef",
+      "choose_residency": "Please select your status:",
+      "mode_resident": "I reside in Qatar",
+      "mode_nonresident": "I am not residing in Qatar",
+      "tawtheeq_cta": "Login via National Authentication (Residents in Qatar)",
+      "google_cta": "Sign in with Google (Non-residents)",
+      "footer_owner": "Ministry of Education and Higher Education – IT Department"
     }
   },
   "validation": {

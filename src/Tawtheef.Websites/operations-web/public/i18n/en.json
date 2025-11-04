@@ -1,25 +1,13 @@
 ﻿{
   "auth": {
+    "azure": {
+      "title": "Sign in - Azure",
+      "hint": "Please use your organization account via Azure to sign in.",
+      "cta": "Sign in with Azure"
+    },
     "login": {
-      "title": "Login",
-      "subtitle": "Log in to your account to access courses",
-      "emailLabel": "Email",
-      "emailPlaceholder": "email@example.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "********",
-      "showPassword": "Show",
-      "hidePassword": "Hide",
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot password?",
-      "submit": "Login",
-      "loading": "Logging in...",
-      "or": "Or",
-      "google": "Sign in with Google",
-      "outlook": "Sign in with Outlook",
-      "azure": "Sign in with Azure AD",
-      "sso": "Sign in with SSO",
-      "noAccount": "Don't have an account?",
-      "registerNow": "Register now"
+      "ministry_name": "Ministry of Education and Higher Education",
+      "footer_owner": "Ministry of Education and Higher Education – IT Department"
     }
   },
   "validation": {
