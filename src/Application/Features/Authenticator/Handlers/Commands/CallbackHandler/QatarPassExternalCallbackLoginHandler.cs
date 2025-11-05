@@ -1,10 +1,8 @@
-using System.Net.Http.Json;
 using System.Security.Claims;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Features.Authenticator.Commands;
@@ -17,7 +15,6 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
 public sealed class QatarPassExternalCallbackLoginHandler(
-    IUnitOfWork uow,
     UserManager<User> userManager,
     ITokenService tokenService,
     IQatarPassClient qatarPassClient
@@ -32,10 +29,9 @@ public sealed class QatarPassExternalCallbackLoginHandler(
             return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
 
         if (string.IsNullOrWhiteSpace(request.Authtoken))
-            return Result.Failure<AuthResponse>(ErrorsCodes
-                .ExternalLoginInfoNotFound); // or define QATAR_PASS_TOKEN_REQUIRED
+            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
 
-        // 1) Call Qatar Pass data endpoint
+        // Call Qatar Pass data endpoint
         var qp = await FetchQatarPassDataAsync(request.Authtoken, ct);
         if (qp.IsFailure) return Result.Failure<AuthResponse>(qp.Error);
 
@@ -45,15 +41,15 @@ public sealed class QatarPassExternalCallbackLoginHandler(
 
         var providerKey = data.UserQid.Trim();
 
-        // 2) Already linked?
+        // Already linked?
         var linkedUser = await userManager.FindByLoginAsync(Provider, providerKey);
         if (linkedUser != null)
         {
             await UpsertQatarPassClaimsAsync(userManager, linkedUser, data);
-            return await IssueTokensAsync(linkedUser, userManager, tokenService, uow, ct);
+            return await tokenService.IssueTokensAsync(linkedUser, ct);
         }
 
-        // 3) Try to attach to an existing local account (heuristics)
+        // Try to attach to an existing local account (heuristics)
         //    a) by normalized phone (if you trust it to be unique)
         User? candidate = null;
         var normalizedPhone = NormalizePhone(data.MobileNumber);
@@ -70,10 +66,10 @@ public sealed class QatarPassExternalCallbackLoginHandler(
                 return Result.Failure<AuthResponse>(string.Join(", ", linkRes.Errors.Select(e => e.Description)));
 
             await UpsertQatarPassClaimsAsync(userManager, candidate, data);
-            return await IssueTokensAsync(candidate, userManager, tokenService, uow, ct);
+            return await tokenService.IssueTokensAsync(candidate, ct);
         }
 
-        // 4) Create a new local user and link
+        // Create a new local user and link
         // Use a safe placeholder email that will never collide with real domains
         var placeholderEmail = $"qp{providerKey}@login.local";
         var newUserResult = User.Register(placeholderEmail, DefaultDisplayName, UserTypeIds.Applicant);
@@ -98,7 +94,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
             return Result.Failure<AuthResponse>(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
 
         await UpsertQatarPassClaimsAsync(userManager, newUser, data);
-        return await IssueTokensAsync(newUser, userManager, tokenService, uow, ct);
+        return await tokenService.IssueTokensAsync(newUser, ct);
     }
 
     // --- External call ---
@@ -132,12 +128,12 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         await Upsert("qid", data.UserQid);
         await Upsert("mobile", NormalizePhone(data.MobileNumber));
         await Upsert("nationality", data.Nationality);
+        await Upsert("passportNumber", data.PassportNumber);
         await Upsert("accountType", data.AccountType);
         await Upsert("accountSubType", data.AccountSubType);
         await Upsert("code", data.Code);
         await Upsert("accessTokenExpiration", data.AccessTokenExpiration);
         
-        // user.NationalId = data.UserQid;
         user.EmailConfirmed = true;
         await userManager.UpdateAsync(user);
     }

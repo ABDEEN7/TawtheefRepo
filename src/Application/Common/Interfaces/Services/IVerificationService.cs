@@ -9,5 +9,4 @@ public interface IVerificationService
     Task LogVerificationAttempt(string email);
     bool CanResendEmail(string email);
     int GetResendCooldown(string email);
-    Task<Result<UnverifiedEmailData>> SendVerificationEmail(string email, string? recipientName);
 }

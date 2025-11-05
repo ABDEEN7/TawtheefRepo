@@ -1,6 +1,6 @@
 ﻿import { inject } from '@angular/core';
 import { Router, CanActivateChildFn, CanMatchFn } from '@angular/router';
-import { AuthStateService } from './auth-state.service';
+import { AuthStateService } from '../auth/auth-state.service';
 import {routes} from '../../routes/routes';
 
 export const authGuard: CanActivateChildFn = (_route, state) => {
@@ -14,7 +14,6 @@ export const authMatchGuard: CanMatchFn = (_route, segments) => {
   return auth.ensureAuth(url);
 };
 
-/** optional: prevent going to /auth/* if already logged in */
 export const loggedOutOnlyGuard: CanMatchFn = () => {
   const auth = inject(AuthStateService);
   const router = inject(Router);

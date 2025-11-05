@@ -13,28 +13,4 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.Callback
 
 public abstract class BaseExternalCallbackLoginHandler
 {
-    protected static async Task<Result<AuthResponse>> IssueTokensAsync<T>(
-        T user,
-        UserManager<T> userManager,
-        ITokenService tokenService,
-        IUnitOfWork uow,
-        CancellationToken ct) where T : User
-    {
-        // load UserType nav (like your Google handler)
-        user.UserType = await uow.GetEntityRepository<UserType>().DbSet
-            .FirstAsync(t => t.Id == user.UserTypeId, ct);
-
-        await tokenService.RevokeAllAsync(user.Id, ct);
-        await userManager.UpdateSecurityStampAsync(user);
-        var securityStamp = await userManager.GetSecurityStampAsync(user);
-
-        var accessToken =
-            tokenService.GenerateAccessToken(user, [new Claim(JwtRegisteredClaimNames.Sid, securityStamp)]);
-        var refreshToken = tokenService.GenerateRefreshToken(user.Id, securityStamp);
-
-        return Result.Success(new AuthResponse(
-            new UserInfoResponse(user.Id, user.GivenNameEn, user.FamilyNameEn, user.Email!, user.Avatar),
-            new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
-        ));
-    }
 }

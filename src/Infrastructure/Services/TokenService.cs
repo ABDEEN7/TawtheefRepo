@@ -1,30 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Domain.Configurations;
+using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Configurations.Settings;
-using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Auth;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Infrastructure.Services;
 
-public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, IUnitOfWork uow) : ITokenService
+public class TokenService(IOptions<JwtSettings> jwtSettings, 
+    UserManager<User> userManager,
+    IProfileCompletenessService pcs,
+    TimeProvider time, IUnitOfWork uow) : ITokenService
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
         jwtSettings.Value.Key ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
+    public async Task<Result<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct)
+    {
+        user.UserType = await uow.GetEntityRepository<UserType>().DbSet
+            .FirstAsync(t => t.Id == user.UserTypeId, ct);
 
-    public (string Token, DateTime Expires) GenerateAccessToken(User user, IEnumerable<Claim>? extraClaims = null)
+        await RevokeAllAsync(user.Id, ct);
+        await userManager.UpdateSecurityStampAsync(user);
+        var securityStamp = await userManager.GetSecurityStampAsync(user);
+
+        var (isComplete, missing) = await pcs.EvaluateAsync(user.Id, ct);
+        var accessToken =
+            GenerateAccessToken(user, [
+                new Claim(JwtRegisteredClaimNames.Sid, securityStamp),
+                new("profile.completed", isComplete ? "true" : "false"),
+                new("profile.missing.count", missing.Length.ToString())
+            ]);
+        var refreshToken = GenerateRefreshToken(user.Id, securityStamp);
+        
+        var prefill = await pcs.BuildPrefillAsync(user, ct);
+        return Result.Success(new AuthResponse(
+            !isComplete,
+            new UserInfoResponse(user.Id, user.GivenNameEn, user.FamilyNameEn, user.Email!, user.Avatar),
+            new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires),
+            missing,
+            prefill
+        ));
+    }
+    
+    private (string Token, DateTime Expires) GenerateAccessToken(User user, IEnumerable<Claim>? extraClaims = null)
     {
         if(user.UserType is null)
             throw new ArgumentException("User type is null. Cannot generate access token.");
@@ -58,7 +86,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
         return (new JwtSecurityTokenHandler().WriteToken(token), expires);
     }
     
-    public RefreshToken GenerateRefreshToken(Guid userId, string sid, string? ipAddress)
+    private RefreshToken GenerateRefreshToken(Guid userId, string sid, string? ipAddress = null)
     {
         return new RefreshToken
         {
@@ -71,7 +99,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
         };
     }
 
-    public async Task RevokeDescendantRefreshTokens(RefreshToken? refreshToken, string ipAddress, string reason)
+    private async Task RevokeDescendantRefreshTokens(RefreshToken? refreshToken, string ipAddress, string reason)
     {
         if (!string.IsNullOrEmpty(refreshToken?.ReplacedByToken))
         {
@@ -89,7 +117,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
         }
     }
 
-    public async Task RevokeRefreshToken(RefreshToken token, string? ipAddress, string? reason = null, string? replacedByToken = null)
+    private async Task RevokeRefreshToken(RefreshToken token, string? ipAddress, string? reason = null, string? replacedByToken = null)
     {
         token.RevokedAt = time.GetLocalNow().DateTime;
         token.RevokedByIp = ipAddress;
@@ -108,7 +136,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings, TimeProvider time, 
         
         foreach (var token in refreshTokens)
         {
-            await RevokeRefreshToken(token, null, "User logged out", null);
+            await RevokeRefreshToken(token, null, "User logged out");
         }
     }
 }

@@ -17,10 +17,7 @@ namespace Tawtheef.Infrastructure.Services;
 
 public class VerificationService(
     IMemoryCache cache,
-    IOptions<AppConfigSettings> appConfig,
-    IEmailService emailService,
-    TimeProvider time,
-    UserManager<User> userManager)
+    TimeProvider time)
     : IVerificationService
 {
     private static string AttemptsKey(string email) => $"verification_attempts_{email}";
@@ -53,36 +50,5 @@ public class VerificationService(
         var elapsed = (time.GetUtcNow() - lastSent.Value).TotalSeconds;
         var cooldown = 60 - (int)elapsed;
         return Math.Max(0, cooldown);
-    }
-
-    public async Task<Result<UnverifiedEmailData>> SendVerificationEmail(string email, string? recipientName)
-    {
-        if (!CanResendEmail(email))
-            return Result.Failure<UnverifiedEmailData>(ErrorsCodes.ResendCooldownActive);
-
-        var token = await GenerateEmailVerificationToken(email);
-        if (token.IsFailure) return Result.Failure<UnverifiedEmailData>(token.Error);
-        if (string.IsNullOrWhiteSpace(appConfig.Value.FrontendUrl))
-            return Result.Failure<UnverifiedEmailData>(ErrorsCodes.SiteUrlNotConfigured);
-
-        var callbackUrl =
-            $"{appConfig.Value.FrontendUrl}/auth/verify-account?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(token.Value)}";
-
-        await emailService.SendConfirmationLinkEmailAsync(email, recipientName, callbackUrl);
-
-        cache.Set(LastSentKey(email), time.GetUtcNow(), TimeSpan.FromMinutes(1));
-        return Result.Success(new UnverifiedEmailData(email, CanResendEmail(email), GetResendCooldown(email)));
-    }
-
-    public async Task<Result<string>> GenerateEmailVerificationToken(string email)
-    {
-        var user = await userManager.FindByEmailAsync(email);
-        if (user is null)
-            return Result.Failure<string>(ErrorsCodes.UserNotFound);
-        if (user.EmailConfirmed)
-            return Result.Failure<string>(ErrorsCodes.EmailAlreadyVerified);
-
-        var raw = await userManager.GenerateEmailConfirmationTokenAsync(user);
-        return Result.Success(raw);
     }
 }

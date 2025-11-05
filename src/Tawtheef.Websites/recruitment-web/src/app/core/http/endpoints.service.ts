@@ -27,6 +27,7 @@ export class EndpointsService {
   };
 
   user= {
+    bootstrap: this.getFullUrl(`/me/bootstrap`),
     profile: {
       socialAccounts: this.getFullUrl(`/user/profile/social-accounts`),
     }

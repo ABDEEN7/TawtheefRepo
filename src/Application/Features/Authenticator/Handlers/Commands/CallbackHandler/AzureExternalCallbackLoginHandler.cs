@@ -14,7 +14,6 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.Callback
 
 public sealed class AzureExternalCallbackLoginHandler(
     IExternalIdTokenValidator azureTokenValidator,
-    IUnitOfWork uow,
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService
@@ -60,7 +59,7 @@ public sealed class AzureExternalCallbackLoginHandler(
         {
             await UpsertProviderClaimsAsync(userManager, linkedUser, provider, principal);
             await signInManager.SignInAsync(linkedUser, isPersistent: false);
-            return await IssueTokensAsync(linkedUser, userManager, tokenService, uow, ct);
+            return await tokenService.IssueTokensAsync(linkedUser, ct);
         }
 
         // Not linked: attach to existing by email, or create new
@@ -84,7 +83,7 @@ public sealed class AzureExternalCallbackLoginHandler(
             await signInManager.SignInAsync(existingUser, isPersistent: false);
 
             
-            return await IssueTokensAsync(existingUser, userManager, tokenService, uow, ct);
+            return await tokenService.IssueTokensAsync(existingUser, ct);
         }
 
         // Create user from claims
@@ -118,7 +117,7 @@ public sealed class AzureExternalCallbackLoginHandler(
             return Result.Failure<AuthResponse>(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
 
         await UpsertProviderClaimsAsync(userManager, newUser, provider, principal);
-        return await IssueTokensAsync(newUser, userManager, tokenService, uow, ct);
+        return await tokenService.IssueTokensAsync(newUser, ct);
     }
     private static string? GetProviderKey(ClaimsPrincipal p)
     {
