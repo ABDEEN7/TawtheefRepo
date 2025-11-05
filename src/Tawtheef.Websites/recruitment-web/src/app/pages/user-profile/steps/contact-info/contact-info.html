@@ -16,9 +16,49 @@
       <label class="form-label">البريد الإلكتروني</label>
       <input class="form-control" type="email" [(ngModel)]="form.email" placeholder="example@email.com">
     </div>
-    <div class="col-md-12">
-      <label class="form-label">العنوان</label>
+    <div class="col-md-6">
+      <label class="form-label">العنوان التفصيلي</label>
       <input class="form-control" [(ngModel)]="form.address" placeholder="المدينة - المنطقة - الشارع - المبنى">
     </div>
+    <div class="col-md-3">
+      <label class="form-label">مكان المقابلة</label>
+      <select id="interviewPlace" class="form-select sel2"></select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">البريد الإلكتروني</label>
+      <input id="email" class="form-control" type="email" placeholder="name@example.com">
+    </div>
   </div>
+  <div class="row g-3">
+    <hr class="my-4">
+    <div class="mb-2 fw-bold" style="color:var(--brand)">العنوان الوطني</div>
+    <div class="plate mb-3">
+      <div class="lbl">رقم العنوان:</div>
+      <div class="box"><small>المنطقة</small><span id="plateZone">—</span></div>
+      <div class="box"><small>الشارع</small><span id="plateStreet">—</span></div>
+      <div class="box"><small>المبنى</small><span id="plateBuilding">—</span></div>
+      <div class="box"><small>الوحدة</small><span id="plateUnit">—</span></div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-3"><label class="form-label">رقم المنطقة</label><input id="naZone" class="form-control"
+                                                                                [(ngModel)]="form.naZone"
+                                                                                inputmode="numeric"></div>
+      <div class="col-md-3"><label class="form-label">رقم الشارع</label><input id="naStreet" class="form-control"
+                                                                               [(ngModel)]="form.naStreet"
+                                                                               inputmode="numeric"></div>
+      <div class="col-md-3"><label class="form-label">رقم المبنى</label><input id="naBuilding" class="form-control"
+                                                                               [(ngModel)]="form.naBuilding"
+                                                                               inputmode="numeric"></div>
+      <div class="col-md-3"><label class="form-label">رقم الوحدة</label><input id="naUnit" class="form-control"
+                                                                               [(ngModel)]="form.naUnit"
+                                                                               inputmode="numeric"></div>
+      <div class="col-md-6">
+        <label class="form-label">إرفاق وثيقة العنوان الوطني (PDF/صورة)</label>
+        <div class="upload-drop" data-target="#naFile"><i class="fa fa-cloud-arrow-up"></i> اسحب وافلت أو انقر</div>
+        <input id="naFile" type="file" class="form-control d-none" accept=".pdf,image/*">
+        <div class="small text-muted" id="naFileInfo">—</div>
+      </div>
+    </div>
+  </div>
+
 </div>

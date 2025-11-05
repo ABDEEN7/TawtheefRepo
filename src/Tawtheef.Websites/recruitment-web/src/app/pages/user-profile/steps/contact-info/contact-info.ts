@@ -9,9 +9,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ContactInfo {
   form = {
     country: '',
+    dialCode: '',
     phone: '',
     email: '',
-    address: ''
+    address: '',
+    interviewPlace: '',
+    naZone: '',
+    naStreet: '',
+    naBuilding: '',
+    naUnit: ''
   };
 
   countries = ['قطر', 'السعودية', 'الإمارات', 'الكويت', 'الأردن', 'مصر'];

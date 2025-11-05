@@ -1,3 +1,38 @@
 .form-label {
   font-weight: 700;
 }
+
+.plate {
+  background: var(--plate);
+  color: #fff;
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 8px 20px rgba(30, 115, 190, .25);
+}
+
+.plate .box {
+  background: #fff;
+  color: #000;
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-align: center;
+  min-width: 84px;
+}
+
+.plate .box span {
+  display: block;
+  font-weight: 800;
+}
+
+.upload-drop {
+  border: 3px dashed var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  color: var(--muted);
+  transition: .2s;
+  cursor: pointer;
+}
