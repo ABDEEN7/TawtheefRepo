@@ -54,7 +54,7 @@ export class LanguageService {
 
   private apply(lang: Lang, opts: { emit: boolean }): void {
     // ngx-translate
-    this.translate.setDefaultLang(DEFAULT_LANG);
+    this.translate.setFallbackLang(DEFAULT_LANG);
     this.translate.use(lang);
 
     // html attributes

@@ -2,6 +2,7 @@ import {Component, input, Input, TemplateRef} from '@angular/core';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {CommonModule} from '@angular/common';
 import {routes} from '../../../routes/routes';
+import {LanguageService} from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,11 +13,9 @@ import {routes} from '../../../routes/routes';
 export class Navbar {
   routes = routes;
   @Input() menuTemplate: TemplateRef<any> | null | undefined;
-  constructor(public translate: TranslateService) {}
+  constructor(public language: LanguageService) {}
 
   switchLang(lang: 'ar' | 'en') {
-    this.translate.use(lang);
-    localStorage.setItem('lang', lang);
-    document.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    this.language.set(lang);
   }
 }

@@ -2,6 +2,7 @@ import {AfterViewInit, Component} from '@angular/core';
 import { TranslateService} from '@ngx-translate/core';
 import AOS from 'aos';
 import {routes} from '../../../routes/routes';
+import {LanguageService} from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-home',
@@ -44,12 +45,7 @@ export class IndexComponent implements AfterViewInit {
   ];
   expandedFaq: number | null = 0;
   toggleFaq(i: number) { this.expandedFaq = this.expandedFaq === i ? null : i; }
-  constructor(private translate: TranslateService) {
-    translate.addLangs(['ar', 'en']);
-    translate.setDefaultLang('ar');
-    const saved = localStorage.getItem('lang') || 'ar';
-    translate.use(saved);
-    document.dir = saved === 'ar' ? 'rtl' : 'ltr';
+  constructor() {
   }
 
   ngAfterViewInit(): void {
