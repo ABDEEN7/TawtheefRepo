@@ -1,5 +1,5 @@
-@use 'styles/tokens';
-@import "aos/dist/aos.css";
+@use "bootstrap/scss/bootstrap";
+@use "styles/tokens";
 
 body {
   background:
@@ -7,10 +7,5 @@ body {
     #fff;
   color: var(--text);
   line-height: 1.7;
-}
-
-[dir="rtl"] .me-2 { margin-left: .5rem; margin-right: 0; }
-[dir="ltr"] .me-2 { margin-right: .5rem; margin-left: 0; }
-body {
   font-family: 'Cairo', sans-serif;
 }
