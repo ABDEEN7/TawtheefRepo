@@ -14,6 +14,7 @@ export let routes = {
     }
   },
   auth: {...authRoutes},
+  profile_wizard: '/profile-wizard',
   ...dashboardRoutes,
   ...errorRoutes,
 };

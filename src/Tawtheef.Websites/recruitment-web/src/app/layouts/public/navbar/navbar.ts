@@ -1,4 +1,4 @@
-import {Component, Input, TemplateRef} from '@angular/core';
+import {Component, input, Input, TemplateRef} from '@angular/core';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {CommonModule} from '@angular/common';
 import {routes} from '../../../routes/routes';
@@ -11,7 +11,7 @@ import {routes} from '../../../routes/routes';
 })
 export class Navbar {
   routes = routes;
-  @Input() protected menu: TemplateRef<any> | null | undefined;
+  @Input() menuTemplate: TemplateRef<any> | null | undefined;
   constructor(public translate: TranslateService) {}
 
   switchLang(lang: 'ar' | 'en') {

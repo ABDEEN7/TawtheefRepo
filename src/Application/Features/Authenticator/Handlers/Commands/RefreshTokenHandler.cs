@@ -75,32 +75,11 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
             if (!string.Equals(sidFromAccess, refreshToken.SecurityStamp, StringComparison.Ordinal))
                 return Result.Failure<TokenResponse>(ErrorsCodes.SessionRevoked);
 
-            // Refresh token must match the user's current stamp
-            var currentStamp = await userManager.GetSecurityStampAsync(user);
-            if (!string.Equals(refreshToken.SecurityStamp, currentStamp, StringComparison.Ordinal))
-                return Result.Failure<TokenResponse>(ErrorsCodes.SessionRevoked);
-
-            // Rotate refresh token (do NOT rotate SecurityStamp here)
-            var newRefreshToken = tokenService.GenerateRefreshToken(user.Id, currentStamp, request.IpAddress);
-            await tokenService.RevokeRefreshToken(refreshToken, request.IpAddress, "Replaced by new token", newRefreshToken.Token);
-
-            user.AddRefreshToken(newRefreshToken.Token, newRefreshToken.Expires, currentStamp, request.IpAddress);
-            user.RemoveOldRefreshTokens(jwtSettings.Value.RefreshTokenRetentionCount ?? 5);
-
-            await userManager.UpdateAsync(user);
-
-            // Mint new access token with the SAME current stamp
-            var accessToken = tokenService.GenerateAccessToken(
-                user,
-                [new Claim(JwtRegisteredClaimNames.Sid, currentStamp)]
-            );
-
-            return Result.Success(new TokenResponse(
-                accessToken.Token,
-                accessToken.Expires,
-                newRefreshToken.Token,
-                newRefreshToken.Expires
-            ));
+            var authResponseResult = await tokenService.IssueTokensAsync(user, cancellationToken);
+            if (authResponseResult.IsFailure)
+                return Result.Failure<TokenResponse>(authResponseResult.Error);
+            
+            return Result.Success(authResponseResult.Value.Token!);
         }
 
         private Result<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
