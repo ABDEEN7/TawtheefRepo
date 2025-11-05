@@ -4,28 +4,48 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {UserService} from "./user.service";
 import {AuthStateService} from "./auth-state.service";
-import {NavigationService} from "../services/navigation.service";
 import {catchError, map} from "rxjs/operators";
-import {AuthResponse} from "../models/auth/auth-response.model";
-import {EndpointsService} from "../http/endpoints.service";
-import {UserInfoModel} from "../../shared/models/user-info.model";
-import {TokenModel} from "../models/auth/token.model";
-import {HttpService} from "../http/http.service";
+import {MessageService} from "primeng/api";
+import {EndpointsService} from '../http/endpoints.service';
+import {LoggerService} from '../services/logger.service';
+import {NavigationService} from '../services/navigation.service';
+import {UserInfoModel} from '../../shared/models/user-info.model';
+import {AuthResponse} from '../models/auth/auth-response.model';
+import {TokenModel} from '../models/auth/token.model';
 
 @Injectable({providedIn: 'root'})
 export class AuthCoreService {
   constructor(
-    private http: HttpService,
+    private logger: LoggerService,
+    private messageService: MessageService,
+    private http: HttpClient,
     private endpoints: EndpointsService,
     private tokenService: TokenService,
     private userService: UserService,
     private authState: AuthStateService,
-    private navigation: NavigationService,
+    private navigation: NavigationService
   ) {
   }
 
   get getToken(): string | null {
     return this.tokenService.getToken();
+  }
+
+
+  login(email: string, password: string): Observable<boolean> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    return this.http.post<AuthResponse>(
+      this.endpoints.auth.login,
+      { email, password },
+      { headers }
+    ).pipe(
+      switchMap(res => this.handleAuthResponse(res)),
+      catchError(err => {
+        this.logger.logError('Login failed', {err: err, email: email}).subscribe();
+        return of(false);
+      })
+    );
   }
 
   externalLogin(data: AuthResponse): Observable<boolean> {
@@ -34,19 +54,33 @@ export class AuthCoreService {
 
   private handleAuthResponse(res: AuthResponse): Observable<boolean> {
     const accessToken = res.token?.accessToken;
-    if (!accessToken) return of(false);
+    if (!accessToken) {
+      this.logger.logError('Login response missing accessToken', {err: res, email: res.user?.email || ''}).subscribe();
+      return of(false);
+    }
 
-    this.tokenService.persistTokens({
+    const stored = this.tokenService.tryPersistTokens({
       accessToken,
       refreshToken: res.token?.refreshToken || ''
     });
+    if (!stored) {
+      this.logger.logError('Failed to store tokens', {err: res, email: res.user?.email || ''}).subscribe();
+      this.messageService.add({severity: 'error', summary: 'Storage blocked', detail: 'Your browser is blocking storage. Try normal browser (not in-app/private).'});
+    }
 
     const user$ = res.user ? of(res.user) : this.loadCurrentUser();
+
     return user$.pipe(
       map(user => {
         this.updateAuthState(user, accessToken);
-        this.navigation.navigateAfterLogin(this.tokenService.getRoleFromToken(accessToken));
+        const rawRole = this.tokenService.getRoleFromToken(accessToken);
+        const role = (rawRole || '').toString().toLowerCase();
+        this.navigation.safeNavigateAfterLogin(role);
         return true;
+      }),
+      catchError(err => {
+        this.logger.logError('Login failed', {err: err, email: res.user?.email || ''}).subscribe();
+        return of(false);
       })
     );
   }
@@ -80,15 +114,5 @@ export class AuthCoreService {
         return of(null);
       })
     );
-  }
-
-  register(fullName: string, email: string, gender: string, password: string, type: string): Observable<any> {
-    return this.http.post<any>(this.endpoints.auth.register, {
-      name: fullName,
-      email,
-      password,
-      gender,
-      userType: type
-    });
   }
 }

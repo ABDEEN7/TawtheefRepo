@@ -1,16 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
-using System.Text.Json;
+﻿using System.Security.Claims;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Tawtheef.Application.Features.Authenticator.Commands;
+using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Application.Features.Authenticator.Queries;
-using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
@@ -35,6 +32,21 @@ namespace Recruitment.API.Controllers
                 return Unauthorized(UserId.Error);
             var result = await mediator.Send(new GetUserProfileQuery{ UserId = UserId.Value});
             return result.ToActionResult();
+        }
+        
+        [HttpGet("/api/me/bootstrap")]
+        public async Task<ActionResult<AuthResponse>> Bootstrap(
+            [FromServices] UserManager<User> userManager,
+            [FromServices] IProfileCompletenessService pcs,
+            CancellationToken ct)
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (user is null) return Unauthorized();
+
+            (bool isComplete, string[] missing) = await pcs.EvaluateAsync(user.Id, ct);
+            var prefill = await pcs.BuildPrefillAsync(user, ct);
+
+            return Ok(new AuthResponse(!isComplete, null,null,missing,prefill));
         }
     }
 }

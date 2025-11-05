@@ -1,15 +1,22 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 import {provideHttpClient} from '@angular/common/http';
 import {provideTranslateService} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    MessageService,
+    importProvidersFrom(NgbModule),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
@@ -21,6 +28,7 @@ export const appConfig: ApplicationConfig = {
       }),
       fallbackLang: 'en',
       lang: 'en'
-    })
+    }),
+    MessageService,
   ]
 };

@@ -2,7 +2,6 @@
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
@@ -13,7 +12,6 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
 public class GoogleExternalCallbackLoginHandler(
-    IUnitOfWork uow,
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService
@@ -42,7 +40,7 @@ public class GoogleExternalCallbackLoginHandler(
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
             await UpsertProviderClaimsAsync(userManager, linkedUser, info);
 
-            return await IssueTokensAsync(linkedUser, userManager, tokenService, uow, cancellationToken);
+            return await tokenService.IssueTokensAsync(linkedUser, cancellationToken);
         }
 
         // Not linked yet: use email to attach or create a new user
@@ -67,7 +65,7 @@ public class GoogleExternalCallbackLoginHandler(
 
             await signInManager.SignInAsync(existingUser, isPersistent: false);
             
-            return await IssueTokensAsync(existingUser, userManager, tokenService, uow, cancellationToken);
+            return await tokenService.IssueTokensAsync(existingUser, cancellationToken);
         }
 
         // Create new user from claims (names can be missing for Google/AzureAD on later logins)
@@ -112,7 +110,7 @@ public class GoogleExternalCallbackLoginHandler(
         await signInManager.UpdateExternalAuthenticationTokensAsync(info);
         await UpsertProviderClaimsAsync(userManager, newUser, info);
 
-        return await IssueTokensAsync(newUser, userManager, tokenService, uow, cancellationToken);
+        return await tokenService.IssueTokensAsync(newUser, cancellationToken);
     }
 
     private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, ExternalLoginInfo info)

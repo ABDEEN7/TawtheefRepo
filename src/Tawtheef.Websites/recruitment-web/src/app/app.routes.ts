@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import {UserLayout} from './layouts/internal/user-layout/user-layout';
 import {PublicLayout} from './layouts/public/public-layout/public-layout';
-import {authGuard, authMatchGuard, loggedOutOnlyGuard} from './core/auth/route-guards';
+import {authGuard, authMatchGuard, loggedOutOnlyGuard} from './core/guards/route-guards';
 
 export const routes: Routes = [
   {
@@ -40,6 +40,12 @@ export const routes: Routes = [
       {
         path: 'profile',
         // canMatch: [authMatchGuard],
+        loadChildren: () =>
+          import('./pages/user-profile/user-profile.module').then(m => m.ProfileModule),
+      },
+      {
+        path: 'dashboard',
+        // canMatch: [authMatchGuard, profileCompleteGuard],
         loadChildren: () =>
           import('./pages/user-profile/user-profile.module').then(m => m.ProfileModule),
       },

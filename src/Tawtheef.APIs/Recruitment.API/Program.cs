@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using reCAPTCHA.AspNetCore;
@@ -6,10 +7,12 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Tawtheef.Application;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Middlewares;
+using Tawtheef.Infrastructure.Services;
 
 const string myCors = "_myAllowSpecificOrigins";
 
@@ -40,7 +43,12 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 builder.Services.AddInfrastructureLayer(builder.Configuration);
 builder.Services.AddApplicationLayer();
 builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
-
+builder.Services.AddSingleton<IAuthorizationHandler, ProfileCompletedHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthPolicyNames.CompletedProfile, 
+        policy => policy.Requirements.Add(new ProfileCompletedRequirement()));
+});
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options => {
     options.InvalidModelStateResponseFactory = ctx =>

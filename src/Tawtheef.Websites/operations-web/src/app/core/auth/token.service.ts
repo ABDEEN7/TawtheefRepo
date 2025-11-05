@@ -1,6 +1,5 @@
 import {JwtHelperService} from "@auth0/angular-jwt";
 import {Injectable} from "@angular/core";
-import {UserType} from "../../shared/models/user-type";
 
 interface TokenPair {
   accessToken: string;
@@ -10,43 +9,51 @@ interface TokenPair {
 @Injectable({providedIn: 'root'})
 export class TokenService {
   private jwtHelper = new JwtHelperService();
-
-  constructor() {
-  }
+  private mem: {accessToken?: string; refreshToken?: string} = {}; // fallback
 
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    return this.safeGet('auth_token') ?? this.mem.accessToken ?? null;
   }
-
   getRefreshToken(): string | null {
-    return localStorage.getItem('refresh_token');
+    return this.safeGet('refresh_token') ?? this.mem.refreshToken ?? null;
   }
 
-  persistTokens(tokens: TokenPair): void {
-    if (tokens.accessToken) localStorage.setItem('auth_token', tokens.accessToken);
-    if (tokens.refreshToken) localStorage.setItem('refresh_token', tokens.refreshToken);
+
+  persistTokens(tokens: {accessToken: string; refreshToken: string}) {
+    this.tryPersistTokens(tokens);
   }
 
   clearTokens(): void {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('refresh_token');
+    try {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('refresh_token');
+    } catch {}
+    this.mem = {};
   }
 
-  decodeToken(token: string): any {
-    return this.jwtHelper.decodeToken(token);
-  }
-
-  isTokenExpired(token: string): boolean {
-    return this.jwtHelper.isTokenExpired(token);
-  }
-
+  decodeToken(token: string): any { return this.jwtHelper.decodeToken(token); }
+  isTokenExpired(token: string): boolean { return this.jwtHelper.isTokenExpired(token); }
   getClaim(token: string, claimName: string): string | undefined {
-    const decoded = this.decodeToken(token);
-    return decoded?.[claimName];
+    const decoded = this.decodeToken(token); return decoded?.[claimName];
   }
-
   getRoleFromToken(token: string): string {
     const decoded = this.decodeToken(token);
-    return decoded?.userType ?? UserType.UNKNOWN;
+    return decoded?.userType ?? '';
+  }
+
+  tryPersistTokens(tokens: {accessToken: string; refreshToken: string}): boolean {
+    try {
+      if (tokens.accessToken) localStorage.setItem('auth_token', tokens.accessToken);
+      if (tokens.refreshToken) localStorage.setItem('refresh_token', tokens.refreshToken);
+      return true;
+    } catch {
+      this.mem.accessToken = tokens.accessToken;
+      this.mem.refreshToken = tokens.refreshToken;
+      return false;
+    }
+  }
+
+  private safeGet(key: string): string | null {
+    try { return localStorage.getItem(key); } catch { return null; }
   }
 }

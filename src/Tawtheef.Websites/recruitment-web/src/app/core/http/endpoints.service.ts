@@ -10,6 +10,7 @@ export class EndpointsService {
     return `${this.apiConfig?.baseUrl}${endpoint}`;
   }
 
+  logger = this.getFullUrl(`/logger`);
   auth = {
     me: this.getFullUrl(this.getFullUrl(`/auth/me`)),
     login: this.getFullUrl(`/auth/login`),
@@ -26,6 +27,7 @@ export class EndpointsService {
   };
 
   user= {
+    bootstrap: this.getFullUrl(`/me/bootstrap`),
     profile: {
       socialAccounts: this.getFullUrl(`/user/profile/social-accounts`),
     }

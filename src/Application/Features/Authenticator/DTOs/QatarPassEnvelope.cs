@@ -17,4 +17,5 @@ public sealed class QatarPassAccount
     [JsonPropertyName("Code")] public string? Code { get; set; }
     [JsonPropertyName("Nationality")] public string? Nationality { get; set; }
     [JsonPropertyName("AccessTokenExpiration")] public string? AccessTokenExpiration { get; set; }
+    [JsonPropertyName("PassportNumber")] public string? PassportNumber { get; set; }
 }

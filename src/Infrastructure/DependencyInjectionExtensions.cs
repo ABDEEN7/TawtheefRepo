@@ -381,6 +381,7 @@ namespace Tawtheef.Infrastructure
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
             services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+            services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
             services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 
             services.AddScoped<ITokenService, TokenService>();
