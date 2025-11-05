@@ -10,6 +10,7 @@ export class EndpointsService {
     return `${this.apiConfig?.baseUrl}${endpoint}`;
   }
 
+  logger = this.getFullUrl(`/logger`);
   auth = {
     me: this.getFullUrl(this.getFullUrl(`/auth/me`)),
     login: this.getFullUrl(`/auth/login`),

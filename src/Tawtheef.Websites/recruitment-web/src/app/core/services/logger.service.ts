@@ -1,14 +1,14 @@
 import {Injectable} from '@angular/core';
+import {of} from "rxjs";
+import {catchError} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
-import {EndpointsService} from "../http/endpoints.service";
-import {HttpService} from "../http/http.service";
-import {Observable} from 'rxjs';
+import {EndpointsService} from '../http/endpoints.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoggerService {
-  constructor() {
+  constructor(private http: HttpClient, private endpoints: EndpointsService) {
   }
-  logError(context: string, error: any, metadata?: any): void {
+  logError(context: string, error: any, metadata?: any) {
     const timestamp = new Date().toISOString();
     const errorData = {
       timestamp,
@@ -16,12 +16,7 @@ export class LoggerService {
       error: this.serializeError(error),
       metadata
     };
-
-    // Console logging (development)
-    console.error('🚨 Upload Error:', errorData);
-
-    // Send to backend (production)
-    this.sendToBackend(errorData).subscribe();
+    return this.sendToBackend(errorData);
   }
 
   private serializeError(error: any): any {
@@ -36,7 +31,8 @@ export class LoggerService {
   }
 
   private sendToBackend(errorData: any) {
-    // Implement your backend error logging endpoint
-    return new Observable();
+    return this.http.post(this.endpoints.logger, errorData).pipe(
+      catchError(() => of(void 0))
+    );
   }
 }
