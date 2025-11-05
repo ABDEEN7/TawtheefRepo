@@ -1,0 +1,233 @@
+<!-- candidate-dashboard.component.html -->
+<nav class="navbar navbar-expand-lg sticky-top bg-white shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-brand" href="#">
+      <i class="fa-solid fa-user"></i> {{ 'candidate_dashboard.title' | translate }}
+    </a>
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <a href="profile.html" class="btn btn-outline-secondary btn-sm btn-pill">
+        <i class="fa fa-id-card"></i> {{ 'candidate_dashboard.profile' | translate }}
+      </a>
+    </div>
+  </div>
+</nav>
+
+<header class="py-3 header-hero">
+  <div class="container d-flex align-items-center justify-content-between">
+    <div>
+      <h4 class="mb-1 text-brand fw-bold">{{ 'candidate_dashboard.subtitle' | translate }}</h4>
+      <div class="text-muted small">{{ 'candidate_dashboard.description' | translate }}</div>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <span class="badge rounded-pill text-bg-light border">
+        {{ 'candidate_dashboard.total_records' | translate }}: {{ this.filteredRecords().length }}
+      </span>
+    </div>
+  </div>
+</header>
+
+<main class="py-4">
+  <div class="container">
+
+    <!-- KPIs -->
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center kpi">
+          <div class="small text-muted">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</div>
+          <div class="h4 fw-bold text-primary">{{ this.kpiInvited() }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center kpi">
+          <div class="small text-muted">{{ 'candidate_dashboard.kpi_under_review' | translate }}</div>
+          <div class="h4 fw-bold text-warning">{{ this.kpiUnderReview() }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center kpi">
+          <div class="small text-muted">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</div>
+          <div class="h4 fw-bold text-danger">{{ this.kpiWithdrawn() }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center kpi">
+          <div class="small text-muted">{{ 'candidate_dashboard.kpi_applied' | translate }}</div>
+          <div class="h4 fw-bold text-success">{{ this.kpiApplied() }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm p-3 mb-3">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
+          <select
+            [value]="this.statusFilter()"
+            (change)="this.onStatusFilterChange($event)"
+            class="form-select form-select-sm">
+            <option value="">{{ 'candidate_dashboard.filter_all' | translate }}</option>
+            <option value="invited">{{ 'candidate_dashboard.status_invited' | translate }}</option>
+            <option value="applied">{{ 'candidate_dashboard.status_applied' | translate }}</option>
+            <option value="under_review">{{ 'candidate_dashboard.status_under_review' | translate }}</option>
+            <option value="withdrawn">{{ 'candidate_dashboard.status_withdrawn' | translate }}</option>
+            <option value="closed">{{ 'candidate_dashboard.status_closed' | translate }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
+          <select
+            [value]="this.typeFilter()"
+            (change)="this.onTypeFilterChange($event)"
+            class="form-select form-select-sm">
+            <option value="">{{ 'candidate_dashboard.filter_all' | translate }}</option>
+            <option value="academic">{{ 'candidate_dashboard.type_academic' | translate }}</option>
+            <option value="administrative">{{ 'candidate_dashboard.type_administrative' | translate }}</option>
+            <option value="labor">{{ 'candidate_dashboard.type_labor' | translate }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
+          <input
+            [value]="this.entityFilter()"
+            (input)="this.onEntityFilterChange($event)"
+            class="form-control form-control-sm"
+            [placeholder]="'candidate_dashboard.placeholder_entity' | translate">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>
+          <input
+            [value]="this.searchFilter()"
+            (input)="this.onSearchFilterChange($event)"
+            class="form-control form-control-sm"
+            [placeholder]="'candidate_dashboard.placeholder_search' | translate">
+        </div>
+      </div>
+      <div class="text-end pt-2">
+        <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm btn-pill">
+          <i class="fa fa-rotate-left"></i> {{ 'candidate_dashboard.clear_filters' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>{{ 'candidate_dashboard.column_job' | translate }}</th>
+            <th>{{ 'candidate_dashboard.column_entity' | translate }}</th>
+            <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
+            <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
+            <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
+            <th class="text-end">{{ 'candidate_dashboard.column_actions' | translate }}</th>
+          </tr>
+          </thead>
+          <tbody>
+            @if (this.paginatedRecords().length === 0) {
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                  {{ 'candidate_dashboard.no_results' | translate }}
+                </td>
+              </tr>
+            } @else {
+              @for (record of this.paginatedRecords(); track record.id; let i = $index) {
+                <tr>
+                  <td>{{ (this.currentPage() - 1) * this.itemsPerPage() + i + 1 }}</td>
+                  <td class="fw-bold">{{ record.title }}</td>
+                  <td>{{ record.entity }}</td>
+                  <td>
+                    <span [class]="this.getTypeBadge(record.type)">
+                      {{ this.getTypeText(record.type) }}
+                    </span>
+                  </td>
+                  <td>
+                    @let statusInfo = this.getStatusPill(record.status);
+                    <span [class]="'status-pill ' + statusInfo.class">
+                      {{ statusInfo.text }}
+                    </span>
+                  </td>
+                  <td>{{ record.date }}</td>
+                  <td class="text-end">
+                    @let actions = this.getActionButtons(record);
+                    @if (actions.showApply) {
+                      <a [href]="'job-details.html?jobId=' + record.jobId"
+                         class="btn btn-sm btn-primary btn-pill">
+                        <i class="fa fa-paper-plane"></i> {{ 'candidate_dashboard.action_apply_now' | translate }}
+                      </a>
+                    }
+                    @if (actions.showView) {
+                      <a [href]="'my-applications.html?jobId=' + record.jobId"
+                         class="btn btn-sm btn-outline-secondary btn-pill">
+                        <i class="fa fa-eye"></i> {{ 'candidate_dashboard.action_view_request' | translate }}
+                      </a>
+                    }
+                    @if (actions.showTrack) {
+                      <a [href]="'my-applications.html?jobId=' + record.jobId"
+                         class="btn btn-sm btn-outline-secondary btn-pill">
+                        <i class="fa fa-hourglass-half"></i> {{ 'candidate_dashboard.action_track_status' | translate }}
+                      </a>
+                    }
+                    @if (actions.showDetails) {
+                      <a [href]="'job-details.html?jobId=' + record.jobId"
+                         class="btn btn-sm btn-outline-secondary btn-pill">
+                        <i class="fa fa-eye"></i> {{ 'candidate_dashboard.action_view_details' | translate }}
+                      </a>
+                    }
+                    @if (actions.showWithdraw) {
+                      <button (click)="this.withdrawApplication(record.id)"
+                              class="btn btn-sm btn-outline-danger btn-pill">
+                        <i class="fa fa-ban"></i> {{ 'candidate_dashboard.action_withdraw_request' | translate }}
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pager -->
+    <div class="d-flex justify-content-between align-items-center p-2 mt-1">
+      <div class="small-muted">
+        @if (this.paginationStats().total > 0) {
+          {{ 'candidate_dashboard.showing_results' | translate:{
+          start: this.paginationStats().start,
+          end: this.paginationStats().end,
+          total: this.paginationStats().total
+        } }}
+        } @else {
+          {{ 'candidate_dashboard.no_results' | translate }}
+        }
+      </div>
+      <nav>
+        <ul class="pagination m-0">
+          <li class="page-item" [class.disabled]="this.currentPage() === 1">
+            <a class="page-link" href="#" (click)="this.previousPage(); $event.preventDefault()">
+              {{ 'candidate_dashboard.pagination_previous' | translate }}
+            </a>
+          </li>
+
+          @for (pageNumber of this.getPageNumbers(); track pageNumber) {
+            <li class="page-item" [class.active]="this.currentPage() === pageNumber">
+              <a class="page-link" href="#" (click)="this.goToPage(pageNumber); $event.preventDefault()">
+                {{ pageNumber }}
+              </a>
+            </li>
+          }
+
+          <li class="page-item" [class.disabled]="this.currentPage() === this.totalPages()">
+            <a class="page-link" href="#" (click)="this.nextPage(); $event.preventDefault()">
+              {{ 'candidate_dashboard.pagination_next' | translate }}
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</main>
