@@ -1,40 +1,54 @@
 // candidate-dashboard.component.ts
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import { HttpClientModule } from '@angular/common/http';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { catchError, of } from 'rxjs';
 
-interface JobRecord {
-  id: number;
-  title: string;
-  entity: string;
-  type: 'academic' | 'administrative' | 'labor';
-  status: 'invited' | 'applied' | 'under_review' | 'withdrawn' | 'closed';
-  date: string;
-  jobId: number;
-}
+import {
+  CandidateDashboardService,
+  JobRecord,
+  ApiResponse,
+  JOB_TYPES,
+  JOB_TYPE_LABELS,
+  JOB_STATUSES,
+  JOB_STATUS_LABELS,
+  STATUS_PILL_CLASSES,
+  TYPE_BADGE_CLASSES,
+  FILTER_OPTIONS,
+  ACTION_CONFIGS,
+  FilterOption,
+  JobType,
+  JobStatus
+} from './candidate-dashboard.service';
 
 @Component({
   selector: 'app-candidate-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, HttpClientModule, TranslatePipe],
   templateUrl: './candidate-dashboard.html',
   styleUrls: ['./candidate-dashboard.scss']
 })
 export class CandidateDashboard implements OnInit {
+  private translate = inject(TranslateService);
+  private candidateService = inject(CandidateDashboardService);
 
-  // Sample data
-  private readonly DATA: JobRecord[] = [
-    {id:1, title:'معلم رياضيات', entity:'إدارة شؤون المدارس', type:'academic', status:'invited', date:'2025-10-28', jobId:1},
-    {id:2, title:'أخصائي موارد بشرية', entity:'إدارة الموارد البشرية', type:'administrative', status:'applied', date:'2025-10-28', jobId:2},
-    {id:3, title:'فني شبكات', entity:'إدارة نظم المعلومات', type:'labor', status:'invited', date:'2025-10-25', jobId:3},
-    {id:4, title:'مشرف نشاط طلابي', entity:'إدارة التقييم', type:'academic', status:'withdrawn', date:'2025-10-20', jobId:4},
-    {id:5, title:'منسق مختبرات', entity:'إدارة التقييم', type:'academic', status:'under_review', date:'2025-10-30', jobId:5},
-    {id:6, title:'كاتب إداري', entity:'إدارة الموارد البشرية', type:'administrative', status:'closed', date:'2025-10-10', jobId:6}
-  ];
+  // Constants exposed to template
+  readonly JOB_TYPES = JOB_TYPES;
+  readonly JOB_STATUSES = JOB_STATUSES;
+  readonly FILTER_OPTIONS = FILTER_OPTIONS;
+
+  // Loading states
+  isLoading = signal(true);
+  isWithdrawing = signal<number | null>(null);
+  isRefreshing = signal(false);
+
+  // Error state
+  error = signal<string | null>(null);
 
   // Reactive signals
-  allRecords = signal<JobRecord[]>(this.DATA);
+  allRecords = signal<JobRecord[]>([]);
   currentPage = signal(1);
   itemsPerPage = signal(10);
 
@@ -69,19 +83,19 @@ export class CandidateDashboard implements OnInit {
 
   // Computed KPIs
   kpiInvited = computed(() =>
-    this.filteredRecords().filter(r => r.status === 'invited').length
+    this.filteredRecords().filter(r => r.status === JOB_STATUSES.INVITED).length
   );
 
   kpiUnderReview = computed(() =>
-    this.filteredRecords().filter(r => r.status === 'under_review').length
+    this.filteredRecords().filter(r => r.status === JOB_STATUSES.UNDER_REVIEW).length
   );
 
   kpiWithdrawn = computed(() =>
-    this.filteredRecords().filter(r => r.status === 'withdrawn').length
+    this.filteredRecords().filter(r => r.status === JOB_STATUSES.WITHDRAWN).length
   );
 
   kpiApplied = computed(() =>
-    this.filteredRecords().filter(r => r.status === 'applied').length
+    this.filteredRecords().filter(r => r.status === JOB_STATUSES.APPLIED).length
   );
 
   // Computed pagination info
@@ -99,17 +113,49 @@ export class CandidateDashboard implements OnInit {
     return { start, end, total };
   });
 
-  // Helper method for pagination numbers
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    for (let i = 1; i <= this.totalPages(); i++) {
-      pages.push(i);
-    }
-    return pages;
+  ngOnInit() {
+    this.loadData();
   }
 
-  ngOnInit() {
-    // Initialize any required setup
+  // Load initial data
+  loadData(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.candidateService.getJobRecords()
+      .pipe(
+        catchError(err => {
+          this.error.set('Failed to load data. Please try again.');
+          console.error('Error loading data:', err);
+          return of({ data: [], message: 'Error', success: false } as ApiResponse<JobRecord[]>);
+        })
+      )
+      .subscribe(response => {
+        this.isLoading.set(false);
+        if (response.success) {
+          this.allRecords.set(response.data);
+        }
+      });
+  }
+
+  // Refresh data
+  refreshData(): void {
+    this.isRefreshing.set(true);
+    this.candidateService.getJobRecords()
+      .pipe(
+        catchError(err => {
+          this.error.set('Failed to refresh data.');
+          console.error('Error refreshing data:', err);
+          return of({ data: this.allRecords(), message: 'Error', success: false } as ApiResponse<JobRecord[]>);
+        })
+      )
+      .subscribe(response => {
+        this.isRefreshing.set(false);
+        if (response.success) {
+          this.allRecords.set(response.data);
+          this.currentPage.set(1);
+        }
+      });
   }
 
   // Filter methods
@@ -167,52 +213,77 @@ export class CandidateDashboard implements OnInit {
 
   // Action methods
   withdrawApplication(recordId: number): void {
-    this.allRecords.update(records =>
-      records.map(record =>
-        record.id === recordId ? { ...record, status: 'withdrawn' as const } : record
+    this.isWithdrawing.set(recordId);
+
+    this.candidateService.withdrawApplication(recordId)
+      .pipe(
+        catchError(err => {
+          this.error.set('Failed to withdraw application.');
+          console.error('Error withdrawing application:', err);
+          return of({ data: { id: recordId }, message: 'Error', success: false } as ApiResponse<{id: number}>);
+        })
       )
-    );
-    this.currentPage.set(1);
+      .subscribe(response => {
+        this.isWithdrawing.set(null);
+        if (response.success) {
+          this.allRecords.update(records =>
+            records.map(record =>
+              record.id === recordId ? { ...record, status: JOB_STATUSES.WITHDRAWN } : record
+            )
+          );
+          this.currentPage.set(1);
+        }
+      });
+  }
+
+  // Helper method for pagination numbers
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages(); i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 
   // Helper methods for templates
-  getTypeBadge(type: string): string {
-    const classes = {
-      academic: 'badge-soft academic',
-      administrative: 'badge-soft administrative',
-      labor: 'badge-soft labor'
-    };
-    return classes[type as keyof typeof classes] || 'badge-soft';
+  getTypeBadge(type: JobType): string {
+    return TYPE_BADGE_CLASSES[type] || 'badge-soft';
   }
 
-  getTypeText(type: string): string {
-    const texts = {
-      academic: 'أكاديمي',
-      administrative: 'إداري',
-      labor: 'عمالي'
-    };
-    return texts[type as keyof typeof texts] || type;
+  getTypeText(type: JobType): string {
+    return JOB_TYPE_LABELS[type] || type;
   }
 
-  getStatusPill(status: string): { class: string, text: string } {
-    const statusMap = {
-      invited: { class: 'status-invited', text: 'دعوة جديدة' },
-      applied: { class: 'status-applied', text: 'تم التقديم' },
-      under_review: { class: 'status-underreview', text: 'قيد المراجعة' },
-      withdrawn: { class: 'status-withdrawn', text: 'ملغي' },
-      closed: { class: 'status-closed', text: 'مغلقة' }
-    };
-
-    return statusMap[status as keyof typeof statusMap] || { class: 'status-closed', text: status };
-  }
-
-  getActionButtons(record: JobRecord): { showApply: boolean, showView: boolean, showTrack: boolean, showDetails: boolean, showWithdraw: boolean } {
+  getStatusPill(status: JobStatus): { class: string, text: string } {
     return {
-      showApply: record.status === 'invited',
-      showView: record.status === 'applied',
-      showTrack: record.status === 'under_review',
-      showDetails: ['withdrawn', 'closed'].includes(record.status),
-      showWithdraw: record.status === 'applied'
+      class: STATUS_PILL_CLASSES[status] || 'status-closed',
+      text: JOB_STATUS_LABELS[status] || status
     };
   }
+
+  getActionButtons(record: JobRecord): {
+    showApply: boolean;
+    showView: boolean;
+    showTrack: boolean;
+    showDetails: boolean;
+    showWithdraw: boolean;
+  } {
+    return ACTION_CONFIGS[record.status] || ACTION_CONFIGS[JOB_STATUSES.CLOSED];
+  }
+
+  // Retry loading data
+  retry(): void {
+    this.loadData();
+  }
+
+  // Get filter options with translation support - FIXED VERSION
+  getTranslatedFilterOptions(): { status: FilterOption[], type: FilterOption[] } {
+    return {
+      status: [...FILTER_OPTIONS.STATUS],
+      type: [...FILTER_OPTIONS.TYPE]
+    };
+  }
+
+  // Alternative simpler approach - just remove the method if not needed
+  // Since we're using FILTER_OPTIONS directly in the template
 }

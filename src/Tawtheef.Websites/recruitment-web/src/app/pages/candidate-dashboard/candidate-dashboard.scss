@@ -1,3 +1,18 @@
+// candidate-dashboard.component.scss
+:root {
+  --brand: #7b1e3a;
+  --accent: #a9445f;
+  --muted: #6b7280;
+  --text: #1e1b2c;
+  --border: rgba(0, 0, 0, 0.08);
+}
+
+body {
+  font-family: 'Cairo', system-ui;
+  background: #fff;
+  color: var(--text);
+}
+
 .text-brand {
   color: var(--brand);
 }
@@ -86,6 +101,17 @@
   line-height: 1.2;
 }
 
+// Loading states
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 // RTL specific styles
 :host-context([dir="rtl"]) {
   .ms-auto {
@@ -99,5 +125,10 @@
 
   .pagination {
     direction: ltr;
+  }
+
+  .me-2 {
+    margin-right: 0 !important;
+    margin-left: 0.5rem !important;
   }
 }
