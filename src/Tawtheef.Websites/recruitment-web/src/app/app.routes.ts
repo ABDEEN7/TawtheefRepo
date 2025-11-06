@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import {UserLayout} from './layouts/internal/user-layout/user-layout';
 import {PublicLayout} from './layouts/public/public-layout/public-layout';
 import {authGuard, authMatchGuard, loggedOutOnlyGuard} from './core/guards/route-guards';
+import {CandidateDashboard} from './pages/candidate-dashboard/candidate-dashboard';
 
 export const routes: Routes = [
   {
@@ -49,6 +50,13 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/user-profile/user-profile.module').then(m => m.ProfileModule),
       },
+      {
+        path: 'candidate-dashboard',
+        loadComponent: () =>
+          import('./pages/candidate-dashboard/candidate-dashboard').then(
+            c => c.CandidateDashboard
+          )
+      }
     ],
   },
 
