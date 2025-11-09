@@ -1,0 +1,31 @@
+﻿{
+  "PROFILE_LIST": {
+    "TITLE": "Employment Admin Dashboard",
+    "SUBTITLE": "List of candidate submitted profiles",
+    "DEMO_VERSION": "Demo version (HTML only)",
+    "RECEIVED_FILES": "Received Files",
+    "SEARCH_PLACEHOLDER": "Search by name / specialization / status / ID…",
+    "ALL_STATUSES": "All Statuses",
+    "STATUS_PENDING_REVIEW": "Pending Review",
+    "STATUS_UNDER_APPROVAL": "Under Approval",
+    "STATUS_COMPLETED": "Completed",
+    "STATUS_NEEDS_CORRECTION": "Needs Correction",
+    "ALL_ENTITIES": "All Entities",
+    "ENTITY_SCHOOLS": "Schools",
+    "ENTITY_MINISTRY": "Ministry",
+    "PAGE": "Page",
+    "CLEAR": "Clear",
+    "NAME": "Name",
+    "SPECIALIZATION": "Specialization",
+    "TARGET_ENTITY": "Target Entity",
+    "SUBMISSION_DATE": "Submission Date",
+    "STATUS": "Status",
+    "ACTION": "Action",
+    "VIEW": "View",
+    "NO_RESULTS": "No matching results.",
+    "OF": "of",
+    "FILE": "file",
+    "PREVIOUS": "Previous",
+    "NEXT": "Next"
+  }
+}

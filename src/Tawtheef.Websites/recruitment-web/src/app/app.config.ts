@@ -7,7 +7,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import {HttpBackend, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
-import {provideTranslateService, TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
