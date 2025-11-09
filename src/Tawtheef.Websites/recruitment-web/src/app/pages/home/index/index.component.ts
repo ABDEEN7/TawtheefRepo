@@ -1,8 +1,6 @@
 import {AfterViewInit, Component} from '@angular/core';
-import { TranslateService} from '@ngx-translate/core';
 import AOS from 'aos';
 import {routes} from '../../../routes/routes';
-import {LanguageService} from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-home',
@@ -11,6 +9,7 @@ import {LanguageService} from '../../../core/services/language.service';
   standalone: false
 })
 export class IndexComponent implements AfterViewInit {
+  protected readonly routes = routes;
   tracks = [
     {
       key: 'schools',
@@ -23,20 +22,17 @@ export class IndexComponent implements AfterViewInit {
       img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop'
     }
   ];
-
   whyItems = [
     { key: 'fair',      icon: 'fa-scale-balanced' },
     { key: 'digital',   icon: 'fa-laptop-code'    },
     { key: 'transparent', icon: 'fa-shield-check' },
     { key: 'support',   icon: 'fa-headset'       }
   ];
-
   successStats = [
     { value: '95%',  label: 'home.success.placementRate' },
     { value: '48h',  label: 'home.success.avgReviewTime' },
     { value: '120+', label: 'home.success.partners'      }
   ];
-
   faqItems = [
     { q: 'home.faq.q1', a: 'home.faq.a1' },
     { q: 'home.faq.q2', a: 'home.faq.a2' },
@@ -44,13 +40,10 @@ export class IndexComponent implements AfterViewInit {
     { q: 'home.faq.q4', a: 'home.faq.a4' }
   ];
   expandedFaq: number | null = 0;
+
   toggleFaq(i: number) { this.expandedFaq = this.expandedFaq === i ? null : i; }
-  constructor() {
-  }
 
   ngAfterViewInit(): void {
     AOS.init({ once: true, duration: 600 });
   }
-
-  protected readonly routes = routes;
 }

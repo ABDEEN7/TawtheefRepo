@@ -1,0 +1,27 @@
+﻿{
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "range": "القيمة يجب أن تكون بين {{min}} و {{max}}",
+    "yearRange": "سنة التخرج يجب أن تكون بين {{min}} و {{max}}",
+    "fileType": "الملف يجب أن يكون صورة أو PDF",
+    "fileSize": "حجم الملف يتجاوز الحد المسموح (1MB)",
+    "requiredEmail": "Email is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "requiredPassword": "Password is required.",
+    "minLengthPassword": "Password must be at least {{min}} characters."
+  },
+  "common": {
+    "ar": "عربي",
+    "en": "English",
+    "optional": "optional",
+    "present": "Present",
+    "select": "Select",
+    "loading": "Loading...",
+    "errorGeneric": "An error occurred. Please try again.",
+    "yes": "Yes",
+    "no": "No",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "close": "Close"
+  }
+}

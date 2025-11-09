@@ -22,7 +22,7 @@ export class LanguageService {
     @Inject(DOCUMENT) private doc: Document
   ) {
     this.translate.addLangs(['ar', 'en']);
-    this.translate.setDefaultLang(DEFAULT_LANG);
+    this.translate.setFallbackLang(DEFAULT_LANG);
 
     const initial = this.resolveInitialLang();
     // Apply without re-emitting current$ (we push once below)

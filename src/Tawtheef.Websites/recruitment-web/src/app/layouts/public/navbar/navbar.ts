@@ -1,12 +1,12 @@
-import {Component, input, Input, TemplateRef} from '@angular/core';
-import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {Component, Input, TemplateRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {routes} from '../../../routes/routes';
 import {LanguageService} from '../../../core/services/language.service';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
