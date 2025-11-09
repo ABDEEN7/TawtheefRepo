@@ -1,4 +1,16 @@
 ﻿{
+
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "range": "القيمة يجب أن تكون بين {{min}} و {{max}}",
+    "yearRange": "سنة التخرج يجب أن تكون بين {{min}} و {{max}}",
+    "fileType": "الملف يجب أن يكون صورة أو PDF",
+    "fileSize": "حجم الملف يتجاوز الحد المسموح (1MB)",
+    "requiredEmail": "البريد الإلكتروني مطلوب.",
+    "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
+    "requiredPassword": "كلمة المرور مطلوبة.",
+    "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل."
+  },
   "auth": {
     "login": {
       "ministry_name": "وزارة التربية والتعليم والتعليم العالي",
@@ -124,10 +136,260 @@
     "pagination_previous": "السابق",
     "pagination_next": "التالي"
   },
-  "validation": {
-    "requiredEmail": "البريد الإلكتروني مطلوب.",
-    "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
-    "requiredPassword": "كلمة المرور مطلوبة.",
-    "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل."
+  "wizard": {
+    "title": "نظام التوظيف – الملف الشخصي",
+    "steps": {
+      "personal": "البيانات الشخصية",
+      "contact": "الاتصال والسكن",
+      "degrees": "المؤهلات",
+      "experience": "الخبرات والدورات",
+      "skills": "المهارات واللغات",
+      "attachments": "المرفقات",
+      "review": "المراجعة"
+    },
+    "availability": "متاح للتعيين",
+    "progress": {
+      "label": "نسبة اكتمال الملف"
+    },
+    "validation": {
+      "required": "هذا الحقل مطلوب.",
+      "invalidPhone": "رقم الجوال غير صالح.",
+      "invalidDate": "التاريخ غير صالح.",
+      "minLength": "يجب أن يكون الطول الأدنى {{min}} أحرف.",
+      "maxLength": "يجب ألا يتجاوز الطول الأقصى {{max}} أحرف.",
+      "invalidEmail": "البريد الإلكتروني غير صالح.",
+      "invalidFileType": "نوع الملف غير مدعوم.",
+      "maxFileSize": "حجم الملف يجب ألا يتجاوز {{size}} ميغابايت.",
+      "dateRange": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء."
+    },
+    "buttons": {
+      "prev": "السابق",
+      "next": "التالي",
+      "save": "حفظ",
+      "submit": "إرسال",
+      "finalSave": "حفظ نهائي",
+      "add": "إضافة",
+      "upload": "رفع",
+      "cancel": "إلغاء",
+      "delete": "حذف"
+    },
+    "personal": {
+      "avatar": {
+        "alt": "الصورة الشخصية",
+        "hint": "أكمل ملفك لرفع نسبة الترشيح",
+        "uploadLink": "رفع صورة شخصية",
+        "title": "رفع صورة شخصية",
+        "rulesIntro": "الرجاء الالتزام بالشروط التالية:",
+        "ruleBg": "خلفية بيضاء بالكامل.",
+        "ruleSize": "المقاس 4×6 سم (نسبة الأبعاد 2:3).",
+        "ruleExt": "صيغة الصورة: JPG أو PNG.",
+        "choose": "اختر الصورة",
+        "previewNote": "هذه معاينة فقط، لن تُحفظ تلقائيًا.",
+        "save": "حفظ الصورة",
+        "errors": {
+          "onlyImage": "يجب اختيار ملف صورة صالح.",
+          "maxSize": "حجم الصورة يجب ألا يتجاوز {{size}} ميغابايت.",
+          "ratio": "يجب أن تكون نسبة الأبعاد 2:3 تقريبًا.",
+          "loadFailed": "تعذّر تحميل الصورة، الرجاء المحاولة بصورة أخرى."
+        },
+        "reset": "إعادة ضبط"
+      },
+      "nameAr": "الاسم باللغة العربية",
+      "nameEn": "الاسم باللغة الإنجليزية",
+      "qid": "رقم البطاقة الشخصية",
+      "dob": "تاريخ الميلاد",
+      "nationality": "الجنسية",
+      "gender": "الجنس",
+      "religion": "الديانة",
+      "marital": "الحالة الاجتماعية",
+      "children": "عدد الأبناء",
+      "prerequisites": "المتطلبات القبلية",
+      "review": {
+        "title": "تم استيفاء المتطلبات القبلية",
+        "statusCompleted": "مكتمل",
+        "statusMissing": "ناقص",
+        "candidateType": "نوع المرشح",
+        "targetEntity": "الجهة المستهدفة",
+        "cv": "السيرة الذاتية",
+        "idCard": "البطاقة الشخصية",
+        "edit": "تعديل المتطلبات"
+      }
+    },
+    "contact": {
+      "country": "دولة الإقامة",
+      "dial": "مفتاح الدولة",
+      "phone": "رقم الجوال",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان التفصيلي",
+      "interviewPlace": "مكان المقابلة"
+    },
+    "nationalAddress": {
+      "title": "العنوان الوطني",
+      "numberLabel": "رقم العنوان:",
+      "zone": "المنطقة",
+      "street": "الشارع",
+      "building": "المبنى",
+      "unit": "الوحدة",
+      "document": "وثيقة العنوان الوطني"
+    },
+    "degrees": {
+      "title": "المؤهلات",
+      "degree": "الدرجة",
+      "major": "التخصص",
+      "university": "الجامعة",
+      "gradYear": "سنة",
+      "gradCountry": "بلد التخرج",
+      "degreeFile": "شهادة المؤهل",
+      "studySystem": "نظام الدراسة",
+      "gpa": "المعدل التراكمي",
+      "grade": "التقدير",
+      "choiceDegree": "اختر الدرجة",
+      "choiceGradCountry": "اختر بلد التخرج",
+      "choiceUniversity": "اختر الجامعة",
+      "choiceMajor": "اختر التخصص",
+      "choiceStudySystem": "اختر نظام الدراسة",
+      "choiceGrade": "اختر التقدير",
+      "choiceDegreeFile": "اختر ملف شهادة المؤهل",
+      "add": "إضافة مؤهل"
+    },
+    "experience": {
+      "title": "الخبرات",
+      "org": "الجهة / الشركة",
+      "jobTitle": "المسمى الوظيفي",
+      "from": "من (شهر/سنة)",
+      "to": "إلى (شهر/سنة)",
+      "tasks": "المهام والمسؤوليات",
+      "current": "أعمل هنا حتى الآن",
+      "attachment": "إرفاق شهادة خبرة (PDF/صورة)",
+      "table": {
+        "org": "الجهة",
+        "title": "المسمى",
+        "period": "الفترة",
+        "tasks": "المهام",
+        "file": "الملف"
+      },
+      "add": "إضافة خبرة"
+    },
+    "courses": {
+      "title": "الدورات / التدريب",
+      "provider": "الجهة المانحة",
+      "courseName": "اسم الدورة",
+      "from": "من (شهر/سنة)",
+      "to": "إلى (شهر/سنة)",
+      "notes": "ملاحظات",
+      "certificate": "شهادة الدورة (PDF/صورة)",
+      "table": {
+        "provider": "الجهة",
+        "courseName": "الدورة",
+        "period": "الفترة",
+        "file": "الملف"
+      },
+      "add": "إضافة دورة"
+    },
+    "achievement": {
+      "title": "الإنجازات",
+      "provider": "الجهة المانحة",
+      "courseName": "اسم الدورة",
+      "from": "من (شهر/سنة)",
+      "to": "إلى (شهر/سنة)",
+      "notes": "ملاحظات",
+      "certificate": "شهادة الدورة (PDF/صورة)",
+      "table": {
+        "provider": "الجهة",
+        "achievement": "الإنجاز",
+        "period": "الفترة",
+        "file": "الملف"
+      },
+      "add": "إضافة إنجاز"
+    },
+    "skills": {
+      "title": "المهارات واللغات",
+      "skills": "المهارات (Tags)",
+      "hint": "اكتب 3 أحرف على الأقل للبحث عن المهارات من الخادم.",
+      "placeholder": "ابحث عن مهارة (مثلاً: Java, Angular, SQL)",
+      "typeMore": "اكتب 3 أحرف على الأقل لبدء البحث...",
+      "noResults": "لا توجد نتائج مطابقة.",
+      "max10": "نعرض حتى 10 نتائج لكل بحث.",
+      "languages": "اللغات",
+      "languagesHint": "أضف لغاتك ومستوى إجادتك.",
+      "language": "اللغة",
+      "level": "المستوى",
+      "selectLanguage": "اختر اللغة",
+      "selectLevel": "اختر المستوى"
+    },
+    "attachments": {
+      "title": "المرفقات",
+      "attachment": "عنوان المرفق",
+      "file": "الملف",
+      "add": "إضافة مرفق",
+      "empty": "لا توجد مرفقات مضافة بعد.",
+      "change": "تغيير المرفق",
+      "placeholders": {
+        "attachmentTitle": "مثال: السيرة الذاتية، صورة البطاقة"
+      }
+    },
+    "review": {
+      "title": "المراجعة",
+      "missingWarningTitle": "هناك بعض الحقول الناقصة قبل الحفظ النهائي:",
+      "success": "تم حفظ ملفك بنجاح.",
+      "errorGeneric": "فشل الإرسال، حاول مرة أخرى.",
+      "saving": "جاري الحفظ..."
+    },
+    "table": {
+      "actions": "الإجراءات",
+      "noRows": "لا توجد بيانات للعرض."
+    },
+    "placeholders": {
+      "search": "ابحث...",
+      "typeHere": "اكتب هنا...",
+      "loading": "جاري التحميل...",
+      "selectNationality": "اختر الجنسية",
+      "selectGender": "اختر الجنس",
+      "selectReligion": "اختر الديانة",
+      "selectMaritalStatus": "اختر الحالة الاجتماعية",
+      "selectCountry": "اختر الدولة",
+      "selectDialCode": "اختر مفتاح الدولة",
+      "selectInterviewPlace": "اختر مكان المقابلة"
+    },
+    "prereq": {
+      "title": "المتطلبات القبلية للبدء",
+      "candidateType": "فئة المرشح",
+      "targetEntity": "الجهة المستهدفة",
+      "cvLabel": "رفع السيرة الذاتية (PDF)",
+      "idLabel": "رفع البطاقة الشخصية (صورة/ PDF)",
+      "dropOrClick": "اسحب وافلت أو انقر",
+      "startProfile": "بدء إنشاء الملف الشخصي",
+      "types": {
+        "qatari": "مواطن قطري",
+        "qatarisWomanChildren": "أبناء المرأة القطرية المتزوجة من غير قطري",
+        "nonQatariSpouse": "الزوج غير القطري المتزوج من قطرية أو قطري",
+        "gcc": "مواطن دول مجلس التعاون الخليجي",
+        "quGraduate": "خريج جامعة قطر",
+        "qatarResident": "مقيم في دولة قطر"
+      },
+      "entities": {
+        "ministry": "الوزارة",
+        "publicSchools": "المدارس الحكومية"
+      },
+      "errors": {
+        "cvPdfOnly": "يجب أن تكون السيرة الذاتية بصيغة PDF.",
+        "idImageOrPdf": "يجب أن تكون البطاقة الشخصية صورة أو PDF.",
+        "maxSize": "حجم الملف يجب ألا يتجاوز {{size}} ميغابايت."
+      }
+    }
+  },
+  "common": {
+    "ar": "عربي",
+    "en": "English",
+    "optional": "اختياري",
+    "present": "حتى الآن",
+    "select": "اختر",
+    "loading": "جاري التحميل...",
+    "errorGeneric": "حدث خطأ غير متوقع. حاول مرة أخرى.",
+    "yes": "نعم",
+    "no": "لا",
+    "remove": "إزالة",
+    "cancel": "إلغاء",
+    "close": "إغلاق"
   }
 }

@@ -1,4 +1,15 @@
 ﻿{
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "range": "القيمة يجب أن تكون بين {{min}} و {{max}}",
+    "yearRange": "سنة التخرج يجب أن تكون بين {{min}} و {{max}}",
+    "fileType": "الملف يجب أن يكون صورة أو PDF",
+    "fileSize": "حجم الملف يتجاوز الحد المسموح (1MB)",
+    "requiredEmail": "Email is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "requiredPassword": "Password is required.",
+    "minLengthPassword": "Password must be at least {{min}} characters."
+  },
   "auth": {
     "login": {
       "ministry_name": "Ministry of Education and Higher Education",
@@ -51,10 +62,22 @@
       "title": "Why Us",
       "desc": "A fair, transparent, fully digital hiring journey.",
       "items": {
-        "fair": { "title": "Fair Selection", "desc": "Clear criteria and equal opportunity." },
-        "digital": { "title": "Digital Journey", "desc": "Apply and track applications in one place." },
-        "transparent": { "title": "Transparency", "desc": "Real-time status updates and accurate notifications." },
-        "support": { "title": "Live Support", "desc": "Helpdesk ready to answer your questions." }
+        "fair": {
+          "title": "Fair Selection",
+          "desc": "Clear criteria and equal opportunity."
+        },
+        "digital": {
+          "title": "Digital Journey",
+          "desc": "Apply and track applications in one place."
+        },
+        "transparent": {
+          "title": "Transparency",
+          "desc": "Real-time status updates and accurate notifications."
+        },
+        "support": {
+          "title": "Live Support",
+          "desc": "Helpdesk ready to answer your questions."
+        }
       }
     },
     "success": {
@@ -80,6 +103,267 @@
       "rights": "All rights reserved © 2025",
       "ministry": "Ministry of Education and Higher Education — State of Qatar"
     }
+  },
+  "wizard": {
+    "title": "Tawtheef - Candidate Profile",
+    "steps": {
+      "personal": "Personal",
+      "contact": "Contact & Address",
+      "degrees": "Degrees",
+      "experience": "Experience & Courses",
+      "skills": "Skills & Languages",
+      "attachments": "Attachments",
+      "review": "Review"
+    },
+    "availability": "Available for hire",
+    "progress": {
+      "label": "Profile completion"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "invalidPhone": "Invalid mobile number.",
+      "invalidDate": "Invalid date.",
+      "minLength": "Must be at least {{min}} characters.",
+      "maxLength": "Must be at most {{max}} characters.",
+      "invalidEmail": "Invalid email address.",
+      "invalidFileType": "Unsupported file type.",
+      "maxFileSize": "File size must not exceed {{size}} MB.",
+      "dateRange": "End date must be after start date."
+    },
+    "buttons": {
+      "prev": "Previous",
+      "next": "Next",
+      "save": "Save",
+      "submit": "Submit",
+      "finalSave": "Submit",
+      "add": "Add",
+      "upload": "Upload",
+      "cancel": "Cancel"
+    },
+    "personal": {
+      "avatar": {
+        "alt": "Profile photo",
+        "hint": "Complete your profile to increase your matching score",
+        "uploadLink": "Upload a profile photo",
+        "title": "Upload profile photo",
+        "rulesIntro": "Please follow the rules:",
+        "ruleBg": "Plain white background.",
+        "ruleSize": "Size 4×6 cm (aspect ratio 2:3).",
+        "ruleExt": "Formats: JPG or PNG.",
+        "choose": "Choose image",
+        "previewNote": "Preview only; it won’t be saved automatically.",
+        "save": "Save photo",
+        "errors": {
+          "onlyImage": "Please choose a valid image file.",
+          "maxSize": "Image size must not exceed {{size}} MB.",
+          "ratio": "Aspect ratio must be approximately 2:3.",
+          "loadFailed": "Failed to load the image. Please try a different one."
+        },
+        "reset": "Reset"
+      },
+      "nameAr": "Full name (Arabic)",
+      "nameEn": "Full name (English)",
+      "qid": "QID",
+      "dob": "Date of birth",
+      "nationality": "Nationality",
+      "gender": "Gender",
+      "religion": "Religion",
+      "marital": "Marital status",
+      "children": "Children count",
+      "prerequisites": "Prerequisites review",
+      "review": {
+        "title": "Prerequisites have been completed",
+        "statusCompleted": "Completed",
+        "statusMissing": "Missing",
+        "candidateType": "Candidate Type",
+        "targetEntity": "Target Entity",
+        "cv": "Curriculum Vitae",
+        "idCard": "ID Card",
+        "edit": "Edit Prerequisites"
+      }
+    },
+    "contact": {
+      "country": "Country",
+      "dial": "Dial code",
+      "phone": "Mobile",
+      "email": "Email",
+      "address": "Address",
+      "interviewPlace": "Interview location"
+    },
+    "nationalAddress": {
+      "title": "National Address",
+      "numberLabel": "Address No.:",
+      "zone": "Zone",
+      "street": "Street",
+      "building": "Building",
+      "unit": "Unit",
+      "document": "National Address document"
+    },
+    "degrees": {
+      "title": "Degrees",
+      "degree": "Degree",
+      "major": "Major",
+      "university": "University",
+      "gradYear": "Year",
+      "gradCountry": "Graduation Country",
+      "degreeFile": "Degree certificate",
+      "studySystem": "Study system",
+      "gpa": "GPA",
+      "grade": "Grade",
+      "choiceDegree": "Choose degree",
+      "choiceGradCountry": "Choose graduation country",
+      "choiceUniversity": "Choose university",
+      "choiceMajor": "Choose major",
+      "choiceStudySystem": "Choose study system",
+      "choiceGrade": "Choose grade",
+      "choiceDegreeFile": "Choose degree file",
+      "add": "Add degree"
+    },
+    "experience": {
+      "title": "Experience",
+      "org": "Organization",
+      "jobTitle": "Job title",
+      "from": "From (Month/Year)",
+      "to": "To (Month/Year)",
+      "tasks": "Responsibilities",
+      "current": "I currently work here",
+      "attachment": "Experience certificate (PDF/image)",
+      "table": {
+        "org": "Organization",
+        "title": "Title",
+        "period": "Period",
+        "tasks": "Tasks",
+        "file": "File"
+      },
+      "add": "Add experience"
+    },
+    "courses": {
+      "title": "Courses / Training",
+      "provider": "Provider",
+      "courseName": "Course name",
+      "from": "From (Month/Year)",
+      "to": "To (Month/Year)",
+      "notes": "Notes (optional)",
+      "certificate": "Course certificate (PDF/image)",
+      "table": {
+        "provider": "Provider",
+        "courseName": "Course",
+        "period": "Period",
+        "file": "File"
+      },
+      "add": "Add course"
+    },
+    "achievement": {
+      "title": "Achievements",
+      "provider": "Provider",
+      "courseName": "Course name",
+      "from": "From (Month/Year)",
+      "to": "To (Month/Year)",
+      "notes": "Notes (optional)",
+      "certificate": "Course certificate (PDF/image)",
+      "table": {
+        "provider": "Provider",
+        "achievement": "Achievement",
+        "period": "Period",
+        "file": "File"
+      },
+      "add": "Add achievement"
+    },
+    "skills": {
+      "title": "Skills & Languages",
+      "skills": "Skills (Tags)",
+      "languages": "Languages",
+      "language": "Language",
+      "level": "Level",
+      "levels": [
+        "Beginner",
+        "Intermediate",
+        "Advanced",
+        "Excellent"
+      ],
+      "hint": "Write 3 or more characters to search for skills from the provider.",
+      "placeholder": "ابحث عن مهارة (مثلاً: Java, Angular, SQL)",
+      "typeMore": "Write 3 or more characters to start searching...",
+      "noResults": "No results found.",
+      "max10": "Showing up to 10 results per search.",
+      "languagesHint": "Add your languages and proficiency levels.",
+      "selectLanguage": "Choose language",
+      "selectLevel": "Choose level"
+    },
+    "attachments": {
+      "title": "Attachments",
+      "attachment": "Attachment title",
+      "file": "File",
+      "add": "Add attachment",
+      "empty": "No attachments added yet.",
+      "change": "Change attachment",
+      "placeholders": {
+        "attachmentTitle": "Example: CV, ID copy"
+      }
+    },
+    "review": {
+      "title": "Review",
+      "missingWarningTitle": "Some required fields are missing before final submission:",
+      "success": "Your profile has been saved successfully.",
+      "errorGeneric": "Failed to submit, please try again.",
+      "saving": "Saving..."
+    },
+    "table": {
+      "actions": "Action",
+      "noRows": "No records yet"
+    },
+    "placeholders": {
+      "search": "Search...",
+      "typeHere": "Type here...",
+      "loading": "Loading...",
+      "selectNationality": "Select nationality",
+      "selectGender": "Select gender",
+      "selectReligion": "Select religion",
+      "selectMaritalStatus": "Select marital status",
+      "selectCountry": "Select country",
+      "selectDialCode": "Select dial code",
+      "selectInterviewPlace": "Select interview place"
+    },
+    "prereq": {
+      "title": "Prerequisites to start",
+      "candidateType": "Candidate category",
+      "targetEntity": "Target entity",
+      "cvLabel": "Upload CV (PDF)",
+      "idLabel": "Upload ID (Image / PDF)",
+      "dropOrClick": "Drag & drop or click",
+      "startProfile": "Start profile creation",
+      "types": {
+        "qatari": "Qatari citizen",
+        "qatarisWomanChildren": "Children of Qatari woman married to non-Qatari",
+        "nonQatariSpouse": "Non-Qatari spouse of Qatari/Qatari woman",
+        "gcc": "GCC citizen",
+        "quGraduate": "Qatar University graduate",
+        "qatarResident": "Resident in Qatar"
+      },
+      "entities": {
+        "ministry": "Ministry",
+        "publicSchools": "Public schools"
+      },
+      "errors": {
+        "cvPdfOnly": "CV must be a PDF file.",
+        "idImageOrPdf": "ID must be an image or PDF.",
+        "maxSize": "File size must not exceed {{size}} MB."
+      }
+    }
+  },
+  "common": {
+    "ar": "عربي",
+    "en": "English",
+    "optional": "optional",
+    "present": "Present",
+    "select": "Select",
+    "loading": "Loading...",
+    "errorGeneric": "An error occurred. Please try again.",
+    "yes": "Yes",
+    "no": "No",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "candidate_dashboard": {
     "title": "Candidate Dashboard",
@@ -122,11 +406,5 @@
     "showing_results": "Showing {{start}}–{{end}} of {{total}} records",
     "pagination_previous": "Previous",
     "pagination_next": "Next"
-  },
-  "validation": {
-    "requiredEmail": "Email is required.",
-    "invalidEmail": "Please enter a valid email address.",
-    "requiredPassword": "Password is required.",
-    "minLengthPassword": "Password must be at least {{min}} characters."
   }
 }

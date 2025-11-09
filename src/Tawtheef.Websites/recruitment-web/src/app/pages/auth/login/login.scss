@@ -1,4 +1,4 @@
-@use '../../../../styles/utilities' as util;
+@use '../../../../styles/base/utilities' as util;
 
 .seg-btn.active {
   @include util.gradient-brand;

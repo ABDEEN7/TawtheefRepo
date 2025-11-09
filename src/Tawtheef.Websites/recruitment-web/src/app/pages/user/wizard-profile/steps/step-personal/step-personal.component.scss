@@ -1,0 +1,97 @@
+@use "../../styles/variables" as *;
+
+.card { @include soft-card; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+
+
+.review-card {
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
+  position: relative;
+
+  /* شريط تمييز جانبي لطيف */
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(135deg, var(--brand, #7b1e3a), var(--accent, #c25b78));
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+  }
+}
+
+.review-title {
+  color: var(--brand, #7b1e3a);
+  font-weight: 800;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .85rem;
+  border-radius: 999px;
+  padding: .35rem .7rem;
+  border: 1px solid $border;
+  background: #f8f9fb;
+
+  &.ok {
+    border-color: rgba(39, 174, 96, .25);
+    background: rgba(39, 174, 96, .08);
+    color: #1e7e34;
+  }
+  &.missing {
+    border-color: rgba(235, 87, 87, .25);
+    background: rgba(235, 87, 87, .08);
+    color: #a33a3a;
+  }
+}
+
+.field {
+  .field-label {
+    font-size: .78rem;
+    color: #6b7280; // رمادي لطيف
+    margin-bottom: .25rem;
+  }
+  .field-value {
+    background: #f8f9fb;
+    border: 1px dashed $border;
+    border-radius: 8px;
+    padding: .55rem .7rem;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    max-width: 100%;
+    .fa-regular, .fa-solid { opacity: .8; }
+  }
+}
+
+/* تحسين لقص النص الطويل لأسماء الملفات */
+.text-truncate {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#editPreReq { border-radius: 999px; }
+.btn-brand {
+  @include brand-gradient; border: none; color: #fff; font-weight: 700; border-radius: 999px; transition: all .25s;
+  &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(123,30,58,.3); }
+}
+/* صورة الرأس في الهيدر */
+.candidate-avatar {
+  width: 72px;
+  height: 96px; /* 2:3 */
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}

@@ -1,0 +1,119 @@
+<form class="p-fluid" [formGroup]="form" (ngSubmit)="onSave()">
+
+  <div class="deg-panel card border-0 shadow-none">
+    <div class="card-body py-3">
+
+      <div class="d-flex flex-column gap-4">
+        <div class="row g-2 g-md-3 align-items-start">
+          <!-- Provider -->
+          <div class="col-12 col-md-6 d-flex flex-column">
+            <label class="form-label fw-semibold mb-2 required">
+              <i class="fa-solid fa-trophy me-1"></i> {{ 'wizard.achievement.provider' | translate }}
+            </label>
+            <input pInputText class="form-control"
+                   formControlName="org"
+                   [ngClass]="{'p-invalid': f['org'].invalid && (f['org'].dirty || f['org'].touched)}">
+            <small *ngIf="f['org'].hasError('required') && (f['org'].dirty || f['org'].touched)" class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+            <small *ngIf="f['org'].hasError('maxlength') && (f['org'].dirty || f['org'].touched)" class="text-danger mt-1 d-block">
+              {{ 'validation.maxLength' | translate:{max:150} }}
+            </small>
+          </div>
+
+          <!-- Title -->
+          <div class="col-12 col-md-6 d-flex flex-column">
+            <label class="form-label fw-semibold mb-2 required">
+              <i class="fa-solid fa-medal me-1"></i> {{ 'wizard.achievement.table.achievement' | translate }}
+            </label>
+            <input pInputText class="form-control"
+                   formControlName="title"
+                   [ngClass]="{'p-invalid': f['title'].invalid && (f['title'].dirty || f['title'].touched)}">
+            <small *ngIf="f['title'].hasError('required') && (f['title'].dirty || f['title'].touched)" class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+            <small *ngIf="f['title'].hasError('maxlength') && (f['title'].dirty || f['title'].touched)" class="text-danger mt-1 d-block">
+              {{ 'validation.maxLength' | translate:{max:150} }}
+            </small>
+          </div>
+        </div>
+
+        <div class="row g-2 g-md-3 align-items-start">
+          <!-- From -->
+          <div class="col-12 col-md-6 d-flex flex-column">
+            <label class="form-label fw-semibold mb-2 required">
+              <i class="fa-solid fa-calendar-day me-1"></i> {{ 'wizard.achievement.from' | translate }}
+            </label>
+            <p-date-picker formControlName="from"
+                           showIcon="true" view="month" dateFormat="yy-mm" fluid
+                           (onSelect)="touchDates()"
+                           [ngClass]="{'p-invalid': (f['from'].invalid || form.hasError('dateRange')) && (f['from'].dirty || f['from'].touched)}">
+            </p-date-picker>
+          </div>
+
+          <!-- To -->
+          <div class="col-12 col-md-6 d-flex flex-column">
+            <label class="form-label fw-semibold mb-2 required">
+              <i class="fa-solid fa-calendar-day me-1"></i> {{ 'wizard.achievement.to' | translate }}
+            </label>
+            <p-date-picker formControlName="to"
+                           showIcon="true" view="month" dateFormat="yy-mm" fluid
+                           (onSelect)="touchDates()"
+                           [ngClass]="{'p-invalid': form.hasError('dateRange') && (f['to'].dirty || f['to'].touched)}">
+            </p-date-picker>
+            <small *ngIf="form.hasError('dateRange') && (f['to'].dirty || f['to'].touched)" class="text-danger mt-1 d-block">
+              {{ 'validation.dateRange' | translate }}
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-2 g-md-3 align-items-start mt-1">
+        <div class="col-12 d-flex flex-column">
+          <label class="form-label fw-semibold mb-2">
+            <i class="fa-solid fa-note-sticky me-1"></i> {{ 'wizard.achievement.notes' | translate }}
+          </label>
+          <textarea rows="2" class="form-control"
+                    formControlName="tasks"
+                    [ngClass]="{'p-invalid': f['tasks'].invalid && (f['tasks'].dirty || f['tasks'].touched)}"></textarea>
+          <small *ngIf="f['tasks'].hasError('maxlength') && (f['tasks'].dirty || f['tasks'].touched)" class="text-danger mt-1 d-block">
+            {{ 'validation.maxLength' | translate:{max:500} }}
+          </small>
+        </div>
+      </div>
+
+      <div class="mt-3 d-flex flex-column">
+        <div class="form-label fw-semibold mb-2 required">
+          <i class="fa-solid fa-paperclip me-1"></i> {{ 'wizard.achievement.certificate' | translate }}
+        </div>
+        <div class="deg-dropzone p-3" [ngClass]="{'p-invalid': !!fileError}">
+          <p-fileupload mode="basic" name="achFile"
+                        [showUploadButton]="false" [showCancelButton]="false"
+                        [maxFileSize]="maxFileSize"
+                        accept=".pdf,image/*"
+                        [chooseLabel]="'wizard.buttons.upload' | translate"
+                        (onSelect)="onUpload($event)">
+          </p-fileupload>
+          <small class="mt-2 d-block" [class.text-muted]="!fileError" [class.text-danger]="!!fileError">
+            {{ fileError || (form.value.fileName || '—') }}
+          </small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <div class="d-flex justify-content-end gap-2">
+    <p-button styleClass="p-button-text" icon="pi pi-times"
+              type="button"
+              (onClick)="onCancel()"
+              [label]="'wizard.buttons.cancel' | translate"></p-button>
+
+    <p-button styleClass="p-button-primary"
+              icon="pi pi-save"
+              type="submit"
+              [disabled]="form.invalid || !!fileError"
+              [label]="'wizard.achievement.add' | translate"></p-button>
+  </div>
+</form>

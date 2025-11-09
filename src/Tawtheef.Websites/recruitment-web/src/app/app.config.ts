@@ -11,13 +11,19 @@ import {provideHttpClient} from '@angular/common/http';
 import {provideTranslateService} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-
-
+import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
+import {providePrimeNG} from 'primeng/config';
+import {TawtheefPreset} from './shared/themes/twatheef-preset';
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(NgbModule),
     provideBrowserGlobalErrorListeners(),
+    provideAnimationsAsync(),
+    providePrimeNG({
+      theme: {
+        preset: TawtheefPreset
+      }
+    }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),

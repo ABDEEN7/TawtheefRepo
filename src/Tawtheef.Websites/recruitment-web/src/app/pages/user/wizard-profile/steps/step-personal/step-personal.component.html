@@ -1,0 +1,212 @@
+<div class="card border-0 shadow rounded-4 p-4 mb-3">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center gap-3">
+      <img
+        [src]="ds.state().avatarUrl || avatarPreviewUrl || 'https://placehold.co/120x160?text=Avatar'"
+        class="candidate-avatar"
+        alt="{{ 'wizard.personal.avatar.alt' | translate }}"
+      />
+      <div>
+        <div class="fw-bold">
+          {{ ds.state().fullName || ('wizard.personal.nameAr' | translate) }}
+        </div>
+        <div class="small text-muted">
+          {{ 'wizard.personal.avatar.hint' | translate }}
+          ·
+          <a (click)="openAvatarDialog()" class="btn link-primary">
+            {{ 'wizard.personal.avatar.uploadLink' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">{{ 'wizard.personal.nameAr' | translate }}</label>
+      <input pInputText class="form-control" pSize="small" [(ngModel)]="form.value.fullName" name="n1"
+             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('fullName',$event)">
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">{{ 'wizard.personal.nameEn' | translate }}</label>
+      <input pInputText class="form-control" pSize="small" [(ngModel)]="form.value.fullNameEn" name="n2"
+             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('fullNameEn',$event)">
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">{{ 'wizard.personal.qid' | translate }}</label>
+      <input pInputText class="form-control" pSize="small" [(ngModel)]="form.value.qid" name="n3"
+             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('qid',$event)">
+    </div>
+
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label">{{ 'wizard.personal.nationality' | translate }}</label>
+      <p-select
+        [options]="nationalities"
+        [(ngModel)]="form.value.nationality"
+        [filter]="true"
+        [loading]="false"
+        filterBy="name"
+        optionLabel="name"
+        size="small"
+        [placeholder]="'wizard.placeholders.selectNationality' | translate"
+        class="w-full md:w-56"
+        (ngModelChange)="ds.up('nationality',$event)">
+      </p-select>
+    </div>
+
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label">{{ 'wizard.personal.gender' | translate }}</label>
+      <p-select
+        [options]="genders"
+        [(ngModel)]="form.value.gender"
+        [filter]="false"
+        [loading]="false"
+        filterBy="name"
+        optionLabel="name"
+        size="small"
+        [placeholder]="'wizard.placeholders.selectGender' | translate"
+        class="w-full md:w-56"
+        (ngModelChange)="ds.up('gender',$event)">
+      </p-select>
+    </div>
+
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label">{{ 'wizard.personal.dob' | translate }}</label>
+      <p-date-picker
+        [(ngModel)]="form.value.dob"
+        [showIcon]="true" size="small"
+        [showOnFocus]="true" dateFormat="yy-mm-dd"
+        (ngModelChange)="ds.up('dob',$event)"
+        fluid>
+      </p-date-picker>
+    </div>
+
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label">{{ 'wizard.personal.religion' | translate }}</label>
+      <p-select
+        [options]="religions"
+        [(ngModel)]="form.value.religion"
+        [filter]="true"
+        [loading]="false"
+        filterBy="name"
+        optionLabel="name"
+        size="small"
+        [placeholder]="'wizard.placeholders.selectReligion' | translate"
+        class="w-full md:w-56"
+        (ngModelChange)="ds.up('religion',$event)">
+      </p-select>
+    </div>
+
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label">{{ 'wizard.personal.marital' | translate }}</label>
+      <p-select
+        [options]="maritals"
+        [(ngModel)]="form.value.marital"
+        [filter]="true"
+        [loading]="false"
+        filterBy="name"
+        optionLabel="name"
+        optionValue="name"
+        size="small"
+        [placeholder]="'wizard.placeholders.selectMaritalStatus' | translate"
+        class="w-full md:w-56"
+        (ngModelChange)="ds.up('marital',$event)">
+      </p-select>
+    </div>
+    <div class="col-md-4" *ngIf="ds.state().marital && ds.state().marital != 'أعزب'">
+      <label class="form-label">{{ 'wizard.personal.children' | translate }}</label>
+      <input
+        pInputText
+        type="number"
+        class="form-control"
+        pSize="small"
+        [(ngModel)]="form.value.children"
+        placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+        name="children"
+        (ngModelChange)="ds.up('children',$event)">
+    </div>
+  </div>
+
+  <!-- ===== Prerequisites Review Card ===== -->
+  <div class="col-12 mt-2">
+    <div class="review-card d-flex flex-column gap-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="review-title">
+          <i class="fa-solid fa-clipboard-check me-2"></i>
+          {{ 'wizard.personal.review.title' | translate }}
+        </div>
+
+        <span class="status-chip" [class.ok]="prereqDone" [class.missing]="!prereqDone">
+        <i class="fa-solid" [ngClass]="prereqDone ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+        <span class="ms-1"> {{`wizard.personal.review.${prereqDone ? 'statusCompleted': 'statusMissing'}` | translate}}</span>
+      </span>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-3 col-6">
+          <div class="field">
+            <div class="field-label">{{ 'wizard.personal.review.candidateType' | translate }}</div>
+            <div class="field-value" id="candTypeView">
+              {{ ds.state().candidateType || '—' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-6">
+          <div class="field">
+            <div class="field-label">{{ 'wizard.personal.review.targetEntity' | translate }}</div>
+            <div class="field-value" id="targetEntityView">
+              {{ ds.state().targetEntity || '—' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-6">
+          <div class="field">
+            <div class="field-label">{{ 'wizard.personal.review.cv' | translate }}</div>
+            <div class="field-value d-flex align-items-center gap-2" id="cvView">
+              <i class="fa-regular fa-file-lines"></i>
+              <span class="text-truncate">{{ ds.state().cvName || '—' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-6">
+          <div class="field">
+            <div class="field-label">{{ 'wizard.personal.review.idCard' | translate }}</div>
+            <div class="field-value d-flex align-items-center gap-2" id="idView">
+              <i class="fa-regular fa-id-card"></i>
+              <span class="text-truncate">{{ ds.state().idName || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-end">
+        <button
+          class="btn btn-outline-secondary btn-sm rounded-pill"
+          id="editPreReq"
+          type="button"
+          (click)="editPrereq()"
+          pTooltip="{{ 'wizard.personal.review.edit' | translate }}"
+          tooltipPosition="bottom"
+        >
+          <i class="fa-solid fa-pen me-1"></i>{{ 'wizard.personal.review.edit' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- ===== /Prerequisites Review Card ===== -->
+</div>
+
+<div class="text-end">
+  <button class="btn btn-brand" (click)="save()">
+    {{ 'wizard.buttons.next' | translate }}
+    <i class="fa-solid ms-1" faDirArrow="end"></i>
+  </button>
+</div>
