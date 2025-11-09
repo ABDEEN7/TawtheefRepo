@@ -10,7 +10,7 @@ import { VersionService } from './services/version.service';
 import {MessageService} from "primeng/api";
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [CommonModule,],
   providers: [
     AuthService,
     HttpService,
