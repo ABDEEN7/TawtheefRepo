@@ -5,13 +5,20 @@ import {
   provideZoneChangeDetection
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
-import {provideHttpClient} from '@angular/common/http';
-import {provideTranslateService} from '@ngx-translate/core';
+import {HttpBackend, provideHttpClient} from '@angular/common/http';
+import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {MultiTranslateHttpLoader} from 'ngx-translate-multi-http-loader';
 
+export function HttpLoaderFactory(_httpBackend: HttpBackend) {
+  return new MultiTranslateHttpLoader(_httpBackend, [
+    {prefix: '/i18n/common/', suffix: '.json'},
+    {prefix: '/i18n/pages/auth/', suffix: '.json'},
+    {prefix: '/i18n/pages/profile-list/', suffix: '.json'}
+  ]);
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,12 +28,13 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideTranslateService({
-      loader: provideTranslateHttpLoader({
-        prefix: './i18n/',
-        suffix: '.json'
-      }),
-      fallbackLang: 'en',
-      lang: 'en'
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpBackend]
+      },
+      fallbackLang: 'ar',
+      lang: 'ar'
     }),
     MessageService,
   ]

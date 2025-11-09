@@ -1,0 +1,13 @@
+﻿{
+  "auth": {
+    "azure": {
+      "title": "Sign in - Azure",
+      "hint": "Please use your organization account via Azure to sign in.",
+      "cta": "Sign in with Azure"
+    },
+    "login": {
+      "ministry_name": "Ministry of Education and Higher Education",
+      "footer_owner": "Ministry of Education and Higher Education – IT Department"
+    }
+  }
+}
