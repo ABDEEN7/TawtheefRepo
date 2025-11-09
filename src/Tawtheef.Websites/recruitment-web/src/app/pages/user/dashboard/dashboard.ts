@@ -21,16 +21,16 @@ import {
   FilterOption,
   JobType,
   JobStatus
-} from './candidate-dashboard.service';
+} from './services/candidate-dashboard.service';
 
 @Component({
-  selector: 'app-candidate-dashboard',
+  selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule, TranslatePipe],
-  templateUrl: './candidate-dashboard.html',
-  styleUrls: ['./candidate-dashboard.scss']
+  templateUrl: './dashboard.html',
+  styleUrls: ['./dashboard.scss']
 })
-export class CandidateDashboard implements OnInit {
+export class Dashboard implements OnInit {
   private translate = inject(TranslateService);
   private candidateService = inject(CandidateDashboardService);
 

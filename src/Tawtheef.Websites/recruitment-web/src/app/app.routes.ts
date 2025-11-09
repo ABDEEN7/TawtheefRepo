@@ -43,13 +43,6 @@ export const routes: Routes = [
         // canMatch: [authMatchGuard],
         loadChildren: () =>
           import('./pages/user/user.module').then(m => m.UserModule),
-      },
-      {
-        path: 'candidate-dashboard',
-        loadComponent: () =>
-          import('./pages/candidate-dashboard/candidate-dashboard').then(
-            c => c.CandidateDashboard
-          )
       }
     ],
   },
