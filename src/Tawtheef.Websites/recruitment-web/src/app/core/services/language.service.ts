@@ -13,22 +13,31 @@ export class LanguageService {
   /** Emits current language immediately and on every change */
   readonly current$ = new BehaviorSubject<Lang>(DEFAULT_LANG);
 
+  /** Emits RTL state immediately and on every change */
+  private isRtlSubj = new BehaviorSubject<boolean>(false);
+  readonly isRtl$ = this.isRtlSubj.asObservable();
+
   constructor(
     private translate: TranslateService,
     @Inject(DOCUMENT) private doc: Document
   ) {
-    // configure translate
     this.translate.addLangs(['ar', 'en']);
+    this.translate.setDefaultLang(DEFAULT_LANG);
+
     const initial = this.resolveInitialLang();
-    this.apply(initial, { emit: false }); // don’t double-emit on startup
+    // Apply without re-emitting current$ (we push once below)
+    this.apply(initial, { emit: false });
     this.current$.next(initial);
+    this.isRtlSubj.next(initial === 'ar');
   }
 
-  /** Get current language value synchronously */
-  get(): Lang {
-    return this.current$.value;
-  }
+  /** Current language sync getter */
+  get(): Lang { return this.current$.value; }
+  getPrev(): Lang { return this.current$.value === 'ar' ? 'en' : 'ar'; }
 
+
+  /** Is current language RTL */
+  get isRtl() { return this.get() === 'ar'; }
   /** Set language and update TranslateService + <html dir/lang> + storage */
   set(lang: Lang): void {
     if (lang !== 'ar' && lang !== 'en') lang = DEFAULT_LANG;
@@ -37,38 +46,55 @@ export class LanguageService {
   }
 
   /** Toggle between ar/en */
-  toggle(): void {
-    this.set(this.get() === 'ar' ? 'en' : 'ar');
-  }
+  toggle(): void { this.set(this.get() === 'ar' ? 'en' : 'ar'); }
 
   // ---- internals ----
   private resolveInitialLang(): Lang {
-    // localStorage
     const stored = (localStorage.getItem(STORAGE_KEY) || '').toLowerCase();
     if (stored === 'ar' || stored === 'en') return stored as Lang;
 
-    // browser language
     const nav = (navigator.language || navigator.languages?.[0] || 'ar').toLowerCase();
     return nav.startsWith('ar') ? 'ar' : 'en';
   }
 
   private apply(lang: Lang, opts: { emit: boolean }): void {
-    // ngx-translate
-    this.translate.setFallbackLang(DEFAULT_LANG);
+    const isRtl = lang === 'ar';
+
+    // i18n
     this.translate.use(lang);
 
-    // html attributes
+    // <html> attributes
     const html = this.doc.documentElement;
     html.setAttribute('lang', lang);
-    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    html.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
 
-    // body class (optional, handy for CSS overrides)
-    this.doc.body.classList.toggle('rtl', lang === 'ar');
-    this.doc.body.classList.toggle('ltr', lang === 'en');
+    // <body> helper classes
+    this.doc.body.classList.toggle('rtl', isRtl);
+    this.doc.body.classList.toggle('ltr', !isRtl);
+
+    // ===== Bootstrap CSS handling (supports two patterns) =====
+    // Pattern A: one link with id="bs" → swap href
+    const bs = this.doc.getElementById('bs') as HTMLLinkElement | null;
+    if (bs) {
+      bs.href = isRtl
+        ? 'assets/styles/bootstrap/bootstrap.rtl.min.css'
+        : 'assets/styles/bootstrap/bootstrap.min.css';
+    } else {
+      // Pattern B: two links with stable ids → flip media
+      const ltr = this.doc.getElementById('bs-ltr') as HTMLLinkElement | null;
+      const rtl = this.doc.getElementById('bs-rtl') as HTMLLinkElement | null;
+      if (ltr && rtl) {
+        ltr.media = isRtl ? 'not all' : 'all';
+        rtl.media = isRtl ? 'all' : 'not all';
+      }
+      // If neither exists, we silently continue (no crash).
+    }
 
     // persist
     try { localStorage.setItem(STORAGE_KEY, lang); } catch { /* ignore */ }
 
+    // notify observers
+    this.isRtlSubj.next(isRtl);
     if (opts.emit) this.current$.next(lang);
   }
 }

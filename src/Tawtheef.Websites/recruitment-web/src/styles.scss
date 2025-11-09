@@ -1,11 +1,18 @@
-@use "bootstrap/scss/bootstrap";
-@use "styles/tokens";
+@use "styles/base/tokens";
+@use "styles/base/flags";
+
+$primary-color: #000;
 
 body {
-  background:
-    radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%),
-    #fff;
+  background: radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%), #fff;
   color: var(--text);
   line-height: 1.7;
   font-family: 'Cairo', sans-serif;
+}
+
+.required::after {
+  content: ' *';
+  color: #dc3545; /* Bootstrap red tone */
+  font-weight: bold;
+  margin-left: 3px;
 }

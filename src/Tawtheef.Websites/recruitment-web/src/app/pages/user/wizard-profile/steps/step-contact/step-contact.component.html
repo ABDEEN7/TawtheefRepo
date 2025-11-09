@@ -1,0 +1,109 @@
+<div class="card border-0 shadow rounded-4 p-4 mb-3">
+  <div class="row g-3">
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label">{{ 'wizard.contact.country' | translate }}</label>
+      <p-select [options]="countries" [(ngModel)]="ds.state().country"
+                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                class="w-full md:w-56"
+                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectCountry') | translate"
+                (ngModelChange)="ds.up('country',$event)"></p-select>
+    </div>
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label">{{ 'wizard.contact.dial' | translate }}</label>
+      <p-select [options]="countries" [(ngModel)]="ds.state().dialCode"
+                [filter]="false" [loading]="false" filterBy="code" optionLabel="code" size="small"
+                class="w-full md:w-56"
+                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectDialCode') | translate"
+                (ngModelChange)="ds.up('dialCode',$event)">
+        <ng-template let-selectedOption #selectedItem>
+          <div class="flex items-center gap-2">
+            <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                 [class]="'flag flag-' + selectedOption.iso.toLowerCase()" style="width: 18px" />
+            <div>{{ selectedOption.code }}</div>
+          </div>
+        </ng-template>
+        <ng-template let-country #item>
+          <div class="flex items-center gap-2">
+            <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                 [class]="'flag flag-' + country.iso.toLowerCase()" style="width: 18px" />
+            <div>{{ country.code }}</div>
+          </div>
+        </ng-template>
+      </p-select>
+    </div>
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label">{{ 'wizard.contact.phone' | translate }}</label>
+      <input pInputText class="form-control" [(ngModel)]="ds.state().phone"
+             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             type="number" (ngModelChange)="ds.up('phone',$event)">
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">{{ 'wizard.contact.address' | translate }}</label>
+      <input pInputText class="form-control" [(ngModel)]="ds.state().address"
+             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('address',$event)">
+    </div>
+    <div class="col-md-3 d-flex flex-column">
+      <label class="form-label">{{'wizard.contact.interviewPlace' | translate}}</label>
+      <p-select [options]="countries" [(ngModel)]="ds.state().interviewPlace"
+                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                class="w-full md:w-56"
+                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectInterviewPlace') | translate"
+                (ngModelChange)="ds.up('interviewPlace',$event)"></p-select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">{{ 'wizard.contact.email' | translate }}</label>
+      <input pInputText type="email" class="form-control" [ngModel]="ds.state().email"
+             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('email',$event)">
+    </div>
+  </div>
+
+  <hr class="my-4">
+  <div class="mb-2 fw-bold" style="color:#7b1e3a">{{ 'wizard.nationalAddress.title' | translate }}</div>
+  <div class="plate mb-3 d-flex align-items-center gap-3" style="background:#1e73be;color:#fff;border-radius:14px;padding:10px 14px;">
+    <div class="lbl fw-bold">{{'wizard.nationalAddress.numberLabel' | translate}}</div>
+    <div class="box"><small>{{ 'wizard.nationalAddress.zone' | translate }}</small><span>{{ ds.state().naZone || '—' }}</span></div>
+    <div class="box"><small>{{ 'wizard.nationalAddress.street' | translate }}</small><span>{{ ds.state().naStreet || '—' }}</span></div>
+    <div class="box"><small>{{ 'wizard.nationalAddress.building' | translate }}</small><span>{{ ds.state().naBuilding || '—' }}</span></div>
+    <div class="box"><small>{{ 'wizard.nationalAddress.unit' | translate }}</small><span>{{ ds.state().naUnit || '—' }}</span></div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.zone' | translate }}</label>
+      <input class="form-control" [ngModel]="ds.state().naZone" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('naZone',$event)">
+    </div>
+    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.street' | translate }}</label>
+      <input class="form-control" [ngModel]="ds.state().naStreet" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('naStreet',$event)">
+    </div>
+    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.building' | translate }}</label>
+      <input class="form-control" [ngModel]="ds.state().naBuilding" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('naBuilding',$event)">
+    </div>
+    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.unit' | translate }}</label>
+      <input class="form-control" [ngModel]="ds.state().naUnit" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('naUnit',$event)">
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">{{'wizard.nationalAddress.document' | translate}}</label>
+      <p-fileupload mode="basic" name="na" chooseLabel="{{'wizard.buttons.upload' | translate}}"
+                    (onSelect)="ds.up('naFileName',$event.files[0]?.name)">
+
+      </p-fileupload>
+      <div class="small text-muted mt-2">{{ ds.state().naFileName || '—' }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="text-end">
+  <button class="btn btn-outline-secondary" (click)="back.emit()">
+    <i class="fa-solid me-1" faDirArrow="start"></i> {{ 'wizard.buttons.prev' | translate }}
+  </button>
+  <button class="btn btn-brand ms-2" (click)="next.emit()">
+    {{ 'wizard.buttons.next' | translate }} <i class="fa-solid ms-1" faDirArrow="end"></i>
+  </button>
+</div>

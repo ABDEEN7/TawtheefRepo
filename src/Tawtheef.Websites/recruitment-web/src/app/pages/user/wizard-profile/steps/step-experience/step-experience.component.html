@@ -1,0 +1,144 @@
+  <div class="card border-0 shadow rounded-4 p-4 mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <h6 class="fw-bold mb-0" style="color:#7b1e3a">{{ 'wizard.experience.title' | translate }}</h6>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addExperience()">
+          <i class="fa-solid fa-plus"></i> {{ 'wizard.experience.add' | translate }}
+        </button>
+      </div>
+    </div>
+
+  <!-- Experience Table -->
+  <p-table [value]="ds.state().experiences">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{'wizard.experience.table.org' | translate}}</th>
+        <th>{{'wizard.experience.table.title' | translate}}</th>
+        <th>{{'wizard.experience.table.period' | translate}}</th>
+        <th>{{'wizard.experience.table.tasks' |translate}}</th>
+        <th>{{'wizard.experience.table.file' | translate}}</th>
+        <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-r let-i="rowIndex">
+      <tr>
+        <td>{{ r.org }}</td>
+        <td>{{ r.title }}</td>
+        <td>
+          {{ r.from ? (r.from | date:'MM/yyyy') : '—' }}
+          -
+          {{ r.to ? (r.to | date:'MM/yyyy') : ('common.present' | translate) }}
+        </td>
+        <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
+        <td>{{ r.fileName || '—' }}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-danger" (click)="ds.delExp(i)">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="7" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Courses / Trainings -->
+  <div class="card border-0 shadow rounded-4 p-4 mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <h6 class="fw-bold mb-0" style="color:#7b1e3a">{{ 'wizard.courses.title' | translate }}</h6>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addCourse()">
+          <i class="fa-solid fa-plus"></i> {{ 'wizard.courses.add' | translate }}
+        </button>
+      </div>
+    </div>
+
+  <p-table [value]="ds.state().courses">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{'wizard.courses.table.provider' | translate}}</th>
+        <th>{{'wizard.courses.table.courseName' | translate}}</th>
+        <th>{{'wizard.courses.table.period' | translate}}</th>
+        <th>{{'wizard.courses.table.file'  | translate }}</th>
+        <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-r let-i="rowIndex">
+      <tr>
+        <td>{{ r.org }}</td>
+        <td>{{ r.title }}</td>
+        <td>
+          {{ r.from ? (r.from | date:'MM/yyyy') : '—' }}
+          -
+          {{ r.to ? (r.to | date:'MM/yyyy') : 'Present' }}
+        </td>
+        <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
+        <td>{{ r.fileName || '—' }}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-danger" (click)="ds.delCourse(i)">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="7" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Achievements -->
+  <div class="card border-0 shadow rounded-4 p-4 mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <h6 class="fw-bold mb-0" style="color:#7b1e3a">{{ 'wizard.achievement.title' | translate }}</h6>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addAchievement()">
+          <i class="fa-solid fa-plus"></i> {{ 'wizard.achievement.add' | translate }}
+        </button>
+      </div>
+    </div>
+
+  <p-table [value]="ds.state().achievements">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{'wizard.achievement.table.provider' | translate}}</th>
+        <th>{{'wizard.achievement.table.achievement' | translate}}</th>
+        <th>{{'wizard.achievement.table.period' | translate}}</th>
+        <th>{{'wizard.achievement.table.file'  | translate }}</th>
+        <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-r let-i="rowIndex">
+      <tr>
+        <td>{{ r.org }}</td>
+        <td>{{ r.title }}</td>
+        <td>
+          {{ r.from ? (r.from | date:'MM/yyyy') : '—' }}
+          -
+          {{ r.to ? (r.to | date:'MM/yyyy') : 'Present' }}
+        </td>
+        <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
+        <td>{{ r.fileName || '—' }}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-danger" (click)="ds.delAchievement(i)">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="7" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div class="text-end">
+  <button class="btn btn-outline-secondary" (click)="back.emit()">
+    <i class="fa-solid me-1" faDirArrow="start"></i> {{ 'wizard.buttons.prev' | translate }}
+  </button>
+  <button class="btn btn-brand ms-2" (click)="next.emit()">
+    {{ 'wizard.buttons.next' | translate }} <i class="fa-solid ms-1" faDirArrow="end"></i>
+  </button>
+</div>

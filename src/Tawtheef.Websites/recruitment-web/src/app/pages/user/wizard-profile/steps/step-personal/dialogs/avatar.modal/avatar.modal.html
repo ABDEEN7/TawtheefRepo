@@ -1,0 +1,126 @@
+<div class="avatar-modal rounded-4">
+  <div class="p-4">
+    <div class="row g-4 align-items-start">
+      <!-- Left: rules + uploader -->
+      <div class="col-12 col-md-5">
+        <div class="mb-2 small text-muted">
+          {{ 'wizard.personal.avatar.rulesIntro' | translate }}
+        </div>
+        <ul class="small mb-3">
+          <li>{{ 'wizard.personal.avatar.ruleBg' | translate }}</li>
+          <li>{{ 'wizard.personal.avatar.ruleSize' | translate }}</li>
+          <li>{{ 'wizard.personal.avatar.ruleExt' | translate }}</li>
+        </ul>
+
+        <label class="form-label">{{ 'wizard.personal.avatar.choose' | translate }}</label>
+        <input
+          type="file" accept="image/*"
+          class="form-control"
+          (change)="onAvatarPicked($event)"
+          aria-label="Choose an image to upload">
+        <div *ngIf="avatarError" class="text-danger small mt-2">
+          <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ avatarError }}
+        </div>
+
+        <!-- Small preview on md- only -->
+<!--        <div class="d-md-none text-center mt-3" *ngIf="croppedImage">-->
+<!--          <img [src]="croppedImage" class="candidate-avatar-preview fx-drop" alt="preview">-->
+<!--          <div class="small text-muted mt-1">-->
+<!--            {{ 'wizard.personal.avatar.previewNote' | translate }}-->
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+
+      <!-- Right: cropper -->
+      <div class="col-12 col-md-7">
+        <div class="avatar-cropper-container">
+          <div *ngIf="imageFile" class="cropper-shell">
+            <div class="cropper-stage">
+              <div class="stage-overlay"></div>
+
+              <!-- Fill parent size on all screens -->
+              <image-cropper
+                class="avatar-cropper"
+                [imageFile]="imageFile"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="2/3"
+                [resizeToWidth]="600"
+                [onlyScaleDown]="true"
+                [containWithinAspectRatio]="false"
+                [roundCropper]="false"
+                [cropperMinWidth]="120"
+                [cropperMinHeight]="180"
+                [transform]="transform"
+                [alignImage]="'center'"
+                format="png"
+                (imageLoaded)="onCropImageLoaded()"
+                (imageCropped)="onImageCropped($event)"
+                (loadImageFailed)="onCropLoadFailed()"
+              ></image-cropper>
+
+              <div class="crop-guides">
+                <span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls mt-3 d-flex flex-wrap align-items-center gap-3">
+              <div class="ctrl d-flex align-items-center gap-2 flex-grow-1">
+                <i class="fa-solid fa-magnifying-glass-minus"></i>
+                <input type="range" min="0.5" max="3" step="0.05"
+                       [(ngModel)]="zoom" (input)="applyZoom()" aria-label="Zoom">
+                <i class="fa-solid fa-magnifying-glass-plus"></i>
+              </div>
+
+              <div class="ctrl d-flex align-items-center gap-2 flex-grow-1">
+                <i class="fa-solid fa-rotate-left"></i>
+                <input type="range" min="-180" max="180" step="1"
+                       [(ngModel)]="rotation" (input)="applyRotation()" aria-label="Rotate">
+                <i class="fa-solid fa-rotate-right"></i>
+              </div>
+
+              <button type="button" class="btn btn-outline-secondary btn-sm"
+                      (click)="resetCrop()">
+                <i class="fa-solid fa-arrows-rotate me-1"></i>
+                {{ 'wizard.personal.avatar.reset' | translate }}
+              </button>
+            </div>
+
+            <!-- Large preview on md+ -->
+<!--            <div class="d-none d-md-flex justify-content-center mt-3" *ngIf="croppedImage">-->
+<!--              <div class="text-center">-->
+<!--                <img [src]="croppedImage" class="candidate-avatar-preview fx-drop" alt="preview">-->
+<!--                <div class="small text-muted mt-1">-->
+<!--                  {{ 'wizard.personal.avatar.previewNote' | translate }}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+          </div>
+
+          <!-- Placeholder state -->
+          <div *ngIf="!imageFile" class="placeholder-state text-center p-5">
+            <i class="fa-regular fa-image fa-2xl d-block mb-3"></i>
+            <div class="text-muted">{{ 'wizard.personal.avatar.choose' | translate }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky footer inside modal body -->
+  <div class="modal-footer-sticky border-0 mt-3 pt-3">
+    <div class="d-flex flex-wrap justify-content-end gap-2">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        {{ 'common.cancel' | translate }}
+      </button>
+
+      <button type="button"
+              class="btn btn-brand"
+              [disabled]="!croppedImage || !!avatarError"
+              (click)="saveAvatar()"
+              data-bs-dismiss="modal">
+        {{ 'wizard.personal.avatar.save' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+﻿$brand:  #7b1e3a;
+$accent: #a9445f;
+$border: rgba(0,0,0,.08);
+$muted:  #6b7280;
+$text:   #1e1b2c;
+$plate:  #1e73be;
+
+// helpers
+@mixin brand-gradient { background: linear-gradient(135deg, $brand, $accent); }
+@mixin focus-ring { border-color: $brand; box-shadow: 0 0 0 .2rem rgba(123,30,58,.15); }
+@mixin soft-card { background: #fff; border: 1px solid $border; border-radius: 16px; }

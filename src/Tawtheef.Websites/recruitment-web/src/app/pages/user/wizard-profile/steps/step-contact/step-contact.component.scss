@@ -1,0 +1,21 @@
+@use "../../styles/variables" as *;
+
+
+.card { @include soft-card; padding: 1.5rem; }
+
+.plate {
+  background: $plate; color: #fff; border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; gap: 16px;
+  box-shadow: 0 8px 20px rgba(30,115,190,.25);
+
+  .box {
+    background: #fff; color: #000; border-radius: 8px; padding: 6px 10px; text-align: center; min-width: 84px;
+    span { display: block; font-weight: 800; }
+  }
+  .lbl { font-weight: 700; opacity: .95; }
+}
+
+#naFileInfo { color: $muted; }
+.btn-brand {
+  @include brand-gradient; border: none; color: #fff; font-weight: 700; border-radius: 999px; transition: all .25s;
+  &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(123,30,58,.3); }
+}

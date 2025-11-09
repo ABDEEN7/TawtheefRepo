@@ -1,0 +1,238 @@
+<form #degForm="ngForm" (ngSubmit)="onSave(degForm)" novalidate>
+  <!-- ===== BODY (Bootstrap only) ===== -->
+  <div class="p-fluid">
+    <div class="deg-panel card border-0 shadow-none">
+      <div class="card-body py-3">
+
+        <!-- ROW 1: 4 fields -->
+        <div class="row g-2 g-md-3 align-items-start">
+          <!-- degree -->
+          <div class="col-12 col-md-3 d-flex flex-column">
+            <label for="degree" class="form-label fw-semibold mb-2">
+              {{ 'wizard.degrees.degree' | translate }}
+            </label>
+            <p-select
+              inputId="degree"
+              name="degree"
+              #degreeCtrl="ngModel"
+              [options]="degrees" optionLabel="name" optionValue="name"
+              [filter]="true"
+              required
+              [placeholder]="'wizard.degrees.choiceDegree' | translate"
+              [(ngModel)]="form.value.degree"
+              [ngClass]="{'p-invalid': degreeCtrl.invalid && (degreeCtrl.dirty || degreeCtrl.touched)}">
+            </p-select>
+            <small *ngIf="degreeCtrl.invalid && (degreeCtrl.dirty || degreeCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+          </div>
+
+          <!-- gradCountry -->
+          <div class="col-12 col-md-3 d-flex flex-column">
+            <label for="gradCountry" class="form-label fw-semibold mb-2">
+              {{ 'wizard.degrees.gradCountry' | translate }}
+            </label>
+            <p-select
+              inputId="gradCountry"
+              name="gradCountry"
+              #gradCountryCtrl="ngModel"
+              [options]="gradCountries" optionLabel="name" optionValue="name"
+              [filter]="true"
+              required
+              [placeholder]="'wizard.degrees.choiceGradCountry' | translate"
+              [(ngModel)]="form.value.gradCountry"
+              [ngClass]="{'p-invalid': gradCountryCtrl.invalid && (gradCountryCtrl.dirty || gradCountryCtrl.touched)}">
+            </p-select>
+            <small *ngIf="gradCountryCtrl.invalid && (gradCountryCtrl.dirty || gradCountryCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+          </div>
+
+          <!-- university -->
+          <div class="col-12 col-md-3 d-flex flex-column">
+            <label for="university" class="form-label fw-semibold mb-2">
+              {{ 'wizard.degrees.university' | translate }}
+            </label>
+            <p-select
+              inputId="university"
+              name="university"
+              #universityCtrl="ngModel"
+              [options]="universities" optionLabel="name" optionValue="name"
+              [filter]="true"
+              required
+              [placeholder]="'wizard.degrees.choiceUniversity' | translate"
+              [(ngModel)]="form.value.university"
+              [ngClass]="{'p-invalid': universityCtrl.invalid && (universityCtrl.dirty || universityCtrl.touched)}">
+            </p-select>
+            <small *ngIf="universityCtrl.invalid && (universityCtrl.dirty || universityCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+          </div>
+
+          <!-- major -->
+          <div class="col-12 col-md-3 d-flex flex-column">
+            <label for="major" class="form-label fw-semibold mb-2">
+              {{ 'wizard.degrees.major' | translate }}
+            </label>
+            <p-select
+              inputId="major"
+              name="major"
+              #majorCtrl="ngModel"
+              [options]="majors" optionLabel="name" optionValue="name"
+              [filter]="true"
+              required
+              [placeholder]="'wizard.degrees.choiceMajor' | translate"
+              [(ngModel)]="form.value.major"
+              [ngClass]="{'p-invalid': majorCtrl.invalid && (majorCtrl.dirty || majorCtrl.touched)}">
+            </p-select>
+            <small *ngIf="majorCtrl.invalid && (majorCtrl.dirty || majorCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+          </div>
+        </div>
+
+        <!-- ROW 2: 4 fields -->
+        <div class="row g-2 g-md-3 align-items-start mt-1">
+          <!-- gradYear -->
+          <div class="col-12 col-md-3 d-flex flex-column">
+            <label for="gradYear" class="form-label fw-semibold mb-2">
+              {{ 'wizard.degrees.gradYear' | translate }}
+            </label>
+            <p-date-picker
+              inputId="gradYear"
+              name="gradYear"
+              #gradYearCtrl="ngModel"
+              [(ngModel)]="form.value.gradYear"
+              view="year"
+              showIcon="true"
+              dateFormat="yy"
+              required
+              [ngClass]="{'p-invalid': (gradYearCtrl.invalid || yearError) && (gradYearCtrl.dirty || gradYearCtrl.touched)}"
+              (onSelect)="validateYear()"
+              (ngModelChange)="validateYear()"
+              fluid>
+            </p-date-picker>
+            <small *ngIf="gradYearCtrl.invalid && (gradYearCtrl.dirty || gradYearCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+            <small *ngIf="!gradYearCtrl.invalid && yearError"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.yearRange' | translate:{min:minYear, max:maxYear} }}
+            </small>
+          </div>
+
+          <!-- studySystem -->
+          <div class="col-12 col-md-3 d-flex flex-column">
+            <label for="studySystem" class="form-label fw-semibold mb-2">
+              {{ 'wizard.degrees.studySystem' | translate }}
+            </label>
+            <p-select
+              inputId="studySystem"
+              name="studySystem"
+              #studySystemCtrl="ngModel"
+              [options]="studySystems" optionLabel="name" optionValue="name"
+              required
+              [placeholder]="'wizard.degrees.choiceStudySystem' | translate"
+              [(ngModel)]="form.value.studySystem"
+              [ngClass]="{'p-invalid': studySystemCtrl.invalid && (studySystemCtrl.dirty || studySystemCtrl.touched)}">
+            </p-select>
+            <small *ngIf="studySystemCtrl.invalid && (studySystemCtrl.dirty || studySystemCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+          </div>
+
+          <!-- gpa -->
+          <div class="col-12 col-md-3 d-flex flex-column">
+            <label for="gpa" class="form-label fw-semibold mb-2">
+              {{ 'wizard.degrees.gpa' | translate }}
+            </label>
+            <p-inputNumber
+              inputId="gpa"
+              name="gpa"
+              #gpaCtrl="ngModel"
+              [(ngModel)]="form.value.gpa"
+              [useGrouping]="false"
+              [min]="0" [max]="100"
+              [maxlength]="5"
+              [showButtons]="false"
+              required
+              [ngClass]="{'p-invalid': gpaCtrl.invalid && (gpaCtrl.dirty || gpaCtrl.touched)}">
+            </p-inputNumber>
+            <small *ngIf="gpaCtrl?.errors?.['required'] && (gpaCtrl.dirty || gpaCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+            <small *ngIf="(gpaCtrl?.errors?.['min'] || gpaCtrl?.errors?.['max']) && (gpaCtrl.dirty || gpaCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.range' | translate:{min:0, max:100} }}
+            </small>
+          </div>
+
+          <!-- grade -->
+          <div class="col-12 col-md-3 d-flex flex-column">
+            <label for="grade" class="form-label fw-semibold mb-2">
+              {{ 'wizard.degrees.grade' | translate }}
+            </label>
+            <p-select
+              inputId="grade"
+              name="grade"
+              #gradeCtrl="ngModel"
+              [options]="grades" optionLabel="name" optionValue="name"
+              required
+              [placeholder]="'wizard.degrees.choiceGrade' | translate"
+              [(ngModel)]="form.value.grade"
+              [ngClass]="{'p-invalid': gradeCtrl.invalid && (gradeCtrl.dirty || gradeCtrl.touched)}">
+            </p-select>
+            <small *ngIf="gradeCtrl.invalid && (gradeCtrl.dirty || gradeCtrl.touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+          </div>
+        </div>
+
+        <!-- Upload block -->
+        <div class="mt-3 d-flex flex-column">
+          <div class="form-label fw-semibold mb-2">
+            {{ 'wizard.degrees.degreeFile' | translate }} <span class="attachment-hint">(صورة/PDF)</span>
+          </div>
+          <div class="deg-dropzone p-3" [ngClass]="{'p-invalid': fileError}">
+            <p-fileupload
+              name="degFile[]"
+              mode="basic"
+              [showUploadButton]="false" [showCancelButton]="false"
+              [maxFileSize]="maxFileSize"
+              accept=".pdf,image/*"
+              [chooseLabel]="'wizard.degrees.choiceDegreeFile' | translate"
+              (onSelect)="onUpload($event)"
+              (onClear)="clearFile()">
+            </p-fileupload>
+            <small class="mt-2 d-block" [class.text-muted]="!fileError" [class.text-danger]="fileError">
+              {{ fileError ? fileError : (form.value.degreeFile ? form.value.degreeFile.name : '—') }}
+            </small>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <div class="d-flex justify-content-end gap-2">
+    <p-button styleClass="p-button-text" icon="pi pi-times"
+              type="button"
+              (onClick)="onCancel()"
+              [label]="'wizard.buttons.cancel' | translate"></p-button>
+
+    <p-button styleClass="p-button-primary"
+              icon="pi pi-save"
+              type="submit"
+              [disabled]="degForm.invalid || !!fileError || !form.value.degreeFile"
+              [label]="'wizard.degrees.add' | translate"></p-button>
+  </div>
+</form>

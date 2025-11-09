@@ -10,7 +10,6 @@ import {LanguageService} from './core/services/language.service';
   styleUrl: './app.scss'
 })
 export class App {
-  currentLang: 'ar' | 'en' = 'ar';
   protected readonly title = signal('recruitment-web');
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
@@ -20,11 +19,5 @@ export class App {
     this.translate.setFallbackLang('ar');
     this.translate.use('ar');
     this.language.set(this.translate.getCurrentLang() as 'ar' | 'en');
-  }
-
-  toggleLanguage(): void {
-    this.currentLang = this.currentLang === 'ar' ? 'en' : 'ar';
-    document.documentElement.lang = this.currentLang;
-    document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
   }
 }

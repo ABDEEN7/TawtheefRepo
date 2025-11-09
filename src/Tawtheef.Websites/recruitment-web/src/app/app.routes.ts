@@ -39,16 +39,10 @@ export const routes: Routes = [
     // canActivateChild: [authGuard],
     children: [
       {
-        path: 'profile',
+        path: 'user',
         // canMatch: [authMatchGuard],
         loadChildren: () =>
-          import('./pages/user-profile/user-profile.module').then(m => m.ProfileModule),
-      },
-      {
-        path: 'dashboard',
-        // canMatch: [authMatchGuard, profileCompleteGuard],
-        loadChildren: () =>
-          import('./pages/user-profile/user-profile.module').then(m => m.ProfileModule),
+          import('./pages/user/user.module').then(m => m.UserModule),
       },
       {
         path: 'candidate-dashboard',
