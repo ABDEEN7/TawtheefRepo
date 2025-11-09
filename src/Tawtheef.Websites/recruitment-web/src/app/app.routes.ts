@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import {UserLayout} from './layouts/internal/user-layout/user-layout';
 import {PublicLayout} from './layouts/public/public-layout/public-layout';
-import {authGuard, authMatchGuard, loggedOutOnlyGuard} from './core/guards/route-guards';
-import {CandidateDashboard} from './pages/candidate-dashboard/candidate-dashboard';
+import {loggedOutOnlyGuard} from './core/guards/route-guards';
+
 
 export const routes: Routes = [
   {
