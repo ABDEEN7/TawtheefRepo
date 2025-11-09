@@ -1,5 +1,6 @@
 ﻿:root {
   --brand: #7b1e3a;
+  --ink: #1f2937;
   --accent: #a9445f;
   --muted: #6b7280;
   --text: #1e1b2c;
@@ -7,6 +8,7 @@
   --bg: #f6f7fb;
   --border: rgba(0,0,0,.08);
   --success: #16a34a;
+  --line: #e5e7eb;
 
   --radius-lg: 18px;
   --radius-pill: 999px;
@@ -14,7 +16,7 @@
   --shadow-2: 0 8px 18px rgba(0,0,0,.08);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
     --card: #0f1220;
     --text: #eef0f6;
