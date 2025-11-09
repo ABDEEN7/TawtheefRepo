@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import {PublicLayout} from './layouts/public-layout/public-layout';
 import {UserLayout} from './layouts/user-layout/user-layout';
 import {loggedOutOnlyGuard} from './core/auth/route-guards';
+import { ProfileList } from './pages/profile-list/profile-list'
 
 export const routes: Routes = [
   {
@@ -36,7 +37,7 @@ export const routes: Routes = [
       // },
     ],
   },
-
+  { path: 'profile-list', component: ProfileList },
   // Fallback
   { path: '**', redirectTo: 'error/404' },
 ];
