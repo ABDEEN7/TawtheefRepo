@@ -1,0 +1,107 @@
+.text-brand {
+  color: var(--brand);
+}
+
+.btn-brand {
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  border: none;
+  color: #fff;
+  border-radius: 999px;
+}
+
+.btn-outline-brand {
+  border-color: var(--brand);
+  color: var(--brand);
+  border-radius: 999px;
+
+  &:hover {
+    background: var(--brand);
+    color: #fff;
+  }
+}
+
+.header-hero {
+  background: radial-gradient(1000px 350px at 50% -60%, #ffe9ef, transparent 70%);
+  border-bottom: 1px solid var(--border);
+}
+
+.badge-soft {
+  background: transparent !important;
+  border: none !important;
+  font-weight: 700;
+  padding: 0;
+
+  &.academic {
+    color: #1d4ed8;
+  }
+
+  &.administrative {
+    color: #047857;
+  }
+
+  &.labor {
+    color: #b91c1c;
+  }
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 1px solid transparent;
+
+  &.pill-total {
+    background: #f3f4f6;
+    color: #111827;
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+
+  &.pill-applied {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: rgba(6, 95, 70, 0.2);
+  }
+
+  &.pill-declined {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: rgba(153, 27, 27, 0.22);
+  }
+
+  &.pill-unseen {
+    background: #eef2ff;
+    color: #4338ca;
+    border-color: rgba(67, 56, 202, 0.2);
+  }
+}
+
+.table {
+  thead th {
+    white-space: nowrap;
+  }
+}
+
+.search-bar {
+  .form-select,
+  .form-control {
+    border-radius: 999px;
+  }
+}
+
+// RTL support for Arabic
+:host-context([dir="rtl"]) {
+  .ms-auto {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+
+  .text-end {
+    text-align: left !important;
+  }
+
+  .pagination {
+    direction: ltr;
+  }
+}
