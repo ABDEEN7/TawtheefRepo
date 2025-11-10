@@ -16,7 +16,8 @@ export function HttpLoaderFactory(_httpBackend: HttpBackend) {
   return new MultiTranslateHttpLoader(_httpBackend, [
     {prefix: '/i18n/common/', suffix: '.json'},
     {prefix: '/i18n/pages/auth/', suffix: '.json'},
-    {prefix: '/i18n/pages/profile-list/', suffix: '.json'}
+    {prefix: '/i18n/pages/profile-list/', suffix: '.json'},
+    {prefix: '/i18n/pages/job-invitation-summary/', suffix: '.json'}
   ]);
 }
 
