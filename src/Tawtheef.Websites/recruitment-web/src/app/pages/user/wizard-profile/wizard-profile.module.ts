@@ -27,6 +27,7 @@ import {DialogService, DynamicDialogModule} from 'primeng/dynamicdialog';
 import {Tooltip} from 'primeng/tooltip';
 import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
 import {ImageCropperComponent} from 'ngx-image-cropper';
+import {I18nNamespaceDirective} from "../../../shared/directives/i18n-namespace.directive";
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import {ImageCropperComponent} from 'ngx-image-cropper';
     InputTextModule,
     Tooltip,
     FaDirArrowDirective,
-    ImageCropperComponent
+    ImageCropperComponent,
+    I18nNamespaceDirective
   ]
 })
 export class WizardProfileModule {}

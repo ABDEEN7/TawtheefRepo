@@ -1,6 +1,6 @@
 import {
   ApplicationConfig,
-  importProvidersFrom,
+  importProvidersFrom, inject, provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection
 } from '@angular/core';
@@ -11,13 +11,12 @@ import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {MultiTranslateHttpLoader} from 'ngx-translate-multi-http-loader';
+import {LanguageService} from './core/services/language.service';
 
-export function HttpLoaderFactory(_httpBackend: HttpBackend) {
+export function rootLoaderFactory(_httpBackend: HttpBackend) {
   return new MultiTranslateHttpLoader(_httpBackend, [
     {prefix: '/i18n/common/', suffix: '.json'},
-    {prefix: '/i18n/pages/auth/', suffix: '.json'},
-    {prefix: '/i18n/pages/profile-list/', suffix: '.json'},
-    {prefix: '/i18n/pages/job-invitation-summary/', suffix: '.json'}
+    {prefix: '/i18n/layout/', suffix: '.json'},
   ]);
 }
 
@@ -28,14 +27,11 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
-    provideTranslateService({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpBackend]
-      },
-      fallbackLang: 'ar',
-      lang: 'ar'
+    provideTranslateService(),
+    { provide: TranslateLoader, useFactory: rootLoaderFactory, deps: [HttpBackend] },
+    provideAppInitializer(() => {
+      const langSvc = inject(LanguageService);
+      return langSvc.init();
     }),
     MessageService,
   ]

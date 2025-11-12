@@ -3,7 +3,6 @@ import {UserLayout} from './layouts/internal/user-layout/user-layout';
 import {PublicLayout} from './layouts/public/public-layout/public-layout';
 import {loggedOutOnlyGuard} from './core/guards/route-guards';
 
-
 export const routes: Routes = [
   {
     path: '',

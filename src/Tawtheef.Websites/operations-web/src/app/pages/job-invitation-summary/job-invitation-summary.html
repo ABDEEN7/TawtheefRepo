@@ -1,173 +1,176 @@
-<nav class="navbar navbar-expand-lg sticky-top bg-white shadow-sm">
-  <div class="container">
-    <a class="navbar-brand fw-bold text-brand" href="#">
-      <i class="fa-solid fa-clipboard-list"></i>
-      {{ 'JOB_INVITATION_SUMMARY.DASHBOARD_TITLE' | translate }}
-    </a>
-    <div class="ms-auto d-flex align-items-center gap-2">
-      <a routerLink="/send-job" class="btn btn-outline-secondary btn-sm rounded-pill">
-        <i class="fa fa-paper-plane"></i>
-        {{ 'JOB_INVITATION_SUMMARY.SEND_INVITATIONS' | translate }}
+<section i18nNamespace="pages/job-invitation-summary">
+  <nav class="navbar navbar-expand-lg sticky-top bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-brand" href="#">
+        <i class="fa-solid fa-clipboard-list"></i>
+        {{ 'JOB_INVITATION_SUMMARY.DASHBOARD_TITLE' | translate }}
       </a>
-    </div>
-  </div>
-</nav>
-
-<header class="py-3 header-hero">
-  <div class="container d-flex align-items-center justify-content-between">
-    <div>
-      <h4 class="mb-1 text-brand fw-bold">{{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}</h4>
-      <div class="text-muted small">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</div>
-    </div>
-    <div class="d-flex gap-2">
-      <a routerLink="/jobs-list" class="btn btn-outline-secondary btn-sm">
-        <i class="fa fa-briefcase"></i>
-        {{ 'JOB_INVITATION_SUMMARY.JOBS_LIST' | translate }}
-      </a>
-    </div>
-  </div>
-</header>
-
-<main class="py-4">
-  <div class="container">
-    <!-- Quick Filters -->
-    <div class="card border-0 shadow-sm p-3 mb-3">
-      <div class="row g-2 search-bar">
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">
-            {{ 'JOB_INVITATION_SUMMARY.JOB_TYPE' | translate }}
-          </label>
-          <select
-            [value]="filters().type"
-            (change)="onTypeFilterChange($any($event.target).value)"
-            class="form-select form-select-sm">
-            <option value="">{{ 'JOB_INVITATION_SUMMARY.ALL' | translate }}</option>
-            <option value="academic">{{ 'JOB_INVITATION_SUMMARY.ACADEMIC' | translate }}</option>
-            <option value="administrative">{{ 'JOB_INVITATION_SUMMARY.ADMINISTRATIVE' | translate }}</option>
-            <option value="labor">{{ 'JOB_INVITATION_SUMMARY.LABOR' | translate }}</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">
-            {{ 'JOB_INVITATION_SUMMARY.REQUESTING_ENTITY' | translate }}
-          </label>
-          <select
-            [value]="filters().entity"
-            (change)="onEntityFilterChange($any($event.target).value)"
-            class="form-select form-select-sm">
-            <option value="">{{ 'JOB_INVITATION_SUMMARY.ALL_ENTITIES' | translate }}</option>
-            <option value="إدارة شؤون المدارس">{{ 'JOB_INVITATION_SUMMARY.SCHOOL_AFFAIRS' | translate }}</option>
-            <option value="إدارة الموارد البشرية">{{ 'JOB_INVITATION_SUMMARY.HR_MANAGEMENT' | translate }}</option>
-            <option value="إدارة نظم المعلومات">{{ 'JOB_INVITATION_SUMMARY.IT_MANAGEMENT' | translate }}</option>
-            <option value="إدارة التقييم">{{ 'JOB_INVITATION_SUMMARY.EVALUATION_MANAGEMENT' | translate }}</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">
-            {{ 'JOB_INVITATION_SUMMARY.STATUS' | translate }}
-          </label>
-          <select
-            [value]="filters().status"
-            (change)="onStatusFilterChange($any($event.target).value)"
-            class="form-select form-select-sm">
-            <option value="">{{ 'JOB_INVITATION_SUMMARY.ALL' | translate }}</option>
-            <option value="open">{{ 'JOB_INVITATION_SUMMARY.OPEN' | translate }}</option>
-            <option value="closed">{{ 'JOB_INVITATION_SUMMARY.CLOSED' | translate }}</option>
-          </select>
-        </div>
-        <div class="col-md-3 d-flex align-items-end justify-content-end gap-2">
-          <button (click)="clearFilters()" class="btn btn-outline-secondary btn-sm rounded-pill">
-            <i class="fa fa-rotate-left"></i>
-            {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
-          </button>
-        </div>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <a routerLink="/send-job" class="btn btn-outline-secondary btn-sm rounded-pill">
+          <i class="fa fa-paper-plane"></i>
+          {{ 'JOB_INVITATION_SUMMARY.SEND_INVITATIONS' | translate }}
+        </a>
       </div>
     </div>
+  </nav>
 
-    <!-- Table -->
-    <div class="card border-0 shadow-sm">
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>{{ 'JOB_INVITATION_SUMMARY.JOB_TITLE' | translate }}</th>
-            <th>{{ 'JOB_INVITATION_SUMMARY.ENTITY' | translate }}</th>
-            <th>{{ 'JOB_INVITATION_SUMMARY.TYPE' | translate }}</th>
-            <th>{{ 'JOB_INVITATION_SUMMARY.JOB_STATUS' | translate }}</th>
-            <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.INVITATIONS' | translate }}</th>
-            <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.APPLICANTS' | translate }}</th>
-            <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.DECLINED' | translate }}</th>
-            <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.UNSEEN' | translate }}</th>
-            <th class="text-end">{{ 'JOB_INVITATION_SUMMARY.ACTION' | translate }}</th>
-          </tr>
-          </thead>
-          <tbody>
-            @for (summary of paginatedJobSummaries(); track summary.job.id; let i = $index) {
-              <tr>
-                <td>{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
-                <td class="fw-bold">{{ summary.job.title }}</td>
-                <td>{{ summary.job.entity }}</td>
-                <td>
+  <header class="py-3 header-hero">
+    <div class="container d-flex align-items-center justify-content-between">
+      <div>
+        <h4 class="mb-1 text-brand fw-bold">{{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}</h4>
+        <div class="text-muted small">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</div>
+      </div>
+      <div class="d-flex gap-2">
+        <a routerLink="/jobs-list" class="btn btn-outline-secondary btn-sm">
+          <i class="fa fa-briefcase"></i>
+          {{ 'JOB_INVITATION_SUMMARY.JOBS_LIST' | translate }}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="py-4">
+    <div class="container">
+      <!-- Quick Filters -->
+      <div class="card border-0 shadow-sm p-3 mb-3">
+        <div class="row g-2 search-bar">
+          <div class="col-md-3">
+            <label class="form-label fw-bold small mb-1">
+              {{ 'JOB_INVITATION_SUMMARY.JOB_TYPE' | translate }}
+            </label>
+            <select
+              [value]="filters().type"
+              (change)="onTypeFilterChange($any($event.target).value)"
+              class="form-select form-select-sm">
+              <option value="">{{ 'JOB_INVITATION_SUMMARY.ALL' | translate }}</option>
+              <option value="academic">{{ 'JOB_INVITATION_SUMMARY.ACADEMIC' | translate }}</option>
+              <option value="administrative">{{ 'JOB_INVITATION_SUMMARY.ADMINISTRATIVE' | translate }}</option>
+              <option value="labor">{{ 'JOB_INVITATION_SUMMARY.LABOR' | translate }}</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-bold small mb-1">
+              {{ 'JOB_INVITATION_SUMMARY.REQUESTING_ENTITY' | translate }}
+            </label>
+            <select
+              [value]="filters().entity"
+              (change)="onEntityFilterChange($any($event.target).value)"
+              class="form-select form-select-sm">
+              <option value="">{{ 'JOB_INVITATION_SUMMARY.ALL_ENTITIES' | translate }}</option>
+              <option value="إدارة شؤون المدارس">{{ 'JOB_INVITATION_SUMMARY.SCHOOL_AFFAIRS' | translate }}</option>
+              <option value="إدارة الموارد البشرية">{{ 'JOB_INVITATION_SUMMARY.HR_MANAGEMENT' | translate }}</option>
+              <option value="إدارة نظم المعلومات">{{ 'JOB_INVITATION_SUMMARY.IT_MANAGEMENT' | translate }}</option>
+              <option value="إدارة التقييم">{{ 'JOB_INVITATION_SUMMARY.EVALUATION_MANAGEMENT' | translate }}</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-bold small mb-1">
+              {{ 'JOB_INVITATION_SUMMARY.STATUS' | translate }}
+            </label>
+            <select
+              [value]="filters().status"
+              (change)="onStatusFilterChange($any($event.target).value)"
+              class="form-select form-select-sm">
+              <option value="">{{ 'JOB_INVITATION_SUMMARY.ALL' | translate }}</option>
+              <option value="open">{{ 'JOB_INVITATION_SUMMARY.OPEN' | translate }}</option>
+              <option value="closed">{{ 'JOB_INVITATION_SUMMARY.CLOSED' | translate }}</option>
+            </select>
+          </div>
+          <div class="col-md-3 d-flex align-items-end justify-content-end gap-2">
+            <button (click)="clearFilters()" class="btn btn-outline-secondary btn-sm rounded-pill">
+              <i class="fa fa-rotate-left"></i>
+              {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>{{ 'JOB_INVITATION_SUMMARY.JOB_TITLE' | translate }}</th>
+              <th>{{ 'JOB_INVITATION_SUMMARY.ENTITY' | translate }}</th>
+              <th>{{ 'JOB_INVITATION_SUMMARY.TYPE' | translate }}</th>
+              <th>{{ 'JOB_INVITATION_SUMMARY.JOB_STATUS' | translate }}</th>
+              <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.INVITATIONS' | translate }}</th>
+              <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.APPLICANTS' | translate }}</th>
+              <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.DECLINED' | translate }}</th>
+              <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.UNSEEN' | translate }}</th>
+              <th class="text-end">{{ 'JOB_INVITATION_SUMMARY.ACTION' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (summary of paginatedJobSummaries(); track summary.job.id; let i = $index) {
+                <tr>
+                  <td>{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
+                  <td class="fw-bold">{{ summary.job.title }}</td>
+                  <td>{{ summary.job.entity }}</td>
+                  <td>
                   <span [class]="'badge-soft ' + summary.job.type">
                     {{ getTypeLabel(summary.job.type) }}
                   </span>
-                </td>
-                <td>
-                  @if (summary.job.status === 'open') {
-                    <span class="badge bg-success-subtle text-success" style="border-radius: 999px">
+                  </td>
+                  <td>
+                    @if (summary.job.status === 'open') {
+                      <span class="badge bg-success-subtle text-success" style="border-radius: 999px">
                       {{ 'JOB_INVITATION_SUMMARY.OPEN' | translate }}
                     </span>
-                  } @else {
-                    <span class="badge bg-secondary-subtle text-secondary" style="border-radius: 999px">
+                    } @else {
+                      <span class="badge bg-secondary-subtle text-secondary" style="border-radius: 999px">
                       {{ 'JOB_INVITATION_SUMMARY.CLOSED' | translate }}
                     </span>
-                  }
-                </td>
-                <td class="text-center"><span class="pill pill-total">{{ summary.totalInv }}</span></td>
-                <td class="text-center"><span class="pill pill-applied">{{ summary.applied }}</span></td>
-                <td class="text-center"><span class="pill pill-declined">{{ summary.declined }}</span></td>
-                <td class="text-center"><span class="pill pill-unseen">{{ summary.unseen }}</span></td>
-                <td class="text-end">
-                  <a [routerLink]="['/staff-invites-details', summary.job.id]"
-                     class="btn btn-sm btn-outline-secondary">
-                    <i class="fa fa-eye"></i>
-                    {{ 'JOB_INVITATION_SUMMARY.VIEW_DETAILS' | translate }}
-                  </a>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+                    }
+                  </td>
+                  <td class="text-center"><span class="pill pill-total">{{ summary.totalInv }}</span></td>
+                  <td class="text-center"><span class="pill pill-applied">{{ summary.applied }}</span></td>
+                  <td class="text-center"><span class="pill pill-declined">{{ summary.declined }}</span></td>
+                  <td class="text-center"><span class="pill pill-unseen">{{ summary.unseen }}</span></td>
+                  <td class="text-end">
+                    <a [routerLink]="['/staff-invites-details', summary.job.id]"
+                       class="btn btn-sm btn-outline-secondary">
+                      <i class="fa fa-eye"></i>
+                      {{ 'JOB_INVITATION_SUMMARY.VIEW_DETAILS' | translate }}
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
-    <!-- Pagination -->
-    <div class="d-flex justify-content-between align-items-center p-2 mt-1">
-      <div class="small-muted">{{ paginationStats() }}</div>
-      <nav>
-        <ul class="pagination m-0">
-          <li class="page-item" [class.disabled]="currentPage() === 1">
-            <a class="page-link" href="#" (click)="goToPage(currentPage() - 1); $event.preventDefault()">
-              {{ 'JOB_INVITATION_SUMMARY.PREVIOUS' | translate }}
-            </a>
-          </li>
-
-          @for (page of getPaginationRange(); track page) {
-            <li class="page-item" [class.active]="page === currentPage()">
-              <a class="page-link" href="#" (click)="goToPage(page); $event.preventDefault()">
-                {{ page }}
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center p-2 mt-1">
+        <div class="small-muted">{{ paginationStats() }}</div>
+        <nav>
+          <ul class="pagination m-0">
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <a class="page-link" href="#" (click)="goToPage(currentPage() - 1); $event.preventDefault()">
+                {{ 'JOB_INVITATION_SUMMARY.PREVIOUS' | translate }}
               </a>
             </li>
-          }
 
-          <li class="page-item" [class.disabled]="currentPage() === totalPages()">
-            <a class="page-link" href="#" (click)="goToPage(currentPage() + 1); $event.preventDefault()">
-              {{ 'JOB_INVITATION_SUMMARY.NEXT' | translate }}
-            </a>
-          </li>
-        </ul>
-      </nav>
+            @for (page of getPaginationRange(); track page) {
+              <li class="page-item" [class.active]="page === currentPage()">
+                <a class="page-link" href="#" (click)="goToPage(page); $event.preventDefault()">
+                  {{ page }}
+                </a>
+              </li>
+            }
+
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <a class="page-link" href="#" (click)="goToPage(currentPage() + 1); $event.preventDefault()">
+                {{ 'JOB_INVITATION_SUMMARY.NEXT' | translate }}
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
-  </div>
-</main>
+  </main>
+
+</section>

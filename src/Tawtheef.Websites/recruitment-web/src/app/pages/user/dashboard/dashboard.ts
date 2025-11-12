@@ -1,4 +1,3 @@
-// candidate-dashboard.component.ts
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,21 +21,21 @@ import {
   JobType,
   JobStatus
 } from './services/candidate-dashboard.service';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, TranslatePipe],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    I18nNamespaceDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
-  private translate = inject(TranslateService);
   private candidateService = inject(CandidateDashboardService);
-
-  // Constants exposed to template
-  readonly JOB_TYPES = JOB_TYPES;
-  readonly JOB_STATUSES = JOB_STATUSES;
   readonly FILTER_OPTIONS = FILTER_OPTIONS;
 
   // Loading states

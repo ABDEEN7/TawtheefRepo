@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Job, Invite, Application, JobSummary, FilterState } from './job-invitation-summary.model';
+import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-job-invitation-summary',
   templateUrl: './job-invitation-summary.html',
   styleUrls: ['./job-invitation-summary.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe]
+  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe, I18nNamespaceDirective]
 })
 export class JobInvitationSummary implements OnInit {
   private translate = inject(TranslateService);

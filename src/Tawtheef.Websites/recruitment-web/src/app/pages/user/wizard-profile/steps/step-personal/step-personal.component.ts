@@ -20,12 +20,6 @@ export class StepPersonalComponent implements OnInit{
   translate = inject(TranslateService);
 
   avatarPreviewUrl: string | null = null;
-  constructor() {
-    if(!this.ds.state().candidateType){
-      this.editPrereq();
-    }
-  }
-
   genders = [ { "id": 1, "name": "ذكر" }, { "id": 2, "name": "أنثى" } ];
   nationalities = [ { "id": 1, "name": "قطري" }, { "id": 2, "name": "سعودي" }, { "id": 3, "name": "إماراتي" }, { "id": 4, "name": "بحريني" }, { "id": 5, "name": "كويتي" }, { "id": 6, "name": "أردني" }, { "id": 7, "name": "مصري" }, { "id": 8, "name": "سوداني" }, { "id": 9, "name": "تونسي" }, { "id": 10, "name": "مغربي" }, { "id": 11, "name": "لبناني" }, { "id": 12, "name": "سوري" }, { "id": 13, "name": "فلسطيني" }, { "id": 14, "name": "عراقي" }, { "id": 15, "name": "يمني" }, { "id": 16, "name": "هندي" }, { "id": 17, "name": "باكستاني" } ];
   religions = [ { "id": 1, "name": "الإسلام" }, { "id": 2, "name": "المسيحية" }, { "id": 3, "name": "أخرى" } ];
@@ -45,6 +39,9 @@ export class StepPersonalComponent implements OnInit{
 
   ngOnInit(){
     this.form.patchValue(this.ds.state());
+    if(!this.ds.state().candidateType){
+      this.editPrereq();
+    }
   }
 
   openAvatarDialog() {
