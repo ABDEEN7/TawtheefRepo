@@ -1,8 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using FluentValidation;
@@ -20,7 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
@@ -28,7 +24,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
-using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
@@ -108,14 +103,19 @@ namespace Tawtheef.Infrastructure
         private static void AddDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             // Connection string kept for potential conditional logic later
-            var cs = configuration.GetConnectionString("DefaultConnection");
+            var cs = configuration.GetConnectionString("TawtheefContextConnection");
 
             services.AddScoped<AuditableEntityInterceptor>();
 
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
             {
                 // register interceptors or other options as needed
-                options.AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
+                options.UseSqlServer(cs, sql =>
+                        {
+                            sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
+                            sql.EnableRetryOnFailure(5);
+                        })
+                        .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
             });
 
             services.AddIdentity<User, IdentityRole<Guid>>(options =>

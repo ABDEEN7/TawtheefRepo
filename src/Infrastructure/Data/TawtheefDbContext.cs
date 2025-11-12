@@ -95,15 +95,15 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
             warnings.Ignore(CoreEventId.RowLimitingOperationWithoutOrderByWarning))
             .AddInterceptors(new SlowQueryInterceptor(logger, 300));
     }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
 
         // Apply configurations
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(TawtheefDbContext).Assembly);
+        builder.ApplyConfigurationsFromAssembly(typeof(TawtheefDbContext).Assembly);
 
         // Configure soft delete globally
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        foreach (var entityType in builder.Model.GetEntityTypes())
         {
             var clrType = entityType.ClrType;
 
@@ -115,11 +115,11 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
             var condition = Expression.Equal(property, Expression.Constant(false));
             var lambda = Expression.Lambda(condition, parameter);
 
-            modelBuilder.Entity(clrType).HasQueryFilter(lambda);
+            builder.Entity(clrType).HasQueryFilter(lambda);
 
             if (!typeof(BaseEntity).IsAssignableFrom(clrType)) continue;
             if (clrType == typeof(User)) continue;
-            var entity = modelBuilder.Entity(clrType);
+            var entity = builder.Entity(clrType);
 
             entity.HasOne(typeof(User), nameof(BaseEntity.CreatedBy))
                 .WithMany()
