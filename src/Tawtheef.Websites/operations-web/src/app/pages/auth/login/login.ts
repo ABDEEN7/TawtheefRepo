@@ -5,13 +5,15 @@ import {AuthService} from '../../../core/auth/auth.service';
 import {ExternalLoginService} from '../../../core/auth/external-login';
 import {TranslatePipe} from '@ngx-translate/core';
 import {Subscription} from 'rxjs';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
   imports: [
-    TranslatePipe
+    TranslatePipe,
+    I18nNamespaceDirective
   ]
 })
 export class Login implements OnInit, OnDestroy {

@@ -5,11 +5,12 @@ import { ProfileService } from './profile-list.service';
 import { ProfileListState } from './profile-list.model';
 import {TranslatePipe} from '@ngx-translate/core';
 import {LanguageService} from '../../core/services/language.service';
+import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-profile-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, I18nNamespaceDirective],
   templateUrl: './profile-list.html',
   styleUrl: './profile-list.scss'
 })

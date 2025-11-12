@@ -7,13 +7,18 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { UnderConstructionComponent } from './under-construction/under-construction.component';
 import { ComeSoonComponent } from './come-soon/come-soon.component';
 
-const routes: Routes = [
-  { path: '404', component: Error404Component },
-  { path: '500', component: Error500Component },
-  { path: 'access-denied', component: AccessDeniedComponent },
-  { path: 'under-construction', component: UnderConstructionComponent },
-  { path: 'come-soon', component: ComeSoonComponent },
-  { path: '', component: ErrorComponent }
+const routes: Routes = [{
+  path:'',
+  component: ErrorComponent,
+  children: [
+    { path: '404', component: Error404Component },
+    { path: '500', component: Error500Component },
+    { path: 'access-denied', component: AccessDeniedComponent },
+    { path: 'under-construction', component: UnderConstructionComponent },
+    { path: 'come-soon', component: ComeSoonComponent },
+    { path: '', component: ErrorComponent }
+  ],
+}
 ];
 
 @NgModule({

@@ -3,7 +3,7 @@ import {race, Subscription, timer} from 'rxjs';
 import {LanguageService} from '../../../core/services/language.service';
 import {HttpClient} from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgIf} from '@angular/common';
 import {ExternalLoginService} from '../../../core/auth/external-login';
 
@@ -11,12 +11,9 @@ import {ExternalLoginService} from '../../../core/auth/external-login';
 type ResidencyMode = 'resident' | 'nonresident';
 @Component({
   selector: 'app-login',
-  imports: [
-    TranslatePipe,
-    NgIf
-  ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
+  standalone: false
 })
 export class Login implements OnInit, OnDestroy{
 
@@ -28,6 +25,7 @@ export class Login implements OnInit, OnDestroy{
   residencyMode: ResidencyMode = (localStorage.getItem('residencyMode') as ResidencyMode) || 'resident';
 
   private subs: Subscription[] = [];
+
 
   ngOnInit(): void {
     const s = this.lang.current$.subscribe(code => {

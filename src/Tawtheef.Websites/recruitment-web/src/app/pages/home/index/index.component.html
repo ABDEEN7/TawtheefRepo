@@ -1,113 +1,115 @@
-<header class="hero brand-grad mb-4">
-  <div class="inner container container-narrow text-center">
-    <div class="kicker mb-2">{{ 'home.hero.kicker' | translate }}</div>
-    <h1 class="display-5 fw-bold mb-3">{{ 'home.hero.title' | translate }}</h1>
-    <p class="lead mb-4">{{ 'home.hero.subtitle' | translate }}</p>
-    <div class="d-flex flex-wrap justify-content-center gap-2">
-      <a class="btn btn-brand btn-lg px-4" href="#tracks">
-        {{ 'home.hero.cta1' | translate }}
-      </a>
-      <a class="btn btn-outline-light btn-lg rounded-pill px-4" [routerLink]="routes.auth.login">
-        {{ 'home.hero.cta2' | translate }}
-      </a>
+<section i18nNamespace="pages/home">
+  <header class="hero brand-grad mb-4">
+    <div class="inner container container-narrow text-center">
+      <div class="kicker mb-2">{{ 'home.hero.kicker' | translate }}</div>
+      <h1 class="display-5 fw-bold mb-3">{{ 'home.hero.title' | translate }}</h1>
+      <p class="lead mb-4">{{ 'home.hero.subtitle' | translate }}</p>
+      <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a class="btn btn-brand btn-lg px-4" href="#tracks">
+          {{ 'home.hero.cta1' | translate }}
+        </a>
+        <a class="btn btn-outline-light btn-lg rounded-pill px-4" [routerLink]="routes.auth.login">
+          {{ 'home.hero.cta2' | translate }}
+        </a>
+      </div>
     </div>
-  </div>
-</header>
-<section id="about" class="section">
-  <div class="container container-narrow">
-    <div class="text-center mb-4">
-      <h2 class="fw-bold" data-aos="fade-up">{{ 'home.about.title' | translate }}</h2>
-      <p class="text-muted" data-aos="fade-up" data-aos-delay="50">
-        {{ 'home.about.desc' | translate }}
-      </p>
+  </header>
+  <section id="about" class="section">
+    <div class="container container-narrow">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold" data-aos="fade-up">{{ 'home.about.title' | translate }}</h2>
+        <p class="text-muted" data-aos="fade-up" data-aos-delay="50">
+          {{ 'home.about.desc' | translate }}
+        </p>
+      </div>
     </div>
-  </div>
-</section>
-<section id="tracks" class="section">
-  <div class="container container-narrow">
-    <div class="text-center mb-4">
-      <h2 class="fw-bold" data-aos="fade-up">{{ 'home.tracks.title' | translate }}</h2>
-      <p class="text-muted" data-aos="fade-up" data-aos-delay="50">
-        {{ 'home.tracks.desc' | translate }}
-      </p>
-    </div>
+  </section>
+  <section id="tracks" class="section">
+    <div class="container container-narrow">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold" data-aos="fade-up">{{ 'home.tracks.title' | translate }}</h2>
+        <p class="text-muted" data-aos="fade-up" data-aos-delay="50">
+          {{ 'home.tracks.desc' | translate }}
+        </p>
+      </div>
 
-    <div class="row g-3">
-      <div class="col-12 col-md-6" *ngFor="let t of tracks; index as i" data-aos="fade-up" [attr.data-aos-delay]="i*60">
-        <div class="card-ghost h-100">
-          <img class="w-100" [src]="t.img" alt="">
-          <div class="p-3">
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="icon-circle"><i class="fa-solid" [ngClass]="t.icon"></i></span>
-              <h5 class="m-0">{{ ('home.tracks.items.' + t.key + '.title') | translate }}</h5>
+      <div class="row g-3">
+        <div class="col-12 col-md-6" *ngFor="let t of tracks; index as i" data-aos="fade-up" [attr.data-aos-delay]="i*60">
+          <div class="card-ghost h-100">
+            <img class="w-100" [src]="t.img" alt="">
+            <div class="p-3">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="icon-circle"><i class="fa-solid" [ngClass]="t.icon"></i></span>
+                <h5 class="m-0">{{ ('home.tracks.items.' + t.key + '.title') | translate }}</h5>
+              </div>
+              <p class="text-muted mb-3">
+                {{ ('home.tracks.items.' + t.key + '.desc') | translate }}
+              </p>
+              <a class="btn btn-outline-secondary rounded-pill" href="#">
+                {{ 'home.tracks.cta' | translate }}
+              </a>
             </div>
-            <p class="text-muted mb-3">
-              {{ ('home.tracks.items.' + t.key + '.desc') | translate }}
-            </p>
-            <a class="btn btn-outline-secondary rounded-pill" href="#">
-              {{ 'home.tracks.cta' | translate }}
-            </a>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
-<section id="why" class="section bg-light">
-  <div class="container container-narrow">
-    <div class="text-center mb-4">
-      <h2 class="fw-bold" data-aos="fade-up">{{ 'home.why.title' | translate }}</h2>
-      <p class="text-muted" data-aos="fade-up" data-aos-delay="50">{{ 'home.why.desc' | translate }}</p>
-    </div>
+  </section>
+  <section id="why" class="section bg-light">
+    <div class="container container-narrow">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold" data-aos="fade-up">{{ 'home.why.title' | translate }}</h2>
+        <p class="text-muted" data-aos="fade-up" data-aos-delay="50">{{ 'home.why.desc' | translate }}</p>
+      </div>
 
-    <div class="row g-3">
-      <div class="col-12 col-md-6 col-lg-3" *ngFor="let w of whyItems; index as i" data-aos="fade-up" [attr.data-aos-delay]="i*60">
-        <div class="card-ghost h-100 p-3">
-          <div class="d-flex align-items-center gap-2 mb-2">
-            <span class="icon-circle"><i class="fa-solid" [ngClass]="w.icon"></i></span>
-            <h6 class="m-0">{{ ('home.why.items.' + w.key + '.title') | translate }}</h6>
+      <div class="row g-3">
+        <div class="col-12 col-md-6 col-lg-3" *ngFor="let w of whyItems; index as i" data-aos="fade-up" [attr.data-aos-delay]="i*60">
+          <div class="card-ghost h-100 p-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="icon-circle"><i class="fa-solid" [ngClass]="w.icon"></i></span>
+              <h6 class="m-0">{{ ('home.why.items.' + w.key + '.title') | translate }}</h6>
+            </div>
+            <p class="text-muted m-0">{{ ('home.why.items.' + w.key + '.desc') | translate }}</p>
           </div>
-          <p class="text-muted m-0">{{ ('home.why.items.' + w.key + '.desc') | translate }}</p>
         </div>
       </div>
     </div>
-  </div>
-</section>
-<section id="success" class="section">
-  <div class="container container-narrow">
-    <div class="text-center mb-4">
-      <h2 class="fw-bold" data-aos="fade-up">{{ 'home.success.title' | translate }}</h2>
-      <p class="text-muted" data-aos="fade-up" data-aos-delay="50">{{ 'home.success.desc' | translate }}</p>
-    </div>
+  </section>
+  <section id="success" class="section">
+    <div class="container container-narrow">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold" data-aos="fade-up">{{ 'home.success.title' | translate }}</h2>
+        <p class="text-muted" data-aos="fade-up" data-aos-delay="50">{{ 'home.success.desc' | translate }}</p>
+      </div>
 
-    <div class="row g-3 text-center">
-      <div class="col-12 col-md-4" *ngFor="let s of successStats; index as i" data-aos="zoom-in" [attr.data-aos-delay]="i*60">
-        <div class="card-ghost p-4">
-          <div class="display-5 fw-bold">{{ s.value }}</div>
-          <div class="text-muted mt-1">{{ s.label | translate }}</div>
+      <div class="row g-3 text-center">
+        <div class="col-12 col-md-4" *ngFor="let s of successStats; index as i" data-aos="zoom-in" [attr.data-aos-delay]="i*60">
+          <div class="card-ghost p-4">
+            <div class="display-5 fw-bold">{{ s.value }}</div>
+            <div class="text-muted mt-1">{{ s.label | translate }}</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
-<section id="faq" class="section bg-light">
-  <div class="container container-narrow">
-    <div class="text-center mb-4">
-      <h2 class="fw-bold" data-aos="fade-up">{{ 'home.faq.title' | translate }}</h2>
-      <p class="text-muted" data-aos="fade-up" data-aos-delay="50">{{ 'home.faq.desc' | translate }}</p>
-    </div>
+  </section>
+  <section id="faq" class="section bg-light">
+    <div class="container container-narrow">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold" data-aos="fade-up">{{ 'home.faq.title' | translate }}</h2>
+        <p class="text-muted" data-aos="fade-up" data-aos-delay="50">{{ 'home.faq.desc' | translate }}</p>
+      </div>
 
-    <div class="faq-list">
-      <div class="faq-item card-ghost p-3 mb-2" *ngFor="let f of faqItems; index as i">
-        <button class="faq-q w-100 text-start btn btn-link d-flex align-items-center justify-content-between"
-                (click)="toggleFaq(i)">
-          <span>{{ f.q | translate }}</span>
-          <i class="fa-solid" [ngClass]="expandedFaq === i ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-        </button>
-        <div class="faq-a" [class.open]="expandedFaq === i">
-          <p class="text-muted m-0">{{ f.a | translate }}</p>
+      <div class="faq-list">
+        <div class="faq-item card-ghost p-3 mb-2" *ngFor="let f of faqItems; index as i">
+          <button class="faq-q w-100 text-start btn btn-link d-flex align-items-center justify-content-between"
+                  (click)="toggleFaq(i)">
+            <span>{{ f.q | translate }}</span>
+            <i class="fa-solid" [ngClass]="expandedFaq === i ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+          </button>
+          <div class="faq-a" [class.open]="expandedFaq === i">
+            <p class="text-muted m-0">{{ f.a | translate }}</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </section>

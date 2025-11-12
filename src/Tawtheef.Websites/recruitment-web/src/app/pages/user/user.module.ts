@@ -6,11 +6,10 @@ import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {TranslatePipe} from '@ngx-translate/core';
 import {WizardProfileModule} from './wizard-profile/wizard-profile.module';
 import {userRoutes} from './user.routes';
+import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
+import {Dashboard} from './dashboard/dashboard';
 
 @NgModule({
-  declarations: [
-
-  ],
   imports: [
     RouterModule.forChild(userRoutes),
     CommonModule,
@@ -19,6 +18,7 @@ import {userRoutes} from './user.routes';
     NgbModalModule,
     TranslatePipe,
     WizardProfileModule,
+    I18nNamespaceDirective
   ]
 })
 export class UserModule {}

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocalizedDirective } from './directives/localized.directive';
 import {TranslatePipe} from '@ngx-translate/core';
+import {I18nNamespaceDirective} from './directives/i18n-namespace.directive';
 
 @NgModule({
   declarations: [],
@@ -11,13 +12,14 @@ import {TranslatePipe} from '@ngx-translate/core';
     FormsModule,
     ReactiveFormsModule,
     LocalizedDirective,
-    TranslatePipe
+    TranslatePipe,
+    I18nNamespaceDirective
   ],
   exports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    TranslatePipe,
+    TranslatePipe
   ]
 })
 export class SharedModule {}

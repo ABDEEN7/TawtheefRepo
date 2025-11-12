@@ -6,6 +6,7 @@ import {RouterLink} from "@angular/router";
 import {IndexComponent} from './index/index.component';
 import {Navbar} from '../../layouts/public/navbar/navbar';
 import {Footer} from '../../layouts/public/footer/footer';
+import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {Footer} from '../../layouts/public/footer/footer';
     RouterLink,
     HomeRoutingModule,
     Navbar,
-    Footer
+    Footer,
+    I18nNamespaceDirective
   ]
 })
 export class HomeModule {}
