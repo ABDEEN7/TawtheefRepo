@@ -20,7 +20,6 @@ using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data.Interceptors;
-using EmailQueue = Tawtheef.Infrastructure.Services.NotificationServices.EmailQueue;
 
 namespace Tawtheef.Infrastructure.Data;
 

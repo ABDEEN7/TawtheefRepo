@@ -3,6 +3,7 @@
     <PropertyGroup>
         <RootNamespace>Tawtheef.Infrastructure</RootNamespace>
         <AssemblyName>Tawtheef.Infrastructure</AssemblyName>
+        <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

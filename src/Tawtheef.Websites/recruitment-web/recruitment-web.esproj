@@ -1,4 +1,5 @@
-<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.2191419">
+﻿<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.2191419">
+  
   <PropertyGroup>
     <StartupCommand>npm start</StartupCommand>
     <JavaScriptTestFramework>Jasmine</JavaScriptTestFramework>
@@ -7,6 +8,16 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\platform.client\browser\</BuildOutputFolder>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Prevent NuGet/MSBuild from generating/expecting those props -->
+    <RestoreProjectStyle>None</RestoreProjectStyle>
+    <!-- Don’t build this project when the solution builds -->
+    <BuildProject>false</BuildProject>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  
   <ItemGroup>
     <None Remove="package-lock.json" />
   </ItemGroup>

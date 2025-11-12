@@ -3,6 +3,7 @@
     <PropertyGroup>
         <RootNamespace>Tawtheef.Application</RootNamespace>
         <AssemblyName>Tawtheef.Application</AssemblyName>
+        <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

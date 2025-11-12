@@ -9,9 +9,7 @@ namespace Tawtheef.Domain.Entities.Users;
 
 public class ApplicantUser : User
 {
-    public Guid? ProfileId { get; set; }
     public UserProfile? Profile { get; set; }
-    
     public ICollection<Qualification> Qualifications { get; set; } = [];
     public ICollection<Experience> Experiences { get; set; } = [];
     public ICollection<TrainingCourse> TrainingCourses { get; set; } = [];

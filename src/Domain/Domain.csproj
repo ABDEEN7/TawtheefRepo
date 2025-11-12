@@ -3,11 +3,12 @@
     <PropertyGroup>
         <RootNamespace>Tawtheef.Domain</RootNamespace>
         <AssemblyName>Tawtheef.Domain</AssemblyName>
+        <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="CSharpFunctionalExtensions" />
-        <PackageReference Include="MediatR"/>
+        <PackageReference Include="MediatR" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     </ItemGroup>
 

@@ -40,11 +40,6 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 builder.Services.Configure<ForwardedHeadersOptions>(o =>
 {
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    
-    // Ensure KnownNetworks/KnownProxies are NOT blocking the internal traffic.
-    // In many cases, clearing them (as you did) is enough.
-    o.KnownNetworks.Clear();
-    o.KnownProxies.Clear();
 });
 
 builder.Services.AddApplicationLayer();
@@ -93,8 +88,6 @@ builder.Services.AddSwagger();
 builder.Services.Configure<ForwardedHeadersOptions>(o =>
 {
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    o.KnownNetworks.Clear();
-    o.KnownProxies.Clear();
 });
 
 var app = builder.Build();
