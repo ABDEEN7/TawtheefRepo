@@ -17,6 +17,5 @@ export const authMatchGuard: CanMatchFn = (_route, segments) => {
 export const loggedOutOnlyGuard: CanMatchFn = () => {
   const auth = inject(AuthStateService);
   const router = inject(Router);
-  const role = 'admin'; //TODO: should be read from token
-  return auth.isAuthenticated() ? router.createUrlTree([routes.dashboard(role)]) : true;
+  return auth.isAuthenticated() ? router.createUrlTree([routes.user.dashboard]) : true;
 };

@@ -11,8 +11,7 @@ public record AuthResponse(
 public sealed class ProfilePrefillDto
 {
     public string? Email { get; init; }
-    public string? GivenNameEn { get; init; }
-    public string? FamilyNameEn { get; init; }
+    public string? FullName { get; init; }
     public string? Avatar { get; init; }
     public string? PhoneE164 { get; init; }
     public string? Nationality { get; init; }

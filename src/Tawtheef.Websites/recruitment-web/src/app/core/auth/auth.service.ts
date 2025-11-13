@@ -43,8 +43,8 @@ export class AuthService {
     return this.core.externalLogin(data);
   }
 
-  logout(): void {
-    this.state.logout();
+  logout(callServer: boolean = true): void {
+    this.state.logout(callServer);
   }
 
   refreshToken(): Observable<string | null> {

@@ -1,20 +1,11 @@
-﻿import {dashboardRoutes} from "./dashboard-routes";
+﻿import {userRoutes} from "./dashboard-routes";
 import {authRoutes} from "./auth-routes";
 import {errorRoutes} from "./error-routes";
 
 export let routes = {
   baseUrl: '',
   home: '/index',
-  dashboard(role: string) {
-    switch (role.toLowerCase()) {
-      case 'admin':
-        return this.adminDashboard;
-      default:
-        return '/';
-    }
-  },
   auth: {...authRoutes},
-  profile_wizard: '/profile-wizard',
-  ...dashboardRoutes,
+  user: {...userRoutes},
   ...errorRoutes,
 };

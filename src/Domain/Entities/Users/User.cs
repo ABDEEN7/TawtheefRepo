@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
-using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Events.User;
@@ -16,17 +13,10 @@ namespace Tawtheef.Domain.Entities.Users;
 
 public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
 {
-    [Required, StringLength(50)]
-    public required string GivenNameEn { get; set; }
-    [Required, StringLength(50)]
-    public required string FamilyNameEn { get; set; }
-    [StringLength(50)]
-    public string? GivenNameAr  { get; set; }
-    [StringLength(50)]
-    public string? FamilyNameAr { get; set; }
-
-    [NotMapped] public string FullNameEn => $"{this.GivenNameEn} {this.FamilyNameEn}".Trim();
-    [NotMapped] public string FullNameAr => $"{this.GivenNameAr} {this.FamilyNameAr}".Trim();
+    [Required, StringLength(100)]
+    public required string FullNameEn { get; set; }
+    [Required, StringLength(100)]
+    public required string FullNameAr { get; set; }
     public DateTime? LastLoginDate { get; set; }
     
     [StringLength(2048)]
@@ -47,15 +37,16 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     private readonly List<RefreshToken> _refreshTokens = [];
     public IReadOnlyCollection<RefreshToken> RefreshTokens  => _refreshTokens.AsReadOnly();
     
-    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
+    [MaxLength(450)]
     public string? CurrentAuthToken { get; set; }
-    [MaxLength(length: 128)]
-    public string? ActiveDeviceId { get; private set; }
-    
+    [MaxLength(6)]
     public string? OtpReference { get; private set; }
     public DateTime? OtpExpiry { get; private set; }
     public int OtpAttempts { get; set; }
-    public int OtpSends { get; private set; }       // for resend throttle
+    /// <summary>
+    /// Number of OTPs sent to the user
+    /// </summary>
+    public int OtpSends { get; private set; }
 
     public void SetOtp(string otpReference, DateTime expiryUtc)
     {
@@ -63,42 +54,6 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         OtpExpiry = expiryUtc;
         OtpAttempts = 0;
         OtpSends++;
-    }
-
-    public void ClearOtp()
-    {
-        OtpReference = null;
-        OtpExpiry = null;
-        OtpAttempts = 0;
-        OtpSends = 0;
-    }
-    public void AddRefreshToken(string token, DateTimeOffset expires, string sid, string? ip = null, string? userDeviceId = null)
-    {
-        _refreshTokens.Add(new RefreshToken
-        {
-            Token = token,
-            Expires = expires,
-            CreatedDate = DateTimeOffset.UtcNow,
-            CreatedByIp = ip,
-            UserId = Id,
-            UserDeviceId = userDeviceId,
-            SecurityStamp = sid
-        });
-    }
-    public void RemoveOldRefreshTokens(int keepCount)
-    {
-        var old = _refreshTokens
-            .Where(rt => !rt.IsActive)
-            .OrderByDescending(rt => rt.CreatedDate)
-            .Skip(keepCount)
-            .ToList();
-
-        foreach (var o in old) _refreshTokens.Remove(o);
-    }
-    public void UpdateLoginInfo(string authToken, DateTime loginDate)
-    {
-        CurrentAuthToken = authToken;
-        LastLoginDate = loginDate;
     }
     public static Result<User> Register(string email, string displayName, Guid userTypeId)
     {
@@ -114,7 +69,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         var user = userResult.Value;
         user.UserTypeId = userTypeId;
         
-        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.GivenNameEn, userTypeId, DateTime.Now));
+        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.FullNameEn, userTypeId, DateTime.Now));
 
         return Result.Success(user);
     }

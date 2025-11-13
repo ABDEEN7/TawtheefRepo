@@ -35,7 +35,7 @@
       {{ 'app.accessDenied.goHome' | translate }}
     </a>
 
-    <a *ngIf="authService.isLoggedIn()" [routerLink]="routes.dashboard(authService.getCurrentUserRole())"
+    <a *ngIf="authService.isLoggedIn()" [routerLink]="routes.user.dashboard"
        class="btn btn-secondary">
       <i class="fas fa-tachometer-alt me-2"></i>
       {{ 'app.accessDenied.goDashboard' | translate }}

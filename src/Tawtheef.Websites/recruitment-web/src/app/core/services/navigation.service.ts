@@ -10,20 +10,20 @@ export class NavigationService {
   ) {
   }
 
-  navigateAfterLogin(userType: string): void {
+  navigateAfterLogin(): void {
     const returnUrl = this.getReturnUrl();
     if (returnUrl && this.isSafeReturnUrl(returnUrl)) {
-      this.router.navigateByUrl(returnUrl).catch(() => this.redirectBasedOnRole(userType));
+      this.router.navigateByUrl(returnUrl).catch(() => this.redirectBasedOnRole());
     } else {
-      this.redirectBasedOnRole(userType);
+      this.redirectBasedOnRole();
     }
   }
 
-  safeNavigateAfterLogin(userType: string) {
+  safeNavigateAfterLogin() {
     try {
-      this.navigateAfterLogin(userType);
+      this.navigateAfterLogin();
     } catch {
-      this.redirectBasedOnRole(userType);
+      this.redirectBasedOnRole();
     }
   }
 
@@ -31,9 +31,8 @@ export class NavigationService {
     return !/^https?:\/\//i.test(url);
   }
 
-  redirectBasedOnRole(userType: string): void {
-    const role = 'admin';
-    this.router.navigate([routes.dashboard(role)], { replaceUrl: true });
+  redirectBasedOnRole(): void {
+    this.router.navigate([routes.user.dashboard], { replaceUrl: true });
   }
   private getReturnUrl(): string | null {
     const tree = this.router.parseUrl(this.router.url);

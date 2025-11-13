@@ -40,7 +40,7 @@ public static class HtmlPopupCloseScript
                 } catch (e) { console.error(e); }
                 
                 // Close the popup
-                window.close();
+                // window.close();
               })();
             </script>
             """;

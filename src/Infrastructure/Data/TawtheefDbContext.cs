@@ -63,6 +63,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<OTPRequest> OTPRequests { get; set; }
+    public DbSet<UserSession> UserSessions { get; set; }
     
     // Applicant Tables
     public DbSet<Experience> Experiences { get; set; }

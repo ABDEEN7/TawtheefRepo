@@ -16,8 +16,8 @@ public class EmployeeUser : User
         {
             Email = email,
             UserName = email,
-            GivenNameEn = name.Value.First,
-            FamilyNameEn = name.Value.Last,
+            FullNameEn = name.Value.First + " " + name.Value.Last,
+            FullNameAr = name.Value.First + " " + name.Value.Last,
             UserTypeId = UserTypeIds.Employee
         };
 

@@ -3,8 +3,8 @@ public sealed record DeviceInfo(string? Ip, string? UserAgent, string? Platform,
 
 public interface ISessionService
 {
-    Task SetCurrentAsync(string userId, string sessionId, DeviceInfo? device, CancellationToken ct);
-    Task<string?> GetCurrentAsync(string userId, CancellationToken ct);
-    Task RevokeAllAsync(string userId, CancellationToken ct);
-    Task RevokeAsync(string userId, string sessionId, CancellationToken ct);
+    Task SetCurrentAsync(Guid userId, string sessionId, DeviceInfo? device, CancellationToken ct);
+    Task<string?> GetCurrentAsync(Guid userId, CancellationToken ct);
+    Task RevokeAllAsync(Guid userId, CancellationToken ct);
+    Task RevokeAsync(Guid userId, string sessionId, CancellationToken ct);
 }

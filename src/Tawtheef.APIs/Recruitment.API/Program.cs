@@ -130,7 +130,6 @@ app.UseMiddleware<ResponseLoggingMiddleware>();
 app.UseCors(myCors);
 app.UseCookiePolicy(); 
 app.UseAuthentication();
-app.UseMiddleware<SingleSessionMiddleware>();
 app.UseAuthorization();
 
 
