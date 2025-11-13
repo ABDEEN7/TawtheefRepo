@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using CSharpFunctionalExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,32 +21,36 @@ namespace Tawtheef.Infrastructure.Services;
 public class TokenService(IOptions<JwtSettings> jwtSettings, 
     UserManager<User> userManager,
     IProfileCompletenessService pcs,
+    ISessionService sessions,              
+    IHttpContextAccessor httpContextAccessor,
     TimeProvider time, IUnitOfWork uow) : ITokenService
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
-        jwtSettings.Value.Key ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
+        jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
     public async Task<Result<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct)
     {
         user.UserType = await uow.GetEntityRepository<UserType>().DbSet
             .FirstAsync(t => t.Id == user.UserTypeId, ct);
+        
+        var sid = Guid.NewGuid().ToString("N");
+        var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
+        await sessions.SetCurrentAsync(user.Id, sid, device, ct);
 
-        await RevokeAllAsync(user.Id, ct);
         await userManager.UpdateSecurityStampAsync(user);
-        var securityStamp = await userManager.GetSecurityStampAsync(user);
 
         var (isComplete, missing) = await pcs.EvaluateAsync(user.Id, ct);
         var accessToken =
             GenerateAccessToken(user, [
-                new Claim(JwtRegisteredClaimNames.Sid, securityStamp),
+                new Claim(JwtRegisteredClaimNames.Sid, sid),
                 new("profile.completed", isComplete ? "true" : "false"),
                 new("profile.missing.count", missing.Length.ToString())
             ]);
-        var refreshToken = GenerateRefreshToken(user.Id, securityStamp);
+        var refreshToken = GenerateRefreshToken(user.Id, sid);
         
         var prefill = await pcs.BuildPrefillAsync(user, ct);
         return Result.Success(new AuthResponse(
             !isComplete,
-            new UserInfoResponse(user.Id, user.GivenNameEn, user.FamilyNameEn, user.Email!, user.Avatar),
+            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar),
             new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires),
             missing,
             prefill
@@ -66,7 +71,6 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             new(nameof(user.UserType), user.UserType.BackendName),
             new(ClaimTypes.Role, user.UserType.BackendName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sid, user.SecurityStamp ?? string.Empty)
         };
         if (extraClaims is not null)
             claims.AddRange(extraClaims);
@@ -95,26 +99,8 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             CreatedDate = time.GetLocalNow().DateTime,
             UserId = userId,
             CreatedByIp = ipAddress,
-            SecurityStamp = sid   
+            SecurityStamp = sid // reuse column to store session id
         };
-    }
-
-    private async Task RevokeDescendantRefreshTokens(RefreshToken? refreshToken, string ipAddress, string reason)
-    {
-        if (!string.IsNullOrEmpty(refreshToken?.ReplacedByToken))
-        {
-            var childToken = await uow.GetEntityRepository<RefreshToken>().DbSet
-                .FirstOrDefaultAsync(x => x.Token == refreshToken.ReplacedByToken);
-            
-            if (childToken is { IsActive: true })
-            {
-                await RevokeRefreshToken(childToken, ipAddress, reason);
-            }
-            else
-            {
-                await RevokeDescendantRefreshTokens(childToken, ipAddress, reason);
-            }
-        }
     }
 
     private async Task RevokeRefreshToken(RefreshToken token, string? ipAddress, string? reason = null, string? replacedByToken = null)
@@ -130,13 +116,24 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
     
     public async Task RevokeAllAsync(Guid userId, CancellationToken ct)
     {
+        // Clear session (so access tokens fail sid check on next request)
+        await sessions.RevokeAllAsync(userId, ct);
+
+        // Revoke any active refresh tokens
         var refreshTokens = await uow.GetEntityRepository<RefreshToken>().DbSet
             .Where(x => x.UserId == userId && x.RevokedAt == null)
             .ToListAsync(ct);
-        
+
         foreach (var token in refreshTokens)
-        {
-            await RevokeRefreshToken(token, null, "User logged out");
-        }
+            await RevokeRefreshToken(token, null, "Admin/explicit revoke-all");
+    }
+    private static DeviceInfo? BuildDeviceInfo(HttpContext? ctx)
+    {
+        if (ctx is null) return null;
+        var ip = ctx.Connection.RemoteIpAddress?.ToString();
+        ctx.Request.Headers.TryGetValue("User-Agent", out var ua);
+        var platform = ctx.Request.Headers.TryGetValue("X-Platform", out var p) ? p.ToString() : null;
+        var version  = ctx.Request.Headers.TryGetValue("X-App-Version", out var v) ? v.ToString() : null;
+        return new DeviceInfo(ip, ua.ToString(), platform, version);
     }
 }

@@ -2,8 +2,6 @@
 using System.Text.Json;
 using CSharpFunctionalExtensions;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,13 +10,11 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
-using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Utils;
 
 namespace Recruitment.API.Controllers
 {
@@ -78,49 +74,49 @@ namespace Recruitment.API.Controllers
          [HttpGet("google/external-login-callback", Name = nameof(GoogleExternalLoginCallback))]
          public async Task<IActionResult> GoogleExternalLoginCallback(
              [FromQuery] GoogleExternalCallbackLoginCommand command,
-             [FromServices] IOptions<AppConfigSettings> appConfig)
+            [FromServices] IOptions<AppConfigSettings> appConfig)
          {
              var result = await mediator.Send(command);
-             var frontEndOrigin = appConfig.Value.FrontendUrl;
-             if (result.IsFailure)
-             {
-                 var message = new
-                 {
-                     type = "EXTERNAL_LOGIN_ERROR",
-                     message = result.Error
-                 };
-                 return HtmlPopupCloseScript.Create(message, frontEndOrigin);
-             }
-             var messageOk  = new
-             {
-                 type = "EXTERNAL_LOGIN_SUCCESS",
-                 userData = result.Value
-             };
-             return HtmlPopupCloseScript.Create(messageOk , frontEndOrigin);
-         }
 
+             var spaOrigin = GetOriginOnly(appConfig.Value.FrontendUrl);
+             var spaCallback = $"{spaOrigin}/auth/popup-callback";
+
+             object message = result.IsFailure
+                 ? new { type = "EXTERNAL_LOGIN_ERROR", message = result.Error }
+                 : new { type = "EXTERNAL_LOGIN_SUCCESS", userData = result.Value };
+
+             var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
+             {
+                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+             });
+
+             var b64 = Base64UrlEncode(json);
+             var url = $"{spaCallback}#payload={b64}";
+             return Redirect(url);
+         }
+         
          [HttpGet("qatar-pass/external-login-callback", Name = nameof(QatarPassExternalLoginCallBack))]
          public async Task<IActionResult> QatarPassExternalLoginCallBack(
              [FromQuery] QatarPassExternalCallbackLoginCommand command,
              [FromServices] IOptions<AppConfigSettings> appConfig)
          {
-             var frontEndOrigin = appConfig.Value.FrontendUrl;
              var result = await mediator.Send(command);
-             if (result.IsFailure)
+             
+             var spaOrigin = GetOriginOnly(appConfig.Value.FrontendUrl);
+             var spaCallback = $"{spaOrigin}/auth/popup-callback";
+
+             object message = result.IsFailure
+                 ? new { type = "EXTERNAL_LOGIN_ERROR", message = result.Error }
+                 : new { type = "EXTERNAL_LOGIN_SUCCESS", userData = result.Value };
+
+             var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
              {
-                 var message = new
-                 {
-                     type = "EXTERNAL_LOGIN_ERROR",
-                     message = result.Error
-                 };
-                 return HtmlPopupCloseScript.Create(message, frontEndOrigin);
-             }
-             var messageOk  = new
-             {
-                 type = "EXTERNAL_LOGIN_SUCCESS",
-                 userData = result.Value
-             };
-             return HtmlPopupCloseScript.Create(messageOk , frontEndOrigin);
+                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+             });
+
+             var b64 = Base64UrlEncode(json);
+             var url = $"{spaCallback}#payload={b64}";
+             return Redirect(url);
          }
 
 
@@ -136,5 +132,24 @@ namespace Recruitment.API.Controllers
                 return BadRequest(result.Error);
             return Ok(new { Message = "Logged out" });
         }
+
+        #region Utils
+
+        private static string GetOriginOnly(string url)
+        {
+            var uri = new Uri(url);
+            return uri.GetLeftPart(UriPartial.Authority);
+        }
+
+        private static string Base64UrlEncode(string input)
+        {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(input);
+            return Convert.ToBase64String(bytes)
+                .TrimEnd('=')
+                .Replace('+', '-')
+                .Replace('/', '_');
+        }
+
+        #endregion
     }
 }

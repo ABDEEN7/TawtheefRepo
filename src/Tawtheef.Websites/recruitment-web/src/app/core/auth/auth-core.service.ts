@@ -73,9 +73,7 @@ export class AuthCoreService {
     return user$.pipe(
       map(user => {
         this.updateAuthState(user, accessToken);
-        const rawRole = this.tokenService.getRoleFromToken(accessToken);
-        const role = (rawRole || '').toString().toLowerCase();
-        this.navigation.safeNavigateAfterLogin(role);
+        this.navigation.safeNavigateAfterLogin();
         return true;
       }),
       catchError(err => {

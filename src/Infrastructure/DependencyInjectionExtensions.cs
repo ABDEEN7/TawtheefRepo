@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
@@ -53,6 +56,9 @@ namespace Tawtheef.Infrastructure
     /// </summary>
     public static class DependencyInjectionExtensions
     {
+        const string Smart = "Smart";
+        const string AzureOidc = "AzureOIDC";
+        const string AppCookieName = ".tawtheef.auth";
         /// <summary>
         /// Registers all infrastructure services (DB, repos, auth, notifications, storage, etc).
         /// </summary>
@@ -85,9 +91,9 @@ namespace Tawtheef.Infrastructure
 
         private static void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<JwtSettings>(configuration.GetSection("Authentication:Jwt"));
             services.Configure<AppConfigSettings>(configuration.GetSection("AppConfig"));
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-            services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
             services.Configure<RecaptchaSettings>(configuration.GetSection("RecaptchaSettings"));
             services.Configure<StorageSettings>(configuration.GetSection("Storage"));
             services.Configure<EmailDispatcherSettings>(configuration.GetSection("EmailDispatcher"));
@@ -103,17 +109,23 @@ namespace Tawtheef.Infrastructure
         private static void AddDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             // Connection string kept for potential conditional logic later
-            var cs = configuration.GetConnectionString("TawtheefContextConnection");
+            var cs = configuration.GetConnectionString("DefaultConnection");
 
             services.AddScoped<AuditableEntityInterceptor>();
 
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
             {
                 // register interceptors or other options as needed
-                options.UseSqlServer(cs, sql =>
+                // options.UseSqlServer(cs, sql =>
+                //         {
+                //             sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
+                //             sql.EnableRetryOnFailure(5);
+                //         })
+                //         .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
+                options.UseSqlite(cs, sql =>
                         {
                             sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
-                            sql.EnableRetryOnFailure(5);
+                            // sql.EnableRetryOnFailure(5);
                         })
                         .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
             });
@@ -163,6 +175,7 @@ namespace Tawtheef.Infrastructure
             services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
             services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>();
         }
+
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<CookiePolicyOptions>(options => {
@@ -180,79 +193,111 @@ namespace Tawtheef.Infrastructure
                     ctx.CookieOptions.Secure = true;
                 };
             });
+
+            var jwtSection = configuration.GetSection("Authentication:Jwt");
+            var issuer = jwtSection["Issuer"]!;
+            var audience = jwtSection["Audience"]!;
+            var signingKeyRaw = jwtSection["SigningKey"]!;
             
-            services
-            .AddAuthentication(options => {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-            })
-            .AddJwtBearer(options => {
-                options.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = async ctx =>
+            var signingKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(signingKeyRaw));
+
+            services.AddAuthentication(options => {
+                    options.DefaultScheme = Smart;
+                    options.DefaultAuthenticateScheme = Smart;
+                    options.DefaultChallengeScheme = Smart;
+                })
+                .AddPolicyScheme(Smart, "Cookie or Bearer", o => {
+                    o.ForwardDefaultSelector = ctx =>
+                        ctx.Request.Headers.TryGetValue("Authorization", out var h) &&
+                        h.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                            ? JwtBearerDefaults.AuthenticationScheme
+                            : CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(o => {
+                    o.Cookie.Name = AppCookieName;
+                    o.Cookie.SameSite = SameSiteMode.None;
+                    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    o.SlidingExpiration = true;
+                })
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => {
+                    options.RequireHttpsMetadata = true;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        var sidFromToken = ctx.Principal?.FindFirst("sid")?.Value;
-                        var userId = ctx.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                        ValidateIssuer = true,
+                        ValidIssuer = issuer,
+                        ValidateAudience = true,
+                        ValidAudience = audience,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = signingKey,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromMinutes(1)
+                    };
 
-                        if (string.IsNullOrEmpty(sidFromToken) || string.IsNullOrEmpty(userId))
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async ctx =>
                         {
-                            ctx.Fail("Missing sid or user id.");
-                            return;
-                        }
+                            var sidFromToken = ctx.Principal?.FindFirst("sid")?.Value
+                                               ?? ctx.Principal?.FindFirst(JwtRegisteredClaimNames.Sid)?.Value;
 
-                        var sessionService =
-                            ctx.HttpContext.RequestServices.GetRequiredService<ISessionService>();
-                        var currentSid =
-                            await sessionService.GetCurrentAsync(userId, ctx.HttpContext.RequestAborted);
+                            var userId = ctx.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                        if (!string.Equals(currentSid, sidFromToken, StringComparison.Ordinal))
-                        {
-                            ctx.Fail("Session changed. Please sign in again.");
+                            if (string.IsNullOrEmpty(sidFromToken) || string.IsNullOrEmpty(userId))
+                            {
+                                ctx.Fail("Missing sid or user id.");
+                                return;
+                            }
+
+                            var sessionService = ctx.HttpContext.RequestServices.GetRequiredService<ISessionService>();
+                            var currentSid = await sessionService.GetCurrentAsync(Guid.Parse(userId), ctx.HttpContext.RequestAborted);
+
+                            if (string.IsNullOrEmpty(currentSid) || !string.Equals(currentSid, sidFromToken, StringComparison.Ordinal))
+                            {
+                                ctx.Fail("Session changed. Please sign in again.");
+                            }
                         }
-                    }
-                };
-            });
-            
-            var googleConfig = configuration.GetSection("Authentication:Google");
-            if (googleConfig.Exists()) {
-                services.AddAuthentication()
-                .AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
-                    options.ClientId = googleConfig["ClientId"]!;
-                    options.ClientSecret = googleConfig["ClientSecret"]!;
+                    };
+                });
+
+            var google = configuration.GetSection("Authentication:Google");
+            var googleClientId = google["ClientId"];
+            var googleClientSecret = google["ClientSecret"];
+            var googleEnabled = !string.IsNullOrWhiteSpace(googleClientId) &&
+                                !string.IsNullOrWhiteSpace(googleClientSecret);
+
+            if (googleEnabled)
+            {
+                services.AddAuthentication().AddGoogle(options => {
+                    options.ClientId = googleClientId!;
+                    options.ClientSecret = googleClientSecret!;
                     options.SignInScheme = IdentityConstants.ExternalScheme;
                     options.SaveTokens = true;
                     options.Scope.Add("email");
                     options.Scope.Add("profile");
                 });
             }
-            
-            var azureConfig = configuration.GetSection("Authentication:Azure");
-            if (azureConfig.Exists())
+
+            var azure = configuration.GetSection("Authentication:Azure");
+            var azureClientId = azure["ClientId"];
+            var azureTenantId = azure["TenantId"];
+            var azureInstance = azure["Instance"];
+
+            var azureEnabled =
+                !string.IsNullOrWhiteSpace(azureClientId) &&
+                !string.IsNullOrWhiteSpace(azureTenantId) &&
+                !string.IsNullOrWhiteSpace(azureInstance);
+
+            if (azureEnabled)
             {
-                services
-                    .AddAuthentication(options =>
-                    {
-                        options.DefaultScheme          = AuthSchemes.AppCookie;
-                        options.DefaultChallengeScheme = AuthSchemes.AzureOidc;
-                    })
-                    .AddCookie(AuthSchemes.AppCookie, o =>
-                    {
-                        o.Cookie.Name         = ".tawtheef.auth";
-                        o.Cookie.SameSite     = SameSiteMode.None;  // cross-site popup
-                        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                        o.SlidingExpiration   = true;
-                    })
+                services.AddAuthentication()
                     .AddMicrosoftIdentityWebApp(configuration, "Authentication:Azure",
-                        openIdConnectScheme: AuthSchemes.AzureOidc,
-                        cookieScheme: null,
-                        subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: false,
-                        displayName: "Azure");
+                        openIdConnectScheme: AzureOidc);
 
-                services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o =>
-                {
-                    o.SignInScheme = AuthSchemes.AppCookie;
+                services.PostConfigure<OpenIdConnectOptions>(AzureOidc, o => {
+                    o.SignInScheme = IdentityConstants.ExternalScheme;
                     o.ResponseType = OpenIdConnectResponseType.Code;
-                    o.SaveTokens   = true;
-
+                    o.SaveTokens = true;
                     o.Scope.Add("openid");
                     o.Scope.Add("profile");
                     o.Scope.Add("email");
@@ -324,78 +369,65 @@ namespace Tawtheef.Infrastructure
                     .AddPolicy(nameof(UserTypeIds.Applicant), policy => policy.RequireRole(nameof(UserTypeIds.Applicant)));
         }
 
-        /// <summary>
-        /// Helper to determine whether the request is an API call (used to prevent interactive redirects).
-        /// </summary>
-        private static bool IsApiRequest(HttpRequest request)
-        {
-            if (request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            if (request.Headers.TryGetValue("Accept", out var accept) &&
-                accept.ToString().Contains("application/json", StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            if (request.Headers.TryGetValue("X-Requested-With", out var xrw) && xrw == "XMLHttpRequest")
-                return true;
-
-            return false;
-        }
-
         #endregion
 
         #region Notification Services & App Services
 
-        /// <summary>
-        /// Registers notification-related services (email queue, templates, dispatcher...).
-        /// </summary>
-        private static void AddNotificationServices(this IServiceCollection services)
+        extension(IServiceCollection services)
         {
-            services.AddSingleton<IEmailBranding, DefaultBranding>();
-            services.AddSingleton<IEmailQueue, EmailQueue>();
-            services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
-            services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
-            services.AddScoped<IEmailService, EmailService>();
-            services.AddHostedService<EmailDispatcher>();
-            
-            services.AddScoped<ISmsSender, HodhodSmsSender>();
-            services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
-            services.AddHostedService<NotificationDispatcher>();
-        }
-
-        /// <summary>
-        /// Registers general application services (storage clients, token services, etc).
-        /// </summary>
-        private static void AddServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            var connectionString = configuration["Storage:ConnectionString"] ?? string.Empty;
-            var containerName = configuration["Storage:RootPath"] ?? string.Empty;
-
-            services.AddSingleton(sp => new BlobServiceClient(connectionString));
-            services.AddScoped(sp =>
+            /// <summary>
+            /// Registers notification-related services (email queue, templates, dispatcher...).
+            /// </summary>
+            private void AddNotificationServices()
             {
-                var serviceClient = sp.GetRequiredService<BlobServiceClient>();
-                var containerClient = serviceClient.GetBlobContainerClient(containerName);
-                return containerClient;
-            });
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
-            services.AddScoped<IFileStorageService, AzureBlobStorageService>();
-            services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
-            services.AddScoped<IPasswordVerifier, PasswordVerifier>();
-
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IVerificationService, VerificationService>();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-            services.AddScoped<IExternalTokenReader, CookieExternalTokenReader>();
-            services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
-
-            services.AddHttpClient<IRecaptchaService, RecaptchaService>();
-
-            services.AddSingleton<IEnvironmentNameProvider, EnvironmentNameProvider>();
+                services.AddSingleton<IEmailBranding, DefaultBranding>();
+                services.AddSingleton<IEmailQueue, EmailQueue>();
+                services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
+                services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
+                services.AddScoped<IEmailService, EmailService>();
+                services.AddHostedService<EmailDispatcher>();
             
-            services.AddSingleton<ILocalizationService, LocalizationService>();
+                services.AddScoped<ISmsSender, HodhodSmsSender>();
+                services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
+                services.AddHostedService<NotificationDispatcher>();
+            }
+
+            /// <summary>
+            /// Registers general application services (storage clients, token services, etc).
+            /// </summary>
+            private void AddServices(IConfiguration configuration)
+            {
+                var connectionString = configuration["Storage:ConnectionString"] ?? string.Empty;
+                var containerName = configuration["Storage:RootPath"] ?? string.Empty;
+
+                services.AddSingleton(_ => new BlobServiceClient(connectionString));
+                services.AddScoped(sp =>
+                {
+                    var serviceClient = sp.GetRequiredService<BlobServiceClient>();
+                    var containerClient = serviceClient.GetBlobContainerClient(containerName);
+                    return containerClient;
+                });
+                services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
+                services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+                services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
+                services.AddScoped<IPasswordVerifier, PasswordVerifier>();
+
+                services.AddScoped<ITokenService, TokenService>();
+                services.AddScoped<IVerificationService, VerificationService>();
+                services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+                services.AddScoped<IExternalTokenReader, CookieExternalTokenReader>();
+                services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
+
+                services.AddHttpClient<IRecaptchaService, RecaptchaService>();
+
+                services.AddSingleton<IEnvironmentNameProvider, EnvironmentNameProvider>();
+            
+                services.AddSingleton<ILocalizationService, LocalizationService>();
+                
+                services.AddScoped<ISessionService, EfSessionService>();
+            }
         }
 
         #endregion

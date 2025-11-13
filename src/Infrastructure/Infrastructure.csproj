@@ -21,6 +21,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
@@ -40,6 +41,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Configurations\" />
       <Folder Include="Data\Configurations\" />
       <Folder Include="Templates\" />
     </ItemGroup>

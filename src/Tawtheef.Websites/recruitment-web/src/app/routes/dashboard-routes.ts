@@ -1,6 +1,11 @@
-﻿export const dashboardRoutes = {
-  admin: '/admin/',
-  get adminDashboard(){
-    return this.admin + 'dashboard';
+﻿import {errorRoutes} from './error-routes';
+
+export const userRoutes = {
+  user: '/user/',
+  get dashboard(){
+    return this.user + 'dashboard';
   },
+  get profileWizard(){
+    return this.user + 'wizard-profile';
+  }
 };

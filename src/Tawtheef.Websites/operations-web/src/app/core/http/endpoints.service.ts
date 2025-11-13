@@ -1,13 +1,13 @@
-﻿import { Injectable } from '@angular/core';
+﻿import {inject, Injectable} from '@angular/core';
 import {ApiConfigService} from '../services/api-config.service';
 import {CaseUtils} from '../utils/case-utils';
 
 @Injectable({ providedIn: 'root' })
 export class EndpointsService {
-  constructor(private apiConfig: ApiConfigService) {}
+  apiConfig = inject(ApiConfigService);
 
   private getFullUrl(endpoint: string): string {
-    return `${this.apiConfig?.baseUrl}${endpoint}`;
+    return `${this.apiConfig.baseUrl}${endpoint}`;
   }
 
   logger = this.getFullUrl(`/logger`);
@@ -15,7 +15,7 @@ export class EndpointsService {
     me: this.getFullUrl(this.getFullUrl(`/auth/me`)),
     login: this.getFullUrl(`/auth/login`),
     register: this.getFullUrl(`/auth/register`),
-    refresh: this.getFullUrl(`/auth/refresh`),
+    refresh: this.getFullUrl(`/auth/refresh-token`),
     externalLogin: (provider: string, returnUrl: string | null = null) =>
       this.getFullUrl(`/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''}`),
     externalLoginUsingToken: this.getFullUrl(`/auth/external-login/token`),

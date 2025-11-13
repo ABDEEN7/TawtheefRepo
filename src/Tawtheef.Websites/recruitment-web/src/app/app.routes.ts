@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import {UserLayout} from './layouts/internal/user-layout/user-layout';
 import {PublicLayout} from './layouts/public/public-layout/public-layout';
-import {loggedOutOnlyGuard} from './core/guards/route-guards';
+import {authGuard, authMatchGuard, loggedOutOnlyGuard} from './core/guards/route-guards';
 
 export const routes: Routes = [
   {
@@ -35,11 +35,11 @@ export const routes: Routes = [
   {
     path: '',
     component: UserLayout,
-    // canActivateChild: [authGuard],
+    canActivateChild: [authGuard],
     children: [
       {
         path: 'user',
-        // canMatch: [authMatchGuard],
+        canMatch: [authMatchGuard],
         loadChildren: () =>
           import('./pages/user/user.module').then(m => m.UserModule),
       }

@@ -125,15 +125,11 @@ public class GoogleExternalCallbackLoginHandler(
         var profile = info.Principal.FindFirst("profile")?.Value;
         var locale = info.Principal.FindFirst("locale")?.Value;
 
-        if (string.IsNullOrWhiteSpace(user.GivenNameEn) && !string.IsNullOrWhiteSpace(givenName)) user.GivenNameEn = givenName;
-        if (string.IsNullOrWhiteSpace(user.FamilyNameEn)  && !string.IsNullOrWhiteSpace(surname))   user.FamilyNameEn  = surname;
-
-        if ((string.IsNullOrWhiteSpace(user.GivenNameEn) || string.IsNullOrWhiteSpace(user.FamilyNameEn)) && !string.IsNullOrWhiteSpace(fullName))
-        {
-            var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (string.IsNullOrWhiteSpace(user.GivenNameEn) && parts.Length >= 1) user.GivenNameEn = parts[0];
-            if (string.IsNullOrWhiteSpace(user.FamilyNameEn)  && parts.Length >= 2) user.FamilyNameEn  = string.Join(' ', parts.Skip(1));
-        }
+        if(string.IsNullOrEmpty(user.FullNameEn) && !string.IsNullOrEmpty(fullName))
+            user.FullNameEn = fullName;
+        
+        if(string.IsNullOrEmpty(user.FullNameAr) && !string.IsNullOrEmpty(fullName))
+            user.FullNameAr = fullName;
 
         if (string.IsNullOrWhiteSpace(user.Avatar) && !string.IsNullOrWhiteSpace(picture))
             user.Avatar = picture;

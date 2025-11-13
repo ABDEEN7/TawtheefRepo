@@ -60,15 +60,11 @@ public sealed class ProfileCompletenessService(
         var qpNat      = C("qatarpass:nationality");
         var qpPass     = C("qatarpass:passportNumber");
 
-        // Split the user’s English name if needed
-        var given = user.GivenNameEn;
-        var family= user.FamilyNameEn;
 
         return new ProfilePrefillDto
         {
             Email        = email,
-            GivenNameEn  = given,
-            FamilyNameEn = family,
+            FullName = fullName,
             Avatar       = picture,
             Locale       = locale,
             Qid          = qpQid,

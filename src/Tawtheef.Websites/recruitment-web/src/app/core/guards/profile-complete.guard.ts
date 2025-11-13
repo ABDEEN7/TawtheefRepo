@@ -12,7 +12,7 @@ export const profileCompleteGuard: CanActivateFn = () => {
   return auth.getAuthBootstrap$().pipe(
     map(b => {
       if (b.requiresProfileCompletion) {
-        router.navigate([routes.profile_wizard], {state: {prefill: b.prefill, missing: b.missingFields}}).then(r => {});
+        router.navigate([routes.user.profileWizard], {state: {prefill: b.prefill, missing: b.missingFields}}).then(r => {});
          return false;
       }
       return true;

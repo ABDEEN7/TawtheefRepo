@@ -20,6 +20,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
     public class RefreshTokenHandler(
         UserManager<User> userManager,
         ITokenService tokenService,
+        ISessionService sessions,
         IOptions<JwtSettings> jwtSettings)
         : IRequestHandler<RefreshTokenCommand, Result<TokenResponse>>
     {
@@ -55,24 +56,17 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
                 return Result.Failure<TokenResponse>(ErrorsCodes.UserNotFound);
 
             // Validate refresh token existence + activity
-            var refreshToken = user.RefreshTokens.FirstOrDefault(rt => rt.Token == request.RefreshToken);
-            if (refreshToken is null)
+            var stored = user.RefreshTokens.FirstOrDefault(rt => rt.Token == request.RefreshToken);
+            if (stored  is null)
                 return Result.Failure<TokenResponse>(ErrorsCodes.RefreshTokenNotFound);
 
-            if (!refreshToken.IsActive)
+            if (!stored .IsActive)
                 return Result.Failure<TokenResponse>(ErrorsCodes.InactiveRefreshToken);
 
             // Single-session checks using SecurityStamp
 
-            // Access token SID must match the refresh token’s stored stamp (prevents mixing)
-            var sidFromAccess =
-                principal.FindFirstValue(JwtRegisteredClaimNames.Sid) ??
-                principal.FindFirstValue("sid"); // some libs emit "sid" short name
-
-            if (string.IsNullOrWhiteSpace(sidFromAccess))
-                return Result.Failure<TokenResponse>(ErrorsCodes.InvalidAccessToken);
-
-            if (!string.Equals(sidFromAccess, refreshToken.SecurityStamp, StringComparison.Ordinal))
+            var currentSid = await sessions.GetCurrentAsync(stored.UserId, cancellationToken);
+            if (string.IsNullOrEmpty(currentSid) || !string.Equals(currentSid, stored.SecurityStamp, StringComparison.Ordinal))
                 return Result.Failure<TokenResponse>(ErrorsCodes.SessionRevoked);
 
             var authResponseResult = await tokenService.IssueTokensAsync(user, cancellationToken);
@@ -85,7 +79,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
         private Result<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
         {
             var settings = jwtSettings.Value;
-            if (string.IsNullOrWhiteSpace(settings.Key))
+            if (string.IsNullOrWhiteSpace(settings.SigningKey))
                 return Result.Failure<ClaimsPrincipal>("JWT key is missing");
 
             var tokenValidationParameters = new TokenValidationParameters
@@ -95,7 +89,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
                 ValidateIssuer = true,           // ensure issuer matches
                 ValidateAudience = true,         // ensure audience matches
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Key)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.SigningKey)),
                 ValidateLifetime = false,        // allow expired tokens (we’re just reading claims)
                 ClockSkew = TimeSpan.FromMinutes(1)
             };

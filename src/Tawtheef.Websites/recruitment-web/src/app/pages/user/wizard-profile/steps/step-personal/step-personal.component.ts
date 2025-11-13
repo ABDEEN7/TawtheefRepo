@@ -58,7 +58,6 @@ export class StepPersonalComponent implements OnInit{
       }
     })
   }
-
   editPrereq(){
     this.dialog.open(PrerequisitesModal, {
       header: this.translate.instant('wizard.personal.prerequisites'),
