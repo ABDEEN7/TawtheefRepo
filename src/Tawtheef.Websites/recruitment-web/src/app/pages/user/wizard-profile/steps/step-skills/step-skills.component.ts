@@ -1,13 +1,9 @@
 import { Component, EventEmitter, Output, inject, OnDestroy, OnInit } from '@angular/core';
-import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
+import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent, AutoCompleteUnselectEvent} from 'primeng/autocomplete';
 import {Subject, Subscription, of, delay} from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap, catchError } from 'rxjs/operators';
 import { DataService } from '../../services/data.service';
-
-export interface SkillDto {
-  id?: string | number;
-  name: string;
-}
+import {SkillDto} from '../../models/skill-dto.model';
 
 @Component({
   selector: 'app-step-skills',
@@ -104,11 +100,19 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     }
     this.search$.next(q);
   }
-
-  add(): void {
+  addSkill(e: AutoCompleteSelectEvent){
+    this.ds.addSkill(e.value);
+  }
+  removeSkill(e: AutoCompleteUnselectEvent){
+    this.ds.delSkill(e.value);
+  }
+  addLang(): void {
     if (this.newName && this.newLevel) {
       this.ds.addLang({ name: this.newName, level: this.newLevel });
       this.newName = this.newLevel = undefined;
     }
+  }
+  removeLang(index: number){
+    this.ds.delLang(index)
   }
 }

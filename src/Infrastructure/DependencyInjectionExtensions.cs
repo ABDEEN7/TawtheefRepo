@@ -1,12 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -16,11 +16,11 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -116,18 +116,16 @@ namespace Tawtheef.Infrastructure
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
             {
                 // register interceptors or other options as needed
-                options.UseSqlServer(cs, sql =>
-                        {
-                            sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
-                            sql.EnableRetryOnFailure(5);
-                        })
-                        .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
-                //options.UseSqlite(cs, sql =>
-                //        {
-                //            sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
-                //            // sql.EnableRetryOnFailure(5);
-                //        })
-                //        .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
+                options.UseSqlServer(cs, sql => {
+                        sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
+                        sql.EnableRetryOnFailure(5);
+                    })
+                    .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
+                
+                options
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors()
+                    .LogTo(Console.WriteLine, LogLevel.Information);
             });
 
             services.AddIdentity<User, IdentityRole<Guid>>(options =>
@@ -199,7 +197,7 @@ namespace Tawtheef.Infrastructure
             var audience = jwtSection["Audience"]!;
             var signingKeyRaw = jwtSection["SigningKey"]!;
             
-            var signingKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(signingKeyRaw));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyRaw));
 
             services.AddAuthentication(options => {
                     options.DefaultScheme = Smart;

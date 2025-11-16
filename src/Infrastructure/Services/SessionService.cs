@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
@@ -12,13 +9,14 @@ public sealed class EfSessionService(IUnitOfWork uow) : ISessionService
 {
     public async Task SetCurrentAsync(Guid userId, string sessionId, DeviceInfo? device, CancellationToken ct)
     {
+        var repo = uow.GetEntityRepository<UserSession>();
         // Revoke all active sessions for this user
-        await uow.GetEntityRepository<UserSession>().DbSet.Where(s => s.UserId == userId && s.RevokedAtUtc == null)
+        await repo.DbSet
+            .Where(s => s.UserId == userId && s.RevokedAtUtc == null)
             .ExecuteUpdateAsync(u => u.SetProperty(s => s.RevokedAtUtc, _ => DateTime.UtcNow), ct);
 
         // Add the new one
-        await uow.GetEntityRepository<UserSession>().AddAsync(new UserSession
-        {
+        await repo.AddAsync(new UserSession {
             UserId = userId,
             SessionId = sessionId,
             CreatedAtUtc = DateTime.UtcNow,

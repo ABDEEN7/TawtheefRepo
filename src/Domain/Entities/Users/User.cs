@@ -32,10 +32,8 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public Guid? DeletedById { get; set; }
     public DateTimeOffset? DeletedDate { get; set; }
     
-    public ICollection<Notification.Notification> Notifications { get; init; } = [];
-    
-    private readonly List<RefreshToken> _refreshTokens = [];
-    public IReadOnlyCollection<RefreshToken> RefreshTokens  => _refreshTokens.AsReadOnly();
+    public virtual ICollection<Notification.Notification> Notifications { get; init; } = [];
+    public virtual ICollection<RefreshToken> RefreshTokens { get; init; } = [];
     
     [MaxLength(450)]
     public string? CurrentAuthToken { get; set; }
