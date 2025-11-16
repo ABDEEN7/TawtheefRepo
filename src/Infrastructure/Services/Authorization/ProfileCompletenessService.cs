@@ -5,7 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Authorization;
 
 public sealed class ProfileCompletenessService(
     UserManager<User> userManager,

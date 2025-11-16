@@ -2,7 +2,7 @@
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Common.Interfaces;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Localization;
 
 public class LocalizationService(IHttpContextAccessor httpContextAccessor) : ILocalizationService
 {

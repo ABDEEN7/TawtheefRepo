@@ -16,7 +16,7 @@ using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Identity;
 
 public class TokenService(IOptions<JwtSettings> jwtSettings, 
     UserManager<User> userManager,

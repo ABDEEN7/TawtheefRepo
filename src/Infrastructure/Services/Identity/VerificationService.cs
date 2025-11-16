@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Tawtheef.Application.Common.Interfaces.Services;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Identity;
 
 public class VerificationService(
     IMemoryCache cache,

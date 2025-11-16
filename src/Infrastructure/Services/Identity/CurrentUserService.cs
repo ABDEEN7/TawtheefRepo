@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Services;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Identity;
 
 public class CurrentUserService(IHttpContextAccessor ctx) : ICurrentUserService
 {

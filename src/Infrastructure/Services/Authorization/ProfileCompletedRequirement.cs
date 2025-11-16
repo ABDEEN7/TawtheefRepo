@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Authorization;
 
 public sealed class ProfileCompletedRequirement : IAuthorizationRequirement {}
 

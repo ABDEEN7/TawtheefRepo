@@ -2,7 +2,7 @@
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Identity;
 
 public sealed class PasswordVerifier(IPasswordHasher<User> hasher) : IPasswordVerifier
 {

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations.Settings;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.StorageServices;
 
 public sealed class MediaUrlResolver(IOptions<AppConfigSettings> cfg, IFileStorageService storage) : IMediaUrlResolver
 {

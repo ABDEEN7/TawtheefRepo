@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Identity;
 
 public sealed class CookieExternalTokenReader : IExternalTokenReader
 {

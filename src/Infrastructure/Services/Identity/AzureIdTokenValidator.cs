@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Constants;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Identity;
 
 
 public sealed class AzureIdTokenValidator(IConfiguration config) : IExternalIdTokenValidator
