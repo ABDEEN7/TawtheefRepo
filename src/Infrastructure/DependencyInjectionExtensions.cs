@@ -116,16 +116,10 @@ namespace Tawtheef.Infrastructure
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
             {
                 // register interceptors or other options as needed
-                // options.UseSqlServer(cs, sql =>
-                //         {
-                //             sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
-                //             sql.EnableRetryOnFailure(5);
-                //         })
-                //         .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
-                options.UseSqlite(cs, sql =>
+                options.UseSqlServer(cs, sql =>
                         {
                             sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
-                            // sql.EnableRetryOnFailure(5);
+                            sql.EnableRetryOnFailure(5);
                         })
                         .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
             });

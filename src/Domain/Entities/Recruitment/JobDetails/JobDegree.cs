@@ -8,6 +8,6 @@ public class JobDegree: EventEntity
     public Guid JobId { get; set; }
     public Job? Job { get; set; }
 
-    public int DegreeId { get; set; }
+    public Guid DegreeId { get; set; }
     public Degree? Degree { get; set; }
 }
