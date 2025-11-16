@@ -72,8 +72,8 @@ namespace Operations.API.Controllers
             var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
             object message = result.IsFailure
-                ? new { type = "EXTERNAL_LOGIN_ERROR", message = result.Error }
-                : new { type = "EXTERNAL_LOGIN_SUCCESS", userData = result.Value };
+                ? new { type = ExternalLoginMessageTypes.Error, message = result.Error }
+                : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
 
             var json = JsonSerializer.Serialize(message,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });

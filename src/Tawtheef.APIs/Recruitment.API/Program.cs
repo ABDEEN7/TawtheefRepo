@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using reCAPTCHA.AspNetCore;
@@ -42,10 +41,9 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 builder.Services.AddInfrastructureLayer(builder.Configuration);
 builder.Services.AddApplicationLayer();
 builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
-builder.Services.AddSingleton<IAuthorizationHandler, ProfileCompletedHandler>();
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AuthPolicyNames.CompletedProfile, 
+    options.AddPolicy(PolicyNames.CompletedProfile, 
         policy => policy.Requirements.Add(new ProfileCompletedRequirement()));
 });
 builder.Services.AddControllers()
