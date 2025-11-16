@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -28,7 +29,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Domain.Configurations.Settings;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Data.Interceptors;
@@ -362,14 +362,6 @@ namespace Tawtheef.Infrastructure
             });
         }
 
-        private static void ConfigureAuthorizationPolicies(IServiceCollection services)
-        {
-            services.AddAuthorizationBuilder()
-                    .AddPolicy(nameof(UserTypeIds.Admin), policy => policy.RequireRole(nameof(UserTypeIds.Admin)))
-                    .AddPolicy(nameof(UserTypeIds.Employee), policy => policy.RequireRole(nameof(UserTypeIds.Employee)))
-                    .AddPolicy(nameof(UserTypeIds.Applicant), policy => policy.RequireRole(nameof(UserTypeIds.Applicant)));
-        }
-
         #endregion
 
         #region Notification Services & App Services
@@ -432,5 +424,12 @@ namespace Tawtheef.Infrastructure
         }
 
         #endregion
+        
+        private static void ConfigureAuthorizationPolicies(IServiceCollection services)
+        {
+            services.AddSingleton<IAuthorizationHandler, ProfileCompletedHandler>();
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        }
     }
 }

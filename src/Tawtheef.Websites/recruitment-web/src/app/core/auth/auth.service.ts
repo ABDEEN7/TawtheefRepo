@@ -12,6 +12,7 @@ import {EndpointsService} from '../http/endpoints.service';
 @Injectable({providedIn: 'root'})
 export class AuthService {
   private bootstrap$?: Observable<AuthBootstrap>;
+  private permissionsCache: Set<string> | null = null;
   constructor(
     protected core: AuthCoreService,
     protected state: AuthStateService,
@@ -20,6 +21,11 @@ export class AuthService {
     protected endpointService: EndpointsService,
   ) {
     this.state.checkAuthState(false);
+    this.state.isAuthenticated$.subscribe(isAuth => {
+      if (!isAuth) {
+        this.permissionsCache = null;
+      }
+    });
   }
 
   // Proxy methods for convenience
@@ -98,6 +104,74 @@ export class AuthService {
     );
 
     return this.bootstrap$;
+  }
+  private getPermissionsFromToken(): Set<string> {
+    if (this.permissionsCache) {
+      return this.permissionsCache;
+    }
+
+    const token = this.token;
+    if (!token) {
+      this.permissionsCache = new Set<string>();
+      return this.permissionsCache;
+    }
+
+    const payload = this.decodeJwtPayload<Record<string, any>>(token) ?? {};
+
+    const result = new Set<string>();
+
+    // 1) `permissions` as array
+    const permissionsArray = payload['permissions'];
+    if (Array.isArray(permissionsArray)) {
+      permissionsArray.forEach((p: any) => {
+        if (typeof p === 'string') result.add(p);
+      });
+    }
+
+    // 2) `permissions` as space-separated string
+    if (typeof permissionsArray === 'string') {
+      permissionsArray.split(' ')
+        .map(x => x.trim())
+        .filter(Boolean)
+        .forEach(p => result.add(p));
+    }
+
+    // 3) multiple `permission` claims (if server serializes them like that)
+    const singlePermission = payload['permission'];
+    if (Array.isArray(singlePermission)) {
+      singlePermission.forEach((p: any) => {
+        if (typeof p === 'string') result.add(p);
+      });
+    } else if (typeof singlePermission === 'string') {
+      result.add(singlePermission);
+    }
+
+    this.permissionsCache = result;
+    return result;
+  }
+
+  /**
+   * Check if user has at least one / all of the required permissions.
+   *
+   * @param permission single permission or array
+   * @param requireAll if true, all permissions must be present (AND); default: false (OR)
+   */
+  hasPermission(permission: string | string[], requireAll: boolean = false): boolean {
+    const perms = this.getPermissionsFromToken();
+    if (!permission) return false;
+
+    const required = Array.isArray(permission) ? permission : [permission];
+
+    if (required.length === 0) return false;
+    if (perms.size === 0) return false;
+
+    if (requireAll) {
+      // AND logic
+      return required.every(p => perms.has(p));
+    }
+
+    // OR logic
+    return required.some(p => perms.has(p));
   }
 
   // ----------------- helpers -----------------

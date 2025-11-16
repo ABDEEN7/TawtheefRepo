@@ -1,7 +1,8 @@
-namespace Tawtheef.Infrastructure.Utils;
-
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
+
+namespace Tawtheef.Infrastructure.Utils;
 
 /// <summary>
 /// Generates a tiny HTML page that sends a postMessage back to the opener window
@@ -56,11 +57,11 @@ public static class HtmlPopupCloseScript
     /// Shortcut for success messages.
     /// </summary>
     public static ContentResult Success(object userData, string targetOrigin)
-        => Create(new { type = "EXTERNAL_LOGIN_SUCCESS", userData }, targetOrigin);
+        => Create(new { type = ExternalLoginMessageTypes.Success, userData }, targetOrigin);
 
     /// <summary>
     /// Shortcut for error messages.
     /// </summary>
     public static ContentResult Error(object error, string targetOrigin)
-        => Create(new { type = "EXTERNAL_LOGIN_ERROR", message = error }, targetOrigin);
+        => Create(new { type = ExternalLoginMessageTypes.Error, message = error }, targetOrigin);
 }

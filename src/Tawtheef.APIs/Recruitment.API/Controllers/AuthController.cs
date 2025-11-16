@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using CSharpFunctionalExtensions;
 using MediatR;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations.Settings;
@@ -82,8 +84,8 @@ namespace Recruitment.API.Controllers
              var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
              object message = result.IsFailure
-                 ? new { type = "EXTERNAL_LOGIN_ERROR", message = result.Error }
-                 : new { type = "EXTERNAL_LOGIN_SUCCESS", userData = result.Value };
+                 ? new { type = ExternalLoginMessageTypes.Error, message = result.Error }
+                 : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
 
              var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
              {
@@ -143,7 +145,7 @@ namespace Recruitment.API.Controllers
 
         private static string Base64UrlEncode(string input)
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(input);
+            var bytes = Encoding.UTF8.GetBytes(input);
             return Convert.ToBase64String(bytes)
                 .TrimEnd('=')
                 .Replace('+', '-')
