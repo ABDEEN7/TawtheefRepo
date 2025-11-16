@@ -4,7 +4,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
-[Table(nameof(TrainingCourse), Schema = Schemas.Applicant)]
+[Table(nameof(TrainingCourse), Schema = Schemas.Profile)]
 public class TrainingCourse : EventEntity
 {
     public required string Organization { get; set; }

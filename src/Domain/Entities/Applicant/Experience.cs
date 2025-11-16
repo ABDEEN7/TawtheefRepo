@@ -3,7 +3,7 @@ using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
-[Table(nameof(Experience), Schema = Schemas.Applicant)]
+[Table(nameof(Experience), Schema = Schemas.Profile)]
 public class Experience : TrainingCourse
 {
     /// <summary>

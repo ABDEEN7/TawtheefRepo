@@ -202,7 +202,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProfileAdditionalAttachment", "app");
+                    b.ToTable("ProfileAdditionalAttachment", "pro");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.ProfileLanguage", b =>
@@ -255,7 +255,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProfileLanguage", "app");
+                    b.ToTable("ProfileLanguage", "pro");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.ProfileSkill", b =>
@@ -303,7 +303,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProfileSkill", "app");
+                    b.ToTable("ProfileSkill", "pro");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Qualification", b =>
@@ -388,7 +388,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Qualification", "app");
+                    b.ToTable("Qualification", "pro");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.ResidenceAddress", b =>
@@ -442,7 +442,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("ResidenceAddress", "app");
+                    b.ToTable("ResidenceAddress", "pro");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.TrainingCourse", b =>
@@ -504,7 +504,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TrainingCourse", "app");
+                    b.ToTable("TrainingCourse", "pro");
 
                     b.UseTptMappingStrategy();
                 });
@@ -563,7 +563,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("OTPRequests");
+                    b.ToTable("OTPRequest");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Auth.RefreshToken", b =>
@@ -636,7 +636,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Logger.EntityLog", b =>
@@ -708,7 +708,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EntityLogs");
+                    b.ToTable("EntityLog");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.CandidateType", b =>
@@ -3740,7 +3740,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("JobSkill");
+                    b.ToTable("JobSkills");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Resource", b =>
@@ -4067,7 +4067,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfile");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.UserSession", b =>
@@ -4132,7 +4132,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSessions");
+                    b.ToTable("UserSession");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Experience", b =>
@@ -4148,7 +4148,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("ApplicantUserId");
 
-                    b.ToTable("Experience", "app");
+                    b.ToTable("Experience", "pro");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.AdminUser", b =>

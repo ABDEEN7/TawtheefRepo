@@ -5,7 +5,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
-[Table(nameof(ProfileLanguage), Schema = Schemas.Applicant)]
+[Table(nameof(ProfileLanguage), Schema = Schemas.Profile)]
 public class ProfileLanguage : EventEntity
 {
     public Guid LanguageId { get; set; }

@@ -17,7 +17,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "lkp");
 
             migrationBuilder.EnsureSchema(
-                name: "app");
+                name: "pro");
 
             migrationBuilder.EnsureSchema(
                 name: "hr");
@@ -426,7 +426,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EntityLogs",
+                name: "EntityLog",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -450,26 +450,26 @@ namespace Tawtheef.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EntityLogs", x => x.Id);
+                    table.PrimaryKey("PK_EntityLog", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EntityLogs_AspNetUsers_ChangedByUserId",
+                        name: "FK_EntityLog_AspNetUsers_ChangedByUserId",
                         column: x => x.ChangedByUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_EntityLogs_AspNetUsers_CreatedById",
+                        name: "FK_EntityLog_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_EntityLogs_AspNetUsers_DeletedById",
+                        name: "FK_EntityLog_AspNetUsers_DeletedById",
                         column: x => x.DeletedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_EntityLogs_AspNetUsers_UpdatedById",
+                        name: "FK_EntityLog_AspNetUsers_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -873,7 +873,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OTPRequests",
+                name: "OTPRequest",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -892,27 +892,27 @@ namespace Tawtheef.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OTPRequests", x => x.Id);
+                    table.PrimaryKey("PK_OTPRequest", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OTPRequests_AspNetUsers_CreatedById",
+                        name: "FK_OTPRequest_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OTPRequests_AspNetUsers_DeletedById",
+                        name: "FK_OTPRequest_AspNetUsers_DeletedById",
                         column: x => x.DeletedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OTPRequests_AspNetUsers_UpdatedById",
+                        name: "FK_OTPRequest_AspNetUsers_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OTPRequests_AspNetUsers_UserId",
+                        name: "FK_OTPRequest_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -1006,7 +1006,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RefreshTokens",
+                name: "RefreshToken",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1030,27 +1030,27 @@ namespace Tawtheef.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_AspNetUsers_CreatedById",
+                        name: "FK_RefreshToken_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_AspNetUsers_DeletedById",
+                        name: "FK_RefreshToken_AspNetUsers_DeletedById",
                         column: x => x.DeletedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_AspNetUsers_UpdatedById",
+                        name: "FK_RefreshToken_AspNetUsers_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        name: "FK_RefreshToken_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -1102,7 +1102,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ResidenceAddress",
-                schema: "app",
+                schema: "pro",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1358,7 +1358,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserSessions",
+                name: "UserSession",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1380,27 +1380,27 @@ namespace Tawtheef.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserSessions", x => x.Id);
+                    table.PrimaryKey("PK_UserSession", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserSessions_AspNetUsers_CreatedById",
+                        name: "FK_UserSession_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserSessions_AspNetUsers_DeletedById",
+                        name: "FK_UserSession_AspNetUsers_DeletedById",
                         column: x => x.DeletedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserSessions_AspNetUsers_UpdatedById",
+                        name: "FK_UserSession_AspNetUsers_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserSessions_AspNetUsers_UserId",
+                        name: "FK_UserSession_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -1547,7 +1547,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ProfileLanguage",
-                schema: "app",
+                schema: "pro",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1607,7 +1607,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ProfileAdditionalAttachment",
-                schema: "app",
+                schema: "pro",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1659,7 +1659,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "TrainingCourse",
-                schema: "app",
+                schema: "pro",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1714,7 +1714,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ProfileSkill",
-                schema: "app",
+                schema: "pro",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1765,7 +1765,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserProfiles",
+                name: "UserProfile",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1796,101 +1796,101 @@ namespace Tawtheef.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserProfiles", x => x.Id);
+                    table.PrimaryKey("PK_UserProfile", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_AspNetUsers_CreatedById",
+                        name: "FK_UserProfile_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_AspNetUsers_DeletedById",
+                        name: "FK_UserProfile_AspNetUsers_DeletedById",
                         column: x => x.DeletedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_AspNetUsers_UpdatedById",
+                        name: "FK_UserProfile_AspNetUsers_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_AspNetUsers_UserId",
+                        name: "FK_UserProfile_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_CandidateType_CandidateTypeId",
+                        name: "FK_UserProfile_CandidateType_CandidateTypeId",
                         column: x => x.CandidateTypeId,
                         principalSchema: "lkp",
                         principalTable: "CandidateType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Country_InterviewLocationId",
+                        name: "FK_UserProfile_Country_InterviewLocationId",
                         column: x => x.InterviewLocationId,
                         principalSchema: "lkp",
                         principalTable: "Country",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Country_NationalityId",
+                        name: "FK_UserProfile_Country_NationalityId",
                         column: x => x.NationalityId,
                         principalSchema: "lkp",
                         principalTable: "Country",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Country_ResidenceCountryId",
+                        name: "FK_UserProfile_Country_ResidenceCountryId",
                         column: x => x.ResidenceCountryId,
                         principalSchema: "lkp",
                         principalTable: "Country",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Gender_GenderId",
+                        name: "FK_UserProfile_Gender_GenderId",
                         column: x => x.GenderId,
                         principalSchema: "lkp",
                         principalTable: "Gender",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserProfiles_MaritalStatus_MaritalStatusId",
+                        name: "FK_UserProfile_MaritalStatus_MaritalStatusId",
                         column: x => x.MaritalStatusId,
                         principalSchema: "lkp",
                         principalTable: "MaritalStatus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Religion_ReligionId",
+                        name: "FK_UserProfile_Religion_ReligionId",
                         column: x => x.ReligionId,
                         principalSchema: "lkp",
                         principalTable: "Religion",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserProfiles_ResidenceAddress_ResidenceAddressId",
+                        name: "FK_UserProfile_ResidenceAddress_ResidenceAddressId",
                         column: x => x.ResidenceAddressId,
-                        principalSchema: "app",
+                        principalSchema: "pro",
                         principalTable: "ResidenceAddress",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Resources_NationalCardIdAttachmentId",
+                        name: "FK_UserProfile_Resources_NationalCardIdAttachmentId",
                         column: x => x.NationalCardIdAttachmentId,
                         principalTable: "Resources",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Resources_ResidenceAddressCertificateId",
+                        name: "FK_UserProfile_Resources_ResidenceAddressCertificateId",
                         column: x => x.ResidenceAddressCertificateId,
                         principalTable: "Resources",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Resources_ResumeAttachmentId",
+                        name: "FK_UserProfile_Resources_ResumeAttachmentId",
                         column: x => x.ResumeAttachmentId,
                         principalTable: "Resources",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserProfiles_TargetEntity_TargetEntityId",
+                        name: "FK_UserProfile_TargetEntity_TargetEntityId",
                         column: x => x.TargetEntityId,
                         principalSchema: "lkp",
                         principalTable: "TargetEntity",
@@ -2056,7 +2056,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Experience",
-                schema: "app",
+                schema: "pro",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -2074,7 +2074,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Experience_TrainingCourse_Id",
                         column: x => x.Id,
-                        principalSchema: "app",
+                        principalSchema: "pro",
                         principalTable: "TrainingCourse",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -2293,7 +2293,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "JobSkill",
+                name: "JobSkills",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -2310,27 +2310,27 @@ namespace Tawtheef.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_JobSkill", x => x.Id);
+                    table.PrimaryKey("PK_JobSkills", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_JobSkill_AspNetUsers_CreatedById",
+                        name: "FK_JobSkills_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_JobSkill_AspNetUsers_DeletedById",
+                        name: "FK_JobSkills_AspNetUsers_DeletedById",
                         column: x => x.DeletedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_JobSkill_AspNetUsers_UpdatedById",
+                        name: "FK_JobSkills_AspNetUsers_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_JobSkill_Job_JobId",
+                        name: "FK_JobSkills_Job_JobId",
                         column: x => x.JobId,
                         principalSchema: "hr",
                         principalTable: "Job",
@@ -2340,7 +2340,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Qualification",
-                schema: "app",
+                schema: "pro",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -2938,28 +2938,28 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EntityLogs_ChangedByUserId",
-                table: "EntityLogs",
+                name: "IX_EntityLog_ChangedByUserId",
+                table: "EntityLog",
                 column: "ChangedByUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EntityLogs_CreatedById",
-                table: "EntityLogs",
+                name: "IX_EntityLog_CreatedById",
+                table: "EntityLog",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EntityLogs_DeletedById",
-                table: "EntityLogs",
+                name: "IX_EntityLog_DeletedById",
+                table: "EntityLog",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EntityLogs_UpdatedById",
-                table: "EntityLogs",
+                name: "IX_EntityLog_UpdatedById",
+                table: "EntityLog",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Experience_ApplicantUserId",
-                schema: "app",
+                schema: "pro",
                 table: "Experience",
                 column: "ApplicantUserId");
 
@@ -3242,23 +3242,23 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobSkill_CreatedById",
-                table: "JobSkill",
+                name: "IX_JobSkills_CreatedById",
+                table: "JobSkills",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobSkill_DeletedById",
-                table: "JobSkill",
+                name: "IX_JobSkills_DeletedById",
+                table: "JobSkills",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobSkill_JobId",
-                table: "JobSkill",
+                name: "IX_JobSkills_JobId",
+                table: "JobSkills",
                 column: "JobId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobSkill_UpdatedById",
-                table: "JobSkill",
+                name: "IX_JobSkills_UpdatedById",
+                table: "JobSkills",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
@@ -3429,184 +3429,184 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OTPRequests_CreatedById",
-                table: "OTPRequests",
+                name: "IX_OTPRequest_CreatedById",
+                table: "OTPRequest",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OTPRequests_DeletedById",
-                table: "OTPRequests",
+                name: "IX_OTPRequest_DeletedById",
+                table: "OTPRequest",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OTPRequests_UpdatedById",
-                table: "OTPRequests",
+                name: "IX_OTPRequest_UpdatedById",
+                table: "OTPRequest",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OTPRequests_UserId",
-                table: "OTPRequests",
+                name: "IX_OTPRequest_UserId",
+                table: "OTPRequest",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileAdditionalAttachment_AttachmentId",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileAdditionalAttachment",
                 column: "AttachmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileAdditionalAttachment_CreatedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileAdditionalAttachment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileAdditionalAttachment_DeletedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileAdditionalAttachment",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileAdditionalAttachment_UpdatedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileAdditionalAttachment",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileAdditionalAttachment_UserId",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileAdditionalAttachment",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileLanguage_CreatedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileLanguage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileLanguage_DeletedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileLanguage",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileLanguage_LanguageId",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileLanguage",
                 column: "LanguageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileLanguage_LevelId",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileLanguage",
                 column: "LevelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileLanguage_UpdatedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileLanguage",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileLanguage_UserId",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileLanguage",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileSkill_CreatedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileSkill",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileSkill_DeletedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileSkill",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileSkill_SkillId",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileSkill",
                 column: "SkillId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileSkill_UpdatedById",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileSkill",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileSkill_UserId",
-                schema: "app",
+                schema: "pro",
                 table: "ProfileSkill",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_CertificateId",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "CertificateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_CountryId",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_CreatedById",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_DeletedById",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_LevelId",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "LevelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_MajorId",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "MajorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_RatingId",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "RatingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_StudyTypeId",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "StudyTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_UniversityId",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "UniversityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_UpdatedById",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_UserId",
-                schema: "app",
+                schema: "pro",
                 table: "Qualification",
                 column: "UserId");
 
@@ -3673,23 +3673,23 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_CreatedById",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_CreatedById",
+                table: "RefreshToken",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_DeletedById",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_DeletedById",
+                table: "RefreshToken",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UpdatedById",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_UpdatedById",
+                table: "RefreshToken",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UserId",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_UserId",
+                table: "RefreshToken",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -3725,19 +3725,19 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResidenceAddress_CreatedById",
-                schema: "app",
+                schema: "pro",
                 table: "ResidenceAddress",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResidenceAddress_DeletedById",
-                schema: "app",
+                schema: "pro",
                 table: "ResidenceAddress",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResidenceAddress_UpdatedById",
-                schema: "app",
+                schema: "pro",
                 table: "ResidenceAddress",
                 column: "UpdatedById");
 
@@ -3875,31 +3875,31 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrainingCourse_CertificateId",
-                schema: "app",
+                schema: "pro",
                 table: "TrainingCourse",
                 column: "CertificateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrainingCourse_CreatedById",
-                schema: "app",
+                schema: "pro",
                 table: "TrainingCourse",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrainingCourse_DeletedById",
-                schema: "app",
+                schema: "pro",
                 table: "TrainingCourse",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrainingCourse_UpdatedById",
-                schema: "app",
+                schema: "pro",
                 table: "TrainingCourse",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrainingCourse_UserId",
-                schema: "app",
+                schema: "pro",
                 table: "TrainingCourse",
                 column: "UserId");
 
@@ -3928,104 +3928,104 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_CandidateTypeId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_CandidateTypeId",
+                table: "UserProfile",
                 column: "CandidateTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_CreatedById",
-                table: "UserProfiles",
+                name: "IX_UserProfile_CreatedById",
+                table: "UserProfile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_DeletedById",
-                table: "UserProfiles",
+                name: "IX_UserProfile_DeletedById",
+                table: "UserProfile",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_GenderId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_GenderId",
+                table: "UserProfile",
                 column: "GenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_InterviewLocationId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_InterviewLocationId",
+                table: "UserProfile",
                 column: "InterviewLocationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_MaritalStatusId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_MaritalStatusId",
+                table: "UserProfile",
                 column: "MaritalStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_NationalCardIdAttachmentId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_NationalCardIdAttachmentId",
+                table: "UserProfile",
                 column: "NationalCardIdAttachmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_NationalityId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_NationalityId",
+                table: "UserProfile",
                 column: "NationalityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_ReligionId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_ReligionId",
+                table: "UserProfile",
                 column: "ReligionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_ResidenceAddressCertificateId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_ResidenceAddressCertificateId",
+                table: "UserProfile",
                 column: "ResidenceAddressCertificateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_ResidenceAddressId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_ResidenceAddressId",
+                table: "UserProfile",
                 column: "ResidenceAddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_ResidenceCountryId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_ResidenceCountryId",
+                table: "UserProfile",
                 column: "ResidenceCountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_ResumeAttachmentId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_ResumeAttachmentId",
+                table: "UserProfile",
                 column: "ResumeAttachmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_TargetEntityId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_TargetEntityId",
+                table: "UserProfile",
                 column: "TargetEntityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_UpdatedById",
-                table: "UserProfiles",
+                name: "IX_UserProfile_UpdatedById",
+                table: "UserProfile",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_UserId",
-                table: "UserProfiles",
+                name: "IX_UserProfile_UserId",
+                table: "UserProfile",
                 column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessions_CreatedById",
-                table: "UserSessions",
+                name: "IX_UserSession_CreatedById",
+                table: "UserSession",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessions_DeletedById",
-                table: "UserSessions",
+                name: "IX_UserSession_DeletedById",
+                table: "UserSession",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessions_UpdatedById",
-                table: "UserSessions",
+                name: "IX_UserSession_UpdatedById",
+                table: "UserSession",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessions_UserId",
-                table: "UserSessions",
+                name: "IX_UserSession_UserId",
+                table: "UserSession",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -4164,11 +4164,11 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "EmailTemplates");
 
             migrationBuilder.DropTable(
-                name: "EntityLogs");
+                name: "EntityLog");
 
             migrationBuilder.DropTable(
                 name: "Experience",
-                schema: "app");
+                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "HistoryInvitation");
@@ -4183,45 +4183,45 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "JobQuotas");
 
             migrationBuilder.DropTable(
-                name: "JobSkill");
+                name: "JobSkills");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
 
             migrationBuilder.DropTable(
-                name: "OTPRequests");
+                name: "OTPRequest");
 
             migrationBuilder.DropTable(
                 name: "ProfileAdditionalAttachment",
-                schema: "app");
+                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "ProfileLanguage",
-                schema: "app");
+                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "ProfileSkill",
-                schema: "app");
+                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "Qualification",
-                schema: "app");
+                schema: "pro");
 
             migrationBuilder.DropTable(
-                name: "RefreshTokens");
+                name: "RefreshToken");
 
             migrationBuilder.DropTable(
-                name: "UserProfiles");
+                name: "UserProfile");
 
             migrationBuilder.DropTable(
-                name: "UserSessions");
+                name: "UserSession");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "TrainingCourse",
-                schema: "app");
+                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "Invitations");
@@ -4272,7 +4272,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ResidenceAddress",
-                schema: "app");
+                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "TargetEntity",

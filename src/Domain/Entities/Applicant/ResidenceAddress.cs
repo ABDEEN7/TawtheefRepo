@@ -3,7 +3,7 @@ using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
-[Table(nameof(ResidenceAddress), Schema = Schemas.Applicant)]
+[Table(nameof(ResidenceAddress), Schema = Schemas.Profile)]
 public class ResidenceAddress : EventEntity
 {
     public required string Address { get; set; }

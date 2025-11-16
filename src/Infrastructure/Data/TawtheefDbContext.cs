@@ -37,51 +37,51 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
         IdentityUserToken<Guid>>(options), ITawtheefDbContext
 {
     // Base Table
-    public DbSet<EntityLog> EntityLogs { get; set; }
+    public DbSet<EntityLog> EntityLog { get; set; }
 
     // Lookup Tables
-    public DbSet<CandidateType> CandidateTypes { get; set; }
-    public DbSet<Degree> Degrees { get; set; }
-    public DbSet<Department> Departments { get; set; }
-    public DbSet<Gender> Genders { get; set; }
-    public DbSet<InvitationStatus> InvitationStatuses { get; set; }
-    public DbSet<JobCategory> JobCategories { get; set; }
-    public DbSet<JobStatus> JobStatuses { get; set; }
-    public DbSet<Language> Languages { get; set; }
-    public DbSet<LanguageLevel> LanguageLevels { get; set; }
-    public DbSet<MaritalStatus> MaritalStatuses { get; set; }
-    public DbSet<QualificationLevel> QualificationLevels { get; set; }
-    public DbSet<RatingGrade> RatingGrades { get; set; }
-    public DbSet<Religion> Religions { get; set; }
-    public DbSet<Sector> Sectors { get; set; }
-    public DbSet<StudyType> StudyTypes { get; set; }
-    public DbSet<TargetEntity> TargetEntities { get; set; }
-    public DbSet<UserType> UserTypes { get; set; }
-    public DbSet<WorkType> WorkTypes { get; set; }
+    public DbSet<CandidateType> CandidateType { get; set; }
+    public DbSet<Degree> Degree { get; set; }
+    public DbSet<Department> Department { get; set; }
+    public DbSet<Gender> Gender { get; set; }
+    public DbSet<InvitationStatus> InvitationStatus { get; set; }
+    public DbSet<JobCategory> JobCategory { get; set; }
+    public DbSet<JobStatus> JobStatus { get; set; }
+    public DbSet<Language> Language { get; set; }
+    public DbSet<LanguageLevel> LanguageLevel { get; set; }
+    public DbSet<MaritalStatus> MaritalStatus { get; set; }
+    public DbSet<QualificationLevel> QualificationLevel { get; set; }
+    public DbSet<RatingGrade> RatingGrade { get; set; }
+    public DbSet<Religion> Religion { get; set; }
+    public DbSet<Sector> Sector { get; set; }
+    public DbSet<StudyType> StudyType { get; set; }
+    public DbSet<TargetEntity> TargetEntity { get; set; }
+    public DbSet<UserType> UserType { get; set; }
+    public DbSet<WorkType> WorkType { get; set; }
     
-    public DbSet<City> Cities { get; set; }
-    public DbSet<Country> Countries { get; set; }
-    public DbSet<Major> Majors { get; set; }
-    public DbSet<SkillType> SkillTypes { get; set; }
-    public DbSet<University> Universities { get; set; }
+    public DbSet<City> City { get; set; }
+    public DbSet<Country> Country { get; set; }
+    public DbSet<Major> Major { get; set; }
+    public DbSet<SkillType> SkillType { get; set; }
+    public DbSet<University> University { get; set; }
 
     // Base User Tables
-    public DbSet<AdminUser> Admins { get; set; }
-    public DbSet<EmployeeUser> Employees { get; set; }
-    public DbSet<ApplicantUser> Applicants { get; set; }
-    public DbSet<UserProfile> UserProfiles { get; set; }
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
-    public DbSet<OTPRequest> OTPRequests { get; set; }
-    public DbSet<UserSession> UserSessions { get; set; }
+    public DbSet<AdminUser> Admin { get; set; }
+    public DbSet<EmployeeUser> Employee { get; set; }
+    public DbSet<ApplicantUser> Applicant { get; set; }
+    public DbSet<UserProfile> UserProfile { get; set; }
+    public DbSet<RefreshToken> RefreshToken { get; set; }
+    public DbSet<OTPRequest> OTPRequest { get; set; }
+    public DbSet<UserSession> UserSession { get; set; }
     
     // Applicant Tables
-    public DbSet<Experience> Experiences { get; set; }
-    public DbSet<Qualification> Qualifications { get; set; }
-    public DbSet<ProfileSkill> ApplicantSkills { get; set; }
-    public DbSet<ProfileLanguage> LanguageProficiencies { get; set; }
-    public DbSet<ResidenceAddress> ResidenceAddresses { get; set; }
-    public DbSet<TrainingCourse> TrainingCourses { get; set; }
-    public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicants { get; set; }
+    public DbSet<Experience> Experience { get; set; }
+    public DbSet<Qualification> Qualification { get; set; }
+    public DbSet<ProfileSkill> ApplicantSkill { get; set; }
+    public DbSet<ProfileLanguage> LanguageProficiency { get; set; }
+    public DbSet<ResidenceAddress> ResidenceAddresse { get; set; }
+    public DbSet<TrainingCourse> TrainingCourse { get; set; }
+    public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicant { get; set; }
     
     // Recruitment Tables
     public DbSet<Job> Jobs { get; set; }
@@ -89,7 +89,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<JobCondition> JobConditions { get; set; }
     public DbSet<JobDegree> JobDegrees { get; set; }
     public DbSet<JobQuota> JobQuotas { get; set; }
-    public DbSet<JobSkill> JobSkill { get; set; }
+    public DbSet<JobSkill> JobSkills { get; set; }
     
     // Notification Tables
     public DbSet<EmailQueue> EmailQueues { get; set; }

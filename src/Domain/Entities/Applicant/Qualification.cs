@@ -5,7 +5,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
-[Table(nameof(Qualification), Schema = Schemas.Applicant)]
+[Table(nameof(Qualification), Schema = Schemas.Profile)]
 public class Qualification : EventEntity
 {
     public Guid LevelId { get; set; }

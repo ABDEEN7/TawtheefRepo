@@ -5,7 +5,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
-[Table(nameof(ProfileSkill), Schema = Schemas.Applicant)]
+[Table(nameof(ProfileSkill), Schema = Schemas.Profile)]
 public class ProfileSkill : EventEntity
 {
     public Guid SkillId { get; set; }

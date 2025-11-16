@@ -5,7 +5,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
-[Table(nameof(ProfileAdditionalAttachment), Schema = Schemas.Applicant)]
+[Table(nameof(ProfileAdditionalAttachment), Schema = Schemas.Profile)]
 public class ProfileAdditionalAttachment: EventEntity
 {
     public required string FileName { get; set; }
