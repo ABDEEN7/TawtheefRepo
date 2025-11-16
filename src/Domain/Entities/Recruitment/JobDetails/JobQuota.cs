@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
@@ -12,7 +11,7 @@ public class JobQuota : EventEntity
 
     public Guid NationalityId { get; set; }
     public Country? Nationality { get; set; }
-
+    
     [Column(TypeName = "decimal(18,2)")]
     public decimal Percentage { get; set; }
 }

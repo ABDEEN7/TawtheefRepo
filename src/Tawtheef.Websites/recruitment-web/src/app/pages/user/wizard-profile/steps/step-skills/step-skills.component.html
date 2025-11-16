@@ -10,10 +10,9 @@
       </div>
 
       <p-auto-complete
-        [ngModel]="ds.state().skills" (ngModelChange)="ds.up('skills',$event)"
         [suggestions]="skillOptions" (completeMethod)="onSkillSearch($event)"
         [minQueryLength]="3" [multiple]="true" [dropdown]="false" [forceSelection]="true"
-        [separator]="','" optionLabel="name"
+        [separator]="','" optionLabel="name" (onSelect)="addSkill($event)" (onUnselect)="removeSkill($event)"
         [placeholder]="'wizard.skills.placeholder' | translate" [appendTo]="'body'" fluid>
       <ng-template #item let-it>
         <div class="d-flex align-items-center gap-2">
@@ -72,7 +71,7 @@
           class="w-level"
         ></p-select>
 
-        <button class="btn btn-outline-primary rounded-pill" (click)="add()">
+        <button class="btn btn-outline-primary rounded-pill" (click)="addLang()">
           <i class="fa-solid fa-plus"></i> {{ 'wizard.buttons.add' | translate }}
         </button>
       </div>
@@ -91,7 +90,9 @@
             <td>{{ r.name }}</td>
             <td><span class="badge rounded-pill bg-soft">{{ r.level }}</span></td>
             <td class="text-end">
-              <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="ds.delLang(i)" pTooltip="{{ 'wizard.buttons.delete' | translate }}">
+              <button class="btn btn-sm btn-outline-danger rounded-pill"
+                      (click)="removeLang(i)"
+                      pTooltip="{{ 'wizard.buttons.delete' | translate }}">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>

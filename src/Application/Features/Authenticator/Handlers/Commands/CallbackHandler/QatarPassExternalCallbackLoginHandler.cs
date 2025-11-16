@@ -2,7 +2,6 @@ using System.Security.Claims;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Features.Authenticator.Commands;
@@ -22,63 +21,90 @@ public sealed class QatarPassExternalCallbackLoginHandler(
 {
     private const string Provider = "QatarPass";
     private const string DefaultDisplayName = "Qatar Pass User";
+    private const string PlaceholderEmailDomain = "@login.local";
 
     public async Task<Result<AuthResponse>> Handle(QatarPassExternalCallbackLoginCommand request, CancellationToken ct)
     {
+        // Guard: provider error
         if (!string.IsNullOrEmpty(request.RemoteError))
             return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
 
+        // Guard: missing token
         if (string.IsNullOrWhiteSpace(request.Authtoken))
             return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
 
-        // Call Qatar Pass data endpoint
-        var qp = await FetchQatarPassDataAsync(request.Authtoken, ct);
-        if (qp.IsFailure) return Result.Failure<AuthResponse>(qp.Error);
+        // 1) Fetch external profile
+        var qpResult = await FetchQatarPassDataAsync(request.Authtoken!, ct);
+        if (qpResult.IsFailure) return Result.Failure<AuthResponse>(qpResult.Error);
 
-        var data = qp.Value;
-        if (string.IsNullOrWhiteSpace(data.UserQid))
+        var qp = qpResult.Value;
+        if (string.IsNullOrWhiteSpace(qp.UserQid))
             return Result.Failure<AuthResponse>("QatarPass: QID is missing.");
 
-        var providerKey = data.UserQid.Trim();
+        var providerKey = qp.UserQid.Trim();
+        var normalizedPhone = NormalizePhone(qp.MobileNumber);
 
-        // Already linked?
-        var linkedUser = await userManager.FindByLoginAsync(Provider, providerKey);
-        if (linkedUser != null)
+        var placeholderEmail = $"qp{providerKey}{PlaceholderEmailDomain}";
+
+        // 2) If already linked → issue tokens
+        var linked = await userManager.FindByLoginAsync(Provider, providerKey);
+        if (linked is not null)
+            return await UpsertClaimsAndIssueAsync(linked, qp, normalizedPhone, ct);
+
+        // *** CHANGE: Try to attach to an existing local account by placeholder email ***
+        var candidate = await FindCandidateByEmailAsync(placeholderEmail, ct);
+        if (candidate is not null)
         {
-            await UpsertQatarPassClaimsAsync(userManager, linkedUser, data);
-            return await tokenService.IssueTokensAsync(linkedUser, ct);
+            var linkRes = await LinkLoginAsync(candidate, providerKey);
+            if (linkRes.IsFailure) return Result.Failure<AuthResponse>(linkRes.Error);
+
+            return await UpsertClaimsAndIssueAsync(candidate, qp, normalizedPhone, ct);
         }
 
-        // Try to attach to an existing local account (heuristics)
-        //    a) by normalized phone (if you trust it to be unique)
-        User? candidate = null;
-        var normalizedPhone = NormalizePhone(data.MobileNumber);
-        if (!string.IsNullOrWhiteSpace(normalizedPhone))
-        {
-            candidate = await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == normalizedPhone, ct);
-        }
+        // 4) Create + link + enrich + tokens
+        var createLinkIssue = await CreateLinkAndIssueAsync(providerKey, normalizedPhone, qp, ct);
+        if (createLinkIssue.IsFailure) return Result.Failure<AuthResponse>(createLinkIssue.Error);
 
-        if (candidate != null)
-        {
-            var linkRes =
-                await userManager.AddLoginAsync(candidate, new UserLoginInfo(Provider, providerKey, Provider));
-            if (!linkRes.Succeeded)
-                return Result.Failure<AuthResponse>(string.Join(", ", linkRes.Errors.Select(e => e.Description)));
+        return createLinkIssue.Value;
+    }
 
-            await UpsertQatarPassClaimsAsync(userManager, candidate, data);
-            return await tokenService.IssueTokensAsync(candidate, ct);
-        }
+    // -----------------------
+    // External data fetch
+    // -----------------------
+    private async Task<Result<QatarPassAccount>> FetchQatarPassDataAsync(string authToken, CancellationToken ct)
+    {
+        var res = await qatarPassClient.GetDataAsync(authToken, ct);
+        if (res.IsFailure) return Result.Failure<QatarPassAccount>(res.Error);
 
-        // Create a new local user and link
-        // Use a safe placeholder email that will never collide with real domains
-        var placeholderEmail = $"qp{providerKey}@login.local";
+        // Defensive: ensure Account exists and has at least one element
+        var account = res.Value?.Account.FirstOrDefault();
+        if (account is null)
+            return Result.Failure<QatarPassAccount>("QatarPass: Account payload is empty.");
+
+        return account;
+    }
+
+    // -----------------------
+    // Users lookup / create
+    // -----------------------
+    private async Task<User?> FindCandidateByEmailAsync(string email, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(email)) return null;
+        return await userManager.FindByEmailAsync(email);
+    }
+
+    private async Task<Result<AuthResponse>> CreateLinkAndIssueAsync(
+        string providerKey,
+        string? normalizedPhone,
+        QatarPassAccount qp,
+        CancellationToken ct)
+    {
+        var placeholderEmail = $"qp{providerKey}{PlaceholderEmailDomain}";
         var newUserResult = User.Register(placeholderEmail, DefaultDisplayName, UserTypeIds.Applicant);
-        if (newUserResult.IsFailure)
-            return Result.Failure<AuthResponse>(newUserResult.Error);
+        if (newUserResult.IsFailure) return Result.Failure<AuthResponse>(newUserResult.Error);
 
         var newUser = (ApplicantUser)newUserResult.Value;
 
-        // Optional enrichments if your User has these fields:
         if (!string.IsNullOrWhiteSpace(normalizedPhone))
         {
             newUser.PhoneNumber = normalizedPhone;
@@ -86,65 +112,95 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         }
 
         var createRes = await userManager.CreateAsync(newUser);
-        if (!createRes.Succeeded)
-            return Result.Failure<AuthResponse>(string.Join(", ", createRes.Errors.Select(e => e.Description)));
+        if (!createRes.Succeeded) return FailureFromIdentity<AuthResponse>(createRes);
 
-        var addLogin = await userManager.AddLoginAsync(newUser, new UserLoginInfo(Provider, providerKey, Provider));
-        if (!addLogin.Succeeded)
-            return Result.Failure<AuthResponse>(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
+        var linkRes = await LinkLoginAsync(newUser, providerKey);
+        if (linkRes.IsFailure) return Result.Failure<AuthResponse>(linkRes.Error);
 
-        await UpsertQatarPassClaimsAsync(userManager, newUser, data);
-        return await tokenService.IssueTokensAsync(newUser, ct);
+        return await UpsertClaimsAndIssueAsync(newUser, qp, normalizedPhone, ct);
     }
 
-    // --- External call ---
-    private async Task<Result<QatarPassAccount>> FetchQatarPassDataAsync(string authtoken, CancellationToken ct)
+    private async Task<Result> LinkLoginAsync(User user, string providerKey)
     {
-        var res = await qatarPassClient.GetDataAsync(authtoken, ct);
-        if (res.IsFailure) return Result.Failure<QatarPassAccount>(res.Error);
-
-        return res.Value.Account[0];
+        var addLogin = await userManager.AddLoginAsync(user, new UserLoginInfo(Provider, providerKey, Provider));
+        return addLogin.Succeeded
+            ? Result.Success()
+            : Result.Failure(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
     }
-    
-    private static async Task UpsertQatarPassClaimsAsync(UserManager<User> userManager, User user, QatarPassAccount data)
+
+    // -----------------------
+    // Claims + tokens
+    // -----------------------
+    private async Task<Result<AuthResponse>> UpsertClaimsAndIssueAsync(
+        User user,
+        QatarPassAccount qp,
+        string? normalizedPhone,
+        CancellationToken ct)
+    {
+        var upsert = await UpsertQatarPassClaimsAsync(user, qp, normalizedPhone);
+        if (upsert.IsFailure) return Result.Failure<AuthResponse>(upsert.Error);
+        return await tokenService.IssueTokensAsync(user, ct);
+    }
+
+    private async Task<Result> UpsertQatarPassClaimsAsync(User user, QatarPassAccount data, string? normalizedPhone)
     {
         var existing = await userManager.GetClaimsAsync(user);
 
-        async Task Upsert(string type, string? value)
+        // Map of claim suffix -> value
+        var claims = new (string Key, string? Value)[]
         {
-            var claimType = $"qatarpass:{type}";
-            var old = existing.FirstOrDefault(c => c.Type == claimType);
+            ("qid", data.UserQid),
+            ("mobile", normalizedPhone), // Still useful to store the phone as a claim
+            ("nationality", data.Nationality),
+            ("passportNumber", data.PassportNumber),
+            ("accountType", data.AccountType),
+            ("accountSubType", data.AccountSubType),
+            ("code", data.Code),
+            ("accessTokenExpiration", data.AccessTokenExpiration)
+        };
+
+        foreach (var (key, value) in claims)
+        {
+            var type = $"qatarpass:{key}";
+            var current = existing.FirstOrDefault(c => c.Type == type);
+
             if (string.IsNullOrWhiteSpace(value))
             {
-                if (old != null) await userManager.RemoveClaimAsync(user, old);
-                return;
+                if (current is not null)
+                    await userManager.RemoveClaimAsync(user, current);
+                continue;
             }
 
-            var @new = new Claim(claimType, value);
-            if (old == null) await userManager.AddClaimAsync(user, @new);
-            else if (old.Value != value) await userManager.ReplaceClaimAsync(user, old, @new);
+            var next = new Claim(type, value);
+
+            if (current is null)
+                await userManager.AddClaimAsync(user, next);
+            else if (current.Value != value)
+                await userManager.ReplaceClaimAsync(user, current, next);
         }
 
-        await Upsert("qid", data.UserQid);
-        await Upsert("mobile", NormalizePhone(data.MobileNumber));
-        await Upsert("nationality", data.Nationality);
-        await Upsert("passportNumber", data.PassportNumber);
-        await Upsert("accountType", data.AccountType);
-        await Upsert("accountSubType", data.AccountSubType);
-        await Upsert("code", data.Code);
-        await Upsert("accessTokenExpiration", data.AccessTokenExpiration);
-        
         user.EmailConfirmed = true;
-        await userManager.UpdateAsync(user);
+        var update = await userManager.UpdateAsync(user);
+        return update.Succeeded ? Result.Success() : FailureFromIdentity(update);
     }
 
+    // -----------------------
+    // Helpers
+    // -----------------------
     private static string? NormalizePhone(string? phone)
     {
         if (string.IsNullOrWhiteSpace(phone)) return null;
-        var s = new string(phone.Where(char.IsDigit).ToArray());
-        // Qatar mobile often like "+9745xxxxxxx" → keep as digits with country code
-        if (s.StartsWith("974") && s.Length == 11) return "+" + s; // +974XXXXXXXX
-        if (s.Length == 8) return "+974" + s;
-        return string.IsNullOrWhiteSpace(s) ? null : "+" + s;
+
+        var digits = new string(phone.Where(char.IsDigit).ToArray());
+        // Qatar mobiles commonly include 974; we normalize to +974XXXXXXXX
+        if (digits.StartsWith("974") && digits.Length == 11) return "+" + digits; // +974XXXXXXXX
+        if (digits.Length == 8) return "+974" + digits;
+        return string.IsNullOrWhiteSpace(digits) ? null : "+" + digits;
     }
+
+    private static Result<T> FailureFromIdentity<T>(IdentityResult res) =>
+        Result.Failure<T>(string.Join(", ", res.Errors.Select(e => e.Description)));
+
+    private static Result FailureFromIdentity(IdentityResult res) =>
+        Result.Failure(string.Join(", ", res.Errors.Select(e => e.Description)));
 }

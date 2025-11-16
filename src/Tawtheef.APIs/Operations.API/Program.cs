@@ -6,7 +6,6 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Tawtheef.Application;
-using Tawtheef.Application.Extensions;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Middlewares;
@@ -122,6 +121,7 @@ app.UseHttpsRedirection();
 #else
     app.UseExceptionHandler();
 #endif
+app.UseExceptionHandlingMiddleware();
 app.UseMiddleware<ResponseLoggingMiddleware>(); 
 app.Use(async (context, next) =>
 {
