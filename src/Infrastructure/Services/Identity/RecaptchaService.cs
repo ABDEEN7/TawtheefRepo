@@ -5,7 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Domain.Configurations.Settings;
 
-namespace Tawtheef.Infrastructure.Services;
+namespace Tawtheef.Infrastructure.Services.Identity;
 
 public class RecaptchaService(HttpClient httpClient, IOptions<RecaptchaSettings> recaptchaSettings) : IRecaptchaService
 {

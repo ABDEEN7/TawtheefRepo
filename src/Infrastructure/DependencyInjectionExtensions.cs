@@ -34,8 +34,11 @@ using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Data.Interceptors;
 using Tawtheef.Infrastructure.Repositories;
 using Tawtheef.Infrastructure.Repositories.Base;
-using Tawtheef.Infrastructure.Services;
+using Tawtheef.Infrastructure.Services.Authorization;
+using Tawtheef.Infrastructure.Services.Environment;
 using Tawtheef.Infrastructure.Services.HttpClients;
+using Tawtheef.Infrastructure.Services.Identity;
+using Tawtheef.Infrastructure.Services.Localization;
 using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.StorageServices;
 

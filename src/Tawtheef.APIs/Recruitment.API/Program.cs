@@ -11,7 +11,7 @@ using Tawtheef.Application.Common.Constants;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Middlewares;
-using Tawtheef.Infrastructure.Services;
+using Tawtheef.Infrastructure.Services.Authorization;
 
 const string myCors = "_myAllowSpecificOrigins";
 
