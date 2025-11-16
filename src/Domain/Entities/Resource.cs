@@ -22,9 +22,7 @@ public class Resource : EventEntity
     
     [Required, StringLength(50)]
     public required string Type { get; set; }
-    
-    [Column(TypeName = "bigint unsigned")]
-    public long Size { get; init; }
+    public ulong Size { get; init; }
     
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? AdditionalData { get; set; }

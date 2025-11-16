@@ -831,7 +831,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     TemplateKey = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Subject = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PayloadJson = table.Column<string>(type: "json", nullable: true),
+                    PayloadJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProviderMessageId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Error = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
@@ -1152,7 +1152,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     Url = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
                     Key = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Size = table.Column<long>(type: "bigint unsigned", nullable: false),
+                    Size = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
                     AdditionalData = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -1847,7 +1847,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalSchema: "lkp",
                         principalTable: "Country",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_UserProfiles_Gender_GenderId",
                         column: x => x.GenderId,
@@ -2193,8 +2193,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DegreeId = table.Column<int>(type: "int", nullable: false),
-                    DegreeId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DegreeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -2225,11 +2224,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_JobDegrees_Degree_DegreeId1",
-                        column: x => x.DegreeId1,
+                        name: "FK_JobDegrees_Degree_DegreeId",
+                        column: x => x.DegreeId,
                         principalSchema: "lkp",
                         principalTable: "Degree",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_JobDegrees_Job_JobId",
                         column: x => x.JobId,
@@ -2436,7 +2436,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalSchema: "lkp",
                         principalTable: "University",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -2488,7 +2488,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         column: x => x.InvitationId,
                         principalTable: "Invitations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
@@ -3197,9 +3197,9 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobDegrees_DegreeId1",
+                name: "IX_JobDegrees_DegreeId",
                 table: "JobDegrees",
-                column: "DegreeId1");
+                column: "DegreeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JobDegrees_DeletedById",

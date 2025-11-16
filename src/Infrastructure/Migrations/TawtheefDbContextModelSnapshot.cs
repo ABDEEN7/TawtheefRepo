@@ -3293,7 +3293,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PayloadJson")
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProviderMessageId")
                         .HasColumnType("nvarchar(max)");
@@ -3606,10 +3606,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("DegreeId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("DegreeId1")
+                    b.Property<Guid>("DegreeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("DeletedById")
@@ -3634,7 +3631,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("DegreeId1");
+                    b.HasIndex("DegreeId");
 
                     b.HasIndex("DeletedById");
 
@@ -3784,8 +3781,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint unsigned");
+                    b.Property<decimal>("Size")
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -5526,7 +5523,9 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Degree", "Degree")
                         .WithMany()
-                        .HasForeignKey("DegreeId1");
+                        .HasForeignKey("DegreeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
                         .WithMany()

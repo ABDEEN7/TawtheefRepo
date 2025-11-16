@@ -21,7 +21,6 @@ public class Notification : EventEntity
     [MaxLength(250)]
     public string? Subject { get; private set; }
     public string? Body { get; private set; }
-    [Column(TypeName = "json")]
     public string? PayloadJson { get; private set; }
     public string? ProviderMessageId { get; set; }
     public NotificationStatus Status { get; set; } = NotificationStatus.Pending;
