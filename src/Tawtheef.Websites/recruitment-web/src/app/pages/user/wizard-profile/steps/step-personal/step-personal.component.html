@@ -40,7 +40,12 @@
       <label class="form-label">{{ 'wizard.personal.qid' | translate }}</label>
       <input pInputText class="form-control" pSize="small" [(ngModel)]="form.value.qid" name="n3"
              placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             (ngModelChange)="ds.up('qid',$event)">
+             (ngModelChange)="ds.up('qid',$event)"
+             [readonly]="ds.isLocked('qid')"
+             [ngClass]="{'locked-field': ds.isLocked('qid')}">
+      <small *ngIf="ds.isLocked('qid')" class="text-muted">
+        This field came from your account and cannot be changed.
+      </small>
     </div>
 
     <div class="col-md-4 d-flex flex-column">
@@ -55,8 +60,13 @@
         size="small"
         [placeholder]="'wizard.placeholders.selectNationality' | translate"
         class="w-full md:w-56"
-        (ngModelChange)="ds.up('nationality',$event)">
+        (ngModelChange)="ds.up('nationality',$event)"
+        [readonly]="ds.isLocked('nationality')"
+        [ngClass]="{'locked-field': ds.isLocked('nationality')}">
       </p-select>
+      <small *ngIf="ds.isLocked('nationality')" class="text-muted">
+        This field came from your account and cannot be changed.
+      </small>
     </div>
 
     <div class="col-md-4 d-flex flex-column">
@@ -71,8 +81,13 @@
         size="small"
         [placeholder]="'wizard.placeholders.selectGender' | translate"
         class="w-full md:w-56"
-        (ngModelChange)="ds.up('gender',$event)">
+        (ngModelChange)="ds.up('gender',$event)"
+        [readonly]="ds.isLocked('gender')"
+        [ngClass]="{'locked-field': ds.isLocked('gender')}">
       </p-select>
+      <small *ngIf="ds.isLocked('gender')" class="text-muted">
+        This field came from your account and cannot be changed.
+      </small>
     </div>
 
     <div class="col-md-4 d-flex flex-column">
@@ -82,8 +97,13 @@
         [showIcon]="true" size="small"
         [showOnFocus]="true" dateFormat="yy-mm-dd"
         (ngModelChange)="ds.up('dob',$event)"
-        fluid>
+        fluid
+        [readonly]="ds.isLocked('dob')"
+        [ngClass]="{'locked-field': ds.isLocked('dob')}">
       </p-date-picker>
+      <small *ngIf="ds.isLocked('dob')" class="text-muted">
+        This field came from your account and cannot be changed.
+      </small>
     </div>
 
     <div class="col-md-4 d-flex flex-column">

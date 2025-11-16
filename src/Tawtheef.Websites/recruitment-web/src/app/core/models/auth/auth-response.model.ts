@@ -21,7 +21,7 @@ export interface PrefillData
   givenNameEn?: string | null;
   familyNameEn?: string | null;
   avatar?: string | null;
-  phoneE164?: string | null;
+  phone?: string | null;
   nationality?: string | null;
   passportNo?: string | null;
   qid?: string | null;

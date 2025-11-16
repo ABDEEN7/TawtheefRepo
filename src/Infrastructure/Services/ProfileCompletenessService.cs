@@ -38,7 +38,6 @@ public sealed class ProfileCompletenessService(
         if (profile.MaritalStatusId == Guid.Empty) missing.Add("maritalStatusId");
         if (profile.BirthDate == default)          missing.Add("birthDate");
         if (profile.ResidenceCountryId == Guid.Empty) missing.Add("residenceCountryId");
-        if (string.IsNullOrWhiteSpace(profile.PassportNo)) missing.Add("passportNo");
 
         var isComplete = missing.Count == 0;
         return (isComplete, missing.ToArray());
@@ -58,7 +57,6 @@ public sealed class ProfileCompletenessService(
         var qpQid      = C("qatarpass:qid");
         var qpMobile   = C("qatarpass:mobile");
         var qpNat      = C("qatarpass:nationality");
-        var qpPass     = C("qatarpass:passportNumber");
 
 
         return new ProfilePrefillDto
@@ -68,9 +66,8 @@ public sealed class ProfileCompletenessService(
             Avatar       = picture,
             Locale       = locale,
             Qid          = qpQid,
-            PhoneE164    = qpMobile,
+            Phone    = qpMobile,
             Nationality  = qpNat,
-            PassportNo   = qpPass,
             Provider     = qpQid is not null ? "qatarpass" : "google"
         };
     }
