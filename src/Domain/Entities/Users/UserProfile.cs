@@ -24,7 +24,6 @@ public class UserProfile : EventEntity
     
     
     public int NationalNumber { get; set; }
-    public required string PassportNo { get; set; }
     public DateOnly BirthDate { get; set; }
     [NotMapped]
     public int Age => DateTime.Now.Year - BirthDate.Year;

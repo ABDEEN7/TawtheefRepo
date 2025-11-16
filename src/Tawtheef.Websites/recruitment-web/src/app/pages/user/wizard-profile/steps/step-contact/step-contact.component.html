@@ -35,7 +35,12 @@
       <label class="form-label">{{ 'wizard.contact.phone' | translate }}</label>
       <input pInputText class="form-control" [(ngModel)]="ds.state().phone"
              placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             type="number" (ngModelChange)="ds.up('phone',$event)">
+             type="number" (ngModelChange)="ds.up('phone',$event)"
+             [readonly]="ds.isLocked('phone')"
+             [ngClass]="{'locked-field': ds.isLocked('phone')}">
+      <small *ngIf="ds.isLocked('phone')" class="text-muted">
+        This field came from your account and cannot be changed.
+      </small>
     </div>
 
     <div class="col-md-6">
@@ -56,7 +61,12 @@
       <label class="form-label">{{ 'wizard.contact.email' | translate }}</label>
       <input pInputText type="email" class="form-control" [ngModel]="ds.state().email"
              placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             (ngModelChange)="ds.up('email',$event)">
+             (ngModelChange)="ds.up('email',$event)"
+             [readonly]="ds.isLocked('email')"
+             [ngClass]="{'locked-field': ds.isLocked('email')}">
+      <small *ngIf="ds.isLocked('email')" class="text-muted">
+        This field came from your account and cannot be changed.
+      </small>
     </div>
   </div>
 

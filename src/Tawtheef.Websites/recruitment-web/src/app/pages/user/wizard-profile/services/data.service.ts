@@ -50,6 +50,7 @@ export class DataService {
     return !!val;
   };
 
+  missing = signal<(keyof ProfileState)[]>([]);
   progress = computed(() => {
     const s = this.state();
 
@@ -76,6 +77,21 @@ export class DataService {
 
     return total === 0 ? 0 : Math.min(100, Math.round((filled / total) * 100));
   });
+  private locked = signal<Partial<Record<keyof ProfileState, boolean>>>({});
+
+  isLocked<K extends keyof ProfileState>(key: K): boolean {
+    return !!this.locked()[key];
+  }
+
+  prefillFromBootstrap(prefill: Partial<ProfileState>) {
+    this.state.update(s => ({ ...s, ...prefill }));
+    const keys = Object.keys(prefill) as (keyof ProfileState)[];
+    this.locked.update(m => {
+      const copy = { ...m };
+      for (const k of keys) copy[k] = true;
+      return copy;
+    });
+  }
 
   up<K extends keyof ProfileState>(key: K, val: ProfileState[K]) {
     this.state.update(s => ({ ...s, [key]: val }));
