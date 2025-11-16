@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Data\Configurations\**" />
+      <EmbeddedResource Remove="Data\Configurations\**" />
+      <None Remove="Data\Configurations\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Azure.Identity" />
         <PackageReference Include="Azure.Storage.Blobs" />
         <PackageReference Include="MailKit" />
@@ -40,8 +46,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Configurations\" />
-      <Folder Include="Data\Configurations\" />
       <Folder Include="Templates\" />
     </ItemGroup>
 

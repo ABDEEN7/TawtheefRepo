@@ -22,10 +22,10 @@ public class Invitation : EventEntity
     [NotMapped]
     public DateTimeOffset? InvitationAt => CreatedDate;
     
-    public ICollection<HistoryInvitations> History { get; init; } = [];
+    public ICollection<HistoryInvitation> History { get; init; } = [];
 }
 
-public class HistoryInvitations : EventEntity
+public class HistoryInvitation : EventEntity
 {
     public Guid InvitationId { get; set; }
     public Invitation? Invitation { get; set; }
