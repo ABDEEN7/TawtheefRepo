@@ -122,6 +122,12 @@ namespace Tawtheef.Infrastructure
                             sql.EnableRetryOnFailure(5);
                         })
                         .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
+                //options.UseSqlite(cs, sql =>
+                //        {
+                //            sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
+                //            // sql.EnableRetryOnFailure(5);
+                //        })
+                //        .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
             });
 
             services.AddIdentity<User, IdentityRole<Guid>>(options =>
