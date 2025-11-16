@@ -9,7 +9,7 @@ public class EmployeeUser : User
     
     public static Result<User> Register(string email,string displayName)
     {
-        var name = ValueObjects.User.FullName.TryParse(displayName);
+        var name = FullName.TryParse(displayName);
         if (name.IsFailure) return name.ConvertFailure<User>();
 
         var user = new EmployeeUser

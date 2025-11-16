@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tawtheef.Application.Common.Models;
+﻿namespace Tawtheef.Application.Common.Models;
 
 public record DropdownOptions
 {

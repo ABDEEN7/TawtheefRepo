@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using RazorLight;
+﻿using RazorLight;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;

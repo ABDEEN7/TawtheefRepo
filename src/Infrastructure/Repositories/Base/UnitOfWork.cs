@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Common;
-using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 
 namespace Tawtheef.Infrastructure.Repositories.Base;

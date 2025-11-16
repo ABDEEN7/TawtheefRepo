@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tawtheef.Application.Common.Security;
+﻿namespace Tawtheef.Application.Common.Security;
 
 /// <summary>
 /// Specifies the class this attribute is applied to requires authorization.

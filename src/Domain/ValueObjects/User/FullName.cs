@@ -1,5 +1,4 @@
-﻿using System;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.ValueObjects.User;

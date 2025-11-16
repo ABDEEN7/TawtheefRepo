@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tawtheef.Application.Common.Exceptions;
+﻿namespace Tawtheef.Application.Common.Exceptions;
 
 public class ForbiddenAccessException : Exception
 {

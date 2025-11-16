@@ -1,5 +1,4 @@
-﻿using System;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 

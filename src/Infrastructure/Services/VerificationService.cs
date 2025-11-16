@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
-using Tawtheef.Application.Common.Interfaces.NotificationServices;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
-using Tawtheef.Domain.Configurations;
-using Tawtheef.Domain.Configurations.Settings;
-using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Infrastructure.Services;
 

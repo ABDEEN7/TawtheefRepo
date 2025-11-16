@@ -1,6 +1,4 @@
 ﻿
-using System.Threading.Tasks;
-
 namespace Tawtheef.Application.Common.Interfaces.NotificationServices;
 
 public interface IEmailService

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tawtheef.Application.Common.Models.Pagination;
+﻿namespace Tawtheef.Application.Common.Models.Pagination;
 
 
 public class PaginationMetadata(int totalCount, int pageSize, int currentPage)

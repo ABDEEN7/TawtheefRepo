@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tawtheef.Application.Features.Authenticator.DTOs;
+﻿namespace Tawtheef.Application.Features.Authenticator.DTOs;
 
 public record GetAllStudentUserDto(
     Guid UserId,

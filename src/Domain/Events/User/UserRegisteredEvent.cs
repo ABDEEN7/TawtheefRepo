@@ -1,5 +1,4 @@
-﻿using System;
-using Tawtheef.Domain.Common;
+﻿using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Events.User;
 
