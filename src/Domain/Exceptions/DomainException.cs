@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tawtheef.Domain.Exceptions;
+﻿namespace Tawtheef.Domain.Exceptions;
 
 public class DomainException : Exception
 {

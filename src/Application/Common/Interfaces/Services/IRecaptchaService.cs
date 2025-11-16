@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Tawtheef.Application.Common.Models;
+﻿using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Common.Interfaces.Services;
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
-using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;

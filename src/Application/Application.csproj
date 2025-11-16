@@ -35,6 +35,8 @@
       <Folder Include="Features\Authenticator\Handlers\Queries\" />
       <Folder Include="Features\Authenticator\Queries\" />
       <Folder Include="Features\Common\" />
+      <Folder Include="Features\Lookups\Commands\" />
+      <Folder Include="Features\Lookups\Handlers\Commands\" />
       <Folder Include="Features\Operations\Admin\" />
       <Folder Include="Features\Operations\Applicant\" />
       <Folder Include="Features\Operations\Employee\" />

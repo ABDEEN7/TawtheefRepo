@@ -1,13 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+﻿using System.Text.RegularExpressions;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Models.Notification;
-using Tawtheef.Domain.Configurations;
 using Tawtheef.Infrastructure.Templates.EmailConfirmation;
 using Tawtheef.Infrastructure.Templates.EmailVerificationSuccess;
 using Tawtheef.Infrastructure.Templates.ResetPassword;

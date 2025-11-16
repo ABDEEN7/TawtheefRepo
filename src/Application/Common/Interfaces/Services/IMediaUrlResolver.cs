@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tawtheef.Application.Common.Interfaces.Services;
+﻿namespace Tawtheef.Application.Common.Interfaces.Services;
 
 public interface IMediaUrlResolver
 {

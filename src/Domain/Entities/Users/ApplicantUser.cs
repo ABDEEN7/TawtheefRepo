@@ -1,5 +1,4 @@
-﻿using System.Net.Mail;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -21,7 +20,7 @@ public class ApplicantUser : User
     public ICollection<Invitation> Invitations { get; init; } = [];
     public static Result<User> Register(string email,string displayName)
     {
-        var name = ValueObjects.User.FullName.TryParse(displayName);
+        var name = FullName.TryParse(displayName);
         if (name.IsFailure) return name.ConvertFailure<User>();
 
         var user = new ApplicantUser {

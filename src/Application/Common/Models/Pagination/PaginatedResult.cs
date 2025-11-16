@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Tawtheef.Application.Common.Models.Pagination;
+﻿namespace Tawtheef.Application.Common.Models.Pagination;
 
 
 public class PaginatedResult<T>(List<T> items, int totalCount, int pageNumber, int pageSize)

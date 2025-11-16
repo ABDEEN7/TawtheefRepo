@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Tawtheef.Domain.Common;
-using Tawtheef.Domain.Entities.Users;
+﻿using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Application.Common.Interfaces.Repositories.Base;
 

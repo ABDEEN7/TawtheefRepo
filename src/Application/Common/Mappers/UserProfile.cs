@@ -1,6 +1,4 @@
 ﻿using Mapster;
-using Tawtheef.Application.Common.Models;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Common.Mappers;
 

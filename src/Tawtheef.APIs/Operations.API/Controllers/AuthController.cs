@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using CSharpFunctionalExtensions;
 using MediatR;
@@ -15,7 +16,6 @@ using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Utils;
 
 namespace Operations.API.Controllers
 {
@@ -108,7 +108,7 @@ namespace Operations.API.Controllers
 
         private static string Base64UrlEncode(string input)
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(input);
+            var bytes = Encoding.UTF8.GetBytes(input);
             return Convert.ToBase64String(bytes)
                 .TrimEnd('=')
                 .Replace('+', '-')

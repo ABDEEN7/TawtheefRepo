@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net.Mail;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 

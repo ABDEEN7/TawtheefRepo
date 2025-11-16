@@ -1,5 +1,4 @@
-﻿using System;
-using Tawtheef.Domain.Common.Interfaces;
+﻿using Tawtheef.Domain.Common.Interfaces;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Common;

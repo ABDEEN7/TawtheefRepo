@@ -1,13 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Domain.Configurations;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 

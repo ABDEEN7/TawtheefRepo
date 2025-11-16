@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tawtheef.Domain.Common.Interfaces;
+﻿namespace Tawtheef.Domain.Common.Interfaces;
 
 public interface ISoftDelete
 {

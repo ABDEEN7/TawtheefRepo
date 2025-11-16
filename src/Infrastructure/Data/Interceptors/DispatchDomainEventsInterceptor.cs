@@ -1,10 +1,7 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Tawtheef.Domain.Common;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Infrastructure.Data.Interceptors;
 

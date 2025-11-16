@@ -6,8 +6,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities;
-using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
