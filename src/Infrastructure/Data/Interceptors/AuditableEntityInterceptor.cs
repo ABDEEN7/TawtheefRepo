@@ -1,14 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Tawtheef.Application.Common.Interfaces;
-using Tawtheef.Domain.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Infrastructure.Data.Interceptors;
 
@@ -31,23 +25,27 @@ public class AuditableEntityInterceptor(
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
+    private static Guid? ParseUserIdOrNull(string? id)
+        => Guid.TryParse(id, out var g) && g != Guid.Empty ? g : null;
+
     private void UpdateEntities(DbContext? context)
     {
         if (context == null) return;
+
+        var currentUserId = ParseUserIdOrNull(user.UserId);
+        var utcNow = dateTime.GetUtcNow();
 
         foreach (var entry in context.ChangeTracker.Entries<EventEntity>())
         {
             if (entry.State is EntityState.Added or EntityState.Modified || entry.HasChangedOwnedEntities())
             {
-                Guid.TryParse(user.UserId, out var userId);
-                var utcNow = dateTime.GetUtcNow();
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedById = userId;
+                    entry.Entity.CreatedById = currentUserId;
                     entry.Entity.CreatedDate = utcNow;
                 }
 
-                entry.Entity.UpdatedById = userId;
+                entry.Entity.UpdatedById = currentUserId;
                 entry.Entity.UpdatedDate = utcNow;
             }
         }

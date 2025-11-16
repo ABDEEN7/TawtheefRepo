@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Serilog;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
@@ -20,12 +20,21 @@ using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data.Interceptors;
+using ILogger = Serilog.ILogger;
 
 namespace Tawtheef.Infrastructure.Data;
 
 public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     ILogger logger, TimeProvider time)
-    : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options), ITawtheefDbContext
+    : IdentityDbContext<
+        User,
+        IdentityRole<Guid>,
+        Guid,
+        IdentityUserClaim<Guid>,
+        IdentityUserRole<Guid>,
+        IdentityUserLogin<Guid>,
+        IdentityRoleClaim<Guid>,
+        IdentityUserToken<Guid>>(options), ITawtheefDbContext
 {
     // Base Table
     public DbSet<EntityLog> EntityLogs { get; set; }
@@ -98,6 +107,45 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
+        var isSqlite = Database.ProviderName?.ToLowerInvariant().Contains("sqlite") == true;
+        if (isSqlite)
+        {
+            builder.Entity<User>()
+                .HasMany<IdentityUserLogin<Guid>>()
+                .WithOne()
+                .HasForeignKey(l => l.UserId)   // Guid
+                .IsRequired();
+            // Normalize all Guid/Guid? to lowercase strings for SQLite
+            var guidToString = new ValueConverter<Guid, string>(
+                v => v.ToString("D").ToLowerInvariant(),
+                v => Guid.Parse(v));
+
+            var nullableGuidToString = new ValueConverter<Guid?, string?>(
+                v => v.HasValue ? v.Value.ToString("D").ToLowerInvariant() : null, 
+                v => string.IsNullOrEmpty(v) ? null : Guid.Parse(v)
+            );
+
+            var dtoConverter = new ValueConverter<DateTimeOffset, long>(
+                v => v.ToUnixTimeMilliseconds(),
+                v => DateTimeOffset.FromUnixTimeMilliseconds(v));
+
+            // For nullable DateTimeOffset?
+            var nullableDtoConverter = new ValueConverter<DateTimeOffset?, long?>(
+                v => v.HasValue ? v.Value.ToUnixTimeMilliseconds() : null,
+                v => v.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(v.Value) : null);
+            // Apply converters globally
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                foreach (var prop in entityType.GetProperties())
+                {
+                    if (prop.ClrType == typeof(Guid)) prop.SetValueConverter(guidToString);
+                    else if (prop.ClrType == typeof(Guid?)) prop.SetValueConverter(nullableGuidToString);
+                    if (prop.ClrType == typeof(DateTimeOffset)) prop.SetValueConverter(dtoConverter);
+                    if (prop.ClrType == typeof(DateTimeOffset?)) prop.SetValueConverter(nullableDtoConverter);
+                }
+            }
+        }
 
         // Apply configurations
         builder.ApplyConfigurationsFromAssembly(typeof(TawtheefDbContext).Assembly);
@@ -120,21 +168,21 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
             if (!typeof(BaseEntity).IsAssignableFrom(clrType)) continue;
             if (clrType == typeof(User)) continue;
             var entity = builder.Entity(clrType);
-
+            
             entity.HasOne(typeof(User), nameof(BaseEntity.CreatedBy))
                 .WithMany()
                 .HasForeignKey(nameof(BaseEntity.CreatedById))
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(typeof(User), nameof(BaseEntity.UpdatedBy))
                 .WithMany()
                 .HasForeignKey(nameof(BaseEntity.UpdatedById))
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(typeof(User), nameof(BaseEntity.DeletedBy))
                 .WithMany()
                 .HasForeignKey(nameof(BaseEntity.DeletedById))
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())

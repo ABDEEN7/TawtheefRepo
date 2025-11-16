@@ -1,39 +1,11 @@
 ﻿import { Injectable, signal, computed } from '@angular/core';
+import {ProfileState} from '../models/profile-state.model';
+import {Language} from '../models/language.model';
+import {Degree} from '../models/degree.model';
+import {Experience} from '../models/experience.model';
+import {Attachment} from '../models/attachment.model';
 
-export interface Degree { level:string; major?:string; uni?:string; year?:number|string; gradCountry?:string; fileName?:string; }
-export interface Experience { org:string; title:string; from?:string; to?:string; tasks?:string; fileName?:string; }
-export interface Language { name:string; level:string; }
-export interface Attachment { title:string; fileName:string; file: any }
 
-export interface ProfileState {
-  // prereq
-  candidateType?: string;
-  targetEntity?: string;
-  cvName?: string;
-  idName?: string;
-
-  // personal
-  fullName?: string; fullNameEn?: string; qid?: string;
-  nationality?: string; gender?: string; religion?: string; marital?: string; children?: number;
-  dob?: string;
-
-  // contact
-  country?: string; dialCode?: string; phone?: string; address?: string; email?: string; interviewPlace?: string;
-  naZone?: string; naStreet?: string; naBuilding?: string; naUnit?: string; naFileName?: string;
-
-  // collections
-  degrees: Degree[];
-  experiences: Experience[];
-  courses: Experience[];
-  achievements: Experience[];
-  skills: string[];
-  languages: Language[];
-  attachments: Attachment[];
-
-  // ui
-  available: boolean;
-  avatarUrl?: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -129,7 +101,7 @@ export class DataService {
       : ({...s, skills:[...s.skills, tag]})
     );
   }
-  removeSkill(tag: string){ this.state.update(s => ({...s, skills: s.skills.filter(t=>t!==tag)})); }
+  delSkill(tag: string){ this.state.update(s => ({...s, skills: s.skills.filter(t=>t!==tag)})); }
 
   addAttachment(a: Attachment){ this.state.update(s => ({...s, attachments:[...s.attachments, a]})); }
   delAttachment(i:number){ this.state.update(s => ({...s, attachments: s.attachments.filter((_,x)=>x!==i)})); }

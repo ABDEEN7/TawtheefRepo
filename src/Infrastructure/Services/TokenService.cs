@@ -29,18 +29,17 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
     public async Task<Result<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct)
     {
-        user.UserType = await uow.GetEntityRepository<UserType>().DbSet
-            .FirstAsync(t => t.Id == user.UserTypeId, ct);
-        
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
         await sessions.SetCurrentAsync(user.Id, sid, device, ct);
 
         await userManager.UpdateSecurityStampAsync(user);
 
+        var userType = await uow.GetEntityRepository<UserType>().DbSet
+            .AsNoTracking().FirstAsync(t => t.Id == user.UserTypeId, ct);
         var (isComplete, missing) = await pcs.EvaluateAsync(user.Id, ct);
         var accessToken =
-            GenerateAccessToken(user, [
+            GenerateAccessToken(user, userType, [
                 new Claim(JwtRegisteredClaimNames.Sid, sid),
                 new("profile.completed", isComplete ? "true" : "false"),
                 new("profile.missing.count", missing.Length.ToString())
@@ -57,10 +56,8 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         ));
     }
     
-    private (string Token, DateTime Expires) GenerateAccessToken(User user, IEnumerable<Claim>? extraClaims = null)
+    private (string Token, DateTime Expires) GenerateAccessToken(User user, UserType userType, IEnumerable<Claim>? extraClaims = null)
     {
-        if(user.UserType is null)
-            throw new ArgumentException("User type is null. Cannot generate access token.");
         var credentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
@@ -68,8 +65,8 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email!),
-            new(nameof(user.UserType), user.UserType.BackendName),
-            new(ClaimTypes.Role, user.UserType.BackendName),
+            new(nameof(user.UserType), userType.BackendName),
+            new(ClaimTypes.Role, userType.BackendName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
         if (extraClaims is not null)

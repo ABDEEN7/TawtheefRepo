@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
-import { DataService, Degree } from '../../services/data.service';
+import { DataService } from '../../services/data.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {QualificationModal} from './dialogs/qualification.modal/qualification.modal';
 import {TranslateService} from '@ngx-translate/core';
