@@ -11,6 +11,6 @@ public class ProfileSkill : EventEntity
     public Guid SkillId { get; set; }
     public SkillType? Skill { get; set; }
     
-    public Guid UserId { get; set; }
-    public ApplicantUser? User { get; set; }
+    public Guid UserProfileId { get; set; }
+    public UserProfile? UserProfile { get; set; }
 }

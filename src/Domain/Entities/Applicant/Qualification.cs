@@ -25,6 +25,6 @@ public class Qualification : EventEntity
     public Guid CertificateId { get; set; }
     public Resource? Certificate { get; set; }
 
-    public Guid UserId { get; set; }
-    public ApplicantUser? User { get; set; }
+    public Guid UserProfileId { get; set; }
+    public UserProfile? UserProfile { get; set; }
 }

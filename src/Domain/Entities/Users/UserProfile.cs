@@ -5,6 +5,7 @@ using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Domain.Entities.Users;
 
+[Table(nameof(UserProfile), Schema = Schemas.Applicant)]
 public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }
@@ -54,4 +55,12 @@ public class UserProfile : EventEntity
     
     public Guid? ResidenceAddressCertificateId { get; set; }
     public Resource? ResidenceAddressCertificate { get; set; }
+    
+    
+    public ICollection<Qualification> Qualifications { get; set; } = [];
+    public ICollection<Experience> Experiences { get; set; } = [];
+    public ICollection<TrainingCourse> TrainingCourses { get; set; } = [];
+    public ICollection<ProfileSkill> Skills { get; set; } = [];
+    public ICollection<ProfileLanguage> Languages { get; set; } = [];
+    public ICollection<ProfileAdditionalAttachment> AdditionalAttachments { get; set; } = [];
 }
