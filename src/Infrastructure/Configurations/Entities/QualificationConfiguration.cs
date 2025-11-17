@@ -9,9 +9,15 @@ public class QualificationConfiguration : IEntityTypeConfiguration<Qualification
     public virtual void Configure(EntityTypeBuilder<Qualification> builder)
     {
         builder
-            .HasOne(u => u.University)
+            .HasOne(q => q.University)
             .WithMany()
-            .HasForeignKey(u => u.UniversityId)
+            .HasForeignKey(q => q.UniversityId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder
+            .HasOne(q=>q.UserProfile)
+            .WithMany(up => up.Qualifications)
+            .HasForeignKey(q=>q.UserProfileId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

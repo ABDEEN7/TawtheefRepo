@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tawtheef.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,9 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.EnsureSchema(
                 name: "hr");
+
+            migrationBuilder.EnsureSchema(
+                name: "app");
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
@@ -1154,6 +1157,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Size = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
                     AdditionalData = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContentHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1546,226 +1550,8 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProfileLanguage",
-                schema: "pro",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProfileLanguage", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProfileLanguage_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileLanguage_AspNetUsers_DeletedById",
-                        column: x => x.DeletedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileLanguage_AspNetUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileLanguage_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProfileLanguage_LanguageLevel_LevelId",
-                        column: x => x.LevelId,
-                        principalSchema: "lkp",
-                        principalTable: "LanguageLevel",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProfileLanguage_Language_LanguageId",
-                        column: x => x.LanguageId,
-                        principalSchema: "lkp",
-                        principalTable: "Language",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProfileAdditionalAttachment",
-                schema: "pro",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProfileAdditionalAttachment", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProfileAdditionalAttachment_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileAdditionalAttachment_AspNetUsers_DeletedById",
-                        column: x => x.DeletedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileAdditionalAttachment_AspNetUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileAdditionalAttachment_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProfileAdditionalAttachment_Resources_AttachmentId",
-                        column: x => x.AttachmentId,
-                        principalTable: "Resources",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TrainingCourse",
-                schema: "pro",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Organization = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TrainingCourse", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TrainingCourse_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TrainingCourse_AspNetUsers_DeletedById",
-                        column: x => x.DeletedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TrainingCourse_AspNetUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TrainingCourse_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TrainingCourse_Resources_CertificateId",
-                        column: x => x.CertificateId,
-                        principalTable: "Resources",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProfileSkill",
-                schema: "pro",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SkillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProfileSkill", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProfileSkill_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileSkill_AspNetUsers_DeletedById",
-                        column: x => x.DeletedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileSkill_AspNetUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileSkill_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProfileSkill_SkillType_SkillId",
-                        column: x => x.SkillId,
-                        principalSchema: "lkp",
-                        principalTable: "SkillType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserProfile",
+                schema: "app",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1775,7 +1561,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     ResumeAttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     NationalCardIdAttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     NationalNumber = table.Column<int>(type: "int", nullable: false),
-                    PassportNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateOnly>(type: "date", nullable: false),
                     NationalityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -2060,22 +1845,276 @@ namespace Tawtheef.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Organization = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Achievements = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicantUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Experience", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Experience_AspNetUsers_ApplicantUserId",
-                        column: x => x.ApplicantUserId,
+                        name: "FK_Experience_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Experience_TrainingCourse_Id",
-                        column: x => x.Id,
-                        principalSchema: "pro",
-                        principalTable: "TrainingCourse",
+                        name: "FK_Experience_AspNetUsers_DeletedById",
+                        column: x => x.DeletedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Experience_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Experience_Resources_CertificateId",
+                        column: x => x.CertificateId,
+                        principalTable: "Resources",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Experience_UserProfile_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalSchema: "app",
+                        principalTable: "UserProfile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProfileAdditionalAttachment",
+                schema: "pro",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProfileAdditionalAttachment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProfileAdditionalAttachment_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileAdditionalAttachment_AspNetUsers_DeletedById",
+                        column: x => x.DeletedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileAdditionalAttachment_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileAdditionalAttachment_Resources_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Resources",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProfileAdditionalAttachment_UserProfile_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalSchema: "app",
+                        principalTable: "UserProfile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProfileLanguage",
+                schema: "pro",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProfileLanguage", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProfileLanguage_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileLanguage_AspNetUsers_DeletedById",
+                        column: x => x.DeletedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileLanguage_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileLanguage_LanguageLevel_LevelId",
+                        column: x => x.LevelId,
+                        principalSchema: "lkp",
+                        principalTable: "LanguageLevel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProfileLanguage_Language_LanguageId",
+                        column: x => x.LanguageId,
+                        principalSchema: "lkp",
+                        principalTable: "Language",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProfileLanguage_UserProfile_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalSchema: "app",
+                        principalTable: "UserProfile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProfileSkill",
+                schema: "pro",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SkillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProfileSkill", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProfileSkill_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileSkill_AspNetUsers_DeletedById",
+                        column: x => x.DeletedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileSkill_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileSkill_SkillType_SkillId",
+                        column: x => x.SkillId,
+                        principalSchema: "lkp",
+                        principalTable: "SkillType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProfileSkill_UserProfile_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalSchema: "app",
+                        principalTable: "UserProfile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrainingCourse",
+                schema: "pro",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Organization = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrainingCourse", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TrainingCourse_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingCourse_AspNetUsers_DeletedById",
+                        column: x => x.DeletedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingCourse_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingCourse_Resources_CertificateId",
+                        column: x => x.CertificateId,
+                        principalTable: "Resources",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TrainingCourse_UserProfile_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalSchema: "app",
+                        principalTable: "UserProfile",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -2148,7 +2187,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -2299,7 +2338,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -2353,7 +2392,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     RatingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -2383,12 +2422,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Qualification_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Qualification_Country_CountryId",
                         column: x => x.CountryId,
@@ -2435,6 +2468,13 @@ namespace Tawtheef.Infrastructure.Migrations
                         column: x => x.UniversityId,
                         principalSchema: "lkp",
                         principalTable: "University",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Qualification_UserProfile_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalSchema: "app",
+                        principalTable: "UserProfile",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -2958,10 +2998,34 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Experience_ApplicantUserId",
+                name: "IX_Experience_CertificateId",
                 schema: "pro",
                 table: "Experience",
-                column: "ApplicantUserId");
+                column: "CertificateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Experience_CreatedById",
+                schema: "pro",
+                table: "Experience",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Experience_DeletedById",
+                schema: "pro",
+                table: "Experience",
+                column: "DeletedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Experience_UpdatedById",
+                schema: "pro",
+                table: "Experience",
+                column: "UpdatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Experience_UserProfileId",
+                schema: "pro",
+                table: "Experience",
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Gender_BackendName",
@@ -3473,10 +3537,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProfileAdditionalAttachment_UserId",
+                name: "IX_ProfileAdditionalAttachment_UserProfileId",
                 schema: "pro",
                 table: "ProfileAdditionalAttachment",
-                column: "UserId");
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileLanguage_CreatedById",
@@ -3509,10 +3573,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProfileLanguage_UserId",
+                name: "IX_ProfileLanguage_UserProfileId",
                 schema: "pro",
                 table: "ProfileLanguage",
-                column: "UserId");
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileSkill_CreatedById",
@@ -3539,10 +3603,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProfileSkill_UserId",
+                name: "IX_ProfileSkill_UserProfileId",
                 schema: "pro",
                 table: "ProfileSkill",
-                column: "UserId");
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Qualification_CertificateId",
@@ -3605,10 +3669,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Qualification_UserId",
+                name: "IX_Qualification_UserProfileId",
                 schema: "pro",
                 table: "Qualification",
-                column: "UserId");
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_QualificationLevel_BackendName",
@@ -3898,10 +3962,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TrainingCourse_UserId",
+                name: "IX_TrainingCourse_UserProfileId",
                 schema: "pro",
                 table: "TrainingCourse",
-                column: "UserId");
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_University_CityId",
@@ -3929,81 +3993,97 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_CandidateTypeId",
+                schema: "app",
                 table: "UserProfile",
                 column: "CandidateTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_CreatedById",
+                schema: "app",
                 table: "UserProfile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_DeletedById",
+                schema: "app",
                 table: "UserProfile",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_GenderId",
+                schema: "app",
                 table: "UserProfile",
                 column: "GenderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_InterviewLocationId",
+                schema: "app",
                 table: "UserProfile",
                 column: "InterviewLocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_MaritalStatusId",
+                schema: "app",
                 table: "UserProfile",
                 column: "MaritalStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_NationalCardIdAttachmentId",
+                schema: "app",
                 table: "UserProfile",
                 column: "NationalCardIdAttachmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_NationalityId",
+                schema: "app",
                 table: "UserProfile",
                 column: "NationalityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_ReligionId",
+                schema: "app",
                 table: "UserProfile",
                 column: "ReligionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_ResidenceAddressCertificateId",
+                schema: "app",
                 table: "UserProfile",
                 column: "ResidenceAddressCertificateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_ResidenceAddressId",
+                schema: "app",
                 table: "UserProfile",
                 column: "ResidenceAddressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_ResidenceCountryId",
+                schema: "app",
                 table: "UserProfile",
                 column: "ResidenceCountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_ResumeAttachmentId",
+                schema: "app",
                 table: "UserProfile",
                 column: "ResumeAttachmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_TargetEntityId",
+                schema: "app",
                 table: "UserProfile",
                 column: "TargetEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_UpdatedById",
+                schema: "app",
                 table: "UserProfile",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_UserId",
+                schema: "app",
                 table: "UserProfile",
                 column: "UserId",
                 unique: true);
@@ -4211,17 +4291,14 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "RefreshToken");
 
             migrationBuilder.DropTable(
-                name: "UserProfile");
+                name: "TrainingCourse",
+                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "UserSession");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "TrainingCourse",
-                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "Invitations");
@@ -4259,6 +4336,22 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp");
 
             migrationBuilder.DropTable(
+                name: "UserProfile",
+                schema: "app");
+
+            migrationBuilder.DropTable(
+                name: "InvitationStatus",
+                schema: "lkp");
+
+            migrationBuilder.DropTable(
+                name: "Job",
+                schema: "hr");
+
+            migrationBuilder.DropTable(
+                name: "City",
+                schema: "lkp");
+
+            migrationBuilder.DropTable(
                 name: "CandidateType",
                 schema: "lkp");
 
@@ -4275,22 +4368,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro");
 
             migrationBuilder.DropTable(
-                name: "TargetEntity",
-                schema: "lkp");
-
-            migrationBuilder.DropTable(
                 name: "Resources");
 
             migrationBuilder.DropTable(
-                name: "InvitationStatus",
-                schema: "lkp");
-
-            migrationBuilder.DropTable(
-                name: "Job",
-                schema: "hr");
-
-            migrationBuilder.DropTable(
-                name: "City",
+                name: "TargetEntity",
                 schema: "lkp");
 
             migrationBuilder.DropTable(

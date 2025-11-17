@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
@@ -32,11 +33,6 @@ public class Job : EventEntity
 
     public int Vacancies { get; set; }
     public DateTimeOffset Deadline { get; set; }
-
-    public ICollection<JobDegree> Degrees { get; init; } = new List<JobDegree>();
-    public ICollection<JobQuota> Quotas { get; init; } = new List<JobQuota>();
-    public ICollection<JobCondition> Conditions { get; init; } = new List<JobCondition>();
-    public ICollection<JobSkill> Skills { get; init; } = new List<JobSkill>();
     public string? Description { get; set; }
     public string? Benefits { get; set; }
     
@@ -44,5 +40,10 @@ public class Job : EventEntity
 
     public Guid StatusId { get; set; }
     public JobStatus? Status { get; set; }
-    public ICollection<Invitation> Invitations { get; init; } = new List<Invitation>();
+    
+    public ICollection<Invitation> Invitations { get; init; } = [];
+    public ICollection<JobDegree> Degrees { get; init; } = [];
+    public ICollection<JobQuota> Quotas { get; init; } = [];
+    public ICollection<JobCondition> Conditions { get; init; } = [];
+    public ICollection<JobSkill> Skills { get; init; } = [];
 }

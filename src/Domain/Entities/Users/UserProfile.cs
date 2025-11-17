@@ -2,9 +2,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Domain.Entities.Users;
 
+[Table(nameof(UserProfile), Schema = Schemas.Applicant)]
 public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }
@@ -26,7 +28,14 @@ public class UserProfile : EventEntity
     public int NationalNumber { get; set; }
     public DateOnly BirthDate { get; set; }
     [NotMapped]
-    public int Age => DateTime.Now.Year - BirthDate.Year;
+    public int Age {
+        get {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var age = today.Year - BirthDate.Year;
+            if (today < new DateOnly(today.Year, BirthDate.Month, BirthDate.Day)) age--;
+            return age;
+        }
+    }
     
     public Guid NationalityId { get; set; }
     public Country? Nationality { get; set; }
@@ -54,4 +63,12 @@ public class UserProfile : EventEntity
     
     public Guid? ResidenceAddressCertificateId { get; set; }
     public Resource? ResidenceAddressCertificate { get; set; }
+    
+    
+    public ICollection<Qualification> Qualifications { get; set; } = [];
+    public ICollection<Experience> Experiences { get; set; } = [];
+    public ICollection<TrainingCourse> TrainingCourses { get; set; } = [];
+    public ICollection<ProfileSkill> Skills { get; set; } = [];
+    public ICollection<ProfileLanguage> Languages { get; set; } = [];
+    public ICollection<ProfileAdditionalAttachment> AdditionalAttachments { get; set; } = [];
 }
