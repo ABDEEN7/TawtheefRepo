@@ -23,11 +23,12 @@ stages:
       persistCredentials: true
 
     - bash: |
-        set -euo pipefail
+        set -eo pipefail
 
-        git fetch origin "$SYSTEM_PULLREQUEST_TARGETBRANCH":refs/remotes/origin/target || true
+        TARGET_BRANCH="${SYSTEM_PULLREQUEST_TARGETBRANCH:-origin/main}"
+        git fetch origin "$TARGET_BRANCH":target || true
 
-        FILES=$(git diff --name-only origin/target HEAD || true)
+        FILES=$(git diff --name-only target HEAD || true)
 
         echo "Changed Files:"
         echo "$FILES"
