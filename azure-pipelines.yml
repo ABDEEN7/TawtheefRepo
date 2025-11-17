@@ -13,7 +13,7 @@ stages:
 # =========================
 # Stage 1: Detect changes
 # =========================
-- stage: detect
+- stage: detect-changes-stage
   displayName: Detect Changes
   jobs:
   - job: detect
@@ -63,9 +63,9 @@ stages:
 # =========================
 # Stage 2: Build Frontend
 # =========================
-- stage: Frontends
+- stage: frontends-stage
   displayName: Build Frontends
-  dependsOn: Detect
+  dependsOn: detect-changes-stage
   condition: or(eq(dependencies.detect.detect.outputs['detectChanges.opsChanged'], 'true'),
                 eq(dependencies.detect.detect.outputs['detectChanges.recChanged'], 'true'))
   jobs:
@@ -114,9 +114,9 @@ stages:
 # =========================
 # Stage 3: Build Backend
 # =========================
-- stage: Backend
+- stage: backend-stage
   displayName: Build Backend
-  dependsOn: Detect
+  dependsOn: detect-changes-stage
   condition: eq(dependencies.detect.detect.outputs['detectChanges.backendChanged'], 'true')
   jobs:
   - job: buildBackend
@@ -145,9 +145,9 @@ stages:
 - stage: PostComment
   displayName: Post PR Summary
   dependsOn:
-    - detect
-    - Frontends
-    - Backend
+    - detect-changes-stage
+    - frontends-stage
+    - backend-stage
   condition: always()
   jobs:
   - job: postComment
