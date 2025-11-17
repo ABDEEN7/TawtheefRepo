@@ -1,0 +1,189 @@
+<form [formGroup]="form">
+  <div class="card card-lite p-3 mb-3">
+    <h6 class="mb-3 text-brand fw-bold">{{ 'job_wizard.steps.basics.title' | translate }}</h6>
+
+    <!-- Requesting Department -->
+    <div class="col-lg-6 col-md-8 mb-3">
+      <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.requesting_dept' | translate }}</label>
+      <p-select
+        [options]="departments()"
+        formControlName="requestingDept"
+        [filter]="true"
+        [showClear]="true"
+        [virtualScroll]="true"
+        [virtualScrollItemSize]="38"
+        [scrollHeight]="virtualScrollOptions.scrollHeight"
+        placeholder="{{ 'job_wizard.steps.basics.requesting_dept_placeholder' | translate }}"
+        class="w-100"
+      ></p-select>
+      <div class="small-muted mt-1">{{ 'job_wizard.steps.basics.requesting_dept_hint' | translate }}</div>
+      @if (form.controls.requestingDept.touched && form.controls.requestingDept.invalid) {
+        <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+      }
+    </div>
+
+    <!-- Job Title, Category, Gender -->
+    <div class="row g-3 mb-3">
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.job_title' | translate }}</label>
+        <input
+          class="form-control"
+          formControlName="title"
+          placeholder="{{ 'job_wizard.steps.basics.job_title_placeholder' | translate }}"
+        />
+        @if (form.controls.title.touched && form.controls.title.invalid) {
+          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.job_category' | translate }}</label>
+        <select class="form-select" formControlName="jobCategory">
+          <option value="" disabled>{{ 'job_wizard.steps.basics.job_category_placeholder' | translate }}</option>
+          @for (category of jobCategories; track category) {
+            <option [value]="category">
+              {{ ('job_wizard.steps.basics.categories.' + category) | translate }}
+            </option>
+          }
+        </select>
+        @if (form.controls.jobCategory.touched && form.controls.jobCategory.invalid) {
+          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.gender' | translate }}</label>
+        <select class="form-select" formControlName="gender">
+          <option value="" disabled>{{ 'job_wizard.steps.basics.select_type' | translate }}</option>
+          @for (gender of genders; track gender) {
+            <option [value]="gender">
+              {{ ('job_wizard.steps.basics.genders.' + gender) | translate }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Entity, Major, Degree -->
+    <div class="row g-3 mb-3">
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.work_entity' | translate }}</label>
+        <select class="form-select" formControlName="entity">
+          <option value="" disabled>{{ 'job_wizard.steps.basics.work_entity_placeholder' | translate }}</option>
+          @for (entity of entities; track entity) {
+            <option [value]="entity">
+              {{ ('job_wizard.steps.basics.entities.' + entity) | translate }}
+            </option>
+          }
+        </select>
+        @if (form.controls.entity.touched && form.controls.entity.invalid) {
+          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.major' | translate }}</label>
+        <p-select
+          [options]="majors()"
+          formControlName="major"
+          [filter]="true"
+          [showClear]="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="37"
+          [scrollHeight]="virtualScrollOptions.scrollHeight"
+          placeholder="{{ 'job_wizard.steps.basics.major_placeholder' | translate }}"
+          class="w-100"
+        ></p-select>
+        @if (form.controls.major.touched && form.controls.major.invalid) {
+          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.degree' | translate }}</label>
+        <div class="dropdown w-100">
+          <button
+            class="btn btn-outline-secondary w-100 text-start dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ degreePlaceholder | translate }}
+          </button>
+          <ul class="dropdown-menu w-100 p-2" style="max-height: 240px; overflow: auto">
+            @for (degree of degreeOptions(); track degree) {
+              <li>
+                <label class="dropdown-item cursor-pointer">
+                  <input
+                    type="checkbox"
+                    class="form-check-input me-2"
+                    [checked]="form.controls.degree.value?.includes(degree)"
+                    (change)="toggleDegree(degree, $event)"
+                  />
+                  {{ degree }}
+                </label>
+              </li>
+            }
+          </ul>
+        </div>
+        @if (form.controls.degree.touched && form.controls.degree.invalid) {
+          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+        }
+      </div>
+    </div>
+
+    <!-- Work Type, Vacancies, Deadline -->
+    <div class="row g-3 mb-1">
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.work_type' | translate }}</label>
+        <select class="form-select" formControlName="typeOfWork">
+          <option value="" disabled>{{ 'job_wizard.steps.basics.work_type_placeholder' | translate }}</option>
+          @for (workType of typeOfWork; track workType) {
+            <option [value]="workType">
+              {{ ('job_wizard.steps.basics.work_types.' + workType) | translate }}
+            </option>
+          }
+        </select>
+        @if (form.controls.typeOfWork.touched && form.controls.typeOfWork.invalid) {
+          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.vacancies' | translate }}</label>
+        <input
+          type="number"
+          min="1"
+          class="form-control"
+          formControlName="vacancies"
+          placeholder="{{ 'job_wizard.steps.basics.vacancies_placeholder' | translate }}"
+        />
+        @if (form.controls.vacancies.touched && form.controls.vacancies.invalid) {
+          <div class="text-danger small">
+            @if (form.controls.vacancies.errors?.['required']) {
+              {{ 'job_wizard.shared.validation.required' | translate }}
+            }
+            @if (form.controls.vacancies.errors?.['min']) {
+              {{ 'job_wizard.shared.validation.min_vacancies' | translate }}
+            }
+          </div>
+        }
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.deadline' | translate }}</label>
+        <p-datePicker
+          formControlName="deadline"
+          [showIcon]="true"
+          inputId="date"
+          dateFormat="dd/mm/yy"
+          placeholder="dd/mm/yyyy"
+          (onSelect)="onDateSelect()"
+        ></p-datePicker>
+        @if (form.controls.deadline.touched && form.controls.deadline.invalid) {
+          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+        }
+      </div>
+    </div>
+  </div>
+</form>

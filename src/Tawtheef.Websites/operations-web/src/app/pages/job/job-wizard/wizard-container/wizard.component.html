@@ -1,0 +1,55 @@
+<section i18nNamespace="pages/job-wizard">
+
+<header class="py-3 header-bg">
+  <div class="container d-flex align-items-center justify-content-between">
+    <div>
+      <h4 class="mb-1 text-brand fw-bold">{{ getHeaderTitle() | translate }}</h4>
+      <div class="small-muted">{{ getHeaderSubtitle() | translate }}</div>
+    </div>
+    <app-progress-bar [value]="progress" />
+  </div>
+</header>
+
+<main class="py-4">
+  <div class="container">
+    <div class="wizard">
+
+      <app-stepper [current]="step" (stepChange)="goTo($event)" />
+
+      <div #stepsContainer></div>
+
+      <div class="d-flex justify-content-between gap-2 mt-4">
+
+        <button
+          class="btn btn-light rounded-pill d-flex align-items-center gap-2"
+          (click)="prev()"
+          [disabled]="step === 1"
+        >
+          <i class="fa fa-arrow-right"></i>
+          {{ 'job_wizard.shared.buttons.back' | translate }}
+        </button>
+
+        @if (step < total) {
+          <button
+            class="btn btn-outline-brand rounded-pill d-flex align-items-center gap-2"
+            (click)="next()"
+            [disabled]="!isCurrentStepValid()"
+          >
+            {{ 'job_wizard.shared.buttons.next' | translate }}
+            <i class="fa fa-arrow-left"></i>
+          </button>
+        } @else {
+          <button
+            class="btn btn-success rounded-pill d-flex align-items-center gap-2"
+            (click)="saveJob()"
+          >
+            <i class="fa fa-check"></i>
+            {{ getSaveButtonText() | translate }}
+          </button>
+        }
+
+      </div>
+    </div>
+  </div>
+</main>
+</section>

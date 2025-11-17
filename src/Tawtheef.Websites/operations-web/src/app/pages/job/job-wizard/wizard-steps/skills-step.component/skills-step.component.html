@@ -1,0 +1,24 @@
+<!-- skills-step.component.html -->
+<div class="card card-lite p-3 mb-3" [formGroup]="form">
+  <h6 class="mb-3 text-brand fw-bold">{{ 'job_wizard.steps.skills.title' | translate }}</h6>
+  <div class="input-group mb-2">
+    <input [(ngModel)]="newSkill" [ngModelOptions]="{standalone: true}" class="form-control" [placeholder]="'steps.skills.placeholder' | translate">
+    <button class="btn btn-outline-brand" (click)="add()">{{ 'job_wizard.steps.skills.add_skill' | translate }}</button>
+  </div>
+
+  <ul class="list-group">
+    <ng-container formArrayName="items">
+      @for (ctrl of items.controls; track $index; let i = $index) {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <input [formControlName]="i" id ="{{ctrl}}" class="form-control border-0 flex-fill" readonly>
+          <button class="btn btn-sm btn-outline-danger delCond" (click)="remove(i)">
+            <i class="fa fa-trash"></i>
+          </button>
+        </li>
+      }
+    </ng-container>
+    @if (items.length === 0) {
+      <li class="list-group-item text-center text-muted">{{ 'job_wizard.steps.skills.empty_state' | translate }}</li>
+    }
+  </ul>
+</div>

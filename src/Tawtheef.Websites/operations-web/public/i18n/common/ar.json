@@ -60,5 +60,13 @@
     "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
     "requiredPassword": "كلمة المرور مطلوبة.",
     "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل."
+  },
+  "pagination": {
+    "showing": "عرض",
+    "of": "من",
+    "results": "نتيجة",
+    "no_results": "لا توجد نتائج",
+    "previous": "السابق",
+    "next": "التالي"
   }
 }

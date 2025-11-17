@@ -1,0 +1,186 @@
+<section i18nNamespace="pages/job-details">
+  <header class="hero py-4">
+    <div class="container">
+      <div class="job-card p-3 p-md-4 hover-card">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <img
+              ngSrc="https://cdn-icons-png.flaticon.com/512/1157/1157000.png"
+              alt="logo"
+              width="56"
+              height="56"
+            />
+            <div>
+              <h4 class="mb-0 fw-800 text-brand">{{ job?.basics?.title }}</h4>
+              <div class="small-muted">
+                <i class="fa-solid fa-location-dot"></i> {{ 'job_details.qatar' | translate }}
+                {{ '-' }} <i class="fa-regular fa-clock"></i>
+                {{ 'job_details.deadline' | translate }}:
+                {{ job?.basics?.deadline | date : 'dd/MM/yyyy' }}
+              </div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-flex flex-column flex-md-row gap-2">
+              <button
+                id="applyBtn"
+                class="btn btn-success btn-lg rounded-pill"
+                (click)="openConfirmModal()"
+                [disabled]="hasApplied"
+              >
+                <i
+                  class="fa-solid"
+                  [class.fa-paper-plane]="!hasApplied"
+                  [class.fa-check]="hasApplied"
+                ></i>
+                {{
+                  hasApplied
+                    ? ('job_details.buttons.submit' | translate)
+                    : ('job_details.buttons.apply' | translate)
+                }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="py-4">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Content Tabs -->
+        <div class="col-lg-8">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'desc'"
+                (click)="setActiveTab('desc')"
+              >{{ 'job_details.description' | translate }}</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'skills'"
+                (click)="setActiveTab('skills')"
+              >{{ 'job_details.skills' | translate }}</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'req'"
+                (click)="setActiveTab('req')"
+              >{{ 'job_details.conditions' | translate }}</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'benefits'"
+                (click)="setActiveTab('benefits')"
+              >{{ 'job_details.benefits' | translate }}</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'about'"
+                (click)="setActiveTab('about')"
+              >{{ 'job_details.about' | translate }}</a
+              >
+            </li>
+          </ul>
+
+          <div class="tab-content p-3">
+            <!-- Description Tab -->
+            @if (activeTab === 'desc') {
+              <div class="tab-pane fade show active">
+                <h6 class="section-title mb-2">{{ 'job_details.description' | translate }}</h6>
+                <p>{{ job?.description }}</p>
+                <h6 class="section-title mt-4 mb-2">
+                  {{ 'job_details.responsibilities' | translate }}
+                </h6>
+                <ul class="list-check">
+                  @for (responsibility of getResponsibilities(); track responsibility) {
+                    <li><i class="fa-solid fa-check"></i> {{ responsibility }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Skills Tab -->
+            @if (activeTab === 'skills') {
+              <div class="tab-pane fade show active">
+                <h6 class="section-title mb-2">{{ 'job_details.skills' | translate }}</h6>
+                <ul class="list-check skills-list-fix">
+                  @for (skill of job?.skills || []; track skill) {
+                    <li><i class="fa-solid fa-check"></i> {{ skill }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Requirements Tab -->
+            @if (activeTab === 'req') {
+              <div class="tab-pane fade show active">
+                <h6 class="section-title mb-2">{{ 'job_details.conditions' | translate }}</h6>
+                <ul class="list-check">
+                  @for (condition of job?.conditions || []; track condition) {
+                    <li><i class="fa-solid fa-check"></i> {{ condition }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Benefits Tab -->
+            @if (activeTab === 'benefits') {
+              <div class="tab-pane fade show active">
+                <h6 class="section-title mb-2">{{ 'job_details.benefits' | translate }}</h6>
+                <ul class="list-check">
+                  @for (benefit of getJobBenefits(); track benefit) {
+                    <li><i class="fa-solid fa-check"></i> {{ benefit }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- About Tab -->
+            @if (activeTab === 'about') {
+              <div class="tab-pane fade show active">
+                <h6 class="section-title mb-2">{{ 'job_details.about' | translate }}</h6>
+                <p>{{ 'job_details.aboutDescription' | translate }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Meta / Apply Sidebar -->
+        <div class="col-lg-4">
+          <div class="sticky-cta">
+            <div class="job-card p-3 p-md-4 mb-3">
+              <h6 class="section-title mb-3">{{ 'job_details.basics' | translate }}</h6>
+              <div class="d-flex flex-column gap-2">
+                <div class="d-flex justify-content-between">
+                  <span class="small-muted">{{ 'job_details.type_of_work' | translate }}</span>
+                  <span class="badge-outline">{{ 'job_details.' + job?.basics?.typeOfWork | translate }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="small-muted">{{ 'job_details.deadline' | translate }}</span>
+                  <span class="badge-outline">{{ job?.basics?.deadline | date : 'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="small-muted">{{ 'job_details.entity' | translate }}</span>
+                  <span class="badge-outline">{{ 'job_details.' + job?.basics?.entity | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>

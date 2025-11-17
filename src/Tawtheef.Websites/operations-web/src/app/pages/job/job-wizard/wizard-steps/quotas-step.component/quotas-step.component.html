@@ -1,0 +1,71 @@
+<div class="card card-lite p-3 mb-3" [formGroup]="form">
+  <h6 class="mb-3 text-brand fw-bold">
+    {{ 'job_wizard.steps.quotas.title' | translate }}
+  </h6>
+
+  <div class="row g-3">
+    @for (control of ['qatariCitizens', 'qatarMother', 'nonQatariSpouse', 'gcc', 'quGrads']; track control) {
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label fw-bold">
+          {{ ('job_wizard.steps.quotas.' + control) | translate }}
+        </label>
+        <input
+          type="number"
+          class="form-control quota"
+          [formControlName]="control"
+          min="0"
+          max="100"
+        >
+      </div>
+    }
+
+    <!-- Residents -->
+    <div class="col-lg-4 col-md-6">
+      <label class="form-label fw-bold">
+        {{ 'job_wizard.steps.quotas.residents' | translate }}
+      </label>
+
+      <div class="input-group">
+        <input
+          type="number"
+          class="form-control quota"
+          formControlName="residents"
+          min="0"
+          max="100"
+        >
+        <button type="button" (click)="openModal()" class="btn btn-outline-brand" id="editResidents"><i
+          class="fa fa-sliders"></i> {{ 'job_wizard.steps.quotas.residents_details_button' | translate }}
+        </button>
+      </div>
+
+      <div class="small-muted mt-1">
+        {{ 'job_wizard.steps.quotas.validation.sum_hint' | translate }}
+      </div>
+
+      <div class="chip mt-2">
+        {{ 'job_wizard.steps.quotas.validation.sum_label' | translate }}:
+        <span [class]="'quota-' + (totalQuota() === 100 ? 'ok' : 'bad')">
+          {{ totalQuota() }}%
+        </span>
+
+        @if (totalQuota() !== 100) {
+          <span id="quotaState" class="quota-bad">{{ 'sum_state' | translate }}</span>
+        } @else {
+          <span id="quotaState" class="quota-ok">{{ 'sum_valid' | translate }}</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (residentsBreakdown.length > 0) {
+    <div class="mt-3">
+      <div class="small-muted">
+        {{ 'job_wizard.steps.quotas.residents_details_button' | translate }}
+      </div>
+
+      @for (item of residentsBreakdown; track item.nat) {
+        <span class="chip">{{ item.nat }}: {{ item.pct }}%</span>
+      }
+    </div>
+  }
+</div>

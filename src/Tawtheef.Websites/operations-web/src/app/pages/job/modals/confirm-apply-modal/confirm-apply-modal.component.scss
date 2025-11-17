@@ -1,0 +1,100 @@
+:host {
+  display: block;
+}
+
+.confirm-apply-modal {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+  .modal-header {
+    background: linear-gradient(135deg, var(--brand), var(--accent));
+    color: #fff;
+    padding: 1.5rem;
+    border: none;
+
+    .modal-title {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.25rem;
+
+      i {
+        margin-left: 0.5rem;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+
+    p {
+      margin: 0 0 1rem 0;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .form-check {
+      padding-right: 20px;
+
+      .form-check-input {
+        margin-left: 0.5rem;
+
+        &:checked {
+          background-color: var(--brand);
+          border-color: var(--brand);
+        }
+      }
+
+      .form-check-label {
+        color: var(--text);
+        cursor: pointer;
+      }
+    }
+  }
+
+  .modal-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    border: none;
+    gap: 0.75rem;
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+
+      &.btn-brand {
+        background: linear-gradient(135deg, var(--brand), var(--accent));
+        border: none;
+        color: #fff;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 8px 22px rgba(123, 30, 58, 0.28);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      &.btn-outline-secondary {
+        border-color: var(--border);
+        color: var(--muted);
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+    }
+  }
+}
+
+// CSS Variables (same as main component)
+:host {
+  --brand: #7b1e3a;
+  --accent: #a9445f;
+  --muted: #6b7280;
+  --text: #1e1b2c;
+  --border: rgba(0, 0, 0, 0.08);
+}

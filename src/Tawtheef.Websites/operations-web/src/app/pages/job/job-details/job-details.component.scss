@@ -1,0 +1,195 @@
+// Skills list fix - ensures each skill appears on its own line
+.skills-list-fix {
+  li {
+    display: block !important;
+    float: none !important;
+    clear: both !important;
+    width: 100% !important;
+  }
+}
+
+// Preserve all existing styles from your design
+:root {
+  --brand: #7b1e3a;
+  --accent: #a9445f;
+  --muted: #6b7280;
+  --text: #1e1b2c;
+  --card: #fafafa;
+  --border: rgba(0, 0, 0, .08);
+  --success: #16a34a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #fff;
+  color: var(--text);
+  font-family: 'Cairo', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  line-height: 1.7;
+}
+
+.text-brand {
+  color: var(--brand);
+}
+
+.btn-brand {
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: all .2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(123, 30, 58, .28);
+  }
+}
+
+.btn-outline-brand {
+  border-color: var(--brand);
+  color: var(--brand);
+  font-weight: 700;
+  border-radius: 999px;
+
+  &:hover {
+    background: var(--brand);
+    color: #fff;
+  }
+}
+
+.navbar {
+  background: #fff;
+}
+
+.hero {
+  background: radial-gradient(1200px 400px at 50% -50%, #ffe9ef, transparent 70%), linear-gradient(135deg, #fff, #fff);
+  border-bottom: 1px solid var(--border);
+}
+
+.job-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .05);
+}
+
+.meta-pill {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  background: #f6f7fb;
+  border: 1px solid var(--border);
+  color: #374151;
+  border-radius: 999px;
+  padding: .35rem .7rem;
+  font-weight: 600;
+}
+
+.progress-circle {
+  --val: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: var(--brand);
+
+  span {
+    font-size: 1rem;
+  }
+}
+
+.tab-content {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .04);
+}
+
+.nav-tabs .nav-link {
+  font-weight: 700;
+  color: #6b7280;
+
+  &.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand), var(--accent));
+    border-color: transparent;
+  }
+}
+
+.section-title {
+  font-weight: 800;
+  color: var(--brand);
+}
+
+.sticky-cta {
+  position: sticky;
+  top: 84px;
+}
+
+.list-check li {
+  margin-bottom: .45rem;
+
+  i {
+    color: var(--success);
+    margin-left: .4rem;
+  }
+}
+
+.footer {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+}
+
+.chips .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  margin: .2rem .2rem 0 0;
+  font-weight: 600;
+  color: #374151;
+}
+
+.btn-save {
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.badge-outline {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: #374151;
+  border-radius: 999px;
+  padding: .35rem .6rem;
+}
+
+.hover-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .08);
+}
+
+.small-muted {
+  color: #6b7280;
+  font-size: .9rem;
+}
+
+// Angular specific styles for active tab
+.nav-link {
+  cursor: pointer;
+
+  &.active {
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--brand), var(--accent)) !important;
+    border-color: transparent !important;
+  }
+}

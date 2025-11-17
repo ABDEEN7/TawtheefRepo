@@ -1,0 +1,104 @@
+
+.btn-outline-brand {
+  border-color: var(--brand);
+  color: var(--brand);
+  border-radius: 999px;
+
+  &:hover {
+    background: var(--brand);
+    color: #fff;
+  }
+}
+
+.header-hero {
+  background: radial-gradient(1000px 350px at 50% -60%, #ffe9ef, transparent 70%);
+  border-bottom: 1px solid var(--border);
+}
+
+.badge-soft {
+  background: transparent !important;
+  border: none !important;
+  font-weight: 700;
+  padding: 0;
+
+  &.academic {
+    color: #1d4ed8;
+  }
+
+  &.administrative {
+    color: #047857;
+  }
+
+  &.labor {
+    color: #b91c1c;
+  }
+}
+
+.table {
+  thead th {
+    white-space: nowrap;
+  }
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 1px solid transparent;
+}
+
+.status-new {
+  background: #eef2ff;
+  border-color: rgba(67, 56, 202, 0.2);
+  color: #4338ca;
+}
+
+.status-viewed {
+  background: #f3f4f6;
+  border-color: rgba(55, 65, 81, 0.2);
+  color: #374151;
+}
+
+.status-applied {
+  background: #ecfdf5;
+  border-color: rgba(6, 95, 70, 0.2);
+  color: #065f46;
+}
+
+.status-declined {
+  background: #fef2f2;
+  border-color: rgba(153, 27, 27, 0.22);
+  color: #991b1b;
+}
+
+.navbar {
+  .navbar-brand {
+    i {
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+.search-bar {
+  .form-label {
+    margin-bottom: 0.25rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .header-hero {
+    .container {
+      flex-direction: column;
+      align-items: flex-start !important;
+      gap: 1rem;
+    }
+  }
+
+  .status-pill {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+  }
+}

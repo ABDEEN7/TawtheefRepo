@@ -1,0 +1,81 @@
+import {NgModule} from '@angular/core';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
+import {JobDetailsComponent} from './job-details/job-details.component';
+import {StepperComponent} from './job-wizard/stepper/stepper.component';
+import {BasicsStepComponent} from './job-wizard/wizard-steps/basics-step.component/basics-step.component';
+import {ConditionsStepComponent} from './job-wizard/wizard-steps/conditions-step.component/conditions-step.component';
+import {DescriptionStepComponent} from './job-wizard/wizard-steps/description-step.component/description-step.component';
+import {QuotasStepComponent} from './job-wizard/wizard-steps/quotas-step.component/quotas-step.component';
+import {ReviewStepComponent} from './job-wizard/wizard-steps/review-step.component/review-step.component';
+import {SkillsStepComponent} from './job-wizard/wizard-steps/skills-step.component/skills-step.component';
+import {ConfirmApplyModalComponent} from './modals/confirm-apply-modal/confirm-apply-modal.component';
+import {PointsConfigModalComponent} from './modals/points-config-modal/points-config-modal.component';
+import {ResidentsModalComponent} from './modals/residents-modal/residents-modal.component';
+import {JobService} from './services/job.service';
+import {ProgressBarComponent} from './job-wizard/progress-bar/progress-bar';
+import {JobListComponent} from './job-list/jobs-list.component';
+import {JobWizardComponent} from './job-wizard/wizard-container/wizard.component';
+import {jobRoutes} from './job.routes';
+import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
+import {TranslatePipe} from '@ngx-translate/core';
+import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
+import {DialogService, DynamicDialogModule} from 'primeng/dynamicdialog';
+import {SelectModule} from 'primeng/select';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {DatePickerModule} from 'primeng/datepicker';
+import {PaginationComponent} from '../../shared/components/pagination/pagination.component';
+
+@NgModule({
+  declarations: [
+    JobDetailsComponent,
+    JobListComponent,
+
+    StepperComponent,
+    JobWizardComponent,
+    ProgressBarComponent,
+
+    BasicsStepComponent,
+    ConditionsStepComponent,
+    DescriptionStepComponent,
+    QuotasStepComponent,
+    ReviewStepComponent,
+    SkillsStepComponent,
+
+  ],
+  imports: [
+    RouterModule.forChild(jobRoutes),
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    I18nNamespaceDirective,
+    TranslatePipe,
+    CommonModule,
+    NgbModalModule,
+    DynamicDialogModule,
+    SelectModule,
+    AutoCompleteModule,
+    DatePickerModule,
+    PaginationComponent,
+    ResidentsModalComponent,
+    ConfirmApplyModalComponent,
+    PointsConfigModalComponent,
+    NgOptimizedImage,
+  ],
+  exports: [
+    JobDetailsComponent,
+    JobListComponent,
+    JobWizardComponent,
+
+    ConfirmApplyModalComponent,
+    PointsConfigModalComponent,
+    ResidentsModalComponent
+  ],
+  providers: [
+    JobService,
+    DialogService
+  ]
+})
+export class JobsModule {
+}

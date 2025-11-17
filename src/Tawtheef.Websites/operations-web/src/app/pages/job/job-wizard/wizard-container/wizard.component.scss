@@ -1,0 +1,194 @@
+.text-brand { color: var(--brand); }
+
+.btn-brand {
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: all .2s;
+}
+.btn-brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(123,30,58,.28);
+}
+
+.btn-outline-brand {
+  border-color: var(--brand);
+  color: var(--brand);
+  font-weight: 700;
+  border-radius: 999px;
+}
+.btn-outline-brand:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
+.wizard {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+.progress {
+  height: 10px;
+  border-radius: 999px;
+  background: #edf2f7;
+}
+.progress-bar {
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+}
+
+.card-lite {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.small-muted {
+  color: #6b7280;
+  font-size: .95rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .25rem .6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  margin: .15rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.quota-ok { color: var(--success); font-weight: 800; }
+.quota-bad { color: var(--danger); font-weight: 800; }
+
+textarea.form-control { min-height: 140px; }
+
+.review-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+.review-title {
+  color: var(--brand);
+  font-weight: 800;
+}
+
+/* Stepper – EXACT DESIGN */
+.stepper .nav-link {
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  padding: .55rem 1rem;
+  margin: .25rem;
+  color: var(--muted);
+  font-weight: 700;
+  transition: .25s;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.stepper .nav-link.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(123,30,58,.25);
+}
+.stepper .nav-link:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.step {
+  display: none;
+}
+.step.active {
+  display: block;
+  animation: slide .35s ease;
+}
+
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+::ng-deep .p-dialog.custom-bootstrap-dialog {
+  width: 800px !important;
+  max-width: 95vw;
+  border-radius: 10px;
+  overflow: visible;
+}
+
+::ng-deep .p-dialog.custom-bootstrap-dialog .p-dialog-header {
+  display: none;
+}
+
+.p-dialog-mask {
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.4) !important; /* dark overlay */
+}
+
+/* ===================================================
+   Global PrimeNG dropdown styling to match Bootstrap
+   Put this in src/styles.scss (global), then restart ng serve
+   =================================================== */
+
+/* Target the main dropdown input area */
+.p-select {
+  display: block;
+  width: 100% !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 0.375rem !important;
+  font-size: 0.95rem !important;
+  height: calc(2.25rem + 2px) !important;
+  box-shadow: none !important;
+  background-color: #fff !important;
+}
+
+.p-select-overlay {
+  border-radius: 0.375rem !important;
+  border: 5px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0,0,0,.06) !important;
+  background-color: #fff !important;
+}
+
+/* 1. Border for the whole header (the filter bar) */
+.p-select-header {
+  border: 1px solid #ced4da;          /* same color as PrimeNG inputs */
+  border-radius: 6px;                 /* optional – matches p-inputtext */
+  padding: 0.5rem 0.75rem;            /* breathing room */
+  background: #fff;                   /* keep it white */
+}
+
+/* 2. Center the whole header inside the panel */
+.p-select-panel .p-select-header {
+  display: flex;
+  justify-content: center;            /* horizontal center */
+  align-items: center;                /* vertical center (optional) */
+  margin: 0.5rem auto;                /* top/bottom margin + auto left/right */
+  width: fit-content;                 /* shrink‑to‑fit */
+  max-width: 90%;                     /* never exceed panel width */
+}
+
+/* 3. Make the clear (X) button visible */
+.p-select-header .p-select-filter-clear {
+  display: inline-flex !important;    /* force visibility */
+  opacity: 1 !important;
+}
+
+/* Optional: nicer clear‑icon (PrimeNG uses a small ×) */
+.p-select-header .p-select-filter-clear .p-icon {
+  font-size: 1rem;
+  color: #6c757d;
+}
