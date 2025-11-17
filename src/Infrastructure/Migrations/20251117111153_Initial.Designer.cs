@@ -12,7 +12,7 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    [Migration("20251117110558_Initial")]
+    [Migration("20251117111153_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -433,9 +433,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserProfileId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CertificateId");
@@ -459,8 +456,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserProfileId");
-
-                    b.HasIndex("UserProfileId1");
 
                     b.ToTable("Qualification", "pro");
                 });
@@ -4583,14 +4578,10 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.UserProfile", "UserProfile")
-                        .WithMany()
+                        .WithMany("Qualifications")
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.UserProfile", null)
-                        .WithMany("Qualifications")
-                        .HasForeignKey("UserProfileId1");
 
                     b.Navigation("Certificate");
 

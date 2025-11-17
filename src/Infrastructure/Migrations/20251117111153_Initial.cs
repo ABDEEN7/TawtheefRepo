@@ -2393,7 +2393,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserProfileId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -2478,12 +2477,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalTable: "UserProfile",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Qualification_UserProfile_UserProfileId1",
-                        column: x => x.UserProfileId1,
-                        principalSchema: "app",
-                        principalTable: "UserProfile",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -3680,12 +3673,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 table: "Qualification",
                 column: "UserProfileId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Qualification_UserProfileId1",
-                schema: "pro",
-                table: "Qualification",
-                column: "UserProfileId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_QualificationLevel_BackendName",

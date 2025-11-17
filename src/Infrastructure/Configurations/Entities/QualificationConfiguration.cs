@@ -16,7 +16,7 @@ public class QualificationConfiguration : IEntityTypeConfiguration<Qualification
         
         builder
             .HasOne(q=>q.UserProfile)
-            .WithMany()
+            .WithMany(up => up.Qualifications)
             .HasForeignKey(q=>q.UserProfileId)
             .OnDelete(DeleteBehavior.Restrict);
     }
