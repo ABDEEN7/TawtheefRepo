@@ -25,223 +25,165 @@ stages:
     - bash: |
         set -euo pipefail
 
-        echo "TargetBranch: $SYSTEM_PULLREQUEST_TARGETBRANCH"
-        echo "SourceBranch: $SYSTEM_PULLREQUEST_SOURCEBRANCH"
-
-        # Make sure target ref exists locally
         git fetch origin "$SYSTEM_PULLREQUEST_TARGETBRANCH":refs/remotes/origin/target || true
 
-        # diff target..HEAD
         FILES=$(git diff --name-only origin/target HEAD || true)
 
-        echo "Files changed in PR:"
+        echo "Changed Files:"
         echo "$FILES"
 
-        # Patterns (customized for your repo)
         OPS_REGEX="^src/Tawtheef.Websites/operations-web/"
         REC_REGEX="^src/Tawtheef.Websites/recruitment-web/"
         BACK_REGEX="^src/(Application|Domain|Infrastructure|Tawtheef.APIs)/"
 
+        # ops
         if echo "$FILES" | grep -qE "$OPS_REGEX"; then
-          echo "Operations web changed"
-          echo "##vso[task.setvariable variable=operationsChanged;isOutput=true]true"
+          echo "##vso[task.setvariable variable=opsChanged;isOutput=true]true"
         else
-          echo "Operations web NOT changed"
-          echo "##vso[task.setvariable variable=operationsChanged;isOutput=true]false"
+          echo "##vso[task.setvariable variable=opsChanged;isOutput=true]false"
         fi
 
+        # rec
         if echo "$FILES" | grep -qE "$REC_REGEX"; then
-          echo "Recruitment web changed"
-          echo "##vso[task.setvariable variable=recruitmentChanged;isOutput=true]true"
+          echo "##vso[task.setvariable variable=recChanged;isOutput=true]true"
         else
-          echo "Recruitment web NOT changed"
-          echo "##vso[task.setvariable variable=recruitmentChanged;isOutput=true]false"
+          echo "##vso[task.setvariable variable=recChanged;isOutput=true]false"
         fi
 
+        # backend
         if echo "$FILES" | grep -qE "$BACK_REGEX"; then
-          echo "Backend changed"
           echo "##vso[task.setvariable variable=backendChanged;isOutput=true]true"
         else
-          echo "Backend NOT changed"
           echo "##vso[task.setvariable variable=backendChanged;isOutput=true]false"
         fi
       name: detectChanges
 
+
 # =========================
-# Stage 2: Build Frontends
+# Stage 2: Build Frontend
 # =========================
 - stage: Frontends
-  displayName: Build Frontends (Angular)
+  displayName: Build Frontends
   dependsOn: Detect
-  # Run this stage if either frontend is detected changed
-  condition: or(eq(dependencies.Detect.detect.outputs['detectChanges.operationsChanged'], 'true'),
-                eq(dependencies.Detect.detect.outputs['detectChanges.recruitmentChanged'], 'true'))
+  condition: or(eq(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true'),
+                eq(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true'))
   jobs:
-  # ------ build operations-web ------
+
+  # ----- operations-web -----
   - job: buildOperations
     displayName: Build operations-web
-    condition: eq(dependencies.Detect.detect.outputs['detectChanges.operationsChanged'], 'true')
-    pool:
-      vmImage: "ubuntu-latest"
+    condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true')
     steps:
     - task: NodeTool@0
       inputs:
         versionSpec: '18.x'
-      displayName: 'Use Node 18'
 
-    # npm cache for operations-web (uses package-lock.json as key)
     - task: Cache@2
       inputs:
-        key: 'npm | src/Tawtheef.Websites/operations-web/package-lock.json'
+        key: 'npm | operations | src/Tawtheef.Websites/operations-web/package-lock.json'
         path: src/Tawtheef.Websites/operations-web/node_modules
-        cacheHitVar: NPM_CACHE_HIT
-      displayName: 'Cache npm (operations-web)'
 
     - script: |
         cd src/Tawtheef.Websites/operations-web
-        echo "Installing operations-web deps (npm)"
-        npm ci --no-audit --prefer-offline
-        echo "Building operations-web"
-        npm run build --if-present
-      displayName: 'Install & build operations-web'
+        npm ci --no-audit
+        npm run build
+      displayName: Build operations-web
 
-  # ------ build recruitment-web ------
+  # ----- recruitment-web -----
   - job: buildRecruitment
     displayName: Build recruitment-web
-    condition: eq(dependencies.Detect.detect.outputs['detectChanges.recruitmentChanged'], 'true')
-    pool:
-      vmImage: "ubuntu-latest"
+    condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true')
     steps:
     - task: NodeTool@0
       inputs:
         versionSpec: '18.x'
-      displayName: 'Use Node 18'
 
     - task: Cache@2
       inputs:
-        key: 'npm | src/Tawtheef.Websites/recruitment-web/package-lock.json'
+        key: 'npm | recruitment | src/Tawtheef.Websites/recruitment-web/package-lock.json'
         path: src/Tawtheef.Websites/recruitment-web/node_modules
-        cacheHitVar: NPM_CACHE_HIT
-      displayName: 'Cache npm (recruitment-web)'
 
     - script: |
         cd src/Tawtheef.Websites/recruitment-web
-        echo "Installing recruitment-web deps (npm)"
-        npm ci --no-audit --prefer-offline
-        echo "Building recruitment-web"
-        npm run build --if-present
-      displayName: 'Install & build recruitment-web'
+        npm ci --no-audit
+        npm run build
+      displayName: Build recruitment-web
+
 
 # =========================
 # Stage 3: Build Backend
 # =========================
 - stage: Backend
-  displayName: Build Backend (.NET)
+  displayName: Build Backend
   dependsOn: Detect
-  condition: eq(dependencies.Detect.detect.outputs['detectChanges.backendChanged'], 'true')
+  condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.backendChanged'], 'true')
   jobs:
   - job: buildBackend
-    displayName: Build .NET (all projects)
-    pool:
-      vmImage: "ubuntu-latest"
+    displayName: Build .NET backend
     steps:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
         version: '8.x'
-      displayName: 'Install .NET SDK'
 
-    # Cache NuGet packages
     - task: Cache@2
       inputs:
-        key: 'nuget | "$(Agent.OS)" | src/**/packages.lock.json'
+        key: 'nuget | src/**/packages.lock.json'
         path: ~/.nuget/packages
-        cacheHitVar: NUGET_CACHE_HIT
-      displayName: 'Cache NuGet packages'
 
     - script: |
-        echo "Restore & build backend"
         cd src
         dotnet restore
         dotnet build --configuration Release --no-restore
-      displayName: 'dotnet restore & build'
+      displayName: Build backend
+
 
 # =========================
-# Stage 4: Post PR comment summary
+# Stage 4: PR Comment
 # =========================
 - stage: PostComment
-  displayName: Post PR summary comment
+  displayName: Post PR Summary
   dependsOn:
+    - Detect
     - Frontends
     - Backend
   condition: always()
   jobs:
   - job: postComment
-    displayName: Post PR comment
+    displayName: Post summary comment
     steps:
     - checkout: self
-      persistCredentials: true
 
     - bash: |
-        set -euo pipefail
+        OPS=$(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'])
+        REC=$(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'])
+        BACK=$(stageDependencies.Detect.detect.outputs['detectChanges.backendChanged'])
 
-        # Read detect outputs
-        OPS_DET=$(dependencies.Detect.detect.outputs['detectChanges.operationsChanged'])
-        REC_DET=$(dependencies.Detect.detect.outputs['detectChanges.recruitmentChanged'])
-        BACK_DET=$(dependencies.Detect.detect.outputs['detectChanges.backendChanged'])
-
-        # Determine short status (we cannot reliably read other jobs' runtime status here in simple way)
-        OPS_STATUS="Not Triggered"
-        REC_STATUS="Not Triggered"
-        BACK_STATUS="Not Triggered"
-
-        if [ "$OPS_DET" = "true" ]; then OPS_STATUS="Triggered"; fi
-        if [ "$REC_DET" = "true" ]; then REC_STATUS="Triggered"; fi
-        if [ "$BACK_DET" = "true" ]; then BACK_STATUS="Triggered"; fi
+        echo "Operations: $OPS"
+        echo "Recruitment: $REC"
+        echo "Backend: $BACK"
 
         PR_ID="$SYSTEM_PULLREQUEST_PULLREQUESTID"
         if [ -z "$PR_ID" ]; then
-          echo "No PR ID found (not a PR run). Skipping comment."
+          echo "Not a PR run."
           exit 0
         fi
 
-        COLLECTION_URL="$SYSTEM_TEAMFOUNDATIONCOLLECTIONURI"
-        PROJECT="$SYSTEM_TEAMPROJECT"
-        REPO_ID="$BUILD_REPOSITORY_ID"
+        BODY="{
+          \"comments\": [
+            {
+              \"content\": \"**PR Build Summary**\n\n- operations-web: $OPS\n- recruitment-web: $REC\n- backend: $BACK\n\",
+              \"commentType\": 1
+            }
+          ]
+        }"
 
-        BUILD_LINK="${SYSTEM_TEAMFOUNDATIONCOLLECTIONURI}${SYSTEM_TEAMPROJECT}/_build/results?buildId=${BUILD_BUILDID}"
-
-        BODY=$(cat <<EOF
-{
-  "comments": [
-    {
-      "parentCommentId": 0,
-      "content": "**PR Build Summary**\n\n- operations-web: $OPS_STATUS\n- recruitment-web: $REC_STATUS\n- backend: $BACK_STATUS\n\n[Open pipeline run results]($BUILD_LINK)\n",
-      "commentType": 1
-    }
-  ],
-  "status": 1
-}
-EOF
-)
-
-        echo "Posting comment to PR #$PR_ID ..."
-
-        # Post comment using Azure DevOps REST API. Requires 'Allow scripts to access the OAuth token' enabled on the pipeline.
         API_URL="${SYSTEM_TEAMFOUNDATIONCOLLECTIONURI}${SYSTEM_TEAMPROJECT}/_apis/git/repositories/${BUILD_REPOSITORY_ID}/pullRequests/${PR_ID}/threads?api-version=6.0"
 
-        # Use System.AccessToken for auth
-        echo "API URL: $API_URL"
-        echo "Body:"
-        echo "$BODY"
-
-        # curl with token
         curl -sS -H "Content-Type: application/json" \
              -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
              --data "$BODY" \
-             "$API_URL" \
-             || echo "Failed to post PR comment (curl non-zero)."
-
+             "$API_URL" || echo "Failed to post comment"
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-      displayName: 'Post PR comment (summary)'
+      displayName: Post PR comment
