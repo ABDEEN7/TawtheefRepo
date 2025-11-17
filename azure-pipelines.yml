@@ -25,7 +25,7 @@ stages:
     - bash: |
         set -eo pipefail
 
-        TARGET_BRANCH="${SYSTEM_PULLREQUEST_TARGETBRANCH:-origin/main}"
+        TARGET_BRANCH="${SYSTEM_PULLREQUEST_TARGETBRANCH:-origin/Development}"
         git fetch origin "$TARGET_BRANCH":target || true
 
         FILES=$(git diff --name-only target HEAD || true)
