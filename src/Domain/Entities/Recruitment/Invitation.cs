@@ -24,14 +24,3 @@ public class Invitation : EventEntity
     
     public ICollection<HistoryInvitation> History { get; init; } = [];
 }
-
-public class HistoryInvitation : EventEntity
-{
-    public Guid InvitationId { get; set; }
-    public Invitation? Invitation { get; set; }
-    
-    public Guid InvitationStatusId { get; set; }
-    public InvitationStatus? InvitationStatus { get; set; }
-    
-    public string? Note { get; set; }
-}
