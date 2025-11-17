@@ -13,7 +13,7 @@ stages:
 # =========================
 # Stage 1: Detect changes
 # =========================
-- stage: detect
+- stage: Detect
   displayName: Detect Changes
   jobs:
   - job: detect
@@ -26,39 +26,58 @@ stages:
         set -eo pipefail
 
         TARGET_BRANCH="${SYSTEM_PULLREQUEST_TARGETBRANCH:-origin/main}"
-        git fetch origin "$TARGET_BRANCH":target || true
-
-        FILES=$(git diff --name-only target HEAD || true)
-
+        echo "Target branch: $TARGET_BRANCH"
+        
+        # Fetch the target branch
+        git fetch origin "$TARGET_BRANCH" --depth=1
+        
+        # Get the current branch (for PR it's the source branch)
+        CURRENT_BRANCH="${SYSTEM_PULLREQUEST_SOURCEBRANCH:-$(git branch --show-current)}"
+        echo "Current branch: $CURRENT_BRANCH"
+        
+        # Compare with the target branch
+        FILES=$(git diff --name-only "origin/$TARGET_BRANCH" HEAD 2>/dev/null || git diff --name-only "target" HEAD 2>/dev/null || echo "")
+        
         echo "Changed Files:"
         echo "$FILES"
+        echo "----------------------------------------"
 
         OPS_REGEX="^src/Tawtheef.Websites/operations-web/"
         REC_REGEX="^src/Tawtheef.Websites/recruitment-web/"
         BACK_REGEX="^src/(Application|Domain|Infrastructure|Tawtheef.APIs)/"
 
+        # Initialize variables
+        OPS_CHANGED="false"
+        REC_CHANGED="false"  
+        BACKEND_CHANGED="false"
+
         # ops
         if echo "$FILES" | grep -qE "$OPS_REGEX"; then
-          echo "##vso[task.setvariable variable=opsChanged;isOutput=true]true"
-        else
-          echo "##vso[task.setvariable variable=opsChanged;isOutput=true]false"
+          echo "Operations-web changes detected"
+          OPS_CHANGED="true"
         fi
 
         # rec
         if echo "$FILES" | grep -qE "$REC_REGEX"; then
-          echo "##vso[task.setvariable variable=recChanged;isOutput=true]true"
-        else
-          echo "##vso[task.setvariable variable=recChanged;isOutput=true]false"
+          echo "Recruitment-web changes detected"
+          REC_CHANGED="true"
         fi
 
         # backend
         if echo "$FILES" | grep -qE "$BACK_REGEX"; then
-          echo "##vso[task.setvariable variable=backendChanged;isOutput=true]true"
-        else
-          echo "##vso[task.setvariable variable=backendChanged;isOutput=true]false"
+          echo "Backend changes detected"
+          BACKEND_CHANGED="true"
         fi
-      name: detectChanges
 
+        echo "##vso[task.setvariable variable=opsChanged;isOutput=true]$OPS_CHANGED"
+        echo "##vso[task.setvariable variable=recChanged;isOutput=true]$REC_CHANGED"
+        echo "##vso[task.setvariable variable=backendChanged;isOutput=true]$BACKEND_CHANGED"
+        
+        echo "Summary:"
+        echo "Operations changed: $OPS_CHANGED"
+        echo "Recruitment changed: $REC_CHANGED"
+        echo "Backend changed: $BACKEND_CHANGED"
+      name: detectChanges
 
 # =========================
 # Stage 2: Build Frontend
@@ -66,14 +85,14 @@ stages:
 - stage: Frontends
   displayName: Build Frontends
   dependsOn: Detect
-  condition: or(eq(dependencies.detect.detect.outputs['detectChanges.opsChanged'], 'true'),
-                eq(dependencies.detect.detect.outputs['detectChanges.recChanged'], 'true'))
+  condition: or(eq(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true'),
+                eq(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true'))
   jobs:
 
   # ----- operations-web -----
   - job: buildOperations
     displayName: Build operations-web
-    condition: eq(dependencies.detect.detect.outputs['detectChanges.opsChanged'], 'true')
+    condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true')
     steps:
     - task: NodeTool@0
       inputs:
@@ -93,7 +112,7 @@ stages:
   # ----- recruitment-web -----
   - job: buildRecruitment
     displayName: Build recruitment-web
-    condition: eq(dependencies.detect.detect.outputs['detectChanges.recChanged'], 'true')
+    condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true')
     steps:
     - task: NodeTool@0
       inputs:
@@ -117,7 +136,7 @@ stages:
 - stage: Backend
   displayName: Build Backend
   dependsOn: Detect
-  condition: eq(dependencies.detect.detect.outputs['detectChanges.backendChanged'], 'true')
+  condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.backendChanged'], 'true')
   jobs:
   - job: buildBackend
     displayName: Build .NET backend
@@ -156,13 +175,13 @@ stages:
     - checkout: self
 
     - bash: |
-        OPS=$(dependencies.detect.detect.outputs['detectChanges.opsChanged'])
-        REC=$(dependencies.detect.detect.outputs['detectChanges.recChanged'])
-        BACK=$(dependencies.detect.detect.outputs['detectChanges.backendChanged'])
+        OPS_CHANGED=$(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'])
+        REC_CHANGED=$(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'])
+        BACK_CHANGED=$(stageDependencies.Detect.detect.outputs['detectChanges.backendChanged'])
 
-        echo "Operations: $OPS"
-        echo "Recruitment: $REC"
-        echo "Backend: $BACK"
+        echo "Operations: $OPS_CHANGED"
+        echo "Recruitment: $REC_CHANGED"
+        echo "Backend: $BACK_CHANGED"
 
         PR_ID="$SYSTEM_PULLREQUEST_PULLREQUESTID"
         if [ -z "$PR_ID" ]; then
@@ -173,7 +192,7 @@ stages:
         BODY="{
           \"comments\": [
             {
-              \"content\": \"**PR Build Summary**\n\n- operations-web: $OPS\n- recruitment-web: $REC\n- backend: $BACK\n\",
+              \"content\": \"**PR Build Summary**\n\n- operations-web: $OPS_CHANGED\n- recruitment-web: $REC_CHANGED\n- backend: $BACK_CHANGED\n\",
               \"commentType\": 1
             }
           ]
