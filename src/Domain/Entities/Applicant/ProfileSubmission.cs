@@ -1,12 +1,14 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 
-namespace Tawtheef.Domain.Entities.Users;
+namespace Tawtheef.Domain.Entities.Applicant;
 
 /// <summary>
 /// Represents a submitted snapshot of a user profile at a specific point in time.
 /// Stores the complete profile data (including all related collections) as JSON for historical tracking.
 /// The version increments with each submission.
 /// </summary>
+[Table(nameof(ProfileSubmission), Schema = Schemas.Profile)]
 public class ProfileSubmission : EventEntity
 {
     public Guid UserProfileId { get; set; }

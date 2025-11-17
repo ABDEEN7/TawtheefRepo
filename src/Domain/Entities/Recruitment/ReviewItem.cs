@@ -1,13 +1,17 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Domain.Entities.Users;
+namespace Tawtheef.Domain.Entities.Recruitment;
 
 public enum ProfileSection { Personal=1, Contact=2, Qualifications=3, Experience=4, SkillsLanguages=5, Attachments=6 }
 public enum ReviewStatus { Draft=0, Pending=1, Approved=2, Rejected=3, ChangesRequested=4 }
 public enum ReviewTargetType { Section=1, Field=2, Row=3, Attachment=4 }
+
+[Table(nameof(ReviewItem), Schema = Schemas.Hr)]
 public class ReviewItem : EventEntity
 {
     /// <summary>

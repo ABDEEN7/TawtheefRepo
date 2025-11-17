@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Domain.Entities.Users;
 
