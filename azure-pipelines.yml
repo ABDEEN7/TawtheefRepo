@@ -10,9 +10,9 @@ pool:
 
 stages:
 
-# =========================
-# Stage 1: Detect changes
-# =========================
+# ============================================
+# Stage 1: Detect file changes in the PR
+# ============================================
 - stage: Detect
   displayName: Detect Changes
   jobs:
@@ -25,7 +25,10 @@ stages:
     - bash: |
         set -eo pipefail
 
+        # Determine target branch (PR only, fallback for manual run)
         TARGET_BRANCH="${SYSTEM_PULLREQUEST_TARGETBRANCH:-origin/main}"
+
+        echo "Using target branch: $TARGET_BRANCH"
         git fetch origin "$TARGET_BRANCH":target || true
 
         FILES=$(git diff --name-only target HEAD || true)
@@ -33,25 +36,26 @@ stages:
         echo "Changed Files:"
         echo "$FILES"
 
+        # Define regex patterns
         OPS_REGEX="^src/Tawtheef.Websites/operations-web/"
         REC_REGEX="^src/Tawtheef.Websites/recruitment-web/"
         BACK_REGEX="^src/(Application|Domain|Infrastructure|Tawtheef.APIs)/"
 
-        # ops
+        # Check for operations-web changes
         if echo "$FILES" | grep -qE "$OPS_REGEX"; then
           echo "##vso[task.setvariable variable=opsChanged;isOutput=true]true"
         else
           echo "##vso[task.setvariable variable=opsChanged;isOutput=true]false"
         fi
 
-        # rec
+        # Check for recruitment-web changes
         if echo "$FILES" | grep -qE "$REC_REGEX"; then
           echo "##vso[task.setvariable variable=recChanged;isOutput=true]true"
         else
           echo "##vso[task.setvariable variable=recChanged;isOutput=true]false"
         fi
 
-        # backend
+        # Check for backend changes
         if echo "$FILES" | grep -qE "$BACK_REGEX"; then
           echo "##vso[task.setvariable variable=backendChanged;isOutput=true]true"
         else
@@ -60,26 +64,30 @@ stages:
       name: detectChanges
 
 
-# =========================
-# Stage 2: Build Frontend
-# =========================
+# ============================================
+# Stage 2: Frontend builds (Angular)
+# ============================================
 - stage: Frontends
-  displayName: Build Frontends
+  displayName: Build Angular Projects
   dependsOn: Detect
-  condition: or(eq(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true'),
-                eq(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true'))
+  condition: or(
+      eq(dependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true'),
+      eq(dependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true')
+  )
   jobs:
 
-  # ----- operations-web -----
+  # -------- operations-web --------
   - job: buildOperations
     displayName: Build operations-web
-    condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true')
+    condition: eq(dependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true')
     steps:
+
     - task: NodeTool@0
       inputs:
         versionSpec: '18.x'
 
     - task: Cache@2
+      displayName: Cache npm (operations)
       inputs:
         key: 'npm | operations | src/Tawtheef.Websites/operations-web/package-lock.json'
         path: src/Tawtheef.Websites/operations-web/node_modules
@@ -90,16 +98,18 @@ stages:
         npm run build
       displayName: Build operations-web
 
-  # ----- recruitment-web -----
+  # -------- recruitment-web --------
   - job: buildRecruitment
     displayName: Build recruitment-web
-    condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true')
+    condition: eq(dependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true')
     steps:
+
     - task: NodeTool@0
       inputs:
         versionSpec: '18.x'
 
     - task: Cache@2
+      displayName: Cache npm (recruitment)
       inputs:
         key: 'npm | recruitment | src/Tawtheef.Websites/recruitment-web/package-lock.json'
         path: src/Tawtheef.Websites/recruitment-web/node_modules
@@ -111,25 +121,28 @@ stages:
       displayName: Build recruitment-web
 
 
-# =========================
-# Stage 3: Build Backend
-# =========================
+# ============================================
+# Stage 3: Backend build (.NET)
+# ============================================
 - stage: Backend
-  displayName: Build Backend
+  displayName: Build .NET Backend
   dependsOn: Detect
-  condition: eq(stageDependencies.Detect.detect.outputs['detectChanges.backendChanged'], 'true')
+  condition: eq(dependencies.Detect.detect.outputs['detectChanges.backendChanged'], 'true')
   jobs:
   - job: buildBackend
-    displayName: Build .NET backend
+    displayName: Build backend
     steps:
+
     - task: UseDotNet@2
+      displayName: Install .NET SDK
       inputs:
         packageType: 'sdk'
         version: '8.x'
 
     - task: Cache@2
+      displayName: Cache NuGet packages
       inputs:
-        key: 'nuget | src/**/packages.lock.json'
+        key: 'nuget | packagesLock | src/**/packages.lock.json'
         path: ~/.nuget/packages
 
     - script: |
@@ -139,9 +152,9 @@ stages:
       displayName: Build backend
 
 
-# =========================
-# Stage 4: PR Comment
-# =========================
+# ============================================
+# Stage 4: Comment summary on PR
+# ============================================
 - stage: PostComment
   displayName: Post PR Summary
   dependsOn:
@@ -151,35 +164,36 @@ stages:
   condition: always()
   jobs:
   - job: postComment
-    displayName: Post summary comment
+    displayName: Post PR comment
     steps:
     - checkout: self
 
     - bash: |
-        OPS=$(stageDependencies.Detect.detect.outputs['detectChanges.opsChanged'])
-        REC=$(stageDependencies.Detect.detect.outputs['detectChanges.recChanged'])
-        BACK=$(stageDependencies.Detect.detect.outputs['detectChanges.backendChanged'])
+        OPS="${dependencies.Detect.detect.outputs['detectChanges.opsChanged']}"
+        REC="${dependencies.Detect.detect.outputs['detectChanges.recChanged']}"
+        BACK="${dependencies.Detect.detect.outputs['detectChanges.backendChanged']}"
 
-        echo "Operations: $OPS"
-        echo "Recruitment: $REC"
-        echo "Backend: $BACK"
+        echo "Operations changed: $OPS"
+        echo "Recruitment changed: $REC"
+        echo "Backend changed: $BACK"
 
         PR_ID="$SYSTEM_PULLREQUEST_PULLREQUESTID"
+
         if [ -z "$PR_ID" ]; then
-          echo "Not a PR run."
+          echo "Not a PR run. Skipping comment."
           exit 0
         fi
 
         BODY="{
           \"comments\": [
             {
-              \"content\": \"**PR Build Summary**\n\n- operations-web: $OPS\n- recruitment-web: $REC\n- backend: $BACK\n\",
+              \"content\": \"**PR Build Summary**\\n\\n- operations-web: $OPS\\n- recruitment-web: $REC\\n- backend: $BACK\\n\",
               \"commentType\": 1
             }
           ]
         }"
 
-        API_URL="${SYSTEM_TEAMFOUNDATIONCOLLECTIONURI}${SYSTEM_TEAMPROJECT}/_apis/git/repositories/${BUILD_REPOSITORY_ID}/pullRequests/${PR_ID}/threads?api-version=6.0"
+        API_URL=\"${SYSTEM_TEAMFOUNDATIONCOLLECTIONURI}${SYSTEM_TEAMPROJECT}/_apis/git/repositories/${BUILD_REPOSITORY_ID}/pullRequests/${PR_ID}/threads?api-version=6.0\"
 
         curl -sS -H "Content-Type: application/json" \
              -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
