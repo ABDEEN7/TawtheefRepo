@@ -61,7 +61,7 @@
         [placeholder]="'wizard.placeholders.selectNationality' | translate"
         class="w-full md:w-56"
         (ngModelChange)="ds.up('nationality',$event)"
-        [readonly]="ds.isLocked('nationality')"
+        [disabled]="ds.isLocked('nationality')"
         [ngClass]="{'locked-field': ds.isLocked('nationality')}">
       </p-select>
       <small *ngIf="ds.isLocked('nationality')" class="text-muted">
@@ -82,7 +82,7 @@
         [placeholder]="'wizard.placeholders.selectGender' | translate"
         class="w-full md:w-56"
         (ngModelChange)="ds.up('gender',$event)"
-        [readonly]="ds.isLocked('gender')"
+        [disabled]="ds.isLocked('gender')"
         [ngClass]="{'locked-field': ds.isLocked('gender')}">
       </p-select>
       <small *ngIf="ds.isLocked('gender')" class="text-muted">
@@ -98,7 +98,7 @@
         [showOnFocus]="true" dateFormat="yy-mm-dd"
         (ngModelChange)="ds.up('dob',$event)"
         fluid
-        [readonly]="ds.isLocked('dob')"
+        [disabled]="ds.isLocked('dob')"
         [ngClass]="{'locked-field': ds.isLocked('dob')}">
       </p-date-picker>
       <small *ngIf="ds.isLocked('dob')" class="text-muted">
