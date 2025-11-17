@@ -13,7 +13,7 @@ stages:
 # =========================
 # Stage 1: Detect changes
 # =========================
-- stage: Detect
+- stage: detect
   displayName: Detect Changes
   jobs:
   - job: detect
@@ -66,14 +66,14 @@ stages:
 - stage: Frontends
   displayName: Build Frontends
   dependsOn: Detect
-  condition: or(eq(dependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true'),
-                eq(dependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true'))
+  condition: or(eq(dependencies.detect.detect.outputs['detectChanges.opsChanged'], 'true'),
+                eq(dependencies.detect.detect.outputs['detectChanges.recChanged'], 'true'))
   jobs:
 
   # ----- operations-web -----
   - job: buildOperations
     displayName: Build operations-web
-    condition: eq(dependencies.Detect.detect.outputs['detectChanges.opsChanged'], 'true')
+    condition: eq(dependencies.detect.detect.outputs['detectChanges.opsChanged'], 'true')
     steps:
     - task: NodeTool@0
       inputs:
@@ -93,7 +93,7 @@ stages:
   # ----- recruitment-web -----
   - job: buildRecruitment
     displayName: Build recruitment-web
-    condition: eq(dependencies.Detect.detect.outputs['detectChanges.recChanged'], 'true')
+    condition: eq(dependencies.detect.detect.outputs['detectChanges.recChanged'], 'true')
     steps:
     - task: NodeTool@0
       inputs:
@@ -117,7 +117,7 @@ stages:
 - stage: Backend
   displayName: Build Backend
   dependsOn: Detect
-  condition: eq(dependencies.Detect.detect.outputs['detectChanges.backendChanged'], 'true')
+  condition: eq(dependencies.detect.detect.outputs['detectChanges.backendChanged'], 'true')
   jobs:
   - job: buildBackend
     displayName: Build .NET backend
@@ -156,9 +156,9 @@ stages:
     - checkout: self
 
     - bash: |
-        OPS=$(dependencies.Detect.detect.outputs['detectChanges.opsChanged'])
-        REC=$(dependencies.Detect.detect.outputs['detectChanges.recChanged'])
-        BACK=$(dependencies.Detect.detect.outputs['detectChanges.backendChanged'])
+        OPS=$(dependencies.detect.detect.outputs['detectChanges.opsChanged'])
+        REC=$(dependencies.detect.detect.outputs['detectChanges.recChanged'])
+        BACK=$(dependencies.detect.detect.outputs['detectChanges.backendChanged'])
 
         echo "Operations: $OPS"
         echo "Recruitment: $REC"
