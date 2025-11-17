@@ -25,4 +25,7 @@ public class Resource : EventEntity
     
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? AdditionalData { get; set; }
+    
+    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
+    public string? ContentHash { get; set; }
 }

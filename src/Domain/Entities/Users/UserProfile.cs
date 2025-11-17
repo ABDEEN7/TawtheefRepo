@@ -27,7 +27,14 @@ public class UserProfile : EventEntity
     public int NationalNumber { get; set; }
     public DateOnly BirthDate { get; set; }
     [NotMapped]
-    public int Age => DateTime.Now.Year - BirthDate.Year;
+    public int Age {
+        get {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var age = today.Year - BirthDate.Year;
+            if (today < new DateOnly(today.Year, BirthDate.Month, BirthDate.Day)) age--;
+            return age;
+        }
+    }
     
     public Guid NationalityId { get; set; }
     public Country? Nationality { get; set; }
