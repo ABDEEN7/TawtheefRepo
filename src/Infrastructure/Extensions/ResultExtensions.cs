@@ -6,24 +6,30 @@ namespace Tawtheef.Infrastructure.Extensions;
 
 public static class ResultExtensions
 {
-    public static IActionResult ToActionResult<T>(this Result<T> result)
+    extension<T>(Result<T> result)
     {
-        if (result.IsSuccess)
+        public IActionResult ToActionResult()
         {
-            return new OkObjectResult(ApiResponse<T>.SuccessResponse(result.Value));
-        }
+            if (result.IsSuccess)
+            {
+                return new OkObjectResult(ApiResponse<T>.SuccessResponse(result.Value));
+            }
 
-        return HandleErrorResult(result.Error);
+            return HandleErrorResult(result.Error);
+        }
     }
 
-    public static IActionResult ToActionResult(this Result result)
+    extension(Result result)
     {
-        if (result.IsSuccess)
+        public IActionResult ToActionResult()
         {
-            return new OkObjectResult(ApiResponse<object?>.SuccessResponse(null));
-        }
+            if (result.IsSuccess)
+            {
+                return new OkObjectResult(ApiResponse<object?>.SuccessResponse(null));
+            }
 
-        return HandleErrorResult(result.Error);
+            return HandleErrorResult(result.Error);
+        }
     }
 
     private static IActionResult HandleErrorResult(string error)

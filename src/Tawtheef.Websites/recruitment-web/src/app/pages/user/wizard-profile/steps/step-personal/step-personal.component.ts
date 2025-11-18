@@ -1,10 +1,15 @@
-import {Component, EventEmitter, Output, inject, OnInit} from '@angular/core';
+import {Component, EventEmitter, Output, inject, OnInit, OnDestroy, effect} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DataService} from '../../services/data.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {PrerequisitesModal} from './dialogs/prerequisites.modal/prerequisites.modal';
 import {TranslateService} from '@ngx-translate/core';
 import {AvatarModal} from './dialogs/avatar.modal/avatar.modal';
+import {Subject} from 'rxjs';
+import {toObservable} from '@angular/core/rxjs-interop';
+import {takeUntil} from 'rxjs/operators';
+import {ProfileState} from '../../models/profile-state.model';
+import {ProfileLookupsService} from '../../services/profile-lookups.service';
 
 @Component({
   selector: 'app-step-personal',
@@ -12,15 +17,14 @@ import {AvatarModal} from './dialogs/avatar.modal/avatar.modal';
   styleUrl: './step-personal.component.scss',
   standalone: false,
 })
-export class StepPersonalComponent implements OnInit {
+export class StepPersonalComponent implements OnInit, OnDestroy {
   @Output() next = new EventEmitter<void>();
 
   ds = inject(DataService);
   fb = inject(FormBuilder);
   dialog = inject(DialogService);
   translate = inject(TranslateService);
-
-  form!: FormGroup; // <-- create in ngOnInit instead of inline
+  lookups = inject(ProfileLookupsService);
 
   avatarPreviewUrl: string | null = null;
 
@@ -51,75 +55,42 @@ export class StepPersonalComponent implements OnInit {
     { id: 4, name: 'أرمل' }
   ];
 
+  private destroy$ = new Subject<void>();
+  form!: FormGroup;
   ngOnInit() {
     const s = this.ds.state();
 
-    // show avatar if it came from bootstrap or previous step
     this.avatarPreviewUrl = s.avatarUrl ?? null;
 
-    // ⚠️ build the form using current state + lock info
     this.form = this.fb.group({
-      fullName: [{
-        value: s.fullName ?? '',
-        disabled: this.ds.isLocked('fullName')
-      }, Validators.required],
-
-      fullNameEn: [{
-        value: s.fullNameEn ?? '',
-        disabled: this.ds.isLocked('fullNameEn')
-      }, Validators.required],
-
+      fullName: [s.fullName ?? null, Validators.required],
+      fullNameEn: [s.fullNameEn ?? null, Validators.required],
       qid: [{
-        value: s.qid ?? '',
+        value: s.qid ?? null,
         disabled: this.ds.isLocked('qid')
       }, Validators.required],
-
       dob: [{
-        value: s.dob ?? '',
+        value: s.dob ?? null,
         disabled: this.ds.isLocked('dob')
       }, Validators.required],
-
       nationality: [{
-        value: s.nationality ?? '',
+        value: s.nationality ?? null,
         disabled: this.ds.isLocked('nationality')
       }, Validators.required],
-
       gender: [{
-        value: s.gender ?? '',
+        value: s.gender ?? null,
         disabled: this.ds.isLocked('gender')
       }, Validators.required],
-
-      religion: [{
-        value: s.religion ?? '',
-        disabled: this.ds.isLocked('religion')
-      }, Validators.required],
-
-      marital: [{
-        value: s.marital ?? '',
-        disabled: this.ds.isLocked('marital')
-      }, Validators.required],
-
-      children: [{
-        value: s.children ?? 0,
-        disabled: this.ds.isLocked('children')
-      }, [Validators.min(0)]]
+      religion: [s.religion ?? null, Validators.required],
+      marital: [s.marital ?? null, Validators.required],
+      children: [s.children ?? 0, [Validators.min(0)]]
     });
 
-    // 🔄 live sync to DataService, but skip locked fields
-    this.form.valueChanges.subscribe(val => {
-      Object.entries(val).forEach(([key, value]) => {
-        const k = key as keyof typeof s;
-        if (!this.ds.isLocked(k as any)) {
-          this.ds.up(k as any, value as any);
-        }
-      });
-    });
-
-    // keep your prerequisite logic as-is
     if (!this.ds.state().candidateType) {
       this.editPrereq();
     }
   }
+
 
   openAvatarDialog() {
     this.dialog.open(AvatarModal, {
@@ -142,7 +113,6 @@ export class StepPersonalComponent implements OnInit {
       width: '80%',
       contentStyle: { 'max-height': '80vh', 'overflow': 'visible' },
       baseZIndex: 10000,
-      closable: true,
       data: {
         initialValue: {
           candidateType: this.ds.state().candidateType,
@@ -165,13 +135,18 @@ export class StepPersonalComponent implements OnInit {
   }
 
   save() {
-    Object.entries(this.form.getRawValue()).forEach(([k, v]) => {
-      const key = k as keyof typeof this.ds.state;
+    const raw = this.form.getRawValue();
+    Object.entries(raw).forEach(([k, v]) => {
+      const key = k as keyof ProfileState;
       if (!this.ds.isLocked(key as any)) {
         this.ds.up(key as any, v as any);
       }
     });
-
     this.next.emit();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

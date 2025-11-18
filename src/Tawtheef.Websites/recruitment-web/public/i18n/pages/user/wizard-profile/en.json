@@ -1,6 +1,7 @@
 ﻿{
   "wizard": {
     "title": "Tawtheef - Candidate Profile",
+    "accountFieldNote": "This field came from your account and cannot be changed.",
     "steps": {
       "personal": "Personal",
       "contact": "Contact & Address",

@@ -23,6 +23,8 @@ export interface PrefillData
   phone?: string | null;
   nationality?: string | null;
   qid?: string | null;
+  gender?: string | null;
+  dob?: string | null;
   locale?: string | null;
   provider?: string | null;
 }

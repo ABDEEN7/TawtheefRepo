@@ -12,7 +12,7 @@ export class DataService {
   state = signal<ProfileState>({
     degrees: [], experiences: [], courses: [], achievements: [],
     skills: [], languages: [], attachments: [],
-    available: true
+    available: true,
   });
 
   /** Fields that count once when non-empty (strings trimmed; numbers count if defined, even 0) */
@@ -50,7 +50,6 @@ export class DataService {
     return !!val;
   };
 
-  missing = signal<(keyof ProfileState)[]>([]);
   progress = computed(() => {
     const s = this.state();
 
@@ -80,18 +79,73 @@ export class DataService {
   private locked = signal<Partial<Record<keyof ProfileState, boolean>>>({});
 
   isLocked<K extends keyof ProfileState>(key: K): boolean {
-    return !!this.locked()[key];
+    const l = this.locked();
+    return !!l[key];
   }
 
+  private lockableKeys: (keyof ProfileState)[] = [
+    'qid',
+    'dob',
+    'nationality',
+    'gender',
+    'phone',
+    'email'
+  ];
   prefillFromBootstrap(prefill: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...prefill }));
-    const keys = Object.keys(prefill) as (keyof ProfileState)[];
     this.locked.update(m => {
       const copy = { ...m };
-      for (const k of keys) copy[k] = true;
+      for (const k of Object.keys(prefill) as (keyof ProfileState)[]) {
+        if (!this.lockableKeys.includes(k)) continue;
+        const value = prefill[k];
+        const hasValue =
+          value !== null && value !== undefined &&
+          (typeof value !== 'string' || value.trim().length > 0);
+
+        if (hasValue) {
+          copy[k] = true;
+        }
+      }
       return copy;
     });
   }
+  stepValidity = computed(() => {
+    const s = this.state();
+
+    const personalValid =
+      this.isFilledScalar(s.fullName) &&
+      this.isFilledScalar(s.fullNameEn) &&
+      this.isFilledScalar(s.qid) &&
+      this.isFilledScalar(s.dob) &&
+      this.isFilledScalar(s.nationality) &&
+      this.isFilledScalar(s.gender) &&
+      this.isFilledScalar(s.religion) &&
+      this.isFilledScalar(s.marital) &&
+      this.isFilledScalar(s.candidateType) &&
+      this.isFilledScalar(s.targetEntity) &&
+      this.isFilledScalar(s.cvName) &&
+      this.isFilledScalar(s.idName);
+
+    const contactValid =
+      this.isFilledScalar(s.country) &&
+      this.isFilledScalar(s.dialCode) &&
+      this.isFilledScalar(s.phone) &&
+      this.isFilledScalar(s.email) &&
+      this.isFilledScalar(s.address);
+
+    const degreesValid   = Array.isArray(s.degrees) && s.degrees.length > 0;
+    const expValid       = Array.isArray(s.experiences) && s.experiences.length > 0;
+    const skillsValid    = (Array.isArray(s.skills) && s.skills.length > 0) || (Array.isArray(s.languages)  && s.languages.length  > 0);
+
+    return {
+      personal: personalValid,
+      contact: contactValid,
+      degrees: degreesValid,
+      experience: expValid,
+      skills: skillsValid,
+      attachments: true,
+    } as const;
+  });
 
   up<K extends keyof ProfileState>(key: K, val: ProfileState[K]) {
     this.state.update(s => ({ ...s, [key]: val }));

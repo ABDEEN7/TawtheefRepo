@@ -86,7 +86,7 @@ label.form-label { font-weight: 700; }
   --tag-remove-bg: transparent; --tag-remove-btn-color: #991b1b;
   font-size: 1.05rem;
 }
-.locked-field {
+::ng-deep .locked-field {
   background-color: #f5f5f5;
   cursor: not-allowed;
 }
