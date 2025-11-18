@@ -93,12 +93,6 @@ stages:
               echo "OPS: '$(OPS)'"
               echo "REC: '$(REC)'"
               echo "BACK: '$(BACK)'"
-      
-              echo ""
-              echo "----- Direct macro syntax -----"
-              echo "Direct OPS: $[ dependencies.detect.outputs['detectChanges.opsChanged'] ]"
-              echo "Direct REC: $[ dependencies.detect.outputs['detectChanges.recChanged'] ]"
-              echo "Direct BACK: $[ dependencies.detect.outputs['detectChanges.backendChanged'] ]"
             displayName: Print dependency outputs
   
   
