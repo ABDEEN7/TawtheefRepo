@@ -74,9 +74,9 @@ stages:
           # Debug step to verify outputs are set
           - bash: |
               echo "Current job outputs:"
-              echo "opsChanged: $(detectChanges.opsChanged)"
-              echo "recChanged: $(detectChanges.recChanged)"
-              echo "backendChanged: $(detectChanges.backendChanged)"
+              echo "opsChanged: $(opsChanged)"
+              echo "recChanged: $(recChanged)"
+              echo "backendChanged: $(backendChanged)"
             displayName: Verify outputs in same job
       
       # Debug job - FIXED syntax
@@ -84,21 +84,21 @@ stages:
         displayName: Debug show dependency outputs
         dependsOn: detect
         variables:
-          OPS: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'] ]
-          REC: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'] ]
-          BACK: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.backendChanged'] ]
+          OPS: $[ dependencies.detect.outputs['detectChanges.opsChanged'] ]
+          REC: $[ dependencies.detect.outputs['detectChanges.recChanged'] ]
+          BACK: $[ dependencies.detect.outputs['detectChanges.backendChanged'] ]
         steps:
           - bash: |
-              echo "----- From stage dependencies -----"
+              echo "----- From job dependencies -----"
               echo "OPS: '$(OPS)'"
               echo "REC: '$(REC)'"
               echo "BACK: '$(BACK)'"
-              
+      
               echo ""
               echo "----- Direct macro syntax -----"
-              echo "Direct OPS: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'] ]"
-              echo "Direct REC: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'] ]"
-              echo "Direct BACK: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.backendChanged'] ]"
+              echo "Direct OPS: $[ dependencies.detect.outputs['detectChanges.opsChanged'] ]"
+              echo "Direct REC: $[ dependencies.detect.outputs['detectChanges.recChanged'] ]"
+              echo "Direct BACK: $[ dependencies.detect.outputs['detectChanges.backendChanged'] ]"
             displayName: Print dependency outputs
   
   
@@ -111,8 +111,8 @@ stages:
     # Condition will be evaluated at runtime
     condition: |
       or(
-        eq(dependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'], 'true'),
-        eq(dependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'], 'true')
+        eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'], 'true'),
+        eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'], 'true')
       )
     jobs:
       - job: buildFrontends
@@ -126,7 +126,7 @@ stages:
       # Alternative: Individual jobs with conditions
       - job: buildOperations
         displayName: Build operations-web
-        condition: eq(dependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'], 'true')
+        condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'], 'true')
         steps:
           - task: NodeTool@0
             inputs:
@@ -138,7 +138,7 @@ stages:
 
       - job: buildRecruitment
         displayName: Build recruitment-web
-        condition: eq(dependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'], 'true')
+        condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'], 'true')
         steps:
           - task: NodeTool@0
             inputs:
@@ -155,7 +155,7 @@ stages:
   - stage: backend_stage
     displayName: Build Backend
     dependsOn: detect_changes_stage
-    condition: eq(dependencies.detect_changes_stage.detect.outputs['detectChanges.backendChanged'], 'true')
+    condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.backendChanged'], 'true')
     jobs:
       - job: buildBackend
         displayName: Build .NET backend
@@ -181,9 +181,9 @@ stages:
       - backend_stage
     condition: always()
     variables:
-      OPS: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'] ]
-      REC: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'] ]
-      BACK: $[ dependencies.detect_changes_stage.detect.outputs['detectChanges.backendChanged'] ]
+      OPS: $[ stageDependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'] ]
+      REC: $[ stageDependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'] ]
+      BACK: $[ stageDependencies.detect_changes_stage.detect.outputs['detectChanges.backendChanged'] ]
     jobs:
       - job: postComment
         displayName: Post summary comment
