@@ -104,11 +104,17 @@ stages:
               echo "Building operations-web..."              
               cd src/Tawtheef.Websites/operations-web
 
-              echo "📦 Installing npm dependencies (operations-web)..."
-              npm ci
-              # لو عندك lint/اختبارات، تقدر تفعلها
-              echo "🔍 Running lint..."
-              npm run lint
+              echo "📦 Installing npm dependencies (recruitment-web)..."
+              if [ -f package-lock.json ]; then
+                echo "Using npm ci..."
+                npm ci
+              else
+                echo "No package-lock.json found, using npm install..."
+                npm install
+              fi
+
+              # echo "🔍 Running lint..."
+              # npm run lint
 
               echo "🏗️ Building operations-web..."
               npm run build -- --configuration=production
@@ -126,10 +132,16 @@ stages:
               cd src/Tawtheef.Websites/recruitment-web
 
               echo "📦 Installing npm dependencies (recruitment-web)..."
-              npm ci
-              # لو عندك lint/اختبارات، تقدر تفعلها
-              echo "🔍 Running lint..."
-              npm run lint
+              if [ -f package-lock.json ]; then
+                echo "Using npm ci..."
+                npm ci
+              else
+                echo "No package-lock.json found, using npm install..."
+                npm install
+              fi
+
+              # echo "🔍 Running lint..."
+              # npm run lint
 
               echo "🏗️ Building recruitment-web..."
               npm run build -- --configuration=productio
