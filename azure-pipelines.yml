@@ -120,7 +120,7 @@ stages:
       # Alternative: Individual jobs with conditions
       - job: buildOperations
         displayName: Build operations-web
-        condition: eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.opsChanged'], 'true')
+        condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'], 'true')
         steps:
           - task: NodeTool@0
             inputs:
@@ -132,7 +132,7 @@ stages:
 
       - job: buildRecruitment
         displayName: Build recruitment-web
-        condition: eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.recChanged'], 'true')
+        condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'], 'true')
         steps:
           - task: NodeTool@0
             inputs:
