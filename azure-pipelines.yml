@@ -105,8 +105,8 @@ stages:
     # Condition will be evaluated at runtime
     condition: |
       or(
-        eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'], 'true'),
-        eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'], 'true')
+        eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.opsChanged'], 'true'),
+        eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.recChanged'], 'true')
       )
     jobs:
       - job: buildFrontends
@@ -120,7 +120,7 @@ stages:
       # Alternative: Individual jobs with conditions
       - job: buildOperations
         displayName: Build operations-web
-        condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'], 'true')
+        condition: eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.opsChanged'], 'true')
         steps:
           - task: NodeTool@0
             inputs:
@@ -132,7 +132,7 @@ stages:
 
       - job: buildRecruitment
         displayName: Build recruitment-web
-        condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'], 'true')
+        condition: eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.recChanged'], 'true')
         steps:
           - task: NodeTool@0
             inputs:
@@ -149,7 +149,7 @@ stages:
   - stage: backend_stage
     displayName: Build Backend
     dependsOn: detect_changes_stage
-    condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.backendChanged'], 'true')
+    condition: eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.backendChanged'], 'true')
     jobs:
       - job: buildBackend
         displayName: Build .NET backend
@@ -175,9 +175,9 @@ stages:
       - backend_stage
     condition: always()
     variables:
-      OPS: $[ stageDependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'] ]
-      REC: $[ stageDependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'] ]
-      BACK: $[ stageDependencies.detect_changes_stage.detect.outputs['detectChanges.backendChanged'] ]
+      OPS: $[ stageDependencies.detect_changes_stage.detect.outputs['detect.detectChanges.opsChanged'] ]
+      REC: $[ stageDependencies.detect_changes_stage.detect.outputs['detect.detectChanges.recChanged'] ]
+      BACK: $[ stageDependencies.detect_changes_stage.detect.outputs['detect.detectChanges.backendChanged'] ]
     jobs:
       - job: postComment
         displayName: Post summary comment
