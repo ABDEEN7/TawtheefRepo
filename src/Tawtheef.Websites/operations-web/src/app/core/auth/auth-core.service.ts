@@ -31,23 +31,6 @@ export class AuthCoreService {
     return this.tokenService.getToken();
   }
 
-
-  login(email: string, password: string): Observable<boolean> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
-    return this.http.post<AuthResponse>(
-      this.endpoints.auth.login,
-      { email, password },
-      { headers }
-    ).pipe(
-      switchMap(res => this.handleAuthResponse(res)),
-      catchError(err => {
-        this.logger.logError('Login failed', {err: err, email: email}).subscribe();
-        return of(false);
-      })
-    );
-  }
-
   externalLogin(data: AuthResponse): Observable<boolean> {
     return this.handleAuthResponse(data);
   }

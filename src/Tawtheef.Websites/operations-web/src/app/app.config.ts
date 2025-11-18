@@ -23,7 +23,6 @@ import {TawtheefPreset} from './shared/themes/twatheef-preset';
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   return new MultiTranslateHttpLoader(_httpBackend, [
     {prefix: '/i18n/common/', suffix: '.json'},
-    {prefix: '/i18n/layout/', suffix: '.json'},
   ]);
 }
 

@@ -58,15 +58,11 @@ namespace Operations.API.Controllers
         public async Task<IActionResult> AzureExternalLoginCallback(
             [FromQuery] AzureExternalCallbackLoginCommand command,
             [FromServices] IHttpContextAccessor http,
+            [FromServices] SignInManager<User> signInManager,
             [FromServices] IExternalTokenReader tokenReader,
             [FromServices] IOptions<AppConfigSettings> appConfig)
         {
-            // read tokens issued by Azure (already on the context after challenge)
-            var (idToken, accessToken) = await tokenReader.ReadAsync(http.HttpContext!, AuthSchemes.AppCookie);
-            if (string.IsNullOrWhiteSpace(idToken))
-                return BadRequest("No id token found");
-
-            var result = await mediator.Send(command with { IdToken = idToken, AccessToken = accessToken });
+            var result = await mediator.Send(command);
 
             var spaOrigin = GetOriginOnly(appConfig.Value.FrontendUrl);
             var spaCallback = $"{spaOrigin}/auth/popup-callback";

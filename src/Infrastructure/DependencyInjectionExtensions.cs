@@ -291,8 +291,7 @@ namespace Tawtheef.Infrastructure
             {
                 services.AddAuthentication()
                     .AddMicrosoftIdentityWebApp(configuration, "Authentication:Azure",
-                        openIdConnectScheme: AuthSchemes.AzureOidc,
-                        cookieScheme: AuthSchemes.AzureCookies);
+                        openIdConnectScheme: AuthSchemes.AzureOidc);
 
                 services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o => {
                     o.SignInScheme = IdentityConstants.ExternalScheme;

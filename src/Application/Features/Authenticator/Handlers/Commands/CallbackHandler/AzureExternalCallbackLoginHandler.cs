@@ -22,10 +22,11 @@ public sealed class AzureExternalCallbackLoginHandler(
     {
         if (!string.IsNullOrWhiteSpace(request.Error))
             return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.Error));
-        if (string.IsNullOrWhiteSpace(request.IdToken))
+        var info = await signInManager.GetExternalLoginInfoAsync();
+        var idToken = info?.AuthenticationTokens?.FirstOrDefault(t => t.Name == "id_token")?.Value;
+        if (idToken is null)
             return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
-
-        var principalResult = await azureTokenValidator.ValidateAsync(request.IdToken, ct);
+        var principalResult = await azureTokenValidator.ValidateAsync(idToken, ct);
         if (principalResult.IsFailure)
             return principalResult.ConvertFailure<AuthResponse>();
 
