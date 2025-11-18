@@ -30,6 +30,8 @@ export class QuotasStepComponent implements WizardStepComponent,OnInit {
   });
 
   totalQuota = signal(0);
+  quotasControls =  ['qatariCitizens', 'qatarMother', 'nonQatariSpouse', 'gcc', 'quGrads'] 
+
 
   get residentsBreakdown() {
     return this.jobService.currentJob().quotas.residentsBreakdown || [];
