@@ -1,4 +1,5 @@
-<div class="card border-0 shadow rounded-4 p-4 mb-3">
+<div class="card border-0 shadow rounded-4 p-4 mb-3" [formGroup]="form">
+  <!-- Avatar section stays as is -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
     <div class="d-flex align-items-center gap-3">
       <img
@@ -22,133 +23,145 @@
   </div>
 
   <div class="row g-3">
+    <!-- fullName -->
     <div class="col-md-4">
-      <label class="form-label">{{ 'wizard.personal.nameAr' | translate }}</label>
-      <input pInputText class="form-control" pSize="small" [(ngModel)]="form.value.fullName" name="n1"
-             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             (ngModelChange)="ds.up('fullName',$event)">
+      <label class="form-label required">{{ 'wizard.personal.nameAr' | translate }}</label>
+      <input
+        pInputText
+        class="form-control"
+        pSize="small"
+        formControlName="fullName"
+        placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+      />
     </div>
 
+    <!-- fullNameEn -->
     <div class="col-md-4">
-      <label class="form-label">{{ 'wizard.personal.nameEn' | translate }}</label>
-      <input pInputText class="form-control" pSize="small" [(ngModel)]="form.value.fullNameEn" name="n2"
-             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             (ngModelChange)="ds.up('fullNameEn',$event)">
+      <label class="form-label required">{{ 'wizard.personal.nameEn' | translate }}</label>
+      <input
+        pInputText
+        class="form-control"
+        pSize="small"
+        formControlName="fullNameEn"
+        placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+      />
     </div>
 
+    <!-- QID -->
     <div class="col-md-4">
-      <label class="form-label">{{ 'wizard.personal.qid' | translate }}</label>
-      <input pInputText class="form-control" pSize="small" [(ngModel)]="form.value.qid" name="n3"
-             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             (ngModelChange)="ds.up('qid',$event)"
-             [readonly]="ds.isLocked('qid')"
-             [ngClass]="{'locked-field': ds.isLocked('qid')}">
-      <small *ngIf="ds.isLocked('qid')" class="text-muted">
-        This field came from your account and cannot be changed.
+      <label class="form-label required">{{ 'wizard.personal.qid' | translate }}</label>
+      <input
+        pInputText
+        class="form-control"
+        pSize="small"
+        formControlName="qid"
+        placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+        [readonly]="ds.isLocked('qid')"
+        [ngClass]="{'locked-field': ds.isLocked('qid')}"
+      />
+      <small *ngIf="ds.isLocked('qid')" class="fz-2xs text-muted">
+        {{'wizard.accountFieldNote' | translate}}
       </small>
     </div>
 
+    <!-- Nationality -->
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label">{{ 'wizard.personal.nationality' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.personal.nationality' | translate }}</label>
       <p-select
-        [options]="nationalities"
-        [(ngModel)]="form.value.nationality"
+        [options]="lookups.countries()"
+        formControlName="nationality"
         [filter]="true"
-        [loading]="false"
         filterBy="name"
         optionLabel="name"
         size="small"
         [placeholder]="'wizard.placeholders.selectNationality' | translate"
         class="w-full md:w-56"
-        (ngModelChange)="ds.up('nationality',$event)"
         [disabled]="ds.isLocked('nationality')"
-        [ngClass]="{'locked-field': ds.isLocked('nationality')}">
-      </p-select>
-      <small *ngIf="ds.isLocked('nationality')" class="text-muted">
-        This field came from your account and cannot be changed.
+        [ngClass]="{'locked-field': ds.isLocked('nationality')}"
+      ></p-select>
+      <small *ngIf="ds.isLocked('nationality')" class="fz-2xs text-muted">
+        {{'wizard.accountFieldNote' | translate}}
       </small>
     </div>
 
+    <!-- Gender -->
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label">{{ 'wizard.personal.gender' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.personal.gender' | translate }}</label>
       <p-select
-        [options]="genders"
-        [(ngModel)]="form.value.gender"
+        [options]="lookups.genders()"
+        formControlName="gender"
         [filter]="false"
-        [loading]="false"
-        filterBy="name"
         optionLabel="name"
         size="small"
         [placeholder]="'wizard.placeholders.selectGender' | translate"
         class="w-full md:w-56"
-        (ngModelChange)="ds.up('gender',$event)"
         [disabled]="ds.isLocked('gender')"
-        [ngClass]="{'locked-field': ds.isLocked('gender')}">
-      </p-select>
-      <small *ngIf="ds.isLocked('gender')" class="text-muted">
-        This field came from your account and cannot be changed.
+        [ngClass]="{'locked-field': ds.isLocked('gender')}"
+      ></p-select>
+      <small *ngIf="ds.isLocked('gender')" class="fz-2xs text-muted">
+        {{'wizard.accountFieldNote' | translate}}
       </small>
     </div>
 
+    <!-- DOB -->
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label">{{ 'wizard.personal.dob' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
       <p-date-picker
-        [(ngModel)]="form.value.dob"
-        [showIcon]="true" size="small"
-        [showOnFocus]="true" dateFormat="yy-mm-dd"
-        (ngModelChange)="ds.up('dob',$event)"
+        formControlName="dob"
+        [showIcon]="true"
+        size="small"
+        [showOnFocus]="true"
+        dateFormat="yy-mm-dd"
         fluid
         [disabled]="ds.isLocked('dob')"
-        [ngClass]="{'locked-field': ds.isLocked('dob')}">
-      </p-date-picker>
-      <small *ngIf="ds.isLocked('dob')" class="text-muted">
-        This field came from your account and cannot be changed.
+        [ngClass]="{'locked-field': ds.isLocked('dob')}"
+      ></p-date-picker>
+      <small *ngIf="ds.isLocked('dob')" class="fz-2xs text-muted">
+        {{'wizard.accountFieldNote' | translate}}
       </small>
     </div>
 
+    <!-- Religion -->
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label">{{ 'wizard.personal.religion' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.personal.religion' | translate }}</label>
       <p-select
-        [options]="religions"
-        [(ngModel)]="form.value.religion"
+        [options]="lookups.religions()"
+        formControlName="religion"
         [filter]="true"
-        [loading]="false"
         filterBy="name"
         optionLabel="name"
         size="small"
         [placeholder]="'wizard.placeholders.selectReligion' | translate"
         class="w-full md:w-56"
-        (ngModelChange)="ds.up('religion',$event)">
-      </p-select>
+      ></p-select>
     </div>
 
+    <!-- Marital -->
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label">{{ 'wizard.personal.marital' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.personal.marital' | translate }}</label>
       <p-select
-        [options]="maritals"
-        [(ngModel)]="form.value.marital"
+        [options]="lookups.maritalStatuses()"
+        formControlName="marital"
         [filter]="true"
-        [loading]="false"
         filterBy="name"
         optionLabel="name"
-        optionValue="name"
         size="small"
         [placeholder]="'wizard.placeholders.selectMaritalStatus' | translate"
         class="w-full md:w-56"
-        (ngModelChange)="ds.up('marital',$event)">
-      </p-select>
+      ></p-select>
     </div>
-    <div class="col-md-4" *ngIf="ds.state().marital && ds.state().marital != 'أعزب'">
-      <label class="form-label">{{ 'wizard.personal.children' | translate }}</label>
+
+    <!-- Children -->
+    <div class="col-md-4" *ngIf="form.get('marital')?.value && form.get('marital')?.value !== 'أعزب'">
+      <label class="form-label required">{{ 'wizard.personal.children' | translate }}</label>
       <input
         pInputText
         type="number"
         class="form-control"
         pSize="small"
-        [(ngModel)]="form.value.children"
+        formControlName="children"
         placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-        name="children"
-        (ngModelChange)="ds.up('children',$event)">
+      />
     </div>
   </div>
 

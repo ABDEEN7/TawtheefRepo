@@ -6,6 +6,7 @@ using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -272,6 +273,7 @@ namespace Tawtheef.Infrastructure
                     options.SaveTokens = true;
                     options.Scope.Add("email");
                     options.Scope.Add("profile");
+                    options.ClaimActions.MapJsonKey("picture", "picture"); 
                 });
             }
 
@@ -289,8 +291,7 @@ namespace Tawtheef.Infrastructure
             {
                 services.AddAuthentication()
                     .AddMicrosoftIdentityWebApp(configuration, "Authentication:Azure",
-                        openIdConnectScheme: AuthSchemes.AzureOidc,
-                        cookieScheme: AuthSchemes.AzureCookies);
+                        openIdConnectScheme: AuthSchemes.AzureOidc);
 
                 services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o => {
                     o.SignInScheme = IdentityConstants.ExternalScheme;

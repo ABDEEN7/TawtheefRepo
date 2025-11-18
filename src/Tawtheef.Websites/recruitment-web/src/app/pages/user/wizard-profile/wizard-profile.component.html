@@ -25,22 +25,38 @@
         <li class="nav-item" *ngFor="let key of [
         'wizard.steps.personal','wizard.steps.contact','wizard.steps.degrees',
         'wizard.steps.experience','wizard.steps.skills','wizard.steps.attachments','wizard.steps.review']; let i = index">
-          <a class="nav-link" [class.active]="step===i+1" href (click)="$event.preventDefault(); go(i+1)">
-            <i class="fa-solid" [class.fa-user]="i===0" [class.fa-house]="i===1"
-               [class.fa-graduation-cap]="i===2" [class.fa-briefcase]="i===3"
-               [class.fa-language]="i===4" [class.fa-paperclip]="i===5" [class.fa-check-circle]="i===6"></i>
+          <a class="nav-link"
+             [class.active]="step===i+1"
+             [class.disabled]="!canGoTo(i+1)"
+             [attr.aria-disabled]="!canGoTo(i+1)"
+             href
+             (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
+            <i class="fa-solid"
+               [class.fa-user]="i===0"
+               [class.fa-house]="i===1"
+               [class.fa-graduation-cap]="i===2"
+               [class.fa-briefcase]="i===3"
+               [class.fa-language]="i===4"
+               [class.fa-paperclip]="i===5"
+               [class.fa-check-circle]="i===6">
+            </i>
             {{ key | translate }}
           </a>
         </li>
       </ul>
+      <div *ngIf="loading" class="wizard-loading">
+        {{ 'wizard.loading' | translate }}
+      </div>
 
-      <app-step-personal    *ngIf="step===1" (next)="next()"></app-step-personal>
-      <app-step-contact     *ngIf="step===2" (back)="prev()" (next)="next()"></app-step-contact>
-      <app-step-degrees     *ngIf="step===3" (back)="prev()" (next)="next()"></app-step-degrees>
-      <app-step-experience  *ngIf="step===4" (back)="prev()" (next)="next()"></app-step-experience>
-      <app-step-skills      *ngIf="step===5" (back)="prev()" (next)="next()"></app-step-skills>
-      <app-step-attachments *ngIf="step===6" (back)="prev()" (next)="next()"></app-step-attachments>
-      <app-step-review      *ngIf="step===7" (back)="prev()"></app-step-review>
+      <div *ngIf="!loading">
+        <app-step-personal    *ngIf="step===1" (next)="next()"></app-step-personal>
+        <app-step-contact     *ngIf="step===2" (back)="prev()" (next)="next()"></app-step-contact>
+        <app-step-degrees     *ngIf="step===3" (back)="prev()" (next)="next()"></app-step-degrees>
+        <app-step-experience  *ngIf="step===4" (back)="prev()" (next)="next()"></app-step-experience>
+        <app-step-skills      *ngIf="step===5" (back)="prev()" (next)="next()"></app-step-skills>
+        <app-step-attachments *ngIf="step===6" (back)="prev()" (next)="next()"></app-step-attachments>
+        <app-step-review      *ngIf="step===7" (back)="prev()"></app-step-review>
+      </div>
     </div>
   </div>
 </section>

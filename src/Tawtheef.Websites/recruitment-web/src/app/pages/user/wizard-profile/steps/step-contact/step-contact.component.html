@@ -1,7 +1,7 @@
 <div class="card border-0 shadow rounded-4 p-4 mb-3">
   <div class="row g-3">
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label">{{ 'wizard.contact.country' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.contact.country' | translate }}</label>
       <p-select [options]="countries" [(ngModel)]="ds.state().country"
                 [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
                 class="w-full md:w-56"
@@ -9,7 +9,7 @@
                 (ngModelChange)="ds.up('country',$event)"></p-select>
     </div>
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label">{{ 'wizard.contact.dial' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.contact.dial' | translate }}</label>
       <p-select [options]="countries" [(ngModel)]="ds.state().dialCode"
                 [filter]="false" [loading]="false" filterBy="code" optionLabel="code" size="small"
                 class="w-full md:w-56"
@@ -32,25 +32,25 @@
       </p-select>
     </div>
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label">{{ 'wizard.contact.phone' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.contact.phone' | translate }}</label>
       <input pInputText class="form-control" [(ngModel)]="ds.state().phone"
              placeholder="{{'wizard.placeholders.typeHere' | translate}}"
              type="number" (ngModelChange)="ds.up('phone',$event)"
              [readonly]="ds.isLocked('phone')"
              [ngClass]="{'locked-field': ds.isLocked('phone')}">
-      <small *ngIf="ds.isLocked('phone')" class="text-muted">
-        This field came from your account and cannot be changed.
+      <small *ngIf="ds.isLocked('phone')" class="fz-2xs text-muted">
+        {{'wizard.accountFieldNote' | translate}}
       </small>
     </div>
 
     <div class="col-md-6">
-      <label class="form-label">{{ 'wizard.contact.address' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.contact.address' | translate }}</label>
       <input pInputText class="form-control" [(ngModel)]="ds.state().address"
              placeholder="{{'wizard.placeholders.typeHere' | translate}}"
              (ngModelChange)="ds.up('address',$event)">
     </div>
     <div class="col-md-3 d-flex flex-column">
-      <label class="form-label">{{'wizard.contact.interviewPlace' | translate}}</label>
+      <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
       <p-select [options]="countries" [(ngModel)]="ds.state().interviewPlace"
                 [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
                 class="w-full md:w-56"
@@ -58,14 +58,14 @@
                 (ngModelChange)="ds.up('interviewPlace',$event)"></p-select>
     </div>
     <div class="col-md-3">
-      <label class="form-label">{{ 'wizard.contact.email' | translate }}</label>
+      <label class="form-label required">{{ 'wizard.contact.email' | translate }}</label>
       <input pInputText type="email" class="form-control" [ngModel]="ds.state().email"
              placeholder="{{'wizard.placeholders.typeHere' | translate}}"
              (ngModelChange)="ds.up('email',$event)"
              [readonly]="ds.isLocked('email')"
              [ngClass]="{'locked-field': ds.isLocked('email')}">
-      <small *ngIf="ds.isLocked('email')" class="text-muted">
-        This field came from your account and cannot be changed.
+      <small *ngIf="ds.isLocked('email')" class="fz-2xs text-muted">
+        {{'wizard.accountFieldNote' | translate}}
       </small>
     </div>
   </div>
@@ -81,25 +81,25 @@
   </div>
 
   <div class="row g-3">
-    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.zone' | translate }}</label>
+    <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.zone' | translate }}</label>
       <input class="form-control" [ngModel]="ds.state().naZone" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
              (ngModelChange)="ds.up('naZone',$event)">
     </div>
-    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.street' | translate }}</label>
+    <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.street' | translate }}</label>
       <input class="form-control" [ngModel]="ds.state().naStreet" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
              (ngModelChange)="ds.up('naStreet',$event)">
     </div>
-    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.building' | translate }}</label>
+    <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.building' | translate }}</label>
       <input class="form-control" [ngModel]="ds.state().naBuilding" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
              (ngModelChange)="ds.up('naBuilding',$event)">
     </div>
-    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.unit' | translate }}</label>
+    <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.unit' | translate }}</label>
       <input class="form-control" [ngModel]="ds.state().naUnit" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
              (ngModelChange)="ds.up('naUnit',$event)">
     </div>
 
     <div class="col-md-6">
-      <label class="form-label">{{'wizard.nationalAddress.document' | translate}}</label>
+      <label class="form-label required">{{'wizard.nationalAddress.document' | translate}}</label>
       <p-fileupload mode="basic" name="na" chooseLabel="{{'wizard.buttons.upload' | translate}}"
                     (onSelect)="ds.up('naFileName',$event.files[0]?.name)">
 

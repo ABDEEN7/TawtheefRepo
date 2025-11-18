@@ -1,6 +1,7 @@
+using CSharpFunctionalExtensions;
 using MediatR;
 using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetDegreesQuery: IRequest<List<DropdownOptions>>;
+public sealed record GetDegreesQuery: IRequest<Result<List<DropdownOptions>>>;

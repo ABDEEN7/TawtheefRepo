@@ -3,13 +3,16 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {FormsModule} from '@angular/forms';
 import {NgIf} from '@angular/common';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {Select} from 'primeng/select';
+import {ProfileLookupsService} from '../../../../services/profile-lookups.service';
 
 @Component({
   selector: 'app-prerequisites',
   imports: [
     TranslatePipe,
     FormsModule,
-    NgIf
+    NgIf,
+    Select
   ],
   templateUrl: './prerequisites.modal.html',
   styleUrl: './prerequisites.modal.scss',
@@ -17,6 +20,8 @@ import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 export class PrerequisitesModal {
   config = inject(DynamicDialogConfig);
   ref = inject(DynamicDialogRef);
+  t = inject(TranslateService);
+  lookups = inject(ProfileLookupsService);
 
   candidateType = '';
   targetEntity  = '';
@@ -27,7 +32,7 @@ export class PrerequisitesModal {
   cvError: string | null = null;
   idError: string | null = null;
 
-  constructor(private t: TranslateService) {
+  constructor() {
     if(this.config.data){
       const iv = this.config.data.initialValue;
       if(iv){
