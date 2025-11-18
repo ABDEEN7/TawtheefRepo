@@ -18,7 +18,7 @@
       ></p-select>
       <div class="small-muted mt-1">{{ 'job_wizard.steps.basics.requesting_dept_hint' | translate }}</div>
       @if (form.controls.requestingDept.touched && form.controls.requestingDept.invalid) {
-        <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+        <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
       }
     </div>
 
@@ -32,7 +32,7 @@
           placeholder="{{ 'job_wizard.steps.basics.job_title_placeholder' | translate }}"
         />
         @if (form.controls.title.touched && form.controls.title.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
 
@@ -47,7 +47,7 @@
           }
         </select>
         @if (form.controls.jobCategory.touched && form.controls.jobCategory.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
 
@@ -77,7 +77,7 @@
           }
         </select>
         @if (form.controls.entity.touched && form.controls.entity.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
 
@@ -95,7 +95,7 @@
           class="w-100"
         ></p-select>
         @if (form.controls.major.touched && form.controls.major.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
 
@@ -127,7 +127,7 @@
           </ul>
         </div>
         @if (form.controls.degree.touched && form.controls.degree.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
     </div>
@@ -145,7 +145,7 @@
           }
         </select>
         @if (form.controls.typeOfWork.touched && form.controls.typeOfWork.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
 
@@ -161,10 +161,10 @@
         @if (form.controls.vacancies.touched && form.controls.vacancies.invalid) {
           <div class="text-danger small">
             @if (form.controls.vacancies.errors?.['required']) {
-              {{ 'job_wizard.shared.validation.required' | translate }}
+              {{ 'validation.required_filed' | translate }}
             }
             @if (form.controls.vacancies.errors?.['min']) {
-              {{ 'job_wizard.shared.validation.min_vacancies' | translate }}
+              {{ 'validation.min_vacancies' | translate }}
             }
           </div>
         }
@@ -181,7 +181,7 @@
           (onSelect)="onDateSelect()"
         ></p-datePicker>
         @if (form.controls.deadline.touched && form.controls.deadline.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
     </div>

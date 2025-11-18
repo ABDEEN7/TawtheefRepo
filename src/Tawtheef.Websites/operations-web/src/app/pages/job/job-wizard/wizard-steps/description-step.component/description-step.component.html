@@ -8,7 +8,7 @@
         <textarea formControlName="desc" class="form-control" rows="10"
                   placeholder="{{ 'job_wizard.steps.description_benefits.description_placeholder' | translate }}"></textarea>
         @if (form.controls.desc.touched && form.controls.desc.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
       <div class="col-lg-6 col-md-12">
@@ -16,7 +16,7 @@
         <textarea formControlName="benefits" class="form-control" rows="10"
                   placeholder="{{ 'job_wizard.steps.description_benefits.benefits_placeholder' | translate }}"></textarea>
         @if (form.controls.benefits.touched && form.controls.benefits.invalid) {
-          <div class="text-danger small">{{ 'job_wizard.shared.validation.required' | translate }}</div>
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
     </div>

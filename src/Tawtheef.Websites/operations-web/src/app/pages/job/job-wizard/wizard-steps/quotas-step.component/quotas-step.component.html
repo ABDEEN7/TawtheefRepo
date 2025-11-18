@@ -39,11 +39,11 @@
       </div>
 
       <div class="small-muted mt-1">
-        {{ 'job_wizard.steps.quotas.validation.sum_hint' | translate }}
+        {{ 'validation.sum_hint' | translate }}
       </div>
 
       <div class="chip mt-2">
-        {{ 'job_wizard.steps.quotas.validation.sum_label' | translate }}:
+        {{ 'validation.sum_label' | translate }}:
         <span [class]="'quota-' + (totalQuota() === 100 ? 'ok' : 'bad')">
           {{ totalQuota() }}%
         </span>
