@@ -38,8 +38,8 @@ export class WizardProfileComponent implements OnInit {
       // case 1: arrived here from guard -> we already have data
       this.ds.prefillFromBootstrap({
         email: state.prefill.email ?? null,
-        givenNameEn: state.prefill.givenNameEn ?? null,
-        familyNameEn: state.prefill.familyNameEn ?? null,
+        fullName: state.prefill.fullName ?? null,
+        fullNameEn: state.prefill.fullName ?? null,
         avatar: state.prefill.avatar ?? null,
         phone: state.prefill.phone ?? null,
       } as Partial<ProfileState>);
@@ -58,8 +58,8 @@ export class WizardProfileComponent implements OnInit {
         if(b.prefill)
           this.ds.prefillFromBootstrap({
             email: b.prefill.email ?? null,
-            givenNameEn: b.prefill.givenNameEn ?? null,
-            familyNameEn: b.prefill.familyNameEn ?? null,
+            fullName: b.prefill.fullName ?? null,
+            fullNameEn: b.prefill.fullName ?? null,
             avatar: b.prefill.avatar ?? null,
             phone: b.prefill.phone ?? null,
           } as Partial<ProfileState>);
