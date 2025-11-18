@@ -3,13 +3,14 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
-import { SelectItem } from 'primeng/select';
 import { JobBasics } from '../../../models/job-basics.models';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 import {JobCategoryEnum} from '../../../enums/job-category.enum';
 import {GenderEnum} from '../../../enums/gender.enum';
 import {EntityEnum} from '../../../enums/entity.enum';
 import {TypeOfWorkEnum} from '../../../enums/type-of-work.enum';
+import { ILookups } from '../../../../../core/models/lookups.model';
+import { LookupService } from '../../../../../core/services/lookup.service';
 
 
 
@@ -20,14 +21,14 @@ import {TypeOfWorkEnum} from '../../../enums/type-of-work.enum';
   styleUrls: ['./basics-step.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class BasicsStepComponent implements WizardStepComponent, OnInit, OnDestroy {
+export class BasicsStepComponent implements WizardStepComponent, OnInit {
   private fb = inject(FormBuilder);
   private jobService = inject(JobService);
-  private destroy$ = new Subject<void>();
+  private lookupsService = inject(LookupService);
 
-  departments = signal<SelectItem[]>([]);
-  majors = signal<SelectItem[]>([]);
-  degreeOptions = signal<string[]>([]);
+  departments = signal<ILookups[]>([]);
+  majors = signal<ILookups[]>([]);
+  degrees = signal<string[]>([]);
 
   jobCategories = Object.values(JobCategoryEnum);
   genders = Object.values(GenderEnum);
@@ -58,13 +59,14 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit, OnDestr
     this.setupFormListeners();
   }
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
 
   private loadLookups(): void {
-   //TODO :: Get Lookups from backend.
+   this.lookupsService.getDepartments().subscribe(depts => {
+      this.departments.set(depts);
+   })
+     this.lookupsService.getMajors().subscribe(majors => {
+      this.majors.set(majors);
+   })
   }
 
   private setupFormListeners(): void {
@@ -72,7 +74,6 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit, OnDestr
       .pipe(
         debounceTime(300),
         filter(() => this.form.valid),
-        takeUntil(this.destroy$)
       )
       .subscribe((value) => {
         this.updateJobService(value as Partial<JobBasics>);

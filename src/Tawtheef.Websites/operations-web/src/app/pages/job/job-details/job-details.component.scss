@@ -1,4 +1,3 @@
-// Skills list fix - ensures each skill appears on its own line
 .skills-list-fix {
   li {
     display: block !important;
@@ -6,28 +5,6 @@
     clear: both !important;
     width: 100% !important;
   }
-}
-
-// Preserve all existing styles from your design
-:root {
-  --brand: #7b1e3a;
-  --accent: #a9445f;
-  --muted: #6b7280;
-  --text: #1e1b2c;
-  --card: #fafafa;
-  --border: rgba(0, 0, 0, .08);
-  --success: #16a34a;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  background: #fff;
-  color: var(--text);
-  font-family: 'Cairo', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  line-height: 1.7;
 }
 
 .text-brand {
@@ -183,7 +160,6 @@ body {
   font-size: .9rem;
 }
 
-// Angular specific styles for active tab
 .nav-link {
   cursor: pointer;
 

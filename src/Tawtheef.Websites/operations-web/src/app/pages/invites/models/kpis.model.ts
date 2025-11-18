@@ -1,5 +1,7 @@
+import { GUID } from "../../../shared/types/guid.type";
+
 export interface KPIs {
-  jobId : number;
+  jobId : GUID | null;
   total: number;
   applied: number;
   declined: number;

@@ -12,7 +12,6 @@ import {JobStatusEnum} from '../enums/job-status.enum';
   standalone : false,
   templateUrl: './jobs-list.component.html',
   styleUrl: './jobs-list.component.scss',
-  encapsulation: ViewEncapsulation.None
 })
 export class JobListComponent implements OnInit {
   private jobService = inject(JobService);

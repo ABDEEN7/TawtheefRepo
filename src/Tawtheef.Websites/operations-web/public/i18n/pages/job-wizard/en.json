@@ -2,9 +2,10 @@
   "job_wizard": {
     "status": "Job Status",
     "create_job": "Create New Job",
-    "enter_details": "Enter the details through the following steps, then publish the job.",
+    "enter_details": "Enter the details through the following steps, then publish the job",
     "edit_job": "Edit Job",
     "edit_details": "Edit job details and requirements",
+
     "navigation": {
       "wizard_steps": {
         "basics": "Basics",
@@ -15,19 +16,20 @@
         "review": "Review & Publish"
       }
     },
+
     "shared": {
       "buttons": {
         "add": "Add",
         "cancel": "Cancel",
         "confirm": "Confirm",
-        "publish": "Publish",
+        "publish_job": "Publish Job",
         "save": "Save",
         "next": "Next",
         "back": "Back",
         "edit_job": "Edit Job"
       },
       "placeholders": {
-        "search_select": "Type to search, then select",
+        "search_select": "Type to search and select",
         "enter_text": "Enter text",
         "select_option": "Select an option",
         "enter_number": "Enter a number"
@@ -35,17 +37,20 @@
       "validation": {
         "required": "This field is required",
         "invalid_format": "Invalid format",
-        "total_100_percent": "The total must equal 100%"
+        "total_100_percent": "The total must equal 100%",
+        "min_vacancies": "The number of vacancies must be at least one"
       }
     },
-    "setps": {
+
+    "steps": {
       "basics": {
         "title": "Basics",
+        "select_type": "Select Type",
         "requesting_dept": "Requesting Department",
-        "requesting_dept_placeholder": "Type to search, then select department",
-        "requesting_dept_hint": "You can type to search and then select the department from the list.",
+        "requesting_dept_placeholder": "Type to search and select a department",
+        "requesting_dept_hint": "You can type to search and select a department from the list.",
         "job_title": "Job Title",
-        "job_title_placeholder": "Enter job title",
+        "job_title_placeholder": "Enter the job title",
         "job_category": "Job Category",
         "job_category_placeholder": "Select category",
         "categories": {
@@ -59,88 +64,95 @@
           "male": "Male",
           "female": "Female"
         },
-        "work_entity": "Work Entity",
-        "work_entity_placeholder": "Select work entity",
+        "work_entity": "Work Location",
+        "work_entity_placeholder": "Select work location",
         "entities": {
           "schools": "Schools",
           "ministry": "Ministry"
         },
         "major": "Major",
-        "major_placeholder": "Type to search, then select major",
-        "degree": "Academic Degree (Multiple Selection)",
+        "major_placeholder": "Type to search and select major",
+        "degree": "Academic Degree (Multi-select)",
         "degree_placeholder": "Select one or more degrees...",
         "work_type": "Work Type",
         "work_type_placeholder": "Select work type",
         "work_types": {
-          "full": "Full-Time",
-          "part": "Part-Time"
+          "full": "Full Time",
+          "part": "Part Time"
         },
         "vacancies": "Number of Vacancies",
         "vacancies_placeholder": "Example: 3",
         "deadline": "Closing Date"
       },
+
       "quotas": {
-        "title": "Target Ratio by Nationality",
+        "title": "Targeted Nationality Quotas",
         "qatariCitizens": "Qatari Citizens (%)",
-        "qatarMother": "Children of Qatari Women Married to Non-Qataris (%)",
-        "nonQatariSpouse": "Non-Qatari Spouse Married to a Qatari (%)",
-        "gcc": "GCC Nationals (%)",
+        "qatarMother": "Children of Qatari Mother married to Non-Qatari (%)",
+        "nonQatariSpouse": "Non-Qatari Spouse married to Qatari (%)",
+        "gcc": "GCC Citizens (%)",
         "quGrads": "Qatar University Graduates (%)",
         "residents": "Residents in Qatar (%)",
         "residents_details_button": "Residents Breakdown",
         "validation": {
-          "sum_hint": "The total is recommended to equal 100% before publishing.",
+          "sum_hint": "The total is preferred to equal 100% before publishing.",
           "sum_label": "Total",
-          "sum_state": "(The total must equal 100%)",
+          "sum_state": "(Total must equal 100%)",
           "sum_valid": "(Complete)"
         }
       },
+
       "conditions": {
         "title": "Conditions",
-        "placeholder": "Enter a clear condition (e.g., Language Level C1 or higher)",
-        "empty_state": "No conditions added yet",
+        "placeholder": "Enter a clear condition (e.g., Language level C1 or above)",
+        "empty_state": "No conditions yet",
         "add_condition": "Add Condition"
       },
+
       "skills": {
         "title": "Required Skills",
         "placeholder": "Enter a new skill",
-        "empty_state": "No skills added yet",
+        "empty_state": "No skills yet",
         "add_skill": "Add Skill"
       },
+
       "description_benefits": {
         "title": "Description & Benefits",
         "description": "Description",
-        "description_placeholder": "Enter job description...",
+        "description_placeholder": "Enter the job description...",
         "benefits": "Benefits",
-        "benefits_placeholder": "Enter job benefits...",
+        "benefits_placeholder": "Enter the job benefits...",
         "responsibilities": "Main Responsibilities",
-        "responsibilities_placeholder": "Enter main responsibilities..."
+        "responsibilities_placeholder": "Enter the main responsibilities..."
       },
+
       "review": {
         "title": "Review & Publish",
         "download_pdf": "Download PDF",
         "sections": {
           "basics": "Basic Information",
-          "quotas": "Target Ratio by Nationality",
+          "quotas": "Nationality Quotas",
           "conditions": "Conditions",
           "skills": "Required Skills",
           "description_benefits": "Description & Benefits"
         }
       }
     },
+
     "modals": {
       "residents": {
-        "title": "Residents Breakdown by Nationality",
-        "description": "Add or modify the proportions and head of each example so that their sum equals the proportion of 'residents' specified in the previous article.",
+        "title": "Residents Quota Breakdown by Nationality",
+        "description": "Add or edit percentages for each nationality so that the total matches the Residents quota specified in the previous step.",
         "nationality": "Nationality",
         "percent": "Percentage",
-        "empty_state": "No ratios added yet",
-        "btn_add": "Add",
+        "empty_state": "No entries yet",
         "total": "Total Residents Breakdown",
+        "btn_add": "Add",
         "close": "Close",
         "save": "Save Breakdown"
       }
     },
+
     "notifications": {
       "success": {
         "job_created": "Job created successfully",
@@ -150,11 +162,18 @@
         "validation_failed": "Please review the entered data",
         "server_error": "A server error occurred"
       }
-    },
-    "publish": {
-      "confirm_title": "Confirm Job Publication",
-      "confirm_body": "Are you sure you want to submit this job? Your full profile will be shared with the hiring entity.",
-      "agree_terms": "I agree to share my profile and CV for recruitment purposes."
     }
-  }
+  },
+
+  "sum_state": "(Total must equal 100%)",
+  "sum_valid": "(Complete)",
+  "steps": {
+    "skills": {
+      "placeholder": "Enter a new skill"
+    }
+  },
+  "PhD": "PhD",
+  "Masters": "Master’s",
+  "Bachelors": "Bachelor’s",
+  "PhD، Masters": "PhD, Master’s"
 }

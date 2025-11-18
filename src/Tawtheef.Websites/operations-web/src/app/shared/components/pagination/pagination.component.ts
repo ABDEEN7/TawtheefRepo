@@ -16,7 +16,7 @@ export class PaginationComponent {
   totalItems = input.required<number>();
   showInfo = input(true);
   showControls = input(true);
-  translationPrefix = input('common.app.pagination');
+  translationPrefix = input('app.pagination');
 
   pageChanged = output<number>();
 

@@ -7,6 +7,7 @@ import {JobQuotas} from '../models/job-quotas.models';
 import {PointsConfig} from '../models/points-config.model';
 import {HttpService} from '../../../core/http/http.service';
 import {GenderEnum} from '../enums/gender.enum';
+import { GUID } from '../../../shared/types/guid.type';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class JobService {
     ).subscribe();
   }
 
-  loadJob(id: number): Observable<Job> {
+  loadJob(id: GUID): Observable<Job> {
     if (!id) return of(this.createEmptyJob());
 
     return this.httpService.get<Job>(`jobs/${id}`).pipe(
@@ -47,7 +48,7 @@ export class JobService {
     );
   }
 
-  saveJobPointsConfig(jobId: number, pointsConfig: PointsConfig): Observable<Job> {
+  saveJobPointsConfig(jobId: GUID, pointsConfig: PointsConfig): Observable<Job> {
     const currentJob = this._currentJob();
     if (currentJob.id !== jobId) return of(currentJob);
 

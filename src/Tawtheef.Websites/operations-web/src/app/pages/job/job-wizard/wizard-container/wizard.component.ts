@@ -21,6 +21,8 @@ import {DescriptionStepComponent} from '../wizard-steps/description-step.compone
 import {ReviewStepComponent} from '../wizard-steps/review-step.component/review-step.component';
 import {Job} from '../../models/job.model';
 import {JobStatusEnum} from '../../enums/job-status.enum';
+import { GUID } from '../../../../shared/types/guid.type';
+import { GuidUtils } from '../../../../core/utils/guid-utils';
 
 @Component({
   selector: 'app-wizard',
@@ -37,7 +39,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
   private notificationService = inject(NotificationService);
   step = 1;
   isEditMode = false;
-  jobId: number | null = null;
+  jobId: GUID = GuidUtils.emptyGuid;
 
   stepClasses: Type<WizardStepComponent>[] = [
     BasicsStepComponent,
@@ -65,7 +67,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
-      this.jobId = Number(id);
+      this.jobId = GuidUtils.asGuid(id);
     }
   }
 

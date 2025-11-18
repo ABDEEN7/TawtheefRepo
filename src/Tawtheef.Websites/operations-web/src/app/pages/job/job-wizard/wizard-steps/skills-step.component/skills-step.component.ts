@@ -5,6 +5,7 @@ import { WizardStepComponent } from '../base/wizard-step.component';
 import { MessageService } from 'primeng/api';
 import {Job} from '../../../models/job.model';
 import {debounceTime, filter} from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'app-skills-step',
   standalone: false,
@@ -16,6 +17,7 @@ export class SkillsStepComponent implements WizardStepComponent,OnInit {
   fb = inject(FormBuilder);
   jobService = inject(JobService);
   messageService = inject(MessageService);
+  translationService = inject(TranslateService)
 
   readonly form = this.fb.group({
     items: this.fb.array<string>([])
@@ -47,21 +49,21 @@ export class SkillsStepComponent implements WizardStepComponent,OnInit {
   }
 
   add() {
-    const value = this.newSkill.trim();
+  const value = this.newSkill.trim();
 
-    if (!value) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'تنبيه',
-        detail: 'الرجاء إدخال شرط قبل الإضافة',
-        life: 2500,
-      });
-      return;
-    }
-
-    this.items.push(this.fb.nonNullable.control(value));
-    this.newSkill = '';
+  if (!value) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: this.translationService.instant('validation.warning'),
+      detail: this.translationService.instant('validation.add_job_skill_detail'),
+      life: 2500,
+    });
+    return;
   }
+
+  this.items.push(this.fb.nonNullable.control(value));
+  this.newSkill = '';
+}
 
   remove(i: number) {
     this.items.removeAt(i);

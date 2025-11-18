@@ -1,5 +1,4 @@
 <section i18nNamespace="pages/job-wizard">
-
 <div class="modal-content">
   <div class="modal-header">
     <h5 class="modal-title">
@@ -7,9 +6,9 @@
       {{ 'job_list.modals.points.title' | translate }} —
       <span class="fw-bold">{{ jobTitle }}</span>
       <span class="badge ms-2 "
-            [class.bg-success]="sumTotals() === 1000"
-            [class.bg-danger]="sumTotals() !== 1000">
-        {{ sumTotals() }}/1000
+            [class.bg-success]="sumTotals() === TOTAL_POINTS"
+            [class.bg-danger]="sumTotals() !== TOTAL_POINTS">
+        {{ sumTotals() }}/{{ TOTAL_POINTS }}
       </span>
     </h5>
     <button type="button" class="btn-close btn-close-white" (click)="ref.close()" aria-label="Close"></button>
@@ -21,20 +20,20 @@
       @for (group of groups; track group) {
         <div class="modal-col-4">
           <label class="form-label">
-            {{ 'job_list.modals.rubrics.' + rubricLabels[group] | translate }} ({{ 'job_list.modals.points.max_limit' | translate }})
+            {{ 'job_list.modals.rubrics.' + getRubricLabel(group) | translate }} ({{ 'job_list.modals.points.max_limit' | translate }})
           </label>
           <div class="input-group">
             <input type="number"
                    class="form-control"
-                   [ngModel]="pointsConfig().totals[group]"
+                   [ngModel]="getTotalValue(group)"
                    (ngModelChange)="updateTotal(group, $event)"
                    min="0"
                    max="1000">
             <span class="input-group-text">
               <span class="badge bg-light"
-                    [class.bg-success]="groupSums()[group] === pointsConfig().totals[group]"
-                    [class.bg-danger]="groupSums()[group] !== pointsConfig().totals[group]">
-                {{ groupSums()[group] }} / {{ pointsConfig().totals[group] }}
+                    [class.bg-success]="groupSums()[group] === getTotalValue(group)"
+                    [class.bg-danger]="groupSums()[group] !== getTotalValue(group)">
+                {{ groupSums()[group] }} / {{ getTotalValue(group) }}
               </span>
             </span>
           </div>
@@ -50,14 +49,14 @@
         <div class="modal-col-6">
           <div class="rubric-card">
             <div class="fw-bold mb-2 text-brand">
-              {{ 'job_list.modals.rubrics.' + rubricLabels[group] | translate }} – {{ 'job_list.modals.points.points_table' | translate }}
+              {{ 'job_list.modals.rubrics.' + getRubricLabel(group) | translate }} – {{ 'job_list.modals.points.points_table' | translate }}
             </div>
-            @for (opt of Object.keys(pointsConfig().rubrics[group]); track opt) {
+            @for (opt of getRubricOptions(group); track opt) {
               <div class="input-group input-group-sm mb-1">
-                <span class="input-group-text w-50">{{ opt | translate }}</span>
+                <span class="input-group-text w-50">{{ 'job-wizard.modals.rubrics.options.' + opt | translate }}</span>
                 <input type="number"
                        class="form-control"
-                       [ngModel]="pointsConfig().rubrics[group][opt]"
+                       [ngModel]="getRubricValue(group, opt)"
                        (ngModelChange)="updateRubric(group, opt, $event)"
                        min="0"
                        max="1000">
@@ -66,9 +65,9 @@
             <div class="d-flex justify-content-between align-items-center mt-2">
               <small class="text-muted">{{ 'job_list.modals.points.rubric_hint' | translate }}</small>
               <span class="badge bg-secondary"
-                    [class.bg-success]="groupSums()[group] === pointsConfig().totals[group]"
-                    [class.bg-danger]="groupSums()[group] !== pointsConfig().totals[group]">
-                {{ groupSums()[group] }} / {{ pointsConfig().totals[group] }}
+                    [class.bg-success]="groupSums()[group] === getTotalValue(group)"
+                    [class.bg-danger]="groupSums()[group] !== getTotalValue(group)">
+                {{ groupSums()[group] }} / {{ getTotalValue(group) }}
               </span>
             </div>
           </div>

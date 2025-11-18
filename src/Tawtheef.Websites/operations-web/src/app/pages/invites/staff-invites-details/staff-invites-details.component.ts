@@ -9,6 +9,8 @@ import {InviteStatusEnum} from '../enums/invite-status.enum';
 
 import {KPIs} from '../models/kpis.model';
 import {JobStatusEnum} from '../../job/enums/job-status.enum';
+import { GuidUtils } from '../../../core/utils/guid-utils';
+import { GUID } from '../../../shared/types/guid.type';
 @Component({
   selector: 'app-staff-invites-details',
   standalone: false,
@@ -22,7 +24,7 @@ export class StaffInvitesDetailsComponent implements OnInit { // Added OnInit
 
   readonly FilterOptionsEnum = FilterOptionsEnum;
   readonly InviteStatusEnum = InviteStatusEnum;
-  jobId=0;
+  jobId : GUID | null = GuidUtils.emptyGuid ;
 
   job = signal<Job | null>(null);
   allInvites = this.staffInvitesService.invites;
@@ -114,14 +116,14 @@ export class StaffInvitesDetailsComponent implements OnInit { // Added OnInit
 };
 
   ngOnInit(): void {
-    this.jobId = Number(this.route.snapshot.paramMap.get('id'));
+    this.jobId = this.route.snapshot.paramMap.get('id') as GUID | null;
     if (this.jobId) {
       this.loadJobDetails(this.jobId);
       this.staffInvitesService.getInvitesForJob(this.jobId).subscribe();
     }
   }
 
-  private loadJobDetails(jobId: number): void {
+  private loadJobDetails(jobId: GUID): void {
     this.staffInvitesService.getJobDetails(jobId).subscribe({
       next: (job) => {
         this.job.set(job);

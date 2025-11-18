@@ -2,9 +2,14 @@ import { Component, computed, signal, inject } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PointsConfig } from '../../models/points-config.model';
 import { JobService } from '../../services/job.service';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {TranslatePipe} from '@ngx-translate/core';
-import {FormsModule} from '@angular/forms';
+import { PointsConfigService } from '../../services/points-config.service';
+import { POINTS_CONFIG_CONSTANTS } from '../../constants/points-config.constants';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { GUID } from '../../../../shared/types/guid.type';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { PointsGroup } from '../../types/points-group.type';
 
 @Component({
   selector: 'app-points-config-modal',
@@ -19,102 +24,94 @@ import {FormsModule} from '@angular/forms';
 })
 export class PointsConfigModalComponent {
   private jobService = inject(JobService);
-
-  jobId: number;
+  private notificationService = inject(NotificationService);
+  private pointsConfigService = inject(PointsConfigService);
+  
+  readonly TOTAL_POINTS = POINTS_CONFIG_CONSTANTS.TOTAL_POINTS;
+  readonly groups = this.pointsConfigService.getGroupLabels();
+  
+  jobId: GUID;
   jobTitle: string;
-  pointsConfig = signal<PointsConfig>(this.getDefaultPointsConfig());
+  pointsConfig = signal<PointsConfig>(this.getInitialPointsConfig());
 
-  groups = ['degree', 'exp', 'langs', 'skills', 'avail', 'geo'] as const;
-
-  sumTotals = computed(() => Object.values(this.pointsConfig().totals).reduce((a, b) => a + b, 0));
+  // Computed signals with proper typing
+  sumTotals = computed(() => 
+    this.groups.reduce((sum, group) => sum + this.getTotalValue(group), 0)
+  );
+  
   groupSums = computed(() => {
-    const rubrics = this.pointsConfig().rubrics;
-    return this.groups.reduce((acc, key) => {
-      acc[key] = Object.values(rubrics[key]).reduce((a, b) => a + b, 0);
-      return acc;
-    }, {} as Record<typeof this.groups[number], number>);
+    const result: Record<PointsGroup, number> = {} as Record<PointsGroup, number>;
+    this.groups.forEach(group => {
+      result[group] = this.calculateGroupSum(group);
+    });
+    return result;
   });
+  
   isValid = computed(() => {
-    if (this.sumTotals() !== 1000) return false;
-    const totals = this.pointsConfig().totals;
-    return this.groups.every(key => this.groupSums()[key] === totals[key]);
+    if (this.sumTotals() !== this.TOTAL_POINTS) return false;
+    return this.groups.every(group => this.groupSums()[group] === this.getTotalValue(group));
   });
-
-  rubricLabels: Record<typeof this.groups[number], string> = {
-    degree: 'lbl_degree',
-    exp: 'lbl_experience',
-    langs: 'lbl_languages',
-    skills: 'lbl_skills',
-    avail: 'lbl_availability',
-    geo: 'lbl_geography'
-  };
 
   constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
     this.jobId = this.config.data.jobId;
     this.jobTitle = this.config.data.jobTitle;
-    this.pointsConfig.set(this.loadPointsConfig(this.jobId));
   }
 
-  updateTotal(key: typeof this.groups[number], value: number) {
+  // Type-safe methods for template access
+  updateTotal(group: PointsGroup, value: number) {
     this.pointsConfig.update(cfg => ({
       ...cfg,
-      totals: { ...cfg.totals, [key]: value }
+      totals: { ...cfg.totals, [group]: value }
     }));
   }
 
-  updateRubric(group: typeof this.groups[number], opt: string, value: number) {
+  updateRubric(group: PointsGroup, option: string, value: number) {
     this.pointsConfig.update(cfg => ({
       ...cfg,
       rubrics: {
         ...cfg.rubrics,
-        [group]: { ...cfg.rubrics[group], [opt]: value }
+        [group]: { ...cfg.rubrics[group], [option]: value }
       }
     }));
+  }
+
+  getTotalValue(group: PointsGroup): number {
+    return this.pointsConfigService.getTotalValue(this.pointsConfig(), group);
+  }
+
+  getRubricValue(group: PointsGroup, option: string): number {
+    return this.pointsConfigService.getRubricValue(this.pointsConfig(), group, option);
+  }
+
+  getRubricOptions(group: PointsGroup): string[] {
+    return this.pointsConfigService.getRubricOptions(this.pointsConfig(), group);
+  }
+
+  getRubricLabel(group: PointsGroup): string {
+    return this.pointsConfigService.getRubricLabel(group);
+  }
+
+  private calculateGroupSum(group: PointsGroup): number {
+    const rubricValues = this.pointsConfig().rubrics[group];
+    return Object.values(rubricValues).reduce((sum: number, value: number) => sum + value, 0);
   }
 
   async save() {
     if (this.isValid()) {
       try {
-        // Save to localStorage
-        this.savePointsConfig(this.jobId, this.pointsConfig());
-
-        // Call API to save job settings
         await this.jobService.saveJobPointsConfig(this.jobId, this.pointsConfig());
-
         this.ref.close(true);
       } catch (error) {
-        console.error(error);
-        // Handle error (show toast message, etc.)
+        this.notificationService.error(error as string);
       }
     }
   }
 
   resetToDefaults() {
-    this.pointsConfig.set(this.getDefaultPointsConfig());
+    this.pointsConfig.set(this.pointsConfigService.getDefaultPointsConfig());
   }
 
-  private getDefaultPointsConfig(): PointsConfig {
-    return {
-      totals: { degree: 250, exp: 200, langs: 150, skills: 150, avail: 100, geo: 150 },
-      rubrics: {
-        degree: { 'دكتوراه': 70, 'ماجستير': 60, 'بكالوريوس': 50, 'دبلوم': 35, 'ثانوي': 20, 'الإعدادية': 10, 'الابتدائية': 5 },
-        exp: { '10+': 60, '7-9': 50, '4-6': 40, '1-3': 30, '0-1': 20 },
-        langs: { ' لغتان': 60, 'لغة واحدة قوية': 45, 'لغة متوسطة': 30, 'أساسية': 15 },
-        skills: { '>=80%': 60, '60-79%': 45, '40-59%': 30, '<40%': 15 },
-        avail: { 'فوري+داخل قطر': 40, 'خلال شهر': 30, 'خارج الدولة': 20, 'غير متاح': 10 },
-        geo: { 'مطابق للسياسة': 70, 'أولوية': 50, 'عام': 30 }
-      }
-    };
+  private getInitialPointsConfig(): PointsConfig {
+    return  this.pointsConfigService.getDefaultPointsConfig();
   }
-
-  private loadPointsConfig(jobId: number): PointsConfig {
-    const stored = localStorage.getItem(`eduhire_points_cfg_${jobId}`);
-    return stored ? JSON.parse(stored) : this.getDefaultPointsConfig();
-  }
-
-  private savePointsConfig(jobId: number, config: PointsConfig) {
-    localStorage.setItem(`eduhire_points_cfg_${jobId}`, JSON.stringify(config));
-  }
-
-  protected readonly Object = Object;
 }

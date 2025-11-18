@@ -7,6 +7,7 @@ import { Profile } from '../models/profile.model';
 import { Application } from '../models/application.model';
 import {JobService} from '../../job/services/job.service';
 import {Job} from '../../job/models/job.model';
+import { GUID } from '../../../shared/types/guid.type';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,11 @@ export class StaffInvitesService {
   private _invites = signal<InviteDetails[]>([]);
   invites = this._invites.asReadonly();
 
-  getJobDetails(jobId: number): Observable<Job> {
+  getJobDetails(jobId: GUID): Observable<Job> {
     return this.jobService.loadJob(jobId);
   }
 
- getInvitesForJob(jobId: number): Observable<InviteDetails[]> {
+ getInvitesForJob(jobId: GUID): Observable<InviteDetails[]> {
     return forkJoin({
       invites: this.http.get<Invite[]>(`/api/invites?jobId=${jobId}`),
       profiles: this.http.get<Profile[]>('/api/profiles'),

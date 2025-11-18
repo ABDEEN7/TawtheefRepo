@@ -53,12 +53,23 @@
       "login": "Login",
       "needHelp": "Need Help?",
       "contactSupport": "Contact Support"
-    }
+    },
+    "pagination": {
+  "showing": "Showing",
+  "of": "of",
+  "results": "results",
+  "no_results": "No results found",
+  "previous": "Previous",
+  "next": "Next"
+}
   },
   "validation": {
     "requiredEmail": "Email is required.",
     "invalidEmail": "Please enter a valid email address.",
     "requiredPassword": "Password is required.",
-    "minLengthPassword": "Password must be at least {{min}} characters."
+    "minLengthPassword": "Password must be at least {{min}} characters.",
+    "warning":"Warning",
+    "add_job_skill_detail" : "Please state the skill before adding.",
+    "add_job_cond_detail" : "Please state the condition before adding."
   }
 }

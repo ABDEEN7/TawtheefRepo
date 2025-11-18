@@ -5,6 +5,7 @@ import {Job} from '../models/job.model';
 import {JobService} from '../services/job.service';
 import {NotificationService} from '../../../core/services/notification.service';
 import {ConfirmApplyModalComponent} from '../modals/confirm-apply-modal/confirm-apply-modal.component';
+import { GUID } from '../../../shared/types/guid.type';
 
 @Component({
   selector: 'app-job-details',
@@ -14,7 +15,7 @@ import {ConfirmApplyModalComponent} from '../modals/confirm-apply-modal/confirm-
 })
 export class JobDetailsComponent implements OnInit {
   job: Job | undefined;
-  id!: number;
+  id!: GUID;
 
   activeTab: string = 'desc';
   hasApplied: boolean = false;
@@ -25,7 +26,7 @@ export class JobDetailsComponent implements OnInit {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   ngOnInit() {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
+    this.id = this.route.snapshot.paramMap.get('id') as GUID;
     this.loadJobById();
   }
 

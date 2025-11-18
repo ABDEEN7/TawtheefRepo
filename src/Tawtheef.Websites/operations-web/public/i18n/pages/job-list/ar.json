@@ -1,6 +1,5 @@
 {
   "job_list": {
-
     "available_jobs": "الوظائف المتاحة",
     "review_edit_jobs": "استعرض وعدّل الوظائف المنشورة من خلال الجدول التالي.",
     "filters_title": "بحث وتصفية",
@@ -66,33 +65,32 @@
         "lbl_availability": "التوفر",
         "lbl_geography": "الموقع الجغرافي",
         "options": {
-          "doctorate": "دكتوراه",
-          "masters": "ماجستير",
-          "bachelors": "بكالوريوس",
-          "diploma": "دبلوم",
-          "secondary": "ثانوي",
-          "preparatory": "الإعدادية",
-          "primary": "الابتدائية",
-          "10plus": "10+",
-          "7to9": "7-9",
-          "4to6": "4-6",
-          "1to3": "1-3",
-          "0to1": "0-1",
-          "twoLanguages": "C1+ لغتان",
-          "oneStrong": "لغة واحدة قوية",
-          "intermediate": "لغة متوسطة",
-          "basic": "أساسية",
-          "80plus": ">=80%",
-          "60to79": "60-79%",
-          "40to59": "40-59%",
-          "below40": "<40%",
-          "immediate": "فوري+داخل قطر",
-          "oneMonth": "خلال شهر",
-          "outsideCountry": "خارج الدولة",
-          "notAvailable": "غير متاح",
-          "matchingPolicy": "مطابق للسياسة",
-          "priority": "أولوية",
-          "general": "عام"
+          "degree": {
+            "phd": "دكتوراه",
+            "masters": "ماجستير",
+            "bachelor": "بكالوريوس",
+            "diploma": "دبلوم",
+            "high_school": "ثانوي",
+            "preparatory": "الإعدادية",
+            "elementary": "الابتدائية"
+          },
+          "langs": {
+            "two_languages": "لغتان",
+            "one_strong_language": "لغة واحدة قوية",
+            "medium_language": "لغة متوسطة",
+            "basic": "أساسية"
+          },
+          "avail": {
+            "immediate_inside_qatar": "فوري + داخل قطر",
+            "within_month": "خلال شهر",
+            "outside_country": "خارج الدولة",
+            "not_available": "غير متاح"
+          },
+          "geo": {
+            "policy_match": "مطابق للسياسة",
+            "priority": "أولوية",
+            "general": "عام"
+          }
         }
       }
     }
