@@ -6,7 +6,6 @@ using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +21,7 @@ using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -59,9 +59,6 @@ namespace Tawtheef.Infrastructure
     /// </summary>
     public static class DependencyInjectionExtensions
     {
-        const string Smart = "Smart";
-        const string AzureOidc = "AzureOIDC";
-        const string AppCookieName = ".tawtheef.auth";
         /// <summary>
         /// Registers all infrastructure services (DB, repos, auth, notifications, storage, etc).
         /// </summary>
@@ -203,19 +200,18 @@ namespace Tawtheef.Infrastructure
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyRaw));
 
             services.AddAuthentication(options => {
-                    options.DefaultScheme = Smart;
-                    options.DefaultAuthenticateScheme = Smart;
-                    options.DefaultChallengeScheme = Smart;
+                    options.DefaultScheme = AuthSchemes.Smart;
+                    options.DefaultAuthenticateScheme = AuthSchemes.Smart;
+                    options.DefaultChallengeScheme = AuthSchemes.Smart;
                 })
-                .AddPolicyScheme(Smart, "Cookie or Bearer", o => {
+                .AddPolicyScheme(AuthSchemes.Smart, "Cookie or Bearer", o => {
                     o.ForwardDefaultSelector = ctx =>
                         ctx.Request.Headers.TryGetValue("Authorization", out var h) &&
                         h.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
-                            ? JwtBearerDefaults.AuthenticationScheme
-                            : CookieAuthenticationDefaults.AuthenticationScheme;
+                            ? JwtBearerDefaults.AuthenticationScheme : AuthSchemes.AppCookieScheme;
                 })
-                .AddCookie(o => {
-                    o.Cookie.Name = AppCookieName;
+                .AddCookie(AuthSchemes.AppCookieScheme,o => {
+                    o.Cookie.Name = AuthSchemes.AppCookieName;
                     o.Cookie.SameSite = SameSiteMode.None;
                     o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     o.SlidingExpiration = true;
@@ -293,9 +289,10 @@ namespace Tawtheef.Infrastructure
             {
                 services.AddAuthentication()
                     .AddMicrosoftIdentityWebApp(configuration, "Authentication:Azure",
-                        openIdConnectScheme: AzureOidc);
+                        openIdConnectScheme: AuthSchemes.AzureOidc,
+                        cookieScheme: AuthSchemes.AzureCookies);
 
-                services.PostConfigure<OpenIdConnectOptions>(AzureOidc, o => {
+                services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o => {
                     o.SignInScheme = IdentityConstants.ExternalScheme;
                     o.ResponseType = OpenIdConnectResponseType.Code;
                     o.SaveTokens = true;
