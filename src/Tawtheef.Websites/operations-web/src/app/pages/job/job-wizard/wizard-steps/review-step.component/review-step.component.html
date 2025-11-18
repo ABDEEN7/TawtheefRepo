@@ -1,0 +1,93 @@
+<!-- src/app/components/steps/review-step.component/review-step.component.html -->
+<div class="card card-lite p-3 mb-3">
+  <h6 class="mb-3 text-brand fw-bold">{{ 'job_wizard.steps.basics.title' | translate }}</h6>
+
+  <div id="reviewArea" class="row g-3">
+    <!-- Basics -->
+    <div class="col-lg-6">
+      <div class="review-card">
+        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.basics' | translate }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.job_title' | translate }}</div><div class="mb-1 fw-bold">{{ jobSignal().basics.title || '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.job_category' | translate }}</div><div class="mb-1">{{ jobSignal().basics.jobCategory ? ('job_wizard.steps.basics.categories.' + jobSignal().basics.jobCategory | translate) : '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.gender' | translate }}</div>
+        <div class="mb-1">
+          @switch (jobSignal().basics.gender) {
+            @case ('all') { {{ 'job_wizard.steps.basics.genders.all' | translate }} }
+            @case ('male') { {{ 'job_wizard.steps.basics.genders.male' | translate }} }
+            @case ('female') { {{ 'job_wizard.steps.basics.genders.female' | translate }} }
+            @default { — }
+          }
+        </div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ jobSignal().basics.entity ? ('job_wizard.steps.basics.entities.' + jobSignal().basics.entity | translate) : '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ jobSignal().basics.degree.join('، ') || '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ jobSignal().basics.major || '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ jobSignal().basics.typeOfWork ? ('job_wizard.steps.basics.work_types.' + jobSignal().basics.typeOfWork | translate) : '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.vacancies' | translate }}</div><div class="mb-1">{{ jobSignal().basics.vacancies || '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.deadline' | translate }}</div><div class="mb-1">{{ jobSignal().basics.deadline ? (jobSignal().basics.deadline | date:'mediumDate') : '—' }}</div>
+      </div>
+    </div>
+
+    <!-- Quotas -->
+    <div class="col-lg-6">
+      <div class="review-card">
+        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.quotas' | translate }}</div>
+        <div class="d-flex flex-wrap gap-1">
+          <span class="chip">{{ 'job_wizard.steps.quotas.qatariCitizens' | translate }}: {{ jobSignal().quotas.qatariCitizens || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.qatarMother' | translate }}: {{ jobSignal().quotas.qatarMother || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.nonQatariSpouse' | translate }}: {{ jobSignal().quotas.nonQatariSpouse || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.gcc' | translate }}: {{ jobSignal().quotas.gcc || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.quGrads' | translate }}: {{ jobSignal().quotas.quGrads || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.residents' | translate }}: {{ jobSignal().quotas.residents || 0 }}%</span>
+        </div>
+        @if (jobSignal().quotas.residentsBreakdown.length) {
+          <div class="small-muted mt-2">{{ 'job_wizard.steps.quotas.residents_details_button' | translate }}</div>
+          <div class="d-flex flex-wrap gap-1">
+            @for (r of jobSignal().quotas.residentsBreakdown; track r.nat) {
+              <span class="chip">{{ r.nat }}: {{ r.pct }}%</span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Conditions -->
+    <div class="col-lg-6">
+      <div class="review-card">
+        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.conditions' | translate }}</div>
+        @if (jobSignal().conditions.length) {
+          <ul class="mb-0">
+            @for (c of jobSignal().conditions; track c) { <li>{{ c }}</li> }
+          </ul>
+        } @else { <p>—</p> }
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="col-lg-6">
+      <div class="review-card">
+        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.skills' | translate }}</div>
+        @if (jobSignal().skills.length) {
+          <ul class="mb-0">
+            @for (s of jobSignal().skills; track s) { <li>{{ s }}</li> }
+          </ul>
+        } @else { <p>—</p> }
+      </div>
+    </div>
+
+    <!-- Description & Benefits -->
+    <div class="col-lg-12">
+      <div class="review-card">
+        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.description_benefits' | translate }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.description_benefits.description' | translate }}</div><div class="mb-2">{{ jobSignal().description || '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.description_benefits.benefits' | translate }}</div><div>{{ jobSignal().benefits || '—' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="d-flex justify-content-end gap-2 mt-3">
+    <button class="btn btn-outline-brand rounded-pill" (click)="downloadPdf()">
+      <i class="fa fa-file-arrow-down"></i> {{ 'job_wizard.steps.review.download_pdf' | translate }}
+    </button>
+  </div>
+</div>

@@ -1,9 +1,9 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 import {PublicLayout} from './layouts/public-layout/public-layout';
 import {UserLayout} from './layouts/user-layout/user-layout';
 import {loggedOutOnlyGuard} from './core/auth/route-guards';
-import { ProfileList } from './pages/profile-list/profile-list'
-import { JobInvitationSummary } from './pages/job-invitation-summary/job-invitation-summary'
+import {ProfileList} from './pages/profile-list/profile-list'
+import {JobInvitationSummary} from './pages/job-invitation-summary/job-invitation-summary'
 
 export const routes: Routes = [
   {
@@ -13,6 +13,14 @@ export const routes: Routes = [
       {
         path: '',
         loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+      },
+      {
+        path: 'jobs',
+        loadChildren: () => import('./pages/job/jobs.module').then(m => m.JobsModule),
+      },
+      {
+        path: 'invites',
+        loadChildren: () => import('./pages/invites/invites.module').then(m => m.InvitesModule),
       },
       {
         path: 'auth',
@@ -38,8 +46,8 @@ export const routes: Routes = [
       // },
     ],
   },
-  { path: 'profile-list', component: ProfileList },
-  { path: 'job-invitation-summary', component: JobInvitationSummary },
+  {path: 'profile-list', component: ProfileList},
+  {path: 'job-invitation-summary', component: JobInvitationSummary},
   // Fallback
-  { path: '**', redirectTo: 'error/404' },
+  {path: '**', redirectTo: 'error/404'},
 ];

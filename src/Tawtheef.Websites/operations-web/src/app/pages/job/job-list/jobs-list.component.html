@@ -1,0 +1,147 @@
+<section i18nNamespace="pages/job-list">
+  <header
+    class="py-3"
+    style="background: radial-gradient(1200px 400px at 50% -50%, #ffe9ef, transparent 70%)"
+  >
+    <div class="container d-flex align-items-center justify-content-between">
+      <div>
+        <h4 class="mb-1 text-brand fw-bold">{{ 'job_list.available_jobs' | translate }}</h4>
+        <div class="small-muted">{{ 'job_list.review_edit_jobs' | translate }}</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="py-4">
+    <div class="container">
+      <!-- Filters -->
+      <div class="card card-lite p-3 mb-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+          <div class="filter-title">{{ 'job_list.filters_title' | translate }}</div>
+          <div class="small-muted">{{ 'job_list.filters_hint' | translate }}</div>
+        </div>
+        <div class="row g-2">
+          <div class="col-lg-4 col-md-6">
+            <input
+              class="form-control"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="searchQuery.set($event); onFilterChange()"
+              [placeholder]="'job_list.filters_search_placeholder' | translate"
+            />
+          </div>
+          <div class="col-lg-2 col-md-4">
+            <select
+              class="form-select"
+              [ngModel]="filterType()"
+              (ngModelChange)="filterType.set($event); onFilterChange()"
+            >
+              <option value="">{{ 'job_list.job.job_category' | translate }}</option>
+              @for (type of jobCategories | keyvalue; track type.key) {
+                <option [value]="type.value">
+                  {{ 'job_list.' + type.value | translate }}
+                </option>
+              }
+            </select>
+          </div>
+          <div class="col-lg-2 col-md-4">
+            <select
+              class="form-select"
+              [ngModel]="filterStatus()"
+              (ngModelChange)="filterStatus.set($event); onFilterChange()"
+            >
+              <option value="">{{ 'job_list.filters_select_status' | translate }}</option>
+              @for (status of jobStatuses | keyvalue; track status.key) {
+                <option [value]="status.value">
+                  {{ 'job_list.' + status.value | translate }}
+                </option>
+              }
+            </select>
+          </div>
+          <div class="col-lg-4 col-md-4 d-flex align-items-stretch">
+            <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+              <i class="fa fa-rotate-left"></i>
+              {{ 'job_list.buttons.clear_filters' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card card-lite p-2">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>{{ 'job_list.job.title' | translate }}</th>
+              <th>{{ 'job_list.job.requesting_dept' | translate }}</th>
+              <th>{{ 'job_list.job.job_category' | translate }}</th>
+              <th>{{ 'job_list.job.vacancies' | translate }}</th>
+              <th>{{ 'job_list.job.status' | translate }}</th>
+              <th class="text-end">{{ 'job_list.points_settings' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (job of pagedJobs(); track job.id; let i = $index) {
+                <tr>
+                  <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
+                  <td class="fw-bold">{{ job.basics.title | translate }}</td>
+                  <td>{{ job.basics.requestingDept || '—' | translate }}</td>
+                  <td>
+                <span class="badge-soft {{ job.basics.jobCategory }}">
+                  {{ 'job_list.' + job.basics.jobCategory | translate }}
+                </span>
+                  </td>
+                  <td>{{ job.basics.vacancies || 0 }}</td>
+                  <td>
+                <span class="status-pill status-{{ job.status }}">
+                  {{ 'job_list.' + job.status | translate }}
+                </span>
+                  </td>
+                  <td class="text-end">
+                    <div class="btn-group" role="group">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary me-1"
+                        (click)="openPointsModal(job)"
+                        [title]="'job_list.points_title' | translate"
+                      >
+                        <i class="fa fa-gear"></i> {{ 'job_list.buttons.list_points' | translate }}
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-brand me-1"
+                        (click)="editJob(job)"
+                        [title]="'job_list.buttons.edit_title' | translate"
+                      >
+                        <i class="fa fa-pen-to-square"></i> {{ 'job_list.buttons.edit' | translate }}
+                      </button>
+                      <a
+                        [routerLink]="['/jobs/view', job.id]"
+                        class="btn btn-sm btn-outline-gray"
+                        [title]="'job_list.buttons.view_job' | translate"
+                      >
+                        <i class="fa fa-eye"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="text-center py-3">{{ 'job_list.no_jobs' | translate }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalItems]="filteredJobs().length"
+          [itemsPerPage]="itemsPerPage"
+          (pageChanged)="onPageChange($event)"
+        >
+        </app-pagination>
+      </div>
+    </div>
+  </main>
+</section>

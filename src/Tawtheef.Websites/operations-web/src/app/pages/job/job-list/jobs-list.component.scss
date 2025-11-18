@@ -1,0 +1,210 @@
+/* Root Variables */
+:root {
+  --brand: #7b1e3a;
+  --accent: #a9445f;
+  --muted: #6b7280;
+  --text: #1e1b2c;
+  --card: #fafafa;
+  --border: rgba(0, 0, 0, .08);
+}
+
+/* Base */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #fff;
+  color: var(--text);
+  font-family: 'Cairo', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  line-height: 1.7;
+}
+
+/* Utilities */
+.text-brand {
+  color: var(--brand);
+}
+
+.small-muted {
+  color: var(--muted);
+  font-size: .95rem;
+}
+
+/* Buttons */
+.btn-brand,
+.btn-outline-brand,
+.btn-outline-gray,
+.btn-outline-secondary {
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+/* Primary Brand Button */
+.btn-brand {
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  border: none;
+  color: #fff;
+  transition: all .2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(123, 30, 58, .28);
+  }
+}
+
+/* Brand Outline Button */
+.btn-outline-brand {
+  border: 1px solid var(--brand);
+  color: var(--brand);
+
+  &:hover {
+    background: var(--brand);
+    color: #fff;
+  }
+}
+
+/* Gray Outline Button */
+.btn-outline-gray {
+  border: 1px solid var(--muted);
+  color: var(--muted);
+
+  &:hover {
+    background: var(--muted);
+    color: #fff;
+  }
+}
+
+/* Accent Outline (secondary) */
+.btn-outline-secondary {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+
+  &:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+}
+
+/* Navbar */
+.navbar {
+  background: #fff;
+}
+
+/* Cards */
+.card-lite,
+.rubric-card {
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.card-lite {
+  border-radius: 14px;
+}
+
+.rubric-card {
+  border-radius: 12px;
+}
+
+/* Chips */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .25rem .6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  margin: .15rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+/* Status Dot */
+.status-dot {
+  width: .55rem;
+  height: .55rem;
+  border-radius: 999px;
+  display: inline-block;
+  margin-left: .35rem;
+}
+
+.dot-open   { background: #16a34a; }
+.dot-draft  { background: #6b7280; }
+.dot-closed { background: #dc2626; }
+
+/* Filter Title */
+.filter-title {
+  font-weight: 800;
+  color: var(--brand);
+}
+
+/* Table */
+.table thead th {
+  white-space: nowrap;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  background: #fff7f9;
+}
+
+/* Badges */
+.badge-soft {
+  background: transparent !important;
+  border: none !important;
+  font-weight: 700;
+  padding: 0;
+}
+
+.badge-soft.academic       { color: #1d4ed8; }
+.badge-soft.administrative { color: #047857; }
+.badge-soft.labor          { color: #b91c1c; }
+
+/* Status Pills */
+.status-pill {
+  display: inline-block;
+  padding: .25rem .6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: .9rem;
+}
+
+.status-open {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid rgba(6, 95, 70, .15);
+}
+
+.status-draft {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid rgba(55, 65, 81, .15);
+}
+
+.status-closed {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid rgba(153, 27, 27, .18);
+}
+
+/* Sticky Points Footer */
+.points-sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  padding: .75rem 1rem;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+/* Footer */
+.footer {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+}

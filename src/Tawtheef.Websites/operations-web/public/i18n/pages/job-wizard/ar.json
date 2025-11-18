@@ -1,0 +1,178 @@
+{
+  "job_wizard": {
+    "status": "حالة الوظيفة",
+    "create_job": "إنشاء وظيفة جديدة",
+    "enter_details": "أدخل التفاصيل عبر الخطوات التالية ثم انشر الوظيفة",
+    "edit_job": "تعديل الوظيفة",
+    "edit_details": "تعديل تفاصيل ومتطلبات الوظيفة",
+
+    "navigation": {
+      "wizard_steps": {
+        "basics": "الأساسيات",
+        "quotas": "النسب حسب الجنسية",
+        "conditions": "الشروط",
+        "skills": "المهارات",
+        "description_benefits": "الوصف والمزايا",
+        "review": "المراجعة والنشر"
+      }
+    },
+
+    "shared": {
+      "buttons": {
+        "add": "إضافة",
+        "cancel": "إلغاء",
+        "confirm": "تأكيد",
+        "publish_job": "نشر الوظيفة",
+        "save": "حفظ",
+        "next": "التالي",
+        "back": "السابق",
+        "edit_job": "تعديل الوظيفة"
+      },
+      "placeholders": {
+        "search_select": "اكتب للبحث ثم اختر",
+        "enter_text": "أدخل النص",
+        "select_option": "اختر خيارًا",
+        "enter_number": "أدخل رقمًا"
+      }
+    },
+
+    "validation": {
+      "total_100_percent": "المجموع يجب أن يساوي 100%",
+      "min_vacancies": "يجب أن يكون عدد الشواغر على الأقل واحد",
+      "add_job_skill_detail": "الرجاء إدخال مهارة قبل الإضافة",
+      "add_job_cond_detail": "الرجاء إدخال شرط قبل الإضافة",
+      "sum_hint": "المجموع يُفضّل أن يساوي 100% قبل النشر.",
+      "sum_label": "المجموع",
+      "sum_state": "(المجموع يجب أن يساوي 100%)",
+      "sum_valid": "(مكتمل)"
+    },
+
+    "steps": {
+      "basics": {
+        "title": "الأساسيات",
+        "select_type": "اختر النوع",
+        "requesting_dept": "الجهة الطالبة للوظيفة",
+        "requesting_dept_placeholder": "اكتب للبحث ثم اختر الإدارة",
+        "requesting_dept_hint": "يمكنك الكتابة للبحث ثم اختيار الإدارة من القائمة.",
+        "job_title": "المسمى الوظيفي",
+        "job_title_placeholder": "أدخل المسمى الوظيفي",
+        "job_category": "نوع الوظيفة",
+        "job_category_placeholder": "اختر النوع",
+        "categories": {
+          "academic": "أكاديمية",
+          "administrative": "إدارية",
+          "labor": "عمالية"
+        },
+        "gender": "الجنس",
+        "genders": {
+          "all": "الكل",
+          "male": "ذكر",
+          "female": "أنثى"
+        },
+        "work_entity": "مكان العمل",
+        "work_entity_placeholder": "اختر مكان العمل",
+        "entities": {
+          "schools": "المدارس",
+          "ministry": "الوزارة"
+        },
+        "major": "التخصص",
+        "major_placeholder": "اكتب للبحث ثم اختر التخصص",
+        "degree": "الدرجة العلمية (اختيار متعدد)",
+        "degree_placeholder": "اختر درجة أو أكثر...",
+        "work_type": "نوع الدوام",
+        "work_type_placeholder": "اختر نوع الدوام",
+        "work_types": {
+          "full": "دوام كامل",
+          "part": "دوام جزئي"
+        },
+        "vacancies": "عدد الشواغر",
+        "vacancies_placeholder": "مثال: 3",
+        "deadline": "تاريخ الإغلاق"
+      },
+
+      "quotas": {
+        "title": "النسبة المستهدفة حسب الجنسية",
+        "qatariCitizens": "المواطنون القطريون (%)",
+        "qatarMother": "أبناء المرأة القطرية المتزوجة من غير قطري (%)",
+        "nonQatariSpouse": "الزوج غير القطري المتزوج من قطرية أو قطري (%)",
+        "gcc": "مواطنو دول مجلس التعاون الخليجي (%)",
+        "quGrads": "خريجو جامعة قطر (%)",
+        "residents": "مقيم في دولة قطر (%)",
+        "residents_details_button": "تفصيل المقيمين"
+      },
+
+      "conditions": {
+        "title": "الشروط",
+        "placeholder": "أدخل شرطًا واضحًا (مثال: مستوى لغة C1 أو أعلى)",
+        "empty_state": "لا توجد شروط بعد",
+        "add_condition": "إضافة شرط"
+      },
+
+      "skills": {
+        "title": "المهارات المطلوبة",
+        "placeholder": "أدخل مهارة جديدة",
+        "empty_state": "لا توجد مهارات بعد",
+        "add_skill": "إضافة مهارة"
+      },
+
+      "description_benefits": {
+        "title": "الوصف والمزايا",
+        "description": "الوصف",
+        "description_placeholder": "أدخل وصف الوظيفة...",
+        "benefits": "المزايا",
+        "benefits_placeholder": "أدخل مزايا الوظيفة...",
+        "responsibilities": "المسؤوليات الأساسية",
+        "responsibilities_placeholder": "أدخل المسؤوليات الأساسية..."
+      },
+
+      "review": {
+        "title": "المراجعة والنشر",
+        "download_pdf": "تحميل PDF",
+        "sections": {
+          "basics": "البيانات الأساسية",
+          "quotas": "النسبة المستهدفة حسب الجنسية",
+          "conditions": "الشروط",
+          "skills": "المهارات المطلوبة",
+          "description_benefits": "الوصف والمزايا"
+        }
+      }
+    },
+
+    "modals": {
+      "residents": {
+        "title": "تفصيل نسب المقيمين حسب الجنسية",
+        "description": "أضف أو عدّل نسب المقيمين لكل جنسية بحيث يساوي مجموعها نسبة \"المقيمين\" المحددة في الخطوة السابقة.",
+        "nationality": "الجنسية",
+        "percent": "النسبة",
+        "empty_state": "لا توجد نسب بعد",
+        "total": "مجموع تفصيل المقيمين",
+        "btn_add": "إضافة",
+        "close": "إغلاق",
+        "save": "حفظ التفصيل"
+      }
+    },
+
+    "notifications": {
+      "success": {
+        "job_created": "تم إنشاء الوظيفة بنجاح",
+        "job_published": "تم نشر الوظيفة بنجاح"
+      },
+      "errors": {
+        "server_error": "حدث خطأ في الخادم"
+      },
+      "warning": "تحذير"
+    }
+  },
+
+  "sum_state": "(المجموع يجب أن يساوي 100%)",
+  "sum_valid": "(مكتمل)",
+  "steps": {
+    "skills": {
+      "placeholder": "أدخل مهارة جديدة"
+    }
+  },
+  "PhD": "دكتوراه",
+  "Masters": "ماجستير",
+  "Bachelors": "بكالوريوس",
+  "PhD، Masters": "دكتوراه، ماجستير"
+}

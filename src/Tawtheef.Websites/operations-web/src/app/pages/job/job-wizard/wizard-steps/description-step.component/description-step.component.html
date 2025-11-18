@@ -1,0 +1,24 @@
+<!-- description-step.component.html -->
+<form [formGroup]="form">
+  <div class="card card-lite p-3 mb-3">
+    <h6 class="mb-3 text-brand fw-bold">{{ 'job_wizard.steps.description_benefits.title' | translate }}</h6>
+    <div class="row g-3">
+      <div class="col-lg-6 col-md-12">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.description_benefits.description' | translate }}</label>
+        <textarea formControlName="desc" class="form-control" rows="10"
+                  placeholder="{{ 'job_wizard.steps.description_benefits.description_placeholder' | translate }}"></textarea>
+        @if (form.controls.desc.touched && form.controls.desc.invalid) {
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
+        }
+      </div>
+      <div class="col-lg-6 col-md-12">
+        <label class="form-label fw-bold">{{ 'job_wizard.steps.description_benefits.benefits' | translate }}</label>
+        <textarea formControlName="benefits" class="form-control" rows="10"
+                  placeholder="{{ 'job_wizard.steps.description_benefits.benefits_placeholder' | translate }}"></textarea>
+        @if (form.controls.benefits.touched && form.controls.benefits.invalid) {
+          <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
+        }
+      </div>
+    </div>
+  </div>
+</form>

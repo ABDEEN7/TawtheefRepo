@@ -1,0 +1,98 @@
+{
+  "job_list": {
+    "available_jobs": "الوظائف المتاحة",
+    "review_edit_jobs": "استعرض وعدّل الوظائف المنشورة من خلال الجدول التالي.",
+    "filters_title": "بحث وتصفية",
+    "filters_hint": "اكتب كلمات مفتاحية أو استخدم المرشّحات.",
+    "filters_search_placeholder": "بحث بالكلمات (المسمى، الجهة الطالبة...)",
+    "filters_select_status": "الحالة",
+    "points_settings": "إعدادات النقاط",
+    "points_title": "إعداد النقاط",
+    "points": "النقاط",
+    "no_jobs": "لا توجد وظائف",
+    "total_matching": "إجمالي مطابق",
+    "academic": "أكاديمية",
+    "administrative": "إدارية",
+    "labor": "عمالية",
+    "open": "مفتوحة",
+    "closed": "مغلقة",
+    "draft": "مسودة",
+    "job": {
+      "title": "المسمى الوظيفي",
+      "requesting_dept": "الجهة الطالبة للوظيفة",
+      "job_category": "نوع الوظيفة",
+      "vacancies": "عدد الشواغر",
+      "status": "حالة الوظيفة"
+    },
+    "buttons": {
+      "clear_filters": "إلغاء التصفية (عرض الكل)",
+      "edit_title": "تعديل",
+      "edit": "تعديل",
+      "view_job": "عرض الوظيفة",
+      "previous": "السابق",
+      "next": "التالي",
+      "list_points": "النقاط",
+      "save": "حفظ",
+      "reset_defaults": "إعادة إلى الافتراضيات"
+    },
+    "steps_basics": {
+      "type_value": "نوع الوظيفة"
+    },
+    "status": {
+      "job_status": "حالة الوظيفة",
+      "status_value": "الحالة"
+    },
+
+    "modals": {
+      "points": {
+        "title": "إعدادات النقاط و جداول المفاضلة",
+        "max_limit": "حد أقصى",
+        "points_table": "جدول النقاط",
+        "rubric_hint": "يجب أن يساوي مجموع هذا الجدول الحد الأقصى للبند أعلاه",
+        "save_hint": "يتم حفظ الإعدادات لهذه الوظيفة فقط"
+      },
+      "rubrics": {
+        "degree": "المؤهل",
+        "experience": "الخبرة",
+        "languages": "اللغات",
+        "skills": "المهارات",
+        "availability": "التوفر",
+        "location": "الموقع والجنسية",
+        "lbl_degree": "المؤهل",
+        "lbl_experience": "الخبرة",
+        "lbl_languages": "اللغات",
+        "lbl_skills": "المهارات",
+        "lbl_availability": "التوفر",
+        "lbl_geography": "الموقع الجغرافي",
+        "options": {
+          "degree": {
+            "phd": "دكتوراه",
+            "masters": "ماجستير",
+            "bachelor": "بكالوريوس",
+            "diploma": "دبلوم",
+            "high_school": "ثانوي",
+            "preparatory": "الإعدادية",
+            "elementary": "الابتدائية"
+          },
+          "langs": {
+            "two_languages": "لغتان",
+            "one_strong_language": "لغة واحدة قوية",
+            "medium_language": "لغة متوسطة",
+            "basic": "أساسية"
+          },
+          "avail": {
+            "immediate_inside_qatar": "فوري + داخل قطر",
+            "within_month": "خلال شهر",
+            "outside_country": "خارج الدولة",
+            "not_available": "غير متاح"
+          },
+          "geo": {
+            "policy_match": "مطابق للسياسة",
+            "priority": "أولوية",
+            "general": "عام"
+          }
+        }
+      }
+    }
+  }
+}

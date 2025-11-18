@@ -1,0 +1,150 @@
+<section i18nNamespace="pages/staff-invites-details">
+
+<header class="py-3 header-hero">
+  <div class="container d-flex align-items-center justify-content-between">
+    <div>
+      <h4 class="mb-1 text-brand fw-bold">
+        {{ 'staff_invites_details.invites_details' | translate }}—
+        <span>{{ job()?.basics?.title }}</span>
+      </h4>
+      <div class="text-muted small">{{ 'staff_invites_details.page_description' | translate }}</div>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      @if (job(); as currentJob) {
+      <span [class]="getTypeClass(currentJob.basics.typeOfWork)">
+        {{ 'staff_invites_details.entities.' + currentJob.basics.entity | translate }} —
+        {{ getJobStatusLabel(currentJob.status) | translate }}
+      </span>
+      }
+      <span class="badge rounded-pill text-bg-light border">
+        {{ 'staff_invites_details.total_invites' | translate }}: {{ kpis().total }}
+      </span>
+    </div>
+  </div>
+</header>
+
+<main class="py-4">
+  <div class="container">
+    <!-- KPIs -->
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center">
+          <div class="small text-muted">{{ 'staff_invites_details.kpi.applied' | translate }}</div>
+          <div class="h4 fw-bold text-success">{{ kpis().applied }}</div>
+          <div class="small text-muted">{{ kpis().appliedPct }}%</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center">
+          <div class="small text-muted">{{ 'staff_invites_details.kpi.declined' | translate }}</div>
+          <div class="h4 fw-bold text-danger">{{ kpis().declined }}</div>
+          <div class="small text-muted">{{ kpis().declinedPct }}%</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center">
+          <div class="small text-muted">{{ 'staff_invites_details.kpi.viewed' | translate }}</div>
+          <div class="h4 fw-bold text-secondary">{{ kpis().viewed }}</div>
+          <div class="small text-muted">{{ kpis().viewedPct }}%</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center">
+          <div class="small text-muted">{{ 'staff_invites_details.kpi.unseen' | translate }}</div>
+          <div class="h4 fw-bold text-primary">{{ kpis().unseen }}</div>
+          <div class="small text-muted">{{ kpis().unseenPct }}%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm p-3 mb-3">
+      <div class="row g-2 search-bar">
+        <div class="col-md-4">
+          <label class="form-label fw-bold small mb-1">{{
+            'staff_invites_details.filters.status' | translate
+          }}</label>
+          <select
+            class="form-select form-select-sm"
+            [value]="statusFilter()"
+            (change)="onStatusFilterChange($event)"
+          >
+            @for (option of filterOptions(); track option.value) {
+            <option [value]="option.value">
+              {{ 'staff_invites_details.filters.' + option.label | translate }}
+            </option>
+            }
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold small mb-1">{{
+            'staff_invites_details.filters.search' | translate
+          }}</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [placeholder]="'staff_invites_details.filters.search_placeholder' | translate"
+            [ngModel]="searchFilter()"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </div>
+        <div class="col-md-4 d-flex align-items-end justify-content-end">
+          <button (click)="clearFilters()" class="btn btn-outline-secondary btn-sm rounded-pill">
+            <i class="fa fa-rotate-left"></i>
+            {{ 'staff_invites_details.filters.clear' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>{{ 'staff_invites_details.table.candidate' | translate }}</th>
+              <th>{{ 'staff_invites_details.table.nationality' | translate }}</th>
+              <th>{{ 'staff_invites_details.table.phone' | translate }}</th>
+              <th>{{ 'staff_invites_details.table.status' | translate }}</th>
+              <th>{{ 'staff_invites_details.table.sent_date' | translate }}</th>
+              <th>{{ 'staff_invites_details.table.applied_date' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (paginatedInvites().length === 0) {
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">
+                {{ 'staff_invites_details.table.no_invites' | translate }}
+              </td>
+            </tr>
+            } @else { @for (invite of paginatedInvites(); track invite.id; let i = $index) {
+            <tr>
+              <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
+              <td class="fw-bold">{{ invite.profile.name }}</td>
+              <td>{{ invite.profile.nationality | translate }}</td>
+              <td>{{ invite.profile.phone }}</td>
+              <td>
+                <span [class]="'status-pill ' + getStatusClass(invite.status)">
+                  {{ getStatusLabel(invite.status) | translate }}
+                </span>
+              </td>
+              <td>{{ invite.sentAt | date : 'dd/MM/yyyy' }}</td>
+              <td>{{ invite.application?.appliedAt | date : 'dd/MM/yyyy' }}</td>
+            </tr>
+            } }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+<app-pagination
+  [currentPage]="currentPage()"
+  [totalItems]="filteredInvites().length"
+  [itemsPerPage]="itemsPerPage"
+  (pageChanged)="onPageChange($event)">
+</app-pagination>
+  </div>
+</main>
+</section>

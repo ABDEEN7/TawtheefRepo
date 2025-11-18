@@ -53,12 +53,22 @@
       "login": "تسجيل الدخول",
       "needHelp": "تحتاج مساعدة؟",
       "contactSupport": "اتصل بالدعم"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من",
+      "results": "نتيجة",
+      "no_results": "لا توجد نتائج",
+      "previous": "السابق",
+      "next": "التالي"
     }
   },
   "validation": {
     "requiredEmail": "البريد الإلكتروني مطلوب.",
     "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
     "requiredPassword": "كلمة المرور مطلوبة.",
-    "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل."
+    "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل.",
+    "required_filed": "هذا الحقل مطلوب",
+    "invalid_format": "التنسيق غير صحيح"
   }
 }

@@ -1,11 +1,11 @@
 @use "bootstrap/scss/bootstrap";
 @use "styles/tokens";
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
 
 body {
-  background:
-    radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%),
-    #fff;
+  background: radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%),
+  #fff;
   color: var(--text);
   line-height: 1.7;
-  font-family:'Cairo', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }

@@ -1,0 +1,91 @@
+<section i18nNamespace="pages/job-wizard">
+<div class="modal-content">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="fa fa-sliders"></i>
+      {{ 'job_list.modals.points.title' | translate }} —
+      <span class="fw-bold">{{ jobTitle }}</span>
+      <span class="badge ms-2 "
+            [class.bg-success]="sumTotals() === TOTAL_POINTS"
+            [class.bg-danger]="sumTotals() !== TOTAL_POINTS">
+        {{ sumTotals() }}/{{ TOTAL_POINTS }}
+      </span>
+    </h5>
+    <button type="button" class="btn-close btn-close-white" (click)="ref.close()" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Totals Section -->
+    <div class="modal-grid">
+      @for (group of groups; track group) {
+        <div class="modal-col-4">
+          <label class="form-label">
+            {{ 'job_list.modals.rubrics.' + getRubricLabel(group) | translate }} ({{ 'job_list.modals.points.max_limit' | translate }})
+          </label>
+          <div class="input-group">
+            <input type="number"
+                   class="form-control"
+                   [ngModel]="getTotalValue(group)"
+                   (ngModelChange)="updateTotal(group, $event)"
+                   min="0"
+                   max="1000">
+            <span class="input-group-text">
+              <span class="badge bg-light"
+                    [class.bg-success]="groupSums()[group] === getTotalValue(group)"
+                    [class.bg-danger]="groupSums()[group] !== getTotalValue(group)">
+                {{ groupSums()[group] }} / {{ getTotalValue(group) }}
+              </span>
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <hr class="modal-divider">
+
+    <!-- Rubrics Section -->
+    <div class="modal-grid">
+      @for (group of groups; track group) {
+        <div class="modal-col-6">
+          <div class="rubric-card">
+            <div class="fw-bold mb-2 text-brand">
+              {{ 'job_list.modals.rubrics.' + getRubricLabel(group) | translate }} – {{ 'job_list.modals.points.points_table' | translate }}
+            </div>
+            @for (opt of getRubricOptions(group); track opt) {
+              <div class="input-group input-group-sm mb-1">
+                <span class="input-group-text w-50">{{ 'job-wizard.modals.rubrics.options.' + opt | translate }}</span>
+                <input type="number"
+                       class="form-control"
+                       [ngModel]="getRubricValue(group, opt)"
+                       (ngModelChange)="updateRubric(group, opt, $event)"
+                       min="0"
+                       max="1000">
+              </div>
+            }
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <small class="text-muted">{{ 'job_list.modals.points.rubric_hint' | translate }}</small>
+              <span class="badge bg-secondary"
+                    [class.bg-success]="groupSums()[group] === getTotalValue(group)"
+                    [class.bg-danger]="groupSums()[group] !== getTotalValue(group)">
+                {{ groupSums()[group] }} / {{ getTotalValue(group) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="points-sticky">
+    <div class="small-muted">{{ 'job_list.modals.points.save_hint' | translate }}</div>
+    <div class="d-flex gap-2 p-1 button-group">
+      <button class="btn btn-outline-secondary" (click)="resetToDefaults()">
+        <i class="fa fa-rotate"></i> {{ 'job_list.buttons.reset_defaults' | translate }}
+      </button>
+      <button class="btn btn-brand" [disabled]="!isValid()" (click)="save()">
+        <i class="fa fa-floppy-disk"></i> {{ 'job_list.buttons.save' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+</section>
