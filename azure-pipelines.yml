@@ -175,9 +175,9 @@ stages:
       - backend_stage
     condition: always()
     variables:
-      OPS: $[ stageDependencies.detect_changes_stage.detect.outputs['detect.detectChanges.opsChanged'] ]
-      REC: $[ stageDependencies.detect_changes_stage.detect.outputs['detect.detectChanges.recChanged'] ]
-      BACK: $[ stageDependencies.detect_changes_stage.detect.outputs['detect.detectChanges.backendChanged'] ]
+      OPS: $[ stageDependencies.detect_changes_stage.outputs['detect.detectChanges.opsChanged'] ]
+      REC: $[ stageDependencies.detect_changes_stage.outputs['detect.detectChanges.recChanged'] ]
+      BACK: $[ stageDependencies.detect_changes_stage.outputs['detect.detectChanges.backendChanged'] ]
     jobs:
       - job: postComment
         displayName: Post summary comment
