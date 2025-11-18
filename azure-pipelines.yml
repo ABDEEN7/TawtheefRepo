@@ -13,7 +13,7 @@ stages:
 # =========================
 # Stage 1: Detect changes
 # =========================
-- stage: detect
+- stage: detect_changes_stage
   displayName: Detect Changes
   jobs:
   - job: detect
@@ -25,7 +25,7 @@ stages:
     - bash: |
         set -eo pipefail
 
-        TARGET_BRANCH="${SYSTEM_PULLREQUEST_TARGETBRANCH:-origin/main}"
+        TARGET_BRANCH="${SYSTEM_PULLREQUEST_TARGETBRANCH:-origin/Development}"
         git fetch origin "$TARGET_BRANCH":target || true
 
         FILES=$(git diff --name-only target HEAD || true)
@@ -63,9 +63,9 @@ stages:
 # =========================
 # Stage 2: Build Frontend
 # =========================
-- stage: Frontends
+- stage: frontends_stage
   displayName: Build Frontends
-  dependsOn: Detect
+  dependsOn: detect_changes_stage
   condition: or(eq(dependencies.detect.detect.outputs['detectChanges.opsChanged'], 'true'),
                 eq(dependencies.detect.detect.outputs['detectChanges.recChanged'], 'true'))
   jobs:
@@ -114,9 +114,9 @@ stages:
 # =========================
 # Stage 3: Build Backend
 # =========================
-- stage: Backend
+- stage: backend_stage
   displayName: Build Backend
-  dependsOn: Detect
+  dependsOn: detect_changes_stage
   condition: eq(dependencies.detect.detect.outputs['detectChanges.backendChanged'], 'true')
   jobs:
   - job: buildBackend
@@ -145,9 +145,9 @@ stages:
 - stage: PostComment
   displayName: Post PR Summary
   dependsOn:
-    - detect
-    - Frontends
-    - Backend
+    - detect_changes_stage
+    - frontends_stage
+    - backend_stage
   condition: always()
   jobs:
   - job: postComment
