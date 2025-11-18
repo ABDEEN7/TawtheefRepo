@@ -144,7 +144,7 @@ stages:
               # npm run lint
 
               echo "🏗️ Building recruitment-web..."
-              npm run build -- --configuration=productio
+              npm run build -- --configuration=production
             displayName: Build recruitment-web
   
   
