@@ -5,6 +5,7 @@
     "enter_details": "أدخل التفاصيل عبر الخطوات التالية ثم انشر الوظيفة",
     "edit_job": "تعديل الوظيفة",
     "edit_details": "تعديل تفاصيل ومتطلبات الوظيفة",
+
     "navigation": {
       "wizard_steps": {
         "basics": "الأساسيات",
@@ -32,13 +33,18 @@
         "enter_text": "أدخل النص",
         "select_option": "اختر خيارًا",
         "enter_number": "أدخل رقمًا"
-      },
-      "validation": {
-        "required": "هذا الحقل مطلوب",
-        "invalid_format": "التنسيق غير صحيح",
-        "total_100_percent": "المجموع يجب أن يساوي 100%",
-        "min_vacancies": "يجب أن يكون عدد الشواغر على الأقل واحد"
       }
+    },
+
+    "validation": {
+      "total_100_percent": "المجموع يجب أن يساوي 100%",
+      "min_vacancies": "يجب أن يكون عدد الشواغر على الأقل واحد",
+      "add_job_skill_detail": "الرجاء إدخال مهارة قبل الإضافة",
+      "add_job_cond_detail": "الرجاء إدخال شرط قبل الإضافة",
+      "sum_hint": "المجموع يُفضّل أن يساوي 100% قبل النشر.",
+      "sum_label": "المجموع",
+      "sum_state": "(المجموع يجب أن يساوي 100%)",
+      "sum_valid": "(مكتمل)"
     },
 
     "steps": {
@@ -92,13 +98,7 @@
         "gcc": "مواطنو دول مجلس التعاون الخليجي (%)",
         "quGrads": "خريجو جامعة قطر (%)",
         "residents": "مقيم في دولة قطر (%)",
-        "residents_details_button": "تفصيل المقيمين",
-        "validation": {
-          "sum_hint": "المجموع يُفضّل أن يساوي 100% قبل النشر.",
-          "sum_label": "المجموع",
-          "sum_state": "(المجموع يجب أن يساوي 100%)",
-          "sum_valid": "(مكتمل)"
-        }
+        "residents_details_button": "تفصيل المقيمين"
       },
 
       "conditions": {
@@ -158,9 +158,9 @@
         "job_published": "تم نشر الوظيفة بنجاح"
       },
       "errors": {
-        "validation_failed": "يرجى مراجعة البيانات المدخلة",
         "server_error": "حدث خطأ في الخادم"
-      }
+      },
+      "warning": "تحذير"
     }
   },
 

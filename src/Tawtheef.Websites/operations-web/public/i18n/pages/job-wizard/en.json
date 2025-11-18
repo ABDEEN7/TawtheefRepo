@@ -33,13 +33,14 @@
         "enter_text": "Enter text",
         "select_option": "Select an option",
         "enter_number": "Enter a number"
-      },
-      "validation": {
-        "required": "This field is required",
-        "invalid_format": "Invalid format",
-        "total_100_percent": "The total must equal 100%",
-        "min_vacancies": "The number of vacancies must be at least one"
       }
+    },
+
+    "validation": {
+      "total_100_percent": "The total must equal 100%",
+      "min_vacancies": "Vacancies must be at least one",
+      "add_job_skill_detail": "Please enter a skill before adding",
+      "add_job_cond_detail": "Please enter a condition before adding"
     },
 
     "steps": {
@@ -47,12 +48,12 @@
         "title": "Basics",
         "select_type": "Select Type",
         "requesting_dept": "Requesting Department",
-        "requesting_dept_placeholder": "Type to search and select a department",
-        "requesting_dept_hint": "You can type to search and select a department from the list.",
+        "requesting_dept_placeholder": "Type to search and select department",
+        "requesting_dept_hint": "You can type to search, then choose the department from the list.",
         "job_title": "Job Title",
         "job_title_placeholder": "Enter the job title",
         "job_category": "Job Category",
-        "job_category_placeholder": "Select category",
+        "job_category_placeholder": "Select a category",
         "categories": {
           "academic": "Academic",
           "administrative": "Administrative",
@@ -64,15 +65,15 @@
           "male": "Male",
           "female": "Female"
         },
-        "work_entity": "Work Location",
-        "work_entity_placeholder": "Select work location",
+        "work_entity": "Work Entity",
+        "work_entity_placeholder": "Select work entity",
         "entities": {
           "schools": "Schools",
           "ministry": "Ministry"
         },
         "major": "Major",
         "major_placeholder": "Type to search and select major",
-        "degree": "Academic Degree (Multi-select)",
+        "degree": "Academic Degree (Multiple Selection)",
         "degree_placeholder": "Select one or more degrees...",
         "work_type": "Work Type",
         "work_type_placeholder": "Select work type",
@@ -82,20 +83,20 @@
         },
         "vacancies": "Number of Vacancies",
         "vacancies_placeholder": "Example: 3",
-        "deadline": "Closing Date"
+        "deadline": "Deadline"
       },
 
       "quotas": {
-        "title": "Targeted Nationality Quotas",
+        "title": "Target Quotas by Nationality",
         "qatariCitizens": "Qatari Citizens (%)",
-        "qatarMother": "Children of Qatari Mother married to Non-Qatari (%)",
-        "nonQatariSpouse": "Non-Qatari Spouse married to Qatari (%)",
-        "gcc": "GCC Citizens (%)",
+        "qatarMother": "Children of Qatari Mothers (%)",
+        "nonQatariSpouse": "Non-Qatari Spouse Married to Qatari (%)",
+        "gcc": "GCC Nationals (%)",
         "quGrads": "Qatar University Graduates (%)",
         "residents": "Residents in Qatar (%)",
         "residents_details_button": "Residents Breakdown",
         "validation": {
-          "sum_hint": "The total is preferred to equal 100% before publishing.",
+          "sum_hint": "The total should preferably be 100% before publishing.",
           "sum_label": "Total",
           "sum_state": "(Total must equal 100%)",
           "sum_valid": "(Complete)"
@@ -104,15 +105,15 @@
 
       "conditions": {
         "title": "Conditions",
-        "placeholder": "Enter a clear condition (e.g., Language level C1 or above)",
-        "empty_state": "No conditions yet",
+        "placeholder": "Enter a clear condition (e.g., C1 language level or higher)",
+        "empty_state": "No conditions added yet",
         "add_condition": "Add Condition"
       },
 
       "skills": {
         "title": "Required Skills",
         "placeholder": "Enter a new skill",
-        "empty_state": "No skills yet",
+        "empty_state": "No skills added yet",
         "add_skill": "Add Skill"
       },
 
@@ -121,9 +122,9 @@
         "description": "Description",
         "description_placeholder": "Enter the job description...",
         "benefits": "Benefits",
-        "benefits_placeholder": "Enter the job benefits...",
-        "responsibilities": "Main Responsibilities",
-        "responsibilities_placeholder": "Enter the main responsibilities..."
+        "benefits_placeholder": "Enter job benefits...",
+        "responsibilities": "Key Responsibilities",
+        "responsibilities_placeholder": "Enter key responsibilities..."
       },
 
       "review": {
@@ -131,7 +132,7 @@
         "download_pdf": "Download PDF",
         "sections": {
           "basics": "Basic Information",
-          "quotas": "Nationality Quotas",
+          "quotas": "Target Quotas by Nationality",
           "conditions": "Conditions",
           "skills": "Required Skills",
           "description_benefits": "Description & Benefits"
@@ -141,11 +142,11 @@
 
     "modals": {
       "residents": {
-        "title": "Residents Quota Breakdown by Nationality",
-        "description": "Add or edit percentages for each nationality so that the total matches the Residents quota specified in the previous step.",
+        "title": "Residents Breakdown by Nationality",
+        "description": "Add or edit resident percentages for each nationality. The total must match the 'Residents' percentage from the previous step.",
         "nationality": "Nationality",
         "percent": "Percentage",
-        "empty_state": "No entries yet",
+        "empty_state": "No percentages added yet",
         "total": "Total Residents Breakdown",
         "btn_add": "Add",
         "close": "Close",
@@ -161,17 +162,20 @@
       "errors": {
         "validation_failed": "Please review the entered data",
         "server_error": "A server error occurred"
-      }
+      },
+      "warning": "Warning"
     }
   },
 
   "sum_state": "(Total must equal 100%)",
   "sum_valid": "(Complete)",
+
   "steps": {
     "skills": {
       "placeholder": "Enter a new skill"
     }
   },
+
   "PhD": "PhD",
   "Masters": "Master’s",
   "Bachelors": "Bachelor’s",

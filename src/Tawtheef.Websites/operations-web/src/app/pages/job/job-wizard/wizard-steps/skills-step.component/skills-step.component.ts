@@ -54,8 +54,8 @@ export class SkillsStepComponent implements WizardStepComponent,OnInit {
   if (!value) {
     this.messageService.add({
       severity: 'warn',
-      summary: this.translationService.instant('validation.warning'),
-      detail: this.translationService.instant('validation.add_job_skill_detail'),
+      summary: this.translationService.instant('job_wizard.notifications.warning'),
+      detail: this.translationService.instant('job_wizard.validation.add_job_skill_detail'),
       life: 2500,
     });
     return;

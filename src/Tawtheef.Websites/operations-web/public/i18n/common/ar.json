@@ -68,12 +68,7 @@
     "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
     "requiredPassword": "كلمة المرور مطلوبة.",
     "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل.",
-    "warning": "تنبيه",
-    "add_job_skill_detail": "الرجاء إدخال مهارة قبل الإضافة",
-    "add_job_cond_detail": "الرجاء إدخال شرط قبل الإضافة",
     "required_filed": "هذا الحقل مطلوب",
-    "invalid_format": "التنسيق غير صحيح",
-    "total_100_percent": "المجموع يجب أن يساوي 100%",
-    "min_vacancies": "يجب أن يكون عدد الشواغر على الأقل واحد"
+    "invalid_format": "التنسيق غير صحيح"
   }
 }

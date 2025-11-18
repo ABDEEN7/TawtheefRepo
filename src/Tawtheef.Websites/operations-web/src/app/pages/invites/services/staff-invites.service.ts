@@ -69,7 +69,7 @@ export class StaffInvitesService {
   }
 
 
-   updateInviteStatus(inviteId: number, status: string): Observable<InviteDetails | null> {
+   updateInviteStatus(inviteId: GUID, status: string): Observable<InviteDetails | null> {
     return this.http.patch<Invite>(`/api/invites/${inviteId}`, { status }).pipe(
       map(updatedInvite => {
         const invites = this._invites();
