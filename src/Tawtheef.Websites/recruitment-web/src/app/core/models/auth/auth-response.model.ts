@@ -18,12 +18,10 @@ export interface AuthBootstrap {
 export interface PrefillData
 {
   email?: string | null;
-  givenNameEn?: string | null;
-  familyNameEn?: string | null;
+  fullName?: string | null;
   avatar?: string | null;
   phone?: string | null;
   nationality?: string | null;
-  passportNo?: string | null;
   qid?: string | null;
   locale?: string | null;
   provider?: string | null;
