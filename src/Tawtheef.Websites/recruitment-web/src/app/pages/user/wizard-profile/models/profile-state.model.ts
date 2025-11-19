@@ -2,11 +2,12 @@ import {Degree} from "./degree.model";
 import {Attachment} from './attachment.model';
 import {Language} from './language.model';
 import {Experience} from './experience.model';
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 
 export interface ProfileState {
   // prereq
-  candidateType?: string;
-  targetEntity?: string;
+  candidateType?: dropdownOptionsModel;
+  targetEntity?: dropdownOptionsModel;
   cvName?: string;
   idName?: string;
 
@@ -14,15 +15,15 @@ export interface ProfileState {
   fullName?: string;
   fullNameEn?: string;
   qid?: string;
-  nationality?: string;
-  gender?: string;
-  religion?: string;
-  marital?: string;
+  nationality?: dropdownOptionsModel;
+  gender?: dropdownOptionsModel;
+  religion?: dropdownOptionsModel;
+  marital?: dropdownOptionsModel;
   children?: number;
   dob?: string;
 
   // contact
-  country?: string;
+  country?: dropdownOptionsModel;
   dialCode?: string;
   phone?: string;
   address?: string;

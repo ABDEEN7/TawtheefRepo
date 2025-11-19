@@ -60,11 +60,11 @@ export class WizardProfileComponent implements OnInit {
         fullName: state.prefill.fullName ?? null,
         fullNameEn: state.prefill.fullName ?? null,
         qid: state.prefill.qid ?? null,
-        gender: state.prefill.gender ?? null,
+        // gender: state.prefill.gender ?? null,
         dob: state.prefill.dob ?? null,
         phone: state.prefill.phone ?? null,
         email: state.prefill.email ?? null,
-        nationality: state.prefill.nationality ?? null,
+        // nationality: state.prefill.nationality ?? null,
         avatarUrl: state.prefill.avatar ?? null,
       } as Partial<ProfileState>);
 
@@ -85,11 +85,11 @@ export class WizardProfileComponent implements OnInit {
             fullName: b.prefill.fullName ?? null,
             fullNameEn: b.prefill.fullName ?? null,
             qid: b.prefill.qid ?? null,
-            gender: b.prefill.gender ?? null,
+            // gender: b.prefill.gender ?? null,
             dob: b.prefill.dob ?? null,
             phone: b.prefill.phone ?? null,
             email: b.prefill.email ?? null,
-            nationality: b.prefill.nationality ?? null,
+            // nationality: b.prefill.nationality ?? null,
             avatarUrl: b.prefill.avatar ?? null,
           } as Partial<ProfileState>);
         }

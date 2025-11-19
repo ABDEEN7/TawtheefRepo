@@ -6,10 +6,9 @@ import {PrerequisitesModal} from './dialogs/prerequisites.modal/prerequisites.mo
 import {TranslateService} from '@ngx-translate/core';
 import {AvatarModal} from './dialogs/avatar.modal/avatar.modal';
 import {Subject} from 'rxjs';
-import {toObservable} from '@angular/core/rxjs-interop';
-import {takeUntil} from 'rxjs/operators';
 import {ProfileState} from '../../models/profile-state.model';
 import {ProfileLookupsService} from '../../services/profile-lookups.service';
+import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 
 @Component({
   selector: 'app-step-personal',
@@ -27,34 +26,6 @@ export class StepPersonalComponent implements OnInit, OnDestroy {
   lookups = inject(ProfileLookupsService);
 
   avatarPreviewUrl: string | null = null;
-
-  genders = [
-    { id: 1, name: 'ذكر' },
-    { id: 2, name: 'أنثى' }
-  ];
-
-  nationalities = [
-    { id: 1, name: 'قطري' }, { id: 2, name: 'سعودي' }, { id: 3, name: 'إماراتي' },
-    { id: 4, name: 'بحريني' }, { id: 5, name: 'كويتي' }, { id: 6, name: 'أردني' },
-    { id: 7, name: 'مصري' }, { id: 8, name: 'سوداني' }, { id: 9, name: 'تونسي' },
-    { id: 10, name: 'مغربي' }, { id: 11, name: 'لبناني' }, { id: 12, name: 'سوري' },
-    { id: 13, name: 'فلسطيني' }, { id: 14, name: 'عراقي' }, { id: 15, name: 'يمني' },
-    { id: 16, name: 'هندي' }, { id: 17, name: 'باكستاني' }
-  ];
-
-  religions = [
-    { id: 1, name: 'الإسلام' },
-    { id: 2, name: 'المسيحية' },
-    { id: 3, name: 'أخرى' }
-  ];
-
-  maritals = [
-    { id: 1, name: 'أعزب' },
-    { id: 2, name: 'متزوج' },
-    { id: 3, name: 'مطلق' },
-    { id: 4, name: 'أرمل' }
-  ];
-
   private destroy$ = new Subject<void>();
   form!: FormGroup;
   ngOnInit() {
@@ -119,7 +90,7 @@ export class StepPersonalComponent implements OnInit, OnDestroy {
           targetEntity: this.ds.state().targetEntity
         }
       },
-    })?.onClose.subscribe((e: { candidateType: string; targetEntity: string; cvFile: File; idFile: File }) => {
+    })?.onClose.subscribe((e: { candidateType: dropdownOptionsModel; targetEntity: dropdownOptionsModel; cvFile: File; idFile: File }) => {
       if (e) {
         this.ds.up('candidateType', e.candidateType);
         this.ds.up('targetEntity', e.targetEntity);

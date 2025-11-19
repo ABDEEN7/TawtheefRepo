@@ -1,34 +1,71 @@
-﻿import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse } from '@angular/common/http';
-import { catchError, switchMap } from 'rxjs/operators';
-import {throwError, from} from 'rxjs';
+﻿import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { from, Subject, throwError } from 'rxjs';
+import { catchError, first, switchMap } from 'rxjs/operators';
+import { TokenService } from '../auth/token.service';
 import { AuthService } from '../auth/auth.service';
+import { HDR } from '../utils/headers.flags';
 
-@Injectable()
-export class RefreshInterceptor implements HttpInterceptor {
-  private refreshing = false;
+let refreshInFlight = false;
+const refreshDone$ = new Subject<boolean>();
 
-  constructor(private auth: AuthService) {}
+export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
+  const tokenSvc = inject(TokenService);
+  const authSvc  = inject(AuthService);
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    return next.handle(req).pipe(
-      catchError(err => {
-        if (err instanceof HttpErrorResponse && err.status === 401 && !req.headers.has('X-Skip-Auth')) {
-          if (this.refreshing) {
-            // wait logic or queue
-            return throwError(() => err);
-          }
-          this.refreshing = true;
-          return from(this.auth.refreshToken()).pipe(
-            switchMap((tokens: any) => {
-              const cloned = req.clone({ setHeaders: { Authorization: `Bearer ${tokens.access}` } });
-              this.refreshing = false;
-              return next.handle(cloned);
-            })
-          );
-        }
+  return next(req).pipe(
+    catchError((err: unknown) => {
+      const httpErr = err as HttpErrorResponse;
+
+      const is401 = httpErr instanceof HttpErrorResponse && httpErr.status === 401;
+      const isAuthCall = /\/auth\/(login|refresh|external)/i.test(req.url);
+      const skipRefresh = req.headers.get(HDR.SkipRefresh) === 'true';
+      const alreadyRetried = req.headers.get(HDR.Retried) === '1';
+
+      // Not our job → pass along
+      if (!is401 || isAuthCall || skipRefresh || alreadyRetried) {
         return throwError(() => err);
-      })
-    );
-  }
+      }
+
+      // If a refresh is already happening, wait for it and then retry once
+      if (refreshInFlight) {
+        return refreshDone$.pipe(
+          first(),
+          switchMap((ok) => ok
+            ? next(attachLatestToken(markRetried(req), tokenSvc))
+            : failAndLocalLogout(authSvc, err))
+        );
+      }
+
+      // Start a single refresh
+      refreshInFlight = true;
+      return from(authSvc.refreshToken()).pipe(
+        switchMap(() => {
+          refreshInFlight = false;
+          refreshDone$.next(true);
+          return next(attachLatestToken(markRetried(req), tokenSvc));
+        }),
+        catchError((refreshErr) => {
+          refreshInFlight = false;
+          refreshDone$.next(false);
+
+          // IMPORTANT: local-only logout to avoid calling logout endpoint again
+          authSvc.logout(false); // clear client & navigate; no API call
+          return throwError(() => refreshErr);
+        })
+      );
+    })
+  );
+};
+
+function markRetried(req: any) {
+  return req.clone({ setHeaders: { [HDR.Retried]: '1' } });
+}
+function attachLatestToken(req: any, tokenSvc: TokenService) {
+  const t = tokenSvc.getToken();
+  return t ? req.clone({ setHeaders: { Authorization: `Bearer ${t}` } }) : req;
+}
+function failAndLocalLogout(authSvc: any, err: unknown) {
+  authSvc.logout(false); // local clear only
+  return throwError(() => err);
 }

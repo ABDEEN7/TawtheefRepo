@@ -6,19 +6,25 @@ import {
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import {HTTP_INTERCEPTORS, HttpBackend, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import {
+  HttpBackend,
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {MultiTranslateHttpLoader} from 'ngx-translate-multi-http-loader';
 import {LanguageService} from './core/services/language.service';
-import {AuthInterceptor} from './core/interceptors/auth.interceptor';
-import {ErrorInterceptor} from './core/interceptors/error.interceptor';
-import {LoadingInterceptor} from './core/interceptors/loading.interceptor';
-import {RefreshInterceptor} from './core/interceptors/refresh.interceptor';
+import {authInterceptor} from './core/interceptors/auth.interceptor';
+import {errorInterceptor} from './core/interceptors/error.interceptor';
+import {loadingInterceptor} from './core/interceptors/loading.interceptor';
+import {refreshInterceptor} from './core/interceptors/refresh.interceptor';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {providePrimeNG} from 'primeng/config';
 import {TawtheefPreset} from './shared/themes/twatheef-preset';
+import {customHttpInterceptor} from './core/interceptors/http.interceptor';
 
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   return new MultiTranslateHttpLoader(_httpBackend, [
@@ -45,10 +51,15 @@ export const appConfig: ApplicationConfig = {
       const langSvc = inject(LanguageService);
       return langSvc.init();
     }),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: RefreshInterceptor, multi: true },
     MessageService,
+    provideHttpClient(
+      withInterceptors([
+        loadingInterceptor,
+        customHttpInterceptor,
+        authInterceptor,
+        refreshInterceptor,
+        errorInterceptor,
+      ])
+    ),
   ]
 };
