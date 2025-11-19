@@ -1,0 +1,41 @@
+<div class="card border-0 shadow rounded-4 p-4 mb-3">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label for="candidateType" class="form-label required">{{ 'wizard.prereq.candidateType' | translate }}</label>
+      <p-select [options]="lookups.candidateTypes()" [(ngModel)]="ds.state().candidateType"
+                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                class="w-full md:w-56"
+                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectCandidateType') | translate"
+                (ngModelChange)="ds.up('candidateType',$event)" fluid></p-select>
+    </div>
+    <div class="col-md-6">
+      <label for="targetEntity" class="form-label required">{{ 'wizard.prereq.targetEntity' | translate }}</label>
+      <p-select [options]="lookups.targetEntities()" [(ngModel)]="ds.state().targetEntity"
+                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                class="w-full md:w-56"
+                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectTargetEntity') | translate"
+                (ngModelChange)="ds.up('targetEntity',$event)" fluid></p-select>
+    </div>
+
+    <div class="col-12"><hr></div>
+
+    <div class="col-md-6">
+      <label class="form-label required">{{ 'wizard.prereq.cvLabel' | translate }}</label>
+      <p-fileupload mode="basic" name="na" chooseLabel="{{'wizard.buttons.upload' | translate}}"
+                    (onSelect)="ds.up('cvName',$event.files[0]?.name)">
+      </p-fileupload>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label required">{{ 'wizard.prereq.idLabel' | translate }}</label>
+      <p-fileupload mode="basic" name="na" chooseLabel="{{'wizard.buttons.upload' | translate}}"
+                    (onSelect)="ds.up('idName',$event.files[0]?.name)">
+      </p-fileupload>
+    </div>
+  </div>
+</div>
+<div class="text-end">
+  <button class="btn btn-brand" (click)="next.emit()">
+    {{ 'wizard.buttons.next' | translate }}
+    <i class="fa-solid ms-1" faDirArrow="end"></i>
+  </button>
+</div>

@@ -28,10 +28,12 @@ import {Tooltip} from 'primeng/tooltip';
 import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
 import {ImageCropperComponent} from 'ngx-image-cropper';
 import {I18nNamespaceDirective} from "../../../shared/directives/i18n-namespace.directive";
+import {StepFirstInfoComponent} from './steps/step-first-info/step-first-info.component';
 
 @NgModule({
   declarations: [
     WizardProfileComponent,
+    StepFirstInfoComponent,
     StepPersonalComponent,
     StepContactComponent,
     StepQualificationComponent,

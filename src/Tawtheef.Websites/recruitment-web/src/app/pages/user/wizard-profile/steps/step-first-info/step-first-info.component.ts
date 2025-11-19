@@ -1,26 +1,19 @@
 import {Component, EventEmitter, inject, Output} from '@angular/core';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {FormsModule} from '@angular/forms';
-import {NgIf} from '@angular/common';
-import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {Select} from 'primeng/select';
-import {ProfileLookupsService} from '../../../../services/profile-lookups.service';
+import { TranslateService } from "@ngx-translate/core";
+import { ProfileLookupsService } from "../../services/profile-lookups.service";
+import {DataService} from '../../services/data.service';
 
 @Component({
-  selector: 'app-prerequisites',
-  imports: [
-    TranslatePipe,
-    FormsModule,
-    NgIf,
-    Select
-  ],
-  templateUrl: './prerequisites.modal.html',
-  styleUrl: './prerequisites.modal.scss',
+  selector: 'app-step-first-info',
+  templateUrl: './step-first-info.component.html',
+  styleUrl: './step-first-info.component.scss',
+  standalone: false
 })
-export class PrerequisitesModal {
-  config = inject(DynamicDialogConfig);
-  ref = inject(DynamicDialogRef);
-  t = inject(TranslateService);
+export class StepFirstInfoComponent {
+  @Output() next = new EventEmitter<void>();
+  ds = inject(DataService);
+
+  translate = inject(TranslateService);
   lookups = inject(ProfileLookupsService);
 
   candidateType = '';
@@ -33,27 +26,8 @@ export class PrerequisitesModal {
   idError: string | null = null;
 
   constructor() {
-    if(this.config.data){
-      const iv = this.config.data.initialValue;
-      if(iv){
-        this.candidateType = iv.candidateType || '';
-        this.targetEntity = iv.targetEntity || '';
-      }
-    }
-  }
-  canStart(): boolean {
-    return !!(this.candidateType && this.targetEntity && this.cvFile && this.idFile && !this.cvError && !this.idError);
-  }
-  start() {
-    if (!this.canStart()) return;
-    this.ref.close({
-      candidateType: this.candidateType,
-      targetEntity: this.targetEntity,
-      cvFile: this.cvFile!,
-      idFile: this.idFile!
-    });
-  }
 
+  }
   /** Drag & Drop **/
   onDragOver(e: DragEvent) {
     e.preventDefault();
@@ -86,12 +60,12 @@ export class PrerequisitesModal {
     if (kind === 'cv') {
       // CV must be PDF
       if (!/pdf$/i.test(file.type) && !/\.pdf$/i.test(file.name)) {
-        this.cvError = this.t.instant('wizard.prereq.errors.cvPdfOnly');
+        this.cvError = this.translate.instant('wizard.prereq.errors.cvPdfOnly');
         this.cvFile = null;
         return;
       }
       if (file.size > 10 * 1024 * 1024) { // 10MB
-        this.cvError = this.t.instant('wizard.prereq.errors.maxSize', { size: 10 });
+        this.cvError = this.translate.instant('wizard.prereq.errors.maxSize', { size: 10 });
         this.cvFile = null;
         return;
       }
@@ -101,12 +75,12 @@ export class PrerequisitesModal {
       // ID: image or pdf
       const ok = /pdf$/i.test(file.type) || /^image\//i.test(file.type) || /\.pdf$/i.test(file.name);
       if (!ok) {
-        this.idError = this.t.instant('wizard.prereq.errors.idImageOrPdf');
+        this.idError = this.translate.instant('wizard.prereq.errors.idImageOrPdf');
         this.idFile = null;
         return;
       }
       if (file.size > 10 * 1024 * 1024) {
-        this.idError = this.t.instant('wizard.prereq.errors.maxSize', { size: 10 });
+        this.idError = this.translate.instant('wizard.prereq.errors.maxSize', { size: 10 });
         this.idFile = null;
         return;
       }

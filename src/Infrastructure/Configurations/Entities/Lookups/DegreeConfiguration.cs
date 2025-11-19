@@ -29,6 +29,15 @@ public class DegreeConfiguration : LookupBaseConfiguration<Degree>
             },
             new Degree
             {
+                Id = DegreeIds.PostgraduateDiploma,
+                BackendName = nameof(DegreeIds.PostgraduateDiploma),
+                NameAr = "دبلوم دراسات عليا",
+                NameEn = "Postgraduate Diploma",
+                DescriptionAr = "دبلوم دراسات عليا",
+                DescriptionEn = "Postgraduate Diploma"
+            },
+            new Degree
+            {
                 Id = DegreeIds.Bachelor,
                 BackendName = nameof(DegreeIds.Bachelor),
                 NameAr = "بكالوريوس",
@@ -38,12 +47,12 @@ public class DegreeConfiguration : LookupBaseConfiguration<Degree>
             },
             new Degree
             {
-                Id = DegreeIds.Diploma,
-                BackendName = nameof(DegreeIds.Diploma),
-                NameAr = "دبلوم",
-                NameEn = "Diploma",
-                DescriptionAr = "دبلوم",
-                DescriptionEn = "Diploma"
+                Id = DegreeIds.IntermediateDiploma,
+                BackendName = nameof(DegreeIds.IntermediateDiploma),
+                NameAr = "دبلوم متوسط",
+                NameEn = "Intermediate Diploma",
+                DescriptionAr = "دبلوم متوسط",
+                DescriptionEn = "Intermediate Diploma"
             },
             new Degree
             {
@@ -65,12 +74,21 @@ public class DegreeConfiguration : LookupBaseConfiguration<Degree>
             },
             new Degree
             {
-                Id = DegreeIds.Elementary,
-                BackendName = nameof(DegreeIds.Elementary),
+                Id = DegreeIds.Primary,
+                BackendName = nameof(DegreeIds.Primary),
                 NameAr = "ابتدائي",
-                NameEn = "Elementary",
+                NameEn = "Primary",
                 DescriptionAr = "ابتدائي",
-                DescriptionEn = "Elementary"
+                DescriptionEn = "Primary"
+            },
+            new Degree
+            {
+                Id = DegreeIds.NoQualifications,
+                BackendName = nameof(DegreeIds.NoQualifications),
+                NameAr = "بدون مؤهل",
+                NameEn = "No Qualifications",
+                DescriptionAr = "بدون مؤهل",
+                DescriptionEn = "No Qualifications"
             }
         );
     }

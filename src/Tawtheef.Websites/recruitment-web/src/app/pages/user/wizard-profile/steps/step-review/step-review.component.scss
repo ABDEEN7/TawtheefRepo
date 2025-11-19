@@ -1,8 +1,5 @@
 @use "../../styles/variables" as *;
 
-.card { @include soft-card; padding: 1.5rem; }
-h6 { color: $brand; }
-
 .review-card { border: 1px solid $border; border-radius: 16px; padding: 16px; }
 .review-title { color: $brand; font-weight: 800; }
 .btn-brand {

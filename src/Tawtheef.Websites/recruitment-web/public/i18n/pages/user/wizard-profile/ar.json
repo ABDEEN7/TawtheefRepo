@@ -3,6 +3,7 @@
     "title": "نظام التوظيف – الملف الشخصي",
     "accountFieldNote": "هذا الحقل مستمد من حسابك ولا يمكن تغييره.",
     "steps": {
+      "firstInfo": "المعلومات الأساسية",
       "personal": "البيانات الشخصية",
       "contact": "الاتصال والسكن",
       "degrees": "المؤهلات",
@@ -213,7 +214,9 @@
       "selectMaritalStatus": "اختر الحالة الاجتماعية",
       "selectCountry": "اختر الدولة",
       "selectDialCode": "اختر مفتاح الدولة",
-      "selectInterviewPlace": "اختر مكان المقابلة"
+      "selectInterviewPlace": "اختر مكان المقابلة",
+      "selectCandidateType": "اختر فئة المرشح",
+      "selectTargetEntity": "اختر الجهة المستهدفة"
     },
     "prereq": {
       "title": "المتطلبات القبلية للبدء",

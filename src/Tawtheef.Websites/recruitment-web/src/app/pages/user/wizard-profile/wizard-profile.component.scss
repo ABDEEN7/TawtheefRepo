@@ -86,7 +86,14 @@ label.form-label { font-weight: 700; }
   --tag-remove-bg: transparent; --tag-remove-btn-color: #991b1b;
   font-size: 1.05rem;
 }
+
+::ng-deep .card { @include soft-card; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+::ng-deep h6 { color: $brand; }
 ::ng-deep .locked-field {
   background-color: #f5f5f5;
   cursor: not-allowed;
+}
+::ng-deep .btn-brand {
+  @include brand-gradient; border: none; color: #fff; font-weight: 700; border-radius: 999px; transition: all .25s;
+  &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(123,30,58,.3); }
 }

@@ -1,4 +1,4 @@
-<div class="card border-0 shadow rounded-4 p-4 mb-3" [formGroup]="form">
+<div class="card border-0 shadow rounded-4 p-4 mb-3">
   <!-- Avatar section stays as is -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
     <div class="d-flex align-items-center gap-3">
@@ -30,8 +30,10 @@
         pInputText
         class="form-control"
         pSize="small"
-        formControlName="fullName"
-        placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+        name="fullName"
+        [ngModel]="ds.state().fullName"
+        (ngModelChange)="updateField('fullName', $event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
       />
     </div>
 
@@ -42,8 +44,10 @@
         pInputText
         class="form-control"
         pSize="small"
-        formControlName="fullNameEn"
-        placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+        name="fullNameEn"
+        [ngModel]="ds.state().fullNameEn"
+        (ngModelChange)="updateField('fullNameEn', $event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
       />
     </div>
 
@@ -54,13 +58,15 @@
         pInputText
         class="form-control"
         pSize="small"
-        formControlName="qid"
-        placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+        name="qid"
+        [ngModel]="ds.state().qid"
+        (ngModelChange)="updateField('qid', $event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
         [readonly]="ds.isLocked('qid')"
-        [ngClass]="{'locked-field': ds.isLocked('qid')}"
+        [ngClass]="{ 'locked-field': ds.isLocked('qid') }"
       />
       <small *ngIf="ds.isLocked('qid')" class="fz-2xs text-muted">
-        {{'wizard.accountFieldNote' | translate}}
+        {{ 'wizard.accountFieldNote' | translate }}
       </small>
     </div>
 
@@ -69,7 +75,9 @@
       <label class="form-label required">{{ 'wizard.personal.nationality' | translate }}</label>
       <p-select
         [options]="lookups.countries()"
-        formControlName="nationality"
+        name="nationality"
+        [ngModel]="ds.state().nationality"
+        (ngModelChange)="updateField('nationality', $event)"
         [filter]="true"
         filterBy="name"
         optionLabel="name"
@@ -77,10 +85,10 @@
         [placeholder]="'wizard.placeholders.selectNationality' | translate"
         class="w-full md:w-56"
         [disabled]="ds.isLocked('nationality')"
-        [ngClass]="{'locked-field': ds.isLocked('nationality')}"
+        [ngClass]="{ 'locked-field': ds.isLocked('nationality') }"
       ></p-select>
       <small *ngIf="ds.isLocked('nationality')" class="fz-2xs text-muted">
-        {{'wizard.accountFieldNote' | translate}}
+        {{ 'wizard.accountFieldNote' | translate }}
       </small>
     </div>
 
@@ -89,17 +97,19 @@
       <label class="form-label required">{{ 'wizard.personal.gender' | translate }}</label>
       <p-select
         [options]="lookups.genders()"
-        formControlName="gender"
+        name="gender"
+        [ngModel]="ds.state().gender"
+        (ngModelChange)="updateField('gender', $event)"
         [filter]="false"
         optionLabel="name"
         size="small"
         [placeholder]="'wizard.placeholders.selectGender' | translate"
         class="w-full md:w-56"
         [disabled]="ds.isLocked('gender')"
-        [ngClass]="{'locked-field': ds.isLocked('gender')}"
+        [ngClass]="{ 'locked-field': ds.isLocked('gender') }"
       ></p-select>
       <small *ngIf="ds.isLocked('gender')" class="fz-2xs text-muted">
-        {{'wizard.accountFieldNote' | translate}}
+        {{ 'wizard.accountFieldNote' | translate }}
       </small>
     </div>
 
@@ -107,17 +117,19 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
       <p-date-picker
-        formControlName="dob"
+        name="dob"
+        [ngModel]="ds.state().dob"
+        (ngModelChange)="updateField('dob', $event)"
         [showIcon]="true"
         size="small"
         [showOnFocus]="true"
         dateFormat="yy-mm-dd"
         fluid
         [disabled]="ds.isLocked('dob')"
-        [ngClass]="{'locked-field': ds.isLocked('dob')}"
+        [ngClass]="{ 'locked-field': ds.isLocked('dob') }"
       ></p-date-picker>
       <small *ngIf="ds.isLocked('dob')" class="fz-2xs text-muted">
-        {{'wizard.accountFieldNote' | translate}}
+        {{ 'wizard.accountFieldNote' | translate }}
       </small>
     </div>
 
@@ -126,7 +138,9 @@
       <label class="form-label required">{{ 'wizard.personal.religion' | translate }}</label>
       <p-select
         [options]="lookups.religions()"
-        formControlName="religion"
+        name="religion"
+        [ngModel]="ds.state().religion"
+        (ngModelChange)="updateField('religion', $event)"
         [filter]="true"
         filterBy="name"
         optionLabel="name"
@@ -141,7 +155,9 @@
       <label class="form-label required">{{ 'wizard.personal.marital' | translate }}</label>
       <p-select
         [options]="lookups.maritalStatuses()"
-        formControlName="marital"
+        name="marital"
+        [ngModel]="ds.state().marital"
+        (ngModelChange)="updateField('marital', $event)"
         [filter]="true"
         filterBy="name"
         optionLabel="name"
@@ -152,93 +168,29 @@
     </div>
 
     <!-- Children -->
-    <div class="col-md-4" *ngIf="form.get('marital')?.value && form.get('marital')?.value.backendName !== 'Single'">
+    <div class="col-md-4" *ngIf="showChildrenField">
       <label class="form-label required">{{ 'wizard.personal.children' | translate }}</label>
       <input
         pInputText
         type="number"
         class="form-control"
         pSize="small"
-        formControlName="children"
-        placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+        name="children"
+        [ngModel]="ds.state().children ?? null"
+        (ngModelChange)="updateChildren($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
       />
     </div>
   </div>
-
-  <!-- ===== Prerequisites Review Card ===== -->
-  <div class="col-12 mt-2">
-    <div class="review-card d-flex flex-column gap-3">
-      <div class="d-flex align-items-center justify-content-between">
-        <div class="review-title">
-          <i class="fa-solid fa-clipboard-check me-2"></i>
-          {{ 'wizard.personal.review.title' | translate }}
-        </div>
-
-        <span class="status-chip" [class.ok]="prereqDone" [class.missing]="!prereqDone">
-        <i class="fa-solid" [ngClass]="prereqDone ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
-        <span class="ms-1"> {{`wizard.personal.review.${prereqDone ? 'statusCompleted': 'statusMissing'}` | translate}}</span>
-      </span>
-      </div>
-
-      <div class="row g-3">
-        <div class="col-md-3 col-6">
-          <div class="field">
-            <div class="field-label">{{ 'wizard.personal.review.candidateType' | translate }}</div>
-            <div class="field-value" id="candTypeView">
-              {{ ds.state().candidateType?.name || '—' }}
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3 col-6">
-          <div class="field">
-            <div class="field-label">{{ 'wizard.personal.review.targetEntity' | translate }}</div>
-            <div class="field-value" id="targetEntityView">
-              {{ ds.state().targetEntity?.name || '—' }}
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3 col-6">
-          <div class="field">
-            <div class="field-label">{{ 'wizard.personal.review.cv' | translate }}</div>
-            <div class="field-value d-flex align-items-center gap-2" id="cvView">
-              <i class="fa-regular fa-file-lines"></i>
-              <span class="text-truncate">{{ ds.state().cvName || '—' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3 col-6">
-          <div class="field">
-            <div class="field-label">{{ 'wizard.personal.review.idCard' | translate }}</div>
-            <div class="field-value d-flex align-items-center gap-2" id="idView">
-              <i class="fa-regular fa-id-card"></i>
-              <span class="text-truncate">{{ ds.state().idName || '—' }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-end">
-        <button
-          class="btn btn-outline-secondary btn-sm rounded-pill"
-          id="editPreReq"
-          type="button"
-          (click)="editPrereq()"
-          pTooltip="{{ 'wizard.personal.review.edit' | translate }}"
-          tooltipPosition="bottom"
-        >
-          <i class="fa-solid fa-pen me-1"></i>{{ 'wizard.personal.review.edit' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
-  <!-- ===== /Prerequisites Review Card ===== -->
 </div>
 
 <div class="text-end">
-  <button class="btn btn-brand" (click)="save()">
+  <button class="btn btn-outline-secondary" (click)="back.emit()">
+    <i class="fa-solid me-1" faDirArrow="start"></i>
+    {{ 'wizard.buttons.prev' | translate }}
+  </button>
+
+  <button class="btn btn-brand ms-2" (click)="next.emit()">
     {{ 'wizard.buttons.next' | translate }}
     <i class="fa-solid ms-1" faDirArrow="end"></i>
   </button>
