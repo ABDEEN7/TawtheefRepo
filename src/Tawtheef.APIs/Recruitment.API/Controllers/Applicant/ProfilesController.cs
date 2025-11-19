@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Constants;
@@ -11,7 +12,7 @@ namespace Recruitment.API.Controllers.Applicant;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.ProfileManage)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfilesController(IMediator mediator) : ControllerBase
 {
     #region Lookups

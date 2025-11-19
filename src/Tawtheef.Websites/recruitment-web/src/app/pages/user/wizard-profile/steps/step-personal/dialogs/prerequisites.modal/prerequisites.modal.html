@@ -4,7 +4,9 @@
     <label for="candidateType" class="form-label required">{{ 'wizard.prereq.candidateType' | translate }}</label>
     <p-select id="targetEntity" class="mt-2"
               [(ngModel)]="candidateType"
-              [options]="lookups.candidateTypes()" fluid>
+              [options]="lookups.candidateTypes()"
+              optionLabel="name"
+              fluid>
     </p-select>
   </div>
 
@@ -13,7 +15,9 @@
     <label for="targetEntity" class="form-label required">{{ 'wizard.prereq.targetEntity' | translate }}</label>
     <p-select id="targetEntity" class="mt-2"
               [(ngModel)]="targetEntity"
-              [options]="lookups.targetEntities()" fluid>
+              [options]="lookups.targetEntities()"
+              optionLabel="name"
+              fluid>
     </p-select>
   </div>
 

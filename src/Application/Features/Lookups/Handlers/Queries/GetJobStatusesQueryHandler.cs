@@ -1,3 +1,4 @@
+using MapsterMapper;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Entities.Lookups;
@@ -5,5 +6,5 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetJobStatusesQueryHandler(
-    IUnitOfWork unitOfWork)
-    : BaseLookupQueryHandler<JobStatus, GetJobStatusesQuery>(unitOfWork);
+    IUnitOfWork unitOfWork, IMapper mapper)
+    : BaseLookupQueryHandler<JobStatus, GetJobStatusesQuery>(unitOfWork, mapper);

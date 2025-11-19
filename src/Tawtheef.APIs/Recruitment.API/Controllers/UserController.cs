@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using CSharpFunctionalExtensions;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace Recruitment.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]/profile")]
-[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.ProfileManage)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserController(IMediator mediator) : ControllerBase
 {
     private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch

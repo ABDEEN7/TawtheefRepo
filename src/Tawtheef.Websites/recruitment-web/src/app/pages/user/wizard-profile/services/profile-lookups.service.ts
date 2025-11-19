@@ -35,6 +35,10 @@ export class ProfileLookupsService {
   ratingGrades     = signal<LookupDto[]>([]);
   languages        = signal<LookupDto[]>([]);
   languageLevels   = signal<LookupDto[]>([]);
+  nationalities        = signal<CountryDto[]>([]);
+  interviewLocation        = signal<CountryDto[]>([]);
+  residenceCountry        = signal<CountryDto[]>([]);
+  graduationCountry        = signal<CountryDto[]>([]);
 
   loadAll() {
     if (this.loaded()) return;
@@ -62,6 +66,10 @@ export class ProfileLookupsService {
         this.religions.set(res.religions);
         this.maritalStatuses.set(res.maritalStatuses);
         this.countries.set(res.countries);
+        this.nationalities.set(res.countries);
+        this.interviewLocation.set(res.countries);
+        this.residenceCountry.set(res.countries);
+        this.graduationCountry.set(res.countries);
         this.degrees.set(res.degrees);
         this.universities.set(res.universities);
         this.majors.set(res.majors);

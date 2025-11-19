@@ -1,15 +1,12 @@
-﻿import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
+﻿import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { LoadingService } from '../services/loading.service';
 
-@Injectable()
-export class LoadingInterceptor implements HttpInterceptor {
-  constructor(private loader: LoadingService) {}
+export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
+  if (req.headers.has('X-Skip-Loading')) return next(req);
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    if (req.headers.has('X-Skip-Loading')) return next.handle(req);
-    this.loader.start();
-    return next.handle(req).pipe(finalize(() => this.loader.stop()));
-  }
-}
+  const loader = inject(LoadingService);
+  loader.start();
+  return next(req).pipe(finalize(() => loader.stop()));
+};

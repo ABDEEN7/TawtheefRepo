@@ -152,7 +152,7 @@
     </div>
 
     <!-- Children -->
-    <div class="col-md-4" *ngIf="form.get('marital')?.value && form.get('marital')?.value !== 'أعزب'">
+    <div class="col-md-4" *ngIf="form.get('marital')?.value && form.get('marital')?.value.backendName !== 'Single'">
       <label class="form-label required">{{ 'wizard.personal.children' | translate }}</label>
       <input
         pInputText
@@ -185,7 +185,7 @@
           <div class="field">
             <div class="field-label">{{ 'wizard.personal.review.candidateType' | translate }}</div>
             <div class="field-value" id="candTypeView">
-              {{ ds.state().candidateType || '—' }}
+              {{ ds.state().candidateType?.name || '—' }}
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@
           <div class="field">
             <div class="field-label">{{ 'wizard.personal.review.targetEntity' | translate }}</div>
             <div class="field-value" id="targetEntityView">
-              {{ ds.state().targetEntity || '—' }}
+              {{ ds.state().targetEntity?.name || '—' }}
             </div>
           </div>
         </div>

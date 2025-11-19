@@ -23,6 +23,7 @@ import {authInterceptor,} from './core/interceptors/auth.interceptor';
 import {loadingInterceptor} from './core/interceptors/loading.interceptor';
 import {refreshInterceptor} from './core/interceptors/refresh.interceptor';
 import {errorInterceptor} from './core/interceptors/error.interceptor';
+import {customHttpInterceptor} from './core/interceptors/http.interceptor';
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   return new MultiTranslateHttpLoader(_httpBackend, [
     {prefix: '/i18n/common/', suffix: '.json'},
@@ -51,6 +52,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([
         loadingInterceptor,
+        customHttpInterceptor,
         authInterceptor,
         refreshInterceptor,
         errorInterceptor,
