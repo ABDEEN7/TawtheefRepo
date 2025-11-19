@@ -3,6 +3,7 @@
     "title": "Tawtheef - Candidate Profile",
     "accountFieldNote": "This field came from your account and cannot be changed.",
     "steps": {
+      "firstInfo": "Basic Information",
       "personal": "Personal",
       "contact": "Contact & Address",
       "degrees": "Degrees",
@@ -218,7 +219,9 @@
       "selectMaritalStatus": "Select marital status",
       "selectCountry": "Select country",
       "selectDialCode": "Select dial code",
-      "selectInterviewPlace": "Select interview place"
+      "selectInterviewPlace": "Select interview place",
+      "selectCandidateType": "Select candidate type",
+      "selectTargetEntity": "Select target entity"
     },
     "prereq": {
       "title": "Prerequisites to start",

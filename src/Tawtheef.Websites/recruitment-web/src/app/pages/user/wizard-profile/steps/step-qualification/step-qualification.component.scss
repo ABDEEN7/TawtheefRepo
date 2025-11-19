@@ -1,14 +1,6 @@
 @use "../../styles/variables" as *;
 
-.card { @include soft-card; padding: 1.5rem; }
-
-h6 { color: $brand; }
-
 table.table {
   thead th { font-weight: 700; }
   tbody td { vertical-align: middle; }
-}
-.btn-brand {
-  @include brand-gradient; border: none; color: #fff; font-weight: 700; border-radius: 999px; transition: all .25s;
-  &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(123,30,58,.3); }
 }

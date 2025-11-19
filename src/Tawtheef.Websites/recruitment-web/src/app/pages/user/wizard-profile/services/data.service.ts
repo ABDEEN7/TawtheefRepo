@@ -112,6 +112,12 @@ export class DataService {
   stepValidity = computed(() => {
     const s = this.state();
 
+    const basicValid =
+      this.isFilledScalar(s.candidateType) &&
+      this.isFilledScalar(s.targetEntity) &&
+      this.isFilledScalar(s.cvName) &&
+      this.isFilledScalar(s.idName);
+
     const personalValid =
       this.isFilledScalar(s.fullName) &&
       this.isFilledScalar(s.fullNameEn) &&
@@ -120,11 +126,7 @@ export class DataService {
       this.isFilledScalar(s.nationality) &&
       this.isFilledScalar(s.gender) &&
       this.isFilledScalar(s.religion) &&
-      this.isFilledScalar(s.marital) &&
-      this.isFilledScalar(s.candidateType) &&
-      this.isFilledScalar(s.targetEntity) &&
-      this.isFilledScalar(s.cvName) &&
-      this.isFilledScalar(s.idName);
+      this.isFilledScalar(s.marital);
 
     const contactValid =
       this.isFilledScalar(s.country) &&
@@ -138,6 +140,7 @@ export class DataService {
     const skillsValid    = (Array.isArray(s.skills) && s.skills.length > 0) || (Array.isArray(s.languages)  && s.languages.length  > 0);
 
     return {
+      basic: basicValid,
       personal: personalValid,
       contact: contactValid,
       degrees: degreesValid,

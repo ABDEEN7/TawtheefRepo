@@ -977,6 +977,18 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = new Guid("1af8c855-975f-4a49-bcf0-343a6d7fd8df"),
+                            BackendName = "PostgraduateDiploma",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DescriptionAr = "دبلوم دراسات عليا",
+                            DescriptionEn = "Postgraduate Diploma",
+                            DisplayOrder = 0,
+                            IsDeleted = false,
+                            NameAr = "دبلوم دراسات عليا",
+                            NameEn = "Postgraduate Diploma"
+                        },
+                        new
+                        {
                             Id = new Guid("de5901db-60dd-49f0-953c-daf923cf9f4a"),
                             BackendName = "Bachelor",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
@@ -990,14 +1002,14 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("f6249ce2-fa02-4e18-9c89-151ba3be0c12"),
-                            BackendName = "Diploma",
+                            BackendName = "IntermediateDiploma",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "دبلوم",
-                            DescriptionEn = "Diploma",
+                            DescriptionAr = "دبلوم متوسط",
+                            DescriptionEn = "Intermediate Diploma",
                             DisplayOrder = 0,
                             IsDeleted = false,
-                            NameAr = "دبلوم",
-                            NameEn = "Diploma"
+                            NameAr = "دبلوم متوسط",
+                            NameEn = "Intermediate Diploma"
                         },
                         new
                         {
@@ -1026,14 +1038,26 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("6e453f48-5f2f-4f98-8b76-f416cdd4811b"),
-                            BackendName = "Elementary",
+                            BackendName = "Primary",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "ابتدائي",
-                            DescriptionEn = "Elementary",
+                            DescriptionEn = "Primary",
                             DisplayOrder = 0,
                             IsDeleted = false,
                             NameAr = "ابتدائي",
-                            NameEn = "Elementary"
+                            NameEn = "Primary"
+                        },
+                        new
+                        {
+                            Id = new Guid("b4e889bb-a35c-46b6-8219-7e0600c71ce1"),
+                            BackendName = "NoQualifications",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DescriptionAr = "بدون مؤهل",
+                            DescriptionEn = "No Qualifications",
+                            DisplayOrder = 0,
+                            IsDeleted = false,
+                            NameAr = "بدون مؤهل",
+                            NameEn = "No Qualifications"
                         });
                 });
 
@@ -2213,6 +2237,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("UpdatedById")
                         .HasColumnType("uniqueidentifier");
 
@@ -2224,6 +2251,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DeletedById");
+
+                    b.HasIndex("ParentId");
 
                     b.HasIndex("UpdatedById");
 
@@ -5069,6 +5098,10 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
+
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
@@ -5077,6 +5110,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("DeletedBy");
+
+                    b.Navigation("Parent");
 
                     b.Navigation("UpdatedBy");
                 });

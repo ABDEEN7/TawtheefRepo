@@ -25,7 +25,7 @@ export class WizardProfileComponent implements OnInit {
   lookups = inject(ProfileLookupsService);
 
   step = 1;
-  total = 7;
+  total = 8;
 
   loading = true;
 
@@ -33,18 +33,19 @@ export class WizardProfileComponent implements OnInit {
   progressText = computed(() => this.progress() + '%');
   private stepKeyMap: Record<number,
     keyof ReturnType<typeof this.ds.stepValidity>> = {
-    1: 'personal',
-    2: 'contact',
-    3: 'degrees',
-    4: 'experience',
-    5: 'skills',
-    6: 'attachments',
+    1: 'basic',
+    2: 'personal',
+    3: 'contact',
+    4: 'degrees',
+    5: 'experience',
+    6: 'skills',
+    7: 'attachments',
   };
 
   isCurrentStepValid(): boolean {
     const validity = this.ds.stepValidity();
     const key = this.stepKeyMap[this.step];
-    if (!key) return true; // review أو أي خطوة بدون شرط
+    if (!key) return true;
     return validity[key];
   }
   ngOnInit(): void {
