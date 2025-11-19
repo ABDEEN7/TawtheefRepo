@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {StaffInvitesDetailsComponent} from './staff-invites-details/staff-invites-details.component';
+import {JobInvitesDetailsComponent} from './job-invites-details/job-invites-details.component';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
@@ -16,7 +16,7 @@ import {invitesRoutes} from './invites.routes';
 
 @NgModule({
   declarations: [
-    StaffInvitesDetailsComponent
+    JobInvitesDetailsComponent
   ],
   imports: [
     RouterModule.forChild(invitesRoutes),
