@@ -1,10 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {DynamicDialogRef, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {ScrollerOptions} from 'primeng/api';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {TranslatePipe} from '@ngx-translate/core';
 import {Select} from 'primeng/select';
 import {FormsModule} from '@angular/forms';
+import { JobLookupService } from '../../services/job-lookup.service';
 
 @Component({
   selector: 'app-residents-modal',
@@ -18,7 +19,8 @@ import {FormsModule} from '@angular/forms';
   templateUrl: './residents-modal.component.html'
 })
 export class ResidentsModalComponent {
-  nationalities = ['مصر', 'الأردن', 'تونس', 'المغرب', 'فلسطين', 'السودان', 'لبنان', 'سوريا', 'الهند', 'باكستان'];
+  lookupsService = inject(JobLookupService);
+
   breakdown: { nat: string; pct: number }[] = [];
   nationality = '';
   percent = 0;
@@ -29,7 +31,6 @@ export class ResidentsModalComponent {
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig
   ) {
-    // Receive data from the parent
     if (config.data) {
       this.target = config.data.target || 0;
       this.breakdown = config.data.breakdown ? [...config.data.breakdown] : [];
@@ -43,17 +44,15 @@ export class ResidentsModalComponent {
     onLazyLoad: this.loadNationalitiesLazy.bind(this)
   };
 
-  nationalitiesOptions = this.nationalities.map(d => ({label: d, value: d}));
-
   loadNationalitiesLazy(event: any) {
     this.lazyLoading = true;
     this.loadLazyTimeout = setTimeout(() => {
       const {first, last} = event;
-      const items = [...this.nationalities];
+      const items = [...this.lookupsService.nationalities()];
       for (let i = first; i < last; i++) {
-        items[i] = this.nationalities[i];
+        items[i] = this.lookupsService.nationalities()[i];
       }
-      this.nationalities = items;
+      this.lookupsService.nationalities.set(items);
       this.lazyLoading = false;
     }, Math.random() * 1000 + 250);
   }

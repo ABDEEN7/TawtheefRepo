@@ -1,9 +1,8 @@
-export interface ILookups {
-  id: string;
+import { GUID } from "../../shared/types/guid.type";
+
+export interface Lookups {
+  id: GUID;
   backendName: string;
-  nameAr: string;
-  nameEn: string;
-  descriptionAr?: string;
-  descriptionEn?: string;
-  displayOrder: number;
+  name: string;
+  description?: string;
 }

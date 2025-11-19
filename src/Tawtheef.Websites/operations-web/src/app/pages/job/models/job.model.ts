@@ -11,7 +11,7 @@ export interface Job {
   skills: string[];
   description: string;
   benefits: string;
-  status?: JobStatusEnum;
+  status?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

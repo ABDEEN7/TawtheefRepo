@@ -7,6 +7,7 @@ import { WizardStepComponent } from '../base/wizard-step.component';
 import {Job} from '../../../models/job.model';
 import {debounceTime, filter} from 'rxjs';
 import {JobQuotas} from '../../../models/job-quotas.models';
+import { JobLookupService } from '../../../services/job-lookup.service';
 
 @Component({
   selector: 'app-quotas-step',
@@ -19,6 +20,7 @@ export class QuotasStepComponent implements WizardStepComponent,OnInit {
   fb = inject(FormBuilder);
   jobService = inject(JobService);
   dialogService = inject(DialogService);
+  lookupsService = inject(JobLookupService)
 
   readonly form = this.fb.group({
     qatariCitizens: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
@@ -88,5 +90,9 @@ export class QuotasStepComponent implements WizardStepComponent,OnInit {
     const values = this.form.value;
     const total = Object.values(values).reduce<number>((sum, val) => sum + Number(val ?? 0), 0);
     this.totalQuota.set(total);
+  }
+
+    getNationalites(natId:string){
+    return this.lookupsService.nationalities().find((country) => country?.id == natId)?.name
   }
 }

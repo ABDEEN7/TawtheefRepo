@@ -1,4 +1,3 @@
-<!-- src/app/components/steps/review-step.component/review-step.component.html -->
 <div class="card card-lite p-3 mb-3">
   <h6 class="mb-3 text-brand fw-bold">{{ 'job_wizard.steps.basics.title' | translate }}</h6>
 
@@ -8,20 +7,13 @@
       <div class="review-card">
         <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.basics' | translate }}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.job_title' | translate }}</div><div class="mb-1 fw-bold">{{ jobSignal().basics.title || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.job_category' | translate }}</div><div class="mb-1">{{ jobSignal().basics.jobCategory ? ('job_wizard.steps.basics.categories.' + jobSignal().basics.jobCategory | translate) : '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.job_category' | translate }}</div><div class="mb-1">{{lookupsService.getJobCategoryLable(jobSignal().basics.jobCategory)}}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.gender' | translate }}</div>
-        <div class="mb-1">
-          @switch (jobSignal().basics.gender) {
-            @case ('all') { {{ 'job_wizard.steps.basics.genders.all' | translate }} }
-            @case ('male') { {{ 'job_wizard.steps.basics.genders.male' | translate }} }
-            @case ('female') { {{ 'job_wizard.steps.basics.genders.female' | translate }} }
-            @default { — }
-          }
-        </div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ jobSignal().basics.entity ? ('job_wizard.steps.basics.entities.' + jobSignal().basics.entity | translate) : '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ jobSignal().basics.degree.join('، ') || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ jobSignal().basics.major || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ jobSignal().basics.typeOfWork ? ('job_wizard.steps.basics.work_types.' + jobSignal().basics.typeOfWork | translate) : '—' }}</div>
+        <div class="mb-1"> {{lookupsService.getGender(jobSignal().basics.gender)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ lookupsService.getWorkEntity(jobSignal().basics.entity)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ lookupsService.getDegrees(jobSignal().basics.degree)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ lookupsService.getMajor(jobSignal().basics.major)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ lookupsService.getTypeOfWork(jobSignal().basics.typeOfWork)}}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.vacancies' | translate }}</div><div class="mb-1">{{ jobSignal().basics.vacancies || '—' }}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.deadline' | translate }}</div><div class="mb-1">{{ jobSignal().basics.deadline ? (jobSignal().basics.deadline | date:'mediumDate') : '—' }}</div>
       </div>
@@ -43,7 +35,7 @@
           <div class="small-muted mt-2">{{ 'job_wizard.steps.quotas.residents_details_button' | translate }}</div>
           <div class="d-flex flex-wrap gap-1">
             @for (r of jobSignal().quotas.residentsBreakdown; track r.nat) {
-              <span class="chip">{{ r.nat }}: {{ r.pct }}%</span>
+              <span class="chip">{{lookupsService.getNationalites(r.nat) }}: {{ r.pct }}%</span>
             }
           </div>
         }

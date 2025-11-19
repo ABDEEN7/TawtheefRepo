@@ -6,6 +6,7 @@ import {JobCategoryEnum} from '../enums/job-category.enum';
 import {Job} from '../models/job.model';
 import {PointsConfigModalComponent} from '../modals/points-config-modal/points-config-modal.component';
 import {JobStatusEnum} from '../enums/job-status.enum';
+import { JobLookupService } from '../services/job-lookup.service';
 
 @Component({
   selector: 'app-job-list',
@@ -17,6 +18,7 @@ export class JobListComponent implements OnInit {
   private jobService = inject(JobService);
   private router = inject(Router);
   private dialogService = inject(DialogService);
+  lookupsService = inject(JobLookupService)
 
   jobs = this.jobService.jobs;
   currentPage = signal(1);
@@ -53,6 +55,7 @@ export class JobListComponent implements OnInit {
 
   ngOnInit() {
     this.jobService.loadJobs();
+    this.lookupsService.loadAll()
   }
 
   onFilterChange() {

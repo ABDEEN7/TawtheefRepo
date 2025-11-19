@@ -1,6 +1,6 @@
-﻿import {inject, Injectable} from '@angular/core';
-import {ApiConfigService} from '../services/api-config.service';
-import {CaseUtils} from '../utils/case-utils';
+﻿import { inject, Injectable } from '@angular/core';
+import { ApiConfigService } from '../services/api-config.service';
+import { CaseUtils } from '../utils/case-utils';
 
 @Injectable({ providedIn: 'root' })
 export class EndpointsService {
@@ -17,7 +17,11 @@ export class EndpointsService {
     register: this.getFullUrl(`/auth/register`),
     refresh: this.getFullUrl(`/auth/refresh-token`),
     externalLogin: (provider: string, returnUrl: string | null = null) =>
-      this.getFullUrl(`/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''}`),
+      this.getFullUrl(
+        `/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${
+          returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''
+        }`
+      ),
     externalLoginUsingToken: this.getFullUrl(`/auth/external-login/token`),
     logout: this.getFullUrl(`/auth/logout`),
     exchangeCode: this.getFullUrl(`/auth/exchange-code`),
@@ -27,14 +31,28 @@ export class EndpointsService {
     resendOtp: this.getFullUrl(`/auth/resend-otp`),
   };
 
-  user= {
+  user = {
     profile: {
       socialAccounts: this.getFullUrl(`/user/profile/social-accounts`),
-    }
+    },
   };
 
   files = {
     upload: this.getFullUrl(`/files/upload`),
-    download: (id: string) => this.getFullUrl(`/files/${id}/download`)
+    download: (id: string) => this.getFullUrl(`/files/${id}/download`),
+  };
+
+  job = {
+    lookups: {
+      departments: this.getFullUrl('/job/lookups/departments'),
+      majors: this.getFullUrl('/job/lookups/majors'),
+      degrees: this.getFullUrl('/job/lookups/degrees'),
+      workTypes: this.getFullUrl('/job/lookups/work-types'),
+      jobCategories: this.getFullUrl('/job/lookups/job-categories'),
+      genders: this.getFullUrl('/job/lookups/genders'),
+      targetEntities: this.getFullUrl('/job/lookups/target-entities'),
+      nationalities: this.getFullUrl('/job/lookups/nationalities'),
+      jobStatus : this.getFullUrl('/job/lookups/job-status')
+    }
   };
 }

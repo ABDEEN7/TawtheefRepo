@@ -1,5 +1,5 @@
-import {StaffInvitesDetailsComponent} from './staff-invites-details/staff-invites-details.component';
+import {JobInvitesDetailsComponent} from './job-invites-details/job-invites-details.component';
 
 export const invitesRoutes = [
-  { path: '', component: StaffInvitesDetailsComponent },
+  { path: '', component: JobInvitesDetailsComponent },
 ]

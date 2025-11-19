@@ -5,7 +5,7 @@ export interface JobBasics {
   requestingDept: string;
   title: string;
   jobCategory: string;
-  gender: GenderEnum;
+  gender: string[];
   entity: string;
   major: string;
   degree: string[];

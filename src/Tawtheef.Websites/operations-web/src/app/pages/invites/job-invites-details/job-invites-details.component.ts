@@ -11,16 +11,18 @@ import {KPIs} from '../models/kpis.model';
 import {JobStatusEnum} from '../../job/enums/job-status.enum';
 import { GuidUtils } from '../../../core/utils/guid-utils';
 import { GUID } from '../../../shared/types/guid.type';
+import { JobLookupService } from '../../job/services/job-lookup.service';
 @Component({
-  selector: 'app-staff-invites-details',
+  selector: 'app-job-invites-details',
   standalone: false,
-  templateUrl: './staff-invites-details.component.html',
-  styleUrl: './staff-invites-details.component.scss',
+  templateUrl: './job-invites-details.component.html',
+  styleUrl: './job-invites-details.component.scss',
 })
-export class StaffInvitesDetailsComponent implements OnInit { // Added OnInit
+export class JobInvitesDetailsComponent implements OnInit { // Added OnInit
   private route = inject(ActivatedRoute);
   private staffInvitesService = inject(StaffInvitesService);
   private notificationService = inject(NotificationService);
+  lookupsService = inject(JobLookupService);
 
   readonly FilterOptionsEnum = FilterOptionsEnum;
   readonly InviteStatusEnum = InviteStatusEnum;
