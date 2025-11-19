@@ -9,5 +9,5 @@ public class City : LookupBase
     public Guid CountryId { get; set; }
     public Country? Country { get; set; }
     
-    public int Code { get; set; }
+    public required string Code { get; set; }
 }
