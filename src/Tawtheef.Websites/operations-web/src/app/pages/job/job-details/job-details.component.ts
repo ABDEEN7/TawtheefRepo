@@ -6,6 +6,7 @@ import {JobService} from '../services/job.service';
 import {NotificationService} from '../../../core/services/notification.service';
 import {ConfirmApplyModalComponent} from '../modals/confirm-apply-modal/confirm-apply-modal.component';
 import { GUID } from '../../../shared/types/guid.type';
+import { JobLookupService } from '../services/job-lookup.service';
 
 @Component({
   selector: 'app-job-details',
@@ -25,9 +26,11 @@ export class JobDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  lookupsService = inject(JobLookupService)
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as GUID;
     this.loadJobById();
+    this.lookupsService.loadAll();
   }
 
   private loadJobById(): void {

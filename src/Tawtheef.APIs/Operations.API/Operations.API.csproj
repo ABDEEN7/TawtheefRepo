@@ -30,6 +30,5 @@
   <ItemGroup>
     <Folder Include="Controllers\Admin\" />
     <Folder Include="Controllers\Applicant\" />
-    <Folder Include="Controllers\Employee\" />
   </ItemGroup>
 </Project>

@@ -22,10 +22,10 @@
       <div class="col-md-6">
         <label class="form-label fw-bold">{{ 'job_wizard.modals.residents.nationality' | translate }}</label>
         <p-select
-          [options]="nationalitiesOptions"
+          [options]="lookupsService.nationalities()"
           [(ngModel)] ="nationality"
-          optionLabel="label"
-          optionValue="value"
+          optionLabel="name"
+          optionValue="id"
           [filter]="true"
           [showClear]="true"
           [virtualScroll]="true"
@@ -61,7 +61,7 @@
         <tbody>
           @for (row of breakdown; track row.nat + row.pct; let i = $index) {
             <tr>
-              <td>{{ row.nat }}</td>
+              <td>{{lookupsService.getNationalites(row.nat) }}</td>
               <td>{{ row.pct }}%</td>
               <td class="text-end">
                 <button (click)="remove(i)" class="btn btn-sm btn-outline-danger">

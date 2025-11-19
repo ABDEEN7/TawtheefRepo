@@ -23,6 +23,7 @@ import {Job} from '../../models/job.model';
 import {JobStatusEnum} from '../../enums/job-status.enum';
 import { GUID } from '../../../../shared/types/guid.type';
 import { GuidUtils } from '../../../../core/utils/guid-utils';
+import { JobLookupService } from '../../services/job-lookup.service';
 
 @Component({
   selector: 'app-wizard',
@@ -37,6 +38,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private notificationService = inject(NotificationService);
+  lookupsService = inject(JobLookupService);
   step = 1;
   isEditMode = false;
   jobId: GUID = GuidUtils.emptyGuid;
@@ -69,6 +71,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
       this.isEditMode = true;
       this.jobId = GuidUtils.asGuid(id);
     }
+    this.lookupsService.loadAll();
   }
 
   ngAfterViewInit(): void {

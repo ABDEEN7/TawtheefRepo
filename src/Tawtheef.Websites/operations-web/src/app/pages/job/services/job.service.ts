@@ -107,7 +107,7 @@ export class JobService {
         requestingDept: '',
         title: '',
         jobCategory: '',
-        gender: GenderEnum.All,
+        gender: [],
         entity: '',
         major: '',
         degree: [],

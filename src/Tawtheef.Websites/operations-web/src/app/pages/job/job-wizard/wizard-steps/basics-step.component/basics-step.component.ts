@@ -1,18 +1,12 @@
-import { Component, inject, OnInit, OnDestroy, signal, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { JobBasics } from '../../../models/job-basics.models';
-import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
-import {JobCategoryEnum} from '../../../enums/job-category.enum';
+import { debounceTime, filter } from 'rxjs';
 import {GenderEnum} from '../../../enums/gender.enum';
-import {EntityEnum} from '../../../enums/entity.enum';
-import {TypeOfWorkEnum} from '../../../enums/type-of-work.enum';
-import { ILookups } from '../../../../../core/models/lookups.model';
-import { LookupService } from '../../../../../core/services/lookup.service';
-
-
+import { JobLookupService } from '../../../services/job-lookup.service';
 
 @Component({
   selector: 'app-basics-step',
@@ -24,27 +18,13 @@ import { LookupService } from '../../../../../core/services/lookup.service';
 export class BasicsStepComponent implements WizardStepComponent, OnInit {
   private fb = inject(FormBuilder);
   private jobService = inject(JobService);
-  private lookupsService = inject(LookupService);
-
-  departments = signal<ILookups[]>([]);
-  majors = signal<ILookups[]>([]);
-  degrees = signal<string[]>([]);
-
-  jobCategories = Object.values(JobCategoryEnum);
-  genders = Object.values(GenderEnum);
-  entities = Object.values(EntityEnum);
-  typeOfWork = Object.values(TypeOfWorkEnum);
-
-  readonly virtualScrollOptions = {
-    scrollHeight: '200px',
-    itemSize: 37
-  };
+  lookupsService = inject(JobLookupService);
 
   readonly form = this.fb.nonNullable.group({
     requestingDept: ['', Validators.required],
     title: ['', Validators.required],
     jobCategory: ['', Validators.required],
-    gender: this.fb.control<GenderEnum>(GenderEnum.All, Validators.required),
+    gender: this.fb.control<string[]>([], Validators.required),
     entity: ['', Validators.required],
     major: ['', Validators.required],
     degree: this.fb.control<string[]>([], Validators.required),
@@ -55,19 +35,9 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
 
   ngOnInit() {
     this.setJobData(this.jobService.currentJob());
-    this.loadLookups();
     this.setupFormListeners();
   }
 
-
-  private loadLookups(): void {
-   this.lookupsService.getDepartments().subscribe(depts => {
-      this.departments.set(depts);
-   })
-     this.lookupsService.getMajors().subscribe(majors => {
-      this.majors.set(majors);
-   })
-  }
 
   private setupFormListeners(): void {
     this.form.valueChanges
@@ -96,7 +66,7 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
         requestingDept: job.basics.requestingDept || '',
         title: job.basics.title || '',
         jobCategory: job.basics.jobCategory || '',
-        gender: job.basics.gender || GenderEnum.All,
+        gender: job.basics.gender || '',
         entity: job.basics.entity || '',
         major: job.basics.major || '',
         degree: job.basics.degree || [],

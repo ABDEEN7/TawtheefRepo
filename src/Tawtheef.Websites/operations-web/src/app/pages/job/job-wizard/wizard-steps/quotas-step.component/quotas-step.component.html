@@ -64,7 +64,7 @@
       </div>
 
       @for (item of residentsBreakdown; track item.nat) {
-        <span class="chip">{{ item.nat }}: {{ item.pct }}%</span>
+        <span class="chip">{{ getNationalites(item.nat) }}: {{ item.pct }}%</span>
       }
     </div>
   }
