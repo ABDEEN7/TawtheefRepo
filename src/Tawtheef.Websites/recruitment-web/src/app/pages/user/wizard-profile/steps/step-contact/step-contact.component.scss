@@ -12,3 +12,144 @@
 }
 
 #naFileInfo { color: $muted; }
+
+// PrimeNG-style for ngx-intl-tel-input
+.prime-tel-input {
+  width: 100%;
+
+  ::ng-deep {
+    // Main container
+    .iti {
+      width: 100%;
+      display: block;
+    }
+
+    // Input field styling
+    .iti__tel-input {
+      width: 100%;
+      font-size: 1rem;
+      color: var(--text-color, #495057);
+      background: var(--surface-0, #ffffff);
+      border: 1px solid var(--surface-border, #ced4da);
+      transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+      border-radius: 6px;
+      outline: none;
+
+      // Focus state
+      &:focus {
+        outline: 0 none;
+        border-color: var(--primary-color, #6366F1);
+        box-shadow: 0 0 0 0.2rem var(--primary-color-lighter, rgba(99, 102, 241, 0.2));
+      }
+
+      // Disabled state
+      &:disabled {
+        background: var(--surface-100, #e9ecef);
+        color: var(--text-color-secondary, #6c757d);
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    .iti__selected-flag {
+      background: transparent;
+      border: none;
+      outline: none;
+
+      &:hover,
+      &:focus {
+        background: transparent;
+      }
+    }
+
+    // Arrow styling
+    .iti__arrow {
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid var(--text-color, #495057);
+      margin-left: 0.5rem;
+    }
+
+    // Dropdown styling
+    .iti__country-list {
+      background: var(--surface-overlay, #ffffff);
+      border: 1px solid var(--surface-border, #ced4da);
+      border-radius: 6px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-top: 0.25rem;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+
+      // Scrollbar styling
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: var(--surface-100, #f8f9fa);
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--surface-300, #dee2e6);
+        border-radius: 4px;
+
+        &:hover {
+          background: var(--surface-400, #ced4da);
+        }
+      }
+    }
+
+    // Country list items
+    .iti__country {
+      color: var(--text-color, #495057);
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: var(--surface-hover, #e9ecef);
+      }
+
+      &.iti__highlight {
+        background: var(--primary-color, #6366F1);
+        color: var(--primary-color-text, #ffffff);
+      }
+
+      &.iti__active {
+        background: var(--surface-100, #e9ecef);
+      }
+    }
+
+    // Country name and dial code
+    .iti__country-name,
+    .iti__dial-code {
+      font-size: 0.875rem;
+    }
+
+    // Search input in dropdown
+    .iti__search-input {
+      width: calc(100% - 2rem);
+      margin: 0.5rem 1rem;
+      border: 1px solid var(--surface-border, #ced4da);
+      border-radius: 4px;
+      font-size: 0.875rem;
+      outline: none;
+
+      &:focus {
+        border-color: var(--primary-color, #6366F1);
+        box-shadow: 0 0 0 0.2rem var(--primary-color-lighter, rgba(99, 102, 241, 0.2));
+      }
+    }
+  }
+
+  // Invalid/Error state
+  &.ng-invalid.ng-touched ::ng-deep {
+    .iti__tel-input {
+      border-color: var(--red-500, #ef4444);
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.2);
+      }
+    }
+  }
+}

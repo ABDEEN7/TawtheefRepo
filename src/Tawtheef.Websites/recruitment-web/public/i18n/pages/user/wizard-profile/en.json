@@ -38,6 +38,13 @@
       "cancel": "Cancel"
     },
     "personal": {
+      "hasDisability": "Do you have a disability?",
+      "disabilityType": "Disability Type",
+      "sponsorType": "Sponsor Type",
+      "sponsorEmployerName": "Establishment Name",
+      "sponsorEmployerNumber": "Establishment Number (Ministry of Labor)",
+      "sponsorCard": "Establishment Registration Card",
+      "sponsorCardHint": "Upload the establishment registration card (JPG, PNG, PDF)",
       "avatar": {
         "alt": "Profile photo",
         "hint": "Complete your profile to increase your matching score",
@@ -221,7 +228,12 @@
       "selectDialCode": "Select dial code",
       "selectInterviewPlace": "Select interview place",
       "selectCandidateType": "Select candidate type",
-      "selectTargetEntity": "Select target entity"
+      "selectTargetEntity": "Select target entity",
+      "selectDisabilityType": "Enter disability type",
+      "selectSponsorType": "Select sponsor type",
+      "uploadEstablishmentCard": "Upload establishment card",
+      "enterSponsorEmployerName": "Enter establishment name",
+      "enterSponsorEmployerNumber": "Enter establishment number"
     },
     "prereq": {
       "title": "Prerequisites to start",

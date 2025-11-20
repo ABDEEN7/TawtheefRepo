@@ -39,6 +39,7 @@ export class ProfileLookupsService {
   interviewLocation        = signal<CountryDto[]>([]);
   residenceCountry        = signal<CountryDto[]>([]);
   graduationCountry        = signal<CountryDto[]>([]);
+  sponsorTypes        = signal<LookupDto[]>([]);
 
   loadAll() {
     if (this.loaded()) return;
@@ -58,6 +59,7 @@ export class ProfileLookupsService {
       ratingGrades:    this.http.get<LookupDto[]>(this.endpoints.profile.lookups.ratingGrades),
       languages:       this.http.get<LookupDto[]>(this.endpoints.profile.lookups.languages),
       languageLevels:  this.http.get<LookupDto[]>(this.endpoints.profile.lookups.languageLevels),
+      sponsorTypes:  this.http.get<LookupDto[]>(this.endpoints.profile.lookups.sponsorTypes),
     }).subscribe({
       next: (res) => {
         this.candidateTypes.set(res.candidateTypes);
@@ -77,6 +79,7 @@ export class ProfileLookupsService {
         this.ratingGrades.set(res.ratingGrades);
         this.languages.set(res.languages);
         this.languageLevels.set(res.languageLevels);
+        this.sponsorTypes.set(res.sponsorTypes);
 
         this.loaded.set(true);
         this.loading.set(false);

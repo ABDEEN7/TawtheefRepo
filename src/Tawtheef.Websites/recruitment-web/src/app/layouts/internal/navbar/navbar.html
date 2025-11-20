@@ -1,0 +1,98 @@
+<nav class="main-nav">
+  <div class="nav-container">
+    <!-- Logo -->
+    <div class="logo">
+      <img
+        src="assets/img/logo.png"
+        [alt]="'internal.nav.logoAlt' | translate"
+      />
+    </div>
+
+    <!-- Navigation Links -->
+    <ul class="nav-links" *ngIf="isProfileCompleted">
+      <li>
+        <a routerLink="/home" routerLinkActive="active">
+          {{ 'internal.nav.home' | translate }}
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/personal-profile" routerLinkActive="active">
+          {{ 'internal.nav.personalProfile' | translate }}
+        </a>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle">
+          {{ 'internal.nav.jobs' | translate }}
+          <i class="icon-chevron-down"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a routerLink="/jobs/search">
+              {{ 'internal.nav.jobsSearch' | translate }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/jobs/applications">
+              {{ 'internal.nav.jobsApplications' | translate }}
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- User Actions -->
+    <div class="nav-actions">
+      <!-- Language Switcher -->
+      <button class="language-toggle" (click)="toggleLanguage()">
+        <span>{{ `common.${language.getPrev()}` | translate }}</span>
+        <i class="fa fa-earth-asia"></i>
+      </button>
+
+      <!-- Notifications -->
+      <button
+        class="notification-btn"
+        [class.has-notifications]="notificationCount > 0">
+        <i class="fa fa-bell"></i>
+        <span class="badge" *ngIf="notificationCount > 0">
+          {{ notificationCount }}
+        </span>
+      </button>
+
+      <!-- Login/Register Button -->
+      <button class="btn-login" *ngIf="!isLoggedIn" (click)="login()">
+        <i class="icon-user"></i>
+        {{ 'internal.nav.login' | translate }}
+      </button>
+
+      <!-- User Menu -->
+      <div class="user-menu" *ngIf="isLoggedIn && isProfileCompleted">
+        <button class="user-toggle" (click)="toggleUserMenu()">
+          <img
+            [src]="userAvatar"
+            [alt]="'internal.nav.userAvatarAlt' | translate"
+          />
+          <span>{{ userName }}</span>
+        </button>
+        <ul class="user-dropdown" *ngIf="showUserMenu">
+          <li>
+            <a routerLink="/profile">
+              {{ 'internal.nav.userProfile' | translate }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/settings">
+              {{ 'internal.nav.userSettings' | translate }}
+            </a>
+          </li>
+          <li>
+            <a (click)="logout()">
+              {{ 'internal.nav.logout' | translate }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -28,10 +28,18 @@ export class AuthService {
     });
   }
 
-  // Proxy methods for convenience
   get isAuthenticated$(): Observable<boolean> {
     return this.state.isAuthenticated$;
   }
+
+   get isAuthenticated(): boolean {
+    return this.state.isAuthenticated();
+   }
+   get isProfileCompleted(): boolean {
+    if(!this.token) return false;
+    const profile = this.decodeBootstrapFromJwt(this.token!);
+    return !profile.requiresProfileCompletion;
+   }
 
   get token(): string | null {
     return this.core.getToken;
@@ -119,8 +127,6 @@ export class AuthService {
     const payload = this.decodeJwtPayload<Record<string, any>>(token) ?? {};
 
     const result = new Set<string>();
-
-    // 1) `permissions` as array
     const permissionsArray = payload['permissions'];
     if (Array.isArray(permissionsArray)) {
       permissionsArray.forEach((p: any) => {
@@ -128,7 +134,6 @@ export class AuthService {
       });
     }
 
-    // 2) `permissions` as space-separated string
     if (typeof permissionsArray === 'string') {
       permissionsArray.split(' ')
         .map(x => x.trim())

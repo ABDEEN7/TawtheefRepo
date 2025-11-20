@@ -1,5 +1,9 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import {Component, EventEmitter, Output, inject, OnInit} from '@angular/core';
 import { DataService } from '../../services/data.service';
+import {ProfileLookupsService} from '../../services/profile-lookups.service';
+import {CountryISO, NgxIntlTelInputComponent, SearchCountryField} from 'ngx-intl-tel-input';
+import {GeoIpService} from '../../../../../core/services/geo-ip.service';
+import { PhoneNumberUtil, PhoneNumber } from 'google-libphonenumber';
 
 @Component({
   selector: 'app-step-contact',
@@ -7,14 +11,34 @@ import { DataService } from '../../services/data.service';
   styleUrl: './step-contact.component.scss',
   standalone: false,
 })
-export class StepContactComponent {
+export class StepContactComponent implements OnInit{
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
   ds = inject(DataService);
+  lookups = inject(ProfileLookupsService);
+  geoIp = inject(GeoIpService);
+  protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
+  protected readonly SearchCountryField = SearchCountryField;
+  phoneView: any = null;
+  phoneValid = false;
+  phoneTouched = false;
+  selectedCountryIso2: CountryISO = CountryISO.Qatar;
 
-  countries = [
-    { name:'قطر', code:'+974', iso: 'qa' }, { name:'السعودية', code:'+966', iso: 'sa' }, { name:'الإمارات', code:'+971', iso: 'ae' },
-    { name:'البحرين', code:'+973', iso: 'br' }, { name:'الكويت', code:'+965', iso: 'kw' }, { name:'الأردن', code:'+962', iso: 'jo' },
-    { name:'مصر', code:'+20', iso: 'eg' }, { name:'تونس', code:'+216', iso: 'ta' }, { name:'المغرب', code:'+212', iso: 'mg' }
-  ];
+  ngOnInit(): void {
+    this.geoIp.getCountryIso2().subscribe(code => {
+      this.selectedCountryIso2 = code.toLowerCase() as CountryISO;
+    });
+  }
+  onPhoneChange(value: any) {
+    if(!value) return;
+
+    this.phoneTouched = true;
+    var phoneNumber = this.phoneNumberUtil.parseAndKeepRawInput(value.e164Number);
+    this.phoneValid = this.phoneNumberUtil.isValidNumber(phoneNumber);
+    if (this.phoneValid) {
+      this.ds.up('phone', value);
+    } else {
+      this.ds.up('phone', null);
+    }
+  }
 }

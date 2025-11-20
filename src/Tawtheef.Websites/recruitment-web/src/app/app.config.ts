@@ -26,6 +26,7 @@ import {errorInterceptor} from './core/interceptors/error.interceptor';
 import {customHttpInterceptor} from './core/interceptors/http.interceptor';
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   return new MultiTranslateHttpLoader(_httpBackend, [
+    {prefix: '/i18n/primeng/', suffix: '.json'},
     {prefix: '/i18n/common/', suffix: '.json'},
     {prefix: '/i18n/layout/', suffix: '.json'},
   ]);

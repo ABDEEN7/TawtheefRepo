@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
 import {RouterOutlet} from '@angular/router';
-import {SideNav} from '../side-nav/side-nav';
+import {Navbar} from '../navbar/navbar';
+import {Footer} from '../footer/footer';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-user-layout',
   imports: [
     RouterOutlet,
-    SideNav
+    Navbar,
+    Footer,
+    I18nNamespaceDirective
   ],
   templateUrl: './user-layout.html',
   styleUrl: './user-layout.scss',

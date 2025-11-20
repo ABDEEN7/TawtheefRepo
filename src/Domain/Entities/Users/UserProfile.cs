@@ -64,6 +64,17 @@ public class UserProfile : EventEntity
     public Guid? ResidenceAddressCertificateId { get; set; }
     public Resource? ResidenceAddressCertificate { get; set; }
     
+    public bool HasDisability { get; set; }
+    public string? DisabilityDetails { get; set; }
+    
+    public Guid? SponsorProfileId { get; set; }
+    public SponsorProfile? SponsorProfile { get; set; }
+    
+    public Guid? BirthdayCertificateId { get; set; }
+    public Resource? BirthdayCertificate { get; set; }
+    
+    public Guid? MarriageCertificateId { get; set; }
+    public Resource? MarriageCertificate { get; set; }
     
     public ICollection<Qualification> Qualifications { get; set; } = [];
     public ICollection<Experience> Experiences { get; set; } = [];

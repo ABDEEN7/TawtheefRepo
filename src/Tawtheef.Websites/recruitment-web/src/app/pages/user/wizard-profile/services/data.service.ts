@@ -4,6 +4,7 @@ import {Language} from '../models/language.model';
 import {Degree} from '../models/degree.model';
 import {Experience} from '../models/experience.model';
 import {Attachment} from '../models/attachment.model';
+import {CandidateType} from '../../../../core/enums/lookups.enum';
 
 
 
@@ -15,67 +16,12 @@ export class DataService {
     available: true,
   });
 
-  /** Fields that count once when non-empty (strings trimmed; numbers count if defined, even 0) */
-  private scalarKeys: (keyof ProfileState)[] = [
-    'fullName','fullNameEn','qid','dob',
-    'country','dialCode','phone','address','email',
-    'nationality','gender','religion','marital','children',
-    'interviewPlace','naZone','naStreet','naBuilding','naUnit','naFileName',
-    'avatarUrl'
-  ];
-
-  /**
-   * Arrays contribute by their length up to a cap.
-   * Tweak caps to change how much each collection can add to progress.
-   */
-  private arrayCaps: Record<keyof ProfileState, number> = {
-    degrees: 1,
-    experiences: 1,
-    courses: 1,
-    achievements: 1,
-    skills: 1,
-    languages: 1,
-    attachments: 1,
-    // non-array keys set to 0 or omitted
-    candidateType: 0, targetEntity: 0, cvName: 0, idName: 0,
-    fullName: 0, fullNameEn: 0, qid: 0, nationality: 0, gender: 0, religion: 0, marital: 0, children: 0,
-    dob: 0, country: 0, dialCode: 0, phone: 0, address: 0, email: 0, interviewPlace: 0,
-    naZone: 0, naStreet: 0, naBuilding: 0, naUnit: 0, naFileName: 0,
-    available: 0, avatarUrl: 0
-  };
-
   private isFilledScalar = (val: unknown) => {
     if (typeof val === 'string') return val.trim().length > 0;
     if (typeof val === 'number') return Number.isFinite(val); // counts even 0
     return !!val;
   };
 
-  progress = computed(() => {
-    const s = this.state();
-
-    // 1) Scalars
-    const scalarFilled = this.scalarKeys.reduce((n, k) => n + (this.isFilledScalar(s[k]) ? 1 : 0), 0);
-    const scalarTotal = this.scalarKeys.length;
-
-    // 2) Arrays with caps
-    const arrayEntries = Object.entries(this.arrayCaps)
-      .filter(([_, cap]) => cap > 0) as Array<[keyof ProfileState, number]>;
-
-    let arrayFilled = 0;
-    let arrayTotal = 0;
-
-    for (const [key, cap] of arrayEntries) {
-      const arr = s[key] as unknown;
-      const len = Array.isArray(arr) ? arr.length : 0;
-      arrayFilled += Math.min(len, cap); // contribute by count up to cap
-      arrayTotal += cap;                 // total possible points for this array
-    }
-
-    const filled = scalarFilled + arrayFilled;
-    const total = scalarTotal + arrayTotal;
-
-    return total === 0 ? 0 : Math.min(100, Math.round((filled / total) * 100));
-  });
   private locked = signal<Partial<Record<keyof ProfileState, boolean>>>({});
 
   isLocked<K extends keyof ProfileState>(key: K): boolean {
@@ -112,11 +58,28 @@ export class DataService {
   stepValidity = computed(() => {
     const s = this.state();
 
+    const basicValidExceptionCase =
+      ![CandidateType.WifeOfQatari, CandidateType.SonOfQatariMother].includes(s.candidateType?.backendName as CandidateType) ||
+      (s.candidateType?.backendName == CandidateType.WifeOfQatari && this.isFilledScalar(s.marriageCertificateName)) ||
+      (s.candidateType?.backendName == CandidateType.SonOfQatariMother && this.isFilledScalar(s.birthCertificateName));
+
+
     const basicValid =
       this.isFilledScalar(s.candidateType) &&
       this.isFilledScalar(s.targetEntity) &&
       this.isFilledScalar(s.cvName) &&
-      this.isFilledScalar(s.idName);
+      this.isFilledScalar(s.idName) &&
+      basicValidExceptionCase;
+
+    const hasDisabilityValid = s.hasDisability !== null && s.hasDisability !== undefined;
+    const disabilityTypeValid =
+      !s.hasDisability || this.isFilledScalar(s.disabilityDetails);
+
+    const sponsorValid =
+      this.isFilledScalar(s.sponsorType) &&
+      this.isFilledScalar(s.sponsorEmployerName) &&
+      this.isFilledScalar(s.sponsorEmployerNumber) &&
+      this.isFilledScalar(s.sponsorCardName);
 
     const personalValid =
       this.isFilledScalar(s.fullName) &&
@@ -126,7 +89,10 @@ export class DataService {
       this.isFilledScalar(s.nationality) &&
       this.isFilledScalar(s.gender) &&
       this.isFilledScalar(s.religion) &&
-      this.isFilledScalar(s.marital);
+      this.isFilledScalar(s.marital) &&
+      hasDisabilityValid &&
+      disabilityTypeValid &&
+      sponsorValid;
 
     const contactValid =
       this.isFilledScalar(s.country) &&
@@ -150,7 +116,7 @@ export class DataService {
     } as const;
   });
 
-  up<K extends keyof ProfileState>(key: K, val: ProfileState[K]) {
+  up<K extends keyof ProfileState>(key: K, val: ProfileState[K] | null) {
     this.state.update(s => ({ ...s, [key]: val }));
   }
 

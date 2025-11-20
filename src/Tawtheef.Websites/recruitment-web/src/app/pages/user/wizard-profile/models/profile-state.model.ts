@@ -10,6 +10,8 @@ export interface ProfileState {
   targetEntity?: dropdownOptionsModel;
   cvName?: string;
   idName?: string;
+  marriageCertificateName?: string;
+  birthCertificateName?: string;
 
   // personal
   fullName?: string;
@@ -47,4 +49,11 @@ export interface ProfileState {
   // ui
   available: boolean;
   avatarUrl?: string;
+
+  hasDisability?: boolean | null;
+  disabilityDetails?: string | null;
+  sponsorType?: any | null;
+  sponsorEmployerName?: string | null;
+  sponsorEmployerNumber?: string | null;
+  sponsorCardName?: string | null;
 }

@@ -150,9 +150,8 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         var claims = new (string Key, string? Value)[]
         {
             ("qid", data.UserQid),
-            ("mobile", normalizedPhone), // Still useful to store the phone as a claim
+            ("mobile", normalizedPhone),
             ("nationality", data.Nationality),
-            ("passportNumber", data.PassportNumber),
             ("accountType", data.AccountType),
             ("accountSubType", data.AccountSubType),
             ("code", data.Code),

@@ -51,6 +51,7 @@ export class EndpointsService {
       ratingGrades: this.getFullUrl(`/profiles/lookups/rating-grades`),
       languages: this.getFullUrl(`/profiles/lookups/languages`),
       languageLevels: this.getFullUrl(`/profiles/lookups/language-levels`),
+      sponsorTypes: this.getFullUrl(`/profiles/lookups/sponsor-types`),
     }
   }
 }

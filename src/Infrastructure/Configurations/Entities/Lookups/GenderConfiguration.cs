@@ -11,6 +11,15 @@ public class GenderConfiguration : LookupBaseConfiguration<Gender>
         builder.HasData(
             new Gender
             {
+                Id = GenderIds.All,
+                BackendName = nameof(GenderIds.All),
+                NameAr = "جميعها",
+                NameEn = "All",
+                DescriptionAr = "جميع الخيارات",
+                DescriptionEn = "All Options"
+            },
+            new Gender
+            {
                 Id = GenderIds.Male,
                 BackendName = nameof(GenderIds.Male),
                 NameAr = "ذكر",

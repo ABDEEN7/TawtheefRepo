@@ -1,11 +1,11 @@
-<div class="card border-0 shadow rounded-4 p-4 mb-3">
+<div class="card border border-1 shadow-none rounded-4 p-4 mb-3">
   <div class="row g-3">
     <div class="col-md-6">
       <label for="candidateType" class="form-label required">{{ 'wizard.prereq.candidateType' | translate }}</label>
       <p-select [options]="lookups.candidateTypes()" [(ngModel)]="ds.state().candidateType"
                 [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
                 class="w-full md:w-56"
-                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectCandidateType') | translate"
+                [placeholder]="'wizard.placeholders.selectCandidateType' | translate"
                 (ngModelChange)="ds.up('candidateType',$event)" fluid></p-select>
     </div>
     <div class="col-md-6">
@@ -13,23 +13,43 @@
       <p-select [options]="lookups.targetEntities()" [(ngModel)]="ds.state().targetEntity"
                 [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
                 class="w-full md:w-56"
-                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectTargetEntity') | translate"
+                [placeholder]="'wizard.placeholders.selectTargetEntity' | translate"
                 (ngModelChange)="ds.up('targetEntity',$event)" fluid></p-select>
     </div>
 
     <div class="col-12"><hr></div>
 
     <div class="col-md-6">
-      <label class="form-label required">{{ 'wizard.prereq.cvLabel' | translate }}</label>
-      <p-fileupload mode="basic" name="na" chooseLabel="{{'wizard.buttons.upload' | translate}}"
-                    (onSelect)="ds.up('cvName',$event.files[0]?.name)">
-      </p-fileupload>
+      <label class="form-label required">
+        {{ 'wizard.prereq.cvLabel' | translate }}
+        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
+      </label>
+      <div class="d-flex gap-2 align-items-center">
+        <input pInputText class="form-control" pSize="small" name="cvName"
+               [ngModel]="ds.state().cvName" (ngModelChange)="ds.up('cvName',$event.files[0]?.name)"
+               placeholder="{{ 'wizard.prereq.cvLabel' | translate }}"
+               readonly
+        />
+        <button type="button" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-upload"></i>
+        </button>
+      </div>
     </div>
     <div class="col-md-6">
-      <label class="form-label required">{{ 'wizard.prereq.idLabel' | translate }}</label>
-      <p-fileupload mode="basic" name="na" chooseLabel="{{'wizard.buttons.upload' | translate}}"
-                    (onSelect)="ds.up('idName',$event.files[0]?.name)">
-      </p-fileupload>
+      <label class="form-label required">
+        {{ 'wizard.prereq.idLabel' | translate }}
+        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
+      </label>
+      <div class="d-flex gap-2 align-items-center">
+        <input pInputText class="form-control" pSize="small" name="idName"
+               [ngModel]="ds.state().idName" (ngModelChange)="ds.up('idName',$event.files[0]?.name)"
+               placeholder="{{ 'wizard.prereq.idLabel' | translate }}"
+               readonly
+        />
+        <button type="button" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-upload"></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>

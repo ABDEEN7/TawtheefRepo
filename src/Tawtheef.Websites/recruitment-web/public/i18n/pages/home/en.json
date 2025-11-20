@@ -1,14 +1,6 @@
 ﻿{
   "home": {
     "title": "Tawtheef",
-    "nav": {
-      "about": "About",
-      "tracks": "Career Paths",
-      "why": "Why Us",
-      "success": "Success Stories",
-      "faq": "FAQ",
-      "login": "Login"
-    },
     "hero": {
       "kicker": "Qatar • Education Careers",
       "title": "We attract talents to build Qatar’s educational future",
@@ -76,9 +68,5 @@
       "q4": "Are Qataris prioritized?",
       "a4": "Selection follows MOEHE criteria with workforce localization considered whenever the required skills are available."
     },
-    "footer": {
-      "rights": "All rights reserved © 2025",
-      "ministry": "Ministry of Education and Higher Education — State of Qatar"
-    }
   }
 }
