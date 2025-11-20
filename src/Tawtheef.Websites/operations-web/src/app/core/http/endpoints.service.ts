@@ -52,7 +52,8 @@ export class EndpointsService {
       genders: this.getFullUrl('/job/lookups/genders'),
       targetEntities: this.getFullUrl('/job/lookups/target-entities'),
       nationalities: this.getFullUrl('/job/lookups/nationalities'),
-      jobStatus : this.getFullUrl('/job/lookups/job-status')
+      jobStatus : this.getFullUrl('/job/lookups/job-status'),
+      jobInvitesStatus : this.getFullUrl('/job/lookups/invitation-statuses')
     }
   };
 }

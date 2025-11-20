@@ -5,16 +5,18 @@ import { InviteDetails } from '../models/invite-details.model';
 import { Invite } from '../models/invite.model';
 import { Profile } from '../models/profile.model';
 import { Application } from '../models/application.model';
-import {JobService} from '../../job/services/job.service';
-import {Job} from '../../job/models/job.model';
+import {JobService} from './job.service';
+import {Job} from '../models/job.model';
 import { GUID } from '../../../shared/types/guid.type';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class StaffInvitesService {
+export class JobInvitesService {
   private http = inject(HttpClient);
   private jobService = inject(JobService);
+  private notificationService = inject(NotificationService)
 
   private _invites = signal<InviteDetails[]>([]);
   invites = this._invites.asReadonly();
@@ -41,9 +43,6 @@ export class StaffInvitesService {
           const profile = profileMap.get(invite.profileId);
           const application = applicationMap.get(`${invite.jobId}-${invite.profileId}`);
 
-          if (!profile) {
-            console.warn(`Profile not found for invite ${invite.id}, profileId: ${invite.profileId}`);
-          }
 
           return {
             ...invite,
@@ -61,7 +60,7 @@ export class StaffInvitesService {
         this._invites.set(inviteDetails);
       }),
       catchError(error => {
-        console.error('Error loading invites:', error);
+        this.notificationService.error(error);
         this._invites.set([]);
         return of([]);
       })
@@ -76,17 +75,14 @@ export class StaffInvitesService {
         const existingInvite = invites.find(i => i.id === inviteId);
 
         if (!existingInvite) {
-          console.warn(`Invite ${inviteId} not found in local state`);
           return null;
         }
 
-        // Merge the update with existing invite details
         const updatedInviteDetails: InviteDetails = {
           ...existingInvite,
           ...updatedInvite
         };
 
-        // Update the signal
         const updatedInvites = invites.map(invite =>
           invite.id === inviteId ? updatedInviteDetails : invite
         );
@@ -95,7 +91,7 @@ export class StaffInvitesService {
         return updatedInviteDetails;
       }),
       catchError(error => {
-        console.error('Error updating invite status:', error);
+        this.notificationService.error(error);
         return of(null);
       })
     );

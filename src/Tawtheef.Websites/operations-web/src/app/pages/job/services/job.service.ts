@@ -6,7 +6,6 @@ import {JobBasics} from '../models/job-basics.models';
 import {JobQuotas} from '../models/job-quotas.models';
 import {PointsConfig} from '../models/points-config.model';
 import {HttpService} from '../../../core/http/http.service';
-import {GenderEnum} from '../enums/gender.enum';
 import { GUID } from '../../../shared/types/guid.type';
 
 @Injectable({

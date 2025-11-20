@@ -27,16 +27,16 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {DatePickerModule} from 'primeng/datepicker';
 import {PaginationComponent} from '../../shared/components/pagination/pagination.component';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { JobInvitesDetailsComponent } from './job-invites-details/job-invites-details.component';
 
 @NgModule({
   declarations: [
     JobDetailsComponent,
     JobListComponent,
-
+    JobInvitesDetailsComponent,
     StepperComponent,
     JobWizardComponent,
     ProgressBarComponent,
-
     BasicsStepComponent,
     ConditionsStepComponent,
     DescriptionStepComponent,

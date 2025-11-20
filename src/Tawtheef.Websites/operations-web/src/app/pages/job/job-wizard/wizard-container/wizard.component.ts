@@ -20,7 +20,6 @@ import {SkillsStepComponent} from '../wizard-steps/skills-step.component/skills-
 import {DescriptionStepComponent} from '../wizard-steps/description-step.component/description-step.component';
 import {ReviewStepComponent} from '../wizard-steps/review-step.component/review-step.component';
 import {Job} from '../../models/job.model';
-import {JobStatusEnum} from '../../enums/job-status.enum';
 import { GUID } from '../../../../shared/types/guid.type';
 import { GuidUtils } from '../../../../core/utils/guid-utils';
 import { JobLookupService } from '../../services/job-lookup.service';
@@ -163,7 +162,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
     const currentJob = this.jobService.currentJob();
     const jobToSave: Job = {
       ...currentJob,
-      status: JobStatusEnum.Open,
+      status: this.lookupsService.jobStatus().find(jobStatus => jobStatus.backendName == "open")?.id || '',
       ...(this.isEditMode && this.jobId && {id: this.jobId}),
     };
 
