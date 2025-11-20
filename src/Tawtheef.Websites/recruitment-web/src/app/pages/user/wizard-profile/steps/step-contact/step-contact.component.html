@@ -1,63 +1,31 @@
-<div class="card border-0 shadow rounded-4 p-4 mb-3">
+<div class="card border border-1 shadow-none rounded-4 p-4 mb-3">
   <div class="row g-3">
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.country' | translate }}</label>
-      <p-select [options]="countries" [(ngModel)]="ds.state().country"
+      <p-select [options]="lookups.countries()" [(ngModel)]="ds.state().country"
                 [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
                 class="w-full md:w-56"
-                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectCountry') | translate"
+                [placeholder]="'wizard.placeholders.selectCountry' | translate"
                 (ngModelChange)="ds.up('country',$event)"></p-select>
     </div>
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label required">{{ 'wizard.contact.dial' | translate }}</label>
-      <p-select [options]="countries" [(ngModel)]="ds.state().dialCode"
-                [filter]="false" [loading]="false" filterBy="code" optionLabel="code" size="small"
-                class="w-full md:w-56"
-                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectDialCode') | translate"
-                (ngModelChange)="ds.up('dialCode',$event)">
-        <ng-template let-selectedOption #selectedItem>
-          <div class="flex items-center gap-2">
-            <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
-                 [class]="'flag flag-' + selectedOption.iso.toLowerCase()" style="width: 18px" />
-            <div>{{ selectedOption.code }}</div>
-          </div>
-        </ng-template>
-        <ng-template let-country #item>
-          <div class="flex items-center gap-2">
-            <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
-                 [class]="'flag flag-' + country.iso.toLowerCase()" style="width: 18px" />
-            <div>{{ country.code }}</div>
-          </div>
-        </ng-template>
-      </p-select>
-    </div>
-    <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.phone' | translate }}</label>
-      <input pInputText class="form-control" [(ngModel)]="ds.state().phone"
-             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             type="number" (ngModelChange)="ds.up('phone',$event)"
-             [readonly]="ds.isLocked('phone')"
-             [ngClass]="{'locked-field': ds.isLocked('phone')}">
+      <ngx-intl-tel-input class="prime-tel-input"
+        [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true"
+        [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+        [maxLength]="15" [phoneValidation]="true"
+        [selectedCountryISO]="selectedCountryIso2"
+        [(ngModel)]="phoneView" (ngModelChange)="onPhoneChange($event)"
+        [disabled]="ds.isLocked('phone')"
+      ></ngx-intl-tel-input>
+      <div *ngIf="phoneTouched && !phoneValid" class="text-danger fz-2xs small mt-1">
+        {{ 'validation.phoneInvalid' | translate }}
+      </div>
       <small *ngIf="ds.isLocked('phone')" class="fz-2xs text-muted">
         {{'wizard.accountFieldNote' | translate}}
       </small>
     </div>
-
-    <div class="col-md-6">
-      <label class="form-label required">{{ 'wizard.contact.address' | translate }}</label>
-      <input pInputText class="form-control" [(ngModel)]="ds.state().address"
-             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             (ngModelChange)="ds.up('address',$event)">
-    </div>
-    <div class="col-md-3 d-flex flex-column">
-      <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
-      <p-select [options]="countries" [(ngModel)]="ds.state().interviewPlace"
-                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
-                class="w-full md:w-56"
-                [placeholder]="(false ? 'wizard.placeholders.loading' : 'wizard.placeholders.selectInterviewPlace') | translate"
-                (ngModelChange)="ds.up('interviewPlace',$event)"></p-select>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
       <label class="form-label required">{{ 'wizard.contact.email' | translate }}</label>
       <input pInputText type="email" class="form-control" [ngModel]="ds.state().email"
              placeholder="{{'wizard.placeholders.typeHere' | translate}}"
@@ -67,6 +35,20 @@
       <small *ngIf="ds.isLocked('email')" class="fz-2xs text-muted">
         {{'wizard.accountFieldNote' | translate}}
       </small>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label required">{{ 'wizard.contact.address' | translate }}</label>
+      <input pInputText class="form-control" [(ngModel)]="ds.state().address"
+             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
+             (ngModelChange)="ds.up('address',$event)">
+    </div>
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
+      <p-select [options]="lookups.countries()" [(ngModel)]="ds.state().interviewPlace"
+                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                class="w-full md:w-56"
+                [placeholder]="'wizard.placeholders.selectInterviewPlace' | translate"
+                (ngModelChange)="ds.up('interviewPlace',$event)"></p-select>
     </div>
   </div>
 

@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
-import { AvatarModal } from './dialogs/avatar.modal/avatar.modal';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { ProfileState } from '../../models/profile-state.model';
+import {MaritalStatus} from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-step-personal',
@@ -12,7 +12,7 @@ import { ProfileState } from '../../models/profile-state.model';
   styleUrl: './step-personal.component.scss',
   standalone: false,
 })
-export class StepPersonalComponent implements OnInit {
+export class StepPersonalComponent {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
@@ -20,13 +20,6 @@ export class StepPersonalComponent implements OnInit {
   dialog = inject(DialogService);
   translate = inject(TranslateService);
   lookups = inject(ProfileLookupsService);
-
-  avatarPreviewUrl: string | null = null;
-
-  ngOnInit() {
-    const s = this.ds.state();
-    this.avatarPreviewUrl = s.avatarUrl ?? null;
-  }
 
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
@@ -38,23 +31,18 @@ export class StepPersonalComponent implements OnInit {
     this.updateField('children', isNaN(num) ? 0 : num);
   }
 
-  get showChildrenField(): boolean {
-    const marital = this.ds.state().marital as any;
-    return !!marital && marital.backendName !== 'Single';
+  updateDisability(value: boolean) {
+    this.updateField('hasDisability', value as any);
+    if (!value) {
+      this.updateField('disabilityDetails', null as any);
+    }
   }
 
-  openAvatarDialog() {
-    this.dialog.open(AvatarModal, {
-      header: this.translate.instant('wizard.personal.avatar.title'),
-      width: '80%',
-      contentStyle: { 'max-height': '80vh', 'overflow': 'visible' },
-      baseZIndex: 10000,
-      closable: true,
-    })?.onClose.subscribe((croppedImage: string | null) => {
-      if (croppedImage) {
-        this.ds.up('avatarUrl', croppedImage);
-        this.avatarPreviewUrl = croppedImage;
-      }
-    });
+  get showChildrenField(): boolean {
+    const marital = this.ds.state().marital as any;
+    return !!marital && marital.backendName !== MaritalStatus.Single;
+  }
+  get showDisabilityType(): boolean {
+    return !!this.ds.state().hasDisability;
   }
 }

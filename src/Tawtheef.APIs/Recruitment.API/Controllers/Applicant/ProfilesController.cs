@@ -2,10 +2,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 
 namespace Recruitment.API.Controllers.Applicant;
@@ -105,6 +103,13 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetLanguageLevels()
     {
         var result = await mediator.Send(new GetLanguageLevelsQuery());
+        return result.ToActionResult();
+    }
+    
+    [HttpGet("lookups/sponsor-types")]
+    public async Task<IActionResult> GetSponsorTypes()
+    {
+        var result = await mediator.Send(new GetSponsorTypesQuery());
         return result.ToActionResult();
     }
 

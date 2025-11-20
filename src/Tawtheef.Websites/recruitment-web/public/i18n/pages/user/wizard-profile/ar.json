@@ -39,9 +39,16 @@
       "delete": "حذف"
     },
     "personal": {
+      "hasDisability": "هل لديك إعاقة؟",
+      "disabilityType": "نوع الإعاقة",
+      "sponsorType": "نوع الكفيل",
+      "sponsorEmployerName": "اسم المنشأة",
+      "sponsorEmployerNumber": "رقم المنشأة (وزارة العمل)",
+      "sponsorCard": "بطاقة قيد المنشأة",
+      "sponsorCardHint": "قم برفع صورة بطاقة قيد المنشأة (JPG, PNG, PDF)",
       "avatar": {
         "alt": "الصورة الشخصية",
-        "hint": "أكمل ملفك لرفع نسبة الترشيح",
+        "hint": "أكمل بيانات ملفك الشخصي للتمكن من التقديم على الوظائف.",
         "uploadLink": "رفع صورة شخصية",
         "title": "رفع صورة شخصية",
         "rulesIntro": "الرجاء الالتزام بالشروط التالية:",
@@ -216,7 +223,12 @@
       "selectDialCode": "اختر مفتاح الدولة",
       "selectInterviewPlace": "اختر مكان المقابلة",
       "selectCandidateType": "اختر فئة المرشح",
-      "selectTargetEntity": "اختر الجهة المستهدفة"
+      "selectTargetEntity": "اختر الجهة المستهدفة",
+      "selectDisabilityType": "ادخل نوع الإعاقة",
+      "selectSponsorType": "اختر نوع الكفيل",
+      "uploadEstablishmentCard": "ارفع بطاقة قيد المنشأة",
+      "enterSponsorEmployerName": "أدخل اسم المنشأة",
+      "enterSponsorEmployerNumber": "أدخل رقم المنشأة"
     },
     "prereq": {
       "title": "المتطلبات القبلية للبدء",

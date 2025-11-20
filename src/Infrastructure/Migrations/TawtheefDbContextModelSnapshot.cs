@@ -879,8 +879,28 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DisplayOrder = 4,
                             IsDeleted = false,
-                            NameAr = "غير قطري",
-                            NameEn = "Non-Qatari"
+                            NameAr = "مقيم خارج قطر",
+                            NameEn = "Resident outside Qatar"
+                        },
+                        new
+                        {
+                            Id = new Guid("744256ea-4ee0-4a63-b071-8810895a33dc"),
+                            BackendName = "SonOfQatariMother",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DisplayOrder = 5,
+                            IsDeleted = false,
+                            NameAr = "أبناء المرأة القطرية المتزوجة من غير قطري",
+                            NameEn = "Children of a Qatari woman married to a non-Qatari"
+                        },
+                        new
+                        {
+                            Id = new Guid("ce67465e-6fed-4a83-9161-8eba16a79af3"),
+                            BackendName = "WifeOfQatari",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DisplayOrder = 6,
+                            IsDeleted = false,
+                            NameAr = "الزوج غير القطري المتزوج من قطرية أو قطري",
+                            NameEn = "Non-Qatari husband married to a Qatari woman or man"
                         });
                 });
 
@@ -1317,6 +1337,18 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("Gender", "lkp");
 
                     b.HasData(
+                        new
+                        {
+                            Id = new Guid("4436a8ce-3f1e-4581-be3d-839c67127a9f"),
+                            BackendName = "All",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DescriptionAr = "جميع الخيارات",
+                            DescriptionEn = "All Options",
+                            DisplayOrder = 0,
+                            IsDeleted = false,
+                            NameAr = "جميعها",
+                            NameEn = "All"
+                        },
                         new
                         {
                             Id = new Guid("6720e352-b360-41f0-8d3b-fa5116b7a0b4"),
@@ -2860,6 +2892,95 @@ namespace Tawtheef.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.SponsorType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("SponsorType", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5970a291-e636-4fd4-ab27-2af22dd77e9a"),
+                            BackendName = "Individual",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DisplayOrder = 1,
+                            IsDeleted = false,
+                            NameAr = "فرد",
+                            NameEn = "Individual"
+                        },
+                        new
+                        {
+                            Id = new Guid("51588ec8-2d50-4365-aa8c-84efaec02e09"),
+                            BackendName = "Company",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DisplayOrder = 2,
+                            IsDeleted = false,
+                            NameAr = "منشأة",
+                            NameEn = "Company"
+                        });
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.StudyType", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3913,6 +4034,64 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("Resources");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.SponsorProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("SponsorCardId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SponsorName")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("SponsorNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("SponsorTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("SponsorCardId");
+
+                    b.HasIndex("SponsorTypeId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("SponsorProfile", "app");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4061,6 +4240,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<DateOnly>("BirthDate")
                         .HasColumnType("date");
 
+                    b.Property<Guid?>("BirthdayCertificateId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("CandidateTypeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -4079,8 +4261,14 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("DeletedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("DisabilityDetails")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("GenderId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("HasDisability")
+                        .HasColumnType("bit");
 
                     b.Property<Guid?>("InterviewLocationId")
                         .HasColumnType("uniqueidentifier");
@@ -4089,6 +4277,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<Guid>("MaritalStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("MarriageCertificateId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("NationalCardIdAttachmentId")
@@ -4115,6 +4306,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid?>("ResumeAttachmentId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SponsorProfileId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("TargetEntityId")
                         .HasColumnType("uniqueidentifier");
 
@@ -4129,6 +4323,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BirthdayCertificateId");
+
                     b.HasIndex("CandidateTypeId");
 
                     b.HasIndex("CreatedById");
@@ -4140,6 +4336,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("InterviewLocationId");
 
                     b.HasIndex("MaritalStatusId");
+
+                    b.HasIndex("MarriageCertificateId");
 
                     b.HasIndex("NationalCardIdAttachmentId");
 
@@ -4154,6 +4352,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("ResidenceCountryId");
 
                     b.HasIndex("ResumeAttachmentId");
+
+                    b.HasIndex("SponsorProfileId");
 
                     b.HasIndex("TargetEntityId");
 
@@ -5269,6 +5469,30 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.SponsorType", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.StudyType", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -5775,6 +5999,44 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.SponsorProfile", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "SponsorCard")
+                        .WithMany()
+                        .HasForeignKey("SponsorCardId");
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.SponsorType", "SponsorType")
+                        .WithMany()
+                        .HasForeignKey("SponsorTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("SponsorCard");
+
+                    b.Navigation("SponsorType");
+
+                    b.Navigation("UpdatedBy");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.User", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.UserType", "UserType")
@@ -5788,6 +6050,10 @@ namespace Tawtheef.Infrastructure.Migrations
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.UserProfile", b =>
                 {
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "BirthdayCertificate")
+                        .WithMany()
+                        .HasForeignKey("BirthdayCertificateId");
+
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.CandidateType", "CandidateType")
                         .WithMany()
                         .HasForeignKey("CandidateTypeId")
@@ -5817,6 +6083,10 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("MaritalStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "MarriageCertificate")
+                        .WithMany()
+                        .HasForeignKey("MarriageCertificateId");
 
                     b.HasOne("Tawtheef.Domain.Entities.Resource", "NationalCardIdAttachment")
                         .WithMany()
@@ -5852,6 +6122,10 @@ namespace Tawtheef.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ResumeAttachmentId");
 
+                    b.HasOne("Tawtheef.Domain.Entities.Users.SponsorProfile", "SponsorProfile")
+                        .WithMany()
+                        .HasForeignKey("SponsorProfileId");
+
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.TargetEntity", "TargetEntity")
                         .WithMany()
                         .HasForeignKey("TargetEntityId")
@@ -5871,6 +6145,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("Address");
 
+                    b.Navigation("BirthdayCertificate");
+
                     b.Navigation("CandidateType");
 
                     b.Navigation("CreatedBy");
@@ -5883,6 +6159,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("MaritalStatus");
 
+                    b.Navigation("MarriageCertificate");
+
                     b.Navigation("NationalCardIdAttachment");
 
                     b.Navigation("Nationality");
@@ -5894,6 +6172,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("ResidenceCountry");
 
                     b.Navigation("ResumeAttachment");
+
+                    b.Navigation("SponsorProfile");
 
                     b.Navigation("TargetEntity");
 

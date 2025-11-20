@@ -1,0 +1,46 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f8f9fa;
+
+  .main-content {
+    flex: 1;
+    width: 100%;
+
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+  }
+}
+@media (max-width: 768px) {
+  .profile-page {
+    .page-header {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .form-container {
+      padding: 1.5rem;
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+  }
+}
+
+::ng-deep input,
+::ng-deep .form-control,
+::ng-deep .p-select{
+  border-radius: 25px !important;
+}

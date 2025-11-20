@@ -1,3 +1,12 @@
-<app-side-nav></app-side-nav>
-<section class="content"><router-outlet /></section>
+<div class="app-layout" i18nNamespace="layout">
+  <!-- Navigation -->
+  <app-nav/>
 
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <router-outlet />
+  </main>
+
+  <!-- Footer -->
+  <app-footer/>
+</div>

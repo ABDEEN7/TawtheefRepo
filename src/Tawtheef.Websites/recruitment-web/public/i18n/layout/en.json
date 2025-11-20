@@ -1,3 +1,39 @@
 ﻿{
-
+  "internal": {
+    "nav": {
+      "logoAlt": "Ministry of Education and Higher Education",
+      "home": "Home",
+      "personalProfile": "Personal Profile",
+      "jobs": "Jobs",
+      "jobsSearch": "Search Jobs",
+      "jobsApplications": "My Applications",
+      "languageToggle": "English",
+      "notifications": "Notifications",
+      "login": "Login",
+      "userAvatarAlt": "User Avatar",
+      "userProfile": "Profile",
+      "userSettings": "Settings",
+      "logout": "Logout"
+    },
+    "footer": {
+      "terms": "Terms and Conditions",
+      "privacy": "Privacy Policy",
+      "rights": "All rights reserved © 2025",
+      "ministry": "Ministry of Education and Higher Education — State of Qatar"
+    }
+  },
+  "public": {
+    "nav": {
+      "about": "About",
+      "tracks": "Career Paths",
+      "why": "Why Us",
+      "success": "Success Stories",
+      "faq": "FAQ",
+      "login": "Login"
+    },
+    "footer": {
+      "rights": "All rights reserved © 2025",
+      "ministry": "Ministry of Education and Higher Education — State of Qatar"
+    }
+  }
 }

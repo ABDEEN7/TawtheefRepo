@@ -36,7 +36,7 @@ public sealed class ProfileCompletenessService(
         if (profile.TargetEntityId  == Guid.Empty) missing.Add("targetEntityId");
         if (profile.NationalityId   == Guid.Empty) missing.Add("nationalityId");
         if (profile.MaritalStatusId == Guid.Empty) missing.Add("maritalStatusId");
-        if (profile.BirthDate == default)          missing.Add("birthDate");
+        if (profile.BirthDate == default) missing.Add("birthDate");
         if (profile.ResidenceCountryId == Guid.Empty) missing.Add("residenceCountryId");
 
         var isComplete = missing.Count == 0;

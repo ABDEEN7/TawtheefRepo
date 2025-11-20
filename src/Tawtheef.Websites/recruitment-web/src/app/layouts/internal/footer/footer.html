@@ -1,0 +1,35 @@
+<footer class="main-footer">
+  <div class="footer-container">
+    <!-- Copyright -->
+    <div class="copyright">
+      <p>{{ 'internal.footer.ministry' | translate }}</p>
+    </div>
+    <!-- Social Media Icons -->
+    <div class="social-links">
+      <a href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok">
+        <i class="icon-tiktok"></i>
+      </a>
+      <a href="https://snapchat.com" target="_blank" rel="noopener" aria-label="Snapchat">
+        <i class="icon-snapchat"></i>
+      </a>
+      <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <i class="icon-linkedin"></i>
+      </a>
+      <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube">
+        <i class="icon-youtube"></i>
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+        <i class="icon-instagram"></i>
+      </a>
+      <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter/X">
+        <i class="icon-twitter"></i>
+      </a>
+    </div>
+    <!-- Footer Links -->
+    <div class="footer-links">
+      <a [routerLink]="routes.terms">{{'internal.footer.terms' | translate}}</a>
+      <span class="separator">|</span>
+      <a [routerLink]="routes.privacy">{{'internal.footer.privacy' | translate}}</a>
+    </div>
+  </div>
+</footer>

@@ -29,6 +29,7 @@ import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directiv
 import {ImageCropperComponent} from 'ngx-image-cropper';
 import {I18nNamespaceDirective} from "../../../shared/directives/i18n-namespace.directive";
 import {StepFirstInfoComponent} from './steps/step-first-info/step-first-info.component';
+import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import {StepFirstInfoComponent} from './steps/step-first-info/step-first-info.co
     Tooltip,
     FaDirArrowDirective,
     ImageCropperComponent,
-    I18nNamespaceDirective
+    I18nNamespaceDirective,
+    NgxIntlTelInputModule
   ]
 })
 export class WizardProfileModule {}

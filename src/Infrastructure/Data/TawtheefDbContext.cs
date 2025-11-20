@@ -58,6 +58,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<TargetEntity> TargetEntity { get; set; }
     public DbSet<UserType> UserType { get; set; }
     public DbSet<WorkType> WorkType { get; set; }
+    public DbSet<SponsorType> SponsorType { get; set; }
     
     public DbSet<City> City { get; set; }
     public DbSet<Country> Country { get; set; }
@@ -70,6 +71,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<EmployeeUser> Employee { get; set; }
     public DbSet<ApplicantUser> Applicant { get; set; }
     public DbSet<UserProfile> UserProfile { get; set; }
+    public DbSet<SponsorProfile> SponsorProfile { get; set; }
     public DbSet<RefreshToken> RefreshToken { get; set; }
     public DbSet<OTPRequest> OTPRequest { get; set; }
     public DbSet<UserSession> UserSession { get; set; }
@@ -79,7 +81,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Qualification> Qualification { get; set; }
     public DbSet<ProfileSkill> ApplicantSkill { get; set; }
     public DbSet<ProfileLanguage> LanguageProficiency { get; set; }
-    public DbSet<ResidenceAddress> ResidenceAddresse { get; set; }
+    public DbSet<ResidenceAddress> ResidenceAddress { get; set; }
     public DbSet<TrainingCourse> TrainingCourse { get; set; }
     public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicant { get; set; }
     
