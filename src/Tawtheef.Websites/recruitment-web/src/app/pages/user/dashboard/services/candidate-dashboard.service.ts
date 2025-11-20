@@ -16,7 +16,7 @@ export const JOB_TYPE_LABELS = {
 } as const;
 
 // Constants for job statuses
-export const JOB_STATUSES = {
+export const JOB_INVITATION_STATUSES = {
   INVITED: 'invited',
   APPLIED: 'applied',
   UNDER_REVIEW: 'under_review',
@@ -24,21 +24,21 @@ export const JOB_STATUSES = {
   CLOSED: 'closed'
 } as const;
 
-export const JOB_STATUS_LABELS = {
-  [JOB_STATUSES.INVITED]: 'دعوة جديدة',
-  [JOB_STATUSES.APPLIED]: 'تم التقديم',
-  [JOB_STATUSES.UNDER_REVIEW]: 'قيد المراجعة',
-  [JOB_STATUSES.WITHDRAWN]: 'ملغي',
-  [JOB_STATUSES.CLOSED]: 'مغلقة'
+export const JOB_INVITATION_STATUS_LABELS = {
+  [JOB_INVITATION_STATUSES.INVITED]: 'دعوة جديدة',
+  [JOB_INVITATION_STATUSES.APPLIED]: 'تم التقديم',
+  [JOB_INVITATION_STATUSES.UNDER_REVIEW]: 'قيد المراجعة',
+  [JOB_INVITATION_STATUSES.WITHDRAWN]: 'ملغي',
+  [JOB_INVITATION_STATUSES.CLOSED]: 'مغلقة'
 } as const;
 
 // Constants for status pill classes
 export const STATUS_PILL_CLASSES = {
-  [JOB_STATUSES.INVITED]: 'status-invited',
-  [JOB_STATUSES.APPLIED]: 'status-applied',
-  [JOB_STATUSES.UNDER_REVIEW]: 'status-underreview',
-  [JOB_STATUSES.WITHDRAWN]: 'status-withdrawn',
-  [JOB_STATUSES.CLOSED]: 'status-closed'
+  [JOB_INVITATION_STATUSES.INVITED]: 'status-invited',
+  [JOB_INVITATION_STATUSES.APPLIED]: 'status-applied',
+  [JOB_INVITATION_STATUSES.UNDER_REVIEW]: 'status-underreview',
+  [JOB_INVITATION_STATUSES.WITHDRAWN]: 'status-withdrawn',
+  [JOB_INVITATION_STATUSES.CLOSED]: 'status-closed'
 } as const;
 
 // Constants for type badge classes
@@ -52,11 +52,11 @@ export const TYPE_BADGE_CLASSES = {
 export const FILTER_OPTIONS = {
   STATUS: [
     { value: '', label: 'الكل' },
-    { value: JOB_STATUSES.INVITED, label: JOB_STATUS_LABELS[JOB_STATUSES.INVITED] },
-    { value: JOB_STATUSES.APPLIED, label: JOB_STATUS_LABELS[JOB_STATUSES.APPLIED] },
-    { value: JOB_STATUSES.UNDER_REVIEW, label: JOB_STATUS_LABELS[JOB_STATUSES.UNDER_REVIEW] },
-    { value: JOB_STATUSES.WITHDRAWN, label: JOB_STATUS_LABELS[JOB_STATUSES.WITHDRAWN] },
-    { value: JOB_STATUSES.CLOSED, label: JOB_STATUS_LABELS[JOB_STATUSES.CLOSED] }
+    { value: JOB_INVITATION_STATUSES.INVITED, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.INVITED] },
+    { value: JOB_INVITATION_STATUSES.APPLIED, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.APPLIED] },
+    { value: JOB_INVITATION_STATUSES.UNDER_REVIEW, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.UNDER_REVIEW] },
+    { value: JOB_INVITATION_STATUSES.WITHDRAWN, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.WITHDRAWN] },
+    { value: JOB_INVITATION_STATUSES.CLOSED, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.CLOSED] }
   ],
   TYPE: [
     { value: '', label: 'الكل' },
@@ -68,35 +68,35 @@ export const FILTER_OPTIONS = {
 
 // Action configurations
 export const ACTION_CONFIGS = {
-  [JOB_STATUSES.INVITED]: {
+  [JOB_INVITATION_STATUSES.INVITED]: {
     showApply: true,
     showView: false,
     showTrack: false,
     showDetails: false,
     showWithdraw: false
   },
-  [JOB_STATUSES.APPLIED]: {
+  [JOB_INVITATION_STATUSES.APPLIED]: {
     showApply: false,
     showView: true,
     showTrack: false,
     showDetails: false,
     showWithdraw: true
   },
-  [JOB_STATUSES.UNDER_REVIEW]: {
+  [JOB_INVITATION_STATUSES.UNDER_REVIEW]: {
     showApply: false,
     showView: false,
     showTrack: true,
     showDetails: false,
     showWithdraw: false
   },
-  [JOB_STATUSES.WITHDRAWN]: {
+  [JOB_INVITATION_STATUSES.WITHDRAWN]: {
     showApply: false,
     showView: false,
     showTrack: false,
     showDetails: true,
     showWithdraw: false
   },
-  [JOB_STATUSES.CLOSED]: {
+  [JOB_INVITATION_STATUSES.CLOSED]: {
     showApply: false,
     showView: false,
     showTrack: false,
@@ -107,7 +107,7 @@ export const ACTION_CONFIGS = {
 
 // Type definitions
 export type JobType = typeof JOB_TYPES[keyof typeof JOB_TYPES];
-export type JobStatus = typeof JOB_STATUSES[keyof typeof JOB_STATUSES];
+export type JobStatus = typeof JOB_INVITATION_STATUSES[keyof typeof JOB_INVITATION_STATUSES];
 
 // Interfaces
 export interface JobRecord {
@@ -150,7 +150,7 @@ export class CandidateDashboardService {
       title: 'معلم رياضيات',
       entity: 'إدارة شؤون المدارس',
       type: JOB_TYPES.ACADEMIC,
-      status: JOB_STATUSES.INVITED,
+      status: JOB_INVITATION_STATUSES.INVITED,
       date: '2025-10-28',
       jobId: 1
     },
@@ -159,7 +159,7 @@ export class CandidateDashboardService {
       title: 'أخصائي موارد بشرية',
       entity: 'إدارة الموارد البشرية',
       type: JOB_TYPES.ADMINISTRATIVE,
-      status: JOB_STATUSES.APPLIED,
+      status: JOB_INVITATION_STATUSES.APPLIED,
       date: '2025-10-28',
       jobId: 2
     },
@@ -168,7 +168,7 @@ export class CandidateDashboardService {
       title: 'فني شبكات',
       entity: 'إدارة نظم المعلومات',
       type: JOB_TYPES.LABOR,
-      status: JOB_STATUSES.INVITED,
+      status: JOB_INVITATION_STATUSES.INVITED,
       date: '2025-10-25',
       jobId: 3
     },
@@ -177,7 +177,7 @@ export class CandidateDashboardService {
       title: 'مشرف نشاط طلابي',
       entity: 'إدارة التقييم',
       type: JOB_TYPES.ACADEMIC,
-      status: JOB_STATUSES.WITHDRAWN,
+      status: JOB_INVITATION_STATUSES.WITHDRAWN,
       date: '2025-10-20',
       jobId: 4
     },
@@ -186,7 +186,7 @@ export class CandidateDashboardService {
       title: 'منسق مختبرات',
       entity: 'إدارة التقييم',
       type: JOB_TYPES.ACADEMIC,
-      status: JOB_STATUSES.UNDER_REVIEW,
+      status: JOB_INVITATION_STATUSES.UNDER_REVIEW,
       date: '2025-10-30',
       jobId: 5
     },
@@ -195,7 +195,7 @@ export class CandidateDashboardService {
       title: 'كاتب إداري',
       entity: 'إدارة الموارد البشرية',
       type: JOB_TYPES.ADMINISTRATIVE,
-      status: JOB_STATUSES.CLOSED,
+      status: JOB_INVITATION_STATUSES.CLOSED,
       date: '2025-10-10',
       jobId: 6
     }
@@ -206,8 +206,8 @@ export class CandidateDashboardService {
     return {
       JOB_TYPES,
       JOB_TYPE_LABELS,
-      JOB_STATUSES,
-      JOB_STATUS_LABELS,
+      JOB_INVITATION_STATUSES,
+      JOB_INVITATION_STATUS_LABELS,
       STATUS_PILL_CLASSES,
       TYPE_BADGE_CLASSES,
       FILTER_OPTIONS,
@@ -230,7 +230,7 @@ export class CandidateDashboardService {
   withdrawApplication(recordId: number): Observable<ApiResponse<{id: number}>> {
     const record = this.fakeData.find(r => r.id === recordId);
     if (record) {
-      record.status = JOB_STATUSES.WITHDRAWN;
+      record.status = JOB_INVITATION_STATUSES.WITHDRAWN;
     }
 
     return of({
@@ -246,11 +246,11 @@ export class CandidateDashboardService {
   getDashboardStats(): Observable<ApiResponse<DashboardStats>> {
     const stats: DashboardStats = {
       total: this.fakeData.length,
-      invited: this.fakeData.filter(r => r.status === JOB_STATUSES.INVITED).length,
-      applied: this.fakeData.filter(r => r.status === JOB_STATUSES.APPLIED).length,
-      under_review: this.fakeData.filter(r => r.status === JOB_STATUSES.UNDER_REVIEW).length,
-      withdrawn: this.fakeData.filter(r => r.status === JOB_STATUSES.WITHDRAWN).length,
-      closed: this.fakeData.filter(r => r.status === JOB_STATUSES.CLOSED).length
+      invited: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.INVITED).length,
+      applied: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.APPLIED).length,
+      under_review: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.UNDER_REVIEW).length,
+      withdrawn: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.WITHDRAWN).length,
+      closed: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.CLOSED).length
     };
 
     return of({

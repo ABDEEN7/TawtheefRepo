@@ -1,25 +1,22 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, of } from 'rxjs';
 
 import {
   CandidateDashboardService,
   JobRecord,
   ApiResponse,
-  JOB_TYPES,
   JOB_TYPE_LABELS,
-  JOB_STATUSES,
-  JOB_STATUS_LABELS,
+  JOB_INVITATION_STATUSES,
+  JOB_INVITATION_STATUS_LABELS,
   STATUS_PILL_CLASSES,
   TYPE_BADGE_CLASSES,
   FILTER_OPTIONS,
   ACTION_CONFIGS,
   FilterOption,
-  JobType,
-  JobStatus
+  JobType, JobStatus
 } from './services/candidate-dashboard.service';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 
@@ -82,19 +79,19 @@ export class Dashboard implements OnInit {
 
   // Computed KPIs
   kpiInvited = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_STATUSES.INVITED).length
+    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.INVITED).length
   );
 
   kpiUnderReview = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_STATUSES.UNDER_REVIEW).length
+    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.UNDER_REVIEW).length
   );
 
   kpiWithdrawn = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_STATUSES.WITHDRAWN).length
+    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.WITHDRAWN).length
   );
 
   kpiApplied = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_STATUSES.APPLIED).length
+    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.APPLIED).length
   );
 
   // Computed pagination info
@@ -227,7 +224,7 @@ export class Dashboard implements OnInit {
         if (response.success) {
           this.allRecords.update(records =>
             records.map(record =>
-              record.id === recordId ? { ...record, status: JOB_STATUSES.WITHDRAWN } : record
+              record.id === recordId ? { ...record, status: JOB_INVITATION_STATUSES.WITHDRAWN } : record
             )
           );
           this.currentPage.set(1);
@@ -256,7 +253,7 @@ export class Dashboard implements OnInit {
   getStatusPill(status: JobStatus): { class: string, text: string } {
     return {
       class: STATUS_PILL_CLASSES[status] || 'status-closed',
-      text: JOB_STATUS_LABELS[status] || status
+      text: JOB_INVITATION_STATUS_LABELS[status] || status
     };
   }
 
@@ -267,7 +264,7 @@ export class Dashboard implements OnInit {
     showDetails: boolean;
     showWithdraw: boolean;
   } {
-    return ACTION_CONFIGS[record.status] || ACTION_CONFIGS[JOB_STATUSES.CLOSED];
+    return ACTION_CONFIGS[record.status] || ACTION_CONFIGS[JOB_INVITATION_STATUSES.CLOSED];
   }
 
   // Retry loading data
