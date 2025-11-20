@@ -23,7 +23,7 @@ export class JobLookupService {
   targetEntities = signal<Lookups[]>([]);
   nationalities = signal<Lookups[]>([]);
   jobStatus = signal<Lookups[]>([]);
-
+  jobInvitesStatus = signal<Lookups[]>([]);
   loadAll() {
     if (this.loaded()) return;
     this.loading.set(true);
@@ -37,7 +37,8 @@ export class JobLookupService {
       genders: this.http.get<Lookups[]>(this.endpoints.job.lookups.genders),
       targetEntities: this.http.get<Lookups[]>(this.endpoints.job.lookups.targetEntities),
       nationalities: this.http.get<Lookups[]>(this.endpoints.job.lookups.nationalities),
-      jobStatus : this.http.get<Lookups[]>(this.endpoints.job.lookups.jobStatus)
+      jobStatus : this.http.get<Lookups[]>(this.endpoints.job.lookups.jobStatus),
+      jobInvitesStatus : this.http.get<Lookups[]>(this.endpoints.job.lookups.jobInvitesStatus)
     }).subscribe({
       next: (res) => {
         this.departments.set([...res.departments]);
@@ -49,6 +50,7 @@ export class JobLookupService {
         this.targetEntities.set([...res.targetEntities]);
         this.nationalities.set([...res.nationalities]);
         this.jobStatus.set([...res.jobStatus]);
+        this.jobInvitesStatus.set([...res.jobInvitesStatus])
         this.loaded.set(true);
         this.loading.set(false);
       },
@@ -91,7 +93,11 @@ export class JobLookupService {
     return this.nationalities().find((country) => country?.id == natId)?.name || ''
   }
 
-   getStatus(statusId: string | undefined){
+  getStatus(statusId: string | undefined){
     return this.jobStatus().find((jobStatus) => jobStatus?.id == statusId)?.name || ''
+  }
+
+  getJobInitesStatus(inviteStatusId : string | undefined){
+    return this.jobInvitesStatus().find((inviteStatus)=>inviteStatus?.id == inviteStatusId)?.name || ''
   }
 }

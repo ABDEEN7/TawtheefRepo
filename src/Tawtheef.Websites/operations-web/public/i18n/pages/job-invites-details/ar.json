@@ -1,5 +1,5 @@
 {
-  "staff_invites_details": {
+  "job_invites_details": {
     "invites_details": "تفاصيل الدعوات",
     "page_description": "تعرض هذه الصفحة الأشخاص الذين أُرسلت إليهم الدعوة لهذه الوظيفة وحالتهم الحالية.",
     "total_invites": "إجمالي الدعوات",
@@ -12,6 +12,7 @@
     },
 
     "filters": {
+      "select_status": "اختر حالة",
       "status": "الحالة",
       "search": "بحث (اسم المرشح)",
       "search_placeholder": "اكتب جزءً من الاسم...",

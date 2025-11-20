@@ -1,37 +1,32 @@
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {StaffInvitesService} from '../services/staff-invites.service';
-import {NotificationService} from '../../../core/services/notification.service';
-import  {FilterOptionsEnum} from '../enums/filter-options.enum';
-import {Job} from '../../job/models/job.model';
-import {InviteDetails} from '../models/invite-details.model';
-import {InviteStatusEnum} from '../enums/invite-status.enum';
-
-import {KPIs} from '../models/kpis.model';
-import {JobStatusEnum} from '../../job/enums/job-status.enum';
+import { NotificationService } from '../../../core/services/notification.service';
+import { Job } from '../models/job.model';
 import { GuidUtils } from '../../../core/utils/guid-utils';
 import { GUID } from '../../../shared/types/guid.type';
-import { JobLookupService } from '../../job/services/job-lookup.service';
+import { JobLookupService } from '../services/job-lookup.service';
+import { InviteDetails } from '../models/invite-details.model';
+import { KPIs } from '../models/kpis.model';
+import { JobInvitesService } from '../services/job-invites.service';
+
 @Component({
   selector: 'app-job-invites-details',
   standalone: false,
   templateUrl: './job-invites-details.component.html',
   styleUrl: './job-invites-details.component.scss',
 })
-export class JobInvitesDetailsComponent implements OnInit { // Added OnInit
+export class JobInvitesDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private staffInvitesService = inject(StaffInvitesService);
+  private jobInvitesService = inject(JobInvitesService);
   private notificationService = inject(NotificationService);
   lookupsService = inject(JobLookupService);
 
-  readonly FilterOptionsEnum = FilterOptionsEnum;
-  readonly InviteStatusEnum = InviteStatusEnum;
-  jobId : GUID | null = GuidUtils.emptyGuid ;
+  jobId: GUID | null = GuidUtils.emptyGuid;
 
   job = signal<Job | null>(null);
-  allInvites = this.staffInvitesService.invites;
+  allInvites = this.jobInvitesService.invites;
 
-  statusFilter = signal<FilterOptionsEnum>(FilterOptionsEnum.All);
+  statusFilter = signal<string[]>([]);
   searchFilter = signal<string>('');
 
   currentPage = signal<number>(1);
@@ -40,9 +35,9 @@ export class JobInvitesDetailsComponent implements OnInit { // Added OnInit
   filteredInvites = computed<InviteDetails[]>(() => {
     let filtered = this.allInvites();
 
-    const status = this.statusFilter();
-    if (status !== FilterOptionsEnum.All) {
-      filtered = filtered.filter((i) => i.status === status);
+    const statusIds = this.statusFilter();
+    if (statusIds?.length > 0) {
+      filtered = filtered.filter((i) => statusIds.includes(i.status));
     }
 
     const search = this.searchFilter().trim().toLowerCase();
@@ -57,9 +52,17 @@ export class JobInvitesDetailsComponent implements OnInit { // Added OnInit
     const jobId = this.jobId;
     const invites = this.allInvites();
     const total = invites.length;
-    const applied = invites.filter((i) => i.status === InviteStatusEnum.Applied).length;
-    const declined = invites.filter((i) => i.status === InviteStatusEnum.Declined).length;
-    const viewed = invites.filter((i) => i.status === InviteStatusEnum.Viewed).length;
+    
+    const statusLookups = this.lookupsService.jobInvitesStatus();
+    
+    const getBackendName = (statusGuid: string): string => {
+      const lookup = statusLookups.find(l => l.id === statusGuid);
+      return lookup?.name || '';
+    };
+
+    const applied = invites.filter((i) => getBackendName(i.status) === 'applied').length;
+    const declined = invites.filter((i) => getBackendName(i.status) === 'declined').length;
+    const viewed = invites.filter((i) => getBackendName(i.status) === 'viewed').length;
     const unseen = Math.max(0, total - applied - declined - viewed);
 
     return {
@@ -88,11 +91,11 @@ export class JobInvitesDetailsComponent implements OnInit { // Added OnInit
 
   paginationInfo = computed<string>(() => {
     const total = this.filteredInvites().length;
-    if (total === 0) return 'staff_invites_details.pagination.no_results';
+    if (total === 0) return 'job_invites_details.pagination.no_results';
 
     const start = (this.currentPage() - 1) * this.itemsPerPage + 1;
     const end = Math.min(total, start + this.itemsPerPage - 1);
-    return `staff_invites_details.pagination.showing ${start}–${end} staff_invites_details.pagination.of ${total}`;
+    return `job_invites_details.pagination.showing ${start}–${end} job_invites_details.pagination.of ${total}`;
   });
 
   pageNumbers = computed<number[]>(() => {
@@ -100,45 +103,35 @@ export class JobInvitesDetailsComponent implements OnInit { // Added OnInit
     return Array.from({ length: total }, (_, i) => i + 1);
   });
 
-  filterOptions = computed(() => {
-    return [
-      { value: FilterOptionsEnum.All, label: FilterOptionsEnum.All },
-      { value: FilterOptionsEnum.Applied, label: FilterOptionsEnum.Applied },
-      { value: FilterOptionsEnum.Declined, label: FilterOptionsEnum.Declined },
-      { value: FilterOptionsEnum.Viewed, label: FilterOptionsEnum.Viewed },
-      { value: FilterOptionsEnum.New, label: FilterOptionsEnum.New }
-    ];
-  });
-
   private readonly statusMap = {
-  [InviteStatusEnum.New]: 'status-new',
-  [InviteStatusEnum.Viewed]: 'status-viewed',
-  [InviteStatusEnum.Applied]: 'status-applied',
-  [InviteStatusEnum.Declined]: 'status-declined',
-};
+    'applied': 'status-applied',
+    'declined': 'status-declined',
+    'viewed': 'status-viewed',
+    'new': 'status-new',
+  };
 
   ngOnInit(): void {
     this.jobId = this.route.snapshot.paramMap.get('id') as GUID | null;
+    this.lookupsService.loadAll();
     if (this.jobId) {
       this.loadJobDetails(this.jobId);
-      this.staffInvitesService.getInvitesForJob(this.jobId).subscribe();
+      this.jobInvitesService.getInvitesForJob(this.jobId).subscribe();
     }
   }
 
   private loadJobDetails(jobId: GUID): void {
-    this.staffInvitesService.getJobDetails(jobId).subscribe({
+    this.jobInvitesService.getJobDetails(jobId).subscribe({
       next: (job) => {
         this.job.set(job);
       },
       error: (error) => {
-         this.notificationService.error(error);
+        this.notificationService.error(error);
       }
     });
   }
 
-  onStatusFilterChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.statusFilter.set(target.value as FilterOptionsEnum);
+  onStatusFilterChange(selectedStatusIds: string[]): void {
+    this.statusFilter.set(selectedStatusIds);
     this.currentPage.set(1);
   }
 
@@ -148,31 +141,44 @@ export class JobInvitesDetailsComponent implements OnInit { // Added OnInit
   }
 
   clearFilters(): void {
-    this.statusFilter.set(FilterOptionsEnum.All);
+    this.statusFilter.set([]);
     this.searchFilter.set('');
     this.currentPage.set(1);
   }
 
-  getStatusClass(status: string) {
-  return this.statusMap[status as InviteStatusEnum] ?? 'status-viewed';
+  getStatusClass(statusGuid: string) {
+    const backendName = this.getBackendName(statusGuid);
+    return this.statusMap[backendName as keyof typeof this.statusMap] ?? 'status-viewed';
   }
-  getStatusLabel(status: string): string {
-    return  'staff_invites_details.status.' + (status as InviteStatusEnum || status);
+
+  getStatusLabel(statusGuid: string): string {
+    const backendName = this.getBackendName(statusGuid);
+    return 'job_invites_details.status.' + (backendName || 'unknown');
   }
 
   getTypeClass(type: string): string {
     return `badge-soft ${type}`;
   }
 
-  getJobStatusLabel(status?: JobStatusEnum): string {
-    return 'staff_invites_details.Job_status.' + (status as JobStatusEnum || status || '');
-  }
-
   private calculatePercentage(value: number, total: number): number {
     return total ? Math.round((value * 100) / total) : 0;
   }
 
-   onPageChange(page: number) {
+  onPageChange(page: number) {
     this.currentPage.set(page);
+  }
+
+  private getBackendName(statusGuid: string): string {
+    const statusLookup = this.lookupsService.jobInvitesStatus().find(
+      lookup => lookup.id === statusGuid
+    );
+    return statusLookup?.backendName || '';
+  }
+
+  getStatusDisplayName(statusGuid: string): string {
+    const statusLookup = this.lookupsService.jobInvitesStatus().find(
+      lookup => lookup.id === statusGuid
+    );
+    return statusLookup?.name || statusGuid;
   }
 }

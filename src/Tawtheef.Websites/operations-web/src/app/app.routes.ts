@@ -19,10 +19,6 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/job/jobs.module').then(m => m.JobsModule),
       },
       {
-        path: 'invites',
-        loadChildren: () => import('./pages/invites/invites.module').then(m => m.InvitesModule),
-      },
-      {
         path: 'auth',
         canMatch: [loggedOutOnlyGuard],
         loadChildren: () => import('./pages/auth/auth.module').then(m => m.AuthModule),

@@ -2,10 +2,8 @@ import { Component, computed, inject, OnInit, signal, ViewEncapsulation } from '
 import { Router } from '@angular/router';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import {JobService} from '../services/job.service';
-import {JobCategoryEnum} from '../enums/job-category.enum';
 import {Job} from '../models/job.model';
 import {PointsConfigModalComponent} from '../modals/points-config-modal/points-config-modal.component';
-import {JobStatusEnum} from '../enums/job-status.enum';
 import { JobLookupService } from '../services/job-lookup.service';
 
 @Component({
@@ -23,8 +21,6 @@ export class JobListComponent implements OnInit {
   jobs = this.jobService.jobs;
   currentPage = signal(1);
   itemsPerPage = 10;
-  jobCategories = JobCategoryEnum;
-  jobStatuses = JobStatusEnum;
 
   searchQuery = signal<string>('');
   filterType = signal<string>('');
@@ -55,7 +51,7 @@ export class JobListComponent implements OnInit {
 
   ngOnInit() {
     this.jobService.loadJobs();
-    this.lookupsService.loadAll()
+    this.lookupsService.loadAll();
   }
 
   onFilterChange() {

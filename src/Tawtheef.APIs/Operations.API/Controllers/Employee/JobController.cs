@@ -11,6 +11,7 @@ namespace Operations.API.Controllers.Employee;
 //[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.JobsManage)]
 public class JobController(IMediator mediator) : ControllerBase
 {
+    #region Lookups
     [HttpGet("lookups/departments")]
     public async Task<IActionResult> GetDepartments()
     {
@@ -72,7 +73,14 @@ public class JobController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetJobStatusesQuery());
         return result.ToActionResult();
     }
-    
+
+    [HttpGet("lookups/invitation-statuses")]
+    public async Task<IActionResult> GetInvitationStatuses()
+    {
+        var result = await mediator.Send(new GetInvitationStatusesQuery());
+        return result.ToActionResult();
+    }
+    #endregion
     // [HttpPost]
     // public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
     // {

@@ -1,6 +1,5 @@
 import {JobBasics} from './job-basics.models';
 import {JobQuotas} from './job-quotas.models';
-import {JobStatusEnum} from '../enums/job-status.enum';
 import { GUID } from '../../../shared/types/guid.type';
 
 export interface Job {

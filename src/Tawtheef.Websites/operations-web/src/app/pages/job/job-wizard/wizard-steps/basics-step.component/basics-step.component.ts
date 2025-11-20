@@ -5,8 +5,8 @@ import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { JobBasics } from '../../../models/job-basics.models';
 import { debounceTime, filter } from 'rxjs';
-import {GenderEnum} from '../../../enums/gender.enum';
 import { JobLookupService } from '../../../services/job-lookup.service';
+import { ScrollerOptions } from 'primeng/api';
 
 @Component({
   selector: 'app-basics-step',
@@ -20,6 +20,8 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
   private jobService = inject(JobService);
   lookupsService = inject(JobLookupService);
 
+  lazyLoading = false
+  loadLazyTimeout = 0
   readonly form = this.fb.nonNullable.group({
     requestingDept: ['', Validators.required],
     title: ['', Validators.required],
@@ -32,6 +34,47 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
     vacancies: [0, [Validators.required, Validators.min(1)]],
     deadline: this.fb.control<Date | null>(null, Validators.required),
   });
+
+   majorOptions: ScrollerOptions = {
+    delay: 100,
+    showLoader: true,
+    lazy: true,
+    onLazyLoad: this.loadMajorsLazy.bind(this)
+  };
+
+  departmentOptions: ScrollerOptions = {
+    delay: 100,
+    showLoader: true,
+    lazy: true,
+    onLazyLoad: this.loadDerpartmentsLazy.bind(this)
+  };
+
+
+  loadMajorsLazy(event: any) {
+    this.lazyLoading = true;
+    this.loadLazyTimeout = setTimeout(() => {
+      const {first, last} = event;
+      const items = [...this.lookupsService.majors()];
+      for (let i = first; i < last; i++) {
+        items[i] = this.lookupsService.majors()[i];
+      }
+      this.lookupsService.nationalities.set(items);
+      this.lazyLoading = false;
+    }, Math.random() * 1000 + 250);
+  }
+
+  loadDerpartmentsLazy(event: any) {
+    this.lazyLoading = true;
+    this.loadLazyTimeout = setTimeout(() => {
+      const {first, last} = event;
+      const items = [...this.lookupsService.majors()];
+      for (let i = first; i < last; i++) {
+        items[i] = this.lookupsService.majors()[i];
+      }
+      this.lookupsService.nationalities.set(items);
+      this.lazyLoading = false;
+    }, Math.random() * 1000 + 250);
+  }
 
   ngOnInit() {
     this.setJobData(this.jobService.currentJob());
