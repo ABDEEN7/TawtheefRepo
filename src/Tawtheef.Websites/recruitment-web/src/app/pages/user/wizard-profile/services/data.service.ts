@@ -20,6 +20,7 @@ export class DataService {
   private isFilledScalar = (val: unknown) => {
     if (typeof val === 'string') return val.trim().length > 0;
     if (typeof val === 'number') return Number.isFinite(val); // counts even 0
+    if (typeof val === 'boolean') return val as boolean; // counts even 0
     return !!val;
   };
 
@@ -92,7 +93,9 @@ export class DataService {
       this.isFilledScalar(s.country) &&
       this.isFilledScalar(s.dialCode) &&
       this.isFilledScalar(s.phone) &&
+      this.isFilledScalar(s.phoneVerified) &&
       this.isFilledScalar(s.email) &&
+      this.isFilledScalar(s.emailVerified) &&
       this.isFilledScalar(s.address);
 
     const degreesValid   = Array.isArray(s.degrees) && s.degrees.length > 0;

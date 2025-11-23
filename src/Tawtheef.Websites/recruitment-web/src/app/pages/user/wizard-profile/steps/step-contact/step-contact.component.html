@@ -115,17 +115,21 @@
           <button type="button"
                   class="btn btn-outline-secondary btn-sm"
                   (click)="sendEmailVerification()"
-                  [disabled]="!emailValid || emailVerificationStatus === 'sending' || emailVerificationStatus === 'linkSent'">
-          <span *ngIf="emailVerificationStatus !== 'sending'">
-            {{ 'wizard.contact.emailSendVerification' | translate }}
-          </span>
-            <span *ngIf="emailVerificationStatus === 'sending'">
-            <i class="fa-solid fa-spinner fa-spin me-1"></i>
-              {{ 'wizard.contact.emailSending' | translate }}
-          </span>
+                  [disabled]="!emailValid || emailVerificationStatus === 'sending' || emailCooldown > 0">
+              <span *ngIf="emailVerificationStatus !== 'sending'">
+                {{ 'wizard.contact.emailSendVerification' | translate }}
+              </span>
+                        <span *ngIf="emailVerificationStatus === 'sending'">
+                <i class="fa-solid fa-spinner fa-spin me-1"></i>
+                          {{ 'wizard.contact.emailSending' | translate }}
+              </span>
           </button>
-
-          <!-- لو حاب تعملها بكود OTP بدال رابط -->
+          <span *ngIf="emailCooldown > 0" class="text-muted fz-2xs ms-2">
+            {{ 'wizard.contact.emailRetryIn' | translate:{seconds: emailCooldown} }}
+          </span>
+          <div *ngIf="emailErrorMessage" class="text-danger fz-2xs mt-1">
+            {{ emailErrorMessage }}
+          </div>
           <div *ngIf="emailVerificationUseCode && emailVerificationStatus === 'linkSent'"
                class="d-flex align-items-center gap-2 flex-grow-1">
             <input type="text"

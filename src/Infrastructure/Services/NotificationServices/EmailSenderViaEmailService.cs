@@ -1,3 +1,4 @@
+using FluentResults;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Services;
 
@@ -5,7 +6,7 @@ namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
 public sealed class EmailSenderViaEmailService(IEmailService emailService) : IEmailSender
 {
-    public async Task<(bool ok, string? providerId, string? error)>
+    public async Task<(bool ok, string? providerId, IReadOnlyList<IError>? error)>
         SendAsync(string to, string? subject, string bodyHtml, CancellationToken ct)
     {
         await emailService.SendHtmlAsync(

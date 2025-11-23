@@ -88,30 +88,42 @@
       }
     },
     "contact": {
-      "country": "دولة الإقامة",
       "dial": "مفتاح الدولة",
+      "phoneVerify": "تحقق من رقم الجوال",
+      "emailVerify": "تحقق من البريد الإلكتروني",
+      "country": "الدولة",
       "phone": "رقم الجوال",
       "email": "البريد الإلكتروني",
-      "address": "العنوان التفصيلي",
-      "interviewPlace": "مكان المقابلة",
-      "emailVerified": "تم التحقق من البريد الإلكتروني",
-      "phoneVerified": "تم التحقق من رقم الجوال",
-      "phoneSendCode": "إرسال رمز التحقق",
-      "emailSendVerification": "إرسال رابط التحقق",
-      "emailOtpPlaceholder": "أدخل رمز التحقق المرسل إلى بريدك الإلكتروني",
-      "phoneOtpPlaceholder": "أدخل رمز التحقق المرسل إلى جوالك",
-      "emailSending": "جاري إرسال رابط التحقق...",
-      "phoneSending": "جاري إرسال رمز التحقق...",
-      "emailFailed": "فشل إرسال رابط التحقق، حاول مرة أخرى.",
-      "phoneFailed": "فشل التحقق من رقم الجوال، حاول مرة أخرى.",
-      "emailLinkSent": "تم إرسال رابط التحقق إلى بريدك الإلكتروني.",
-      "phoneCodeSent": "تم إرسال رمز التحقق إلى جوالك.",
-      "emailNotVerified": "لم يتم التحقق من البريد الإلكتروني بعد.",
-      "phoneNotVerified": "لم يتم التحقق من رقم الجوال بعد.",
+      "phoneNotVerified": "رقم الجوال غير مُفعّل بعد.",
+      "phoneCodeSent": "تم إرسال رمز التفعيل إلى رقم جوالك.",
       "phoneVerifying": "جاري التحقق من رقم الجوال...",
+      "phoneVerified": "تم توثيق رقم الجوال",
+      "phoneFailed": "فشل توثيق رقم الجوال، يرجى المحاولة مرة أخرى.",
+      "phoneSendCode": "إرسال الرمز",
+      "phoneSending": "جاري إرسال الرمز...",
+      "phoneRetryIn": "يمكنك طلب رمز جديد بعد {{seconds}} ثانية",
+      "phoneOtpPlaceholder": "أدخل رمز التفعيل",
+      "emailNotVerified": "البريد الإلكتروني غير مُفعّل بعد.",
+      "emailLinkSent": "تم إرسال رابط التفعيل إلى بريدك الإلكتروني.",
       "emailVerifying": "جاري التحقق من البريد الإلكتروني...",
-      "phoneVerify": "تحقق من رقم الجوال",
-      "emailVerify": "تحقق من البريد الإلكتروني"
+      "emailVerified": "تم توثيق البريد الإلكتروني",
+      "emailFailed": "فشل توثيق البريد الإلكتروني، يرجى المحاولة مرة أخرى.",
+      "emailSendVerification": "إرسال رابط التفعيل",
+      "emailSending": "جاري إرسال رابط التفعيل...",
+      "emailOtpPlaceholder": "أدخل رمز التفعيل",
+      "address": "العنوان",
+      "interviewPlace": "مكان المقابلة المفضّل",
+      "emailRetryIn": "يمكنك طلب رابط تفعيل جديد بعد {{seconds}} ثانية",
+      "codeSent": {
+        "phone": {
+          "cooldown": "يمكنك طلب رمز جديد بعد {{seconds}} ثانية",
+          "error": "فشل إرسال الرمز، يرجى المحاولة مرة أخرى."
+        },
+        "email": {
+          "cooldown": "يمكنك طلب رمز جديد بعد {{seconds}} ثانية",
+          "error": "فشل إرسال الرمز، يرجى المحاولة مرة أخرى."
+        }
+      }
 
     },
     "nationalAddress": {
