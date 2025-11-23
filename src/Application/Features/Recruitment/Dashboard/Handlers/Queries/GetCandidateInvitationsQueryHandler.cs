@@ -1,8 +1,10 @@
-using CSharpFunctionalExtensions;
+using FluentResults;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Recruitment.Dashboard.DTOs;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -10,42 +12,21 @@ using Tawtheef.Domain.Entities.Recruitment;
 namespace Tawtheef.Application.Features.Recruitment.Dashboard.Handlers.Queries;
 
 public sealed class GetCandidateInvitationsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetCandidateInvitationsQuery, Result<List<CandidateInvitationsDto>>>
+    : IRequestHandler<GetCandidateInvitationsQuery, IResult<PaginatedResult<CandidateInvitationsDto>>>
 {
-    public async Task<Result<List<CandidateInvitationsDto>>> Handle(GetCandidateInvitationsQuery query, CancellationToken cancellationToken)
+    public async Task<IResult<PaginatedResult<CandidateInvitationsDto>>> Handle(GetCandidateInvitationsQuery query, CancellationToken cancellationToken)
     {
-        var dbSet = unitOfWork.GetEntityRepository<Invitation>().DbSet;
-        
-        // Start base query
-        var invitationsQuery =  dbSet
+        var invitations =  await unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
             .Include(i => i.InvitationStatus)
-            .Include(i => i.Job)
-            .ThenInclude(j => j!.JobCategory)
-            .Include(i => i.Job)
-            .ThenInclude(j => j!.RequestingDepartment)
-            .AsQueryable();
+            .Include(i => i.Job).ThenInclude(j => j!.JobCategory)
+            .Include(i => i.Job).ThenInclude(j => j!.RequestingDepartment)
+            .WhereIf(query.InvitationStatusId is not null, i => i.InvitationStatusId == query.InvitationStatusId)
+            .WhereIf(query.JobCategoryId is not null, i => i.Job!.JobCategoryId == query.JobCategoryId)
+            .WhereIf(query.DepartmentId is not null, i => i.Job!.RequestingDepartmentId == query.DepartmentId)
+            .WhereIf(!string.IsNullOrWhiteSpace(query.JobTitle), i => i.Job!.Title.Contains(query.JobTitle!))
+            .ToPaginatedListAsync<Invitation, CandidateInvitationsDto>(mapper, query, cancellationToken);
 
-        // Apply optional filters
-        if (query.InvitationStatusId != null)
-            invitationsQuery = invitationsQuery
-                .Where(i => i.InvitationStatusId == query.InvitationStatusId);
-
-        if (query.JobCategoryId != null)
-            invitationsQuery = invitationsQuery
-                .Where(i => i.Job!.JobCategoryId == query.JobCategoryId);
-
-        if (query.DepartmentId != null)
-            invitationsQuery = invitationsQuery
-                .Where(i => i.Job!.RequestingDepartmentId == query.DepartmentId);
-
-        if (!string.IsNullOrWhiteSpace(query.JobTitle))
-            invitationsQuery = invitationsQuery
-                .Where(i => i.Job!.Title.Contains(query.JobTitle));
-
-        var result = await invitationsQuery.OrderByDescending(x => x.CreatedDate)
-            .ToListAsync(cancellationToken);
-
-        return Result.Success(mapper.Map<List<CandidateInvitationsDto>>(result));
+        return Result.Ok(invitations);
     }
 }

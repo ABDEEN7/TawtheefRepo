@@ -13,7 +13,8 @@ export class DataService {
   state = signal<ProfileState>({
     degrees: [], experiences: [], courses: [], achievements: [],
     skills: [], languages: [], attachments: [],
-    available: true,
+    available: true, hasDisability: false,
+    emailVerified: false, phoneVerified: false,
   });
 
   private isFilledScalar = (val: unknown) => {
@@ -29,14 +30,7 @@ export class DataService {
     return !!l[key];
   }
 
-  private lockableKeys: (keyof ProfileState)[] = [
-    'qid',
-    'dob',
-    'nationality',
-    'gender',
-    'phone',
-    'email'
-  ];
+  private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email'];
   prefillFromBootstrap(prefill: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...prefill }));
     this.locked.update(m => {

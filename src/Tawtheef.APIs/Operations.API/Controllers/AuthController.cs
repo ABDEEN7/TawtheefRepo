@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -25,9 +25,9 @@ namespace Operations.API.Controllers
     {
         private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
         {
-            null => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier),
-            var id when Guid.TryParse(id, out var guid) => Result.Success(guid),
-            _ => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier)
+            null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
+            var id when Guid.TryParse(id, out var guid) => Result.Ok(guid),
+            _ => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier)
         };
 
         [HttpPost("refresh-token")]
@@ -67,8 +67,8 @@ namespace Operations.API.Controllers
             var spaOrigin = GetOriginOnly(appConfig.Value.FrontendUrl);
             var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
-            object message = result.IsFailure
-                ? new { type = ExternalLoginMessageTypes.Error, message = result.Error }
+            object message = result.IsFailed
+                ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors }
                 : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
 
             var json = JsonSerializer.Serialize(message,
@@ -85,12 +85,12 @@ namespace Operations.API.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            if (UserId.IsFailure)
-                return BadRequest(UserId.Error);
+            if (UserId.IsFailed)
+                return BadRequest(UserId.Errors);
 
             var result = await mediator.Send(new LogoutCommand(UserId.Value));
-            if (result.IsFailure)
-                return BadRequest(result.Error);
+            if (result.IsFailed)
+                return BadRequest(result.Errors);
             return Ok(new { Message = "Logged out" });
         }
 

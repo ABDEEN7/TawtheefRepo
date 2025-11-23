@@ -1,5 +1,4 @@
-using CSharpFunctionalExtensions;
-using Mapster;
+using FluentResults;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +9,11 @@ using Tawtheef.Domain.Common;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public abstract class BaseLookupQueryHandler<TLookup, TRequest>(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<TRequest, Result<List<DropdownOptions>>>
+    : IRequestHandler<TRequest, IResult<List<DropdownOptions>>>
     where TLookup : LookupBase
-    where TRequest : IRequest<Result<List<DropdownOptions>>>
+    where TRequest : IRequest<IResult<List<DropdownOptions>>>
 {
-    public async Task<Result<List<DropdownOptions>>> Handle(TRequest request, CancellationToken cancellationToken)
+    public async Task<IResult<List<DropdownOptions>>> Handle(TRequest request, CancellationToken cancellationToken)
     {
         var dbSet = unitOfWork.GetEntityRepository<TLookup>().DbSet;
 
@@ -23,6 +22,6 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(IUnitOfWork unit
             .OrderBy(x => x.DisplayOrder)
             .ToListAsync(cancellationToken);
 
-        return Result.Success(mapper.Map<List<DropdownOptions>>(entities));
+        return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));
     }
 }

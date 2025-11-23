@@ -193,83 +193,85 @@
         placeholder="{{ 'wizard.placeholders.selectDisabilityType' | translate }}"/>
     </div>
 
-    <!-- Sponsor Type -->
-    <div class="col-md-4 d-flex flex-column">
-      <label class="form-label required">
-        {{ 'wizard.personal.sponsorType' | translate }}
-      </label>
-      <p-select
-        [options]="lookups.sponsorTypes()"
-        name="sponsorType"
-        [ngModel]="ds.state().sponsorType"
-        (ngModelChange)="updateField('sponsorType', $event)"
-        [filter]="true"
-        filterBy="name"
-        optionLabel="name"
-        size="small"
-        [placeholder]="'wizard.placeholders.selectSponsorType' | translate"
-        class="w-full md:w-56"
-      ></p-select>
-    </div>
+    <ng-container *ngIf="isNeedSponsor">
+      <!-- Sponsor Type -->
+      <div class="col-md-4 d-flex flex-column">
+        <label class="form-label required">
+          {{ 'wizard.personal.sponsorType' | translate }}
+        </label>
+        <p-select
+          [options]="lookups.sponsorTypes()"
+          name="sponsorType"
+          [ngModel]="ds.state().sponsorType"
+          (ngModelChange)="updateField('sponsorType', $event)"
+          [filter]="true"
+          filterBy="name"
+          optionLabel="name"
+          size="small"
+          [placeholder]="'wizard.placeholders.selectSponsorType' | translate"
+          class="w-full md:w-56"
+        ></p-select>
+      </div>
 
-    <!-- Sponsor Employer Name -->
-    <div class="col-md-4">
-      <label class="form-label required">
-        {{ 'wizard.personal.sponsorEmployerName' | translate }}
-      </label>
-      <input
-        pInputText
-        class="form-control"
-        pSize="small"
-        name="sponsorEmployerName"
-        [ngModel]="ds.state().sponsorEmployerName"
-        (ngModelChange)="updateField('sponsorEmployerName', $event)"
-        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-      />
-    </div>
-
-    <!-- Sponsor Employer Number (Ministry of Labor) -->
-    <div class="col-md-4">
-      <label class="form-label required">
-        {{ 'wizard.personal.sponsorEmployerNumber' | translate }}
-      </label>
-      <input
-        pInputText
-        type="text"
-        class="form-control"
-        pSize="small"
-        name="sponsorEmployerNumber"
-        [ngModel]="ds.state().sponsorEmployerNumber"
-        (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
-        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-      />
-    </div>
-
-    <!-- Establishment Registration Card -->
-    <div class="col-md-4">
-      <label class="form-label required">
-        {{ 'wizard.personal.sponsorCard' | translate }}
-        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
-      </label>
-      <div class="d-flex gap-2 align-items-center">
+      <!-- Sponsor Employer Name -->
+      <div class="col-md-4">
+        <label class="form-label required">
+          {{ 'wizard.personal.sponsorEmployerName' | translate }}
+        </label>
         <input
           pInputText
           class="form-control"
           pSize="small"
-          name="sponsorCardName"
-          [ngModel]="ds.state().sponsorCardName"
-          (ngModelChange)="updateField('sponsorCardName', $event)"
-          placeholder="{{ 'wizard.placeholders.uploadEstablishmentCard' | translate }}"
-          readonly
+          name="sponsorEmployerName"
+          [ngModel]="ds.state().sponsorEmployerName"
+          (ngModelChange)="updateField('sponsorEmployerName', $event)"
+          placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
         />
-        <button type="button" class="btn btn-outline-secondary btn-sm">
-          <i class="fa-solid fa-upload"></i>
-        </button>
       </div>
-      <small class="fz-2xs text-muted">
-        {{ 'wizard.personal.sponsorCardHint' | translate }}
-      </small>
-    </div>
+
+      <!-- Sponsor Employer Number (Ministry of Labor) -->
+      <div class="col-md-4">
+        <label class="form-label required">
+          {{ 'wizard.personal.sponsorEmployerNumber' | translate }}
+        </label>
+        <input
+          pInputText
+          type="text"
+          class="form-control"
+          pSize="small"
+          name="sponsorEmployerNumber"
+          [ngModel]="ds.state().sponsorEmployerNumber"
+          (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
+          placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+        />
+      </div>
+
+      <!-- Establishment Registration Card -->
+      <div class="col-md-4">
+        <label class="form-label required">
+          {{ 'wizard.personal.sponsorCard' | translate }}
+          <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
+        </label>
+        <div class="d-flex gap-2 align-items-center">
+          <input
+            pInputText
+            class="form-control"
+            pSize="small"
+            name="sponsorCardName"
+            [ngModel]="ds.state().sponsorCardName"
+            (ngModelChange)="updateField('sponsorCardName', $event)"
+            placeholder="{{ 'wizard.placeholders.uploadEstablishmentCard' | translate }}"
+            readonly
+          />
+          <button type="button" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-upload"></i>
+          </button>
+        </div>
+        <small class="fz-2xs text-muted">
+          {{ 'wizard.personal.sponsorCardHint' | translate }}
+        </small>
+      </div>
+    </ng-container>
   </div>
 </div>
 

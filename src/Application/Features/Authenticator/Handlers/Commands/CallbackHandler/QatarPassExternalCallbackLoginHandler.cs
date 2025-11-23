@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -17,29 +17,29 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     UserManager<User> userManager,
     ITokenService tokenService,
     IQatarPassClient qatarPassClient
-) : BaseExternalCallbackLoginHandler, IRequestHandler<QatarPassExternalCallbackLoginCommand, Result<AuthResponse>>
+) : BaseExternalCallbackLoginHandler, IRequestHandler<QatarPassExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     private const string Provider = "QatarPass";
     private const string DefaultDisplayName = "Qatar Pass User";
     private const string PlaceholderEmailDomain = "@login.local";
 
-    public async Task<Result<AuthResponse>> Handle(QatarPassExternalCallbackLoginCommand request, CancellationToken ct)
+    public async Task<IResult<AuthResponse>> Handle(QatarPassExternalCallbackLoginCommand request, CancellationToken ct)
     {
         // Guard: provider error
         if (!string.IsNullOrEmpty(request.RemoteError))
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
 
         // Guard: missing token
         if (string.IsNullOrWhiteSpace(request.Authtoken))
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
 
         // 1) Fetch external profile
         var qpResult = await FetchQatarPassDataAsync(request.Authtoken!, ct);
-        if (qpResult.IsFailure) return Result.Failure<AuthResponse>(qpResult.Error);
+        if (qpResult.IsFailed) return Result.Fail<AuthResponse>(qpResult.Errors);
 
         var qp = qpResult.Value;
         if (string.IsNullOrWhiteSpace(qp.UserQid))
-            return Result.Failure<AuthResponse>("QatarPass: QID is missing.");
+            return Result.Fail<AuthResponse>("QatarPass: QID is missing.");
 
         var providerKey = qp.UserQid.Trim();
         var normalizedPhone = NormalizePhone(qp.MobileNumber);
@@ -56,32 +56,32 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         if (candidate is not null)
         {
             var linkRes = await LinkLoginAsync(candidate, providerKey);
-            if (linkRes.IsFailure) return Result.Failure<AuthResponse>(linkRes.Error);
+            if (linkRes.IsFailed) return Result.Fail<AuthResponse>(linkRes.Errors);
 
             return await UpsertClaimsAndIssueAsync(candidate, qp, normalizedPhone, ct);
         }
 
         // 4) Create + link + enrich + tokens
         var createLinkIssue = await CreateLinkAndIssueAsync(providerKey, normalizedPhone, qp, ct);
-        if (createLinkIssue.IsFailure) return Result.Failure<AuthResponse>(createLinkIssue.Error);
+        if (createLinkIssue.IsFailed) return Result.Fail<AuthResponse>(createLinkIssue.Errors);
 
-        return createLinkIssue.Value;
+        return Result.Ok(createLinkIssue.Value);
     }
 
     // -----------------------
     // External data fetch
     // -----------------------
-    private async Task<Result<QatarPassAccount>> FetchQatarPassDataAsync(string authToken, CancellationToken ct)
+    private async Task<IResult<QatarPassAccount>> FetchQatarPassDataAsync(string authToken, CancellationToken ct)
     {
         var res = await qatarPassClient.GetDataAsync(authToken, ct);
-        if (res.IsFailure) return Result.Failure<QatarPassAccount>(res.Error);
+        if (res.IsFailed) return Result.Fail<QatarPassAccount>(res.Errors);
 
         // Defensive: ensure Account exists and has at least one element
         var account = res.Value?.Account.FirstOrDefault();
         if (account is null)
-            return Result.Failure<QatarPassAccount>("QatarPass: Account payload is empty.");
+            return Result.Fail<QatarPassAccount>("QatarPass: Account payload is empty.");
 
-        return account;
+        return Result.Ok(account);
     }
 
     // -----------------------
@@ -93,7 +93,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         return await userManager.FindByEmailAsync(email);
     }
 
-    private async Task<Result<AuthResponse>> CreateLinkAndIssueAsync(
+    private async Task<IResult<AuthResponse>> CreateLinkAndIssueAsync(
         string providerKey,
         string? normalizedPhone,
         QatarPassAccount qp,
@@ -101,7 +101,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     {
         var placeholderEmail = $"qp{providerKey}{PlaceholderEmailDomain}";
         var newUserResult = User.Register(placeholderEmail, DefaultDisplayName, UserTypeIds.Applicant);
-        if (newUserResult.IsFailure) return Result.Failure<AuthResponse>(newUserResult.Error);
+        if (newUserResult.IsFailed) return Result.Fail<AuthResponse>(newUserResult.Errors);
 
         var newUser = (ApplicantUser)newUserResult.Value;
 
@@ -115,7 +115,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         if (!createRes.Succeeded) return FailureFromIdentity<AuthResponse>(createRes);
 
         var linkRes = await LinkLoginAsync(newUser, providerKey);
-        if (linkRes.IsFailure) return Result.Failure<AuthResponse>(linkRes.Error);
+        if (linkRes.IsFailed) return Result.Fail<AuthResponse>(linkRes.Errors);
 
         return await UpsertClaimsAndIssueAsync(newUser, qp, normalizedPhone, ct);
     }
@@ -124,21 +124,21 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     {
         var addLogin = await userManager.AddLoginAsync(user, new UserLoginInfo(Provider, providerKey, Provider));
         return addLogin.Succeeded
-            ? Result.Success()
-            : Result.Failure(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
+            ? Result.Ok()
+            : Result.Fail(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
     }
 
     // -----------------------
     // Claims + tokens
     // -----------------------
-    private async Task<Result<AuthResponse>> UpsertClaimsAndIssueAsync(
+    private async Task<IResult<AuthResponse>> UpsertClaimsAndIssueAsync(
         User user,
         QatarPassAccount qp,
         string? normalizedPhone,
         CancellationToken ct)
     {
         var upsert = await UpsertQatarPassClaimsAsync(user, qp, normalizedPhone);
-        if (upsert.IsFailure) return Result.Failure<AuthResponse>(upsert.Error);
+        if (upsert.IsFailed) return Result.Fail<AuthResponse>(upsert.Errors);
         return await tokenService.IssueTokensAsync(user, ct);
     }
 
@@ -178,9 +178,9 @@ public sealed class QatarPassExternalCallbackLoginHandler(
                 await userManager.ReplaceClaimAsync(user, current, next);
         }
 
-        user.EmailConfirmed = true;
+        user.PhoneNumberConfirmed = true;
         var update = await userManager.UpdateAsync(user);
-        return update.Succeeded ? Result.Success() : FailureFromIdentity(update);
+        return update.Succeeded ? Result.Ok() : FailureFromIdentity(update);
     }
 
     // -----------------------
@@ -198,8 +198,8 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     }
 
     private static Result<T> FailureFromIdentity<T>(IdentityResult res) =>
-        Result.Failure<T>(string.Join(", ", res.Errors.Select(e => e.Description)));
+        Result.Fail<T>(string.Join(", ", res.Errors.Select(e => e.Description)));
 
     private static Result FailureFromIdentity(IdentityResult res) =>
-        Result.Failure(string.Join(", ", res.Errors.Select(e => e.Description)));
+        Result.Fail(string.Join(", ", res.Errors.Select(e => e.Description)));
 }

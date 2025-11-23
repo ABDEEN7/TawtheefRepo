@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -16,19 +16,19 @@ public sealed class AzureExternalCallbackLoginHandler(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService
-) : BaseExternalCallbackLoginHandler, IRequestHandler<AzureExternalCallbackLoginCommand, Result<AuthResponse>>
+) : BaseExternalCallbackLoginHandler, IRequestHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
-    public async Task<Result<AuthResponse>> Handle(AzureExternalCallbackLoginCommand request, CancellationToken ct)
+    public async Task<IResult<AuthResponse>> Handle(AzureExternalCallbackLoginCommand request, CancellationToken ct)
     {
         if (!string.IsNullOrWhiteSpace(request.Error))
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.Error));
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginError(request.Error));
         var info = await signInManager.GetExternalLoginInfoAsync();
         var idToken = info?.AuthenticationTokens?.FirstOrDefault(t => t.Name == "id_token")?.Value;
         if (idToken is null)
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
         var principalResult = await azureTokenValidator.ValidateAsync(idToken, ct);
-        if (principalResult.IsFailure)
-            return principalResult.ConvertFailure<AuthResponse>();
+        if (principalResult.IsFailed)
+            return Result.Fail<AuthResponse>(principalResult.Errors);
 
         var principal = principalResult.Value;
 
@@ -37,7 +37,7 @@ public sealed class AzureExternalCallbackLoginHandler(
         var providerKey = GetProviderKey(principal);
 
         if (string.IsNullOrWhiteSpace(providerKey))
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginMissingProviderKey);
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginMissingProviderKey);
 
         var email = principal.FindFirst(ClaimTypes.Email)?.Value ??
                     principal.FindFirst("preferred_username")?.Value ??
@@ -64,7 +64,7 @@ public sealed class AzureExternalCallbackLoginHandler(
 
         // Not linked: attach to existing by email, or create new
         if (string.IsNullOrWhiteSpace(email))
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginEmailNotFound);
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginEmailNotFound);
 
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser is not null)
@@ -72,12 +72,12 @@ public sealed class AzureExternalCallbackLoginHandler(
             // Guard against duplicate link to another account
             var duplicate = await userManager.FindByLoginAsync(provider, providerKey);
             if (duplicate is not null && duplicate.Id != existingUser.Id)
-                return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginAlreadyLinked);
+                return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginAlreadyLinked);
 
             var addLoginRes = await userManager.AddLoginAsync(existingUser,
                 new UserLoginInfo(provider, providerKey, "Azure AD"));
             if (!addLoginRes.Succeeded)
-                return Result.Failure<AuthResponse>(string.Join(", ", addLoginRes.Errors.Select(e => e.Description)));
+                return Result.Fail<AuthResponse>(string.Join(", ", addLoginRes.Errors.Select(e => e.Description)));
 
             await UpsertProviderClaimsAsync(userManager, existingUser, provider, principal);
             await signInManager.SignInAsync(existingUser, isPersistent: false);
@@ -103,18 +103,18 @@ public sealed class AzureExternalCallbackLoginHandler(
         }
 
         var createUserRes = User.Register(email, $"{givenName} {surname}".Trim(), UserTypeIds.Employee);
-        if (createUserRes.IsFailure)
-            return Result.Failure<AuthResponse>(createUserRes.Error);
+        if (createUserRes.IsFailed)
+            return Result.Fail<AuthResponse>(createUserRes.Errors);
 
         var newUser = (EmployeeUser)createUserRes.Value;
         var createRes = await userManager.CreateAsync(newUser);
         if (!createRes.Succeeded)
-            return Result.Failure<AuthResponse>(string.Join(", ", createRes.Errors.Select(e => e.Description)));
+            return Result.Fail<AuthResponse>(string.Join(", ", createRes.Errors.Select(e => e.Description)));
 
         var addLogin = await userManager.AddLoginAsync(newUser,
             new UserLoginInfo(provider, providerKey, "Azure AD"));
         if (!addLogin.Succeeded)
-            return Result.Failure<AuthResponse>(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
+            return Result.Fail<AuthResponse>(string.Join(", ", addLogin.Errors.Select(e => e.Description)));
 
         await UpsertProviderClaimsAsync(userManager, newUser, provider, principal);
         return await tokenService.IssueTokensAsync(newUser, ct);

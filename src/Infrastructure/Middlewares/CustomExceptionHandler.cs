@@ -36,7 +36,7 @@ public sealed class CustomExceptionHandler : IExceptionHandler
         //    .ForContext("Ticket", correlationId)
         //    .ForContext("Path", httpContext.Request.Path)
         //    .ForContext("Method", httpContext.Request.Method)
-        //    .Error(exception, "Unhandled exception -> {StatusCode}", statusCode);
+        //    .Errors(exception, "Unhandled exception -> {StatusCode}", statusCode);
 
         // Build RFC 7807 payload
         var problem = new ProblemDetails

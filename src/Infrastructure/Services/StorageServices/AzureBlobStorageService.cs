@@ -1,6 +1,6 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -29,14 +29,14 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
             _logger = logger.ForContext<AzureBlobStorageService>();
         }
 
-        public async Task<Result<FileSaved>> SaveAsync(Stream stream, string blobKey, CancellationToken ct = default)
+        public async Task<IResult<FileSaved>> SaveAsync(Stream stream, string blobKey, CancellationToken ct = default)
         {
             try
             {
                 ct.ThrowIfCancellationRequested();
 
                 if (string.IsNullOrWhiteSpace(blobKey))
-                    return Result.Failure<FileSaved>(ErrorsCodes.InvalidBlobKey);
+                    return Result.Fail<FileSaved>(ErrorsCodes.InvalidBlobKey);
 
                 // normalize blob key to use forward slashes
                 blobKey = blobKey.Replace('\\', '/');
@@ -56,27 +56,27 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                 var props = await blobClient.GetPropertiesAsync(cancellationToken: ct).ConfigureAwait(false);
                 var size = props.Value.ContentLength;
 
-                return Result.Success(new FileSaved(blobKey, size));
+                return Result.Ok(new FileSaved(blobKey, size));
             }
             catch (OperationCanceledException oce)
             {
                 _logger.Error(oce, "SaveAsync cancelled for {BlobKey}", blobKey);
-                return Result.Failure<FileSaved>(ErrorsCodes.Cancelled);
+                return Result.Fail<FileSaved>(ErrorsCodes.Cancelled);
             }
             catch (RequestFailedException rfe) when (rfe.Status == 403)
             {
                 _logger.Error(rfe, "SaveAsync access denied for {BlobKey}", blobKey);
-                return Result.Failure<FileSaved>(ErrorsCodes.AccessDenied);
+                return Result.Fail<FileSaved>(ErrorsCodes.AccessDenied);
             }
             catch (RequestFailedException rfe)
             {
                 _logger.Error(rfe, "SaveAsync Azure error for {BlobKey}", blobKey);
-                return Result.Failure<FileSaved>(ErrorsCodes.IoError);
+                return Result.Fail<FileSaved>(ErrorsCodes.IoError);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "SaveAsync error for {BlobKey}", blobKey);
-                return Result.Failure<FileSaved>(ErrorsCodes.IoError);
+                return Result.Fail<FileSaved>(ErrorsCodes.IoError);
             }
         }
 
@@ -87,34 +87,34 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                 ct.ThrowIfCancellationRequested();
 
                 if (string.IsNullOrWhiteSpace(blobKey))
-                    return Result.Failure<bool>(ErrorsCodes.InvalidBlobKey);
+                    return Result.Fail<bool>(ErrorsCodes.InvalidBlobKey);
 
                 blobKey = blobKey.Replace('\\', '/');
 
                 var blobClient = _container.GetBlobClient(blobKey);
                 var resp = await blobClient.DeleteIfExistsAsync(cancellationToken: ct).ConfigureAwait(false);
 
-                return Result.Success(resp.Value);
+                return Result.Ok(resp.Value);
             }
             catch (OperationCanceledException oce)
             {
                 _logger.Error(oce, "DeleteAsync cancelled for {BlobKey}", blobKey);
-                return Result.Failure<bool>(ErrorsCodes.Cancelled);
+                return Result.Fail<bool>(ErrorsCodes.Cancelled);
             }
             catch (RequestFailedException rfe) when (rfe.Status == 403)
             {
                 _logger.Error(rfe, "DeleteAsync access denied for {BlobKey}", blobKey);
-                return Result.Failure<bool>(ErrorsCodes.AccessDenied);
+                return Result.Fail<bool>(ErrorsCodes.AccessDenied);
             }
             catch (RequestFailedException rfe)
             {
                 _logger.Error(rfe, "DeleteAsync Azure error for {BlobKey}", blobKey);
-                return Result.Failure<bool>(ErrorsCodes.IoError);
+                return Result.Fail<bool>(ErrorsCodes.IoError);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "DeleteAsync error for {BlobKey}", blobKey);
-                return Result.Failure<bool>(ErrorsCodes.IoError);
+                return Result.Fail<bool>(ErrorsCodes.IoError);
             }
         }
 
@@ -125,7 +125,7 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                 ct.ThrowIfCancellationRequested();
 
                 if (string.IsNullOrWhiteSpace(prefix))
-                    return Result.Failure<int>(ErrorsCodes.InvalidBlobKey);
+                    return Result.Fail<int>(ErrorsCodes.InvalidBlobKey);
 
                 // normalize
                 prefix = prefix.Replace('\\', '/');
@@ -150,62 +150,62 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                     }
                 }
 
-                return Result.Success(deleted);
+                return Result.Ok(deleted);
             }
             catch (OperationCanceledException oce)
             {
                 _logger.Error(oce, "DeletePrefixAsync cancelled for {Prefix}", prefix);
-                return Result.Failure<int>(ErrorsCodes.Cancelled);
+                return Result.Fail<int>(ErrorsCodes.Cancelled);
             }
             catch (RequestFailedException rfe) when (rfe.Status == 403)
             {
                 _logger.Error(rfe, "DeletePrefixAsync access denied for {Prefix}", prefix);
-                return Result.Failure<int>(ErrorsCodes.AccessDenied);
+                return Result.Fail<int>(ErrorsCodes.AccessDenied);
             }
             catch (RequestFailedException rfe)
             {
                 _logger.Error(rfe, "DeletePrefixAsync Azure error for {Prefix}", prefix);
-                return Result.Failure<int>(ErrorsCodes.IoError);
+                return Result.Fail<int>(ErrorsCodes.IoError);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "DeletePrefixAsync error for {Prefix}", prefix);
-                return Result.Failure<int>(ErrorsCodes.IoError);
+                return Result.Fail<int>(ErrorsCodes.IoError);
             }
         }
 
-        public Result<string> ToPublicUrl(string blobKey)
+        public IResult<string> ToPublicUrl(string blobKey)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(_publicBaseUrl))
-                    return Result.Failure<string>(ErrorsCodes.ConfigMissing);
+                    return Result.Fail<string>(ErrorsCodes.ConfigMissing);
 
                 if (string.IsNullOrWhiteSpace(blobKey))
-                    return Result.Failure<string>(ErrorsCodes.InvalidBlobKey);
+                    return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
 
                 // follow same rule as LocalStorageService: require public/ prefix
                 const string pubPrefix = "public/";
                 if (!blobKey.StartsWith(pubPrefix, StringComparison.OrdinalIgnoreCase))
-                    return Result.Failure<string>(ErrorsCodes.NotPublicResource);
+                    return Result.Fail<string>(ErrorsCodes.NotPublicResource);
 
                 var relative = blobKey[pubPrefix.Length..].Replace('\\', '/');
                 var url = $"{_publicBaseUrl}/{relative}";
-                return Result.Success(url);
+                return Result.Ok(url);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "ToPublicUrl error for {BlobKey}", blobKey);
-                return Result.Failure<string>(ErrorsCodes.IoError);
+                return Result.Fail<string>(ErrorsCodes.IoError);
             }
         }
 
-        public Result<string> MapPath(string blobKey)
+        public IResult<string> MapPath(string blobKey)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(blobKey))
-                    return Result.Failure<string>(ErrorsCodes.InvalidBlobKey);
+                    return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
 
                 // Normalize
                 blobKey = blobKey.Replace('\\', '/');
@@ -214,12 +214,12 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                 var blobClient = _container.GetBlobClient(blobKey);
                 var uri = blobClient.Uri.AbsoluteUri;
 
-                return Result.Success(uri);
+                return Result.Ok(uri);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "MapPath error for {BlobKey}", blobKey);
-                return Result.Failure<string>(ErrorsCodes.InvalidBlobKey);
+                return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
             }
         }
     }

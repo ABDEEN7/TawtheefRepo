@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+﻿using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Common.Interfaces;
@@ -11,49 +11,49 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
 {
     public DbSet<T> DbSet => dbContext.Set<T>();
  
-    public async Task<Result<T>> AddAsync(T entity)
+    public async Task<IResult<T>> AddAsync(T entity)
     {
         try
         {
             await dbContext.Set<T>().AddAsync(entity);
-            return Result.Success(entity);
+            return Result.Ok(entity);
         }
         catch(Exception e)
         {
-            return Result.Failure<T>($"An error occurred while adding the entity: {e.Message}");
+            return Result.Fail<T>($"An error occurred while adding the entity: {e.Message}");
         }
     }
-    public async Task<Result<IList<T>>> AddRangeAsync(IList<T> entity)
+    public async Task<IResult<IList<T>>> AddRangeAsync(IList<T> entity)
     {
         try
         {
             await dbContext.Set<T>().AddRangeAsync(entity);
-            return Result.Success(entity);
+            return Result.Ok(entity);
         }
         catch(Exception e)
         {
-            return Result.Failure<IList<T>>($"An error occurred while adding the entity: {e.Message}");
+            return Result.Fail<IList<T>>($"An error occurred while adding the entity: {e.Message}");
         }
     }
  
-    public async Task<Result<T>> UpdateAsync(T entity)
+    public async Task<IResult<T>> UpdateAsync(T entity)
     {
         try
         {
 
             var exist = await dbContext.Set<T>().FindAsync(entity.Id);
             if(exist is null) 
-                return Result.Failure<T>($"Entity with ID {entity.Id} does not exist.");
+                return Result.Fail<T>($"Entity with ID {entity.Id} does not exist.");
             dbContext.Entry(exist).CurrentValues.SetValues(entity);
-            return Result.Success(entity);
+            return Result.Ok(entity);
         }
         catch (Exception e)
         {
-            return Result.Failure<T>($"An error occurred while updating the entity: {e.Message}");
+            return Result.Fail<T>($"An error occurred while updating the entity: {e.Message}");
         }
     }
     
-    public async Task<Result<IList<T>>> UpdateRangeAsync(IList<T> entity)
+    public async Task<IResult<IList<T>>> UpdateRangeAsync(IList<T> entity)
     {
         try
         {
@@ -61,14 +61,14 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
             {
                 var exist = await dbContext.Set<T>().FindAsync(item.Id);
                 if (exist is null) 
-                    return Result.Failure<IList<T>>($"Entity with ID {item.Id} does not exist.");
+                    return Result.Fail<IList<T>>($"Entity with ID {item.Id} does not exist.");
                 dbContext.Entry(exist).CurrentValues.SetValues(item);
             }
-            return Result.Success(entity);
+            return Result.Ok(entity);
         }
         catch (Exception e)
         {
-            return Result.Failure<IList<T>>($"An error occurred while updating the entities: {e.Message}");
+            return Result.Fail<IList<T>>($"An error occurred while updating the entities: {e.Message}");
         }
     }
  
@@ -77,11 +77,11 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
         try
         {
             dbContext.Set<T>().Remove(entity);
-            return Task.FromResult(Result.Success());
+            return Task.FromResult(Result.Ok());
         }
         catch (Exception ex)
         {
-            return Task.FromResult(Result.Failure($"An error occurred while deleting the entity: {ex.Message}"));
+            return Task.FromResult(Result.Fail($"An error occurred while deleting the entity: {ex.Message}"));
         }
     }
 
@@ -91,38 +91,38 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
         {
             var entity = await dbContext.Set<T>().FindAsync(id);
             if (entity == null)
-                return Result.Failure($"Entity with ID {id} does not exist.");
+                return Result.Fail($"Entity with ID {id} does not exist.");
             
             dbContext.Set<T>().Remove(entity);
-            return Result.Success();
+            return Result.Ok();
         }
         catch (Exception ex)
         {
-            return Result.Failure($"An error occurred while deleting the entity with ID {id}: {ex.Message}");
+            return Result.Fail($"An error occurred while deleting the entity with ID {id}: {ex.Message}");
         }
     }
  
-    public async Task<Result<List<T>>> GetAllAsync()
+    public async Task<IResult<List<T>>> GetAllAsync()
     {
         try
         {
-            return Result.Success(await dbContext.Set<T>().AsNoTracking().ToListAsync());
+            return Result.Ok(await dbContext.Set<T>().AsNoTracking().ToListAsync());
         }
         catch (Exception ex)
         {
-            return Result.Failure<List<T>>($"An error occurred while retrieving entities: {ex.Message}");
+            return Result.Fail<List<T>>($"An error occurred while retrieving entities: {ex.Message}");
         }
     }
  
-    public async Task<Result<T?>> GetByIdAsync(Guid id)
+    public async Task<IResult<T?>> GetByIdAsync(Guid id)
     {
         try
         {
-            return Result.Success(await dbContext.Set<T>().FindAsync(id));
+            return Result.Ok(await dbContext.Set<T>().FindAsync(id));
         }
         catch (Exception ex)
         {
-            return Result.Failure<T?>($"An error occurred while retrieving the entity with ID {id}: {ex.Message}");
+            return Result.Fail<T?>($"An error occurred while retrieving the entity with ID {id}: {ex.Message}");
         }
     }
 }

@@ -3,6 +3,7 @@ import {Attachment} from './attachment.model';
 import {Language} from './language.model';
 import {Experience} from './experience.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {PhoneNumber} from './phone-number.model';
 
 export interface ProfileState {
   // prereq
@@ -27,9 +28,11 @@ export interface ProfileState {
   // contact
   country?: dropdownOptionsModel;
   dialCode?: string;
-  phone?: string;
   address?: string;
+  phone?: PhoneNumber;
+  phoneVerified: boolean;
   email?: string;
+  emailVerified: boolean;
   interviewPlace?: string;
   naZone?: string;
   naStreet?: string;
@@ -50,7 +53,7 @@ export interface ProfileState {
   available: boolean;
   avatarUrl?: string;
 
-  hasDisability?: boolean | null;
+  hasDisability: boolean;
   disabilityDetails?: string | null;
   sponsorType?: any | null;
   sponsorEmployerName?: string | null;

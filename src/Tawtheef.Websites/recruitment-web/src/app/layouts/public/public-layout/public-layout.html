@@ -1,5 +1,5 @@
 <div i18nNamespace="layout">
-  <app-navbar [menuTemplate]="menuTemplate"></app-navbar>
+  <app-navbar></app-navbar>
 
   <router-outlet />
 
@@ -7,11 +7,3 @@
 </div>
 
 
-
-<ng-template #menuTemplate>
-  <li class="nav-item"><a class="nav-link" href="#about">{{ 'home.nav.about' | translate }}</a></li>
-  <li class="nav-item"><a class="nav-link" href="#tracks">{{ 'home.nav.tracks' | translate }}</a></li>
-  <li class="nav-item"><a class="nav-link" href="#why">{{ 'home.nav.why' | translate }}</a></li>
-  <li class="nav-item"><a class="nav-link" href="#success">{{ 'home.nav.success' | translate }}</a></li>
-  <li class="nav-item"><a class="nav-link" href="#faq">{{ 'home.nav.faq' | translate }}</a></li>
-</ng-template>

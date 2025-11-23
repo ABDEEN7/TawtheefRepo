@@ -18,9 +18,11 @@ export interface AuthBootstrap {
 export interface PrefillData
 {
   email?: string | null;
+  emailVerified?: boolean | null;
   fullName?: string | null;
   avatar?: string | null;
   phone?: string | null;
+  phoneVerified?: boolean | null;
   nationality?: string | null;
   qid?: string | null;
   gender?: string | null;

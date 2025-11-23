@@ -1,4 +1,6 @@
-﻿$brand:  #7b1e3a;
+﻿@use "sass:map";
+
+$brand:  #7b1e3a;
 $accent: #a9445f;
 $border: rgba(0,0,0,.08);
 $muted:  #6b7280;
@@ -24,6 +26,7 @@ $colors: (
 @mixin brand-gradient { background: linear-gradient(135deg, $brand, $accent); }
 @mixin focus-ring { border-color: $brand; box-shadow: 0 0 0 .2rem rgba(123,30,58,.15); }
 @mixin soft-card { background: #fff; border: 1px solid $border; border-radius: 16px; }
+
 @function color($name) {
-  @return map-get($colors, $name);
+  @return map.get($colors, $name);
 }

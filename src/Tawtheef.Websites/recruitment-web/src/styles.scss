@@ -1,8 +1,11 @@
 @use "styles/base/tokens";
 @use "styles/base/flags";
 
-$primary-color: #000;
-
+$primary: #000;
+.form-check-input:checked {
+  background-color: #a9445f !important;
+  border-color: #a9445f !important;
+}
 body {
   background: radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%), #fff;
   color: var(--text);

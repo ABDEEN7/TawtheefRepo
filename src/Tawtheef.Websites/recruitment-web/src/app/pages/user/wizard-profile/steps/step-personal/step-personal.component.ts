@@ -4,7 +4,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { ProfileState } from '../../models/profile-state.model';
-import {MaritalStatus} from '../../../../../core/enums/lookups.enum';
+import {CandidateType, MaritalStatus} from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-step-personal',
@@ -21,6 +21,11 @@ export class StepPersonalComponent {
   translate = inject(TranslateService);
   lookups = inject(ProfileLookupsService);
 
+  get isNeedSponsor(){
+    return [CandidateType.ResidentQatar].includes(
+      this.ds.state().candidateType?.backendName as CandidateType
+    );
+  }
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);
@@ -45,4 +50,6 @@ export class StepPersonalComponent {
   get showDisabilityType(): boolean {
     return !!this.ds.state().hasDisability;
   }
+
+  protected readonly CandidateType = CandidateType;
 }

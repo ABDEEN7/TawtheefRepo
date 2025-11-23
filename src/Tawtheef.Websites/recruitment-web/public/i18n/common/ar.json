@@ -9,7 +9,8 @@
     "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
     "requiredPassword": "كلمة المرور مطلوبة.",
     "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل.",
-    "phoneInvalid": "أدخل رقم هاتف صالح."
+    "phoneInvalid": "أدخل رقم هاتف صالح.",
+    "emailInvalid": "رمز التحقق من البريد الإلكتروني غير صالح."
   },
   "common": {
     "ar": "عربي",

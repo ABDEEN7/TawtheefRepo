@@ -72,7 +72,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
             catch (SmtpCommandException sce) when (IsPermanent(sce))
             {
                 keepClient = false; // drop on protocol-level permanent error
-                // _log.Error(sce, "Permanent SMTP error: status={StatusCode}, subj={Subject}",
+                // _log.Errors(sce, "Permanent SMTP error: status={StatusCode}, subj={Subject}",
                 //     sce.StatusCode, Truncate(env.Subject, 100));
                 throw;
             }

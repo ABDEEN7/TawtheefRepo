@@ -1,4 +1,6 @@
-﻿namespace Tawtheef.Domain.Constants;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Tawtheef.Domain.Constants;
 public class ErrorsCodes
 {
     #region Common Errors
@@ -32,9 +34,9 @@ public class ErrorsCodes
     public const string SocialAccountNotLinked = "SOCIAL_ACCOUNT_NOT_LINKED";
     public const string UnlinkSocialAccountFailed = "UNLINK_SOCIAL_ACCOUNT_FAILED";
     public const string ExternalLoginMissingTokens = "EXTERNAL_LOGIN_MISSING_TOKENS";
-    public static string ExternalLoginCreateUserFailed(IEnumerable<Microsoft.AspNetCore.Identity.IdentityError> error) =>
+    public static string ExternalLoginCreateUserFailed(IEnumerable<IdentityError> error) =>
         $"EXTERNAL_LOGIN_CREATE_USER_FAILED: {error}";
-    public static string ExternalLoginLinkFailed(IEnumerable<Microsoft.AspNetCore.Identity.IdentityError> error) =>
+    public static string ExternalLoginLinkFailed(IEnumerable<IdentityError> error) =>
         $"EXTERNAL_LOGIN_LINK_FAILED: {error}";
     #endregion
 
@@ -61,6 +63,8 @@ public class ErrorsCodes
     public const string EmailAlreadyVerified = "EMAIL_ALREADY_VERIFIED";
     public const string SendOtpLimitReached = "SEND_OTP_LIMIT_REACHED";
     public const string UserPhoneRequired = "USER_PHONE_REQUIRED";
+    public const string InvalidCode = "INVALID_CODE";
+    public const string PhoneVerificationRateLimited = "PHONE_VERIFICATION_RATE_LIMITED";
     #endregion
 
     #region Update Profile Errors

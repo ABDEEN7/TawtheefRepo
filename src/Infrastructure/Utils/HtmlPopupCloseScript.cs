@@ -38,7 +38,7 @@ public static class HtmlPopupCloseScript
                   if (window.opener && origin) {
                     window.opener.postMessage(payload, origin);
                   }
-                } catch (e) { console.error(e); }
+                } catch (e) { console.Errors(e); }
                 
                 // Close the popup
                 // window.close();
