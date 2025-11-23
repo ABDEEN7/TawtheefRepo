@@ -41,42 +41,41 @@ public static class QueryableExtensions
         }
     }
 
-    extension<T>(IQueryable<T> source)
+    public static IQueryable<T> WhereIf<T>(
+        this IQueryable<T> source,
+        bool condition,
+        Expression<Func<T, bool>> predicate)
     {
-        public IQueryable<T> WhereIf(bool condition,
-            Expression<Func<T, bool>> predicate)
-        {
-            return condition ? source.Where(predicate) : source;
-        }
+        return condition ? source.Where(predicate) : source;
+    }
 
-        private IQueryable<T> SortBy(string? sortBy, string? sortDirection)
-        {
-            if (string.IsNullOrWhiteSpace(sortBy))
-                return source;
+    private static IQueryable<T> SortBy<T>(this IQueryable<T> source, string? sortBy, string? sortDirection)
+    {
+        if (string.IsNullOrWhiteSpace(sortBy))
+            return source;
 
-            var isDescending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
-            var parameter = Expression.Parameter(typeof(T), "x");
+        var isDescending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        var parameter = Expression.Parameter(typeof(T), "x");
 
-            // Build x => x.Prop OR x => x.Nested.Prop
-            var body = BuildPropertyAccess(parameter, typeof(T), sortBy);
-            if (body is null) // property isn't found -> no sort
-                return source;
+        // Build x => x.Prop OR x => x.Nested.Prop
+        var body = BuildPropertyAccess(parameter, typeof(T), sortBy);
+        if (body is null) // property isn't found -> no sort
+            return source;
 
-            var keyType = body.Type;
-            var lambda = Expression.Lambda(
-                typeof(Func<,>).MakeGenericType(typeof(T), keyType), body, parameter);
+        var keyType = body.Type;
+        var lambda = Expression.Lambda(
+            typeof(Func<,>).MakeGenericType(typeof(T), keyType), body, parameter);
 
-            var method = typeof(Queryable).GetMethods()
-                .First(m => m.Name == (isDescending ? "OrderByDescending" : "OrderBy")
-                            && m.IsGenericMethodDefinition
-                            && m.GetGenericArguments().Length == 2
-                            && m.GetParameters().Length == 2);
+        var method = typeof(Queryable).GetMethods()
+            .First(m => m.Name == (isDescending ? "OrderByDescending" : "OrderBy")
+                        && m.IsGenericMethodDefinition
+                        && m.GetGenericArguments().Length == 2
+                        && m.GetParameters().Length == 2);
 
-            var ordered = method.MakeGenericMethod(typeof(T), keyType)
-                .Invoke(null, [source, lambda])!;
+        var ordered = method.MakeGenericMethod(typeof(T), keyType)
+            .Invoke(null, [source, lambda])!;
 
-            return (IQueryable<T>)ordered;
-        }
+        return (IQueryable<T>)ordered;
     }
 
     private static Expression? BuildPropertyAccess(ParameterExpression param, Type type, string path)
