@@ -151,7 +151,8 @@ namespace Tawtheef.Infrastructure
             services
                 .AddTransient<IUnitOfWork, UnitOfWork>()
                 .AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>))
-                .AddTransient<IUserRepository, UserRepository>();
+                .AddTransient<IUserRepository, UserRepository>()
+                .AddScoped<IJobRepository, JobRepository>();
         }
 
         #endregion

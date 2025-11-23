@@ -81,10 +81,10 @@
               <tr>
                 <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
                 <td class="fw-bold">{{ job.basics.title | translate }}</td>
-                <td>{{ lookupsService.getRequestingDepartment(job.basics.requestingDept)}}</td>
+                <td>{{ lookupsService.getRequestingDepartment(job.basics.requestingDeptId)}}</td>
                 <td>
-                  <span class="badge-soft {{ job.basics.jobCategory }}">
-                    {{ lookupsService.getJobCategoryLable(job.basics.jobCategory)}}
+                  <span class="badge-soft {{ job.basics.jobCategoryId }}">
+                    {{ lookupsService.getJobCategoryLable(job.basics.jobCategoryId)}}
                   </span>
                 </td>
                 <td>{{ job.basics.vacancies || 0 }}</td>

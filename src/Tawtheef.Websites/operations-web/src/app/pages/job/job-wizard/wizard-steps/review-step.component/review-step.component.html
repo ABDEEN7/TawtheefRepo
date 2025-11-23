@@ -7,13 +7,13 @@
       <div class="review-card">
         <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.basics' | translate }}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.job_title' | translate }}</div><div class="mb-1 fw-bold">{{ jobSignal().basics.title || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.job_category' | translate }}</div><div class="mb-1">{{lookupsService.getJobCategoryLable(jobSignal().basics.jobCategory)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.job_category' | translate }}</div><div class="mb-1">{{lookupsService.getJobCategoryLable(jobSignal().basics.jobCategoryId)}}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.gender' | translate }}</div>
-        <div class="mb-1"> {{lookupsService.getGender(jobSignal().basics.gender)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ lookupsService.getWorkEntity(jobSignal().basics.entity)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ lookupsService.getDegrees(jobSignal().basics.degree)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ lookupsService.getMajor(jobSignal().basics.major)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ lookupsService.getTypeOfWork(jobSignal().basics.typeOfWork)}}</div>
+        <div class="mb-1"> {{jobSignal().basics.genderId}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ lookupsService.getWorkEntity(jobSignal().basics.entityId)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ lookupsService.getDegrees(jobSignal().degreeIds)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ lookupsService.getMajor(jobSignal().basics.majorId)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ lookupsService.getTypeOfWork(jobSignal().basics.workTypeId)}}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.vacancies' | translate }}</div><div class="mb-1">{{ jobSignal().basics.vacancies || '—' }}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.deadline' | translate }}</div><div class="mb-1">{{ jobSignal().basics.deadline ? (jobSignal().basics.deadline | date:'mediumDate') : '—' }}</div>
       </div>
@@ -34,8 +34,8 @@
         @if (jobSignal().quotas.residentsBreakdown.length) {
           <div class="small-muted mt-2">{{ 'job_wizard.steps.quotas.residents_details_button' | translate }}</div>
           <div class="d-flex flex-wrap gap-1">
-            @for (r of jobSignal().quotas.residentsBreakdown; track r.nat) {
-              <span class="chip">{{lookupsService.getNationalites(r.nat) }}: {{ r.pct }}%</span>
+            @for (r of jobSignal().quotas.residentsBreakdown; track r.nationalityId) {
+              <span class="chip">{{lookupsService.getNationalites(r.nationalityId) }}: {{ r.percentage }}%</span>
             }
           </div>
         }

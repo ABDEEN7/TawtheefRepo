@@ -32,10 +32,10 @@ export class JobListComponent implements OnInit {
     const fStatus = this.filterStatus();
 
     return this.jobs().filter((j) => {
-      if (fType && j.basics.jobCategory !== fType) return false;
+      if (fType && j.basics.jobCategoryId !== fType) return false;
       if (fStatus && j.status !== fStatus) return false;
       if (q) {
-        const hay = [j.basics.title, j.basics.requestingDept].join(' ').toLowerCase();
+        const hay = [j.basics.title, j.basics.requestingDeptId].join(' ').toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;

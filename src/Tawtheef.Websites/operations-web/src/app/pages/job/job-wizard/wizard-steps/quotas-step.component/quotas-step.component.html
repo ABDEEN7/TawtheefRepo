@@ -63,8 +63,8 @@
         {{ 'job_wizard.steps.quotas.residents_details_button' | translate }}
       </div>
 
-      @for (item of residentsBreakdown; track item.nat) {
-        <span class="chip">{{ getNationalites(item.nat) }}: {{ item.pct }}%</span>
+      @for (item of residentsBreakdown; track item.nationalityId) {
+        <span class="chip">{{ getNationalites(item.nationalityId) }}: {{ item.percentage }}%</span>
       }
     </div>
   }

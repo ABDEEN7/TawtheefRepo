@@ -3,15 +3,15 @@ using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
+[Table(nameof(ResidentBreakdown), Schema = Schemas.Hr)]
 
-public class JobQuota : EventEntity
+public class ResidentBreakdown : EventEntity
 {
-    public Guid JobId { get; set; }
-    public Job? Job { get; set; }
-
+    public Guid JobQuotaId { get; set; }
+    public JobQuotas? JobQuota { get; set; }
+    
     public Guid NationalityId { get; set; }
     public Country? Nationality { get; set; }
     
-    [Column(TypeName = "decimal(18,2)")]
     public decimal Percentage { get; set; }
 }

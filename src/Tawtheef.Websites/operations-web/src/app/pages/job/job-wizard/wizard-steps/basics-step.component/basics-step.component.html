@@ -8,7 +8,7 @@
       }}</label>
       <p-select
         [options]="lookupsService.departments()"
-        formControlName="requestingDept"
+        formControlName="requestingDeptId"
         optionLabel="name"
         optionValue="id"
         [filter]="true"
@@ -22,7 +22,7 @@
       <div class="small-muted mt-1">
         {{ 'job_wizard.steps.basics.requesting_dept_hint' | translate }}
       </div>
-      @if (form.controls.requestingDept.touched && form.controls.requestingDept.invalid) {
+      @if (form.controls.requestingDeptId.touched && form.controls.requestingDeptId.invalid) {
       <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
       }
     </div>
@@ -48,30 +48,30 @@
         }}</label>
         <p-select
           [options]="lookupsService.jobCategories()"
-          formControlName="jobCategory"
+          formControlName="jobCategoryId"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
           placeholder="{{ 'job_wizard.steps.basics.job_category_placeholder' | translate }}"
           class="w-100"
         ></p-select>
-        @if (form.controls.jobCategory.touched && form.controls.jobCategory.invalid) {
+        @if (form.controls.jobCategoryId.touched && form.controls.jobCategoryId.invalid) {
         <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
 
       <div class="col-lg-4 col-md-6">
         <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.gender' | translate }}</label>
-        <p-multiselect
+        <p-select
           [options]="lookupsService.genders()"
-          formControlName="gender"
+          formControlName="genderId"
           [showClear]="true"
           optionLabel="name"
           optionValue="id"
           placeholder="{{ 'job_wizard.steps.basics.select_type' | translate }}"
           class="w-100"
         />
-      @if (form.controls.gender.touched && form.controls.gender.invalid) {
+        @if (form.controls.genderId.touched && form.controls.genderId.invalid) {
         <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
@@ -84,14 +84,14 @@
         }}</label>
         <p-select
           [options]="lookupsService.targetEntities()"
-          formControlName="entity"
+          formControlName="entityId"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
           placeholder="{{ 'job_wizard.steps.basics.work_entity_placeholder' | translate }}"
           class="w-100"
         ></p-select>
-        @if (form.controls.entity.touched && form.controls.entity.invalid) {
+        @if (form.controls.entityId.touched && form.controls.entityId.invalid) {
         <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
@@ -102,7 +102,7 @@
           [options]="lookupsService.majors()"
           optionLabel="name"
           optionValue="id"
-          formControlName="major"
+          formControlName="majorId"
           [filter]="true"
           [showClear]="true"
           [virtualScroll]="true"
@@ -111,7 +111,7 @@
           placeholder="{{ 'job_wizard.steps.basics.major_placeholder' | translate }}"
           class="w-100"
         ></p-select>
-        @if (form.controls.major.touched && form.controls.major.invalid) {
+        @if (form.controls.majorId.touched && form.controls.majorId.invalid) {
         <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
@@ -120,7 +120,7 @@
         <label class="form-label fw-bold">{{ 'job_wizard.steps.basics.degree' | translate }}</label>
         <p-multiselect
           [options]="lookupsService.degrees()"
-          formControlName="degree"
+          formControlName="degreeIds"
           [showClear]="true"
           [filter]="true"
           optionLabel="name"
@@ -128,7 +128,7 @@
           placeholder="{{ 'job_wizard.steps.basics.degree_placeholder' | translate }}"
           class="w-100"
         />
-        @if (form.controls.degree.touched && form.controls.degree.invalid) {
+        @if (form.controls.degreeIds.touched && form.controls.degreeIds.invalid) {
         <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>
@@ -143,12 +143,12 @@
           [options]="lookupsService.workTypes()"
           optionLabel="name"
           optionValue="id"
-          formControlName="typeOfWork"
+          formControlName="workTypeId"
           [showClear]="true"
           placeholder="{{ 'job_wizard.steps.basics.work_type_placeholder' | translate }}"
           class="w-100"
         ></p-select>
-        @if (form.controls.typeOfWork.touched && form.controls.typeOfWork.invalid) {
+        @if (form.controls.workTypeId.touched && form.controls.workTypeId.invalid) {
         <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>

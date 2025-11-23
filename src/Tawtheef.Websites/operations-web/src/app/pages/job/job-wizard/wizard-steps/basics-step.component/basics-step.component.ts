@@ -7,6 +7,7 @@ import { JobBasics } from '../../../models/job-basics.models';
 import { debounceTime, filter } from 'rxjs';
 import { JobLookupService } from '../../../services/job-lookup.service';
 import { ScrollerOptions } from 'primeng/api';
+import { GUID } from '../../../../../shared/types/guid.type';
 
 @Component({
   selector: 'app-basics-step',
@@ -23,14 +24,14 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
   lazyLoading = false
   loadLazyTimeout = 0
   readonly form = this.fb.nonNullable.group({
-    requestingDept: ['', Validators.required],
+    requestingDeptId: ['', Validators.required],
     title: ['', Validators.required],
-    jobCategory: ['', Validators.required],
-    gender: this.fb.control<string[]>([], Validators.required),
-    entity: ['', Validators.required],
-    major: ['', Validators.required],
-    degree: this.fb.control<string[]>([], Validators.required),
-    typeOfWork: ['', Validators.required],
+    jobCategoryId: ['', Validators.required],
+    genderId: ['', Validators.required],
+    entityId: ['', Validators.required],
+    majorId: ['', Validators.required],
+    degreeIds: this.fb.control<GUID[]>([], Validators.required),
+    workTypeId: ['', Validators.required],
     vacancies: [0, [Validators.required, Validators.min(1)]],
     deadline: this.fb.control<Date | null>(null, Validators.required),
   });
@@ -89,16 +90,15 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
         filter(() => this.form.valid),
       )
       .subscribe((value) => {
-        this.updateJobService(value as Partial<JobBasics>);
+        this.updateJobService(value as Partial<JobBasics>,value.degreeIds as GUID[]);
       });
   }
 
-  private updateJobService(basics: Partial<JobBasics>): void {
+  private updateJobService(basics: Partial<JobBasics>,degreeIds:GUID[]): void {
     const updatedBasics = {
       ...basics,
-      degree: basics.degree || []
     };
-    this.jobService.updateCurrentJobBasics(updatedBasics);
+    this.jobService.updateCurrentJobBasics(updatedBasics,degreeIds);
   }
 
   setJobData(job: Job): void {
@@ -106,29 +106,29 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
       const deadline = job.basics.deadline ? new Date(job.basics.deadline) : null;
 
       this.form.patchValue({
-        requestingDept: job.basics.requestingDept || '',
+        requestingDeptId: job.basics.requestingDeptId || '',
         title: job.basics.title || '',
-        jobCategory: job.basics.jobCategory || '',
-        gender: job.basics.gender || '',
-        entity: job.basics.entity || '',
-        major: job.basics.major || '',
-        degree: job.basics.degree || [],
-        typeOfWork: job.basics.typeOfWork || '',
+        jobCategoryId: job.basics.jobCategoryId || '',
+        genderId: job.basics.genderId || '',
+        entityId: job.basics.entityId || '',
+        majorId: job.basics.majorId || '',
+        degreeIds: job.degreeIds || [],
+        workTypeId: job.basics.workTypeId || '',
         vacancies: job.basics.vacancies || 0,
         deadline: deadline,
       }, { emitEvent: false });
     }
   }
 
-  toggleDegree(degree: string, event: Event): void {
+  toggleDegree(degree: GUID, event: Event): void {
   const checked = (event.target as HTMLInputElement).checked;
-  const currentDegrees = this.form.controls.degree.value || [];
+  const currentDegrees = this.form.controls.degreeIds.value || [];
   const updatedDegrees = checked
     ? [...currentDegrees, degree]
     : currentDegrees.filter(d => d !== degree);
 
-  this.form.controls.degree.setValue(updatedDegrees);
-  this.form.controls.degree.markAsDirty();
+  this.form.controls.degreeIds.setValue(updatedDegrees);
+  this.form.controls.degreeIds.markAsDirty();
 }
 
   onDateSelect(): void {
@@ -140,7 +140,7 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
   }
 
   get selectedDegrees(): string {
-    return this.form.controls.degree.value?.join('، ') || '';
+    return this.form.controls.degreeIds.value?.join('، ') || '';
   }
 
   get degreePlaceholder(): string {

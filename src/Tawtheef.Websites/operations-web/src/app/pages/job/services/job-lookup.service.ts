@@ -4,6 +4,7 @@ import { forkJoin } from 'rxjs';
 import { Lookups } from '../../../core/models/lookups.model';
 import { EndpointsService } from '../../../core/http/endpoints.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { GUID } from '../../../shared/types/guid.type';
 
 @Injectable({ providedIn: 'root' })
 export class JobLookupService {
@@ -83,7 +84,7 @@ export class JobLookupService {
    getMajor(id : string) :string{
        return this.majors().find(m => m.id == id)?.name || ''
   }
-  getDegrees(ids:string[]): string {
+  getDegrees(ids:GUID[]): string {
     let splitedNames : string[] = []
     ids.forEach(id =>{splitedNames.push(this.degrees().find(degree =>degree.id == id)?.name || '')})
     return splitedNames.join(',')

@@ -1,14 +1,13 @@
-
+import { GUID } from "../../../shared/types/guid.type";
 
 export interface JobBasics {
-  requestingDept: string;
+  requestingDeptId: GUID;
   title: string;
-  jobCategory: string;
-  gender: string[];
-  entity: string;
-  major: string;
-  degree: string[];
-  typeOfWork: string;
+  jobCategoryId: GUID;
+  genderId: GUID;
+  entityId: GUID;
+  majorId: GUID;
+  workTypeId: GUID;
   vacancies: number;
   deadline: Date | null;
 }
