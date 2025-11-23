@@ -78,17 +78,13 @@ public class JobRepository(IGenericRepository<Job> repository) : BaseRepository<
                 .Include(j => j.JobCategory)
                 .AsQueryable();
 
-            // Apply filters
             query = ApplyFilters(query, filter);
 
-            // Apply sorting
             bool sortDescending = pagination.SortDirection?.ToLower() == "desc";
             query = ApplySorting(query, pagination.SortBy, sortDescending);
 
-            // Get total count
             var totalCount = await query.CountAsync();
 
-            // Apply pagination
             var items = await query
                 .Skip(pagination.Skip)
                 .Take(pagination.Take)
@@ -104,53 +100,34 @@ public class JobRepository(IGenericRepository<Job> repository) : BaseRepository<
 
     private static IQueryable<Job> ApplyFilters(IQueryable<Job> query, JobQueryFilter filter)
     {
-        if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
-        {
-            query = query.Where(j => j.Title.Contains(filter.SearchTerm) ||
-                                   (j.Description != null && j.Description.Contains(filter.SearchTerm)));
-        }
+        return query
+            .WhereIf(!string.IsNullOrWhiteSpace(filter.SearchTerm),
+                j => j.Title.Contains(filter.SearchTerm!) ||
+                     (j.Description != null && j.Description.Contains(filter.SearchTerm!)))
 
-        if (filter.DepartmentId.HasValue)
-        {
-            query = query.Where(j => j.RequestingDepartmentId == filter.DepartmentId.Value);
-        }
+            .WhereIf(filter.DepartmentId.HasValue,
+                j => j.RequestingDepartmentId == filter.DepartmentId)
 
-        if (filter.StatusId.HasValue)
-        {
-            query = query.Where(j => j.StatusId == filter.StatusId.Value);
-        }
+            .WhereIf(filter.StatusId.HasValue,
+                j => j.StatusId == filter.StatusId)
 
-        if (filter.JobCategoryId.HasValue)
-        {
-            query = query.Where(j => j.JobCategoryId == filter.JobCategoryId.Value);
-        }
+            .WhereIf(filter.JobCategoryId.HasValue,
+                j => j.JobCategoryId == filter.JobCategoryId)
 
-        if (filter.WorkTypeId.HasValue)
-        {
-            query = query.Where(j => j.WorkTypeId == filter.WorkTypeId.Value);
-        }
+            .WhereIf(filter.WorkTypeId.HasValue,
+                j => j.WorkTypeId == filter.WorkTypeId)
 
-        if (filter.DeadlineFrom.HasValue)
-        {
-            query = query.Where(j => j.Deadline >= filter.DeadlineFrom.Value);
-        }
+            .WhereIf(filter.DeadlineFrom.HasValue,
+                j => j.Deadline >= filter.DeadlineFrom)
 
-        if (filter.DeadlineTo.HasValue)
-        {
-            query = query.Where(j => j.Deadline <= filter.DeadlineTo.Value);
-        }
+            .WhereIf(filter.DeadlineTo.HasValue,
+                j => j.Deadline <= filter.DeadlineTo)
 
-        if (filter.MinVacancies.HasValue)
-        {
-            query = query.Where(j => j.Vacancies >= filter.MinVacancies.Value);
-        }
+            .WhereIf(filter.MinVacancies.HasValue,
+                j => j.Vacancies >= filter.MinVacancies)
 
-        if (filter.MaxVacancies.HasValue)
-        {
-            query = query.Where(j => j.Vacancies <= filter.MaxVacancies.Value);
-        }
-
-        return query;
+            .WhereIf(filter.MaxVacancies.HasValue,
+                j => j.Vacancies <= filter.MaxVacancies);
     }
 
     private static IQueryable<Job> ApplySorting(IQueryable<Job> query, string? sortBy, bool sortDescending)
