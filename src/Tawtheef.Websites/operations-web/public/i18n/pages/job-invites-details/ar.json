@@ -1,0 +1,61 @@
+{
+  "job_invites_details": {
+    "invites_details": "تفاصيل الدعوات",
+    "page_description": "تعرض هذه الصفحة الأشخاص الذين أُرسلت إليهم الدعوة لهذه الوظيفة وحالتهم الحالية.",
+    "total_invites": "إجمالي الدعوات",
+
+    "kpi": {
+      "applied": "تم التقديم",
+      "declined": "رافضون",
+      "viewed": "مقروء",
+      "unseen": "غير مشاهد"
+    },
+
+    "filters": {
+      "select_status": "اختر حالة",
+      "status": "الحالة",
+      "search": "بحث (اسم المرشح)",
+      "search_placeholder": "اكتب جزءً من الاسم...",
+      "clear": "إلغاء التصفية",
+      "all": "الكل",
+      "applied": "تم التقديم",
+      "declined": "رافض",
+      "viewed": "مقروء",
+      "new": "غير مشاهد"
+    },
+
+    "table": {
+      "candidate": "المرشح",
+      "nationality": "الجنسية",
+      "phone": "الهاتف",
+      "status": "الحالة",
+      "sent_date": "تاريخ الإرسال",
+      "applied_date": "تاريخ التقديم",
+      "no_invites": "لا توجد دعوات لهذه الفلاتر"
+    },
+
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "no_results": "0 نتائج",
+      "showing": "عرض",
+      "of": "من"
+    },
+
+    "status": {
+      "new": "جديد",
+      "viewed": "مقروء",
+      "applied": "تم التقديم",
+      "declined": "مرفوض"
+    },
+    "Job_status":{
+      "open": "مفتوحة",
+      "closed": "مغلقة",
+      "draft": "مسودة"
+    },
+    "entities": {
+          "schools": "المدارس",
+          "ministry": "الوزارة"
+    }
+  }
+}

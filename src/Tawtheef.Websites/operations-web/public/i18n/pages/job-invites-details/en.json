@@ -1,0 +1,62 @@
+{
+  "job_invites_details": {
+    "invites_details": "Invites Details",
+    "page_description": "This page displays the people who were sent an invitation for this job and their current status.",
+    "total_invites": "Total Invites",
+
+    "kpi": {
+      "applied": "Applied",
+      "declined": "Declined",
+      "viewed": "Viewed",
+      "unseen": "Unseen"
+    },
+
+    "filters": {
+      "status": "Status",
+      "search": "Search (candidate name)",
+      "search_placeholder": "Type part of the name...",
+      "clear": "Clear Filters",
+      "all": "All",
+      "applied": "Applied",
+      "declined": "Declined",
+      "viewed": "Viewed",
+      "new": "Unseen"
+    },
+
+    "table": {
+      "candidate": "Candidate",
+      "nationality": "Nationality",
+      "phone": "Phone",
+      "status": "Status",
+      "sent_date": "Sent Date",
+      "applied_date": "Applied Date",
+      "no_invites": "No invites for these filters"
+    },
+
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "no_results": "0 results",
+      "showing": "Showing",
+      "of": "of"
+    },
+
+    "status": {
+      "new": "New",
+      "viewed": "Viewed",
+      "applied": "Applied",
+      "declined": "Declined"
+    },
+
+    "Job_status": {
+      "open": "Open",
+      "closed": "Closed",
+      "draft": "Draft"
+    },
+
+    "entities": {
+      "schools": "Schools",
+      "ministry": "Ministry"
+    }
+  }
+}

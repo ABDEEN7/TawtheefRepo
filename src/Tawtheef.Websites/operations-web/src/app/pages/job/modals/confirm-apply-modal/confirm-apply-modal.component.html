@@ -1,0 +1,45 @@
+<section i18nNamespace="pages/job-details">
+
+<div class="confirm-apply-modal">
+  <div class="modal-header ">
+    <h5 class="modal-title">
+      <i class="fa-solid fa-check-circle"></i> {{ 'job_details.modal.confirm_title' | translate }}
+    </h5>
+    <button
+      type="button"
+      class="btn-close btn-close-white"
+      (click)="cancel()"
+      aria-label="Close"
+    ></button>
+  </div>
+
+  <div class="modal-body">
+    <p>{{ 'steps.review.publishConfirmBody' | translate }}</p>
+    <div class="form-check mt-2">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        id="agreeCheck"
+        [checked]="agreedToTerms"
+        (change)="onAgreementChange($event)">
+      <label class="form-check-label" for="agreeCheck">
+        {{ 'steps.review.agreeTerms' | translate }}
+      </label>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      class="btn btn-outline-secondary rounded-pill"
+      (click)="cancel()">
+      {{ 'buttons.cancel' | translate }}
+    </button>
+    <button
+      class="btn btn-brand rounded-pill"
+      [disabled]="!agreedToTerms"
+      (click)="confirmApply()">
+      <i class="fa-solid fa-paper-plane"></i> {{ 'buttons.confirmPublish' | translate }}
+    </button>
+  </div>
+</div>
+</section>

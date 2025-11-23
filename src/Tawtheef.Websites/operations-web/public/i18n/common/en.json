@@ -53,12 +53,22 @@
       "login": "Login",
       "needHelp": "Need Help?",
       "contactSupport": "Contact Support"
-    }
+    },
+    "pagination": {
+  "showing": "Showing",
+  "of": "of",
+  "results": "results",
+  "no_results": "No results found",
+  "previous": "Previous",
+  "next": "Next"
+}
   },
-  "validation": {
-    "requiredEmail": "Email is required.",
-    "invalidEmail": "Please enter a valid email address.",
-    "requiredPassword": "Password is required.",
-    "minLengthPassword": "Password must be at least {{min}} characters."
-  }
+"validation": {
+  "requiredEmail": "Email is required.",
+  "invalidEmail": "Enter a valid email address.",
+  "requiredPassword": "Password is required.",
+  "minLengthPassword": "Password must be at least {{min}} characters.",
+  "required_filed": "This field is required",
+  "invalid_format": "Invalid format"
+}
 }

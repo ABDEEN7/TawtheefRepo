@@ -1,0 +1,31 @@
+{
+  "job_details": {
+    "qatar": "Qatar",
+    "deadline": "Deadline",
+    "buttons": {
+      "submit": "Submitted",
+      "apply": "Apply Now"
+    },
+    "description": "Job Description",
+    "responsibilities": "Responsibilities",
+    "skills": "Required Skills",
+    "conditions": "Requirements & Conditions",
+    "benefits": "Benefits",
+    "about": "About the Job",
+    "aboutDescription": "Learn more about this position and the organization offering it.",
+    "basics": "Basic Information",
+    "type_of_work": "Type of Work",
+    "entity": "Entity",
+    "vacancies": "Vacancies"
+  },
+  "work_type": {
+    "full_time": "Full Time",
+    "part_time": "Part Time",
+    "remote": "Remote"
+  },
+  "entity": {
+    "government": "Government",
+    "private": "Private Sector",
+    "ngo": "Non-Governmental Organization"
+  }
+}

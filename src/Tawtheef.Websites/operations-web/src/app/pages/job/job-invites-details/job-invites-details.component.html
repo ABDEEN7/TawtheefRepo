@@ -1,0 +1,148 @@
+<section i18nNamespace="pages/job-invites-details">
+  <header class="py-3 header-hero">
+    <div class="container d-flex align-items-center justify-content-between">
+      <div>
+        <h4 class="mb-1 text-brand fw-bold">
+          {{ 'job_invites_details.invites_details' | translate }}—
+          <span>{{ job()?.basics?.title }}</span>
+        </h4>
+        <div class="text-muted small">{{ 'job_invites_details.page_description' | translate }}</div>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        @if (job(); as currentJob) {
+        <span [class]="getTypeClass(currentJob.basics.typeOfWork)">
+          {{ 'job_invites_details.entities.' + currentJob.basics.entity | translate }} —
+          {{ lookupsService.getStatus(currentJob.status)}}
+        </span>
+        }
+        <span class="badge rounded-pill text-bg-light border">
+          {{ 'job_invites_details.total_invites' | translate }}: {{ kpis().total }}
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="py-4">
+    <div class="container">
+      <!-- KPIs -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <div class="card border-0 shadow-sm p-3 text-center">
+            <div class="small text-muted">{{ 'job_invites_details.kpi.applied' | translate }}</div>
+            <div class="h4 fw-bold text-success">{{ kpis().applied }}</div>
+            <div class="small text-muted">{{ kpis().appliedPct }}%</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-0 shadow-sm p-3 text-center">
+            <div class="small text-muted">{{ 'job_invites_details.kpi.declined' | translate }}</div>
+            <div class="h4 fw-bold text-danger">{{ kpis().declined }}</div>
+            <div class="small text-muted">{{ kpis().declinedPct }}%</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-0 shadow-sm p-3 text-center">
+            <div class="small text-muted">{{ 'job_invites_details.kpi.viewed' | translate }}</div>
+            <div class="h4 fw-bold text-secondary">{{ kpis().viewed }}</div>
+            <div class="small text-muted">{{ kpis().viewedPct }}%</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-0 shadow-sm p-3 text-center">
+            <div class="small text-muted">{{ 'job_invites_details.kpi.unseen' | translate }}</div>
+            <div class="h4 fw-bold text-primary">{{ kpis().unseen }}</div>
+            <div class="small text-muted">{{ kpis().unseenPct }}%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="card border-0 shadow-sm p-3 mb-3">
+        <div class="row g-2 search-bar">
+          <div class="col-md-4">
+            <label class="form-label fw-bold small mb-1">{{
+              'job_invites_details.filters.status' | translate
+            }}</label>
+            <p-multiselect
+              [options]="lookupsService.jobInvitesStatus()"
+              optionLabel="name"
+              optionValue="id"
+              [showClear]="true"
+              [placeholder]="'job_invites_details.filters.select_status' | translate"
+              [ngModel]="statusFilter()"
+              (ngModelChange)="onStatusFilterChange($event)"
+              class="w-100"
+            ></p-multiselect>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold small mb-1">{{
+              'job_invites_details.filters.search' | translate
+            }}</label>
+            <input
+              type="text"
+              class="form-control"
+              [placeholder]="'job_invites_details.filters.search_placeholder' | translate"
+              [ngModel]="searchFilter()"
+              (ngModelChange)="onSearchChange($event)"
+            />
+          </div>
+          <div class="col-md-4 d-flex align-items-end justify-content-end">
+            <button (click)="clearFilters()" class="btn btn-outline-secondary rounded-pill">
+              <i class="fa fa-rotate-left"></i>
+              {{ 'job_invites_details.filters.clear' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>{{ 'job_invites_details.table.candidate' | translate }}</th>
+                <th>{{ 'job_invites_details.table.nationality' | translate }}</th>
+                <th>{{ 'job_invites_details.table.phone' | translate }}</th>
+                <th>{{ 'job_invites_details.table.status' | translate }}</th>
+                <th>{{ 'job_invites_details.table.sent_date' | translate }}</th>
+                <th>{{ 'job_invites_details.table.applied_date' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (paginatedInvites().length === 0) {
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                  {{ 'job_invites_details.table.no_invites' | translate }}
+                </td>
+              </tr>
+              } @else { @for (invite of paginatedInvites(); track invite.id; let i = $index) {
+              <tr>
+                <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
+                <td class="fw-bold">{{ invite.profile.name }}</td>
+                <td>{{ invite.profile.nationality | translate }}</td>
+                <td>{{ invite.profile.phone }}</td>
+                <td>
+                  <span [class]="'status-pill ' + getStatusClass(invite.status)">
+                    {{ getStatusDisplayName(invite.status) }}
+                  </span>
+                </td>
+                <td>{{ invite.sentAt | date : 'dd/MM/yyyy' }}</td>
+                <td>{{ invite.application?.appliedAt | date : 'dd/MM/yyyy' }}</td>
+              </tr>
+              } }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <app-pagination
+        [currentPage]="currentPage()"
+        [totalItems]="filteredInvites().length"
+        [itemsPerPage]="itemsPerPage"
+        (pageChanged)="onPageChange($event)">
+      </app-pagination>
+    </div>
+  </main>
+</section>

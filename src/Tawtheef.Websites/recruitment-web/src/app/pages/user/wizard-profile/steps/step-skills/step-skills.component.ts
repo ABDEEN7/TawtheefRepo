@@ -74,7 +74,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
               this.loadingSkills = false;
             }),
             catchError(error => {
-              console.error('Search error:', error);
+              console.error(error);
               this.loadingSkills = false;
               this.skillOptions = [];
               return of([]);

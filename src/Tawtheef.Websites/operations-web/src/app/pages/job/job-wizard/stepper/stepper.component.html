@@ -1,0 +1,13 @@
+<ul class="nav nav-pills stepper flex-wrap mb-3">
+  @for (s of steps; track s.id) {
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        [class.active]="current === s.id"
+        (click)="stepChange.emit(s.id)"
+      >
+        <i [class]="s.icon"></i> {{ s.label | translate}}
+      </a>
+    </li>
+  }
+</ul>
