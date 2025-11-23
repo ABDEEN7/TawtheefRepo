@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -13,7 +13,7 @@ namespace Tawtheef.Infrastructure.Services.Identity;
 
 public sealed class AzureIdTokenValidator(IConfiguration config) : IExternalIdTokenValidator
 {
-    public async Task<Result<ClaimsPrincipal>> ValidateAsync(string idToken, CancellationToken ct)
+    public async Task<IResult<ClaimsPrincipal>> ValidateAsync(string idToken, CancellationToken ct)
     {
         try
         {
@@ -60,11 +60,11 @@ public sealed class AzureIdTokenValidator(IConfiguration config) : IExternalIdTo
 
             var handler = new JwtSecurityTokenHandler();
             var principal = handler.ValidateToken(idToken, parameters, out _);
-            return Result.Success(principal);
+            return Result.Ok(principal);
         }
         catch
         {
-            return Result.Failure<ClaimsPrincipal>(ErrorsCodes.ExternalLoginInvalidToken);
+            return Result.Fail<ClaimsPrincipal>(ErrorsCodes.ExternalLoginInvalidToken);
         }
     }
 }

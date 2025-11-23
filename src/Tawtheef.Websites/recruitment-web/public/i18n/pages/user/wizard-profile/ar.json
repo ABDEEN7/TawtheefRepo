@@ -93,7 +93,26 @@
       "phone": "رقم الجوال",
       "email": "البريد الإلكتروني",
       "address": "العنوان التفصيلي",
-      "interviewPlace": "مكان المقابلة"
+      "interviewPlace": "مكان المقابلة",
+      "emailVerified": "تم التحقق من البريد الإلكتروني",
+      "phoneVerified": "تم التحقق من رقم الجوال",
+      "phoneSendCode": "إرسال رمز التحقق",
+      "emailSendVerification": "إرسال رابط التحقق",
+      "emailOtpPlaceholder": "أدخل رمز التحقق المرسل إلى بريدك الإلكتروني",
+      "phoneOtpPlaceholder": "أدخل رمز التحقق المرسل إلى جوالك",
+      "emailSending": "جاري إرسال رابط التحقق...",
+      "phoneSending": "جاري إرسال رمز التحقق...",
+      "emailFailed": "فشل إرسال رابط التحقق، حاول مرة أخرى.",
+      "phoneFailed": "فشل التحقق من رقم الجوال، حاول مرة أخرى.",
+      "emailLinkSent": "تم إرسال رابط التحقق إلى بريدك الإلكتروني.",
+      "phoneCodeSent": "تم إرسال رمز التحقق إلى جوالك.",
+      "emailNotVerified": "لم يتم التحقق من البريد الإلكتروني بعد.",
+      "phoneNotVerified": "لم يتم التحقق من رقم الجوال بعد.",
+      "phoneVerifying": "جاري التحقق من رقم الجوال...",
+      "emailVerifying": "جاري التحقق من البريد الإلكتروني...",
+      "phoneVerify": "تحقق من رقم الجوال",
+      "emailVerify": "تحقق من البريد الإلكتروني"
+
     },
     "nationalAddress": {
       "title": "العنوان الوطني",
@@ -238,6 +257,8 @@
       "idLabel": "رفع البطاقة الشخصية (صورة/ PDF)",
       "dropOrClick": "اسحب وافلت أو انقر",
       "startProfile": "بدء إنشاء الملف الشخصي",
+      "birthCertificate": "شهادة ميلاد أبناء المرأة القطرية",
+      "marriageCertificate": "شهادة زواج الزوج غير القطري",
       "types": {
         "qatari": "مواطن قطري",
         "qatarisWomanChildren": "أبناء المرأة القطرية المتزوجة من غير قطري",

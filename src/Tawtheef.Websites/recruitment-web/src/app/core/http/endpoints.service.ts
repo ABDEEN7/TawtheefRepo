@@ -29,6 +29,16 @@ export class EndpointsService {
     bootstrap: this.getFullUrl(`/me/bootstrap`),
     profile: {
       socialAccounts: this.getFullUrl(`/user/profile/social-accounts`),
+    },
+    verify:{
+      phone:{
+        request: this.getFullUrl(`/user/verify/phone/request`),
+        confirm: this.getFullUrl(`/user/verify/phone/confirm`),
+      },
+      email:{
+        request: this.getFullUrl(`/user/verify/email/request`),
+        confirm: this.getFullUrl(`/user/verify/email/confirm`),
+      }
     }
   };
   files = {

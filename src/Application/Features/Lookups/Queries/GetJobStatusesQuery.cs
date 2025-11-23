@@ -1,7 +1,7 @@
-using CSharpFunctionalExtensions;
+using FluentResults;
 using MediatR;
 using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetJobStatusesQuery : IRequest<Result<List<DropdownOptions>>>;
+public sealed record GetJobStatusesQuery : IRequest<IResult<List<DropdownOptions>>>;

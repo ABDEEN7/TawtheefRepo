@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -15,16 +15,16 @@ public class GoogleExternalCallbackLoginHandler(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService
-) : BaseExternalCallbackLoginHandler, IRequestHandler<GoogleExternalCallbackLoginCommand, Result<AuthResponse>>
+) : BaseExternalCallbackLoginHandler, IRequestHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
-    public async Task<Result<AuthResponse>> Handle(GoogleExternalCallbackLoginCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<AuthResponse>> Handle(GoogleExternalCallbackLoginCommand request, CancellationToken cancellationToken)
     {
         if (request.RemoteError != null)
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginError(request.RemoteError));
 
         var info = await signInManager.GetExternalLoginInfoAsync();
         if (info == null)
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginInfoNotFound);
 
         // If already linked, sign in directly
         var result = await signInManager.ExternalLoginSignInAsync(
@@ -34,7 +34,7 @@ public class GoogleExternalCallbackLoginHandler(
         {
             var linkedUser = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (linkedUser == null)
-                return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginUserNotFound);
+                return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginUserNotFound);
 
             // Update tokens from provider & upsert claims
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
@@ -46,18 +46,18 @@ public class GoogleExternalCallbackLoginHandler(
         // Not linked yet: use email to attach or create a new user
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
         if (string.IsNullOrWhiteSpace(email))
-            return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginEmailNotFound);
+            return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginEmailNotFound);
 
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser != null)
         {
             var duplicate = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (duplicate != null && duplicate.Id != existingUser.Id)
-                return Result.Failure<AuthResponse>(ErrorsCodes.ExternalLoginAlreadyLinked);
+                return Result.Fail<AuthResponse>(ErrorsCodes.ExternalLoginAlreadyLinked);
 
             var addLoginResult = await userManager.AddLoginAsync(existingUser, info);
             if (!addLoginResult.Succeeded)
-                return Result.Failure<AuthResponse>(string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
+                return Result.Fail<AuthResponse>(string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
 
             // Update provider tokens & claims snapshot
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
@@ -91,19 +91,19 @@ public class GoogleExternalCallbackLoginHandler(
         }
 
         var newUserResult = User.Register(email,$"{givenName} {surname}".Trim(), UserTypeIds.Applicant);
-        if(newUserResult.IsFailure)
-            return Result.Failure<AuthResponse>(newUserResult.Error);
+        if(newUserResult.IsFailed)
+            return Result.Fail<AuthResponse>(newUserResult.Errors);
         
         var newUser = (ApplicantUser)newUserResult.Value;
         var createResult = await userManager.CreateAsync(newUser);
         if (!createResult.Succeeded)
-            return Result.Failure<AuthResponse>(string.Join(", ", createResult.Errors.Select(e => e.Description)));
+            return Result.Fail<AuthResponse>(string.Join(", ", createResult.Errors.Select(e => e.Description)));
 
         var addLogin = await userManager.AddLoginAsync(newUser, info);
         if (!addLogin.Succeeded)
         {
             var errors = addLogin.Errors.Select(e => e.Description);
-            return Result.Failure<AuthResponse>(string.Join(", ", errors));
+            return Result.Fail<AuthResponse>(string.Join(", ", errors));
         }
 
         // Save tokens & claims

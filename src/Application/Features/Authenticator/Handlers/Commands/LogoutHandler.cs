@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+﻿using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,21 +14,21 @@ public class LogoutHandler(
     IUnitOfWork uow,
     ITokenService tokenService,
     UserManager<User> userManager,
-    SignInManager<User> signInManager) : IRequestHandler<LogoutCommand, Result<Unit>>
+    SignInManager<User> signInManager) : IRequestHandler<LogoutCommand, IResult<Unit>>
 {
-    public async Task<Result<Unit>> Handle(LogoutCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<Unit>> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.Users
             .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
         if (user is null)
-            return Result.Failure<Unit>(ErrorsCodes.UserNotFound);
+            return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
         
         await tokenService.RevokeAllAsync(user.Id, cancellationToken);
         await userManager.UpdateSecurityStampAsync(user);
         await uow.SaveChangesAsync(cancellationToken);
         
         await signInManager.SignOutAsync();
-        return Result.Success(Unit.Value);
+        return Result.Ok(Unit.Value);
     }
 }

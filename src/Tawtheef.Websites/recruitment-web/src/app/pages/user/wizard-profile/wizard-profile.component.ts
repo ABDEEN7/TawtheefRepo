@@ -12,6 +12,7 @@ import {finalize} from 'rxjs/operators';
 import {ProfileLookupsService} from './services/profile-lookups.service';
 import {AvatarModal} from './steps/step-personal/dialogs/avatar.modal/avatar.modal';
 import {DialogService} from 'primeng/dynamicdialog';
+import {PhoneMapperService} from './services/phone-mapper.service';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -27,6 +28,7 @@ export class WizardProfileComponent implements OnInit {
   ds = inject(DataService);
   lookups = inject(ProfileLookupsService);
   language = inject(LanguageService);
+  phoneMapper = inject(PhoneMapperService);
 
   avatarPreviewUrl: string | null = null;
 
@@ -66,10 +68,12 @@ export class WizardProfileComponent implements OnInit {
         fullName: state.prefill.fullName ?? null,
         fullNameEn: state.prefill.fullName ?? null,
         qid: state.prefill.qid ?? null,
-        // gender: state.prefill.gender ?? null,
         dob: state.prefill.dob ?? null,
-        phone: state.prefill.phone ?? null,
+        phone: this.phoneMapper.toPhoneObject(state.prefill.phone) ?? false,
+        phoneVerified: state.prefill.phoneVerified ?? false,
         email: state.prefill.email ?? null,
+        emailVerified: state.prefill.emailVerified ?? false,
+        // gender: state.prefill.gender ?? null,
         // nationality: state.prefill.nationality ?? null,
         avatarUrl: state.prefill.avatar ?? null,
       } as Partial<ProfileState>);
@@ -91,11 +95,13 @@ export class WizardProfileComponent implements OnInit {
             fullName: b.prefill.fullName ?? null,
             fullNameEn: b.prefill.fullName ?? null,
             qid: b.prefill.qid ?? null,
-            // gender: b.prefill.gender ?? null,
             dob: b.prefill.dob ?? null,
-            phone: b.prefill.phone ?? null,
+            phone: this.phoneMapper.toPhoneObject(b.prefill.phone) ?? null,
+            phoneVerified: b.prefill.phoneVerified ?? false,
             email: b.prefill.email ?? null,
+            emailVerified: b.prefill.emailVerified ?? false,
             // nationality: b.prefill.nationality ?? null,
+            // gender: b.prefill.gender ?? null,
             avatarUrl: b.prefill.avatar ?? null,
           } as Partial<ProfileState>);
         }

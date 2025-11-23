@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+﻿using FluentResults;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.ValueObjects.User;
@@ -12,7 +12,7 @@ public class ApplicantUser : User
     public static Result<User> Register(string email,string displayName)
     {
         var name = FullName.TryParse(displayName);
-        if (name.IsFailure) return name.ConvertFailure<User>();
+        if (name.IsFailed) return Result.Fail<User>(name.Errors);
 
         var user = new ApplicantUser {
             Email = email,
@@ -22,6 +22,6 @@ public class ApplicantUser : User
             UserTypeId = UserTypeIds.Applicant
         };
 
-        return Result.Success(user as User);
+        return Result.Ok(user as User);
     }
 }

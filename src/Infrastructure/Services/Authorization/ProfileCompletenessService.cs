@@ -14,27 +14,27 @@ public sealed class ProfileCompletenessService(
 {
     public async Task<(bool isComplete, string[] missing)> EvaluateAsync(Guid userId, CancellationToken ct)
     {
-        // Example rule set — adapt to your UserProfile schema
+
         var profile = await uow.GetEntityRepository<UserProfile>().DbSet
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.UserId == userId, ct);
 
         var missing = new List<string>();
 
-        if (profile is null) 
+        if (profile is null)
         {
             missing.AddRange(new[]
             {
-                "candidateTypeId","targetEntityId","nationalityId","maritalStatusId",
-                "birthDate","residenceCountryId","address","passportNo"
+                "candidateTypeId", "targetEntityId", "nationalityId", "maritalStatusId", "birthDate",
+                "residenceCountryId", "address", "passportNo"
             });
             return (false, missing.ToArray());
         }
 
         // Minimal sample checks — expand as needed
         if (profile.CandidateTypeId == Guid.Empty) missing.Add("candidateTypeId");
-        if (profile.TargetEntityId  == Guid.Empty) missing.Add("targetEntityId");
-        if (profile.NationalityId   == Guid.Empty) missing.Add("nationalityId");
+        if (profile.TargetEntityId == Guid.Empty) missing.Add("targetEntityId");
+        if (profile.NationalityId == Guid.Empty) missing.Add("nationalityId");
         if (profile.MaritalStatusId == Guid.Empty) missing.Add("maritalStatusId");
         if (profile.BirthDate == default) missing.Add("birthDate");
         if (profile.ResidenceCountryId == Guid.Empty) missing.Add("residenceCountryId");
@@ -50,7 +50,7 @@ public sealed class ProfileCompletenessService(
         string? C(string type) => claims.FirstOrDefault(c => c.Type == type)?.Value;
 
         // Google claims come as "google:xxx", QatarPass as "qatarpass:xxx" (from your code)
-        var email      = C("google:email") ?? user.Email;
+        var email      = C("google:email");
         var fullName   = C("google:name");
         var picture    = C("google:picture") ?? user.Avatar;
         var locale     = C("google:locale");
@@ -62,11 +62,13 @@ public sealed class ProfileCompletenessService(
         return new ProfilePrefillDto
         {
             Email        = email,
+            EmailVerified = user.EmailConfirmed,
             FullName = fullName,
             Avatar       = picture,
             Locale       = locale,
             Qid          = qpQid,
             Phone    = qpMobile,
+            PhoneVerified = user.PhoneNumberConfirmed,
             Nationality  = qpNat,
             Provider     = qpQid is not null ? "qatarpass" : "google"
         };

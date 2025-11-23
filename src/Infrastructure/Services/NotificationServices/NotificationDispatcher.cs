@@ -1,3 +1,4 @@
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,7 +37,7 @@ public sealed class NotificationDispatcher(
 
                 foreach (var n in batch)
                 {
-                    (bool ok, string? providerId, string? error) result = (false, null, null);
+                    (bool ok, string? providerId, IReadOnlyList<IError>? error) result = (false, null, null);
 
                     try
                     {
@@ -59,7 +60,7 @@ public sealed class NotificationDispatcher(
                             case NotificationChannel.Push:
                                 if (n.UserId is null)
                                 {
-                                    result = (false, null, "PUSH_USER_REQUIRED");
+                                    result = (false, null, new List<IError> { new Error("USER_ID_REQUIRED") });
                                     break;
                                 }
                                 result = await push!.SendAsync(n.UserId.Value, n.Subject ?? "", n.Body!, stoppingToken);
@@ -73,7 +74,10 @@ public sealed class NotificationDispatcher(
                         if (result.ok)
                             n.MarkSent(result.providerId, time.GetUtcNow().DateTime);
                         else
-                            n.MarkFailed(result.error ?? "UNKNOWN_SEND_ERROR");
+                        {
+                            var errors = result.error?.Select(e => e.Message).ToList() ?? new List<string>();
+                            n.MarkFailed(errors.Any() ? string.Join(", ", errors) : "UNKNOWN_ERROR");
+                        }
                     }
                     catch (Exception ex)
                     {

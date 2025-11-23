@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+﻿using FluentResults;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 
@@ -9,11 +9,11 @@ public static class UserTypeParser
     public static Result<Guid> TryFrom(string raw)
     {
         if (raw.Equals(nameof(UserTypeIds.Applicant), StringComparison.OrdinalIgnoreCase))
-            return Result.Success(UserTypeIds.Applicant);
+            return Result.Ok(UserTypeIds.Applicant);
 
         if (raw.Equals(nameof(UserTypeIds.Employee), StringComparison.OrdinalIgnoreCase))
-            return Result.Success(UserTypeIds.Employee);
+            return Result.Ok(UserTypeIds.Employee);
 
-        return Result.Failure<Guid>(DomainErrors.InvalidUserType);
+        return Result.Fail<Guid>(DomainErrors.InvalidUserType);
     }
 }

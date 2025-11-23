@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -17,15 +17,15 @@ public class UserController(IMediator mediator) : ControllerBase
 {
     private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
     {
-        null => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier),
-        var id => Result.Success(Guid.Parse(id))
+        null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
+        var id => Result.Ok(Guid.Parse(id))
     };
     
     [HttpGet]
     public async Task<IActionResult> GetProfile()
     {
-        if(UserId.IsFailure)
-            return Unauthorized(UserId.Error);
+        if(UserId.IsFailed)
+            return Unauthorized(UserId.Errors);
         var result = await mediator.Send(new GetUserProfileQuery{ UserId = UserId.Value});
         return result.ToActionResult();
     }

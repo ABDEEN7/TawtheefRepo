@@ -51,6 +51,38 @@
         </button>
       </div>
     </div>
+    <div class="col-md-6" *ngIf="isNeedBirthCertificate">
+      <label class="form-label required">
+        {{ 'wizard.prereq.birthCertificate' | translate }}
+        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
+      </label>
+      <div class="d-flex gap-2 align-items-center">
+        <input pInputText class="form-control" pSize="small" name="birthCertificateName"
+               [ngModel]="ds.state().idName" (ngModelChange)="ds.up('birthCertificateName',$event.files[0]?.name)"
+               placeholder="{{ 'wizard.prereq.birthCertificate' | translate }}"
+               readonly
+        />
+        <button type="button" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-upload"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-6" *ngIf="isNeedMarriageCertificate">
+      <label class="form-label required">
+        {{ 'wizard.prereq.marriageCertificate' | translate }}
+        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
+      </label>
+      <div class="d-flex gap-2 align-items-center">
+        <input pInputText class="form-control" pSize="small" name="marriageCertificateName"
+               [ngModel]="ds.state().idName" (ngModelChange)="ds.up('marriageCertificateName',$event.files[0]?.name)"
+               placeholder="{{ 'wizard.prereq.marriageCertificate' | translate }}"
+               readonly
+        />
+        <button type="button" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-upload"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 <div class="text-end">

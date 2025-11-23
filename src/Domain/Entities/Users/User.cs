@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
@@ -56,20 +56,20 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public static Result<User> Register(string email, string displayName, Guid userTypeId)
     {
         var name = FullName.TryParse(displayName);
-        if (name.IsFailure) return name.ConvertFailure<User>();
+        if (name.IsFailed) return Result.Fail<User>(name.Errors);
 
         var userResult = userTypeId == UserTypeIds.Applicant
             ? ApplicantUser.Register(email, displayName)
             : EmployeeUser.Register(email, displayName);
 
-        if (userResult.IsFailure) return userResult;
+        if (userResult.IsFailed) return userResult;
         
         var user = userResult.Value;
         user.UserTypeId = userTypeId;
         
         user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.FullNameEn, userTypeId, DateTime.Now));
 
-        return Result.Success(user);
+        return Result.Ok(user);
     }
     
     //--------------------------------------------

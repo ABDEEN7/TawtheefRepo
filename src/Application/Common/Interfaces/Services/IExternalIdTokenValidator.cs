@@ -1,9 +1,9 @@
 using System.Security.Claims;
-using CSharpFunctionalExtensions;
+using FluentResults;
 
 namespace Tawtheef.Application.Common.Interfaces.Services;
 
 public interface IExternalIdTokenValidator
 {
-    Task<Result<ClaimsPrincipal>> ValidateAsync(string idToken, CancellationToken ct);
+    Task<IResult<ClaimsPrincipal>> ValidateAsync(string idToken, CancellationToken ct);
 }

@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +27,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
-    public async Task<Result<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct)
+    public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct)
     {
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
@@ -47,7 +47,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         var refreshToken = GenerateRefreshToken(user.Id, sid);
         
         var prefill = await pcs.BuildPrefillAsync(user, ct);
-        return Result.Success(new AuthResponse(
+        return Result.Ok(new AuthResponse(
             !isComplete,
             new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar),
             new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires),

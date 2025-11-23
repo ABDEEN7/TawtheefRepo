@@ -1,4 +1,5 @@
-﻿using CSharpFunctionalExtensions;
+﻿using FluentResults;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Models;
 
@@ -6,44 +7,46 @@ namespace Tawtheef.Infrastructure.Extensions;
 
 public static class ResultExtensions
 {
-    extension<T>(Result<T> result)
+    public static IActionResult ToActionResult<T>(this IResult<T> result)
     {
-        public IActionResult ToActionResult()
+        if (result.IsSuccess)
         {
-            if (result.IsSuccess)
-            {
-                return new OkObjectResult(ApiResponse<T>.SuccessResponse(result.Value));
-            }
-
-            return HandleErrorResult(result.Error);
+            return new OkObjectResult(ApiResponse<T>.SuccessResponse(result.Value));
         }
+
+        return HandleErrorResult(result.Errors);
     }
 
-    extension(Result result)
+    private static IActionResult HandleErrorResult(IReadOnlyList<IError> errors)
     {
-        public IActionResult ToActionResult()
+        var first = errors.FirstOrDefault();
+
+        var apiResponse = ApiResponse<object?>.ErrorResponse(errors);
+
+        if (first != null &&
+            first.Metadata.TryGetValue("StatusCode", out var statusObj) &&
+            statusObj is int statusFromMeta)
         {
-            if (result.IsSuccess)
+            return new ObjectResult(apiResponse)
             {
-                return new OkObjectResult(ApiResponse<object?>.SuccessResponse(null));
-            }
-
-            return HandleErrorResult(result.Error);
+                StatusCode = statusFromMeta
+            };
         }
-    }
 
-    private static IActionResult HandleErrorResult(string error)
-    {
-        var apiResponse = ApiResponse<object>.ErrorResponse(error, error);
+        var code = first != null
+            ? (first.Metadata.TryGetValue("Code", out var codeObj) ? codeObj as string : null) 
+              ?? first.Message
+            : null;
 
-        return error switch
+        return code switch
         {
-            // { Code: "NotFound" } => new NotFoundObjectResult(apiResponse),
-            // { Code: "Validation" } => new BadRequestObjectResult(apiResponse),
-            // { Code: "Conflict" } => new ConflictObjectResult(apiResponse),
-            // { Code: "Unauthorized" } => new UnauthorizedObjectResult(apiResponse),
-            // { Code: "Forbidden" } => new ObjectResult(apiResponse) { StatusCode = 403 },
-            _ => new ObjectResult(apiResponse) { StatusCode = 500 }
+            "NotFound"      => new NotFoundObjectResult(apiResponse),
+            "Validation"    => new BadRequestObjectResult(apiResponse),
+            "Conflict"      => new ConflictObjectResult(apiResponse),
+            "Unauthorized"  => new UnauthorizedObjectResult(apiResponse),
+            "Forbidden"     => new ObjectResult(apiResponse) { StatusCode = StatusCodes.Status403Forbidden },
+
+            _ => new ObjectResult(apiResponse) { StatusCode = StatusCodes.Status500InternalServerError }
         };
     }
 }

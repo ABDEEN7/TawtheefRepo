@@ -9,7 +9,8 @@
     "invalidEmail": "Please enter a valid email address.",
     "requiredPassword": "Password is required.",
     "minLengthPassword": "Password must be at least {{min}} characters.",
-    "phoneInvalid": "Please enter a valid phone number."
+    "phoneInvalid": "Please enter a valid phone number.",
+    "emailInvalid": "The email verification code is invalid."
   },
   "common": {
     "ar": "عربي",

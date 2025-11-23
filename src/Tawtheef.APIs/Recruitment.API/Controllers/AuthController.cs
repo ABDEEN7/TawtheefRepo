@@ -1,13 +1,12 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using CSharpFunctionalExtensions;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Models;
@@ -15,7 +14,6 @@ using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
-using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Recruitment.API.Controllers;
@@ -26,33 +24,13 @@ public class AuthController(IMediator mediator) : ControllerBase
 {
     private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
     {
-        null => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier),
-        var id when Guid.TryParse(id, out var guid) => Result.Success(guid),
-        _ => Result.Failure<Guid>(ErrorsCodes.InvalidUserIdentifier)
+        null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
+        var id when Guid.TryParse(id, out var guid) => Result.Ok(guid),
+        _ => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier)
     };
 
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
-    {
-        var result = await mediator.Send(command);
-        return result.ToActionResult();
-    }
-
-    [HttpPost("send-otp")]
-    public async Task<IActionResult> VerifyOtp([FromBody] SendOtpCommand command)
-    {
-        var result = await mediator.Send(command);
-        return result.ToActionResult();
-    }
-    [HttpPost("resend-otp")]
-    public async Task<IActionResult> VerifyOtp([FromBody] ResendOtpCommand command)
-    {
-        var result = await mediator.Send(command);
-        return result.ToActionResult();
-    }
-    [EnableRateLimiting(LimitsPolicyKeys.VerificationPolicy)]
-    [HttpPost("verify-otp")]
-    public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpCommand command)
     {
         var result = await mediator.Send(command);
         return result.ToActionResult();
@@ -83,8 +61,8 @@ public class AuthController(IMediator mediator) : ControllerBase
         var spaOrigin = GetOriginOnly(appConfig.Value.FrontendUrl);
         var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
-        object message = result.IsFailure
-            ? new { type = ExternalLoginMessageTypes.Error, message = result.Error }
+        object message = result.IsFailed
+            ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors }
             : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
 
         var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
@@ -107,8 +85,8 @@ public class AuthController(IMediator mediator) : ControllerBase
         var spaOrigin = GetOriginOnly(appConfig.Value.FrontendUrl);
         var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
-        object message = result.IsFailure
-            ? new { type = "EXTERNAL_LOGIN_ERROR", message = result.Error }
+        object message = result.IsFailed
+            ? new { type = "EXTERNAL_LOGIN_ERROR", message = result.Errors }
             : new { type = "EXTERNAL_LOGIN_SUCCESS", userData = result.Value };
 
         var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
@@ -126,12 +104,12 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        if (UserId.IsFailure)
-            return BadRequest(UserId.Error);
+        if (UserId.IsFailed)
+            return BadRequest(UserId.Errors);
 
         var result = await mediator.Send(new LogoutCommand(UserId.Value));
-        if (result.IsFailure)
-            return BadRequest(result.Error);
+        if (result.IsFailed)
+            return BadRequest(result.Errors);
         return Ok(new { Message = "Logged out" });
     }
 
