@@ -11,6 +11,6 @@ public class JobQuotaConfiguration : IEntityTypeConfiguration<JobQuota>
         builder.HasMany(q => q.ResidentsBreakdowns)
             .WithOne(rb => rb.JobQuota)
             .HasForeignKey(rb => rb.JobQuotaId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
