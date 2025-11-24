@@ -70,7 +70,7 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
         builder.HasMany(j => j.Degrees)
             .WithOne(d => d.Job)
             .HasForeignKey(d => d.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Indexes for better performance
         builder.HasIndex(j => j.StatusId);
