@@ -54,7 +54,7 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
         builder.HasOne(j => j.Quota)
             .WithOne(q => q.Job)
             .HasForeignKey<Job>(j => j.QuotaId) 
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
             
         // One-to-Many Relationships
         builder.HasMany(j => j.Skills)
