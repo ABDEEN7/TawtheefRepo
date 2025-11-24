@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Output, computed, inject, signal } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { TranslateService } from '@ngx-translate/core';
+import {EndpointsService} from '../../../../../core/http/endpoints.service';
+import {HttpClient} from '@angular/common/http';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-step-review',
@@ -9,9 +12,12 @@ import { TranslateService } from '@ngx-translate/core';
   standalone: false
 })
 export class StepReviewComponent {
+  savingDraft = false;
   @Output() back = new EventEmitter<void>();
   ds = inject(DataService);
   private i18n = inject(TranslateService);
+  private http = inject(HttpClient);
+  private endpoints = inject(EndpointsService);
 
   private requiredKeys = [
     'fullName','fullNameEn','qid','dob',
@@ -34,22 +40,26 @@ export class StepReviewComponent {
 
   trackSkill = (_: number, v: string) => v;
 
-  async submit() {
+  submit() {
     if (!this.canSubmit()) return;
     this.submitting.set(true);
+    this.submitted.set(false);
     this.errorText.set(null);
-
-    try {
-      // مثال: نداء API حقيقي هنا
-      // await this.http.post('/api/profile', this.ds.state()).toPromise();
-
-      setTimeout(() => {
-        this.submitting.set(false);
+    this.http.post(this.endpoints.user.profile.save, {
+      submit: true,
+      ...this.ds.state()
+    }).subscribe({
+      next: () => {
         this.submitted.set(true);
-      }, 400);
-    } catch {
-      this.submitting.set(false);
-      this.errorText.set(this.i18n.instant('wizard.review.errorGeneric'));
-    }
+        this.submitting.set(false);
+      },
+      error: (err) => {
+        this.errorText.set(
+          this.i18n.instant('wizard.review.submitError') +
+          (err?.error?.message ? `: ${err.error.message}` : '')
+        );
+        this.submitting.set(false);
+      }
+    });
   }
 }

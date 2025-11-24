@@ -76,6 +76,8 @@ public class UserProfile : EventEntity
     public Guid? MarriageCertificateId { get; set; }
     public Resource? MarriageCertificate { get; set; }
     
+    public bool IsDraft { get; set; } = true;
+    
     public ICollection<Qualification> Qualifications { get; set; } = [];
     public ICollection<Experience> Experiences { get; set; } = [];
     public ICollection<TrainingCourse> TrainingCourses { get; set; } = [];

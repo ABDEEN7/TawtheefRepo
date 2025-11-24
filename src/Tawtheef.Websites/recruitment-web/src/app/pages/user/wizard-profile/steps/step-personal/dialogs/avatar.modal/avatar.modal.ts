@@ -103,4 +103,7 @@ export class AvatarModal {
     if (!this.croppedImage || this.avatarError) return;
     this.ref.close(this.croppedImage);
   }
+  close(){
+    this.ref.close();
+  }
 }

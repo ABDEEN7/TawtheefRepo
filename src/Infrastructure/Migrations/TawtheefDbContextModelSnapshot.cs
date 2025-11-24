@@ -1449,111 +1449,111 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("3f0b7dab-7c9f-4b3f-8a5f-1f8d2b7f2c11"),
-                            BackendName = "Submitted",
+                            Id = new Guid("f0bc801d-f54c-4a0e-8aae-00694e4fc80d"),
+                            BackendName = "NewInvitation",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "تم إرسال الطلب من قبل المتقدم.",
-                            DescriptionEn = "The application has been submitted by the candidate.",
+                            DescriptionAr = "وظيفة تمت دعوة المرشح لها ولم يقم بقراءتها أو فتحها بعد.",
+                            DescriptionEn = "The candidate was invited but has not opened or viewed it yet.",
                             DisplayOrder = 1,
                             IsDeleted = false,
-                            NameAr = "تم الإرسال",
+                            NameAr = "دعوة جديدة",
+                            NameEn = "New Invitation"
+                        },
+                        new
+                        {
+                            Id = new Guid("64236c6a-167a-4213-b1d6-80c2c8c86dde"),
+                            BackendName = "Readed",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DescriptionAr = "المرشح فتح الدعوة لأول مرة ولم يبدأ التقديم.",
+                            DescriptionEn = "The candidate opened the invitation for the first time but has not started the application.",
+                            DisplayOrder = 2,
+                            IsDeleted = false,
+                            NameAr = "تمت القراءة",
+                            NameEn = "Read"
+                        },
+                        new
+                        {
+                            Id = new Guid("e7b28f10-fb23-466e-a9b2-aaa3c9afdeac"),
+                            BackendName = "Submitted",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة.",
+                            DescriptionEn = "The candidate submitted the application with all required information completed.",
+                            DisplayOrder = 3,
+                            IsDeleted = false,
+                            NameAr = "تم التقديم",
                             NameEn = "Submitted"
                         },
                         new
                         {
-                            Id = new Guid("a1b923d2-2c7e-4e1a-9b14-0b6d2f5c7e90"),
-                            BackendName = "Returned",
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "تم إرجاع الطلب من قبل مسؤول التوظيف لوجود نقص أو خطأ.",
-                            DescriptionEn = "Returned to the applicant by the recruiter due to missing or incorrect information.",
-                            DisplayOrder = 2,
-                            IsDeleted = false,
-                            NameAr = "تم الإرجاع",
-                            NameEn = "Returned"
-                        },
-                        new
-                        {
-                            Id = new Guid("5a7d2c4f-3b1e-44a6-a9e5-9e7d23b4c1a2"),
+                            Id = new Guid("43ad4950-46a9-4b37-b4e2-4a2d8ac4a7c4"),
                             BackendName = "UnderReview",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "تتم عملية فحص المرفقات والملف الشخصي.",
-                            DescriptionEn = "Administrative/technical review of attachments and profile is in progress.",
-                            DisplayOrder = 3,
+                            DescriptionAr = "الطلب تحت المراجعة المبدئية لقسم التوظيف.",
+                            DescriptionEn = "The application is under initial review by the recruitment department.",
+                            DisplayOrder = 4,
                             IsDeleted = false,
-                            NameAr = "تحت الفحص",
+                            NameAr = "قيد المراجعة",
                             NameEn = "Under Review"
                         },
                         new
                         {
-                            Id = new Guid("d3e2a4b6-8f1c-4e7a-9d2b-7c5f1a9e3b40"),
-                            BackendName = "AdminShortlisting",
+                            Id = new Guid("5602dbce-00a3-488b-9156-981a0fb18a01"),
+                            BackendName = "RequiresUpdate",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "يتم حالياً الفرز الإداري من قبل مسؤول التوظيف (تظهر لمسؤول التوظيف فقط).",
-                            DescriptionEn = "Administrative shortlisting by recruiter is in progress (recruiter-only visibility).",
-                            DisplayOrder = 4,
-                            IsDeleted = false,
-                            NameAr = "فرز إداري",
-                            NameEn = "Administrative Shortlisting"
-                        },
-                        new
-                        {
-                            Id = new Guid("9c2a7d5b-6e4f-4d1a-83b2-5e7f9a1c2d30"),
-                            BackendName = "TechnicalShortlisting",
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "يتم حالياً الفرز الفني من قبل الموجه (تظهر لمسؤول التوظيف فقط).",
-                            DescriptionEn = "Technical shortlisting is in progress (recruiter-only visibility).",
+                            DescriptionAr = "الطلب تم إرجاعه للمرشح لإكمال نواقص محددة.",
+                            DescriptionEn = "The application was returned to the candidate to complete missing information.",
                             DisplayOrder = 5,
                             IsDeleted = false,
-                            NameAr = "فرز فني",
-                            NameEn = "Technical Shortlisting"
+                            NameAr = "مطلوب تعديل",
+                            NameEn = "Requires Update"
                         },
                         new
                         {
-                            Id = new Guid("2e4b6a8c-1d2f-4b6a-9c3e-7a1b2c3d4e55"),
-                            BackendName = "TestProcessing",
+                            Id = new Guid("22ef7e86-28cb-4a30-98bc-7d45f9b44de3"),
+                            BackendName = "Approved",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "يتم حالياً تنفيذ الإجراءات الخاصة بالاختبار (تظهر النتائج لمسؤول التوظيف).",
-                            DescriptionEn = "Testing procedures are being arranged/executed (results visible to recruiter).",
+                            DescriptionAr = "تمت الموافقة على الطلب وانتقل لمرحلة لاحقة.",
+                            DescriptionEn = "The application has been approved and moved to a later stage.",
                             DisplayOrder = 6,
                             IsDeleted = false,
-                            NameAr = "تحت إجراءات الاختبار",
-                            NameEn = "Test Processing"
+                            NameAr = "معتمد",
+                            NameEn = "Approved"
                         },
                         new
                         {
-                            Id = new Guid("7b9e1c3d-5a2f-4f6b-8a1d-2c3e4f5a6b70"),
-                            BackendName = "InterviewProcessing",
+                            Id = new Guid("7103ba49-ad43-4751-b1a5-9084aca69676"),
+                            BackendName = "Rejected",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "يتم حالياً تنفيذ الإجراءات الخاصة بالمقابلات (تظهر النتائج لمسؤول التوظيف).",
-                            DescriptionEn = "Interview procedures are being arranged/executed (results visible to recruiter).",
+                            DescriptionAr = "الطلب لم يتم قبوله لأسباب وظيفية أو تنظيمية.",
+                            DescriptionEn = "The application was not accepted for functional or organizational reasons.",
                             DisplayOrder = 7,
                             IsDeleted = false,
-                            NameAr = "تحت إجراءات المقابلات",
-                            NameEn = "Interview Processing"
+                            NameAr = "مرفوض",
+                            NameEn = "Rejected"
                         },
                         new
                         {
-                            Id = new Guid("6a5b4c3d-2e1f-4a6b-9c8d-1e2f3a4b5c60"),
-                            BackendName = "HiringProcessing",
+                            Id = new Guid("bced01d8-3784-4e2c-9312-930951cc59d8"),
+                            BackendName = "Cancelled",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "يتم حالياً تنفيذ الإجراءات الخاصة بالتعيين (تظهر النتائج لمسؤول التوظيف).",
-                            DescriptionEn = "Hiring actions are in progress (recruiter-only results).",
+                            DescriptionAr = "المرشح قام بإلغاء الطلب أو تم إلغاؤه وفق الإجراءات.",
+                            DescriptionEn = "The candidate cancelled the application or it was cancelled procedurally.",
                             DisplayOrder = 8,
                             IsDeleted = false,
-                            NameAr = "تحت إجراءات التعيين",
-                            NameEn = "Hiring Processing"
+                            NameAr = "ملغي",
+                            NameEn = "Cancelled"
                         },
                         new
                         {
-                            Id = new Guid("1c2d3e4f-5a6b-7c8d-9e1f-2a3b4c5d6e20"),
-                            BackendName = "FinalApprovalProcessing",
+                            Id = new Guid("ca054592-8617-406d-8e8f-3a773b3d0d5e"),
+                            BackendName = "Closed",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "يتم حالياً تنفيذ الإجراءات الخاصة بالاعتماد النهائي (تظهر النتائج لمسؤول التوظيف).",
-                            DescriptionEn = "Final approval actions are in progress (recruiter-only results).",
+                            DescriptionAr = "الوظيفة انتهت أو أُغلقت من قبل الموارد البشرية ولا يمكن اتخاذ أي إجراء عليها.",
+                            DescriptionEn = "The job has ended or was closed by HR and no further action can be taken.",
                             DisplayOrder = 9,
                             IsDeleted = false,
-                            NameAr = "تحت الإعتماد النهائي",
-                            NameEn = "Final Approval Processing"
+                            NameAr = "مغلق",
+                            NameEn = "Closed"
                         });
                 });
 
@@ -4279,6 +4279,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDraft")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("MaritalStatusId")
