@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Recruitment;
-using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities;
 
@@ -10,25 +8,6 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
 {
     public void Configure(EntityTypeBuilder<Job> builder)
     {
-        builder.ToTable(nameof(Job), Schemas.Hr);
-        
-        // Basic Property Configurations
-        builder.Property(j => j.Title)
-            .IsRequired()
-            .HasMaxLength(200);
-            
-        builder.Property(j => j.Vacancies)
-            .IsRequired();
-            
-        builder.Property(j => j.Deadline)
-            .IsRequired();
-            
-        builder.Property(j => j.Description)
-            .HasMaxLength(2000);
-            
-        builder.Property(j => j.Benefits)
-            .HasMaxLength(2000);
-
         // Navigation Property Configurations
         builder.HasOne(j => j.RequestingDepartment)
             .WithMany()
@@ -48,9 +27,9 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(j => j.TargetEntity)
+        builder.HasOne(j => j.WorkLocation)
             .WithMany()
-            .HasForeignKey(j => j.TargetEntityId)
+            .HasForeignKey(j => j.WorkLocationId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -72,26 +51,26 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
             .OnDelete(DeleteBehavior.Restrict);
 
         // One-to-One with JobQuotas
-        builder.HasOne(j => j.Quotas)
+        builder.HasOne(j => j.Quota)
             .WithOne(q => q.Job)
-            .HasForeignKey<JobQuotas>(q => q.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey<Job>(j => j.QuotaId) 
+            .OnDelete(DeleteBehavior.Restrict);
             
         // One-to-Many Relationships
         builder.HasMany(j => j.Skills)
             .WithOne(s => s.Job)
             .HasForeignKey(s => s.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
             
         builder.HasMany(j => j.Conditions)
             .WithOne(c => c.Job)
             .HasForeignKey(c => c.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
             
         builder.HasMany(j => j.Degrees)
             .WithOne(d => d.Job)
             .HasForeignKey(d => d.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Indexes for better performance
         builder.HasIndex(j => j.StatusId);

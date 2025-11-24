@@ -35,7 +35,8 @@
       "finalSave": "Submit",
       "add": "Add",
       "upload": "Upload",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "saveDraft": "Save Draft"
     },
     "personal": {
       "hasDisability": "Do you have a disability?",
@@ -110,7 +111,19 @@
       "phoneVerifying": "Verifying mobile number...",
       "emailVerifying": "Verifying email...",
       "phoneVerify": "Verify mobile number",
-      "emailVerify": "Verify email"
+      "emailVerify": "Verify email",
+      "phoneRetryIn": "You can request a new code in {{seconds}} seconds",
+      "emailRetryIn": "You can request a new link in {{seconds}} seconds",
+      "codeSent": {
+        "phone": {
+          "cooldown": "You can request a new code in {{seconds}} seconds",
+          "error": "Failed to send code, please try again."
+        },
+        "email": {
+          "cooldown": "You can request a new code in {{seconds}} seconds",
+          "error": "Failed to send code, please try again."
+        }
+      }
     },
     "nationalAddress": {
       "title": "National Address",

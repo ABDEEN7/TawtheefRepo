@@ -14,7 +14,6 @@ public sealed class ProfileCompletenessService(
 {
     public async Task<(bool isComplete, string[] missing)> EvaluateAsync(Guid userId, CancellationToken ct)
     {
-
         var profile = await uow.GetEntityRepository<UserProfile>().DbSet
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.UserId == userId, ct);
@@ -23,11 +22,18 @@ public sealed class ProfileCompletenessService(
 
         if (profile is null)
         {
-            missing.AddRange(new[]
-            {
+            missing.AddRange([
                 "candidateTypeId", "targetEntityId", "nationalityId", "maritalStatusId", "birthDate",
                 "residenceCountryId", "address", "passportNo"
-            });
+            ]);
+            return (false, missing.ToArray());
+        }
+
+        // 👇 if marked draft, always “incomplete”
+        if (profile.IsDraft)
+        {
+            // you can optionally still fill `missing` for UI
+            missing.Add("draft");
             return (false, missing.ToArray());
         }
 
@@ -36,7 +42,7 @@ public sealed class ProfileCompletenessService(
         if (profile.TargetEntityId == Guid.Empty) missing.Add("targetEntityId");
         if (profile.NationalityId == Guid.Empty) missing.Add("nationalityId");
         if (profile.MaritalStatusId == Guid.Empty) missing.Add("maritalStatusId");
-        if (profile.BirthDate == default) missing.Add("birthDate");
+        if (profile.BirthDate == default)         missing.Add("birthDate");
         if (profile.ResidenceCountryId == Guid.Empty) missing.Add("residenceCountryId");
 
         var isComplete = missing.Count == 0;

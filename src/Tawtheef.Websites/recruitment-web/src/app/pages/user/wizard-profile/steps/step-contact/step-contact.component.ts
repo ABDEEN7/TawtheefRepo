@@ -7,6 +7,7 @@ import { PhoneNumberUtil } from 'google-libphonenumber';
 import {CandidateType} from '../../../../../core/enums/lookups.enum';
 import {ContactVerificationService} from '../../services/contact-verification.service';
 import {PhoneNumber} from '../../models/phone-number.model';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-step-contact',
@@ -20,6 +21,7 @@ export class StepContactComponent implements OnInit{
   ds = inject(DataService);
   lookups = inject(ProfileLookupsService);
   verification = inject(ContactVerificationService);
+  translate = inject(TranslateService);
   geoIp = inject(GeoIpService);
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
@@ -52,7 +54,7 @@ export class StepContactComponent implements OnInit{
     const state = this.ds.state();
     if (state.phoneVerified) this.phoneVerificationStatus = 'verified';
     if (state.emailVerified) this.emailVerificationStatus = 'verified';
-    if (state.phone) this.phoneView = this.phoneNumberUtil.parseAndKeepRawInput(state.phone!.e164Number);
+    if (state.phone) this.phoneView = state.phone.e164Number;
     if (state.email) this.emailView = state.email;
   }
 
@@ -88,7 +90,7 @@ export class StepContactComponent implements OnInit{
     }, 1000);
   }
   onPhoneChange(value: PhoneNumber) {
-    if (!value) return;
+    if (!value || this.ds.isLocked('phone')) return;
 
     this.phoneTouched = true;
     this.phoneErrorMessage = null;
@@ -108,7 +110,7 @@ export class StepContactComponent implements OnInit{
   }
 
   onEmailChange(value: string) {
-    if (!value) return;
+    if (!value|| this.ds.isLocked('email')) return;
 
     this.emailTouched = true;
     this.emailErrorMessage = null;
@@ -137,19 +139,18 @@ export class StepContactComponent implements OnInit{
     }).subscribe({
       next: () => {
         this.phoneVerificationStatus = 'codeSent';
-        this.startPhoneCooldown(60); // مثلاً 60 ثانية بين كل إرسال
+        this.startPhoneCooldown(60);
       },
       error: (err) => {
         this.phoneVerificationStatus = 'failed';
 
         if (err.status === 429) {
-          // لو السيرفر يرسل Retry-After
           const retryAfterHeader = err.headers?.get?.('Retry-After');
           const retrySeconds = retryAfterHeader ? +retryAfterHeader : 60;
           this.startPhoneCooldown(retrySeconds);
-          this.phoneErrorMessage = 'لقد قمت بعدة محاولات. الرجاء المحاولة لاحقاً.';
+          this.phoneErrorMessage = this.translate.instant('wizard.contact.codeSent.phone.cooldown', { seconds: retrySeconds });
         } else {
-          this.phoneErrorMessage = 'حدث خطأ أثناء إرسال الكود. حاول مرة أخرى.';
+          this.phoneErrorMessage = this.translate.instant('wizard.contact.codeSent.phone.error');
         }
       }
     });
@@ -171,32 +172,44 @@ export class StepContactComponent implements OnInit{
       },
       error: (err) => {
         this.phoneVerificationStatus = 'failed';
-        // ممكن تضيف محاولة عدّاد محاولات لو حاب
-        this.phoneErrorMessage = 'رمز التحقق غير صحيح. تأكد وأعد المحاولة.';
+        this.phoneErrorMessage = this.translate.instant('wizard.contact.codeSent.phone.error');
       }
     });
   }
-
   sendEmailVerification() {
-    if (!this.emailValid || !this.ds.state().email) return;
+    if (!this.emailValid || !this.ds.state().email || this.emailCooldown > 0) return;
 
     this.emailVerificationStatus = 'sending';
+    this.emailErrorMessage = null;
+
     this.verification.requestEmailVerification({
       email: this.ds.state().email!
     }).subscribe({
       next: () => {
         this.emailVerificationStatus = 'linkSent';
+        // start cooldown, e.g. 60 seconds
+        this.startEmailCooldown(60);
       },
-      error: () => {
+      error: (err) => {
         this.emailVerificationStatus = 'failed';
+
+        if (err.status === 429) {
+          const retryAfterHeader = err.headers?.get?.('Retry-After');
+          const retrySeconds = retryAfterHeader ? +retryAfterHeader : 60;
+          this.startEmailCooldown(retrySeconds);
+          this.emailErrorMessage = this.translate.instant('wizard.contact.codeSent.email.cooldown', { seconds: retrySeconds });
+        } else {
+          this.emailErrorMessage = this.translate.instant('wizard.contact.codeSent.email.error');
+        }
       }
     });
   }
-
   verifyEmailCode() {
     if (!this.emailOtp || !this.emailVerificationUseCode) return;
 
     this.emailVerificationStatus = 'verifying';
+    this.emailErrorMessage = null;
+
     this.verification.verifyEmailCode({
       email: this.ds.state().email!,
       code: this.emailOtp
@@ -207,6 +220,7 @@ export class StepContactComponent implements OnInit{
       },
       error: () => {
         this.emailVerificationStatus = 'failed';
+        this.emailErrorMessage = this.translate.instant('wizard.contact.codeSent.email.error');
       }
     });
   }

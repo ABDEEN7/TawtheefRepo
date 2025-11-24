@@ -91,7 +91,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<JobDegree> JobDegrees { get; set; }
     public DbSet<JobQuotas> JobQuotas { get; set; }
     public DbSet<JobSkill> JobSkills { get; set; }
-    public DbSet<JobCondition> JobConditions { get; set; }
+    public DbSet<ResidentBreakdown> ResidentBreakdowns { get; set; }
     
     // Notification Tables
     public DbSet<EmailQueue> EmailQueues { get; set; }

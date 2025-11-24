@@ -1,10 +1,15 @@
+using System.Security.Claims;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
+using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile.Queries;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
-
 
 namespace Recruitment.API.Controllers.Applicant;
 
@@ -13,6 +18,26 @@ namespace Recruitment.API.Controllers.Applicant;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfilesController(IMediator mediator) : ControllerBase
 {
+    private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
+    {
+        null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
+        var id => Result.Ok(Guid.Parse(id))
+    };
+    [HttpPost("save")]
+    public async Task<IActionResult> SaveProfile([FromBody] SaveUserProfileRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new SaveUserProfileCommand(UserId.Value, request), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> GetMyProfile(CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new GetFullUserProfileQuery(UserId.Value), ct); // create DTO with all fields needed by wizard
+        return result.ToActionResult();
+    }
     #region Lookups
 
     [HttpGet("lookups/candidate-types")]

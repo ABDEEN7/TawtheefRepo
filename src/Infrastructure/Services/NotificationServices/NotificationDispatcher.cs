@@ -34,10 +34,9 @@ public sealed class NotificationDispatcher(
                     .OrderBy(n => n.CreatedDate)
                     .Take(25)
                     .ToListAsync(stoppingToken);
-
                 foreach (var n in batch)
                 {
-                    (bool ok, string? providerId, IReadOnlyList<IError>? error) result = (false, null, null);
+                    var result = (ok: false, providerId: (string?)null, error: (IReadOnlyList<IError>?)null);
 
                     try
                     {
@@ -45,38 +44,78 @@ public sealed class NotificationDispatcher(
                         {
                             case NotificationChannel.Email:
                                 {
-                                    var (ok, providerId, error) = await email!.SendAsync(n.ToAddress!, n.Subject, n.Body!, stoppingToken);
-                                    if (ok)
+                                    if (email is null)
                                     {
-                                        n.Status = NotificationStatus.Queued;
-                                        n.ProviderMessageId = providerId;
+                                        result = (false, null,
+                                            new List<IError> { new Error("EMAIL_SENDER_NOT_CONFIGURED") });
+                                        break;
                                     }
-                                    else n.MarkFailed(error ?? "EMAIL_ENQUEUE_FAILED");
+
+                                    result = await email.SendAsync(
+                                        n.ToAddress!,
+                                        n.Subject ?? string.Empty,
+                                        n.Body!,
+                                        stoppingToken
+                                    );
                                     break;
                                 }
+
                             case NotificationChannel.Sms:
-                                result = await sms!.SendAsync(n.ToAddress!, n.Body!, stoppingToken);
-                                break;
-                            case NotificationChannel.Push:
-                                if (n.UserId is null)
                                 {
-                                    result = (false, null, new List<IError> { new Error("USER_ID_REQUIRED") });
+                                    if (sms is null)
+                                    {
+                                        result = (false, null,
+                                            new List<IError> { new Error("SMS_SENDER_NOT_CONFIGURED") });
+                                        break;
+                                    }
+
+                                    result = await sms.SendAsync(
+                                        n.ToAddress!,
+                                        n.Body!,
+                                        stoppingToken
+                                    );
                                     break;
                                 }
-                                result = await push!.SendAsync(n.UserId.Value, n.Subject ?? "", n.Body!, stoppingToken);
-                                break;
+
+                            case NotificationChannel.Push:
+                                {
+                                    if (n.UserId is null)
+                                    {
+                                        result = (false, null, new List<IError> { new Error("USER_ID_REQUIRED") });
+                                        break;
+                                    }
+
+                                    if (push is null)
+                                    {
+                                        result = (false, null,
+                                            new List<IError> { new Error("PUSH_SENDER_NOT_CONFIGURED") });
+                                        break;
+                                    }
+
+                                    result = await push.SendAsync(
+                                        n.UserId.Value,
+                                        n.Subject ?? string.Empty,
+                                        n.Body!,
+                                        stoppingToken
+                                    );
+                                    break;
+                                }
+
                             case NotificationChannel.InApp:
-                                // In-app just mark sent; the UI can read from an InAppNotifications table or SignalR
                                 result = (true, null, null);
                                 break;
                         }
 
                         if (result.ok)
+                        {
                             n.MarkSent(result.providerId, time.GetUtcNow().DateTime);
+                        }
                         else
                         {
                             var errors = result.error?.Select(e => e.Message).ToList() ?? new List<string>();
-                            n.MarkFailed(errors.Any() ? string.Join(", ", errors) : "UNKNOWN_ERROR");
+                            n.MarkFailed(errors.Any()
+                                ? string.Join(", ", errors)
+                                : "UNKNOWN_ERROR");
                         }
                     }
                     catch (Exception ex)
@@ -85,7 +124,6 @@ public sealed class NotificationDispatcher(
                         logger.LogError(ex, "Notification {Id} failed", n.Id);
                     }
                 }
-
                 if (batch.Count > 0) await uow.SaveChangesAsync(stoppingToken);
             }
             catch (Exception ex)

@@ -110,15 +110,15 @@
   <!-- Sticky footer inside modal body -->
   <div class="modal-footer-sticky border-0 mt-3 pt-3">
     <div class="d-flex flex-wrap justify-content-end gap-2">
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      <button type="button" class="btn btn-secondary"
+              (click)="close()">
         {{ 'common.cancel' | translate }}
       </button>
 
       <button type="button"
               class="btn btn-brand"
               [disabled]="!croppedImage || !!avatarError"
-              (click)="saveAvatar()"
-              data-bs-dismiss="modal">
+              (click)="saveAvatar()">
         {{ 'wizard.personal.avatar.save' | translate }}
       </button>
     </div>

@@ -4,11 +4,16 @@
       <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
           <div class="d-flex align-items-center gap-3">
-            <img
-              [src]="ds.state().avatarUrl || avatarPreviewUrl || 'https://placehold.co/76x76?text=Avatar'"
-              class="candidate-avatar"
-              alt="{{ 'wizard.personal.avatar.alt' | translate }}"
-              (click)="openAvatarDialog()"/>
+            <div class="avatar-wrapper">
+              <img
+                [src]="ds.state().avatarUrl || avatarPreviewUrl || 'https://placehold.co/76x76?text=Avatar'"
+                class="candidate-avatar-pulse"
+                alt="{{ 'wizard.personal.avatar.alt' | translate }}"
+                (click)="openAvatarDialog()"/>
+              <div class="edit-badge" (click)="openAvatarDialog()">
+                <i class="fa fa-camera"></i>
+              </div>
+            </div>
             <div>
               <div class="fw-bold">
                 {{ ds.state().fullName || ('wizard.personal.nameAr' | translate) }}
@@ -52,8 +57,9 @@
           </a>
         </li>
       </ul>
-      <div *ngIf="loading" class="wizard-loading">
-        {{ 'wizard.loading' | translate }}
+      <div *ngIf="loading" class="wizard-loading" role="status" aria-live="polite">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">{{ 'wizard.loading' | translate }}</p>
       </div>
 
       <div *ngIf="!loading">
@@ -66,6 +72,16 @@
         <app-step-attachments *ngIf="step===7" (back)="prev()" (next)="next()"></app-step-attachments>
         <app-step-review      *ngIf="step===8" (back)="prev()"></app-step-review>
       </div>
+    </div>
+    <div class="d-flex justify-content-between mt-3" *ngIf="!loading">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="saveDraft()"
+        [disabled]="savingDraft">
+        <i class="fa fa-save me-1"></i>
+        {{ 'wizard.buttons.saveDraft' | translate }}
+      </button>
     </div>
   </div>
 </section>

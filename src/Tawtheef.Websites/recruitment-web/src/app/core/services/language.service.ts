@@ -26,12 +26,14 @@ export class LanguageService {
   ) {
     // Constructor stays light; no .use() here.
     this.translate.addLangs(SUPPORTED_LANGS);
-    this.translate.setDefaultLang(DEFAULT_LANG);
   }
 
   /** Call once at app start (from provideAppInitializer). */
   async init(): Promise<void> {
     const initial = this.resolveInitialLang();
+    if (initial !== DEFAULT_LANG) {
+      this.translate.setFallbackLang(DEFAULT_LANG);
+    }
     await this.apply(initial, { emit: true, persist: true });
   }
 
