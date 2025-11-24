@@ -36,7 +36,7 @@ public class Job : EventEntity
     [MaxLength(2000),Required]
     public required string Description { get; set; }
     [MaxLength(2000),Required]
-    public string? Benefits { get; set; }
+    public required string Benefits { get; set; }
     
     public DateTimeOffset? PublishAt { get; set; }
 
