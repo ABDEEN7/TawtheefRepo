@@ -12,8 +12,8 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    [Migration("20251124060936_AddDraftModeCreateProfile")]
-    partial class AddDraftModeCreateProfile
+    [Migration("20251124062732_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1453,7 +1453,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("f0bc801d-f54c-4a0e-8aae-00694e4fc80d"),
-                            BackendName = "NEW_INVITATION",
+                            BackendName = "NewInvitation",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "وظيفة تمت دعوة المرشح لها ولم يقم بقراءتها أو فتحها بعد.",
                             DescriptionEn = "The candidate was invited but has not opened or viewed it yet.",
@@ -1465,7 +1465,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("64236c6a-167a-4213-b1d6-80c2c8c86dde"),
-                            BackendName = "READED",
+                            BackendName = "Readed",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "المرشح فتح الدعوة لأول مرة ولم يبدأ التقديم.",
                             DescriptionEn = "The candidate opened the invitation for the first time but has not started the application.",
@@ -1477,7 +1477,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("e7b28f10-fb23-466e-a9b2-aaa3c9afdeac"),
-                            BackendName = "SUBMITTED",
+                            BackendName = "Submitted",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة.",
                             DescriptionEn = "The candidate submitted the application with all required information completed.",
@@ -1489,7 +1489,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("43ad4950-46a9-4b37-b4e2-4a2d8ac4a7c4"),
-                            BackendName = "UNDER_REVIEW",
+                            BackendName = "UnderReview",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "الطلب تحت المراجعة المبدئية لقسم التوظيف.",
                             DescriptionEn = "The application is under initial review by the recruitment department.",
@@ -1501,7 +1501,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("5602dbce-00a3-488b-9156-981a0fb18a01"),
-                            BackendName = "REQUIRES_UPDATE",
+                            BackendName = "RequiresUpdate",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "الطلب تم إرجاعه للمرشح لإكمال نواقص محددة.",
                             DescriptionEn = "The application was returned to the candidate to complete missing information.",
@@ -1513,7 +1513,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("22ef7e86-28cb-4a30-98bc-7d45f9b44de3"),
-                            BackendName = "APPROVED",
+                            BackendName = "Approved",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "تمت الموافقة على الطلب وانتقل لمرحلة لاحقة.",
                             DescriptionEn = "The application has been approved and moved to a later stage.",
@@ -1525,7 +1525,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("7103ba49-ad43-4751-b1a5-9084aca69676"),
-                            BackendName = "REJECTED",
+                            BackendName = "Rejected",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "الطلب لم يتم قبوله لأسباب وظيفية أو تنظيمية.",
                             DescriptionEn = "The application was not accepted for functional or organizational reasons.",
@@ -1537,7 +1537,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("bced01d8-3784-4e2c-9312-930951cc59d8"),
-                            BackendName = "CANCELLED",
+                            BackendName = "Cancelled",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "المرشح قام بإلغاء الطلب أو تم إلغاؤه وفق الإجراءات.",
                             DescriptionEn = "The candidate cancelled the application or it was cancelled procedurally.",
@@ -1549,7 +1549,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("ca054592-8617-406d-8e8f-3a773b3d0d5e"),
-                            BackendName = "CLOSED",
+                            BackendName = "Closed",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DescriptionAr = "الوظيفة انتهت أو أُغلقت من قبل الموارد البشرية ولا يمكن اتخاذ أي إجراء عليها.",
                             DescriptionEn = "The job has ended or was closed by HR and no further action can be taken.",
