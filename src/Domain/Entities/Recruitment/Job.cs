@@ -34,7 +34,7 @@ public class Job : EventEntity
     [Required]
     public DateTimeOffset Deadline { get; set; }
     [MaxLength(2000),Required]
-    public string? Description { get; set; }
+    public required string Description { get; set; }
     [MaxLength(2000),Required]
     public string? Benefits { get; set; }
     
