@@ -167,22 +167,27 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("Organization")
                         .IsRequired()
@@ -196,10 +201,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("date");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
@@ -229,29 +236,36 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
@@ -278,19 +292,24 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uniqueidentifier");
@@ -299,10 +318,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
@@ -331,28 +352,35 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid>("SkillId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
@@ -385,16 +413,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("GPA")
                         .IsRequired()
@@ -404,7 +436,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid>("LevelId")
                         .HasColumnType("uniqueidentifier");
@@ -422,10 +455,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
@@ -471,19 +506,24 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<int?>("StreetNo")
                         .HasColumnType("int");
@@ -492,10 +532,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<int?>("ZoneNo")
                         .HasColumnType("int");
@@ -521,22 +563,27 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("Organization")
                         .IsRequired()
@@ -550,10 +597,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("date");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
@@ -585,16 +634,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("Destination")
                         .IsRequired()
@@ -605,16 +658,19 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<DateTimeOffset?>("UsedAt")
                         .HasColumnType("datetimeoffset");
@@ -642,25 +698,30 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<string>("CreatedByIp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<DateTimeOffset>("Expires")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("ReplacedByToken")
                         .HasColumnType("nvarchar(max)");
@@ -683,10 +744,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<string>("UserDeviceId")
                         .HasMaxLength(128)
@@ -728,16 +791,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uniqueidentifier");
@@ -750,7 +817,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NewValues")
                         .HasColumnType("nvarchar(max)");
@@ -759,10 +827,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<string>("UserAgent")
                         .HasColumnType("nvarchar(max)");
@@ -792,16 +862,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -813,7 +887,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -826,10 +901,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -921,16 +998,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -942,7 +1023,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -955,10 +1037,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -1098,16 +1182,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -1119,7 +1207,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -1132,10 +1221,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -1287,16 +1378,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -1308,7 +1403,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -1321,10 +1417,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -1392,16 +1490,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -1413,7 +1515,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -1426,10 +1529,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -1569,16 +1674,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -1590,7 +1699,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -1603,10 +1713,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -1674,16 +1786,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -1695,7 +1811,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -1708,10 +1825,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -1791,16 +1910,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -1812,7 +1935,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -1825,10 +1949,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -1880,16 +2006,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -1901,7 +2031,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -1914,10 +2045,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -1989,16 +2122,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2010,7 +2147,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2023,10 +2161,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2105,16 +2245,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2126,7 +2270,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2139,10 +2284,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2176,16 +2323,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2201,7 +2352,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2214,10 +2366,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2242,16 +2396,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2263,7 +2421,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2279,10 +2438,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2309,16 +2470,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2330,7 +2495,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2343,10 +2509,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2377,16 +2545,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2401,7 +2573,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("LogoAr")
                         .HasColumnType("nvarchar(max)");
@@ -2426,10 +2599,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<string>("WebSite")
                         .HasColumnType("nvarchar(max)");
@@ -2459,16 +2634,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2480,7 +2659,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2493,10 +2673,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2578,16 +2760,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2599,7 +2785,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2612,10 +2799,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2687,16 +2876,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2708,7 +2901,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2721,10 +2915,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2816,16 +3012,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2837,7 +3037,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2850,10 +3051,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2909,16 +3112,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -2930,7 +3137,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -2943,10 +3151,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -2998,16 +3208,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -3019,7 +3233,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -3032,10 +3247,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3097,16 +3314,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -3118,7 +3339,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -3131,10 +3353,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3186,16 +3410,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -3207,7 +3435,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -3220,10 +3449,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3285,16 +3516,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DescriptionAr")
                         .HasColumnType("nvarchar(max)");
@@ -3306,7 +3541,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -3319,10 +3555,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3377,22 +3615,27 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("ErrorMessage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<bool>("IsSent")
                         .HasColumnType("bit");
@@ -3412,10 +3655,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3439,22 +3684,27 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -3465,10 +3715,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3494,23 +3746,28 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("Error")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("PayloadJson")
                         .HasColumnType("nvarchar(max)");
@@ -3538,10 +3795,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -3568,16 +3827,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<Guid>("InvitationId")
                         .HasColumnType("uniqueidentifier");
@@ -3586,16 +3849,19 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3625,16 +3891,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<Guid>("InvitationStatusId")
                         .HasColumnType("uniqueidentifier");
@@ -3643,16 +3913,19 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3678,31 +3951,40 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Benefits")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<DateTimeOffset>("Deadline")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
-                    b.Property<Guid?>("GenderId")
+                    b.Property<Guid>("GenderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid>("JobCategoryId")
                         .HasColumnType("uniqueidentifier");
@@ -3713,6 +3995,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("PublishAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("QuotaId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("RequestingDepartmentId")
                         .HasColumnType("uniqueidentifier");
 
@@ -3721,14 +4006,16 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<int>("Vacancies")
                         .HasColumnType("int");
@@ -3743,6 +4030,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("Deadline");
+
                     b.HasIndex("DeletedById");
 
                     b.HasIndex("GenderId");
@@ -3750,6 +4039,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("JobCategoryId");
 
                     b.HasIndex("MajorId");
+
+                    b.HasIndex("QuotaId")
+                        .IsUnique();
 
                     b.HasIndex("RequestingDepartmentId");
 
@@ -3761,6 +4053,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("WorkTypeId");
 
+                    b.HasIndex("IsDeleted", "Deadline");
+
                     b.ToTable("Job", "hr");
                 });
 
@@ -3771,19 +4065,24 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");
@@ -3797,10 +4096,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3822,31 +4123,38 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid>("DegreeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3870,34 +4178,56 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
+
+                    b.Property<decimal>("Gcc")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
-                    b.Property<Guid>("JobId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<decimal>("NonQatariSpouse")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("NationalityId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<decimal>("QatarMother")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Percentage")
+                    b.Property<decimal>("QatariCitizens")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("QuGrads")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Residents")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3905,13 +4235,9 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("DeletedById");
 
-                    b.HasIndex("JobId");
-
-                    b.HasIndex("NationalityId");
-
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("JobQuotas");
+                    b.ToTable("JobQuota", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobSkill", b =>
@@ -3921,19 +4247,24 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");
@@ -3947,10 +4278,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -3963,6 +4296,65 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("JobSkills");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.ResidentBreakdown", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("JobQuotaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("NationalityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Percentage")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("JobQuotaId");
+
+                    b.HasIndex("NationalityId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ResidentBreakdown", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Resource", b =>
@@ -3978,23 +4370,28 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("Key")
                         .IsRequired()
@@ -4015,10 +4412,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -4046,19 +4445,24 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<Guid?>("SponsorCardId")
                         .HasColumnType("uniqueidentifier");
@@ -4077,10 +4481,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.HasKey("Id");
 
@@ -4255,16 +4661,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("DisabilityDetails")
                         .HasColumnType("nvarchar(max)");
@@ -4279,7 +4689,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<bool>("IsDraft")
                         .HasColumnType("bit");
@@ -4321,10 +4732,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -4386,22 +4799,27 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
 
                     b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
 
                     b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
 
                     b.Property<string>("Ip")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
 
                     b.Property<string>("Platform")
                         .HasColumnType("nvarchar(max)");
@@ -4414,10 +4832,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
 
                     b.Property<string>("UserAgent")
                         .HasColumnType("nvarchar(max)");
@@ -5775,30 +6195,38 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Gender", "Gender")
                         .WithMany()
-                        .HasForeignKey("GenderId");
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.JobCategory", "JobCategory")
                         .WithMany()
                         .HasForeignKey("JobCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
                         .WithMany()
                         .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobQuota", "Quota")
+                        .WithOne("Job")
+                        .HasForeignKey("Tawtheef.Domain.Entities.Recruitment.Job", "QuotaId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Department", "RequestingDepartment")
                         .WithMany()
                         .HasForeignKey("RequestingDepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.JobStatus", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
@@ -5809,13 +6237,13 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Sector", "WorkLocation")
                         .WithMany()
                         .HasForeignKey("WorkLocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.WorkType", "WorkType")
                         .WithMany()
                         .HasForeignKey("WorkTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
@@ -5827,6 +6255,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("JobCategory");
 
                     b.Navigation("Major");
+
+                    b.Navigation("Quota");
 
                     b.Navigation("RequestingDepartment");
 
@@ -5854,7 +6284,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
                         .WithMany("Conditions")
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
@@ -5892,7 +6322,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
                         .WithMany("Degrees")
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
@@ -5923,18 +6353,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
-                        .WithMany("Quotas")
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Country", "Nationality")
-                        .WithMany()
-                        .HasForeignKey("NationalityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
@@ -5943,10 +6361,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("DeletedBy");
-
-                    b.Navigation("Job");
-
-                    b.Navigation("Nationality");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -5966,7 +6380,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
                         .WithMany("Skills")
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
@@ -5979,6 +6393,46 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("DeletedBy");
 
                     b.Navigation("Job");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.ResidentBreakdown", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobQuota", "JobQuota")
+                        .WithMany("ResidentsBreakdowns")
+                        .HasForeignKey("JobQuotaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Country", "Nationality")
+                        .WithMany()
+                        .HasForeignKey("NationalityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("JobQuota");
+
+                    b.Navigation("Nationality");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -6235,9 +6689,14 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("Invitations");
 
-                    b.Navigation("Quotas");
-
                     b.Navigation("Skills");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobQuota", b =>
+                {
+                    b.Navigation("Job");
+
+                    b.Navigation("ResidentsBreakdowns");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.User", b =>
