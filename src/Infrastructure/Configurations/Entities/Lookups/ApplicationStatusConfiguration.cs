@@ -13,8 +13,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 1 — NEW_INVITATION
             new InvitationStatus
             {
-                Id = InvitationStatusIds.NEW_INVITATION,
-                BackendName = nameof(InvitationStatusIds.NEW_INVITATION),
+                Id = InvitationStatusIds.NewInvitation,
+                BackendName = nameof(InvitationStatusIds.NewInvitation),
                 NameEn = "New Invitation",
                 NameAr = "دعوة جديدة",
                 DescriptionEn = "The candidate was invited but has not opened or viewed it yet.",
@@ -25,8 +25,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 2 — READED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.READED,
-                BackendName = nameof(InvitationStatusIds.READED),
+                Id = InvitationStatusIds.Readed,
+                BackendName = nameof(InvitationStatusIds.Readed),
                 NameEn = "Read",
                 NameAr = "تمت القراءة",
                 DescriptionEn =
@@ -38,8 +38,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 3 — SUBMITTED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.SUBMITTED,
-                BackendName = nameof(InvitationStatusIds.SUBMITTED),
+                Id = InvitationStatusIds.Submitted,
+                BackendName = nameof(InvitationStatusIds.Submitted),
                 NameEn = "Submitted",
                 NameAr = "تم التقديم",
                 DescriptionEn = "The candidate submitted the application with all required information completed.",
@@ -50,8 +50,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 4 — UNDER_REVIEW
             new InvitationStatus
             {
-                Id = InvitationStatusIds.UNDER_REVIEW,
-                BackendName = nameof(InvitationStatusIds.UNDER_REVIEW),
+                Id = InvitationStatusIds.UnderReview,
+                BackendName = nameof(InvitationStatusIds.UnderReview),
                 NameEn = "Under Review",
                 NameAr = "قيد المراجعة",
                 DescriptionEn = "The application is under initial review by the recruitment department.",
@@ -62,8 +62,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 5 — REQUIRES_UPDATE
             new InvitationStatus
             {
-                Id = InvitationStatusIds.REQUIRES_UPDATE,
-                BackendName = nameof(InvitationStatusIds.REQUIRES_UPDATE),
+                Id = InvitationStatusIds.RequiresUpdate,
+                BackendName = nameof(InvitationStatusIds.RequiresUpdate),
                 NameEn = "Requires Update",
                 NameAr = "مطلوب تعديل",
                 DescriptionEn = "The application was returned to the candidate to complete missing information.",
@@ -74,8 +74,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 6 — APPROVED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.APPROVED,
-                BackendName = nameof(InvitationStatusIds.APPROVED),
+                Id = InvitationStatusIds.Approved,
+                BackendName = nameof(InvitationStatusIds.Approved),
                 NameEn = "Approved",
                 NameAr = "معتمد",
                 DescriptionEn = "The application has been approved and moved to a later stage.",
@@ -86,8 +86,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 7 — REJECTED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.REJECTED,
-                BackendName = nameof(InvitationStatusIds.REJECTED),
+                Id = InvitationStatusIds.Rejected,
+                BackendName = nameof(InvitationStatusIds.Rejected),
                 NameEn = "Rejected",
                 NameAr = "مرفوض",
                 DescriptionEn = "The application was not accepted for functional or organizational reasons.",
@@ -98,8 +98,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 8 — CANCELLED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.CANCELLED,
-                BackendName = nameof(InvitationStatusIds.CANCELLED),
+                Id = InvitationStatusIds.Cancelled,
+                BackendName = nameof(InvitationStatusIds.Cancelled),
                 NameEn = "Cancelled",
                 NameAr = "ملغي",
                 DescriptionEn = "The candidate cancelled the application or it was cancelled procedurally.",
@@ -110,8 +110,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 9 — CLOSED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.CLOSED,
-                BackendName = nameof(InvitationStatusIds.CLOSED),
+                Id = InvitationStatusIds.Closed,
+                BackendName = nameof(InvitationStatusIds.Closed),
                 NameEn = "Closed",
                 NameAr = "مغلق",
                 DescriptionEn = "The job has ended or was closed by HR and no further action can be taken.",
