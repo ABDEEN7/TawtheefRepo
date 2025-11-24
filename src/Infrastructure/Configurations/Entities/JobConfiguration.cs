@@ -60,7 +60,7 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
         builder.HasMany(j => j.Skills)
             .WithOne(s => s.Job)
             .HasForeignKey(s => s.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
             
         builder.HasMany(j => j.Conditions)
             .WithOne(c => c.Job)
