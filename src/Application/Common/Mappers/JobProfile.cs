@@ -11,8 +11,16 @@ public class JobProfile : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<CreateJobDto, Job>()
-            .Map(dest => dest, src => src.Basics.Adapt<JobBasics>())
-            .Map(dest => dest.Quota, src => src.Quotas.Adapt<JobQuota>())
+            .Map(dest => dest.Title, src => src.Title)
+            .Map(dest => dest.RequestingDepartmentId, src => src.RequestingDepartmentId)
+            .Map(dest => dest.JobCategoryId, src => src.JobCategoryId)
+            .Map(dest =>  dest.GenderId, src => src.GenderId)
+            .Map(dest => dest.WorkLocationId, src => src.WorkLocationId)
+            .Map(dest => dest.MajorId, src => src.MajorId)
+            .Map(dest => dest.WorkTypeId, src => src.WorkTypeId)
+            .Map(dest => dest.Vacancies, src => src.Vacancies)
+            .Map(dest => dest.Deadline, src => src.Deadline)
+            .Map(dest => dest.Quota, src => src.Quota.Adapt<JobQuota>())
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Benefits, src => src.Benefits)
             .Map(dest => dest.Skills, src => src.Skills)
@@ -49,18 +57,7 @@ public class JobProfile : IRegister
                 }
             });
 
-        config.NewConfig<JobBasicsDto, JobBasics>()
-            .Map(dest => dest.RequestingDepartmentId, src => src.RequestingDeptId)
-            .Map(dest => dest.JobCategoryId, src => src.JobCategoryId)
-            .Map(dest => dest.GenderId, src => src.GenderId)
-            .Map(dest => dest.TargetEntityId, src => src.WorkLocationId)
-            .Map(dest => dest.MajorId, src => src.MajorId)
-            .Map(dest => dest.WorkTypeId, src => src.WorkTypeId)
-            .Map(dest => dest.Vacancies, src => src.Vacancies)
-            .Map(dest => dest.Deadline, src => src.Deadline)
-            .Map(dest => dest.Title, src => src.Title);
-
-        config.NewConfig<JobQuotasDto, JobQuota>()
+        config.NewConfig<JobQuotaDto, JobQuota>()
             .Map(dest => dest.QatariCitizens, src => src.QatariCitizens)
             .Map(dest => dest.QatarMother, src => src.QatarMother)
             .Map(dest => dest.NonQatariSpouse, src => src.NonQatariSpouse)

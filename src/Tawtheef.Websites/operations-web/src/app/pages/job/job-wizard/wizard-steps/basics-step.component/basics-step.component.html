@@ -8,7 +8,7 @@
       }}</label>
       <p-select
         [options]="lookupsService.departments()"
-        formControlName="requestingDeptId"
+        formControlName="requestingDepartmentId"
         optionLabel="name"
         optionValue="id"
         [filter]="true"
@@ -22,7 +22,7 @@
       <div class="small-muted mt-1">
         {{ 'job_wizard.steps.basics.requesting_dept_hint' | translate }}
       </div>
-      @if (form.controls.requestingDeptId.touched && form.controls.requestingDeptId.invalid) {
+      @if (form.controls.requestingDepartmentId.touched && form.controls.requestingDepartmentId.invalid) {
       <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
       }
     </div>
@@ -83,15 +83,15 @@
           'job_wizard.steps.basics.work_entity' | translate
         }}</label>
         <p-select
-          [options]="lookupsService.targetEntities()"
-          formControlName="entityId"
+          [options]="lookupsService.workLocations()"
+          formControlName="workLocationId"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
           placeholder="{{ 'job_wizard.steps.basics.work_entity_placeholder' | translate }}"
           class="w-100"
         ></p-select>
-        @if (form.controls.entityId.touched && form.controls.entityId.invalid) {
+        @if (form.controls.workLocationId.touched && form.controls.workLocationId.invalid) {
         <div class="text-danger small">{{ 'validation.required_filed' | translate }}</div>
         }
       </div>

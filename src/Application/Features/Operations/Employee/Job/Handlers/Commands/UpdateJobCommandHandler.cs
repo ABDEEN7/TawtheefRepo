@@ -28,7 +28,7 @@ public class UpdateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
                 UpdateMainJobProperties(existingJob, request.Job);
 
                 // Update owned type - JobBasics
-                UpdateJobBasics(existingJob, request.Job.Basics);
+                UpdateJobBasics(existingJob, request.Job);
 
                 // Update collections (skills, conditions, degrees, quotas)
                 UpdateJobCollections(existingJob, request.Job);
@@ -53,19 +53,19 @@ public class UpdateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
         existingJob.Benefits = updateDto.Benefits;
         
         // Update navigation property IDs through the Basics owned type
-        existingJob.RequestingDepartmentId = updateDto.Basics.RequestingDeptId;
-        existingJob.JobCategoryId = updateDto.Basics.JobCategoryId;
-        existingJob.GenderId = updateDto.Basics.GenderId;
-        existingJob.WorkLocationId = updateDto.Basics.WorkLocationId;
-        existingJob.MajorId = updateDto.Basics.MajorId;
-        existingJob.WorkTypeId = updateDto.Basics.WorkTypeId;
+        existingJob.RequestingDepartmentId = updateDto.RequestingDepartmentId;
+        existingJob.JobCategoryId = updateDto.JobCategoryId;
+        existingJob.GenderId = updateDto.GenderId;
+        existingJob.WorkLocationId = updateDto.WorkLocationId;
+        existingJob.MajorId = updateDto.MajorId;
+        existingJob.WorkTypeId = updateDto.WorkTypeId;
     }
 
-    private void UpdateJobBasics(JobEntity existingBasics, JobBasicsDto updateBasics)
+    private void UpdateJobBasics(JobEntity existingJob, UpdateJobDto job)
     {
-        existingBasics.Title = updateBasics.Title;
-        existingBasics.Vacancies = updateBasics.Vacancies;
-        existingBasics.Deadline = updateBasics.Deadline;
+        existingJob.Title = job.Title;
+        existingJob.Vacancies = job.Vacancies;
+        existingJob.Deadline = job.Deadline;
     }
 
     private void UpdateJobCollections(JobEntity existingJob, UpdateJobDto updateDto)
@@ -111,10 +111,10 @@ public class UpdateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
         }
 
         // Update quotas
-        UpdateJobQuotas(existingJob.Quota, updateDto.Quotas);
+        UpdateJobQuotas(existingJob.Quota, updateDto.Quota);
     }
 
-    private void UpdateJobQuotas(JobQuota? existingQuotas, JobQuotasDto updateQuotas)
+    private void UpdateJobQuotas(JobQuota? existingQuotas, JobQuotaDto updateQuotas)
     {
         existingQuotas?.QatariCitizens = updateQuotas.QatariCitizens;
         existingQuotas?.QatarMother = updateQuotas.QatarMother;

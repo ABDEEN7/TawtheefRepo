@@ -24,11 +24,11 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
   lazyLoading = false
   loadLazyTimeout = 0
   readonly form = this.fb.nonNullable.group({
-    requestingDeptId: ['', Validators.required],
+    requestingDepartmentId: ['', Validators.required],
     title: ['', Validators.required],
     jobCategoryId: ['', Validators.required],
     genderId: ['', Validators.required],
-    entityId: ['', Validators.required],
+    workLocationId: ['', Validators.required],
     majorId: ['', Validators.required],
     degreeIds: this.fb.control<GUID[]>([], Validators.required),
     workTypeId: ['', Validators.required],
@@ -90,31 +90,31 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
         filter(() => this.form.valid),
       )
       .subscribe((value) => {
-        this.updateJobService(value as Partial<JobBasics>,value.degreeIds as GUID[]);
+        this.updateJobService(value as JobBasics);
       });
   }
 
-  private updateJobService(basics: Partial<JobBasics>,degreeIds:GUID[]): void {
-    const updatedBasics = {
-      ...basics,
+  private updateJobService(value:JobBasics): void {
+    const updatedJobBasics = {
+      ...value,
     };
-    this.jobService.updateCurrentJobBasics(updatedBasics,degreeIds);
+    this.jobService.updateCurrentJobBasics(updatedJobBasics);
   }
 
   setJobData(job: Job): void {
-    if (job.basics) {
-      const deadline = job.basics.deadline ? new Date(job.basics.deadline) : null;
+    if (job) {
+      const deadline = job.deadline ? new Date(job.deadline) : null;
 
       this.form.patchValue({
-        requestingDeptId: job.basics.requestingDeptId || '',
-        title: job.basics.title || '',
-        jobCategoryId: job.basics.jobCategoryId || '',
-        genderId: job.basics.genderId || '',
-        entityId: job.basics.entityId || '',
-        majorId: job.basics.majorId || '',
+        requestingDepartmentId: job.requestingDepartmentId || '',
+        title: job.title || '',
+        jobCategoryId: job.jobCategoryId || '',
+        genderId: job.genderId || '',
+        workLocationId: job.workLocationId || '',
+        majorId: job.majorId || '',
         degreeIds: job.degreeIds || [],
-        workTypeId: job.basics.workTypeId || '',
-        vacancies: job.basics.vacancies || 0,
+        workTypeId: job.workTypeId || '',
+        vacancies: job.vacancies || 0,
         deadline: deadline,
       }, { emitEvent: false });
     }

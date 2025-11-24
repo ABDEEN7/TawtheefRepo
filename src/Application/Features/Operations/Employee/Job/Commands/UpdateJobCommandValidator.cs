@@ -13,34 +13,31 @@ public class UpdateJobCommandValidator : AbstractValidator<UpdateJobCommand>
 
         RuleFor(x => x.Job)
             .NotNull().WithMessage(JobValidationMessages.JobRequired);
+        
 
-        // Basics validation
-        RuleFor(x => x.Job.Basics)
-            .NotNull().WithMessage(JobValidationMessages.JobBasicsRequired);
-
-        RuleFor(x => x.Job.Basics.Title)
+        RuleFor(x => x.Job.Title)
             .NotEmpty().WithMessage(JobValidationMessages.JobTitleRequired)
             .MaximumLength(200).WithMessage(JobValidationMessages.JobTitleMaxLength);
 
-        RuleFor(x => x.Job.Basics.Vacancies)
+        RuleFor(x => x.Job.Vacancies)
             .GreaterThan(0).WithMessage(JobValidationMessages.VacanciesGreaterThanZero);
 
-        RuleFor(x => x.Job.Basics.Deadline)
+        RuleFor(x => x.Job.Deadline)
             .GreaterThan(DateTimeOffset.UtcNow.AddHours(24))
             .WithMessage(JobValidationMessages.DeadlineAtLeast24Hours);
 
-        RuleFor(x => x.Job.Basics.RequestingDeptId)
+        RuleFor(x => x.Job.RequestingDepartmentId)
             .NotEmpty().WithMessage(JobValidationMessages.RequestingDeptRequired);
 
         // Quotas validation
-        RuleFor(x => x.Job.Quotas)
+        RuleFor(x => x.Job.Quota)
             .NotNull().WithMessage(JobValidationMessages.JobQuotasRequired);
 
-        RuleFor(x => x.Job.Quotas)
+        RuleFor(x => x.Job.Quota)
             .Must(HaveValidQuotaTotal)
             .WithMessage(JobValidationMessages.JobQuotaTotalInvalid);
 
-        RuleForEach(x => x.Job.Quotas.ResidentsBreakdown)
+        RuleForEach(x => x.Job.Quota.ResidentsBreakdown)
             .ChildRules(breakdown =>
             {
                 breakdown.RuleFor(b => b.Percentage)
@@ -57,7 +54,7 @@ public class UpdateJobCommandValidator : AbstractValidator<UpdateJobCommand>
             .MaximumLength(100).WithMessage(JobValidationMessages.SkillMaxLength);
     }
 
-    private bool HaveValidQuotaTotal(JobQuotasDto? quotas)
+    private bool HaveValidQuotaTotal(JobQuotaDto? quotas)
     {
         if (quotas == null) return false;
 

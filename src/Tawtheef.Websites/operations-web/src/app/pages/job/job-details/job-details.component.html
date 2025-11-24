@@ -11,12 +11,12 @@
               height="56"
             />
             <div>
-              <h4 class="mb-0 fw-800 text-brand">{{ job?.basics?.title }}</h4>
+              <h4 class="mb-0 fw-800 text-brand">{{ job?.title }}</h4>
               <div class="small-muted">
                 <i class="fa-solid fa-location-dot"></i> {{ 'job_details.qatar' | translate }}
                 {{ '-' }} <i class="fa-regular fa-clock"></i>
                 {{ 'job_details.deadline' | translate }}:
-                {{ job?.basics?.deadline | date : 'dd/MM/yyyy' }}
+                {{ job?.deadline | date : 'dd/MM/yyyy' }}
               </div>
             </div>
           </div>
@@ -166,15 +166,15 @@
               <div class="d-flex flex-column gap-2">
                 <div class="d-flex justify-content-between">
                   <span class="small-muted">{{ 'job_details.type_of_work' | translate }}</span>
-                  <span class="badge-outline">{{ lookupsService.getTypeOfWork(job?.basics?.workTypeId)}}</span>
+                  <span class="badge-outline">{{ lookupsService.getTypeOfWork(job?.workTypeId)}}</span>
                 </div>
                 <div class="d-flex justify-content-between">
                   <span class="small-muted">{{ 'job_details.deadline' | translate }}</span>
-                  <span class="badge-outline">{{ job?.basics?.deadline | date : 'dd/MM/yyyy' }}</span>
+                  <span class="badge-outline">{{ job?.deadline | date : 'dd/MM/yyyy' }}</span>
                 </div>
                 <div class="d-flex justify-content-between">
                   <span class="small-muted">{{ 'job_details.entity' | translate }}</span>
-                  <span class="badge-outline">{{ lookupsService.getWorkEntity(job?.basics?.entityId) }}</span>
+                  <span class="badge-outline">{{ lookupsService.getWorkLocations(job?.workLocationId) }}</span>
                 </div>
               </div>
             </div>

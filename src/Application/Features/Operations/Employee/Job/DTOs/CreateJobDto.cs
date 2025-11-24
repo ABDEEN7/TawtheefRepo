@@ -2,8 +2,16 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 public record CreateJobDto
 {
-    public JobBasicsDto Basics { get; init; } = default!;
-    public JobQuotasDto Quotas { get; init; } = default!;
+    public string Title { get; init; } = string.Empty;
+    public Guid RequestingDepartmentId { get; init; }
+    public Guid JobCategoryId { get; init; }
+    public Guid GenderId { get; init; }
+    public Guid WorkLocationId { get; init; }
+    public Guid MajorId { get; init; }
+    public Guid WorkTypeId { get; init; }
+    public int Vacancies { get; init; }
+    public DateTimeOffset Deadline { get; init; }
+    public required JobQuotaDto Quota { get; init; } 
     public string? Description { get; init; }
     public string? Benefits { get; init; }
     public List<string> Conditions { get; init; } = [];

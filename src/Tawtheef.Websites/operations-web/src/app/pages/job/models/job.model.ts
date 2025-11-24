@@ -1,11 +1,19 @@
 import { JobBasics } from './job-basics.models';
-import { JobQuotas } from './job-quotas.models';
+import { JobQuota } from './job-quota.models';
 import { GUID } from '../../../shared/types/guid.type';
 
 export interface Job {
   id?: GUID;
-  basics: JobBasics;
-  quotas: JobQuotas;
+  requestingDepartmentId:GUID;
+  title: string;
+  jobCategoryId: GUID;
+  genderId: GUID;
+  workLocationId: GUID;
+  majorId: GUID;
+  workTypeId: GUID;
+  vacancies: number;
+  deadline: Date | null;
+  quota: JobQuota;
   description: string;
   benefits: string;
   conditions: string[];

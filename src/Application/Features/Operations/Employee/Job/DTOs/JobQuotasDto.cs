@@ -1,6 +1,6 @@
 namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
-public record JobQuotasDto
+public record JobQuotaDto
 {
     public decimal QatariCitizens { get; init; }
     public decimal QatarMother { get; init; }

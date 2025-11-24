@@ -6,7 +6,7 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import {Job} from '../../../models/job.model';
 import {debounceTime, filter} from 'rxjs';
-import {JobQuotas} from '../../../models/job-quotas.models';
+import {JobQuota} from '../../../models/job-quota.models';
 import { JobLookupService } from '../../../services/job-lookup.service';
 
 @Component({
@@ -36,7 +36,7 @@ export class QuotasStepComponent implements WizardStepComponent,OnInit {
 
 
   get residentsBreakdown() {
-    return this.jobService.currentJob().quotas.residentsBreakdown || [];
+    return this.jobService.currentJob().quota.residentsBreakdown || [];
   }
 
   ngOnInit() {
@@ -47,7 +47,7 @@ export class QuotasStepComponent implements WizardStepComponent,OnInit {
       filter(() => this.form.valid) // Only update service when valid
     ).subscribe(value => {
       this.calculateTotal();
-        this.jobService.updateCurrentJobQuotas(value as JobQuotas);
+        this.jobService.updateCurrentJobQuota(value as JobQuota);
     });
   }
   openModal() {
@@ -62,7 +62,7 @@ export class QuotasStepComponent implements WizardStepComponent,OnInit {
     });
 
     ref?.onClose.subscribe(result => {
-      if (result) this.jobService.updateCurrentJobQuotas({ residentsBreakdown: result });
+      if (result) this.jobService.updateCurrentJobQuota({ residentsBreakdown: result });
     });
   }
 
@@ -72,14 +72,14 @@ export class QuotasStepComponent implements WizardStepComponent,OnInit {
   }
 
   setJobData(currentJob: Job) {
-    if(currentJob.quotas){
+    if(currentJob.quota){
       this.form.patchValue({
-        qatariCitizens: currentJob.quotas.qatariCitizens ?? 0,
-        qatarMother: currentJob.quotas.qatarMother ?? 0,
-        nonQatariSpouse: currentJob.quotas.nonQatariSpouse ?? 0,
-        gcc: currentJob.quotas.gcc ?? 0,
-        quGrads: currentJob.quotas.quGrads ?? 0,
-        residents: currentJob.quotas.residents ?? 0
+        qatariCitizens: currentJob.quota.qatariCitizens ?? 0,
+        qatarMother: currentJob.quota.qatarMother ?? 0,
+        nonQatariSpouse: currentJob.quota.nonQatariSpouse ?? 0,
+        gcc: currentJob.quota.gcc ?? 0,
+        quGrads: currentJob.quota.quGrads ?? 0,
+        residents: currentJob.quota.residents ?? 0
       });
       this.calculateTotal();
       this.form.updateValueAndValidity();

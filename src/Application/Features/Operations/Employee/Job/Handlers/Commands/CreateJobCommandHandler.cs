@@ -20,6 +20,7 @@ public class CreateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
             job.Id = Guid.NewGuid();
             job.StatusId = JobStatusIds.Draft;
             
+            
             SetCollectionIds(job);
             var addResult = await jobRepository.Repository.AddAsync(job);
             if (addResult.IsFailed)

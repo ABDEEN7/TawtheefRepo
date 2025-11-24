@@ -3,7 +3,7 @@ import {tap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {Job} from '../models/job.model';
 import {JobBasics} from '../models/job-basics.models';
-import {JobQuotas} from '../models/job-quotas.models';
+import {JobQuota} from '../models/job-quota.models';
 import {PointsConfig} from '../models/points-config.model';
 import {HttpService} from '../../../core/http/http.service';
 import { GUID } from '../../../shared/types/guid.type';
@@ -65,18 +65,26 @@ export class JobService {
   }
 
   // ==================== UPDATE OPERATIONS ====================
-  updateCurrentJobBasics(basics: Partial<JobBasics>,degreeIds : GUID[]): void {
+  updateCurrentJobBasics(updatedJob: Partial<JobBasics>): void {
     this._currentJob.update(job => ({
       ...job,
-      degreeIds:[...degreeIds],
-      basics: {...job.basics, ...basics}
+      requestingDepartmentId: updatedJob.requestingDepartmentId || job.requestingDepartmentId,
+      title: updatedJob.title || job.title,
+      jobCategoryId: updatedJob.jobCategoryId || job.jobCategoryId,
+      genderId: updatedJob.genderId || job.genderId,
+      workLocationId: updatedJob.workLocationId || job.workLocationId,
+      majorId: updatedJob.majorId || job.majorId,
+      workTypeId: updatedJob.workTypeId || job.workTypeId,
+      vacancies: updatedJob.vacancies ?? job.vacancies,
+      deadline: updatedJob.deadline ?? job.deadline,
+      degreeIds : updatedJob.degreeIds || job.degreeIds
     }));
   }
 
-  updateCurrentJobQuotas(quotas: Partial<JobQuotas>): void {
+  updateCurrentJobQuota(quotas: Partial<JobQuota>): void {
     this._currentJob.update(job => ({
       ...job,
-      quotas: {...job.quotas, ...quotas}
+      quota: {...job.quota, ...quotas}
     }));
   }
 
@@ -110,18 +118,17 @@ export class JobService {
 
   private createEmptyJob(): Job {
     return {
-      basics: {
-        requestingDeptId: '' as GUID,
-        title: '',
-        jobCategoryId: '' as GUID,
-        genderId: '' as GUID,
-        entityId: '' as GUID,
-        majorId: '' as GUID,
-        workTypeId: '' as GUID,
-        vacancies: 0,
-        deadline: null
-      },
-      quotas: {
+
+      requestingDepartmentId: '' as GUID,
+      title: '',
+      jobCategoryId: '' as GUID,
+      genderId: '' as GUID,
+      workLocationId: '' as GUID,
+      majorId: '' as GUID,
+      workTypeId: '' as GUID,
+      vacancies: 0,
+      deadline: null,
+      quota: {
         qatariCitizens: 0,
         qatarMother: 0,
         nonQatariSpouse: 0,

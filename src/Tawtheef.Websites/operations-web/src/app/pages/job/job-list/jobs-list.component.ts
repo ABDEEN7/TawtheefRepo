@@ -32,10 +32,10 @@ export class JobListComponent implements OnInit {
     const fStatus = this.filterStatus();
 
     return this.jobs().filter((j) => {
-      if (fType && j.basics.jobCategoryId !== fType) return false;
+      if (fType && j.jobCategoryId !== fType) return false;
       if (fStatus && j.status !== fStatus) return false;
       if (q) {
-        const hay = [j.basics.title, j.basics.requestingDeptId].join(' ').toLowerCase();
+        const hay = [j.title, j.requestingDepartmentId].join(' ').toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -71,7 +71,7 @@ export class JobListComponent implements OnInit {
 
   openPointsModal(job: Job) {
     const ref: DynamicDialogRef | null = this.dialogService.open(PointsConfigModalComponent, {
-      data: { jobId: job.id, jobTitle: job.basics.title },
+      data: { jobId: job.id, jobTitle: job.title },
       width: '80%',
     });
 

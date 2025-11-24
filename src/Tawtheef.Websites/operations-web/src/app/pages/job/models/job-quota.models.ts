@@ -1,6 +1,6 @@
 import {ResidentBreakdown} from './resident-breakdown.model';
 
-export interface JobQuotas {
+export interface JobQuota {
   qatariCitizens: number;
   qatarMother: number;
   nonQatariSpouse: number;
