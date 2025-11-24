@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Recruitment;
-using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities;
 
@@ -10,25 +8,6 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
 {
     public void Configure(EntityTypeBuilder<Job> builder)
     {
-        builder.ToTable(nameof(Job), Schemas.Hr);
-        
-        // Basic Property Configurations
-        builder.Property(j => j.Title)
-            .IsRequired()
-            .HasMaxLength(200);
-            
-        builder.Property(j => j.Vacancies)
-            .IsRequired();
-            
-        builder.Property(j => j.Deadline)
-            .IsRequired();
-            
-        builder.Property(j => j.Description)
-            .HasMaxLength(2000);
-            
-        builder.Property(j => j.Benefits)
-            .HasMaxLength(2000);
-
         // Navigation Property Configurations
         builder.HasOne(j => j.RequestingDepartment)
             .WithMany()
@@ -74,7 +53,7 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
         // One-to-One with JobQuotas
         builder.HasOne(j => j.Quota)
             .WithOne(q => q.Job)
-            .HasForeignKey<JobQuota>(q => q.JobId)
+            .HasForeignKey<Job>(j => j.QuotaId) 
             .OnDelete(DeleteBehavior.Cascade);
             
         // One-to-Many Relationships
