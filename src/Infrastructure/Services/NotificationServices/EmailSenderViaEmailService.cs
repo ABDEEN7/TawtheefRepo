@@ -11,8 +11,6 @@ public sealed class EmailSenderViaEmailService(IEmailService emailService) : IEm
     {
         await emailService.SendHtmlAsync(
             subject ?? "Notification", [to], bodyHtml, null, ct);
-
-        // The queue returns immediately; dispatcher/transport will actually deliver
         return (true, Guid.NewGuid().ToString("N"), null);
     }
 }

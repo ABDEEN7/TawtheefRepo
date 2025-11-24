@@ -35,7 +35,8 @@
       "finalSave": "Submit",
       "add": "Add",
       "upload": "Upload",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "saveDraft": "Save Draft"
     },
     "personal": {
       "hasDisability": "Do you have a disability?",

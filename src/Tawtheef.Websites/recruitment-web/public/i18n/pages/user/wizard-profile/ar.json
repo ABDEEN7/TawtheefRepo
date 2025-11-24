@@ -36,7 +36,8 @@
       "add": "إضافة",
       "upload": "رفع",
       "cancel": "إلغاء",
-      "delete": "حذف"
+      "delete": "حذف",
+      "saveDraft": "حفظ كمسودة"
     },
     "personal": {
       "hasDisability": "هل لديك إعاقة؟",

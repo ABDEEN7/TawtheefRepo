@@ -1,4 +1,4 @@
-﻿import {Component, computed, inject, OnInit} from '@angular/core';
+﻿import {Component, computed, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {DataService} from './services/data.service';
 import {TranslateService} from '@ngx-translate/core';
 import {LanguageService} from '../../../core/services/language.service';
@@ -13,6 +13,8 @@ import {ProfileLookupsService} from './services/profile-lookups.service';
 import {AvatarModal} from './steps/step-personal/dialogs/avatar.modal/avatar.modal';
 import {DialogService} from 'primeng/dynamicdialog';
 import {PhoneMapperService} from './services/phone-mapper.service';
+import {HttpClient} from '@angular/common/http';
+import {EndpointsService} from '../../../core/http/endpoints.service';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -29,7 +31,11 @@ export class WizardProfileComponent implements OnInit {
   lookups = inject(ProfileLookupsService);
   language = inject(LanguageService);
   phoneMapper = inject(PhoneMapperService);
+  private i18n = inject(TranslateService);
+  private http = inject(HttpClient);
+  private endpoints = inject(EndpointsService);
 
+  savingDraft = false;
   avatarPreviewUrl: string | null = null;
 
   step = 1;
@@ -146,9 +152,6 @@ export class WizardProfileComponent implements OnInit {
       this.step--;
     }
   }
-  toggleLang(){
-    this.language.toggle();
-  }
   openAvatarDialog() {
     this.dialog.open(AvatarModal, {
       header: this.translate.instant('wizard.personal.avatar.title'),
@@ -162,6 +165,19 @@ export class WizardProfileComponent implements OnInit {
         this.avatarPreviewUrl = croppedImage;
       }
     });
+  }
+
+  saveDraft() {
+    this.savingDraft = true;
+    this.http.post(this.endpoints.user.profile.save, {
+      submit: false,
+      ...this.ds.state()
+    })
+      .pipe(finalize(() => this.savingDraft = false))
+      .subscribe({
+        next: () => this.i18n.instant('wizard.review.savedDraft'),
+        error: (err) => console.log(err)
+      });
   }
 }
 
