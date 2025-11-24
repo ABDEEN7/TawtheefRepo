@@ -30,7 +30,7 @@ public class Job : EventEntity
     public Guid WorkTypeId { get; set; }
     public WorkType? WorkType { get; set; }
     [Required]
-    public int Vacancies { get; set; }
+    public required int Vacancies { get; set; }
     [Required]
     public DateTimeOffset Deadline { get; set; }
     [MaxLength(2000),Required]
