@@ -54,13 +54,14 @@ public class CreateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
         }
 
         // Set IDs for quotas and breakdowns
-        job.Quotas.Id = Guid.NewGuid();
-        job.Quotas.JobId = job.Id;
-        
-        foreach (var breakdown in job.Quotas.ResidentsBreakdown)
+        job.Quota?.Id = Guid.NewGuid();
+        if (job.Quota == null)
+            return;
+
+        foreach (var breakdown in job.Quota.ResidentsBreakdowns)
         {
             breakdown.Id = Guid.NewGuid();
-            breakdown.JobQuotaId = job.Quotas.Id;
+            breakdown.JobQuotaId = job.Quota.Id;
         }
     }
 }

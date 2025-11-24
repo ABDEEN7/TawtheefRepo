@@ -56,7 +56,7 @@ public class UpdateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
         existingJob.RequestingDepartmentId = updateDto.Basics.RequestingDeptId;
         existingJob.JobCategoryId = updateDto.Basics.JobCategoryId;
         existingJob.GenderId = updateDto.Basics.GenderId;
-        existingJob.TargetEntityId = updateDto.Basics.TargetEntityId;
+        existingJob.WorkLocationId = updateDto.Basics.WorkLocationId;
         existingJob.MajorId = updateDto.Basics.MajorId;
         existingJob.WorkTypeId = updateDto.Basics.WorkTypeId;
     }
@@ -111,23 +111,23 @@ public class UpdateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
         }
 
         // Update quotas
-        UpdateJobQuotas(existingJob.Quotas, updateDto.Quotas);
+        UpdateJobQuotas(existingJob.Quota, updateDto.Quotas);
     }
 
-    private void UpdateJobQuotas(JobQuotas existingQuotas, JobQuotasDto updateQuotas)
+    private void UpdateJobQuotas(JobQuota? existingQuotas, JobQuotasDto updateQuotas)
     {
-        existingQuotas.QatariCitizens = updateQuotas.QatariCitizens;
-        existingQuotas.QatarMother = updateQuotas.QatarMother;
-        existingQuotas.NonQatariSpouse = updateQuotas.NonQatariSpouse;
-        existingQuotas.Gcc = updateQuotas.Gcc;
-        existingQuotas.QuGrads = updateQuotas.QuGrads;
-        existingQuotas.Residents = updateQuotas.Residents;
+        existingQuotas?.QatariCitizens = updateQuotas.QatariCitizens;
+        existingQuotas?.QatarMother = updateQuotas.QatarMother;
+        existingQuotas?.NonQatariSpouse = updateQuotas.NonQatariSpouse;
+        existingQuotas?.Gcc = updateQuotas.Gcc;
+        existingQuotas?.QuGrads = updateQuotas.QuGrads;
+        existingQuotas?.Residents = updateQuotas.Residents;
 
         // Update residents breakdown - clear and add new
-        existingQuotas.ResidentsBreakdown.Clear();
+        existingQuotas?.ResidentsBreakdowns.Clear();
         foreach (var breakdownDto in updateQuotas.ResidentsBreakdown)
         {
-            existingQuotas.ResidentsBreakdown.Add(new ResidentBreakdown
+            existingQuotas?.ResidentsBreakdowns.Add(new ResidentBreakdown
             {
                 Id = Guid.NewGuid(),
                 JobQuotaId = existingQuotas.Id,

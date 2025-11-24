@@ -12,7 +12,7 @@ public class JobProfile : IRegister
     {
         config.NewConfig<CreateJobDto, Job>()
             .Map(dest => dest, src => src.Basics.Adapt<JobBasics>())
-            .Map(dest => dest.Quotas, src => src.Quotas.Adapt<JobQuotas>())
+            .Map(dest => dest.Quota, src => src.Quotas.Adapt<JobQuota>())
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Benefits, src => src.Benefits)
             .Map(dest => dest.Skills, src => src.Skills)
@@ -38,13 +38,14 @@ public class JobProfile : IRegister
                     degree.JobId = dest.Id;
                 }
 
-                dest.Quotas.Id = Guid.NewGuid();
-                dest.Quotas.JobId = dest.Id;
-                
-                foreach (var breakdown in dest.Quotas.ResidentsBreakdown)
+
+                if (dest.Quota?.ResidentsBreakdowns != null)
                 {
-                    breakdown.Id = Guid.NewGuid();
-                    breakdown.JobQuotaId = dest.Quotas.Id;
+                    foreach (var breakdown in dest.Quota.ResidentsBreakdowns)
+                    {
+                        breakdown.Id = Guid.NewGuid();
+                        breakdown.JobQuotaId = dest.Quota.Id;
+                    }
                 }
             });
 
@@ -52,21 +53,21 @@ public class JobProfile : IRegister
             .Map(dest => dest.RequestingDepartmentId, src => src.RequestingDeptId)
             .Map(dest => dest.JobCategoryId, src => src.JobCategoryId)
             .Map(dest => dest.GenderId, src => src.GenderId)
-            .Map(dest => dest.TargetEntityId, src => src.TargetEntityId)
+            .Map(dest => dest.TargetEntityId, src => src.WorkLocationId)
             .Map(dest => dest.MajorId, src => src.MajorId)
             .Map(dest => dest.WorkTypeId, src => src.WorkTypeId)
             .Map(dest => dest.Vacancies, src => src.Vacancies)
             .Map(dest => dest.Deadline, src => src.Deadline)
             .Map(dest => dest.Title, src => src.Title);
 
-        config.NewConfig<JobQuotasDto, JobQuotas>()
+        config.NewConfig<JobQuotasDto, JobQuota>()
             .Map(dest => dest.QatariCitizens, src => src.QatariCitizens)
             .Map(dest => dest.QatarMother, src => src.QatarMother)
             .Map(dest => dest.NonQatariSpouse, src => src.NonQatariSpouse)
             .Map(dest => dest.Gcc, src => src.Gcc)
             .Map(dest => dest.QuGrads, src => src.QuGrads)
             .Map(dest => dest.Residents, src => src.Residents)
-            .Map(dest => dest.ResidentsBreakdown, src => src.ResidentsBreakdown.Adapt<List<ResidentBreakdown>>());
+            .Map(dest => dest.ResidentsBreakdowns, src => src.ResidentsBreakdown.Adapt<List<ResidentBreakdown>>());
 
         config.NewConfig<ResidentBreakdownDto, ResidentBreakdown>()
             .Map(dest => dest.NationalityId, src => src.NationalityId)
@@ -107,9 +108,9 @@ public class JobProfile : IRegister
                 Major = src.Major.Adapt<DropdownOptions>(),
                 WorkType = src.WorkType.Adapt<DropdownOptions>(),
                 Gender = src.Gender.Adapt<DropdownOptions>(),
-                TargetEntity = src.TargetEntity.Adapt<DropdownOptions>()
+                TargetEntity = src.WorkLocation.Adapt<DropdownOptions>()
             })
-            .Map(dest => dest.Quotas, src => src.Quotas.Adapt<JobQuotasResponseDto>())
+            .Map(dest => dest.Quotas, src => src.Quota.Adapt<JobQuotasResponseDto>())
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Benefits, src => src.Benefits)
             .Map(dest => dest.Status, src => src.Status.Adapt<DropdownOptions>())
@@ -117,14 +118,14 @@ public class JobProfile : IRegister
             .Map(dest => dest.Conditions, src => src.Conditions.OrderBy(c => c.Order).Select(c => c.Text))
             .Map(dest => dest.Degrees, src => src.Degrees.Select(d => d.Degree.Adapt<DropdownOptions>())); // ✅ Map Degree lookup to DropdownOptions
 
-        config.NewConfig<JobQuotas, JobQuotasResponseDto>()
+        config.NewConfig<JobQuota, JobQuotasResponseDto>()
             .Map(dest => dest.QatariCitizens, src => src.QatariCitizens)
             .Map(dest => dest.QatarMother, src => src.QatarMother)
             .Map(dest => dest.NonQatariSpouse, src => src.NonQatariSpouse)
             .Map(dest => dest.Gcc, src => src.Gcc)
             .Map(dest => dest.QuGrads, src => src.QuGrads)
             .Map(dest => dest.Residents, src => src.Residents)
-            .Map(dest => dest.ResidentsBreakdown, src => src.ResidentsBreakdown.Adapt<List<ResidentBreakdownResponseDto>>());
+            .Map(dest => dest.ResidentsBreakdown, src => src.ResidentsBreakdowns.Adapt<List<ResidentBreakdownResponseDto>>());
 
         config.NewConfig<ResidentBreakdown, ResidentBreakdownResponseDto>()
             .Map(dest => dest.Nationality, src => src.Nationality.Adapt<DropdownOptions>())

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
@@ -9,10 +10,6 @@ namespace Tawtheef.Domain.Entities.Recruitment;
 [Table(nameof(Job), Schema = Schemas.Hr)]
 public class Job : EventEntity
 {
-    public string Title { get; set; } = string.Empty;
-    public int Vacancies { get; set; }
-    public DateTimeOffset Deadline { get; set; }
-    public JobQuotas Quotas { get; set; } = new();
     public Guid RequestingDepartmentId { get; set; }
     public Department? RequestingDepartment { get; set; }
     [MaxLength(200),Required]
@@ -29,6 +26,7 @@ public class Job : EventEntity
 
     public Guid MajorId { get; set; }
     public Major? Major { get; set; }
+
     public Guid WorkTypeId { get; set; }
     public WorkType? WorkType { get; set; }
     [Required]

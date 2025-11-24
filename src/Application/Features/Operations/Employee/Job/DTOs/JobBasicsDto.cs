@@ -6,7 +6,7 @@ public record JobBasicsDto
     public Guid RequestingDeptId { get; init; }
     public Guid JobCategoryId { get; init; }
     public Guid GenderId { get; init; }
-    public Guid TargetEntityId { get; init; }
+    public Guid WorkLocationId { get; init; }
     public Guid MajorId { get; init; }
     public Guid WorkTypeId { get; init; }
     public int Vacancies { get; init; }
