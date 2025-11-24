@@ -65,7 +65,7 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
         builder.HasMany(j => j.Conditions)
             .WithOne(c => c.Job)
             .HasForeignKey(c => c.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
             
         builder.HasMany(j => j.Degrees)
             .WithOne(d => d.Job)
