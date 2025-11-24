@@ -100,24 +100,12 @@ public class JobController(IMediator mediator) : ControllerBase
     // [HttpGet("{id:guid}")]
     // public async Task<IActionResult> GetJob(Guid id)
     // {
-    //     var result = await mediator.Send(new GetJobQuery(id));
+    //     var result = await mediator.Send(new GetJobByIdQuery(id));
     //     return result.ToActionResult();
     // }
 
     [HttpGet]
     public async Task<IActionResult> GetJobs([FromQuery] GetJobsQuery query)
-    {
-        var result = await mediator.Send(query);
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-    
-        return BadRequest(result.IsFailed);
-    }
-
-    [HttpGet("search")]
-    public async Task<IActionResult> GetFilteredJobs([FromQuery] GetFilteredJobsQuery query)
     {
         var result = await mediator.Send(query);
         if (result.IsSuccess)

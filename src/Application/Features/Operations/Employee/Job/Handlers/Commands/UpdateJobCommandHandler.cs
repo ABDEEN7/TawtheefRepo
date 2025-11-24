@@ -1,5 +1,6 @@
 using FluentResults;
 using MediatR;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
@@ -7,7 +8,6 @@ using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
-using JobBasics = Tawtheef.Domain.Entities.Recruitment.JobDetails.JobBasics;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
 
@@ -16,43 +16,35 @@ public class UpdateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
 {
     public async Task<IResult<Unit>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            // Get existing job with all details
-            var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
+            var existingJobResult = await jobRepository.Repository.GetByIdAsync(request.JobId);
             if (existingJobResult.IsFailed)
-                return Result.Fail<Unit>($"Job not found: {existingJobResult.Errors}");
+                return Result.Fail<Unit>($"{JobValidationMessages.JobNotFound}: {existingJobResult.Errors}");
 
             var existingJob = existingJobResult.Value;
-
-            // Check if job can be updated (e.g., not in published state)
-            if (existingJob.StatusId == JobStatusIds.Active)
-                return Result.Fail<Unit>("Cannot update a published job");
-
+            
             // Update main job properties
-            UpdateMainJobProperties(existingJob, request.Job);
+            if (existingJob != null)
+            {
+                UpdateMainJobProperties(existingJob, request.Job);
 
-            // Update owned type - JobBasics
-            UpdateJobBasics(existingJob, request.Job.Basics);
+                // Update owned type - JobBasics
+                UpdateJobBasics(existingJob, request.Job.Basics);
 
-            // Update collections (skills, conditions, degrees, quotas)
-            UpdateJobCollections(existingJob, request.Job);
+                // Update collections (skills, conditions, degrees, quotas)
+                UpdateJobCollections(existingJob, request.Job);
 
-            // Update job status if needed (e.g., back to draft if modified)
-            existingJob.StatusId = JobStatusIds.Draft;
+                // Update job status if needed (e.g., back to draft if modified)
+                existingJob.StatusId = JobStatusIds.Draft;
 
-            var updateResult = await jobRepository.Repository.UpdateAsync(existingJob);
-            if (updateResult.IsFailed)
-                return Result.Fail<Unit>(updateResult.Errors);
+                var updateResult = await jobRepository.Repository.UpdateAsync(existingJob);
+                if (updateResult.IsFailed)
+                    return Result.Fail<Unit>(updateResult.Errors);
+            }
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(Unit.Value);
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail<Unit>($"Failed to update job: {ex.Message}");
-        }
+
     }
 
     private void UpdateMainJobProperties(JobEntity existingJob, UpdateJobDto updateDto)

@@ -9,10 +9,9 @@ namespace Tawtheef.Application.Common.Interfaces.Repositories;
 
 public interface IJobRepository : IBaseRepository<Job>
 {
-    Task<IResult<Job>> GetByIdAsync(Guid id, params Expression<Func<Job, object>>[]? includes);
-    
-    Task<IResult<Job>> GetByIdWithDetailsAsync(Guid id);
-    
-    Task<IResult<PaginatedResult<Job>>> GetPaginatedJobsAsync(PaginatedRequest request);
-    Task<IResult<PaginatedResult<Job>>> GetFilteredJobsAsync(JobQueryFilter filter, PaginatedRequest pagination);
+    Task<IResult<Job?>> GetByIdWithDetailsAsync(Guid id);
+    Task<IResult<PaginatedResult<Job>>> GetFilteredJobsAsync(
+        JobQueryFilter filter,
+        PaginatedRequest pagination,
+        List<Expression<Func<Job, object>>> includes);
 }

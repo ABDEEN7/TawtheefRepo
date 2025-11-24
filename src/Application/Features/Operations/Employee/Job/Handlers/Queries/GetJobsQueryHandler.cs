@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Mapster;
 using FluentResults;
 using MediatR;
@@ -13,8 +14,11 @@ public class GetJobsQueryHandler(IJobRepository jobRepository)
 {
     public async Task<IResult<PaginatedResult<JobResponseDto>>> Handle(GetJobsQuery request, CancellationToken cancellationToken)
     {
-        var paginatedRequest = request.ToPaginatedRequest();
-        var result = await jobRepository.GetPaginatedJobsAsync(paginatedRequest);
+        var result = await jobRepository.GetFilteredJobsAsync(
+            filter: request.Filter ?? new JobQueryFilter(),
+            pagination: request.Pagination ?? new PaginatedRequest(),
+            includes: new List<Expression<Func<Domain.Entities.Recruitment.Job, object>>>() 
+        );
         
         if (result.IsFailed)
             return Result.Fail<PaginatedResult<JobResponseDto>>(result.Errors);

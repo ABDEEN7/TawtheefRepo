@@ -1,5 +1,6 @@
 using FluentResults;
 using MediatR;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
@@ -11,28 +12,22 @@ public class DeleteJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
 {
     public async Task<IResult<Unit>> Handle(DeleteJobCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            // Get existing job
-            var existingJobResult = await jobRepository.GetByIdAsync(request.JobId);
+
+            var existingJobResult = await jobRepository.Repository.GetByIdAsync(request.JobId);
             if (existingJobResult.IsFailed)
-                return Result.Fail<Unit>($"Job not found: {existingJobResult.Errors}");
+                return Result.Fail<Unit>($"{JobValidationMessages.JobNotFound}: {existingJobResult.Errors}");
 
             var existingJob = existingJobResult.Value;
 
-            // Perform deletion
-            var deleteResult = await jobRepository.Repository.DeleteAsync(existingJob);
-            if (deleteResult.IsFailed)
-                return Result.Fail<Unit>(deleteResult.Errors);
+            if (existingJob != null)
+            {
+                var deleteResult = await jobRepository.Repository.DeleteAsync(existingJob);
+                if (deleteResult.IsFailed)
+                    return Result.Fail<Unit>(deleteResult.Errors);
+            }
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
-
             return Result.Ok(Unit.Value);
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail<Unit>($"Failed to delete job: {ex.Message}");
-        }
     }
     
 }
