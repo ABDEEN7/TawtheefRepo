@@ -30,7 +30,6 @@
       <Folder Include="Common\Events\" />
       <Folder Include="Common\Mappers\AdminProfiles\" />
       <Folder Include="Common\Mappers\ApplicantProfiles\" />
-      <Folder Include="Common\Mappers\EmployeePorfiles\" />
       <Folder Include="Common\Mappers\Utils\" />
       <Folder Include="Features\Authenticator\Handlers\Queries\" />
       <Folder Include="Features\Authenticator\Queries\" />
@@ -39,7 +38,6 @@
       <Folder Include="Features\Lookups\Handlers\Commands\" />
       <Folder Include="Features\Operations\Admin\" />
       <Folder Include="Features\Operations\Applicant\" />
-      <Folder Include="Features\Operations\Employee\" />
       <Folder Include="Features\Recruitment\Website\" />
     </ItemGroup>
 
