@@ -14,10 +14,10 @@ namespace Tawtheef.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "lkp");
+                name: "pro");
 
             migrationBuilder.EnsureSchema(
-                name: "pro");
+                name: "lkp");
 
             migrationBuilder.EnsureSchema(
                 name: "hr");
@@ -58,6 +58,31 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Achievement",
+                schema: "pro",
+                columns: table => new
+                {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Organization = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Achievement", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,7 +200,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -183,6 +207,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -217,20 +242,20 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "ContactVerification",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Destination = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    ExpiresAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UsedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Destination = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UsedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -266,10 +291,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Code = table.Column<int>(type: "int", nullable: false),
-                    ISOCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CodeAlpha = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -277,6 +298,10 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<int>(type: "int", nullable: false),
+                    ISOCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CodeAlpha = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -312,7 +337,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -320,6 +344,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -355,7 +380,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -363,6 +387,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -397,6 +422,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "EmailQueues",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RecipientEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -404,14 +436,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     IsSent = table.Column<bool>(type: "bit", nullable: false),
                     SentDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     RetryCount = table.Column<int>(type: "int", nullable: false),
-                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -440,18 +465,18 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "EmailTemplates",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TemplateKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BodyTemplate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TemplateKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BodyTemplate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -480,6 +505,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "EntityLog",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EntityType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -490,14 +522,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     NewValues = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IPAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserAgent = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChangedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    ChangedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -532,7 +557,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -540,6 +564,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -575,7 +600,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -583,6 +607,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -618,7 +643,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -626,6 +650,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -657,11 +682,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "JobStatus",
-                schema: "lkp",
+                name: "JobQuota",
+                schema: "hr",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -669,6 +693,50 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QatariCitizens = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    QatarMother = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    NonQatariSpouse = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Gcc = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    QuGrads = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Residents = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobQuota", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JobQuota_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_JobQuota_AspNetUsers_DeletedById",
+                        column: x => x.DeletedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_JobQuota_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobStatus",
+                schema: "lkp",
+                columns: table => new
+                {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -704,7 +772,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -712,6 +779,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -747,7 +815,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -755,6 +822,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -790,8 +858,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -799,6 +865,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     BackendName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -840,7 +908,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -848,6 +915,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -882,6 +950,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "Notifications",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ToAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -893,14 +968,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     ProviderMessageId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Error = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    SentAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    SentAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -935,7 +1003,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -943,6 +1010,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -978,7 +1046,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -986,6 +1053,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -1020,6 +1088,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "RefreshToken",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Expires = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -1030,14 +1105,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     RevokedReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserDeviceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1073,7 +1141,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1081,6 +1148,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -1116,19 +1184,19 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BuildingNo = table.Column<int>(type: "int", nullable: true),
-                    StreetNo = table.Column<int>(type: "int", nullable: true),
-                    ZoneNo = table.Column<int>(type: "int", nullable: true),
-                    UnitNo = table.Column<int>(type: "int", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BuildingNo = table.Column<int>(type: "int", nullable: true),
+                    StreetNo = table.Column<int>(type: "int", nullable: true),
+                    ZoneNo = table.Column<int>(type: "int", nullable: true),
+                    UnitNo = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1157,6 +1225,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "Resources",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
@@ -1165,14 +1240,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Size = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
                     AdditionalData = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContentHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    ContentHash = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1202,7 +1270,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1210,6 +1277,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -1245,7 +1313,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1253,6 +1320,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -1288,7 +1356,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1296,6 +1363,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -1331,7 +1399,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1339,6 +1406,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -1374,7 +1442,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1382,6 +1449,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -1416,6 +1484,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "UserSession",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SessionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -1424,14 +1499,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     Ip = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserAgent = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Platform = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AppVersion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    AppVersion = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1467,7 +1535,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1475,6 +1542,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -1510,7 +1578,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1518,6 +1585,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -1553,9 +1621,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1563,6 +1628,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -1601,22 +1669,76 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SponsorProfile",
-                schema: "app",
+                name: "ResidentBreakdown",
+                schema: "hr",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SponsorTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SponsorName = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
-                    SponsorNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SponsorCardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JobQuotaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NationalityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Percentage = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResidentBreakdown", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ResidentBreakdown_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ResidentBreakdown_AspNetUsers_DeletedById",
+                        column: x => x.DeletedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ResidentBreakdown_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ResidentBreakdown_Country_NationalityId",
+                        column: x => x.NationalityId,
+                        principalSchema: "lkp",
+                        principalTable: "Country",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ResidentBreakdown_JobQuota_JobQuotaId",
+                        column: x => x.JobQuotaId,
+                        principalSchema: "hr",
+                        principalTable: "JobQuota",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SponsorProfile",
+                schema: "app",
+                columns: table => new
+                {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SponsorTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SponsorName = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
+                    SponsorNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SponsorCardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1658,27 +1780,28 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "hr",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RequestingDepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    JobCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    WorkLocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MajorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    WorkTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Vacancies = table.Column<int>(type: "int", nullable: false),
-                    Deadline = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Benefits = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PublishAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    StatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RequestingDepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    JobCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WorkLocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MajorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WorkTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Vacancies = table.Column<int>(type: "int", nullable: false),
+                    Deadline = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    Benefits = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    PublishAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    StatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuotaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1707,48 +1830,56 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalSchema: "lkp",
                         principalTable: "Department",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Job_Gender_GenderId",
                         column: x => x.GenderId,
                         principalSchema: "lkp",
                         principalTable: "Gender",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Job_JobCategory_JobCategoryId",
                         column: x => x.JobCategoryId,
                         principalSchema: "lkp",
                         principalTable: "JobCategory",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Job_JobQuota_QuotaId",
+                        column: x => x.QuotaId,
+                        principalSchema: "hr",
+                        principalTable: "JobQuota",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Job_JobStatus_StatusId",
                         column: x => x.StatusId,
                         principalSchema: "lkp",
                         principalTable: "JobStatus",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Job_Major_MajorId",
                         column: x => x.MajorId,
                         principalSchema: "lkp",
                         principalTable: "Major",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Job_Sector_WorkLocationId",
                         column: x => x.WorkLocationId,
                         principalSchema: "lkp",
                         principalTable: "Sector",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Job_WorkType_WorkTypeId",
                         column: x => x.WorkTypeId,
                         principalSchema: "lkp",
                         principalTable: "WorkType",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1756,6 +1887,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "lkp",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     WebSite = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -1765,13 +1903,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     LogoEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LogoAr = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OriginalName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     BackendName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     NameAr = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     NameEn = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -1814,36 +1945,37 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "app",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CandidateTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TargetEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ResumeAttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    NationalCardIdAttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    NationalNumber = table.Column<int>(type: "int", nullable: false),
-                    BirthDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    NationalityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ReligionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    MaritalStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ChildrenCount = table.Column<int>(type: "int", nullable: false),
-                    ResidenceCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ResidenceAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    InterviewLocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ResidenceAddressCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    HasDisability = table.Column<bool>(type: "bit", nullable: false),
-                    DisabilityDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SponsorProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    BirthdayCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    MarriageCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    IsDraft = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CandidateTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TargetEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ResumeAttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    NationalCardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    NationalNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BirthDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    NationalityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ReligionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MaritalStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ChildrenCount = table.Column<int>(type: "int", nullable: false),
+                    ResidenceCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InterviewLocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResidenceAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ResidenceAddressCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    HasDisability = table.Column<bool>(type: "bit", nullable: false),
+                    DisabilityDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SponsorProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    BirthdayCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MarriageCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDraft = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1936,8 +2068,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalTable: "Resources",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserProfile_Resources_NationalCardIdAttachmentId",
-                        column: x => x.NationalCardIdAttachmentId,
+                        name: "FK_UserProfile_Resources_NationalCardId",
+                        column: x => x.NationalCardId,
                         principalTable: "Resources",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -1969,19 +2101,19 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "Invitations",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ApplicantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
-                    AcceptedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    InvitationStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
+                    AcceptedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    InvitationStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2030,17 +2162,17 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "JobConditions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Order = table.Column<int>(type: "int", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2069,23 +2201,23 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalSchema: "hr",
                         principalTable: "Job",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "JobDegrees",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DegreeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DegreeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2121,77 +2253,24 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalSchema: "hr",
                         principalTable: "Job",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "JobQuotas",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NationalityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Percentage = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_JobQuotas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_JobQuotas_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_JobQuotas_AspNetUsers_DeletedById",
-                        column: x => x.DeletedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_JobQuotas_AspNetUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_JobQuotas_Country_NationalityId",
-                        column: x => x.NationalityId,
-                        principalSchema: "lkp",
-                        principalTable: "Country",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_JobQuotas_Job_JobId",
-                        column: x => x.JobId,
-                        principalSchema: "hr",
-                        principalTable: "Job",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "JobSkills",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Order = table.Column<int>(type: "int", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2220,7 +2299,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalSchema: "hr",
                         principalTable: "Job",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -2228,6 +2307,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Organization = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -2235,14 +2321,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     EndDate = table.Column<DateOnly>(type: "date", nullable: true),
                     CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Achievements = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    Achievements = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2285,17 +2364,17 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2338,17 +2417,17 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2399,16 +2478,16 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SkillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SkillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2452,6 +2531,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 columns: table => new
                 {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MajorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -2462,14 +2548,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     RatingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2554,20 +2633,20 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Organization = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Organization = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2609,17 +2688,17 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "HistoryInvitation",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    InvitationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    InvitationStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InvitationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InvitationStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2901,6 +2980,36 @@ namespace Tawtheef.Infrastructure.Migrations
                     { new Guid("a2c6d553-1c3d-4697-99d2-7e12f6335f38"), 0, null, "75a677a7-c93d-4940-8666-4d648343104c", null, new DateTimeOffset(new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 3, 0, 0, 0)), null, null, null, "AdminUser", "admin@tawtheef.com", true, "Admin", "Admin", false, null, false, null, "ADMIN@TAWTHEEF.COM", "ADMIN@TAWTHEEF.COM", 0, null, null, 0, "AQAAAAIAAYagAAAAEIgyaMwrHltJioEPUc/0/KfGb2iA529lr04a/6+LmeVbtJZ1fV3px6oeRlalT1GI/Q==", null, false, "a984b6f5-e904-44b0-8d0d-5e93c07b1510", false, null, null, "admin@tawtheef.com", new Guid("c3d4e5f6-a7b8-6a95-0c3d-7e8f9a0b1c2d") },
                     { new Guid("bf879671-62de-4f17-8c07-38b6e6619fe0"), 0, null, "af24df87-26d1-4f94-b84b-410bbbe14859", null, new DateTimeOffset(new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 3, 0, 0, 0)), null, null, null, "ApplicantUser", "qa.a@tawtheef.com", true, "QA. A", "QA. A", false, null, false, null, "QA.A@TAWTHEEF.COM", "QA.A@TAWTHEEF.COM", 0, null, null, 0, "AQAAAAIAAYagAAAAEN8QCL2z2kO862Y8bQpTxN7RPyssbCDnnWOBERadOw0vaVF5WAL3D/axQfbD1BgXKA==", null, false, "18cc15bc-1783-40d9-a3b5-d26dd57c3f6c", false, null, null, "qa.a@tawtheef.com", new Guid("b2c3d4e5-f6a7-5984-9b2c-6d7e8f9a0b1c") }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_CertificateId",
+                schema: "pro",
+                table: "Achievement",
+                column: "CertificateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_CreatedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_DeletedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "DeletedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_UpdatedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "UpdatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_UserProfileId",
+                schema: "pro",
+                table: "Achievement",
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -3312,6 +3421,12 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Job_Deadline",
+                schema: "hr",
+                table: "Job",
+                column: "Deadline");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Job_DeletedById",
                 schema: "hr",
                 table: "Job",
@@ -3324,6 +3439,12 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "GenderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Job_IsDeleted_Deadline",
+                schema: "hr",
+                table: "Job",
+                columns: new[] { "IsDeleted", "Deadline" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Job_JobCategoryId",
                 schema: "hr",
                 table: "Job",
@@ -3334,6 +3455,13 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "hr",
                 table: "Job",
                 column: "MajorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Job_QuotaId",
+                schema: "hr",
+                table: "Job",
+                column: "QuotaId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Job_RequestingDepartmentId",
@@ -3442,28 +3570,21 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobQuotas_CreatedById",
-                table: "JobQuotas",
+                name: "IX_JobQuota_CreatedById",
+                schema: "hr",
+                table: "JobQuota",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobQuotas_DeletedById",
-                table: "JobQuotas",
+                name: "IX_JobQuota_DeletedById",
+                schema: "hr",
+                table: "JobQuota",
                 column: "DeletedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobQuotas_JobId",
-                table: "JobQuotas",
-                column: "JobId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_JobQuotas_NationalityId",
-                table: "JobQuotas",
-                column: "NationalityId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_JobQuotas_UpdatedById",
-                table: "JobQuotas",
+                name: "IX_JobQuota_UpdatedById",
+                schema: "hr",
+                table: "JobQuota",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
@@ -3953,6 +4074,36 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ResidentBreakdown_CreatedById",
+                schema: "hr",
+                table: "ResidentBreakdown",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResidentBreakdown_DeletedById",
+                schema: "hr",
+                table: "ResidentBreakdown",
+                column: "DeletedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResidentBreakdown_JobQuotaId",
+                schema: "hr",
+                table: "ResidentBreakdown",
+                column: "JobQuotaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResidentBreakdown_NationalityId",
+                schema: "hr",
+                table: "ResidentBreakdown",
+                column: "NationalityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResidentBreakdown_UpdatedById",
+                schema: "hr",
+                table: "ResidentBreakdown",
+                column: "UpdatedById");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Resources_CreatedById",
                 table: "Resources",
                 column: "CreatedById");
@@ -4248,10 +4399,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "MarriageCertificateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfile_NationalCardIdAttachmentId",
+                name: "IX_UserProfile_NationalCardId",
                 schema: "app",
                 table: "UserProfile",
-                column: "NationalCardIdAttachmentId");
+                column: "NationalCardId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfile_NationalityId",
@@ -4397,6 +4548,52 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_AspNetUsers_CreatedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "CreatedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_AspNetUsers_DeletedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "DeletedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_AspNetUsers_UpdatedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "UpdatedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_Resources_CertificateId",
+                schema: "pro",
+                table: "Achievement",
+                column: "CertificateId",
+                principalTable: "Resources",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_UserProfile_UserProfileId",
+                schema: "pro",
+                table: "Achievement",
+                column: "UserProfileId",
+                principalSchema: "app",
+                principalTable: "UserProfile",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                 table: "AspNetUserClaims",
                 column: "UserId",
@@ -4449,6 +4646,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 table: "UserType");
 
             migrationBuilder.DropTable(
+                name: "Achievement",
+                schema: "pro");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -4489,9 +4690,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "JobDegrees");
 
             migrationBuilder.DropTable(
-                name: "JobQuotas");
-
-            migrationBuilder.DropTable(
                 name: "JobSkills");
 
             migrationBuilder.DropTable(
@@ -4515,6 +4713,10 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "RefreshToken");
+
+            migrationBuilder.DropTable(
+                name: "ResidentBreakdown",
+                schema: "hr");
 
             migrationBuilder.DropTable(
                 name: "TrainingCourse",
@@ -4612,6 +4814,10 @@ namespace Tawtheef.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "JobCategory",
                 schema: "lkp");
+
+            migrationBuilder.DropTable(
+                name: "JobQuota",
+                schema: "hr");
 
             migrationBuilder.DropTable(
                 name: "JobStatus",
