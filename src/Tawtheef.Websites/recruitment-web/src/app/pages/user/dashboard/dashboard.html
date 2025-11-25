@@ -87,33 +87,56 @@
         <div class="row g-2">
           <div class="col-md-3">
             <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
-            <select
-              [value]="this.statusFilter()"
-              (change)="this.onStatusFilterChange($event)"
-              class="form-select form-select-sm">
-              @for (option of this.FILTER_OPTIONS.STATUS; track option.value) {
-                <option [value]="option.value">{{ option.label }}</option>
-              }
-            </select>
+            <p-select
+              [options]="candidateService.invitationStatuses()"
+              [showClear]="true"
+              [placeholder]="'candidate_dashboard.filter_all' | translate"
+              name="invitationStatuses"
+              (onChange)="this.onStatusFilterChange($event)"
+              [filter]="true"
+              filterBy="name"
+              optionLabel="name"
+              optionValue="backendName"
+              size="small"
+              class="form-select form-select-sm"
+            ></p-select>
           </div>
           <div class="col-md-3">
             <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
-            <select
-              [value]="this.typeFilter()"
-              (change)="this.onTypeFilterChange($event)"
-              class="form-select form-select-sm">
-              @for (option of this.FILTER_OPTIONS.TYPE; track option.value) {
-                <option [value]="option.value">{{ option.label }}</option>
-              }
-            </select>
+            <p-select
+              [options]="candidateService.jobCategories()"
+              [showClear]="true"
+              [placeholder]="'candidate_dashboard.filter_all' | translate"
+              name="jobCategories"
+              (onChange)="this.onTypeFilterChange($event)"
+              [filter]="true"
+              filterBy="name"
+              optionLabel="name"
+              optionValue="backendName"
+              size="small"
+              class="form-select form-select-sm"
+            ></p-select>
           </div>
           <div class="col-md-3">
             <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
-            <input
-              [value]="this.entityFilter()"
-              (input)="this.onEntityFilterChange($event)"
-              class="form-control form-control-sm"
-              [placeholder]="'candidate_dashboard.placeholder_entity' | translate">
+<!--            <input-->
+<!--              [value]="this.entityFilter()"-->
+<!--              (input)="this.onEntityFilterChange($event)"-->
+<!--              class="form-control form-control-sm"-->
+<!--              [placeholder]="'candidate_dashboard.placeholder_entity' | translate">-->
+            <p-select
+              [options]="candidateService.departments()"
+              [showClear]="true"
+              [placeholder]="'candidate_dashboard.filter_all' | translate"
+              name="departments"
+              (onChange)="this.onEntityFilterChange($event)"
+              [filter]="true"
+              filterBy="name"
+              optionLabel="name"
+              optionValue="backendName"
+              size="small"
+              class="form-select form-select-sm"
+            ></p-select>
           </div>
           <div class="col-md-3">
             <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>

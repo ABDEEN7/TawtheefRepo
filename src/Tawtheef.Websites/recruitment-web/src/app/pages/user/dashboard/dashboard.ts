@@ -19,6 +19,8 @@ import {
   JobType, JobStatus
 } from './services/candidate-dashboard.service';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
+import {Select} from 'primeng/select';
+import {AnyCatcher} from 'rxjs/internal/AnyCatcher';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,12 +29,14 @@ import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.
     CommonModule,
     FormsModule,
     TranslatePipe,
-    I18nNamespaceDirective],
+    I18nNamespaceDirective,
+    Select
+  ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
-  private candidateService = inject(CandidateDashboardService);
+  candidateService = inject(CandidateDashboardService);
   readonly FILTER_OPTIONS = FILTER_OPTIONS;
 
   // Loading states
@@ -79,7 +83,7 @@ export class Dashboard implements OnInit {
 
   // Computed KPIs
   kpiInvited = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.INVITED).length
+    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.NEW_INVITATION).length
   );
 
   kpiUnderReview = computed(() =>
@@ -87,11 +91,11 @@ export class Dashboard implements OnInit {
   );
 
   kpiWithdrawn = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.WITHDRAWN).length
+    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.REJECTED).length
   );
 
   kpiApplied = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.APPLIED).length
+    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.SUBMITTED).length
   );
 
   // Computed pagination info
@@ -110,6 +114,7 @@ export class Dashboard implements OnInit {
   });
 
   ngOnInit() {
+    this.candidateService.loadCandidateLookups();
     this.loadData();
   }
 
@@ -155,21 +160,21 @@ export class Dashboard implements OnInit {
   }
 
   // Filter methods
-  onStatusFilterChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    this.statusFilter.set(value);
+  onStatusFilterChange(event: any): void {
+    const value = event.value; // PrimeNG event has value property
+    this.statusFilter.set(value ?? '');
     this.currentPage.set(1);
   }
 
-  onTypeFilterChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    this.typeFilter.set(value);
+  onTypeFilterChange(event: any): void {
+    const value =  event.value;
+    this.typeFilter.set(value ?? '');
     this.currentPage.set(1);
   }
 
-  onEntityFilterChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.entityFilter.set(value);
+  onEntityFilterChange(event: any): void {
+    const value = event.value;
+    this.typeFilter.set(value ?? '');
     this.currentPage.set(1);
   }
 
@@ -224,7 +229,7 @@ export class Dashboard implements OnInit {
         if (response.success) {
           this.allRecords.update(records =>
             records.map(record =>
-              record.id === recordId ? { ...record, status: JOB_INVITATION_STATUSES.WITHDRAWN } : record
+              record.id === recordId ? { ...record, status: JOB_INVITATION_STATUSES.REJECTED } : record
             )
           );
           this.currentPage.set(1);
