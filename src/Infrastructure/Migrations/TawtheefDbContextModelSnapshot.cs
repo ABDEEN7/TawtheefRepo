@@ -153,6 +153,75 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Achievement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("Organization")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
+
+                    b.Property<Guid>("UserProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CertificateId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("UserProfileId");
+
+                    b.ToTable("Achievement", "pro");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Experience", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4648,7 +4717,10 @@ namespace Tawtheef.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("BirthDate")
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("date");
 
                     b.Property<Guid?>("BirthdayCertificateId")
@@ -4701,11 +4773,11 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid?>("MarriageCertificateId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("NationalCardIdAttachmentId")
+                    b.Property<Guid?>("NationalCardId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("NationalNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("NationalNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("NationalityId")
                         .HasColumnType("uniqueidentifier");
@@ -4760,7 +4832,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("MarriageCertificateId");
 
-                    b.HasIndex("NationalCardIdAttachmentId");
+                    b.HasIndex("NationalCardId");
 
                     b.HasIndex("NationalityId");
 
@@ -5003,6 +5075,46 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Achievement", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "Certificate")
+                        .WithMany()
+                        .HasForeignKey("CertificateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.UserProfile", "UserProfile")
+                        .WithMany("Achievements")
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Certificate");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+
+                    b.Navigation("UserProfile");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Experience", b =>
@@ -6550,9 +6662,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("MarriageCertificateId");
 
-                    b.HasOne("Tawtheef.Domain.Entities.Resource", "NationalCardIdAttachment")
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "NationalCard")
                         .WithMany()
-                        .HasForeignKey("NationalCardIdAttachmentId");
+                        .HasForeignKey("NationalCardId");
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Country", "Nationality")
                         .WithMany()
@@ -6568,7 +6680,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ResidenceAddressCertificateId");
 
-                    b.HasOne("Tawtheef.Domain.Entities.Applicant.ResidenceAddress", "Address")
+                    b.HasOne("Tawtheef.Domain.Entities.Applicant.ResidenceAddress", "ResidenceAddress")
                         .WithMany()
                         .HasForeignKey("ResidenceAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -6605,8 +6717,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Address");
-
                     b.Navigation("BirthdayCertificate");
 
                     b.Navigation("CandidateType");
@@ -6623,11 +6733,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("MarriageCertificate");
 
-                    b.Navigation("NationalCardIdAttachment");
+                    b.Navigation("NationalCard");
 
                     b.Navigation("Nationality");
 
                     b.Navigation("Religion");
+
+                    b.Navigation("ResidenceAddress");
 
                     b.Navigation("ResidenceAddressCertificate");
 
@@ -6708,6 +6820,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.UserProfile", b =>
                 {
+                    b.Navigation("Achievements");
+
                     b.Navigation("AdditionalAttachments");
 
                     b.Navigation("Experiences");

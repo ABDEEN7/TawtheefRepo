@@ -17,4 +17,4 @@ public interface IFileStorageService
     IResult<string> MapPath(string blobKey);      // Ok(fullPath) or Fail(InvalidBlobKey)
 }
 
-public record FileSaved(string BlobKey, long Size);
+public record FileSaved(string BlobKey, ulong Size);

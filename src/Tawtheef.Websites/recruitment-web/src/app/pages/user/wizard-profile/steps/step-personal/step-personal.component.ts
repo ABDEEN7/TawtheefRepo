@@ -5,6 +5,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { ProfileState } from '../../models/profile-state.model';
 import {CandidateType, MaritalStatus} from '../../../../../core/enums/lookups.enum';
+import {mapPersonalSection} from '../../services/profile.mapper';
+import {finalize} from 'rxjs/operators';
+import {ProfileService} from '../../services/profile.service';
 
 @Component({
   selector: 'app-step-personal',
@@ -20,7 +23,10 @@ export class StepPersonalComponent {
   dialog = inject(DialogService);
   translate = inject(TranslateService);
   lookups = inject(ProfileLookupsService);
+  profileService = inject(ProfileService);
 
+  savingPersonal = false;
+  uploadingSponsor = false;
   get isNeedSponsor(){
     return [CandidateType.ResidentQatar].includes(
       this.ds.state().candidateType?.backendName as CandidateType
@@ -48,8 +54,49 @@ export class StepPersonalComponent {
     return !!marital && marital.backendName !== MaritalStatus.Single;
   }
   get showDisabilityType(): boolean {
-    return !!this.ds.state().hasDisability;
+    return this.ds.state().hasDisability;
   }
 
-  protected readonly CandidateType = CandidateType;
+  onSponsorCardSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.uploadingSponsor = true;
+
+    this.profileService.uploadFile(file)
+      .pipe(finalize(() => {
+        this.uploadingSponsor = false;
+        input.value = '';
+      }))
+      .subscribe({
+        next: (ref) => {
+          this.ds.up('sponsorCardFile', ref);
+        },
+        error: err => {
+          console.error(err);
+        }
+      });
+  }
+  onNext() {
+    const s = this.ds.state();
+    if (!s.fullName || !s.qid || !s.dob || !s.nationality || !s.gender) {
+      return;
+    }
+
+    const dto = mapPersonalSection(s);
+
+    this.savingPersonal = true;
+
+    this.profileService.savePersonalSection(dto)
+      .pipe(finalize(() => this.savingPersonal = false))
+      .subscribe({
+        next: () => {
+          this.next.emit();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
 }

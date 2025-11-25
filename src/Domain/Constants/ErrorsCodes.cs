@@ -68,6 +68,7 @@ public class ErrorsCodes
     #endregion
 
     #region Update Profile Errors
+    public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";
     public const string InvalidPassword = "INVALID_PASSWORD";
@@ -100,5 +101,6 @@ public class ErrorsCodes
     public const string IoError = "IO_ERROR";
     public const string AccessDenied = "ACCESS_DENIED";
     public const string Cancelled = "CANCELLED";
+    public const string EmptyFile = "EMPTY_FILE";
     #endregion
 }

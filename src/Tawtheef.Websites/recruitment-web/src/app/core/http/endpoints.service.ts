@@ -28,8 +28,16 @@ export class EndpointsService {
   user= {
     bootstrap: this.getFullUrl(`/me/bootstrap`),
     profile: {
-      socialAccounts: this.getFullUrl(`/user/profile/social-accounts`),
-      save: this.getFullUrl(`/user/profile/save`),
+      upload: this.getFullUrl(`/user/profiles/file/upload`),
+      savePrereq: this.getFullUrl(`/user/profiles/prereq`),
+      savePersonal: this.getFullUrl(`/user/profiles/personal`),
+      saveContact: this.getFullUrl(`/user/profiles/contact`),
+      saveEducation: this.getFullUrl(`/user/profiles/education`),
+      saveExperience: this.getFullUrl(`/user/profiles/experience`),
+      saveSkills: this.getFullUrl(`/user/profiles/skills`),
+      saveLanguages: this.getFullUrl(`/user/profiles/languages`),
+      saveReferences: this.getFullUrl(`/user/profiles/references`),
+      save: this.getFullUrl(`/user/profiles/save`),
     },
     verify:{
       phone:{
@@ -63,6 +71,7 @@ export class EndpointsService {
       languages: this.getFullUrl(`/profiles/lookups/languages`),
       languageLevels: this.getFullUrl(`/profiles/lookups/language-levels`),
       sponsorTypes: this.getFullUrl(`/profiles/lookups/sponsor-types`),
+      skill: this.getFullUrl(`/profiles/lookups/skill-search`),
     }
   }
 }

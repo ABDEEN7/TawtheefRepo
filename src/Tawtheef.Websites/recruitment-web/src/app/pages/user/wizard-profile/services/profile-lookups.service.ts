@@ -1,7 +1,8 @@
 ﻿import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {forkJoin, Observable} from 'rxjs';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
+import {SkillDto} from '../models/skill-dto.model';
 
 export interface LookupDto {
   id: string;
@@ -89,5 +90,9 @@ export class ProfileLookupsService {
         this.loading.set(false);
       }
     });
+  }
+  searchSkills(query: string): Observable<SkillDto[]> {
+    const params = new HttpParams().set('q', query);
+    return this.http.get<SkillDto[]>(this.endpoints.profile.lookups.skill, { params });
   }
 }

@@ -26,13 +26,22 @@
       </label>
       <div class="d-flex gap-2 align-items-center">
         <input pInputText class="form-control" pSize="small" name="cvName"
-               [ngModel]="ds.state().cvName" (ngModelChange)="ds.up('cvName',$event.files[0]?.name)"
+               [ngModel]="ds.state().cvName"
                placeholder="{{ 'wizard.prereq.cvLabel' | translate }}"
                readonly
         />
-        <button type="button" class="btn btn-outline-secondary btn-sm">
-          <i class="fa-solid fa-upload"></i>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="cvInput.click()"
+                [disabled]="uploading['cv']">
+          <i *ngIf="!uploading['cv']" class="fa-solid fa-upload"></i>
+          <i *ngIf="uploading['cv']" class="fa-solid fa-spinner fa-spin"></i>
         </button>
+        <input #cvInput
+               type="file"
+               accept=".jpg,.jpeg,.png,.pdf"
+               class="d-none"
+               (change)="onFileSelected('cv', $event)" />
       </div>
     </div>
     <div class="col-md-6">
@@ -42,13 +51,22 @@
       </label>
       <div class="d-flex gap-2 align-items-center">
         <input pInputText class="form-control" pSize="small" name="idName"
-               [ngModel]="ds.state().idName" (ngModelChange)="ds.up('idName',$event.files[0]?.name)"
+               [ngModel]="ds.state().idName"
                placeholder="{{ 'wizard.prereq.idLabel' | translate }}"
                readonly
         />
-        <button type="button" class="btn btn-outline-secondary btn-sm">
-          <i class="fa-solid fa-upload"></i>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="idInput.click()"
+                [disabled]="uploading['id']">
+          <i *ngIf="!uploading['id']" class="fa-solid fa-upload"></i>
+          <i *ngIf="uploading['id']" class="fa-solid fa-spinner fa-spin"></i>
         </button>
+        <input #idInput
+               type="file"
+               accept=".jpg,.jpeg,.png,.pdf"
+               class="d-none"
+               (change)="onFileSelected('id', $event)" />
       </div>
     </div>
     <div class="col-md-6" *ngIf="isNeedBirthCertificate">
@@ -58,13 +76,22 @@
       </label>
       <div class="d-flex gap-2 align-items-center">
         <input pInputText class="form-control" pSize="small" name="birthCertificateName"
-               [ngModel]="ds.state().idName" (ngModelChange)="ds.up('birthCertificateName',$event.files[0]?.name)"
+               [ngModel]="ds.state().birthCertificateName"
                placeholder="{{ 'wizard.prereq.birthCertificate' | translate }}"
                readonly
         />
-        <button type="button" class="btn btn-outline-secondary btn-sm">
-          <i class="fa-solid fa-upload"></i>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="birthInput.click()"
+                [disabled]="uploading['birth']">
+          <i *ngIf="!uploading['birth']" class="fa-solid fa-upload"></i>
+          <i *ngIf="uploading['birth']" class="fa-solid fa-spinner fa-spin"></i>
         </button>
+        <input #birthInput
+               type="file"
+               accept=".jpg,.jpeg,.png,.pdf"
+               class="d-none"
+               (change)="onFileSelected('birth', $event)" />
       </div>
     </div>
     <div class="col-md-6" *ngIf="isNeedMarriageCertificate">
@@ -74,20 +101,42 @@
       </label>
       <div class="d-flex gap-2 align-items-center">
         <input pInputText class="form-control" pSize="small" name="marriageCertificateName"
-               [ngModel]="ds.state().idName" (ngModelChange)="ds.up('marriageCertificateName',$event.files[0]?.name)"
+               [ngModel]="ds.state().marriageCertificateName"
                placeholder="{{ 'wizard.prereq.marriageCertificate' | translate }}"
                readonly
         />
-        <button type="button" class="btn btn-outline-secondary btn-sm">
-          <i class="fa-solid fa-upload"></i>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="marriageInput.click()"
+                [disabled]="uploading['marriage']">
+          <i *ngIf="!uploading['marriage']" class="fa-solid fa-upload"></i>
+          <i *ngIf="uploading['marriage']" class="fa-solid fa-spinner fa-spin"></i>
         </button>
+        <input #marriageInput
+               type="file"
+               accept=".jpg,.jpeg,.png,.pdf"
+               class="d-none"
+               (change)="onFileSelected('marriage', $event)" />
       </div>
     </div>
   </div>
 </div>
 <div class="text-end">
-  <button class="btn btn-brand" (click)="next.emit()">
-    {{ 'wizard.buttons.next' | translate }}
-    <i class="fa-solid ms-1" faDirArrow="end"></i>
+  <div *ngIf="errorMessage" class="text-danger small mb-2">
+    {{ errorMessage }}
+  </div>
+
+  <button class="btn btn-brand"
+          type="button"
+          (click)="onNext()"
+          [disabled]="saving">
+    <span *ngIf="!saving">
+      {{ 'wizard.buttons.next' | translate }}
+      <i class="fa-solid ms-1" faDirArrow="end"></i>
+    </span>
+    <span *ngIf="saving">
+      <i class="fa-solid fa-spinner fa-spin me-1"></i>
+      {{ 'wizard.buttons.saving' | translate }}
+    </span>
   </button>
 </div>

@@ -118,6 +118,14 @@ export class DataService {
   }
 
   addDegree(d: Degree){ this.state.update(s => ({...s, degrees:[...s.degrees, d]})); }
+  updateDegree(index: number, patch: Partial<Degree>) {
+    this.state.update(s => ({
+      ...s,
+      degrees: s.degrees.map((d, i) =>
+        i === index ? { ...d, ...patch } : d
+      ),
+    }));
+  }
   delDegree(i:number){ this.state.update(s => ({...s, degrees: s.degrees.filter((_,x)=>x!==i)})); }
 
   addExp(e: Experience){ this.state.update(s => ({...s, experiences:[...s.experiences, e]})); }

@@ -5,14 +5,22 @@ import {Experience} from './experience.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {PhoneNumber} from './phone-number.model';
 
+export interface UploadedFileRef {
+  resourceId: string;
+  fileName: string;
+}
 export interface ProfileState {
   // prereq
   candidateType?: dropdownOptionsModel;
   targetEntity?: dropdownOptionsModel;
-  cvName?: string;
-  idName?: string;
-  marriageCertificateName?: string;
-  birthCertificateName?: string;
+  cvName?: string | null;
+  cvFile?: UploadedFileRef | null;
+  idName?: string | null;
+  idFile?: UploadedFileRef  | null;
+  birthCertificateName?: string | null;
+  birthCertificateFile?: UploadedFileRef  | null;
+  marriageCertificateName?: string | null;
+  marriageCertificateFile?: UploadedFileRef  | null;
 
   // personal
   fullName?: string;
@@ -24,6 +32,14 @@ export interface ProfileState {
   marital?: dropdownOptionsModel;
   children?: number;
   dob?: string;
+
+  hasDisability: boolean;
+  disabilityDetails?: string | null;
+  sponsorType?: any | null;
+  sponsorEmployerName?: string | null;
+  sponsorEmployerNumber?: string | null;
+  sponsorCardName?: string | null;
+  sponsorCardFile?: UploadedFileRef | null;
 
   // contact
   country?: dropdownOptionsModel;
@@ -39,6 +55,7 @@ export interface ProfileState {
   naBuilding?: string;
   naUnit?: string;
   naFileName?: string;
+  naFile?: UploadedFileRef | null;
 
   // collections
   degrees: Degree[];
@@ -52,11 +69,4 @@ export interface ProfileState {
   // ui
   available: boolean;
   avatarUrl?: string;
-
-  hasDisability: boolean;
-  disabilityDetails?: string | null;
-  sponsorType?: any | null;
-  sponsorEmployerName?: string | null;
-  sponsorEmployerNumber?: string | null;
-  sponsorCardName?: string | null;
 }

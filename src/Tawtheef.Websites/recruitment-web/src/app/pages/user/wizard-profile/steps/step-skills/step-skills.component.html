@@ -54,17 +54,17 @@
 
       <div class="d-flex flex-wrap gap-2 mb-2 align-items-start">
         <p-select
-          [options]="languageOptions"
-          optionLabel="label" optionValue="value"
-          [(ngModel)]="newName"
+          [options]="lookups.languages()"
+          optionLabel="name"
+          [(ngModel)]="newLanguage"
           [placeholder]="'wizard.skills.selectLanguage' | translate"
           [showClear]="true"
           class="w-language"
         ></p-select>
 
         <p-select
-          [options]="levelOptions"
-          optionLabel="label" optionValue="value"
+          [options]="lookups.languageLevels()"
+          optionLabel="name"
           [(ngModel)]="newLevel"
           [placeholder]="'wizard.skills.selectLevel' | translate"
           [showClear]="true"
@@ -87,8 +87,8 @@
 
         <ng-template pTemplate="body" let-r let-i="rowIndex">
           <tr>
-            <td>{{ r.name }}</td>
-            <td><span class="badge rounded-pill bg-soft">{{ r.level }}</span></td>
+            <td>{{ r.langName }}</td>
+            <td><span class="badge rounded-pill bg-soft">{{ r.levelName }}</span></td>
             <td class="text-end">
               <button class="btn btn-sm btn-outline-danger rounded-pill"
                       (click)="removeLang(i)"

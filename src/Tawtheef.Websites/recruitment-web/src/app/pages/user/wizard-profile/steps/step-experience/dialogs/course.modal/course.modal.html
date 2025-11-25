@@ -38,29 +38,33 @@
         </div>
 
         <div class="row g-2 g-md-3 align-items-start">
-          <!-- From -->
-          <div class="col-12 col-md-6 d-flex flex-column">
+          <div class="col-12 d-flex flex-column">
             <label class="form-label fw-semibold mb-2 required">
-              <i class="fa-solid fa-calendar-day me-1"></i> {{ 'wizard.courses.from' | translate }}
+              <i class="fa-solid fa-calendar-day me-1"></i>
+              {{ 'wizard.courses.period' | translate }}
             </label>
-            <p-date-picker formControlName="from"
-                           showIcon="true" view="month" dateFormat="yy-mm" fluid
-                           (onSelect)="touchDates()"
-                           [ngClass]="{'p-invalid': (f['from'].invalid || form.hasError('dateRange')) && (f['from'].dirty || f['from'].touched)}">
-            </p-date-picker>
-          </div>
 
-          <!-- To -->
-          <div class="col-12 col-md-6 d-flex flex-column">
-            <label class="form-label fw-semibold mb-2 required">
-              <i class="fa-solid fa-calendar-day me-1"></i> {{ 'wizard.courses.to' | translate }}
-            </label>
-            <p-date-picker formControlName="to"
-                           showIcon="true" view="month" dateFormat="yy-mm" fluid
-                           (onSelect)="touchDates()"
-                           [ngClass]="{'p-invalid': form.hasError('dateRange') && (f['to'].dirty || f['to'].touched)}">
+            <p-date-picker
+              formControlName="period"
+              selectionMode="range"
+              view="month"
+              dateFormat="yy-mm"
+              showIcon="true"
+              fluid
+              (onSelect)="touchPeriod()"
+              [ngClass]="{
+        'p-invalid':
+          f['period'].invalid && (f['period'].dirty || f['period'].touched)
+      }">
             </p-date-picker>
-            <small *ngIf="form.hasError('dateRange') && (f['to'].dirty || f['to'].touched)" class="text-danger mt-1 d-block">
+
+            <small *ngIf="f['period'].hasError('required') && (f['period'].dirty || f['period'].touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+
+            <small *ngIf="f['period'].hasError('periodRange') && (f['period'].dirty || f['period'].touched)"
+                   class="text-danger mt-1 d-block">
               {{ 'validation.dateRange' | translate }}
             </small>
           </div>

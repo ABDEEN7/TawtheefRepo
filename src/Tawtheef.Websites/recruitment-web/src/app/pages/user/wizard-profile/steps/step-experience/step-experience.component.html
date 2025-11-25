@@ -32,7 +32,7 @@
         <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
         <td>{{ r.fileName || '—' }}</td>
         <td class="text-end">
-          <button class="btn btn-sm btn-outline-danger" (click)="ds.delExp(i)">
+          <button class="btn btn-sm btn-outline-danger" (click)="removeExperience(i)">
             <i class="fa-solid fa-trash"></i>
           </button>
         </td>
@@ -77,7 +77,7 @@
         <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
         <td>{{ r.fileName || '—' }}</td>
         <td class="text-end">
-          <button class="btn btn-sm btn-outline-danger" (click)="ds.delCourse(i)">
+          <button class="btn btn-sm btn-outline-danger" (click)="removeCourse(i)">
             <i class="fa-solid fa-trash"></i>
           </button>
         </td>
@@ -122,7 +122,7 @@
         <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
         <td>{{ r.fileName || '—' }}</td>
         <td class="text-end">
-          <button class="btn btn-sm btn-outline-danger" (click)="ds.delAchievement(i)">
+          <button class="btn btn-sm btn-outline-danger" (click)="removeAchievement(i)">
             <i class="fa-solid fa-trash"></i>
           </button>
         </td>
