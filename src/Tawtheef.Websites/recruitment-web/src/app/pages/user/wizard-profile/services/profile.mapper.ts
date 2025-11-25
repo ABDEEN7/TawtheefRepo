@@ -10,16 +10,16 @@ export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestM
     targetEntityId: state.targetEntity!.id,
 
     cvResourceId: state.cvFile?.resourceId ?? null,
-    cvFileName: state.cvFile?.fileName ?? state.cvName ?? null,
+    cvFileName: state.cvFile?.resourceName ?? state.cvName ?? null,
 
     idResourceId: state.idFile?.resourceId ?? null,
-    idFileName: state.idFile?.fileName ?? state.idName ?? null,
+    idFileName: state.idFile?.resourceName ?? state.idName ?? null,
 
     birthCertResourceId: state.birthCertificateFile?.resourceId ?? null,
-    birthCertFileName: state.birthCertificateFile?.fileName ?? state.birthCertificateName ?? null,
+    birthCertFileName: state.birthCertificateFile?.resourceName ?? state.birthCertificateName ?? null,
 
     marriageCertResourceId: state.marriageCertificateFile?.resourceId ?? null,
-    marriageCertFileName: state.marriageCertificateFile?.fileName ?? state.marriageCertificateName ?? null,
+    marriageCertFileName: state.marriageCertificateFile?.resourceName ?? state.marriageCertificateName ?? null,
   };
 }
 export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequestDto {

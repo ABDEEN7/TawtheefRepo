@@ -54,20 +54,20 @@ export class StepFirstInfoComponent {
       next: res => {
         switch (kind) {
           case 'cv':
-            this.ds.up('cvFile', { resourceId: res.resourceId, fileName: res.fileName });
-            this.ds.up('cvName', res.fileName);
+            this.ds.up('cvFile', { resourceId: res.resourceId, resourceName: res.resourceName });
+            this.ds.up('cvName', res.resourceName);
             break;
           case 'id':
-            this.ds.up('idFile', { resourceId: res.resourceId, fileName: res.fileName });
-            this.ds.up('idName', res.fileName);
+            this.ds.up('idFile', { resourceId: res.resourceId, resourceName: res.resourceName });
+            this.ds.up('idName', res.resourceName);
             break;
           case 'birth':
-            this.ds.up('birthCertificateFile', { resourceId: res.resourceId, fileName: res.fileName });
-            this.ds.up('birthCertificateName', res.fileName);
+            this.ds.up('birthCertificateFile', { resourceId: res.resourceId, resourceName: res.resourceName });
+            this.ds.up('birthCertificateName', res.resourceName);
             break;
           case 'marriage':
-            this.ds.up('marriageCertificateFile', { resourceId: res.resourceId, fileName: res.fileName });
-            this.ds.up('marriageCertificateName', res.fileName);
+            this.ds.up('marriageCertificateFile', { resourceId: res.resourceId, resourceName: res.resourceName });
+            this.ds.up('marriageCertificateName', res.resourceName);
             break;
         }
         input.value = '';

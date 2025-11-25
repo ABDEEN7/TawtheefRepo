@@ -28,16 +28,16 @@ export class EndpointsService {
   user= {
     bootstrap: this.getFullUrl(`/me/bootstrap`),
     profile: {
-      upload: this.getFullUrl(`/user/profiles/file/upload`),
-      savePrereq: this.getFullUrl(`/user/profiles/prereq`),
-      savePersonal: this.getFullUrl(`/user/profiles/personal`),
-      saveContact: this.getFullUrl(`/user/profiles/contact`),
-      saveEducation: this.getFullUrl(`/user/profiles/education`),
-      saveExperience: this.getFullUrl(`/user/profiles/experience`),
-      saveSkills: this.getFullUrl(`/user/profiles/skills`),
-      saveLanguages: this.getFullUrl(`/user/profiles/languages`),
-      saveReferences: this.getFullUrl(`/user/profiles/references`),
-      save: this.getFullUrl(`/user/profiles/save`),
+      upload: this.getFullUrl(`/profiles/file/upload`),
+      savePrereq: this.getFullUrl(`/profiles/prereq`),
+      savePersonal: this.getFullUrl(`/profiles/personal`),
+      saveContact: this.getFullUrl(`/profiles/contact`),
+      saveEducation: this.getFullUrl(`/profiles/education`),
+      saveExperience: this.getFullUrl(`/profiles/experience`),
+      saveSkills: this.getFullUrl(`/profiles/skills`),
+      saveLanguages: this.getFullUrl(`/profiles/languages`),
+      saveReferences: this.getFullUrl(`/profiles/references`),
+      save: this.getFullUrl(`/profiles/save`),
     },
     verify:{
       phone:{
@@ -51,7 +51,6 @@ export class EndpointsService {
     }
   };
   files = {
-    upload: this.getFullUrl(`/files/upload`),
     download: (id: string) => this.getFullUrl(`/files/${id}/download`)
   };
 

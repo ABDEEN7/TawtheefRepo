@@ -23,7 +23,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
         var id => Result.Ok(Guid.Parse(id))
     };
-    [HttpPost("files/upload")]
+    [HttpPost("file/upload")]
     public async Task<IActionResult> UploadProfileFile(IFormFile file, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);

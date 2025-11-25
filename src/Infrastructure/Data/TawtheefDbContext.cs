@@ -25,7 +25,7 @@ using ILogger = Serilog.ILogger;
 namespace Tawtheef.Infrastructure.Data;
 
 public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
-    ILogger logger, TimeProvider time)
+    ILogger logger)
     : IdentityDbContext<
         User,
         IdentityRole<Guid>,
@@ -154,7 +154,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     {
         // Get current user ID (you'll need to inject IHttpContextAccessor or similar)
         var currentUserId = GetCurrentUserId();
-        var now = time.GetLocalNow().DateTime;
+        var now = DateTimeOffset.UtcNow;
 
         foreach (var entry in ChangeTracker.Entries<IBaseEntity>())
         {
@@ -186,9 +186,18 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
         return result;
     }
     private Guid? GetCurrentUserId()
-    { 
-        var userIdClaim = this.GetService<IHttpContextAccessor>().HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier);
-        return userIdClaim != null ? Guid.Parse(userIdClaim.Value) : null;
+    {
+        try
+        {
+
+            var userIdClaim = this.GetService<IHttpContextAccessor>().HttpContext?.User
+                .FindFirst(ClaimTypes.NameIdentifier);
+            return userIdClaim != null ? Guid.Parse(userIdClaim.Value) : null;
+        }
+        catch (Exception)
+        {
+            return AdminUserIds.AdminUserId;
+        }
     }
     public override int SaveChanges()
     {

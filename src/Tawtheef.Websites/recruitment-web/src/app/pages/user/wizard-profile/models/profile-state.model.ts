@@ -7,7 +7,7 @@ import {PhoneNumber} from './phone-number.model';
 
 export interface UploadedFileRef {
   resourceId: string;
-  fileName: string;
+  resourceName: string;
 }
 export interface ProfileState {
   // prereq
@@ -45,7 +45,7 @@ export interface ProfileState {
   country?: dropdownOptionsModel;
   dialCode?: string;
   address?: string;
-  phone?: PhoneNumber;
+  phone?: PhoneNumber | null;
   phoneVerified: boolean;
   email?: string;
   emailVerified: boolean;

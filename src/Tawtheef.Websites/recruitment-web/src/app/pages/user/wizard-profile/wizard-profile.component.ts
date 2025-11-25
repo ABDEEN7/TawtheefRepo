@@ -2,11 +2,11 @@
 import {DataService} from './services/data.service';
 import {TranslateService} from '@ngx-translate/core';
 import {LanguageService} from '../../../core/services/language.service';
-import {ProfileState} from './models/profile-state.model';
+import {ProfileState, UploadedFileRef} from './models/profile-state.model';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../core/auth/auth.service';
 import {take} from 'rxjs';
-import {AuthBootstrap, PrefillData} from '../../../core/models/auth/auth-response.model';
+import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../core/models/auth/auth-response.model';
 import {routes} from '../../../routes/routes';
 import {finalize} from 'rxjs/operators';
 import {ProfileLookupsService} from './services/profile-lookups.service';
@@ -16,7 +16,7 @@ import {PhoneMapperService} from './services/phone-mapper.service';
 import {HttpClient} from '@angular/common/http';
 import {EndpointsService} from '../../../core/http/endpoints.service';
 import {MessageService} from 'primeng/api';
-// import {buildProfileFormData, mapProfileStateToRequest} from './models/profile.mapper';
+import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -67,53 +67,23 @@ export class WizardProfileComponent implements OnInit {
     this.lookups.loadAll();
 
     const nav = this.router.currentNavigation();
-    const state = nav?.extras.state as {
-      prefill?: PrefillData | null;
-      missing?: string[];
-    } | undefined;
-    if (state?.prefill) {
-      this.avatarPreviewUrl = state.prefill.avatar ?? null;
-      this.ds.prefillFromBootstrap({
-        fullName: state.prefill.fullName ?? null,
-        fullNameEn: state.prefill.fullName ?? null,
-        qid: state.prefill.qid ?? null,
-        dob: state.prefill.dob ?? null,
-        phone: this.phoneMapper.toPhoneObject(state.prefill.phone) ?? false,
-        phoneVerified: state.prefill.phoneVerified ?? false,
-        email: state.prefill.email ?? null,
-        emailVerified: state.prefill.emailVerified ?? false,
-        // gender: state.prefill.gender ?? null,
-        // nationality: state.prefill.nationality ?? null,
-        avatarUrl: state.prefill.avatar ?? null,
-      } as Partial<ProfileState>);
+    const state = nav?.extras.state as ProfileStatusDto | null;
+    if (state) {
+      this.avatarPreviewUrl = state.avatar ?? null;
+      this.ds.prefillFromBootstrap(this.mapProfileStatusToState(state));
       this.loading = false;
       return;
     }
     this.auth.getAuthBootstrap$()
       .pipe(take(1))
       .pipe(finalize(() => {this.loading = false;}))
-      .subscribe((b: AuthBootstrap) => {
-        if (!b.requiresProfileCompletion) {
+      .subscribe((b: Partial<ProfileStatusDto>) => {
+        if (b.isComplete) {
           this.router.navigate([routes.user.dashboard]);
           return;
         }
-
-        if (b.prefill) {
-          this.avatarPreviewUrl =  b.prefill.avatar ?? null;
-          this.ds.prefillFromBootstrap({
-            fullName: b.prefill.fullName ?? null,
-            fullNameEn: b.prefill.fullName ?? null,
-            qid: b.prefill.qid ?? null,
-            dob: b.prefill.dob ?? null,
-            phone: this.phoneMapper.toPhoneObject(b.prefill.phone) ?? null,
-            phoneVerified: b.prefill.phoneVerified ?? false,
-            email: b.prefill.email ?? null,
-            emailVerified: b.prefill.emailVerified ?? false,
-            // nationality: b.prefill.nationality ?? null,
-            // gender: b.prefill.gender ?? null,
-            avatarUrl: b.prefill.avatar ?? null,
-          } as Partial<ProfileState>);
-        }
+        this.avatarPreviewUrl =  b.avatar ?? null;
+        this.ds.prefillFromBootstrap(this.mapProfileStatusToState(b as ProfileStatusDto));
       });
 
   }
@@ -194,5 +164,180 @@ export class WizardProfileComponent implements OnInit {
   //       }
   //     });
   // }
+   mapProfileStatusToState(
+    dto: ProfileStatusDto,
+    prefill?: PrefillData | null
+  ): ProfileState {
+    return {
+      // ----------- Prereq -----------
+      candidateType: this.mapIdToDropdown('candidateType',dto.candidateTypeId) as dropdownOptionsModel,
+      targetEntity: this.mapIdToDropdown('targetEntity',dto.targetEntityId) as dropdownOptionsModel,
+
+      // Attachments
+      cvFile: this.mapFile(dto.resumeAttachment),
+      cvName: dto.resumeAttachment?.fileName ?? null,
+
+      idFile: this.mapFile(dto.nationalCard),
+      idName: dto.nationalCard?.fileName ?? null,
+
+      birthCertificateFile: this.mapFile(dto.birthdayCertificate),
+      birthCertificateName: dto.birthdayCertificate?.fileName ?? null,
+
+      marriageCertificateFile: this.mapFile(dto.marriageCertificate),
+      marriageCertificateName: dto.marriageCertificate?.fileName ?? null,
+
+      // ----------- Personal -----------
+      fullName: dto.fullNameAr ?? prefill?.fullName ?? undefined,
+      fullNameEn: dto.fullNameEn ?? undefined,
+
+      qid: dto.nationalNumber ?? prefill?.qid ?? undefined,
+
+      // nationality: this.mapIdToDropdown(dto.nationalityId ?? prefill?.nationality ?? undefined),
+      // gender: this.mapIdToDropdown(dto.genderId ?? prefill?.gender ?? undefined),
+      // religion: this.mapIdToDropdown(dto.religionId ?? undefined),
+      // marital: this.mapIdToDropdown(dto.maritalStatusId ?? undefined),
+
+      children: dto.childrenCount,
+
+      dob: dto.birthDate ?? prefill?.dob ?? undefined,
+
+      hasDisability: dto.hasDisability,
+      disabilityDetails: dto.disabilityDetails ?? null,
+
+      sponsorType: dto.sponsorProfileId ?? null,
+      sponsorEmployerName: undefined, // Fill when needed
+      sponsorEmployerNumber: undefined,
+      sponsorCardName: undefined,
+      sponsorCardFile: null,
+
+      // ----------- Contact -----------
+      country: this.mapIdToDropdown('countries',dto.residenceCountryId),
+      dialCode: undefined,
+      address: dto.address ?? undefined,
+
+      phone: dto.phone ? this.phoneMapper.toPhoneObject(dto.phone) :
+        prefill?.phone ? this.phoneMapper.toPhoneObject(prefill.phone) : null,
+
+      phoneVerified: dto.phoneVerified ?? prefill?.phoneVerified ?? false,
+
+      email: dto.email ?? prefill?.email ?? undefined,
+      emailVerified: dto.emailVerified ?? prefill?.emailVerified ?? false,
+
+      interviewPlace: dto.interviewLocationId ?? undefined,
+
+      // National Address
+      naZone: undefined,
+      naStreet: undefined,
+      naBuilding: undefined,
+      naUnit: undefined,
+      naFileName: undefined,
+      naFile: this.mapFile(dto.residenceAddressCertificate),
+
+      // ----------- Collections -----------
+      degrees: (dto.qualifications ?? []).map(q => ({
+        id: q.id,
+        levelId: q.degreeId ?? '',
+        level: q.degreeName ?? '',
+        majorId: q.major ?? '',
+        major: q.major ?? undefined,
+        uniId: q.universityName ?? undefined,
+        uni: q.universityName ?? undefined,
+        graduationYear: q.graduationYear ?? undefined,
+        attachment: this.mapFile(q.attachment),
+      })),
+
+      experiences: (dto.experiences ?? []).map(e => ({
+        id: e.id,
+        org: e.employerName ?? '',
+        title: e.jobTitle ?? '',
+        startDate: e.startDate ?? undefined,
+        endDate: e.endDate ?? undefined,
+        isCurrent: e.isCurrent,
+        attachment: this.mapFile(e.attachment),
+      })),
+
+      courses: (dto.trainingCourses ?? []).map(t => ({
+        id: t.id,
+        title: t.title ?? '',
+        org: t.provider ?? '',
+        startDate: t.startDate ?? undefined,
+        endDate: t.endDate ?? undefined,
+        attachment: this.mapFile(t.attachment),
+      })),
+
+      achievements: [],
+
+      skills: (dto.skills ?? []).map(s => s.skillId),
+
+      languages: (dto.languages ?? []).map(l => ({
+        id: l.id,
+        langId: l.languageId,
+        langName: this.mapIdToDropdown('language', l.languageId)?.name ?? '',
+        levelId: l.levelId,
+        levelName: this.mapIdToDropdown('languageLevel', l.levelId)?.name ?? '',
+      })),
+
+      attachments: (dto.additionalAttachments ?? []).map(a => ({
+        id: a.id,
+        name: a.title ?? '',
+        // file: this.mapFile(a.file)!,
+      })),
+
+      // ----------- UI fields -----------
+      available: true,
+      avatarUrl: dto.avatar ?? prefill?.avatar ?? undefined,
+    };
+  }
+  mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
+    if (!ref) return null;
+
+    return {
+      resourceId: ref.resourceId,
+      resourceName: ref.fileName,
+    };
+  }
+
+// Convert backend ID → dropdownOptionsModel
+  mapIdToDropdown(kind: string, id?: string | null): dropdownOptionsModel | undefined {
+    if (!id) return undefined;
+    switch (kind) {
+      case 'candidateType':
+        return this.lookups.candidateTypes().find(ct => ct.id === id);
+      case 'targetEntity':
+        return this.lookups.targetEntities().find(te => te.id === id);
+      case 'nationality':
+        return this.lookups.nationalities().find(nat => nat.id === id);
+      case 'gender':
+        return this.lookups.genders().find(g => g.id === id);
+      case 'religion':
+        return this.lookups.religions().find(r => r.id === id);
+      case 'marital':
+        return this.lookups.maritalStatuses().find(m => m.id === id);
+      case 'studyType':
+        return this.lookups.studyTypes().find(st => st.id === id);
+      case 'degree':
+        return this.lookups.degrees().find(d => d.id === id);
+      case 'university':
+        return this.lookups.universities().find(u => u.id === id);
+      case 'major':
+        return this.lookups.majors().find(m => m.id === id);
+      case 'ratingGrade':
+        return this.lookups.ratingGrades().find(rg => rg.id === id);
+      case 'language':
+        return this.lookups.languages().find(l => l.id === id);
+      case 'languageLevel':
+        return this.lookups.languageLevels().find(ll => ll.id === id);
+      case 'interviewLocation':
+        return this.lookups.interviewLocation().find(il => il.id === id);
+      case 'residenceCountry':
+        return this.lookups.residenceCountry().find(rc => rc.id === id);
+      case 'graduationCountry':
+        return this.lookups.graduationCountry().find(gc => gc.id === id);
+      case 'sponsorType':
+        return this.lookups.sponsorTypes().find(st => st.id === id);
+        default:
+          return undefined;
+      }
+    }
 }
 
