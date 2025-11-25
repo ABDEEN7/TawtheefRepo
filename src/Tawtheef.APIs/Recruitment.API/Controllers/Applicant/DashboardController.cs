@@ -28,6 +28,13 @@ public class DashboardController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetJobCategoriesQuery());
         return result.ToActionResult();
     }
+    
+    [HttpGet("lookups/department")]
+    public async Task<IActionResult> GetDepartments()
+    {
+        var result = await mediator.Send(new GetDepartmentsQuery());
+        return result.ToActionResult();
+    }
     #endregion
 
     #region Retrive Dashboard Data
