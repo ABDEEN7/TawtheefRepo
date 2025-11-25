@@ -1,5 +1,8 @@
 export interface Attachment {
-  title: string;
-  fileName: string;
-  file: any
+  id?: string;
+  name: string;
+  type?: string;
+  size?: number;
+  file?: File;
+  url?: string;
 }

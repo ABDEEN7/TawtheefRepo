@@ -23,11 +23,82 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
         var id => Result.Ok(Guid.Parse(id))
     };
-    [HttpPost("save")]
-    public async Task<IActionResult> SaveProfile([FromBody] SaveUserProfileRequest request, CancellationToken ct)
+    [HttpPost("files/upload")]
+    public async Task<IActionResult> UploadProfileFile(IFormFile file, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(new SaveUserProfileCommand(UserId.Value, request), ct);
+        var result = await mediator.Send(new UploadAttachmentCommand(file), ct);
+        return result.ToActionResult();
+    }
+    [HttpPost("prereq")]
+    public async Task<IActionResult> SavePrereq([FromBody] SaveProfilePrereqRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfilePrereqCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("personal")]
+    public async Task<IActionResult> SavePersonal([FromBody] SaveProfilePersonalRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfilePersonalCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("contact")]
+    public async Task<IActionResult> SaveContact([FromBody] SaveProfileContactRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileContactCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("education")]
+    public async Task<IActionResult> SaveEducation([FromBody] SaveProfileEducationRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileEducationCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("experience")]
+    public async Task<IActionResult> SaveExperience([FromBody] SaveProfileExperienceRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileExperienceCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("skills")]
+    public async Task<IActionResult> SaveSkills([FromBody] SaveProfileSkillsRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileSkillsCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("attachments")]
+    public async Task<IActionResult> SaveAttachments([FromBody] SaveProfileAttachmentsRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileAttachmentsCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("submit")]
+    public async Task<IActionResult> SubmitProfile([FromBody] SubmitUserProfileRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SubmitUserProfileCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
 
@@ -39,7 +110,12 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     #region Lookups
-
+    [HttpGet("lookups/skill-search")]
+    public async Task<IActionResult> Search([FromQuery] SearchSkillsQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
     [HttpGet("lookups/candidate-types")]
     public async Task<IActionResult> GetCandidateTypes()
     {

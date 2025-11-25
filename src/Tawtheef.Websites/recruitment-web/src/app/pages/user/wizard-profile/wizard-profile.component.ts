@@ -1,4 +1,4 @@
-﻿import {Component, computed, EventEmitter, inject, OnInit, Output} from '@angular/core';
+﻿import {Component, inject, OnInit} from '@angular/core';
 import {DataService} from './services/data.service';
 import {TranslateService} from '@ngx-translate/core';
 import {LanguageService} from '../../../core/services/language.service';
@@ -15,6 +15,8 @@ import {DialogService} from 'primeng/dynamicdialog';
 import {PhoneMapperService} from './services/phone-mapper.service';
 import {HttpClient} from '@angular/common/http';
 import {EndpointsService} from '../../../core/http/endpoints.service';
+import {MessageService} from 'primeng/api';
+// import {buildProfileFormData, mapProfileStateToRequest} from './models/profile.mapper';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -34,6 +36,7 @@ export class WizardProfileComponent implements OnInit {
   private i18n = inject(TranslateService);
   private http = inject(HttpClient);
   private endpoints = inject(EndpointsService);
+  private messages = inject(MessageService);
 
   savingDraft = false;
   avatarPreviewUrl: string | null = null;
@@ -167,17 +170,29 @@ export class WizardProfileComponent implements OnInit {
     });
   }
 
-  saveDraft() {
-    this.savingDraft = true;
-    this.http.post(this.endpoints.user.profile.save, {
-      submit: false,
-      ...this.ds.state()
-    })
-      .pipe(finalize(() => this.savingDraft = false))
-      .subscribe({
-        next: () => this.i18n.instant('wizard.review.savedDraft'),
-        error: (err) => console.log(err)
-      });
-  }
+  // saveDraft() {
+  //   this.savingDraft = true;
+  //   const state = this.ds.state();
+  //   const formData = buildProfileFormData(state, false);
+  //   this.http.post(this.endpoints.user.profile.save, formData)
+  //     .pipe(finalize(() => this.savingDraft = false))
+  //     .subscribe({
+  //       next: () => {
+  //         this.messages.add({
+  //           severity: 'success',
+  //           summary: this.i18n.instant('wizard.review.savedDraftTitle'),
+  //           detail: this.i18n.instant('wizard.review.savedDraft'),
+  //         });
+  //       },
+  //       error: (err) => {
+  //         console.error(err);
+  //         this.messages.add({
+  //           severity: 'error',
+  //           summary: this.i18n.instant('common.error'),
+  //           detail: this.i18n.instant('wizard.review.saveDraftFailed'),
+  //         });
+  //       }
+  //     });
+  // }
 }
 

@@ -1,6 +1,7 @@
-import {Component, EventEmitter, Output, inject, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataService } from '../../services/data.service';
+import { Attachment } from '../../models/attachment.model';
 
 @Component({
   selector: 'app-step-attachments',
@@ -8,50 +9,60 @@ import { DataService } from '../../services/data.service';
   styleUrl: './step-attachments.component.scss',
   standalone: false,
 })
-export class StepAttachmentsComponent implements OnInit{
+export class StepAttachmentsComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
   @Output() back = new EventEmitter<void>();
 
   ds = inject(DataService);
+  private fb = inject(FormBuilder);
+
   private filesStore: (File | null)[] = [];
-  form: FormGroup;
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      rows: this.fb.array([])
-    });
-  }
+
+  form: FormGroup = this.fb.group({
+    rows: this.fb.array([]),
+  });
 
   ngOnInit(): void {
     const attachments = this.ds.state().attachments || [];
-    attachments.forEach((att: any) => {
-      this.rows.push(this.createRow(att.title, att.fileName));
-      const i = this.rows.length - 1;
-      (this.rows.at(i) as FormGroup).disable({ emitEvent: false });
+    attachments.forEach((att: any, idx: number) => {
+      const row = this.createRow(att.title ?? '', att.fileName ?? '', false);
+      this.rows.push(row);
+      this.filesStore[idx] = att.file ?? null;
+      row.disable({ emitEvent: false });
     });
+
     if (attachments.length === 0) {
       this.addRow();
     }
   }
 
+  // ======== FormArray helper ========
+
   get rows(): FormArray {
     return this.form.get('rows') as FormArray;
   }
 
-  private createRow(title = '', fileName = ''): FormGroup {
+  private createRow(title = '', fileName = '', existing = false): FormGroup {
     return this.fb.group({
       title: [title, Validators.required],
-      file: [null, Validators.required],
-      fileName: [fileName]
+      file: [
+        null,
+        existing ? [] : [Validators.required],
+      ],
+      fileName: [fileName],
     });
   }
 
+  // ======== Row actions ========
+
   addRow(): void {
     this.rows.push(this.createRow());
+    this.filesStore.push(null);
   }
 
   removeRow(i: number): void {
     this.rows.removeAt(i);
-    this.ds.delAttachment(i);
+    this.filesStore.splice(i, 1);
   }
 
   confirmRow(i: number): void {
@@ -60,10 +71,14 @@ export class StepAttachmentsComponent implements OnInit{
       g.markAllAsTouched();
       return;
     }
-    const { title, fileName, file } = g.getRawValue();
-    this.ds.addAttachment({ title, fileName, file });
     g.disable({ emitEvent: false });
   }
+
+  editRow(i: number): void {
+    (this.rows.at(i) as FormGroup).enable({ emitEvent: false });
+  }
+
+  // ======== File handling ========
 
   onFileChange(i: number, ev: Event): void {
     const input = ev.target as HTMLInputElement;
@@ -71,39 +86,71 @@ export class StepAttachmentsComponent implements OnInit{
     const grp = this.rows.at(i) as FormGroup;
 
     if (file) {
-      this.filesStore[i] = file; // persist the actual File
+      this.filesStore[i] = file;
       grp.patchValue({ file, fileName: file.name });
-      grp.updateValueAndValidity({ emitEvent:false });
+      grp.updateValueAndValidity({ emitEvent: false });
     }
   }
 
   changeFile(i: number): void {
-    // clear current selection and show the picker again
     const grp = this.rows.at(i) as FormGroup;
     this.filesStore[i] = null;
     grp.patchValue({ file: null, fileName: '' });
-    // We keep controls enabled state as-is; UI will show the input because hasFile(i) becomes false.
   }
 
   hasFile(i: number): boolean {
     const grp = this.rows.at(i) as FormGroup;
-    const name = grp.get('fileName')?.value;
+    const fileName = grp.get('fileName')?.value;
     const file = grp.get('file')?.value;
-    // true if either a File is present now OR we restored it from the store
-    return !!(name && (file || this.filesStore[i]));
+    return !!fileName || !!file || !!this.filesStore[i];
   }
 
   getFileName(i: number): string {
     const grp = this.rows.at(i) as FormGroup;
-    return grp.get('fileName')?.value || (this.filesStore[i]?.name ?? 'No file chosen');
-  }
-
-  editRow(i: number): void {
-    (this.rows.at(i) as FormGroup).enable({ emitEvent: false });
+    return (
+      grp.get('fileName')?.value ||
+      this.filesStore[i]?.name ||
+      'No file chosen'
+    );
   }
 
   isInvalid(i: number, control: 'title' | 'file'): boolean {
     const c = (this.rows.at(i) as FormGroup).get(control);
     return !!c && c.enabled && c.invalid && (c.dirty || c.touched);
+  }
+
+  // ======== Navigation ========
+
+  onBack(): void {
+    this.back.emit();
+  }
+
+  onNext(): void {
+    this.rows.controls.forEach(g => {
+      const grp = g as FormGroup;
+      if (grp.enabled) {
+        grp.markAllAsTouched();
+      }
+    });
+
+    if (this.form.invalid) {
+      return;
+    }
+
+    const attachments: Attachment[] = this.rows.controls.map((g, index) => {
+      const grp = g as FormGroup;
+      const { title, fileName } = grp.getRawValue();
+
+      return {
+        name: title,
+        fileName,
+        file: this.filesStore[index] ?? null,
+      } as Attachment;
+    });
+
+    // حفظ في الـ DataService
+    this.ds.up('attachments', attachments as any);
+
+    this.next.emit();
   }
 }

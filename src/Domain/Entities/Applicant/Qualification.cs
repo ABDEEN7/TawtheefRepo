@@ -18,7 +18,7 @@ public class Qualification : EventEntity
     public  int? GraduationYear { get; set; }
     public Guid StudyTypeId { get; set; }
     public StudyType? StudyType { get; set; }
-    public required string GPA { get; set; }
+    public string GPA { get; set; } = null!;
     public Guid RatingId { get; set; }
     public RatingGrade? Rating { get; set; }
     public Guid CountryId { get; set; }

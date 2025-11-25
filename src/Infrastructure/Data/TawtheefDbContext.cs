@@ -82,6 +82,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<ProfileSkill> ApplicantSkill { get; set; }
     public DbSet<ProfileLanguage> LanguageProficiency { get; set; }
     public DbSet<ResidenceAddress> ResidenceAddress { get; set; }
+    public DbSet<Achievement> Achievement { get; set; }
     public DbSet<TrainingCourse> TrainingCourse { get; set; }
     public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicant { get; set; }
     

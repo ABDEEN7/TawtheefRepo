@@ -50,7 +50,7 @@ public sealed class LocalStorageService : IFileStorageService
             File.Move(tmp, full);
 
             var size = new FileInfo(full).Length;
-            return Result.Ok(new FileSaved(blobKey, size));
+            return Result.Ok(new FileSaved(blobKey, (ulong)size));
         }
         catch (OperationCanceledException oce)
         {

@@ -1,5 +1,4 @@
-<form #degForm="ngForm" (ngSubmit)="onSave(degForm)" novalidate>
-  <!-- ===== BODY (Bootstrap only) ===== -->
+<form [formGroup]="form" (ngSubmit)="onSave()" novalidate>
   <div class="p-fluid">
     <div class="deg-panel card border-0 shadow-none">
       <div class="card-body py-3">
@@ -13,16 +12,15 @@
             </label>
             <p-select
               inputId="degree"
-              name="degree"
-              #degreeCtrl="ngModel"
-              [options]="degrees" optionLabel="name" optionValue="name"
+              formControlName="degree"
+              [options]="lookpus.degrees()" optionLabel="name" optionValue="name"
               [filter]="true"
-              required
               [placeholder]="'wizard.degrees.choiceDegree' | translate"
-              [(ngModel)]="form.value.degree"
-              [ngClass]="{'p-invalid': degreeCtrl.invalid && (degreeCtrl.dirty || degreeCtrl.touched)}">
+              [ngClass]="{
+                'p-invalid': f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)
+              }">
             </p-select>
-            <small *ngIf="degreeCtrl.invalid && (degreeCtrl.dirty || degreeCtrl.touched)"
+            <small *ngIf="f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
@@ -35,16 +33,15 @@
             </label>
             <p-select
               inputId="gradCountry"
-              name="gradCountry"
-              #gradCountryCtrl="ngModel"
-              [options]="gradCountries" optionLabel="name" optionValue="name"
+              formControlName="gradCountry"
+              [options]="lookpus.countries()" optionLabel="name" optionValue="name"
               [filter]="true"
-              required
               [placeholder]="'wizard.degrees.choiceGradCountry' | translate"
-              [(ngModel)]="form.value.gradCountry"
-              [ngClass]="{'p-invalid': gradCountryCtrl.invalid && (gradCountryCtrl.dirty || gradCountryCtrl.touched)}">
+              [ngClass]="{
+                'p-invalid': f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)
+              }">
             </p-select>
-            <small *ngIf="gradCountryCtrl.invalid && (gradCountryCtrl.dirty || gradCountryCtrl.touched)"
+            <small *ngIf="f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
@@ -57,16 +54,15 @@
             </label>
             <p-select
               inputId="university"
-              name="university"
-              #universityCtrl="ngModel"
-              [options]="universities" optionLabel="name" optionValue="name"
+              formControlName="university"
+              [options]="lookpus.universities()" optionLabel="name" optionValue="name"
               [filter]="true"
-              required
               [placeholder]="'wizard.degrees.choiceUniversity' | translate"
-              [(ngModel)]="form.value.university"
-              [ngClass]="{'p-invalid': universityCtrl.invalid && (universityCtrl.dirty || universityCtrl.touched)}">
+              [ngClass]="{
+                'p-invalid': f['university'].invalid && (f['university'].dirty || f['university'].touched)
+              }">
             </p-select>
-            <small *ngIf="universityCtrl.invalid && (universityCtrl.dirty || universityCtrl.touched)"
+            <small *ngIf="f['university'].invalid && (f['university'].dirty || f['university'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
@@ -79,16 +75,15 @@
             </label>
             <p-select
               inputId="major"
-              name="major"
-              #majorCtrl="ngModel"
-              [options]="majors" optionLabel="name" optionValue="name"
+              formControlName="major"
+              [options]="lookpus.majors()" optionLabel="name" optionValue="name"
               [filter]="true"
-              required
               [placeholder]="'wizard.degrees.choiceMajor' | translate"
-              [(ngModel)]="form.value.major"
-              [ngClass]="{'p-invalid': majorCtrl.invalid && (majorCtrl.dirty || majorCtrl.touched)}">
+              [ngClass]="{
+                'p-invalid': f['major'].invalid && (f['major'].dirty || f['major'].touched)
+              }">
             </p-select>
-            <small *ngIf="majorCtrl.invalid && (majorCtrl.dirty || majorCtrl.touched)"
+            <small *ngIf="f['major'].invalid && (f['major'].dirty || f['major'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
@@ -104,23 +99,22 @@
             </label>
             <p-date-picker
               inputId="gradYear"
-              name="gradYear"
-              #gradYearCtrl="ngModel"
-              [(ngModel)]="form.value.gradYear"
+              formControlName="gradYear"
               view="year"
               showIcon="true"
               dateFormat="yy"
-              required
-              [ngClass]="{'p-invalid': (gradYearCtrl.invalid || yearError) && (gradYearCtrl.dirty || gradYearCtrl.touched)}"
+              [ngClass]="{
+                'p-invalid': (f['gradYear'].invalid || yearError) && (f['gradYear'].dirty || f['gradYear'].touched)
+              }"
               (onSelect)="validateYear()"
-              (ngModelChange)="validateYear()"
+              (onInput)="validateYear()"
               fluid>
             </p-date-picker>
-            <small *ngIf="gradYearCtrl.invalid && (gradYearCtrl.dirty || gradYearCtrl.touched)"
+            <small *ngIf="f['gradYear'].invalid && (f['gradYear'].dirty || f['gradYear'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
-            <small *ngIf="!gradYearCtrl.invalid && yearError"
+            <small *ngIf="!f['gradYear'].invalid && yearError"
                    class="text-danger mt-1 d-block">
               {{ 'validation.yearRange' | translate:{min:minYear, max:maxYear} }}
             </small>
@@ -133,15 +127,14 @@
             </label>
             <p-select
               inputId="studySystem"
-              name="studySystem"
-              #studySystemCtrl="ngModel"
-              [options]="studySystems" optionLabel="name" optionValue="name"
-              required
+              formControlName="studySystem"
+              [options]="lookpus.studyTypes()" optionLabel="name" optionValue="name"
               [placeholder]="'wizard.degrees.choiceStudySystem' | translate"
-              [(ngModel)]="form.value.studySystem"
-              [ngClass]="{'p-invalid': studySystemCtrl.invalid && (studySystemCtrl.dirty || studySystemCtrl.touched)}">
+              [ngClass]="{
+                'p-invalid': f['studySystem'].invalid && (f['studySystem'].dirty || f['studySystem'].touched)
+              }">
             </p-select>
-            <small *ngIf="studySystemCtrl.invalid && (studySystemCtrl.dirty || studySystemCtrl.touched)"
+            <small *ngIf="f['studySystem'].invalid && (f['studySystem'].dirty || f['studySystem'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
@@ -154,21 +147,20 @@
             </label>
             <p-inputNumber
               inputId="gpa"
-              name="gpa"
-              #gpaCtrl="ngModel"
-              [(ngModel)]="form.value.gpa"
+              formControlName="gpa"
               [useGrouping]="false"
               [min]="0" [max]="100"
               [maxlength]="5"
               [showButtons]="false"
-              required
-              [ngClass]="{'p-invalid': gpaCtrl.invalid && (gpaCtrl.dirty || gpaCtrl.touched)}">
+              [ngClass]="{
+                'p-invalid': f['gpa'].invalid && (f['gpa'].dirty || f['gpa'].touched)
+              }">
             </p-inputNumber>
-            <small *ngIf="gpaCtrl?.errors?.['required'] && (gpaCtrl.dirty || gpaCtrl.touched)"
+            <small *ngIf="f['gpa']?.errors?.['required'] && (f['gpa'].dirty || f['gpa'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
-            <small *ngIf="(gpaCtrl?.errors?.['min'] || gpaCtrl?.errors?.['max']) && (gpaCtrl.dirty || gpaCtrl.touched)"
+            <small *ngIf="(f['gpa']?.errors?.['min'] || f['gpa']?.errors?.['max']) && (f['gpa'].dirty || f['gpa'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.range' | translate:{min:0, max:100} }}
             </small>
@@ -181,15 +173,14 @@
             </label>
             <p-select
               inputId="grade"
-              name="grade"
-              #gradeCtrl="ngModel"
-              [options]="grades" optionLabel="name" optionValue="name"
-              required
+              formControlName="grade"
+              [options]="lookpus.ratingGrades()" optionLabel="name" optionValue="name"
               [placeholder]="'wizard.degrees.choiceGrade' | translate"
-              [(ngModel)]="form.value.grade"
-              [ngClass]="{'p-invalid': gradeCtrl.invalid && (gradeCtrl.dirty || gradeCtrl.touched)}">
+              [ngClass]="{
+                'p-invalid': f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)
+              }">
             </p-select>
-            <small *ngIf="gradeCtrl.invalid && (gradeCtrl.dirty || gradeCtrl.touched)"
+            <small *ngIf="f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
@@ -212,8 +203,14 @@
               (onSelect)="onUpload($event)"
               (onClear)="clearFile()">
             </p-fileupload>
-            <small class="mt-2 d-block" [class.text-muted]="!fileError" [class.text-danger]="fileError">
-              {{ fileError ? fileError : (form.value.degreeFile ? form.value.degreeFile.name : '—') }}
+            <small class="mt-2 d-block"
+                   [class.text-muted]="!fileError"
+                   [class.text-danger]="fileError">
+              {{
+                fileError
+                  ? fileError
+                  : (form.value.degreeFile ? form.value.degreeFile.name : '—')
+              }}
             </small>
           </div>
         </div>
@@ -232,7 +229,7 @@
     <p-button styleClass="p-button-primary"
               icon="pi pi-save"
               type="submit"
-              [disabled]="degForm.invalid || !!fileError || !form.value.degreeFile"
+              [disabled]="form.invalid || yearError || !!fileError || !form.value.degreeFile"
               [label]="'wizard.degrees.add' | translate"></p-button>
   </div>
 </form>

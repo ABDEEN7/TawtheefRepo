@@ -188,7 +188,7 @@
       </label>
       <input pInputText class="form-control"
         pSize="small" name="disabilityDetails"
-        [ngModel]="ds.state().sponsorCardName"
+        [ngModel]="ds.state().disabilityDetails"
         (ngModelChange)="updateField('disabilityDetails', $event)"
         placeholder="{{ 'wizard.placeholders.selectDisabilityType' | translate }}"/>
     </div>
@@ -247,42 +247,47 @@
       </div>
 
       <!-- Establishment Registration Card -->
-      <div class="col-md-4">
-        <label class="form-label required">
+      <div class="col-md-6">
+        <label class="form-label">
           {{ 'wizard.personal.sponsorCard' | translate }}
           <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
         </label>
         <div class="d-flex gap-2 align-items-center">
-          <input
-            pInputText
-            class="form-control"
-            pSize="small"
-            name="sponsorCardName"
-            [ngModel]="ds.state().sponsorCardName"
-            (ngModelChange)="updateField('sponsorCardName', $event)"
-            placeholder="{{ 'wizard.placeholders.uploadEstablishmentCard' | translate }}"
-            readonly
-          />
-          <button type="button" class="btn btn-outline-secondary btn-sm">
-            <i class="fa-solid fa-upload"></i>
+          <input pInputText class="form-control" pSize="small"
+                 [ngModel]="ds.state().sponsorCardFile?.fileName"
+                 readonly>
+          <button type="button"
+                  class="btn btn-outline-secondary btn-sm"
+                  [disabled]="uploadingSponsor"
+                  (click)="sponsorInput.click()">
+            <i class="fa-solid fa-upload" *ngIf="!uploadingSponsor"></i>
+            <i class="fa-solid fa-spinner fa-spin" *ngIf="uploadingSponsor"></i>
           </button>
+          <input #sponsorInput
+                 type="file"
+                 accept=".jpg,.jpeg,.png,.pdf"
+                 class="d-none"
+                 (change)="onSponsorCardSelected($event)">
         </div>
-        <small class="fz-2xs text-muted">
-          {{ 'wizard.personal.sponsorCardHint' | translate }}
-        </small>
       </div>
     </ng-container>
   </div>
 </div>
 
 <div class="text-end">
-  <button class="btn btn-outline-secondary" (click)="back.emit()">
-    <i class="fa-solid me-1" faDirArrow="start"></i>
-    {{ 'wizard.buttons.prev' | translate }}
+  <button class="btn btn-outline-secondary rounded-pill me-2" (click)="back.emit()">
+    <i class="fa-solid me-1" faDirArrow="start"></i> {{ 'wizard.buttons.prev' | translate }}
   </button>
-
-  <button class="btn btn-brand ms-2" (click)="next.emit()">
-    {{ 'wizard.buttons.next' | translate }}
-    <i class="fa-solid ms-1" faDirArrow="end"></i>
+  <button class="btn btn-brand rounded-pill"
+          (click)="onNext()"
+          [disabled]="savingPersonal">
+    <span *ngIf="!savingPersonal">
+      {{ 'wizard.buttons.next' | translate }}
+      <i class="fa-solid ms-1" faDirArrow="end"></i>
+    </span>
+    <span *ngIf="savingPersonal">
+      <i class="fa-solid fa-spinner fa-spin me-1"></i>
+      {{ 'wizard.buttons.saving' | translate }}
+    </span>
   </button>
 </div>
