@@ -21,18 +21,22 @@ public class UserProfile : EventEntity
     public Guid? ResumeAttachmentId { get; set; }
     public Resource? ResumeAttachment { get; set; }
     
-    public Guid? NationalCardIdAttachmentId { get; set; }
-    public Resource? NationalCardIdAttachment { get; set; }
+    public Guid? NationalCardId { get; set; }
+    public Resource? NationalCard { get; set; }
     
-    
-    public int NationalNumber { get; set; }
-    public DateOnly BirthDate { get; set; }
+    /// <summary>
+    /// National ID number (e.g. QID)
+    /// </summary>
+    public string? NationalNumber { get; set; }
+    public DateOnly? BirthDate { get; set; }
     [NotMapped]
-    public int Age {
-        get {
+    public int? Age {
+        get
+        {
+            if (BirthDate is null) return null;
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var age = today.Year - BirthDate.Year;
-            if (today < new DateOnly(today.Year, BirthDate.Month, BirthDate.Day)) age--;
+            var age = today.Year - BirthDate!.Value.Year;
+            if (today < new DateOnly(today.Year, BirthDate!.Value.Month, BirthDate!.Value.Day)) age--;
             return age;
         }
     }
@@ -55,11 +59,13 @@ public class UserProfile : EventEntity
     public Guid ResidenceCountryId { get; set; }
     public Country? ResidenceCountry { get; set; }
     
-    public Guid ResidenceAddressId { get; set; }
-    public ResidenceAddress? Address { get; set; }
-    
     public Guid? InterviewLocationId { get; set; }
     public Country? InterviewLocation { get; set; }
+    
+    public string? Address { get; set; }
+    
+    public Guid ResidenceAddressId { get; set; }
+    public ResidenceAddress? ResidenceAddress { get; set; }
     
     public Guid? ResidenceAddressCertificateId { get; set; }
     public Resource? ResidenceAddressCertificate { get; set; }
@@ -78,10 +84,11 @@ public class UserProfile : EventEntity
     
     public bool IsDraft { get; set; } = true;
     
-    public ICollection<Qualification> Qualifications { get; set; } = [];
-    public ICollection<Experience> Experiences { get; set; } = [];
-    public ICollection<TrainingCourse> TrainingCourses { get; set; } = [];
-    public ICollection<ProfileSkill> Skills { get; set; } = [];
-    public ICollection<ProfileLanguage> Languages { get; set; } = [];
-    public ICollection<ProfileAdditionalAttachment> AdditionalAttachments { get; set; } = [];
+    public ICollection<Qualification>? Qualifications { get; set; } = [];
+    public ICollection<Experience>? Experiences { get; set; } = [];
+    public ICollection<Achievement>? Achievements { get; set; } = [];
+    public ICollection<TrainingCourse>? TrainingCourses { get; set; } = [];
+    public ICollection<ProfileSkill>? Skills { get; set; } = [];
+    public ICollection<ProfileLanguage>? Languages { get; set; } = [];
+    public ICollection<ProfileAdditionalAttachment>? AdditionalAttachments { get; set; } = [];
 }

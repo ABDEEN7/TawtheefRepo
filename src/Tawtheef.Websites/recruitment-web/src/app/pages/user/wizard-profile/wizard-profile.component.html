@@ -5,8 +5,9 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
           <div class="d-flex align-items-center gap-3">
             <div class="avatar-wrapper">
-              <img
+              <img #userPictureRef
                 [src]="ds.state().avatarUrl || avatarPreviewUrl || 'https://placehold.co/76x76?text=Avatar'"
+                (error)="userPictureRef.src ='https://placehold.co/76x76?text=Avatar'"
                 class="candidate-avatar-pulse"
                 alt="{{ 'wizard.personal.avatar.alt' | translate }}"
                 (click)="openAvatarDialog()"/>
@@ -73,15 +74,15 @@
         <app-step-review      *ngIf="step===8" (back)="prev()"></app-step-review>
       </div>
     </div>
-    <div class="d-flex justify-content-between mt-3" *ngIf="!loading">
-      <button
-        type="button"
-        class="btn btn-outline-secondary"
-        (click)="saveDraft()"
-        [disabled]="savingDraft">
-        <i class="fa fa-save me-1"></i>
-        {{ 'wizard.buttons.saveDraft' | translate }}
-      </button>
-    </div>
+<!--    <div class="d-flex justify-content-between mt-3" *ngIf="!loading">-->
+<!--      <button-->
+<!--        class="btn btn-outline-secondary rounded-pill"-->
+<!--        type="button"-->
+<!--        [disabled]="savingDraft"-->
+<!--        (click)="saveDraft()">-->
+<!--        <i *ngIf="savingDraft" class="fa-solid fa-spinner fa-spin me-1"></i>-->
+<!--        {{ 'wizard.review.saveDraft' | translate }}-->
+<!--      </button>-->
+<!--    </div>-->
   </div>
 </section>

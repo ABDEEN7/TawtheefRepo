@@ -7,6 +7,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
 import {NgClass, NgIf} from '@angular/common';
+import {periodRangeValidator} from '../../../../../../../shared/validator/period-range,validator';
 
 @Component({
   selector: 'app-course',
@@ -34,18 +35,14 @@ export class CourseModal implements OnInit {
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
 
-  form: FormGroup = this.fb.group(
-    {
-      org: ['', [Validators.required, Validators.maxLength(150)]],
-      title: ['', [Validators.required, Validators.maxLength(150)]],
-      from: [null],
-      to: [null],
-      tasks: ['', [Validators.maxLength(500)]],
-      fileName: [''],
-      file: [null]
-    },
-    { validators: dateRangeValidator('from', 'to') }
-  );
+  form: FormGroup = this.fb.group({
+    org: ['', [Validators.required, Validators.maxLength(150)]],
+    title: ['', [Validators.required, Validators.maxLength(150)]],
+    period: [null, [Validators.required, periodRangeValidator]],
+    tasks: ['', [Validators.maxLength(500)]],
+    fileName: [''],
+    file: [null, Validators.required],
+  });
 
   ngOnInit(): void {
     if (this.config.data?.initialValue) {
@@ -71,29 +68,35 @@ export class CourseModal implements OnInit {
     this.form.patchValue({ file: f, fileName: f.name });
   }
 
-  touchDates() {
-    this.f['from'].markAsTouched();
-    this.f['to'].markAsTouched();
+  touchPeriod() {
+    this.f['period'].markAsTouched();
     this.form.updateValueAndValidity({ onlySelf: false, emitEvent: true });
   }
-
   onSave() {
     if (this.form.invalid || this.fileError) {
       this.form.markAllAsTouched();
       return;
     }
+
     const v = this.form.value;
+    const period = v.period as Date[] | null;
+
+    const from = period && period.length > 0 ? period[0] : null;
+    const to   = period && period.length > 1 ? period[1] : null;
+
     const payload = {
       org: v.org,
       title: v.title,
-      from: v.from,
-      to: v.to,
+      from,
+      to,
       tasks: v.tasks,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null
     };
+
     this.ref.close(payload);
   }
+
 
   onCancel() {
     this.ref.close();

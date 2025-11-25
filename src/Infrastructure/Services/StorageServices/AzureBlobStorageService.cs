@@ -56,7 +56,7 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                 var props = await blobClient.GetPropertiesAsync(cancellationToken: ct).ConfigureAwait(false);
                 var size = props.Value.ContentLength;
 
-                return Result.Ok(new FileSaved(blobKey, size));
+                return Result.Ok(new FileSaved(blobKey, (ulong)size));
             }
             catch (OperationCanceledException oce)
             {

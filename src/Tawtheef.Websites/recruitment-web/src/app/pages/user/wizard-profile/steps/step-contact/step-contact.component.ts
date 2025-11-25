@@ -8,7 +8,12 @@ import {CandidateType} from '../../../../../core/enums/lookups.enum';
 import {ContactVerificationService} from '../../services/contact-verification.service';
 import {PhoneNumber} from '../../models/phone-number.model';
 import {TranslateService} from '@ngx-translate/core';
+import {ProfileService} from '../../services/profile.service';
+import { mapContactSection } from "../../services/profile.mapper";
+import {finalize} from 'rxjs/operators';
 
+type phoneVerificationStatus = 'idle' | 'sending' | 'codeSent' | 'verifying' | 'verified' | 'failed';
+type emailVerificationStatus = 'idle' | 'sending' | 'linkSent' | 'verifying' | 'verified' | 'failed';
 @Component({
   selector: 'app-step-contact',
   templateUrl: './step-contact.component.html',
@@ -25,11 +30,16 @@ export class StepContactComponent implements OnInit{
   geoIp = inject(GeoIpService);
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
+
+  naFileError: string | null = null;
+  maxNaFileSize = 2 * 1024 * 1024; // 2MB مثلاً
+  allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+
   phoneView: any = null;
   phoneValid = false;
   phoneTouched = false;
   phoneOtp: string = '';
-  phoneVerificationStatus: 'idle' | 'sending' | 'codeSent' | 'verifying' | 'verified' | 'failed' = 'idle';
+  phoneVerificationStatus: phoneVerificationStatus = 'idle';
   // Phone cooldown
   phoneCooldown = 0;
   private phoneCooldownTimer?: any;
@@ -38,7 +48,7 @@ export class StepContactComponent implements OnInit{
   emailValid = false;
   emailTouched = false;
   emailOtp: string = '';
-  emailVerificationStatus: 'idle' | 'sending' | 'linkSent' | 'verifying' | 'verified' | 'failed' = 'idle';
+  emailVerificationStatus: emailVerificationStatus = 'idle';
   emailVerificationUseCode = true;
   // Email cooldown
   emailCooldown = 0;
@@ -47,6 +57,10 @@ export class StepContactComponent implements OnInit{
   phoneErrorMessage: string | null = null;
   emailErrorMessage: string | null = null;
   selectedCountryIso2: CountryISO = CountryISO.Qatar;
+  savingContact = false;
+  uploadingNa = false;
+
+  profileService = inject(ProfileService);
   ngOnInit(): void {
     this.geoIp.getCountryIso2().subscribe(code => {
       this.selectedCountryIso2 = code.toLowerCase() as CountryISO;
@@ -223,5 +237,46 @@ export class StepContactComponent implements OnInit{
         this.emailErrorMessage = this.translate.instant('wizard.contact.codeSent.email.error');
       }
     });
+  }
+  onNaFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) return;
+
+    this.uploadingNa = true;
+
+    this.profileService.uploadFile(file)
+      .pipe(finalize(() => {
+        this.uploadingNa = false;
+        input.value = '';
+      }))
+      .subscribe({
+        next: (ref) => {
+          this.ds.up('naFile', ref);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
+  onNext() {
+    const s = this.ds.state();
+    if (!s.country || !s.phone || !s.email) {
+      return;
+    }
+
+    const dto = mapContactSection(s);
+
+    this.savingContact = true;
+    this.profileService.saveContactSection(dto)
+      .pipe(finalize(() => this.savingContact = false))
+      .subscribe({
+        next: () => {
+          this.next.emit();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
   }
 }

@@ -1,4 +1,6 @@
 export interface Language {
-  name: string;
-  level: string;
+  langId: string;
+  langName: string;
+  levelId: string;
+  levelName: string;
 }
