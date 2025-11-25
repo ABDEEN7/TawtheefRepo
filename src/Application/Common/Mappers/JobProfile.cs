@@ -1,5 +1,6 @@
 using Mapster;
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -91,25 +92,37 @@ public class JobProfile : IRegister
         // Response mappings
         config.NewConfig<Job, JobResponseDto>()
             .Map(dest => dest.Id, src => src.Id)
-            .Map(dest => dest.Basics, src => new JobBasicsResponseDto
-            {
-                Title = src.Title,
-                Vacancies = src.Vacancies,
-                Deadline = src.Deadline,
-                Department = src.RequestingDepartment.Adapt<DropdownOptions>(),
-                JobCategory = src.JobCategory.Adapt<DropdownOptions>(),
-                Major = src.Major.Adapt<DropdownOptions>(),
-                WorkType = src.WorkType.Adapt<DropdownOptions>(),
-                Gender = src.Gender.Adapt<DropdownOptions>(),
-                TargetEntity = src.WorkLocation.Adapt<DropdownOptions>()
-            })
-            .Map(dest => dest.Quotas, src => src.Quota.Adapt<JobQuotasResponseDto>())
-            .Map(dest => dest.Description, src => src.Description)
-            .Map(dest => dest.Benefits, src => src.Benefits)
+            .Map(dest => dest.CreatedById, src => src.CreatedById)
+            .Map(dest => dest.CreatedDate, src => src.CreatedDate)
+            .Map(dest => dest.UpdatedById, src => src.UpdatedById)
+            .Map(dest => dest.UpdatedDate, src => src.UpdatedDate)
+            .Map(dest => dest.PublishAt, src => src.PublishAt)
+            .Map(dest => dest.Title, src => src.Title)
+            .Map(dest => dest.Vacancies, src => src.Vacancies)  
+            .Map(dest => dest.Deadline, src => src.Deadline)
+
+            // Navigation → DropdownOptions
+            .Map(dest => dest.RequestingDepartment, src => src.RequestingDepartment.Adapt<DropdownOptions>())
+            .Map(dest => dest.JobCategory, src => src.JobCategory.Adapt<DropdownOptions>())
+            .Map(dest => dest.Gender, src => src.Gender.Adapt<DropdownOptions>())
+            .Map(dest => dest.WorkLocation, src => src.WorkLocation.Adapt<DropdownOptions>())
+            .Map(dest => dest.Major, src => src.Major.Adapt<DropdownOptions>())
+            .Map(dest => dest.WorkType, src => src.WorkType.Adapt<DropdownOptions>())
             .Map(dest => dest.Status, src => src.Status.Adapt<DropdownOptions>())
+
+            // Quota / Complex DTOs
+            .Map(dest => dest.Quota, src => src.Quota.Adapt<JobQuotasResponseDto>())
+
+            // Simple text collections
             .Map(dest => dest.Skills, src => src.Skills.OrderBy(s => s.Order).Select(s => s.Text))
             .Map(dest => dest.Conditions, src => src.Conditions.OrderBy(c => c.Order).Select(c => c.Text))
-            .Map(dest => dest.Degrees, src => src.Degrees.Select(d => d.Degree.Adapt<DropdownOptions>()));
+
+            // Degrees (DropdownOptions)
+            .Map(dest => dest.Degrees, src => src.Degrees.Select(d => d.Degree.Adapt<DropdownOptions>()))
+
+            // Direct fields
+            .Map(dest => dest.Description, src => src.Description)
+            .Map(dest => dest.Benefits, src => src.Benefits);
 
         config.NewConfig<JobQuota, JobQuotasResponseDto>()
             .Map(dest => dest.QatariCitizens, src => src.QatariCitizens)
@@ -118,8 +131,9 @@ public class JobProfile : IRegister
             .Map(dest => dest.Gcc, src => src.Gcc)
             .Map(dest => dest.QuGrads, src => src.QuGrads)
             .Map(dest => dest.Residents, src => src.Residents)
-            .Map(dest => dest.ResidentsBreakdown, src => src.ResidentsBreakdowns.Adapt<List<ResidentBreakdownResponseDto>>());
-
+            .Map(dest => dest.ResidentsBreakdown, 
+                src => src.ResidentsBreakdowns.Adapt<List<ResidentBreakdownResponseDto>>());
+        
         config.NewConfig<ResidentBreakdown, ResidentBreakdownResponseDto>()
             .Map(dest => dest.Nationality, src => src.Nationality.Adapt<DropdownOptions>())
             .Map(dest => dest.Percentage, src => src.Percentage);

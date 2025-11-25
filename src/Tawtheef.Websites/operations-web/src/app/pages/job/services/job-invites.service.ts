@@ -9,6 +9,7 @@ import {JobService} from './job.service';
 import {Job} from '../models/job.model';
 import { GUID } from '../../../shared/types/guid.type';
 import { NotificationService } from '../../../core/services/notification.service';
+import { JobResponseDto } from '../models/job-response-Dto';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class JobInvitesService {
   private _invites = signal<InviteDetails[]>([]);
   invites = this._invites.asReadonly();
 
-  getJobDetails(jobId: GUID): Observable<Job> {
+  getJobDetails(jobId: GUID): Observable<JobResponseDto> {
     return this.jobService.loadJob(jobId);
   }
 

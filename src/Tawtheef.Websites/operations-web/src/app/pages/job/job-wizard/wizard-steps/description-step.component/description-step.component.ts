@@ -21,7 +21,7 @@ export class DescriptionStepComponent implements WizardStepComponent, OnInit {
   });
 
   ngOnInit(): void {
-    this.setJobData(this.jobService.currentJob());
+    this.setJobData(this.jobService.newJob());
 
     this.form.valueChanges.pipe(
       debounceTime(300),

@@ -1,23 +1,21 @@
-using System.Linq.Expressions;
-using Mapster;
 using FluentResults;
+using MapsterMapper;
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Models.Pagination;
-using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
-public class GetJobsQueryHandler(IJobRepository jobRepository)
+public class GetJobsQueryHandler(IJobRepository jobRepository,IMapper mapper)
     : IRequestHandler<GetJobsQuery, IResult<PaginatedResult<JobResponseDto>>>
 {
     public async Task<IResult<PaginatedResult<JobResponseDto>>> Handle(GetJobsQuery request, CancellationToken cancellationToken)
     {
         var result = await jobRepository.GetFilteredJobsAsync(
             filter: request.Filter ?? new JobQueryFilter(),
-            pagination: request.Pagination ?? new PaginatedRequest(),
-            includes: new List<Expression<Func<Domain.Entities.Recruitment.Job, object>>>() 
+            pagination: request.Pagination ?? new PaginatedRequest()
         );
         
         if (result.IsFailed)
@@ -26,8 +24,7 @@ public class GetJobsQueryHandler(IJobRepository jobRepository)
         var jobs = result.Value;
         
         // ✅ Use Mapster instead of manual mapping
-        var dtos = jobs.Items.Adapt<List<JobResponseDto>>();
-        
+        var dtos = mapper.Map<List<JobResponseDto>>(jobs.Items);    
         return Result.Ok(new PaginatedResult<JobResponseDto>(
             dtos, 
             jobs.Metadata.TotalCount, 

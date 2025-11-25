@@ -14,7 +14,4 @@ public record PaginatedRequest
     public string? SortBy { get; set; }
     [AllowedValues("asc", "desc", ErrorMessage = "Sort direction must be either 'asc' or 'desc'.")]
     public string? SortDirection { get; set; } = "asc";
-    // ✅ Add these computed properties
-    public int Skip => (PageNumber - 1) * PageSize;
-    public int Take => PageSize;
 }

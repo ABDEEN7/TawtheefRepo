@@ -166,7 +166,7 @@
               <div class="d-flex flex-column gap-2">
                 <div class="d-flex justify-content-between">
                   <span class="small-muted">{{ 'job_details.type_of_work' | translate }}</span>
-                  <span class="badge-outline">{{ lookupsService.getTypeOfWork(job?.workTypeId)}}</span>
+                  <span class="badge-outline">{{ job?.workType?.name}}</span>
                 </div>
                 <div class="d-flex justify-content-between">
                   <span class="small-muted">{{ 'job_details.deadline' | translate }}</span>
@@ -174,7 +174,7 @@
                 </div>
                 <div class="d-flex justify-content-between">
                   <span class="small-muted">{{ 'job_details.entity' | translate }}</span>
-                  <span class="badge-outline">{{ lookupsService.getWorkLocations(job?.workLocationId) }}</span>
+                  <span class="badge-outline">{{ job?.workLocation?.name }}</span>
                 </div>
               </div>
             </div>

@@ -6,8 +6,8 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import {Job} from '../../../models/job.model';
 import {debounceTime, filter} from 'rxjs';
-import {JobQuota} from '../../../models/job-quota.models';
 import { JobLookupService } from '../../../services/job-lookup.service';
+import { JobQuota } from '../../../models/job-quotas.models';
 
 @Component({
   selector: 'app-quotas-step',
@@ -36,11 +36,11 @@ export class QuotasStepComponent implements WizardStepComponent,OnInit {
 
 
   get residentsBreakdown() {
-    return this.jobService.currentJob().quota.residentsBreakdown || [];
+    return this.jobService.newJob().quota.residentsBreakdown || [];
   }
 
   ngOnInit() {
-    this.setJobData(this.jobService.currentJob());
+    this.setJobData(this.jobService.newJob());
 
     this.form.valueChanges.pipe(
       debounceTime(300),

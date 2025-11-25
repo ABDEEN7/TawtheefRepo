@@ -1,21 +1,14 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
-
+using jobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Extensions;
 
 public static class JobRepositoryExtensions
 {
-    public static IQueryable<Domain.Entities.Recruitment.Job> ApplyIncludes(this IQueryable<Domain.Entities.Recruitment.Job> query, List<Expression<Func<Domain.Entities.Recruitment.Job, object>>>? includes)
-    {
-        if (includes == null || !includes.Any()) 
-            return query;
-
-        return includes.Aggregate(query, (current, include) => current.Include(include));
-    }
-
-    public static IQueryable<Domain.Entities.Recruitment.Job> ApplySorting(this IQueryable<Domain.Entities.Recruitment.Job> query, PaginatedRequest? pagination)
+    public static IQueryable<jobEntity> ApplySorting(this IQueryable<jobEntity> query, PaginatedRequest? pagination)
     {
         if (pagination == null || string.IsNullOrWhiteSpace(pagination.SortBy))
         {
@@ -48,65 +41,49 @@ public static class JobRepositoryExtensions
     }
 
     // Your existing ApplyJobFilter method remains the same
-    public static IQueryable<Domain.Entities.Recruitment.Job> ApplyJobFilter(this IQueryable<Domain.Entities.Recruitment.Job> query, JobQueryFilter? filter)
+    public static IQueryable<jobEntity> ApplyJobFilter(
+        this IQueryable<jobEntity> query,
+        JobQueryFilter? filter)
     {
-        if (filter == null) return query;
+        if (filter is null)
+            return query;
 
-        // Search term filter
-        if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
-        {
-            query = query.Where(j => 
-                j.Title.Contains(filter.SearchTerm) ||
-                (j.Description != null && j.Description.Contains(filter.SearchTerm)) ||
-                (j.Benefits != null && j.Benefits.Contains(filter.SearchTerm)));
-        }
+        return query
 
-        // Department filter
-        if (filter.DepartmentId.HasValue)
-        {
-            query = query.Where(j => j.RequestingDepartmentId == filter.DepartmentId.Value);
-        }
+            // Search term
+            .WhereIf(!string.IsNullOrWhiteSpace(filter.SearchTerm),
+                j => j.Title.Contains(filter.SearchTerm!) ||
+                     j.Description.Contains(filter.SearchTerm!) ||
+                     j.Benefits.Contains(filter.SearchTerm!))
 
-        // Status filter
-        if (filter.StatusId.HasValue)
-        {
-            query = query.Where(j => j.StatusId == filter.StatusId.Value);
-        }
+            // Department
+            .WhereIf(filter.DepartmentId.HasValue,
+                j => j.RequestingDepartmentId == filter.DepartmentId)
 
-        // Job category filter
-        if (filter.JobCategoryId.HasValue)
-        {
-            query = query.Where(j => j.JobCategoryId == filter.JobCategoryId.Value);
-        }
+            // Status
+            .WhereIf(filter.StatusId.HasValue,
+                j => j.StatusId == filter.StatusId)
 
-        // Work type filter
-        if (filter.WorkTypeId.HasValue)
-        {
-            query = query.Where(j => j.WorkTypeId == filter.WorkTypeId.Value);
-        }
+            // Category
+            .WhereIf(filter.JobCategoryId.HasValue,
+                j => j.JobCategoryId == filter.JobCategoryId)
 
-        // Deadline range filter
-        if (filter.DeadlineFrom.HasValue)
-        {
-            query = query.Where(j => j.Deadline >= filter.DeadlineFrom.Value);
-        }
+            // Work type
+            .WhereIf(filter.WorkTypeId.HasValue,
+                j => j.WorkTypeId == filter.WorkTypeId)
 
-        if (filter.DeadlineTo.HasValue)
-        {
-            query = query.Where(j => j.Deadline <= filter.DeadlineTo.Value);
-        }
+            // Deadline range
+            .WhereIf(filter.DeadlineFrom.HasValue,
+                j => j.Deadline >= filter.DeadlineFrom)
 
-        // Vacancies range filter
-        if (filter.MinVacancies.HasValue)
-        {
-            query = query.Where(j => j.Vacancies >= filter.MinVacancies.Value);
-        }
+            .WhereIf(filter.DeadlineTo.HasValue,
+                j => j.Deadline <= filter.DeadlineTo)
 
-        if (filter.MaxVacancies.HasValue)
-        {
-            query = query.Where(j => j.Vacancies <= filter.MaxVacancies.Value);
-        }
+            // Vacancies min/max
+            .WhereIf(filter.MinVacancies.HasValue,
+                j => j.Vacancies >= filter.MinVacancies)
 
-        return query;
+            .WhereIf(filter.MaxVacancies.HasValue,
+                j => j.Vacancies <= filter.MaxVacancies);
     }
 }

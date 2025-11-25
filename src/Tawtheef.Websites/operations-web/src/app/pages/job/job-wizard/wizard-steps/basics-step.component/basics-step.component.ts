@@ -78,7 +78,7 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
   }
 
   ngOnInit() {
-    this.setJobData(this.jobService.currentJob());
+    this.setJobData(this.jobService.newJob());
     this.setupFormListeners();
   }
 

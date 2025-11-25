@@ -15,7 +15,7 @@ export class ReviewStepComponent implements WizardStepComponent {
   jobService = inject(JobService);
   lookupsService = inject(JobLookupService)
 
-  jobSignal = this.jobService.currentJob;
+  jobSignal = this.jobService.newJob;
 
   readonly form = this.fb.group({});
 

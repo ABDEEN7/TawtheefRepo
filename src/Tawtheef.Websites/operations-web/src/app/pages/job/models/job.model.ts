@@ -1,5 +1,4 @@
-import { JobBasics } from './job-basics.models';
-import { JobQuota } from './job-quota.models';
+import { JobQuota } from './job-quotas.models';
 import { GUID } from '../../../shared/types/guid.type';
 
 export interface Job {
