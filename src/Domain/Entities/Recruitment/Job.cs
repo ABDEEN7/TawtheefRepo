@@ -12,8 +12,7 @@ public class Job : EventEntity
 {
     public Guid RequestingDepartmentId { get; set; }
     public Department? RequestingDepartment { get; set; }
-
-    [Required, MaxLength(250)]
+    [MaxLength(200),Required]
     public required string Title { get; set; }
 
     public Guid JobCategoryId { get; set; }
@@ -30,20 +29,25 @@ public class Job : EventEntity
 
     public Guid WorkTypeId { get; set; }
     public WorkType? WorkType { get; set; }
-
-    public int Vacancies { get; set; }
+    [Required]
+    public required int Vacancies { get; set; }
+    [Required]
     public DateTimeOffset Deadline { get; set; }
-    public string? Description { get; set; }
-    public string? Benefits { get; set; }
+    [MaxLength(2000),Required]
+    public required string Description { get; set; }
+    [MaxLength(2000),Required]
+    public required string Benefits { get; set; }
     
     public DateTimeOffset? PublishAt { get; set; }
 
     public Guid StatusId { get; set; }
     public JobStatus? Status { get; set; }
     
+    public Guid QuotaId { get; set; }
+    public JobQuota? Quota { get; set; }
+
     public ICollection<Invitation> Invitations { get; init; } = [];
     public ICollection<JobDegree> Degrees { get; init; } = [];
-    public ICollection<JobQuota> Quotas { get; init; } = [];
     public ICollection<JobCondition> Conditions { get; init; } = [];
     public ICollection<JobSkill> Skills { get; init; } = [];
 }
