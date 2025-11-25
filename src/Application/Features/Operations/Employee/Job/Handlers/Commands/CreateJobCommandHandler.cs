@@ -1,68 +1,101 @@
-using Mapster;
 using FluentResults;
+using Mapster;
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
-using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
 
-public class CreateJobCommandHandler(IJobRepository jobRepository, IUnitOfWork unitOfWork)
+public class CreateJobCommandHandler(
+    IJobRepository jobRepository,
+    IJobQuotaRepository jobQuotaRepository,
+    IJobDegreeRepository jobDegreeRepository,
+    IJobConditionRepository jobConditionRepository,
+    IJobSkillRepository jobSkillRepository,
+    IUnitOfWork unitOfWork)
     : IRequestHandler<CreateJobCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
-    
-            var job = request.Job.Adapt<JobEntity>();
+            // Begin transaction
+            await unitOfWork.BeginTransactionAsync(cancellationToken);
             
-            job.Id = Guid.NewGuid();
-            job.StatusId = JobStatusIds.Draft;
-            
-            
-            SetCollectionIds(job);
-            var addResult = await jobRepository.Repository.AddAsync(job);
-            if (addResult.IsFailed)
-                return Result.Fail<Guid>(addResult.Errors);
+                // 1. Create main job entity
+                var job = request.Job.Adapt<JobEntity>();
+                
+                // 2. Create and save quota
+                var quotaResult = await CreateJobQuotaAsync(request, job);
+                if (quotaResult.IsFailed)
+                {
+                    await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                    return quotaResult;
+                }
+                
+                // 3. Save the main job
+                var jobResult = await jobRepository.Repository.AddAsync(job);
+                if (jobResult.IsFailed)
+                {
+                    await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                    return Result.Fail<Guid>(jobResult.Errors);
+                }
+                
+                // 4. Create related entities
+                var relatedEntitiesResult = await CreateRelatedEntitiesAsync(job.Id, request.Job);
+                if (relatedEntitiesResult.IsFailed)
+                {
+                    await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                    return relatedEntitiesResult;
+                }
+                
+                // 5. Save all changes and commit transaction
+                await unitOfWork.CommitTransactionAsync(cancellationToken);
+                await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+                return Result.Ok(job.Id);
 
-            return Result.Ok(job.Id);
     }
-
-    private void SetCollectionIds(JobEntity job)
+    
+    private async Task<IResult<Guid>> CreateJobQuotaAsync(CreateJobCommand request, JobEntity job)
     {
-        // Set IDs for skills
-        foreach (var skill in job.Skills)
+        var quota = (request.Job, job.QuotaId).Adapt<JobQuota>();
+        var quotaResult = await jobQuotaRepository.Repository.AddAsync(quota);
+        return quotaResult.IsSuccess 
+            ? Result.Ok(Guid.Empty) 
+            : Result.Fail<Guid>(quotaResult.Errors);
+    }
+    
+    private async Task<IResult<Guid>> CreateRelatedEntitiesAsync(Guid jobId, CreateJobDto jobDto)
+    {
+        // Create degrees
+        if (jobDto.DegreeIds.Any())
         {
-            skill.Id = Guid.NewGuid();
-            skill.JobId = job.Id;
+            var degrees = (jobId, jobDto.DegreeIds).Adapt<List<JobDegree>>();
+            var degreesResult = await jobDegreeRepository.Repository.AddRangeAsync(degrees);
+            if (degreesResult.IsFailed) return Result.Fail<Guid>(degreesResult.Errors);
         }
 
-        // Set IDs for conditions
-        foreach (var condition in job.Conditions)
+        // Create conditions
+        if (jobDto.Conditions.Count != 0)
         {
-            condition.Id = Guid.NewGuid();
-            condition.JobId = job.Id;
+            var conditions = (jobId, jobDto.Conditions).Adapt<List<JobCondition>>();
+            var conditionsResult = await jobConditionRepository.Repository.AddRangeAsync(conditions);
+            if (conditionsResult.IsFailed)
+                return Result.Fail<Guid>(conditionsResult.Errors);
         }
-
-        // Set IDs for degrees
-        foreach (var degree in job.Degrees)
+        
+        // Create skills
+        if (jobDto.Skills.Any())
         {
-            degree.Id = Guid.NewGuid();
-            degree.JobId = job.Id;
+            var skills = (jobId, jobDto.Skills).Adapt<List<JobSkill>>();
+            var skillsResult = await jobSkillRepository.Repository.AddRangeAsync(skills);
+            if (skillsResult.IsFailed)
+                return Result.Fail<Guid>(skillsResult.Errors);
         }
-
-        // Set IDs for quotas and breakdowns
-        job.Quota?.Id = Guid.NewGuid();
-        if (job.Quota == null)
-            return;
-
-        foreach (var breakdown in job.Quota.ResidentsBreakdowns)
-        {
-            breakdown.Id = Guid.NewGuid();
-            breakdown.JobQuotaId = job.Quota.Id;
-        }
+        
+        return Result.Ok(Guid.Empty);
     }
 }

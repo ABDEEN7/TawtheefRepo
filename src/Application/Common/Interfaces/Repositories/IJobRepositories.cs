@@ -4,6 +4,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Application.Common.Interfaces.Repositories;
 

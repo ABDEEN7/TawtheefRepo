@@ -1,7 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
+
+[Table("JobSkills")]
 
 public class JobSkill: EventEntity
 {

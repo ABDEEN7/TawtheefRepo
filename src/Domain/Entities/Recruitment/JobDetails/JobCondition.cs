@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
+[Table("JobConditions")]
 public class JobCondition: EventEntity
 {
     public Guid JobId { get; set; }
