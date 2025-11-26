@@ -42,7 +42,7 @@ public class JobProfile : IRegister
             .Map(dest => dest.Gcc, src => src.dto.Quota.Gcc)
             .Map(dest => dest.QuGrads, src => src.dto.Quota.QuGrads)
             .Map(dest => dest.Residents, src => src.dto.Quota.Residents)
-            .Map(dest => dest.ResidentsBreakdowns, src => src.dto.Quota.ResidentsBreakdown) // FIXED: Map to correct property name
+            .Map(dest => dest.ResidentsBreakdowns, src => src.dto.Quota.ResidentsBreakdowns) // FIXED: Map to correct property name
             .AfterMapping((_, dest) =>
             {
                 // Set IDs for resident breakdowns
@@ -76,7 +76,7 @@ public class JobProfile : IRegister
                 Id = Guid.NewGuid(),
                 JobId = src.jobId,
                 Text = condition,
-                Order = index
+                Order = index +1
             }).ToList());
 
         // Create JobSkill from skills
@@ -86,7 +86,7 @@ public class JobProfile : IRegister
                 Id = Guid.NewGuid(),
                 JobId = src.jobId,
                 Text = skill,
-                Order = index
+                Order = index +1
             }).ToList());
 
         // Response mappings
@@ -131,7 +131,7 @@ public class JobProfile : IRegister
             .Map(dest => dest.Gcc, src => src.Gcc)
             .Map(dest => dest.QuGrads, src => src.QuGrads)
             .Map(dest => dest.Residents, src => src.Residents)
-            .Map(dest => dest.ResidentsBreakdown, 
+            .Map(dest => dest.ResidentsBreakdowns, 
                 src => src.ResidentsBreakdowns.Adapt<List<ResidentBreakdownResponseDto>>());
         
         config.NewConfig<ResidentBreakdown, ResidentBreakdownResponseDto>()

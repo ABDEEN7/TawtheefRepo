@@ -117,15 +117,9 @@ public class JobController(IMediator mediator) : ControllerBase
     }
     
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateJob(Guid id, [FromBody] UpdateJobCommand command)
+    [HttpPut]
+    public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
     {
-        // Ensure the ID in the route matches the command
-        if (id != command.JobId)
-        {
-            return BadRequest("Route ID does not match command ID");
-        }
-        
         var result = await mediator.Send(command);
         if (result.IsSuccess)
         {

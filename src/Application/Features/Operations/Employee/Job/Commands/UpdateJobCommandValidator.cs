@@ -8,7 +8,7 @@ public class UpdateJobCommandValidator : AbstractValidator<UpdateJobCommand>
 {
     public UpdateJobCommandValidator()
     {
-        RuleFor(x => x.JobId)
+        RuleFor(x => x.Job.Id)
             .NotEmpty().WithMessage(JobValidationMessages.JobIdRequired);
 
         RuleFor(x => x.Job)
@@ -37,7 +37,7 @@ public class UpdateJobCommandValidator : AbstractValidator<UpdateJobCommand>
             .Must(HaveValidQuotaTotal)
             .WithMessage(JobValidationMessages.JobQuotaTotalInvalid);
 
-        RuleForEach(x => x.Job.Quota.ResidentsBreakdown)
+        RuleForEach(x => x.Job.Quota.ResidentsBreakdowns)
             .ChildRules(breakdown =>
             {
                 breakdown.RuleFor(b => b.Percentage)

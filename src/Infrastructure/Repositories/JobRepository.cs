@@ -63,7 +63,7 @@ public class JobRepository (IGenericRepository<Job> repository) : BaseRepository
             .ThenInclude(de => de.Degree)
             .Include(j => j.Invitations)
             .Include(j => j.Quota)
-            .ThenInclude(q => q!.ResidentsBreakdowns)
+            .ThenInclude(q => q!.ResidentsBreakdowns).ThenInclude(rs=>rs.Nationality)
             .FirstOrDefaultAsync(j => j.Id == id);
 
         return job is null ? Result.Fail<Job>(JobValidationMessages.JobNotFound) : Result.Ok(job);

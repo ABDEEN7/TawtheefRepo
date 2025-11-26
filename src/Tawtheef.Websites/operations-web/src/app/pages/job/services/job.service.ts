@@ -67,7 +67,10 @@ export class JobService {
 
   loadJob(id: GUID): Observable<JobResponseDto> {
     return this.httpService.get<JobResponseDto>(`${this.endpoints.job.job}/${id}`).pipe(
-      tap(job => this._currentJob.set(job)),
+      tap(job => {
+        this._currentJob.set(job)
+        this.setJobForEdit(job);
+      }),
     );
   }
 
@@ -77,7 +80,7 @@ export class JobService {
     job: job
   };
     const operation = job.id
-      ? this.httpService.put<Job>(this.endpoints.job.job + `/${job.id}`, command)
+      ? this.httpService.put<Job>(this.endpoints.job.job, command)
       : this.httpService.post<Job>(this.endpoints.job.job, command);
 
     return operation;
@@ -113,7 +116,7 @@ export class JobService {
   updateCurrentJobQuota(quotas: Partial<JobQuota>): void {
     this._newJob.update(job => ({
       ...job,
-      quota: {...job.quota, ...quotas}
+      quota: {...job.quota, ...quotas,}
     }));
   }
 
@@ -129,21 +132,41 @@ export class JobService {
     this._newJob.update(job => ({...job, description, benefits}));
   }
 
-  // private updateJobInState(savedJob: Job): void {
-  //   const currentJobs = this._jobs();
-
-  //   if (savedJob.id) {
-  //     const jobExists = currentJobs.some(j => j.id === savedJob.id);
-  //     const updatedJobs = jobExists
-  //       ? currentJobs.map(j => j.id === savedJob.id ? savedJob : j)
-  //       : [...currentJobs, savedJob];
-
-  //     this._jobs.set(updatedJobs);
-  //   } else {
-  //     this._jobs.set([...currentJobs, savedJob]);
-  //   }
-  //   this._currentJob.set(savedJob);
-  // }
+  setJobForEdit(job: JobResponseDto): void {
+    // Convert JobResponseDto to Job model for editing
+    const editJob: Job = {
+      id: job.id,
+      requestingDepartmentId: job.requestingDepartment?.id || '' as GUID,
+      title: job.title,
+      jobCategoryId: job.jobCategory?.id || '' as GUID,
+      genderId: job.gender?.id || '' as GUID,
+      workLocationId: job.workLocation?.id || '' as GUID,
+      majorId: job.major?.id || '' as GUID,
+      workTypeId: job.workType?.id || '' as GUID,
+      statusId : job.status?.id || '' as GUID,
+      vacancies: job.vacancies,
+      deadline: job.deadline ? new Date(job.deadline) : null,
+      description: job.description,
+      benefits: job.benefits,
+      conditions: job.conditions || [],
+      skills: job.skills || [],
+      degreeIds: job.degrees?.map(d => d.id) || [],
+      quota: job.quota ? {
+        qatariCitizens: job.quota.qatariCitizens || 0,
+        qatarMother: job.quota.qatarMother || 0,
+        nonQatariSpouse: job.quota.nonQatariSpouse || 0,
+        gcc: job.quota.gcc || 0,
+        quGrads: job.quota.quGrads || 0,
+        residents: job.quota.residents || 0,
+        residentsBreakdowns: (job.quota.residentsBreakdowns || []).map(item => ({
+        nationalityId: item.nationality?.id || '' as GUID,
+        percentage : item.percentage
+      }))
+    } : this.createEmptyJob().quota
+    };
+    
+    this._newJob.set(editJob);
+  }
 
   private createEmptyJob(): Job {
     return {
@@ -155,6 +178,7 @@ export class JobService {
       workLocationId: '' as GUID,
       majorId: '' as GUID,
       workTypeId: '' as GUID,
+      statusId:'' as GUID,
       vacancies: 0,
       deadline: null,
       quota: {
@@ -164,7 +188,7 @@ export class JobService {
         gcc: 0,
         quGrads: 0,
         residents: 0,
-        residentsBreakdown: []
+        residentsBreakdowns: []
       },
       conditions: [],
       skills: [],

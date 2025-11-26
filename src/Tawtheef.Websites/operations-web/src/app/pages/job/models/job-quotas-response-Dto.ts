@@ -7,5 +7,5 @@ export interface JobQuotasResponseDto {
   gcc: number;
   quGrads: number;
   residents: number;
-  residentsBreakdown: ResidentBreakdownResponseDto[];
+  residentsBreakdowns: ResidentBreakdownResponseDto[];
 }

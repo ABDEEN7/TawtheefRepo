@@ -32,7 +32,7 @@ public class CreateJobCommandValidator : AbstractValidator<CreateJobCommand>
             .Must(HaveValidQuotaTotal)
             .WithMessage(JobValidationMessages.JobQuotaTotalInvalid);
             
-        RuleForEach(x => x.Job.Quota.ResidentsBreakdown)
+        RuleForEach(x => x.Job.Quota.ResidentsBreakdowns)
             .ChildRules(breakdown =>
             {
                 breakdown.RuleFor(b => b.Percentage)

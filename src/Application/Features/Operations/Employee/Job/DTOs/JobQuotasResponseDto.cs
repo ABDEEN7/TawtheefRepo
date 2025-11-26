@@ -8,5 +8,5 @@ public record JobQuotasResponseDto
     public decimal Gcc { get; init; }
     public decimal QuGrads { get; init; }
     public decimal Residents { get; init; }
-    public List<ResidentBreakdownResponseDto> ResidentsBreakdown { get; init; } = [];
+    public List<ResidentBreakdownResponseDto> ResidentsBreakdowns { get; init; } = [];
 }

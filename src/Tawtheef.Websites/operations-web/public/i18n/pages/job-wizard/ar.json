@@ -148,7 +148,13 @@
         "total": "مجموع تفصيل المقيمين",
         "btn_add": "إضافة",
         "close": "إغلاق",
-        "save": "حفظ التفصيل"
+        "save": "حفظ التفصيل",
+        "residents": {
+          "target": "الهدف",
+          "remaining": "المتبقي",
+          "exceeded_target": "يتجاوز النسبة المستهدفة",
+          "exceeds_remaining": "لا يمكن أن يتجاوز {{remaining}}٪ المتبقية"
+        }
       }
     },
 

@@ -7,5 +7,5 @@ export interface JobQuota {
   gcc: number;
   quGrads: number;
   residents: number;
-  residentsBreakdown: ResidentBreakdown[];
+  residentsBreakdowns: ResidentBreakdown[];
 }

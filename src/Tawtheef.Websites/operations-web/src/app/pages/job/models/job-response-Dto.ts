@@ -1,8 +1,9 @@
 import { Lookups } from "../../../core/models/lookups.model";
+import { GUID } from "../../../shared/types/guid.type";
 import { JobQuotasResponseDto } from "./job-quotas-response-Dto";
 
 export interface JobResponseDto {
-  id: string;
+  id: GUID;
 
   createdById?: string;    
   createdDate: string;     

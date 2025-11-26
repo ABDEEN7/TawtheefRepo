@@ -150,7 +150,11 @@
         "total": "Total Residents Breakdown",
         "btn_add": "Add",
         "close": "Close",
-        "save": "Save Breakdown"
+        "save": "Save Breakdown",
+        "target": "Target",
+        "remaining": "Remaining",
+        "exceeded_target": "Exceeds target percentage",
+        "exceeds_remaining": "Cannot exceed {{remaining}}% remaining"
       }
     },
 

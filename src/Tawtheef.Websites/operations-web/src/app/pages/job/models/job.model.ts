@@ -10,6 +10,7 @@ export interface Job {
   workLocationId: GUID;
   majorId: GUID;
   workTypeId: GUID;
+  statusId :GUID;
   vacancies: number;
   deadline: Date | null;
   quota: JobQuota;

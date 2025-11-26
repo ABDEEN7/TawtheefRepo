@@ -5,7 +5,6 @@ public static class JobValidationMessages
     public const string JobIdRequired = "Job ID is required";
 
     public const string JobRequired = "Job data is required";
-    public const string JobBasicsRequired = "Job basics are required";
     
     public const string JobTitleRequired = "Job title is required";
     public const string JobTitleMaxLength = "Job title cannot exceed 200 characters";
@@ -27,7 +26,10 @@ public static class JobValidationMessages
 
     public const string SkillRequired = "Skill text cannot be empty";
     public const string SkillMaxLength = "Skill cannot exceed 100 characters";
-    
+    public const string QuotaNotFound = "Job quota not found";
+    public const string QuotaIdRequired = "Quota ID is required for update";
     public const string JobNotFound = "Job not found";
     public const string JobDeleteFailed = "Failed to delete job";
+    public const string JobResidentsBreakdownNotFound = "No Resident Breakdowns found for the given Job Quota Id.";
+    public const string UpdateFailed = "Failed to update";
 }

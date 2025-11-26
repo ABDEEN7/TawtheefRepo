@@ -5,6 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
@@ -34,8 +35,9 @@ public class CreateJobCommandHandler(
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
                     return quotaResult;
                 }
-                
+
                 // 3. Save the main job
+                job.StatusId = JobStatusIds.Draft;
                 var jobResult = await jobRepository.Repository.AddAsync(job);
                 if (jobResult.IsFailed)
                 {
@@ -64,14 +66,14 @@ public class CreateJobCommandHandler(
         var quota = (request.Job, job.QuotaId).Adapt<JobQuota>();
         var quotaResult = await jobQuotaRepository.Repository.AddAsync(quota);
         return quotaResult.IsSuccess 
-            ? Result.Ok(Guid.Empty) 
+            ? Result.Ok(quotaResult.Value.Id) 
             : Result.Fail<Guid>(quotaResult.Errors);
     }
     
     private async Task<IResult<Guid>> CreateRelatedEntitiesAsync(Guid jobId, CreateJobDto jobDto)
     {
         // Create degrees
-        if (jobDto.DegreeIds.Any())
+        if (jobDto.DegreeIds.Count != 0)
         {
             var degrees = (jobId, jobDto.DegreeIds).Adapt<List<JobDegree>>();
             var degreesResult = await jobDegreeRepository.Repository.AddRangeAsync(degrees);
@@ -88,7 +90,7 @@ public class CreateJobCommandHandler(
         }
         
         // Create skills
-        if (jobDto.Skills.Any())
+        if (jobDto.Skills.Count != 0)
         {
             var skills = (jobId, jobDto.Skills).Adapt<List<JobSkill>>();
             var skillsResult = await jobSkillRepository.Repository.AddRangeAsync(skills);

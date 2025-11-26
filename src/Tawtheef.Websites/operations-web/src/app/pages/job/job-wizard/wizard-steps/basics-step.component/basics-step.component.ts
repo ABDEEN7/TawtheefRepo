@@ -59,7 +59,7 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
       for (let i = first; i < last; i++) {
         items[i] = this.lookupsService.majors()[i];
       }
-      this.lookupsService.nationalities.set(items);
+      this.lookupsService.majors.set(items);
       this.lazyLoading = false;
     }, Math.random() * 1000 + 250);
   }
@@ -68,11 +68,11 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
     this.lazyLoading = true;
     this.loadLazyTimeout = setTimeout(() => {
       const {first, last} = event;
-      const items = [...this.lookupsService.majors()];
+      const items = [...this.lookupsService.departments()];
       for (let i = first; i < last; i++) {
-        items[i] = this.lookupsService.majors()[i];
+        items[i] = this.lookupsService.departments()[i];
       }
-      this.lookupsService.nationalities.set(items);
+      this.lookupsService.departments.set(items);
       this.lazyLoading = false;
     }, Math.random() * 1000 + 250);
   }

@@ -2,6 +2,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 public record UpdateJobDto
 {
+    public Guid Id { get; init; }
     public string Title { get; init; } = string.Empty;
     public Guid RequestingDepartmentId { get; init; }
     public Guid JobCategoryId { get; init; }
@@ -17,4 +18,7 @@ public record UpdateJobDto
     public List<string> Conditions { get; init; } = [];
     public List<string> Skills { get; init; } = [];
     public List<Guid> DegreeIds { get; init; } = [];
+    
+    public Guid StatusId { get; init; }
+
 }
