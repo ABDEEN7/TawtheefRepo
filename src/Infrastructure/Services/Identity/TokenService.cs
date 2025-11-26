@@ -37,22 +37,20 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
 
         var userType = await uow.GetEntityRepository<UserType>().DbSet
             .AsNoTracking().FirstAsync(t => t.Id == user.UserTypeId, ct);
-        var (isComplete, missing) = await pcs.EvaluateAsync(user.Id, ct);
+        var data = await pcs.EvaluateAsync(user.Id, ct);
+        var prefill = !data.IsComplete ? await pcs.BuildPrefillAsync(user, ct) : null;
         var accessToken =
             GenerateAccessToken(user, userType, [
                 new Claim(JwtRegisteredClaimNames.Sid, sid),
-                new("profile.completed", isComplete ? "true" : "false"),
-                new("profile.missing.count", missing.Length.ToString())
+                new("profile.completed", data.IsComplete ? "true" : "false"),
+                new("profile.missing.count", data.Missing.Length.ToString())
             ]);
         var refreshToken = GenerateRefreshToken(user.Id, sid);
         
-        var prefill = await pcs.BuildPrefillAsync(user, ct);
         return Result.Ok(new AuthResponse(
-            !isComplete,
-            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar),
-            new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires),
-            missing,
-            prefill
+            !data.IsComplete,
+            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, data.Missing, prefill),
+            new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
         ));
     }
     

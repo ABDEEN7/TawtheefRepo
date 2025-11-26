@@ -1,5 +1,6 @@
 ﻿{
   "wizard": {
+    "validationErrorTitle": "خطأ في التحقق من صحة البيانات",
     "title": "نظام التوظيف – الملف الشخصي",
     "accountFieldNote": "هذا الحقل مستمد من حسابك ولا يمكن تغييره.",
     "steps": {
@@ -125,7 +126,6 @@
           "error": "فشل إرسال الرمز، يرجى المحاولة مرة أخرى."
         }
       }
-
     },
     "nationalAddress": {
       "title": "العنوان الوطني",
@@ -288,6 +288,61 @@
         "cvPdfOnly": "يجب أن تكون السيرة الذاتية بصيغة PDF.",
         "idImageOrPdf": "يجب أن تكون البطاقة الشخصية صورة أو PDF.",
         "maxSize": "حجم الملف يجب ألا يتجاوز {{size}} ميغابايت."
+      }
+    },
+    "profile": {
+      "basic": {
+        "candidateType": {
+          "required": "يرجى اختيار نوع المتقدم"
+        },
+        "targetEntity": {
+          "required": "يرجى اختيار الجهة المستهدفة"
+        },
+        "cv": {
+          "required": "يرجى إرفاق السيرة الذاتية"
+        },
+        "id": {
+          "required": "يرجى إرفاق بطاقة الهوية"
+        },
+        "marriageCertificate": {
+          "required": "يرجى إرفاق عقد الزواج"
+        },
+        "birthCertificate": {
+          "required": "يرجى إرفاق شهادة الميلاد"
+        }
+      },
+      "personal": {
+        "fullNameAr": { "required": "يرجى إدخال الاسم بالعربية" },
+        "fullNameEn": { "required": "يرجى إدخال الاسم بالإنجليزية" },
+        "qid": { "required": "يرجى إدخال الرقم الشخصي" },
+        "dob": { "required": "يرجى إدخال تاريخ الميلاد" },
+        "nationality": { "required": "يرجى اختيار الجنسية" },
+        "gender": { "required": "يرجى اختيار الجنس" },
+        "religion": { "required": "يرجى اختيار الديانة" },
+        "marital": { "required": "يرجى اختيار الحالة الاجتماعية" },
+        "disabilityDetails": { "required": "يرجى إدخال تفاصيل الإعاقة" },
+        "sponsorType": { "required": "يرجى اختيار نوع الكفيل" },
+        "sponsorEmployerName": { "required": "يرجى إدخال اسم جهة العمل" },
+        "sponsorEmployerNumber": { "required": "يرجى إدخال رقم جهة العمل" },
+        "sponsorCard": { "required": "يرجى إرفاق بطاقة الكفيل" }
+      },
+      "contact": {
+        "country": { "required": "يرجى اختيار الدولة" },
+        "dialCode": { "required": "يرجى اختيار مفتاح الاتصال" },
+        "phone": { "required": "يرجى إدخال رقم الجوال" },
+        "phoneVerified": { "required": "يرجى توثيق رقم الجوال" },
+        "email": { "required": "يرجى إدخال البريد الإلكتروني" },
+        "emailVerified": { "required": "يرجى توثيق البريد الإلكتروني" },
+        "address": { "required": "يرجى إدخال العنوان" }
+      },
+      "degrees": {
+        "atLeastOne": { "required": "يجب إضافة مؤهل علمي واحد على الأقل" }
+      },
+      "experience": {
+        "atLeastOne": { "required": "يجب إضافة خبرة عملية واحدة على الأقل" }
+      },
+      "skills": {
+        "orLanguages": { "required": "يرجى إضافة مهارات أو لغات على الأقل" }
       }
     }
   }

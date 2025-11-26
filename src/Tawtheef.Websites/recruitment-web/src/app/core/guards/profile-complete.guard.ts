@@ -9,15 +9,14 @@ export const profileCompleteGuard: CanActivateFn = () => {
   const auth = injector.get(AuthService);
   const router = injector.get(Router);
 
-  return auth.getAuthBootstrap$().pipe(
-    map(b => {
-      if (b.requiresProfileCompletion) {
-        router.navigate([routes.user.profileWizard], {
-          state: {prefill: b.prefill, missing: b.missingFields}
-        }).then(r => {});
-         return false;
-      }
-      return true;
-    })
-  );
-};
+  const jwtData = auth.decodeBootstrapFromJwt();
+  if (jwtData.requiresProfileCompletion) {
+    return auth.getAuthBootstrap$().pipe(
+      map(response => {
+        router.navigate([routes.user.profileWizard], {state: {response}}).then(r => {});
+        return false;
+      })
+    )
+  }
+  return true;
+}

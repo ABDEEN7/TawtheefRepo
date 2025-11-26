@@ -4767,7 +4767,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<bool>("IsDraft")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaritalStatusId")
+                    b.Property<Guid?>("MaritalStatusId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("MarriageCertificateId")
@@ -4779,7 +4779,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<string>("NationalNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("NationalityId")
+                    b.Property<Guid?>("NationalityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ReligionId")
@@ -4788,10 +4788,10 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid?>("ResidenceAddressCertificateId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ResidenceAddressId")
+                    b.Property<Guid?>("ResidenceAddressId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ResidenceCountryId")
+                    b.Property<Guid?>("ResidenceCountryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ResumeAttachmentId")
@@ -6654,9 +6654,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.MaritalStatus", "MaritalStatus")
                         .WithMany()
-                        .HasForeignKey("MaritalStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MaritalStatusId");
 
                     b.HasOne("Tawtheef.Domain.Entities.Resource", "MarriageCertificate")
                         .WithMany()
@@ -6668,9 +6666,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Country", "Nationality")
                         .WithMany()
-                        .HasForeignKey("NationalityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NationalityId");
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Religion", "Religion")
                         .WithMany()
@@ -6682,15 +6678,12 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Applicant.ResidenceAddress", "ResidenceAddress")
                         .WithMany()
-                        .HasForeignKey("ResidenceAddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ResidenceAddressId");
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Country", "ResidenceCountry")
                         .WithMany()
                         .HasForeignKey("ResidenceCountryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Resource", "ResumeAttachment")
                         .WithMany()

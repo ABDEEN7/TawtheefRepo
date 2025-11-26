@@ -3,15 +3,10 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {forkJoin, Observable} from 'rxjs';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SkillDto} from '../models/skill-dto.model';
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {catchError, map} from 'rxjs/operators';
 
-export interface LookupDto {
-  id: string;
-  backendName: string;
-  name: string;
-  description?: string;
-}
-
-export interface CountryDto extends LookupDto {
+export interface CountryDto extends dropdownOptionsModel {
   code: string;
 }
 
@@ -23,46 +18,50 @@ export class ProfileLookupsService {
   loading = signal<boolean>(false);
   loaded = signal<boolean>(false);
 
-  candidateTypes   = signal<LookupDto[]>([]);
-  targetEntities   = signal<LookupDto[]>([]);
-  genders          = signal<LookupDto[]>([]);
-  religions        = signal<LookupDto[]>([]);
-  maritalStatuses  = signal<LookupDto[]>([]);
+  candidateTypes   = signal<dropdownOptionsModel[]>([]);
+  targetEntities   = signal<dropdownOptionsModel[]>([]);
+  genders          = signal<dropdownOptionsModel[]>([]);
+  religions        = signal<dropdownOptionsModel[]>([]);
+  maritalStatuses  = signal<dropdownOptionsModel[]>([]);
   countries        = signal<CountryDto[]>([]);
-  degrees          = signal<LookupDto[]>([]);
-  universities     = signal<LookupDto[]>([]);
-  majors           = signal<LookupDto[]>([]);
-  studyTypes       = signal<LookupDto[]>([]);
-  ratingGrades     = signal<LookupDto[]>([]);
-  languages        = signal<LookupDto[]>([]);
-  languageLevels   = signal<LookupDto[]>([]);
+  degrees          = signal<dropdownOptionsModel[]>([]);
+  universities     = signal<dropdownOptionsModel[]>([]);
+  majors           = signal<dropdownOptionsModel[]>([]);
+  studyTypes       = signal<dropdownOptionsModel[]>([]);
+  ratingGrades     = signal<dropdownOptionsModel[]>([]);
+  languages        = signal<dropdownOptionsModel[]>([]);
+  languageLevels   = signal<dropdownOptionsModel[]>([]);
   nationalities        = signal<CountryDto[]>([]);
   interviewLocation        = signal<CountryDto[]>([]);
   residenceCountry        = signal<CountryDto[]>([]);
   graduationCountry        = signal<CountryDto[]>([]);
-  sponsorTypes        = signal<LookupDto[]>([]);
+  sponsorTypes        = signal<dropdownOptionsModel[]>([]);
 
-  loadAll() {
-    if (this.loaded()) return;
+  loadAll(): Observable<void> {
+    if (this.loaded()) return new Observable(observer => {
+      observer.next();
+      observer.complete();
+    });
+
     this.loading.set(true);
 
-    forkJoin({
-      candidateTypes:  this.http.get<LookupDto[]>(this.endpoints.profile.lookups.candidateTypes),
-      targetEntities:  this.http.get<LookupDto[]>(this.endpoints.profile.lookups.targetEntities),
-      genders:         this.http.get<LookupDto[]>(this.endpoints.profile.lookups.genders),
-      religions:       this.http.get<LookupDto[]>(this.endpoints.profile.lookups.religions),
-      maritalStatuses: this.http.get<LookupDto[]>(this.endpoints.profile.lookups.maritalStatuses),
-      countries:       this.http.get<CountryDto[]>(this.endpoints.profile.lookups.countries),
-      degrees:         this.http.get<LookupDto[]>(this.endpoints.profile.lookups.degrees),
-      universities:    this.http.get<LookupDto[]>(this.endpoints.profile.lookups.universities),
-      majors:          this.http.get<LookupDto[]>(this.endpoints.profile.lookups.majors),
-      studyTypes:      this.http.get<LookupDto[]>(this.endpoints.profile.lookups.studyTypes),
-      ratingGrades:    this.http.get<LookupDto[]>(this.endpoints.profile.lookups.ratingGrades),
-      languages:       this.http.get<LookupDto[]>(this.endpoints.profile.lookups.languages),
-      languageLevels:  this.http.get<LookupDto[]>(this.endpoints.profile.lookups.languageLevels),
-      sponsorTypes:  this.http.get<LookupDto[]>(this.endpoints.profile.lookups.sponsorTypes),
-    }).subscribe({
-      next: (res) => {
+    return forkJoin({
+      candidateTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.candidateTypes),
+      targetEntities: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.targetEntities),
+      genders: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.genders),
+      religions: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.religions),
+      maritalStatuses: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.maritalStatuses),
+      countries: this.http.get<CountryDto[]>(this.endpoints.profile.lookups.countries),
+      degrees: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.degrees),
+      universities: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.universities),
+      majors: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.majors),
+      studyTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.studyTypes),
+      ratingGrades: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.ratingGrades),
+      languages: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languages),
+      languageLevels: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languageLevels),
+      sponsorTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.sponsorTypes),
+    }).pipe(
+      map(res => {
         this.candidateTypes.set(res.candidateTypes);
         this.targetEntities.set(res.targetEntities);
         this.genders.set(res.genders);
@@ -84,12 +83,13 @@ export class ProfileLookupsService {
 
         this.loaded.set(true);
         this.loading.set(false);
-      },
-      error: (err) => {
+      }),
+      catchError(err => {
         console.error('Failed to load profile lookups', err);
         this.loading.set(false);
-      }
-    });
+        throw err;
+      })
+    );
   }
   searchSkills(query: string): Observable<SkillDto[]> {
     const params = new HttpParams().set('q', query);

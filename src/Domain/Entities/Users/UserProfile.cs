@@ -41,7 +41,7 @@ public class UserProfile : EventEntity
         }
     }
     
-    public Guid NationalityId { get; set; }
+    public Guid? NationalityId { get; set; }
     public Country? Nationality { get; set; }
     
     public Guid? GenderId { get; set; }
@@ -50,13 +50,13 @@ public class UserProfile : EventEntity
     public Guid? ReligionId { get; set; }
     public Religion? Religion { get; init; }
     
-    public Guid MaritalStatusId { get; set; }
+    public Guid? MaritalStatusId { get; set; }
     public MaritalStatus? MaritalStatus { get; set; }
     
     public int ChildrenCount { get; set; }
     
     
-    public Guid ResidenceCountryId { get; set; }
+    public Guid? ResidenceCountryId { get; set; }
     public Country? ResidenceCountry { get; set; }
     
     public Guid? InterviewLocationId { get; set; }
@@ -64,7 +64,7 @@ public class UserProfile : EventEntity
     
     public string? Address { get; set; }
     
-    public Guid ResidenceAddressId { get; set; }
+    public Guid? ResidenceAddressId { get; set; }
     public ResidenceAddress? ResidenceAddress { get; set; }
     
     public Guid? ResidenceAddressCertificateId { get; set; }

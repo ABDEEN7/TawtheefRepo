@@ -34,6 +34,7 @@ export function rootLoaderFactory(_httpBackend: HttpBackend) {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    MessageService,
     importProvidersFrom(NgbModule),
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptorsFromDi()),
@@ -51,7 +52,6 @@ export const appConfig: ApplicationConfig = {
       const langSvc = inject(LanguageService);
       return langSvc.init();
     }),
-    MessageService,
     provideHttpClient(
       withInterceptors([
         loadingInterceptor,

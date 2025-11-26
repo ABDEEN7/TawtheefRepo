@@ -3,6 +3,7 @@ import { DataService } from '../../services/data.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {QualificationModal} from './dialogs/qualification.modal/qualification.modal';
 import {TranslateService} from '@ngx-translate/core';
+import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 
 @Component({
   selector: 'app-step-degrees',
@@ -16,6 +17,12 @@ export class StepQualificationComponent {
   ds = inject(DataService);
   dialog = inject(DialogService);
   translate = inject(TranslateService);
+
+  get step(){
+    const stepValidity = createStepValiditySignal(this.ds.state);
+    const validity = stepValidity();
+    return validity['degrees'];
+  }
 
   add(){
     this.dialog.open(QualificationModal,{

@@ -394,19 +394,26 @@ namespace Tawtheef.Infrastructure
             /// </summary>
             private void AddServices(IConfiguration configuration)
             {
-                var connectionString = configuration["Storage:ConnectionString"] ?? string.Empty;
-                var containerName = configuration["Storage:RootPath"] ?? string.Empty;
-
-                services.AddSingleton(_ => new BlobServiceClient(connectionString));
-                services.AddScoped(sp =>
+                var connectionString = configuration[$"Storage:{nameof(StorageSettings.AzureConnectionString)}"] ?? string.Empty;
+                var containerName = configuration[$"Storage:{nameof(StorageSettings.RootPath)}"] ?? string.Empty;
+                if (!string.IsNullOrEmpty(connectionString))
                 {
-                    var serviceClient = sp.GetRequiredService<BlobServiceClient>();
-                    var containerClient = serviceClient.GetBlobContainerClient(containerName);
-                    return containerClient;
-                });
+                    services.AddSingleton(_ => new BlobServiceClient(connectionString));
+                    services.AddScoped(sp =>
+                    {
+                        var serviceClient = sp.GetRequiredService<BlobServiceClient>();
+                        var containerClient = serviceClient.GetBlobContainerClient(containerName);
+                        return containerClient;
+                    });
+                    services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+                }
+                else
+                {
+                    services.AddScoped<IFileStorageService, LocalStorageService>();
+                }
+
                 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
                 services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
-                services.AddScoped<IFileStorageService, AzureBlobStorageService>();
                 services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 

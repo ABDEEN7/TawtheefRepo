@@ -2,21 +2,17 @@
 import {DataService} from './services/data.service';
 import {TranslateService} from '@ngx-translate/core';
 import {LanguageService} from '../../../core/services/language.service';
-import {ProfileState} from './models/profile-state.model';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../core/auth/auth.service';
 import {take} from 'rxjs';
-import {AuthBootstrap, PrefillData} from '../../../core/models/auth/auth-response.model';
+import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../core/models/auth/auth-response.model';
 import {routes} from '../../../routes/routes';
 import {finalize} from 'rxjs/operators';
 import {ProfileLookupsService} from './services/profile-lookups.service';
 import {AvatarModal} from './steps/step-personal/dialogs/avatar.modal/avatar.modal';
 import {DialogService} from 'primeng/dynamicdialog';
 import {PhoneMapperService} from './services/phone-mapper.service';
-import {HttpClient} from '@angular/common/http';
-import {EndpointsService} from '../../../core/http/endpoints.service';
-import {MessageService} from 'primeng/api';
-// import {buildProfileFormData, mapProfileStateToRequest} from './models/profile.mapper';
+import {mapProfileStatusToState} from './services/profile.mapper';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -33,12 +29,7 @@ export class WizardProfileComponent implements OnInit {
   lookups = inject(ProfileLookupsService);
   language = inject(LanguageService);
   phoneMapper = inject(PhoneMapperService);
-  private i18n = inject(TranslateService);
-  private http = inject(HttpClient);
-  private endpoints = inject(EndpointsService);
-  private messages = inject(MessageService);
 
-  savingDraft = false;
   avatarPreviewUrl: string | null = null;
 
   step = 1;
@@ -63,60 +54,34 @@ export class WizardProfileComponent implements OnInit {
     if (!key) return true;
     return validity[key];
   }
+
   ngOnInit(): void {
-    this.lookups.loadAll();
-
-    const nav = this.router.currentNavigation();
-    const state = nav?.extras.state as {
-      prefill?: PrefillData | null;
-      missing?: string[];
-    } | undefined;
-    if (state?.prefill) {
-      this.avatarPreviewUrl = state.prefill.avatar ?? null;
-      this.ds.prefillFromBootstrap({
-        fullName: state.prefill.fullName ?? null,
-        fullNameEn: state.prefill.fullName ?? null,
-        qid: state.prefill.qid ?? null,
-        dob: state.prefill.dob ?? null,
-        phone: this.phoneMapper.toPhoneObject(state.prefill.phone) ?? false,
-        phoneVerified: state.prefill.phoneVerified ?? false,
-        email: state.prefill.email ?? null,
-        emailVerified: state.prefill.emailVerified ?? false,
-        // gender: state.prefill.gender ?? null,
-        // nationality: state.prefill.nationality ?? null,
-        avatarUrl: state.prefill.avatar ?? null,
-      } as Partial<ProfileState>);
-      this.loading = false;
-      return;
-    }
-    this.auth.getAuthBootstrap$()
-      .pipe(take(1))
-      .pipe(finalize(() => {this.loading = false;}))
-      .subscribe((b: AuthBootstrap) => {
-        if (!b.requiresProfileCompletion) {
-          this.router.navigate([routes.user.dashboard]);
-          return;
-        }
-
-        if (b.prefill) {
-          this.avatarPreviewUrl =  b.prefill.avatar ?? null;
-          this.ds.prefillFromBootstrap({
-            fullName: b.prefill.fullName ?? null,
-            fullNameEn: b.prefill.fullName ?? null,
-            qid: b.prefill.qid ?? null,
-            dob: b.prefill.dob ?? null,
-            phone: this.phoneMapper.toPhoneObject(b.prefill.phone) ?? null,
-            phoneVerified: b.prefill.phoneVerified ?? false,
-            email: b.prefill.email ?? null,
-            emailVerified: b.prefill.emailVerified ?? false,
-            // nationality: b.prefill.nationality ?? null,
-            // gender: b.prefill.gender ?? null,
-            avatarUrl: b.prefill.avatar ?? null,
-          } as Partial<ProfileState>);
-        }
-      });
+    this.lookups.loadAll().subscribe(() => {
+      const nav = this.router.currentNavigation();
+      const state = nav?.extras.state as ProfileStatusDto | null;
+      if (state) {
+        this.avatarPreviewUrl = state.avatar ?? null;
+        this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state));
+        this.loading = false;
+        return;
+      }
+      this.auth.getAuthBootstrap$()
+        .pipe(take(1))
+        .pipe(finalize(() => {
+          this.loading = false;
+        }))
+        .subscribe((b: Partial<ProfileStatusDto>) => {
+          if (b.isComplete) {
+            this.router.navigate([routes.user.dashboard]);
+            return;
+          }
+          this.avatarPreviewUrl = b.avatar ?? null;
+          this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto));
+        });
+    })
 
   }
+
   canGoTo(targetStep: number): boolean {
     // const v = this.ds.stepValidity();
     // const orderedSteps: (keyof typeof v)[] = [
@@ -137,10 +102,12 @@ export class WizardProfileComponent implements OnInit {
 
     return true;
   }
+
   go(step: number) {
     if (!this.canGoTo(step)) return;
     this.step = step;
   }
+
   next() {
     if (!this.isCurrentStepValid()) {
       return;
@@ -150,16 +117,18 @@ export class WizardProfileComponent implements OnInit {
       this.step++;
     }
   }
+
   prev() {
     if (this.step > 1) {
       this.step--;
     }
   }
+
   openAvatarDialog() {
     this.dialog.open(AvatarModal, {
       header: this.translate.instant('wizard.personal.avatar.title'),
       width: '80%',
-      contentStyle: { 'max-height': '80vh', 'overflow': 'visible' },
+      contentStyle: {'max-height': '80vh', 'overflow': 'visible'},
       baseZIndex: 10000,
       closable: true,
     })?.onClose.subscribe((croppedImage: string | null) => {
@@ -169,30 +138,4 @@ export class WizardProfileComponent implements OnInit {
       }
     });
   }
-
-  // saveDraft() {
-  //   this.savingDraft = true;
-  //   const state = this.ds.state();
-  //   const formData = buildProfileFormData(state, false);
-  //   this.http.post(this.endpoints.user.profile.save, formData)
-  //     .pipe(finalize(() => this.savingDraft = false))
-  //     .subscribe({
-  //       next: () => {
-  //         this.messages.add({
-  //           severity: 'success',
-  //           summary: this.i18n.instant('wizard.review.savedDraftTitle'),
-  //           detail: this.i18n.instant('wizard.review.savedDraft'),
-  //         });
-  //       },
-  //       error: (err) => {
-  //         console.error(err);
-  //         this.messages.add({
-  //           severity: 'error',
-  //           summary: this.i18n.instant('common.error'),
-  //           detail: this.i18n.instant('wizard.review.saveDraftFailed'),
-  //         });
-  //       }
-  //     });
-  // }
 }
-

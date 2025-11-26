@@ -1,9 +1,8 @@
-// candidate-dashboard.service.ts
 import {inject, Injectable, signal} from '@angular/core';
 import {Observable, of, delay, forkJoin} from 'rxjs';
-import { LookupDto } from '../../wizard-profile/services/profile-lookups.service';
 import {HttpClient} from '@angular/common/http';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 
 // Constants for job types
 export const JOB_TYPES = {
@@ -248,9 +247,9 @@ export class CandidateDashboardService {
   loading = signal<boolean>(false);
   loaded = signal<boolean>(false);
 
-  invitationStatuses   = signal<LookupDto[]>([]);
-  jobCategories   = signal<LookupDto[]>([]);
-  departments          = signal<LookupDto[]>([]);
+  invitationStatuses   = signal<dropdownOptionsModel[]>([]);
+  jobCategories   = signal<dropdownOptionsModel[]>([]);
+  departments          = signal<dropdownOptionsModel[]>([]);
 
   // Get all constants for use in components
   getConstants() {
@@ -347,9 +346,9 @@ export class CandidateDashboardService {
     this.loading.set(true);
 
     forkJoin({
-      invitationStatuses:  this.http.get<LookupDto[]>(this.endpoints.dashboard.lookups.invitationStatuses),
-      jobCategories:  this.http.get<LookupDto[]>(this.endpoints.dashboard.lookups.jobCategories),
-      departments:         this.http.get<LookupDto[]>(this.endpoints.dashboard.lookups.departments),
+      invitationStatuses:  this.http.get<dropdownOptionsModel[]>(this.endpoints.dashboard.lookups.invitationStatuses),
+      jobCategories:  this.http.get<dropdownOptionsModel[]>(this.endpoints.dashboard.lookups.jobCategories),
+      departments:         this.http.get<dropdownOptionsModel[]>(this.endpoints.dashboard.lookups.departments),
 
     }).subscribe({
       next: (res) => {

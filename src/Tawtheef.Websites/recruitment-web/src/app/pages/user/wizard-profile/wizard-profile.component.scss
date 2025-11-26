@@ -35,11 +35,6 @@
 .step.active { display: block; animation: step-slide .35s ease; }
 @keyframes step-slide { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
 
-.btn-brand {
-  @include brand-gradient; border: none; color: #fff; font-weight: 700; border-radius: 999px; transition: all .25s;
-  &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(123,30,58,.3); }
-}
-
 .form-control, .form-select { font-size: 1.05rem; background: var(--card); border-color: $border;
   &:focus { @include focus-ring; }
 }
@@ -206,8 +201,25 @@ label.form-label { font-weight: 700; }
   cursor: not-allowed;
 }
 ::ng-deep .btn-brand {
-  @include brand-gradient; border: none; color: #fff; font-weight: 700; border-radius: 999px; transition: all .25s;
-  &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(123,30,58,.3); }
+  @include brand-gradient;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: all .25s;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(123,30,58,.3);
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+    background: #ccc !important;
+    color: #999 !important;
+  }
 }
 .profile-page {
   padding: 24px 0 40px;
