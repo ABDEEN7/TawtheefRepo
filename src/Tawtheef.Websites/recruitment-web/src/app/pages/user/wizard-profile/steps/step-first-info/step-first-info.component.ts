@@ -5,6 +5,8 @@ import { DataService } from '../../services/data.service';
 import { CandidateType } from '../../../../../core/enums/lookups.enum';
 import { ProfileService } from '../../services/profile.service';
 import {mapPrereqSection} from '../../services/profile.mapper';
+import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
+import {MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-step-first-info',
@@ -19,7 +21,13 @@ export class StepFirstInfoComponent {
   translate = inject(TranslateService);
   lookups   = inject(ProfileLookupsService);
   profile   = inject(ProfileService);
+  messageService   = inject(MessageService);
 
+  get step(){
+    const stepValidity = createStepValiditySignal(this.ds.state);
+    const validity = stepValidity();
+    return validity['basic'];
+  }
   uploading: Record<'cv' | 'id' | 'birth' | 'marriage', boolean> = {
     cv: false,
     id: false,
@@ -28,7 +36,6 @@ export class StepFirstInfoComponent {
   };
 
   saving = false;
-  errorMessage: string | null = null;
 
   get isNeedBirthCertificate() {
     const t = this.ds.state().candidateType?.backendName as CandidateType | undefined;
@@ -48,8 +55,6 @@ export class StepFirstInfoComponent {
     if (!file) return;
 
     this.uploading[kind] = true;
-    this.errorMessage = null;
-
     this.profile.uploadFile(file).subscribe({
       next: res => {
         switch (kind) {
@@ -76,46 +81,25 @@ export class StepFirstInfoComponent {
       error: err => {
         console.error(err);
         this.uploading[kind] = false;
-        this.errorMessage = this.translate.instant('wizard.prereq.uploadError');
         input.value = '';
       }
     });
   }
 
-  // استدعاء عند الضغط على Next
   onNext() {
-    this.errorMessage = null;
+    if (!this.step.valid) {
+      const firstError = this.step.errors[0];
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.translate.instant(firstError.i18nKey),
+        life: 5000,
+      });
+      return;
+    }
 
     const state = this.ds.state();
-
-    // تحقق بسيط قبل الإرسال
-    if (!state.candidateType || !state.targetEntity) {
-      this.errorMessage = this.translate.instant('wizard.prereq.missingTypeOrTarget');
-      return;
-    }
-
-    if (!state.cvFile) {
-      this.errorMessage = this.translate.instant('wizard.prereq.cvRequired');
-      return;
-    }
-
-    if (!state.idFile) {
-      this.errorMessage = this.translate.instant('wizard.prereq.idRequired');
-      return;
-    }
-
-    if (this.isNeedBirthCertificate && !state.birthCertificateFile) {
-      this.errorMessage = this.translate.instant('wizard.prereq.birthRequired');
-      return;
-    }
-
-    if (this.isNeedMarriageCertificate && !state.marriageCertificateFile) {
-      this.errorMessage = this.translate.instant('wizard.prereq.marriageRequired');
-      return;
-    }
-
     const payload = mapPrereqSection(state);
-
     this.saving = true;
     this.profile.savePrereq(payload).subscribe({
       next: () => {
@@ -125,7 +109,6 @@ export class StepFirstInfoComponent {
       error: err => {
         console.error(err);
         this.saving = false;
-        this.errorMessage = this.translate.instant('wizard.prereq.saveError');
       }
     });
   }

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataService } from '../../services/data.service';
 import { Attachment } from '../../models/attachment.model';
+import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 
 @Component({
   selector: 'app-step-attachments',
@@ -15,6 +16,12 @@ export class StepAttachmentsComponent implements OnInit {
 
   ds = inject(DataService);
   private fb = inject(FormBuilder);
+
+  get step(){
+    const stepValidity = createStepValiditySignal(this.ds.state);
+    const validity = stepValidity();
+    return validity['attachments'];
+  }
 
   private filesStore: (File | null)[] = [];
 

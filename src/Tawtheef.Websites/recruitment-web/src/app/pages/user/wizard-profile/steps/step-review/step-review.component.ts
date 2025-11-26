@@ -21,7 +21,7 @@ export class StepReviewComponent {
 
   private requiredKeys = [
     'fullNameAr','fullNameEn','qid','dob',
-    'country','dialCode','phone','address','email'
+    'country','phone','address','email'
   ] as const;
 
   missing = computed(() => {

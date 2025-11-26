@@ -108,7 +108,6 @@ export class DataService {
 
     const contactValid =
       this.isFilledScalar(s.country) &&
-      this.isFilledScalar(s.dialCode) &&
       this.isFilledScalar(s.phone) &&
       this.isFilledScalar(s.phoneVerified) &&
       this.isFilledScalar(s.email) &&

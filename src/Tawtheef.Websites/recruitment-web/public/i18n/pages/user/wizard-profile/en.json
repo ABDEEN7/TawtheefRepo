@@ -1,5 +1,6 @@
 ﻿{
   "wizard": {
+    "validationErrorTitle": "Validation error",
     "title": "Tawtheef - Candidate Profile",
     "accountFieldNote": "This field came from your account and cannot be changed.",
     "steps": {
@@ -292,6 +293,107 @@
         "cvPdfOnly": "CV must be a PDF file.",
         "idImageOrPdf": "ID must be an image or PDF.",
         "maxSize": "File size must not exceed {{size}} MB."
+      }
+    },
+    "profile": {
+      "basic": {
+        "candidateType": {
+          "required": "Please select candidate type"
+        },
+        "targetEntity": {
+          "required": "Please select target entity"
+        },
+        "cv": {
+          "required": "Please attach your CV"
+        },
+        "id": {
+          "required": "Please attach your ID card"
+        },
+        "marriageCertificate": {
+          "required": "Please attach marriage certificate"
+        },
+        "birthCertificate": {
+          "required": "Please attach birth certificate"
+        }
+      },
+      "personal": {
+        "fullNameAr": {
+          "required": "Please enter name in Arabic"
+        },
+        "fullNameEn": {
+          "required": "Please enter name in English"
+        },
+        "qid": {
+          "required": "Please enter QID number"
+        },
+        "dob": {
+          "required": "Please enter date of birth"
+        },
+        "nationality": {
+          "required": "Please select nationality"
+        },
+        "gender": {
+          "required": "Please select gender"
+        },
+        "religion": {
+          "required": "Please select religion"
+        },
+        "marital": {
+          "required": "Please select marital status"
+        },
+        "disabilityDetails": {
+          "required": "Please enter disability details"
+        },
+        "sponsorType": {
+          "required": "Please select sponsor type"
+        },
+        "sponsorEmployerName": {
+          "required": "Please enter employer name"
+        },
+        "sponsorEmployerNumber": {
+          "required": "Please enter employer number"
+        },
+        "sponsorCard": {
+          "required": "Please attach sponsor card"
+        }
+      },
+      "contact": {
+        "country": {
+          "required": "Please select country"
+        },
+        "dialCode": {
+          "required": "Please select dial code"
+        },
+        "phone": {
+          "required": "Please enter mobile number"
+        },
+        "phoneVerified": {
+          "required": "Please verify mobile number"
+        },
+        "email": {
+          "required": "Please enter email address"
+        },
+        "emailVerified": {
+          "required": "Please verify email address"
+        },
+        "address": {
+          "required": "Please enter address"
+        }
+      },
+      "degrees": {
+        "atLeastOne": {
+          "required": "Please add at least one academic qualification"
+        }
+      },
+      "experience": {
+        "atLeastOne": {
+          "required": "Please add at least one work experience"
+        }
+      },
+      "skills": {
+        "orLanguages": {
+          "required": "Please add at least one skill or language"
+        }
       }
     }
   }

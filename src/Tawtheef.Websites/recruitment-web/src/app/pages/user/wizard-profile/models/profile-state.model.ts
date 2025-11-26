@@ -44,7 +44,6 @@ export interface ProfileState {
 
   // contact
   country?: dropdownOptionsModel;
-  dialCode?: string;
   address?: string;
   phone?: PhoneNumber | null;
   phoneVerified: boolean;

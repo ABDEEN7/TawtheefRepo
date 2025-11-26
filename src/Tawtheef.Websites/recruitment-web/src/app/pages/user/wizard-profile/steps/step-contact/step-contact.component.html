@@ -18,69 +18,72 @@
     </div>
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.phone' | translate }}</label>
-
       <ngx-intl-tel-input class="prime-tel-input"
                           [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true"
                           [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
                           [maxLength]="15" [phoneValidation]="true"
                           [selectedCountryISO]="selectedCountryIso2"
-                          [(ngModel)]="phoneView" (ngModelChange)="onPhoneChange($event)"
-                          [disabled]="ds.isLocked('phone') || phoneVerificationStatus === 'verified'"
+                          [ngModel]="phone.value" (ngModelChange)="onPhoneChange($event)"
+                          [disabled]="ds.isLocked('phone') || phone.status === 'verified'"
       ></ngx-intl-tel-input>
       <small *ngIf="ds.isLocked('phone')" class="fz-2xs text-muted">
         {{'wizard.accountFieldNote' | translate}}
       </small>
-      <div *ngIf="phoneTouched && !phoneValid" class="text-danger fz-2xs small mt-1">
+      <div *ngIf="phone.touched && !phone.valid" class="text-danger fz-2xs small mt-1">
         {{ 'validation.phoneInvalid' | translate }}
       </div>
       <ng-container *ngIf="ds.state().phone && !ds.state().phoneVerified">
         <div class="mt-1 d-flex align-items-center gap-2 fz-2xs">
-          <span *ngIf="phoneVerificationStatus === 'idle'" class="text-muted">
+          <span *ngIf="phone.status === 'idle'" class="text-muted">
             {{ 'wizard.contact.phoneNotVerified' | translate }}
           </span>
-            <span *ngIf="phoneVerificationStatus === 'codeSent'" class="text-info">
+          <span *ngIf="phone.status === 'codeSent'" class="text-info">
             {{ 'wizard.contact.phoneCodeSent' | translate }}
           </span>
-            <span *ngIf="phoneVerificationStatus === 'verifying'" class="text-muted">
+          <span *ngIf="phone.status === 'verifying'" class="text-muted">
             {{ 'wizard.contact.phoneVerifying' | translate }}
           </span>
-            <span *ngIf="phoneVerificationStatus === 'verified'" class="text-success">
+          <span *ngIf="phone.status === 'verified'" class="text-success">
             <i class="fa-solid fa-circle-check me-1"></i>
-              {{ 'wizard.contact.phoneVerified' | translate }}
+                      {{ 'wizard.contact.phoneVerified' | translate }}
           </span>
-            <span *ngIf="phoneVerificationStatus === 'failed'" class="text-danger">
+          <span *ngIf="phone.status === 'failed'" class="text-danger">
             {{ 'wizard.contact.phoneFailed' | translate }}
           </span>
         </div>
         <div class="mt-2 d-flex align-items-center gap-2">
-          <button type="button"
-                  class="btn btn-outline-secondary btn-sm"
-                  (click)="sendPhoneCode()"
-                  [disabled]="!phoneValid || phoneVerificationStatus === 'sending' || phoneCooldown > 0">
-            <span *ngIf="phoneVerificationStatus !== 'sending'">
-              {{ 'wizard.contact.phoneSendCode' | translate }}
-            </span>
-                      <span *ngIf="phoneVerificationStatus === 'sending'">
-              <i class="fa-solid fa-spinner fa-spin me-1"></i>
-                        {{ 'wizard.contact.phoneSending' | translate }}
-            </span>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            (click)="sendPhoneCode()"
+            [disabled]="!phone.valid || phone.status === 'sending' || phone.cooldown > 0">
+              <span *ngIf="phone.status !== 'sending'">
+                {{ 'wizard.contact.phoneSendCode' | translate }}
+              </span>
+                        <span *ngIf="phone.status === 'sending'">
+                <i class="fa-solid fa-spinner fa-spin me-1"></i>
+                          {{ 'wizard.contact.phoneSending' | translate }}
+              </span>
           </button>
-          <span *ngIf="phoneCooldown > 0" class="text-muted fz-2xs ms-2">
-            {{ 'wizard.contact.phoneRetryIn' | translate:{seconds: phoneCooldown} }}
+          <span *ngIf="phone.cooldown > 0" class="text-muted fz-2xs ms-2">
+            {{ 'wizard.contact.phoneRetryIn' | translate:{seconds: phone.cooldown} }}
           </span>
-          <div *ngIf="phoneErrorMessage" class="text-danger fz-2xs mt-1">
-            {{ phoneErrorMessage }}
+          <div *ngIf="phone.errorMessage" class="text-danger fz-2xs mt-1">
+            {{ phone.errorMessage }}
           </div>
-          <div *ngIf="phoneVerificationStatus === 'codeSent'" class="d-flex align-items-center gap-2 flex-grow-1">
-            <input type="text"
-                   maxlength="6"
-                   class="form-control form-control-sm"
-                   [(ngModel)]="phoneOtp"
-                   placeholder="{{ 'wizard.contact.phoneOtpPlaceholder' | translate }}">
-            <button type="button"
-                    class="btn btn-brand btn-sm"
-                    (click)="verifyPhoneCode()"
-                    [disabled]="!phoneOtp">
+
+          <div *ngIf="phone.status === 'codeSent'" class="d-flex align-items-center gap-2 flex-grow-1">
+            <input
+              type="text"
+              maxlength="6"
+              class="form-control form-control-sm"
+              [(ngModel)]="phone.otp"
+              [placeholder]="'wizard.contact.phoneOtpPlaceholder' | translate" />
+            <button
+              type="button"
+              class="btn btn-brand btn-sm"
+              (click)="verifyPhoneCode()"
+              [disabled]="!phone.otp">
               {{ 'wizard.contact.phoneVerify' | translate }}
             </button>
           </div>
@@ -90,32 +93,33 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.email' | translate }}</label>
       <input pInputText type="email" class="form-control"
-             [ngModel]="emailView" (ngModelChange)="onEmailChange($event)"
-             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             [disabled]="ds.isLocked('email') || emailVerificationStatus === 'verified'"
-             [ngClass]="{'locked-field': ds.isLocked('email') || emailVerificationStatus === 'verified'}">
+        [ngModel]="email.value"
+        (ngModelChange)="onEmailChange($event)"
+        [disabled]="ds.isLocked('email') || email.status === 'verified'"
+        [ngClass]="{ 'locked-field': ds.isLocked('email') || email.status === 'verified' }"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
       <small *ngIf="ds.isLocked('email')" class="fz-2xs text-muted">
         {{'wizard.accountFieldNote' | translate}}
       </small>
-      <div *ngIf="emailTouched && !emailValid" class="text-danger fz-2xs small mt-1">
+      <div *ngIf="email.touched && !email.valid" class="text-danger fz-2xs small mt-1">
         {{ 'validation.emailInvalid' | translate }}
       </div>
       <ng-container *ngIf="ds.state().email && !ds.state().emailVerified">
         <div class="mt-1 d-flex align-items-center gap-2 fz-2xs">
-        <span *ngIf="emailVerificationStatus === 'idle'" class="text-muted">
+        <span *ngIf="email.status === 'idle'" class="text-muted">
           {{ 'wizard.contact.emailNotVerified' | translate }}
         </span>
-          <span *ngIf="emailVerificationStatus === 'linkSent'" class="text-info">
+        <span *ngIf="email.status === 'linkSent'" class="text-info">
           {{ 'wizard.contact.emailLinkSent' | translate }}
         </span>
-          <span *ngIf="emailVerificationStatus === 'verifying'" class="text-muted">
+        <span *ngIf="email.status === 'verifying'" class="text-muted">
           {{ 'wizard.contact.emailVerifying' | translate }}
         </span>
-          <span *ngIf="emailVerificationStatus === 'verified'" class="text-success">
+        <span *ngIf="email.status === 'verified'" class="text-success">
           <i class="fa-solid fa-circle-check me-1"></i>
             {{ 'wizard.contact.emailVerified' | translate }}
         </span>
-          <span *ngIf="emailVerificationStatus === 'failed'" class="text-danger">
+        <span *ngIf="email.status === 'failed'" class="text-danger">
           {{ 'wizard.contact.emailFailed' | translate }}
         </span>
         </div>
@@ -123,32 +127,28 @@
           <button type="button"
                   class="btn btn-outline-secondary btn-sm"
                   (click)="sendEmailVerification()"
-                  [disabled]="!emailValid || emailVerificationStatus === 'sending' || emailCooldown > 0">
-              <span *ngIf="emailVerificationStatus !== 'sending'">
+                  [disabled]="!email.valid || email.status === 'sending' || email.cooldown > 0">
+              <span *ngIf="email.status !== 'sending'">
                 {{ 'wizard.contact.emailSendVerification' | translate }}
               </span>
-                        <span *ngIf="emailVerificationStatus === 'sending'">
+                        <span *ngIf="email.status === 'sending'">
                 <i class="fa-solid fa-spinner fa-spin me-1"></i>
                           {{ 'wizard.contact.emailSending' | translate }}
               </span>
           </button>
-          <span *ngIf="emailCooldown > 0" class="text-muted fz-2xs ms-2">
-            {{ 'wizard.contact.emailRetryIn' | translate:{seconds: emailCooldown} }}
+          <span *ngIf="email.cooldown > 0" class="text-muted fz-2xs ms-2">
+            {{ 'wizard.contact.emailRetryIn' | translate:{seconds: email.cooldown} }}
           </span>
-          <div *ngIf="emailErrorMessage" class="text-danger fz-2xs mt-1">
-            {{ emailErrorMessage }}
-          </div>
-          <div *ngIf="emailVerificationUseCode && emailVerificationStatus === 'linkSent'"
-               class="d-flex align-items-center gap-2 flex-grow-1">
-            <input type="text"
-                   maxlength="6"
-                   class="form-control form-control-sm"
-                   [(ngModel)]="emailOtp"
-                   placeholder="{{ 'wizard.contact.emailOtpPlaceholder' | translate }}">
-            <button type="button"
-                    class="btn btn-brand btn-sm"
-                    (click)="verifyEmailCode()"
-                    [disabled]="!emailOtp">
+          <div
+            *ngIf="email.useCode && email.status === 'linkSent'"
+            class="d-flex align-items-center gap-2 flex-grow-1">
+            <input type="text" maxlength="6" class="form-control form-control-sm"
+              [(ngModel)]="email.otp" [placeholder]="'wizard.contact.emailOtpPlaceholder' | translate" />
+            <button
+              type="button"
+              class="btn btn-brand btn-sm"
+              (click)="verifyEmailCode()"
+              [disabled]="!email.otp">
               {{ 'wizard.contact.emailVerify' | translate }}
             </button>
           </div>
