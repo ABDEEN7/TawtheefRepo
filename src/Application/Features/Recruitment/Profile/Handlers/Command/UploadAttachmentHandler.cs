@@ -18,8 +18,8 @@ public class UploadAttachmentHandler(
     {
         if (cmd.file.Length == 0) return Result.Fail<UploadAttachmentRequest>(ErrorsCodes.EmptyFile);
         await using var stream = cmd.file.OpenReadStream();
-        var result = await fileStorageService.SaveAsync(stream, cmd.file.FileName, ct);
-        if (!result.IsFailed) return Result.Fail<UploadAttachmentRequest>(result.Errors);
+        var result = await fileStorageService.SaveAsync(stream, Guid.NewGuid().ToString(), ct);
+        if (result.IsFailed) return Result.Fail<UploadAttachmentRequest>(result.Errors);
 
         var uploadResult = await uow.GetEntityRepository<Resource>().AddAsync(new Resource
         {

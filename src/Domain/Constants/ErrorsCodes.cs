@@ -103,4 +103,13 @@ public class ErrorsCodes
     public const string Cancelled = "CANCELLED";
     public const string EmptyFile = "EMPTY_FILE";
     #endregion
+
+    #region Resources Error
+    public const string BlobSignKeyConfigMissing = "BLOB_SIGN_KEY_CONFIG_MISSING";
+    public const string OnlyPrivateBlobKeysAllowed = "ONLY_PRIVATE_BLOB_KEYS_ALLOWED";
+    public const string UnExpectedError = "UN_EXPECTED_ERROR";
+    public const string FileNotFound = "FILE_NOT_FOUND";
+    public const string UrlFileExpired = "URL_FILE_EXPIRED";
+    #endregion
 }
+

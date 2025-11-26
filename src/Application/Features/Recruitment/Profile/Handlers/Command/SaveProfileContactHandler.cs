@@ -36,26 +36,20 @@ public sealed class SaveProfileContactHandler(
         profile.Address            = r.Address;
         profile.InterviewLocationId = r.InterviewLocationId;
 
-        // National Address
         if (r.NationalAddress is not null)
         {
             if (profile.ResidenceAddress is null)
-                profile.ResidenceAddress = new ResidenceAddress()
-                {
-                    Address = r.Address ?? string.Empty,
-                    ZoneNo = r.NationalAddress.Zone,
-                    StreetNo = r.NationalAddress.Street,
-                    BuildingNo = r.NationalAddress.Building,
-                    UnitNo = r.NationalAddress.Unit,
-                };
+            {
+                profile.ResidenceAddress =
+                    ResidenceAddress.Create(r.NationalAddress.Building, r.NationalAddress.Street,
+                        r.NationalAddress.Zone, r.NationalAddress.Unit);
+            }
 
-            profile.ResidenceAddress.Address   = r.Address ?? string.Empty;
             profile.ResidenceAddress.ZoneNo    = r.NationalAddress.Zone;
             profile.ResidenceAddress.StreetNo  = r.NationalAddress.Street;
             profile.ResidenceAddress.BuildingNo = r.NationalAddress.Building;
             profile.ResidenceAddress.UnitNo    = r.NationalAddress.Unit;
-            
-            profile.NationalCardId = r.NationalAddress.ResourceId;
+            profile.ResidenceAddressCertificateId = r.NationalAddress.NationalAddressResourceId;
         }
 
         profile.IsDraft = true;

@@ -5,6 +5,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { ExperienceModal } from './dialogs/experience.modal/experience.modal';
 import { CourseModal } from './dialogs/course.modal/course.modal';
 import { AchievementModal } from './dialogs/achievement.modal/achievement.modal';
+import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 
 @Component({
   selector: 'app-step-experience',
@@ -20,6 +21,11 @@ export class StepExperienceComponent {
   dialog = inject(DialogService);
   translate = inject(TranslateService);
 
+  get step(){
+    const stepValidity = createStepValiditySignal(this.ds.state);
+    const validity = stepValidity();
+    return validity['experience'];
+  }
   // ========== EXPERIENCES ==========
 
   addExperience() {

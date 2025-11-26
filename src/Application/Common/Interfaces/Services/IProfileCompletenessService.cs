@@ -5,6 +5,6 @@ namespace Tawtheef.Application.Common.Interfaces.Services;
 
 public interface IProfileCompletenessService
 {
-    Task<(bool isComplete, string[] missing)> EvaluateAsync(Guid userId, CancellationToken ct);
-    Task<ProfilePrefillDto?> BuildPrefillAsync(User user, CancellationToken ct);
+    Task<ProfileStatusDto> EvaluateAsync(Guid userId, CancellationToken ct);
+    Task<ProfilePrefillDto> BuildPrefillAsync(User user, CancellationToken ct);
 }

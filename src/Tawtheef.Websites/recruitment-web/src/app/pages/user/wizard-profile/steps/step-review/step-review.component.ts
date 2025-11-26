@@ -20,8 +20,8 @@ export class StepReviewComponent {
   private endpoints = inject(EndpointsService);
 
   private requiredKeys = [
-    'fullName','fullNameEn','qid','dob',
-    'country','dialCode','phone','address','email'
+    'fullNameAr','fullNameEn','qid','dob',
+    'country','phone','address','email'
   ] as const;
 
   missing = computed(() => {

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
-using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Application.Features.Authenticator.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
@@ -36,7 +35,7 @@ public class UserController(IMediator mediator) : ControllerBase
     }
         
     [HttpGet("/api/me/bootstrap")]
-    public async Task<ActionResult<AuthResponse>> Bootstrap(
+    public async Task<IActionResult> Bootstrap(
         [FromServices] UserManager<User> userManager,
         [FromServices] IProfileCompletenessService pcs,
         CancellationToken ct)
@@ -44,10 +43,8 @@ public class UserController(IMediator mediator) : ControllerBase
         var user = await userManager.GetUserAsync(User);
         if (user is null) return Unauthorized();
 
-        (bool isComplete, string[] missing) = await pcs.EvaluateAsync(user.Id, ct);
-        var prefill = await pcs.BuildPrefillAsync(user, ct);
-
-        return Ok(new AuthResponse(!isComplete, null,null,missing,prefill));
+        var profile = await pcs.EvaluateAsync(user.Id, ct);
+        return Ok(profile);
     }
     
 

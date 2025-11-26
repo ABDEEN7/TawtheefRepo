@@ -25,7 +25,7 @@
     <div class="row g-3">
       <div class="col-md-4">
         <div class="small text-muted">{{ 'wizard.personal.nameAr' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().fullName || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().fullNameAr || '—' }}</div>
       </div>
       <div class="col-md-4">
         <div class="small text-muted">{{ 'wizard.personal.nameEn' | translate }}</div>
@@ -79,10 +79,6 @@
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.contact.country' | translate }}</div>
         <div class="fw-semibold">{{ ds.state().country || '—' }}</div>
-      </div>
-      <div class="col-md-2">
-        <div class="small text-muted">{{ 'wizard.contact.dial' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().dialCode || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.contact.phone' | translate }}</div>

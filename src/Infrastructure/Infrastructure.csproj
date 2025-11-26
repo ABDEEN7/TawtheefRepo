@@ -46,6 +46,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Configurations\Entities\SeedData\" />
       <Folder Include="Templates\" />
     </ItemGroup>
 

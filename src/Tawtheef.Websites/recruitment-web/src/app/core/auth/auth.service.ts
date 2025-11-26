@@ -4,14 +4,14 @@ import {AuthStateService} from "./auth-state.service";
 import {UserService} from "./user.service";
 import {Observable, of, shareReplay} from "rxjs";
 import {UserInfoModel} from "../../shared/models/user-info.model";
-import {AuthBootstrap, AuthResponse} from "../models/auth/auth-response.model";
+import {AuthBootstrap, AuthResponse, ProfileStatusDto} from "../models/auth/auth-response.model";
 import {catchError, map} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {EndpointsService} from '../http/endpoints.service';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  private bootstrap$?: Observable<AuthBootstrap>;
+  private bootstrap$?: Observable<ProfileStatusDto>;
   private permissionsCache: Set<string> | null = null;
   constructor(
     protected core: AuthCoreService,
@@ -37,7 +37,7 @@ export class AuthService {
    }
    get isProfileCompleted(): boolean {
     if(!this.token) return false;
-    const profile = this.decodeBootstrapFromJwt(this.token!);
+    const profile = this.decodeBootstrapFromJwt();
     return !profile.requiresProfileCompletion;
    }
 
@@ -81,33 +81,17 @@ export class AuthService {
     this.state.logout(false);
   }
 
-  getAuthBootstrap$(): Observable<AuthBootstrap> {
+  getAuthBootstrap$(): Observable<Partial<ProfileStatusDto>> {
     if (this.bootstrap$) return this.bootstrap$;
-
-    // Not logged in → no need to fetch
     const token = this.token;
     if (!token) {
       this.bootstrap$ = of({
-        requiresProfileCompletion: false,
-        missingFields: [],
-        prefill: null
-      }).pipe(shareReplay(1));
+        isComplete: false,
+      } as ProfileStatusDto).pipe(shareReplay(1));
       return this.bootstrap$;
     }
 
-    this.bootstrap$ = this.http.get<Partial<AuthResponse>>(this.endpointService.user.bootstrap).pipe(
-      map(resp => {
-        const requires = !!resp?.requiresProfileCompletion;
-        const missing = (resp?.missingFields ?? []) as string[];
-        const prefill = (resp?.prefill ?? null) as AuthBootstrap['prefill'];
-
-        return {
-          requiresProfileCompletion: requires,
-          missingFields: missing,
-          prefill
-        } satisfies AuthBootstrap;
-      }),
-      catchError(() => of(this.decodeBootstrapFromJwt(token))),
+    this.bootstrap$ = this.http.get<ProfileStatusDto>(this.endpointService.user.bootstrap).pipe(
       shareReplay(1)
     );
 
@@ -201,7 +185,9 @@ export class AuthService {
   }
 
   /** Build a minimal bootstrap view from token claims */
-  private decodeBootstrapFromJwt(token: string): AuthBootstrap {
+  public decodeBootstrapFromJwt(): AuthBootstrap {
+    const token = this.token;
+    if (!token) return { requiresProfileCompletion: false, missingFields: [], prefill: null };
     const payload = this.decodeJwtPayload<Record<string, any>>(token) ?? {};
     // Your server issues claim "profile.completed" = "true" | "false"
     const completedRaw = payload['profile.completed'];

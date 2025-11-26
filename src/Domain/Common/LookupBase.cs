@@ -11,7 +11,7 @@ public class LookupBase : EventEntity, ILocalizedName, ILocalizedDescription
     public required string NameAr { get; set; }
     [Required, MaxLength(200)] 
     public required string NameEn { get; set; }
-    public string? DescriptionEn { get; set; }
     public string? DescriptionAr { get; set; }
+    public string? DescriptionEn { get; set; }
     public int DisplayOrder { get; init; } = 0;
 }

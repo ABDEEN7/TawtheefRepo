@@ -2,11 +2,11 @@ import {UserInfoModel} from "../../../shared/models/user-info.model";
 import {TokenModel} from "./token.model";
 
 export interface AuthResponse {
-  requiresProfileCompletion: boolean;
+  //requiresProfileCompletion: boolean;
   user: UserInfoModel;
   token: TokenModel;
-  missingFields: string[];
-  prefill: PrefillData;
+  //missingFields: string[];
+  //prefill: PrefillData;
 }
 
 export interface AuthBootstrap {
@@ -29,4 +29,106 @@ export interface PrefillData
   dob?: string | null;
   locale?: string | null;
   provider?: string | null;
+}
+
+export interface ProfileStatusDto {
+  isComplete: boolean;
+  missing: string[];
+  isDraft: boolean;
+  avatar?: string | null;
+  fullNameAr?: string | null;
+  fullNameEn?: string | null;
+  email?: string | null;
+  emailVerified: boolean;
+  phone?: string | null;
+  phoneVerified: boolean;
+  // ===== Scalars =====
+  candidateTypeId?: string | null;
+  targetEntityId?: string | null;
+
+  nationalNumber?: string | null;
+  birthDate?: string | null;
+  nationalityId?: string | null;
+  genderId?: string | null;
+  religionId?: string | null;
+  maritalStatusId?: string | null;
+
+  childrenCount: number;
+
+  residenceCountryId?: string | null;
+  interviewLocationId?: string | null;
+
+  address?: string | null;
+  naZone?: string | null;
+  naStreet?: string | null;
+  naBuilding?: string | null;
+  naUnit?: string | null;
+
+  hasDisability: boolean;
+  disabilityDetails?: string | null;
+
+  sponsorTypeId?: string | null;
+  sponsorEmployerName?: string | null;
+  sponsorEmployerNumber?: string | null;
+  sponsorCard?: FileRefDto | null;
+
+  // ===== Attachments =====
+  resumeAttachment?: FileRefDto | null;
+  nationalCard?: FileRefDto | null;
+  residenceAddressCertificate?: FileRefDto | null;
+  birthdayCertificate?: FileRefDto | null;
+  marriageCertificate?: FileRefDto | null;
+  additionalAttachments?: AdditionalAttachmentDto[] | null;
+
+  // ===== Collections =====
+  qualifications?: QualificationDto[] | null;
+  experiences?: ExperienceDto[] | null;
+  trainingCourses?: TrainingCourseDto[] | null;
+  skills?: SkillDto[] | null;
+  languages?: LanguageDto[] | null;
+}
+export interface AdditionalAttachmentDto {
+  id: string;
+  title?: string | null;
+  file: FileRefDto;
+}
+export interface LanguageDto {
+  id: string;
+  languageId: string;
+  levelId: string;
+  isNative: boolean;
+}
+export interface SkillDto {
+  id: string;
+  skillId: string;
+}
+export interface TrainingCourseDto {
+  id: string;
+  title?: string | null;
+  provider?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  attachment?: FileRefDto | null;
+}
+export interface ExperienceDto {
+  id: string;
+  employerName?: string | null;
+  jobTitle?: string | null;
+  startDate?: string | null; // DateOnly → string
+  endDate?: string | null;
+  isCurrent: boolean;
+  attachment?: FileRefDto | null;
+}
+export interface QualificationDto {
+  id: string;
+  degreeName?: string | null;
+  degreeId?: string | null;
+  major?: string | null;
+  universityName?: string | null;
+  graduationYear?: number | null;
+  attachment?: FileRefDto | null;
+}
+export interface FileRefDto {
+  resourceId: string;
+  fileName: string;
 }

@@ -8,6 +8,9 @@ import {CandidateType, MaritalStatus} from '../../../../../core/enums/lookups.en
 import {mapPersonalSection} from '../../services/profile.mapper';
 import {finalize} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
+import {dateToDateOnly} from '../../../../../shared/types/dateOnly.type';
+import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
+import {MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-step-personal',
@@ -24,6 +27,13 @@ export class StepPersonalComponent {
   translate = inject(TranslateService);
   lookups = inject(ProfileLookupsService);
   profileService = inject(ProfileService);
+  messageService = inject(MessageService);
+
+  get step(){
+    const stepValidity = createStepValiditySignal(this.ds.state);
+    const validity = stepValidity();
+    return validity['personal'];
+  }
 
   savingPersonal = false;
   uploadingSponsor = false;
@@ -79,11 +89,18 @@ export class StepPersonalComponent {
       });
   }
   onNext() {
-    const s = this.ds.state();
-    if (!s.fullName || !s.qid || !s.dob || !s.nationality || !s.gender) {
+    if (!this.step.valid) {
+      const firstError = this.step.errors[0];
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.translate.instant(firstError.i18nKey),
+        life: 5000,
+      });
       return;
     }
 
+    const s = this.ds.state();
     const dto = mapPersonalSection(s);
 
     this.savingPersonal = true;
@@ -99,4 +116,6 @@ export class StepPersonalComponent {
         }
       });
   }
+
+  protected readonly dateToDateOnly = dateToDateOnly;
 }

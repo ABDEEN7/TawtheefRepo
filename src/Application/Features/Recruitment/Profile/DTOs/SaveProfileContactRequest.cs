@@ -1,15 +1,5 @@
 namespace Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 
-public sealed class NationalAddressDto
-{
-    public int? Zone { get; set; }
-    public int? Street { get; set; }
-    public int? Building { get; set; }
-    public int? Unit { get; set; }
-
-    public string? FileName { get; set; }
-    public Guid? ResourceId { get; set; }
-}
 public sealed class SaveProfileContactRequest
 {
     public bool Submit { get; set; }
@@ -19,4 +9,14 @@ public sealed class SaveProfileContactRequest
     public Guid InterviewLocationId { get; set; }
 
     public NationalAddressDto? NationalAddress { get; set; }
+}
+
+public sealed class NationalAddressDto
+{
+    public int? Zone { get; set; }
+    public int? Street { get; set; }
+    public int? Building { get; set; }
+    public int? Unit { get; set; }
+    public string? NationalAddressFileName { get; set; }
+    public Guid? NationalAddressResourceId { get; set; }
 }

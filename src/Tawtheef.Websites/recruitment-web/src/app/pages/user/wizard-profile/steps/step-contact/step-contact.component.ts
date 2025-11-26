@@ -1,282 +1,399 @@
-import {Component, EventEmitter, Output, inject, OnInit} from '@angular/core';
-import { DataService } from '../../services/data.service';
-import {ProfileLookupsService} from '../../services/profile-lookups.service';
-import {CountryISO, SearchCountryField} from 'ngx-intl-tel-input';
-import {GeoIpService} from '../../../../../core/services/geo-ip.service';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  inject,
+  OnInit,
+  OnDestroy
+} from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { PhoneNumberUtil } from 'google-libphonenumber';
-import {CandidateType} from '../../../../../core/enums/lookups.enum';
-import {ContactVerificationService} from '../../services/contact-verification.service';
-import {PhoneNumber} from '../../models/phone-number.model';
-import {TranslateService} from '@ngx-translate/core';
-import {ProfileService} from '../../services/profile.service';
-import { mapContactSection } from "../../services/profile.mapper";
-import {finalize} from 'rxjs/operators';
+import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input';
 
-type phoneVerificationStatus = 'idle' | 'sending' | 'codeSent' | 'verifying' | 'verified' | 'failed';
-type emailVerificationStatus = 'idle' | 'sending' | 'linkSent' | 'verifying' | 'verified' | 'failed';
+import { DataService } from '../../services/data.service';
+import { ProfileLookupsService } from '../../services/profile-lookups.service';
+import { GeoIpService } from '../../../../../core/services/geo-ip.service';
+import { CandidateType } from '../../../../../core/enums/lookups.enum';
+import { ContactVerificationService } from '../../services/contact-verification.service';
+import { PhoneNumber } from '../../models/phone-number.model';
+import { TranslateService } from '@ngx-translate/core';
+import { ProfileService } from '../../services/profile.service';
+import { mapContactSection } from '../../services/profile.mapper';
+import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
+import {MessageService} from 'primeng/api';
+
+type VerificationStatus =
+  | 'idle'
+  | 'sending'
+  | 'codeSent'
+  | 'linkSent'
+  | 'verifying'
+  | 'verified'
+  | 'failed';
+
+interface VerificationState {
+  value: any;
+  valid: boolean;
+  touched: boolean;
+  otp: string;
+  status: VerificationStatus;
+  cooldown: number;
+  errorMessage: string | null;
+  useCode?: boolean;
+  cooldownTimer?: any;
+}
+
 @Component({
   selector: 'app-step-contact',
   templateUrl: './step-contact.component.html',
   styleUrl: './step-contact.component.scss',
-  standalone: false,
+  standalone: false
 })
-export class StepContactComponent implements OnInit{
+export class StepContactComponent implements OnInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+
+  // services
   ds = inject(DataService);
   lookups = inject(ProfileLookupsService);
-  verification = inject(ContactVerificationService);
+  verificationService = inject(ContactVerificationService);
   translate = inject(TranslateService);
   geoIp = inject(GeoIpService);
+  profileService = inject(ProfileService);
+  messageService = inject(MessageService);
+
+  get step(){
+    const stepValidity = createStepValiditySignal(this.ds.state);
+    const validity = stepValidity();
+    return validity['contact'];
+  }
+  // libs
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
 
+  // national address upload
   naFileError: string | null = null;
-  maxNaFileSize = 2 * 1024 * 1024; // 2MB مثلاً
+  maxNaFileSize = 2 * 1024 * 1024; // 2MB
   allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
-
-  phoneView: any = null;
-  phoneValid = false;
-  phoneTouched = false;
-  phoneOtp: string = '';
-  phoneVerificationStatus: phoneVerificationStatus = 'idle';
-  // Phone cooldown
-  phoneCooldown = 0;
-  private phoneCooldownTimer?: any;
-
-  emailView: any = null;
-  emailValid = false;
-  emailTouched = false;
-  emailOtp: string = '';
-  emailVerificationStatus: emailVerificationStatus = 'idle';
-  emailVerificationUseCode = true;
-  // Email cooldown
-  emailCooldown = 0;
-  private emailCooldownTimer?: any;
-
-  phoneErrorMessage: string | null = null;
-  emailErrorMessage: string | null = null;
-  selectedCountryIso2: CountryISO = CountryISO.Qatar;
-  savingContact = false;
   uploadingNa = false;
 
-  profileService = inject(ProfileService);
+  // verification states
+  phone: VerificationState = {
+    value: null,
+    valid: false,
+    touched: false,
+    otp: '',
+    status: 'idle',
+    cooldown: 0,
+    errorMessage: null
+  };
+
+  email: VerificationState = {
+    value: null,
+    valid: false,
+    touched: false,
+    otp: '',
+    status: 'idle',
+    cooldown: 0,
+    errorMessage: null,
+    useCode: true
+  };
+
+  selectedCountryIso2: CountryISO = CountryISO.Qatar;
+  savingContact = false;
+
+  get isResidentQatar(): boolean {
+    const type = this.ds.state().candidateType?.backendName as CandidateType | undefined;
+    if (!type) return false;
+
+    return [
+      CandidateType.ResidentQatar,
+      CandidateType.Qatari,
+      CandidateType.SonOfQatariMother,
+      CandidateType.WifeOfQatari
+    ].includes(type);
+  }
+
   ngOnInit(): void {
     this.geoIp.getCountryIso2().subscribe(code => {
       this.selectedCountryIso2 = code.toLowerCase() as CountryISO;
     });
+
     const state = this.ds.state();
-    if (state.phoneVerified) this.phoneVerificationStatus = 'verified';
-    if (state.emailVerified) this.emailVerificationStatus = 'verified';
-    if (state.phone) this.phoneView = state.phone.e164Number;
-    if (state.email) this.emailView = state.email;
+
+    // init phone
+    if (state.phone) {
+      this.phone.value = state.phone.e164Number;
+      this.phone.valid = true;
+    }
+    if (state.phoneVerified) {
+      this.phone.status = 'verified';
+    }
+
+    // init email
+    if (state.email) {
+      this.email.value = state.email;
+      this.email.valid = true;
+    }
+    if (state.emailVerified) {
+      this.email.status = 'verified';
+    }
   }
 
-  get isResidentQatar(){
-    return [CandidateType.ResidentQatar,CandidateType.Qatari,
-      CandidateType.SonOfQatariMother, CandidateType.WifeOfQatari].includes(
-      this.ds.state().candidateType?.backendName as CandidateType
-    );
+  ngOnDestroy(): void {
+    // clear timers to avoid leaks
+    if (this.phone.cooldownTimer) clearInterval(this.phone.cooldownTimer);
+    if (this.email.cooldownTimer) clearInterval(this.email.cooldownTimer);
   }
-  private startPhoneCooldown(seconds: number) {
-    this.phoneCooldown = seconds;
-    if (this.phoneCooldownTimer) clearInterval(this.phoneCooldownTimer);
 
-    this.phoneCooldownTimer = setInterval(() => {
-      this.phoneCooldown--;
-      if (this.phoneCooldown <= 0) {
-        this.phoneCooldown = 0;
-        clearInterval(this.phoneCooldownTimer);
+  // ========== Cooldown helper ==========
+
+  private startCooldown(target: VerificationState, seconds: number): void {
+    target.cooldown = seconds;
+    if (target.cooldownTimer) clearInterval(target.cooldownTimer);
+
+    target.cooldownTimer = setInterval(() => {
+      target.cooldown--;
+      if (target.cooldown <= 0) {
+        target.cooldown = 0;
+        clearInterval(target.cooldownTimer);
+        target.cooldownTimer = undefined;
       }
     }, 1000);
   }
 
-  private startEmailCooldown(seconds: number) {
-    this.emailCooldown = seconds;
-    if (this.emailCooldownTimer) clearInterval(this.emailCooldownTimer);
+  // ========== Phone ==========
 
-    this.emailCooldownTimer = setInterval(() => {
-      this.emailCooldown--;
-      if (this.emailCooldown <= 0) {
-        this.emailCooldown = 0;
-        clearInterval(this.emailCooldownTimer);
-      }
-    }, 1000);
-  }
-  onPhoneChange(value: PhoneNumber) {
+  onPhoneChange(value: PhoneNumber): void {
     if (!value || this.ds.isLocked('phone')) return;
 
-    this.phoneTouched = true;
-    this.phoneErrorMessage = null;
+    this.phone.touched = true;
+    this.phone.errorMessage = null;
 
     const phoneNumber = this.phoneNumberUtil.parseAndKeepRawInput(value.e164Number);
-    this.phoneValid = this.phoneNumberUtil.isValidNumber(phoneNumber);
+    this.phone.valid = this.phoneNumberUtil.isValidNumber(phoneNumber);
 
-    if (this.phoneValid) {
+    if (this.phone.valid) {
+      this.phone.value = value.e164Number;
       this.ds.up('phone', value);
-      if (this.phoneVerificationStatus === 'verified') {
-        this.phoneVerificationStatus = 'idle';
+
+      if (this.phone.status === 'verified') {
+        this.phone.status = 'idle';
         this.ds.up('phoneVerified', false);
       }
     } else {
+      this.phone.value = null;
       this.ds.up('phone', null);
     }
   }
 
-  onEmailChange(value: string) {
-    if (!value|| this.ds.isLocked('email')) return;
+  sendPhoneCode(): void {
+    const state = this.ds.state();
+    if (!this.phone.valid || !state.phone || this.phone.cooldown > 0) return;
 
-    this.emailTouched = true;
-    this.emailErrorMessage = null;
+    this.phone.status = 'sending';
+    this.phone.errorMessage = null;
 
-    this.emailValid = !!value && /\S+@\S+\.\S+/.test(value);
-    if (this.emailValid) {
+    this.verificationService
+      .requestPhoneCode({ phoneE164: state.phone.e164Number })
+      .subscribe({
+        next: () => {
+          this.phone.status = 'codeSent';
+          this.startCooldown(this.phone, 60);
+        },
+        error: err => {
+          this.phone.status = 'failed';
+
+          if (err.status === 429) {
+            const retryAfterHeader = err.headers?.get?.('Retry-After');
+            const retrySeconds = retryAfterHeader ? +retryAfterHeader : 60;
+            this.startCooldown(this.phone, retrySeconds);
+            this.phone.errorMessage = this.translate.instant(
+              'wizard.contact.codeSent.phone.cooldown',
+              { seconds: retrySeconds }
+            );
+          } else {
+            this.phone.errorMessage = this.translate.instant(
+              'wizard.contact.codeSent.phone.error'
+            );
+          }
+        }
+      });
+  }
+
+  verifyPhoneCode(): void {
+    if (!this.phone.otp) return;
+    const state = this.ds.state();
+    if (!state.phone) return;
+
+    this.phone.status = 'verifying';
+    this.phone.errorMessage = null;
+
+    this.verificationService
+      .verifyPhoneCode({
+        phoneE164: state.phone.e164Number,
+        code: this.phone.otp
+      })
+      .subscribe({
+        next: () => {
+          this.phone.status = 'verified';
+          this.ds.up('phoneVerified', true);
+        },
+        error: () => {
+          this.phone.status = 'failed';
+          this.phone.errorMessage = this.translate.instant(
+            'wizard.contact.codeSent.phone.error'
+          );
+        }
+      });
+  }
+
+  // ========== Email ==========
+
+  onEmailChange(value: string): void {
+    if (!value || this.ds.isLocked('email')) return;
+
+    this.email.touched = true;
+    this.email.errorMessage = null;
+
+    this.email.valid = !!value && /\S+@\S+\.\S+/.test(value);
+    if (this.email.valid) {
+      this.email.value = value;
       this.ds.up('email', value);
     } else {
+      this.email.value = value;
       this.ds.up('email', null);
     }
 
-    if (this.emailVerificationStatus === 'verified') {
-      this.emailVerificationStatus = 'idle';
+    if (this.email.status === 'verified') {
+      this.email.status = 'idle';
       this.ds.up('emailVerified', false);
     }
   }
 
-  sendPhoneCode() {
-    if (!this.phoneValid || !this.ds.state().phone || this.phoneCooldown > 0) return;
+  sendEmailVerification(): void {
+    const state = this.ds.state();
+    if (!this.email.valid || !state.email || this.email.cooldown > 0) return;
 
-    this.phoneVerificationStatus = 'sending';
-    this.phoneErrorMessage = null;
+    this.email.status = 'sending';
+    this.email.errorMessage = null;
 
-    this.verification.requestPhoneCode({
-      phoneE164: this.ds.state().phone!.e164Number
-    }).subscribe({
-      next: () => {
-        this.phoneVerificationStatus = 'codeSent';
-        this.startPhoneCooldown(60);
-      },
-      error: (err) => {
-        this.phoneVerificationStatus = 'failed';
+    this.verificationService
+      .requestEmailVerification({ email: state.email })
+      .subscribe({
+        next: () => {
+          this.email.status = 'linkSent';
+          this.startCooldown(this.email, 60);
+        },
+        error: (err: any) => {
+          this.email.status = 'failed';
 
-        if (err.status === 429) {
-          const retryAfterHeader = err.headers?.get?.('Retry-After');
-          const retrySeconds = retryAfterHeader ? +retryAfterHeader : 60;
-          this.startPhoneCooldown(retrySeconds);
-          this.phoneErrorMessage = this.translate.instant('wizard.contact.codeSent.phone.cooldown', { seconds: retrySeconds });
-        } else {
-          this.phoneErrorMessage = this.translate.instant('wizard.contact.codeSent.phone.error');
+          if (err.status === 429) {
+            const retryAfterHeader = err.headers?.get?.('Retry-After');
+            const retrySeconds = retryAfterHeader ? +retryAfterHeader : 60;
+            this.startCooldown(this.email, retrySeconds);
+            this.email.errorMessage = this.translate.instant(
+              'wizard.contact.codeSent.email.cooldown',
+              { seconds: retrySeconds }
+            );
+          } else {
+            this.email.errorMessage = this.translate.instant(
+              'wizard.contact.codeSent.email.error'
+            );
+          }
         }
-      }
-    });
+      });
   }
 
-  verifyPhoneCode() {
-    if (!this.phoneOtp) return;
+  verifyEmailCode(): void {
+    const state = this.ds.state();
+    if (!this.email.useCode || !this.email.otp || !state.email) return;
 
-    this.phoneVerificationStatus = 'verifying';
-    this.phoneErrorMessage = null;
+    this.email.status = 'verifying';
+    this.email.errorMessage = null;
 
-    this.verification.verifyPhoneCode({
-      phoneE164: this.ds.state().phone!.e164Number,
-      code: this.phoneOtp
-    }).subscribe({
-      next: () => {
-        this.phoneVerificationStatus = 'verified';
-        this.ds.up('phoneVerified', true);
-      },
-      error: (err) => {
-        this.phoneVerificationStatus = 'failed';
-        this.phoneErrorMessage = this.translate.instant('wizard.contact.codeSent.phone.error');
-      }
-    });
-  }
-  sendEmailVerification() {
-    if (!this.emailValid || !this.ds.state().email || this.emailCooldown > 0) return;
-
-    this.emailVerificationStatus = 'sending';
-    this.emailErrorMessage = null;
-
-    this.verification.requestEmailVerification({
-      email: this.ds.state().email!
-    }).subscribe({
-      next: () => {
-        this.emailVerificationStatus = 'linkSent';
-        // start cooldown, e.g. 60 seconds
-        this.startEmailCooldown(60);
-      },
-      error: (err) => {
-        this.emailVerificationStatus = 'failed';
-
-        if (err.status === 429) {
-          const retryAfterHeader = err.headers?.get?.('Retry-After');
-          const retrySeconds = retryAfterHeader ? +retryAfterHeader : 60;
-          this.startEmailCooldown(retrySeconds);
-          this.emailErrorMessage = this.translate.instant('wizard.contact.codeSent.email.cooldown', { seconds: retrySeconds });
-        } else {
-          this.emailErrorMessage = this.translate.instant('wizard.contact.codeSent.email.error');
+    this.verificationService
+      .verifyEmailCode({
+        email: state.email,
+        code: this.email.otp
+      })
+      .subscribe({
+        next: () => {
+          this.email.status = 'verified';
+          this.ds.up('emailVerified', true);
+        },
+        error: () => {
+          this.email.status = 'failed';
+          this.email.errorMessage = this.translate.instant(
+            'wizard.contact.codeSent.email.error'
+          );
         }
-      }
-    });
+      });
   }
-  verifyEmailCode() {
-    if (!this.emailOtp || !this.emailVerificationUseCode) return;
 
-    this.emailVerificationStatus = 'verifying';
-    this.emailErrorMessage = null;
+  // ========== NA file ==========
 
-    this.verification.verifyEmailCode({
-      email: this.ds.state().email!,
-      code: this.emailOtp
-    }).subscribe({
-      next: () => {
-        this.emailVerificationStatus = 'verified';
-        this.ds.up('emailVerified', true);
-      },
-      error: () => {
-        this.emailVerificationStatus = 'failed';
-        this.emailErrorMessage = this.translate.instant('wizard.contact.codeSent.email.error');
-      }
-    });
-  }
-  onNaFileSelected(event: Event) {
+  onNaFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (!file) return;
 
-    this.uploadingNa = true;
-
-    this.profileService.uploadFile(file)
-      .pipe(finalize(() => {
-        this.uploadingNa = false;
-        input.value = '';
-      }))
-      .subscribe({
-        next: (ref) => {
-          this.ds.up('naFile', ref);
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
-  }
-  onNext() {
-    const s = this.ds.state();
-    if (!s.country || !s.phone || !s.email) {
+    // simple validation example
+    if (!this.allowedNaTypes.includes(file.type)) {
+      this.naFileError = this.translate.instant('wizard.nationalAddress.fileTypeError');
+      input.value = '';
+      return;
+    }
+    if (file.size > this.maxNaFileSize) {
+      this.naFileError = this.translate.instant('wizard.nationalAddress.fileSizeError');
+      input.value = '';
       return;
     }
 
+    this.naFileError = null;
+    this.uploadingNa = true;
+
+    this.profileService
+      .uploadFile(file)
+      .pipe(
+        finalize(() => {
+          this.uploadingNa = false;
+          input.value = '';
+        })
+      )
+      .subscribe({
+        next: ref => this.ds.up('naFile', ref),
+        error: err => {
+          console.error(err);
+          this.naFileError = this.translate.instant('wizard.nationalAddress.uploadError');
+        }
+      });
+  }
+
+  // ========== Next ==========
+
+  onNext(): void {
+    if (!this.step.valid) {
+      const firstError = this.step.errors[0];
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.translate.instant(firstError.i18nKey),
+        life: 5000,
+      });
+      return;
+    }
+
+    const s = this.ds.state();
     const dto = mapContactSection(s);
 
     this.savingContact = true;
-    this.profileService.saveContactSection(dto)
-      .pipe(finalize(() => this.savingContact = false))
+    this.profileService
+      .saveContactSection(dto)
+      .pipe(finalize(() => (this.savingContact = false)))
       .subscribe({
-        next: () => {
-          this.next.emit();
-        },
-        error: (err) => {
-          console.error(err);
-        }
+        next: () => this.next.emit(),
+        error: err => console.error(err)
       });
   }
 }

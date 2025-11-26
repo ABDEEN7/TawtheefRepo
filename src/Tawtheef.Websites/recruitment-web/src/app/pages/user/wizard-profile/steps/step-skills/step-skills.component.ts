@@ -6,6 +6,7 @@ import { DataService } from '../../services/data.service';
 import {SkillDto} from '../../models/skill-dto.model';
 import {ProfileLookupsService} from '../../services/profile-lookups.service';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 
 @Component({
   selector: 'app-step-skills',
@@ -20,6 +21,11 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   ds = inject(DataService);
   lookups = inject(ProfileLookupsService);
 
+  get step(){
+    const stepValidity = createStepValiditySignal(this.ds.state);
+    const validity = stepValidity();
+    return validity['skills'];
+  }
   // UI state
   skillOptions: SkillDto[] = [];
   loadingSkills = false;
