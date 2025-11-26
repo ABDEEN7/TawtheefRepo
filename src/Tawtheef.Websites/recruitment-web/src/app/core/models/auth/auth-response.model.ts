@@ -59,12 +59,18 @@ export interface ProfileStatusDto {
   interviewLocationId?: string | null;
 
   address?: string | null;
-  residenceAddressId?: string | null;
+  naZone?: string | null;
+  naStreet?: string | null;
+  naBuilding?: string | null;
+  naUnit?: string | null;
 
   hasDisability: boolean;
   disabilityDetails?: string | null;
 
-  sponsorProfileId?: string | null;
+  sponsorTypeId?: string | null;
+  sponsorEmployerName?: string | null;
+  sponsorEmployerNumber?: string | null;
+  sponsorCard?: FileRefDto | null;
 
   // ===== Attachments =====
   resumeAttachment?: FileRefDto | null;

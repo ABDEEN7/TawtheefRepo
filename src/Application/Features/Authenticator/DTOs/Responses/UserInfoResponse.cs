@@ -4,5 +4,7 @@ public record UserInfoResponse(
     Guid UserId,
     string FullName,
     string Email,
-    string? ProfilePictureUrl
+    string? ProfilePictureUrl,
+    string[]? MissingFields = null,
+    ProfilePrefillDto? Prefill = null
 );

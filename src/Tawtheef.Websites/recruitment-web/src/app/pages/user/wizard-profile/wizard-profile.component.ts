@@ -33,12 +33,7 @@ export class WizardProfileComponent implements OnInit {
   lookups = inject(ProfileLookupsService);
   language = inject(LanguageService);
   phoneMapper = inject(PhoneMapperService);
-  private i18n = inject(TranslateService);
-  private http = inject(HttpClient);
-  private endpoints = inject(EndpointsService);
-  private messages = inject(MessageService);
 
-  savingDraft = false;
   avatarPreviewUrl: string | null = null;
 
   step = 1;
@@ -63,30 +58,34 @@ export class WizardProfileComponent implements OnInit {
     if (!key) return true;
     return validity[key];
   }
-  ngOnInit(): void {
-    this.lookups.loadAll();
 
-    const nav = this.router.currentNavigation();
-    const state = nav?.extras.state as ProfileStatusDto | null;
-    if (state) {
-      this.avatarPreviewUrl = state.avatar ?? null;
-      this.ds.prefillFromBootstrap(this.mapProfileStatusToState(state));
-      this.loading = false;
-      return;
-    }
-    this.auth.getAuthBootstrap$()
-      .pipe(take(1))
-      .pipe(finalize(() => {this.loading = false;}))
-      .subscribe((b: Partial<ProfileStatusDto>) => {
-        if (b.isComplete) {
-          this.router.navigate([routes.user.dashboard]);
-          return;
-        }
-        this.avatarPreviewUrl =  b.avatar ?? null;
-        this.ds.prefillFromBootstrap(this.mapProfileStatusToState(b as ProfileStatusDto));
-      });
+  ngOnInit(): void {
+    this.lookups.loadAll().subscribe(() => {
+      const nav = this.router.currentNavigation();
+      const state = nav?.extras.state as ProfileStatusDto | null;
+      if (state) {
+        this.avatarPreviewUrl = state.avatar ?? null;
+        this.ds.prefillFromBootstrap(this.mapProfileStatusToState(state));
+        this.loading = false;
+        return;
+      }
+      this.auth.getAuthBootstrap$()
+        .pipe(take(1))
+        .pipe(finalize(() => {
+          this.loading = false;
+        }))
+        .subscribe((b: Partial<ProfileStatusDto>) => {
+          if (b.isComplete) {
+            this.router.navigate([routes.user.dashboard]);
+            return;
+          }
+          this.avatarPreviewUrl = b.avatar ?? null;
+          this.ds.prefillFromBootstrap(this.mapProfileStatusToState(b as ProfileStatusDto));
+        });
+    })
 
   }
+
   canGoTo(targetStep: number): boolean {
     // const v = this.ds.stepValidity();
     // const orderedSteps: (keyof typeof v)[] = [
@@ -107,10 +106,12 @@ export class WizardProfileComponent implements OnInit {
 
     return true;
   }
+
   go(step: number) {
     if (!this.canGoTo(step)) return;
     this.step = step;
   }
+
   next() {
     if (!this.isCurrentStepValid()) {
       return;
@@ -120,16 +121,18 @@ export class WizardProfileComponent implements OnInit {
       this.step++;
     }
   }
+
   prev() {
     if (this.step > 1) {
       this.step--;
     }
   }
+
   openAvatarDialog() {
     this.dialog.open(AvatarModal, {
       header: this.translate.instant('wizard.personal.avatar.title'),
       width: '80%',
-      contentStyle: { 'max-height': '80vh', 'overflow': 'visible' },
+      contentStyle: {'max-height': '80vh', 'overflow': 'visible'},
       baseZIndex: 10000,
       closable: true,
     })?.onClose.subscribe((croppedImage: string | null) => {
@@ -164,14 +167,14 @@ export class WizardProfileComponent implements OnInit {
   //       }
   //     });
   // }
-   mapProfileStatusToState(
+  mapProfileStatusToState(
     dto: ProfileStatusDto,
     prefill?: PrefillData | null
   ): ProfileState {
     return {
       // ----------- Prereq -----------
-      candidateType: this.mapIdToDropdown('candidateType',dto.candidateTypeId) as dropdownOptionsModel,
-      targetEntity: this.mapIdToDropdown('targetEntity',dto.targetEntityId) as dropdownOptionsModel,
+      candidateType: this.mapIdToDropdown('candidateType', dto.candidateTypeId) as dropdownOptionsModel,
+      targetEntity: this.mapIdToDropdown('targetEntity', dto.targetEntityId) as dropdownOptionsModel,
 
       // Attachments
       cvFile: this.mapFile(dto.resumeAttachment),
@@ -187,15 +190,16 @@ export class WizardProfileComponent implements OnInit {
       marriageCertificateName: dto.marriageCertificate?.fileName ?? null,
 
       // ----------- Personal -----------
-      fullName: dto.fullNameAr ?? prefill?.fullName ?? undefined,
+      fullNameAr: dto.fullNameAr ?? prefill?.fullName ?? undefined,
       fullNameEn: dto.fullNameEn ?? undefined,
 
       qid: dto.nationalNumber ?? prefill?.qid ?? undefined,
 
-      // nationality: this.mapIdToDropdown(dto.nationalityId ?? prefill?.nationality ?? undefined),
-      // gender: this.mapIdToDropdown(dto.genderId ?? prefill?.gender ?? undefined),
-      // religion: this.mapIdToDropdown(dto.religionId ?? undefined),
-      // marital: this.mapIdToDropdown(dto.maritalStatusId ?? undefined),
+      nationality: this.mapIdToDropdown('nationality', dto.nationalityId ?? prefill?.nationality ?? undefined),
+      gender: this.mapIdToDropdown('gender', dto.genderId ?? prefill?.gender ?? undefined),
+      religion: this.mapIdToDropdown('religion', dto.religionId ?? undefined),
+      marital: this.mapIdToDropdown('marital', dto.maritalStatusId ?? undefined),
+      sponsorType: this.mapIdToDropdown('sponsorType', dto.sponsorTypeId ?? undefined),
 
       children: dto.childrenCount,
 
@@ -204,14 +208,13 @@ export class WizardProfileComponent implements OnInit {
       hasDisability: dto.hasDisability,
       disabilityDetails: dto.disabilityDetails ?? null,
 
-      sponsorType: dto.sponsorProfileId ?? null,
-      sponsorEmployerName: undefined, // Fill when needed
-      sponsorEmployerNumber: undefined,
-      sponsorCardName: undefined,
-      sponsorCardFile: null,
+      sponsorEmployerName: dto.sponsorEmployerName,
+      sponsorEmployerNumber: dto.sponsorEmployerNumber,
+      sponsorCardName: dto.sponsorCard?.fileName ?? null,
+      sponsorCardFile: this.mapFile(dto.sponsorCard),
 
       // ----------- Contact -----------
-      country: this.mapIdToDropdown('countries',dto.residenceCountryId),
+      country: this.mapIdToDropdown('countries', dto.residenceCountryId),
       dialCode: undefined,
       address: dto.address ?? undefined,
 
@@ -223,14 +226,15 @@ export class WizardProfileComponent implements OnInit {
       email: dto.email ?? prefill?.email ?? undefined,
       emailVerified: dto.emailVerified ?? prefill?.emailVerified ?? false,
 
-      interviewPlace: dto.interviewLocationId ?? undefined,
+      interviewPlace: this.mapIdToDropdown('interviewLocation', dto.interviewLocationId),
 
       // National Address
-      naZone: undefined,
-      naStreet: undefined,
-      naBuilding: undefined,
-      naUnit: undefined,
-      naFileName: undefined,
+      naZone: dto.naZone,
+      naStreet: dto.naStreet,
+      naBuilding: dto.naBuilding,
+      naUnit: dto.naUnit,
+
+      naFileName: dto.residenceAddressCertificate?.fileName ?? null,
       naFile: this.mapFile(dto.residenceAddressCertificate),
 
       // ----------- Collections -----------
@@ -288,6 +292,7 @@ export class WizardProfileComponent implements OnInit {
       avatarUrl: dto.avatar ?? prefill?.avatar ?? undefined,
     };
   }
+
   mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
     if (!ref) return null;
 
@@ -298,7 +303,10 @@ export class WizardProfileComponent implements OnInit {
   }
 
 // Convert backend ID → dropdownOptionsModel
-  mapIdToDropdown(kind: string, id?: string | null): dropdownOptionsModel | undefined {
+  mapIdToDropdown(kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
+                    'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'university' | 'major' | 'ratingGrade' |
+                    'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType',
+                  id?: string | null): dropdownOptionsModel | undefined {
     if (!id) return undefined;
     switch (kind) {
       case 'candidateType':
@@ -335,9 +343,10 @@ export class WizardProfileComponent implements OnInit {
         return this.lookups.graduationCountry().find(gc => gc.id === id);
       case 'sponsorType':
         return this.lookups.sponsorTypes().find(st => st.id === id);
-        default:
-          return undefined;
-      }
+      case 'countries':
+        return this.lookups.countries().find(c => c.id === id);
+      default:
+        throw Error(`Unknown dropdown: ${kind}`);
     }
+  }
 }
-

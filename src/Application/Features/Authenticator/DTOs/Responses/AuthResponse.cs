@@ -3,9 +3,7 @@
 public record AuthResponse(
     bool RequiresProfileCompletion,
     UserInfoResponse? User = null,
-    TokenResponse? Token = null,
-    string[]? MissingFields = null,
-    ProfilePrefillDto? Prefill = null
+    TokenResponse? Token = null
 );
 
 public sealed class ProfilePrefillDto
@@ -53,12 +51,18 @@ public sealed class ProfileStatusDto
     public Guid? InterviewLocationId { get; init; }
 
     public string? Address { get; init; }
-    public Guid? ResidenceAddressId { get; init; }
+    public int? naZone { get; init; }
+    public int? naStreet { get; init; }
+    public int? naBuilding { get; init; }
+    public int? naUnit { get; init; }
 
     public bool HasDisability { get; init; }
     public string? DisabilityDetails { get; init; }
-
-    public Guid? SponsorProfileId { get; init; }
+    
+    public string? SponsorEmployerName { get; set; }
+    public string? SponsorEmployerNumber { get; set; }
+    public FileRefDto? SponsorCard { get; set; }
+    public Guid? SponsorTypeId { get; set; }
 
     // ===== Attachments كـ objects جاهزة للـ UI =====
     public FileRefDto? ResumeAttachment { get; init; }

@@ -24,8 +24,10 @@ public sealed class ProfileCompletenessService(
         var profile = await repo.DbSet
             .AsNoTracking()
             // Attachments الأساسية
+            .Include(p => p.SponsorProfile).ThenInclude(s => s!.SponsorCard)
             .Include(p => p.ResumeAttachment)
             .Include(p => p.NationalCard)
+            .Include(p => p.ResidenceAddress)
             .Include(p => p.ResidenceAddressCertificate)
             .Include(p => p.BirthdayCertificate)
             .Include(p => p.MarriageCertificate)
@@ -183,12 +185,18 @@ public sealed class ProfileCompletenessService(
             InterviewLocationId          = profile.InterviewLocationId,
 
             Address                      = profile.Address,
-            ResidenceAddressId           = profile.ResidenceAddressId,
+            naBuilding = profile.ResidenceAddress?.BuildingNo,
+            naStreet = profile.ResidenceAddress?.StreetNo,
+            naZone = profile.ResidenceAddress?.ZoneNo,
+            naUnit = profile.ResidenceAddress?.UnitNo,
 
             HasDisability                = profile.HasDisability,
             DisabilityDetails            = profile.DisabilityDetails,
-
-            SponsorProfileId             = profile.SponsorProfileId,
+            
+            SponsorEmployerName = profile.SponsorProfile?.SponsorName,
+            SponsorEmployerNumber = profile.SponsorProfile?.SponsorNumber,
+            SponsorTypeId = profile.SponsorProfile?.SponsorTypeId,
+            SponsorCard = ToFileRef(profile.SponsorProfile?.SponsorCard),
 
             ResumeAttachment             = ToFileRef(profile.ResumeAttachment),
             NationalCard                 = ToFileRef(profile.NationalCard),

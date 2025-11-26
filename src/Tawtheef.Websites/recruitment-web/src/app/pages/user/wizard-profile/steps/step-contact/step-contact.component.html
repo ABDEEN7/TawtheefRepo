@@ -2,11 +2,19 @@
   <div class="row g-3">
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.country' | translate }}</label>
-      <p-select [options]="lookups.countries()" [(ngModel)]="ds.state().country"
-                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
-                class="w-full md:w-56"
-                [placeholder]="'wizard.placeholders.selectCountry' | translate"
-                (ngModelChange)="ds.up('country',$event)"></p-select>
+      <p-select
+        [options]="lookups.countries()"
+        name="nationality"
+        [ngModel]="ds.state().country"
+        (ngModelChange)="ds.up('country',$event)"
+        [filter]="true"
+        filterBy="name"
+        optionLabel="name"
+        size="small"
+        [placeholder]="'wizard.placeholders.selectCountry' | translate"
+        class="w-full md:w-56"
+        [disabled]="ds.isLocked('country')"
+        [ngClass]="{ 'locked-field': ds.isLocked('country') }"></p-select>
     </div>
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.phone' | translate }}</label>
@@ -157,7 +165,7 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
       <p-select [options]="lookups.countries()" [(ngModel)]="ds.state().interviewPlace"
-                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                [filter]="true" [loading]="false" filterBy="name" optionLabel="name" size="small"
                 class="w-full md:w-56"
                 [placeholder]="'wizard.placeholders.selectInterviewPlace' | translate"
                 (ngModelChange)="ds.up('interviewPlace',$event)"></p-select>
@@ -199,7 +207,7 @@
         </label>
         <div class="d-flex gap-2 align-items-center">
           <input pInputText class="form-control" pSize="small"
-                 [ngModel]="ds.state().naFile?.fileName"
+                 [ngModel]="ds.state().naFile?.resourceName"
                  placeholder="{{ 'wizard.nationalAddress.document' | translate }}"
                  readonly />
           <button type="button"

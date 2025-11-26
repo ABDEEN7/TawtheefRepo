@@ -23,7 +23,7 @@ export interface ProfileState {
   marriageCertificateFile?: UploadedFileRef  | null;
 
   // personal
-  fullName?: string;
+  fullNameAr?: string;
   fullNameEn?: string;
   qid?: string;
   nationality?: dropdownOptionsModel;
@@ -35,10 +35,11 @@ export interface ProfileState {
 
   hasDisability: boolean;
   disabilityDetails?: string | null;
-  sponsorType?: any | null;
+  sponsorType?: dropdownOptionsModel | null;
   sponsorEmployerName?: string | null;
   sponsorEmployerNumber?: string | null;
   sponsorCardName?: string | null;
+  sponsorCardFileName?: string | null;
   sponsorCardFile?: UploadedFileRef | null;
 
   // contact
@@ -49,12 +50,12 @@ export interface ProfileState {
   phoneVerified: boolean;
   email?: string;
   emailVerified: boolean;
-  interviewPlace?: string;
-  naZone?: string;
-  naStreet?: string;
-  naBuilding?: string;
-  naUnit?: string;
-  naFileName?: string;
+  interviewPlace?: dropdownOptionsModel;
+  naZone?: string | null;
+  naStreet?: string | null;
+  naBuilding?: string | null;
+  naUnit?: string | null;
+  naFileName?: string | null;
   naFile?: UploadedFileRef | null;
 
   // collections

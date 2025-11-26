@@ -20,7 +20,7 @@ export class StepReviewComponent {
   private endpoints = inject(EndpointsService);
 
   private requiredKeys = [
-    'fullName','fullNameEn','qid','dob',
+    'fullNameAr','fullNameEn','qid','dob',
     'country','dialCode','phone','address','email'
   ] as const;
 

@@ -8,6 +8,7 @@ import {CandidateType, MaritalStatus} from '../../../../../core/enums/lookups.en
 import {mapPersonalSection} from '../../services/profile.mapper';
 import {finalize} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
+import {dateToDateOnly} from '../../../../../shared/types/dateOnly.type';
 
 @Component({
   selector: 'app-step-personal',
@@ -80,7 +81,7 @@ export class StepPersonalComponent {
   }
   onNext() {
     const s = this.ds.state();
-    if (!s.fullName || !s.qid || !s.dob || !s.nationality || !s.gender) {
+    if (!s.fullNameAr || !s.qid || !s.dob || !s.nationality || !s.gender) {
       return;
     }
 
@@ -99,4 +100,6 @@ export class StepPersonalComponent {
         }
       });
   }
+
+  protected readonly dateToDateOnly = dateToDateOnly;
 }

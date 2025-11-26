@@ -1,15 +1,17 @@
-﻿import { Injectable, signal, computed } from '@angular/core';
+﻿import {Injectable, signal, computed, inject} from '@angular/core';
 import {ProfileState} from '../models/profile-state.model';
 import {Language} from '../models/language.model';
 import {Degree} from '../models/degree.model';
 import {Experience} from '../models/experience.model';
 import {Attachment} from '../models/attachment.model';
 import {CandidateType} from '../../../../core/enums/lookups.enum';
+import {UserService} from '../../../../core/auth/user.service';
 
 
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
+  userService = inject(UserService);
   state = signal<ProfileState>({
     degrees: [], experiences: [], courses: [], achievements: [],
     skills: [], languages: [], attachments: [],
@@ -34,11 +36,25 @@ export class DataService {
   private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email'];
   prefillFromBootstrap(prefill: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...prefill }));
+    this.lockedPrefillData();
+  }
+
+  lockedPrefillData(){
+    const prefill = this.userService.getPrefill();
+    if (!prefill) return;
+    const dataPrefill = {
+      email: prefill.email,
+      emailVerified: prefill.emailVerified,
+      phone: prefill.phone,
+      phoneVerified: prefill.phoneVerified,
+      nationality: prefill.nationality,
+      qid: prefill.qid
+    } as ProfileState;
     this.locked.update(m => {
       const copy = { ...m };
-      for (const k of Object.keys(prefill) as (keyof ProfileState)[]) {
+      for (const k of Object.keys(dataPrefill) as (keyof ProfileState)[]) {
         if (!this.lockableKeys.includes(k)) continue;
-        const value = prefill[k];
+        const value = dataPrefill[k];
         const hasValue =
           value !== null && value !== undefined &&
           (typeof value !== 'string' || value.trim().length > 0);
@@ -50,6 +66,7 @@ export class DataService {
       return copy;
     });
   }
+
   stepValidity = computed(() => {
     const s = this.state();
 
@@ -77,7 +94,7 @@ export class DataService {
       this.isFilledScalar(s.sponsorCardName);
 
     const personalValid =
-      this.isFilledScalar(s.fullName) &&
+      this.isFilledScalar(s.fullNameAr) &&
       this.isFilledScalar(s.fullNameEn) &&
       this.isFilledScalar(s.qid) &&
       this.isFilledScalar(s.dob) &&

@@ -1,9 +1,7 @@
-﻿import {UploadedFileRef} from './profile-state.model';
-
-export interface SaveProfilePersonalRequestDto {
+﻿export interface SaveProfilePersonalRequestDto {
   submit: boolean;
 
-  fullName: string | null;
+  fullNameAr: string | null;
   fullNameEn: string | null;
   nationalNumber: string | null;
   birthDate: string | null;
@@ -20,5 +18,6 @@ export interface SaveProfilePersonalRequestDto {
   sponsorEmployerName: string | null;
   sponsorEmployerNumber: string | null;
   sponsorTypeId: string | null;
-  sponsorCard: UploadedFileRef | null;
+  sponsorCardResourceId : string | null;
+  sponsorCardFileName: string | null;
 }

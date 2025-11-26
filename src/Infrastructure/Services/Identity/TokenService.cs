@@ -49,10 +49,8 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         
         return Result.Ok(new AuthResponse(
             !data.IsComplete,
-            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar),
-            new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires),
-            data.Missing,
-            prefill
+            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, data.Missing, prefill),
+            new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
         ));
     }
     

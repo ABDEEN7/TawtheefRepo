@@ -26,7 +26,7 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
   return {
     submit: false,
 
-    fullName: state.fullName ?? null,
+    fullNameAr: state.fullNameAr ?? null,
     fullNameEn: state.fullNameEn ?? null,
     nationalNumber: state.qid ?? null,
     birthDate: state.dob ?? null,
@@ -43,7 +43,8 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
     sponsorEmployerName: state.sponsorEmployerName ?? null,
     sponsorEmployerNumber: state.sponsorEmployerNumber ?? null,
     sponsorTypeId: state.sponsorType?.id ?? null,
-    sponsorCard: state.sponsorCardFile ?? null,
+    sponsorCardResourceId: state.sponsorCardFile?.resourceId ?? null,
+    sponsorCardFileName: state.sponsorCardFile?.resourceName ?? state.sponsorCardFileName ?? null,
   };
 }
 export function mapContactSection(state: ProfileState): SaveProfileContactRequestDto {
@@ -58,22 +59,17 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
     submit: false,
 
     residenceCountryId: state.country?.id ?? null,
-    dialCode: state.dialCode ?? null,
+    interviewLocationId: state.interviewPlace?.id ?? null,
+
     address: state.address ?? null,
-    interviewLocation: state.interviewPlace ?? null,
-
-    phone: state.phone ?? null,
-    phoneVerified: state.phoneVerified,
-    email: state.email ?? null,
-    emailVerified: state.emailVerified,
-
     nationalAddress: hasNa
       ? {
         zone: state.naZone ?? null,
         street: state.naStreet ?? null,
         building: state.naBuilding ?? null,
         unit: state.naUnit ?? null,
-        document: state.naFile ?? null,
+        nationalAddressFileName: state.naFile?.resourceName ?? state.naFileName ?? null,
+        nationalAddressResourceId: state.naFile?.resourceId ?? null,
       } : null,
   };
 }

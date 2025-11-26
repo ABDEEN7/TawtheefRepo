@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{F97FCCC7-153
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Website", "Website", "{43A9B289-C267-4098-AF70-3B1123039CF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migration", "Migration\Migration.csproj", "{0D6255B2-F57C-4C66-A3BE-E73C3AE83C67}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,10 +59,6 @@ Global
 		{90B05558-4218-4217-9F32-A0A627CF4054}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90B05558-4218-4217-9F32-A0A627CF4054}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90B05558-4218-4217-9F32-A0A627CF4054}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D6255B2-F57C-4C66-A3BE-E73C3AE83C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D6255B2-F57C-4C66-A3BE-E73C3AE83C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D6255B2-F57C-4C66-A3BE-E73C3AE83C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D6255B2-F57C-4C66-A3BE-E73C3AE83C67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

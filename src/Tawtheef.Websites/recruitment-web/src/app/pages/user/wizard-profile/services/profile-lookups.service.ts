@@ -4,6 +4,7 @@ import {forkJoin, Observable} from 'rxjs';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SkillDto} from '../models/skill-dto.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {catchError, map} from 'rxjs/operators';
 
 export interface CountryDto extends dropdownOptionsModel {
   code: string;
@@ -36,27 +37,31 @@ export class ProfileLookupsService {
   graduationCountry        = signal<CountryDto[]>([]);
   sponsorTypes        = signal<dropdownOptionsModel[]>([]);
 
-  loadAll() {
-    if (this.loaded()) return;
+  loadAll(): Observable<void> {
+    if (this.loaded()) return new Observable(observer => {
+      observer.next();
+      observer.complete();
+    });
+
     this.loading.set(true);
 
-    forkJoin({
-      candidateTypes:  this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.candidateTypes),
-      targetEntities:  this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.targetEntities),
-      genders:         this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.genders),
-      religions:       this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.religions),
+    return forkJoin({
+      candidateTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.candidateTypes),
+      targetEntities: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.targetEntities),
+      genders: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.genders),
+      religions: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.religions),
       maritalStatuses: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.maritalStatuses),
-      countries:       this.http.get<CountryDto[]>(this.endpoints.profile.lookups.countries),
-      degrees:         this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.degrees),
-      universities:    this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.universities),
-      majors:          this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.majors),
-      studyTypes:      this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.studyTypes),
-      ratingGrades:    this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.ratingGrades),
-      languages:       this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languages),
-      languageLevels:  this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languageLevels),
-      sponsorTypes:  this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.sponsorTypes),
-    }).subscribe({
-      next: (res) => {
+      countries: this.http.get<CountryDto[]>(this.endpoints.profile.lookups.countries),
+      degrees: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.degrees),
+      universities: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.universities),
+      majors: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.majors),
+      studyTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.studyTypes),
+      ratingGrades: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.ratingGrades),
+      languages: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languages),
+      languageLevels: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languageLevels),
+      sponsorTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.sponsorTypes),
+    }).pipe(
+      map(res => {
         this.candidateTypes.set(res.candidateTypes);
         this.targetEntities.set(res.targetEntities);
         this.genders.set(res.genders);
@@ -78,12 +83,13 @@ export class ProfileLookupsService {
 
         this.loaded.set(true);
         this.loading.set(false);
-      },
-      error: (err) => {
+      }),
+      catchError(err => {
         console.error('Failed to load profile lookups', err);
         this.loading.set(false);
-      }
-    });
+        throw err;
+      })
+    );
   }
   searchSkills(query: string): Observable<SkillDto[]> {
     const params = new HttpParams().set('q', query);
