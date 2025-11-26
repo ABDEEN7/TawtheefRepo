@@ -73,4 +73,13 @@ export class EndpointsService {
       skill: this.getFullUrl(`/profiles/lookups/skill-search`),
     }
   }
+
+  dashboard = {
+    candidateInvitations: this.getFullUrl(`/dashboard/get-candidate-invitations`),
+    lookups: {
+      invitationStatuses: this.getFullUrl(`/dashboard/lookups/invitation-statuses`),
+      jobCategories: this.getFullUrl(`/dashboard/lookups/job-categories`),
+      departments: this.getFullUrl(`/dashboard/lookups/department`)
+    }
+  };
 }

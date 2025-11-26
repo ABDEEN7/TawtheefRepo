@@ -9,7 +9,7 @@ export const userRoutes: Routes = [
   },
   {
     path: 'dashboard',
-    canMatch: [profileCompleteGuard],
+    //canMatch: [profileCompleteGuard],
     loadComponent: () => Dashboard
   },
 ];
