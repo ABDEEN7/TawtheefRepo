@@ -1,12 +1,15 @@
 // candidate-dashboard.service.ts
-import { Injectable } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
+import {inject, Injectable, signal} from '@angular/core';
+import {Observable, of, delay, forkJoin} from 'rxjs';
+import { LookupDto } from '../../wizard-profile/services/profile-lookups.service';
+import {HttpClient} from '@angular/common/http';
+import {EndpointsService} from '../../../../core/http/endpoints.service';
 
 // Constants for job types
 export const JOB_TYPES = {
-  ACADEMIC: 'academic',
-  ADMINISTRATIVE: 'administrative',
-  LABOR: 'labor'
+  ACADEMIC: 'Academic',
+  ADMINISTRATIVE: 'Administrative',
+  LABOR: 'Labor'
 } as const;
 
 export const JOB_TYPE_LABELS = {
@@ -17,28 +20,40 @@ export const JOB_TYPE_LABELS = {
 
 // Constants for job statuses
 export const JOB_INVITATION_STATUSES = {
-  INVITED: 'invited',
-  APPLIED: 'applied',
-  UNDER_REVIEW: 'under_review',
-  WITHDRAWN: 'withdrawn',
-  CLOSED: 'closed'
+  NEW_INVITATION: 'NewInvitation',
+  CLOSED: 'Closed',
+  UNDER_REVIEW: 'UnderReview',
+  APPROVED: 'Approved',
+  READED: 'Readed',
+  REJECTED: 'Rejected',
+  CANCELLED: 'Cancelled',
+  REQUIRES_UPDATE: 'RequiresUpdate',
+  SUBMITTED: 'Submitted'
 } as const;
 
 export const JOB_INVITATION_STATUS_LABELS = {
-  [JOB_INVITATION_STATUSES.INVITED]: 'دعوة جديدة',
-  [JOB_INVITATION_STATUSES.APPLIED]: 'تم التقديم',
+  [JOB_INVITATION_STATUSES.NEW_INVITATION]: 'دعوة جديدة',
+  [JOB_INVITATION_STATUSES.CLOSED]: 'مغلق',
   [JOB_INVITATION_STATUSES.UNDER_REVIEW]: 'قيد المراجعة',
-  [JOB_INVITATION_STATUSES.WITHDRAWN]: 'ملغي',
-  [JOB_INVITATION_STATUSES.CLOSED]: 'مغلقة'
+  [JOB_INVITATION_STATUSES.APPROVED]: 'معتمد',
+  [JOB_INVITATION_STATUSES.READED]: 'تمت القراءة',
+  [JOB_INVITATION_STATUSES.REJECTED]: 'مرفوض',
+  [JOB_INVITATION_STATUSES.CANCELLED]: 'ملغي',
+  [JOB_INVITATION_STATUSES.REQUIRES_UPDATE]: 'مطلوب تعديل',
+  [JOB_INVITATION_STATUSES.SUBMITTED]: 'تم التقديم'
 } as const;
 
 // Constants for status pill classes
-export const STATUS_PILL_CLASSES = {
-  [JOB_INVITATION_STATUSES.INVITED]: 'status-invited',
-  [JOB_INVITATION_STATUSES.APPLIED]: 'status-applied',
+export const STATUS_PILL_CLASSES: Record<JobStatus, string> = {
+  [JOB_INVITATION_STATUSES.NEW_INVITATION]: 'status-invited',
+  [JOB_INVITATION_STATUSES.CLOSED]: 'status-closed',
   [JOB_INVITATION_STATUSES.UNDER_REVIEW]: 'status-underreview',
-  [JOB_INVITATION_STATUSES.WITHDRAWN]: 'status-withdrawn',
-  [JOB_INVITATION_STATUSES.CLOSED]: 'status-closed'
+  [JOB_INVITATION_STATUSES.APPROVED]: 'status-applied',
+  [JOB_INVITATION_STATUSES.READED]: 'status-withdrawn',
+  [JOB_INVITATION_STATUSES.REJECTED]: 'status-closed',
+  [JOB_INVITATION_STATUSES.CANCELLED]: 'status-closed',
+  [JOB_INVITATION_STATUSES.REQUIRES_UPDATE]: 'status-withdrawn',
+  [JOB_INVITATION_STATUSES.SUBMITTED]: 'status-applied'
 } as const;
 
 // Constants for type badge classes
@@ -52,10 +67,10 @@ export const TYPE_BADGE_CLASSES = {
 export const FILTER_OPTIONS = {
   STATUS: [
     { value: '', label: 'الكل' },
-    { value: JOB_INVITATION_STATUSES.INVITED, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.INVITED] },
-    { value: JOB_INVITATION_STATUSES.APPLIED, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.APPLIED] },
+    { value: JOB_INVITATION_STATUSES.NEW_INVITATION, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.NEW_INVITATION] },
+    { value: JOB_INVITATION_STATUSES.SUBMITTED, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.SUBMITTED] },
     { value: JOB_INVITATION_STATUSES.UNDER_REVIEW, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.UNDER_REVIEW] },
-    { value: JOB_INVITATION_STATUSES.WITHDRAWN, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.WITHDRAWN] },
+    { value: JOB_INVITATION_STATUSES.CANCELLED, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.CANCELLED] },
     { value: JOB_INVITATION_STATUSES.CLOSED, label: JOB_INVITATION_STATUS_LABELS[JOB_INVITATION_STATUSES.CLOSED] }
   ],
   TYPE: [
@@ -68,14 +83,14 @@ export const FILTER_OPTIONS = {
 
 // Action configurations
 export const ACTION_CONFIGS = {
-  [JOB_INVITATION_STATUSES.INVITED]: {
+  [JOB_INVITATION_STATUSES.NEW_INVITATION]: {
     showApply: true,
     showView: false,
     showTrack: false,
     showDetails: false,
     showWithdraw: false
   },
-  [JOB_INVITATION_STATUSES.APPLIED]: {
+  [JOB_INVITATION_STATUSES.SUBMITTED]: {
     showApply: false,
     showView: true,
     showTrack: false,
@@ -89,7 +104,7 @@ export const ACTION_CONFIGS = {
     showDetails: false,
     showWithdraw: false
   },
-  [JOB_INVITATION_STATUSES.WITHDRAWN]: {
+  [JOB_INVITATION_STATUSES.REJECTED]: {
     showApply: false,
     showView: false,
     showTrack: false,
@@ -102,7 +117,35 @@ export const ACTION_CONFIGS = {
     showTrack: false,
     showDetails: true,
     showWithdraw: false
-  }
+  },
+  [JOB_INVITATION_STATUSES.APPROVED]: {
+    showApply: false,
+    showView: true,
+    showTrack: true,
+    showDetails: true,
+    showWithdraw: false
+  },
+  [JOB_INVITATION_STATUSES.CANCELLED]: {
+    showApply: false,
+    showView: true,
+    showTrack: false,
+    showDetails: false,
+    showWithdraw: false
+  },
+  [JOB_INVITATION_STATUSES.REQUIRES_UPDATE]: {
+    showApply: false,
+    showView: true,
+    showTrack: false,
+    showDetails: false,
+    showWithdraw: false
+  },
+  [JOB_INVITATION_STATUSES.READED]: {
+    showApply: false,
+    showView: true,
+    showTrack: false,
+    showDetails: false,
+    showWithdraw: false
+  },
 } as const;
 
 // Type definitions
@@ -144,13 +187,15 @@ export interface FilterOption {
   providedIn: 'root'
 })
 export class CandidateDashboardService {
+  private http = inject(HttpClient);
+  private endpoints = inject(EndpointsService);
   private readonly fakeData: JobRecord[] = [
     {
       id: 1,
       title: 'معلم رياضيات',
       entity: 'إدارة شؤون المدارس',
       type: JOB_TYPES.ACADEMIC,
-      status: JOB_INVITATION_STATUSES.INVITED,
+      status: JOB_INVITATION_STATUSES.NEW_INVITATION,
       date: '2025-10-28',
       jobId: 1
     },
@@ -159,7 +204,7 @@ export class CandidateDashboardService {
       title: 'أخصائي موارد بشرية',
       entity: 'إدارة الموارد البشرية',
       type: JOB_TYPES.ADMINISTRATIVE,
-      status: JOB_INVITATION_STATUSES.APPLIED,
+      status: JOB_INVITATION_STATUSES.SUBMITTED,
       date: '2025-10-28',
       jobId: 2
     },
@@ -168,7 +213,7 @@ export class CandidateDashboardService {
       title: 'فني شبكات',
       entity: 'إدارة نظم المعلومات',
       type: JOB_TYPES.LABOR,
-      status: JOB_INVITATION_STATUSES.INVITED,
+      status: JOB_INVITATION_STATUSES.NEW_INVITATION,
       date: '2025-10-25',
       jobId: 3
     },
@@ -177,7 +222,7 @@ export class CandidateDashboardService {
       title: 'مشرف نشاط طلابي',
       entity: 'إدارة التقييم',
       type: JOB_TYPES.ACADEMIC,
-      status: JOB_INVITATION_STATUSES.WITHDRAWN,
+      status: JOB_INVITATION_STATUSES.REJECTED,
       date: '2025-10-20',
       jobId: 4
     },
@@ -200,6 +245,12 @@ export class CandidateDashboardService {
       jobId: 6
     }
   ];
+  loading = signal<boolean>(false);
+  loaded = signal<boolean>(false);
+
+  invitationStatuses   = signal<LookupDto[]>([]);
+  jobCategories   = signal<LookupDto[]>([]);
+  departments          = signal<LookupDto[]>([]);
 
   // Get all constants for use in components
   getConstants() {
@@ -230,7 +281,7 @@ export class CandidateDashboardService {
   withdrawApplication(recordId: number): Observable<ApiResponse<{id: number}>> {
     const record = this.fakeData.find(r => r.id === recordId);
     if (record) {
-      record.status = JOB_INVITATION_STATUSES.WITHDRAWN;
+      record.status = JOB_INVITATION_STATUSES.REJECTED;
     }
 
     return of({
@@ -246,10 +297,10 @@ export class CandidateDashboardService {
   getDashboardStats(): Observable<ApiResponse<DashboardStats>> {
     const stats: DashboardStats = {
       total: this.fakeData.length,
-      invited: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.INVITED).length,
-      applied: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.APPLIED).length,
+      invited: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.NEW_INVITATION).length,
+      applied: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.SUBMITTED).length,
       under_review: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.UNDER_REVIEW).length,
-      withdrawn: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.WITHDRAWN).length,
+      withdrawn: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.REJECTED).length,
       closed: this.fakeData.filter(r => r.status === JOB_INVITATION_STATUSES.CLOSED).length
     };
 
@@ -289,5 +340,30 @@ export class CandidateDashboardService {
         success: false
       }).pipe(delay(400));
     }
+  }
+
+  loadCandidateLookups() {
+    if (this.loaded()) return;
+    this.loading.set(true);
+
+    forkJoin({
+      invitationStatuses:  this.http.get<LookupDto[]>(this.endpoints.dashboard.lookups.invitationStatuses),
+      jobCategories:  this.http.get<LookupDto[]>(this.endpoints.dashboard.lookups.jobCategories),
+      departments:         this.http.get<LookupDto[]>(this.endpoints.dashboard.lookups.departments),
+
+    }).subscribe({
+      next: (res) => {
+        this.invitationStatuses.set(res.invitationStatuses);
+        this.jobCategories.set(res.jobCategories);
+        this.departments.set(res.departments);
+
+        this.loaded.set(true);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to load profile lookups', err);
+        this.loading.set(false);
+      }
+    });
   }
 }
