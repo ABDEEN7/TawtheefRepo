@@ -11,13 +11,4 @@ namespace Tawtheef.Infrastructure.Repositories;
 public class ResidentsBreakdownRepository(IGenericRepository<ResidentBreakdown> repository)
     : BaseRepository<ResidentBreakdown>(repository), IResidentsBreakdownRepository
 {
-    private readonly IGenericRepository<ResidentBreakdown> _repository = repository;
-
-    public async Task<IResult<List<ResidentBreakdown>>> GetByQuotaIdAsync(Guid quotaId)
-    {
-            var residentsBreakdowns = await _repository.DbSet
-                .Where(js => js.JobQuotaId == quotaId)
-                .ToListAsync();
-                return residentsBreakdowns.Count == 0 ? Result.Fail<List<ResidentBreakdown>>(JobValidationMessages.JobResidentsBreakdownNotFound) : Result.Ok(residentsBreakdowns);
-    }
 }

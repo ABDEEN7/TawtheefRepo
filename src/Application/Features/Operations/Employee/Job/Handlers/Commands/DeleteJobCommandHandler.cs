@@ -27,7 +27,7 @@ public class DeleteJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
             }
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result.Ok(Unit.Value);
+            return Result.Ok(Unit.Value);  
     }
     
 }

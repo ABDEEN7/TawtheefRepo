@@ -6,5 +6,4 @@ namespace Tawtheef.Application.Common.Interfaces.Repositories;
 
 public interface IResidentsBreakdownRepository : IBaseRepository<ResidentBreakdown>
 {
-    Task<IResult<List<ResidentBreakdown>>> GetByQuotaIdAsync(Guid quotaId);
 }

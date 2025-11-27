@@ -15,5 +15,6 @@ public interface IGenericRepository<T> where T : class, IBaseEntity
     Task<IResult<T>> UpdateAsync(T entity);
     Task<IResult<IList<T>>> UpdateRangeAsync(IList<T> entity);
     Task<Result> DeleteAsync(T entity);
+    Task<Result> DeleteRangeAsync(IEnumerable<T> entities);
     Task<Result> DeleteAsync(Guid id);
 }

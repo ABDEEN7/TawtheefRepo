@@ -18,7 +18,6 @@ public record UpdateJobDto
     public List<string> Conditions { get; init; } = [];
     public List<string> Skills { get; init; } = [];
     public List<Guid> DegreeIds { get; init; } = [];
-    
     public Guid StatusId { get; init; }
 
 }

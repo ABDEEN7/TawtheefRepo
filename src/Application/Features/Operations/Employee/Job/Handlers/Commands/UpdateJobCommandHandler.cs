@@ -1,11 +1,12 @@
 using FluentResults;
+using Mapster;
 using MediatR;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
@@ -13,246 +14,196 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Command
 
 public class UpdateJobCommandHandler(
     IJobRepository jobRepository,
-    IJobQuotaRepository jobQuotaRepository,
-    IJobDegreeRepository jobDegreeRepository,
-    IJobConditionRepository jobConditionRepository,
     IJobSkillRepository jobSkillRepository,
-    IResidentsBreakdownRepository residentsBreakdownRepository,
+    IJobConditionRepository jobConditionRepository,
+    IJobDegreeRepository jobDegreeRepository,
+    IResidentsBreakdownRepository residentBreakdownRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateJobCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
         var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.Job.Id);
-        if (existingJobResult.IsFailed)
-        {
-            await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Fail<Unit>($"{JobValidationMessages.JobNotFound}: {existingJobResult.Errors}");
-        }
+        if (existingJobResult.IsFailed || existingJobResult.Value == null)
+            return Result.Fail<Unit>(JobValidationMessages.JobNotFound);
         
         var existingJob = existingJobResult.Value;
-        if (existingJob == null)
-        {
-            await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Fail<Unit>(JobValidationMessages.JobNotFound);
-        }
-        // Begin transaction
-        await unitOfWork.BeginTransactionAsync(cancellationToken);
-        try
-        {
-            // Update main job properties
-            UpdateMainJobProperties(existingJob, request.Job);
-            
-            // Update collections using repositories for better control
-            var collectionsResult = await UpdateJobCollectionsAsync(existingJob, request.Job);
-            if (collectionsResult.IsFailed)
+            return await unitOfWork.ExecuteInTransactionAsync(async (ct) =>
             {
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                return Result.Fail<Unit>(collectionsResult.Errors);
-            }
+                request.Job.Adapt(existingJob);
+                
+                await UpdateCollectionsAsync(existingJob, request.Job);
+                
+               var result = await unitOfWork.SaveChangesAsync(ct);
+                return result == 0 ? Result.Fail<Unit>($"{JobValidationMessages.UpdateFailed}") : Result.Ok(Unit.Value);
+            }, cancellationToken);
 
-            // Update job status
-            existingJob.StatusId = JobStatusIds.Draft;
-
-            // Update the main job entity
-            var updateResult = await jobRepository.Repository.UpdateAsync(existingJob);
-            if (updateResult.IsFailed)
-            {
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                return Result.Fail<Unit>(updateResult.Errors);
-            }
-
-            // Save changes and commit
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            await unitOfWork.CommitTransactionAsync(cancellationToken);
-
-            return Result.Ok(Unit.Value);
-        }
-        catch (Exception ex)
-        {
-            await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Fail<Unit>($"{JobValidationMessages.UpdateFailed}: {ex.Message}");
-        }
     }
-
-    private void UpdateMainJobProperties(JobEntity existingJob, UpdateJobDto updateDto)
+    
+    private async Task UpdateCollectionsAsync(JobEntity job, UpdateJobDto dto)
     {
-        existingJob.Title = updateDto.Title;
-        existingJob.Vacancies = updateDto.Vacancies;
-        existingJob.Deadline = updateDto.Deadline;
-        existingJob.Description = updateDto.Description;
-        existingJob.Benefits = updateDto.Benefits;
-        existingJob.RequestingDepartmentId = updateDto.RequestingDepartmentId;
-        existingJob.JobCategoryId = updateDto.JobCategoryId;
-        existingJob.GenderId = updateDto.GenderId;
-        existingJob.WorkLocationId = updateDto.WorkLocationId;
-        existingJob.MajorId = updateDto.MajorId;
-        existingJob.WorkTypeId = updateDto.WorkTypeId;
-        existingJob.StatusId = updateDto.StatusId;
+        await UpdateSkillsAsync(job, dto.Skills);
+        await UpdateConditionsAsync(job, dto.Conditions);
+        await UpdateDegreesAsync(job, dto.DegreeIds);
+
+        if (job.Quota != null)
+            await UpdateQuota(job.Quota, dto.Quota);
     }
-
-    private async Task<IResult<Unit>> UpdateJobCollectionsAsync(JobEntity existingJob, UpdateJobDto updateDto)
+    
+    private async Task UpdateSkillsAsync(JobEntity job, List<string> newSkills)
     {
-        // Update skills
-        var skillsResult = await UpdateSkillsAsync(existingJob.Id, updateDto.Skills);
-        if (skillsResult.IsFailed)
-            return Result.Fail<Unit>(skillsResult.Errors);
+        var toRemove = job.Skills
+            .Where(s => !newSkills.Contains(s.Text))
+            .ToList();
 
-        // Update conditions
-        var conditionsResult = await UpdateConditionsAsync(existingJob.Id, updateDto.Conditions);
-        if (conditionsResult.IsFailed)
-            return Result.Fail<Unit>(conditionsResult.Errors);
-
-        // Update degrees
-        var degreesResult = await UpdateDegreesAsync(existingJob.Id, updateDto.DegreeIds);
-        if (degreesResult.IsFailed)
-            return Result.Fail<Unit>(degreesResult.Errors);
-
-        // Update quotas
-
-            var quotaResult = await UpdateQuotasAsync(existingJob.QuotaId, updateDto.Quota);
-            return quotaResult.IsFailed ? Result.Fail<Unit>(quotaResult.Errors) : Result.Ok(Unit.Value);
-    }
-
-    private async Task<IResult<Unit>> UpdateSkillsAsync(Guid jobId, List<string> skills)
-    {
-        // Remove existing skills
-        var existingSkillsResult = await jobSkillRepository.GetByJobIdAsync(jobId);
-        if (existingSkillsResult.IsSuccess)
+        if (toRemove.Any())
         {
-            var jobSkills = existingSkillsResult.Value.Where(s => s.JobId == jobId).ToList();
-            foreach (var skill in jobSkills)
-            {
-                var deleteResult = await jobSkillRepository.Repository.DeleteAsync(skill);
-                if (deleteResult.IsFailed)
-                    return Result.Fail<Unit>(deleteResult.Errors);
-            }
+            job.Skills.RemoveAll(s => toRemove.Any(x => x.Id == s.Id));
+            await jobSkillRepository.Repository.DeleteRangeAsync(toRemove);
         }
 
-        // Add new skills
-        if (skills.Count != 0)
+        var existingTexts = job.Skills.Select(s => s.Text).ToHashSet();
+        var maxOrder = job.Skills.Any() ? job.Skills.Max(s => s.Order) : 0;
+
+        var newItems = new List<JobSkill>();
+
+        foreach (var text in newSkills.Where(s => !existingTexts.Contains(s)))
         {
-            var order = 1;
-            var newSkills = skills.Select(skill => new JobSkill { Id = Guid.NewGuid(), JobId = jobId, Text = skill, Order = order++ }).ToList();
-
-            var addResult = await jobSkillRepository.Repository.AddRangeAsync(newSkills);
-            if (addResult.IsFailed)
-                return Result.Fail<Unit>(addResult.Errors);
-        }
-
-        return Result.Ok(Unit.Value);
-    }
-
-    private async Task<IResult<Unit>> UpdateConditionsAsync(Guid jobId, List<string> conditions)
-    {
-        // Remove existing conditions
-        var existingConditionsResult = await jobConditionRepository.GetByJobIdAsync(jobId);
-        if (existingConditionsResult.IsSuccess)
-        {
-            var jobConditions = existingConditionsResult.Value.Where(c => c.JobId == jobId).ToList();
-            foreach (var condition in jobConditions)
-            {
-                var deleteResult = await jobConditionRepository.Repository.DeleteAsync(condition);
-                if (deleteResult.IsFailed)
-                    return Result.Fail<Unit>(deleteResult.Errors);
-            }
-        }
-
-        // Add new conditions
-        if (conditions.Count != 0)
-        {
-            var order = 1;
-            var newConditions = conditions.Select(condition => new JobCondition { Id = Guid.NewGuid(), JobId = jobId, Text = condition, Order = order++ }).ToList();
-
-            var addResult = await jobConditionRepository.Repository.AddRangeAsync(newConditions);
-            if (addResult.IsFailed)
-                return Result.Fail<Unit>(addResult.Errors);
-        }
-
-        return Result.Ok(Unit.Value);
-    }
-
-    private async Task<IResult<Unit>> UpdateDegreesAsync(Guid jobId, List<Guid> degreeIds)
-    {
-        // Remove existing degrees
-        var existingDegreesResult = await jobDegreeRepository.GetByJobIdAsync(jobId);
-        if (existingDegreesResult.IsSuccess)
-        {
-            var jobDegrees = existingDegreesResult.Value.Where(d => d.JobId == jobId).ToList();
-            foreach (var degree in jobDegrees)
-            {
-                var deleteResult = await jobDegreeRepository.Repository.DeleteAsync(degree);
-                if (deleteResult.IsFailed)
-                    return Result.Fail<Unit>(deleteResult.Errors);
-            }
-        }
-
-        // Add new degrees
-        if (degreeIds.Count != 0)
-        {
-            var newDegrees = degreeIds.Select(degreeId => new JobDegree
+            var item = new JobSkill
             {
                 Id = Guid.NewGuid(),
-                JobId = jobId,
-                DegreeId = degreeId
-            }).ToList();
+                JobId = job.Id,
+                Text = text,
+                Order = ++maxOrder
+            };
 
-            var addResult = await jobDegreeRepository.Repository.AddRangeAsync(newDegrees);
-            if (addResult.IsFailed)
-                return Result.Fail<Unit>(addResult.Errors);
+            job.Skills.Add(item);
+            newItems.Add(item);
         }
 
-        return Result.Ok(Unit.Value);
+        if (newItems.Count != 0)
+            await jobSkillRepository.Repository.AddRangeAsync(newItems);
     }
-
-    private async Task<IResult<Unit>> UpdateQuotasAsync(Guid? quotaId, JobQuotaDto updateQuotas)
+    
+    private async Task UpdateConditionsAsync(JobEntity job, List<string> newConditions)
     {
-        if (!quotaId.HasValue)
-            return Result.Fail<Unit>(JobValidationMessages.QuotaIdRequired);
+        var toRemove = job.Conditions
+            .Where(c => !newConditions.Contains(c.Text))
+            .ToList();
 
-        var existingQuotaResult = await jobQuotaRepository.Repository.GetByIdAsync(quotaId.Value);
-        if (existingQuotaResult.IsFailed || existingQuotaResult.Value == null)
-            return Result.Fail<Unit>(JobValidationMessages.QuotaNotFound);
-
-        var existingQuota = existingQuotaResult.Value;
-
-        // Update quota properties
-        existingQuota.QatariCitizens = updateQuotas.QatariCitizens;
-        existingQuota.QatarMother = updateQuotas.QatarMother;
-        existingQuota.NonQatariSpouse = updateQuotas.NonQatariSpouse;
-        existingQuota.Gcc = updateQuotas.Gcc;
-        existingQuota.QuGrads = updateQuotas.QuGrads;
-        existingQuota.Residents = updateQuotas.Residents;
-
-        // Update residents breakdown
-        await UpdateResidentsBreakdownAsync(existingQuota, updateQuotas.ResidentsBreakdowns);
-
-        var updateResult = await jobQuotaRepository.Repository.UpdateAsync(existingQuota);
-        return updateResult.IsSuccess 
-            ? Result.Ok(Unit.Value) 
-            : Result.Fail<Unit>(updateResult.Errors);
-    }
-
-    private async Task UpdateResidentsBreakdownAsync(JobQuota quota, List<ResidentBreakdownDto> residentsBreakdownDtos)
-    {
-        var existingBreakdowns = quota.ResidentsBreakdowns.ToList();
-        foreach (var breakdown in existingBreakdowns)
+        if (toRemove.Any())
         {
-            await residentsBreakdownRepository.Repository.DeleteAsync(breakdown); // Assuming your repo supports this
+            job.Conditions.RemoveAll(c => toRemove.Any(x => x.Id == c.Id));
+            await jobConditionRepository.Repository.DeleteRangeAsync(toRemove);
         }
 
-        if (residentsBreakdownDtos.Count != 0)
+        var existingTexts = job.Conditions.Select(c => c.Text).ToHashSet();
+        var maxOrder = job.Conditions.Any() ? job.Conditions.Max(c => c.Order) : 0;
+
+        var newItems = new List<JobCondition>();
+
+        foreach (var text in newConditions.Where(c => !existingTexts.Contains(c)))
         {
-            foreach (var breakdownDto in residentsBreakdownDtos)
+            var item = new JobCondition
             {
-                quota.ResidentsBreakdowns.Add(new ResidentBreakdown
+                Id = Guid.NewGuid(),
+                JobId = job.Id,
+                Text = text,
+                Order = ++maxOrder
+            };
+
+            job.Conditions.Add(item);
+            newItems.Add(item);
+        }
+
+        if (newItems.Count != 0)
+            await jobConditionRepository.Repository.AddRangeAsync(newItems);
+    }
+    
+    private async Task UpdateDegreesAsync(JobEntity job, List<Guid> newDegreeIds)
+    {
+        var toRemove = job.Degrees
+            .Where(d => !newDegreeIds.Contains(d.DegreeId))
+            .ToList();
+
+        if (toRemove.Any())
+        {
+            job.Degrees.RemoveAll(d => toRemove.Any(x => x.Id == d.Id));
+            await jobDegreeRepository.Repository.DeleteRangeAsync(toRemove);
+        }
+
+        var existingIds = job.Degrees.Select(d => d.DegreeId).ToHashSet();
+        var newItems = new List<JobDegree>();
+
+        foreach (var id in newDegreeIds.Where(i => !existingIds.Contains(i)))
+        {
+            var item = new JobDegree
+            {
+                Id = Guid.NewGuid(),
+                JobId = job.Id,
+                DegreeId = id
+            };
+
+            job.Degrees.Add(item);
+            newItems.Add(item);
+        }
+
+        if (newItems.Any())
+            await jobDegreeRepository.Repository.AddRangeAsync(newItems);
+    }
+    
+    private async Task UpdateQuota(JobQuota quota, JobQuotaDto dto)
+    {
+        quota.QatariCitizens = dto.QatariCitizens;
+        quota.QatarMother = dto.QatarMother;
+        quota.NonQatariSpouse = dto.NonQatariSpouse;
+        quota.Gcc = dto.Gcc;
+        quota.QuGrads = dto.QuGrads;
+        quota.Residents = dto.Residents;
+
+        await UpdateResidentsBreakdownAsync(quota, dto.ResidentsBreakdowns);
+    }
+    
+    private async Task UpdateResidentsBreakdownAsync(JobQuota quota, List<ResidentBreakdownDto> dtos)
+    {
+        var dtoIds = dtos.Select(d => d.NationalityId).ToHashSet();
+
+        var toRemove = quota.ResidentsBreakdowns
+            .Where(rb => !dtoIds.Contains(rb.NationalityId))
+            .ToList();
+
+        if (toRemove.Any())
+        {
+            quota.ResidentsBreakdowns.RemoveAll(rb => toRemove.Any(x => x.Id == rb.Id));
+            await residentBreakdownRepository.Repository.DeleteRangeAsync(toRemove);
+        }
+
+        var existing = quota.ResidentsBreakdowns.ToDictionary(rb => rb.NationalityId, rb => rb);
+        var newItems = new List<ResidentBreakdown>();
+
+        foreach (var dto in dtos)
+        {
+            if (existing.TryGetValue(dto.NationalityId, out var record))
+            {
+                record.Percentage = dto.Percentage;
+                await residentBreakdownRepository.Repository.UpdateAsync(record);
+            }
+            else
+            {
+                var item = new ResidentBreakdown
                 {
                     Id = Guid.NewGuid(),
                     JobQuotaId = quota.Id,
-                    NationalityId = breakdownDto.NationalityId,
-                    Percentage = breakdownDto.Percentage
-                });
+                    NationalityId = dto.NationalityId,
+                    Percentage = dto.Percentage
+                };
+
+                quota.ResidentsBreakdowns.Add(item);
+                newItems.Add(item);
             }
         }
+
+        if (newItems.Count != 0)
+            await residentBreakdownRepository.Repository.AddRangeAsync(newItems);
     }
 }

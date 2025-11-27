@@ -8,5 +8,4 @@ namespace Tawtheef.Infrastructure.Repositories;
 public class JobQuotaRepository(IGenericRepository<JobQuota> repository)
     : BaseRepository<JobQuota>(repository), IJobQuotaRepository
 {
-    private readonly IGenericRepository<JobQuota> _repository = repository;
 }
