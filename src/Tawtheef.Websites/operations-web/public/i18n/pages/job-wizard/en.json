@@ -99,6 +99,7 @@
           "sum_hint": "The total should preferably be 100% before publishing.",
           "sum_label": "Total",
           "sum_state": "(Total must equal 100%)",
+          "breakdowns_invalid":"  Sum of residents breakdowns must equal total residents",
           "sum_valid": "(Complete)"
         }
       },
@@ -170,9 +171,6 @@
       "warning": "Warning"
     }
   },
-
-  "sum_state": "(Total must equal 100%)",
-  "sum_valid": "(Complete)",
 
   "steps": {
     "skills": {

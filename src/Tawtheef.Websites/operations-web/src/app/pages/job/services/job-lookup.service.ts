@@ -90,7 +90,7 @@ export class JobLookupService {
     return splitedNames.join(',')
   }
 
-    getNationalites(natId:string){
+    getNationalites(natId?:string){
     return this.nationalities().find((country) => country?.id == natId)?.name || ''
   }
 

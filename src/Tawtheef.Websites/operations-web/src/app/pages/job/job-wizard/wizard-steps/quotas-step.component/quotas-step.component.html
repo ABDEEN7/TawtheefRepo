@@ -50,7 +50,10 @@
 
         @if (totalQuota() !== 100) {
           <span id="quotaState" class="bad">{{ 'job_wizard.validation.sum_state' | translate }}</span>
-        } @else {
+        } @else if (form.errors?.['residentsMismatch']) {
+          <span id="quotaState" class="bad">{{ 'job_wizard.validation.breakdowns_invalid' | translate }}</span>
+        }
+         @else {
           <span id="quotaState" class="ok">{{ 'job_wizard.validation.sum_valid' | translate }}</span>
         }
       </div>
@@ -63,8 +66,8 @@
         {{ 'job_wizard.steps.quotas.residents_details_button' | translate }}
       </div>
 
-      @for (item of residentsBreakdowns; track item.nationalityId) {
-        <span class="chip">{{ lookupsService.getNationalites(item.nationalityId) }}: {{ item.percentage }}%</span>
+      @for (item of residentsBreakdowns; track item?.nationalityId) {
+        <span class="chip">{{ lookupsService.getNationalites(item?.nationalityId) }}: {{ item?.percentage }}%</span>
       }
     </div>
   }
