@@ -74,6 +74,22 @@ public class ErrorsCodes
     public const string InvalidPassword = "INVALID_PASSWORD";
     public const string IncorrectOldPassword = "INCORRECT_OLD_PASSWORD";
     public const string PasswordChangeFailed = "PASSWORD_CHANGE_FAILED";
+    public const string DegreeNotFound = "DEGREE_NOT_FOUND";
+    public const string ExperienceNotFound = "EXPERIENCE_NOT_FOUND";
+    public const string SkillNotFound = "SKILL_NOT_FOUND";
+    public const string LanguageProfileNotFound = "LANGUAGE_PROFILE_NOT_FOUND";
+    public const string TrainingNotFound = "TRAINING_NOT_FOUND";
+    public const string AchievementNotFound = "ACHIEVEMENT_NOT_FOUND";
+    public const string InvalidDegreeUniversityId = "INVALID_DEGREE_UNIVERSITY_ID";
+    public const string InvalidDegreeMajorId = "INVALID_DEGREE_MAJOR_ID";
+    public const string InvalidGpa = "INVALID_GPA";
+    public const string InvalidDegreeFile = "INVALID_DEGREE_FILE";
+    public const string InvalidDegreeId = "INVALID_DEGREE_ID";
+    public const string InvalidDegreeCountryId = "INVALID_DEGREE_COUNTRY_ID";
+    public const string InvalidDegreeGradeId = "INVALID_DEGREE_GRADE_ID";
+    public const string InvalidGradYear = "INVALID_GRAD_YEAR";
+    public const string InvalidDegreeStudyTypeId = "INVALID_DEGREE_STUDY_TYPE_ID";
+    public const string InvalidDegreeSubMajorId = "INVALID_DEGREE_SUB_MAJOR_ID";
     #endregion
 
     #region External Authentication Errors
@@ -115,6 +131,14 @@ public class ErrorsCodes
     #region User Profile
     public const string InvalidDegreesJson = "INVALID_DEGREES_JSON";
     public const string InvalidDegreesCount = "INVALID_DEGREES_COUNT";
+    #endregion
+
+    #region Attachments
+
+    public const string InvalidAttachmentType = "INVALID_ATTACHMENT_TYPE";
+    public const string InvalidAttachmentSize = "INVALID_ATTACHMENT_SIZE";
+    public const string AttachmentNotFound = "ATTACHMENT_NOT_FOUND";
+
     #endregion
 }
 

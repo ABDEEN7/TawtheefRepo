@@ -49,7 +49,6 @@ sponsorTypeId?: string | null;
 degrees: QualificationDto[];
 experiences: ExperienceDto[];
 trainingCourses: TrainingCourseDto[];
-achievements: AchievementDto[];
 skills: SkillDto[];
 languages: LanguageDto[];
 additionalAttachments: AttachmentDto[];
@@ -76,7 +75,6 @@ export interface ExperienceDto {
 }
 
 export interface TrainingCourseDto extends ExperienceDto {}
-export interface AchievementDto extends ExperienceDto {}
 
 export interface LanguageDto {
   languageId: string;

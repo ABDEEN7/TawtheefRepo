@@ -20,7 +20,6 @@ import { NgClass, NgIf } from '@angular/common';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    FileUpload,
     TranslatePipe,
     DatePicker,
     NgIf,
@@ -85,12 +84,13 @@ export class ExperienceModal implements OnInit {
     this.form.updateValueAndValidity({ onlySelf: false, emitEvent: true });
   }
 
-  onUpload(ev: any) {
+  onUpload(evt: any) {
     this.fileError = null;
-    const f: File | undefined = ev?.files?.[0];
-    if (!f) return;
+    const input = evt.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) return;
 
-    if (!this.allowedTypes.includes(f.type)) {
+    if (!this.allowedTypes.includes(file.type)) {
       this.fileError = this.translate.instant('validation.fileType', {
         types: 'PDF, PNG, JPEG, WEBP'
       });
@@ -98,13 +98,13 @@ export class ExperienceModal implements OnInit {
       return;
     }
 
-    if (f.size > this.maxFileSize) {
+    if (file.size > this.maxFileSize) {
       this.fileError = this.translate.instant('validation.fileSize', { size: '1MB' });
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }
 
-    this.form.patchValue({ file: f, fileName: f.name });
+    this.form.patchValue({ file: file, fileName: file.name });
   }
 
   touchDates() {

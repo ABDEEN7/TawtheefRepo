@@ -6,6 +6,7 @@ public sealed class SaveProfileExperienceRequest
 
     public List<ExperienceUpsertDto> Experiences { get; set; } = [];
     public List<TrainingCourseUpsertDto> TrainingCourses { get; set; } = [];
+    public List<AchievementUpsertDto> Achievements { get; set; } = [];
 }
 
 public sealed class ExperienceUpsertDto
@@ -26,6 +27,15 @@ public sealed class TrainingCourseUpsertDto
     public Guid? Id { get; set; }
     public required string Organization { get; set; }
     public required string Position { get; set; }
+    public DateOnly StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
+    public Guid? CertificateId { get; set; }
+}
+public sealed class AchievementUpsertDto
+{
+    public Guid? Id { get; set; }
+    public required string Organization { get; set; }
+    public required string Title { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
     public Guid? CertificateId { get; set; }

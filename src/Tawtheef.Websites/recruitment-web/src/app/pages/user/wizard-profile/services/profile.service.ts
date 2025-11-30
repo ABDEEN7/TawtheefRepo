@@ -6,6 +6,7 @@ import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
 import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
 import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.model';
+import {GUID} from '../../../../shared/types/guid.type';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -73,16 +74,16 @@ export class ProfileService {
         fileName: d.fileName
       })),
     };
-
-    const files: Record<string, File | null> = {};
-    newDegrees.forEach((d, index) => {
+    const formData = this.buildFormData(dto);
+    newDegrees.forEach(d => {
       if (d.file) {
-        files[`DegreeFiles${index}`] = d.file as File;
+        formData.append('DegreeFiles', d.file);
       }
     });
-
-    const formData = this.buildFormData(dto, files);
     return this.http.post(this.endpoints.user.profile.saveEducation, formData);
+  }
+  deleteEduction(degreeId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteEducation(degreeId));
   }
 
   private buildFormData(dto: any, files?: Record<string, File | null | undefined>): FormData {

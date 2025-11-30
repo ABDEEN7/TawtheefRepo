@@ -1,5 +1,6 @@
 import {UserInfoModel} from "../../../shared/models/user-info.model";
 import {TokenModel} from "./token.model";
+import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
 
 export interface AuthResponse {
   //requiresProfileCompletion: boolean;
@@ -124,8 +125,11 @@ export interface QualificationDto {
   degreeId?: string | null;
   gradCountryId?: string | null;
   universityId?: string | null;
+  university?: dropdownOptionsModel | null;
   majorId?: string | null;
+  major?: dropdownOptionsModel | null;
   subMajorId?: string | null;
+  subMajor?: dropdownOptionsModel | null;
   graduationYear?: number | null;
   studyTypeId?: string | null;
   gpa?: number | null;

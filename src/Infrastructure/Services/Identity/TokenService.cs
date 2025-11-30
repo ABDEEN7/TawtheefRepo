@@ -32,7 +32,8 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
         await sessions.SetCurrentAsync(user.Id, sid, device, ct);
-
+        var refreshToken = GenerateRefreshToken(user.Id, sid);
+        user.RefreshTokens.Add(refreshToken);
         await userManager.UpdateSecurityStampAsync(user);
 
         var userType = await uow.GetEntityRepository<UserType>().DbSet
@@ -44,7 +45,6 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
                 new Claim(JwtRegisteredClaimNames.Sid, sid),
                 new("profile.completed", data.IsComplete ? "true" : "false")
             ]);
-        var refreshToken = GenerateRefreshToken(user.Id, sid);
         
         return Result.Ok(new AuthResponse(
             !data.IsComplete,

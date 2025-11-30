@@ -4,4 +4,4 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetSkillTypesQuery : IRequest<IResult<List<DropdownOptions>>>;
+public sealed record GetSkillTypesQuery: BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;

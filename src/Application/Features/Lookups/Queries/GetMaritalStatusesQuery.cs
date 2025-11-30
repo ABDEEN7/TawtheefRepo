@@ -4,4 +4,4 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetMaritalStatusesQuery : IRequest<IResult<List<DropdownOptions>>>;
+public sealed record GetMaritalStatusesQuery : BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;

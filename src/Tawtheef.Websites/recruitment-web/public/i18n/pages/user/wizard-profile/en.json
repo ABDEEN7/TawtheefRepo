@@ -176,8 +176,7 @@
       "title": "Courses / Training",
       "provider": "Provider",
       "courseName": "Course name",
-      "from": "From (Month/Year)",
-      "to": "To (Month/Year)",
+      "period": "Period",
       "notes": "Notes (optional)",
       "certificate": "Course certificate (PDF/image)",
       "table": {
@@ -187,22 +186,6 @@
         "file": "File"
       },
       "add": "Add course"
-    },
-    "achievement": {
-      "title": "Achievements",
-      "provider": "Provider",
-      "courseName": "Course name",
-      "from": "From (Month/Year)",
-      "to": "To (Month/Year)",
-      "notes": "Notes (optional)",
-      "certificate": "Course certificate (PDF/image)",
-      "table": {
-        "provider": "Provider",
-        "achievement": "Achievement",
-        "period": "Period",
-        "file": "File"
-      },
-      "add": "Add achievement"
     },
     "skills": {
       "title": "Skills & Languages",

@@ -61,7 +61,6 @@ export interface ProfileState {
   degrees: Degree[];
   experiences: Experience[];
   courses: Experience[];
-  achievements: Experience[];
   skills: string[];
   languages: Language[];
   attachments: Attachment[];

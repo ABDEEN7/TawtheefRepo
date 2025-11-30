@@ -4,4 +4,4 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetInvitationStatusesQuery : IRequest<IResult<List<DropdownOptions>>>;
+public sealed record GetInvitationStatusesQuery : BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;

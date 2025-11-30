@@ -503,7 +503,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<decimal>("GPA")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("GraduationYear")
+                    b.Property<int>("GraduationYear")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -2714,132 +2714,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("University", "lkp");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QualificationLevel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BackendName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(98);
-
-                    b.Property<string>("DescriptionAr")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DescriptionEn")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<string>("NameAr")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("NameEn")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BackendName")
-                        .IsUnique();
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("DisplayOrder");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("QualificationLevel", "lkp");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("78292166-dff6-416f-ab04-0547331cbfee"),
-                            BackendName = "HighSchool",
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DisplayOrder = 1,
-                            IsDeleted = false,
-                            NameAr = "الثانوية العامة",
-                            NameEn = "High School"
-                        },
-                        new
-                        {
-                            Id = new Guid("d3a7fa85-6e1a-489d-9606-1ab786d46066"),
-                            BackendName = "Diploma",
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DisplayOrder = 2,
-                            IsDeleted = false,
-                            NameAr = "دبلوم",
-                            NameEn = "Diploma"
-                        },
-                        new
-                        {
-                            Id = new Guid("39ffab2f-86d1-4db3-9210-113a4fcd77e8"),
-                            BackendName = "Bachelor",
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DisplayOrder = 3,
-                            IsDeleted = false,
-                            NameAr = "بكالوريوس",
-                            NameEn = "Bachelor"
-                        },
-                        new
-                        {
-                            Id = new Guid("7137f1ec-1c46-414a-9071-dc40e984cc16"),
-                            BackendName = "Master",
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DisplayOrder = 4,
-                            IsDeleted = false,
-                            NameAr = "ماجستير",
-                            NameEn = "Master"
-                        },
-                        new
-                        {
-                            Id = new Guid("a99f5bdc-a1a2-46ca-9211-0c85bddd1f75"),
-                            BackendName = "Doctorate",
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DisplayOrder = 5,
-                            IsDeleted = false,
-                            NameAr = "دكتوراه",
-                            NameEn = "Doctorate"
-                        });
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RatingGrade", b =>
@@ -5329,7 +5203,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QualificationLevel", "Degree")
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.Degree", "Degree")
                         .WithMany()
                         .HasForeignKey("DegreeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -5873,7 +5747,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Parent")
-                        .WithMany()
+                        .WithMany("SubMajors")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -5939,30 +5813,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("City");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QualificationLevel", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CreatedBy");
 
@@ -6813,6 +6663,11 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", b =>
+                {
+                    b.Navigation("SubMajors");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Invitation", b =>

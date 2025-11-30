@@ -1,4 +1,6 @@
-﻿namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
+﻿using Tawtheef.Application.Common.Models;
+
+namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
 public record AuthResponse(
     bool RequiresProfileCompletion,
@@ -91,8 +93,11 @@ public sealed class QualificationDto
     public Guid? DegreeId { get; init; }
     public Guid? GradCountryId { get; init; }
     public Guid? MajorId { get; init; }
+    public DropdownOptions? Major { get; init; }
     public Guid? SubMajorId { get; init; }
+    public DropdownOptions? SubMajor { get; init; }
     public Guid? UniversityId { get; init; }
+    public DropdownOptions? University { get; init; }
     public Guid? StudyTypeId { get; init; }
     public Guid? GradeId { get; init; }
     public int? GraduationYear { get; init; }

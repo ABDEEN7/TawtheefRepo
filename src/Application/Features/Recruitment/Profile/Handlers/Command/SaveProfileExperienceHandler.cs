@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
 
@@ -16,32 +17,15 @@ public sealed class SaveProfileExperienceHandler(
     public async Task<IResult<Unit>> Handle(SaveProfileExperienceCommand cmd, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
-        var expRepo     = uow.GetEntityRepository<Experience>();
-        var courseRepo  = uow.GetEntityRepository<TrainingCourse>();
-
         var profile = await profileRepo.DbSet
             .Include(p => p.Experiences)
             .Include(p => p.TrainingCourses)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
-        {
-            profile = new UserProfile
-            {
-                UserId  = cmd.UserId,
-                IsDraft = true
-            };
-            await profileRepo.AddAsync(profile);
-            await uow.SaveChangesAsync(ct);
-        }
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        // 1) حذف كل الخبرات القديمة
-        if (profile.Experiences is not null && profile.Experiences.Count > 0)
-        {
-            expRepo.DbSet.RemoveRange(profile.Experiences);
-        }
-        profile.Experiences = new List<Experience>();
-
+        profile.Experiences ??= [];
         foreach (var e in cmd.Request.Experiences)
         {
             var entity = new Experience
@@ -59,14 +43,8 @@ public sealed class SaveProfileExperienceHandler(
 
             profile.Experiences.Add(entity);
         }
-
-        // 2) حذف كل الدورات القديمة
-        if (profile.TrainingCourses is not null && profile.TrainingCourses.Count > 0)
-        {
-            courseRepo.DbSet.RemoveRange(profile.TrainingCourses);
-        }
-        profile.TrainingCourses = new List<TrainingCourse>();
-
+        
+        profile.TrainingCourses ??= [];
         foreach (var c in cmd.Request.TrainingCourses)
         {
             var entity = new TrainingCourse

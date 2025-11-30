@@ -89,51 +89,6 @@
   </p-table>
 </div>
 
-<!-- Achievements -->
-  <div class="card border border-1 shadow-none rounded-4 p-4 mb-3">
-    <div class="d-flex justify-content-between align-items-center">
-      <h6 class="fw-bold mb-0" style="color:#7b1e3a">{{ 'wizard.achievement.title' | translate }}</h6>
-      <div class="d-flex gap-2">
-        <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addAchievement()">
-          <i class="fa-solid fa-plus"></i> {{ 'wizard.achievement.add' | translate }}
-        </button>
-      </div>
-    </div>
-
-  <p-table [value]="ds.state().achievements">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>{{'wizard.achievement.table.provider' | translate}}</th>
-        <th>{{'wizard.achievement.table.achievement' | translate}}</th>
-        <th>{{'wizard.achievement.table.period' | translate}}</th>
-        <th>{{'wizard.achievement.table.file'  | translate }}</th>
-        <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-r let-i="rowIndex">
-      <tr>
-        <td>{{ r.org }}</td>
-        <td>{{ r.title }}</td>
-        <td>
-          {{ r.from ? (r.from | date:'MM/yyyy') : '—' }}
-          -
-          {{ r.to ? (r.to | date:'MM/yyyy') : 'Present' }}
-        </td>
-        <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
-        <td>{{ r.fileName || '—' }}</td>
-        <td class="text-end">
-          <button class="btn btn-sm btn-outline-danger" (click)="removeAchievement(i)">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr><td colspan="7" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
-    </ng-template>
-  </p-table>
-</div>
-
 <div class="text-end">
   <button class="btn btn-outline-secondary" (click)="back.emit()">
     <i class="fa-solid me-1" faDirArrow="start"></i>

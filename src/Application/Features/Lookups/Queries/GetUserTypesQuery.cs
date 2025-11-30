@@ -4,4 +4,4 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetUserTypesQuery : IRequest<IResult<List<DropdownOptions>>>;
+public sealed record GetUserTypesQuery: BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;

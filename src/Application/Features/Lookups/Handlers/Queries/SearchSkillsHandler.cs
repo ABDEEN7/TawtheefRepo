@@ -17,18 +17,17 @@ public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper)
         SearchSkillsQuery request,
         CancellationToken cancellationToken)
     {
-        var term = request.Term?.Trim().ToLower();
+        var term = request.Search?.Trim().ToLower();
         if (string.IsNullOrWhiteSpace(term) || term.Length < 3) 
             return Result.Ok(new List<DropdownOptions>());
 
         var matches = await uow.GetEntityRepository<SkillType>().DbSet
             .AsNoTracking()
             .Where(s =>
-                EF.Functions.Like(s.NameAr.ToLower(), $"%{term}%") ||
-                EF.Functions.Like(s.NameEn.ToLower(), $"%{term}%") ||
-                EF.Functions.Like(s.DescriptionAr, $"%{term}%") ||
-                EF.Functions.Like(s.DescriptionEn, $"%{term}%")
-            )
+                EF.Functions.Like(s.NameAr, $"%{term}%") ||
+                EF.Functions.Like(s.NameEn, $"%{term}%") ||
+                EF.Functions.Like(s.DescriptionAr ?? "", $"%{term}%") ||
+                EF.Functions.Like(s.DescriptionEn ?? "", $"%{term}%"))
             .OrderBy(s => s.DisplayOrder)
             .Take(10)
             .ToListAsync(cancellationToken);

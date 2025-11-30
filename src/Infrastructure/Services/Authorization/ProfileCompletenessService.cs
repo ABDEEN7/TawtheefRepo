@@ -1,7 +1,9 @@
+using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Users;
@@ -10,7 +12,8 @@ namespace Tawtheef.Infrastructure.Services.Authorization;
 
 public sealed class ProfileCompletenessService(
     UserManager<User> userManager,
-    IUnitOfWork uow
+    IUnitOfWork uow,
+    IMapper mapper
 ) : IProfileCompletenessService
 {
     
@@ -36,7 +39,14 @@ public sealed class ProfileCompletenessService(
             // Collections
             .Include(p => p.Skills)
             .Include(p => p.Languages)
-            .Include(p => p.Qualifications)!.ThenInclude(a => a.Certificate)
+            .Include(p => p.Qualifications)!
+                .ThenInclude(a => a.University)
+            .Include(p => p.Qualifications)!
+                .ThenInclude(a => a.Major)
+            .Include(p => p.Qualifications)!
+                .ThenInclude(a => a.SubMajor)
+            .Include(p => p.Qualifications)!
+                .ThenInclude(a => a.Certificate)
             .Include(p => p.Experiences)!.ThenInclude(a => a.Certificate)
             .Include(p => p.TrainingCourses)!.ThenInclude(a => a.Certificate)
             .FirstOrDefaultAsync(p => p.UserId == userId, ct);
@@ -69,12 +79,15 @@ public sealed class ProfileCompletenessService(
                 DegreeId = q.DegreeId,
                 GradCountryId = q.CountryId,
                 UniversityId = q.UniversityId,
+                University = mapper.Map<DropdownOptions>(q.University!),
                 MajorId = q.MajorId,
+                Major = mapper.Map<DropdownOptions>(q.Major!),
                 SubMajorId = q.SubMajorId,
+                SubMajor = mapper.Map<DropdownOptions>(q.SubMajor!),
                 GraduationYear = q.GraduationYear,
                 StudyTypeId = q.StudyTypeId,
                 Gpa = q.GPA,
-                GradeId = q.CertificateId,
+                GradeId = q.RatingId,
                 Attachment = ToFileRef(q.Certificate)
             })
             .ToList();

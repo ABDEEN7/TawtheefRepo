@@ -1,7 +1,6 @@
 <form class="p-fluid" [formGroup]="form" (ngSubmit)="onSave()">
-  <div class="deg-panel card border-0 shadow-none">
-    <div class="card-body py-3">
-
+  <div class="deg-panel border-0 shadow-none">
+    <div class="py-3">
       <div class="d-flex flex-column gap-4">
         <div class="row g-2 g-md-3 align-items-start">
           <!-- Org -->
@@ -59,7 +58,6 @@
               </label>
               <p-date-picker
                 formControlName="from"
-                showIcon="true"
                 view="month"
                 dateFormat="yy-mm"
                 fluid
@@ -75,15 +73,13 @@
               </small>
             </div>
 
-            <!-- To (optional if current) -->
-            <div class="col-12 col-md-6 d-flex flex-column">
+            <div class="col-12 col-md-6 d-flex flex-column" *ngIf="!f['current'].value">
               <label class="form-label fw-semibold mb-2" [ngClass]="{'required': !f['current'].value}">
                 <i class="fa-solid fa-calendar-day me-1"></i> {{ 'wizard.experience.to' | translate }}
                 <small class="text-muted ms-1" *ngIf="f['current'].value">({{ 'common.optional' | translate }})</small>
               </label>
               <p-date-picker
                 formControlName="to"
-                showIcon="true"
                 view="month"
                 dateFormat="yy-mm"
                 fluid
@@ -116,6 +112,33 @@
         </div>
       </div>
 
+      <div class="mt-3 d-flex flex-column">
+        <label class="form-label required">
+          {{ 'wizard.experience.attachment' | translate }}
+        </label>
+        <div class="upload-field"
+             (click)="naInput.click()">
+          <div class="upload-field__icon">
+            <img src="assets/img/icons/file-upload.svg" *ngIf="!f['fileName'].value" alt="upload"/>
+            <img src="assets/img/icons/file-eye.svg" *ngIf="f['fileName'].value" alt="view"/>
+          </div>
+
+          <div class="upload-field__text">
+            {{ f['fileName'].value || ('wizard.experience.attachment' | translate) }}
+          </div>
+
+          <input #naInput type="file" class="d-none" accept=".pdf,image/*"
+                 (change)="onUpload($event)" />
+        </div>
+        <small *ngIf="f['file'].invalid && (f['file'].dirty || f['file'].touched)"
+               class="text-danger mt-1 d-block">
+          {{ 'validation.required' | translate }}
+        </small>
+        <small *ngIf="fileError" class="text-danger mt-1 d-block">
+          {{ fileError }}
+        </small>
+      </div>
+
       <div class="row g-2 g-md-3 align-items-start mt-1">
         <div class="col-12 d-flex flex-column">
           <label class="form-label fw-semibold mb-2 required">
@@ -129,25 +152,6 @@
           </small>
         </div>
       </div>
-
-      <div class="mt-3 d-flex flex-column">
-        <div class="form-label fw-semibold mb-2 required">
-          <i class="fa-solid fa-paperclip me-1"></i> {{ 'wizard.experience.attachment' | translate }}
-        </div>
-        <div class="deg-dropzone p-3" [ngClass]="{'p-invalid': !!fileError}">
-          <p-fileupload mode="basic" name="expCert"
-                        [showUploadButton]="false" [showCancelButton]="false"
-                        [maxFileSize]="maxFileSize"
-                        accept=".pdf,image/*"
-                        [chooseLabel]="'wizard.buttons.upload' | translate"
-                        (onSelect)="onUpload($event)">
-          </p-fileupload>
-          <small class="mt-2 d-block" [class.text-muted]="!fileError" [class.text-danger]="!!fileError">
-            {{ fileError || (form.value.fileName || '—') }}
-          </small>
-        </div>
-      </div>
-
     </div>
   </div>
 

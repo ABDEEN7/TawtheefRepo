@@ -13,7 +13,7 @@ import {UserService} from '../../../../core/auth/user.service';
 export class DataService {
   userService = inject(UserService);
   state = signal<ProfileState>({
-    degrees: [], experiences: [], courses: [], achievements: [],
+    degrees: [], experiences: [], courses: [],
     skills: [], languages: [], attachments: [],
     available: true, hasDisability: false,
     emailVerified: false, phoneVerified: false,
@@ -149,8 +149,6 @@ export class DataService {
 
   addCourse(e: Experience){ this.state.update(s => ({...s, courses:[...s.courses, e]})); }
   delCourse(i:number){ this.state.update(s => ({...s, courses: s.courses.filter((_,x)=>x!==i)})); }
-  addAchievement(e: Experience){ this.state.update(s => ({...s, achievements:[...s.achievements, e]})); }
-  delAchievement(i:number){ this.state.update(s => ({...s, achievements: s.achievements.filter((_,x)=>x!==i)})); }
 
   addLang(l: Language){ this.state.update(s => ({...s, languages:[...s.languages, l]})); }
   delLang(i:number){ this.state.update(s => ({...s, languages: s.languages.filter((_,x)=>x!==i)})); }

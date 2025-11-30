@@ -8,4 +8,6 @@ public class Major : LookupBase
 {
     public Guid? ParentId { get; set; }
     public Major? Parent { get; set; }
+
+    public ICollection<Major>? SubMajors { get; set; } = [];
 }
