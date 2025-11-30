@@ -338,7 +338,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 principalSchema: "lkp",
                 principalTable: "Major",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Qualification_QualificationLevel_DegreeId",
@@ -348,7 +348,7 @@ namespace Tawtheef.Infrastructure.Migrations
                 principalSchema: "lkp",
                 principalTable: "QualificationLevel",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />

@@ -5343,7 +5343,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
                         .WithMany()
                         .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.RatingGrade", "Rating")
@@ -5361,7 +5361,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "SubMajor")
                         .WithMany()
                         .HasForeignKey("SubMajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.University", "University")
@@ -5874,7 +5874,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Parent")
                         .WithMany()
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
