@@ -86,6 +86,61 @@ export class ProfileService {
     return this.http.delete(this.endpoints.user.profile.deleteEducation(degreeId));
   }
 
+  // ========== EXPERIENCE ==========
+  saveExperienceSection(experiences: any[], courses: any[]) {
+    const dto = {
+      submit: false,
+      experiences: (experiences ?? []).map(e => ({
+        id: e.id ?? null,
+        organization: e.org,
+        position: e.title,
+        startDate: e.from,
+        endDate: e.current ? null : e.to,
+        certificateId: e.attachmentId ?? null,
+        achievements: e.tasks ? [e.tasks] : [],
+      })),
+      trainingCourses: (courses ?? []).map(c => ({
+        id: c.id ?? null,
+        organization: c.org,
+        position: c.title,
+        startDate: c.from,
+        endDate: c.to,
+        certificateId: c.attachmentId ?? null,
+      })),
+      achievements: [],
+    };
+
+    return this.http.post(this.endpoints.user.profile.saveExperience, dto);
+  }
+
+  // ========== SKILLS ==========
+  saveSkillsSection(skills: any[], languages: any[]) {
+    const dto = {
+      submit: false,
+      skills: (skills ?? []).map(s => ({ skillId: s.id ?? s })),
+      languages: (languages ?? []).map(l => ({
+        languageId: l.langId ?? l.languageId ?? l.id ?? l,
+        levelId: l.levelId ?? l.level?.id ?? l.level,
+      })),
+    };
+
+    return this.http.post(this.endpoints.user.profile.saveSkills, dto);
+  }
+
+  // ========== ATTACHMENTS ==========
+  saveAttachmentsSection(attachments: any[]) {
+    const dto = {
+      submit: false,
+      attachments: (attachments ?? []).map(a => ({
+        id: a.id ?? null,
+        fileName: a.fileName ?? a.name,
+        attachmentId: a.attachmentId ?? a.id ?? null,
+      })),
+    };
+
+    return this.http.post(this.endpoints.user.profile.saveAttachments, dto);
+  }
+
   private buildFormData(dto: any, files?: Record<string, File | null | undefined>): FormData {
     const formData = new FormData();
     Object.entries(dto ?? {}).forEach(([key, value]) => {
