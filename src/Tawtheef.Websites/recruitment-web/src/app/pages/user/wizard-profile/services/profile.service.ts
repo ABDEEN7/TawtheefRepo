@@ -141,6 +141,11 @@ export class ProfileService {
     return this.http.post(this.endpoints.user.profile.saveAttachments, dto);
   }
 
+  // ========== FINAL SUBMISSION ==========
+  finalizeProfile() {
+    return this.http.post(this.endpoints.user.profile.submit, {});
+  }
+
   private buildFormData(dto: any, files?: Record<string, File | null | undefined>): FormData {
     const formData = new FormData();
     Object.entries(dto ?? {}).forEach(([key, value]) => {

@@ -41,7 +41,7 @@ export class EndpointsService {
       deleteLanguage: (id: string) => this.getFullUrl(`/profiles/languages/${id}/delete`),
       saveLanguages: this.getFullUrl(`/profiles/languages`),
       saveReferences: this.getFullUrl(`/profiles/references`),
-      save: this.getFullUrl(`/profiles/save`),
+      submit: this.getFullUrl(`/profiles/submit`),
     },
     verify:{
       phone:{

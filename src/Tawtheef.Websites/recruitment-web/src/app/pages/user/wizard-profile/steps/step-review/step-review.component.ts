@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Output, computed, inject, signal } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { TranslateService } from '@ngx-translate/core';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
-import {HttpClient} from '@angular/common/http';
 import {finalize} from 'rxjs/operators';
+import {ProfileService} from '../../services/profile.service';
 
 @Component({
   selector: 'app-step-review',
@@ -16,8 +15,7 @@ export class StepReviewComponent {
   @Output() back = new EventEmitter<void>();
   ds = inject(DataService);
   private i18n = inject(TranslateService);
-  private http = inject(HttpClient);
-  private endpoints = inject(EndpointsService);
+  private profile = inject(ProfileService);
 
   private requiredKeys = [
     'fullNameAr','fullNameEn','qid','dob',
@@ -45,21 +43,19 @@ export class StepReviewComponent {
     this.submitting.set(true);
     this.submitted.set(false);
     this.errorText.set(null);
-    this.http.post(this.endpoints.user.profile.save, {
-      submit: true,
-      ...this.ds.state()
-    }).subscribe({
-      next: () => {
-        this.submitted.set(true);
-        this.submitting.set(false);
-      },
-      error: (err) => {
-        this.errorText.set(
-          this.i18n.instant('wizard.review.submitError') +
-          (err?.error?.message ? `: ${err.error.message}` : '')
-        );
-        this.submitting.set(false);
-      }
-    });
+    this.profile
+      .finalizeProfile()
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.submitted.set(true);
+        },
+        error: (err) => {
+          this.errorText.set(
+            this.i18n.instant('wizard.review.submitError') +
+            (err?.error?.message ? `: ${err.error.message}` : '')
+          );
+        }
+      });
   }
 }
