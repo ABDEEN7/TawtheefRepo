@@ -1,8 +1,12 @@
+using System.Text.Json;
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
 
@@ -10,9 +14,15 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 
 public sealed class SaveProfileAttachmentsHandler(
-    IUnitOfWork uow
+    IUnitOfWork uow,
+    IMediator mediator
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     public async Task<IResult<Unit>> Handle(SaveProfileAttachmentsCommand cmd, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
@@ -23,33 +33,90 @@ public sealed class SaveProfileAttachmentsHandler(
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
-        {
-            profile = new UserProfile
-            {
-                UserId  = cmd.UserId,
-                IsDraft = true
-            };
-            await profileRepo.AddAsync(profile);
-            await uow.SaveChangesAsync(ct);
-        }
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var attachmentsResult = Deserialize(cmd.Request.AttachmentsJson);
+        if (attachmentsResult.IsFailed)
+            return Result.Fail<Unit>(attachmentsResult.Errors);
+
+        var attachments = attachmentsResult.Value;
+        var files = cmd.Request.AttachmentFiles ?? [];
 
         if (profile.AdditionalAttachments is not null && profile.AdditionalAttachments.Count > 0)
         {
             attachRepo.DbSet.RemoveRange(profile.AdditionalAttachments);
         }
 
-        profile.AdditionalAttachments = cmd.Request.Attachments
-            .Select(a => new ProfileAdditionalAttachment
+        profile.AdditionalAttachments = [];
+
+        foreach (var dto in attachments)
+        {
+            var uploadResult = await UploadIfNeededAsync(
+                dto.FileIndex,
+                files,
+                ErrorsCodes.InvalidAttachmentFileIndex,
+                ErrorsCodes.InvalidAttachmentFile,
+                ct);
+
+            if (uploadResult.IsFailed)
+                return Result.Fail<Unit>(uploadResult.Errors);
+
+            var attachmentId = uploadResult.Value?.ResourceId ?? dto.AttachmentId;
+            if (attachmentId is null || attachmentId == Guid.Empty)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
+
+            var fileName = uploadResult.Value?.ResourceName ?? dto.FileName;
+            if (string.IsNullOrWhiteSpace(fileName))
+                return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
+
+            profile.AdditionalAttachments.Add(new ProfileAdditionalAttachment
             {
-                FileName      = a.FileName,
-                AttachmentId  = a.AttachmentId,
+                FileName      = fileName,
+                AttachmentId  = attachmentId.Value,
                 UserProfileId = profile.Id
-            })
-            .ToList();
+            });
+        }
 
         profile.IsDraft = !cmd.Request.Submit;
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
+
+        static Result<List<AdditionalAttachmentUpsertDto>> Deserialize(string json)
+        {
+            try
+            {
+                var data = JsonSerializer.Deserialize<List<AdditionalAttachmentUpsertDto>>(json, JsonOptions) ?? [];
+                return Result.Ok(data);
+            }
+            catch (JsonException)
+            {
+                return Result.Fail<List<AdditionalAttachmentUpsertDto>>(ErrorsCodes.InvalidAttachmentsJson);
+            }
+        }
+
+        async Task<Result<UploadAttachmentRequest?>> UploadIfNeededAsync(
+            int? fileIndex,
+            IReadOnlyList<IFormFile> files,
+            string invalidIndexError,
+            string invalidFileError,
+            CancellationToken cancellationToken)
+        {
+            if (fileIndex is null)
+                return Result.Ok<UploadAttachmentRequest?>(null);
+
+            if (fileIndex < 0 || fileIndex >= files.Count)
+                return Result.Fail<UploadAttachmentRequest?>(invalidIndexError);
+
+            var file = files[fileIndex.Value];
+            if (file is not { Length: > 0 })
+                return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
+
+            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), cancellationToken);
+            if (uploadResult.IsFailed)
+                return Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors);
+
+            return Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
+        }
     }
 }

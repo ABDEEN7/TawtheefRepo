@@ -5,4 +5,7 @@ export interface Experience {
   to?: string;
   tasks?: string;
   fileName?: string;
+  file?: File | null;
+  attachmentId?: string | null;
+  current?: boolean;
 }
