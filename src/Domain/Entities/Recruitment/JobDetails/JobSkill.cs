@@ -4,7 +4,7 @@ using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-[Table("JobSkills")]
+[Table(nameof(JobSkill), Schema = Schemas.Hr)]
 
 public class JobSkill: EventEntity
 {
