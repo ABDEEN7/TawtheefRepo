@@ -6,7 +6,7 @@ using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
-public record GetJobsQuery : IRequest<IResult<PaginatedResult<JobResponseDto>>>
+public record GetJobsQuery : PaginatedRequest, IRequest<IResult<PaginatedResult<JobResponseDto>>>
 {
     public JobQueryFilter? Filter { get; init; }
     public PaginatedRequest? Pagination { get; init; }
