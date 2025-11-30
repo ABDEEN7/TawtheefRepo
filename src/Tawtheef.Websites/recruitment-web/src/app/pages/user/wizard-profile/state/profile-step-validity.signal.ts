@@ -159,16 +159,37 @@ function validateContactStep(s: ProfileState): StepValidationResult {
   }
 
   // هنا حسب تصميمك: إن كنت تريد العنوان إلزامي:
-  if (!isFilledScalar(s.address)) {
+  if(!isResidentQatar()){
+  if (!isFilledScalar(s.address))
     addRequiredError(errors, 'contact', 'address');
-  }
+  }else{
+    if(!isFilledScalar(s.naZone))
+      addRequiredError(errors, 'contact', 'naZone');
+    if(!isFilledScalar(s.naStreet))
+      addRequiredError(errors, 'contact', 'naStreet');
+    if(!isFilledScalar(s.naBuilding))
+      addRequiredError(errors, 'contact', 'naBuilding');
 
-  // interviewPlace / national address (naZone/Street/...) ممكن تضيف لها شروط لاحقًا
+    if(!isFilledScalar(s.naFileName))
+      addRequiredError(errors, 'contact', 'naFileName');
+  }
 
   return {
     valid: errors.length === 0,
     errors,
   };
+
+  function isResidentQatar(): boolean {
+    const type = s.candidateType?.backendName as CandidateType | undefined;
+    if (!type) return false;
+
+    return [
+      CandidateType.ResidentQatar,
+      CandidateType.Qatari,
+      CandidateType.SonOfQatariMother,
+      CandidateType.WifeOfQatari
+    ].includes(type);
+  }
 }
 
 /* ========== DEGREES / EXPERIENCE / SKILLS / ATTACHMENTS ========== */

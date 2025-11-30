@@ -111,5 +111,10 @@ public class ErrorsCodes
     public const string FileNotFound = "FILE_NOT_FOUND";
     public const string UrlFileExpired = "URL_FILE_EXPIRED";
     #endregion
+
+    #region User Profile
+    public const string InvalidDegreesJson = "INVALID_DEGREES_JSON";
+    public const string InvalidDegreesCount = "INVALID_DEGREES_COUNT";
+    #endregion
 }
 

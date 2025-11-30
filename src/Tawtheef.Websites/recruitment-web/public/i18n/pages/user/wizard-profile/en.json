@@ -17,17 +17,6 @@
     "progress": {
       "label": "Profile completion"
     },
-    "validation": {
-      "required": "This field is required.",
-      "invalidPhone": "Invalid mobile number.",
-      "invalidDate": "Invalid date.",
-      "minLength": "Must be at least {{min}} characters.",
-      "maxLength": "Must be at most {{max}} characters.",
-      "invalidEmail": "Invalid email address.",
-      "invalidFileType": "Unsupported file type.",
-      "maxFileSize": "File size must not exceed {{size}} MB.",
-      "dateRange": "End date must be after start date."
-    },
     "buttons": {
       "prev": "Previous",
       "next": "Next",
@@ -43,10 +32,19 @@
       "hasDisability": "Do you have a disability?",
       "disabilityType": "Disability Type",
       "sponsorType": "Sponsor Type",
-      "sponsorEmployerName": "Establishment Name",
-      "sponsorEmployerNumber": "Establishment Number (Ministry of Labor)",
-      "sponsorCard": "Establishment Registration Card",
-      "sponsorCardHint": "Upload the establishment registration card (JPG, PNG, PDF)",
+      "sponsorName": "Establishment Name",
+      "sponsor": {
+        "company": {
+          "name": "Establishment Name",
+          "qid": "Establishment Number (Ministry of Labor)",
+          "card": "Establishment Registration Card"
+        },
+        "individual": {
+          "name": "Establishment Name",
+          "qid": "Sponsor QID Number",
+          "card": "Sponsor Registration Card"
+        }
+      },
       "avatar": {
         "alt": "Profile photo",
         "hint": "Complete your profile to increase your matching score",
@@ -139,6 +137,7 @@
       "title": "Degrees",
       "degree": "Degree",
       "major": "Major",
+      "main-major": "Main Major",
       "university": "University",
       "gradYear": "Year",
       "gradCountry": "Graduation Country",

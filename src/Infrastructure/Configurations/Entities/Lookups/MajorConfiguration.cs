@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -8,5 +9,9 @@ public class MajorConfiguration : LookupBaseConfiguration<Major>
     public override void Configure(EntityTypeBuilder<Major> builder)
     {
         base.Configure(builder);
+        builder.HasOne(m => m.Parent)
+            .WithMany()
+            .HasForeignKey(m => m.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

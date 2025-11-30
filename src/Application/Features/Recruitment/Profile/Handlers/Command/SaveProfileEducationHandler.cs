@@ -1,75 +1,67 @@
+using System.Text.Json;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SaveProfileEducationHandler(
-    IUnitOfWork uow
-) : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
+public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator mediator)
+    : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileEducationCommand cmd, CancellationToken ct)
     {
-        var repo = uow.GetEntityRepository<UserProfile>();
+        var profileRepo   = uow.GetEntityRepository<UserProfile>();
+        var educationRepo = uow.GetEntityRepository<Qualification>();
 
-        var profile = await repo.DbSet
-            .Include(p => p.Qualifications)
+        var profile = await profileRepo.DbSet
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
-        {
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
-        }
 
-        var req = cmd.Request;
+        var json = cmd.Request.DegreesJson;
+        if (string.IsNullOrWhiteSpace(json))
+            return Result.Fail<Unit>(ErrorsCodes.InvalidDegreesJson);
 
-        profile.Qualifications ??= [];
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var degrees = JsonSerializer.Deserialize<List<SaveProfileEducationDegreeDto>>(json, options) ?? [];
+        if (degrees.Count != cmd.Request.DegreeFiles.Count)
+            return Result.Fail<Unit>(ErrorsCodes.InvalidDegreesCount);
         
-        var incomingIds = req.Degrees
-            .Where(d => d.Id.HasValue)
-            .Select(d => d.Id!.Value)
-            .ToHashSet();
-
-        var toRemove = profile.Qualifications
-            .Where(q => !incomingIds.Contains(q.Id))
-            .ToList();
-        toRemove.ForEach(q => profile.Qualifications.Remove(q));
-
-        // 3) Upsert لكل Degree
-        foreach (var dto in req.Degrees)
+        for (var i = 0; i < degrees.Count; i++)
         {
-            Qualification entity;
+            var dto = degrees[i];
+            var file = cmd.Request.DegreeFiles[i];
+            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file),ct);
+            if (uploadResult.IsFailed)
+                return Result.Fail<Unit>(uploadResult.Errors);
+            var attachmentId = uploadResult.Value.ResourceId;
 
-            if (dto.Id is Guid existingId)
+            var edu = new Qualification
             {
-                entity = profile.Qualifications
-                             .FirstOrDefault(x => x.Id == existingId)
-                         ?? new Qualification { UserProfileId = profile.Id };
-            }
-            else
-            {
-                entity = new Qualification{ UserProfileId = profile.Id };
-                profile.Qualifications.Add(entity);
-            }
+                UserProfileId = profile.Id,
+                DegreeId     = dto.DegreeId,
+                CountryId     = dto.GradCountryId,
+                UniversityId  = dto.UniversityId,
+                MajorId       = dto.MajorId,
+                SubMajorId       = dto.SubMajorId,
+                StudyTypeId   = dto.StudyTypeId,
+                RatingId       = dto.GradeId,
+                GraduationYear      = dto.GradYear,
+                GPA           = dto.Gpa,
+                CertificateId  = attachmentId,
+            };
 
-            entity.LevelId        = dto.LevelId;
-            entity.MajorId        = dto.MajorId;
-            entity.UniversityId   = dto.UniversityId;
-            entity.GraduationYear = dto.GraduationYear;
-            entity.StudyTypeId    = dto.StudyTypeId;
-            entity.GPA            = dto.GPA;
-            entity.RatingId       = dto.RatingId;
-            entity.CountryId      = dto.CountryId;
-
-            if (dto.CertificateResourceId.HasValue)
-                entity.CertificateId = dto.CertificateResourceId.Value;
+            await educationRepo.AddAsync(edu);
         }
 
+        profile.IsDraft = true;
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

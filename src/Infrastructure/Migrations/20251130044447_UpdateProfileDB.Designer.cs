@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    partial class TawtheefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251130044447_UpdateProfileDB")]
+    partial class UpdateProfileDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5343,7 +5346,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
                         .WithMany()
                         .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.RatingGrade", "Rating")
@@ -5361,7 +5364,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "SubMajor")
                         .WithMany()
                         .HasForeignKey("SubMajorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.University", "University")
@@ -5874,8 +5877,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Parent")
                         .WithMany()
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ParentId");
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()

@@ -1,13 +1,18 @@
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {UploadedFileRef} from './profile-state.model';
+
 export interface Degree {
-  levelId: string;
-  level: string;
-  majorId?: string;
-  major?: string;
-  uniId?: string;
-  uni?: string;
-  year?: number | string;
-  gradCountryId?: string;
-  gradCountry?: string;
-  fileName?: string;
+  degree: dropdownOptionsModel | undefined;
+  gradCountry: dropdownOptionsModel | undefined;
+  university: dropdownOptionsModel | undefined;
+  major: dropdownOptionsModel | undefined;
+  subMajor: dropdownOptionsModel | undefined;
+  gradYear: number;
+  studySystem: dropdownOptionsModel | undefined;
+  gpa: number;
+  grade: dropdownOptionsModel | undefined;
+  certificateName?: string;
+  certificate?: UploadedFileRef | null;
   file?: File | null;
+  attachmentId?: string | null;
 }

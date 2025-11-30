@@ -19,5 +19,15 @@ public class QualificationConfiguration : IEntityTypeConfiguration<Qualification
             .WithMany(up => up.Qualifications)
             .HasForeignKey(q=>q.UserProfileId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(q => q.Major)
+            .WithMany()
+            .HasForeignKey(q => q.MajorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(q => q.SubMajor)
+            .WithMany()
+            .HasForeignKey(q => q.SubMajorId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

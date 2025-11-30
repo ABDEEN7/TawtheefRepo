@@ -196,7 +196,7 @@
         <input class="form-control" [ngModel]="ds.state().naBuilding" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
                (ngModelChange)="ds.up('naBuilding',$event)">
       </div>
-      <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.unit' | translate }}</label>
+      <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.unit' | translate }}</label>
         <input class="form-control" [ngModel]="ds.state().naUnit" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
                (ngModelChange)="ds.up('naUnit',$event)">
       </div>
@@ -205,23 +205,23 @@
           {{ 'wizard.nationalAddress.document' | translate }}
           <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
         </label>
-        <div class="d-flex gap-2 align-items-center">
-          <input pInputText class="form-control" pSize="small"
-                 [ngModel]="ds.state().naFile?.resourceName"
-                 placeholder="{{ 'wizard.nationalAddress.document' | translate }}"
-                 readonly />
-          <button type="button"
-                  class="btn btn-outline-secondary btn-sm"
-                  [disabled]="uploadingNa"
-                  (click)="naInput.click()">
-            <i class="fa-solid fa-upload" *ngIf="!uploadingNa"></i>
-            <i class="fa-solid fa-spinner fa-spin" *ngIf="uploadingNa"></i>
-          </button>
+        <div class="upload-field"
+             (click)="naInput.click()">
+
+          <div class="upload-field__icon">
+            <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().naFileName"/>
+            <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().naFileName"/>
+          </div>
+
+          <div class="upload-field__text">
+            {{ ds.state().naFileName|| ('wizard.nationalAddress.document' | translate) }}
+          </div>
+
           <input #naInput
                  type="file"
-                 accept=".jpg,.jpeg,.png,.pdf"
                  class="d-none"
-                 (change)="onNaFileSelected($event)"/>
+                 accept=".jpg,.jpeg,.png,.pdf"
+                 (change)="onNaFileSelected($event)" />
         </div>
       </div>
     </div>

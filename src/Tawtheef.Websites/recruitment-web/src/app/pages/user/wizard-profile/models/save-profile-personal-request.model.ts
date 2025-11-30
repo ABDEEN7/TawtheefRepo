@@ -18,6 +18,4 @@
   sponsorEmployerName: string | null;
   sponsorEmployerNumber: string | null;
   sponsorTypeId: string | null;
-  sponsorCardResourceId : string | null;
-  sponsorCardFileName: string | null;
 }

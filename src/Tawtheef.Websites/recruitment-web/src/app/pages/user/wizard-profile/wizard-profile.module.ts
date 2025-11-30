@@ -5,7 +5,7 @@ import {WizardProfileComponent} from './wizard-profile.component';
 import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {StepPersonalComponent} from './steps/step-personal/step-personal.component';
 import {StepContactComponent} from './steps/step-contact/step-contact.component';
-import {StepQualificationComponent} from './steps/step-qualification/step-qualification.component';
+import {StepDegreeComponent} from './steps/step-degree/step-degree.component';
 import {StepExperienceComponent} from './steps/step-experience/step-experience.component';
 import {StepSkillsComponent} from './steps/step-skills/step-skills.component';
 import {StepAttachmentsComponent} from './steps/step-attachments/step-attachments.component';
@@ -37,7 +37,7 @@ import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
     StepFirstInfoComponent,
     StepPersonalComponent,
     StepContactComponent,
-    StepQualificationComponent,
+    StepDegreeComponent,
     StepExperienceComponent,
     StepSkillsComponent,
     StepAttachmentsComponent,
