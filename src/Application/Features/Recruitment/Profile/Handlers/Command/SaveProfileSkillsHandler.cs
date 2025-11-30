@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
 
@@ -25,15 +26,7 @@ public sealed class SaveProfileSkillsHandler(
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
-        {
-            profile = new UserProfile
-            {
-                UserId  = cmd.UserId,
-                IsDraft = true
-            };
-            await profileRepo.AddAsync(profile);
-            await uow.SaveChangesAsync(ct);
-        }
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
         // Skills
         if (profile.Skills is not null && profile.Skills.Count > 0)

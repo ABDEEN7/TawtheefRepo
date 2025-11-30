@@ -40,7 +40,7 @@ export class StepAttachmentsComponent implements OnInit {
   ngOnInit(): void {
     const attachments = this.ds.state().attachments || [];
     attachments.forEach((att: any, idx: number) => {
-      const row = this.createRow(att.title ?? '', att.fileName ?? '', false);
+      const row = this.createRow(att.name ?? '', att.fileName ?? att.name ?? '', true, att.id, att.attachmentId);
       this.rows.push(row);
       this.filesStore[idx] = att.file ?? null;
       row.disable({ emitEvent: false });
@@ -57,8 +57,10 @@ export class StepAttachmentsComponent implements OnInit {
     return this.form.get('rows') as FormArray;
   }
 
-  private createRow(title = '', fileName = '', existing = false): FormGroup {
+  private createRow(title = '', fileName = '', existing = false, id?: string, attachmentId?: string): FormGroup {
     return this.fb.group({
+      id: [id ?? null],
+      attachmentId: [attachmentId ?? null],
       title: [title, Validators.required],
       file: [
         null,
@@ -160,9 +162,11 @@ export class StepAttachmentsComponent implements OnInit {
 
     const attachments: Attachment[] = this.rows.controls.map((g, index) => {
       const grp = g as FormGroup;
-      const { title, fileName } = grp.getRawValue();
+      const { title, fileName, id, attachmentId } = grp.getRawValue();
 
       return {
+        id,
+        attachmentId,
         name: title,
         fileName,
         file: this.filesStore[index] ?? null,
