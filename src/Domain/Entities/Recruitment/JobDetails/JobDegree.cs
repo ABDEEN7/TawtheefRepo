@@ -3,7 +3,7 @@ using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
-[Table("JobDegrees")]
+[Table(nameof(JobDegree), Schema = Schemas.Hr)]
 
 public class JobDegree: EventEntity
 {
