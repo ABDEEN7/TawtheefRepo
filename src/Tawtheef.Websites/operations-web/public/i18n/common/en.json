@@ -70,5 +70,9 @@
   "minLengthPassword": "Password must be at least {{min}} characters.",
   "required_filed": "This field is required",
   "invalid_format": "Invalid format"
-}
+},
+"common": {
+    "ar": "العربية",
+    "en": "English"
+  }
 }
