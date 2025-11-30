@@ -216,7 +216,7 @@
       <!-- Sponsor Employer Name -->
       <div class="col-md-4">
         <label class="form-label required">
-          {{ 'wizard.personal.sponsorEmployerName' | translate }}
+          {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.name`| lowercase | translate }}
         </label>
         <input
           pInputText
@@ -232,7 +232,7 @@
       <!-- Sponsor Employer Number (Ministry of Labor) -->
       <div class="col-md-4">
         <label class="form-label required">
-          {{ 'wizard.personal.sponsorEmployerNumber' | translate }}
+          {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.qid`| lowercase | translate }}
         </label>
         <input
           pInputText
@@ -249,26 +249,26 @@
       <!-- Establishment Registration Card -->
       <div class="col-md-6">
         <label class="form-label">
-          {{ 'wizard.personal.sponsorCard' | translate }}
+          {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate }}
           <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
         </label>
-        <div class="d-flex gap-2 align-items-center">
-          <input pInputText class="form-control" pSize="small"
-                 [ngModel]="ds.state().sponsorCardFile?.resourceName"
-                 placeholder="{{ 'wizard.personal.sponsorCard' | translate }}"
-                 readonly>
-          <button type="button"
-                  class="btn btn-outline-secondary btn-sm"
-                  [disabled]="uploadingSponsor"
-                  (click)="sponsorInput.click()">
-            <i class="fa-solid fa-upload" *ngIf="!uploadingSponsor"></i>
-            <i class="fa-solid fa-spinner fa-spin" *ngIf="uploadingSponsor"></i>
-          </button>
+        <div class="upload-field"
+             (click)="sponsorInput.click()">
+
+          <div class="upload-field__icon">
+            <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().sponsorCardFileName"/>
+            <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().sponsorCardFileName"/>
+          </div>
+
+          <div class="upload-field__text">
+            {{ ds.state().sponsorCardFileName || (`wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate) }}
+          </div>
+
           <input #sponsorInput
                  type="file"
-                 accept=".jpg,.jpeg,.png,.pdf"
                  class="d-none"
-                 (change)="onSponsorCardSelected($event)">
+                 accept=".jpg,.jpeg,.png,.pdf"
+                 (change)="onSponsorCardSelected($event)" />
         </div>
       </div>
     </ng-container>

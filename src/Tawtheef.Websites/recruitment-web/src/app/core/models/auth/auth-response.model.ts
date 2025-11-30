@@ -121,11 +121,15 @@ export interface ExperienceDto {
 }
 export interface QualificationDto {
   id: string;
-  degreeName?: string | null;
   degreeId?: string | null;
-  major?: string | null;
-  universityName?: string | null;
+  gradCountryId?: string | null;
+  universityId?: string | null;
+  majorId?: string | null;
+  subMajorId?: string | null;
   graduationYear?: number | null;
+  studyTypeId?: string | null;
+  gpa?: number | null;
+  gradeId?: string | null;
   attachment?: FileRefDto | null;
 }
 export interface FileRefDto {

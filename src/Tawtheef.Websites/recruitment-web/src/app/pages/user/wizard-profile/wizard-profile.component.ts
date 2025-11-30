@@ -128,7 +128,7 @@ export class WizardProfileComponent implements OnInit {
     this.dialog.open(AvatarModal, {
       header: this.translate.instant('wizard.personal.avatar.title'),
       width: '80%',
-      contentStyle: {'max-height': '80vh', 'overflow': 'visible'},
+      contentStyle: {'max-height': '80vh', 'overflow': 'scroll'},
       baseZIndex: 10000,
       closable: true,
     })?.onClose.subscribe((croppedImage: string | null) => {

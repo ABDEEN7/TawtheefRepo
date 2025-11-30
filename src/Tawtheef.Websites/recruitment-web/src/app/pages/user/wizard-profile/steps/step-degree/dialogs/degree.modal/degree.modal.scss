@@ -1,0 +1,44 @@
+/* brand + neutrals to match your screenshot */
+$brand-start: #7b1e3a;
+$brand-end:   #a9445f;
+$border:      #e7eaf1;
+$muted:       #8a94a3;
+
+/* dialog header look (keep if you control <p-dialog>) */
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: linear-gradient(135deg, $brand-start, $brand-end);
+  color: #fff;
+}
+
+/* inner panel (white area with dotted border feel like the image) */
+.deg-panel {
+  border-radius: 1rem;
+  background: #fff;
+  border: 1px solid $border;
+}
+
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-dropdown,
+:host ::ng-deep .p-inputnumber .p-inputtext {
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding-inline: 12px;
+  background-color: #fff;
+  box-shadow: none;
+}
+
+/* dashed upload zone */
+.deg-dropzone {
+  border-radius: 16px;
+  border: 2px dashed $border;
+  background: #fafbfc;
+}
+
+/* footer primary button (pill) */
+:host ::ng-deep .p-dialog .p-dialog-footer .p-button-primary,
+:host ::ng-deep .p-button.p-button-primary {
+  background: linear-gradient(135deg, $brand-start, $brand-end);
+  border: none;
+  border-radius: 999px;
+  font-weight: 800;
+}

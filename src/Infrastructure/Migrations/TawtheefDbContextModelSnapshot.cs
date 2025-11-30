@@ -489,6 +489,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnOrder(94);
 
+                    b.Property<Guid>("DegreeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("DeletedById")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(97);
@@ -497,9 +500,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnOrder(98);
 
-                    b.Property<string>("GPA")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("GPA")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("GraduationYear")
                         .HasColumnType("int");
@@ -508,9 +510,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
-                    b.Property<Guid>("LevelId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("MajorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -518,6 +517,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("StudyTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SubMajorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UniversityId")
@@ -542,15 +544,17 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("DeletedById");
+                    b.HasIndex("DegreeId");
 
-                    b.HasIndex("LevelId");
+                    b.HasIndex("DeletedById");
 
                     b.HasIndex("MajorId");
 
                     b.HasIndex("RatingId");
 
                     b.HasIndex("StudyTypeId");
+
+                    b.HasIndex("SubMajorId");
 
                     b.HasIndex("UniversityId");
 
@@ -567,11 +571,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("BuildingNo")
+                    b.Property<int>("BuildingNo")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("CreatedById")
@@ -594,10 +594,10 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
-                    b.Property<int?>("StreetNo")
+                    b.Property<int>("StreetNo")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UnitNo")
+                    b.Property<int>("UnitNo")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("UpdatedById")
@@ -608,7 +608,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnOrder(96);
 
-                    b.Property<int?>("ZoneNo")
+                    b.Property<int>("ZoneNo")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -2303,8 +2303,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("BackendName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -2344,13 +2344,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("NameAr")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NameEn")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
                         .HasColumnType("uniqueidentifier")
@@ -2362,11 +2362,16 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
                     b.HasIndex("CountryId");
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
 
                     b.HasIndex("UpdatedById");
 
@@ -2381,8 +2386,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("BackendName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Code")
                         .HasColumnType("int");
@@ -2426,13 +2431,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("NameAr")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NameEn")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
                         .HasColumnType("uniqueidentifier")
@@ -2444,9 +2449,14 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
 
                     b.HasIndex("UpdatedById");
 
@@ -2461,8 +2471,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("BackendName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uniqueidentifier")
@@ -2495,13 +2505,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("NameAr")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NameEn")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uniqueidentifier");
@@ -2516,9 +2526,14 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
 
                     b.HasIndex("ParentId");
 
@@ -2535,8 +2550,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("BackendName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uniqueidentifier")
@@ -2569,13 +2584,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("NameAr")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NameEn")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("UpdatedById")
                         .HasColumnType("uniqueidentifier")
@@ -2587,9 +2602,14 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
 
                     b.HasIndex("UpdatedById");
 
@@ -2604,8 +2624,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("BackendName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("CityId")
                         .HasColumnType("uniqueidentifier");
@@ -2653,13 +2673,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("NameAr")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NameEn")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("OriginalName")
                         .HasColumnType("nvarchar(max)");
@@ -2680,11 +2700,16 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
                     b.HasIndex("CityId");
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
 
                     b.HasIndex("UpdatedById");
 
@@ -5304,21 +5329,21 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QualificationLevel", "Degree")
+                        .WithMany()
+                        .HasForeignKey("DegreeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
                         .WithMany()
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QualificationLevel", "Level")
-                        .WithMany()
-                        .HasForeignKey("LevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
                         .WithMany()
                         .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.RatingGrade", "Rating")
@@ -5331,6 +5356,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("StudyTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "SubMajor")
+                        .WithMany()
+                        .HasForeignKey("SubMajorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.University", "University")
@@ -5356,15 +5387,17 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("CreatedBy");
 
-                    b.Navigation("DeletedBy");
+                    b.Navigation("Degree");
 
-                    b.Navigation("Level");
+                    b.Navigation("DeletedBy");
 
                     b.Navigation("Major");
 
                     b.Navigation("Rating");
 
                     b.Navigation("StudyType");
+
+                    b.Navigation("SubMajor");
 
                     b.Navigation("University");
 
@@ -5841,7 +5874,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Parent")
                         .WithMany()
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()

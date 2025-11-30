@@ -1,0 +1,72 @@
+<nav class="main-nav">
+  <div class="nav-container">
+    <!-- Logo -->
+    <div class="logo">
+      <img
+        src="assets/img/logo-black.png"
+        [alt]="'internal.nav.logoAlt' | translate"
+      />
+    </div>
+
+    <!-- User Actions -->
+    <div class="nav-actions">
+      <!-- Language Switcher -->
+      <button class="language-toggle" (click)="toggleLanguage()">
+        <span>{{ `common.${language.getPrev()}` | translate }}</span>
+        <i class="fa fa-earth-asia"></i>
+      </button>
+
+      <!-- Notifications -->
+      <button
+        class="notification-btn"
+        [class.has-notifications]="notificationCount > 0">
+        <i class="fa fa-bell"></i>
+
+        @if (notificationCount > 0) {
+          <span class="badge">{{ notificationCount }}</span>
+        }
+      </button>
+
+      <!-- Login/Register Button -->
+      @if (!isLoggedIn) {
+        <button class="btn-login" (click)="login()">
+          <i class="icon-user"></i>
+          {{ 'internal.nav.login' | translate }}
+        </button>
+      }
+
+      <!-- User Menu -->
+      @if (isLoggedIn && isProfileCompleted) {
+        <div class="user-menu">
+          <button class="user-toggle" (click)="toggleUserMenu()">
+            <img
+              [src]="userAvatar"
+              [alt]="'internal.nav.userAvatarAlt' | translate"
+            />
+            <span>{{ userName }}</span>
+          </button>
+
+          @if (showUserMenu) {
+            <ul class="user-dropdown">
+              <li>
+                <a routerLink="/profile">
+                  {{ 'internal.nav.userProfile' | translate }}
+                </a>
+              </li>
+              <li>
+                <a routerLink="/settings">
+                  {{ 'internal.nav.userSettings' | translate }}
+                </a>
+              </li>
+              <li>
+                <a (click)="logout()">
+                  {{ 'internal.nav.logout' | translate }}
+                </a>
+              </li>
+            </ul>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</nav>

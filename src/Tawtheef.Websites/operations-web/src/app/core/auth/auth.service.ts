@@ -30,6 +30,9 @@ export class AuthService {
   get isAuthenticated$(): Observable<boolean> {
     return this.state.isAuthenticated$;
   }
+   get isAuthenticated(): boolean {
+    return this.state.isAuthenticated();
+   }
 
   get token(): string | null {
     return this.core.getToken;

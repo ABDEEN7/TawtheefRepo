@@ -42,14 +42,13 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         var accessToken =
             GenerateAccessToken(user, userType, [
                 new Claim(JwtRegisteredClaimNames.Sid, sid),
-                new("profile.completed", data.IsComplete ? "true" : "false"),
-                new("profile.missing.count", data.Missing.Length.ToString())
+                new("profile.completed", data.IsComplete ? "true" : "false")
             ]);
         var refreshToken = GenerateRefreshToken(user.Id, sid);
         
         return Result.Ok(new AuthResponse(
             !data.IsComplete,
-            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, data.Missing, prefill),
+            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, prefill),
             new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
         ));
     }

@@ -23,7 +23,6 @@ public sealed class ProfilePrefillDto
 public sealed class ProfileStatusDto
 {
     public bool IsComplete { get; init; }
-    public string[] Missing { get; init; } = [];
     public bool IsDraft { get; init; }
 
     // ===== Scalars من UserProfile =====
@@ -89,13 +88,16 @@ public sealed class FileRefDto
 public sealed class QualificationDto
 {
     public Guid Id { get; init; }
-    public string? DegreeName { get; init; }          // أو خليه من lookup في الفرونت
-    public Guid? DegreeId { get; init; }              // لو عندك lookup
-    public string? Major { get; init; }
-    public string? UniversityName { get; init; }
+    public Guid? DegreeId { get; init; }
+    public Guid? GradCountryId { get; init; }
+    public Guid? MajorId { get; init; }
+    public Guid? SubMajorId { get; init; }
+    public Guid? UniversityId { get; init; }
+    public Guid? StudyTypeId { get; init; }
+    public Guid? GradeId { get; init; }
     public int? GraduationYear { get; init; }
-
-    public FileRefDto? Attachment { get; init; }      // مفتاح ملف الشهادة إن وجد
+    public decimal? Gpa { get; init; }
+    public FileRefDto? Attachment { get; init; }
 }
 
 // ====== Experiences ======

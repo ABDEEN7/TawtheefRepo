@@ -62,20 +62,19 @@ export class StepContactComponent implements OnInit, OnDestroy {
   profileService = inject(ProfileService);
   messageService = inject(MessageService);
 
+  naFileError: string | null = null;
+  maxNaFileSize = 2 * 1024 * 1024; // 2MB
+  allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  private naLocalFile: File | null = null;
+
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
     return validity['contact'];
   }
-  // libs
+
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
-
-  // national address upload
-  naFileError: string | null = null;
-  maxNaFileSize = 2 * 1024 * 1024; // 2MB
-  allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
-  uploadingNa = false;
 
   // verification states
   phone: VerificationState = {
@@ -337,8 +336,6 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (!file) return;
-
-    // simple validation example
     if (!this.allowedNaTypes.includes(file.type)) {
       this.naFileError = this.translate.instant('wizard.nationalAddress.fileTypeError');
       input.value = '';
@@ -351,34 +348,16 @@ export class StepContactComponent implements OnInit, OnDestroy {
     }
 
     this.naFileError = null;
-    this.uploadingNa = true;
-
-    this.profileService
-      .uploadFile(file)
-      .pipe(
-        finalize(() => {
-          this.uploadingNa = false;
-          input.value = '';
-        })
-      )
-      .subscribe({
-        next: ref => this.ds.up('naFile', ref),
-        error: err => {
-          console.error(err);
-          this.naFileError = this.translate.instant('wizard.nationalAddress.uploadError');
-        }
-      });
+    this.naLocalFile = file;
+    this.ds.up('naFile', { resourceId: 'local', fileName: file.name } as any);
+    input.value = '';
   }
-
-  // ========== Next ==========
-
   onNext(): void {
     if (!this.step.valid) {
-      const firstError = this.step.errors[0];
       this.messageService.add({
         severity: 'error',
         summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant(firstError.i18nKey),
+        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
         life: 5000,
       });
       return;
@@ -389,7 +368,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     this.savingContact = true;
     this.profileService
-      .saveContactSection(dto)
+      .saveContactSection(dto, { nationalAddressFile: this.naLocalFile })
       .pipe(finalize(() => (this.savingContact = false)))
       .subscribe({
         next: () => this.next.emit(),

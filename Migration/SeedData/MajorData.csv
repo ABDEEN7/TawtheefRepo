@@ -1,35 +1,11 @@
 Id,BackendName,NameAr,NameEn,DescriptionAr,DescriptionEn,DisplayOrder,ParentId
-588E24B6-50B4-42EC-8168-46AF2B28AFC9,     Master of Global Media Commnication ,     Master of Global Media Commnication ,     Master of Global Media Commnication ,"","",1,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 06FC6DB6-F9E7-44E7-8A83-D6A90F365374, Architecture and Landscape ,العمارة والمناظر الطبيعية, Architecture and Landscape ,"","",2,53068239-3437-9508-3860-820022132875
 0F871E46-DD63-4E11-84E1-67070DEEAC4A, Artificial Intelligence for Business, الذكاء الاصطناعي للأعمال, Artificial Intelligence for Business,"","",3,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-354C31A4-A692-46D7-8B17-731A8CE84EE7, Bartlett School of Planning, Bartlett School of Planning, Bartlett School of Planning,"","",4,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-A1873A49-FF97-4B34-8507-AFF410B7AB19, Bartlett School of Planning, Bartlett School of Planning, Bartlett School of Planning,"","",5,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-0F0C5276-94E1-44BA-AEEE-29B3AB3178D4, Biological & Biomedical Sciences, Biological & Biomedical Sciences, Biological & Biomedical Sciences,"","",6,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-9C497F67-530B-4F22-A684-A9BC2831A225, Biopsychology and Neuroscience, Biopsychology and Neuroscience, Biopsychology and Neuroscience,"","",7,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-B7E99FE2-2FE0-4859-8CB7-E330095078C6, Computer Forensics,تحليل رقمي جنائي , Computer Forensics,"","",8,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-89E03506-9AC9-44D4-A1E3-D0972B1756A7, Computer Science and Artificial Intelligence, Computer Science and Artificial Intelligence, Computer Science and Artificial Intelligence,"","",9,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-C68CAA69-8BE3-4154-91ED-0A60282D59B6, Computing Science, Computing Science, Computing Science,"","",10,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 08C43179-07EA-4B3B-B884-D9C20E5BA8D1, Cyber Security and Forensic Computing,الأمن السيبراني والحوسبة الجنائية, Cyber Security and Forensic Computing,"","",11,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 0246B1F3-FD7F-460F-82BD-429A07CA31D9, Engineering Management,الإدارة الهندسية, Engineering Management,"","",12,A4E63C31-2522-498F-A2D1-160A4DE0C61F
-1FE83B7A-4E7E-4DB7-B62C-1CFF142255A3, Finance (FinTech, Finance (FinTech, Finance (FinTech,"","",13,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0461FAC0-A9F4-45E5-AD03-02A50EEEDE45, International and Comparative Law ,القانون الدولي والمقارن, International and Comparative Law ,"","",14,53068239-3437-9508-3860-820022132875
-22C88280-311E-45D5-82CB-A922B2FD048E, International Management, International Management, International Management,"","",15,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-07C4DEBD-3BBA-4851-8EEE-1BA30D425663, Investment and Financial Risk Management, Investment and Financial Risk Management, Investment and Financial Risk Management,"","",16,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-1206C705-A5D0-46A8-AC20-F6725CA6600F," Management (Innovation, Strategy and Entrepreneurship)"," Management (Innovation, Strategy and Entrepreneurship)"," Management (Innovation, Strategy and Entrepreneurship)","","",17,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 02C2C319-EC6A-4BD0-AC87-A1450959453A, Marine technology with marine engineering,التكنولوجيا البحرية مع الهندسة البحرية, Marine technology with marine engineering,"","",18,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-CF0D590D-AD82-4364-A8AE-3C8CDD7339BC, Master of Science in Islamic Finance, Master of Science in Islamic Finance, Master of Science in Islamic Finance,"","",19,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0C1A2997-E137-4BE0-9CFB-F6FF0814F430, Mechatronics and Robotic Systems,الميكاترونكس والأنظمة الروبوتية, Mechatronics and Robotic Systems,"","",20,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-229514CD-4536-47A8-BE33-7093873E4198, Middle Eastern and Islamic Studies, Middle Eastern and Islamic Studies, Middle Eastern and Islamic Studies,"","",21,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-D3AA7C0A-B591-4B06-B880-27291D7D8616, MSc Foundations in Clinical Psychology, MSc Foundations in Clinical Psychology, MSc Foundations in Clinical Psychology,"","",22,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-FF421342-F0C6-4068-851B-C560ADC8A0AA, Planning, Planning, Planning,"","",23,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-CEFBA28D-7437-4A42-96E1-4438FC2EB698, Robotics & Artificial Intelligence, Robotics & Artificial Intelligence, Robotics & Artificial Intelligence,"","",24,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-419CC867-472E-4C4E-99D8-4D564606440C, Sience in Medical Radiography or medical imaging ,التصوير الإشعاعي الطبي, Sience in Medical Radiography or medical imaging ,"","",25,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-257AA873-95B7-4609-AF60-58A6B90E65D0, Smart Buildings and Digital Engineering, Smart Buildings and Digital Engineering, Smart Buildings and Digital Engineering,"","",26,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-C464BFB5-73C7-4544-923D-8D244FDA4A10, Social Work, Social Work, Social Work,"","",27,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-34DD29CE-FFB3-49FE-AD10-45814FF39E06, Sport and Entertainment Management., Sport and Entertainment Management., Sport and Entertainment Management.,"","",28,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-093228A9-F863-4776-B9EF-A72DA1034260, Sustainability, Sustainability, Sustainability,"","",29,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-46CE2B61-54D1-405A-9A69-D30DDC36063B, الماجستير التنفيذي المزدوج في الإدارة العامة وإدارة الأعمال, الماجستير التنفيذي المزدوج في الإدارة العامة وإدارة الأعمال, الماجستير التنفيذي المزدوج في الإدارة العامة وإدارة الأعمال,"","",30,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-7C155352-0CB0-4FD8-A161-44B7C249CB29,) Naval Architecture and Marine Engineering,) Naval Architecture and Marine Engineering,) Naval Architecture and Marine Engineering,"","",31,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 89798286-4261-9056-4345-838957121837,Academic Bridge Program,برنامج الجسر الأكاديمي,Academic Bridge Program,"","",32,
 0385F69C-A761-42B8-9C24-2F490E4AB449,Academic Bridge Program,الجسر الأكاديمي,Academic Bridge Program,"","",33,89798286-4261-9056-4345-838957121837
 062DE665-6710-4953-BEDF-16260F7E43B4,Academic Research,البحث الأكاديمي,Academic Research,"","",34,0EDE5489-BDF4-4838-9C6C-4E39B0B00E06
@@ -37,13 +13,11 @@ E48B8C61-6883-4B82-AF30-37D6D264267B,Accountancy,المحاسبة,Accountancy,""
 FE8830F7-D320-422C-90BE-2593BB1B9B89,Accounting,محاسبة,Accounting,"","",36,
 42B731EA-29D6-44C2-BFD7-E4EE60D65BCC,Accounting,محاسبة,Accounting,"","",37,FE8830F7-D320-422C-90BE-2593BB1B9B89
 0AB2C31A-083D-42C3-BC52-C47C0C31814D,Accounting and Computer Science,المحاسبة وعلوم الكمبيوتر,Accounting and Computer Science,"","",38,53068239-3437-9508-3860-820022132875
-2597F717-8D78-4C91-B5C1-F834FF190B27,Accounting and Finance,Accounting and Finance,Accounting and Finance,"","",39,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 01C3698D-6EB3-4886-AA42-AE1C0FE5E5BD,Accounting and FiNULLce,المحاسبة والمالية,Accounting and FiNULLce,"","",40,53068239-3437-9508-3860-820022132875
 2CD5F603-2DCC-455D-B93D-A4F996432F83,Acoustics & vibration,الصوتيات والاهتزاز,Acoustics & vibration,"","",41,5DB7DE56-F67A-48CD-9089-46FB4E84D197
 EF4D0470-7C30-419C-8E42-F9C3F9993E27,Acting,التمثيل,Acting,"","",42,27F76109-CE90-4F0B-A56C-AE5943612575
 09BCCBF0-2AC7-4997-BDC8-63CA09918B80,Actuarial Mathematics ,الرياضيات الاكتوارية,Actuarial Mathematics ,"","",43,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
 B9DE009E-F607-47FC-AA9D-28DE8FBDF214,Actuarial science,العلوم الاكتوارية,Actuarial science,"","",44,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
-D400100D-15A1-4063-A999-E50C1E8680BB,Actuarial Science ,علوم اكتوارية ,Actuarial Science ,"","",45,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0E5EB6E6-D43B-4B83-8CB0-247A03C59F04,Acupuncture,الوخز بالإبر,Acupuncture,"","",46,B2B987EF-278C-4E27-AC79-6AAD152BF4DF
 049E08EC-E225-48A9-974A-7E5E07F8DFDB,Administrative Assistant and Secretarial Science,مساعد إداري وعلوم السكرتارية,Administrative Assistant and Secretarial Science,"","",47,E9281E81-96F0-474B-B6D4-9F264FC2FC72
 0CD5C4C0-DAB6-472B-8F64-BD960B4E7243,Adult Literacy,محو الأمية للكبار,Adult Literacy,"","",48,0EDE5489-BDF4-4838-9C6C-4E39B0B00E06
@@ -51,8 +25,6 @@ E4515AE6-9C51-4364-BFF0-BC9FBA4EF6F7,Adult nursing,تمريض الكبار,Adult
 0198767C-B268-4B49-9ED6-D8CA017E4A4F,Advanced Care Paramedicine,الاسعاف والرعاية الصحية المتقدمة,Advanced Care Paramedicine,"","",50,E35FB37B-2402-4603-9776-33D0D4848B9B
 388B7846-7E8E-488A-984F-C351763D0EBF,Advertising,دعاية,Advertising,"","",51,43817EFA-BADD-419E-8D15-1E388A7AB85F
 DA240A4B-C6D8-4DC0-9D20-1F2332E4E235,Aerodynamics,الديناميكا الهوائية,Aerodynamics,"","",52,413C8F0F-01A1-4339-B3A5-A42C2989B803
-629EF223-56BD-4C2C-A4A2-1685ED5C8120,Aeronautical and Aerospace Engineering,Aeronautical and Aerospace Engineering,Aeronautical and Aerospace Engineering,"","",53,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-7DFD67FD-D8F2-44C8-A730-2887BD850A39,Aeronautical and Aerospace Engineering ,Aeronautical and Aerospace Engineering ,Aeronautical and Aerospace Engineering ,"","",54,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 7E3FCB59-128C-4CD6-9E3F-F186DD600703,Aeronautical and Aerospace Engineering,هندسة الطيران,Aeronautical and Aerospace Engineering,"","",55,413C8F0F-01A1-4339-B3A5-A42C2989B803
 09F9EBB2-2CB9-4D05-A31C-8B5D0A2E84D4,Aeronautical and Aerospace Engineering Technology,تكنولوجيا هندسة الطيران والفضاء,Aeronautical and Aerospace Engineering Technology,"","",56,413C8F0F-01A1-4339-B3A5-A42C2989B803
 0AA06DA8-8365-453C-8A08-F15809DE168A,Aeronautical and Manufacturing Engineering,هندسة الطيران والتصنيع,Aeronautical and Manufacturing Engineering,"","",57,EF4B99A8-A131-49EB-A044-14B5F227BDC9
@@ -149,7 +121,6 @@ D356810C-5BE2-46D7-A7CD-7196C48F55AE,Applied genetics,الوراثة التطب�
 C7F4B55F-9ED4-475F-8E5C-5D43124C6D53,Applied physics,الفيزياء التطبيقية,Applied physics,"","",148,79BED130-E352-4C2F-A2AB-DFC8239151C0
 4FDA6BE6-5A2F-4522-96B8-80938D571377,Applied psychology,علم النفس التطبيقي,Applied psychology,"","",149,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
 288F509D-C399-4174-868E-B37CDDBD1412,Applied sociology,علم الاجتماع التطبيقي,Applied sociology,"","",150,97EA1354-7504-4C00-B170-E993193B678E
-B9601915-BB32-4273-9599-E60494F9BB7F,Applied Software Engineering,Applied Software Engineering,Applied Software Engineering,"","",151,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 A65355D4-2216-45F0-ACD7-85EE1AB79209,Applied statistics,الإحصائيات التطبيقية,Applied statistics,"","",152,E0DDB537-F0A8-4F65-88E5-EDE72D109AEC
 0EE5D215-0401-4238-8322-BCD10DAEC9C6,Applied telecommunications and network engineering ,هندسة الاتصالات التطبيقية والشبكات,Applied telecommunications and network engineering ,"","",153,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 8A9EB77D-328E-4444-BCD8-1E5FB00742F6,Aquaculture,تربية الأحياء المائية,Aquaculture,"","",154,9D89556F-9EE5-4D31-9883-6A16F8EF09DE
@@ -159,7 +130,6 @@ DB4B485F-F7D7-4D2C-8064-9E8D715A8CC7,Arabic Lanuage,اللغة العربية,Ar
 585D9CD7-0321-49E4-A129-D8BFF57AC199,Arabic literature,الأدب العربي,Arabic literature,"","",158,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 7CEDAE34-154E-4A0E-A780-E386B065BAB1,Arable & fruit farming,زراعة الأراضي الصالحة للزراعة والفواكه,Arable & fruit farming,"","",159,9D89556F-9EE5-4D31-9883-6A16F8EF09DE
 3775574C-8A24-4FF9-BE08-0D99CB4DDF18,Archaeological science,علم الآثار,Archaeological science,"","",160,2E16E0DA-608E-4B96-B9D7-B000923DF19C
-94FAE6EB-FC0D-4896-86B2-597AA93C1A06,Archaeology ,Archaeology  ( آثار ),Archaeology ,"","",161,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0703B120-5657-49CB-B151-01AC0A220FEB,Archaeology and Anthropology,علم الآثار والأنثروبولوجيا,Archaeology and Anthropology,"","",162,53068239-3437-9508-3860-820022132875
 0B5940F4-CE2D-4B0B-9337-60FF013A1A64,Architectural design,التصميم المعماري,Architectural design,"","",163,91E66B15-E39A-4A1C-B74B-357EA365F7AC
 A1A528C1-F60B-446A-B415-1B3A3F22321F,Architectural design theory,نظرية التصميم المعماري,Architectural design theory,"","",164,91E66B15-E39A-4A1C-B74B-357EA365F7AC
@@ -167,7 +137,6 @@ A1A528C1-F60B-446A-B415-1B3A3F22321F,Architectural design theory,نظرية ال
 7AC72166-ABD1-47B7-88C5-BC63F6C17435,Architectural Engineering,الهندسة المعمارية,Architectural Engineering,"","",166,
 07F651CF-EBFC-4C81-A196-85CD04EC031F,Architectural Engineering Technology,تكنولوجيا الهندسة المعمارية,Architectural Engineering Technology,"","",167,7AC72166-ABD1-47B7-88C5-BC63F6C17435
 0A134DC5-6D95-44E4-B80E-1F0F02F5CDF5,Architectural Environment Engineering   ,هندسة البيئة المعمارية,Architectural Environment Engineering   ,"","",168,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-DD881EDC-8362-48B0-98EE-6CBA2D477CCC,Architectural Environment Engineering,Architectural Environment Engineering,Architectural Environment Engineering,"","",169,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 09EE9990-0221-49ED-9E9B-D0890DEA826F,Architectural History,التاريخ المعماري,Architectural History,"","",170,BDE37404-BF32-4148-B8C6-CB6DCDF96EE9
 A542AB6E-1952-4C1A-A135-9ECB92438ED2,Architectural technology,التكنولوجيا المعمارية,Architectural technology,"","",171,91E66B15-E39A-4A1C-B74B-357EA365F7AC
 05CB5731-6986-460B-A43B-0D130D9AD5EE,Architectural Technology and Design  ,التكنولوجيا المعمارية والتصميم,Architectural Technology and Design  ,"","",172,EF4B99A8-A131-49EB-A044-14B5F227BDC9
@@ -186,7 +155,6 @@ CFC86EDD-5AFD-49ED-B6D9-6A9814054B1F,Artificial intelligence,الذكاء الا
 058A4AB9-2CD9-4686-AC79-A50E0533E339,Arts in Digital Culture ,الفنون في الثقافة الرقمية,Arts in Digital Culture ,"","",185,56463547-1778-6080-6803-396575136009
 03CEA7B8-CE7C-4B3D-B78D-B5C4026625DB,Arts in Digital Humanities and Societies,الفنون في الدراسات الرقمية للعلوم الإنسانية والمجتمعات,Arts in Digital Humanities and Societies,"","",186,56463547-1778-6080-6803-396575136009
 0715ED3F-6D7F-426C-BB4B-F9600A0918D8,Arts in Interdisciplinary Studies,الآداب في الدراسات متعددة التخصصات,Arts in Interdisciplinary Studies,"","",187,927C60FE-2C0B-45F1-ACA4-06CD3A5D7EB7
-D20BA622-A032-4E67-ADCD-7062EAFBCF67,Arts in Islam and Global Affairs,Arts in Islam and Global Affairs,Arts in Islam and Global Affairs,"","",188,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0A5371E5-F215-4EDF-AEB7-8CD90F4EF2EA,Arts in Modern Criticism,آداب النقد الحديث,Arts in Modern Criticism,"","",189,53068239-3437-9508-3860-820022132875
 D3819D50-72C9-4725-A55E-AE7A3185C3B9,Asian religious texts,النصوص الدينية الآسيوية,Asian religious texts,"","",190,7E272DDE-3A15-43D0-AD21-1800E8A9A48B
 CC9259AF-A6C9-4516-BEFB-A479ACB73C15,Asmita sub Major,Asmita sub Major,Asmita sub Major,"","",191,AF83C0B0-82F7-45D6-878B-66CCB327990E
@@ -207,7 +175,6 @@ D16D7DE5-0981-4AA5-91A1-1D71ED5A1DC7,Atomic engineering,الهندسة الذر�
 6E3EC274-2B2D-401B-8C51-66C157FCDE4D,Audio technology,تكنولوجيا الصوت,Audio technology,"","",206,1445B371-EACD-45A1-8ACA-2318DF9F9893
 D84146B8-2B14-49B2-98A8-581BC2682234,Audio typing,الكتابة الصوتية,Audio typing,"","",207,E9281E81-96F0-474B-B6D4-9F264FC2FC72
 71441C8E-0462-4BA8-8EA7-B300428D6B1A,Audiology,علم السمع,Audiology,"","",208,5E7A14B4-6733-4477-8E95-FD49EA9612BA
-82BBF390-879A-471A-9455-2AA2FE049F5A,Audiology and Speech Sciences,علوم السمع والنطق,Audiology and Speech Sciences,"","",209,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 008BDC04-0F7C-4681-A606-35A60FB639AA,Audiology and Speech-Language Pathology,السمعيات وعلم أمراض النطق واللغة,Audiology and Speech-Language Pathology,"","",210,14702637-5298-9375-6717-257512837849
 098EF953-17CE-499E-A856-3C100229488E,Auditing,التدقيق,Auditing,"","",211,FE8830F7-D320-422C-90BE-2593BB1B9B89
 983044C8-D2E0-40B2-A207-B95F64ED55CB,Auditing of accounts,تدقيق الحسابات,Auditing of accounts,"","",212,FE8830F7-D320-422C-90BE-2593BB1B9B89
@@ -226,9 +193,7 @@ E5A8A6A3-BBD8-4577-87A5-F3901019D889,Automotive engineering,هندسة السي�
 F6CF4123-6143-4282-B15B-2BEB852CF6DA,Bacteriology,علم الجراثيم,Bacteriology,"","",225,9234841C-6F26-4470-963E-8594BC2CF961
 B9D73503-7690-402E-A0EA-5929FF92A07E,Ballet,الباليه,Ballet,"","",226,3E3CD1C2-E37B-459A-89F8-957EB309D9E6
 9CAD62D0-4AAF-4D38-BB7A-C15FEC70B43A,Banking,الخدمات المصرفية,Banking,"","",227,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
-1567DB60-3246-493E-9BCA-0D8E4BDC7182,Banking and Finance,Banking and Finance,Banking and Finance,"","",228,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 08DCAF2F-DEEC-4BE3-B9F2-A3580A7069A7,Banking and FiNULLce,البنوك والتمويل,Banking and FiNULLce,"","",229,53068239-3437-9508-3860-820022132875
-0337513C-9DD1-4CB6-ACDA-A32E5C7D4C38,Banking International finance ,Banking International finance ,Banking International finance ,"","",230,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0F8E0153-73AF-4B61-86FD-27FD0D26644A,"Banking, Corporate, FiNULLce, and Securities Law",قانون البنوك والشركات والتمويل والأوراق المالية,"Banking, Corporate, FiNULLce, and Securities Law","","",231,53068239-3437-9508-3860-820022132875
 285A4133-9078-455E-BEB5-1BD15B0CB6DA,Basketry,صناعة السلال,Basketry,"","",232,7695196F-70D0-4244-9B41-DD496FF40793
 CBBC4543-D985-4C26-ABDB-4DAEB01340E6,Beauty therapies,علاجات التجميل,Beauty therapies,"","",233,B2B987EF-278C-4E27-AC79-6AAD152BF4DF
@@ -239,7 +204,6 @@ A13E8A53-1A61-46C8-8D00-F5353A076CBB,Biochemical engineering,الهندسة ال
 04AB5FB9-6899-4FF3-86CF-36E10FF61D99,Biochemistry with Genetics,الكيمياء الحيوية مع علم الوراثة,Biochemistry with Genetics,"","",238,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 1719B8DE-80F6-43BE-9DA6-1919F2756EAC,Biodiversity,التنوع البيولوجي,Biodiversity,"","",239,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
 609ABCC5-42C4-4E52-AA0A-F8F3DBB00A64,Bioelectronics & bioelectricity,الالكترونيات الحيوية والكهرباء الحيوية,Bioelectronics & bioelectricity,"","",240,A4E63C31-2522-498F-A2D1-160A4DE0C61F
-BA97EBBD-B4F8-4E96-BCD7-0297B0B2B5F0,Bioengineering,Bioengineering,Bioengineering,"","",241,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 D6338C4D-46EC-4407-86BD-E9B0AB5BD24F,"Bioengineering, biomedical engineering & clinical engineering",الهندسة الحيوية والهندسة الطبية الحيوية والهندسة السريرية,"Bioengineering, biomedical engineering & clinical engineering","","",242,A4E63C31-2522-498F-A2D1-160A4DE0C61F
 AC39393B-AC51-434D-A987-31B6C5DFF132,Biogeochemical cycles,الدورات البيوجيوكيميائية,Biogeochemical cycles,"","",243,F0D691B4-D2C4-433E-A45D-BAF5B1D1A9AE
 95E55AB9-A97C-446E-AE61-840A0E3C3191,Biogeography,الجغرافيا الحيوية,Biogeography,"","",244,A565B2D4-44FD-42E8-B7AE-CA5E82A64AAB
@@ -251,13 +215,11 @@ BBC64394-8DC9-418D-B690-1381BBA31638,Biological chemistry,الكيمياء ال�
 4F1065D8-FDA9-42AD-8895-70BB3C87BB59,Biological engineering,الهندسة البيولوجية,Biological engineering,"","",250,F0986833-4BE7-4B76-91B6-356BDA766CE1
 7BF94ED4-A6B0-4E6C-9F46-9296A7B2FD12,Biological heritage site management,إدارة مواقع التراث البيولوجي,Biological heritage site management,"","",251,9D89556F-9EE5-4D31-9883-6A16F8EF09DE
 CC0B4282-AAF4-4BBE-8691-EFD3BBB4C723,Biological science,العلوم البيولوجية,Biological science,"","",252,D697718A-D4C8-4388-9FFD-CEEFEF2C9572
-4ABF981D-B0FF-4B4A-9951-864AFF28D3C7,Biological Science	التشخيص العصبي,Biological Science	التشخيص العصبي,Biological Science	التشخيص العصبي,"","",253,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 01390729-E653-445A-8EDC-E5D5E669019C,Biology,علم الأحياء,Biology,"","",254,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
 BAE3B5D3-F58F-4607-A5FB-49ABD245282E,Biology,علم الأحياء,Biology,"","",255,
 AE5625D5-1E1B-4166-B193-0E5ACCC10075,Biomaterials,المواد الحيوية,Biomaterials,"","",256,A4E63C31-2522-498F-A2D1-160A4DE0C61F
 3523FAF8-6EFC-4E67-83C9-C2B5D0AFF879,Biomechanics & prosthetics (non-clinical),الميكانيكا الحيوية والأطراف الصناعية (غير السريرية),Biomechanics & prosthetics (non-clinical),"","",257,49C41DF6-30BD-4A7A-8EE4-201F6CCEAFD8
 1270FD67-1C49-43EA-A039-8A08684B1055,Biomechanics (including fluid & solid mechanics),الميكانيكا الحيوية (بما في ذلك ميكانيكا السوائل والصلبة),Biomechanics (including fluid & solid mechanics),"","",258,A4E63C31-2522-498F-A2D1-160A4DE0C61F
-07C26B4E-4567-4FC2-AF24-D68A2E139798,Biomedical Science ( بنك الدم ) ,Biomedical Science ( بنك الدم ) ,Biomedical Science ( بنك الدم ) ,"","",259,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 DA75491E-A00E-4EF8-93DD-121A2F6A95AA,Biomedical sciences,العلوم الطبية الحيوية,Biomedical sciences,"","",260,D697718A-D4C8-4388-9FFD-CEEFEF2C9572
 029B8524-B345-4DEC-9214-D13C030FF795,Biomedical Technology,التكنولوجيا الطبية الحيوية,Biomedical Technology,"","",261,D697718A-D4C8-4388-9FFD-CEEFEF2C9572
 1873C039-52D9-46C2-9189-FFF5738BCCFB,Biometry,القياسات الحيوية,Biometry,"","",262,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
@@ -275,11 +237,9 @@ D3193169-CCEC-434E-97DE-6855C5A813F2,Body awareness,وعي الجسم,Body aware
 0CBB81B9-6B7B-47DD-B552-B3D9076103DB,Boilermaking,صناعة الغلايات,Boilermaking,"","",274,7695196F-70D0-4244-9B41-DD496FF40793
 F285C8FE-F6D8-4811-AB7B-32B91BCE0791,Book keeping,حفظ الكتاب,Book keeping,"","",275,FE8830F7-D320-422C-90BE-2593BB1B9B89
 B7B002E2-CA5C-4370-8024-1022E93ECFA4,Bookbinding,التجليد,Bookbinding,"","",276,7695196F-70D0-4244-9B41-DD496FF40793
-F81CFF1F-0BC2-400C-AEFB-E479B6AF5E5A,Border Management and Supply Chains,إدارة الحدود وسلاسل الامداد,Border Management and Supply Chains,"","",277,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 114C82E2-3F3A-4B10-97B8-7EFFD801A55F,Botany,علم النبات,Botany,"","",278,
 8F705338-54CC-434A-AD0C-54B389A5E3DD,Botany,علم النبات,Botany,"","",279,114C82E2-3F3A-4B10-97B8-7EFFD801A55F
 5EADB72A-F164-488C-9668-1F6440A44731,Boundary-layer meteorology,الأرصاد الجوية للطبقة الحدودية,Boundary-layer meteorology,"","",280,F0D691B4-D2C4-433E-A45D-BAF5B1D1A9AE
-642F2574-A517-4942-8937-3081A1F0E373,Breast Imaging,التصوير الإشعاعي الطبي,Breast Imaging,"","",281,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 1F126EFA-B75A-4494-98D9-63CEBC0ED6B8,British Sign Language,لغة الإشارة البريطانية,British Sign Language,"","",282,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 4FA13323-B479-40D9-89AC-467ACCFB7DDC,Broadcast engineering,هندسة البث,Broadcast engineering,"","",283,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 0DB358E4-33A9-4B4D-9A2E-C797071D47A4,Broadcasting Media Technologies,تقنيات البث الإعلامي,Broadcasting Media Technologies,"","",284,56463547-1778-6080-6803-396575136009
@@ -293,17 +253,12 @@ DBBE024A-9DCA-497B-B9B7-08FA2619E86D,Building surveying,مسح البناء,Buil
 B4425FFF-7191-4FA2-BB08-33B377775A2A,Business & commercial law,قانون الأعمال التجارية,Business & commercial law,"","",292,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
 081B71EC-A62C-454D-958A-74940FDDB097,Business Administration,إدارة الأعمال,Business Administration,"","",293,6075F702-3633-401F-9F28-5B4C802FA648
 036B4C72-2104-4303-A106-12C101B19884,Business analysis and consulting,تحليل الأعمال والاستشارات,Business analysis and consulting,"","",294,53068239-3437-9508-3860-820022132875
-D1D1C79A-6EFD-4C31-BE4C-035EA7331B1A,Business Analysis and Technology and Finance,Business Analysis and Technology and Finance,Business Analysis and Technology and Finance,"","",295,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-8F70D364-C69B-4A8D-951C-88DD5DC1C6D0,Business Analysis and Technology and Finance,Business Analysis and Technology and Finance,Business Analysis and Technology and Finance,"","",296,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-37000B43-D439-4A34-826B-3EC4B4B81D03,Business Analytics and Information Systems,Business Analytics and Information Systems,Business Analytics and Information Systems,"","",297,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0E33BBCF-88EA-4299-8C2A-73750D69E21D,Business and Economics,الأعمال والاقتصاد,Business and Economics,"","",298,53068239-3437-9508-3860-820022132875
 013F79C7-5168-4073-B604-1B190012557C,business and events managements ,إدارة الأعمال والفعاليات,business and events managements ,"","",299,53068239-3437-9508-3860-820022132875
 0C6CC9BD-DECB-4A99-BC2F-FA020BCBBE5B,Business and Humanities,إدارة الأعمال والعلوم الإنسانية,Business and Humanities,"","",300,53068239-3437-9508-3860-820022132875
 0E4521B1-0A72-4AE3-8073-06EA0C20AA54,Business and Management Studies,دراسات الأعمال والإدارة,Business and Management Studies,"","",301,53068239-3437-9508-3860-820022132875
 0E91D110-EC53-4497-983A-3B880C5DC0A1,Business and Public Administration,إدارة الأعمال والإدارة العامة,Business and Public Administration,"","",302,53068239-3437-9508-3860-820022132875
 07010C85-6608-40E2-88E4-87DF04B13F6E,Business Automation and Data Entry,أتمتة الأعمال وإدخال البيانات,Business Automation and Data Entry,"","",303,17384735-4CF2-48DA-ACA9-18F37FF9CCBC
-1F060DB9-27A0-4701-95E3-B49E94F56A03,Business Economics and Social and Public Policy,Business Economics and Social and Public Policy,Business Economics and Social and Public Policy,"","",304,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-899380D9-FFEB-4C8F-8742-BCDE64A6DD2C,Business Management (Logistics and Operations),Business Management (Logistics and Operations),Business Management (Logistics and Operations),"","",305,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 02FBC785-447D-40AB-996F-7ACA065879F4,Business Management and Social science ,إدارة الأعمال والعلوم الاجتماعية,Business Management and Social science ,"","",306,53068239-3437-9508-3860-820022132875
 0D950005-E99D-48CC-99DA-6FA50918C868,"Business Management, Digital Innovation and Entrepreneurship",إدارة الأعمال والابتكار الرقمي وريادة الأعمال,"Business Management, Digital Innovation and Entrepreneurship","","",307,53068239-3437-9508-3860-820022132875
 5F85EF79-3E26-4202-A44D-BF219139D4F3,Business psychology,علم نفس الأعمال,Business psychology,"","",308,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
@@ -311,7 +266,6 @@ D1D1C79A-6EFD-4C31-BE4C-035EA7331B1A,Business Analysis and Technology and Financ
 17384735-4CF2-48DA-ACA9-18F37FF9CCBC,Business studies,الدراسات التجارية,Business studies,"","",310,
 0B6ACA6A-246B-4154-B295-300E00974910,Business With FiNULLce,الأعمال مع التمويل,Business With FiNULLce,"","",311,53068239-3437-9508-3860-820022132875
 BEC10C01-8450-44E1-ABD8-3BD97A840FDB,Cabinet making,صنع مجلس الوزراء,Cabinet making,"","",312,7695196F-70D0-4244-9B41-DD496FF40793
-AE25C3C3-85FA-4055-B8F6-F9A9CA9C95BA,CAD Drawing,رسن هندسي طرق ,CAD Drawing,"","",313,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 7448F280-4709-4413-B2F1-D8946F1C71B9,Calligraphy,الخط,Calligraphy,"","",314,8947863D-C8BC-4697-A114-8918F4241B58
 0A187A0A-7B07-4BD3-8CBC-03450745DFE7,Cambodian Language,اللغة الكمبودية,Cambodian Language,"","",315,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 0CD1FE18-8DB2-45CC-95D2-CDA20CDE2B22,Canadian Law,القانون الكندي,Canadian Law,"","",316,57E7370E-497B-4BD3-9E14-CF574151EB6F
@@ -324,7 +278,6 @@ AE25C3C3-85FA-4055-B8F6-F9A9CA9C95BA,CAD Drawing,رسن هندسي طرق ,CAD D
 94F4D412-48BE-4884-B6FB-1E5D92CCF7E6,Careers guidance,التوجيه الوظيفي,Careers guidance,"","",323,C73D8BF3-FB18-4B10-931F-26B0B3A7CE2A
 88BDD641-F7F6-4046-B04F-84CAE1770244,Carpentry/joinery,نجارة / نجارة,Carpentry/joinery,"","",324,7695196F-70D0-4244-9B41-DD496FF40793
 C7653F6C-5A05-4C95-925A-2EA04A491AE3,Cartography,رسم الخرائط,Cartography,"","",325,A565B2D4-44FD-42E8-B7AE-CA5E82A64AAB
-221ACD29-9EFB-49D3-ABFB-F2FD2B63FF62,cartoon,رسوم متحركة ,cartoon,"","",326,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0058F2CD-3251-4CDB-8BBC-B1BA04A791DF,Catalan Language,اللغة الكاتالونية,Catalan Language,"","",327,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 8E74A18F-0B5C-4013-AB85-DDFF4284A4C7,Cell biology,بيولوجيا الخلية,Cell biology,"","",328,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
 0ED06FC1-16BD-4DC9-B538-E8B60216FF9C,Cell Biology and Anatomy,بيولوجيا الخلية والتشريح,Cell Biology and Anatomy,"","",329,EF4B99A8-A131-49EB-A044-14B5F227BDC9
@@ -382,11 +335,9 @@ DF6F72B9-5206-42E9-8389-0886A0BB4AC5,Climate & climate change,المناخ وت�
 ACA15120-FACF-4967-88E4-874B59396725,Climatology,علم المناخ,Climatology,"","",381,F0D691B4-D2C4-433E-A45D-BAF5B1D1A9AE
 0307EE1A-731D-4DA0-BE49-1BD30C9F1501,Clinical and Industrial Drug Development,تطوير الأدوية السريرية والصناعية,Clinical and Industrial Drug Development,"","",382,14702637-5298-9375-6717-257512837849
 0AC119C1-9FF8-474D-A862-3B9E0BCCAB6F,Clinical Child psychology,علم نفس الطفل السريري,Clinical Child psychology,"","",383,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
-0F3BCC18-70FC-4951-A71B-27D0BF59685B,Clinical Coding    , ترميز وتشفير سجلات طبية ,Clinical Coding    ,"","",384,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 08898F29-F230-4CFA-B12D-C7AD48447DAA,Clinical dentistry,طب الأسنان السريري,Clinical dentistry,"","",385,8E3B4DAF-9BCE-452A-A000-81355FF7FCE3
 08772FCC-82C8-4BBB-AF11-5B8405A40C03,"Clinical Leadership, Cancer, Palliative and End of Life Care",القيادة السريرية والسرطان والرعاية,"Clinical Leadership, Cancer, Palliative and End of Life Care","","",386,14702637-5298-9375-6717-257512837849
 105FB75F-0131-4C82-96DD-5CB1795F4741,Clinical medicine,الطب السريري,Clinical medicine,"","",387,8E3B4DAF-9BCE-452A-A000-81355FF7FCE3
-A5F0BAFF-488A-4445-887F-CED4DF1002ED,Clinical Medicine Research ,Clinical Medicine Research ,Clinical Medicine Research ,"","",388,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0D1F77B6-0CB0-4F8A-BCF9-225107C34CF3,Clinical Neurodevelopmental Sciences ,علم النمو العصبي السريري,Clinical Neurodevelopmental Sciences ,"","",389,A038E0EA-4410-40C2-9FAB-039786715382
 338F9E7D-2F96-4448-98F1-1834B2581821,Clinical neuropsychology,علم النفس العصبي السريري,Clinical neuropsychology,"","",390,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
 06CF5C84-38D0-4E0F-A323-1ED703BC6083,Clinical Nutrition,التغذية السريرية,Clinical Nutrition,"","",391,E1A5C391-DBA7-4699-991A-BB694B098B78
@@ -420,12 +371,10 @@ AF6625A1-BA1B-4843-816D-70F56001ADE5,Commercial tailoring,الخياطة الت�
 14033D96-BBCE-485B-B994-3995E06AA8F9,Commonwealth politics,سياسة الكومنولث,Commonwealth politics,"","",419,C3022B9C-4CFB-4E3E-AFE6-897C73A1036E
 0CA31E2A-6D8C-4A7F-B324-D6230C8B2E24,Communication and media,الاتصال والإعلام,Communication and media,"","",420,53068239-3437-9508-3860-820022132875
 00E90BE0-F9C7-4D9A-841C-E0250A40C7DA,Communication Disorders Sciences and Services,علوم وخدمات اضطرابات التواصل,Communication Disorders Sciences and Services,"","",421,14702637-5298-9375-6717-257512837849
-BB0F56CA-44ED-40FB-9359-901F06B5E4CB,Communication Engineering,Communication Engineering,Communication Engineering,"","",422,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 04D077B9-DB3C-4570-BCA5-0E3D05E400CB,Communication Science ,علوم الاتصال,Communication Science ,"","",423,56ABF249-06C6-4AC0-91F3-E2586E3E3C0E
 0FFE4844-ADF6-4C4F-9B81-88AC05B59B8B,Communication Studies,دراسات الاتصال,Communication Studies,"","",424,56ABF249-06C6-4AC0-91F3-E2586E3E3C0E
 0D695F22-2BA2-42BE-9EA1-DD880FAEA66A,"Communication, Culture and Technology  ",الاتصالات والثقافة والتكنولوجيا,"Communication, Culture and Technology  ","","",425,53068239-3437-9508-3860-820022132875
 0D1D7858-A134-4CE5-841E-838909DC1CAD,Communications and electronics engineering,هندسة الاتصالات والإلكترونيات,Communications and electronics engineering,"","",426,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
-EFF5B383-14EB-41E8-87EE-E6099FAFFB05,Communications and Networks Engineering,هندسه الاتصالات والشبكات ,Communications and Networks Engineering,"","",427,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 005AD0B9-D6D6-43FF-B30C-F89088FDB9AA,Communications engineering,هندسة الاتصالات,Communications engineering,"","",428,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 04EB32E0-C369-4399-A55A-F62702799E21,Communications Systems Installation and Repair Technology,تكنولوجيا تركيب وإصلاح أنظمة الاتصالات,Communications Systems Installation and Repair Technology,"","",429,1445B371-EACD-45A1-8ACA-2318DF9F9893
 07967D70-1D77-4C8D-AE00-03F00564B5C9,Communications Technology Technician,فني تكنولوجيا الاتصالات,Communications Technology Technician,"","",430,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
@@ -460,7 +409,6 @@ D9535567-02BE-4BC1-BCDF-A4BA7334F7D0,Computational science foundations,أسس ا
 71059D10-DB26-4EBA-B7F3-AD6D87F4E125,Computer architectures,بنيات الكمبيوتر,Computer architectures,"","",459,46364BE2-BEB2-4B59-B263-23D8CA421126
 AFEFD811-0CD4-405A-871E-34E123875AD1,Computer architectures & operating systems,معماريات الحاسوب وأنظمة التشغيل,Computer architectures & operating systems,"","",460,46364BE2-BEB2-4B59-B263-23D8CA421126
 2E706266-CC95-41C2-8536-EE96E07E443E,Computer engineering,هندسة الكمبيوتر,Computer engineering,"","",461,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
-9425BA2B-169D-4E1A-BF95-8882719CDE61,Computer Engineering (Teacher),هندسة حاسب آلي (معلم),Computer Engineering (Teacher),"","",462,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 075AF643-DE79-478B-A67C-D7740354642C,Computer Engineering Education,تعليم: هندسة حاسب آلي,Computer Engineering Education,"","",463,6CB67E60-E96A-4EF1-85E6-FBFDCA9460E9
 3C28B645-4193-4736-80C8-9543D7E5CFA2,Computer games design,تصميم العاب الكمبيوتر,Computer games design,"","",464,7AE3CD27-7536-4DC4-A8CF-0F85D2ED3C98
 E5C0D72E-6196-4854-BEA1-6DCA59945254,Computer games graphics,رسومات العاب كمبيوتر,Computer games graphics,"","",465,7AE3CD27-7536-4DC4-A8CF-0F85D2ED3C98
@@ -471,24 +419,16 @@ B4AE8E6A-47E6-4D69-ADC7-5ABC4D1EF0FC,Computer generated imagery,الصور ال�
 0E84A3B0-60B5-456A-96A0-55F60B4C7C9A,Computer Installation and Repair Technology,تكنولوجيا تركيب وإصلاح الكمبيوتر,Computer Installation and Repair Technology,"","",470,1445B371-EACD-45A1-8ACA-2318DF9F9893
 46364BE2-BEB2-4B59-B263-23D8CA421126,Computer science,علوم الكمبيوتر,Computer science,"","",471,
 1E44E084-954B-4014-8296-CBE6761DBF47,Computer science,علوم الكمبيوتر,Computer science,"","",472,46364BE2-BEB2-4B59-B263-23D8CA421126
-F633A328-EEBD-461D-B85C-8C5DFB77336A,Computer Science - Computer Engineering  ,هندسة حاسب الي او علوم حاسب الي ,Computer Science - Computer Engineering  ,"","",473,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-17D8A4F0-AE7E-44EA-AF82-12547BBCCBF5,Computer Science (Cyber Security),Computer Science (Cyber Security),Computer Science (Cyber Security),"","",474,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-2D1859B0-3DD8-4C2A-A110-BA0F9E76FA3C,Computer Science (Software Engineering),Computer Science (Software Engineering),Computer Science (Software Engineering),"","",475,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-60EA60CC-F6BC-4760-8C03-B791F07BD03F,Computer Science (Teacher),علوم حاسب آلي (معلم),Computer Science (Teacher),"","",476,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 05F613A2-C634-4148-BB87-3E6B028413A5,Computer science and cyber security,علوم الكمبيوتر والأمن السيبراني,Computer science and cyber security,"","",477,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 0135A6B3-A6B8-462B-8601-69D700B1A701,Computer Science and Engineering,علوم الكمبيوتر والهندسة,Computer Science and Engineering,"","",478,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 0AB448C0-1175-457E-B8A0-E3290849B8C7,Computer Science Education,تعليم: علوم حاسب آلي,Computer Science Education,"","",479,6CB67E60-E96A-4EF1-85E6-FBFDCA9460E9
 0CEF50AA-732A-4E36-9663-1A460C18EB43,Computer Science Information security ,علوم الكمبيوتر أمن المعلومات,Computer Science Information security ,"","",480,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-9E4DB0DA-C776-442C-A125-22FB76D2F4E7,Computer Science with Artificial Intelligence,Computer Science with Artificial Intelligence,Computer Science with Artificial Intelligence,"","",481,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0C18B9EE-C1C0-48CB-B006-D24F0019DC2E,Computer Science with Artificial Intelligence,علوم الحاسب الآلي مع الذكاء الاصطناعي,Computer Science with Artificial Intelligence,"","",482,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-9C37C6FE-99C6-4E3B-BED7-6D822513366A,Computer Science with Security and Forensics,Computer Science with Security and Forensics,Computer Science with Security and Forensics,"","",483,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 04F0DAA4-793E-40CF-88BB-6E990E3BBD67,Computer Science with Security and Forensics,علوم الكمبيوتر مع الأمن والطب الشرعي,Computer Science with Security and Forensics,"","",484,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-9DB9C5B0-6E5E-4AE1-85B3-AB2736B68980,Computer System Engineering,Computer System Engineering,Computer System Engineering,"","",485,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 009E23DC-9C06-4209-8A8D-9488047AB99B,Computer Systems Engineering,هندسة نظم الكمبيوتر,Computer Systems Engineering,"","",486,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 0DD19030-F635-4873-8FAD-F5880867C043,Computer Systems Networking and Telecommunications,شبكات أنظمة الكمبيوتر والاتصالات,Computer Systems Networking and Telecommunications,"","",487,46364BE2-BEB2-4B59-B263-23D8CA421126
 C5A79328-36AA-401E-AB33-28ACD3D29F12,Computer vision,رؤية الكمبيوتر,Computer vision,"","",488,C6F2E677-90AA-407B-9735-8FBDFA294CDD
 9A2D81EC-376A-4C07-A4E2-D80FC24A9A52,Computer-aided engineering,الهندسة بمساعدة الحاسوب,Computer-aided engineering,"","",489,A4E63C31-2522-498F-A2D1-160A4DE0C61F
-FA72A663-EFCE-4DA4-9B29-0F15A65077D5,Computing and Application Development,الحوسبة وتطوير التطبيقات,Computing and Application Development,"","",490,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 09E06877-5405-41FD-97BE-A5A604071A19,Computing for Business Management and Analysis,الحوسبة لإدارة وتحليل الأعمال,Computing for Business Management and Analysis,"","",491,46364BE2-BEB2-4B59-B263-23D8CA421126
 ADBF62B1-7A86-46E1-AA4F-441DAFE60B4C,Conducting,إجراء,Conducting,"","",492,EABC0146-B80D-473D-AB47-623C38EC444B
 01858985-DC2A-469B-8F04-F8D5064DFF72,Conflict management and humanitarian action,إدارة النزاع والعمل الإنساني,Conflict management and humanitarian action,"","",493,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
@@ -516,7 +456,6 @@ D8F44B75-34B2-4AE7-88FA-69F429835C4A,Corrosion engineering,هندسة التآك
 1F2544AB-C6F1-44FD-ABB2-216203711029,Coservation Studies,دراسات الحفظ,Coservation Studies,"","",515,A158CEFA-5D2C-46EF-BC48-12DE95A564AE
 98E161DD-29D9-434D-9C2C-0E23775CA198,Cost & management accountancy,محاسبة التكاليف والإدارة,Cost & management accountancy,"","",516,FE8830F7-D320-422C-90BE-2593BB1B9B89
 0E30B758-91E1-4BE5-BBEA-43E30474D299,Cost engineering,هندسة التكاليف,Cost engineering,"","",517,F0986833-4BE7-4B76-91B6-356BDA766CE1
-DEA4A1D8-5D73-464D-99BB-071893CAA951,Counseling and mental health,الارشاد والصحة النفسية,Counseling and mental health,"","",518,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0BA32C33-B95C-42B8-A14D-6D5899E83291,Counselling,الاستشارة,Counselling,"","",519,E35FB37B-2402-4603-9776-33D0D4848B9B
 D78C2AEE-99EC-42AC-9904-78F248DD35F6,Counselling psychology,الإرشاد النفسي,Counselling psychology,"","",520,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
 0E99AD3B-EDEE-414E-9D16-866305467B55,"Counselor Education, School Counseling and Guidance Services.",خدمات تعليم المستشارين والإرشاد والتوجيه المدرسي,"Counselor Education, School Counseling and Guidance Services.","","",521,28486045-6425-5050-7815-459339547780
@@ -529,16 +468,12 @@ D78C2AEE-99EC-42AC-9904-78F248DD35F6,Counselling psychology,الإرشاد ال�
 AC99A595-799B-4263-95BB-476DBAEED53B,Creative music technology,تكنولوجيا الموسيقى الإبداعية,Creative music technology,"","",528,EABC0146-B80D-473D-AB47-623C38EC444B
 035F0703-EA0E-4A57-8096-21680ED328F2,Creative Technologies,التقنيات الإبداعية,Creative Technologies,"","",529,56463547-1778-6080-6803-396575136009
 01CEE719-D6C6-41F9-8015-39B901C0F9C5,Creativity and Innovation,الإبداع والابتكار,Creativity and Innovation,"","",530,56463547-1778-6080-6803-396575136009
-35121A7A-529E-441B-AB23-0B1A34DFAD21,Criminal Justice and Criminology,Criminal Justice and Criminology,Criminal Justice and Criminology,"","",531,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-00EDF116-4BF0-4DD5-B4A3-861B2EC8E3F4,Criminal Justice and Criminology,Criminal Justice and Criminology,Criminal Justice and Criminology,"","",532,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 3AB2B43E-D2AE-42A2-B2A0-70E6620E4DA9,Criminal justice management,إدارة العدالة الجنائية,Criminal justice management,"","",533,6075F702-3633-401F-9F28-5B4C802FA648
 155A0A46-A995-4E14-8B4B-408C2B430FE1,Criminal justice policy,سياسة العدالة الجنائية,Criminal justice policy,"","",534,64D65E23-2E73-493D-9B47-7A355D6FE5FD
 443FD342-CA16-4756-B2A0-187E1DB24E39,Criminal law,القانون الجنائي,Criminal law,"","",535,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
 52EA04E7-C606-40F1-9AD4-40B347C39181,Criminological theory,النظرية الجنائية,Criminological theory,"","",536,DDFBE911-31BD-4240-984F-282B08516D24
 0A1BE5DC-1EB9-4083-A3C0-8AEC05E93626,Criminology,علم الجريمة,Criminology,"","",537,97EA1354-7504-4C00-B170-E993193B678E
-B72E15AB-6D52-40D2-8DE8-B6D4C771F8C0,Criminology,Criminology,Criminology,"","",538,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 02353A5E-8197-44D2-9FF9-C79B02470B80,Criminology and Criminal Investigation,علم الجريمة والتحقيق الجنائي,Criminology and Criminal Investigation,"","",539,2E16E0DA-608E-4B96-B9D7-B000923DF19C
-4D3D6EF5-9D91-456F-AEEC-2BB9D9197DF5,Criminology and Criminal Investigation,علم الجريمة والتحقيق الجنائي,Criminology and Criminal Investigation,"","",540,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0885D963-EAD3-4154-8C80-1E8B07904106,Criminology and cybercrime ,علم الجريمة والجرائم الإلكترونية,Criminology and cybercrime ,"","",541,53068239-3437-9508-3860-820022132875
 0F204FF1-A8BD-4F23-8286-E4C704C82BA7,Criminology and Human Rights,علم الجريمة وحقوق الإنسان,Criminology and Human Rights,"","",542,53068239-3437-9508-3860-820022132875
 0B972ACE-9922-4F5E-9D02-99D30C2AEF1C,Criminology and Sociology,علم الجريمة وعلم الاجتماع,Criminology and Sociology,"","",543,53068239-3437-9508-3860-820022132875
@@ -553,7 +488,6 @@ DF9434BD-643A-48EA-AB4D-DAC4D0C2F08A,Crop physiology,فسيولوجيا المح
 2C1A0E6D-4C86-486D-84C5-3C686F9A1F25,Crop protection,حماية المحاصيل,Crop protection,"","",552,9D89556F-9EE5-4D31-9883-6A16F8EF09DE
 E20C7761-8C68-497A-B19F-07825AD0B43B,Cross-cultural psychology,علم النفس عبر الثقافات,Cross-cultural psychology,"","",553,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
 7D6B8B8A-B66C-4B1B-9DF9-A37BF656293C,Crystallography,علم البلورات,Crystallography,"","",554,B1BDE659-5A76-41D5-A0C6-4A2FB34444A2
-1EA897B3-5355-4143-8F3F-39CEC62CA5B3,CT Scan,التصوير الإشعاعي الطبي (التصوير المقطعي المحوسب),CT Scan,"","",555,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0F4077BF-267B-42B4-A35B-32800E376123,Culinary Arts,فنون الطهي,Culinary Arts,"","",556,7695196F-70D0-4244-9B41-DD496FF40793
 801294C2-5479-40A8-95C1-72379F4D2DC6,Cultural geography,الجغرافيا الثقافية,Cultural geography,"","",557,344586BA-A3D0-4075-ACC6-44E7FA38A3C7
 0631B745-7813-48E5-BDE1-104C03BBA799,Cultural Resource Management and Policy Analysis,إدارة الموارد الثقافية وتحليل السياسات,Cultural Resource Management and Policy Analysis,"","",558,53068239-3437-9508-3860-820022132875
@@ -565,9 +499,7 @@ E20C7761-8C68-497A-B19F-07825AD0B43B,Cross-cultural psychology,علم النفس
 9DC4E9B8-2144-47A2-8747-B05E7596D29D,Curriculum and Education Studies,دراسات المناهج والتربية,Curriculum and Education Studies,"","",564,
 0DAB77D8-9F6B-4179-93F9-6234192D16C2,Curriculum and Education Studies nec,المناهج والدراسات التعليمية غير المصنّفة في موضع آخر,Curriculum and Education Studies nec,"","",565,9DC4E9B8-2144-47A2-8747-B05E7596D29D
 986ED61B-D13D-4D21-9C02-4865B3B2545F,Curriculum Studies,دراسات المناهج,Curriculum Studies,"","",566,9DC4E9B8-2144-47A2-8747-B05E7596D29D
-746CAAE4-17B9-478D-999C-B4FFA4E6B58B,"Curriculum, Pedagogy and Assessment "," Curriculum, Pedagogy and Assessment ","Curriculum, Pedagogy and Assessment ","","",567,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 01C22B8A-BF0C-46B6-BF20-599508BD581D,"Customer Service Support, Call Center and Teleservice Operation",دعم خدمة العملاء ومركز الاتصال وتشغيل الخدمة عن بعد,"Customer Service Support, Call Center and Teleservice Operation","","",568,17384735-4CF2-48DA-ACA9-18F37FF9CCBC
-CB67F374-9AAF-4A28-810E-11C14F7DE973,Customs and Border Administration,إدارة الجمارك والحدود,Customs and Border Administration,"","",569,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 E68A6EBA-6E83-41B2-9CFD-084AE1007D14,Customs Studies,الدراسات الجمركية,Customs Studies,"","",570,605F0873-4D76-4FC5-A357-FE7C18869824
 0D92461A-114E-4D3D-8CD2-DE3D051E3345,Cyber Security and Digital Forensics,الأمن السيبراني والطب الشرعي الرقمي,Cyber Security and Digital Forensics,"","",571,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 09F916AB-7F97-4284-9ED1-9EF20348A009,Cyber Security Management ,إدارة الأمن السيبراني,Cyber Security Management ,"","",572,EF4B99A8-A131-49EB-A044-14B5F227BDC9
@@ -608,7 +540,6 @@ BAFEEFF5-8E76-48E1-825A-DFE8B67644B5,Dental nursing,تمريض الأسنان,De
 46D45FAC-D60C-4838-8602-764C04892ADC,Dentistry,طب الأسنان,Dentistry,"","",607,8E3B4DAF-9BCE-452A-A000-81355FF7FCE3
 0D64807F-6419-4ABB-A7C2-85B009BFEBB9,Department of Conservation of Heritage Resources,إدارة صيانة المصادر التراثية,Department of Conservation of Heritage Resources,"","",608,53068239-3437-9508-3860-820022132875
 0BB20AB4-0873-49BD-B29C-587D020FDD35,Dermatology,طب الأمراض الجلدية,Dermatology,"","",609,8E3B4DAF-9BCE-452A-A000-81355FF7FCE3
-CD8D34B7-86D3-4729-B348-CEA90BF92E1C,design,تصميم,design,"","",610,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0C90F5F1-20D9-4BE9-9F7D-E2170540E0D0,Design and Urban Ecologies,التصميم والإيكولوجيا الحضرية,Design and Urban Ecologies,"","",611,53068239-3437-9508-3860-820022132875
 98726A46-0BA8-437A-AA93-EEA10F29C04F,Design studies,دراسات التصميم,Design studies,"","",612,
 7D0B890C-1916-4C46-A6A2-F85AC84847E5,Design studies,دراسات التصميم,Design studies,"","",613,98726A46-0BA8-437A-AA93-EEA10F29C04F
@@ -633,7 +564,6 @@ A855E7A0-BF2B-4F53-A171-BB91D9F7DDDF,Digital circuit engineering,هندسة ال
 03B0EDE3-A93A-4E5D-A27D-7BFE0F9D3EE0,Digital Media Culture and Technology,ثقافة وتكنولوجيا الوسائط الرقمية,Digital Media Culture and Technology,"","",632,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 04D6F63A-1A18-4949-BEA5-33730FE0381A,Digital Teaching and Learning ,التعليم والتعلم الرقمي,Digital Teaching and Learning ,"","",633,28486045-6425-5050-7815-459339547780
 04B4673F-E39E-4050-8751-B1100F9F1E1F,Diplomacy and International Affairs ,الدبلوماسية والشؤون الدولية,Diplomacy and International Affairs ,"","",634,53068239-3437-9508-3860-820022132875
-9B9FFFFA-B613-4FAE-9AF1-9AE0B0957591,Diplomacy and International Affairs,Diplomacy and International Affairs,Diplomacy and International Affairs,"","",635,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0BE89AEF-5E77-45EE-AAFE-A2280E1D2C7C,Diplomatic Studies,الدراسات الدبلوماسية,Diplomatic Studies,"","",636,C3022B9C-4CFB-4E3E-AFE6-897C73A1036E
 AE20E594-6C94-45A0-A1CD-D2386E4C092D,Directing for theatre,التوجيه للمسرح,Directing for theatre,"","",637,27F76109-CE90-4F0B-A56C-AE5943612575
 27DA4B36-FC8D-4162-8A3C-BF3B77C5301C,Directing motion pictures,توجيه الصور المتحركة,Directing motion pictures,"","",638,6569B223-81EB-4A45-B60D-7875E6019300
@@ -642,7 +572,6 @@ AE20E594-6C94-45A0-A1CD-D2386E4C092D,Directing for theatre,التوجيه للم
 722A8594-DD69-4F3B-A29D-1BFB2953CC76,Displays & imaging,يعرض والتصوير,Displays & imaging,"","",641,46364BE2-BEB2-4B59-B263-23D8CA421126
 2D6C31FE-A83D-495C-8386-DB19B0357F20,Distribution,توزيع,Distribution,"","",642,43817EFA-BADD-419E-8D15-1E388A7AB85F
 04284C7D-C204-495B-9C47-715707AE5A84,Diver Instruction,تدريب الغواصة,Diver Instruction,"","",643,7695196F-70D0-4244-9B41-DD496FF40793
-B8F2C507-A4D5-40F9-8346-580C44FE5153,Document and Archives Management,إدارة الوثائق والمحفوظات,Document and Archives Management,"","",644,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 D15AD116-5586-41CA-8CE9-7DF3F3062673,Domestic management,الإدارة المحلية,Domestic management,"","",645,6075F702-3633-401F-9F28-5B4C802FA648
 0B4C995D-3DC4-435C-A8CB-CE8A022C2C8A,Drafting and Design Technology,تكنولوجيا الرسم والتصميم باستخدام الحاسوب,Drafting and Design Technology,"","",646,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 27F76109-CE90-4F0B-A56C-AE5943612575,Drama,دراما,Drama,"","",647,
@@ -672,10 +601,7 @@ BDB128A2-156F-4E49-90F5-2675E3D0BE4B,Economics,الاقتصاد,Economics,"","",
 08558422-6164-467B-8464-A3A602B7D2B8,"Economics,Politics & International Relation",الاقتصاد والسياسة والعلاقات الدولية,"Economics,Politics & International Relation","","",671,53068239-3437-9508-3860-820022132875
 04C5C568-12D1-4668-B634-9ACAD8E39271,Ecosystem ecology & land use,بيئة النظام البيئي واستخدام الأراضي,Ecosystem ecology & land use,"","",672,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
 C82A5360-0D01-4B17-94B1-D90C6C17EB0D,Ecotoxicology,علم السموم البيئية,Ecotoxicology,"","",673,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
-62636EF7-F8A9-4A4A-A90A-73719598E739,Education - Severe and Profound Disabilities,تربية خاصة - إعاقة شديدة وحادة,Education - Severe and Profound Disabilities,"","",674,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-5ECD1783-3E5D-4F65-B473-4B6F2E852CB6,"Education (Learning, Technology and Society)","Education (Learning, Technology and Society)","Education (Learning, Technology and Society)","","",675,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 111858EE-85E9-4327-830A-DA46CAF3274E,Education policy,سياسة التعليم,Education policy,"","",676,64D65E23-2E73-493D-9B47-7A355D6FE5FD
-291AB6B7-DCAF-4C0C-95F6-38463677B582,Education Research,Education Research,Education Research,"","",677,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 F9F36FC9-B09A-4BC8-98D6-B0C31C13C79B,Education Studies,دراسات التعليم,Education Studies,"","",678,9DC4E9B8-2144-47A2-8747-B05E7596D29D
 9B8DDA16-0E19-42C6-80A3-FACB8252882B,Education Systems and Policies,نظم وسياسات التعليم,Education Systems and Policies,"","",679,9DC4E9B8-2144-47A2-8747-B05E7596D29D
 09BABFA2-2349-4613-8D5D-517E04E9879C,Educational Administration and Supervision,الإدارة والإشراف التربوي,Educational Administration and Supervision,"","",680,28486045-6425-5050-7815-459339547780
@@ -692,7 +618,6 @@ EBDB27B2-E2DC-424B-B33E-284D9529F2C2,Electrical engineering,الهندسة ال�
 08346F9A-4FD8-4CD1-A063-03080519C2C2,Electrical Engineering Technology,تكنولوجيا الهندسة الكهربائية,Electrical Engineering Technology,"","",691,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 78B483C5-6A22-41B7-8427-B8B365D1D9E3,Electrical power,الطاقة الكهربائية,Electrical power,"","",692,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 DB7F3132-3E42-474F-A6DC-579A4A781B6C,Electrical power distribution,توزيع الطاقة الكهربائية,Electrical power distribution,"","",693,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
-E882E1F2-7C0C-4723-AEF8-38CF7A23DD85,Electrical power Engineering,Electrical power Engineering,Electrical power Engineering,"","",694,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 01DD4D2A-782E-4485-8142-CC1B0B709356,Electrical Power Engineering Technology,تكنولوجيا هندسة قوى كهربائية,Electrical Power Engineering Technology,"","",695,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 6394B84B-954C-4183-B436-516371BB86B3,Electrical power generation,توليد الطاقة الكهربائية,Electrical power generation,"","",696,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 08592EE8-4333-4FDF-9578-54F70E1B4942,Electrical Power Systems ,أنظمة الطاقة الكهربائية,Electrical Power Systems ,"","",697,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
@@ -716,7 +641,6 @@ B85E7A8F-2761-4EED-A2FA-247F2762CE32,Electronic music,الموسيقى الإل�
 1401607C-3430-4C14-BEED-A95363B2E279,Electronic publishing,النشر الإلكتروني,Electronic publishing,"","",715,383EA2CE-3E59-4BF5-8235-55F536223D6C
 8F01BE55-54D0-4886-9285-26030E2293BA,Electronic/electro-acoustic music performance,أداء الموسيقى الإلكترونية/الكهربائية الصوتية,Electronic/electro-acoustic music performance,"","",716,EABC0146-B80D-473D-AB47-623C38EC444B
 019465AA-A12F-4907-97C0-5361016B73D9,Electronics,الإلكترونيات,Electronics,"","",717,1445B371-EACD-45A1-8ACA-2318DF9F9893
-C891795F-1B02-4A61-8FC6-81FFB2C38ABB,Electronics and Computer Engineering,Electronics and Computer Engineering,Electronics and Computer Engineering,"","",718,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 015F454B-3AE3-4C3B-A9DF-58C40B33425E,Elementary and Middle School Administration,إدارة المدارس الابتدائية والمتوسطة,Elementary and Middle School Administration,"","",719,28486045-6425-5050-7815-459339547780
 0D9C074D-509D-4C1E-8A3C-7BF608C052AE,Elementary Particle Physics,فيزياء الجسيمات الأولية,Elementary Particle Physics,"","",720,79BED130-E352-4C2F-A2AB-DFC8239151C0
 B597243F-1BD3-4E8D-9678-997E5D678C30,Emergency & disaster management,إدارة الطوارئ والكوارث,Emergency & disaster management,"","",721,6075F702-3633-401F-9F28-5B4C802FA648
@@ -726,8 +650,6 @@ B597243F-1BD3-4E8D-9678-997E5D678C30,Emergency & disaster management,إدارة 
 59B5AFF8-B673-4ADA-BF3B-70AAB7FAC21B,Emergency nursing,تمريض الطوارئ,Emergency nursing,"","",725,CE505D71-B5F7-494E-AB4D-BDE190745D96
 9E748062-D74B-4297-ACCA-26C913F006F9,Emergency services management,إدارة خدمات الطوارئ,Emergency services management,"","",726,6075F702-3633-401F-9F28-5B4C802FA648
 F52A99A1-4842-4CDE-9AC5-406F9175AB58,Emergency services policy,سياسة خدمات الطوارئ,Emergency services policy,"","",727,64D65E23-2E73-493D-9B47-7A355D6FE5FD
-57942F72-1826-4FAF-81AC-A350C52CC311,Emerging Leaders Track of the Executive MBA,Emerging Leaders Track of the Executive MBA,Emerging Leaders Track of the Executive MBA,"","",728,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-D33E76A3-2815-464F-BDFF-8A20AFB54725,Emerging Leaders Track of the Executive MBA,Emerging Leaders Track of the Executive MBA,Emerging Leaders Track of the Executive MBA,"","",729,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 615C7CC3-4C76-416D-8FF3-E317000E045D,Employment Skills Programs,برامج مهارات التوظيف,Employment Skills Programs,"","",730,
 8C3ABCC4-57F4-43F7-941C-7978D4DBE0D9,Employment Skills Programs,برامج مهارات التوظيف,Employment Skills Programs,"","",731,615C7CC3-4C76-416D-8FF3-E317000E045D
 0DA40289-50F3-4F49-9419-694B05C265BA,Endocrinology and Metabolism,الغدد الصماء والأيض,Endocrinology and Metabolism,"","",732,A038E0EA-4410-40C2-9FAB-039786715382
@@ -743,7 +665,6 @@ AD102AD5-49D4-4309-881B-9715D3053158,Engineering design,التصميم الهن�
 0E9EDC7D-2D29-46A3-839A-8469086DC1C4,Engineering Leadership and Management,القيادة الهندسية والإدارة,Engineering Leadership and Management,"","",742,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 7DE4BFA9-B042-4970-BF99-3C4775F94340,Engineering materials,المواد الهندسية,Engineering materials,"","",743,DB3CECA1-2BA6-41B7-9A3E-D89D368AE44F
 2F0FA9D3-0C01-449E-B1EA-0A0737996D33,Engineering physics,الفيزياء الهندسية,Engineering physics,"","",744,79BED130-E352-4C2F-A2AB-DFC8239151C0
-A7A1F53A-F384-46C3-B640-71F09F2EBD24,Engineering Physics - Nuclear,فيزياء هندسية - نووي,Engineering Physics - Nuclear,"","",745,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0FFBF8E1-DB34-496F-B7D4-4BD406B475E7,Engineering Project Management,هندسة إدارة المشاريع,Engineering Project Management,"","",746,F0986833-4BE7-4B76-91B6-356BDA766CE1
 5C8669AF-6A60-473D-A1BF-FB72230B335E,Engineering surveying,المسح الهندسي,Engineering surveying,"","",747,57DEE9CC-7922-460E-8A7C-BED321E792D7
 09193B80-B812-4F7A-8F22-71D106A6DA73,Engineering Technical Supervision,إشراف فني هندسي,Engineering Technical Supervision,"","",748,EF4B99A8-A131-49EB-A044-14B5F227BDC9
@@ -755,7 +676,6 @@ D600E130-5948-46CF-A504-F38D62F542F0,English law,القانون الانجليز
 369A684C-33EA-4FC1-9868-326274E31C49,English literature,الأدب الإنجليزي,English literature,"","",754,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 B00B4FDA-C5DB-4E89-AFD9-EB4E5743457D,English literature written as a second language,الأدب الإنجليزي مكتوب كلغة ثانية,English literature written as a second language,"","",755,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 852221BA-1738-412E-AC93-DC0325B76ADA,English studies,دراسات اللغة الإنجليزية,English studies,"","",756,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
-B5AC5219-9918-43A9-A035-99D3628B0827,Environment and Development,Environment and Development,Environment and Development,"","",757,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 679742A6-285F-493C-993D-4B773F9ADF4F,Environmental biology,علم الأحياء البيئي,Environmental biology,"","",758,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
 21DD294D-98AA-45E7-A7BA-FA7452626825,Environmental biotechnology,التكنولوجيا الحيوية البيئية,Environmental biotechnology,"","",759,A307014E-4A8E-4468-9DFE-8A70904F8FC1
 5B1B5BA0-41C7-4A6D-9F58-63ACB32A60A8,Environmental chemistry,الكيمياء البيئية,Environmental chemistry,"","",760,B1BDE659-5A76-41D5-A0C6-4A2FB34444A2
@@ -819,24 +739,19 @@ BC9439BC-E0F9-4200-A48A-B58E22A16992,Fascism,الفاشية,Fascism,"","",808,C3
 0DFE1DAC-F7F8-4DE8-9AEA-237306633AC6,Films and Television,أفلام وتلفزيون,Films and Television,"","",818,56ABF249-06C6-4AC0-91F3-E2586E3E3C0E
 9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC,Finance,تمويل,Finance,"","",819,
 741C980B-3027-43A9-85F3-901BA5256B0C,Finance,تمويل,Finance,"","",820,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
-EB80B787-4125-4D47-9DC7-16CF26E91A56,"Finance, Accounting and Management","Finance, Accounting and Management ","Finance, Accounting and Management","","",821,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 D15FE4AE-91A4-455A-8309-2485D0F4E85E,Financial economics,الاقتصاد المالي,Financial economics,"","",822,1C167EB2-E4A2-45A5-B2BF-085DB83518DA
 2F111397-44EC-4794-8C47-5C466D83CDF2,Financial management,الإدارة المالية,Financial management,"","",823,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
 8711FEF3-1D7E-4B82-ADCB-52A5497C1A08,Financial reporting,التقارير المالية,Financial reporting,"","",824,FE8830F7-D320-422C-90BE-2593BB1B9B89
 03D96EAB-6787-462D-A26A-F59FBF210CCA,Financial risk,المخاطر المالية,Financial risk,"","",825,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
-F941984D-04DD-4FE9-A31E-279D871964FF,Financial technology,التكنولوجيا المالية,Financial technology,"","",826,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 06363D6E-3CAF-42B5-8760-2FF201EA80D4,Financial Technology,التكنولوجيا المالية,Financial Technology,"","",827,1445B371-EACD-45A1-8ACA-2318DF9F9893
 240BBF9D-E8ED-4701-979F-52CAAA853241,Fine art,الفنون الجميلة,Fine art,"","",828,8947863D-C8BC-4697-A114-8918F4241B58
 8947863D-C8BC-4697-A114-8918F4241B58,Fine art,الفنون الجميلة,Fine art,"","",829,
 FBE68851-3C6A-41E1-A810-8C6413C3FD2E,Fine art conservation,الحفاظ على الفنون الجميلة,Fine art conservation,"","",830,8947863D-C8BC-4697-A114-8918F4241B58
-20A308D5-72B6-47E1-8880-D83188D8A029,Fine Arts ,Fine Arts ,Fine Arts ,"","",831,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-08D14096-4B2E-4A40-B3F8-0E2DB536D949,Fine Arts ,Fine Arts ,Fine Arts ,"","",832,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 05D92521-779D-43EB-BCF9-B2D70C2367B4,Finnish and Related Languages,اللغة الفنلندية,Finnish and Related Languages,"","",833,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 014C4DA1-10AD-4F86-B451-92E60F8BF2DA,FiNULLce and Investment Banking,الخدمات المصرفية المالية والاستثمارية,FiNULLce and Investment Banking,"","",834,53068239-3437-9508-3860-820022132875
 065F8081-24D5-488D-9093-D94B0792ECE2,FiNULLce and investment management ,إدارة التمويل والاستثمار,FiNULLce and investment management ,"","",835,53068239-3437-9508-3860-820022132875
 0D77F6AF-21B9-4375-8E03-4DCB0490E6A5,FiNULLce and Technology,التمويل والتكنولوجيا,FiNULLce and Technology,"","",836,53068239-3437-9508-3860-820022132875
 01F5BEB2-2FC6-4006-A02B-D97A04102309,FiNULLcial Islamic Law,القانون الإسلامي المالي,FiNULLcial Islamic Law,"","",837,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
-6C6E6870-B29F-4680-9A94-26C34ED375E4,Fiqh and Usul,الشريعة والفقه,Fiqh and Usul,"","",838,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 DDE00A40-150D-4E96-9749-B179B020F6FC,Fiqh and Usul Al-Fiqh,الفقه و أصول الفقه,Fiqh and Usul Al-Fiqh,"","",839,7E272DDE-3A15-43D0-AD21-1800E8A9A48B
 0C528E90-E976-42EE-B759-3882B0127B66,Fire safety engineering,هندسة السلامة من الحرائق,Fire safety engineering,"","",840,A4E63C31-2522-498F-A2D1-160A4DE0C61F
 07DB32AC-A7DB-49D6-BFE2-D3D50F2AB5DA,Fire Services Administration,إدارة خدمات الإطفاء,Fire Services Administration,"","",841,14702637-5298-9375-6717-257512837849
@@ -860,7 +775,6 @@ E0C673C1-5694-4945-89D8-B4342BF17F06,Food hygiene,نظافة الغذاء,Food h
 69F6CACA-7559-4DBF-B045-2DE1EE5F4ADA,Footwear production,إنتاج الأحذية,Footwear production,"","",859,DA4B5B54-4E28-4E3C-94BF-4971F5FC955F
 BB786BD4-1850-4D05-A4CD-5304A2A32D0D,Forensic & archaeological sciences,العلوم الشرعية والآثارية,Forensic & archaeological sciences,"","",860,2E16E0DA-608E-4B96-B9D7-B000923DF19C
 2E16E0DA-608E-4B96-B9D7-B000923DF19C,Forensic & archaeological sciences,العلوم الشرعية والآثارية,Forensic & archaeological sciences,"","",861,
-8D3F5ECC-194B-414E-B04D-3EF3836532EB,Forensic and Analytical Chemistry,Forensic and Analytical Chemistry,Forensic and Analytical Chemistry,"","",862,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0A9394C1-01D8-4FCF-9D59-687A0DDE5DDD,Forensic Pathology,علم الأمراض الشرعي,Forensic Pathology,"","",863,A038E0EA-4410-40C2-9FAB-039786715382
 E4686937-AEF9-4B6F-88C2-0421B1A6C564,Forensic psychology,علم النفس الشرعي,Forensic psychology,"","",864,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
 C211A30A-0699-45A4-81FB-95A3DCC8A147,Forensic science,علم الطب الشرعي,Forensic science,"","",865,2E16E0DA-608E-4B96-B9D7-B000923DF19C
@@ -891,7 +805,6 @@ E1B0D27C-78E9-4508-9CF7-FF47744F23E1,Gas engineering,هندسة الغاز,Gas e
 0EDE5489-BDF4-4838-9C6C-4E39B0B00E06,General Education Programs,برامج التعليم العام,General Education Programs,"","",890,
 84D5F463-DC2A-4409-BAB7-B398395E5654,General Education Programs nec,برامج التعليم العام غير المصنّفة في موضع آخر,General Education Programs nec,"","",891,0EDE5489-BDF4-4838-9C6C-4E39B0B00E06
 E7238593-F644-47F7-ABFC-D8CF23AB3733,General engineering,الهندسة العامة,General engineering,"","",892,A4E63C31-2522-498F-A2D1-160A4DE0C61F
-444A8EBD-0D10-484B-8B7C-779E8A999E9C,General Engineering,General Engineering,General Engineering,"","",893,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 A4E63C31-2522-498F-A2D1-160A4DE0C61F,General engineering,الهندسة العامة,General engineering,"","",894,
 D62B895D-A898-483B-BB6C-5B07C5632DBE,General Foundation Programs,البرامج التأسيسية العامة,General Foundation Programs,"","",895,0EDE5489-BDF4-4838-9C6C-4E39B0B00E06
 07E44E5C-60DF-420E-878A-D5440BCA7C99,General literary studies,دراسات أدبية عامة,General literary studies,"","",896,1B51EA47-B126-41D6-98EC-8DFDD5B54492
@@ -909,7 +822,6 @@ AEC0B6C0-F2D5-47C2-8E37-7A3D68D417C9,Genetic engineering,الهندسة الور
 0B1ED347-B0B1-4B38-8D08-EF9E035EE784,Genomics and molecular genetics,علم الجينوم وعلم الوراثة الجزيئي,Genomics and molecular genetics,"","",908,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 0404CCE3-A262-43A1-A868-165E0E55A9F0,Genomics and Precision Medicine.,العلوم في علم الجينوم والطب الدقيق,Genomics and Precision Medicine.,"","",909,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 18674D29-6A77-4DFB-AC9B-07B9691A0DA8,Geochemistry,الجيوكيمياء,Geochemistry,"","",910,3A626880-24E5-4381-96E7-BFC68C0637E9
-968BA35F-9BB7-4E35-BD84-BC245CF9B7AA,Geographic Information Systems,نظم المعومات الجغرافية ,Geographic Information Systems,"","",911,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 5CB3AF1E-46C3-4A7F-8372-42ECABDBFD75,Geographical information systems,نظم المعلومات الجغرافية,Geographical information systems,"","",912,A565B2D4-44FD-42E8-B7AE-CA5E82A64AAB
 0E44C8C3-F6F2-47C8-AB98-C16C0065D3E4,Geography,جغرافيا,Geography,"","",913,A565B2D4-44FD-42E8-B7AE-CA5E82A64AAB
 0AA30D43-840E-4D51-BB64-059D0ADA8450,Geography and Cartography,الجغرافيا ورسم الخرائط,Geography and Cartography,"","",914,53068239-3437-9508-3860-820022132875
@@ -918,8 +830,6 @@ CC426928-545E-4082-9936-7BACD1D5B22F,Geohazards,المخاطر الجيولوج�
 02CB45DA-630A-4B7F-B2D6-4BD30ADEA2A5,Geological and Geophysical Engineering,الهندسة الجيولوجية والجيوفيزيائية,Geological and Geophysical Engineering,"","",917,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 0464D085-8AF0-4C08-9B16-BB970107AFE1,Geological and Geosciences,علوم الجيولوجيا وعلوم الأرض,Geological and Geosciences,"","",918,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 DFF38D3A-6C38-40BB-A73D-849FF38CDB70,Geological oceanography,علم المحيطات الجيولوجي,Geological oceanography,"","",919,3A626880-24E5-4381-96E7-BFC68C0637E9
-9CAFFE57-41C6-4AF4-A27A-A46DA8954730,Geological Sciences,Geological Sciences,Geological Sciences,"","",920,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-196B2DAF-07B7-41AD-B12E-BF27EC17C5BE,Geological Sciences,علوم جيولوجية ,Geological Sciences,"","",921,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 3A626880-24E5-4381-96E7-BFC68C0637E9,Geology,الجيولوجيا,Geology,"","",922,
 83197207-EFC3-4458-B4A3-E87333FE1286,Geology,الجيولوجيا,Geology,"","",923,3A626880-24E5-4381-96E7-BFC68C0637E9
 01248A54-B8E9-4963-BFDE-2A9E039A2730,Geometry and Geometric Analysis.,التحليل الهندسي,Geometry and Geometric Analysis.,"","",924,FDD8F156-4D12-4C75-8683-57C918C454F1
@@ -958,23 +868,18 @@ FCEF7D93-8240-44ED-87A2-E9514D5EE62D,Gulf studies,الدراسات الخليج�
 070DFA81-91F9-421C-8D52-E2620BC9BF88,Health Aide,مساعد صحي,Health Aide,"","",957,E35FB37B-2402-4603-9776-33D0D4848B9B
 03788910-ACD3-40D3-938C-0B7B03A7416A,Health Communication ,الاتصالات الصحية,Health Communication ,"","",958,E18A0B1B-F30C-4440-98F8-038A56BDF360
 06936E36-50DF-4811-A58C-48BF0D8BDA58,Health Education for Diabetes,التثقيف الصحي لمرض السكري,Health Education for Diabetes,"","",959,E18A0B1B-F30C-4440-98F8-038A56BDF360
-2933758D-9486-46E4-883D-E486DF07F68C,Health in Clinic.&Population,Health in Clinic.&Population,Health in Clinic.&Population,"","",960,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 F2D7A802-B489-49EE-8149-CF24A2D6A55E,Health informatics,المعلوماتية الصحية,Health informatics,"","",961,7AE3CD27-7536-4DC4-A8CF-0F85D2ED3C98
 7AE3CD27-7536-4DC4-A8CF-0F85D2ED3C98,Health informatics,المعلوماتية الصحية,Health informatics,"","",962,
 060E1EDB-673E-4137-9612-E34D055195C2,Health Information and Medical Records Administration,إدارة السجلات الطبية والمعلومات الصحية,Health Information and Medical Records Administration,"","",963,14702637-5298-9375-6717-257512837849
 0AFC38B2-79B4-4F5E-A91C-D3A0025C29C0,Health Inspection technician,فني تفتيش صحي,Health Inspection technician,"","",964,E35FB37B-2402-4603-9776-33D0D4848B9B
 03483211-1420-41EF-B3FE-4CF80F0F00FE,Health Law,قانون الصحة,Health Law,"","",965,57E7370E-497B-4BD3-9E14-CF574151EB6F
 6C91A651-C062-4248-AC21-03B557BDF00A,Health policy,السياسة الصحية,Health policy,"","",966,64D65E23-2E73-493D-9B47-7A355D6FE5FD
-51AE28FA-FDB2-4B2D-82D0-3ABED41B9F3B,Health Promation and Public Health,Health Promation and Public Health,Health Promation and Public Health,"","",967,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 6318A388-408B-4670-9D97-AC85F4447AB0,Health Promotion,تعزيز الصحة,Health Promotion,"","",968,E18A0B1B-F30C-4440-98F8-038A56BDF360
-B1061139-F40A-436A-8653-B735991CCF47,Health Promotion and Public Health,Health Promotion and Public Health,Health Promotion and Public Health,"","",969,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 CA492E71-87B7-4488-8591-CC8DC5D326C2,Health psychology,علم النفس الصحي,Health psychology,"","",970,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
-2A42CC4C-A7BC-42A5-8FD0-4A4DF0BF4DD7,Health Sciences,Health Sciences,Health Sciences,"","",971,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 5ED9DB41-E445-441E-8F24-849CADF56E7F,Health technologies,التقنيات الصحية,Health technologies,"","",972,7AE3CD27-7536-4DC4-A8CF-0F85D2ED3C98
 E730C43F-73C5-4AC8-9F2A-D4BD0E6BFA24,Health visiting,الزيارة الصحية,Health visiting,"","",973,CE505D71-B5F7-494E-AB4D-BDE190745D96
 07F0907E-F8F6-49AC-A39D-181906E67EF1,Healthcare and Hospital Management,إدارة الخدمات الصحية والمستشفيات,Healthcare and Hospital Management,"","",974,6075F702-3633-401F-9F28-5B4C802FA648
 07646DD1-1311-4D4E-8942-66830035F67C,Healthcare Management,إدارة الرعاية الصحية,Healthcare Management,"","",975,E35FB37B-2402-4603-9776-33D0D4848B9B
-8957E01D-84AB-4E7F-85B4-37BEBF336490,Healthcare Quality & Safety,Healthcare Quality & Safety,Healthcare Quality & Safety,"","",976,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0068A2D2-2FC2-4C3D-9743-CCDA0EAC1004,Hebrew Language,اللغة العبرية,Hebrew Language,"","",977,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 0538520A-1B39-4549-AF25-0D330034FFDC,Hematological Pathology,علم أمراض الدم,Hematological Pathology,"","",978,A038E0EA-4410-40C2-9FAB-039786715382
 02C3C3FE-7052-41E7-A6B1-286105CFDEC1,Hematology.,طب الدم,Hematology.,"","",979,8E3B4DAF-9BCE-452A-A000-81355FF7FCE3
@@ -1020,8 +925,6 @@ F7F7A906-A232-4DD6-81DB-1477A28264BD,Human resource management,إدارة الم
 0D261A1F-2F2B-403E-8369-BA740DF13DC9,Human Sciences and Family and Consumer Sciences,العلوم الإنسانية وعلوم الأسرة والمستهلك,Human Sciences and Family and Consumer Sciences,"","",1019,53068239-3437-9508-3860-820022132875
 026843DF-C180-4A79-A6CF-AFA09785D800,Human-computer interaction,التفاعل بين الإنسان والحاسوب,Human-computer interaction,"","",1020,46364BE2-BEB2-4B59-B263-23D8CA421126
 0B5465E8-3C09-4707-9049-2EAB06B2F350,humanities and culture,العلوم الإنسانية والثقافة,humanities and culture,"","",1021,53068239-3437-9508-3860-820022132875
-5E7CA0AB-6ED0-4779-928C-8BB63E3B5D9F,Humanities and Social Politics and International Relations ,Humanities and Social Politics and International Relations ,Humanities and Social Politics and International Relations ,"","",1022,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-0D8F5498-4757-4356-BC9C-8AF417858B7E,Humanities and Social Politics and International Relations,Humanities and Social Politics and International Relations,Humanities and Social Politics and International Relations,"","",1023,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 04A3F955-4FF5-469E-B85A-AEBF040B169B,Humanities and Social Sciences ,العلوم الإنسانية والاجتماعية,Humanities and Social Sciences ,"","",1024,53068239-3437-9508-3860-820022132875
 092FA7EF-D33C-4295-95EA-956D0A4E6BB5,Hungarian/Magyar Language,اللغة المجرية / المجرية,Hungarian/Magyar Language,"","",1025,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 0187A044-9114-446F-9A42-97A50B97FF53,HVAC mainteNULLce technician,فني صيانة التدفئة وتكييف الهواء والتهوية والتبريد,HVAC mainteNULLce technician,"","",1026,1445B371-EACD-45A1-8ACA-2318DF9F9893
@@ -1068,7 +971,6 @@ A5B2B263-AAB5-47BD-9063-CB304465E7BE,Information systems,نظم المعلوما
 09CE003B-382C-4E92-8E45-17F90D4DFA67,Information Technology - Network Administration,تكنولوجيا المعلومات- ادارة شبكات,Information Technology - Network Administration,"","",1067,A5B2B263-AAB5-47BD-9063-CB304465E7BE
 0EC33219-E290-4D32-91FE-174C0B03A40E,Infrastructure Engineering,هندسة البنية التحتية,Infrastructure Engineering,"","",1068,F0986833-4BE7-4B76-91B6-356BDA766CE1
 0DAB0873-DF67-4140-8CDB-BD16031EBCF9,Innovation and development strategy,الابتكار واستراتيجية التنمية,Innovation and development strategy,"","",1069,53068239-3437-9508-3860-820022132875
-90883AD1-56A7-4C62-9220-BF5116E97022,Innovation and Enterpreneurship,الابتكار وريادة الاعمال ,Innovation and Enterpreneurship,"","",1070,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 C759CF85-CD46-418E-A600-1A014C0E4D1E,Inorganic chemistry,الكيمياء غير العضوية,Inorganic chemistry,"","",1071,B1BDE659-5A76-41D5-A0C6-4A2FB34444A2
 54171B22-FFEB-4DCE-946C-BB565906100C,Institutional management,الإدارة المؤسسية,Institutional management,"","",1072,6075F702-3633-401F-9F28-5B4C802FA648
 09E9EF75-C911-4F7C-8364-37A50FDFC27B,Instrument Engineering,هندسة الأدوات,Instrument Engineering,"","",1073,F0986833-4BE7-4B76-91B6-356BDA766CE1
@@ -1101,36 +1003,29 @@ A52B7EBB-EA84-423E-AFEE-728D8B140DC9,Interactive & electronic design,التصم�
 D88FEE02-923D-45A6-B051-12C4E41F63EA,International criminology,علم الجريمة الدولي,International criminology,"","",1100,C3022B9C-4CFB-4E3E-AFE6-897C73A1036E
 00AB4243-FB45-4B49-9328-295209EAD4D2,International Development,التنمية الدولية,International Development,"","",1101,1A8C8C00-EB48-495B-A42F-24AC73E2C37B
 0274FB93-4007-45E4-AE4B-6744072DC0F1,International Development Management ,إدارة التنمية الدولية,International Development Management ,"","",1102,53068239-3437-9508-3860-820022132875
-E2AB173D-07E1-4B72-8A88-3484914F4D74,International Development public policy management,International Development public policy management,International Development public policy management,"","",1103,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 084BD776-878D-42DA-8D97-7C00021051EF,International Economic and Business Law ,القانون الاقتصادي والتجاري الدولي,International Economic and Business Law ,"","",1104,53068239-3437-9508-3860-820022132875
 45CDF2DD-1F47-4F69-9AA4-0BB98572CAC0,International economics,الاقتصاد الدولي,International economics,"","",1105,1C167EB2-E4A2-45A5-B2BF-085DB83518DA
 0564CC8A-FE4A-4A25-8CBD-493D03E95C67,International FiNULLce,التمويل الدولي,International FiNULLce,"","",1106,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
 0A25F099-33A7-44B2-977A-E78306756630,International Fire Safety Management Sciences,علوم الإدارة الدولية للسلامة من الحريق,International Fire Safety Management Sciences,"","",1107,A4E63C31-2522-498F-A2D1-160A4DE0C61F
 246EBE37-BAD5-4BD7-BF51-AA31B0E243C7,International forestry,الغابات الدولية,International forestry,"","",1108,820CF2C6-3F0D-48EE-B176-4F5B6267053B
 A8A8353B-6576-486D-8DE6-9FD9002F6404,International History,التاريخ الدولي,International History,"","",1109,BDE37404-BF32-4148-B8C6-CB6DCDF96EE9
-7ED7A988-ABD6-44F7-B8A6-393991427498,International Hospitality and Tourism Management,International Hospitality and Tourism Management,International Hospitality and Tourism Management,"","",1110,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 01A5BBB2-F469-47A8-B31A-52E801B0703A,International Management,الإدارة الدولية,International Management,"","",1111,6075F702-3633-401F-9F28-5B4C802FA648
 5849C5CB-ABD3-4744-AB18-6407A62CC08D,International marketing,التسويق الدولي,International marketing,"","",1112,43817EFA-BADD-419E-8D15-1E388A7AB85F
 0EF8BCEE-22B3-45F1-92DC-BD9B05DEFB0A,International Political Economy,الاقتصاد السياسي الدولي,International Political Economy,"","",1113,53068239-3437-9508-3860-820022132875
 BEC2371E-65D2-4352-A9BD-1B798D127B72,International politics,السياسة الدولية,International politics,"","",1114,C3022B9C-4CFB-4E3E-AFE6-897C73A1036E
-E140CB35-29B7-4C0D-9B8F-187FE8B01ADE,International Public Policy,International Public Policy,International Public Policy,"","",1115,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 18ADE83F-F58F-4799-9857-3F959E96C68F,International relations,العلاقات الدولية,International relations,"","",1116,C3022B9C-4CFB-4E3E-AFE6-897C73A1036E
 553EE4FA-C0CD-462B-A4A8-0DE6CDA12C0B,International social policy,السياسة الاجتماعية الدولية,International social policy,"","",1117,64D65E23-2E73-493D-9B47-7A355D6FE5FD
 07FD17FD-0CD4-4CE3-98A4-AB9D0DA1CAA7,International Tourism and Hospitality Management,إدارة السياحة والضيافة الدولية,International Tourism and Hospitality Management,"","",1118,96D55527-8E7C-4FB8-8487-F27A5DAC0FAD
 0EECE112-6A57-4F0D-9AE7-6ADC046B5E1B,International Tourism management,إدارة السياحة الدولية,International Tourism management,"","",1119,96D55527-8E7C-4FB8-8487-F27A5DAC0FAD
 0A46ED41-04C8-41D3-90AB-797102F8F50D,International Trade,التجارة الدولية,International Trade,"","",1120,17384735-4CF2-48DA-ACA9-18F37FF9CCBC
 9C6A8CCD-77BA-48A7-B1CE-A5A9C87C4D43,Internet,إنترنت,Internet,"","",1121,46364BE2-BEB2-4B59-B263-23D8CA421126
-1066875C-7581-4757-9D4F-54D53A552CAD,Interventional Radiology,التصوير الإشعاعي الطبي (الأشعة التداخلية),Interventional Radiology,"","",1122,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 963C6794-CBE2-44CB-93C1-FE89E33235F9,Investment,استثمار,Investment,"","",1123,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
 C6D20859-60FD-4303-97D1-29773B3B98A0,Investment & insurance,الاستثمار والتأمين,Investment & insurance,"","",1124,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
 0AC71905-9964-478A-8028-A1E8053C3598,Iranian Law,القانون الإيراني,Iranian Law,"","",1125,57E7370E-497B-4BD3-9E14-CF574151EB6F
 011D0379-DA67-4DC2-A235-C5AE9971AABB,Irish language,اللغة الأيرلندية,Irish language,"","",1126,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 BE1E5516-A105-45C8-8C18-435A1FF27CAD,Irish literature,الأدب الأيرلندي,Irish literature,"","",1127,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 009CFDE0-5FCD-464E-B9ED-8838069A1BD9,Irrigation Engineering,هندسة الري,Irrigation Engineering,"","",1128,F0986833-4BE7-4B76-91B6-356BDA766CE1
-C0FEE207-7162-47A3-942A-2F01A05B5D75,Isamic Studies snd Sharia ,العلوم الشرعية والدراسات الاسلامية ,Isamic Studies snd Sharia ,"","",1129,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 3B5E2701-B035-4C8B-ADDA-BDCBF2617262,Islamic Finance,التمويل الإسلامي,Islamic Finance,"","",1130,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
-94FB0CD2-C438-448D-944F-BC05A5A7B1BF,Islamic Finance,Islamic Finance,Islamic Finance,"","",1131,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-B8683CF9-D012-42A6-A08F-F808B28E5523,Islamic Finance and Economy,Islamic Finance and Economy,Islamic Finance and Economy,"","",1132,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0F49152B-566C-47B8-A9DE-C2BE0CF0FA52,Islamic FiNULLce and Economics,التمويل الإسلامي والاقتصاد,Islamic FiNULLce and Economics,"","",1133,53068239-3437-9508-3860-820022132875
 0D1DF4C2-3F56-4B44-9152-A382036F19D8,Islamic knowledge and heritage,الفلسفة في المعرفة والتراث الإسلامي,Islamic knowledge and heritage,"","",1134,AF7BBC76-E253-457C-931F-1E6AD491DE55
 214379F7-5B0D-4A01-BF82-18D2E6449B43,Islamic studies,الدراسات الإسلامية,Islamic studies,"","",1135,7E272DDE-3A15-43D0-AD21-1800E8A9A48B
@@ -1144,7 +1039,6 @@ B359812B-CF6A-41DA-8C6F-2F8CC7ED82ED,Jazz performance,أداء موسيقى ال
 4B03FFDB-4A9C-46FB-B730-B3490EF00A6D,Job Search Skills Programs,برامج مهارات البحث عن عمل,Job Search Skills Programs,"","",1143,615C7CC3-4C76-416D-8FF3-E317000E045D
 6F41B482-BD0C-4DFA-8415-DB92CB159B30,Journalism,الصحافة,Journalism,"","",1144,
 0A1215D2-6C0F-4136-BA27-CDF7428C0504,Journalism,الصحافة,Journalism,"","",1145,6F41B482-BD0C-4DFA-8415-DB92CB159B30
-0234AC4C-C512-4BE1-A19F-A26737E3CF63,Journalism and Media Studies MA,Journalism and Media Studies MA,Journalism and Media Studies MA,"","",1146,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0DDBFC7B-87F2-4467-A4F9-EB1601DEC783,Judiciary and Sharia politics,القضاء والسياسة الشرعية,Judiciary and Sharia politics,"","",1147,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
 B0094C37-B896-44AA-A0C4-38C0E22CDC71,Jurisprudence,الفقه,Jurisprudence,"","",1148,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
 29D13E30-060C-4510-8A73-F42882225E42,Keynesianism,الكينزية,Keynesianism,"","",1149,1C167EB2-E4A2-45A5-B2BF-085DB83518DA
@@ -1176,7 +1070,6 @@ BD0391F2-B059-4A25-90C3-8C1520419DB4,Laser physics,فيزياء الليزر,Las
 F2D4824D-220A-406D-94A1-677B16362427,Law and Shariaa,القانون والشريعة,Law and Shariaa,"","",1175,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
 57E7370E-497B-4BD3-9E14-CF574151EB6F,Law by area,القانون حسب المنطقة,Law by area,"","",1176,
 4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE,Law by topic,القانون حسب الموضوع,Law by topic,"","",1177,
-E2CD949E-D74B-461B-92E1-27FEA1A1FA4A,Law in Sport,قانون رياضي ,Law in Sport,"","",1178,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 000E7C8B-8A82-49D5-9CBF-30340EABB74F,Leadership,القيادة,Leadership,"","",1179,6075F702-3633-401F-9F28-5B4C802FA648
 098CF01A-2028-4BF9-9FF3-6E0B03571408,Leadership and Innovation ,القيادة والابتكار,Leadership and Innovation ,"","",1180,56463547-1778-6080-6803-396575136009
 0B467D5F-4EC5-446A-9886-DE83059A20BE,"Leadership, innovation, & Policy ",القيادة والابتكار والسياسة,"Leadership, innovation, & Policy ","","",1181,53068239-3437-9508-3860-820022132875
@@ -1186,14 +1079,12 @@ F3F0E6B0-EA1F-4BDC-B719-9F80BD19881F,Learning disability nursing,تمريض صع
 860A9F3E-FD02-4AD9-9378-B52AE82A96A7,Leatherwork,الأعمال الجلدية,Leatherwork,"","",1185,7695196F-70D0-4244-9B41-DD496FF40793
 0F89A750-0AA2-4F5E-BA19-CC21010FC978,Legal and political sciences,العلوم القانونية والسياسية,Legal and political sciences,"","",1186,53068239-3437-9508-3860-820022132875
 315FC3FA-A7FD-4D3F-AA68-842707B67E64,Legal practice,الممارسة القانونية,Legal practice,"","",1187,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
-34A82BC5-79E8-45D8-A22D-A022864B1CF3,"Lenguas, Textos y Contextos ","Lenguas, Textos y Contextos ","Lenguas, Textos y Contextos ","","",1188,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0EA5AB56-7CEB-42B7-9E23-A33A0CEFFA70,Liberal Arts and Social Science,الفنون الليبرالية والعلوم الاجتماعية,Liberal Arts and Social Science,"","",1189,927C60FE-2C0B-45F1-ACA4-06CD3A5D7EB7
 97346A66-1C9B-428B-A65E-037BEDDFCA53,Liberalism,الليبرالية,Liberalism,"","",1190,C3022B9C-4CFB-4E3E-AFE6-897C73A1036E
 5A3B3724-462E-49B8-8DAA-B12C8613683F,Librarianship,أمينة المكتبات,Librarianship,"","",1191,FC71437F-9178-4500-8DD9-4D416565B168
 05DD5AA0-D991-4867-ADBC-1896035316C0,Librarianship and Information Management,مكتبات وادارة معلومات,Librarianship and Information Management,"","",1192,53068239-3437-9508-3860-820022132875
 98C0E7A7-1E7F-4C0D-9FE3-276C348EDFFF,Library studies,الدراسات المكتبية,Library studies,"","",1193,FC71437F-9178-4500-8DD9-4D416565B168
 0B4FF64F-802F-48FC-BA6A-E0B60F1620A6,Life and Environmental Sciences,علوم الحياة والبيئة,Life and Environmental Sciences,"","",1194,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-EFE87D84-E894-4F9F-A797-529D4D0C5C4E,Life Course Science Research,Life Course Science Research,Life Course Science Research,"","",1195,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0C7748A3-09D6-4752-AE43-83B9050FB8D8,Life Sciences,علوم الحياة,Life Sciences,"","",1196,FA47FBE8-D331-427A-97DB-DC122FCD9BDA
 C83DF4CB-CEF7-4959-B860-AF49BEFC8B4B,Linguistics,اللغويات,Linguistics,"","",1197,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 03248525-CFBE-419B-AC78-C89AF0DF5F4D,Literature in its original language,الأدب بلغته الأصلية,Literature in its original language,"","",1198,1B51EA47-B126-41D6-98EC-8DFDD5B54492
@@ -1201,18 +1092,12 @@ C83DF4CB-CEF7-4959-B860-AF49BEFC8B4B,Linguistics,اللغويات,Linguistics,""
 062725DD-1978-46F5-B8AE-54862FD798E6,Livestock,الماشية,Livestock,"","",1200,9D89556F-9EE5-4D31-9883-6A16F8EF09DE
 63684C43-0553-4A58-AA68-20C7381F73A8,Livestock husbandry,تربية الماشية,Livestock husbandry,"","",1201,9D89556F-9EE5-4D31-9883-6A16F8EF09DE
 0921F8F0-336A-4665-BF5B-2BB40D9A3BD9,Logistics and Materials Management,الخدمات اللوجستية وإدارة المواد,Logistics and Materials Management,"","",1202,53068239-3437-9508-3860-820022132875
-974F5E83-8A16-4647-9FD8-A19F054D9EA8,logistics and supply chain management,logistics and supply chain management,logistics and supply chain management,"","",1203,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 06A78187-F62F-4FDF-8508-6FAB0EAC7548,Logistics Management,إدارة لوجستية,Logistics Management,"","",1204,6075F702-3633-401F-9F28-5B4C802FA648
-10046A65-4707-41B1-958A-A58F0FC18BD3,MA Comparative Education,MA Comparative Education,MA Comparative Education,"","",1205,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-E37CAE58-EF7E-414E-BDFB-03198296F6D4,MA Film Studies,MA Film Studies,MA Film Studies,"","",1206,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-A911C46E-F5D0-496D-BFD0-D7B33555886A,MA in Public Administraon and Public Policy,MA in Public Administraon and Public Policy,MA in Public Administraon and Public Policy,"","",1207,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-0B7D6E26-E333-4FF5-B42C-D74C598E5DA8,MA Social Research,MA Social Research,MA Social Research,"","",1208,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 BB68A8CD-FFF2-4D17-A60F-03C7B867DE9D,Machine knitting,آلة الحياكة,Machine knitting,"","",1209,DA4B5B54-4E28-4E3C-94BF-4971F5FC955F
 061E0C88-BBC1-4653-B8F9-75B352D69596,Machine learning,التعلم الآلي,Machine learning,"","",1210,C6F2E677-90AA-407B-9735-8FBDFA294CDD
 E1828C57-9418-4234-A9DA-2CFD8EEC33B9,Machinery maintenance,صيانة الآلات,Machinery maintenance,"","",1211,1445B371-EACD-45A1-8ACA-2318DF9F9893
 0B885F31-D8C1-4CED-A2C9-A3DED0DE989D,Macroeconomics,الاقتصاد الكلي,Macroeconomics,"","",1212,1C167EB2-E4A2-45A5-B2BF-085DB83518DA
 0457D580-7138-4B6F-B5ED-129A0A393894,MaintaiNULLce engineering,هندسة الصيانة,MaintaiNULLce engineering,"","",1213,5DB7DE56-F67A-48CD-9089-46FB4E84D197
-5A75F474-9798-416B-88B0-27C0B03AE19A,Maintenance Engineering,هندسة الصيانة,Maintenance Engineering,"","",1214,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0BE6DFB8-82BC-49C8-A8A0-FCC40C584D12,MainteNULLce Engineering Technology ,تكنولوجيا هندسة الصيانة,MainteNULLce Engineering Technology ,"","",1215,5DB7DE56-F67A-48CD-9089-46FB4E84D197
 18B217CB-9DEB-4032-84FC-18A680E69EDD,Make-up,ماكياج,Make-up,"","",1216,B2B987EF-278C-4E27-AC79-6AAD152BF4DF
 1D5AE2B6-06C3-4D80-AB16-2EC644D7425D,Management & organisation of education,إدارة وتنظيم التعليم,Management & organisation of education,"","",1217,6075F702-3633-401F-9F28-5B4C802FA648
@@ -1248,14 +1133,8 @@ E2DFD6D1-EFFB-4A13-B5DA-58A11D6F78F2,Marine/Freshwater biology,بيولوجيا 
 2A43121B-DD17-4478-B207-CA294F543C7E,Market research,أبحاث السوق,Market research,"","",1247,43817EFA-BADD-419E-8D15-1E388A7AB85F
 43817EFA-BADD-419E-8D15-1E388A7AB85F,Marketing,تسويق,Marketing,"","",1248,
 43B00250-B849-4835-A47F-4C8E909FF800,Marketing,تسويق,Marketing,"","",1249,43817EFA-BADD-419E-8D15-1E388A7AB85F
-8E6BCC3C-11D3-4C87-8ED7-021B56BF6B2D,Marketing Communications,Marketing Communications,Marketing Communications,"","",1250,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 8C9B2F65-F88B-4463-986B-575022F7D592,Marquetry & inlaying,المطعمة والتطعيم,Marquetry & inlaying,"","",1251,7695196F-70D0-4244-9B41-DD496FF40793
-D3BAB97C-07F2-468C-A2B5-F74B1472BCF9,Master of Advanced Studies in European and International Governance,Master of Advanced Studies in European and International Governance,Master of Advanced Studies in European and International Governance,"","",1252,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-B2637DA2-E5A7-49E6-BF7A-958605675A42,Master Of Arts In Global Security,Master Of Arts In Global Security,Master Of Arts In Global Security,"","",1253,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-3F1EFFAF-C95F-439F-AC08-C0246475CE31,Master of Global Media,Master of Global Media,Master of Global Media,"","",1254,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0913154F-0B8E-446F-9560-E8670A72CA03,Master of International Business Economics and Management,اقتصاديات الأعمال الدولية والإدارة,Master of International Business Economics and Management,"","",1255,53068239-3437-9508-3860-820022132875
-CEBE10B6-7736-487C-A557-85C512377311,"Master of Management, Innovation and Entrepreneurship","Master of Management, Innovation and Entrepreneurship","Master of Management, Innovation and Entrepreneurship","","",1256,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-EA4D046C-FD04-491F-97A8-6C49F412CDD9,Master of Science in Digital Marketing and Entrepreneurship,Master of Science in Digital Marketing and Entrepreneurship,Master of Science in Digital Marketing and Entrepreneurship,"","",1257,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0E062E8F-9A38-468E-87C9-04A30DCC39DB,Master of Social Enterprise Management,إدارة المشاريع الاجتماعية,Master of Social Enterprise Management,"","",1258,6075F702-3633-401F-9F28-5B4C802FA648
 817E1D9C-C4E3-4E90-A33F-147BBB383965,Materials engineering,هندسة المواد,Materials engineering,"","",1259,26647CD5-C4EA-4A04-AB6B-CA0CD29794E8
 B5E6AFCD-022F-40A3-B956-EE0D55339FF2,Materials science,علم المواد,Materials science,"","",1260,439297D9-7501-457E-BB66-ECB4DA68D9B9
@@ -1290,7 +1169,6 @@ BF003183-6E7D-4FBE-ADC8-6510DCEB9421,Media production,الإنتاج الإعل�
 00C7B071-D07C-40D0-900D-B1A259DE0624,Medical & veterinary genetics,الوراثة الطبية والبيطرية,Medical & veterinary genetics,"","",1289,52BC99F6-76CC-4C90-9A98-4603E9DF2FF1
 E01F3356-61C1-4169-A993-C36E132B3BC0,Medical & veterinary microbiology,علم الأحياء الدقيقة الطبية والبيطرية,Medical & veterinary microbiology,"","",1290,9234841C-6F26-4470-963E-8594BC2CF961
 07803177-39A2-465D-BEDE-B37FC889E5F5,Medical biochemistry,الكيمياء الحيوية الطبية,Medical biochemistry,"","",1291,D697718A-D4C8-4388-9FFD-CEEFEF2C9572
-0D3124C5-6C29-4219-B817-83A4BA43D434,Medical Biosciences (Microbiology or Virology),علم أحياء دقيقة أو علم فيروسات,Medical Biosciences (Microbiology or Virology),"","",1292,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 196462DE-2B82-452C-AD32-855A68E98252,Medical biotechnology,التكنولوجيا الحيوية الطبية,Medical biotechnology,"","",1293,A307014E-4A8E-4468-9DFE-8A70904F8FC1
 24093B2A-3EB2-42DF-BB27-D2A8BE333747,Medical devices & instrumentation,الأجهزة والأدوات الطبية,Medical devices & instrumentation,"","",1294,A4E63C31-2522-498F-A2D1-160A4DE0C61F
 0A546A16-E1C1-43B6-A4E4-D8AA07B8094B,Medical Engineering,الهندسة الطبية,Medical Engineering,"","",1295,EF4B99A8-A131-49EB-A044-14B5F227BDC9
@@ -1353,7 +1231,6 @@ D34A682D-D0DA-4BAD-9B7C-A9DD150925DE,Missing Main Major,Missing Main Major,Missi
 AA2432FB-CCC3-401A-BF74-CB25E955E478,Modern history,التاريخ الحديث,Modern history,"","",1352,BDE37404-BF32-4148-B8C6-CB6DCDF96EE9
 0238A287-0559-4916-8205-1CA90346D4D4,Modern Languages with Management and EFL,اللغات الحديثة مع الإدارة وتعليم اللغة الإنجليزية كلغة أجنبية,Modern Languages with Management and EFL,"","",1353,53068239-3437-9508-3860-820022132875
 059D136E-333E-4291-97FB-F2CE980A6ACA,Modern Middle Eastern studies,دراسات الشرق الأوسط الحديثة,Modern Middle Eastern studies,"","",1354,42572058-C798-4E0F-A9D2-58E3B2926C85
-184B0CF2-A2B3-4022-8FD7-B2F262EAB2F5,Molecular and Cell Biology,Molecular and Cell Biology,Molecular and Cell Biology,"","",1355,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 1A204DD1-9A14-46CD-92B6-CFAA0121C888,"Molecular biology, biophysics & biochemistry",البيولوجيا الجزيئية والفيزياء الحيوية والكيمياء الحيوية,"Molecular biology, biophysics & biochemistry","","",1356,D697718A-D4C8-4388-9FFD-CEEFEF2C9572
 D697718A-D4C8-4388-9FFD-CEEFEF2C9572,"Molecular biology, biophysics & biochemistry",البيولوجيا الجزيئية والفيزياء الحيوية والكيمياء الحيوية,"Molecular biology, biophysics & biochemistry","","",1357,
 FAA941BB-2E67-4EC0-93E9-402E17A8DC0F,Molecular engineering,الهندسة الجزيئية,Molecular engineering,"","",1358,26647CD5-C4EA-4A04-AB6B-CA0CD29794E8
@@ -1365,11 +1242,6 @@ FAA941BB-2E67-4EC0-93E9-402E17A8DC0F,Molecular engineering,الهندسة الج
 056AB8D6-F18E-4C3D-AB0D-7354056497FD,Mortuary Sciences and Funeral Service,علوم المشرحة وخدمة الجنائز,Mortuary Sciences and Funeral Service,"","",1364,49C41DF6-30BD-4A7A-8EE4-201F6CCEAFD8
 A624CC74-4AAF-41CF-8B45-4B877694211B,Mortuary technology,تكنولوجيا المشرحة,Mortuary technology,"","",1365,49C41DF6-30BD-4A7A-8EE4-201F6CCEAFD8
 958DD98E-A5CE-440C-BE08-D51BBE34280F,Moving image techniques,تقنيات الصور المتحركة,Moving image techniques,"","",1366,6569B223-81EB-4A45-B60D-7875E6019300
-C2366783-5A5F-4BBB-B678-3D3F0D62A468,Msc Clinical Mental Health Science ,Msc Clinical Mental Health Science ,Msc Clinical Mental Health Science ,"","",1367,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-1E7989A8-0A2A-4025-B022-64AE18104100,MSc Conservation of Contemporary Art and Media,MSc Conservation of Contemporary Art and Media,MSc Conservation of Contemporary Art and Media,"","",1368,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-AAE45D68-B254-4093-AFDE-E9833444CAB5,MSc Information System and Operations Management,MSc Information System and Operations Management,MSc Information System and Operations Management,"","",1369,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-00678967-FC20-4E38-BE95-6869AEF9A426,MSc Project and Infrastructure Management,MSc Project and Infrastructure Management,MSc Project and Infrastructure Management,"","",1370,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-42642975-CE5B-4430-A9BE-364BB5490DA0,MSc Sport Business Management & Leadership ,MSc Sport Business Management & Leadership ,MSc Sport Business Management & Leadership ,"","",1371,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 EF4B99A8-A131-49EB-A044-14B5F227BDC9,Multidisciplinary and Interdisciplinary,متعددة التخصصات ومتعددة التخصصات,Multidisciplinary and Interdisciplinary,"","",1372,
 56463547-1778-6080-6803-396575136009,Multidisciplinary and Interdisciplinary_Track-Crea,متعدد التخصصات والمجالات - مسار الإبداع,Multidisciplinary and Interdisciplinary_Track-Crea,"","",1373,
 72039078-5123-8018-7821-976435904294,Multidisciplinary and Interdisciplinary_Track-Diploma,متعدد التخصصات والمجالات - مسار الدبلوم,Multidisciplinary and Interdisciplinary_Track-Diploma,"","",1374,
@@ -1382,7 +1254,6 @@ EF4B99A8-A131-49EB-A044-14B5F227BDC9,Multidisciplinary and Interdisciplinary,م�
 C72DB38D-37FE-4D8B-BA16-887CEC46620F,Multimedia music composition,تأليف موسيقى الوسائط المتعددة,Multimedia music composition,"","",1381,EABC0146-B80D-473D-AB47-623C38EC444B
 9A0A3DC6-C752-4C40-8A71-87E1140C3305,Multimedia publishing,النشر بالوسائط المتعددة,Multimedia publishing,"","",1382,383EA2CE-3E59-4BF5-8235-55F536223D6C
 046DD8FB-A6CE-4292-9731-563F01761C54,Museology and Museum Studies,علم المتاحف و دراسات المتاحف,Museology and Museum Studies,"","",1383,53068239-3437-9508-3860-820022132875
-242F99A6-908C-4B32-9B6D-91E516DDEAF9,Museum Affairs,شؤون متحفية,Museum Affairs,"","",1384,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0879523C-D157-43B7-BBD8-4FDF0C8AD4F0,Museum and Gallery Practice  ,ممارسة المتحف والمعرض,Museum and Gallery Practice  ,"","",1385,FC71437F-9178-4500-8DD9-4D416565B168
 D35A7F3A-4210-441F-9991-6A41841D8C31,Museum studies,دراسات المتحف,Museum studies,"","",1386,FC71437F-9178-4500-8DD9-4D416565B168
 0306F175-2BF6-4083-85F5-E92708A37C78,Museums & Digital  Culture,المتاحف والثقافة الرقمية,Museums & Digital  Culture,"","",1387,53068239-3437-9508-3860-820022132875
@@ -1413,8 +1284,6 @@ AE4388DE-8CDE-48B8-B190-BBBB14318B5A,Natural heritage,التراث الطبيع�
 4FE0B3CE-0844-4131-8D64-8EF3386D6F71,Naval architecture,العمارة البحرية,Naval architecture,"","",1412,6C88BD41-F46D-4BE7-873E-FEE8F8731703
 4337E0F0-CB07-4F4D-A8CB-C5522172BCEC,Naval Studies,الدراسات البحرية,Naval Studies,"","",1413,605F0873-4D76-4FC5-A357-FE7C18869824
 15B4956C-297F-45EF-ADA0-EC3914934800,Needlecraft,تطريز,Needlecraft,"","",1414,7695196F-70D0-4244-9B41-DD496FF40793
-E89D5009-9B84-4362-B8AD-EDB26F0008C2,Negotiation and Conflict Resolution,Negotiation and Conflict Resolution,Negotiation and Conflict Resolution,"","",1415,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-1F49B1BE-D28F-4E21-BD35-6F5CA89C8C8E,Negotiation and Conflict Resolution,Negotiation and Conflict Resolution,Negotiation and Conflict Resolution,"","",1416,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 BDDAC24E-5DF9-4499-B0A0-A53242DB6BA5,Neonatal care,رعاية الأطفال حديثي الولادة,Neonatal care,"","",1417,CE505D71-B5F7-494E-AB4D-BDE190745D96
 9B910312-00E5-42D4-80BD-34C61E6BE4F1,Networks & communications,الشبكات والاتصالات,Networks & communications,"","",1418,46364BE2-BEB2-4B59-B263-23D8CA421126
 09357AB1-01C1-43A6-B93B-E04C05F34D2D,Networks Engineering,هندسة شبكات,Networks Engineering,"","",1419,46364BE2-BEB2-4B59-B263-23D8CA421126
@@ -1443,15 +1312,12 @@ D71BEB91-1940-44A4-8E31-F42805719AEB,Nuclear & particle physics,الفيزياء
 CE505D71-B5F7-494E-AB4D-BDE190745D96,Nursing,تمريض,Nursing,"","",1442,
 BF1379B5-84CD-45CD-B954-D7632BB1564E,Nursing,تمريض,Nursing,"","",1443,CE505D71-B5F7-494E-AB4D-BDE190745D96
 0D11A67E-D315-429C-8AFC-A5750A3785CA,Nursing Administration,إدارة التمريض,Nursing Administration,"","",1444,14702637-5298-9375-6717-257512837849
-258559DA-75F1-4638-91EF-9825AE55D76E,Nutrition,Nutrition,Nutrition,"","",1445,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-BBACAD60-E059-40F1-89E1-8901FF33B3E6,Nutrition,Nutrition,Nutrition,"","",1446,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 E1A5C391-DBA7-4699-991A-BB694B098B78,Nutrition,تَغذِيَة,Nutrition,"","",1447,
 CCE43DF1-BAE5-4059-B47C-0356D86BED4C,Nutrition,تَغذِيَة,Nutrition,"","",1448,E1A5C391-DBA7-4699-991A-BB694B098B78
 F963CB55-A36C-4178-ADA8-CA412FBE0A60,Object-oriented programming,البرمجة الشيئية,Object-oriented programming,"","",1449,92B1806A-2E2D-421A-92DB-344E1CA3E34A
 4CA330CA-8398-4B40-A439-32AB4E45803B,Obstetrics and Gynaecology,أمراض النساء والتوليد,Obstetrics and Gynaecology,"","",1450,8E3B4DAF-9BCE-452A-A000-81355FF7FCE3
 74D6C561-57D4-44F7-A22D-635783D52820,Occupational health,الصحة المهنية,Occupational health,"","",1451,E35FB37B-2402-4603-9776-33D0D4848B9B
 04217F40-A624-465F-9FB3-2D6E00ACD894,Occupational health and safety and the environment,صحة وسلامة مهنية وبيئية,Occupational health and safety and the environment,"","",1452,53068239-3437-9508-3860-820022132875
-229C9A31-BB6C-4E3E-BFDE-EAA1162E5BC8,"Occupational Health, Safety and Environment","Occupational Health, Safety and Environment","Occupational Health, Safety and Environment","","",1453,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 C8900519-DF8C-4A95-940A-8AC936C65E3F,Occupational psychology,علم النفس المهني,Occupational psychology,"","",1454,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
 046078FB-22FB-453A-8891-F5CA0EFE810F,Occupational Safety and Health Technology,تكنولوجيا السلامة والصحة المهنية,Occupational Safety and Health Technology,"","",1455,72039078-5123-8018-7821-976435904294
 E81C00DC-59EE-4A27-BD68-5A37A6C8637E,Occupational therapy,العلاج المهني,Occupational therapy,"","",1456,E35FB37B-2402-4603-9776-33D0D4848B9B
@@ -1552,8 +1418,6 @@ B0EBD050-4C81-4400-98B7-67B27BFF773D,Petrochemical technology,تكنولوجيا
 037DD83D-D288-4062-883E-C012062F2898,Petroleum Geoscience,علوم الأرض البترولية,Petroleum Geoscience,"","",1551,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 E96FB0A6-B0DA-40AA-8709-60B771449872,Pharmaceutical chemistry,الكيمياء الصيدلانية,Pharmaceutical chemistry,"","",1552,B1BDE659-5A76-41D5-A0C6-4A2FB34444A2
 37C577BA-569F-49D1-A155-7A04972FB187,Pharmaceutical engineering,الهندسة الصيدلانية,Pharmaceutical engineering,"","",1553,26647CD5-C4EA-4A04-AB6B-CA0CD29794E8
-30178433-BFF8-4C8D-8232-1A2115016E0C,Pharmaceutical Technology ,Pharmaceutical Technology ,Pharmaceutical Technology ,"","",1554,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-DB3828D7-1571-40FE-B3E0-26311DD9D39E,Pharmaceutical Technology - غير قطر ,Pharmaceutical Technology - غير قطر ,Pharmaceutical Technology - غير قطر ,"","",1555,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0D79AA61-3BC0-4846-BAD6-3D2F0B212BBA,Pharmacological and pharmaceutical economics,الاقتصاد الدوائي والصيدلاني,Pharmacological and pharmaceutical economics,"","",1556,14702637-5298-9375-6717-257512837849
 F1A1470E-79AB-47EF-AE7B-D9C04F6943EA,Pharmacology,علم الصيدلة,Pharmacology,"","",1557,252C93BF-180D-4330-BEA8-453317B03A4B
 0A022099-30D9-4406-A17C-413701F7844A,Pharmacology and drug design,الصيدلة وتصميم الدواء,Pharmacology and drug design,"","",1558,EF4B99A8-A131-49EB-A044-14B5F227BDC9
@@ -1590,13 +1454,11 @@ E78FB1AB-0855-4272-A7D2-C5FF50C9B4BC,Physical geographical sciences,العلوم
 013007EE-8D4E-4973-A55F-0C040D4AD410,Physics and Astronomy,الفيزياء وعلم الفلك,Physics and Astronomy,"","",1589,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 D84220A0-D71B-45FD-BA03-7E6F2B23FF47,Physiology,علم وظائف الأعضاء,Physiology,"","",1590,A038E0EA-4410-40C2-9FAB-039786715382
 01B81519-5EE9-49C1-BC99-812F09CD54F9,Physiology of Fitness Training,فسيولوجيا تدريب اللياقة البدنية ,Physiology of Fitness Training,"","",1591,8EEFC790-92F6-4472-94B8-8F02D0F07688
-294EE7D2-06C1-4251-ADCD-F0D13DF711A9,Physiotherapy,Physiotherapy,Physiotherapy,"","",1592,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 77D4BB99-F414-4B96-BB2B-AE3494B42FB5,Physiotherapy,العلاج الطبيعي,Physiotherapy,"","",1593,A038E0EA-4410-40C2-9FAB-039786715382
 09B3E3CC-8303-4E0F-A486-283402134414,Physiotherapy and rehabilitation,العلاج الطبيعي وإعادة التأهيل,Physiotherapy and rehabilitation,"","",1594,A038E0EA-4410-40C2-9FAB-039786715382
 26D457EA-25A2-478E-ABEA-7C7C04403500,Planetary science,علم الكواكب,Planetary science,"","",1595,2E16E0DA-608E-4B96-B9D7-B000923DF19C
 7520D603-C251-4A21-8A0C-1FDEA6D666C2,"Planning (urban, rural & regional)",التخطيط (الحضري والريفي والإقليمي),"Planning (urban, rural & regional)","","",1596,
 C0DE58FB-D9E9-4CC6-948B-E6DB9F01E9CC,"Planning (urban, rural & regional)",التخطيط (الحضري والريفي والإقليمي),"Planning (urban, rural & regional)","","",1597,7520D603-C251-4A21-8A0C-1FDEA6D666C2
-6CCF0A36-A62A-4C03-ABD2-A8D413C15F0D,Planning and Design of Museum Exhibitions,تخطيط وتصميم معارض متحفية,Planning and Design of Museum Exhibitions,"","",1598,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0396392E-F225-4E7D-942E-75EA0415520C,Planning and designing museum exhibitions,تخطيط وتصميم المعارض المتحفية,Planning and designing museum exhibitions,"","",1599,FC71437F-9178-4500-8DD9-4D416565B168
 06CF028E-FAC7-4F7F-BC2A-C80A07B00EEF,Planning and Quality Engineering,هندسة التخطيط والجودة,Planning and Quality Engineering,"","",1600,F0986833-4BE7-4B76-91B6-356BDA766CE1
 37B2B31E-BE86-4FA3-B720-1617111E1B07,Planning studies,دراسات التخطيط,Planning studies,"","",1601,7520D603-C251-4A21-8A0C-1FDEA6D666C2
@@ -1617,7 +1479,6 @@ F035F9F7-3852-42BD-952C-B9E952CA0BE4,Plutocracy,البلوتوقراطية,Pluto
 0EED6730-0FAD-4325-A8EB-04110C4E5779,Polish Language,اللغة البولندية,Polish Language,"","",1616,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 0804820D-AFAD-49D6-A8B4-5CE607425C05,Political Communications,الاتصالات السياسية,Political Communications,"","",1617,56463547-1778-6080-6803-396575136009
 AA47421E-FBAB-4D85-A282-9AD36BB37E81,Political economics,الاقتصاد السياسي,Political economics,"","",1618,1C167EB2-E4A2-45A5-B2BF-085DB83518DA
-46AF5C80-2394-4900-8F0F-52B4444ABE09,Political Economy,Political Economy,Political Economy,"","",1619,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 2D368B51-F04E-4C34-ABE2-6073D510ABCF,Political geography,الجغرافيا السياسية,Political geography,"","",1620,344586BA-A3D0-4075-ACC6-44E7FA38A3C7
 0F94D5AE-4F18-42BF-A7EE-C266029571F1,Political Science and Government,العلوم السياسية والحكومة,Political Science and Government,"","",1621,C3022B9C-4CFB-4E3E-AFE6-897C73A1036E
 DF8FD11A-C7A6-4E29-8131-187DCB821126,Political sociology,علم الاجتماع السياسي,Political sociology,"","",1622,97EA1354-7504-4C00-B170-E993193B678E
@@ -1636,7 +1497,6 @@ F215315A-B54A-4353-84AE-1B91925D3311,Polymers & textiles,البوليمرات و
 B47DD7C3-7CB1-4490-B0C6-EC2BD5442F4C,Population biology,البيولوجيا السكانية,Population biology,"","",1635,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
 F5FE07E3-9146-43E1-AEA0-2F41D61F8A04,Population ecology,البيئة السكانية,Population ecology,"","",1636,BAE3B5D3-F58F-4607-A5FB-49ABD245282E
 001D5A45-08D7-49E7-AC2C-FD986146A1AD,Population genetics & evolution,علم الوراثة السكانية والتطور,Population genetics & evolution,"","",1637,52BC99F6-76CC-4C90-9A98-4603E9DF2FF1
-AA243A9B-D770-45C9-9354-9E4E0CFA9E83,Population Health Sciences,Population Health Sciences,Population Health Sciences,"","",1638,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0563B1DD-4034-4C0C-ABCE-02440CB5D495,Port Management,إدارة الموانئ,Port Management,"","",1639,3B9B1C75-8FA4-4E7F-894F-A60BE2D46C49
 04B92A69-8318-40BB-9F19-557B066D845C,Port Security,أمن الموانئ,Port Security,"","",1640,53068239-3437-9508-3860-820022132875
 03CB08B7-4460-42D7-9264-50440682F776,Portuguese Language,اللغة البرتغالية,Portuguese Language,"","",1641,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
@@ -1698,7 +1558,6 @@ BF9AA6BB-9CB5-4975-9C28-39E5E4E83337,Psychopharmacology,علم الأدوية ا
 37EA3B22-9A39-4BF7-B3F8-D9B7244E201A,Public accountancy,المحاسبة العامة,Public accountancy,"","",1697,FE8830F7-D320-422C-90BE-2593BB1B9B89
 3F8F201D-2160-4E40-BF54-C22459781AB5,Public administration,الإدارة العامة,Public administration,"","",1698,C3022B9C-4CFB-4E3E-AFE6-897C73A1036E
 03B66688-9DCF-4A95-BC57-42C60E35ADA9,Public Administration and Development Economics,الإدارة العامة واقتصاديات التنمية,Public Administration and Development Economics,"","",1699,53068239-3437-9508-3860-820022132875
-9212261D-8C2F-4652-98A0-95869B1C17A6,Public Administration Teacher,معلم ادارة عامة ,Public Administration Teacher,"","",1700,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 06EBDC35-9B39-460A-A785-2B3009330FF5,Public Applied History and Archival Administration,التاريخ العام التطبيقي وإدارة الأرشيف,Public Applied History and Archival Administration,"","",1701,53068239-3437-9508-3860-820022132875
 0217F882-C1C5-43CD-B666-867A07C29286,Public Diplomacy and International Communication,دبلوماسية عامة و تواصل دولي,Public Diplomacy and International Communication,"","",1702,53068239-3437-9508-3860-820022132875
 03D9B43D-4982-42B2-BCD3-BC6F0AAAFD13,Public FiNULLce,التمويل العام,Public FiNULLce,"","",1703,9589CFD6-4CBF-4FA8-B1EC-ABC0BF11F7EC
@@ -1731,7 +1590,6 @@ DA2331C5-ECE8-40A7-BF34-5149E1CC7161,Quarrying,المحاجر,Quarrying,"","",17
 7FFB29ED-6635-4BCF-9FBD-5FE6DB2CF8FF,Quaternary studies,دراسات رباعية,Quaternary studies,"","",1730,3A626880-24E5-4381-96E7-BFC68C0637E9
 7FA0A62F-D3C3-4A17-B351-88F5D33FB17F,Quranic Sceinces and Exegesis,علوم القرآن والتفسير,Quranic Sceinces and Exegesis,"","",1731,7E272DDE-3A15-43D0-AD21-1800E8A9A48B
 0B6B64FA-5068-407D-9521-B44293C71770,Radiation physics,فيزياء الإشعاع,Radiation physics,"","",1732,79BED130-E352-4C2F-A2AB-DFC8239151C0
-46F2964B-E6C7-439B-BDBA-0086912B38BA,Radiation protection,الوقاية من الإشعاع,Radiation protection,"","",1733,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0F8D0636-E6FF-4B8A-95EA-6B2A061C967F,Radiation Safety,الوقاية من الإشعاع,Radiation Safety,"","",1734,F0D691B4-D2C4-433E-A45D-BAF5B1D1A9AE
 94ED6AD2-D5A3-413E-B79C-27D122B87C02,Radiative processes & effects,العمليات والتأثيرات الإشعاعية,Radiative processes & effects,"","",1735,F0D691B4-D2C4-433E-A45D-BAF5B1D1A9AE
 D634D167-36FA-4288-8F97-BB9623F4F076,Radio production,الإنتاج الإذاعي,Radio production,"","",1736,56ABF249-06C6-4AC0-91F3-E2586E3E3C0E
@@ -1741,7 +1599,6 @@ FC9442D8-C1DA-46DC-BEBA-CA26E8DF0F93,Radio studies,الدراسات الإذاع
 07A289AF-1F6C-47EF-94FB-FA3602A7A9D8,Radioisotopic Pathology,علم أمراض النظائر المشعة,Radioisotopic Pathology,"","",1740,A038E0EA-4410-40C2-9FAB-039786715382
 03E400C5-41AF-489F-A5EF-A76B05C00DC0,Radiologic Technology,تكنولوجيا الأشعة,Radiologic Technology,"","",1741,49C41DF6-30BD-4A7A-8EE4-201F6CCEAFD8
 FF31AAAD-4C54-4607-8AB6-534D8CA1410A,Radiology,الأشعة,Radiology,"","",1742,49C41DF6-30BD-4A7A-8EE4-201F6CCEAFD8
-989066A9-1BBF-4CB7-BEC2-0DC5996012E3,Radiology:  Ultrasound التصوير الإشعاعي الطبي ( اشعة الموجات  فوق الصوتية ),التصوير الإشعاعي الطبي ( اشعة الموجات  فوق الصوتية ),Radiology:  Ultrasound التصوير الإشعاعي الطبي ( اشعة الموجات  فوق الصوتية ),"","",1743,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 10B256FF-FCA9-4753-A6DF-C34E4BD1590F,Rail vehicle engineering,هندسة مركبات السكك الحديدية,Rail vehicle engineering,"","",1744,5DB7DE56-F67A-48CD-9089-46FB4E84D197
 59E8884D-06DD-4C0A-A2AD-38AE6F97AE1A,Railway engineering,هندسة السكك الحديدية,Railway engineering,"","",1745,57DEE9CC-7922-460E-8A7C-BED321E792D7
 0AF8145D-5A63-4F15-8157-D1B00AD286BF,Range Science and Management,علوم وإدارة المدى,Range Science and Management,"","",1746,EF4B99A8-A131-49EB-A044-14B5F227BDC9
@@ -1764,16 +1621,13 @@ F5B9FCA8-4D65-4045-A910-B744E9CD24CD,Religion in society,الدين في الم�
 88F2711B-76B3-49E1-9252-810BB988A62B,Reprographic techniques,تقنيات النسخ,Reprographic techniques,"","",1763,DB3CECA1-2BA6-41B7-9A3E-D89D368AE44F
 5F85B4DD-8635-46FA-A946-9D259F62D16A,Research methods in psychology,طرق البحث في علم النفس,Research methods in psychology,"","",1764,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
 05E17448-2C7F-4C29-8435-0190F99F16DB,Respiratory Therapy,العلاج التنفسي,Respiratory Therapy,"","",1765,8E3B4DAF-9BCE-452A-A000-81355FF7FCE3
-A726F118-20DD-4331-92AD-65BA1DB26ACA,restoration,ترميم,restoration,"","",1766,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 087C2BC1-F132-4676-9226-A72A0B929B1C,Restoration,ترميم,Restoration,"","",1767,8947863D-C8BC-4697-A114-8918F4241B58
 38D9D4F6-3728-49F1-BDAB-0D4ED727F1BB,Retail management,إدارة البيع بالتجزئة,Retail management,"","",1768,6075F702-3633-401F-9F28-5B4C802FA648
 0270D627-77B9-42A3-A780-15E10B43A48F,Risk management,إدارة المخاطر,Risk management,"","",1769,6075F702-3633-401F-9F28-5B4C802FA648
 E29B8FDA-9313-4ACD-A489-AEF28889533A,Road vehicle engineering,هندسة مركبات الطرق,Road vehicle engineering,"","",1770,5DB7DE56-F67A-48CD-9089-46FB4E84D197
 07F14F33-8CBB-476F-A8A4-53BC05FE8ABB,Robotic Engineering,الهندسة الروبوتية,Robotic Engineering,"","",1771,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 729D382E-26A9-42B6-9FC5-7413052D37CE,Robotics,الروبوتات,Robotics,"","",1772,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
-49103254-6C16-4BDF-9964-F18012D9D281,Robotics & Artificial Intelligence,Robotics & Artificial Intelligence,Robotics & Artificial Intelligence,"","",1773,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 DEF94A1D-D180-49F9-9D48-821C93F047E0,Robotics & cybernetics,الروبوتات وعلم التحكم الآلي,Robotics & cybernetics,"","",1774,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
-8DADD490-4AF4-4D73-871C-7079D4C02864,Robotics and Artificial Intelligence,Robotics and Artificial Intelligence,Robotics and Artificial Intelligence,"","",1775,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 A942D6CA-5738-492C-AA00-32ADAC8A6524,Rock mechanics,ميكانيكا الصخور,Rock mechanics,"","",1776,ABD5340D-2F60-4C2A-ADBF-13D43BE28E62
 0A35B1B4-0D35-4CA7-BDBA-7879042D5355,Romanian Language,اللغة الرومانية,Romanian Language,"","",1777,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 DB65BCE3-970E-4263-BB8A-0F874498EDC2,Rural estate management,إدارة العقارات الريفية,Rural estate management,"","",1778,9D89556F-9EE5-4D31-9883-6A16F8EF09DE
@@ -1784,7 +1638,6 @@ E767D17E-7A5A-44F9-B24B-F4FF5C840C46,Rural planning,التخطيط الريفي,
 25AD4D29-775C-4B7D-B2A5-C74A9958E783,Safety engineering,هندسة السلامة,Safety engineering,"","",1783,A4E63C31-2522-498F-A2D1-160A4DE0C61F
 07E37496-7532-40AF-A411-C20900A565FF,Safety Management,إدارة السلامة,Safety Management,"","",1784,EF4B99A8-A131-49EB-A044-14B5F227BDC9
 0EE09115-1EC9-4D7B-8D6E-987608C32A63,"Safety, Health and Environmental Mangement ",إدارة السلامة والصحة والبيئة,"Safety, Health and Environmental Mangement ","","",1785,EF4B99A8-A131-49EB-A044-14B5F227BDC9
-A419DF04-443F-4B8E-BFEF-9C84EE1D8F45,Safty Engineering ,هندسة السلامة ,Safty Engineering ,"","",1786,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 79E77FC4-2151-4F30-B7EC-4BE2C93B385D,Sales management,إدارة المبيعات,Sales management,"","",1787,43817EFA-BADD-419E-8D15-1E388A7AB85F
 99AEAF23-772D-40A5-AEA9-A69CD6A2E956,Salon management,إدارة الصالون,Salon management,"","",1788,96D55527-8E7C-4FB8-8487-F27A5DAC0FAD
 574FD636-13F5-4F26-B085-A6D30F1292E4,Saltwater fish,أسماك المياه المالحة,Saltwater fish,"","",1789,9D89556F-9EE5-4D31-9883-6A16F8EF09DE
@@ -1828,7 +1681,6 @@ FDB4EC6E-85B1-4BA0-83C2-2BCA54291F3B,Ship design,تصميم السفينة,Ship 
 02585414-6625-43BC-B041-D1F20C8F02F9,"Shoe, Boot and Leather Repair",إصلاح الأحذية والأحذية والجلود,"Shoe, Boot and Leather Repair","","",1827,7695196F-70D0-4244-9B41-DD496FF40793
 F3C9D3E7-53E2-4C6F-A9A5-934A118943BA,Shorthand & shorthand transcription,الاختزال والنسخ المختصر,Shorthand & shorthand transcription,"","",1828,E9281E81-96F0-474B-B6D4-9F264FC2FC72
 447E12C1-3901-4683-BF21-6556D639949E,Silversmithing/goldsmithing,صياغة الفضة / صياغة الذهب,Silversmithing/goldsmithing,"","",1829,7695196F-70D0-4244-9B41-DD496FF40793
-F3314FFB-2124-4A0D-8DAE-E7F0096CA641,Skill Program,برنامج مهارة ,Skill Program,"","",1830,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 0CC602EE-E51B-4B7E-B480-053F07F08B0C,Slovak Language,اللغة السلوفاكية,Slovak Language,"","",1831,A49540BA-CF94-4C4F-ACBA-2CFF003B6DFA
 25F61B45-78DD-4C8B-AF87-BB7C278A6C4B,Social & cultural anthropology,الأنثروبولوجيا الاجتماعية والثقافية,Social & cultural anthropology,"","",1832,DDFBE911-31BD-4240-984F-282B08516D24
 04BA171C-B2F2-48B7-867A-09B7066FBC6B,Social and Behavioural Science,العلوم الاجتماعية والسلوكية,Social and Behavioural Science,"","",1833,53068239-3437-9508-3860-820022132875
@@ -1839,7 +1691,6 @@ A26038C8-53F9-4221-A8B2-A698BE0E8AA1,Social hierarchy,التسلسل الهرم�
 DBB37920-4CB8-475B-AF1E-28595487E54D,Social philosophy,الفلسفة الاجتماعية,Social philosophy,"","",1838,AF7BBC76-E253-457C-931F-1E6AD491DE55
 64D65E23-2E73-493D-9B47-7A355D6FE5FD,Social policy,السياسة الاجتماعية,Social policy,"","",1839,
 E4B6DE2F-FAAC-43E4-B7A4-DBCDF46ED9F0,Social policy,السياسة الاجتماعية,Social policy,"","",1840,64D65E23-2E73-493D-9B47-7A355D6FE5FD
-4BC88A19-3F9D-4CE2-AA68-56E5347415E1,Social Policy and Program Evaluation,Social Policy and Program Evaluation,Social Policy and Program Evaluation,"","",1841,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 EF2BACBF-521A-4F1C-9A7C-A0B95E996C13,Social psychology,علم النفس الاجتماعي,Social psychology,"","",1842,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
 927C60FE-2C0B-45F1-ACA4-06CD3A5D7EB7,Social Skills Programs,برامج المهارات الاجتماعية,Social Skills Programs,"","",1843,
 EE386B9D-B7C9-48EB-B1DD-4E322B452205,Social Skills Programs nec,برامج المهارات الاجتماعية غير المصنّفة في موضع آخر,Social Skills Programs nec,"","",1844,927C60FE-2C0B-45F1-ACA4-06CD3A5D7EB7
@@ -1884,25 +1735,18 @@ E90174ED-1B2E-447F-9D85-14AC05DE385A,Space & planetary sciences,علوم الف�
 B192A721-32E4-4E85-8BED-5C2ED95CAEBF,Sponsorship,الرعاية,Sponsorship,"","",1883,43817EFA-BADD-419E-8D15-1E388A7AB85F
 FE4CEC80-209F-4961-AEDB-738B91438612,Sport & exercise science,علم الرياضة والتمرين,Sport & exercise science,"","",1884,8EEFC790-92F6-4472-94B8-8F02D0F07688
 8EEFC790-92F6-4472-94B8-8F02D0F07688,Sport & exercise science,علم الرياضة والتمرين,Sport & exercise science,"","",1885,
-7E409A89-5BBE-4297-8553-81EA2A9AA70D,Sport and Entertainment Management,Sport and Entertainment Management,Sport and Entertainment Management,"","",1886,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-2492B340-B10E-41FA-A85A-B75D014021BB,Sport and Exercise Sciences,Sport and Exercise Sciences,Sport and Exercise Sciences,"","",1887,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-47AA1667-5F6B-447B-8130-07ED6AFE7AC8,Sport Business Management,Sport Business Management,Sport Business Management,"","",1888,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 64854351-2219-4D8A-BE1D-13B7A8B407CA,Sport coaching,التدريب الرياضي,Sport coaching,"","",1889,8EEFC790-92F6-4472-94B8-8F02D0F07688
 671612AC-6FB0-42E5-B82D-09000DAC85AA,"Sport conditioning, rehabilitation & therapy",التكييف الرياضي وإعادة التأهيل والعلاج,"Sport conditioning, rehabilitation & therapy","","",1890,8EEFC790-92F6-4472-94B8-8F02D0F07688
 ECB196CF-FA6D-4770-A64C-BDA50F14F36D,Sport development,تطوير الرياضة,Sport development,"","",1891,8EEFC790-92F6-4472-94B8-8F02D0F07688
-07F6D100-3B3C-4401-A95D-B4ED7A6E04C0,Sport Management  ,الادارة الرياضية ,Sport Management  ,"","",1892,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 12282875-641D-46E2-945E-99AB48CD079E,Sport management,إدارة الرياضة,Sport management,"","",1893,96D55527-8E7C-4FB8-8487-F27A5DAC0FAD
 751D2F5D-470D-405A-935C-C8A76308B49C,Sport psychology,علم النفس الرياضي,Sport psychology,"","",1894,0BA9E910-CF12-4040-B5FC-6D18F9A6D765
-AD5C785A-0AB9-4A98-93EE-D9825CAF4130,Sport science management ,الادارة والعلوم الرياضية ,Sport science management ,"","",1895,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 DAD233AF-0419-4EA2-A1DD-61BD315CD41D,Sport studies,دراسات رياضية,Sport studies,"","",1896,8EEFC790-92F6-4472-94B8-8F02D0F07688
 5E2F65A6-913C-4B53-A6D0-F7FEA2724D52,Sport technology,تكنولوجيا الرياضة,Sport technology,"","",1897,8EEFC790-92F6-4472-94B8-8F02D0F07688
 0FC3E030-AD16-4F7C-9D3B-B5C40EE11222,Sports and Fitness,الرياضة واللياقة البدنية,Sports and Fitness,"","",1898,8EEFC790-92F6-4472-94B8-8F02D0F07688
-EC427D5F-1E7A-4497-B76B-1519D1ADD49E,Sports Biomechanics,الميكانيكا الحيوية الرياضية,Sports Biomechanics,"","",1899,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 013F78DB-C441-40C3-A62C-31140BF7C658,Sports Biomechanics,الميكانيكا الحيوية الرياضية,Sports Biomechanics,"","",1900,A4E63C31-2522-498F-A2D1-160A4DE0C61F
 006FDEE4-2352-41B7-8C2A-F7390EAC831A,Sports Facilities and Venue Management,إدارة المنشآت والمرافق الرياضية ,Sports Facilities and Venue Management,"","",1901,96D55527-8E7C-4FB8-8487-F27A5DAC0FAD
 03221CFE-616A-4747-83DA-9C8F09EC41FE,Sports law,القانون الرياضي,Sports law,"","",1902,4F74D66E-F94C-4215-8EE6-20D8B2A0D2DE
 0CFACF35-FD7A-40FF-9647-C2030DD75E5D,Sports media,اعلام رياضي,Sports media,"","",1903,56ABF249-06C6-4AC0-91F3-E2586E3E3C0E
-8018E0F1-A8D5-464F-BFED-53DC5D3BFE44,Sports Psychology,علم النفس الرياضي,Sports Psychology,"","",1904,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 A8C29AB7-5C62-4570-8663-6CF53D5442FF,Staff development,تطوير الموظفين,Staff development,"","",1905,F7F7A906-A232-4DD6-81DB-1477A28264BD
 644A2B03-986A-47CC-AD97-53F14FEB2C82,Stage design,تصميم المرحلة,Stage design,"","",1906,27F76109-CE90-4F0B-A56C-AE5943612575
 E9CF6043-2607-4212-8546-3D0B1FF9FC1C,Stage management,إدارة المرحلة,Stage management,"","",1907,27F76109-CE90-4F0B-A56C-AE5943612575
@@ -1964,7 +1808,6 @@ C84CA793-EF80-4B13-854E-7667E34A8A43,Teacher Education: Early Childhood,تعلي
 2DED9287-5F89-41E7-B68C-6705E33F16E8,Teacher Education: Special Education,تعليم المعلمين: التربية الخاصة,Teacher Education: Special Education,"","",1963,6CB67E60-E96A-4EF1-85E6-FBFDCA9460E9
 1EF7FC53-FF72-4712-8CEC-DD7C863748DC,Teacher Education: Vocational Education and Training,تعليم المعلمين: التعليم والتدريب المهني,Teacher Education: Vocational Education and Training,"","",1964,6CB67E60-E96A-4EF1-85E6-FBFDCA9460E9
 5418DAE0-E17D-474B-A838-8F26B0AA75F9,Teacher Librarianship,مكتبة المعلم,Teacher Librarianship,"","",1965,6CB67E60-E96A-4EF1-85E6-FBFDCA9460E9
-E8F4332E-738D-40D8-84D0-093AD687F614,Teaching STEM,Teaching STEM,Teaching STEM,"","",1966,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 07875630-3381-40E4-B2AF-E9B90AD1829A,Technical and Business Writing,الكتابة الفنية والتجارية,Technical and Business Writing,"","",1967,E9281E81-96F0-474B-B6D4-9F264FC2FC72
 2D8972B7-E916-42E4-BF52-9BDB1F3E3E26,Technical arts & special effects for theatre,الفنون التقنية والمؤثرات الخاصة للمسرح,Technical arts & special effects for theatre,"","",1968,27F76109-CE90-4F0B-A56C-AE5943612575
 DEBC1DD6-5979-4052-80E6-1F0C84895B1B,Technical stage management,إدارة المرحلة الفنية,Technical stage management,"","",1969,27F76109-CE90-4F0B-A56C-AE5943612575
@@ -1976,7 +1819,6 @@ DEBC1DD6-5979-4052-80E6-1F0C84895B1B,Technical stage management,إدارة ال�
 52E3CB4D-86A6-44FE-986D-8BD0CFC8939C,Telecommunications and Network engineering Technology,تكنولوجيا هندسة الاتصالات والشبكات,Telecommunications and Network engineering Technology,"","",1975,5E0CFB10-3F40-44DE-BB4B-DBCCEF779F34
 BC863FBA-FD1C-4987-8FCD-2624FA126027,Television production,الإنتاج التلفزيوني,Television production,"","",1976,56ABF249-06C6-4AC0-91F3-E2586E3E3C0E
 46C438E3-241C-4B7C-A94A-E3C0AEF64676,Television studies,دراسات تلفزيونية,Television studies,"","",1977,56ABF249-06C6-4AC0-91F3-E2586E3E3C0E
-79B2FB2C-6A27-4564-B4D2-06B28CAF16E1,Temp F,Temp F,Temp F,"","",1978,
 B05AE4D9-417A-4E2C-91C0-10BED62FCCA5,Test main,Test main,Test main,"","",1979,
 41FFBFF8-50D7-426B-9998-20CB8EDAC34F,Test sub,Test sub,Test sub,"","",1980,B05AE4D9-417A-4E2C-91C0-10BED62FCCA5
 B2629D90-0E49-43A0-8271-702182440FB0,Textile chemistry,كيمياء النسيج,Textile chemistry,"","",1981,DA4B5B54-4E28-4E3C-94BF-4971F5FC955F
@@ -2051,13 +1893,10 @@ A8FACC78-EBC0-4582-8B31-291807906351,Urban studies,الدراسات الحضري
 0DE5C810-FBC0-4D2E-A8DF-09A2092DFFC9,Vehicle Emissions Inspection and MainteNULLce Technology,تقنية فحص وصيانة انبعاثات المركبات,Vehicle Emissions Inspection and MainteNULLce Technology,"","",2050,1445B371-EACD-45A1-8ACA-2318DF9F9893
 0C696D6A-1A60-436B-ADCA-B3F4A58BC7E5,Veneering,القشرة,Veneering,"","",2051,7695196F-70D0-4244-9B41-DD496FF40793
 04806646-5F15-4524-B157-2A6D06EE8A41,Veterinary Anaesthesiology,طب التخدير البيطري,Veterinary Anaesthesiology,"","",2052,9BA51219-2070-4110-8E2C-6C01300A10B1
-28AA2FCA-8452-4263-8F49-E19420ADEBF1,Veterinary and Biomedical Sciences,Veterinary and Biomedical Sciences,Veterinary and Biomedical Sciences,"","",2053,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 E6710866-A7DC-40B6-9365-01140CFC4772,Veterinary biochemistry,الكيمياء الحيوية البيطرية,Veterinary biochemistry,"","",2054,D697718A-D4C8-4388-9FFD-CEEFEF2C9572
-9BA2BB64-D0BC-4C6B-B571-F5B23A61C7F1,Veterinary Biosciences,Veterinary Biosciences,Veterinary Biosciences,"","",2055,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 08EAAA33-2306-4F6C-A075-2D3B0E4C0F8F,Veterinary Dermatology,طب الأمراض الجلدية البيطرية,Veterinary Dermatology,"","",2056,9BA51219-2070-4110-8E2C-6C01300A10B1
 C56C80EE-2534-4753-A1CB-11B77AE1FC6C,Veterinary genetics,الوراثة البيطرية,Veterinary genetics,"","",2057,52BC99F6-76CC-4C90-9A98-4603E9DF2FF1
 8A1333DE-9866-43E4-B04F-E4B333541E0B,Veterinary Medicine,الطب البيطري,Veterinary Medicine,"","",2058,44AF3AB9-7B6D-4DB3-BC97-5655FA0FC007
-7C82BE03-E319-4D9C-B489-BF021B216753,Veterinary Medicine and Science,Veterinary Medicine and Science,Veterinary Medicine and Science,"","",2059,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
 BDE38642-0891-4242-A7E3-D292B1C5BCFD,Veterinary microbiology,علم الأحياء الدقيقة البيطرية,Veterinary microbiology,"","",2060,9234841C-6F26-4470-963E-8594BC2CF961
 4E8878AB-373E-4A77-9C1D-5EA815A815B3,Veterinary nursing,التمريض البيطري,Veterinary nursing,"","",2061,44AF3AB9-7B6D-4DB3-BC97-5655FA0FC007
 030D5983-8018-4DA4-AE16-FB180ACCC569,Veterinary Ophthalmics,طب العيون البيطري,Veterinary Ophthalmics,"","",2062,9BA51219-2070-4110-8E2C-6C01300A10B1
@@ -2096,57 +1935,3 @@ CFFB65D1-7AC7-4610-90FA-DB4F27B5116D,Women's studies,دراسات المرأة,W
 88973643-B3D4-47DF-8E86-8F5DF17C510D,Work Practices Programs,برامج ممارسات العمل,Work Practices Programs,"","",2095,615C7CC3-4C76-416D-8FF3-E317000E045D
 03E39CF4-0FB0-4F13-BB52-72210F109BC8,Youth Activation,التنشيط الشبابي,Youth Activation,"","",2096,53068239-3437-9508-3860-820022132875
 1C3E637C-A336-4EE0-A027-041FDE02ADEA,Youth work,عمل الشباب,Youth work,"","",2097,C73D8BF3-FB18-4B10-931F-26B0B3A7CE2A
-815D547F-8ECB-46DF-BF63-F36A5F514535,اصول التربية ,اصول التربية,اصول التربية ,"","",2098,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-5A4ABCF1-F33B-4A9A-A6FE-8A16D52888FF,التصوير الإشعاعي الطبي ( اشعة صدر ),التصوير الإشعاعي الطبي ( اشعة صدر ),التصوير الإشعاعي الطبي ( اشعة صدر ),"","",2099,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-87DE29F4-CCC5-4CD5-AD9C-50A0A0249EE8,التصوير الإشعاعي الطبي ( الأشعة السينية / الفلوروسكوبية ) ,التصوير الإشعاعي الطبي ( الأشعة السينية / الفلوروسكوبية ) ,التصوير الإشعاعي الطبي ( الأشعة السينية / الفلوروسكوبية ) ,"","",2100,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-CC7CF490-EABD-455B-998D-5FF6B1E7C286,التصوير الإشعاعي الطبي ( التصوير بالرنين المغناطيسي )MRI,التصوير الإشعاعي الطبي ( التصوير بالرنين المغناطيسي )MRI,التصوير الإشعاعي الطبي ( التصوير بالرنين المغناطيسي )MRI,"","",2101,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-9174A0BE-717F-4CEA-98FD-152B22DC480D,الجغرافيا التطبيقية ونظم المعلومات الجغرافية,الجغرافيا التطبيقية ونظم المعلومات الجغرافية,الجغرافيا التطبيقية ونظم المعلومات الجغرافية,"","",2102,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-FBB64250-B8E2-4E8A-AEF6-1E118B5D1E36,الهندسه الكهربائيه والانظمه الذكيه,الهندسه الكهربائيه والانظمه الذكيه,الهندسه الكهربائيه والانظمه الذكيه,"","",2103,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-96F5291F-70E0-491B-9137-3B8753430C65,انظمه تشغيل ,انظمه تشغيل ,انظمه تشغيل ,"","",2104,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-CF011C27-677F-4A0F-AF72-692CD4E1FEDD,برمجه,برمجه,برمجه,"","",2105,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-92425E91-DF2F-431B-B4E1-28165FD3052D,بيولوجي - غير قطري,بيولوجي - غير قطري,بيولوجي - غير قطري,"","",2106,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-79CE3431-8B56-4334-A8BA-469D186026EA,تاريخ ,تاريخ ,تاريخ ,"","",2107,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-43919237-F09B-40B4-8F51-4F165A8BF130,تربية بدنية - قطري بنين,تربية بدنية - غير قطري,تربية بدنية - قطري بنين,"","",2108,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-18C35889-AF79-487C-AC04-0A235AECF70C,تربية عام,تربية عام ,تربية عام,"","",2109,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-FA2B3048-8629-4DAA-9B21-CBA60E505D95,تربية عام ,تربية عام,تربية عام ,"","",2110,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-DF395699-646A-4901-9D4C-73463CB07047,تربية عام - غير قطري ,تربية عام - غير قطري ,تربية عام - غير قطري ,"","",2111,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-BA8397C8-A527-4D51-9339-25BDC6E72907,تربية فنية - غير قطري ,تربية فنية - غير قطري ,تربية فنية - غير قطري ,"","",2112,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-B6BF0A34-9A2E-42F7-B34D-BB6AE3081BAB,تربية فنية - غير قطري ,تربية فنية - غير قطري ,تربية فنية - غير قطري ,"","",2113,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-9781D40E-6308-4F48-B809-902ED7C30325,تربية لغة انجليزية,تربية لغة انجليزية,تربية لغة انجليزية,"","",2114,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-8DC155B3-D366-46A4-8B5E-1D60E38A80AB,تصميم جرافيكس,تصميم جرافيكس,تصميم جرافيكس,"","",2115,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-25F27484-F434-46DD-8F37-345CC2AB088C,تغذية انسان - ابناء القطريات ,تغذية انسان - ابناء القطريات ,تغذية انسان - ابناء القطريات ,"","",2116,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-82E01655-095C-48BA-9A2E-2CD7DB0128EE,تكنولوجيا الهندسة الكهربائية ,تكنولوجيا الهندسة الكهربائية ,تكنولوجيا الهندسة الكهربائية ,"","",2117,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-85636D92-A4BF-437E-99F7-5E4071E1231F,تمريض - غير قطري ,تمريض - غير قطري ,تمريض - غير قطري ,"","",2118,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-594627A2-F610-45F3-AC07-C2BBEB5A7655,تمريض - غير قطري ,تمريض - غير قطري,تمريض - غير قطري ,"","",2119,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-1C4D949A-18C2-4602-A94E-25DDA7BE9FD6,دبلوم مشارك ,دبلوم مشارك ,دبلوم مشارك ,"","",2120,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-41A6AA7A-11E7-4550-8770-D9B00485992A,دراسات اجتماعية - غير قطري,دراسات اجتماعية - غير قطري,دراسات اجتماعية - غير قطري,"","",2121,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-CF6DCEC7-AFC4-4FF9-93EF-D848F2F596C6,دراسات اجتماعية - غير قطري بنين,دراسات اجتماعية - غير قطري بنين,دراسات اجتماعية - غير قطري بنين,"","",2122,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-19B8E889-0D50-4A47-B53B-0DA53A95650C,رياضيات وعلوم - غير قطري,رياضيات وعلوم - غير قطري,رياضيات وعلوم - غير قطري,"","",2123,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-9ECB768D-EA7A-4797-ABAC-3DDC460B33B2,شبكات,شبكات,شبكات,"","",2124,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-50A28C95-E4CA-47DF-956E-A24490AD588E,شبكات/انظمه تشغيل ,شبكات/انظمه تشغيل ,شبكات/انظمه تشغيل ,"","",2125,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-2CFAAEB6-F754-4FAC-A99B-52B77D86E3B5,صيدلة - ابناء قطريات ,صيدلة ابناء قطريات ,صيدلة - ابناء قطريات ,"","",2126,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-73BCFF36-96FD-4B62-908E-5095B64C93C3,طب - ابناء قطريات ,طب - ابناء قطريات ,طب - ابناء قطريات ,"","",2127,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-007DFF2A-1675-4971-83DD-C07BE2F501F2,"علم البيانات ,علوم الحاسب ","علم البيانات ,علوم الحاسب ","علم البيانات ,علوم الحاسب ","","",2128,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-66CDC095-4850-455D-B428-2CA57B6C8420,"علوم الحاسب ,الذكاء الاصطناعي ","علوم الحاسب ,الذكاء الاصطناعي ","علوم الحاسب ,الذكاء الاصطناعي ","","",2129,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-DB9131A5-2D98-48EF-AEE4-897384786C37,"علوم الحاسب ,هندسه البرمجيات ,الذكاء الاصطناعي ","علوم الحاسب ,هندسه البرمجيات ,الذكاء الاصطناعي ","علوم الحاسب ,هندسه البرمجيات ,الذكاء الاصطناعي ","","",2130,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-27CC2275-1C2D-4F41-8849-9CFB302B1A88,علوم السمع والنطق,علوم السمع والنطق,علوم السمع والنطق,"","",2131,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-F9E66B31-CE8D-4836-8FC2-B0DD479DB5AA,علوم حاسب آلي (معلم),علوم حاسب آلي (معلم),علوم حاسب آلي (معلم),"","",2132,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-90F03696-83C0-4B8D-A774-7D9FAAE85B1E,علوم حاسب آلي (معلم),علوم حاسب آلي (معلم),علوم حاسب آلي (معلم),"","",2133,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-3AC16892-E877-4EA6-BE32-A5F611BADC8E,علوم رياضة ,علوم رياضة ,علوم رياضة ,"","",2134,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-4ED39AD3-675E-4947-AD25-61E39A0F5305,علوم صحية عام ,علوم صحية عام ,علوم صحية عام ,"","",2135,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-3CEAEDE0-D7D4-4559-BC61-994B3CAC4366,علوم حيوية طبية ( استلام العينات ) ,علوم حيوية طبية ( استلام العينات ) ,علوم حيوية طبية ( استلام العينات ) ,"","",2136,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-3AE3A9FE-60F2-4126-A17A-6118351147C4,فني تقنية معلومات ,فني تقنية معلومات ,فني تقنية معلومات ,"","",2137,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-7961411D-A5A3-4308-9DCA-05F4316F4B44,لغه انجليزية - غير قطر ,لغه انجليزية - غير قطر ,لغه انجليزية - غير قطر ,"","",2138,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-55CD7BBC-AFC7-4030-997B-3806C7D3FA75,ماجستير الادب المقارن,ماجستير الادب المقارن,ماجستير الادب المقارن,"","",2139,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-6FF9F847-9DA8-45F3-959E-5680BEFA9246,ماجستير القيادة التربوية ,ماجستير القيادة التربوية ,ماجستير القيادة التربوية ,"","",2140,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-AB9E9DC0-F467-4EEB-8F61-441257DC342C,ماجستير في دراسات الاعلام,ماجستير في دراسات الاعلام,ماجستير في دراسات الاعلام,"","",2141,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-03E53E01-2051-458F-94A0-DE0DA5DA1B75,محاسبه,محاسبه,محاسبه,"","",2142,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-9F4B9F24-C01E-4A55-B2A1-A40253456748,معلم - مالية ,معلم - مالية ,معلم - مالية ,"","",2143,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-669944EB-8D58-4E9B-88C2-0C9B9A22BF01,معلم ( اداري ) ,معلم ( اداري ) ,معلم ( اداري ) ,"","",2144,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-28976F11-6EB0-4D6B-AAD5-DDB64F7BC97A,معلمة ادارة اعمال ,معلمة ادارة اعمال ,معلمة ادارة اعمال ,"","",2145,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-2238D56E-8737-4611-AFED-9003D273F9FB,"نظم المعلومات , نظم المعلومات الاداريه ","نظم المعلومات , نظم المعلومات الاداريه ","نظم المعلومات , نظم المعلومات الاداريه ","","",2146,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-07F1C11E-328C-4E8F-806F-20C12F90D982,"نظم المعلومات ,الذكاء الاصطناعي , هندسه البرمجيات ","نظم المعلومات ,الذكاء الاصطناعي , هندسه البرمجيات ","نظم المعلومات ,الذكاء الاصطناعي , هندسه البرمجيات ","","",2147,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-3668B019-B15C-423D-9700-F907810DE89C,نظم المعلومات الجغرافية,نظم المعلومات الجغرافية,نظم المعلومات الجغرافية,"","",2148,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-C22CEF5D-4A03-4C46-A1A3-770B834CB6C7,نظم معلومات / أمن سحابي ,نظم معلومات / أمن سحابي ,نظم معلومات / أمن سحابي ,"","",2149,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-4796C1EB-90E5-4F28-A8BF-E3F688E0A608,نظم معلومات / أمن سيبراني ,نظم معلومات / أمن سيبراني ,نظم معلومات / أمن سيبراني ,"","",2150,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1
-73C24C70-41DA-4E58-A8A1-7209B15677E7,هندسة حاسب آلي (معلم),هندسة حاسب آلي (معلم),هندسة حاسب آلي (معلم),"","",2151,79B2FB2C-6A27-4564-B4D2-06B28CAF16E1

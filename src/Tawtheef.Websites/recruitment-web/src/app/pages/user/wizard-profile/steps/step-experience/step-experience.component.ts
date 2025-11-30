@@ -32,7 +32,7 @@ export class StepExperienceComponent {
     const ref = this.dialog.open(ExperienceModal, {
       header: this.translate.instant('wizard.experience.add'),
       width: '50%',
-      contentStyle: { 'max-height': '80vh', overflow: 'visible' },
+      contentStyle: { 'max-height': '80vh', overflow: 'scroll' },
       baseZIndex: 10000,
       closable: true,
     });
@@ -49,7 +49,7 @@ export class StepExperienceComponent {
     const ref = this.dialog.open(ExperienceModal, {
       header: this.translate.instant('wizard.experience.edit'),
       width: '50%',
-      contentStyle: { 'max-height': '80vh', overflow: 'visible' },
+      contentStyle: { 'max-height': '80vh', overflow: 'scroll' },
       baseZIndex: 10000,
       closable: true,
       data: {
@@ -76,7 +76,7 @@ export class StepExperienceComponent {
     const ref = this.dialog.open(CourseModal, {
       header: this.translate.instant('wizard.courses.add'),
       width: '50%',
-      contentStyle: { 'max-height': '80vh', overflow: 'visible' },
+      contentStyle: { 'max-height': '80vh', overflow: 'scroll' },
       baseZIndex: 10000,
       closable: true,
     });
@@ -93,7 +93,7 @@ export class StepExperienceComponent {
     const ref = this.dialog.open(CourseModal, {
       header: this.translate.instant('wizard.courses.edit'),
       width: '50%',
-      contentStyle: { 'max-height': '80vh', overflow: 'visible' },
+      contentStyle: { 'max-height': '80vh', overflow: 'scroll' },
       baseZIndex: 10000,
       closable: true,
       data: {
@@ -120,7 +120,7 @@ export class StepExperienceComponent {
     const ref = this.dialog.open(AchievementModal, {
       header: this.translate.instant('wizard.achievement.add'),
       width: '50%',
-      contentStyle: { 'max-height': '80vh', overflow: 'visible' },
+      contentStyle: { 'max-height': '80vh', overflow: 'scroll' },
       baseZIndex: 10000,
       closable: true,
     });
@@ -137,7 +137,7 @@ export class StepExperienceComponent {
     const ref = this.dialog.open(AchievementModal, {
       header: this.translate.instant('wizard.achievement.edit'),
       width: '50%',
-      contentStyle: { 'max-height': '80vh', overflow: 'visible' },
+      contentStyle: { 'max-height': '80vh', overflow: 'scroll' },
       baseZIndex: 10000,
       closable: true,
       data: {

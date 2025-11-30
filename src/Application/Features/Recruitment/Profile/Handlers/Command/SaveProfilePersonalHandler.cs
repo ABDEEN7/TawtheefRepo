@@ -1,5 +1,6 @@
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,8 +11,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfilePersonalHandler(
-    IUnitOfWork uow,
-    UserManager<User> userManager
+    IUnitOfWork uow, IMediator mediator,UserManager<User> userManager
     ) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePersonalCommand cmd, CancellationToken ct)
@@ -21,17 +21,11 @@ public sealed class SaveProfilePersonalHandler(
         
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var profile = await profileRepo.DbSet
-            .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
+            .Include(p => p.SponsorProfile)
+            .SingleOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
-        {
-            profile = new UserProfile
-            {
-                UserId  = cmd.UserId,
-                IsDraft = true
-            };
-            await profileRepo.AddAsync(profile);
-        }
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
         var r = cmd.Request;
 
@@ -50,23 +44,46 @@ public sealed class SaveProfilePersonalHandler(
         profile.DisabilityDetails = r.DisabilityDetails;
 
 
-        if (!string.IsNullOrWhiteSpace(r.SponsorEmployerName) &&
-            !string.IsNullOrWhiteSpace(r.SponsorEmployerNumber) &&
-            !string.IsNullOrWhiteSpace(r.SponsorCardFileName) &&
-            !string.IsNullOrWhiteSpace(r.SponsorCardResourceId?.ToString()))
+        if (!string.IsNullOrWhiteSpace(r.SponsorEmployerName) && !string.IsNullOrWhiteSpace(r.SponsorEmployerNumber))
         {
-            profile.SponsorProfile = new SponsorProfile
+            var idResult = await UploadIfNeededAsync(r.SponsorCard, profile.SponsorProfile?.SponsorCardId);
+            if (idResult.IsFailed)
+                return Result.Fail<Unit>(idResult.Errors);
+            
+            if (profile.SponsorProfile is null)
             {
-                SponsorTypeId = r.SponsorTypeId!.Value,
-                SponsorName = r.SponsorEmployerName,
-                SponsorNumber = r.SponsorEmployerNumber,
-                SponsorCardId = r.SponsorCardResourceId
-            };
+                profile.SponsorProfile = new SponsorProfile
+                {
+                    SponsorName = r.SponsorEmployerName,
+                    SponsorNumber = r.SponsorEmployerNumber,
+                    SponsorCardId = idResult.Value
+                };
+            }
+            else
+            {
+                profile.SponsorProfile.SponsorName = r.SponsorEmployerName;
+                profile.SponsorProfile.SponsorNumber = r.SponsorEmployerNumber;
+                profile.SponsorProfile.SponsorCardId = idResult.Value;
+            }
+            
         }
 
         profile.IsDraft = true;
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
+        
+        
+        async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId)
+        {
+            if (file is null || file.Length == 0)
+                return Result.Ok(existingId);
+
+            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), ct);
+            if (uploadResult.IsFailed)
+                return Result.Fail<Guid?>(uploadResult.Errors);
+
+            return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        }
     }
 }
