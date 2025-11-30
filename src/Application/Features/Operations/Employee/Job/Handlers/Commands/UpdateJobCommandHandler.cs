@@ -25,7 +25,7 @@ public class UpdateJobCommandHandler(
     {
         var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.Job.Id);
         if (existingJobResult.IsFailed || existingJobResult.Value == null)
-            return Result.Fail<Unit>(JobValidationMessages.JobNotFound);
+            return Result.Fail<Unit>(JobValidationMessages.JOB_NOT_FOUND);
         
         var existingJob = existingJobResult.Value;
             return await unitOfWork.ExecuteInTransactionAsync(async (ct) =>
@@ -35,7 +35,7 @@ public class UpdateJobCommandHandler(
                 await UpdateCollectionsAsync(existingJob, request.Job);
                 
                var result = await unitOfWork.SaveChangesAsync(ct);
-                return result == 0 ? Result.Fail<Unit>($"{JobValidationMessages.UpdateFailed}") : Result.Ok(Unit.Value);
+                return result == 0 ? Result.Fail<Unit>(JobValidationMessages.UPDATE_FAILED) : Result.Ok(Unit.Value);
             }, cancellationToken);
 
     }

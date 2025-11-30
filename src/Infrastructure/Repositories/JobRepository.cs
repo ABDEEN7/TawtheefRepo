@@ -65,6 +65,6 @@ public class JobRepository (IGenericRepository<Job> repository) : BaseRepository
             .ThenInclude(q => q!.ResidentsBreakdowns).ThenInclude(rs=>rs.Nationality)
             .FirstOrDefaultAsync(j => j.Id == id);
 
-        return job is null ? Result.Fail<Job>(JobValidationMessages.JobNotFound) : Result.Ok(job);
+        return job is null ? Result.Fail<Job>(JobValidationMessages.JOB_NOT_FOUND) : Result.Ok(job);
     }
 }

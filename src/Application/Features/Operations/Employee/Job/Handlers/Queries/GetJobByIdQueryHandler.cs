@@ -22,7 +22,7 @@ public class GetJobByIdQueryHandler(IJobRepository jobRepository,IMapper mapper)
         var job = result.Value;
 
         if (job is null)
-            return Result.Fail<JobResponseDto>(JobValidationMessages.JobNotFound);
+            return Result.Fail<JobResponseDto>(JobValidationMessages.JOB_NOT_FOUND);
         
         var jobDto = mapper.Map<JobResponseDto>(job);
 
