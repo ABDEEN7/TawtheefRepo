@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 
 public sealed class SaveProfileContactRequest
@@ -13,10 +15,9 @@ public sealed class SaveProfileContactRequest
 
 public sealed class NationalAddressDto
 {
-    public int? Zone { get; set; }
-    public int? Street { get; set; }
-    public int? Building { get; set; }
-    public int? Unit { get; set; }
-    public string? NationalAddressFileName { get; set; }
-    public Guid? NationalAddressResourceId { get; set; }
+    public int Zone { get; set; }
+    public int Street { get; set; }
+    public int Building { get; set; }
+    public int Unit { get; set; }
+    public required IFormFile NationalAddress { get; set; }
 }

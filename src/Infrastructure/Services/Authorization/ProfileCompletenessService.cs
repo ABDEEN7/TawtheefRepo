@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Users;
@@ -42,50 +41,21 @@ public sealed class ProfileCompletenessService(
             .Include(p => p.TrainingCourses)!.ThenInclude(a => a.Certificate)
             .FirstOrDefaultAsync(p => p.UserId == userId, ct);
         
-        var missing = new List<string>();
 
         // ===== 1) لا يوجد UserProfile إطلاقاً =====
         if (profile is null)
         {
-            missing.AddRange(new[]
-            {
-                "candidateTypeId", "targetEntityId", "nationalityId", "maritalStatusId",
-                "birthDate", "residenceCountryId", "address", "nationalNumber"
-            });
-
             return new ProfileStatusDto
             {
                 IsComplete = false,
-                IsDraft    = false,
-                Missing    = missing.ToArray()
+                IsDraft    = false
             };
         }
-
-        // ===== 2) Profile موجود لكن Draft =====
-        if (profile.IsDraft)
-        {
-            missing.Add("draft");
-        }
-
-        // ===== 3) Checks للحقول المطلوبة (مثال، عدّل حسب البزنس) =====
-        if (profile.CandidateTypeId == Guid.Empty)            missing.Add("candidateTypeId");
-        if (profile.TargetEntityId == Guid.Empty)             missing.Add("targetEntityId");
-        if (profile.NationalityId is null
-            || profile.NationalityId == Guid.Empty)           missing.Add("nationalityId");
-        if (profile.MaritalStatusId is null
-            || profile.MaritalStatusId == Guid.Empty)         missing.Add("maritalStatusId");
-        if (profile.BirthDate is null)                        missing.Add("birthDate");
-        if (profile.ResidenceCountryId is null
-            || profile.ResidenceCountryId == Guid.Empty)      missing.Add("residenceCountryId");
-        if (string.IsNullOrWhiteSpace(profile.Address))       missing.Add("address");
-        if (string.IsNullOrWhiteSpace(profile.NationalNumber)) missing.Add("nationalNumber");
-
-        bool isComplete = missing.Count == 0;
+        bool isComplete = profile.IsCompleted();
         // Additional attachments
         var additional = profile.AdditionalAttachments?
             .Where(a => a.Attachment != null)
-            .Select(a => new AdditionalAttachmentDto
-            {
+            .Select(a => new AdditionalAttachmentDto {
                 Id    = a.Id,
                 Title = a.FileName,
                 File  = ToFileRefNonNull(a.Attachment!)
@@ -94,15 +64,18 @@ public sealed class ProfileCompletenessService(
 
         // Qualifications
         var qualifications = profile.Qualifications?
-            .Select(q => new QualificationDto
-            {
-                Id             = q.Id,
-                DegreeId       = q.LevelId,
-                DegreeName     = q.Level?.GetLocalizedName("ar"),
-                Major          = q.Major?.GetLocalizedName("ar"),
-                UniversityName = q.University?.GetLocalizedName("ar"),
+            .Select(q => new QualificationDto {
+                Id = q.Id,
+                DegreeId = q.DegreeId,
+                GradCountryId = q.CountryId,
+                UniversityId = q.UniversityId,
+                MajorId = q.MajorId,
+                SubMajorId = q.SubMajorId,
                 GraduationYear = q.GraduationYear,
-                Attachment     = ToFileRef(q.Certificate)
+                StudyTypeId = q.StudyTypeId,
+                Gpa = q.GPA,
+                GradeId = q.CertificateId,
+                Attachment = ToFileRef(q.Certificate)
             })
             .ToList();
 
@@ -159,8 +132,6 @@ public sealed class ProfileCompletenessService(
         {
             IsComplete = isComplete,
             IsDraft    = profile.IsDraft,
-            Missing    = missing.ToArray(),
-
             Avatar = user.Avatar ?? prefill.Avatar,
             FullNameAr = string.IsNullOrWhiteSpace(user.FullNameAr) ? prefill.FullName : user.FullNameAr,
             FullNameEn = string.IsNullOrWhiteSpace(user.FullNameEn) ? prefill.FullName : user.FullNameEn,
@@ -235,7 +206,7 @@ public sealed class ProfileCompletenessService(
         var claims = await userManager.GetClaimsAsync(user);
         string? C(string type) => claims.FirstOrDefault(c => c.Type == type)?.Value;
 
-        // Google claims come as "google:xxx", QatarPass as "qatarpass:xxx" (from your code)
+        // Google claims to come as "google:xxx", QatarPass as "qatarpass:xxx" (from your code)
         var email      = C("google:email");
         var fullName   = C("google:name");
         var picture    = C("google:picture") ?? user.Avatar;

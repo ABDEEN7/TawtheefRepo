@@ -4,7 +4,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { ProfileState } from '../../models/profile-state.model';
-import {CandidateType, MaritalStatus} from '../../../../../core/enums/lookups.enum';
+import {CandidateType, MaritalStatus, SponsorType} from '../../../../../core/enums/lookups.enum';
 import {mapPersonalSection} from '../../services/profile.mapper';
 import {finalize} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
@@ -36,7 +36,7 @@ export class StepPersonalComponent {
   }
 
   savingPersonal = false;
-  uploadingSponsor = false;
+  private sponsorCardLocalFile: File | null = null;
   get isNeedSponsor(){
     return [CandidateType.ResidentQatar].includes(
       this.ds.state().candidateType?.backendName as CandidateType
@@ -71,30 +71,16 @@ export class StepPersonalComponent {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-
-    this.uploadingSponsor = true;
-
-    this.profileService.uploadFile(file)
-      .pipe(finalize(() => {
-        this.uploadingSponsor = false;
-        input.value = '';
-      }))
-      .subscribe({
-        next: (ref) => {
-          this.ds.up('sponsorCardFile', ref);
-        },
-        error: err => {
-          console.error(err);
-        }
-      });
+    this.sponsorCardLocalFile = file;
+    this.ds.up('sponsorCardFile', { resourceId: 'local', fileName: file.name } as any);
+    input.value = '';
   }
   onNext() {
     if (!this.step.valid) {
-      const firstError = this.step.errors[0];
       this.messageService.add({
         severity: 'error',
         summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant(firstError.i18nKey),
+        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
         life: 5000,
       });
       return;
@@ -105,7 +91,8 @@ export class StepPersonalComponent {
 
     this.savingPersonal = true;
 
-    this.profileService.savePersonalSection(dto)
+    this.profileService
+      .savePersonalSection(dto, { sponsorCardFile: this.sponsorCardLocalFile })
       .pipe(finalize(() => this.savingPersonal = false))
       .subscribe({
         next: () => {
@@ -118,4 +105,5 @@ export class StepPersonalComponent {
   }
 
   protected readonly dateToDateOnly = dateToDateOnly;
+  protected readonly SponsorType = SponsorType;
 }

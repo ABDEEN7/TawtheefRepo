@@ -1,16 +1,23 @@
 ﻿{
   "validation": {
-    "required": "هذا الحقل مطلوب",
-    "range": "القيمة يجب أن تكون بين {{min}} و {{max}}",
-    "yearRange": "سنة التخرج يجب أن تكون بين {{min}} و {{max}}",
-    "fileType": "الملف يجب أن يكون صورة أو PDF",
-    "fileSize": "حجم الملف يتجاوز الحد المسموح (1MB)",
+    "required": "This field is required",
+    "range": "Value must be between {{min}} and {{max}}",
+    "yearRange": "Graduation year must be between {{min}} and {{max}}",
+    "fileType": "File must be an image or PDF",
+    "fileSize": "File size exceeds the allowed limit (1MB)",
     "requiredEmail": "Email is required.",
     "invalidEmail": "Please enter a valid email address.",
     "requiredPassword": "Password is required.",
     "minLengthPassword": "Password must be at least {{min}} characters.",
     "phoneInvalid": "Please enter a valid phone number.",
-    "emailInvalid": "The email verification code is invalid."
+    "emailInvalid": "The email verification code is invalid.",
+    "invalidPhone": "Invalid mobile number.",
+    "invalidDate": "Invalid date.",
+    "minLength": "Must be at least {{min}} characters.",
+    "maxLength": "Must be at most {{max}} characters.",
+    "invalidFileType": "Unsupported file type.",
+    "maxFileSize": "File size must not exceed {{size}} MB.",
+    "dateRange": "End date must be after start date."
   },
   "common": {
     "ar": "عربي",

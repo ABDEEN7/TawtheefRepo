@@ -12,18 +12,6 @@ export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestM
     submit: false,
     candidateTypeId: state.candidateType!.id,
     targetEntityId: state.targetEntity!.id,
-
-    cvResourceId: state.cvFile?.resourceId ?? null,
-    cvFileName: state.cvFile?.resourceName ?? state.cvName ?? null,
-
-    idResourceId: state.idFile?.resourceId ?? null,
-    idFileName: state.idFile?.resourceName ?? state.idName ?? null,
-
-    birthCertResourceId: state.birthCertificateFile?.resourceId ?? null,
-    birthCertFileName: state.birthCertificateFile?.resourceName ?? state.birthCertificateName ?? null,
-
-    marriageCertResourceId: state.marriageCertificateFile?.resourceId ?? null,
-    marriageCertFileName: state.marriageCertificateFile?.resourceName ?? state.marriageCertificateName ?? null,
   };
 }
 export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequestDto {
@@ -47,8 +35,6 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
     sponsorEmployerName: state.sponsorEmployerName ?? null,
     sponsorEmployerNumber: state.sponsorEmployerNumber ?? null,
     sponsorTypeId: state.sponsorType?.id ?? null,
-    sponsorCardResourceId: state.sponsorCardFile?.resourceId ?? null,
-    sponsorCardFileName: state.sponsorCardFile?.resourceName ?? state.sponsorCardFileName ?? null,
   };
 }
 export function mapContactSection(state: ProfileState): SaveProfileContactRequestDto {
@@ -72,8 +58,6 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
         street: state.naStreet ?? null,
         building: state.naBuilding ?? null,
         unit: state.naUnit ?? null,
-        nationalAddressFileName: state.naFile?.resourceName ?? state.naFileName ?? null,
-        nationalAddressResourceId: state.naFile?.resourceId ?? null,
       } : null,
   };
 }
@@ -151,15 +135,17 @@ export function mapProfileStatusToState(
 
     // ----------- Collections -----------
     degrees: (dto.qualifications ?? []).map(q => ({
-      id: q.id,
-      levelId: q.degreeId ?? '',
-      level: q.degreeName ?? '',
-      majorId: q.major ?? '',
-      major: q.major ?? undefined,
-      uniId: q.universityName ?? undefined,
-      uni: q.universityName ?? undefined,
-      graduationYear: q.graduationYear ?? undefined,
-      attachment: mapFile(q.attachment),
+      degree:  mapIdToDropdown(lookups, 'degree', q.degreeId),
+      gradCountry: mapIdToDropdown(lookups, 'graduationCountry', q.gradCountryId),
+      university: mapIdToDropdown(lookups, 'university', q.universityId),
+      major: mapIdToDropdown(lookups, 'major', q.majorId),
+      subMajor: mapIdToDropdown(lookups, 'major', q.subMajorId),
+      gradYear: q.graduationYear!,
+      studySystem: mapIdToDropdown(lookups, 'studyType', q.studyTypeId),
+      gpa: q.gpa!,
+      grade: mapIdToDropdown(lookups, 'ratingGrade', q.gradeId),
+      certificate: mapFile(q.attachment),
+      attachmentId: q.attachment?.resourceId,
     })),
 
     experiences: (dto.experiences ?? []).map(e => ({

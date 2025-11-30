@@ -17,20 +17,11 @@ $muted:       #8a94a3;
   border: 1px solid $border;
 }
 
-/* inputs rounded + compact like screenshot */
-:host ::ng-deep .p-dropdown,
-:host ::ng-deep .p-inputnumber,
-:host ::ng-deep input[pInputText] {
-  width: 100%;
-  .p-inputtext { width: 100%; }
-}
-
 :host ::ng-deep .p-inputtext,
 :host ::ng-deep .p-dropdown,
 :host ::ng-deep .p-inputnumber .p-inputtext {
   border: 1px solid $border;
   border-radius: 14px;
-  height: 44px;
   padding-inline: 12px;
   background-color: #fff;
   box-shadow: none;
@@ -49,6 +40,5 @@ $muted:       #8a94a3;
   background: linear-gradient(135deg, $brand-start, $brand-end);
   border: none;
   border-radius: 999px;
-  height: 44px;
   font-weight: 800;
 }

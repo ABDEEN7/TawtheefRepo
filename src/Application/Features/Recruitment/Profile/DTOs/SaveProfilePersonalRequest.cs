@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 
 public sealed class SaveProfilePersonalRequest
@@ -18,9 +20,8 @@ public sealed class SaveProfilePersonalRequest
     public bool HasDisability { get; set; }
     public string? DisabilityDetails { get; set; }
 
+    public Guid? SponsorTypeId { get; set; }
     public string? SponsorEmployerName { get; set; }
     public string? SponsorEmployerNumber { get; set; }
-    public string? SponsorCardFileName { get; set; }
-    public Guid? SponsorCardResourceId { get; set; }
-    public Guid? SponsorTypeId { get; set; }
+    public IFormFile? SponsorCard { get; set; }
 }

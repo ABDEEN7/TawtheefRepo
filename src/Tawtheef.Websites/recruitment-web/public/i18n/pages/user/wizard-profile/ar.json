@@ -17,17 +17,6 @@
     "progress": {
       "label": "نسبة اكتمال الملف"
     },
-    "validation": {
-      "required": "هذا الحقل مطلوب.",
-      "invalidPhone": "رقم الجوال غير صالح.",
-      "invalidDate": "التاريخ غير صالح.",
-      "minLength": "يجب أن يكون الطول الأدنى {{min}} أحرف.",
-      "maxLength": "يجب ألا يتجاوز الطول الأقصى {{max}} أحرف.",
-      "invalidEmail": "البريد الإلكتروني غير صالح.",
-      "invalidFileType": "نوع الملف غير مدعوم.",
-      "maxFileSize": "حجم الملف يجب ألا يتجاوز {{size}} ميغابايت.",
-      "dateRange": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء."
-    },
     "buttons": {
       "prev": "السابق",
       "next": "التالي",
@@ -44,10 +33,18 @@
       "hasDisability": "هل لديك إعاقة؟",
       "disabilityType": "نوع الإعاقة",
       "sponsorType": "نوع الكفيل",
-      "sponsorEmployerName": "اسم المنشأة",
-      "sponsorEmployerNumber": "رقم المنشأة (وزارة العمل)",
-      "sponsorCard": "بطاقة قيد المنشأة",
-      "sponsorCardHint": "قم برفع صورة بطاقة قيد المنشأة (JPG, PNG, PDF)",
+      "sponsor": {
+        "company": {
+          "name": "اسم المنشأة",
+          "qid": "رقم المنشأة (وزارة العمل)",
+          "card": "بطاقة قيد المنشأة"
+        },
+        "individual": {
+          "name": "اسم الكفيل",
+          "qid": "رقم البطاقة الشخصية للكفيل",
+          "card": "بطاقة قيد الكفيل"
+        }
+      },
       "avatar": {
         "alt": "الصورة الشخصية",
         "hint": "أكمل بيانات ملفك الشخصي للتمكن من التقديم على الوظائف.",
@@ -138,14 +135,15 @@
     },
     "degrees": {
       "title": "المؤهلات",
-      "degree": "الدرجة",
+      "degree": "الدرجة العلمية",
       "major": "التخصص",
+      "main-major": "التخصص الرئيسي",
       "university": "الجامعة",
-      "gradYear": "سنة",
+      "gradYear": "سنة التخرج",
       "gradCountry": "بلد التخرج",
       "degreeFile": "شهادة المؤهل",
       "studySystem": "نظام الدراسة",
-      "gpa": "المعدل التراكمي",
+      "gpa": "المعدل",
       "grade": "التقدير",
       "choiceDegree": "اختر الدرجة",
       "choiceGradCountry": "اختر بلد التخرج",
@@ -333,7 +331,11 @@
         "phoneVerified": { "required": "يرجى توثيق رقم الجوال" },
         "email": { "required": "يرجى إدخال البريد الإلكتروني" },
         "emailVerified": { "required": "يرجى توثيق البريد الإلكتروني" },
-        "address": { "required": "يرجى إدخال العنوان" }
+        "address": { "required": "يرجى إدخال العنوان" },
+        "naZone": { "required": "يرجى إدخال المنطقة في العنوان الوطني" },
+        "naStreet": { "required": "يرجى إدخال الشارع في العنوان الوطني" },
+        "naBuilding": { "required": "يرجى إدخال المبنى في العنوان الوطني"},
+        "naFile": { "required": "يرجى إرفاق وثيقة العنوان الوطني" }
       },
       "degrees": {
         "atLeastOne": { "required": "يجب إضافة مؤهل علمي واحد على الأقل" }

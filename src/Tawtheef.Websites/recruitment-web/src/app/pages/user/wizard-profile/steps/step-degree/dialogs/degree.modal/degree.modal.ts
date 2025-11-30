@@ -11,13 +11,13 @@ import {
 } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { InputNumber } from 'primeng/inputnumber';
-import { FileUpload } from 'primeng/fileupload';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { NgClass, NgIf } from '@angular/common';
 import { ProfileLookupsService } from '../../../../services/profile-lookups.service';
+import {Degree} from '../../../../models/degree.model';
 
 @Component({
   selector: 'app-qualification',
@@ -25,107 +25,108 @@ import { ProfileLookupsService } from '../../../../services/profile-lookups.serv
     ReactiveFormsModule,
     Button,
     InputNumber,
-    FileUpload,
     TranslatePipe,
     Select,
     DatePicker,
     NgClass,
     NgIf,
   ],
-  templateUrl: './qualification.modal.html',
-  styleUrl: './qualification.modal.scss',
+  templateUrl: './degree.modal.html',
+  styleUrl: './degree.modal.scss',
 })
-export class QualificationModal implements OnInit {
+export class DegreeModal implements OnInit {
   private fb = inject(FormBuilder);
-  private ref = inject(DynamicDialogRef);
   private config = inject(DynamicDialogConfig);
   private translate = inject(TranslateService);
-  protected lookpus = inject(ProfileLookupsService);
+  protected lookups = inject(ProfileLookupsService);
+  protected ref = inject(DynamicDialogRef);
 
   minYear = 1970;
   maxYear = new Date().getFullYear();
   yearError = false;
 
+  degreeFile: File | null = null;
   maxFileSize = 1_000_000; // 1MB
   fileError: string | null = null;
   allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
-
-  form: FormGroup = this.fb.group({
-    degree: [null, Validators.required],
-    gradCountry: [null, Validators.required],
-    university: [null, Validators.required],
-    major: [null, Validators.required],
-    gradYear: [
-      null,
-      [Validators.required /* + range check يدوي عبر yearError */],
-    ],
-    studySystem: [null, Validators.required],
-    gpa: [
-      null,
-      [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)],
-    ],
-    grade: [null, Validators.required],
-    degreeFile: [null],
-  });
-
   ngOnInit() {
     if (this.config.data && this.config.data.initialValue) {
       this.form.patchValue(this.config.data.initialValue);
     }
   }
+  form: FormGroup = this.fb.group({
+    degree: [null, Validators.required],
+    gradCountry: [null, Validators.required],
+    university: [null, Validators.required],
+    major: [null, Validators.required],
+    subMajor: [null, Validators.required],
+    gradYear: [null, [Validators.required]],
+    studySystem: [null, Validators.required],
+    gpa: [null,[Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+    grade: [null, Validators.required],
+    degreeFileName: [null, Validators.required],
+  });
 
-  onUpload(evt: any): void {
+  // onUpload كما هي عندك تقريباً (مع تصحيح بسيط)
+  onUpload(evt: Event): void {
     this.fileError = null;
-    const file: File | undefined = evt?.files?.[0];
+    const input = evt.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
     if (!file) return;
 
     if (!this.allowedTypes.includes(file.type)) {
       this.fileError =
         this.translate.instant('validation.fileType') +
         ': PDF, PNG, JPEG, WEBP';
-      this.form.patchValue({ degreeFile: null });
+      this.degreeFile = null;
+      this.form.patchValue({ degreeFileName: null });
+      input.value = '';
       return;
     }
 
     if (file.size > this.maxFileSize) {
-      this.fileError =
-        this.translate.instant('validation.fileSize', {
-          size: this.maxFileSize / 1_000_000,
-        }) + 'MB';
-      this.form.patchValue({ degreeFile: null });
+      this.fileError = this.translate.instant('validation.fileSize', {
+        size: this.maxFileSize / 1_000_000,
+      }) + 'MB';
+      this.degreeFile = null;
+      this.form.patchValue({ degreeFileName: null });
+      input.value = '';
       return;
     }
 
-    this.form.patchValue({ degreeFile: file });
-  }
-
-  clearFile(): void {
-    this.form.patchValue({ degreeFile: null });
     this.fileError = null;
+    this.degreeFile = file;
+    this.form.patchValue({ degreeFileName: file.name });
+    input.value = '';
   }
 
   onSave() {
-    if (this.form.invalid || this.yearError || !this.form.value.degreeFile) {
+    if (this.form.invalid || this.yearError || !this.degreeFile) {
       this.form.markAllAsTouched();
       return;
     }
-
     const raw = this.form.value;
 
+    const gradYear =
+      raw.gradYear instanceof Date
+        ? raw.gradYear.getFullYear()
+        : new Date(raw.gradYear as any).getFullYear();
+
     const payload = {
-      ...raw,
-      gradYear: raw.gradYear
-        ? (raw.gradYear instanceof Date
-          ? raw.gradYear.getFullYear()
-          : new Date(raw.gradYear as any).getFullYear())
-        : null,
-    };
+      degree: raw.degree,
+      gradCountry: raw.gradCountry,
+      university: raw.university,
+      major: raw.major,
+      subMajor: raw.subMajor,
+      gradYear,
+      studySystem: raw.studySystem,
+      gpa: +raw.gpa,
+      grade: raw.grade,
+      fileName: raw.degreeFileName,
+      file: this.degreeFile as File,
+    } as Degree;
 
     this.ref.close(payload);
-  }
-
-  onCancel() {
-    this.ref.close();
   }
 
   validateYear(): void {

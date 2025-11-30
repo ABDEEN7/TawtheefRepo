@@ -23,17 +23,15 @@ export class StepFirstInfoComponent {
   profile   = inject(ProfileService);
   messageService   = inject(MessageService);
 
+  private cvFile: File | null = null;
+  private idFile: File | null = null;
+  private birthCertificateFile: File | null = null;
+  private marriageCertificateFile: File | null = null;
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
     return validity['basic'];
   }
-  uploading: Record<'cv' | 'id' | 'birth' | 'marriage', boolean> = {
-    cv: false,
-    id: false,
-    birth: false,
-    marriage: false,
-  };
 
   saving = false;
 
@@ -53,46 +51,37 @@ export class StepFirstInfoComponent {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (!file) return;
-
-    this.uploading[kind] = true;
-    this.profile.uploadFile(file).subscribe({
-      next: res => {
-        switch (kind) {
-          case 'cv':
-            this.ds.up('cvFile', { resourceId: res.resourceId, resourceName: res.resourceName });
-            this.ds.up('cvName', res.resourceName);
-            break;
-          case 'id':
-            this.ds.up('idFile', { resourceId: res.resourceId, resourceName: res.resourceName });
-            this.ds.up('idName', res.resourceName);
-            break;
-          case 'birth':
-            this.ds.up('birthCertificateFile', { resourceId: res.resourceId, resourceName: res.resourceName });
-            this.ds.up('birthCertificateName', res.resourceName);
-            break;
-          case 'marriage':
-            this.ds.up('marriageCertificateFile', { resourceId: res.resourceId, resourceName: res.resourceName });
-            this.ds.up('marriageCertificateName', res.resourceName);
-            break;
-        }
-        input.value = '';
-        this.uploading[kind] = false;
-      },
-      error: err => {
-        console.error(err);
-        this.uploading[kind] = false;
-        input.value = '';
-      }
-    });
+    switch (kind) {
+      case 'cv':
+        this.cvFile = file;
+        this.ds.up('cvFile', { resourceId: 'local', resourceName: file.name });
+        this.ds.up('cvName', file.name);
+        break;
+      case 'id':
+        this.idFile = file;
+        this.ds.up('idFile', { resourceId: 'local', resourceName: file.name });
+        this.ds.up('idName', file.name);
+        break;
+      case 'birth':
+        this.birthCertificateFile = file;
+        this.ds.up('birthCertificateFile', { resourceId: 'local', resourceName: file.name });
+        this.ds.up('birthCertificateName', file.name);
+        break;
+      case 'marriage':
+        this.marriageCertificateFile = file;
+        this.ds.up('marriageCertificateFile', {resourceId: 'local', resourceName: file.name });
+        this.ds.up('marriageCertificateName', file.name);
+        break;
+    }
+    input.value = '';
   }
 
   onNext() {
     if (!this.step.valid) {
-      const firstError = this.step.errors[0];
       this.messageService.add({
         severity: 'error',
         summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant(firstError.i18nKey),
+        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
         life: 5000,
       });
       return;
@@ -101,7 +90,13 @@ export class StepFirstInfoComponent {
     const state = this.ds.state();
     const payload = mapPrereqSection(state);
     this.saving = true;
-    this.profile.savePrereq(payload).subscribe({
+    this.profile
+      .savePrereq(payload, {
+        cvFile: this.cvFile,
+        idFile: this.idFile,
+        birthCertificateFile: this.birthCertificateFile,
+        marriageCertificateFile: this.marriageCertificateFile
+      }).subscribe({
       next: () => {
         this.saving = false;
         this.next.emit();

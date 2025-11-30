@@ -10,21 +10,29 @@
     <ng-template pTemplate="header">
       <tr>
         <th>{{ 'wizard.degrees.degree' | translate }}</th>
-        <th>{{ 'wizard.degrees.major' | translate }}</th>
-        <th>{{ 'wizard.degrees.university' | translate }}</th>
-        <th>{{ 'wizard.degrees.gradYear' | translate }}</th>
         <th>{{ 'wizard.degrees.gradCountry' | translate }}</th>
+        <th>{{ 'wizard.degrees.university' | translate }}</th>
+        <th>{{ 'wizard.degrees.main-major' | translate }}</th>
+        <th>{{ 'wizard.degrees.major' | translate }}</th>
+        <th>{{ 'wizard.degrees.gradYear' | translate }}</th>
+        <th>{{ 'wizard.degrees.studySystem' | translate }}</th>
+        <th>{{ 'wizard.degrees.gpa' | translate }}</th>
+        <th>{{ 'wizard.degrees.grade' | translate }}</th>
         <th>{{ 'wizard.degrees.degreeFile' | translate }}</th>
         <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-r let-i="rowIndex">
       <tr>
-        <td>{{ r.degree }}</td>
-        <td>{{ r.major || '—' }}</td>
-        <td>{{ r.university || '—' }}</td>
+        <td>{{ r.degree.name }}</td>
+        <td>{{ r.gradCountry.name || '—' }}</td>
+        <td>{{ r.university.name || '—' }}</td>
+        <td>{{ r.major.name || '—' }}</td>
+        <td>{{ r.subMajor.name || '—' }}</td>
         <td>{{ r.gradYear || '—' }}</td>
-        <td>{{ r.gradCountry || '—' }}</td>
+        <td>{{ r.studySystem.name || '—' }}</td>
+        <td>{{ r.gpa || '—' }}</td>
+        <td>{{ r.grade.name || '—' }}</td>
         <td>{{ r.fileName || '—' }}</td>
         <td class="text-end">
           <button class="btn btn-sm btn-outline-danger" (click)="del(i)">
@@ -44,7 +52,9 @@
     <i class="fa-solid me-1" faDirArrow="start"></i>
     {{ 'wizard.buttons.prev' | translate }}
   </button>
-  <button class="btn btn-brand ms-2" (click)="next.emit()">
+  <button class="btn btn-brand ms-2"
+          (click)="onNext()"
+          [disabled]="savingDegrees">
     {{ 'wizard.buttons.next' | translate }}
     <i class="fa-solid ms-1" faDirArrow="end"></i>
   </button>

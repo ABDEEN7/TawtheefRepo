@@ -23,15 +23,8 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
         var id => Result.Ok(Guid.Parse(id))
     };
-    [HttpPost("file/upload")]
-    public async Task<IActionResult> UploadProfileFile(IFormFile file, CancellationToken ct)
-    {
-        if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(new UploadAttachmentCommand(file), ct);
-        return result.ToActionResult();
-    }
     [HttpPost("prereq")]
-    public async Task<IActionResult> SavePrereq([FromBody] SaveProfilePrereqRequest request, CancellationToken ct)
+    public async Task<IActionResult> SavePrereq([FromForm] SaveProfilePrereqRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfilePrereqCommand(UserId.Value, request);
@@ -40,7 +33,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("personal")]
-    public async Task<IActionResult> SavePersonal([FromBody] SaveProfilePersonalRequest request, CancellationToken ct)
+    public async Task<IActionResult> SavePersonal([FromForm] SaveProfilePersonalRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfilePersonalCommand(UserId.Value, request);
@@ -49,7 +42,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("contact")]
-    public async Task<IActionResult> SaveContact([FromBody] SaveProfileContactRequest request, CancellationToken ct)
+    public async Task<IActionResult> SaveContact([FromForm] SaveProfileContactRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileContactCommand(UserId.Value, request);
@@ -58,7 +51,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("education")]
-    public async Task<IActionResult> SaveEducation([FromBody] SaveProfileEducationRequest request, CancellationToken ct)
+    public async Task<IActionResult> SaveEducation([FromForm] SaveProfileEducationRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileEducationCommand(UserId.Value, request);
@@ -67,7 +60,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("experience")]
-    public async Task<IActionResult> SaveExperience([FromBody] SaveProfileExperienceRequest request, CancellationToken ct)
+    public async Task<IActionResult> SaveExperience([FromForm] SaveProfileExperienceRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileExperienceCommand(UserId.Value, request);
@@ -76,7 +69,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("skills")]
-    public async Task<IActionResult> SaveSkills([FromBody] SaveProfileSkillsRequest request, CancellationToken ct)
+    public async Task<IActionResult> SaveSkills([FromForm] SaveProfileSkillsRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileSkillsCommand(UserId.Value, request);
@@ -85,7 +78,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("attachments")]
-    public async Task<IActionResult> SaveAttachments([FromBody] SaveProfileAttachmentsRequest request, CancellationToken ct)
+    public async Task<IActionResult> SaveAttachments([FromForm] SaveProfileAttachmentsRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileAttachmentsCommand(UserId.Value, request);
