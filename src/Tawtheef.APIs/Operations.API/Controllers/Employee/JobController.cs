@@ -1,8 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
+using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
+using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Infrastructure.Extensions;
-
 
 namespace Operations.API.Controllers.Employee;
 
@@ -37,27 +38,28 @@ public class JobController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetWorkTypes()
     {
         var result = await mediator.Send(new GetWorkTypesQuery());
-        return  result.ToActionResult();
+        return result.ToActionResult();
     }
     
     [HttpGet("lookups/job-categories")]
     public async Task<IActionResult> GetJobCategories()
     {
         var result = await mediator.Send(new GetJobCategoriesQuery());
-        return  result.ToActionResult();
+        return result.ToActionResult();
     }
+    
     [HttpGet("lookups/genders")]
     public async Task<IActionResult> GetGenders()
     {
         var result = await mediator.Send(new GetGendersQuery());
-        return  result.ToActionResult();
+        return result.ToActionResult();
     }
     
     [HttpGet("lookups/target-entities")]
     public async Task<IActionResult> GetTargetEntities()
     {
         var result = await mediator.Send(new GetTargetEntitiesQuery());
-        return  result.ToActionResult();
+        return result.ToActionResult();
     }
 
     [HttpGet("lookups/nationalities")]
@@ -81,10 +83,42 @@ public class JobController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     #endregion
-    // [HttpPost]
-    // public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
-    // {
-    //     var result = await mediator.Send(command);
-    //     return result.ToActionResult();
-    // }
+
+    #region Job CRUD Operations
+    [HttpPost]
+    public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
+     [HttpGet("{id:guid}")]
+     public async Task<IActionResult> GetJob(Guid id)
+     {
+         var result = await mediator.Send(new GetJobByIdQuery(id));
+         return result.ToActionResult();
+     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetJobs([FromQuery] GetJobsQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+    
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteJob(Guid id)
+    {
+        var result = await mediator.Send(new DeleteJobCommand(id));
+        return result.ToActionResult();
+    }
+    #endregion
 }

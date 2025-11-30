@@ -65,8 +65,10 @@
   font-weight: 600;
 }
 
-.quota-ok { color: var(--success); font-weight: 800; }
-.quota-bad { color: var(--danger); font-weight: 800; }
+.ok { color: var(--success); font-weight: 800; }
+.bad { color: var(--danger); font-weight: 800; }
+
+
 
 textarea.form-control { min-height: 140px; }
 

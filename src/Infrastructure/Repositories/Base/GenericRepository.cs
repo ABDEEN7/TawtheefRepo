@@ -84,6 +84,18 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
             return Task.FromResult(Result.Fail($"An error occurred while deleting the entity: {ex.Message}"));
         }
     }
+    public Task<Result> DeleteRangeAsync(IEnumerable<T> entities)
+    {
+        try
+        {
+            dbContext.Set<T>().RemoveRange(entities);
+            return Task.FromResult(Result.Ok());
+        }
+        catch (Exception ex)
+        {
+            return Task.FromResult(Result.Fail($"An error occurred while deleting the entities: {ex.Message}"));
+        }
+    }
 
     public async Task<Result> DeleteAsync(Guid id)
     {
@@ -101,6 +113,8 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
             return Result.Fail($"An error occurred while deleting the entity with ID {id}: {ex.Message}");
         }
     }
+    
+    
  
     public async Task<IResult<List<T>>> GetAllAsync()
     {

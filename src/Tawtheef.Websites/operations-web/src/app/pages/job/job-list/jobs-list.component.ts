@@ -5,6 +5,9 @@ import {JobService} from '../services/job.service';
 import {Job} from '../models/job.model';
 import {PointsConfigModalComponent} from '../modals/points-config-modal/points-config-modal.component';
 import { JobLookupService } from '../services/job-lookup.service';
+import { PaginatedRequest } from '../../../core/models/paginated-request.model';
+import { JobQueryFilter } from '../models/job-query-filter.model';
+import { JobResponseDto } from '../models/job-response-Dto';
 
 @Component({
   selector: 'app-job-list',
@@ -19,6 +22,8 @@ export class JobListComponent implements OnInit {
   lookupsService = inject(JobLookupService)
 
   jobs = this.jobService.jobs;
+  paginationMetadata = this.jobService.paginationMetadata;
+  
   currentPage = signal(1);
   itemsPerPage = 10;
 
@@ -26,36 +31,38 @@ export class JobListComponent implements OnInit {
   filterType = signal<string>('');
   filterStatus = signal<string>('');
 
-  filteredJobs = computed(() => {
-    const q = this.searchQuery().trim().toLowerCase();
-    const fType = this.filterType();
-    const fStatus = this.filterStatus();
-
-    return this.jobs().filter((j) => {
-      if (fType && j.basics.jobCategory !== fType) return false;
-      if (fStatus && j.status !== fStatus) return false;
-      if (q) {
-        const hay = [j.basics.title, j.basics.requestingDept].join(' ').toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
-  });
-
+  totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+  totalPages = computed(() => this.paginationMetadata()?.totalPages || 0);
 
   pagedJobs = computed(() => {
-    const start = (this.currentPage() - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    return this.filteredJobs().slice(start, end);
+    return this.jobs();
   });
 
   ngOnInit() {
-    this.jobService.loadJobs();
+    this.loadJobsWithFilters();
     this.lookupsService.loadAll();
+  }
+
+  loadJobsWithFilters() {
+    const pagination: PaginatedRequest = {
+      pageNumber: this.currentPage(),
+      pageSize: this.itemsPerPage,
+      sortBy: 'title',
+      sortDirection: 'asc'
+    };
+
+    const filter: JobQueryFilter = {
+      searchTerm: this.searchQuery() || undefined,
+      jobCategoryId: this.filterType() || undefined,
+      statusId: this.filterStatus() || undefined
+    };
+
+    this.jobService.loadJobs(pagination, filter);
   }
 
   onFilterChange() {
     this.currentPage.set(1);
+    this.loadJobsWithFilters();
   }
 
   clearFilters() {
@@ -63,25 +70,28 @@ export class JobListComponent implements OnInit {
     this.filterType.set('');
     this.filterStatus.set('');
     this.currentPage.set(1);
+    this.loadJobsWithFilters();
   }
 
-  editJob(job: Job) {
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+    this.loadJobsWithFilters();
+  }
+
+  editJob(job: JobResponseDto) {
     this.router.navigate([`jobs/edit/${job.id}`]).then();
   }
 
-  openPointsModal(job: Job) {
+  openPointsModal(job: JobResponseDto) {
     const ref: DynamicDialogRef | null = this.dialogService.open(PointsConfigModalComponent, {
-      data: { jobId: job.id, jobTitle: job.basics.title },
+      data: { jobId: job.id, jobTitle: job.title },
       width: '80%',
     });
 
     ref?.onClose.subscribe((saved: boolean) => {
       if (saved) {
+        this.loadJobsWithFilters();
       }
     });
-  }
-
-  onPageChange(page: number) {
-    this.currentPage.set(page);
   }
 }

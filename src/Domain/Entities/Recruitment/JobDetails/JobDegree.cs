@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
+[Table(nameof(JobDegree), Schema = Schemas.Hr)]
 
 public class JobDegree: EventEntity
 {

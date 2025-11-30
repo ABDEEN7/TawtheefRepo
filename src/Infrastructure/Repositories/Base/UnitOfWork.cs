@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Utils;
@@ -105,6 +106,29 @@ public class UnitOfWork(TawtheefDbContext dbContext, IMediator mediator) : IUnit
             await _currentTransaction.DisposeAsync();
             _currentTransaction = null;
         }
+    }
+    
+    public async Task<T> ExecuteInTransactionAsync<T>(
+        Func<CancellationToken, Task<T>> operation, 
+        CancellationToken cancellationToken = default)
+    {
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+        
+        return await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                var result = await operation(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+        });
     }
     // ----------------------------------------------
 

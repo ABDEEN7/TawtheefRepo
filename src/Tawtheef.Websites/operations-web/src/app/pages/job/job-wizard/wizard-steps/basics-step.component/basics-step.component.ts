@@ -7,6 +7,7 @@ import { JobBasics } from '../../../models/job-basics.models';
 import { debounceTime, filter } from 'rxjs';
 import { JobLookupService } from '../../../services/job-lookup.service';
 import { ScrollerOptions } from 'primeng/api';
+import { GUID } from '../../../../../shared/types/guid.type';
 
 @Component({
   selector: 'app-basics-step',
@@ -23,14 +24,14 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
   lazyLoading = false
   loadLazyTimeout = 0
   readonly form = this.fb.nonNullable.group({
-    requestingDept: ['', Validators.required],
+    requestingDepartmentId: ['', Validators.required],
     title: ['', Validators.required],
-    jobCategory: ['', Validators.required],
-    gender: this.fb.control<string[]>([], Validators.required),
-    entity: ['', Validators.required],
-    major: ['', Validators.required],
-    degree: this.fb.control<string[]>([], Validators.required),
-    typeOfWork: ['', Validators.required],
+    jobCategoryId: ['', Validators.required],
+    genderId: ['', Validators.required],
+    workLocationId: ['', Validators.required],
+    majorId: ['', Validators.required],
+    degreeIds: this.fb.control<GUID[]>([], Validators.required),
+    workTypeId: ['', Validators.required],
     vacancies: [0, [Validators.required, Validators.min(1)]],
     deadline: this.fb.control<Date | null>(null, Validators.required),
   });
@@ -58,7 +59,7 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
       for (let i = first; i < last; i++) {
         items[i] = this.lookupsService.majors()[i];
       }
-      this.lookupsService.nationalities.set(items);
+      this.lookupsService.majors.set(items);
       this.lazyLoading = false;
     }, Math.random() * 1000 + 250);
   }
@@ -67,17 +68,17 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
     this.lazyLoading = true;
     this.loadLazyTimeout = setTimeout(() => {
       const {first, last} = event;
-      const items = [...this.lookupsService.majors()];
+      const items = [...this.lookupsService.departments()];
       for (let i = first; i < last; i++) {
-        items[i] = this.lookupsService.majors()[i];
+        items[i] = this.lookupsService.departments()[i];
       }
-      this.lookupsService.nationalities.set(items);
+      this.lookupsService.departments.set(items);
       this.lazyLoading = false;
     }, Math.random() * 1000 + 250);
   }
 
   ngOnInit() {
-    this.setJobData(this.jobService.currentJob());
+    this.setJobData(this.jobService.newJob());
     this.setupFormListeners();
   }
 
@@ -89,46 +90,45 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
         filter(() => this.form.valid),
       )
       .subscribe((value) => {
-        this.updateJobService(value as Partial<JobBasics>);
+        this.updateJobService(value as JobBasics);
       });
   }
 
-  private updateJobService(basics: Partial<JobBasics>): void {
-    const updatedBasics = {
-      ...basics,
-      degree: basics.degree || []
+  private updateJobService(value:JobBasics): void {
+    const updatedJobBasics = {
+      ...value,
     };
-    this.jobService.updateCurrentJobBasics(updatedBasics);
+    this.jobService.updateCurrentJobBasics(updatedJobBasics);
   }
 
   setJobData(job: Job): void {
-    if (job.basics) {
-      const deadline = job.basics.deadline ? new Date(job.basics.deadline) : null;
+    if (job) {
+      const deadline = job.deadline ? new Date(job.deadline) : null;
 
       this.form.patchValue({
-        requestingDept: job.basics.requestingDept || '',
-        title: job.basics.title || '',
-        jobCategory: job.basics.jobCategory || '',
-        gender: job.basics.gender || '',
-        entity: job.basics.entity || '',
-        major: job.basics.major || '',
-        degree: job.basics.degree || [],
-        typeOfWork: job.basics.typeOfWork || '',
-        vacancies: job.basics.vacancies || 0,
+        requestingDepartmentId: job.requestingDepartmentId || '',
+        title: job.title || '',
+        jobCategoryId: job.jobCategoryId || '',
+        genderId: job.genderId || '',
+        workLocationId: job.workLocationId || '',
+        majorId: job.majorId || '',
+        degreeIds: job.degreeIds || [],
+        workTypeId: job.workTypeId || '',
+        vacancies: job.vacancies || 0,
         deadline: deadline,
       }, { emitEvent: false });
     }
   }
 
-  toggleDegree(degree: string, event: Event): void {
+  toggleDegree(degree: GUID, event: Event): void {
   const checked = (event.target as HTMLInputElement).checked;
-  const currentDegrees = this.form.controls.degree.value || [];
+  const currentDegrees = this.form.controls.degreeIds.value || [];
   const updatedDegrees = checked
     ? [...currentDegrees, degree]
     : currentDegrees.filter(d => d !== degree);
 
-  this.form.controls.degree.setValue(updatedDegrees);
-  this.form.controls.degree.markAsDirty();
+  this.form.controls.degreeIds.setValue(updatedDegrees);
+  this.form.controls.degreeIds.markAsDirty();
 }
 
   onDateSelect(): void {
@@ -140,7 +140,7 @@ export class BasicsStepComponent implements WizardStepComponent, OnInit {
   }
 
   get selectedDegrees(): string {
-    return this.form.controls.degree.value?.join('، ') || '';
+    return this.form.controls.degreeIds.value?.join('، ') || '';
   }
 
   get degreePlaceholder(): string {

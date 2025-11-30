@@ -49,22 +49,25 @@
         </span>
 
         @if (totalQuota() !== 100) {
-          <span id="quotaState" class="quota-bad">{{ 'job_wizard.validation.sum_state' | translate }}</span>
-        } @else {
-          <span id="quotaState" class="quota-ok">{{ 'job_wizard.validation.sum_valid' | translate }}</span>
+          <span id="quotaState" class="bad">{{ 'job_wizard.validation.sum_state' | translate }}</span>
+        } @else if (form.errors?.['residentsMismatch']) {
+          <span id="quotaState" class="bad">{{ 'job_wizard.validation.breakdowns_invalid' | translate }}</span>
+        }
+         @else {
+          <span id="quotaState" class="ok">{{ 'job_wizard.validation.sum_valid' | translate }}</span>
         }
       </div>
     </div>
   </div>
 
-  @if (residentsBreakdown.length > 0) {
+  @if (residentsBreakdowns.length > 0) {
     <div class="mt-3">
       <div class="small-muted">
         {{ 'job_wizard.steps.quotas.residents_details_button' | translate }}
       </div>
 
-      @for (item of residentsBreakdown; track item.nat) {
-        <span class="chip">{{ getNationalites(item.nat) }}: {{ item.pct }}%</span>
+      @for (item of residentsBreakdowns; track item?.nationalityId) {
+        <span class="chip">{{ lookupsService.getNationalites(item?.nationalityId) }}: {{ item?.percentage }}%</span>
       }
     </div>
   }

@@ -7,6 +7,7 @@ import {NotificationService} from '../../../core/services/notification.service';
 import {ConfirmApplyModalComponent} from '../modals/confirm-apply-modal/confirm-apply-modal.component';
 import { GUID } from '../../../shared/types/guid.type';
 import { JobLookupService } from '../services/job-lookup.service';
+import { JobResponseDto } from '../models/job-response-Dto';
 
 @Component({
   selector: 'app-job-details',
@@ -15,7 +16,7 @@ import { JobLookupService } from '../services/job-lookup.service';
   standalone: false,
 })
 export class JobDetailsComponent implements OnInit {
-  job: Job | undefined;
+  job: JobResponseDto | undefined;
   id!: GUID;
 
   activeTab: string = 'desc';
