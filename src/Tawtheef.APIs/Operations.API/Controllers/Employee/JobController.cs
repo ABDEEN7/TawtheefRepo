@@ -89,12 +89,7 @@ public class JobController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
     {
         var result = await mediator.Send(command);
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-    
-        return BadRequest(result.IsFailed);
+        return result.ToActionResult();
     }
 
      [HttpGet("{id:guid}")]
@@ -108,12 +103,7 @@ public class JobController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetJobs([FromQuery] GetJobsQuery query)
     {
         var result = await mediator.Send(query);
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-    
-        return BadRequest(result.IsFailed);
+        return result.ToActionResult();
     }
     
 
@@ -121,24 +111,14 @@ public class JobController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
     {
         var result = await mediator.Send(command);
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-    
-        return BadRequest(result.IsFailed);
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteJob(Guid id)
     {
         var result = await mediator.Send(new DeleteJobCommand(id));
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-    
-        return BadRequest(result.IsFailed);
+        return result.ToActionResult();
     }
     #endregion
 }
