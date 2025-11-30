@@ -70,5 +70,9 @@
     "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل.",
     "required_filed": "هذا الحقل مطلوب",
     "invalid_format": "التنسيق غير صحيح"
+  },
+  "common": {
+    "ar": "العربية",
+    "en": "English"
   }
 }

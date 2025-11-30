@@ -5,6 +5,8 @@ import {errorRoutes} from "./error-routes";
 export let routes = {
   baseUrl: '',
   home: '/index',
+  terms: '/terms',
+  privacy: '/privacy',
   dashboard(role: string) {
     switch (role.toLowerCase()) {
       case 'admin':
