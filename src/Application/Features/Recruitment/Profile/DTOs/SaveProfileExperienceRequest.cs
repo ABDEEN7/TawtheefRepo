@@ -17,10 +17,10 @@ public sealed class ExperienceUpsertDto
 {
     public Guid? Id { get; set; }
     public required string Organization { get; set; }
-    public required string Position { get; set; }
+    public required string Name { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
-    public string? Achievements { get; set; }
+    public string? Description { get; set; }
 
     public Guid? CertificateId { get; set; }
     public int? CertificateFileIndex { get; set; }
@@ -30,9 +30,10 @@ public sealed class TrainingCourseUpsertDto
 {
     public Guid? Id { get; set; }
     public required string Organization { get; set; }
-    public required string Position { get; set; }
+    public required string Name { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
+    public string? Description { get; set; }
     public Guid? CertificateId { get; set; }
     public int? CertificateFileIndex { get; set; }
 }

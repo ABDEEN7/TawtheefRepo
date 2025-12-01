@@ -8,7 +8,9 @@ namespace Tawtheef.Domain.Entities.Applicant;
 public class TrainingCourse : EventEntity
 {
     public required string Organization { get; set; }
-    public required string Position { get; set; }
+    [Column("Position")]
+    public required string Name { get; set; }
+    public string? Description { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
     

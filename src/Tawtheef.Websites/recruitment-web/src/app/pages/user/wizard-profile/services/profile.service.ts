@@ -93,12 +93,12 @@ export class ProfileService {
       return {
         id: e.id ?? null,
         organization: e.org,
-        position: e.title,
+        name: e.name,
         startDate: e.from,
         endDate: e.current ? null : e.to,
         certificateId: e.attachmentId ?? null,
         certificateFileIndex: fileIndex,
-        achievements: e.tasks,
+        description: e.description,
       };
     });
 
@@ -109,9 +109,10 @@ export class ProfileService {
       return {
         id: c.id ?? null,
         organization: c.org,
-        position: c.title,
+        name: c.name,
         startDate: c.from,
         endDate: c.to,
+        description: c.description,
         certificateId: c.attachmentId ?? null,
         certificateFileIndex: fileIndex,
       };

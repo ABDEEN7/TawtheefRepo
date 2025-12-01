@@ -23,13 +23,13 @@
     <ng-template pTemplate="body" let-r let-i="rowIndex">
       <tr>
         <td>{{ r.org }}</td>
-        <td>{{ r.title }}</td>
+        <td>{{ r.name }}</td>
         <td>
           {{ r.from ? (r.from | date:'MM/yyyy') : '—' }}
           -
-          {{ r.to ? (r.to | date:'MM/yyyy') : ('common.present' | translate) }}
+          {{ r.current ? ('common.present' | translate) : (r.to ? (r.to | date:'MM/yyyy') : '—') }}
         </td>
-        <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
+        <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
         <td>{{ r.fileName || '—' }}</td>
         <td class="text-end">
           <button class="btn btn-sm btn-outline-danger" (click)="removeExperience(i)">
@@ -68,13 +68,13 @@
     <ng-template pTemplate="body" let-r let-i="rowIndex">
       <tr>
         <td>{{ r.org }}</td>
-        <td>{{ r.title }}</td>
+        <td>{{ r.name }}</td>
         <td>
           {{ r.from ? (r.from | date:'MM/yyyy') : '—' }}
           -
           {{ r.to ? (r.to | date:'MM/yyyy') : 'Present' }}
         </td>
-        <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
+        <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
         <td>{{ r.fileName || '—' }}</td>
         <td class="text-end">
           <button class="btn btn-sm btn-outline-danger" (click)="removeCourse(i)">
