@@ -75,6 +75,7 @@ public class ErrorsCodes
     public const string IncorrectOldPassword = "INCORRECT_OLD_PASSWORD";
     public const string PasswordChangeFailed = "PASSWORD_CHANGE_FAILED";
     public const string DegreeNotFound = "DEGREE_NOT_FOUND";
+    public const string ReviewItemNotFound = "REVIEW_ITEM_NOT_FOUND";
     public const string ExperienceNotFound = "EXPERIENCE_NOT_FOUND";
     public const string SkillNotFound = "SKILL_NOT_FOUND";
     public const string LanguageProfileNotFound = "LANGUAGE_PROFILE_NOT_FOUND";

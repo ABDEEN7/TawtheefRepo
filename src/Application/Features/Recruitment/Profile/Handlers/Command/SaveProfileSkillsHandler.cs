@@ -2,6 +2,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
@@ -11,7 +12,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 
 public sealed class SaveProfileSkillsHandler(
-    IUnitOfWork uow
+    IUnitOfWork uow,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileSkillsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileSkillsCommand cmd, CancellationToken ct)
@@ -58,6 +60,7 @@ public sealed class SaveProfileSkillsHandler(
 
         profile.IsDraft = !cmd.Request.Submit;
 
+        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.SkillsLanguages, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
@@ -11,7 +12,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfileContactHandler(
-    IUnitOfWork uow, IMediator mediator
+    IUnitOfWork uow, IMediator mediator, IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileContactCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileContactCommand cmd, CancellationToken ct)
@@ -51,9 +52,20 @@ public sealed class SaveProfileContactHandler(
             if (idResult.IsFailed)
                 return Result.Fail<Unit>(idResult.Errors);
             profile.ResidenceAddressCertificateId = idResult.Value;
+
+            if (profile.ResidenceAddressCertificateId.HasValue)
+            {
+                await reviewService.TouchAttachmentAsync(
+                    profile.Id,
+                    Domain.Entities.Recruitment.ProfileSection.Contact,
+                    "National Address Certificate",
+                    profile.ResidenceAddressCertificateId.Value,
+                    ct);
+            }
         }
         profile.IsDraft = true;
 
+        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         

@@ -83,6 +83,8 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<ResidenceAddress> ResidenceAddress { get; set; }
     public DbSet<TrainingCourse> TrainingCourse { get; set; }
     public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicant { get; set; }
+
+    public DbSet<ReviewItem> ReviewItem { get; set; }
     
     // Recruitment Tables
     public DbSet<Job> Jobs { get; set; }
