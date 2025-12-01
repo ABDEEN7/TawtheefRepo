@@ -44,10 +44,31 @@
   color: $brand;
   border: 2px solid rgba(123,30,58,.25);
   font-weight: 800;
+  font-size: 14px;
+
+  &.is-complete {
+    background: rgba(45, 199, 144, 0.15);
+    color: #2dc790;
+    border-color: rgba(45, 199, 144, 0.35);
+  }
+
+  &.is-active {
+    box-shadow: 0 0 0 4px rgba(123, 30, 58, 0.08);
+  }
 }
 
 .step-label {
   min-width: 140px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 12px;
 }
 
 .wizard-progress {

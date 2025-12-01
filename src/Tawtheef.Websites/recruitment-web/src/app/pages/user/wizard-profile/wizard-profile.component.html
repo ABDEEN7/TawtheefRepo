@@ -43,10 +43,14 @@
              [attr.aria-disabled]="!canGoTo(i+1)"
              href
              (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
-            <span class="step-index">{{ i + 1 }}</span>
+            <span class="step-index" [ngClass]="{'is-complete': isStepValid(i+1), 'is-active': step===i+1}">
+              <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-circle'"></i>
+            </span>
             <span class="step-label">{{ label | translate }}</span>
-            <span class="badge ms-2" [ngClass]="{'bg-success': isStepValid(i+1), 'bg-warning text-dark': !isStepValid(i+1)}">
-              {{ isStepValid(i+1) ? ('wizard.progress.status.complete' | translate) : ('wizard.progress.status.pending' | translate) }}
+            <span class="status-badge ms-2"
+                  [ngClass]="{'bg-success text-white': isStepValid(i+1), 'bg-secondary text-white': !isStepValid(i+1)}"
+                  [attr.aria-label]="isStepValid(i+1) ? ('wizard.progress.status.complete' | translate) : ('wizard.progress.status.pending' | translate)">
+              <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-clock'"></i>
             </span>
           </a>
         </li>
