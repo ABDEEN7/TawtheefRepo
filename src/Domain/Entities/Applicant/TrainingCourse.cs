@@ -12,6 +12,7 @@ public class TrainingCourse : EventEntity
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
     
+    
     public Guid CertificateId { get; set; }
     public Resource? Certificate { get; set; }
     

@@ -197,6 +197,7 @@
     "skills": {
       "title": "Skills & Languages",
       "skills": "Skills (Tags)",
+      "skill": "Skills (Tags)",
       "languages": "Languages",
       "language": "Language",
       "level": "Level",

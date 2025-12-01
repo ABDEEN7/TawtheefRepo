@@ -165,7 +165,7 @@ export class DataService {
       : ({...s, skills:[...s.skills, skill]})
     );
   }
-  delSkill(skillId: string){ this.state.update(s => ({...s, skills: s.skills.filter(t=>t.skillId!==skillId)})); }
+  delSkill(i: number){ this.state.update(s => ({...s, skills: s.skills.filter((_,x)=>x!==i)})); }
 
   addAttachment(a: Attachment){ this.state.update(s => ({...s, attachments:[...s.attachments, a]})); }
   delAttachment(i:number){ this.state.update(s => ({...s, attachments: s.attachments.filter((_,x)=>x!==i)})); }

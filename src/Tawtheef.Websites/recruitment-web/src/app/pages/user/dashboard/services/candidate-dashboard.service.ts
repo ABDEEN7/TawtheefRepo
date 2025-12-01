@@ -3,6 +3,7 @@ import {Observable, of, delay, forkJoin} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {HttpService} from '../../../../core/http/http.service';
 
 // Constants for job types
 export const JOB_TYPES = {
@@ -186,7 +187,7 @@ export interface FilterOption {
   providedIn: 'root'
 })
 export class CandidateDashboardService {
-  private http = inject(HttpClient);
+  private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
   private readonly fakeData: JobRecord[] = [
     {

@@ -135,6 +135,8 @@ public sealed class SkillDto
 {
     public Guid Id { get; init; }
     public Guid SkillId { get; init; }
+    public DropdownOptions? Skill { get; init; }
+    public Guid LevelId { get; init; }
 }
 
 // ====== Languages ======
@@ -142,6 +144,7 @@ public sealed class LanguageDto
 {
     public Guid Id { get; init; }
     public Guid LanguageId { get; init; }
+    public DropdownOptions? Language { get; init; }
     public Guid LevelId { get; init; }
     public bool IsNative { get; init; }
 }

@@ -42,15 +42,15 @@
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.nationality' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().nationality || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().nationality?.name || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.gender' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().gender || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().gender?.name || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.marital' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().marital || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().marital?.name || '—' }}</div>
       </div>
 
       <div class="col-md-3">
@@ -59,7 +59,7 @@
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.religion' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().religion || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().religion?.name || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.availability' | translate }}</div>
@@ -78,7 +78,7 @@
     <div class="row g-3">
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.contact.country' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().country || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().country?.name || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.contact.phone' | translate }}</div>
@@ -137,11 +137,11 @@
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.level }}</td>
-          <td>{{ r.major || '—' }}</td>
-          <td>{{ r.uni || '—' }}</td>
-          <td>{{ r.year || '—' }}</td>
-          <td>{{ r.gradCountry || '—' }}</td>
+          <td>{{ r.degree?.name }}</td>
+          <td>{{ r.major?.name || '—' }}</td>
+          <td>{{ r.university?.name || '—' }}</td>
+          <td>{{ r.gradYear || '—' }}</td>
+          <td>{{ r.gradCountry?.name || '—' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -160,8 +160,7 @@
         <tr>
           <th>{{ 'wizard.experience.table.org' | translate }}</th>
           <th>{{ 'wizard.experience.table.title' | translate }}</th>
-          <th>{{ 'wizard.experience.from' | translate }}</th>
-          <th>{{ 'wizard.experience.to' | translate }}</th>
+          <th>{{ 'wizard.experience.period' | translate }}</th>
           <th>{{ 'wizard.experience.tasks' | translate }}</th>
           <th>{{ 'wizard.experience.table.file' | translate }}</th>
         </tr>
@@ -170,10 +169,9 @@
         <tr>
           <td>{{ r.org }}</td>
           <td>{{ r.title }}</td>
-          <td>{{ r.from || '—' }}</td>
-          <td>{{ r.to || '—' }}</td>
+          <td>{{ (r.to | date: 'yy/MM') + '-' + (r.from | date: 'yy/MM') }}</td>
           <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
-          <td>{{ r.fileName || '—' }}</td>
+          <td>{{ r.certificate?.resourceName || r.fileName || '—' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -192,8 +190,7 @@
         <tr>
           <th>{{ 'wizard.courses.table.provider' | translate }}</th>
           <th>{{ 'wizard.courses.table.courseName' | translate }}</th>
-          <th>{{ 'wizard.courses.from' | translate }}</th>
-          <th>{{ 'wizard.courses.to' | translate }}</th>
+          <th>{{ 'wizard.courses.period' | translate }}</th>
           <th>{{ 'wizard.courses.notes' | translate }}</th>
           <th>{{ 'wizard.courses.table.file' | translate }}</th>
         </tr>
@@ -202,10 +199,9 @@
         <tr>
           <td>{{ r.org }}</td>
           <td>{{ r.title }}</td>
-          <td>{{ r.from || '—' }}</td>
-          <td>{{ r.to || '—' }}</td>
+          <td>{{ (r.to | date: 'yy/MM') + '-' + (r.from | date: 'yy/MM') }}</td>
           <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
-          <td>{{ r.fileName || '—' }}</td>
+          <td>{{ r.certificate?.resourceName || r.fileName || '—' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -227,7 +223,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
-        <tr><td>{{ r.skillName }}</td><td>{{ r.levelName }}</td></tr>
+        <tr><td>{{ r.skill.name }}</td><td>{{ r.level.name }}</td></tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
@@ -248,7 +244,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
-        <tr><td>{{ r.langName }}</td><td>{{ r.levelName }}</td></tr>
+        <tr><td>{{ r.lang.name }}</td><td>{{ r.level.name }}</td></tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
@@ -270,7 +266,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.title }}</td>
+          <td>{{ r.name }}</td>
           <td>{{ r.fileName }}</td>
         </tr>
       </ng-template>

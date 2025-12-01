@@ -6,6 +6,7 @@ import {catchError, map} from 'rxjs/operators';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgIf} from '@angular/common';
 import {ExternalLoginService} from '../../../core/auth/external-login';
+import {HttpService} from '../../../core/http/http.service';
 
 
 type ResidencyMode = 'resident' | 'nonresident';
@@ -19,7 +20,7 @@ export class Login implements OnInit, OnDestroy{
 
   private lang = inject(LanguageService);
   private auth = inject(ExternalLoginService);
-  private http = inject(HttpClient);
+  private http = inject(HttpService);
 
   currentLang: 'ar' | 'en' = 'ar';
   residencyMode: ResidencyMode = (localStorage.getItem('residencyMode') as ResidencyMode) || 'resident';

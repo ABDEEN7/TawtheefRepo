@@ -5,6 +5,7 @@ import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SkillDto} from '../models/skill-dto.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {catchError, map} from 'rxjs/operators';
+import {HttpService} from '../../../../core/http/http.service';
 
 export interface CountryDto extends dropdownOptionsModel {
   code: string;
@@ -12,7 +13,7 @@ export interface CountryDto extends dropdownOptionsModel {
 
 @Injectable({ providedIn: 'root' })
 export class ProfileLookupsService {
-  private http = inject(HttpClient);
+  private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
   loading = signal<boolean>(false);

@@ -37,8 +37,8 @@ public sealed class ProfileCompletenessService(
             .Include(p => p.AdditionalAttachments!)
                 .ThenInclude(a => a.Attachment)
             // Collections
-            .Include(p => p.Skills)
-            .Include(p => p.Languages)
+            .Include(p => p.Skills)!.ThenInclude(sp=> sp.Skill)
+            .Include(p => p.Languages)!.ThenInclude(sp=> sp.Language)
             .Include(p => p.Qualifications)!
                 .ThenInclude(a => a.University)
             .Include(p => p.Qualifications)!
@@ -124,7 +124,9 @@ public sealed class ProfileCompletenessService(
             .Select(s => new SkillDto
             {
                 Id       = s.Id,
-                SkillId  = s.SkillId
+                SkillId  = s.SkillId,
+                Skill = mapper.Map<DropdownOptions>(s.Skill!),
+                LevelId  = s.LevelId
             })
             .ToList();
 
@@ -134,6 +136,7 @@ public sealed class ProfileCompletenessService(
             {
                 Id         = l.Id,
                 LanguageId = l.LanguageId,
+                Language = mapper.Map<DropdownOptions>(l.Language!),
                 LevelId    = l.LevelId
             })
             .ToList();

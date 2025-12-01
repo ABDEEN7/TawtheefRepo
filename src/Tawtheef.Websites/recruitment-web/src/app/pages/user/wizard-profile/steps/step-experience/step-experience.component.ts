@@ -48,7 +48,25 @@ export class StepExperienceComponent {
   }
 
   removeExperience(index: number) {
-    this.ds.delExp(index);
+    var exp = this.ds.state().experiences[index];
+    if(exp.id){
+      this.profile.deleteExperience(exp.id).subscribe({
+        next: () => {
+          this.ds.delExp(index);
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.errorTitle'),
+            detail: this.translate.instant('wizard.experience.deleteError'),
+            life: 5000,
+          });
+        },
+      });
+    } else {
+      this.ds.delExp(index);
+    }
   }
 
   // ========== COURSES ==========
@@ -68,7 +86,25 @@ export class StepExperienceComponent {
   }
 
   removeCourse(index: number) {
-    this.ds.delCourse(index);
+    const course = this.ds.state().courses[index];
+    if(course.id){
+      this.profile.deleteTrainingCourse(course.id).subscribe({
+        next: () => {
+          this.ds.delCourse(index);
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.errorTitle'),
+            detail: this.translate.instant('wizard.course.deleteError'),
+            life: 5000,
+          });
+        },
+      });
+    } else {
+      this.ds.delCourse(index);
+    }
   }
 
   onNext() {

@@ -49,7 +49,25 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   }
 
   removeLang(index: number){
-    this.ds.delLang(index);
+    const lang = this.ds.state().languages[index];
+    if(lang.id){
+      this.profile.deleteLanguage(lang.id).subscribe({
+        next: () => {
+          this.ds.delLang(index);
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.errorTitle'),
+            detail: this.translate.instant('wizard.language.deleteError'),
+            life: 5000,
+          });
+        },
+      });
+    } else {
+      this.ds.delLang(index);
+    }
   }
 
   onNext() {
@@ -68,7 +86,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     const languages = state.languages || [];
 
     this.saving = true;
-    this.profile.saveSkillsSection(skills, languages).subscribe({
+    this.profile.saveLanguagesSection(languages).subscribe({
       next: () => {
         this.saving = false;
         this.next.emit();

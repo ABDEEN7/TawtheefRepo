@@ -1,14 +1,14 @@
 ﻿import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
 import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
 import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.model';
 import {GUID} from '../../../../shared/types/guid.type';
+import {HttpService} from '../../../../core/http/http.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-  private http = inject(HttpClient);
+  private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
 // ========== PREREQ ==========
@@ -138,22 +138,41 @@ export class ProfileService {
 
     return this.http.post(this.endpoints.user.profile.saveExperience, formData);
   }
+  deleteExperience(experienceId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteExperience(experienceId));
+  }
+  deleteTrainingCourse(courseId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteTrainingCourse(courseId));
+  }
 
-  // ========== SKILLS ==========
-  saveSkillsSection(skills: any[], languages: any[]) {
+  // ========== SKILLS & LANGUAGES ==========
+  saveSkillsSection(skills: any[]) {
     const dto = {
       submit: false,
       skills: (skills ?? []).map(s => ({
         skillId: s.skillId ?? s.id ?? s,
         levelId: s.levelId ?? s.level?.id,
       })),
+    };
+
+    return this.http.post(this.endpoints.user.profile.saveSkills, dto);
+  }
+  deleteSkill(skillId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteSkill(skillId));
+  }
+  saveLanguagesSection(languages: any[]) {
+    const dto = {
+      submit: false,
       languages: (languages ?? []).map(l => ({
         languageId: l.langId ?? l.languageId ?? l.id ?? l,
         levelId: l.levelId ?? l.level?.id ?? l.level,
       })),
     };
 
-    return this.http.post(this.endpoints.user.profile.saveSkills, dto);
+    return this.http.post(this.endpoints.user.profile.saveLanguages, dto);
+  }
+  deleteLanguage(languageId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteLanguage(languageId));
   }
 
   // ========== ATTACHMENTS ==========

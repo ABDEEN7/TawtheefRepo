@@ -47,11 +47,11 @@
               <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-circle'"></i>
             </span>
             <span class="step-label">{{ label | translate }}</span>
-            <span class="status-badge ms-2"
-                  [ngClass]="{'bg-success text-white': isStepValid(i+1), 'bg-secondary text-white': !isStepValid(i+1)}"
-                  [attr.aria-label]="isStepValid(i+1) ? ('wizard.progress.status.complete' | translate) : ('wizard.progress.status.pending' | translate)">
-              <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-clock'"></i>
-            </span>
+<!--            <span class="status-badge ms-2"-->
+<!--                  [ngClass]="{'bg-success text-white': isStepValid(i+1), 'bg-secondary text-white': !isStepValid(i+1)}"-->
+<!--                  [attr.aria-label]="isStepValid(i+1) ? ('wizard.progress.status.complete' | translate) : ('wizard.progress.status.pending' | translate)">-->
+<!--              <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-clock'"></i>-->
+<!--            </span>-->
           </a>
         </li>
       </ul>

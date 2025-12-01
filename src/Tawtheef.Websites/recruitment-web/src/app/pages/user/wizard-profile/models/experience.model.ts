@@ -1,4 +1,7 @@
+import {GUID} from '../../../../shared/types/guid.type';
+
 export interface Experience {
+  id?: GUID;
   org: string;
   title: string;
   from?: string;

@@ -17,8 +17,4 @@ public class Experience : EventEntity
     
     public Guid UserProfileId { get; set; }
     public UserProfile? UserProfile { get; set; }
-    /// <summary>
-    /// list of achievements  separated by unique line '\n'
-    /// </summary>
-    public string? Achievements { get; set; }
 }

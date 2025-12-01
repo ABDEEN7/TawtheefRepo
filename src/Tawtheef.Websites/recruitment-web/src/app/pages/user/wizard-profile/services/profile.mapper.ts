@@ -8,6 +8,9 @@ import {ProfileLookupsService} from './profile-lookups.service';
 import {PhoneMapperService} from './phone-mapper.service';
 import {Degree} from '../models/degree.model';
 import {Experience} from '../models/experience.model';
+import {Skill} from '../models/skill.model';
+import {Language} from '../models/language.model';
+import {Attachment} from '../models/attachment.model';
 
 export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestModel {
   return {
@@ -159,10 +162,10 @@ export function mapProfileStatusToState(
       id: e.id,
       org: e.employerName ?? '',
       title: e.jobTitle ?? '',
-      startDate: e.startDate ?? undefined,
-      endDate: e.endDate ?? undefined,
+      from: e.startDate ?? undefined,
+      to: e.endDate ?? undefined,
       isCurrent: e.isCurrent,
-      attachment: mapFile(e.attachment),
+      fileName: e.attachment?.fileName,
       attachmentId: e.attachment?.resourceId,
     } as Experience)),
 
@@ -170,9 +173,9 @@ export function mapProfileStatusToState(
       id: t.id,
       title: t.title ?? '',
       org: t.provider ?? '',
-      startDate: t.startDate ?? undefined,
-      endDate: t.endDate ?? undefined,
-      attachment: mapFile(t.attachment),
+      from: t.startDate ?? undefined,
+      to: t.endDate ?? undefined,
+      fileName: t.attachment?.fileName,
       attachmentId: t.attachment?.resourceId,
     } as Experience)),
 
@@ -182,7 +185,7 @@ export function mapProfileStatusToState(
       skill: s.skill,
       levelId: s.levelId,
       level: mapIdToDropdown(lookups, 'ratingGrade', s.levelId),
-    })),
+    } as Skill)),
 
     languages: (dto.languages ?? []).map(l => ({
       id: l.id,
@@ -190,7 +193,7 @@ export function mapProfileStatusToState(
       lang: mapIdToDropdown(lookups, 'language', l.languageId),
       levelId: l.levelId,
       level: mapIdToDropdown(lookups, 'languageLevel', l.levelId),
-    })),
+    } as Language)),
 
     attachments: (dto.additionalAttachments ?? []).map(a => ({
       id: a.id,
@@ -198,7 +201,7 @@ export function mapProfileStatusToState(
       fileName: a.file?.fileName,
       attachmentId: a.file?.resourceId,
       // file: this.mapFile(a.file)!,
-    })),
+    } as Attachment)),
 
     // ----------- UI fields -----------
     available: true,

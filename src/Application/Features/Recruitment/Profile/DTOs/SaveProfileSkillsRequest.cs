@@ -5,6 +5,11 @@ public sealed class SaveProfileSkillsRequest
     public bool Submit { get; set; }
 
     public List<SkillUpsertDto> Skills { get; set; } = [];
+}
+public sealed class SaveProfileLanguagesRequest
+{
+    public bool Submit { get; set; }
+
     public List<ProfileLanguageUpsertDto> Languages { get; set; } = [];
 }
 

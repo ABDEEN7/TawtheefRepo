@@ -8,3 +8,8 @@ public sealed record SaveProfileSkillsCommand(
     Guid UserId,
     SaveProfileSkillsRequest Request
 ) : IRequest<IResult<Unit>>;
+
+public sealed record SaveProfileLanguagesCommand(
+    Guid UserId,
+    SaveProfileLanguagesRequest Request
+) : IRequest<IResult<Unit>>;

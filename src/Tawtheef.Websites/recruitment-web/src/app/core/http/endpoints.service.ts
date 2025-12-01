@@ -35,7 +35,7 @@ export class EndpointsService {
       deleteEducation: (id: string) => this.getFullUrl(`/profiles/education/${id}/delete`),
       saveExperience: this.getFullUrl(`/profiles/experience`),
       deleteExperience: (id: string) => this.getFullUrl(`/profiles/experience/${id}/delete`),
-      deleteTraining: (id: string) => this.getFullUrl(`/profiles/training/${id}/delete`),
+      deleteTrainingCourse: (id: string) => this.getFullUrl(`/profiles/training/${id}/delete`),
       saveSkills: this.getFullUrl(`/profiles/skills`),
       deleteSkill: (id: string) => this.getFullUrl(`/profiles/skills/${id}/delete`),
       deleteLanguage: (id: string) => this.getFullUrl(`/profiles/languages/${id}/delete`),

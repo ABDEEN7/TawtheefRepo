@@ -94,11 +94,11 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   }
   onSkillSelect(e: AutoCompleteSelectEvent){
     this.selectedSkill = e.value;
+    e.value = null;
   }
   addSkill(){
     if (this.selectedSkill && this.selectedLevel) {
       const skill: Skill = {
-        id: this.selectedSkill.id?.toString(),
         skillId: this.selectedSkill.id?.toString() ?? this.selectedSkill.name,
         skill: this.selectedSkill,
         levelId: this.selectedLevel.id,
@@ -109,8 +109,26 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       this.selectedLevel = undefined;
     }
   }
-  removeSkill(skill: Skill){
-    this.ds.delSkill(skill.skillId);
+  removeSkill(index: number){
+    var skill = this.ds.state().skills[index];
+    if(skill.id){
+      this.profile.deleteSkill(skill.id).subscribe({
+        next: () => {
+          this.ds.delSkill(index);
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.errorTitle'),
+            detail: this.translate.instant('wizard.skill.deleteError'),
+            life: 5000,
+          });
+        },
+      });
+    } else {
+      this.ds.delSkill(index);
+    }
   }
 
   onNext() {
@@ -128,7 +146,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     const languages = state.languages || [];
 
     this.saving = true;
-    this.profile.saveSkillsSection(skills, languages).subscribe({
+    this.profile.saveSkillsSection(skills).subscribe({
       next: () => {
         this.saving = false;
         this.next.emit();

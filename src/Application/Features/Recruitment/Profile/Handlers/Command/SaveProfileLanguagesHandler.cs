@@ -12,15 +12,15 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 
-public sealed class SaveProfileSkillsHandler(
+public sealed class SaveProfileLanguagesHandler(
     IUnitOfWork uow,
     IProfileReviewService reviewService
-) : IRequestHandler<SaveProfileSkillsCommand, IResult<Unit>>
+) : IRequestHandler<SaveProfileLanguagesCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(SaveProfileSkillsCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(SaveProfileLanguagesCommand cmd, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
-        var skillRepo   = uow.GetEntityRepository<ProfileSkill>();
+        var langRepo    = uow.GetEntityRepository<ProfileLanguage>();
 
         var profile = await profileRepo.DbSet
             .Include(p => p.Skills)
@@ -29,26 +29,25 @@ public sealed class SaveProfileSkillsHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
-        
-        if(cmd.Request.Skills.Count == 0)
+
+        if(cmd.Request.Languages.Count == 0)
             return Result.Ok(Unit.Value);
         
-        // Skills
-        if (profile.Skills is not null && profile.Skills.Count > 0)
+        if (profile.Languages is not null && profile.Languages.Count > 0)
         {
-            skillRepo.DbSet.RemoveRange(profile.Skills);
+            langRepo.DbSet.RemoveRange(profile.Languages);
         }
-
-        var skills = cmd.Request.Skills
-            .Select(s => new ProfileSkill
+        var languages = cmd.Request.Languages
+            .Select(l => new ProfileLanguage
             {
-                SkillId = s.SkillId, 
-                LevelId = s.LevelId, 
+                LanguageId    = l.LanguageId,
+                LevelId       = l.LevelId,
                 UserProfileId = profile.Id
             }).ToList();
-        
-        await skillRepo.AddRangeAsync(skills);
+
+        await langRepo.AddRangeAsync(languages);
         profile.IsDraft = !cmd.Request.Submit;
+
         await reviewService.TouchSectionAsync(profile.Id, ProfileSection.SkillsLanguages, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

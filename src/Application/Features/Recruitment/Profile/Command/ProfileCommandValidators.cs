@@ -206,7 +206,24 @@ public sealed class SaveProfileSkillsCommandValidator : AbstractValidator<SavePr
                 skill.RuleFor(s => s.SkillId).NotEmpty();
                 skill.RuleFor(s => s.LevelId).NotEmpty();
             });
+            When(x => x.Request!.Submit, () =>
+            {
+                RuleFor(x => x.Request!)
+                    .Must(r => (r.Skills?.Count ?? 0) > 0)
+                    .WithMessage(ErrorsCodes.SkillOrLanguageRequired);
+            });
+        });
+    }
+}
+public sealed class SaveProfileLanguagesCommandValidator : AbstractValidator<SaveProfileLanguagesCommand>
+{
+    public SaveProfileLanguagesCommandValidator()
+    {
+        RuleFor(x => x.UserId).NotEmpty();
+        RuleFor(x => x.Request).NotNull();
 
+        When(x => x.Request is not null, () =>
+        {
             RuleForEach(x => x.Request!.Languages).ChildRules(lang =>
             {
                 lang.RuleFor(l => l.LanguageId).NotEmpty();
@@ -216,7 +233,7 @@ public sealed class SaveProfileSkillsCommandValidator : AbstractValidator<SavePr
             When(x => x.Request!.Submit, () =>
             {
                 RuleFor(x => x.Request!)
-                    .Must(r => (r.Skills?.Count ?? 0) + (r.Languages?.Count ?? 0) > 0)
+                    .Must(r => (r.Languages?.Count ?? 0) > 0)
                     .WithMessage(ErrorsCodes.SkillOrLanguageRequired);
             });
         });

@@ -101,7 +101,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("skills")]
-    public async Task<IActionResult> SaveSkills([FromForm] SaveProfileSkillsRequest request, CancellationToken ct)
+    public async Task<IActionResult> SaveSkills([FromBody] SaveProfileSkillsRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileSkillsCommand(UserId.Value, request);
@@ -116,6 +116,15 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command, ct);
         return result.ToActionResult();
     }
+
+    [HttpPost("languages")]
+    public async Task<IActionResult> SaveSkills([FromBody] SaveProfileLanguagesRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileLanguagesCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
     
     [HttpDelete("language/{languageId}/delete")]
     public async Task<IActionResult> DeleteLanguage([FromRoute] DeleteProfileLanguageCommand command, CancellationToken ct)
@@ -125,7 +134,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPost("attachments")]
+    [HttpPost("references")]
     public async Task<IActionResult> SaveAttachments([FromForm] SaveProfileAttachmentsRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -134,7 +143,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpDelete("attachment/{attachmentId}/delete")]
+    [HttpDelete("references/{attachmentId}/delete")]
     public async Task<IActionResult> DeleteAttachment([FromRoute] DeleteProfileAttachmentCommand command, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
