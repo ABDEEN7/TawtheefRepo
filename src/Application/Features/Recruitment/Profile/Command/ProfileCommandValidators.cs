@@ -204,6 +204,7 @@ public sealed class SaveProfileSkillsCommandValidator : AbstractValidator<SavePr
             RuleForEach(x => x.Request!.Skills).ChildRules(skill =>
             {
                 skill.RuleFor(s => s.SkillId).NotEmpty();
+                skill.RuleFor(s => s.LevelId).NotEmpty();
             });
 
             RuleForEach(x => x.Request!.Languages).ChildRules(lang =>

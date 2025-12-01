@@ -3,6 +3,7 @@ import { DataService } from '../../services/data.service';
 import { TranslateService } from '@ngx-translate/core';
 import {finalize} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
+import {Skill} from '../../models/skill.model';
 
 @Component({
   selector: 'app-step-review',
@@ -36,7 +37,7 @@ export class StepReviewComponent {
   submitted  = signal(false);
   errorText  = signal<string | null>(null);
 
-  trackSkill = (_: number, v: string) => v;
+  trackSkill = (_: number, v: Skill) => v.skillId;
 
   submit() {
     if (!this.canSubmit()) return;

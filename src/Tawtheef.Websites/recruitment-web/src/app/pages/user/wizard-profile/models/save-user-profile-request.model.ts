@@ -1,5 +1,5 @@
 ﻿import {PhoneNumber} from './phone-number.model';
-import {SkillDto} from './skill-dto.model';
+import {Skill} from './skill.model';
 export interface SaveUserProfileRequestDto {
 submit: boolean;
 
@@ -49,7 +49,7 @@ sponsorTypeId?: string | null;
 degrees: QualificationDto[];
 experiences: ExperienceDto[];
 trainingCourses: TrainingCourseDto[];
-skills: SkillDto[];
+  skills: Skill[];
 languages: LanguageDto[];
 additionalAttachments: AttachmentDto[];
 }

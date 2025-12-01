@@ -11,6 +11,7 @@ public sealed class SaveProfileSkillsRequest
 public sealed class SkillUpsertDto
 {
     public Guid SkillId { get; set; }    // Id من جدول SkillType
+    public Guid LevelId { get; set; }    // Id من جدول RatingGrade (Skill level)
 }
 
 public sealed class ProfileLanguageUpsertDto

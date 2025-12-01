@@ -214,39 +214,46 @@
     </p-table>
   </div>
 
-  <!-- Skills & Languages -->
+  <!-- Skills -->
   <div class="border rounded-3 p-3 mb-3">
     <div class="fw-bold mb-2" style="color:#7b1e3a">
-      <i class="fa-solid fa-language me-1"></i> {{ 'wizard.skills.title' | translate }}
+      <i class="fa-solid fa-language me-1"></i> {{ 'wizard.skills.skills' | translate }}
     </div>
-    <div class="row g-3">
-      <div class="col-lg-6">
-        <div class="small text-muted mb-2">{{ 'wizard.skills.skills' | translate }}</div>
-        <div class="d-flex flex-wrap gap-2">
-          <span *ngFor="let s of ds.state().skills; trackBy: trackSkill" class="badge text-bg-light border">
-            <i class="fa-solid fa-hashtag"></i> {{ s }}
-          </span>
-          <span *ngIf="!ds.state().skills?.length" class="text-muted">{{ 'wizard.table.noRows' | translate }}</span>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="small text-muted mb-2">{{ 'wizard.skills.languages' | translate }}</div>
-        <p-table [value]="ds.state().languages">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>{{ 'wizard.skills.language' | translate }}</th>
-              <th>{{ 'wizard.skills.level' | translate }}</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-r>
-            <tr><td>{{ r.name }}</td><td>{{ r.level }}</td></tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
-          </ng-template>
-        </p-table>
-      </div>
+    <p-table [value]="ds.state().skills">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'wizard.skills.skill' | translate }}</th>
+          <th>{{ 'wizard.skills.level' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-r>
+        <tr><td>{{ r.skillName }}</td><td>{{ r.levelName }}</td></tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Languages -->
+  <div class="border rounded-3 p-3 mb-3">
+    <div class="fw-bold mb-2" style="color:#7b1e3a">
+      <i class="fa-solid fa-language me-1"></i> {{ 'wizard.skills.languages' | translate }}
     </div>
+    <p-table [value]="ds.state().languages">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'wizard.skills.language' | translate }}</th>
+          <th>{{ 'wizard.skills.level' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-r>
+        <tr><td>{{ r.langName }}</td><td>{{ r.levelName }}</td></tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
   </div>
 
   <!-- Attachments -->

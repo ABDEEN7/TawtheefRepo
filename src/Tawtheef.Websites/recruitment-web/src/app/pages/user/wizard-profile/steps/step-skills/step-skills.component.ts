@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output, inject, OnDestroy, OnInit } from '@angular/core';
-import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent, AutoCompleteUnselectEvent} from 'primeng/autocomplete';
-import {Subject, Subscription, of, delay} from 'rxjs';
+import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent} from 'primeng/autocomplete';
+import {Subject, Subscription, of} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap, catchError, map} from 'rxjs/operators';
 import { DataService } from '../../services/data.service';
 import {SkillDto} from '../../models/skill-dto.model';
@@ -10,6 +10,7 @@ import {createStepValiditySignal} from '../../state/profile-step-validity.signal
 import {MessageService} from 'primeng/api';
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileService} from '../../services/profile.service';
+import {Skill} from '../../models/skill.model';
 
 @Component({
   selector: 'app-step-skills',
@@ -39,9 +40,8 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   loadingSkills = false;
   lastQuery = '';
 
-  // language form bits
-  newLanguage?: dropdownOptionsModel;
-  newLevel?: dropdownOptionsModel;
+  selectedSkill?: SkillDto;
+  selectedLevel?: dropdownOptionsModel;
 
   // search stream
   private search$ = new Subject<string>();
@@ -92,25 +92,25 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     }
     this.search$.next(q);
   }
-  addSkill(e: AutoCompleteSelectEvent){
-    this.ds.addSkill(e.value);
+  onSkillSelect(e: AutoCompleteSelectEvent){
+    this.selectedSkill = e.value;
   }
-  removeSkill(e: AutoCompleteUnselectEvent){
-    this.ds.delSkill(e.value);
-  }
-  addLang(): void {
-    if (this.newLanguage && this.newLevel) {
-      this.ds.addLang({
-        langId: this.newLanguage.id,
-        langName: this.newLanguage.name,
-        levelId: this.newLevel.id,
-        levelName: this.newLevel.name
-      });
-      this.newLanguage = this.newLevel = undefined;
+  addSkill(){
+    if (this.selectedSkill && this.selectedLevel) {
+      const skill: Skill = {
+        id: this.selectedSkill.id?.toString(),
+        skillId: this.selectedSkill.id?.toString() ?? this.selectedSkill.name,
+        skillName: this.selectedSkill.name,
+        levelId: this.selectedLevel.id,
+        levelName: this.selectedLevel.name,
+      };
+      this.ds.addSkill(skill);
+      this.selectedSkill = undefined;
+      this.selectedLevel = undefined;
     }
   }
-  removeLang(index: number){
-    this.ds.delLang(index)
+  removeSkill(skill: Skill){
+    this.ds.delSkill(skill.skillId);
   }
 
   onNext() {
@@ -126,15 +126,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     const state = this.ds.state();
     const skills = state.skills || [];
     const languages = state.languages || [];
-    if (!skills.length && !languages.length) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.skills.validation.noRows'),
-        life: 5000,
-      });
-      return;
-    }
 
     this.saving = true;
     this.profile.saveSkillsSection(skills, languages).subscribe({

@@ -4,6 +4,7 @@ import {Language} from './language.model';
 import {Experience} from './experience.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {PhoneNumber} from './phone-number.model';
+import {Skill} from './skill.model';
 
 export interface UploadedFileRef {
   resourceId: string;
@@ -61,7 +62,7 @@ export interface ProfileState {
   degrees: Degree[];
   experiences: Experience[];
   courses: Experience[];
-  skills: string[];
+  skills: Skill[];
   languages: Language[];
   attachments: Attachment[];
 

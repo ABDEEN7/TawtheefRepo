@@ -37,6 +37,7 @@ public sealed class SaveProfileSkillsHandler(
             .Select(s => new ProfileSkill
             {
                 SkillId       = s.SkillId,
+                LevelId       = s.LevelId,
                 UserProfileId = profile.Id
             })
             .ToList();
