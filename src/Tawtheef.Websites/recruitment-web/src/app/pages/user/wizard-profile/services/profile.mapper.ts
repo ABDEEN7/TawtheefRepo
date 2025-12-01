@@ -189,7 +189,7 @@ export function mapProfileStatusToState(
     attachments: (dto.additionalAttachments ?? []).map(a => ({
       id: a.id,
       name: a.title ?? '',
-      fileName: a.file?.resourceName,
+      fileName: a.file?.fileName,
       attachmentId: a.file?.resourceId,
       // file: this.mapFile(a.file)!,
     })),

@@ -1,21 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Button } from 'primeng/button';
-import { FileUpload } from 'primeng/fileupload';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
 import {NgClass, NgIf} from '@angular/common';
 import {periodRangeValidator} from '../../../../../../../shared/validator/period-range,validator';
+import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
 
 @Component({
   selector: 'app-course',
   standalone: true,
   imports: [
-    ReactiveFormsModule,       // مهم لاستخدام formControlName
+    ReactiveFormsModule,
     Button,
-    FileUpload,
     TranslatePipe,
     DatePicker,
     InputText,
@@ -82,8 +81,8 @@ export class CourseModal implements OnInit {
     const v = this.form.value;
     const period = v.period as Date[] | null;
 
-    const from = period && period.length > 0 ? period[0] : null;
-    const to   = period && period.length > 1 ? period[1] : null;
+    const from = period && period.length > 0 ? dateToDateOnly(period[0]) : null;
+    const to   = period && period.length > 1 ? dateToDateOnly(period[1]) : null;
 
     const payload = {
       org: v.org,
@@ -104,15 +103,4 @@ export class CourseModal implements OnInit {
   }
 
   get f() { return this.form.controls; }
-}
-
-/** from <= to إذا كانا موجودين */
-export function dateRangeValidator(fromKey: string, toKey: string) {
-  return (group: AbstractControl): ValidationErrors | null => {
-    const from = group.get(fromKey)?.value as Date | null;
-    const to = group.get(toKey)?.value as Date | null;
-    if (!from || !to) return null;
-    const ok = new Date(from).getTime() <= new Date(to).getTime();
-    return ok ? null : { dateRange: true };
-  };
 }

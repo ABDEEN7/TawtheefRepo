@@ -1,7 +1,5 @@
-using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
@@ -183,7 +181,6 @@ public sealed class SaveProfileExperienceCommandValidator : AbstractValidator<Sa
             RuleFor(x => x.Request!.TrainingCoursesJson).NotNull();
             RuleFor(x => x.Request!.ExperienceFiles).NotNull();
             RuleFor(x => x.Request!.TrainingCourseFiles).NotNull();
-            RuleForEach(x => x.Request!.Achievements).SetValidator(new AchievementUpsertValidator());
 
             When(x => x.Request!.Submit, () =>
             {
@@ -268,19 +265,6 @@ internal sealed class TrainingCourseUpsertValidator : AbstractValidator<Training
     {
         RuleFor(x => x.Organization).NotEmpty();
         RuleFor(x => x.Position).NotEmpty();
-        RuleFor(x => x.StartDate).NotEmpty();
-        RuleFor(x => x.EndDate)
-            .GreaterThanOrEqualTo(x => x.StartDate)
-            .When(x => x.EndDate.HasValue);
-    }
-}
-
-internal sealed class AchievementUpsertValidator : AbstractValidator<AchievementUpsertDto>
-{
-    public AchievementUpsertValidator()
-    {
-        RuleFor(x => x.Organization).NotEmpty();
-        RuleFor(x => x.Title).NotEmpty();
         RuleFor(x => x.StartDate).NotEmpty();
         RuleFor(x => x.EndDate)
             .GreaterThanOrEqualTo(x => x.StartDate)

@@ -43,8 +43,8 @@ public sealed class SaveProfileExperienceHandler(
 
         var experiences = experiencesResult.Value;
         var trainings = trainingsResult.Value;
-        var experienceFiles = cmd.Request.ExperienceFiles ?? [];
-        var trainingFiles   = cmd.Request.TrainingCourseFiles ?? [];
+        var experienceFiles = cmd.Request.ExperienceFiles;
+        var trainingFiles   = cmd.Request.TrainingCourseFiles;
 
         profile.Experiences ??= [];
         foreach (var dto in experiences)
@@ -67,9 +67,7 @@ public sealed class SaveProfileExperienceHandler(
                 EndDate       = dto.EndDate,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id,
-                Achievements  = (dto.Achievements is { Count: > 0 })
-                    ? string.Join('\n', dto.Achievements)
-                    : string.Empty
+                Achievements  = dto.Achievements
             };
 
             profile.Experiences.Add(entity);

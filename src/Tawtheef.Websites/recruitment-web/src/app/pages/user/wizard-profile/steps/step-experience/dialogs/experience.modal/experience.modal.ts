@@ -14,6 +14,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { NgClass, NgIf } from '@angular/common';
+import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
 
 @Component({
   selector: 'app-experience',
@@ -124,8 +125,8 @@ export class ExperienceModal implements OnInit {
     const payload = {
       org: v.org,
       title: v.title,
-      from: v.from,
-      to: v.current ? null : v.to,
+      from: dateToDateOnly(v.from),
+      to: dateToDateOnly(v.current ? null : v.to),
       current: !!v.current,
       tasks: v.tasks,
       file: v.file,
