@@ -68,9 +68,11 @@ export interface ExperienceDto {
   id?: string | null;
   org: string;
   title: string;
+  name?: string | null;
   from?: string | null; // 'YYYY-MM-DD'
   to?: string | null;
   tasks?: string | null;
+  description?: string | null;
   fileName?: string | null;
 }
 

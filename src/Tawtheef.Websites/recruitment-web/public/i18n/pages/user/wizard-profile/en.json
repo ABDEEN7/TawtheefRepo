@@ -1,5 +1,6 @@
 ﻿{
   "wizard": {
+    "errorTitle": "Something went wrong",
     "validationErrorTitle": "Validation error",
     "title": "Tawtheef - Candidate Profile",
     "accountFieldNote": "This field came from your account and cannot be changed.",
@@ -138,7 +139,9 @@
       "street": "Street",
       "building": "Building",
       "unit": "Unit",
-      "document": "National Address document"
+      "document": "National Address document",
+      "fileTypeError": "File type must be PDF or an image.",
+      "fileSizeError": "File size must be 1MB or less."
     },
     "degrees": {
       "title": "Degrees",
@@ -159,7 +162,15 @@
       "choiceStudySystem": "Choose study system",
       "choiceGrade": "Choose grade",
       "choiceDegreeFile": "Choose degree file",
-      "add": "Add degree"
+      "add": "Add degree",
+      "deleteError": "Failed to delete degree. Please try again.",
+      "saveError": "Failed to save education section. Please try again.",
+      "validation": {
+        "noRows": "Please add at least one degree."
+      }
+    },
+    "course": {
+      "deleteError": "Failed to delete course. Please try again."
     },
     "experience": {
       "title": "Experience",
@@ -167,9 +178,15 @@
       "jobTitle": "Job title",
       "from": "From (Month/Year)",
       "to": "To (Month/Year)",
+      "period": "Period",
       "tasks": "Responsibilities",
       "current": "I currently work here",
       "attachment": "Experience certificate (PDF/image)",
+      "deleteError": "Failed to delete experience. Please try again.",
+      "saveError": "Failed to save experience section. Please try again.",
+      "validation": {
+        "noRows": "Please add at least one experience."
+      },
       "table": {
         "org": "Organization",
         "title": "Title",
@@ -186,6 +203,7 @@
       "period": "Period",
       "notes": "Notes (optional)",
       "certificate": "Course certificate (PDF/image)",
+      "deleteError": "Failed to delete course. Please try again.",
       "table": {
         "provider": "Provider",
         "courseName": "Course",
@@ -193,6 +211,9 @@
         "file": "File"
       },
       "add": "Add course"
+    },
+    "skill": {
+      "deleteError": "Failed to delete skill. Please try again."
     },
     "skills": {
       "title": "Skills & Languages",
@@ -214,7 +235,8 @@
       "max10": "Showing up to 10 results per search.",
       "languagesHint": "Add your languages and proficiency levels.",
       "selectLanguage": "Choose language",
-      "selectLevel": "Choose level"
+      "selectLevel": "Choose level",
+      "saveError": "Failed to save skills section. Please try again."
     },
     "attachments": {
       "title": "Attachments",
@@ -222,6 +244,7 @@
       "file": "File",
       "add": "Add attachment",
       "empty": "No attachments added yet.",
+      "saveError": "Failed to save attachments. Please try again.",
       "change": "Change attachment",
       "placeholders": {
         "attachmentTitle": "Example: CV, ID copy"
@@ -232,6 +255,7 @@
       "missingWarningTitle": "Some required fields are missing before final submission:",
       "success": "Your profile has been saved successfully.",
       "errorGeneric": "Failed to submit, please try again.",
+      "submitError": "Failed to submit profile",
       "saving": "Saving..."
     },
     "table": {

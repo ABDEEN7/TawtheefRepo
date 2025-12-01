@@ -32,6 +32,16 @@ export class StepReviewComponent {
 
   canSubmit = computed(() => this.missing().length === 0);
 
+  hasNationalAddress = computed(() => {
+    const s = this.ds.state();
+    return !!(s.naZone || s.naStreet || s.naBuilding || s.naUnit || s.naFileName);
+  });
+
+  hasSponsor = computed(() => {
+    const s = this.ds.state();
+    return !!(s.sponsorType || s.sponsorEmployerName || s.sponsorEmployerNumber || s.sponsorCardName);
+  });
+
   // UI flags
   submitting = signal(false);
   submitted  = signal(false);

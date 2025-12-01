@@ -25,12 +25,12 @@
               <i class="fa-solid fa-medal me-1"></i> {{ 'wizard.experience.table.title' | translate }}
             </label>
             <input pInputText class="form-control"
-                   formControlName="title"
-                   [ngClass]="{'p-invalid': f['title'].invalid && (f['title'].dirty || f['title'].touched)}">
-            <small *ngIf="f['title'].hasError('required') && (f['title'].dirty || f['title'].touched)" class="text-danger mt-1 d-block">
+                   formControlName="name"
+                   [ngClass]="{'p-invalid': f['name'].invalid && (f['name'].dirty || f['name'].touched)}">
+            <small *ngIf="f['name'].hasError('required') && (f['name'].dirty || f['name'].touched)" class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
-            <small *ngIf="f['title'].hasError('maxlength') && (f['title'].dirty || f['title'].touched)" class="text-danger mt-1 d-block">
+            <small *ngIf="f['name'].hasError('maxlength') && (f['name'].dirty || f['name'].touched)" class="text-danger mt-1 d-block">
               {{ 'validation.maxLength' | translate:{max:150} }}
             </small>
           </div>
@@ -145,9 +145,9 @@
             <i class="fa-solid fa-list-check me-1"></i> {{ 'wizard.experience.tasks' | translate }}
           </label>
           <textarea rows="2" class="form-control"
-                    formControlName="tasks"
-                    [ngClass]="{'p-invalid': f['tasks'].invalid && (f['tasks'].dirty || f['tasks'].touched)}"></textarea>
-          <small *ngIf="f['tasks'].hasError('maxlength') && (f['tasks'].dirty || f['tasks'].touched)" class="text-danger mt-1 d-block">
+                    formControlName="description"
+                    [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}"></textarea>
+          <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)" class="text-danger mt-1 d-block">
             {{ 'validation.maxLength' | translate:{max:1000} }}
           </small>
         </div>

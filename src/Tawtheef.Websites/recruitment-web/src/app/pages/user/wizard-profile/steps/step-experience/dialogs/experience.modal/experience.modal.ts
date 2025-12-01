@@ -46,11 +46,11 @@ export class ExperienceModal implements OnInit {
   form: FormGroup = this.fb.group(
     {
       org: ['', [Validators.required, Validators.maxLength(150)]],
-      title: ['', [Validators.required, Validators.maxLength(150)]],
+      name: ['', [Validators.required, Validators.maxLength(150)]],
       from: [null, [Validators.required]],
       to: [null],
       current: [false],
-      tasks: ['', [Validators.maxLength(1000)]],
+      description: ['', [Validators.maxLength(1000)]],
       fileName: [''],
       file: [null, Validators.required], // ✅ required
     },
@@ -124,11 +124,11 @@ export class ExperienceModal implements OnInit {
 
     const payload = {
       org: v.org,
-      title: v.title,
+      name: v.name,
       from: dateToDateOnly(v.from),
       to: dateToDateOnly(v.current ? null : v.to),
       current: !!v.current,
-      tasks: v.tasks,
+      description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null,
     };

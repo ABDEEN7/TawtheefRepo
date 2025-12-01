@@ -36,9 +36,9 @@ export class CourseModal implements OnInit {
 
   form: FormGroup = this.fb.group({
     org: ['', [Validators.required, Validators.maxLength(150)]],
-    title: ['', [Validators.required, Validators.maxLength(150)]],
+    name: ['', [Validators.required, Validators.maxLength(150)]],
     period: [null, [Validators.required, periodRangeValidator]],
-    tasks: ['', [Validators.maxLength(500)]],
+    description: ['', [Validators.maxLength(500)]],
     fileName: [''],
     file: [null, Validators.required],
   });
@@ -86,10 +86,10 @@ export class CourseModal implements OnInit {
 
     const payload = {
       org: v.org,
-      title: v.title,
+      name: v.name,
       from,
       to,
-      tasks: v.tasks,
+      description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null
     };

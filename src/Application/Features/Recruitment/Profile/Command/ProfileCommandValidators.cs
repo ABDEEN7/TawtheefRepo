@@ -269,7 +269,7 @@ internal sealed class ExperienceUpsertValidator : AbstractValidator<ExperienceUp
     public ExperienceUpsertValidator()
     {
         RuleFor(x => x.Organization).NotEmpty();
-        RuleFor(x => x.Position).NotEmpty();
+        RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => x.StartDate).NotEmpty();
         RuleFor(x => x.EndDate)
             .GreaterThanOrEqualTo(x => x.StartDate)
@@ -282,7 +282,7 @@ internal sealed class TrainingCourseUpsertValidator : AbstractValidator<Training
     public TrainingCourseUpsertValidator()
     {
         RuleFor(x => x.Organization).NotEmpty();
-        RuleFor(x => x.Position).NotEmpty();
+        RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => x.StartDate).NotEmpty();
         RuleFor(x => x.EndDate)
             .GreaterThanOrEqualTo(x => x.StartDate)

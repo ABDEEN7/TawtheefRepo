@@ -65,12 +65,12 @@ public sealed class SaveProfileExperienceHandler(
             var entity = new Experience
             {
                 Organization  = dto.Organization,
-                Position      = dto.Position,
+                Name          = dto.Name,
                 StartDate     = dto.StartDate,
                 EndDate       = dto.EndDate,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id,
-                Achievements  = dto.Achievements
+                Description   = dto.Description
             };
 
             profile.Experiences.Add(entity);
@@ -94,9 +94,10 @@ public sealed class SaveProfileExperienceHandler(
             var entity = new TrainingCourse
             {
                 Organization  = dto.Organization,
-                Position      = dto.Position,
+                Name          = dto.Name,
                 StartDate     = dto.StartDate,
                 EndDate       = dto.EndDate,
+                Description   = dto.Description,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id
             };
