@@ -8,6 +8,7 @@ import {StepContactComponent} from './steps/step-contact/step-contact.component'
 import {StepDegreeComponent} from './steps/step-degree/step-degree.component';
 import {StepExperienceComponent} from './steps/step-experience/step-experience.component';
 import {StepSkillsComponent} from './steps/step-skills/step-skills.component';
+import {StepLanguagesComponent} from './steps/step-languages/step-languages.component';
 import {StepAttachmentsComponent} from './steps/step-attachments/step-attachments.component';
 import {StepReviewComponent} from './steps/step-review/step-review.component';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -40,6 +41,7 @@ import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
     StepDegreeComponent,
     StepExperienceComponent,
     StepSkillsComponent,
+    StepLanguagesComponent,
     StepAttachmentsComponent,
     StepReviewComponent
   ],

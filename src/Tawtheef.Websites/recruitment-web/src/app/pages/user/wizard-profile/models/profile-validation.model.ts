@@ -5,6 +5,7 @@
   | 'degrees'
   | 'experience'
   | 'skills'
+  | 'languages'
   | 'attachments';
 
 export interface FieldError {

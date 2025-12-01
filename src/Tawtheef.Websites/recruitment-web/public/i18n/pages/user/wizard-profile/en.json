@@ -9,7 +9,9 @@
       "contact": "Contact & Address",
       "degrees": "Degrees",
       "experience": "Experience & Courses",
-      "skills": "Skills & Languages",
+      "skills": "Skills",
+      "skill": "Skill",
+      "languages": "Languages",
       "attachments": "Attachments",
       "review": "Review"
     },
@@ -378,9 +380,10 @@
         }
       },
       "skills": {
-        "orLanguages": {
-          "required": "Please add at least one skill or language"
-        }
+        "required": "Please add at least one skill"
+      },
+      "languages": {
+        "required": "Please add at least one language"
       }
     }
   }

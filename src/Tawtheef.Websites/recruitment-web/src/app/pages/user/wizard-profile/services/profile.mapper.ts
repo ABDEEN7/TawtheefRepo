@@ -176,7 +176,13 @@ export function mapProfileStatusToState(
       attachmentId: t.attachment?.resourceId,
     } as Experience)),
 
-    skills: (dto.skills ?? []).map(s => s.skillId),
+    skills: (dto.skills ?? []).map(s => ({
+      id: s.id,
+      skillId: s.skillId,
+      skillName: mapIdToDropdown(lookups, 'skillType', s.skillId)?.name ?? '',
+      levelId: s.levelId,
+      levelName: mapIdToDropdown(lookups, 'ratingGrade', s.levelId)?.name ?? '',
+    })),
 
     languages: (dto.languages ?? []).map(l => ({
       id: l.id,

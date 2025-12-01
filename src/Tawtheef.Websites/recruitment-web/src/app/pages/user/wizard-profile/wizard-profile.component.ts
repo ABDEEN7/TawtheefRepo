@@ -33,7 +33,7 @@ export class WizardProfileComponent implements OnInit {
   avatarPreviewUrl: string | null = null;
 
   step = 1;
-  total = 8;
+  total = 9;
 
   loading = true;
 
@@ -44,6 +44,7 @@ export class WizardProfileComponent implements OnInit {
     'wizard.steps.degrees',
     'wizard.steps.experience',
     'wizard.steps.skills',
+    'wizard.steps.languages',
     'wizard.steps.attachments',
     'wizard.steps.review',
   ];
@@ -56,7 +57,8 @@ export class WizardProfileComponent implements OnInit {
     4: 'degrees',
     5: 'experience',
     6: 'skills',
-    7: 'attachments',
+    7: 'languages',
+    8: 'attachments',
   };
 
   private orderedValidationSteps: (keyof ReturnType<typeof this.ds.stepValidity>)[] = [
@@ -66,6 +68,7 @@ export class WizardProfileComponent implements OnInit {
     'degrees',
     'experience',
     'skills',
+    'languages',
     'attachments',
   ];
 
