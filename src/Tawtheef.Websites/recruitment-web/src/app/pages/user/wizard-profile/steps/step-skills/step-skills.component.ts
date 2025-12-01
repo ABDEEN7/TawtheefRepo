@@ -29,18 +29,18 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   profile = inject(ProfileService);
 
   saving = false;
-  
+
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
     return validity['skills'];
   }
   // UI state
-  skillOptions: SkillDto[] = [];
+  skillOptions: dropdownOptionsModel[] = [];
   loadingSkills = false;
   lastQuery = '';
 
-  selectedSkill?: SkillDto;
+  selectedSkill?: dropdownOptionsModel;
   selectedLevel?: dropdownOptionsModel;
 
   // search stream
@@ -100,9 +100,9 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       const skill: Skill = {
         id: this.selectedSkill.id?.toString(),
         skillId: this.selectedSkill.id?.toString() ?? this.selectedSkill.name,
-        skillName: this.selectedSkill.name,
+        skill: this.selectedSkill,
         levelId: this.selectedLevel.id,
-        levelName: this.selectedLevel.name,
+        level: this.selectedLevel,
       };
       this.ds.addSkill(skill);
       this.selectedSkill = undefined;

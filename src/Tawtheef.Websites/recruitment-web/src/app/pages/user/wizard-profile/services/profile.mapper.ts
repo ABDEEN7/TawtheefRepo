@@ -179,17 +179,17 @@ export function mapProfileStatusToState(
     skills: (dto.skills ?? []).map(s => ({
       id: s.id,
       skillId: s.skillId,
-      skillName: mapIdToDropdown(lookups, 'skillType', s.skillId)?.name ?? '',
+      skill: s.skill,
       levelId: s.levelId,
-      levelName: mapIdToDropdown(lookups, 'ratingGrade', s.levelId)?.name ?? '',
+      level: mapIdToDropdown(lookups, 'ratingGrade', s.levelId),
     })),
 
     languages: (dto.languages ?? []).map(l => ({
       id: l.id,
       langId: l.languageId,
-      langName: mapIdToDropdown(lookups, 'language', l.languageId)?.name ?? '',
+      lang: mapIdToDropdown(lookups, 'language', l.languageId),
       levelId: l.levelId,
-      levelName: mapIdToDropdown(lookups, 'languageLevel', l.levelId)?.name ?? '',
+      level: mapIdToDropdown(lookups, 'languageLevel', l.levelId),
     })),
 
     attachments: (dto.additionalAttachments ?? []).map(a => ({
@@ -203,7 +203,7 @@ export function mapProfileStatusToState(
     // ----------- UI fields -----------
     available: true,
     avatarUrl: dto.avatar ?? prefill?.avatar ?? undefined,
-  };
+  } as ProfileState;
 }
 
 function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {

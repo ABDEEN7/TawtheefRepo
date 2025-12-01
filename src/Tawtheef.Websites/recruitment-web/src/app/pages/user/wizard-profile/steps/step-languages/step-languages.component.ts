@@ -40,9 +40,9 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     if (this.newLanguage && this.newLevel) {
       this.ds.addLang({
         langId: this.newLanguage.id,
-        langName: this.newLanguage.name,
+        lang: this.newLanguage,
         levelId: this.newLevel.id,
-        levelName: this.newLevel.name
+        level: this.newLevel
       });
       this.newLanguage = this.newLevel = undefined;
     }

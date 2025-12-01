@@ -1,7 +1,9 @@
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+
 export interface Skill {
   id?: string | null;
   skillId: string;
-  skillName: string;
+  skill: dropdownOptionsModel | null | undefined;
   levelId: string;
-  levelName: string;
+  level: dropdownOptionsModel | null | undefined;
 }

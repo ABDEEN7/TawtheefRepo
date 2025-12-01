@@ -2,7 +2,6 @@
 import { inject, NgZone } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
-import { AuthService } from '../auth/auth.service';
 import { HDR } from '../utils/headers.flags';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -14,7 +13,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err: unknown) => {
       if (!(err instanceof HttpErrorResponse)) return throwError(() => err);
       const isInfraAuth = /\/auth\/(login|refresh|logout|external)/i.test(req.url);
-      if (isInfraAuth || req.headers.get(HDR.LogoutFlow) === 'true') {
+      const external = req.url.includes('ipapi.co');
+      if (isInfraAuth || external || req.headers.get(HDR.LogoutFlow) === 'true') {
         return throwError(() => err);
       }
 

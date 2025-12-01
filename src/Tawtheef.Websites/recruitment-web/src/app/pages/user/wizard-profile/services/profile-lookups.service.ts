@@ -85,8 +85,8 @@ export class ProfileLookupsService {
       })
     );
   }
-  searchSkills(query: string): Observable<SkillDto[]> {
-    const params = new HttpParams().set('q', query);
-    return this.http.get<SkillDto[]>(this.endpoints.profile.lookups.skill, { params });
+  searchSkills(query: string): Observable<dropdownOptionsModel[]> {
+    const params = new HttpParams().set('search', query);
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.skill, { params });
   }
 }

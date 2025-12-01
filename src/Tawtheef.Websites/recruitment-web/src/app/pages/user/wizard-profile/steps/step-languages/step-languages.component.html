@@ -1,4 +1,4 @@
-<div class="card border border-1 shadow-none rounded-4 p-4 mb-3">
+<div class="card border border-1 shadow-none rounded-4 p-4 mb-3 step-languages">
   <div class="row g-4">
     <div class="col-12">
       <div class="section-head">
@@ -41,8 +41,8 @@
 
         <ng-template pTemplate="body" let-r let-i="rowIndex">
           <tr>
-            <td>{{ r.langName }}</td>
-            <td><span class="badge rounded-pill bg-soft">{{ r.levelName }}</span></td>
+            <td>{{ r.lang.name }}</td>
+            <td><span class="badge rounded-pill bg-soft">{{ r.level.name }}</span></td>
             <td class="text-end">
               <button class="btn btn-sm btn-outline-danger rounded-pill"
                       (click)="removeLang(i)"

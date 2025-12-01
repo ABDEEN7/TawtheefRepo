@@ -1,6 +1,8 @@
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+
 export interface Language {
   langId: string;
-  langName: string;
+  lang: dropdownOptionsModel | null | undefined;
   levelId: string;
-  levelName: string;
+  level: dropdownOptionsModel | null | undefined;
 }
