@@ -28,6 +28,7 @@ import {DatePickerModule} from 'primeng/datepicker';
 import {PaginationComponent} from '../../shared/components/pagination/pagination.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { JobInvitesDetailsComponent } from './job-invites-details/job-invites-details.component';
+import { Scroller } from "primeng/scroller";
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { JobInvitesDetailsComponent } from './job-invites-details/job-invites-de
     PointsConfigModalComponent,
     NgOptimizedImage,
     MultiSelectModule,
-  ],
+    Scroller
+],
   exports: [
     JobDetailsComponent,
     JobListComponent,

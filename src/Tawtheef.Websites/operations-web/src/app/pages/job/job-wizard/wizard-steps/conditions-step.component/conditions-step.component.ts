@@ -27,7 +27,7 @@ export class ConditionsStepComponent implements WizardStepComponent,OnInit {
   newCond = '';
 
   ngOnInit() {
-    this.setJobData(this.jobService.currentJob());
+    this.setJobData(this.jobService.newJob());
 
     this.form.valueChanges.pipe(
       debounceTime(300),

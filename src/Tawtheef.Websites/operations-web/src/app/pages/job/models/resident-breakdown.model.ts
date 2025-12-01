@@ -1,4 +1,6 @@
+import { GUID } from "../../../shared/types/guid.type";
+
 export interface ResidentBreakdown {
-  nat: string;
-  pct: number;
+  nationalityId: GUID;
+  percentage: number;
 }

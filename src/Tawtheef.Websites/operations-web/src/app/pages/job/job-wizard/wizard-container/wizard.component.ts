@@ -104,7 +104,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
       const ref = this.container.createComponent(cls);
 
       if (ref.instance.setJobData) {
-        ref.instance.setJobData(this.jobService.currentJob());
+        ref.instance.setJobData(this.jobService.newJob());
       }
 
       (ref.location.nativeElement as HTMLElement).style.display = 'none';
@@ -159,7 +159,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
   }
 
   saveJob(): void {
-    const currentJob = this.jobService.currentJob();
+    const currentJob = this.jobService.newJob();
     const jobToSave: Job = {
       ...currentJob,
       status: this.lookupsService.jobStatus().find(jobStatus => jobStatus.backendName == "open")?.id || '',

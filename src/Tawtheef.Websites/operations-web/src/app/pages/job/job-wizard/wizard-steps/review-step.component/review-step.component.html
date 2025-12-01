@@ -6,16 +6,16 @@
     <div class="col-lg-6">
       <div class="review-card">
         <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.basics' | translate }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.job_title' | translate }}</div><div class="mb-1 fw-bold">{{ jobSignal().basics.title || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.job_category' | translate }}</div><div class="mb-1">{{lookupsService.getJobCategoryLable(jobSignal().basics.jobCategory)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.job_title' | translate }}</div><div class="mb-1 fw-bold">{{ jobSignal().title || '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.job_category' | translate }}</div><div class="mb-1">{{lookupsService.getJobCategoryLable(jobSignal().jobCategoryId)}}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.gender' | translate }}</div>
-        <div class="mb-1"> {{lookupsService.getGender(jobSignal().basics.gender)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ lookupsService.getWorkEntity(jobSignal().basics.entity)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ lookupsService.getDegrees(jobSignal().basics.degree)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ lookupsService.getMajor(jobSignal().basics.major)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ lookupsService.getTypeOfWork(jobSignal().basics.typeOfWork)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.vacancies' | translate }}</div><div class="mb-1">{{ jobSignal().basics.vacancies || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.deadline' | translate }}</div><div class="mb-1">{{ jobSignal().basics.deadline ? (jobSignal().basics.deadline | date:'mediumDate') : '—' }}</div>
+        <div class="mb-1"> {{jobSignal().genderId}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ lookupsService.getWorkLocations(jobSignal().workLocationId)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ lookupsService.getDegrees(jobSignal().degreeIds)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ lookupsService.getMajor(jobSignal().majorId)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ lookupsService.getTypeOfWork(jobSignal().workTypeId)}}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.vacancies' | translate }}</div><div class="mb-1">{{ jobSignal().vacancies || '—' }}</div>
+        <div class="small-muted">{{ 'job_wizard.steps.basics.deadline' | translate }}</div><div class="mb-1">{{ jobSignal().deadline ? (jobSignal().deadline | date:'mediumDate') : '—' }}</div>
       </div>
     </div>
 
@@ -24,18 +24,18 @@
       <div class="review-card">
         <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.quotas' | translate }}</div>
         <div class="d-flex flex-wrap gap-1">
-          <span class="chip">{{ 'job_wizard.steps.quotas.qatariCitizens' | translate }}: {{ jobSignal().quotas.qatariCitizens || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.qatarMother' | translate }}: {{ jobSignal().quotas.qatarMother || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.nonQatariSpouse' | translate }}: {{ jobSignal().quotas.nonQatariSpouse || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.gcc' | translate }}: {{ jobSignal().quotas.gcc || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.quGrads' | translate }}: {{ jobSignal().quotas.quGrads || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.residents' | translate }}: {{ jobSignal().quotas.residents || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.qatariCitizens' | translate }}: {{ jobSignal().quota.qatariCitizens || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.qatarMother' | translate }}: {{ jobSignal().quota.qatarMother || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.nonQatariSpouse' | translate }}: {{ jobSignal().quota.nonQatariSpouse || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.gcc' | translate }}: {{ jobSignal().quota.gcc || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.quGrads' | translate }}: {{ jobSignal().quota.quGrads || 0 }}%</span>
+          <span class="chip">{{ 'job_wizard.steps.quotas.residents' | translate }}: {{ jobSignal().quota.residents || 0 }}%</span>
         </div>
-        @if (jobSignal().quotas.residentsBreakdown.length) {
+        @if (jobSignal().quota.residentsBreakdowns.length) {
           <div class="small-muted mt-2">{{ 'job_wizard.steps.quotas.residents_details_button' | translate }}</div>
           <div class="d-flex flex-wrap gap-1">
-            @for (r of jobSignal().quotas.residentsBreakdown; track r.nat) {
-              <span class="chip">{{lookupsService.getNationalites(r.nat) }}: {{ r.pct }}%</span>
+            @for (r of jobSignal().quota.residentsBreakdowns; track r.nationalityId) {
+              <span class="chip">{{lookupsService.getNationalites(r.nationalityId) }}: {{ r.percentage }}%</span>
             }
           </div>
         }

@@ -203,8 +203,6 @@ $hover-color: #e3f2fd;
   }
 }
 
-// RTL Support for Arabic
-[dir="rtl"] {
   .p-datepicker {
     .p-datepicker-input {
       padding: .375rem .75rem;
@@ -222,7 +220,7 @@ $hover-color: #e3f2fd;
       }
     }
   }
-}
+
 
 // Responsive Design
 @media (max-width: 768px) {

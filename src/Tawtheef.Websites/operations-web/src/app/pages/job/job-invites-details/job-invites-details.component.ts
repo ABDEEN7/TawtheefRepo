@@ -8,6 +8,7 @@ import { JobLookupService } from '../services/job-lookup.service';
 import { InviteDetails } from '../models/invite-details.model';
 import { KPIs } from '../models/kpis.model';
 import { JobInvitesService } from '../services/job-invites.service';
+import { JobResponseDto } from '../models/job-response-Dto';
 
 @Component({
   selector: 'app-job-invites-details',
@@ -23,7 +24,7 @@ export class JobInvitesDetailsComponent implements OnInit {
 
   jobId: GUID | null = GuidUtils.emptyGuid;
 
-  job = signal<Job | null>(null);
+  job = signal<JobResponseDto | null>(null);
   allInvites = this.jobInvitesService.invites;
 
   statusFilter = signal<string[]>([]);
@@ -156,7 +157,7 @@ export class JobInvitesDetailsComponent implements OnInit {
     return 'job_invites_details.status.' + (backendName || 'unknown');
   }
 
-  getTypeClass(type: string): string {
+  getTypeClass(type?: string): string {
     return `badge-soft ${type}`;
   }
 

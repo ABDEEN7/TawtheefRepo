@@ -1,25 +1,3 @@
-/* Root Variables */
-:root {
-  --brand: #7b1e3a;
-  --accent: #a9445f;
-  --muted: #6b7280;
-  --text: #1e1b2c;
-  --card: #fafafa;
-  --border: rgba(0, 0, 0, .08);
-}
-
-/* Base */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  background: #fff;
-  color: var(--text);
-  font-family: 'Cairo', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  line-height: 1.7;
-}
-
 /* Utilities */
 .text-brand {
   color: var(--brand);
@@ -32,13 +10,15 @@ body {
 
 /* Buttons */
 .btn-brand,
-.btn-outline-brand,
 .btn-outline-gray,
 .btn-outline-secondary {
   font-weight: 700;
-  border-radius: 999px;
 }
 
+.btn-outline-brand{
+  font-weight: 700;
+  border-radius: 900px !important;
+}
 /* Primary Brand Button */
 .btn-brand {
   background: linear-gradient(135deg, var(--brand), var(--accent));
@@ -85,25 +65,6 @@ body {
   }
 }
 
-/* Navbar */
-.navbar {
-  background: #fff;
-}
-
-/* Cards */
-.card-lite,
-.rubric-card {
-  border: 1px solid var(--border);
-  background: #fff;
-}
-
-.card-lite {
-  border-radius: 14px;
-}
-
-.rubric-card {
-  border-radius: 12px;
-}
 
 /* Chips */
 .chip {
@@ -160,9 +121,9 @@ body {
   padding: 0;
 }
 
-.badge-soft.academic       { color: #1d4ed8; }
-.badge-soft.administrative { color: #047857; }
-.badge-soft.labor          { color: #b91c1c; }
+.badge-soft.Academic       { color: #1d4ed8; }
+.badge-soft.Administrative { color: #047857; }
+.badge-soft.Labor          { color: #b91c1c; }
 
 /* Status Pills */
 .status-pill {
@@ -173,38 +134,20 @@ body {
   font-size: .9rem;
 }
 
-.status-open {
+.status-Open {
   background: #ecfdf5;
   color: #065f46;
   border: 1px solid rgba(6, 95, 70, .15);
 }
 
-.status-draft {
+.status-Draft {
   background: #f3f4f6;
   color: #374151;
   border: 1px solid rgba(55, 65, 81, .15);
 }
 
-.status-closed {
+.status-Closed {
   background: #fef2f2;
   color: #991b1b;
   border: 1px solid rgba(153, 27, 27, .18);
-}
-
-/* Sticky Points Footer */
-.points-sticky {
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  background: #fff;
-  border-top: 1px solid var(--border);
-  padding: .75rem 1rem;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-/* Footer */
-.footer {
-  background: var(--card);
-  border-top: 1px solid var(--border);
 }

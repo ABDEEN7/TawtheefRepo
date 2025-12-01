@@ -28,7 +28,7 @@ export class SkillsStepComponent implements WizardStepComponent,OnInit {
   newSkill = '';
 
   ngOnInit(): void {
-    this.setJobData(this.jobService.currentJob());
+    this.setJobData(this.jobService.newJob());
 
     this.form.valueChanges.pipe(
       debounceTime(300),

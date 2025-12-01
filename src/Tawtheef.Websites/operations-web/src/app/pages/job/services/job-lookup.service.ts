@@ -4,6 +4,7 @@ import { forkJoin } from 'rxjs';
 import { Lookups } from '../../../core/models/lookups.model';
 import { EndpointsService } from '../../../core/http/endpoints.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { GUID } from '../../../shared/types/guid.type';
 
 @Injectable({ providedIn: 'root' })
 export class JobLookupService {
@@ -20,7 +21,7 @@ export class JobLookupService {
   workTypes = signal<Lookups[]>([]);
   jobCategories = signal<Lookups[]>([]);
   genders = signal<Lookups[]>([]);
-  targetEntities = signal<Lookups[]>([]);
+  workLocations = signal<Lookups[]>([]);
   nationalities = signal<Lookups[]>([]);
   jobStatus = signal<Lookups[]>([]);
   jobInvitesStatus = signal<Lookups[]>([]);
@@ -47,7 +48,7 @@ export class JobLookupService {
         this.workTypes.set([...res.workTypes]);
         this.jobCategories.set([...res.jobCategories]);
         this.genders.set([...res.genders]);
-        this.targetEntities.set([...res.targetEntities]);
+        this.workLocations.set([...res.targetEntities]);
         this.nationalities.set([...res.nationalities]);
         this.jobStatus.set([...res.jobStatus]);
         this.jobInvitesStatus.set([...res.jobInvitesStatus])
@@ -73,23 +74,23 @@ export class JobLookupService {
     ids.forEach(id =>{splitedNames.push(this.genders().find(gender =>gender.id == id)?.name || '')})
     return splitedNames.join(',')
   }
-  getWorkEntity(id : string | undefined) :string{
-       return this.targetEntities().find(en => en.id == id)?.name || ''
+  getWorkLocations(id : string | undefined) :string{
+       return this.workLocations().find(en => en.id == id)?.name || ''
   }
 
     getTypeOfWork(id : string | undefined) :string{
        return this.workTypes().find(wt => wt.id == id)?.name || ''
   }
    getMajor(id : string) :string{
-       return this.majors().find(m => m.id == id)?.name || ''
+       return this.majors().find(ma => ma.id == id)?.name  || ''
   }
-  getDegrees(ids:string[]): string {
+  getDegrees(ids:GUID[]): string {
     let splitedNames : string[] = []
     ids.forEach(id =>{splitedNames.push(this.degrees().find(degree =>degree.id == id)?.name || '')})
     return splitedNames.join(',')
   }
 
-    getNationalites(natId:string){
+    getNationalites(natId?:string){
     return this.nationalities().find((country) => country?.id == natId)?.name || ''
   }
 

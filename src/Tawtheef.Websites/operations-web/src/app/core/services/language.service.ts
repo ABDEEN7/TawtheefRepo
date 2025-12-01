@@ -1,7 +1,8 @@
-﻿import { Injectable, Inject } from '@angular/core';
+﻿import {Injectable, Inject, inject} from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { DOCUMENT } from '@angular/common';
+import {PRIME_NG_CONFIG, PrimeNG} from 'primeng/config';
 
 export type Lang = 'ar' | 'en';
 
@@ -11,6 +12,7 @@ const SUPPORTED_LANGS: Lang[] = ['ar', 'en'];
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
+  private primengConfig = inject(PrimeNG);
   /** Emits current language immediately and on every change */
   readonly current$ = new BehaviorSubject<Lang>(DEFAULT_LANG);
 
@@ -24,12 +26,14 @@ export class LanguageService {
   ) {
     // Constructor stays light; no .use() here.
     this.translate.addLangs(SUPPORTED_LANGS);
-    this.translate.setDefaultLang(DEFAULT_LANG);
   }
 
   /** Call once at app start (from provideAppInitializer). */
   async init(): Promise<void> {
     const initial = this.resolveInitialLang();
+    if (initial !== DEFAULT_LANG) {
+      this.translate.setFallbackLang(DEFAULT_LANG);
+    }
     await this.apply(initial, { emit: true, persist: true });
   }
 
@@ -62,6 +66,7 @@ export class LanguageService {
   private async apply(lang: Lang, opts: { emit: boolean; persist: boolean }): Promise<void> {
     // Switch translations first (Angular will await this in app initializer)
     await this.translate.use(lang).toPromise();
+    this.translate.get('primeng').subscribe(res => this.primengConfig.setTranslation(res));
 
     const isRtl = lang === 'ar';
 
@@ -80,7 +85,8 @@ export class LanguageService {
       bs.href = isRtl
         ? 'assets/styles/bootstrap/bootstrap.rtl.min.css'
         : 'assets/styles/bootstrap/bootstrap.min.css';
-    } else {
+    }
+    else {
       const ltr = this.doc.getElementById('bs-ltr') as HTMLLinkElement | null;
       const rtl = this.doc.getElementById('bs-rtl') as HTMLLinkElement | null;
       if (ltr && rtl) {
