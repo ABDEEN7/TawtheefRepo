@@ -45,10 +45,6 @@ export class StepAttachmentsComponent implements OnInit {
       this.filesStore[idx] = att.file ?? null;
       row.disable({ emitEvent: false });
     });
-
-    if (attachments.length === 0) {
-      this.addRow();
-    }
   }
 
   // ======== FormArray helper ========
