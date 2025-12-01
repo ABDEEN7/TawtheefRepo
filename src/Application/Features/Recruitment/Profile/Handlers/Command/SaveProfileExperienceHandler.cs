@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
@@ -14,7 +15,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfileExperienceHandler(
     IUnitOfWork uow,
-    IMediator mediator
+    IMediator mediator,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileExperienceCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -47,6 +49,7 @@ public sealed class SaveProfileExperienceHandler(
         var trainingFiles   = cmd.Request.TrainingCourseFiles;
 
         profile.Experiences ??= [];
+        var newExperiences = new List<Experience>();
         foreach (var dto in experiences)
         {
             var certResult = await UploadIfNeededAsync(
@@ -71,9 +74,11 @@ public sealed class SaveProfileExperienceHandler(
             };
 
             profile.Experiences.Add(entity);
+            newExperiences.Add(entity);
         }
 
         profile.TrainingCourses ??= [];
+        var newTrainings = new List<TrainingCourse>();
         foreach (var dto in trainings)
         {
             var certResult = await UploadIfNeededAsync(
@@ -97,9 +102,21 @@ public sealed class SaveProfileExperienceHandler(
             };
 
             profile.TrainingCourses.Add(entity);
+            newTrainings.Add(entity);
         }
 
         profile.IsDraft = !cmd.Request.Submit;
+
+        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, ct);
+        foreach (var experience in newExperiences)
+        {
+            await reviewService.TouchRowAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, nameof(Experience), experience.Id, ct);
+        }
+
+        foreach (var training in newTrainings)
+        {
+            await reviewService.TouchRowAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, nameof(TrainingCourse), training.Id, ct);
+        }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

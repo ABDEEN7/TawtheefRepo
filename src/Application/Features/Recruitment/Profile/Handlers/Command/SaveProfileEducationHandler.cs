@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
@@ -13,7 +14,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator mediator)
+public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator mediator, IProfileReviewService reviewService)
     : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
 {
     // JSON options مرة واحدة بدل ما نعيد إنشائها
@@ -65,6 +66,8 @@ public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator media
         if (filesValidation.IsFailed)
             return Result.Fail<Unit>(filesValidation.Errors);
 
+        var newQualifications = new List<Qualification>();
+
         for (var i = 0; i < degrees.Count; i++)
         {
             var dto  = degrees[i];
@@ -91,10 +94,23 @@ public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator media
                 CertificateId  = attachmentId,
             };
 
+            newQualifications.Add(edu);
             await educationRepo.AddAsync(edu);
         }
 
         profile.IsDraft = true;
+
+        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Qualifications, ct);
+        foreach (var qualification in newQualifications)
+        {
+            await reviewService.TouchRowAsync(
+                profile.Id,
+                Domain.Entities.Recruitment.ProfileSection.Qualifications,
+                nameof(Qualification),
+                qualification.Id,
+                ct);
+        }
+
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

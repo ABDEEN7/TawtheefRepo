@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
@@ -11,7 +12,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfilePersonalHandler(
-    IUnitOfWork uow, IMediator mediator,UserManager<User> userManager
+    IUnitOfWork uow, IMediator mediator,UserManager<User> userManager, IProfileReviewService reviewService
     ) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePersonalCommand cmd, CancellationToken ct)
@@ -65,11 +66,21 @@ public sealed class SaveProfilePersonalHandler(
                 profile.SponsorProfile.SponsorNumber = r.SponsorEmployerNumber;
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
-            
+
+            if (idResult.Value.HasValue)
+            {
+                await reviewService.TouchAttachmentAsync(
+                    profile.Id,
+                    Domain.Entities.Recruitment.ProfileSection.Personal,
+                    "Sponsor Card",
+                    idResult.Value.Value,
+                    ct);
+            }
         }
 
         profile.IsDraft = true;
 
+        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Personal, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         

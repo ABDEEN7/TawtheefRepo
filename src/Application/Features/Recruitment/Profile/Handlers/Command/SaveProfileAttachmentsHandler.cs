@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
@@ -15,7 +16,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
-    IMediator mediator
+    IMediator mediator,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -49,6 +51,8 @@ public sealed class SaveProfileAttachmentsHandler(
 
         profile.AdditionalAttachments = [];
 
+        var reviewAttachments = new List<ProfileAdditionalAttachment>();
+
         foreach (var dto in attachments)
         {
             var uploadResult = await UploadIfNeededAsync(
@@ -69,15 +73,29 @@ public sealed class SaveProfileAttachmentsHandler(
             if (string.IsNullOrWhiteSpace(fileName))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
 
-            profile.AdditionalAttachments.Add(new ProfileAdditionalAttachment
+            var attachment = new ProfileAdditionalAttachment
             {
                 FileName      = fileName,
                 AttachmentId  = attachmentId.Value,
                 UserProfileId = profile.Id
-            });
+            };
+
+            profile.AdditionalAttachments.Add(attachment);
+            reviewAttachments.Add(attachment);
         }
 
         profile.IsDraft = !cmd.Request.Submit;
+
+        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, ct);
+        foreach (var attachment in reviewAttachments)
+        {
+            await reviewService.TouchAttachmentAsync(
+                profile.Id,
+                Domain.Entities.Recruitment.ProfileSection.Attachments,
+                attachment.FileName,
+                attachment.AttachmentId,
+                ct);
+        }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

@@ -29,6 +29,8 @@ namespace Tawtheef.Application
             // Expose a time provider so services can rely on a testable time source.
             services.AddSingleton(TimeProvider.System);
 
+            services.AddScoped<Common.Services.IProfileReviewService, Common.Services.ProfileReviewService>();
+
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
         }
