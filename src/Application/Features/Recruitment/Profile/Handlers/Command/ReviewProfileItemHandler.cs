@@ -21,6 +21,21 @@ public sealed class ReviewProfileItemHandler(IUnitOfWork uow)
         if (item is null)
             return Result.Fail<Unit>(ErrorsCodes.ReviewItemNotFound);
 
+        if (cmd.Status == ReviewStatus.Approved && item.TargetType == ReviewTargetType.Attachment)
+        {
+            var sectionItem = await repo.DbSet
+                .Where(r => r.UserProfileId == item.UserProfileId
+                            && r.Section == item.Section
+                            && r.TargetType == ReviewTargetType.Section)
+                .OrderByDescending(r => r.Version)
+                .FirstOrDefaultAsync(ct);
+
+            if (sectionItem is null || sectionItem.Status != ReviewStatus.Approved)
+            {
+                return Result.Fail<Unit>(ErrorsCodes.SectionMustBeApprovedFirst);
+            }
+        }
+
         switch (cmd.Status)
         {
             case ReviewStatus.Approved:

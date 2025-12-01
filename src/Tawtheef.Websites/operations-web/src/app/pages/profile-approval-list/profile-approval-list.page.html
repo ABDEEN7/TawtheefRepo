@@ -1,0 +1,84 @@
+<div class="tasks-page" dir="rtl">
+  <div class="card shadow-sm">
+    <div class="card-header py-3">
+      <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+        <div>
+          <div class="title">اعتماد الملفات</div>
+          <div class="text-muted small">مهامك الحالية لمراجعة الملفات المرسلة</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <div class="filter-group">
+            <label class="form-label mb-1 small">حالة الاعتماد</label>
+            <select
+              class="form-select form-select-sm"
+              [ngModel]="statusFilter()"
+              (ngModelChange)="statusFilter.set($event)"
+            >
+              <option *ngFor="let option of statusOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="form-label mb-1 small">بحث</label>
+            <input
+              class="form-control form-control-sm"
+              type="search"
+              placeholder="اسم الطالب أو الجهة"
+              [ngModel]="search()"
+              (ngModelChange)="search.set($event)"
+            />
+          </div>
+          <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadList()" [disabled]="loading()">
+            تحديث القائمة
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div *ngIf="error()" class="alert alert-danger">{{ error() }}</div>
+      <div *ngIf="loading()" class="text-center text-muted py-4">...جاري تحميل المهام</div>
+      <div *ngIf="!loading() && filteredList().length === 0" class="text-center text-muted py-4">
+        لا توجد مهام مراجعة حالياً
+      </div>
+
+      <div class="table-responsive" *ngIf="!loading() && filteredList().length > 0">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th scope="col">اسم الطالب</th>
+              <th scope="col">درجة الوزارة</th>
+              <th scope="col">الجهة المستهدفة</th>
+              <th scope="col">تاريخ الإنشاء</th>
+              <th scope="col">آخر تحديث</th>
+              <th scope="col">حالة الاعتماد</th>
+              <th scope="col" class="text-center">المطلوب</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredList()">
+              <td>
+                <div class="fw-semibold">{{ item.fullName || 'مرشح' }}</div>
+                <div class="small text-muted">{{ item.userId }}</div>
+              </td>
+              <td>{{ item.candidateType || '-' }}</td>
+              <td>{{ item.targetEntity || '-' }}</td>
+              <td>{{ item.submittedAtUtc | date: 'mediumDate' }}</td>
+              <td>{{ item.lastUpdatedAtUtc ? (item.lastUpdatedAtUtc | date: 'short') : '-' }}</td>
+              <td>
+                <span class="status-pill" [ngClass]="statusClass(item.overallStatus)">{{ statusLabel(item.overallStatus) }}</span>
+              </td>
+              <td class="text-center">
+                <span class="badge bg-primary-subtle text-primary" *ngIf="item.pendingCount > 0">{{ item.pendingCount }} قيد المراجعة</span>
+                <span class="text-muted" *ngIf="item.pendingCount === 0">لا يوجد</span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-primary btn-sm" type="button" (click)="openProfile(item)">عرض الملف</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

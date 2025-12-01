@@ -81,6 +81,7 @@ public class ErrorsCodes
     public const string LanguageProfileNotFound = "LANGUAGE_PROFILE_NOT_FOUND";
     public const string TrainingNotFound = "TRAINING_NOT_FOUND";
     public const string AchievementNotFound = "ACHIEVEMENT_NOT_FOUND";
+    public const string SectionMustBeApprovedFirst = "SECTION_MUST_BE_APPROVED_FIRST";
     public const string InvalidDegreeUniversityId = "INVALID_DEGREE_UNIVERSITY_ID";
     public const string InvalidDegreeMajorId = "INVALID_DEGREE_MAJOR_ID";
     public const string InvalidGpa = "INVALID_GPA";
