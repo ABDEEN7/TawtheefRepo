@@ -86,6 +86,113 @@ export class ProfileService {
     return this.http.delete(this.endpoints.user.profile.deleteEducation(degreeId));
   }
 
+  // ========== EXPERIENCE ==========
+  saveExperienceSection(experiences: any[], courses: any[]) {
+    const experienceFiles: (File | null | undefined)[] = [];
+    const experiencesDto = (experiences ?? []).map(e => {
+      const fileIndex = e.file ? experienceFiles.push(e.file) - 1 : null;
+
+      return {
+        id: e.id ?? null,
+        organization: e.org,
+        position: e.title,
+        startDate: e.from,
+        endDate: e.current ? null : e.to,
+        certificateId: e.attachmentId ?? null,
+        certificateFileIndex: fileIndex,
+        achievements: e.tasks ? [e.tasks] : [],
+      };
+    });
+
+    const trainingCourseFiles: (File | null | undefined)[] = [];
+    const coursesDto = (courses ?? []).map(c => {
+      const fileIndex = c.file ? trainingCourseFiles.push(c.file) - 1 : null;
+
+      return {
+        id: c.id ?? null,
+        organization: c.org,
+        position: c.title,
+        startDate: c.from,
+        endDate: c.to,
+        certificateId: c.attachmentId ?? null,
+        certificateFileIndex: fileIndex,
+      };
+    });
+
+    const formData = this.buildFormData({
+      submit: false,
+      experiencesJson: experiencesDto,
+      trainingCoursesJson: coursesDto,
+      achievements: [],
+    });
+
+    experienceFiles.forEach(f => {
+      if (f) {
+        formData.append('ExperienceFiles', f);
+      }
+    });
+
+    trainingCourseFiles.forEach(f => {
+      if (f) {
+        formData.append('TrainingCourseFiles', f);
+      }
+    });
+
+    return this.http.post(this.endpoints.user.profile.saveExperience, formData);
+  }
+
+  // ========== SKILLS ==========
+  saveSkillsSection(skills: any[], languages: any[]) {
+    const dto = {
+      submit: false,
+      skills: (skills ?? []).map(s => ({ skillId: s.id ?? s })),
+      languages: (languages ?? []).map(l => ({
+        languageId: l.langId ?? l.languageId ?? l.id ?? l,
+        levelId: l.levelId ?? l.level?.id ?? l.level,
+      })),
+    };
+
+    return this.http.post(this.endpoints.user.profile.saveSkills, dto);
+  }
+
+  // ========== ATTACHMENTS ==========
+  saveAttachmentsSection(attachments: any[]) {
+    let fileCursor = 0;
+    const files: (File | null | undefined)[] = [];
+
+    const payload = (attachments ?? []).map(a => {
+      const item: any = {
+        id: a.id ?? null,
+        fileName: a.fileName ?? a.name,
+        attachmentId: a.attachmentId ?? null,
+      };
+
+      if (a?.file) {
+        item.fileIndex = fileCursor;
+        files[fileCursor] = a.file;
+        fileCursor += 1;
+      }
+
+      return item;
+    });
+
+    const formData = new FormData();
+    formData.append('Submit', 'false');
+    formData.append('AttachmentsJson', JSON.stringify(payload));
+    files.forEach(f => {
+      if (f) {
+        formData.append('AttachmentFiles', f);
+      }
+    });
+
+    return this.http.post(this.endpoints.user.profile.saveAttachments, formData);
+  }
+
+  // ========== FINAL SUBMISSION ==========
+  finalizeProfile() {
+    return this.http.post(this.endpoints.user.profile.submit, {});
+  }
+
   private buildFormData(dto: any, files?: Record<string, File | null | undefined>): FormData {
     const formData = new FormData();
     Object.entries(dto ?? {}).forEach(([key, value]) => {

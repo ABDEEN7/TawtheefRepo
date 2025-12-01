@@ -15,7 +15,12 @@
     },
     "availability": "Available for hire",
     "progress": {
-      "label": "Profile completion"
+      "label": "Profile completion",
+      "steps": "Step {{current}} of {{total}}",
+      "status": {
+        "complete": "Complete",
+        "pending": "Needs info"
+      }
     },
     "buttons": {
       "prev": "Previous",

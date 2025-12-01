@@ -14,6 +14,10 @@ export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestM
     submit: false,
     candidateTypeId: state.candidateType!.id,
     targetEntityId: state.targetEntity!.id,
+    cvFileName: state.cvName,
+    idFileName: state.idName,
+    birthCertificateFileName: state.birthCertificateName,
+    marriageCertificateFileName: state.marriageCertificateName,
   };
 }
 export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequestDto {
@@ -159,6 +163,7 @@ export function mapProfileStatusToState(
       endDate: e.endDate ?? undefined,
       isCurrent: e.isCurrent,
       attachment: mapFile(e.attachment),
+      attachmentId: e.attachment?.resourceId,
     } as Experience)),
 
     courses: (dto.trainingCourses ?? []).map(t => ({
@@ -168,6 +173,7 @@ export function mapProfileStatusToState(
       startDate: t.startDate ?? undefined,
       endDate: t.endDate ?? undefined,
       attachment: mapFile(t.attachment),
+      attachmentId: t.attachment?.resourceId,
     } as Experience)),
 
     skills: (dto.skills ?? []).map(s => s.skillId),
@@ -183,6 +189,8 @@ export function mapProfileStatusToState(
     attachments: (dto.additionalAttachments ?? []).map(a => ({
       id: a.id,
       name: a.title ?? '',
+      fileName: a.file?.resourceName,
+      attachmentId: a.file?.resourceId,
       // file: this.mapFile(a.file)!,
     })),
 

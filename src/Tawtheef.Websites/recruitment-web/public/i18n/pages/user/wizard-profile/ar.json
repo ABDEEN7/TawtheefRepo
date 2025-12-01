@@ -15,7 +15,12 @@
     },
     "availability": "متاح للتعيين",
     "progress": {
-      "label": "نسبة اكتمال الملف"
+      "label": "نسبة اكتمال الملف",
+      "steps": "الخطوة {{current}} من {{total}}",
+      "status": {
+        "complete": "مكتمل",
+        "pending": "بحاجة لبيانات"
+      }
     },
     "buttons": {
       "prev": "السابق",

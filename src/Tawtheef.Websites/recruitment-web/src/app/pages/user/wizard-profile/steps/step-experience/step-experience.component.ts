@@ -5,6 +5,8 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { ExperienceModal } from './dialogs/experience.modal/experience.modal';
 import { CourseModal } from './dialogs/course.modal/course.modal';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
+import {MessageService} from 'primeng/api';
+import {ProfileService} from '../../services/profile.service';
 
 @Component({
   selector: 'app-step-experience',
@@ -19,6 +21,10 @@ export class StepExperienceComponent {
   ds = inject(DataService);
   dialog = inject(DialogService);
   translate = inject(TranslateService);
+  messageService = inject(MessageService);
+  profile = inject(ProfileService);
+
+  saving = false;
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -63,5 +69,47 @@ export class StepExperienceComponent {
 
   removeCourse(index: number) {
     this.ds.delCourse(index);
+  }
+
+  onNext() {
+    if (!this.step.valid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
+        life: 5000,
+      });
+      return;
+    }
+    const state = this.ds.state();
+    const experiences = state.experiences || [];
+    const courses = state.courses || [];
+    if (!experiences.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.translate.instant('wizard.experience.validation.noRows'),
+        life: 5000,
+      });
+      return;
+    }
+
+    this.saving = true;
+    this.profile.saveExperienceSection(experiences, courses).subscribe({
+      next: () => {
+        this.saving = false;
+        this.next.emit();
+      },
+      error: err => {
+        console.error(err);
+        this.saving = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('wizard.errorTitle'),
+          detail: this.translate.instant('wizard.experience.saveError'),
+          life: 5000,
+        });
+      },
+    });
   }
 }

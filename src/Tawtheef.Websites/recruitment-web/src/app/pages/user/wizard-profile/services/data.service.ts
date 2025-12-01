@@ -117,6 +117,9 @@ export class DataService {
     const degreesValid   = Array.isArray(s.degrees) && s.degrees.length > 0;
     const expValid       = Array.isArray(s.experiences) && s.experiences.length > 0;
     const skillsValid    = (Array.isArray(s.skills) && s.skills.length > 0) || (Array.isArray(s.languages)  && s.languages.length  > 0);
+    const attachmentsValid = Array.isArray(s.attachments) &&
+      s.attachments.length > 0 &&
+      s.attachments.every(a => this.isFilledScalar(a.fileName ?? a.name) && (!!a.file || !!a.attachmentId));
 
     return {
       basic: basicValid,
@@ -125,7 +128,7 @@ export class DataService {
       degrees: degreesValid,
       experience: expValid,
       skills: skillsValid,
-      attachments: true,
+      attachments: attachmentsValid,
     } as const;
   });
 

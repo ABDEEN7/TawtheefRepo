@@ -7,6 +7,9 @@ import {SkillDto} from '../../models/skill-dto.model';
 import {ProfileLookupsService} from '../../services/profile-lookups.service';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
+import {MessageService} from 'primeng/api';
+import {TranslateService} from '@ngx-translate/core';
+import {ProfileService} from '../../services/profile.service';
 
 @Component({
   selector: 'app-step-skills',
@@ -20,7 +23,12 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
 
   ds = inject(DataService);
   lookups = inject(ProfileLookupsService);
+  messageService = inject(MessageService);
+  translate = inject(TranslateService);
+  profile = inject(ProfileService);
 
+  saving = false;
+  
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
@@ -103,6 +111,48 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   }
   removeLang(index: number){
     this.ds.delLang(index)
+  }
+
+  onNext() {
+    if (!this.step.valid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
+        life: 5000,
+      });
+      return;
+    }
+    const state = this.ds.state();
+    const skills = state.skills || [];
+    const languages = state.languages || [];
+    if (!skills.length && !languages.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.translate.instant('wizard.skills.validation.noRows'),
+        life: 5000,
+      });
+      return;
+    }
+
+    this.saving = true;
+    this.profile.saveSkillsSection(skills, languages).subscribe({
+      next: () => {
+        this.saving = false;
+        this.next.emit();
+      },
+      error: err => {
+        console.error(err);
+        this.saving = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('wizard.errorTitle'),
+          detail: this.translate.instant('wizard.skills.saveError'),
+          life: 5000,
+        });
+      },
+    });
   }
 
   ngOnDestroy(): void {

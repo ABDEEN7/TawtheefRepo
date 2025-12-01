@@ -131,6 +131,25 @@ public class ErrorsCodes
     #region User Profile
     public const string InvalidDegreesJson = "INVALID_DEGREES_JSON";
     public const string InvalidDegreesCount = "INVALID_DEGREES_COUNT";
+    public const string InvalidExperiencesJson = "INVALID_EXPERIENCES_JSON";
+    public const string InvalidTrainingCoursesJson = "INVALID_TRAINING_COURSES_JSON";
+    public const string InvalidExperienceFileIndex = "INVALID_EXPERIENCE_FILE_INDEX";
+    public const string InvalidTrainingCourseFileIndex = "INVALID_TRAINING_COURSE_FILE_INDEX";
+    public const string InvalidExperienceFile = "INVALID_EXPERIENCE_FILE";
+    public const string InvalidTrainingCourseFile = "INVALID_TRAINING_COURSE_FILE";
+    public const string InvalidAttachmentsJson = "INVALID_ATTACHMENTS_JSON";
+    public const string InvalidAttachmentFileIndex = "INVALID_ATTACHMENT_FILE_INDEX";
+    public const string InvalidAttachmentFile = "INVALID_ATTACHMENT_FILE";
+    public const string CvFileRequired = "CV_FILE_REQUIRED";
+    public const string IdFileRequired = "ID_FILE_REQUIRED";
+    public const string MarriageCertificateFileRequired = "MARRIAGE_CERTIFICATE_FILE_REQUIRED";
+    public const string BirthCertificateFileRequired = "BIRTH_CERTIFICATE_FILE_REQUIRED";
+    public const string SponsorCardRequired = "SPONSOR_CARD_REQUIRED";
+    public const string SponsorCardFileRequired = "SPONSOR_CARD_FILE_REQUIRED";
+    public const string NationalAddressDocumentRequired = "NATIONAL_ADDRESS_DOCUMENT_REQUIRED";
+    public const string DegreeFileRequired = "DEGREE_FILE_REQUIRED";
+    public const string ExperienceRequired = "EXPERIENCE_REQUIRED";
+    public const string SkillOrLanguageRequired = "SKILL_OR_LANGUAGE_REQUIRED";
     #endregion
 
     #region Attachments

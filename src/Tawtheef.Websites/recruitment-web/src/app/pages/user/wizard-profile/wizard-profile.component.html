@@ -35,26 +35,29 @@
         </div>
       </div>
 
-      <ul class="nav nav-pills flex-wrap stepper mb-3 border border-1">
-        <li class="nav-item" *ngFor="let key of [
-        'wizard.steps.firstInfo','wizard.steps.personal','wizard.steps.contact','wizard.steps.degrees',
-        'wizard.steps.experience','wizard.steps.skills','wizard.steps.attachments']; let i = index">
+      <div class="wizard-progress" *ngIf="!loading">
+        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+          <div class="fw-semibold text-brand">{{ 'wizard.progress.label' | translate }}</div>
+          <small class="text-muted">{{ 'wizard.progress.steps' | translate:{current: completedSteps(), total: total} }}</small>
+        </div>
+        <div class="progress" role="progressbar" [attr.aria-valuenow]="progressPercentage()" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar bg-brand" [style.width.%]="progressPercentage()">{{ progressPercentage() }}%</div>
+        </div>
+      </div>
+
+      <ul class="nav nav-pills flex-wrap stepper mb-3 border border-1" aria-label="Profile steps">
+        <li class="nav-item" *ngFor="let label of stepLabels; let i = index">
           <a class="nav-link"
              [class.active]="step===i+1"
              [class.disabled]="!canGoTo(i+1)"
              [attr.aria-disabled]="!canGoTo(i+1)"
              href
              (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
-            <i class="fa-solid"
-               [class.fa-user]="i===0"
-               [class.fa-house]="i===1"
-               [class.fa-graduation-cap]="i===2"
-               [class.fa-briefcase]="i===3"
-               [class.fa-language]="i===4"
-               [class.fa-paperclip]="i===5"
-               [class.fa-check-circle]="i===6">
-            </i>
-            {{ key | translate }}
+            <span class="step-index">{{ i + 1 }}</span>
+            <span class="step-label">{{ label | translate }}</span>
+            <span class="badge ms-2" [ngClass]="{'bg-success': isStepValid(i+1), 'bg-warning text-dark': !isStepValid(i+1)}">
+              {{ isStepValid(i+1) ? ('wizard.progress.status.complete' | translate) : ('wizard.progress.status.pending' | translate) }}
+            </span>
           </a>
         </li>
       </ul>
