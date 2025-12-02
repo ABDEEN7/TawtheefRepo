@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -18,7 +18,7 @@ import {UploadedFileRef} from '../../models/profile-state.model';
   styleUrl: './step-experience.component.scss',
   standalone: false,
 })
-export class StepExperienceComponent {
+export class StepExperienceComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
@@ -30,11 +30,18 @@ export class StepExperienceComponent {
   fileUtils = inject(FileUtilsService);
 
   saving = false;
+  private lastSubmittedSignature: string | null = null;
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
     return validity['experience'];
+  }
+
+  ngOnInit(): void {
+    const state = this.ds.state();
+    const signature = this.buildSignature(state.experiences);
+    this.lastSubmittedSignature = signature;
   }
   // ========== EXPERIENCES ==========
 
@@ -133,6 +140,13 @@ export class StepExperienceComponent {
     const state = this.ds.state();
     const experiences = state.experiences || [];
     const courses = state.courses || [];
+    const signature = this.buildSignature(experiences, courses);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
+
     if (!experiences.length) {
       this.messageService.add({
         severity: 'error',
@@ -147,6 +161,7 @@ export class StepExperienceComponent {
     this.profile.saveExperienceSection(experiences, courses).subscribe({
       next: () => {
         this.saving = false;
+        this.lastSubmittedSignature = signature;
         this.next.emit();
       },
       error: err => {
@@ -174,5 +189,34 @@ export class StepExperienceComponent {
     }else if(ref?.file){
       this.fileUtils.previewBlob(ref!.file);
     }
+  }
+
+  private buildSignature(experiences: Experience[], courses: TrainingCourse[]): string {
+    const experienceSignature = (experiences ?? []).map(e => ({
+      id: e.id ?? null,
+      employerName: e.employerName ?? '',
+      jobTitle: e.jobTitle ?? '',
+      from: e.from ?? null,
+      to: e.to ?? null,
+      countryId: e.country?.id ?? null,
+      current: e.current ?? false,
+      description: e.description ?? '',
+      attachmentId: e.attachmentId ?? null,
+      fileName: e.file?.name ?? e.attachment?.resourceName ?? e.attachment?.fileName ?? null,
+    }));
+
+    const courseSignature = (courses ?? []).map(c => ({
+      id: c.id ?? null,
+      title: c.title ?? '',
+      provider: c.provider ?? '',
+      from: c.from ?? null,
+      to: c.to ?? null,
+      countryId: c.country?.id ?? null,
+      description: c.description ?? '',
+      attachmentId: c.attachmentId ?? null,
+      fileName: c.file?.name ?? c.attachment?.resourceName ?? c.attachment?.fileName ?? null,
+    }));
+
+    return JSON.stringify({ experienceSignature, courseSignature });
   }
 }

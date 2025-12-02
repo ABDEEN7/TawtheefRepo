@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +19,7 @@ import {FileUtilsService} from '../../../../../core/utils/file-utils';
   styleUrl: './step-personal.component.scss',
   standalone: false,
 })
-export class StepPersonalComponent {
+export class StepPersonalComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
@@ -39,6 +39,7 @@ export class StepPersonalComponent {
 
   savingPersonal = false;
   private sponsorCardLocalFile: File | null = null;
+  private lastSubmittedSignature: string | null = null;
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);
@@ -54,6 +55,12 @@ export class StepPersonalComponent {
     if (!value) {
       this.updateField('disabilityDetails', null as any);
     }
+  }
+
+  ngOnInit(): void {
+    const state = this.ds.state();
+    const dto = mapPersonalSection(state);
+    this.lastSubmittedSignature = this.buildSignature(dto, state);
   }
 
   get showChildrenField(): boolean {
@@ -101,6 +108,12 @@ export class StepPersonalComponent {
 
     const s = this.ds.state();
     const dto = mapPersonalSection(s);
+    const signature = this.buildSignature(dto, s);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
 
     this.savingPersonal = true;
 
@@ -109,12 +122,26 @@ export class StepPersonalComponent {
       .pipe(finalize(() => this.savingPersonal = false))
       .subscribe({
         next: () => {
+          this.lastSubmittedSignature = signature;
           this.next.emit();
         },
         error: (err) => {
           console.error(err);
         }
       });
+  }
+
+  private buildSignature(dto: ReturnType<typeof mapPersonalSection>, state: ReturnType<typeof this.ds.state>): string | null {
+    try {
+      const sponsorCard = {
+        localName: this.sponsorCardLocalFile?.name ?? null,
+        resourceId: state.sponsorCardFile?.resourceId ?? null,
+        resourceName: state.sponsorCardFile?.resourceName ?? state.sponsorCardFile?.fileName ?? null,
+      };
+      return JSON.stringify({ dto, sponsorCard });
+    } catch {
+      return null;
+    }
   }
 
   protected readonly dateToDateOnly = dateToDateOnly;
