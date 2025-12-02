@@ -1,5 +1,6 @@
 import {GUID} from '../../../../shared/types/guid.type';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {UploadedFileRef} from './profile-state.model';
 
 export interface Experience {
   id?: GUID;
@@ -12,6 +13,7 @@ export interface Experience {
   fileName?: string;
   file?: File | null;
   attachmentId?: string | null;
+  attachment?: UploadedFileRef | null;
   current?: boolean;
 }
 export interface TrainingCourse {
@@ -26,4 +28,5 @@ export interface TrainingCourse {
   fileName?: string;
   file?: File | null;
   attachmentId?: string | null;
+  attachment?: UploadedFileRef | null;
 }

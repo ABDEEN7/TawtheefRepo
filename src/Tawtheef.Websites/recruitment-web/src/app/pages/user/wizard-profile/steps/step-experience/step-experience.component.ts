@@ -7,6 +7,8 @@ import { CourseModal } from './dialogs/course.modal/course.modal';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
 import {ProfileService} from '../../services/profile.service';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {Experience, TrainingCourse} from '../../models/experience.model';
 
 @Component({
   selector: 'app-step-experience',
@@ -23,6 +25,7 @@ export class StepExperienceComponent {
   translate = inject(TranslateService);
   messageService = inject(MessageService);
   profile = inject(ProfileService);
+  fileUtils = inject(FileUtilsService);
 
   saving = false;
 
@@ -69,6 +72,10 @@ export class StepExperienceComponent {
     }
   }
 
+  previewExperience(exp: Experience, ev?: Event): void {
+    this.previewAttachment(exp.attachment, exp.file, exp.fileName, ev);
+  }
+
   // ========== COURSES ==========
 
   addCourse() {
@@ -105,6 +112,10 @@ export class StepExperienceComponent {
     } else {
       this.ds.delCourse(index);
     }
+  }
+
+  previewCourse(course: TrainingCourse, ev?: Event): void {
+    this.previewAttachment(course.attachment, course.file, course.fileName, ev);
   }
 
   onNext() {
@@ -147,5 +158,17 @@ export class StepExperienceComponent {
         });
       },
     });
+  }
+
+  private previewAttachment(ref?: { url?: string | null; resourceName?: string | null } | null, file?: File | null, fallbackName?: string | null, ev?: Event) {
+    ev?.stopPropagation();
+    if (file) {
+      this.fileUtils.previewBlob(file);
+      return;
+    }
+
+    if (ref?.url) {
+      this.fileUtils.previewUrl(ref.url, ref.resourceName || fallbackName || '', false);
+    }
   }
 }

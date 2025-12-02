@@ -7,6 +7,7 @@ import { createStepValiditySignal } from '../../state/profile-step-validity.sign
 import { ProfileService } from '../../services/profile.service';
 import { MessageService } from 'primeng/api';
 import {Degree} from '../../models/degree.model';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
 
 @Component({
   selector: 'app-step-degrees',
@@ -23,6 +24,7 @@ export class StepDegreeComponent {
   translate = inject(TranslateService);
   profile = inject(ProfileService);
   messageService = inject(MessageService);
+  fileUtils = inject(FileUtilsService);
 
   savingDegrees = false;
 
@@ -66,6 +68,19 @@ export class StepDegreeComponent {
       });
     } else {
       this.ds.delDegree(i);
+    }
+  }
+
+  preview(r: Degree, ev?: Event) {
+    ev?.stopPropagation();
+    const local = r.file ?? r.certificate?.file ?? null;
+    if (local) {
+      this.fileUtils.previewBlob(local);
+      return;
+    }
+
+    if (r.certificate?.url) {
+      this.fileUtils.previewUrl(r.certificate.url, r.certificate.resourceName || '', false);
     }
   }
 

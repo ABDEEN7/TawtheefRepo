@@ -5,6 +5,9 @@ import {finalize} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
 import {Skill} from '../../models/skill.model';
 import {CandidateType} from '../../../../../core/enums/lookups.enum';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
+import {UploadedFileRef} from '../../models/profile-state.model';
 
 @Component({
   selector: 'app-step-review',
@@ -18,17 +21,17 @@ export class StepReviewComponent {
   ds = inject(DataService);
   private i18n = inject(TranslateService);
   private profile = inject(ProfileService);
+  private fileUtils = inject(FileUtilsService);
 
-  private requiredKeys = [
-    'fullNameAr','fullNameEn','qid','dob',
-    'country','phone','address','email'
-  ] as const;
+  private stepValidity = createStepValiditySignal(this.ds.state);
 
   missing = computed(() => {
-    const s = this.ds.state();
-    const miss: string[] = [];
-    this.requiredKeys.forEach(k => { if (!s[k]) miss.push(k as string); });
-    return miss;
+    const validity = this.stepValidity();
+    const set = new Set<string>();
+    Object.values(validity).forEach(result => {
+      result.errors?.forEach(err => set.add(err.i18nKey));
+    });
+    return Array.from(set);
   });
 
   canSubmit = computed(() => this.missing().length === 0);
@@ -60,6 +63,18 @@ export class StepReviewComponent {
   errorText  = signal<string | null>(null);
 
   trackSkill = (_: number, v: Skill) => v.skillId;
+
+  preview(ref?: UploadedFileRef | null, file?: File | null, fallbackName?: string | null, ev?: Event): void {
+    ev?.stopPropagation();
+    if (file) {
+      this.fileUtils.previewBlob(file);
+      return;
+    }
+
+    if (ref?.url) {
+      this.fileUtils.previewUrl(ref.url, ref.resourceName || fallbackName || '', false);
+    }
+  }
 
   submit() {
     if (!this.canSubmit()) return;

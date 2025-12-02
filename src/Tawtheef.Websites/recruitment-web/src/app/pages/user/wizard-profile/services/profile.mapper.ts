@@ -169,6 +169,7 @@ export function mapProfileStatusToState(
       description: e.description ?? '',
       fileName: e.attachment?.fileName,
       attachmentId: e.attachment?.resourceId,
+      attachment: mapFile(e.attachment),
     } as Experience)),
 
     courses: (dto.trainingCourses ?? []).map(t => ({
@@ -181,6 +182,7 @@ export function mapProfileStatusToState(
       description: t.description ?? '',
       fileName: t.attachment?.fileName,
       attachmentId: t.attachment?.resourceId,
+      attachment: mapFile(t.attachment),
     } as TrainingCourse)),
 
     skills: (dto.skills ?? []).map(s => ({
@@ -204,6 +206,7 @@ export function mapProfileStatusToState(
       name: a.title ?? '',
       fileName: a.file?.fileName,
       attachmentId: a.file?.resourceId,
+      fileRef: mapFile(a.file),
       // file: this.mapFile(a.file)!,
     } as Attachment)),
 
