@@ -57,6 +57,7 @@ public sealed class SaveProfileExperienceHandler(
                 experienceFiles,
                 ErrorsCodes.InvalidExperienceFileIndex,
                 ErrorsCodes.InvalidExperienceFile,
+                "experience",
                 ct);
 
             if (certResult.IsFailed)
@@ -87,6 +88,7 @@ public sealed class SaveProfileExperienceHandler(
                 trainingFiles,
                 ErrorsCodes.InvalidTrainingCourseFileIndex,
                 ErrorsCodes.InvalidTrainingCourseFile,
+                "training",
                 ct);
 
             if (certResult.IsFailed)
@@ -155,6 +157,7 @@ public sealed class SaveProfileExperienceHandler(
             IReadOnlyList<IFormFile> files,
             string invalidIndexError,
             string invalidFileError,
+            string category,
             CancellationToken cancellationToken)
         {
             if (fileIndex is null)
@@ -167,7 +170,10 @@ public sealed class SaveProfileExperienceHandler(
             if (file is not { Length: > 0 })
                 return Result.Fail<Guid?>(invalidFileError);
 
-            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), cancellationToken);
+            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, category, file, false, cancellationToken);
+            var uploadResult = await mediator.Send(
+                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                cancellationToken);
             if (uploadResult.IsFailed)
                 return Result.Fail<Guid?>(uploadResult.Errors);
 
