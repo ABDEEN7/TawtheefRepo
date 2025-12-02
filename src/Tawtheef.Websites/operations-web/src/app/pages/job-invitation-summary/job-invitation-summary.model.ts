@@ -1,35 +1,20 @@
-export interface Job {
-  id: number;
-  title: string;
-  entity: string;
-  type: 'academic' | 'administrative' | 'labor';
-  status: 'open' | 'closed';
+import {PaginatedRequest} from '../../core/models/paginated-request.model';
+
+export interface JobInvitationSummary {
+  jobId: string; // Guid
+  jobName: string;
+  departmentName: string;
+  jobCategory: string;
+  jobStatusBackendName: string;
+  invitationCount: number;
+  applicantsCount: number;
+  refusedCount: number;
+  notSeenCount: number;
+  createDate: string;           // ISO date string
 }
 
-export interface Invite {
-  jobId: number;
-  profileId: number;
-  status: 'new' | 'viewed' | 'declined' | 'applied';
-  sentAt: string;
-}
-
-export interface Application {
-  jobId: number;
-  profileId: number;
-  appliedAt: string;
-  status: string;
-}
-
-export interface JobSummary {
-  job: Job;
-  totalInv: number;
-  applied: number;
-  declined: number;
-  unseen: number;
-}
-
-export interface FilterState {
-  type: string;
-  entity: string;
-  status: string;
+export interface JobSummaryFilters extends PaginatedRequest {
+  jobCategoryId?: string | null;
+  departmentId?: string | null;
+  jobStatusId?: string | null;
 }
