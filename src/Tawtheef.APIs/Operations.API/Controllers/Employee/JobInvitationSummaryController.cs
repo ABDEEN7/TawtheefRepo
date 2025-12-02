@@ -34,8 +34,8 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     #endregion
     
     #region Retrive Job Invitation Data
-    [HttpGet("get-candidate-invitations")]
-    public async Task<IActionResult> GetCandidateInvitations([FromBody] GetJobInvitationSummaryQuery query)
+    [HttpGet("get-invitations-summary")]
+    public async Task<IActionResult> GetInvitationsSummary([FromQuery] GetJobInvitationSummaryQuery query)
     {
         var result = await mediator.Send(query);
         return result.ToActionResult();

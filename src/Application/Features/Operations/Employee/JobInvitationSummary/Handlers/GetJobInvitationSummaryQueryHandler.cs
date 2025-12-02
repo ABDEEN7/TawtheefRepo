@@ -20,6 +20,7 @@ public sealed class GetJobInvitationSummaryQueryHandler(IUnitOfWork unitOfWork, 
             .Include(i => i.JobCategory)
             .Include(i => i.Invitations)
             .Include(i => i.RequestingDepartment)
+            .Include(i => i.Status)
             .WhereIf(query.JobCategoryId is not null, i => i.JobCategoryId == query.JobCategoryId)
             .WhereIf(query.DepartmentId is not null, i => i.RequestingDepartmentId == query.DepartmentId)
             .WhereIf(query.JobStatusId is not null, i => i.StatusId == query.JobStatusId)

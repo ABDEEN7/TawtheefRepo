@@ -27,12 +27,16 @@
     "EVALUATION_MANAGEMENT": "Evaluation Management",
     "STATUS": "Status",
     "OPEN": "Open",
+    "ACTIVE": "Active",
+    "DRAFT": "Draft",
+    "CANCELLED": "Cancelled",
     "CLOSED": "Closed",
     "CLEAR_FILTERS": "Clear Filters",
     "SHOWING_RESULTS": "Showing {{start}}–{{end}} of {{total}} jobs",
     "NO_RESULTS": "0 results",
     "PREVIOUS": "Previous",
     "NEXT": "Next",
-    "DASHBOARD_TITLE": "Department Staff Dashboard"
+    "DASHBOARD_TITLE": "Department Staff Dashboard",
+    "filter_all": "All"
   }
 }
