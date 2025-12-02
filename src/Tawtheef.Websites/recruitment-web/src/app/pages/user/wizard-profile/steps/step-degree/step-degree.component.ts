@@ -81,6 +81,8 @@ export class StepDegreeComponent {
 
     if (r.certificate?.url) {
       this.fileUtils.previewUrl(r.certificate.url, r.certificate.resourceName || '', false);
+    }else if(r.certificate?.file){
+      this.fileUtils.previewBlob(r.certificate!.file);
     }
   }
 

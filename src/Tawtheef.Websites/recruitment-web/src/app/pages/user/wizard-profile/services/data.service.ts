@@ -7,11 +7,15 @@ import {Attachment} from '../models/attachment.model';
 import {CandidateType} from '../../../../core/enums/lookups.enum';
 import {Skill} from '../models/skill.model';
 import {UserService} from '../../../../core/auth/user.service';
+import {NationalityMapperService, PhoneMapperService} from './phone-mapper.service';
+import {CountryISO} from 'ngx-intl-tel-input';
 
 
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
+  nationalityMapperService = inject(NationalityMapperService);
+  phoneMapperService = inject(PhoneMapperService);
   userService = inject(UserService);
   state = signal<ProfileState>({
     degrees: [], experiences: [], courses: [],
@@ -19,6 +23,34 @@ export class DataService {
     available: true, hasDisability: false,
     emailVerified: false, phoneVerified: false,
   });
+
+  get isNeedSponsor(){
+    return [CandidateType.ResidentQatar].includes(
+      this.state().candidateType?.backendName as CandidateType
+    );
+  }
+  get isNeedBirthCertificate() {
+    const t = this.state().candidateType?.backendName as CandidateType | undefined;
+    if (!t) return false;
+    return [CandidateType.SonOfQatariMother].includes(t);
+  }
+
+  get isNeedMarriageCertificate() {
+    const t = this.state().candidateType?.backendName as CandidateType | undefined;
+    if (!t) return false;
+    return [CandidateType.WifeOfQatari].includes(t);
+  }
+  get isResidentQatar(): boolean {
+    const type = this.state().candidateType?.backendName as CandidateType | undefined;
+    if (!type) return false;
+
+    return [
+      CandidateType.ResidentQatar,
+      CandidateType.Qatari,
+      CandidateType.SonOfQatariMother,
+      CandidateType.WifeOfQatari
+    ].includes(type);
+  }
 
   private isFilledScalar = (val: unknown) => {
     if (typeof val === 'string') return val.trim().length > 0;
@@ -35,35 +67,44 @@ export class DataService {
   }
 
   private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email'];
-  prefillFromBootstrap(prefill: Partial<ProfileState>) {
-    this.state.update(s => ({ ...s, ...prefill }));
+  prefillFromBootstrap(userData: Partial<ProfileState>) {
+    this.state.update(s => ({ ...s, ...userData }));
     this.lockedPrefillData();
   }
-
-  lockedPrefillData(){
+  private lockedPrefillData() {
     const prefill = this.userService.getPrefill();
     if (!prefill) return;
-    const dataPrefill = {
+
+    const state = this.state();
+    const prefillMap: Partial<ProfileState> = {
       email: prefill.email,
       emailVerified: prefill.emailVerified,
-      phone: prefill.phone,
+      phone: this.phoneMapperService.toPhoneObject(prefill.phone),
       phoneVerified: prefill.phoneVerified,
-      nationality: prefill.nationality,
-      qid: prefill.qid
-    } as ProfileState;
+      nationality: this.nationalityMapperService.toNationalityObject(prefill.nationality),
+      qid: prefill.qid,
+    };
+
     this.locked.update(m => {
       const copy = { ...m };
-      for (const k of Object.keys(dataPrefill) as (keyof ProfileState)[]) {
-        if (!this.lockableKeys.includes(k)) continue;
-        const value = dataPrefill[k];
-        const hasValue =
-          value !== null && value !== undefined &&
-          (typeof value !== 'string' || value.trim().length > 0);
 
-        if (hasValue) {
-          copy[k] = true;
+      for (const k of Object.keys(prefillMap) as (keyof ProfileState)[]) {
+        if (!this.lockableKeys.includes(k)) continue;
+
+        const prefillValue = prefillMap[k];
+        if (prefillValue === null || prefillValue === undefined) {
+          copy[k] = false;
+          continue;
         }
+
+        const currentValue = state[k];
+        const matches =
+          typeof currentValue === 'string' && typeof prefillValue === 'string'
+            ? currentValue.trim().toLowerCase() === prefillValue.trim().toLowerCase()
+            : JSON.stringify(currentValue) === JSON.stringify(prefillValue);
+        copy[k] = matches;
       }
+
       return copy;
     });
   }
@@ -72,9 +113,9 @@ export class DataService {
     const s = this.state();
 
     const basicValidExceptionCase =
-      ![CandidateType.WifeOfQatari, CandidateType.SonOfQatariMother].includes(s.candidateType?.backendName as CandidateType) ||
-      (s.candidateType?.backendName == CandidateType.WifeOfQatari && this.isFilledScalar(s.marriageCertificateName)) ||
-      (s.candidateType?.backendName == CandidateType.SonOfQatariMother && this.isFilledScalar(s.birthCertificateName));
+      (!this.isNeedBirthCertificate && !this.isNeedMarriageCertificate) ||
+      (this.isNeedMarriageCertificate && this.isFilledScalar(s.marriageCertificateName)) ||
+      (this.isNeedBirthCertificate && this.isFilledScalar(s.birthCertificateName));
 
 
     const basicValid =
@@ -84,28 +125,31 @@ export class DataService {
       this.isFilledScalar(s.idName) &&
       basicValidExceptionCase;
 
-    const hasDisabilityValid = s.hasDisability !== null && s.hasDisability !== undefined;
     const disabilityTypeValid =
       !s.hasDisability || this.isFilledScalar(s.disabilityDetails);
 
     const sponsorValid =
+      !this.isNeedSponsor || (
       this.isFilledScalar(s.sponsorType) &&
       this.isFilledScalar(s.sponsorEmployerName) &&
       this.isFilledScalar(s.sponsorEmployerNumber) &&
-      this.isFilledScalar(s.sponsorCardName);
+      this.isFilledScalar(s.sponsorCardName));
 
     const personalValid =
       this.isFilledScalar(s.fullNameAr) &&
       this.isFilledScalar(s.fullNameEn) &&
       this.isFilledScalar(s.qid) &&
-      this.isFilledScalar(s.dob) &&
       this.isFilledScalar(s.nationality) &&
+      this.isFilledScalar(s.dob) &&
       this.isFilledScalar(s.gender) &&
       this.isFilledScalar(s.religion) &&
       this.isFilledScalar(s.marital) &&
-      hasDisabilityValid &&
       disabilityTypeValid &&
       sponsorValid;
+
+    const addressValid =
+      (this.isResidentQatar && this.isFilledScalar(s.naZone) &&this.isFilledScalar(s.naStreet) &&this.isFilledScalar(s.naBuilding) &&this.isFilledScalar(s.naFileName)) ||
+      (!this.isResidentQatar && this.isFilledScalar(s.address));
 
     const contactValid =
       this.isFilledScalar(s.country) &&
@@ -113,12 +157,18 @@ export class DataService {
       this.isFilledScalar(s.phoneVerified) &&
       this.isFilledScalar(s.email) &&
       this.isFilledScalar(s.emailVerified) &&
-      this.isFilledScalar(s.address);
+      addressValid;
 
-    const degreesValid   = Array.isArray(s.degrees) && s.degrees.length > 0;
-    const expValid       = Array.isArray(s.experiences) && s.experiences.length > 0;
+    const degreesValid   = Array.isArray(s.degrees) && s.degrees.length > 0&&
+      s.degrees.every(a => !!a.certificate && this.isFilledScalar(a.certificate.resourceName) && (!!a.file || !!a.attachmentId));
+    const expValid       = Array.isArray(s.experiences) && s.experiences.length > 0&&
+      s.experiences.every(a => !!a.attachment && this.isFilledScalar(a.attachment.resourceName) && (!!a.file || !!a.attachmentId));
+    const courseValid       = Array.isArray(s.courses) && s.courses.length > 0&&
+      s.courses.every(a => !!a.attachment && this.isFilledScalar(a.attachment.resourceName) && (!!a.file || !!a.attachmentId));
+
     const skillsValid    = Array.isArray(s.skills) && s.skills.length > 0;
     const languagesValid = Array.isArray(s.languages) && s.languages.length  > 0;
+    
     const attachmentsValid = Array.isArray(s.attachments) &&
       s.attachments.length > 0 &&
       s.attachments.every(a => this.isFilledScalar(a.fileName ?? a.name) && (!!a.file || !!a.attachmentId));
@@ -128,7 +178,7 @@ export class DataService {
       personal: personalValid,
       contact: contactValid,
       degrees: degreesValid,
-      experience: expValid,
+      experience: expValid && courseValid,
       skills: skillsValid,
       languages: languagesValid,
       attachments: attachmentsValid,

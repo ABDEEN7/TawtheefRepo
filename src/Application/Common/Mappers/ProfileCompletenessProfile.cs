@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Mapster;
-using Tawtheef.Application.Common.Interfaces.Services;
+﻿using Mapster;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
@@ -14,18 +12,15 @@ public sealed class ProfileCompletenessProfile : IRegister
     {
         config.NewConfig<Resource, FileRefDto>()
             .Map(dest => dest.ResourceId, src => src.Id)
-            .Map(dest => dest.FileName, src => src.Name)
-            .Map(dest => dest.Url,
-                src => MapContext.Current!
-                    .GetService<IMediaUrlResolver>()!
-                    .ResolveAbsolute(src.Url));
+            .Map(dest => dest.FileName, src => src.Name);
 
         config.NewConfig<ProfileAdditionalAttachment, AdditionalAttachmentDto>()
             .Map(dest => dest.Title, src => src.FileName)
-            .Map(dest => dest.File, src => src.Attachment!);
+            .Map(dest => dest.File, src => src.Attachment);
 
         config.NewConfig<Qualification, QualificationDto>()
             .Map(dest => dest.GradCountryId, src => src.CountryId)
+            .Map(dest => dest.Gpa, src => src.GPA)
             .Map(dest => dest.GradeId, src => src.RatingId)
             .Map(dest => dest.Attachment, src => src.Certificate);
 
@@ -60,13 +55,24 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.Phone, src => src.user.PhoneNumber ?? src.prefill.Phone)
             .Map(dest => dest.PhoneVerified, src => src.user.PhoneNumberConfirmed)
             .Map(dest => dest.NationalNumber, src => src.profile.NationalNumber ?? src.prefill.Qid)
+            .Map(dest => dest.SponsorTypeId, src => src.profile.SponsorProfile == null ? null : (Guid?)src.profile.SponsorProfile.SponsorTypeId)
+            .Map(dest => dest.SponsorEmployerName, src => src.profile.SponsorProfile == null ? null : src.profile.SponsorProfile.SponsorName)
+            .Map(dest => dest.SponsorEmployerNumber, src => src.profile.SponsorProfile == null ? null : src.profile.SponsorProfile.SponsorNumber)
+            .Map(dest => dest.SponsorCard, src => src.profile.SponsorProfile == null ? null : src.profile.SponsorProfile.SponsorCard)
+            .Map(dest => dest.naZone, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.ZoneNo)
+            .Map(dest => dest.naStreet, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.StreetNo)
+            .Map(dest => dest.naBuilding, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.BuildingNo)
+            .Map(dest => dest.naUnit, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.UnitNo)
+            .Map(dest => dest.ResidenceAddressCertificate, src => src.profile.SponsorProfile == null ? null : src.profile.ResidenceAddressCertificate)
             .Map(dest => dest.AdditionalAttachments,
-                src => src.profile.AdditionalAttachments
-                    ?.Where(a => a.Attachment != null))
+                 src => 
+                     src.profile.AdditionalAttachments == null ? null :
+                     src.profile.AdditionalAttachments.Where(a => a.Attachment != null))
             .Map(dest => dest.Qualifications, src => src.profile.Qualifications)
             .Map(dest => dest.Experiences, src => src.profile.Experiences)
             .Map(dest => dest.TrainingCourses, src => src.profile.TrainingCourses)
             .Map(dest => dest.Skills, src => src.profile.Skills)
-            .Map(dest => dest.Languages, src => src.profile.Languages);
+            .Map(dest => dest.Languages, src => src.profile.Languages)
+            ;
     }
 }

@@ -24,7 +24,7 @@
                           [maxLength]="15" [phoneValidation]="true"
                           [selectedCountryISO]="selectedCountryIso2"
                           [ngModel]="phone.value" (ngModelChange)="onPhoneChange($event)"
-                          [disabled]="ds.isLocked('phone') || phone.status === 'verified'"
+                          [disabled]="ds.isLocked('phone')"
       ></ngx-intl-tel-input>
       <small *ngIf="ds.isLocked('phone')" class="fz-2xs text-muted">
         {{'wizard.accountFieldNote' | translate}}
@@ -156,7 +156,7 @@
       </ng-container>
     </div>
 
-    <div class="col-md-6" *ngIf="!isResidentQatar">
+    <div class="col-md-6" *ngIf="!ds.isResidentQatar">
       <label class="form-label required">{{ 'wizard.contact.address' | translate }}</label>
       <input pInputText class="form-control" [(ngModel)]="ds.state().address"
              placeholder="{{'wizard.placeholders.typeHere' | translate}}"
@@ -172,7 +172,7 @@
     </div>
   </div>
 
-  <ng-container *ngIf="isResidentQatar">
+  <ng-container *ngIf="ds.isResidentQatar">
     <hr class="my-4">
     <div class="mb-2 fw-bold" style="color:#7b1e3a">{{ 'wizard.nationalAddress.title' | translate }}</div>
     <div class="plate mb-3 d-flex align-items-center gap-3" style="background:#1e73be;color:#fff;border-radius:14px;padding:10px 14px;">

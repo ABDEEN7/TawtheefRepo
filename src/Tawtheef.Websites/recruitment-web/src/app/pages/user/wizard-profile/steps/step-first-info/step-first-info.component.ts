@@ -37,18 +37,6 @@ export class StepFirstInfoComponent {
 
   saving = false;
 
-  get isNeedBirthCertificate() {
-    const t = this.ds.state().candidateType?.backendName as CandidateType | undefined;
-    if (!t) return false;
-    return [CandidateType.SonOfQatariMother].includes(t);
-  }
-
-  get isNeedMarriageCertificate() {
-    const t = this.ds.state().candidateType?.backendName as CandidateType | undefined;
-    if (!t) return false;
-    return [CandidateType.WifeOfQatari].includes(t);
-  }
-
   onFileSelected(kind: 'cv' | 'id' | 'birth' | 'marriage', event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;

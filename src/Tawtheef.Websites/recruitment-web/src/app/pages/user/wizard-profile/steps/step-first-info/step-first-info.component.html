@@ -75,7 +75,7 @@
       </div>
     </div>
     <!-- Birth Certificate -->
-    <div class="col-md-6" *ngIf="isNeedBirthCertificate">
+    <div class="col-md-6" *ngIf="ds.isNeedBirthCertificate">
       <label class="form-label required d-flex justify-content-between align-items-center">
         <span class="d-flex align-items-center gap-2">
           {{ 'wizard.prereq.birthCertificate' | translate }}
@@ -112,7 +112,7 @@
     </div>
 
     <!-- Marriage Certificate -->
-    <div class="col-md-6" *ngIf="isNeedMarriageCertificate">
+    <div class="col-md-6" *ngIf="ds.isNeedMarriageCertificate">
       <label class="form-label required d-flex justify-content-between align-items-center">
         <span class="d-flex align-items-center gap-2">
           {{ 'wizard.prereq.marriageCertificate' | translate }}

@@ -193,7 +193,7 @@
         placeholder="{{ 'wizard.placeholders.selectDisabilityType' | translate }}"/>
     </div>
 
-    <ng-container *ngIf="isNeedSponsor">
+    <ng-container *ngIf="ds.isNeedSponsor">
       <!-- Sponsor Type -->
       <div class="col-md-4 d-flex flex-column">
         <label class="form-label required">
@@ -213,66 +213,65 @@
         ></p-select>
       </div>
 
-      <!-- Sponsor Employer Name -->
-      <div class="col-md-4">
-        <label class="form-label required">
-          {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.name`| lowercase | translate }}
-        </label>
-        <input
-          pInputText
-          class="form-control"
-          pSize="small"
-          name="sponsorEmployerName"
-          [ngModel]="ds.state().sponsorEmployerName"
-          (ngModelChange)="updateField('sponsorEmployerName', $event)"
-          placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-        />
-      </div>
-
-      <!-- Sponsor Employer Number (Ministry of Labor) -->
-      <div class="col-md-4">
-        <label class="form-label required">
-          {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.qid`| lowercase | translate }}
-        </label>
-        <input
-          pInputText
-          type="text"
-          class="form-control"
-          pSize="small"
-          name="sponsorEmployerNumber"
-          [ngModel]="ds.state().sponsorEmployerNumber"
-          (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
-          placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-        />
-      </div>
-
-      <!-- Establishment Registration Card -->
-      <div class="col-md-6">
-        <label class="form-label">
-          {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate }}
-          <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
-        </label>
-        <div class="upload-field"
-             (click)="sponsorInput.click()">
-
-          <div class="upload-field__icon">
-            <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().sponsorCardName"/>
-            <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().sponsorCardName"
-                 class="cursor-pointer"
-                 (click)="previewSponsorCard($event)"/>
-          </div>
-
-          <div class="upload-field__text">
-            {{ ds.state().sponsorCardName || (`wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate) }}
-          </div>
-
-          <input #sponsorInput
-                 type="file"
-                 class="d-none"
-                 accept=".jpg,.jpeg,.png,.pdf"
-                 (change)="onSponsorCardSelected($event)" />
+      <ng-container *ngIf="ds.state().sponsorType">
+        <!-- Sponsor Employer Name -->
+        <div class="col-md-4">
+          <label class="form-label required">
+            {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.name`| lowercase | translate }}
+          </label>
+          <input
+            pInputText
+            class="form-control"
+            pSize="small"
+            name="sponsorEmployerName"
+            [ngModel]="ds.state().sponsorEmployerName"
+            (ngModelChange)="updateField('sponsorEmployerName', $event)"
+            placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+          />
         </div>
-      </div>
+        <!-- Sponsor Employer Number (Ministry of Labor) -->
+        <div class="col-md-4">
+          <label class="form-label required">
+            {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.qid`| lowercase | translate }}
+          </label>
+          <input
+            pInputText
+            type="text"
+            class="form-control"
+            pSize="small"
+            name="sponsorEmployerNumber"
+            [ngModel]="ds.state().sponsorEmployerNumber"
+            (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
+            placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+          />
+        </div>
+        <!-- Establishment Registration Card -->
+        <div class="col-md-6">
+          <label class="form-label">
+            {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate }}
+          </label>
+          <div class="upload-field"
+               (click)="sponsorInput.click()">
+
+            <div class="upload-field__icon">
+              <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().sponsorCardName"/>
+              <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().sponsorCardName"
+                   class="cursor-pointer"
+                   (click)="previewSponsorCard($event)"/>
+            </div>
+
+            <div class="upload-field__text">
+              {{ ds.state().sponsorCardName || (`wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate) }}
+            </div>
+
+            <input #sponsorInput
+                   type="file"
+                   class="d-none"
+                   accept=".jpg,.jpeg,.png,.pdf"
+                   (change)="onSponsorCardSelected($event)" />
+          </div>
+        </div>
+      </ng-container>
     </ng-container>
   </div>
 </div>

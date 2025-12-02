@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
@@ -7,6 +8,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Domain.Entities.Users;
 
 [Table(nameof(UserProfile), Schema = Schemas.Applicant)]
+[Index(nameof(NationalNumber), IsUnique = true)]
 public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }

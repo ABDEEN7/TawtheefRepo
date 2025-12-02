@@ -103,18 +103,6 @@ export class StepContactComponent implements OnInit, OnDestroy {
   selectedCountryIso2: CountryISO = CountryISO.Qatar;
   savingContact = false;
 
-  get isResidentQatar(): boolean {
-    const type = this.ds.state().candidateType?.backendName as CandidateType | undefined;
-    if (!type) return false;
-
-    return [
-      CandidateType.ResidentQatar,
-      CandidateType.Qatari,
-      CandidateType.SonOfQatariMother,
-      CandidateType.WifeOfQatari
-    ].includes(type);
-  }
-
   ngOnInit(): void {
     this.geoIp.getCountryIso2().subscribe(code => {
       this.selectedCountryIso2 = code.toLowerCase() as CountryISO;
@@ -178,11 +166,12 @@ export class StepContactComponent implements OnInit, OnDestroy {
       this.phone.value = value.e164Number;
       this.ds.up('phone', value);
 
-      if (this.phone.status === 'verified') {
+      if (this.phone.status === 'verified' && (value.e164Number !== this.ds.state().phone?.e164Number || !this.ds.state().phoneVerified)) {
         this.phone.status = 'idle';
         this.ds.up('phoneVerified', false);
       }
-    } else {
+    }
+    else {
       this.phone.value = null;
       this.ds.up('phone', null);
     }

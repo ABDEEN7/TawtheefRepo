@@ -9,6 +9,8 @@ import {MessageService} from 'primeng/api';
 import {ProfileService} from '../../services/profile.service';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
 import {Experience, TrainingCourse} from '../../models/experience.model';
+import {FileRefDto} from '../../../../../core/models/auth/auth-response.model';
+import {UploadedFileRef} from '../../models/profile-state.model';
 
 @Component({
   selector: 'app-step-experience',
@@ -160,7 +162,7 @@ export class StepExperienceComponent {
     });
   }
 
-  private previewAttachment(ref?: { url?: string | null; resourceName?: string | null } | null, file?: File | null, fallbackName?: string | null, ev?: Event) {
+  private previewAttachment(ref?: UploadedFileRef | null, file?: File | null, fallbackName?: string | null, ev?: Event) {
     ev?.stopPropagation();
     if (file) {
       this.fileUtils.previewBlob(file);
@@ -169,6 +171,8 @@ export class StepExperienceComponent {
 
     if (ref?.url) {
       this.fileUtils.previewUrl(ref.url, ref.resourceName || fallbackName || '', false);
+    }else if(ref?.file){
+      this.fileUtils.previewBlob(ref!.file);
     }
   }
 }

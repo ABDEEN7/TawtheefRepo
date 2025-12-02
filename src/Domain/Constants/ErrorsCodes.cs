@@ -68,6 +68,7 @@ public class ErrorsCodes
     #endregion
 
     #region Update Profile Errors
+    public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";

@@ -28,8 +28,8 @@ export interface ProfileState {
   // personal
   fullNameAr?: string;
   fullNameEn?: string;
-  qid?: string;
-  nationality?: dropdownOptionsModel;
+  qid?: string | null;
+  nationality?: dropdownOptionsModel | null;
   gender?: dropdownOptionsModel;
   religion?: dropdownOptionsModel;
   marital?: dropdownOptionsModel;
@@ -48,9 +48,9 @@ export interface ProfileState {
   country?: dropdownOptionsModel;
   address?: string;
   phone?: PhoneNumber | null;
-  phoneVerified: boolean;
-  email?: string;
-  emailVerified: boolean;
+  phoneVerified: boolean | null;
+  email?: string | null;
+  emailVerified: boolean | null;
   interviewPlace?: dropdownOptionsModel;
   naZone?: string | null;
   naStreet?: string | null;

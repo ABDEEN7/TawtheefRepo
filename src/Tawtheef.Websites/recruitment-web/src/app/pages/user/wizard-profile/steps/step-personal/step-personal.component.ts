@@ -39,11 +39,6 @@ export class StepPersonalComponent {
 
   savingPersonal = false;
   private sponsorCardLocalFile: File | null = null;
-  get isNeedSponsor(){
-    return [CandidateType.ResidentQatar].includes(
-      this.ds.state().candidateType?.backendName as CandidateType
-    );
-  }
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);

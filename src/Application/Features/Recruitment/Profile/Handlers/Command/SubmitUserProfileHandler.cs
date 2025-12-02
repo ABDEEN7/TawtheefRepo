@@ -29,13 +29,16 @@ public sealed class SubmitUserProfileHandler(
             .Include(p => p.Skills)
             .Include(p => p.Languages)
             .Include(p => p.AdditionalAttachments)
+            .Include(p => p.SponsorProfile)
             .Include(p => p.ResidenceAddress)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+        
+        if(!profile.IsCompleted())
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotCompleted);
 
-        // TODO: هنا ممكن تتحقق أن كل الـ Sections مكتملة قبل السماح بالـ Submit
         var lastVersion = await submissionRepo.DbSet
             .Where(s => s.UserProfileId == profile.Id)
             .OrderByDescending(s => s.Version)
@@ -51,7 +54,8 @@ public sealed class SubmitUserProfileHandler(
             Skills           = profile.Skills,
             Languages        = profile.Languages,
             Attachments      = profile.AdditionalAttachments,
-            Address          = profile.ResidenceAddress
+            ResidenceAddress = profile.ResidenceAddress,
+            SponsorProfile   = profile.SponsorProfile
         };
 
         var json = JsonSerializer.Serialize(snapshot,

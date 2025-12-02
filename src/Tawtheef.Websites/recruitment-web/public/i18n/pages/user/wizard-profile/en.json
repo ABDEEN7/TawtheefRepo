@@ -35,7 +35,8 @@
       "upload": "Upload",
       "preview": "Preview",
       "cancel": "Cancel",
-      "saveDraft": "Save Draft"
+      "saveDraft": "Save Draft",
+      "saving": "Saving..."
     },
     "personal": {
       "hasDisability": "Do you have a disability?",
@@ -45,12 +46,12 @@
         "company": {
           "name": "Establishment Name",
           "qid": "Establishment Number (Ministry of Labor)",
-          "card": "Establishment Registration Card"
+          "card": "Establishment Registration Card (Image, PDF)"
         },
         "individual": {
           "name": "Establishment Name",
           "qid": "Sponsor QID Number",
-          "card": "Sponsor Registration Card"
+          "card": "Sponsor Registration Card (Image, PDF)"
         }
       },
       "avatar": {
@@ -233,7 +234,7 @@
         "Excellent"
       ],
       "hint": "Write 3 or more characters to search for skills from the provider.",
-      "placeholder": "ابحث عن مهارة (مثلاً: Java, Angular, SQL)",
+      "placeholder": "Start typing to search skills...",
       "typeMore": "Write 3 or more characters to start searching...",
       "noResults": "No results found.",
       "max10": "Showing up to 10 results per search.",
