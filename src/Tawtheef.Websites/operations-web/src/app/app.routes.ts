@@ -1,6 +1,5 @@
 import {Routes} from '@angular/router';
 import {loggedOutOnlyGuard} from './core/auth/route-guards';
-import {ProfileList} from './pages/profile-list/profile-list'
 import {JobInvitationSummary} from './pages/job-invitation-summary/job-invitation-summary'
 import { UserLayout } from './layouts/internal/user-layout/user-layout';
 import {ProfileApprovalListPage} from './pages/profile-approval-list/profile-approval-list.page';
@@ -36,7 +35,6 @@ export const routes: Routes = [
       },
       { path: 'approval/tasks', component: ProfileApprovalListPage },
       { path: 'approval', component: ProfileApprovalPage },
-      { path: 'profile-list', component: ProfileList },
       { path: 'job-invitation-summary', component: JobInvitationSummary },
     ],
   },

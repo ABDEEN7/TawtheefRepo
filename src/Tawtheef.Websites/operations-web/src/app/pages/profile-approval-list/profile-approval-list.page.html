@@ -1,83 +1,192 @@
-<div class="tasks-page" dir="rtl">
-  <div class="card shadow-sm">
-    <div class="card-header py-3">
-      <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
-        <div>
-          <div class="title">اعتماد الملفات</div>
-          <div class="text-muted small">مهامك الحالية لمراجعة الملفات المرسلة</div>
+<div class="wrap" i18nNamespace="pages/profile-list">
+  <!-- page header -->
+  <div class="page-head">
+    <div class="page-head-main">
+      <button class="icon-btn back-btn" type="button">
+        ‹
+      </button>
+
+      <div>
+        <div class="page-title">
+          {{ 'profileList.title' | translate }}
         </div>
-        <div class="d-flex flex-wrap gap-2 align-items-center">
-          <div class="filter-group">
-            <label class="form-label mb-1 small">حالة الاعتماد</label>
-            <select
-              class="form-select form-select-sm"
-              [ngModel]="statusFilter()"
-              (ngModelChange)="statusFilter.set($event)"
-            >
-              <option *ngFor="let option of statusOptions" [ngValue]="option.value">{{ option.label }}</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label class="form-label mb-1 small">بحث</label>
-            <input
-              class="form-control form-control-sm"
-              type="search"
-              placeholder="اسم الطالب أو الجهة"
-              [ngModel]="search()"
-              (ngModelChange)="search.set($event)"
-            />
-          </div>
-          <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadList()" [disabled]="loading()">
-            تحديث القائمة
-          </button>
+        <div class="page-sub">
+          {{ 'profileList.subtitle' | translate }}
         </div>
       </div>
     </div>
 
-    <div class="card-body">
-      <div *ngIf="error()" class="alert alert-danger">{{ error() }}</div>
-      <div *ngIf="loading()" class="text-center text-muted py-4">...جاري تحميل المهام</div>
-      <div *ngIf="!loading() && filteredList().length === 0" class="text-center text-muted py-4">
-        لا توجد مهام مراجعة حالياً
+    <button class="chip chip-outline" type="button">
+      <span class="chip-count">{{ paginatedProfiles().total }}</span>
+      <span>{{ 'profileList.totalAssignedFiles' | translate }}</span>
+      <span class="chip-icon">📎</span>
+    </button>
+  </div>
+
+  <!-- main card -->
+  <div class="card">
+    <!-- card header: title + search -->
+    <div class="card-head">
+      <h3 class="card-title">
+        {{ 'profileList.assignedFiles' | translate }}
+      </h3>
+
+      <div class="search-wrap">
+        <input
+          #searchInput
+          type="search"
+          class="input search-input"
+          [placeholder]="'profileList.searchPlaceholder' | translate"
+          [value]="state().query"
+          (input)="updateState({ query: searchInput.value.trim(), page: 1 })">
+
+        <button class="search-icon" type="button">
+          🔍
+        </button>
+      </div>
+    </div>
+
+    <!-- filters row -->
+    <div class="filters-row">
+      <button class="pill-filter reset" type="button" (click)="clearFilters()">
+        <span class="icon">✖</span>
+        <span>{{ 'profileList.clearFilter' | translate }}</span>
+      </button>
+
+      <select
+        class="select pill"
+        [value]="state().entity"
+        (change)="updateState({ entity: $any($event.target).value, page: 1 })">
+        <option value="">{{ 'profileList.allEntities' | translate }}</option>
+        <option value="المدارس">{{ 'profileList.entitySchools' | translate }}</option>
+        <option value="الوزارة">{{ 'profileList.entityMinistry' | translate }}</option>
+      </select>
+
+      <select
+        class="select pill"
+        [value]="state().status"
+        (change)="updateState({ status: $any($event.target).value, page: 1 })">
+        <option value="">{{ 'profileList.allStatuses' | translate }}</option>
+        <option value="بانتظار المراجعة">{{ 'profileList.statusPendingReview' | translate }}</option>
+        <option value="قيد الاعتماد">{{ 'profileList.statusUnderApproval' | translate }}</option>
+        <option value="مكتمل">{{ 'profileList.statusCompleted' | translate }}</option>
+        <option value="يحتاج تصحيح">{{ 'profileList.statusNeedsCorrection' | translate }}</option>
+      </select>
+
+      <select
+        class="select pill"
+        [value]="state().size"
+        (change)="updateState({ size: +$any($event.target).value, page: 1 })">
+        <option value="5">5/{{ 'profileList.page' | translate }}</option>
+        <option value="10">10/{{ 'profileList.page' | translate }}</option>
+        <option value="20">20/{{ 'profileList.page' | translate }}</option>
+        <option value="50">50/{{ 'profileList.page' | translate }}</option>
+      </select>
+    </div>
+
+    <!-- table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th style="width:40px" class="hide-sm"></th>
+          <th>{{ 'profileList.candidateName' | translate }}</th>
+          <th>{{ 'profileList.specialization' | translate }}</th>
+          <th>{{ 'profileList.targetEntity' | translate }}</th>
+          <th>{{ 'profileList.submissionDate' | translate }}</th>
+          <th>{{ 'profileList.status' | translate }}</th>
+          <th>{{ 'profileList.actions' | translate }}</th>
+        </tr>
+        </thead>
+
+        <tbody>
+          @for (profile of paginatedProfiles().slice; track profile.id) {
+            <tr>
+              <td class="hide-sm">
+                <img class="avatar" [src]="profile.avatar" [alt]="profile.name">
+              </td>
+
+              <td>
+                <div class="cell-main">{{ profile.name }}</div>
+                <div class="idnote">{{ profile.id }}</div>
+              </td>
+
+              <td>{{ profile.major }}</td>
+              <td>{{ profile.entity }}</td>
+              <td>{{ profile.sent }}</td>
+
+              <td>
+                @switch (profile.status) {
+                  @case ('مكتمل') {
+                    <span class="pill ok">{{ profile.status }}</span>
+                  }
+                  @case ('قيد الاعتماد') {
+                    <span class="pill warn">{{ profile.status }}</span>
+                  }
+                  @case ('بانتظار المراجعة') {
+                    <span class="pill info">{{ profile.status }}</span>
+                  }
+                  @case ('يحتاج تصحيح') {
+                    <span class="pill bad">{{ profile.status }}</span>
+                  }
+                  @default {
+                    <span class="pill">{{ profile.status }}</span>
+                  }
+                }
+              </td>
+
+              <td>
+                <button class="btn outline-danger" type="button"
+                        (click)="openApprovalPage(profile.id)">
+                  <span class="icon">📝</span>
+                  <span>{{ 'profileList.approveFile' | translate }}</span>
+                </button>
+              </td>
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="7">
+                <div id="nodata" class="counter" style="padding:16px;display:block">
+                  {{ 'profileList.noResults' | translate }}
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- footer -->
+    <div class="foot">
+      <div class="counter">
+        {{ getDisplayRange() }}
+        {{ 'profileList.of' | translate }}
+        {{ paginatedProfiles().total }}
+        {{ 'profileList.file' | translate }}
       </div>
 
-      <div class="table-responsive" *ngIf="!loading() && filteredList().length > 0">
-        <table class="table align-middle">
-          <thead>
-            <tr>
-              <th scope="col">اسم الطالب</th>
-              <th scope="col">درجة الوزارة</th>
-              <th scope="col">الجهة المستهدفة</th>
-              <th scope="col">تاريخ الإنشاء</th>
-              <th scope="col">آخر تحديث</th>
-              <th scope="col">حالة الاعتماد</th>
-              <th scope="col" class="text-center">المطلوب</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of filteredList()">
-              <td>
-                <div class="fw-semibold">{{ item.fullName || 'مرشح' }}</div>
-                <div class="small text-muted">{{ item.userId }}</div>
-              </td>
-              <td>{{ item.candidateType || '-' }}</td>
-              <td>{{ item.targetEntity || '-' }}</td>
-              <td>{{ item.submittedAtUtc | date: 'mediumDate' }}</td>
-              <td>{{ item.lastUpdatedAtUtc ? (item.lastUpdatedAtUtc | date: 'short') : '-' }}</td>
-              <td>
-                <span class="status-pill" [ngClass]="statusClass(item.overallStatus)">{{ statusLabel(item.overallStatus) }}</span>
-              </td>
-              <td class="text-center">
-                <span class="badge bg-primary-subtle text-primary" *ngIf="item.pendingCount > 0">{{ item.pendingCount }} قيد المراجعة</span>
-                <span class="text-muted" *ngIf="item.pendingCount === 0">لا يوجد</span>
-              </td>
-              <td class="text-end">
-                <button class="btn btn-primary btn-sm" type="button" (click)="openProfile(item)">عرض الملف</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="pager">
+        <button
+          class="btn"
+          type="button"
+          (click)="previousPage()"
+          [disabled]="state().page <= 1">
+          ‹ {{ 'profileList.previous' | translate }}
+        </button>
+
+        <div class="counter">
+          {{ 'profileList.page' | translate }}
+          {{ state().page }} / {{ paginatedProfiles().pages || 1 }}
+        </div>
+
+        <button
+          class="btn"
+          type="button"
+          (click)="nextPage()"
+          [disabled]="state().page >= paginatedProfiles().pages">
+          {{ 'profileList.next' | translate }} ›
+        </button>
       </div>
     </div>
   </div>

@@ -1,31 +1,36 @@
 ﻿{
-  "PROFILE_LIST": {
-    "TITLE": "Employment Admin Dashboard",
-    "SUBTITLE": "List of candidate submitted profiles",
-    "DEMO_VERSION": "Demo version (HTML only)",
-    "RECEIVED_FILES": "Received Files",
-    "SEARCH_PLACEHOLDER": "Search by name / specialization / status / ID…",
-    "ALL_STATUSES": "All Statuses",
-    "STATUS_PENDING_REVIEW": "Pending Review",
-    "STATUS_UNDER_APPROVAL": "Under Approval",
-    "STATUS_COMPLETED": "Completed",
-    "STATUS_NEEDS_CORRECTION": "Needs Correction",
-    "ALL_ENTITIES": "All Entities",
-    "ENTITY_SCHOOLS": "Schools",
-    "ENTITY_MINISTRY": "Ministry",
-    "PAGE": "Page",
-    "CLEAR": "Clear",
-    "NAME": "Name",
-    "SPECIALIZATION": "Specialization",
-    "TARGET_ENTITY": "Target Entity",
-    "SUBMISSION_DATE": "Submission Date",
-    "STATUS": "Status",
-    "ACTION": "Action",
-    "VIEW": "View",
-    "NO_RESULTS": "No matching results.",
-    "OF": "of",
-    "FILE": "file",
-    "PREVIOUS": "Previous",
-    "NEXT": "Next"
+  "profileList": {
+    "title": "اعتماد الملفات",
+    "subtitle": "قائمة الملفات الشخصية المقدمة من المرشحين",
+    "totalAssignedFiles": "إجمالي الملفات المسندة",
+    "assignedFiles": "الملفات المسندة",
+    "searchPlaceholder": "ابحث بالاسم / التخصص / الحالة / الرقم…",
+
+    "allStatuses": "كل الحالات",
+    "statusPendingReview": "بانتظار المراجعة",
+    "statusUnderApproval": "قيد الاعتماد",
+    "statusCompleted": "مكتمل",
+    "statusNeedsCorrection": "يحتاج تصحيح",
+
+    "allEntities": "كل الجهات",
+    "entitySchools": "المدارس",
+    "entityMinistry": "الوزارة",
+
+    "page": "صفحة",
+    "clearFilter": "إلغاء التصفية",
+
+    "candidateName": "اسم المرشح",
+    "specialization": "التخصص",
+    "targetEntity": "الجهة المستهدفة",
+    "submissionDate": "تاريخ التقديم",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "approveFile": "اعتماد الملف",
+
+    "noResults": "لا توجد نتائج مطابقة.",
+    "of": "من",
+    "file": "ملف",
+    "previous": "السابق",
+    "next": "التالي"
   }
 }
