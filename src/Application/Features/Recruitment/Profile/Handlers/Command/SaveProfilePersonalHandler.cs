@@ -90,7 +90,10 @@ public sealed class SaveProfilePersonalHandler(
             if (file is null || file.Length == 0)
                 return Result.Ok(existingId);
 
-            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), ct);
+            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "sponsor-card", file, false, ct);
+            var uploadResult = await mediator.Send(
+                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                ct);
             if (uploadResult.IsFailed)
                 return Result.Fail<Guid?>(uploadResult.Errors);
 

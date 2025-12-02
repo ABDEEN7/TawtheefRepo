@@ -146,4 +146,5 @@ export interface QualificationDto {
 export interface FileRefDto {
   resourceId: GUID;
   fileName: string;
+  url?: string | null;
 }

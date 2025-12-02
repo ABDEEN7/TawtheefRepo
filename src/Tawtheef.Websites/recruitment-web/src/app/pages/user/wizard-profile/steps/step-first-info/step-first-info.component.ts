@@ -7,6 +7,7 @@ import { ProfileService } from '../../services/profile.service';
 import {mapPrereqSection} from '../../services/profile.mapper';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
 
 @Component({
   selector: 'app-step-first-info',
@@ -22,6 +23,7 @@ export class StepFirstInfoComponent {
   lookups   = inject(ProfileLookupsService);
   profile   = inject(ProfileService);
   messageService   = inject(MessageService);
+  fileUtils = inject(FileUtilsService);
 
   private cvFile: File | null = null;
   private idFile: File | null = null;
@@ -106,5 +108,50 @@ export class StepFirstInfoComponent {
         this.saving = false;
       }
     });
+  }
+
+  canPreview(kind: 'cv' | 'id' | 'birth' | 'marriage'): boolean {
+    return !!this.getLocalFile(kind) || !!this.getFileRef(kind)?.url;
+  }
+
+  previewFile(kind: 'cv' | 'id' | 'birth' | 'marriage', ev?: Event) {
+    ev?.stopPropagation();
+    const local = this.getLocalFile(kind);
+    if (local) {
+      this.fileUtils.previewBlob(local);
+      return;
+    }
+
+    const ref = this.getFileRef(kind);
+    if (ref?.url) {
+      this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
+    }
+  }
+
+  private getLocalFile(kind: 'cv' | 'id' | 'birth' | 'marriage'): File | null {
+    switch (kind) {
+      case 'cv':
+        return this.cvFile;
+      case 'id':
+        return this.idFile;
+      case 'birth':
+        return this.birthCertificateFile;
+      case 'marriage':
+        return this.marriageCertificateFile;
+    }
+  }
+
+  private getFileRef(kind: 'cv' | 'id' | 'birth' | 'marriage') {
+    const state = this.ds.state();
+    switch (kind) {
+      case 'cv':
+        return state.cvFile;
+      case 'id':
+        return state.idFile;
+      case 'birth':
+        return state.birthCertificateFile;
+      case 'marriage':
+        return state.marriageCertificateFile;
+    }
   }
 }
