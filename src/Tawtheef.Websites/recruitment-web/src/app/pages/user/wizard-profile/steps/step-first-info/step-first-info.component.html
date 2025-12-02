@@ -19,7 +19,15 @@
     <!-- CV -->
     <div class="col-md-6">
       <label class="form-label required d-flex justify-content-between align-items-center">
-        <span>{{ 'wizard.prereq.cvLabel' | translate }}</span>
+        <span class="d-flex align-items-center gap-2">
+          {{ 'wizard.prereq.cvLabel' | translate }}
+          <button *ngIf="canPreview('cv')"
+                  type="button"
+                  class="btn btn-link p-0 fz-2xs"
+                  (click)="previewFile('cv', $event)">
+            <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.view' | translate }}
+          </button>
+        </span>
         <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
       </label>
 
@@ -28,7 +36,9 @@
 
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().cvName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().cvName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().cvName"
+               class="cursor-pointer"
+               (click)="previewFile('cv', $event)"/>
         </div>
 
         <div class="upload-field__text">
@@ -45,7 +55,15 @@
     <!-- ID -->
     <div class="col-md-6">
       <label class="form-label required d-flex justify-content-between align-items-center">
-        <span>{{ 'wizard.prereq.idLabel' | translate }}</span>
+        <span class="d-flex align-items-center gap-2">
+          {{ 'wizard.prereq.idLabel' | translate }}
+          <button *ngIf="canPreview('id')"
+                  type="button"
+                  class="btn btn-link p-0 fz-2xs"
+                  (click)="previewFile('id', $event)">
+            <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.view' | translate }}
+          </button>
+        </span>
         <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
       </label>
 
@@ -54,7 +72,9 @@
 
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().idName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().idName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().idName"
+               class="cursor-pointer"
+               (click)="previewFile('id', $event)"/>
         </div>
 
         <div class="upload-field__text">
@@ -71,7 +91,15 @@
     <!-- Birth Certificate -->
     <div class="col-md-6" *ngIf="isNeedBirthCertificate">
       <label class="form-label required d-flex justify-content-between align-items-center">
-        <span>{{ 'wizard.prereq.birthCertificate' | translate }}</span>
+        <span class="d-flex align-items-center gap-2">
+          {{ 'wizard.prereq.birthCertificate' | translate }}
+          <button *ngIf="canPreview('birth')"
+                  type="button"
+                  class="btn btn-link p-0 fz-2xs"
+                  (click)="previewFile('birth', $event)">
+            <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.view' | translate }}
+          </button>
+        </span>
         <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
       </label>
 
@@ -80,7 +108,9 @@
 
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().birthCertificateName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().birthCertificateName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().birthCertificateName"
+               class="cursor-pointer"
+               (click)="previewFile('birth', $event)"/>
         </div>
 
         <div class="upload-field__text">
@@ -98,7 +128,15 @@
     <!-- Marriage Certificate -->
     <div class="col-md-6" *ngIf="isNeedMarriageCertificate">
       <label class="form-label required d-flex justify-content-between align-items-center">
-        <span>{{ 'wizard.prereq.marriageCertificate' | translate }}</span>
+        <span class="d-flex align-items-center gap-2">
+          {{ 'wizard.prereq.marriageCertificate' | translate }}
+          <button *ngIf="canPreview('marriage')"
+                  type="button"
+                  class="btn btn-link p-0 fz-2xs"
+                  (click)="previewFile('marriage', $event)">
+            <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.view' | translate }}
+          </button>
+        </span>
         <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
       </label>
 
@@ -107,7 +145,9 @@
 
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().marriageCertificateName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().marriageCertificateName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().marriageCertificateName"
+               class="cursor-pointer"
+               (click)="previewFile('marriage', $event)"/>
         </div>
 
         <div class="upload-field__text">

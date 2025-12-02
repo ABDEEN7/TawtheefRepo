@@ -152,7 +152,9 @@
              (click)="naInput.click()">
           <div class="upload-field__icon">
             <img src="assets/img/icons/file-upload.svg" *ngIf="!f['fileName'].value" alt="upload"/>
-            <img src="assets/img/icons/file-eye.svg" *ngIf="f['fileName'].value" alt="view"/>
+            <img src="assets/img/icons/file-eye.svg" *ngIf="f['fileName'].value" alt="view"
+                 class="cursor-pointer"
+                 (click)="previewFile($event)"/>
           </div>
 
           <div class="upload-field__text">

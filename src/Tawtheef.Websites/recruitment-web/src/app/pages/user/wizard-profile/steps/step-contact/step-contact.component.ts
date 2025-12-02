@@ -21,6 +21,7 @@ import { ProfileService } from '../../services/profile.service';
 import { mapContactSection } from '../../services/profile.mapper';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
 
 type VerificationStatus =
   | 'idle'
@@ -61,6 +62,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   geoIp = inject(GeoIpService);
   profileService = inject(ProfileService);
   messageService = inject(MessageService);
+  fileUtils = inject(FileUtilsService);
 
   naFileError: string | null = null;
   maxNaFileSize = 2 * 1024 * 1024; // 2MB
@@ -374,5 +376,18 @@ export class StepContactComponent implements OnInit, OnDestroy {
         next: () => this.next.emit(),
         error: err => console.error(err)
       });
+  }
+
+  previewNaFile(ev?: Event): void {
+    ev?.stopPropagation();
+    if (this.naLocalFile) {
+      this.fileUtils.previewBlob(this.naLocalFile);
+      return;
+    }
+
+    const ref = this.ds.state().naFile;
+    if (ref?.url) {
+      this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
+    }
   }
 }

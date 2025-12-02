@@ -9,6 +9,7 @@ import {Skill} from './skill.model';
 export interface UploadedFileRef {
   resourceId: string;
   resourceName: string;
+  url?: string | null;
 }
 export interface ProfileState {
   // prereq

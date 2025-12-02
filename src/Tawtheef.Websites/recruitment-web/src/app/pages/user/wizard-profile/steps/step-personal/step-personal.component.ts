@@ -11,6 +11,7 @@ import {ProfileService} from '../../services/profile.service';
 import {dateToDateOnly} from '../../../../../shared/types/dateOnly.type';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
 
 @Component({
   selector: 'app-step-personal',
@@ -28,6 +29,7 @@ export class StepPersonalComponent {
   lookups = inject(ProfileLookupsService);
   profileService = inject(ProfileService);
   messageService = inject(MessageService);
+  fileUtils = inject(FileUtilsService);
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -65,6 +67,19 @@ export class StepPersonalComponent {
   }
   get showDisabilityType(): boolean {
     return this.ds.state().hasDisability;
+  }
+
+  previewSponsorCard(ev?: Event) {
+    ev?.stopPropagation();
+    if (this.sponsorCardLocalFile) {
+      this.fileUtils.previewBlob(this.sponsorCardLocalFile);
+      return;
+    }
+
+    const ref = this.ds.state().sponsorCardFile;
+    if (ref?.url) {
+      this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
+    }
   }
 
   onSponsorCardSelected(event: Event) {

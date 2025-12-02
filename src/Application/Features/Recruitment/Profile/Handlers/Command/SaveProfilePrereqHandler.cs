@@ -35,25 +35,25 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
         profile.TargetEntityId  = r.TargetEntityId;
 
         // CV
-        var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId);
+        var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, "cv");
         if (cvResult.IsFailed)
             return Result.Fail<Unit>(cvResult.Errors);
         profile.ResumeAttachmentId = cvResult.Value;
 
         // ID
-        var idResult = await UploadIfNeededAsync(r.IdFile, profile.NationalCardId);
+        var idResult = await UploadIfNeededAsync(r.IdFile, profile.NationalCardId, "national-id");
         if (idResult.IsFailed)
             return Result.Fail<Unit>(idResult.Errors);
         profile.NationalCardId = idResult.Value;
 
         // Birth Certificate
-        var birthResult = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId);
+        var birthResult = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId, "birth-certificate");
         if (birthResult.IsFailed)
             return Result.Fail<Unit>(birthResult.Errors);
         profile.BirthdayCertificateId = birthResult.Value;
 
         // Marriage Certificate
-        var marriageResult = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId);
+        var marriageResult = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, "marriage-certificate");
         if (marriageResult.IsFailed)
             return Result.Fail<Unit>(marriageResult.Errors);
         profile.MarriageCertificateId = marriageResult.Value;
@@ -73,12 +73,15 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
 
-        async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId)
+        async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId, string category)
         {
             if (file is null || file.Length == 0)
                 return Result.Ok(existingId);
 
-            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), ct);
+            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, category, file, false, ct);
+            var uploadResult = await mediator.Send(
+                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                ct);
             if (uploadResult.IsFailed)
                 return Result.Fail<Guid?>(uploadResult.Errors);
 

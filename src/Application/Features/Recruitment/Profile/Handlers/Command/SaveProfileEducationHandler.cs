@@ -73,7 +73,10 @@ public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator media
             var dto  = degrees[i];
             var file = files[i];
 
-            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), ct);
+            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "education", file, false, ct);
+            var uploadResult = await mediator.Send(
+                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                ct);
             if (uploadResult.IsFailed)
                 return Result.Fail<Unit>(uploadResult.Errors);
 

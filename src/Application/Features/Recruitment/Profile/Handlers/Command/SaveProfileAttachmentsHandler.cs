@@ -130,7 +130,10 @@ public sealed class SaveProfileAttachmentsHandler(
             if (file is not { Length: > 0 })
                 return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
 
-            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), cancellationToken);
+            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "additional", file, false, cancellationToken);
+            var uploadResult = await mediator.Send(
+                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                cancellationToken);
             if (uploadResult.IsFailed)
                 return Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors);
 
