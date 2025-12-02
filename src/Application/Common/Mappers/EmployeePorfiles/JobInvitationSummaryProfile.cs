@@ -13,7 +13,7 @@ public class JobInvitationSummaryProfile: IRegister
         config.NewConfig<Job, JobInvitationSummaryDto>()
             .Map(dest => dest.JobId, src => src.Id)
             .Map(dest => dest.JobName, src => src.Title)
-            .Map(dest => dest.JobStatusBackendName, src => src.Status!.BackendName)
+            .Map(dest => dest.JobStatus, src => src.Status!)
             .Map(dest => dest.InvitationCount, src => src.Invitations.Count)
             .Map(dest => dest.ApplicantsCount, 
                 src => src.Invitations.Count(i => i.IsAccepted == true))

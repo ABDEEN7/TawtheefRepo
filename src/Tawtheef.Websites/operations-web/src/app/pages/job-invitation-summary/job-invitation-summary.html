@@ -130,8 +130,8 @@
                   </span>
                   </td>
                   <td>
-                    <span class="badge rounded-pill" [ngClass]="getStatusClasses(summary.jobStatusBackendName)">
-                      {{ ('JOB_INVITATION_SUMMARY.' + summary.jobStatusBackendName.toUpperCase()) | translate }}
+                    <span class="badge rounded-pill" [ngClass]="getStatusClasses(summary.jobStatus.backendName)">
+                      {{ summary.jobStatus.name }}
                     </span>
                   </td>
                   <td class="text-center"><span class="pill pill-total">{{ summary.invitationCount }}</span></td>

@@ -1,3 +1,6 @@
+using Tawtheef.Application.Common.Models;
+using Tawtheef.Domain.Common;
+
 namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary.DTOs;
 
 public class JobInvitationSummaryDto
@@ -6,7 +9,7 @@ public class JobInvitationSummaryDto
     public required string JobName { get; set; }
     public required string DepartmentName { get; set; }
     public required string JobCategory { get; set; }
-    public required string JobStatusBackendName { get; set; }
+    public required DropdownOptions JobStatus { get; set; }
     public required int InvitationCount { get; set; }
     public required int ApplicantsCount { get; set; }
     public required int RefusedCount { get; set; }

@@ -1,11 +1,12 @@
-import {PaginatedRequest} from '../../core/models/paginated-request.model';
+import {PaginatedRequest} from '../../../core/models/paginated-request.model';
+import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
 
 export interface JobInvitationSummary {
   jobId: string; // Guid
   jobName: string;
   departmentName: string;
   jobCategory: string;
-  jobStatusBackendName: string;
+  jobStatus: dropdownOptionsModel;
   invitationCount: number;
   applicantsCount: number;
   refusedCount: number;

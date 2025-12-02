@@ -1,12 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { EndpointsService } from '../../core/http/endpoints.service';
-import { LookupDto } from '../../shared/models/lookup.model';
-import { JobInvitationSummary, JobSummaryFilters } from './job-invitation-summary.model';
+import { EndpointsService } from '../../../core/http/endpoints.service';
+import { JobInvitationSummary, JobSummaryFilters } from '../models/job-invitation-summary.model';
 import { forkJoin, Observable } from 'rxjs';
-import {PaginationMetadata} from '../../core/models/pagination-metadata.model';
-import {PaginatedResult} from '../../core/models/paginated-result.model';
+import {PaginationMetadata} from '../../../core/models/pagination-metadata.model';
+import {PaginatedResult} from '../../../core/models/paginated-result.model';
 import {tap} from 'rxjs/operators';
-import {HttpService} from '../../core/http/http.service';
+import {HttpService} from '../../../core/http/http.service';
+import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
 
 @Injectable({ providedIn: 'root' })
 export class JobInvitationSummaryService {
@@ -22,9 +22,9 @@ export class JobInvitationSummaryService {
   loading = signal(false);
   loaded = signal(false);
 
-  jobCategories = signal<LookupDto[]>([]);
-  departments   = signal<LookupDto[]>([]);
-  jobStatuses   = signal<LookupDto[]>([]);
+  jobCategories = signal<dropdownOptionsModel[]>([]);
+  departments   = signal<dropdownOptionsModel[]>([]);
+  jobStatuses   = signal<dropdownOptionsModel[]>([]);
 
   // response storage
   summaries = signal<JobInvitationSummary[]>([]);
@@ -35,9 +35,9 @@ export class JobInvitationSummaryService {
     this.loading.set(true);
 
     forkJoin({
-      jobStatuses: this.http.get<LookupDto[]>(this.endpoints.JobInvitationSummary.lookups.jobStatuses),
-      jobCategories: this.http.get<LookupDto[]>(this.endpoints.JobInvitationSummary.lookups.jobCategories),
-      departments: this.http.get<LookupDto[]>(this.endpoints.JobInvitationSummary.lookups.departments)
+      jobStatuses: this.http.get<dropdownOptionsModel[]>(this.endpoints.JobInvitationSummary.lookups.jobStatuses),
+      jobCategories: this.http.get<dropdownOptionsModel[]>(this.endpoints.JobInvitationSummary.lookups.jobCategories),
+      departments: this.http.get<dropdownOptionsModel[]>(this.endpoints.JobInvitationSummary.lookups.departments)
     })
       .subscribe({
         next: (res) => {
