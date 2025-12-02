@@ -13,7 +13,8 @@ namespace Tawtheef.Infrastructure.Services.Authorization;
 public sealed class ProfileCompletenessService(
     UserManager<User> userManager,
     IUnitOfWork uow,
-    IMapper mapper
+    IMapper mapper,
+    IMediaUrlResolver mediaUrlResolver
 ) : IProfileCompletenessService
 {
     
@@ -205,18 +206,20 @@ public sealed class ProfileCompletenessService(
 
 
         // ===== Helpers =====
-        static FileRefDto? ToFileRef(Resource? r)
+        FileRefDto? ToFileRef(Resource? r)
             => r is null ? null : new FileRefDto
             {
                 ResourceId = r.Id,
-                FileName   = r.Name
+                FileName   = r.Name,
+                Url        = mediaUrlResolver.ResolveAbsolute(r.Url)
             };
 
-        static FileRefDto ToFileRefNonNull(Resource r)
+        FileRefDto ToFileRefNonNull(Resource r)
             => new()
             {
                 ResourceId = r.Id,
-                FileName   = r.Name
+                FileName   = r.Name,
+                Url        = mediaUrlResolver.ResolveAbsolute(r.Url)
             };
     }
 

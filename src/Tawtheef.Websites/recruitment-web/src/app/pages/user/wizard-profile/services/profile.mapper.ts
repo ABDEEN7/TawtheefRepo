@@ -219,6 +219,7 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
   return {
     resourceId: ref.resourceId,
     resourceName: ref.fileName,
+    url: ref.url ?? null,
   };
 }
 
