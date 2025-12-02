@@ -48,6 +48,12 @@
         {{ getFileName(i) }}
       </span>
 
+              <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none"
+                      *ngIf="canPreview(i)"
+                      (click)="previewFile(i, $event)">
+                <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+              </button>
+
               <button type="button"
                       class="btn btn-sm btn-outline-primary"
                       (click)="changeFile(i)"
