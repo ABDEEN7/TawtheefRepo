@@ -27,12 +27,16 @@
     "EVALUATION_MANAGEMENT": "إدارة التقييم",
     "STATUS": "حالة الوظيفة",
     "OPEN": "مفتوحة",
+    "ACTIVE": "فعالة",
+    "DRAFT": "مسودة",
+    "CANCELLED": "ملغية",
     "CLOSED": "مغلقة",
     "CLEAR_FILTERS": "إلغاء",
     "SHOWING_RESULTS": "عرض {{start}}–{{end}} من {{total}} وظيفة",
     "NO_RESULTS": "0 نتائج",
     "PREVIOUS": "السابق",
     "NEXT": "التالي",
-    "DASHBOARD_TITLE": "لوحة موظف القسم"
+    "DASHBOARD_TITLE": "لوحة موظف القسم",
+    "filter_all": "الكل"
   }
 }

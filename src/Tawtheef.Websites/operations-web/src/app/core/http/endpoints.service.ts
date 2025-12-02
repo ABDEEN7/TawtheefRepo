@@ -63,4 +63,13 @@ export class EndpointsService {
     detail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}`),
     reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`)
   };
+
+  JobInvitationSummary = {
+    invitationsSummary: this.getFullUrl(`/jobInvitationSummary/get-invitations-summary`),
+    lookups: {
+      jobStatuses: this.getFullUrl(`/jobInvitationSummary/lookups/job-statuses`),
+      jobCategories: this.getFullUrl(`/jobInvitationSummary/lookups/job-categories`),
+      departments: this.getFullUrl(`/jobInvitationSummary/lookups/departments`)
+    }
+  };
 }
