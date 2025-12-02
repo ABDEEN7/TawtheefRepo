@@ -29,6 +29,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   profile = inject(ProfileService);
 
   saving = false;
+  private lastSubmittedSignature: string | null = null;
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -48,6 +49,10 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   private sub?: Subscription;
 
   ngOnInit(): void {
+    const state = this.ds.state();
+    const signature = this.buildSignature(state.skills);
+    this.lastSubmittedSignature = signature;
+
     this.sub = this.search$
       .pipe(
         map(q => (q ?? '').trim()),
@@ -143,11 +148,18 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     }
     const state = this.ds.state();
     const skills = state.skills || [];
+    const signature = this.buildSignature(skills);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
 
     this.saving = true;
     this.profile.saveSkillsSection(skills).subscribe({
       next: () => {
         this.saving = false;
+        this.lastSubmittedSignature = signature;
         this.next.emit();
       },
       error: err => {
@@ -161,6 +173,16 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         });
       },
     });
+  }
+
+  private buildSignature(skills: Skill[]): string {
+    return JSON.stringify(
+      (skills ?? []).map(s => ({
+        id: s.id ?? null,
+        skillId: s.skillId ?? s.id ?? null,
+        levelId: s.levelId ?? s.level?.id ?? null,
+      }))
+    );
   }
 
   ngOnDestroy(): void {

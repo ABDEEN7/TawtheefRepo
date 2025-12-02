@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { DataService } from '../../services/data.service';
@@ -15,7 +15,7 @@ import {FileUtilsService} from '../../../../../core/utils/file-utils';
   styleUrl: './step-first-info.component.scss',
   standalone: false
 })
-export class StepFirstInfoComponent {
+export class StepFirstInfoComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
 
   ds        = inject(DataService);
@@ -29,6 +29,7 @@ export class StepFirstInfoComponent {
   private idFile: File | null = null;
   private birthCertificateFile: File | null = null;
   private marriageCertificateFile: File | null = null;
+  private lastSubmittedSignature: string | null = null;
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
@@ -36,6 +37,12 @@ export class StepFirstInfoComponent {
   }
 
   saving = false;
+
+  ngOnInit(): void {
+    const state = this.ds.state();
+    const payload = mapPrereqSection(state);
+    this.lastSubmittedSignature = this.buildSignature(payload, state);
+  }
 
   onFileSelected(kind: 'cv' | 'id' | 'birth' | 'marriage', event: Event) {
     const input = event.target as HTMLInputElement;
@@ -79,6 +86,12 @@ export class StepFirstInfoComponent {
 
     const state = this.ds.state();
     const payload = mapPrereqSection(state);
+    const signature = this.buildSignature(payload, state);
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
+
     this.saving = true;
     this.profile
       .savePrereq(payload, {
@@ -89,6 +102,7 @@ export class StepFirstInfoComponent {
       }).subscribe({
       next: () => {
         this.saving = false;
+        this.lastSubmittedSignature = signature;
         this.next.emit();
       },
       error: err => {
@@ -114,6 +128,28 @@ export class StepFirstInfoComponent {
     if (ref?.url) {
       this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
     }
+  }
+
+  private buildSignature(payload: ReturnType<typeof mapPrereqSection>, state: ReturnType<typeof this.ds.state>): string | null {
+    try {
+      const files = {
+        cv: this.fileSignature(this.cvFile, state.cvFile),
+        id: this.fileSignature(this.idFile, state.idFile),
+        birth: this.fileSignature(this.birthCertificateFile, state.birthCertificateFile),
+        marriage: this.fileSignature(this.marriageCertificateFile, state.marriageCertificateFile),
+      };
+      return JSON.stringify({ payload, files });
+    } catch {
+      return null;
+    }
+  }
+
+  private fileSignature(local: File | null, remote: any) {
+    return {
+      localName: local?.name ?? null,
+      resourceId: remote?.resourceId ?? null,
+      resourceName: remote?.resourceName ?? remote?.fileName ?? null,
+    };
   }
 
   private getLocalFile(kind: 'cv' | 'id' | 'birth' | 'marriage'): File | null {

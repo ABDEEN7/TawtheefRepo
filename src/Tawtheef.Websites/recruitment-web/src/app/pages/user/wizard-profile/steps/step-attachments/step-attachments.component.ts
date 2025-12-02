@@ -27,6 +27,7 @@ export class StepAttachmentsComponent implements OnInit {
   fileUtils = inject(FileUtilsService);
 
   saving = false;
+  private lastSubmittedSignature: string | null = null;
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -50,6 +51,8 @@ export class StepAttachmentsComponent implements OnInit {
       this.fileRefs[idx] = att.fileRef ?? null;
       row.disable({ emitEvent: false });
     });
+
+    this.lastSubmittedSignature = this.buildSignature(attachments);
   }
 
   // ======== FormArray helper ========
@@ -182,10 +185,17 @@ export class StepAttachmentsComponent implements OnInit {
     // حفظ في الـ DataService
     this.ds.up('attachments', attachments as any);
 
+    const signature = this.buildSignature(attachments);
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
+
     this.saving = true;
     this.profile.saveAttachmentsSection(attachments).subscribe({
       next: () => {
         this.saving = false;
+        this.lastSubmittedSignature = signature;
         this.next.emit();
       },
       error: err => {
@@ -213,6 +223,19 @@ export class StepAttachmentsComponent implements OnInit {
     if (ref?.url) {
       this.fileUtils.previewUrl(ref.url, ref.resourceName || this.getFileName(i), false);
     }
+  }
+
+  private buildSignature(attachments: Attachment[]): string {
+    return JSON.stringify(
+      (attachments ?? []).map((a, index) => ({
+        id: a.id ?? null,
+        attachmentId: a.attachmentId ?? null,
+        name: a.name ?? '',
+        fileName: a.file?.name ?? a.fileName ?? a.fileRef?.resourceName ?? null,
+        refId: a.fileRef?.resourceId ?? null,
+        localStoreName: this.filesStore[index]?.name ?? null,
+      }))
+    );
   }
 
   canPreview(i: number): boolean {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { DegreeModal } from './dialogs/degree.modal/degree.modal';
@@ -15,7 +15,7 @@ import {FileUtilsService} from '../../../../../core/utils/file-utils';
   styleUrl: './step-degree.component.scss',
   standalone: false,
 })
-export class StepDegreeComponent {
+export class StepDegreeComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
@@ -27,11 +27,18 @@ export class StepDegreeComponent {
   fileUtils = inject(FileUtilsService);
 
   savingDegrees = false;
+  private lastSubmittedSignature: string | null = null;
 
   get step() {
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
     return validity['degrees'];
+  }
+
+  ngOnInit(): void {
+    const state = this.ds.state();
+    const signature = this.buildSignature(state.degrees);
+    this.lastSubmittedSignature = signature;
   }
 
   add() {
@@ -100,6 +107,13 @@ export class StepDegreeComponent {
 
     const state = this.ds.state();
     const degrees = state.degrees || [];
+    const signature = this.buildSignature(degrees);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
+
     if (!degrees.length) {
       this.messageService.add({
         severity: 'error',
@@ -116,6 +130,7 @@ export class StepDegreeComponent {
       .subscribe({
         next: () => {
           this.savingDegrees = false;
+          this.lastSubmittedSignature = signature;
           this.next.emit();
         },
         error: err => {
@@ -129,5 +144,24 @@ export class StepDegreeComponent {
           });
         },
       });
+  }
+
+  private buildSignature(degrees: Degree[]): string {
+    return JSON.stringify(
+      (degrees ?? []).map(d => ({
+        id: d.id ?? null,
+        degreeId: d.degree?.id ?? null,
+        gradCountryId: d.gradCountry?.id ?? null,
+        universityId: d.university?.id ?? null,
+        majorId: d.major?.id ?? null,
+        subMajorId: d.subMajor?.id ?? null,
+        gradYear: d.gradYear ?? null,
+        studySystemId: d.studySystem?.id ?? null,
+        gpa: d.gpa ?? null,
+        gradeId: d.grade?.id ?? null,
+        attachmentId: d.attachmentId ?? null,
+        fileName: d.file?.name ?? d.certificate?.resourceName ?? d.certificate?.fileName ?? null,
+      }))
+    );
   }
 }

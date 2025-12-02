@@ -102,6 +102,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   selectedCountryIso2: CountryISO = CountryISO.Qatar;
   savingContact = false;
+  private lastSubmittedSignature: string | null = null;
 
   ngOnInit(): void {
     this.geoIp.getCountryIso2().subscribe(code => {
@@ -127,6 +128,9 @@ export class StepContactComponent implements OnInit, OnDestroy {
     if (state.emailVerified) {
       this.email.status = 'verified';
     }
+
+    const dto = mapContactSection(state);
+    this.lastSubmittedSignature = this.buildSignature(dto, state);
   }
 
   ngOnDestroy(): void {
@@ -357,13 +361,22 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     const s = this.ds.state();
     const dto = mapContactSection(s);
+    const signature = this.buildSignature(dto, s);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
 
     this.savingContact = true;
     this.profileService
       .saveContactSection(dto, { nationalAddressFile: this.naLocalFile })
       .pipe(finalize(() => (this.savingContact = false)))
       .subscribe({
-        next: () => this.next.emit(),
+        next: () => {
+          this.lastSubmittedSignature = signature;
+          this.next.emit();
+        },
         error: err => console.error(err)
       });
   }
@@ -380,6 +393,27 @@ export class StepContactComponent implements OnInit, OnDestroy {
       this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
     }else if(ref?.file){
       this.fileUtils.previewBlob(ref?.file);
+    }
+  }
+
+  private buildSignature(dto: ReturnType<typeof mapContactSection>, state: ReturnType<typeof this.ds.state>): string | null {
+    try {
+      const nationalAddress = {
+        localName: this.naLocalFile?.name ?? null,
+        resourceId: state.naFile?.resourceId ?? null,
+        resourceName: state.naFile?.resourceName ?? state.naFile?.fileName ?? null,
+      };
+
+      const contactInfo = {
+        phone: state.phone?.e164Number ?? null,
+        phoneVerified: state.phoneVerified ?? false,
+        email: state.email ?? null,
+        emailVerified: state.emailVerified ?? false,
+      };
+
+      return JSON.stringify({ dto, nationalAddress, contactInfo });
+    } catch {
+      return null;
     }
   }
 }
