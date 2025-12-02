@@ -27,7 +27,7 @@
         </div>
         <div class="form-check form-switch">
           <label class="form-check-label fw-bold">{{ 'wizard.availability' | translate }}</label>
-          <p-toggleswitch [(ngModel)]="ds.state().available"  (ngModelChange)="ds.up('available',$event)">
+          <p-toggleswitch [ngModel]="ds.state().available"  (ngModelChange)="ds.up('available',$event)">
             <ng-template #handle let-checked="checked">
               <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
             </ng-template>
