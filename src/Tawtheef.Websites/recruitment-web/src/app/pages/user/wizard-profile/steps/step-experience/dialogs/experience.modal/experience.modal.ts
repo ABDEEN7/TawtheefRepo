@@ -18,6 +18,7 @@ import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
 import {Select} from 'primeng/select';
 import {ProfileLookupsService} from '../../../../services/profile-lookups.service';
 import {Experience} from '../../../../models/experience.model';
+import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
 
 @Component({
   selector: 'app-experience',
@@ -41,10 +42,12 @@ export class ExperienceModal implements OnInit {
   private config = inject(DynamicDialogConfig);
   private translate = inject(TranslateService);
   protected lookups = inject(ProfileLookupsService);
+  private fileUtils = inject(FileUtilsService);
 
   readonly maxFileSize = 1_000_000; // 1MB
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
+  initialAttachmentUrl: string | null = null;
 
   today = new Date();
 
@@ -72,6 +75,8 @@ export class ExperienceModal implements OnInit {
   ngOnInit(): void {
     if (this.config.data?.initialValue) {
       this.form.patchValue(this.config.data.initialValue);
+      const init = this.config.data.initialValue as any;
+      this.initialAttachmentUrl = init?.attachment?.url ?? init?.attachmentUrl ?? null;
     }
     this.syncToDisabled();
   }
@@ -149,6 +154,19 @@ export class ExperienceModal implements OnInit {
 
   get f() {
     return this.form.controls;
+  }
+
+  previewFile(ev?: Event): void {
+    ev?.stopPropagation();
+    const file = this.form.get('file')?.value as File | null;
+    if (file) {
+      this.fileUtils.previewBlob(file);
+      return;
+    }
+
+    if (this.initialAttachmentUrl) {
+      this.fileUtils.previewUrl(this.initialAttachmentUrl, this.form.get('fileName')?.value ?? '', false);
+    }
   }
 }
 
