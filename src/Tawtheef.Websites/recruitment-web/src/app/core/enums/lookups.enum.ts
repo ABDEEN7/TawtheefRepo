@@ -111,18 +111,6 @@ export enum MaritalStatus {
   Divorced = "Divorced",
   Widowed = "Widowed",
 }
-
-/* ---------------------------------------------
-   Qualification Level
----------------------------------------------- */
-export enum QualificationLevel {
-  HighSchool = "HighSchool",
-  Diploma = "Diploma",
-  Bachelor = "Bachelor",
-  Master = "Master",
-  Doctorate = "Doctorate",
-}
-
 /* ---------------------------------------------
    Rating Grade
 ---------------------------------------------- */

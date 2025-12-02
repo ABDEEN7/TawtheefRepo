@@ -1,16 +1,18 @@
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {UploadedFileRef} from './profile-state.model';
+import {GUID} from '../../../../shared/types/guid.type';
 
 export interface Degree {
-  degree: dropdownOptionsModel | undefined;
-  gradCountry: dropdownOptionsModel | undefined;
-  university: dropdownOptionsModel | undefined;
-  major: dropdownOptionsModel | undefined;
-  subMajor: dropdownOptionsModel | undefined;
+  id?: GUID;
+  degree: dropdownOptionsModel | null | undefined;
+  gradCountry: dropdownOptionsModel | null | undefined;
+  university: dropdownOptionsModel | null | undefined;
+  major: dropdownOptionsModel | null | undefined;
+  subMajor: dropdownOptionsModel | null | undefined;
   gradYear: number;
-  studySystem: dropdownOptionsModel | undefined;
+  studySystem: dropdownOptionsModel | null | undefined;
   gpa: number;
-  grade: dropdownOptionsModel | undefined;
+  grade: dropdownOptionsModel | null | undefined;
   certificateName?: string;
   certificate?: UploadedFileRef | null;
   file?: File | null;

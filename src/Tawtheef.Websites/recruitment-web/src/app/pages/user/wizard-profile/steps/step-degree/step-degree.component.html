@@ -33,7 +33,7 @@
         <td>{{ r.studySystem.name || '—' }}</td>
         <td>{{ r.gpa || '—' }}</td>
         <td>{{ r.grade.name || '—' }}</td>
-        <td>{{ r.fileName || '—' }}</td>
+        <td>{{ r.certificate?.resourceName || r.file?.name|| '—' }}</td>
         <td class="text-end">
           <button class="btn btn-sm btn-outline-danger" (click)="del(i)">
             <i class="fa-solid fa-trash"></i>

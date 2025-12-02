@@ -33,9 +33,21 @@ export class WizardProfileComponent implements OnInit {
   avatarPreviewUrl: string | null = null;
 
   step = 1;
-  total = 8;
+  total = 9;
 
   loading = true;
+
+  stepLabels: string[] = [
+    'wizard.steps.firstInfo',
+    'wizard.steps.personal',
+    'wizard.steps.contact',
+    'wizard.steps.degrees',
+    'wizard.steps.experience',
+    'wizard.steps.skills',
+    'wizard.steps.languages',
+    'wizard.steps.attachments',
+    'wizard.steps.review',
+  ];
 
   private stepKeyMap: Record<number,
     keyof ReturnType<typeof this.ds.stepValidity>> = {
@@ -45,14 +57,45 @@ export class WizardProfileComponent implements OnInit {
     4: 'degrees',
     5: 'experience',
     6: 'skills',
-    7: 'attachments',
+    7: 'languages',
+    8: 'attachments',
   };
+
+  private orderedValidationSteps: (keyof ReturnType<typeof this.ds.stepValidity>)[] = [
+    'basic',
+    'personal',
+    'contact',
+    'degrees',
+    'experience',
+    'skills',
+    'languages',
+    'attachments',
+  ];
 
   isCurrentStepValid(): boolean {
     const validity = this.ds.stepValidity();
     const key = this.stepKeyMap[this.step];
     if (!key) return true;
     return validity[key];
+  }
+
+  isStepValid(step: number): boolean {
+    const validity = this.ds.stepValidity();
+    const key = this.stepKeyMap[step];
+    if (!key) return this.canGoTo(step);
+    return validity[key];
+  }
+
+  completedSteps(): number {
+    const validity = this.ds.stepValidity();
+    const completeCount = this.orderedValidationSteps.reduce((count, key) =>
+      count + (validity[key] ? 1 : 0), 0);
+    const reviewUnlocked = this.canGoTo(this.total) ? 1 : 0;
+    return Math.min(this.total, completeCount + reviewUnlocked);
+  }
+
+  progressPercentage(): number {
+    return Math.round((this.completedSteps() / this.total) * 100);
   }
 
   ngOnInit(): void {
@@ -83,22 +126,13 @@ export class WizardProfileComponent implements OnInit {
   }
 
   canGoTo(targetStep: number): boolean {
-    // const v = this.ds.stepValidity();
-    // const orderedSteps: (keyof typeof v)[] = [
-    //   'personal',
-    //   'contact',
-    //   'degrees',
-    //   'experience',
-    //   'skills',
-    //   'attachments'
-    // ];
-
-    // if (targetStep === 1) return true;
-    // for (let i = 0; i < targetStep - 1 && i < orderedSteps.length; i++) {
-    //   if (!v[orderedSteps[i]]) {
-    //     return false;
-    //   }
-    // }
+    //if (targetStep === 1) return true;
+    //const validity = this.ds.stepValidity();
+    //for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
+    //  if (!validity[this.orderedValidationSteps[i]]) {
+    //    return false;
+    //  }
+    //}
 
     return true;
   }

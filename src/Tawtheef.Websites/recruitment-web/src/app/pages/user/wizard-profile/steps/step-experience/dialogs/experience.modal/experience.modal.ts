@@ -14,19 +14,23 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { NgClass, NgIf } from '@angular/common';
+import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
+import {Select} from 'primeng/select';
+import {ProfileLookupsService} from '../../../../services/profile-lookups.service';
+import {Experience} from '../../../../models/experience.model';
 
 @Component({
   selector: 'app-experience',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    FileUpload,
     TranslatePipe,
     DatePicker,
     NgIf,
     Button,
     InputText,
-    NgClass
+    NgClass,
+    Select
   ],
   templateUrl: './experience.modal.html',
   styleUrl: './experience.modal.scss',
@@ -36,6 +40,7 @@ export class ExperienceModal implements OnInit {
   private ref = inject(DynamicDialogRef);
   private config = inject(DynamicDialogConfig);
   private translate = inject(TranslateService);
+  protected lookups = inject(ProfileLookupsService);
 
   readonly maxFileSize = 1_000_000; // 1MB
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
@@ -46,11 +51,12 @@ export class ExperienceModal implements OnInit {
   form: FormGroup = this.fb.group(
     {
       org: ['', [Validators.required, Validators.maxLength(150)]],
-      title: ['', [Validators.required, Validators.maxLength(150)]],
+      name: ['', [Validators.required, Validators.maxLength(150)]],
+      country: [null, [Validators.required]],
       from: [null, [Validators.required]],
       to: [null],
       current: [false],
-      tasks: ['', [Validators.maxLength(1000)]],
+      description: ['', [Validators.maxLength(1000)]],
       fileName: [''],
       file: [null, Validators.required], // ✅ required
     },
@@ -85,12 +91,13 @@ export class ExperienceModal implements OnInit {
     this.form.updateValueAndValidity({ onlySelf: false, emitEvent: true });
   }
 
-  onUpload(ev: any) {
+  onUpload(evt: any) {
     this.fileError = null;
-    const f: File | undefined = ev?.files?.[0];
-    if (!f) return;
+    const input = evt.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) return;
 
-    if (!this.allowedTypes.includes(f.type)) {
+    if (!this.allowedTypes.includes(file.type)) {
       this.fileError = this.translate.instant('validation.fileType', {
         types: 'PDF, PNG, JPEG, WEBP'
       });
@@ -98,13 +105,13 @@ export class ExperienceModal implements OnInit {
       return;
     }
 
-    if (f.size > this.maxFileSize) {
+    if (file.size > this.maxFileSize) {
       this.fileError = this.translate.instant('validation.fileSize', { size: '1MB' });
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }
 
-    this.form.patchValue({ file: f, fileName: f.name });
+    this.form.patchValue({ file: file, fileName: file.name });
   }
 
   touchDates() {
@@ -122,15 +129,16 @@ export class ExperienceModal implements OnInit {
     const v = this.form.getRawValue();
 
     const payload = {
-      org: v.org,
-      title: v.title,
-      from: v.from,
-      to: v.current ? null : v.to,
+      employerName: v.org,
+      jobTitle: v.name,
+      from: dateToDateOnly(v.from),
+      to: dateToDateOnly(v.current ? null : v.to),
+      country: v.country,
       current: !!v.current,
-      tasks: v.tasks,
+      description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null,
-    };
+    } as Experience;
 
     this.ref.close(payload);
   }

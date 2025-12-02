@@ -27,7 +27,7 @@
         </div>
         <div class="form-check form-switch">
           <label class="form-check-label fw-bold">{{ 'wizard.availability' | translate }}</label>
-          <p-toggleswitch [(ngModel)]="ds.state().available"  (ngModelChange)="ds.up('available',$event)">
+          <p-toggleswitch [ngModel]="ds.state().available"  (ngModelChange)="ds.up('available',$event)">
             <ng-template #handle let-checked="checked">
               <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
             </ng-template>
@@ -35,26 +35,23 @@
         </div>
       </div>
 
-      <ul class="nav nav-pills flex-wrap stepper mb-3 border border-1">
-        <li class="nav-item" *ngFor="let key of [
-        'wizard.steps.firstInfo','wizard.steps.personal','wizard.steps.contact','wizard.steps.degrees',
-        'wizard.steps.experience','wizard.steps.skills','wizard.steps.attachments']; let i = index">
+      <ul class="nav nav-pills flex-wrap stepper mb-3 border border-1" aria-label="Profile steps">
+        <li class="nav-item" *ngFor="let label of stepLabels; let i = index">
           <a class="nav-link"
              [class.active]="step===i+1"
              [class.disabled]="!canGoTo(i+1)"
              [attr.aria-disabled]="!canGoTo(i+1)"
              href
              (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
-            <i class="fa-solid"
-               [class.fa-user]="i===0"
-               [class.fa-house]="i===1"
-               [class.fa-graduation-cap]="i===2"
-               [class.fa-briefcase]="i===3"
-               [class.fa-language]="i===4"
-               [class.fa-paperclip]="i===5"
-               [class.fa-check-circle]="i===6">
-            </i>
-            {{ key | translate }}
+            <span class="step-index" [ngClass]="{'is-complete': isStepValid(i+1), 'is-active': step===i+1}">
+              <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-circle'"></i>
+            </span>
+            <span class="step-label">{{ label | translate }}</span>
+<!--            <span class="status-badge ms-2"-->
+<!--                  [ngClass]="{'bg-success text-white': isStepValid(i+1), 'bg-secondary text-white': !isStepValid(i+1)}"-->
+<!--                  [attr.aria-label]="isStepValid(i+1) ? ('wizard.progress.status.complete' | translate) : ('wizard.progress.status.pending' | translate)">-->
+<!--              <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-clock'"></i>-->
+<!--            </span>-->
           </a>
         </li>
       </ul>
@@ -70,8 +67,9 @@
         <app-step-degrees     *ngIf="step===4" (back)="prev()" (next)="next()"></app-step-degrees>
         <app-step-experience  *ngIf="step===5" (back)="prev()" (next)="next()"></app-step-experience>
         <app-step-skills      *ngIf="step===6" (back)="prev()" (next)="next()"></app-step-skills>
-        <app-step-attachments *ngIf="step===7" (back)="prev()" (next)="next()"></app-step-attachments>
-        <app-step-review      *ngIf="step===8" (back)="prev()"></app-step-review>
+        <app-step-languages   *ngIf="step===7" (back)="prev()" (next)="next()"></app-step-languages>
+        <app-step-attachments *ngIf="step===8" (back)="prev()" (next)="next()"></app-step-attachments>
+        <app-step-review      *ngIf="step===9" (back)="prev()"></app-step-review>
       </div>
     </div>
 <!--    <div class="d-flex justify-content-between mt-3" *ngIf="!loading">-->

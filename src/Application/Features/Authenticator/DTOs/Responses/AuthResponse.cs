@@ -1,4 +1,6 @@
-﻿namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
+﻿using Tawtheef.Application.Common.Models;
+
+namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
 public record AuthResponse(
     bool RequiresProfileCompletion,
@@ -91,8 +93,11 @@ public sealed class QualificationDto
     public Guid? DegreeId { get; init; }
     public Guid? GradCountryId { get; init; }
     public Guid? MajorId { get; init; }
+    public DropdownOptions? Major { get; init; }
     public Guid? SubMajorId { get; init; }
+    public DropdownOptions? SubMajor { get; init; }
     public Guid? UniversityId { get; init; }
+    public DropdownOptions? University { get; init; }
     public Guid? StudyTypeId { get; init; }
     public Guid? GradeId { get; init; }
     public int? GraduationYear { get; init; }
@@ -104,13 +109,15 @@ public sealed class QualificationDto
 public sealed class ExperienceDto
 {
     public Guid Id { get; init; }
+    public string? Description { get; init; }
     public string? EmployerName { get; init; }
     public string? JobTitle { get; init; }
+    public Guid? CountryId { get; init; }
     public DateOnly? StartDate { get; init; }
     public DateOnly? EndDate { get; init; }
     public bool IsCurrent { get; init; }
 
-    public FileRefDto? Attachment { get; init; }      // ملف إثبات الخبرة إن وجد
+    public FileRefDto? Attachment { get; init; }
 }
 
 // ====== Training Courses ======
@@ -119,8 +126,10 @@ public sealed class TrainingCourseDto
     public Guid Id { get; init; }
     public string? Title { get; init; }
     public string? Provider { get; init; }
+    public Guid? CountryId { get; init; }
     public DateOnly? StartDate { get; init; }
     public DateOnly? EndDate { get; init; }
+    public string? Description { get; init; }
 
     public FileRefDto? Attachment { get; init; }
 }
@@ -130,6 +139,8 @@ public sealed class SkillDto
 {
     public Guid Id { get; init; }
     public Guid SkillId { get; init; }
+    public DropdownOptions? Skill { get; init; }
+    public Guid LevelId { get; init; }
 }
 
 // ====== Languages ======
@@ -137,6 +148,7 @@ public sealed class LanguageDto
 {
     public Guid Id { get; init; }
     public Guid LanguageId { get; init; }
+    public DropdownOptions? Language { get; init; }
     public Guid LevelId { get; init; }
     public bool IsNative { get; init; }
 }

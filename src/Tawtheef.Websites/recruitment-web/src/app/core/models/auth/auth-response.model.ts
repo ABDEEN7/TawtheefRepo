@@ -1,5 +1,7 @@
 import {UserInfoModel} from "../../../shared/models/user-info.model";
 import {TokenModel} from "./token.model";
+import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
+import {GUID} from '../../../shared/types/guid.type';
 
 export interface AuthResponse {
   //requiresProfileCompletion: boolean;
@@ -88,44 +90,53 @@ export interface ProfileStatusDto {
   languages?: LanguageDto[] | null;
 }
 export interface AdditionalAttachmentDto {
-  id: string;
+  id: GUID;
   title?: string | null;
   file: FileRefDto;
 }
 export interface LanguageDto {
-  id: string;
+  id: GUID;
   languageId: string;
   levelId: string;
   isNative: boolean;
 }
 export interface SkillDto {
-  id: string;
+  id: GUID;
   skillId: string;
+  skill: dropdownOptionsModel;
+  levelId: string;
 }
 export interface TrainingCourseDto {
-  id: string;
+  id: GUID;
   title?: string | null;
   provider?: string | null;
+  countryId: GUID;
   startDate?: string | null;
   endDate?: string | null;
+  description?: string | null;
   attachment?: FileRefDto | null;
 }
 export interface ExperienceDto {
-  id: string;
+  id: GUID;
   employerName?: string | null;
   jobTitle?: string | null;
-  startDate?: string | null; // DateOnly → string
+  countryId: GUID;
+  startDate?: string | null;
   endDate?: string | null;
+  description?: string | null;
   isCurrent: boolean;
   attachment?: FileRefDto | null;
 }
 export interface QualificationDto {
-  id: string;
+  id: GUID;
   degreeId?: string | null;
   gradCountryId?: string | null;
   universityId?: string | null;
+  university?: dropdownOptionsModel | null;
   majorId?: string | null;
+  major?: dropdownOptionsModel | null;
   subMajorId?: string | null;
+  subMajor?: dropdownOptionsModel | null;
   graduationYear?: number | null;
   studyTypeId?: string | null;
   gpa?: number | null;
@@ -133,6 +144,6 @@ export interface QualificationDto {
   attachment?: FileRefDto | null;
 }
 export interface FileRefDto {
-  resourceId: string;
+  resourceId: GUID;
   fileName: string;
 }

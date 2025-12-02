@@ -1,0 +1,26 @@
+.tasks-page {
+  .title {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .filter-group {
+    min-width: 160px;
+  }
+
+  .status-pill {
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+  }
+
+  table {
+    th {
+      color: #6c757d;
+      font-weight: 600;
+    }
+
+    td {
+      vertical-align: middle;
+    }
+  }
+}

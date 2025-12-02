@@ -1,15 +1,15 @@
 ﻿import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import {UploadedFileRef} from '../models/profile-state.model';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
 import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
 import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.model';
+import {GUID} from '../../../../shared/types/guid.type';
+import {HttpService} from '../../../../core/http/http.service';
+import {Experience, TrainingCourse} from '../models/experience.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-  private http = inject(HttpClient);
+  private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
 // ========== PREREQ ==========
@@ -73,16 +73,148 @@ export class ProfileService {
         fileName: d.fileName
       })),
     };
-
-    const files: Record<string, File | null> = {};
-    newDegrees.forEach((d, index) => {
+    const formData = this.buildFormData(dto);
+    newDegrees.forEach(d => {
       if (d.file) {
-        files[`DegreeFiles${index}`] = d.file as File;
+        formData.append('DegreeFiles', d.file);
+      }
+    });
+    return this.http.post(this.endpoints.user.profile.saveEducation, formData);
+  }
+  deleteEduction(degreeId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteEducation(degreeId));
+  }
+
+  // ========== EXPERIENCE ==========
+  saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
+    const experienceFiles: (File | null | undefined)[] = [];
+    const experiencesDto = (experiences ?? []).map(e => {
+      const fileIndex = e.file ? experienceFiles.push(e.file) - 1 : null;
+
+      return {
+        id: e.id ?? null,
+        employerName: e.employerName,
+        jobTitle: e.jobTitle,
+        startDate: e.from,
+        endDate: e.current ? null : e.to,
+        countryId: e.country?.id,
+        certificateId: e.attachmentId ?? null,
+        certificateFileIndex: fileIndex,
+        description: e.description,
+      };
+    });
+
+    const trainingCourseFiles: (File | null | undefined)[] = [];
+    const coursesDto = (courses ?? []).map(c => {
+      const fileIndex = c.file ? trainingCourseFiles.push(c.file) - 1 : null;
+
+      return {
+        id: c.id ?? null,
+        title: c.title,
+        provider: c.provider,
+        startDate: c.from,
+        endDate: c.to,
+        countryId: c.country?.id,
+        description: c.description,
+        certificateId: c.attachmentId ?? null,
+        certificateFileIndex: fileIndex,
+      };
+    });
+
+    const formData = this.buildFormData({
+      submit: false,
+      experiencesJson: experiencesDto,
+      trainingCoursesJson: coursesDto,
+      achievements: [],
+    });
+
+    experienceFiles.forEach(f => {
+      if (f) {
+        formData.append('ExperienceFiles', f);
       }
     });
 
-    const formData = this.buildFormData(dto, files);
-    return this.http.post(this.endpoints.user.profile.saveEducation, formData);
+    trainingCourseFiles.forEach(f => {
+      if (f) {
+        formData.append('TrainingCourseFiles', f);
+      }
+    });
+
+    return this.http.post(this.endpoints.user.profile.saveExperience, formData);
+  }
+  deleteExperience(experienceId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteExperience(experienceId));
+  }
+  deleteTrainingCourse(courseId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteTrainingCourse(courseId));
+  }
+
+  // ========== SKILLS & LANGUAGES ==========
+  saveSkillsSection(skills: any[]) {
+    const dto = {
+      submit: false,
+      skills: (skills ?? []).map(s => ({
+        skillId: s.skillId ?? s.id ?? s,
+        levelId: s.levelId ?? s.level?.id,
+      })),
+    };
+
+    return this.http.post(this.endpoints.user.profile.saveSkills, dto);
+  }
+  deleteSkill(skillId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteSkill(skillId));
+  }
+  saveLanguagesSection(languages: any[]) {
+    const dto = {
+      submit: false,
+      languages: (languages ?? []).map(l => ({
+        languageId: l.langId ?? l.languageId ?? l.id ?? l,
+        levelId: l.levelId ?? l.level?.id ?? l.level,
+      })),
+    };
+
+    return this.http.post(this.endpoints.user.profile.saveLanguages, dto);
+  }
+  deleteLanguage(languageId: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteLanguage(languageId));
+  }
+
+  // ========== ATTACHMENTS ==========
+  saveAttachmentsSection(attachments: any[]) {
+    let fileCursor = 0;
+    const files: (File | null | undefined)[] = [];
+
+    const payload = (attachments ?? []).map(a => {
+      const item: any = {
+        id: a.id ?? null,
+        fileName: a.fileName ?? a.name,
+        attachmentId: a.attachmentId ?? null,
+      };
+
+      if (a?.file) {
+        item.fileIndex = fileCursor;
+        files[fileCursor] = a.file;
+        fileCursor += 1;
+      }
+
+      return item;
+    });
+
+    const formData = new FormData();
+    formData.append('Submit', 'false');
+    formData.append('AttachmentsJson', JSON.stringify(payload));
+    files.forEach(f => {
+      if (f) {
+        formData.append('AttachmentFiles', f);
+      }
+    });
+
+    return this.http.post(this.endpoints.user.profile.saveReferences, formData);
+  }
+
+  // ========== FINAL SUBMISSION ==========
+  finalizeProfile() {
+    return this.http.post(this.endpoints.user.profile.submit, {});
   }
 
   private buildFormData(dto: any, files?: Record<string, File | null | undefined>): FormData {

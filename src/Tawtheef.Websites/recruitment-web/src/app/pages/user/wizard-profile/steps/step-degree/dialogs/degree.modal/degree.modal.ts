@@ -18,6 +18,9 @@ import { DatePicker } from 'primeng/datepicker';
 import { NgClass, NgIf } from '@angular/common';
 import { ProfileLookupsService } from '../../../../services/profile-lookups.service';
 import {Degree} from '../../../../models/degree.model';
+import {EndpointsService} from '../../../../../../../core/http/endpoints.service';
+import {RemoteSelectComponent} from '../../../../../../../shared/components/remote-select/remote-select';
+import * as Lookups from '../../../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-qualification',
@@ -30,6 +33,7 @@ import {Degree} from '../../../../models/degree.model';
     DatePicker,
     NgClass,
     NgIf,
+    RemoteSelectComponent,
   ],
   templateUrl: './degree.modal.html',
   styleUrl: './degree.modal.scss',
@@ -40,6 +44,7 @@ export class DegreeModal implements OnInit {
   private translate = inject(TranslateService);
   protected lookups = inject(ProfileLookupsService);
   protected ref = inject(DynamicDialogRef);
+  protected endpoints = inject(EndpointsService);
 
   minYear = 1970;
   maxYear = new Date().getFullYear();
@@ -49,24 +54,133 @@ export class DegreeModal implements OnInit {
   maxFileSize = 1_000_000; // 1MB
   fileError: string | null = null;
   allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+
+  form: FormGroup = this.fb.group({
+    degree: [null, Validators.required],
+    gradCountry: [null, Validators.required],
+    university: [null],
+    major: [null],
+    subMajor: [null],
+    gradYear: [null],
+    studySystem: [null],
+    gpa: [null],
+    grade: [null],
+    degreeFileName: [null, Validators.required],
+  });
+
+  get isQualification(): boolean {
+    const degree = this.form.get('degree')?.value;
+    const backendName = degree?.backendName;
+
+    return ![
+      Lookups.Degree.Preparatory,
+      Lookups.Degree.Primary,
+      Lookups.Degree.Secondary,
+    ].includes(backendName);
+  }
   ngOnInit() {
     if (this.config.data && this.config.data.initialValue) {
       this.form.patchValue(this.config.data.initialValue);
     }
-  }
-  form: FormGroup = this.fb.group({
-    degree: [null, Validators.required],
-    gradCountry: [null, Validators.required],
-    university: [null, Validators.required],
-    major: [null, Validators.required],
-    subMajor: [null, Validators.required],
-    gradYear: [null, [Validators.required]],
-    studySystem: [null, Validators.required],
-    gpa: [null,[Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-    grade: [null, Validators.required],
-    degreeFileName: [null, Validators.required],
-  });
 
+    this.updateQualificationValidators();
+    this.form.get('degree')?.valueChanges.subscribe(() => {
+      this.updateQualificationValidators();
+    });
+  }
+  private updateQualificationValidators(): void {
+    const need = this.isQualification;
+
+    const uni = this.form.get('university');
+    const major = this.form.get('major');
+    const subMajor = this.form.get('subMajor');
+    const gradYear = this.form.get('gradYear');
+    const studySystem = this.form.get('studySystem');
+    const gpa = this.form.get('gpa');
+    const grade = this.form.get('grade');
+
+    if (need) {
+      uni?.setValidators([Validators.required]);
+      major?.setValidators([Validators.required]);
+      subMajor?.setValidators([Validators.required]);
+      gradYear?.setValidators([Validators.required]);
+      studySystem?.setValidators([Validators.required]);
+      gpa?.setValidators([
+        Validators.required,
+        Validators.pattern(/^\d+(\.\d{1,2})?$/),
+      ]);
+      grade?.setValidators([Validators.required]);
+    } else {
+      // نحذف الفاليديشن ونفضي القيمة
+      [uni, major, subMajor, gradYear, studySystem, gpa, grade].forEach(c => {
+        c?.clearValidators();
+        c?.setValue(null);
+        c?.updateValueAndValidity({ emitEvent: false });
+      });
+
+      // بما إننا ما نحتاج معلومات المؤهل، ما في داعي لـ yearError
+      this.yearError = false;
+    }
+
+    // تحديث الـ validity للحقول اللي عليها Validators
+    [uni, major, subMajor, gradYear, studySystem, gpa, grade].forEach(c => {
+      c?.updateValueAndValidity({ emitEvent: false });
+    });
+  }
+
+  validateYear(): void {
+    // لو مش محتاج معلومات المؤهل، تجاهل الـ yearError
+    if (!this.isQualification) {
+      this.yearError = false;
+      return;
+    }
+
+    const d = this.form.value.gradYear;
+    if (!d) {
+      this.yearError = false;
+      return;
+    }
+
+    const y =
+      d instanceof Date
+        ? d.getFullYear()
+        : new Date(d as any).getFullYear();
+
+    this.yearError = !(y >= this.minYear && y <= this.maxYear);
+  }
+
+  onSave() {
+    // الآن form.invalid راح يكون صحيح حسب نوع الدرجة
+    if (this.form.invalid || this.yearError || !this.degreeFile) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const raw = this.form.value;
+
+    const gradYear =
+      raw.gradYear instanceof Date
+        ? raw.gradYear.getFullYear()
+        : raw.gradYear
+          ? new Date(raw.gradYear as any).getFullYear()
+          : null;
+
+    const payload = {
+      degree: raw.degree,
+      gradCountry: raw.gradCountry,
+      university: raw.university,
+      major: raw.major,
+      subMajor: raw.subMajor,
+      gradYear,
+      studySystem: raw.studySystem,
+      gpa: raw.gpa != null ? +raw.gpa : null,
+      grade: raw.grade,
+      fileName: raw.degreeFileName,
+      file: this.degreeFile as File,
+    } as Degree;
+
+    this.ref.close(payload);
+  }
   // onUpload كما هي عندك تقريباً (مع تصحيح بسيط)
   onUpload(evt: Event): void {
     this.fileError = null;
@@ -98,50 +212,6 @@ export class DegreeModal implements OnInit {
     this.degreeFile = file;
     this.form.patchValue({ degreeFileName: file.name });
     input.value = '';
-  }
-
-  onSave() {
-    if (this.form.invalid || this.yearError || !this.degreeFile) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    const raw = this.form.value;
-
-    const gradYear =
-      raw.gradYear instanceof Date
-        ? raw.gradYear.getFullYear()
-        : new Date(raw.gradYear as any).getFullYear();
-
-    const payload = {
-      degree: raw.degree,
-      gradCountry: raw.gradCountry,
-      university: raw.university,
-      major: raw.major,
-      subMajor: raw.subMajor,
-      gradYear,
-      studySystem: raw.studySystem,
-      gpa: +raw.gpa,
-      grade: raw.grade,
-      fileName: raw.degreeFileName,
-      file: this.degreeFile as File,
-    } as Degree;
-
-    this.ref.close(payload);
-  }
-
-  validateYear(): void {
-    const d = this.form.value.gradYear;
-    if (!d) {
-      this.yearError = false;
-      return;
-    }
-
-    const y =
-      d instanceof Date
-        ? d.getFullYear()
-        : new Date(d as any).getFullYear();
-
-    this.yearError = !(y >= this.minYear && y <= this.maxYear);
   }
 
   get f() {

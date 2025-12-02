@@ -3,12 +3,13 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator)
+public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator, IProfileReviewService reviewService)
     : IRequestHandler<SaveProfilePrereqCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePrereqCommand cmd, CancellationToken ct)
@@ -58,6 +59,16 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
         profile.MarriageCertificateId = marriageResult.Value;
 
         profile.IsDraft = true;
+
+        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Personal, ct);
+        if (profile.ResumeAttachmentId is not null)
+            await reviewService.TouchAttachmentAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, "Resume", profile.ResumeAttachmentId.Value, ct);
+        if (profile.NationalCardId is not null)
+            await reviewService.TouchAttachmentAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, "NationalCard", profile.NationalCardId.Value, ct);
+        if (profile.BirthdayCertificateId is not null)
+            await reviewService.TouchAttachmentAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, "BirthCertificate", profile.BirthdayCertificateId.Value, ct);
+        if (profile.MarriageCertificateId is not null)
+            await reviewService.TouchAttachmentAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, "MarriageCertificate", profile.MarriageCertificateId.Value, ct);
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

@@ -5,6 +5,7 @@ import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SkillDto} from '../models/skill-dto.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {catchError, map} from 'rxjs/operators';
+import {HttpService} from '../../../../core/http/http.service';
 
 export interface CountryDto extends dropdownOptionsModel {
   code: string;
@@ -12,7 +13,7 @@ export interface CountryDto extends dropdownOptionsModel {
 
 @Injectable({ providedIn: 'root' })
 export class ProfileLookupsService {
-  private http = inject(HttpClient);
+  private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
   loading = signal<boolean>(false);
@@ -25,8 +26,6 @@ export class ProfileLookupsService {
   maritalStatuses  = signal<dropdownOptionsModel[]>([]);
   countries        = signal<CountryDto[]>([]);
   degrees          = signal<dropdownOptionsModel[]>([]);
-  universities     = signal<dropdownOptionsModel[]>([]);
-  majors           = signal<dropdownOptionsModel[]>([]);
   studyTypes       = signal<dropdownOptionsModel[]>([]);
   ratingGrades     = signal<dropdownOptionsModel[]>([]);
   languages        = signal<dropdownOptionsModel[]>([]);
@@ -53,8 +52,6 @@ export class ProfileLookupsService {
       maritalStatuses: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.maritalStatuses),
       countries: this.http.get<CountryDto[]>(this.endpoints.profile.lookups.countries),
       degrees: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.degrees),
-      universities: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.universities),
-      majors: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.majors),
       studyTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.studyTypes),
       ratingGrades: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.ratingGrades),
       languages: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languages),
@@ -73,8 +70,6 @@ export class ProfileLookupsService {
         this.residenceCountry.set(res.countries);
         this.graduationCountry.set(res.countries);
         this.degrees.set(res.degrees);
-        this.universities.set(res.universities);
-        this.majors.set(res.majors);
         this.studyTypes.set(res.studyTypes);
         this.ratingGrades.set(res.ratingGrades);
         this.languages.set(res.languages);
@@ -91,8 +86,8 @@ export class ProfileLookupsService {
       })
     );
   }
-  searchSkills(query: string): Observable<SkillDto[]> {
-    const params = new HttpParams().set('q', query);
-    return this.http.get<SkillDto[]>(this.endpoints.profile.lookups.skill, { params });
+  searchSkills(query: string): Observable<dropdownOptionsModel[]> {
+    const params = new HttpParams().set('search', query);
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.skill, { params });
   }
 }

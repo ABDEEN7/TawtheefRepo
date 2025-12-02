@@ -1,0 +1,150 @@
+<div class="approval-page" dir="rtl">
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="mb-0">طلبات الاعتماد</h5>
+            <small class="text-muted">اختر أحد الملفات لمراجعته</small>
+          </div>
+          <button class="btn btn-outline-secondary btn-sm" type="button" (click)="loadList()" [disabled]="loadingList()">
+            تحديث
+          </button>
+        </div>
+        <div class="card-body p-0 list-scroll">
+          <div *ngIf="loadingList()" class="p-3 text-center text-muted">...جاري التحميل</div>
+          <div *ngIf="!loadingList() && list().length === 0" class="p-3 text-center text-muted">
+            لا توجد طلبات معلقة حالياً
+          </div>
+          <ul class="list-group list-group-flush">
+            <li
+              class="list-group-item list-group-item-action"
+              *ngFor="let item of list()"
+              [class.active]="item.userProfileId === selectedProfileId()"
+              (click)="selectProfile(item.userProfileId)"
+            >
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="fw-semibold">{{ item.fullName || 'مرشح' }}</div>
+                  <div class="small text-muted">{{ item.candidateType || 'نوع المرشح غير محدد' }}</div>
+                  <div class="small text-muted">{{ item.targetEntity || 'جهة التوظيف' }}</div>
+                </div>
+                <div class="text-end">
+                  <span class="badge bg-primary">{{ item.pendingCount }} قيد المراجعة</span>
+                  <div class="small text-muted">{{ item.submittedAtUtc | date: 'short' }}</div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-0">تفاصيل المراجعة</h5>
+              <small class="text-muted" *ngIf="detail()">{{ detail()?.fullName }}</small>
+            </div>
+            <div *ngIf="loadingDetail()" class="spinner-border spinner-border-sm text-primary" role="status"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="error()" class="alert alert-danger">{{ error() }}</div>
+          <div *ngIf="!detail() && !loadingDetail()" class="text-muted">اختر ملفاً لعرض تفاصيله.</div>
+
+          <ng-container *ngIf="detail() as info">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="text-muted small">نوع المرشح</div>
+                <div class="fw-semibold">{{ info.candidateType || 'غير محدد' }}</div>
+              </div>
+              <div class="col-md-6">
+                <div class="text-muted small">الجهة المستهدفة</div>
+                <div class="fw-semibold">{{ info.targetEntity || 'غير محددة' }}</div>
+              </div>
+              <div class="col-md-6 mt-3">
+                <div class="text-muted small">إصدار الطلب</div>
+                <div class="fw-semibold">{{ info.submissionVersion || '-' }}</div>
+              </div>
+              <div class="col-md-6 mt-3">
+                <div class="text-muted small">تاريخ الإرسال</div>
+                <div class="fw-semibold">{{ info.submittedAtUtc | date: 'medium' }}</div>
+              </div>
+            </div>
+
+            <div class="section" *ngFor="let section of info.sections">
+              <div class="section-header">
+                <div>
+                  <div class="fw-semibold">{{ sectionName(section.section) }}</div>
+                  <div class="text-muted small">{{ section.hasAttachments ? 'بيانات نصية ومرفقات' : 'بيانات نصية فقط' }}</div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge" [ngClass]="statusClass(section.sectionReview?.status)">
+                    {{ statusLabel(section.sectionReview?.status) }}
+                  </span>
+                  <button
+                    class="btn btn-sm btn-success"
+                    type="button"
+                    (click)="section.sectionReview && approve(section.sectionReview)"
+                    [disabled]="!section.sectionReview || section.sectionReview.status === ReviewStatus.Approved"
+                  >
+                    اعتماد البيانات النصية
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    type="button"
+                    (click)="section.sectionReview && reject(section.sectionReview)"
+                    [disabled]="!section.sectionReview"
+                  >
+                    رفض القسم
+                  </button>
+                </div>
+              </div>
+
+              <div class="section-body" *ngIf="section.items.length > 0; else noItems">
+                <div class="item" *ngFor="let item of section.items">
+                  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div>
+                      <div class="fw-semibold">{{ item.title }}</div>
+                      <div class="small text-muted">
+                        {{ item.targetType === ReviewTargetType.Attachment ? 'مرفق' : 'بيان نصي' }}
+                        <ng-container *ngIf="item.entityName">- {{ item.entityName }}</ng-container>
+                      </div>
+                      <div class="small text-muted" *ngIf="item.note">ملاحظات سابقة: {{ item.note }}</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) }}</span>
+                      <a *ngIf="item.resourceUrl" class="btn btn-link btn-sm" [href]="item.resourceUrl" target="_blank">
+                        عرض الملف
+                      </a>
+                      <button
+                        class="btn btn-sm btn-success"
+                        type="button"
+                        [disabled]="!canApproveAttachment(section, item) || item.status === ReviewStatus.Approved"
+                        (click)="approve(item)"
+                      >
+                        اعتماد
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" type="button" (click)="reject(item)">
+                        رفض
+                      </button>
+                      <button class="btn btn-sm btn-outline-secondary" type="button" (click)="requestChanges(item)">
+                        طلب تعديل
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noItems>
+                <div class="text-muted small">لا توجد عناصر تفصيلية في هذا القسم.</div>
+              </ng-template>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

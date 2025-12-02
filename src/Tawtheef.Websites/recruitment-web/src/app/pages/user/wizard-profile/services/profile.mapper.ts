@@ -6,12 +6,21 @@ import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.m
 import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../../core/models/auth/auth-response.model';
 import {ProfileLookupsService} from './profile-lookups.service';
 import {PhoneMapperService} from './phone-mapper.service';
+import {Degree} from '../models/degree.model';
+import {Experience, TrainingCourse} from '../models/experience.model';
+import {Skill} from '../models/skill.model';
+import {Language} from '../models/language.model';
+import {Attachment} from '../models/attachment.model';
 
 export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestModel {
   return {
     submit: false,
     candidateTypeId: state.candidateType!.id,
     targetEntityId: state.targetEntity!.id,
+    cvFileName: state.cvName,
+    idFileName: state.idName,
+    birthCertificateFileName: state.birthCertificateName,
+    marriageCertificateFileName: state.marriageCertificateName,
   };
 }
 export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequestDto {
@@ -135,60 +144,73 @@ export function mapProfileStatusToState(
 
     // ----------- Collections -----------
     degrees: (dto.qualifications ?? []).map(q => ({
+      id: q.id,
       degree:  mapIdToDropdown(lookups, 'degree', q.degreeId),
       gradCountry: mapIdToDropdown(lookups, 'graduationCountry', q.gradCountryId),
-      university: mapIdToDropdown(lookups, 'university', q.universityId),
-      major: mapIdToDropdown(lookups, 'major', q.majorId),
-      subMajor: mapIdToDropdown(lookups, 'major', q.subMajorId),
+      university: q.university,
+      major: q.major,
+      subMajor: q.subMajor,
       gradYear: q.graduationYear!,
       studySystem: mapIdToDropdown(lookups, 'studyType', q.studyTypeId),
       gpa: q.gpa!,
       grade: mapIdToDropdown(lookups, 'ratingGrade', q.gradeId),
       certificate: mapFile(q.attachment),
       attachmentId: q.attachment?.resourceId,
-    })),
+    } as Degree)),
 
     experiences: (dto.experiences ?? []).map(e => ({
       id: e.id,
-      org: e.employerName ?? '',
-      title: e.jobTitle ?? '',
-      startDate: e.startDate ?? undefined,
-      endDate: e.endDate ?? undefined,
-      isCurrent: e.isCurrent,
-      attachment: mapFile(e.attachment),
-    })),
+      employerName: e.employerName ?? '',
+      jobTitle: e.jobTitle ?? '',
+      from: e.startDate ?? undefined,
+      to: e.endDate ?? undefined,
+      country: mapIdToDropdown(lookups, 'countries', e.countryId),
+      current: e.isCurrent,
+      description: e.description ?? '',
+      fileName: e.attachment?.fileName,
+      attachmentId: e.attachment?.resourceId,
+    } as Experience)),
 
     courses: (dto.trainingCourses ?? []).map(t => ({
       id: t.id,
       title: t.title ?? '',
-      org: t.provider ?? '',
-      startDate: t.startDate ?? undefined,
-      endDate: t.endDate ?? undefined,
-      attachment: mapFile(t.attachment),
-    })),
+      provider: t.provider ?? '',
+      from: t.startDate ?? undefined,
+      to: t.endDate ?? undefined,
+      country: mapIdToDropdown(lookups, 'countries', t.countryId),
+      description: t.description ?? '',
+      fileName: t.attachment?.fileName,
+      attachmentId: t.attachment?.resourceId,
+    } as TrainingCourse)),
 
-    achievements: [],
-
-    skills: (dto.skills ?? []).map(s => s.skillId),
+    skills: (dto.skills ?? []).map(s => ({
+      id: s.id,
+      skillId: s.skillId,
+      skill: s.skill,
+      levelId: s.levelId,
+      level: mapIdToDropdown(lookups, 'ratingGrade', s.levelId),
+    } as Skill)),
 
     languages: (dto.languages ?? []).map(l => ({
       id: l.id,
       langId: l.languageId,
-      langName: mapIdToDropdown(lookups, 'language', l.languageId)?.name ?? '',
+      lang: mapIdToDropdown(lookups, 'language', l.languageId),
       levelId: l.levelId,
-      levelName: mapIdToDropdown(lookups, 'languageLevel', l.levelId)?.name ?? '',
-    })),
+      level: mapIdToDropdown(lookups, 'languageLevel', l.levelId),
+    } as Language)),
 
     attachments: (dto.additionalAttachments ?? []).map(a => ({
       id: a.id,
       name: a.title ?? '',
+      fileName: a.file?.fileName,
+      attachmentId: a.file?.resourceId,
       // file: this.mapFile(a.file)!,
-    })),
+    } as Attachment)),
 
     // ----------- UI fields -----------
     available: true,
     avatarUrl: dto.avatar ?? prefill?.avatar ?? undefined,
-  };
+  } as ProfileState;
 }
 
 function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
@@ -202,8 +224,8 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
 
 // Convert backend ID → dropdownOptionsModel
 function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
-'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'university' | 'major' | 'ratingGrade' |
-'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType',
+'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |
+'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country',
   id?: string | null): dropdownOptionsModel | undefined {
   if (!id) return undefined;
   switch (kind) {
@@ -223,10 +245,6 @@ function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' |
       return lookups.studyTypes().find(st => st.id === id);
     case 'degree':
       return lookups.degrees().find(d => d.id === id);
-    case 'university':
-      return lookups.universities().find(u => u.id === id);
-    case 'major':
-      return lookups.majors().find(m => m.id === id);
     case 'ratingGrade':
       return lookups.ratingGrades().find(rg => rg.id === id);
     case 'language':

@@ -59,6 +59,14 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpDelete("education/{degreeId}/delete")]
+    public async Task<IActionResult> DeleteEducation([FromRoute] DeleteProfileEducationCommand command, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(command, ct);
+        return result.ToActionResult();
+    }
+
     [HttpPost("experience")]
     public async Task<IActionResult> SaveExperience([FromForm] SaveProfileExperienceRequest request, CancellationToken ct)
     {
@@ -68,8 +76,32 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpDelete("experience/{experienceId}/delete")]
+    public async Task<IActionResult> DeleteExperience([FromRoute] DeleteProfileExperienceCommand command, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(command, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("training/{trainingId}/delete")]
+    public async Task<IActionResult> DeleteTraining([FromRoute] DeleteProfileTrainingCommand command, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(command, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("achievement/{achievementId}/delete")]
+    public async Task<IActionResult> DeleteAchievement([FromRoute] DeleteProfileAchievementCommand command, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(command, ct);
+        return result.ToActionResult();
+    }
+
     [HttpPost("skills")]
-    public async Task<IActionResult> SaveSkills([FromForm] SaveProfileSkillsRequest request, CancellationToken ct)
+    public async Task<IActionResult> SaveSkills([FromBody] SaveProfileSkillsRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileSkillsCommand(UserId.Value, request);
@@ -77,12 +109,45 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPost("attachments")]
+    [HttpDelete("skill/{skillId}/delete")]
+    public async Task<IActionResult> DeleteSkill([FromRoute] DeleteProfileSkillCommand command, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(command, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("languages")]
+    public async Task<IActionResult> SaveSkills([FromBody] SaveProfileLanguagesRequest request, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileLanguagesCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+    
+    [HttpDelete("language/{languageId}/delete")]
+    public async Task<IActionResult> DeleteLanguage([FromRoute] DeleteProfileLanguageCommand command, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(command, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("references")]
     public async Task<IActionResult> SaveAttachments([FromForm] SaveProfileAttachmentsRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileAttachmentsCommand(UserId.Value, request);
         var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("references/{attachmentId}/delete")]
+    public async Task<IActionResult> DeleteAttachment([FromRoute] DeleteProfileAttachmentCommand command, CancellationToken ct)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(command, ct);
         return result.ToActionResult();
     }
 
@@ -159,16 +224,25 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/universities")]
-    public async Task<IActionResult> GetUniversities()
+    public async Task<IActionResult> GetUniversities([FromQuery] GetUniversitiesQuery query)
     {
-        var result = await mediator.Send(new GetUniversitiesQuery());
+        var result = await mediator.Send(query);
         return result.ToActionResult();
     }
 
     [HttpGet("lookups/majors")]
-    public async Task<IActionResult> GetMajors()
+    public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
     {
-        var result = await mediator.Send(new GetMajorsQuery());
+        //get language from header
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(query with {Language = language});
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/sub-majors")]
+    public async Task<IActionResult> GetMajors([FromQuery] GetSubMajorsQuery query)
+    {
+        var result = await mediator.Send(query);
         return result.ToActionResult();
     }
     

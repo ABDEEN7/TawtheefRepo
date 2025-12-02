@@ -74,6 +74,24 @@ public class ErrorsCodes
     public const string InvalidPassword = "INVALID_PASSWORD";
     public const string IncorrectOldPassword = "INCORRECT_OLD_PASSWORD";
     public const string PasswordChangeFailed = "PASSWORD_CHANGE_FAILED";
+    public const string DegreeNotFound = "DEGREE_NOT_FOUND";
+    public const string ReviewItemNotFound = "REVIEW_ITEM_NOT_FOUND";
+    public const string ExperienceNotFound = "EXPERIENCE_NOT_FOUND";
+    public const string SkillNotFound = "SKILL_NOT_FOUND";
+    public const string LanguageProfileNotFound = "LANGUAGE_PROFILE_NOT_FOUND";
+    public const string TrainingNotFound = "TRAINING_NOT_FOUND";
+    public const string AchievementNotFound = "ACHIEVEMENT_NOT_FOUND";
+    public const string SectionMustBeApprovedFirst = "SECTION_MUST_BE_APPROVED_FIRST";
+    public const string InvalidDegreeUniversityId = "INVALID_DEGREE_UNIVERSITY_ID";
+    public const string InvalidDegreeMajorId = "INVALID_DEGREE_MAJOR_ID";
+    public const string InvalidGpa = "INVALID_GPA";
+    public const string InvalidDegreeFile = "INVALID_DEGREE_FILE";
+    public const string InvalidDegreeId = "INVALID_DEGREE_ID";
+    public const string InvalidDegreeCountryId = "INVALID_DEGREE_COUNTRY_ID";
+    public const string InvalidDegreeGradeId = "INVALID_DEGREE_GRADE_ID";
+    public const string InvalidGradYear = "INVALID_GRAD_YEAR";
+    public const string InvalidDegreeStudyTypeId = "INVALID_DEGREE_STUDY_TYPE_ID";
+    public const string InvalidDegreeSubMajorId = "INVALID_DEGREE_SUB_MAJOR_ID";
     #endregion
 
     #region External Authentication Errors
@@ -115,6 +133,33 @@ public class ErrorsCodes
     #region User Profile
     public const string InvalidDegreesJson = "INVALID_DEGREES_JSON";
     public const string InvalidDegreesCount = "INVALID_DEGREES_COUNT";
+    public const string InvalidExperiencesJson = "INVALID_EXPERIENCES_JSON";
+    public const string InvalidTrainingCoursesJson = "INVALID_TRAINING_COURSES_JSON";
+    public const string InvalidExperienceFileIndex = "INVALID_EXPERIENCE_FILE_INDEX";
+    public const string InvalidTrainingCourseFileIndex = "INVALID_TRAINING_COURSE_FILE_INDEX";
+    public const string InvalidExperienceFile = "INVALID_EXPERIENCE_FILE";
+    public const string InvalidTrainingCourseFile = "INVALID_TRAINING_COURSE_FILE";
+    public const string InvalidAttachmentsJson = "INVALID_ATTACHMENTS_JSON";
+    public const string InvalidAttachmentFileIndex = "INVALID_ATTACHMENT_FILE_INDEX";
+    public const string InvalidAttachmentFile = "INVALID_ATTACHMENT_FILE";
+    public const string CvFileRequired = "CV_FILE_REQUIRED";
+    public const string IdFileRequired = "ID_FILE_REQUIRED";
+    public const string MarriageCertificateFileRequired = "MARRIAGE_CERTIFICATE_FILE_REQUIRED";
+    public const string BirthCertificateFileRequired = "BIRTH_CERTIFICATE_FILE_REQUIRED";
+    public const string SponsorCardRequired = "SPONSOR_CARD_REQUIRED";
+    public const string SponsorCardFileRequired = "SPONSOR_CARD_FILE_REQUIRED";
+    public const string NationalAddressDocumentRequired = "NATIONAL_ADDRESS_DOCUMENT_REQUIRED";
+    public const string DegreeFileRequired = "DEGREE_FILE_REQUIRED";
+    public const string ExperienceRequired = "EXPERIENCE_REQUIRED";
+    public const string SkillOrLanguageRequired = "SKILL_OR_LANGUAGE_REQUIRED";
+    #endregion
+
+    #region Attachments
+
+    public const string InvalidAttachmentType = "INVALID_ATTACHMENT_TYPE";
+    public const string InvalidAttachmentSize = "INVALID_ATTACHMENT_SIZE";
+    public const string AttachmentNotFound = "ATTACHMENT_NOT_FOUND";
+
     #endregion
 }
 

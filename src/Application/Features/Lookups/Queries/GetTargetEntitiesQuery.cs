@@ -4,4 +4,4 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetTargetEntitiesQuery : IRequest<IResult<List<DropdownOptions>>>;
+public sealed record GetTargetEntitiesQuery: BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;

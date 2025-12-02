@@ -1,12 +1,16 @@
 import { Component, EventEmitter, Output, inject, OnDestroy, OnInit } from '@angular/core';
-import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent, AutoCompleteUnselectEvent} from 'primeng/autocomplete';
-import {Subject, Subscription, of, delay} from 'rxjs';
+import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent} from 'primeng/autocomplete';
+import {Subject, Subscription, of} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap, catchError, map} from 'rxjs/operators';
 import { DataService } from '../../services/data.service';
 import {SkillDto} from '../../models/skill-dto.model';
 import {ProfileLookupsService} from '../../services/profile-lookups.service';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
+import {MessageService} from 'primeng/api';
+import {TranslateService} from '@ngx-translate/core';
+import {ProfileService} from '../../services/profile.service';
+import {Skill} from '../../models/skill.model';
 
 @Component({
   selector: 'app-step-skills',
@@ -20,6 +24,11 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
 
   ds = inject(DataService);
   lookups = inject(ProfileLookupsService);
+  messageService = inject(MessageService);
+  translate = inject(TranslateService);
+  profile = inject(ProfileService);
+
+  saving = false;
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -27,13 +36,12 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     return validity['skills'];
   }
   // UI state
-  skillOptions: SkillDto[] = [];
+  skillOptions: dropdownOptionsModel[] = [];
   loadingSkills = false;
   lastQuery = '';
 
-  // language form bits
-  newLanguage?: dropdownOptionsModel;
-  newLevel?: dropdownOptionsModel;
+  selectedSkill?: dropdownOptionsModel;
+  selectedLevel?: dropdownOptionsModel;
 
   // search stream
   private search$ = new Subject<string>();
@@ -84,25 +92,75 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     }
     this.search$.next(q);
   }
-  addSkill(e: AutoCompleteSelectEvent){
-    this.ds.addSkill(e.value);
+  onSkillSelect(e: AutoCompleteSelectEvent){
+    this.selectedSkill = e.value;
+    e.value = null;
   }
-  removeSkill(e: AutoCompleteUnselectEvent){
-    this.ds.delSkill(e.value);
-  }
-  addLang(): void {
-    if (this.newLanguage && this.newLevel) {
-      this.ds.addLang({
-        langId: this.newLanguage.id,
-        langName: this.newLanguage.name,
-        levelId: this.newLevel.id,
-        levelName: this.newLevel.name
-      });
-      this.newLanguage = this.newLevel = undefined;
+  addSkill(){
+    if (this.selectedSkill && this.selectedLevel) {
+      const skill: Skill = {
+        skillId: this.selectedSkill.id?.toString() ?? this.selectedSkill.name,
+        skill: this.selectedSkill,
+        levelId: this.selectedLevel.id,
+        level: this.selectedLevel,
+      };
+      this.ds.addSkill(skill);
+      this.selectedSkill = undefined;
+      this.selectedLevel = undefined;
     }
   }
-  removeLang(index: number){
-    this.ds.delLang(index)
+  removeSkill(index: number){
+    var skill = this.ds.state().skills[index];
+    if(skill.id){
+      this.profile.deleteSkill(skill.id).subscribe({
+        next: () => {
+          this.ds.delSkill(index);
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.errorTitle'),
+            detail: this.translate.instant('wizard.skill.deleteError'),
+            life: 5000,
+          });
+        },
+      });
+    } else {
+      this.ds.delSkill(index);
+    }
+  }
+
+  onNext() {
+    if (!this.step.valid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
+        life: 5000,
+      });
+      return;
+    }
+    const state = this.ds.state();
+    const skills = state.skills || [];
+
+    this.saving = true;
+    this.profile.saveSkillsSection(skills).subscribe({
+      next: () => {
+        this.saving = false;
+        this.next.emit();
+      },
+      error: err => {
+        console.error(err);
+        this.saving = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('wizard.errorTitle'),
+          detail: this.translate.instant('wizard.skills.saveError'),
+          life: 5000,
+        });
+      },
+    });
   }
 
   ngOnDestroy(): void {

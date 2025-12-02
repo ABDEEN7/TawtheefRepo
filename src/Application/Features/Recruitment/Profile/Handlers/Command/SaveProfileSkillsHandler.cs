@@ -2,22 +2,25 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 
 public sealed class SaveProfileSkillsHandler(
-    IUnitOfWork uow
+    IUnitOfWork uow,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileSkillsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileSkillsCommand cmd, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var skillRepo   = uow.GetEntityRepository<ProfileSkill>();
-        var langRepo    = uow.GetEntityRepository<ProfileLanguage>();
 
         var profile = await profileRepo.DbSet
             .Include(p => p.Skills)
@@ -25,45 +28,28 @@ public sealed class SaveProfileSkillsHandler(
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
-        {
-            profile = new UserProfile
-            {
-                UserId  = cmd.UserId,
-                IsDraft = true
-            };
-            await profileRepo.AddAsync(profile);
-            await uow.SaveChangesAsync(ct);
-        }
-
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+        
+        if(cmd.Request.Skills.Count == 0)
+            return Result.Ok(Unit.Value);
+        
         // Skills
         if (profile.Skills is not null && profile.Skills.Count > 0)
         {
             skillRepo.DbSet.RemoveRange(profile.Skills);
         }
-        profile.Skills = cmd.Request.Skills
+
+        var skills = cmd.Request.Skills
             .Select(s => new ProfileSkill
             {
-                SkillId       = s.SkillId,
+                SkillId = s.SkillId, 
+                LevelId = s.LevelId, 
                 UserProfileId = profile.Id
-            })
-            .ToList();
-
-        // Languages
-        if (profile.Languages is not null && profile.Languages.Count > 0)
-        {
-            langRepo.DbSet.RemoveRange(profile.Languages);
-        }
-        profile.Languages = cmd.Request.Languages
-            .Select(l => new ProfileLanguage
-            {
-                LanguageId    = l.LanguageId,
-                LevelId       = l.LevelId,
-                UserProfileId = profile.Id
-            })
-            .ToList();
-
+            }).ToList();
+        
+        await skillRepo.AddRangeAsync(skills);
         profile.IsDraft = !cmd.Request.Submit;
-
+        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.SkillsLanguages, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

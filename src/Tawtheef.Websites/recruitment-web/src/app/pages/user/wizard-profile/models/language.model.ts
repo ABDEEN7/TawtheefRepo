@@ -1,6 +1,10 @@
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {GUID} from '../../../../shared/types/guid.type';
+
 export interface Language {
+  id?: GUID;
   langId: string;
-  langName: string;
+  lang: dropdownOptionsModel | null | undefined;
   levelId: string;
-  levelName: string;
+  level: dropdownOptionsModel | null | undefined;
 }

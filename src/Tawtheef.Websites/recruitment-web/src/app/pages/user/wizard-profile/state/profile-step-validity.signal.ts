@@ -232,15 +232,32 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
 
 function validateSkillsStep(s: ProfileState): StepValidationResult {
   const hasSkills = Array.isArray(s.skills) && s.skills.length > 0;
-  const hasLanguages = Array.isArray(s.languages) && s.languages.length > 0;
 
-  if (!(hasSkills || hasLanguages)) {
+  if (!hasSkills) {
     return {
       valid: false,
       errors: [
         {
           field: 'skills',
-          i18nKey: 'wizard.profile.skills.orLanguages.required',
+          i18nKey: 'wizard.profile.skills.required',
+        },
+      ],
+    };
+  }
+
+  return { valid: true, errors: [] };
+}
+
+function validateLanguagesStep(s: ProfileState): StepValidationResult {
+  const hasLanguages = Array.isArray(s.languages) && s.languages.length > 0;
+
+  if (!hasLanguages) {
+    return {
+      valid: false,
+      errors: [
+        {
+          field: 'languages',
+          i18nKey: 'wizard.profile.languages.required',
         },
       ],
     };
@@ -272,6 +289,7 @@ export function createStepValiditySignal(
       degrees:     validateDegreesStep(s),
       experience:  validateExperienceStep(s),
       skills:      validateSkillsStep(s),
+      languages:   validateLanguagesStep(s),
       attachments: validateAttachmentsStep(s),
     };
   });

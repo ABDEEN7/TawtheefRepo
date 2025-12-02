@@ -1,9 +1,10 @@
 import {Degree} from "./degree.model";
 import {Attachment} from './attachment.model';
 import {Language} from './language.model';
-import {Experience} from './experience.model';
+import {Experience, TrainingCourse} from './experience.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {PhoneNumber} from './phone-number.model';
+import {Skill} from './skill.model';
 
 export interface UploadedFileRef {
   resourceId: string;
@@ -39,7 +40,6 @@ export interface ProfileState {
   sponsorEmployerName?: string | null;
   sponsorEmployerNumber?: string | null;
   sponsorCardName?: string | null;
-  sponsorCardFileName?: string | null;
   sponsorCardFile?: UploadedFileRef | null;
 
   // contact
@@ -60,9 +60,8 @@ export interface ProfileState {
   // collections
   degrees: Degree[];
   experiences: Experience[];
-  courses: Experience[];
-  achievements: Experience[];
-  skills: string[];
+  courses: TrainingCourse[];
+  skills: Skill[];
   languages: Language[];
   attachments: Attachment[];
 

@@ -2,10 +2,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
+import {HttpService} from '../../../../core/http/http.service';
 
 @Injectable({ providedIn: 'root' })
 export class ContactVerificationService {
-  private http = inject(HttpClient);
+  private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
   requestPhoneCode(payload: { phoneE164: string }): Observable<void> {

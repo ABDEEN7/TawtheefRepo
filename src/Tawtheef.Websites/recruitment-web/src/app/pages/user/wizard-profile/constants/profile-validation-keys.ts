@@ -35,4 +35,10 @@
     naBuilding: 'wizard.profile.contact.naBuilding.required',
     naFiler: 'wizard.profile.contact.naFiler.required',
   },
+  skills: {
+    skills: 'wizard.profile.skills.required',
+  },
+  languages: {
+    languages: 'wizard.profile.languages.required',
+  },
 } as const;

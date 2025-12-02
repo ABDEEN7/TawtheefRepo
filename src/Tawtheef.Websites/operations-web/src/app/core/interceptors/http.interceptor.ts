@@ -1,9 +1,9 @@
-﻿import {inject, Injectable} from '@angular/core';
+﻿import {inject} from '@angular/core';
 import {
   HttpErrorResponse,
   HttpEvent,
-  HttpHandler, HttpHandlerFn,
-  HttpInterceptor, HttpInterceptorFn,
+  HttpHandlerFn,
+  HttpInterceptorFn,
   HttpRequest,
   HttpResponse
 } from '@angular/common/http';
@@ -12,14 +12,11 @@ import {tap} from 'rxjs/operators';
 import {TranslateService} from "@ngx-translate/core";
 import {environment} from "../../../environments/environment";
 import {routes} from '../../routes/routes';
-import {TokenService} from '../auth/token.service';
 export const customHttpInterceptor: HttpInterceptorFn = (req, next) => {
   const modifiedRequest = addHeaders(req);
   logRequest(modifiedRequest);
   return executeRequest(modifiedRequest, next);
 };
-
-
 function executeRequest(request: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> {
   return next(request).pipe(
     tap({
@@ -27,7 +24,6 @@ function executeRequest(request: HttpRequest<any>, next: HttpHandlerFn): Observa
     })
   );
 }
-
 function addHeaders(request: HttpRequest<any>): HttpRequest<any> {
   const translate = inject(TranslateService);
   const currentLang = translate.getCurrentLang() || translate.getFallbackLang();
@@ -37,12 +33,10 @@ function addHeaders(request: HttpRequest<any>): HttpRequest<any> {
   };
   return request.clone({ setHeaders: headers });
 }
-
 function generateRequestId(): string {
   return Math.random().toString(36).substring(2, 15) +
     Math.random().toString(36).substring(2, 15);
 }
-
 function handleResponse(event: HttpEvent<any>, request: HttpRequest<any>): void {
   if (event instanceof HttpResponse && event.body?.data !== undefined) {
     if (!environment.production) {
@@ -68,7 +62,6 @@ function handleResponse(event: HttpEvent<any>, request: HttpRequest<any>): void 
     }
   }
 }
-
 function logRequest(request: HttpRequest<any>): void {
   if (!environment.production && !request.url.includes(routes.auth.auth)) {
     console.log(`Making ${request.method} request to ${request.urlWithParams}`);

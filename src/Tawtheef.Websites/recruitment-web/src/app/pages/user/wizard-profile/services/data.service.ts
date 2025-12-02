@@ -2,9 +2,10 @@
 import {ProfileState} from '../models/profile-state.model';
 import {Language} from '../models/language.model';
 import {Degree} from '../models/degree.model';
-import {Experience} from '../models/experience.model';
+import {Experience, TrainingCourse} from '../models/experience.model';
 import {Attachment} from '../models/attachment.model';
 import {CandidateType} from '../../../../core/enums/lookups.enum';
+import {Skill} from '../models/skill.model';
 import {UserService} from '../../../../core/auth/user.service';
 
 
@@ -13,7 +14,7 @@ import {UserService} from '../../../../core/auth/user.service';
 export class DataService {
   userService = inject(UserService);
   state = signal<ProfileState>({
-    degrees: [], experiences: [], courses: [], achievements: [],
+    degrees: [], experiences: [], courses: [],
     skills: [], languages: [], attachments: [],
     available: true, hasDisability: false,
     emailVerified: false, phoneVerified: false,
@@ -116,7 +117,11 @@ export class DataService {
 
     const degreesValid   = Array.isArray(s.degrees) && s.degrees.length > 0;
     const expValid       = Array.isArray(s.experiences) && s.experiences.length > 0;
-    const skillsValid    = (Array.isArray(s.skills) && s.skills.length > 0) || (Array.isArray(s.languages)  && s.languages.length  > 0);
+    const skillsValid    = Array.isArray(s.skills) && s.skills.length > 0;
+    const languagesValid = Array.isArray(s.languages) && s.languages.length  > 0;
+    const attachmentsValid = Array.isArray(s.attachments) &&
+      s.attachments.length > 0 &&
+      s.attachments.every(a => this.isFilledScalar(a.fileName ?? a.name) && (!!a.file || !!a.attachmentId));
 
     return {
       basic: basicValid,
@@ -125,7 +130,8 @@ export class DataService {
       degrees: degreesValid,
       experience: expValid,
       skills: skillsValid,
-      attachments: true,
+      languages: languagesValid,
+      attachments: attachmentsValid,
     } as const;
   });
 
@@ -147,21 +153,19 @@ export class DataService {
   addExp(e: Experience){ this.state.update(s => ({...s, experiences:[...s.experiences, e]})); }
   delExp(i:number){ this.state.update(s => ({...s, experiences: s.experiences.filter((_,x)=>x!==i)})); }
 
-  addCourse(e: Experience){ this.state.update(s => ({...s, courses:[...s.courses, e]})); }
+  addCourse(e: TrainingCourse){ this.state.update(s => ({...s, courses:[...s.courses, e]})); }
   delCourse(i:number){ this.state.update(s => ({...s, courses: s.courses.filter((_,x)=>x!==i)})); }
-  addAchievement(e: Experience){ this.state.update(s => ({...s, achievements:[...s.achievements, e]})); }
-  delAchievement(i:number){ this.state.update(s => ({...s, achievements: s.achievements.filter((_,x)=>x!==i)})); }
 
   addLang(l: Language){ this.state.update(s => ({...s, languages:[...s.languages, l]})); }
   delLang(i:number){ this.state.update(s => ({...s, languages: s.languages.filter((_,x)=>x!==i)})); }
 
-  addSkill(tag: string){
-    this.state.update(s => s.skills.includes(tag)
+  addSkill(skill: Skill){
+    this.state.update(s => s.skills.some(t => t.skillId === skill.skillId)
       ? s
-      : ({...s, skills:[...s.skills, tag]})
+      : ({...s, skills:[...s.skills, skill]})
     );
   }
-  delSkill(tag: string){ this.state.update(s => ({...s, skills: s.skills.filter(t=>t!==tag)})); }
+  delSkill(i: number){ this.state.update(s => ({...s, skills: s.skills.filter((_,x)=>x!==i)})); }
 
   addAttachment(a: Attachment){ this.state.update(s => ({...s, attachments:[...s.attachments, a]})); }
   delAttachment(i:number){ this.state.update(s => ({...s, attachments: s.attachments.filter((_,x)=>x!==i)})); }

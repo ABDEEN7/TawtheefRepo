@@ -1,5 +1,5 @@
 ﻿import {PhoneNumber} from './phone-number.model';
-import {SkillDto} from './skill-dto.model';
+import {Skill} from './skill.model';
 export interface SaveUserProfileRequestDto {
 submit: boolean;
 
@@ -49,8 +49,7 @@ sponsorTypeId?: string | null;
 degrees: QualificationDto[];
 experiences: ExperienceDto[];
 trainingCourses: TrainingCourseDto[];
-achievements: AchievementDto[];
-skills: SkillDto[];
+  skills: Skill[];
 languages: LanguageDto[];
 additionalAttachments: AttachmentDto[];
 }
@@ -69,14 +68,15 @@ export interface ExperienceDto {
   id?: string | null;
   org: string;
   title: string;
+  name?: string | null;
   from?: string | null; // 'YYYY-MM-DD'
   to?: string | null;
   tasks?: string | null;
+  description?: string | null;
   fileName?: string | null;
 }
 
 export interface TrainingCourseDto extends ExperienceDto {}
-export interface AchievementDto extends ExperienceDto {}
 
 export interface LanguageDto {
   languageId: string;

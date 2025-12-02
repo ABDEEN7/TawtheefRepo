@@ -19,6 +19,9 @@
     "maxFileSize": "حجم الملف يجب ألا يتجاوز {{size}} ميغابايت.",
     "dateRange": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء."
   },
+  "remote-select": {
+    "search-hint": "اكتب على الأقل {{minChars}} أحرف للبحث"
+  },
   "common": {
     "ar": "عربي",
     "en": "English",

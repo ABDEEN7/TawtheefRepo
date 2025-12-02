@@ -32,6 +32,15 @@ export const routes: Routes = [
         path: 'jobs',
         loadChildren: () => import('./pages/job/jobs.module').then(m => m.JobsModule),
       },
+      {
+        path: 'approval/tasks',
+        loadComponent: () =>
+          import('./pages/profile-approval-list/profile-approval-list.page').then(m => m.ProfileApprovalListPage),
+      },
+      {
+        path: 'approval',
+        loadComponent: () => import('./pages/profile-approval/profile-approval.page').then(m => m.ProfileApprovalPage),
+      },
     ],
   },
   {path: 'profile-list', component: ProfileList},

@@ -10,7 +10,7 @@ public class MajorConfiguration : LookupBaseConfiguration<Major>
     {
         base.Configure(builder);
         builder.HasOne(m => m.Parent)
-            .WithMany()
+            .WithMany(sm=> sm.SubMajors)
             .HasForeignKey(m => m.ParentId)
             .OnDelete(DeleteBehavior.Restrict);
     }

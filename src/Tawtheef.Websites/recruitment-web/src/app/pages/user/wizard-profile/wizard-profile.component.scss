@@ -20,6 +20,9 @@
     font-weight: 700;
     transition: .25s;
     font-size: small;
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
 
     &.active {
       color: #fff;
@@ -27,6 +30,60 @@
       border-color: transparent;
       box-shadow: 0 8px 20px rgba(123,30,58,.25);
     }
+  }
+}
+
+.step-index {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: $brand;
+  border: 2px solid rgba(123,30,58,.25);
+  font-weight: 800;
+  font-size: 14px;
+
+  &.is-complete {
+    background: rgba(45, 199, 144, 0.15);
+    color: #2dc790;
+    border-color: rgba(45, 199, 144, 0.35);
+  }
+
+  &.is-active {
+    box-shadow: 0 0 0 4px rgba(123, 30, 58, 0.08);
+  }
+}
+
+.step-label {
+  min-width: 140px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+.wizard-progress {
+  margin-bottom: 1rem;
+
+  .progress {
+    height: 12px;
+    border-radius: 999px;
+    background: #f3f4f6;
+  }
+
+  .progress-bar {
+    border-radius: 999px;
+    font-size: .75rem;
+    line-height: 12px;
   }
 }
 

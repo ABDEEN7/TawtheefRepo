@@ -89,7 +89,6 @@ public class UserProfile : EventEntity
 
     public ICollection<Qualification>? Qualifications { get; set; } = [];
     public ICollection<Experience>? Experiences { get; set; } = [];
-    public ICollection<Achievement>? Achievements { get; set; } = [];
     public ICollection<TrainingCourse>? TrainingCourses { get; set; } = [];
     public ICollection<ProfileSkill>? Skills { get; set; } = [];
     public ICollection<ProfileLanguage>? Languages { get; set; } = [];
@@ -167,9 +166,6 @@ public class UserProfile : EventEntity
             return false;
 
         if (Skills is null || Skills.Count == 0)
-            return false;
-
-        if (Achievements is null || Achievements.Count == 0)
             return false;
 
         if (Experiences is null || Experiences.Count == 0)

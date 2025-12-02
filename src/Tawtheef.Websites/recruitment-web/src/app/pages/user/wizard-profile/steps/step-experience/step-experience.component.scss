@@ -5,14 +5,7 @@ table.table {
   tbody td { vertical-align: middle; }
 }
 
-// مودال الخبرة
 #expModal {
   .modal-header { @include brand-gradient; color: #fff; }
   #expFileInfo { color: $muted; }
-}
-
-.achievements-list {
-  .list-group-item {
-    display: flex; justify-content: space-between; align-items: center;
-  }
 }

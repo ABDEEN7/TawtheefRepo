@@ -42,30 +42,46 @@
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.nationality' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().nationality || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().nationality?.name || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.gender' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().gender || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().gender?.name || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.marital' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().marital || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().marital?.name || '—' }}</div>
       </div>
 
-      <div class="col-md-3">
-        <div class="small text-muted">{{ 'wizard.personal.children' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().children ?? '—' }}</div>
+      <div class="col-md-3" *ngIf="ds.state().hasDisability">
+        <div class="small text-muted">{{ 'wizard.personal.disabilityType' | translate }}</div>
+        <div class="fw-semibold">{{ ds.state().disabilityDetails || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.religion' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().religion || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().religion?.name || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.availability' | translate }}</div>
         <div class="fw-semibold">
           <i class="fa-solid" [class.fa-toggle-on]="ds.state().available" [class.fa-toggle-off]="!ds.state().available"></i>
         </div>
+      </div>
+      <div class="col-md-3" *ngIf="ds.state().children !== null && ds.state().children !== undefined">
+        <div class="small text-muted">{{ 'wizard.personal.children' | translate }}</div>
+        <div class="fw-semibold">{{ ds.state().children }}</div>
+      </div>
+      <div class="col-md-3" *ngIf="hasSponsor()">
+        <div class="small text-muted">{{ 'wizard.personal.sponsorType' | translate }}</div>
+        <div class="fw-semibold">{{ ds.state().sponsorType?.name || '—' }}</div>
+      </div>
+      <div class="col-md-3" *ngIf="hasSponsor()">
+        <div class="small text-muted">{{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.name`| lowercase | translate }}</div>
+        <div class="fw-semibold">{{ ds.state().sponsorEmployerName || '—' }}</div>
+      </div>
+      <div class="col-md-3" *ngIf="hasSponsor()">
+        <div class="small text-muted">{{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.qid`| lowercase | translate }}</div>
+        <div class="fw-semibold">{{ ds.state().sponsorEmployerNumber || '—' }}</div>
       </div>
     </div>
   </div>
@@ -78,7 +94,7 @@
     <div class="row g-3">
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.contact.country' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().country || '—' }}</div>
+        <div class="fw-semibold">{{ ds.state().country?.name || '—' }}</div>
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.contact.phone' | translate }}</div>
@@ -88,13 +104,13 @@
         <div class="small text-muted">{{ 'wizard.contact.email' | translate }}</div>
         <div class="fw-semibold">{{ ds.state().email || '—' }}</div>
       </div>
-      <div class="col-12">
+      <div class="col-12" *ngIf="!hasNationalAddress">
         <div class="small text-muted">{{ 'wizard.contact.address' | translate }}</div>
         <div class="fw-semibold">{{ ds.state().address || '—' }}</div>
       </div>
     </div>
 
-    <div class="mt-3">
+    <div class="mt-3" *ngIf="hasNationalAddress()">
       <div class="small text-muted mb-1">{{ 'wizard.nationalAddress.title' | translate }}</div>
       <div class="plate d-inline-flex align-items-center gap-3 flex-wrap" style="background:#1e73be;color:#fff;border-radius:14px;padding:10px 14px;">
         <div class="box">
@@ -137,11 +153,11 @@
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.level }}</td>
-          <td>{{ r.major || '—' }}</td>
-          <td>{{ r.uni || '—' }}</td>
-          <td>{{ r.year || '—' }}</td>
-          <td>{{ r.gradCountry || '—' }}</td>
+          <td>{{ r.degree?.name }}</td>
+          <td>{{ r.major?.name || '—' }}</td>
+          <td>{{ r.university?.name || '—' }}</td>
+          <td>{{ r.gradYear || '—' }}</td>
+          <td>{{ r.gradCountry?.name || '—' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -160,20 +176,20 @@
         <tr>
           <th>{{ 'wizard.experience.table.org' | translate }}</th>
           <th>{{ 'wizard.experience.table.title' | translate }}</th>
-          <th>{{ 'wizard.experience.from' | translate }}</th>
-          <th>{{ 'wizard.experience.to' | translate }}</th>
+          <th>{{ 'wizard.experience.country' | translate }}</th>
+          <th>{{ 'wizard.experience.period' | translate }}</th>
           <th>{{ 'wizard.experience.tasks' | translate }}</th>
           <th>{{ 'wizard.experience.table.file' | translate }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.org }}</td>
-          <td>{{ r.title }}</td>
-          <td>{{ r.from || '—' }}</td>
-          <td>{{ r.to || '—' }}</td>
-          <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
-          <td>{{ r.fileName || '—' }}</td>
+          <td>{{ r.employerName }}</td>
+          <td>{{ r.jobTitle }}</td>
+          <td>{{ r.country!.name }}</td>
+          <td>{{ (r.from | date: 'yy/MM') || '—' }} - {{ r.current ? ('wizard.experience.current' | translate) : ((r.to | date: 'yy/MM') || '—') }}</td>
+          <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
+          <td>{{ r.certificate?.resourceName || r.fileName || '—' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -192,20 +208,20 @@
         <tr>
           <th>{{ 'wizard.courses.table.provider' | translate }}</th>
           <th>{{ 'wizard.courses.table.courseName' | translate }}</th>
-          <th>{{ 'wizard.courses.from' | translate }}</th>
-          <th>{{ 'wizard.courses.to' | translate }}</th>
+          <th>{{ 'wizard.experience.country' | translate }}</th>
+          <th>{{ 'wizard.courses.period' | translate }}</th>
           <th>{{ 'wizard.courses.notes' | translate }}</th>
           <th>{{ 'wizard.courses.table.file' | translate }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.org }}</td>
+          <td>{{ r.provider }}</td>
           <td>{{ r.title }}</td>
-          <td>{{ r.from || '—' }}</td>
-          <td>{{ r.to || '—' }}</td>
-          <td class="text-truncate" style="max-width:260px">{{ r.tasks || '—' }}</td>
-          <td>{{ r.fileName || '—' }}</td>
+          <td>{{ r.country!.name }}</td>
+          <td>{{ (r.from | date: 'yy/MM') || '—' }} - {{ (r.to | date: 'yy/MM') || '—' }}</td>
+          <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
+          <td>{{ r.certificate?.resourceName || r.fileName || '—' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -214,39 +230,46 @@
     </p-table>
   </div>
 
-  <!-- Skills & Languages -->
+  <!-- Skills -->
   <div class="border rounded-3 p-3 mb-3">
     <div class="fw-bold mb-2" style="color:#7b1e3a">
-      <i class="fa-solid fa-language me-1"></i> {{ 'wizard.skills.title' | translate }}
+      <i class="fa-solid fa-language me-1"></i> {{ 'wizard.skills.skills' | translate }}
     </div>
-    <div class="row g-3">
-      <div class="col-lg-6">
-        <div class="small text-muted mb-2">{{ 'wizard.skills.skills' | translate }}</div>
-        <div class="d-flex flex-wrap gap-2">
-          <span *ngFor="let s of ds.state().skills; trackBy: trackSkill" class="badge text-bg-light border">
-            <i class="fa-solid fa-hashtag"></i> {{ s }}
-          </span>
-          <span *ngIf="!ds.state().skills?.length" class="text-muted">{{ 'wizard.table.noRows' | translate }}</span>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="small text-muted mb-2">{{ 'wizard.skills.languages' | translate }}</div>
-        <p-table [value]="ds.state().languages">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>{{ 'wizard.skills.language' | translate }}</th>
-              <th>{{ 'wizard.skills.level' | translate }}</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-r>
-            <tr><td>{{ r.name }}</td><td>{{ r.level }}</td></tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
-          </ng-template>
-        </p-table>
-      </div>
+    <p-table [value]="ds.state().skills">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'wizard.skills.skill' | translate }}</th>
+          <th>{{ 'wizard.skills.level' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-r>
+        <tr><td>{{ r.skill.name }}</td><td>{{ r.level.name }}</td></tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Languages -->
+  <div class="border rounded-3 p-3 mb-3">
+    <div class="fw-bold mb-2" style="color:#7b1e3a">
+      <i class="fa-solid fa-language me-1"></i> {{ 'wizard.skills.languages' | translate }}
     </div>
+    <p-table [value]="ds.state().languages">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'wizard.skills.language' | translate }}</th>
+          <th>{{ 'wizard.skills.level' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-r>
+        <tr><td>{{ r.lang.name }}</td><td>{{ r.level.name }}</td></tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
   </div>
 
   <!-- Attachments -->
@@ -263,7 +286,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.title }}</td>
+          <td>{{ r.name }}</td>
           <td>{{ r.fileName }}</td>
         </tr>
       </ng-template>

@@ -57,4 +57,10 @@ export class EndpointsService {
       jobInvitesStatus : this.getFullUrl('/job/lookups/invitation-statuses')
     }
   };
+
+  approvals = {
+    list: this.getFullUrl('/profile-approvals'),
+    detail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}`),
+    reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`)
+  };
 }

@@ -36,7 +36,7 @@ export class StepDegreeComponent {
     this.dialog.open(DegreeModal, {
         header: this.translate.instant('wizard.degrees.add'),
         width: '80%',
-        contentStyle: { 'max-height': '80vh', 'overflow': 'scroll' },
+        contentStyle: { 'max-height': '80vh', 'overflow': 'auto' },
         baseZIndex: 10000,
         closable: true,
       })?.onClose.subscribe((e: Degree) => {
@@ -47,7 +47,26 @@ export class StepDegreeComponent {
   }
 
   del(i: number) {
-    this.ds.delDegree(i);
+    // reterive degree and check if it already submit to server should be remove from server before remove iot from client
+    const degree = this.ds.state().degrees[i];
+    if(degree.id){
+      this.profile.deleteEduction(degree.id).subscribe({
+        next: () => {
+          this.ds.delDegree(i);
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.errorTitle'),
+            detail: this.translate.instant('wizard.degrees.deleteError'),
+            life: 5000,
+          });
+        },
+      });
+    } else {
+      this.ds.delDegree(i);
+    }
   }
 
   // ====== NEW: submit to API ======

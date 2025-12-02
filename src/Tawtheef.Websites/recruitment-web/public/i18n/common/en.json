@@ -19,6 +19,9 @@
     "maxFileSize": "File size must not exceed {{size}} MB.",
     "dateRange": "End date must be after start date."
   },
+  "remote-select": {
+    "search-hint": "Type at least {{minChars}} characters to search"
+  },
   "common": {
     "ar": "عربي",
     "en": "English",

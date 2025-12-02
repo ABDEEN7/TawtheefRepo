@@ -4,4 +4,4 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetDegreesQuery: IRequest<IResult<List<DropdownOptions>>>;
+public sealed record GetDegreesQuery: BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;
