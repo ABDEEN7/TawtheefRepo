@@ -37,19 +37,37 @@
         </div>
 
         <div class="row g-2 g-md-3 align-items-start">
-          <div class="row g-2 g-md-3 align-items-center">
-            <div class="col-12 d-flex align-items-center gap-2">
-              <input type="checkbox"
-                     id="current"
-                     class="form-check-input"
-                     formControlName="current"
-                     (change)="onCurrentToggle()">
-              <label for="current" class="form-check-label">
-                {{ 'wizard.experience.current' | translate }}
-              </label>
-            </div>
+          <div class="col-12 d-flex flex-column">
+            <label for="country" class="form-label required fw-semibold mb-2">
+              {{ 'wizard.experience.country' | translate }}
+            </label>
+            <p-select size="small" [filter]="true" [filterBy]="'name'"
+                      inputId="country"
+                      formControlName="country"
+                      [options]="lookups.countries()" optionLabel="name"
+                      [placeholder]="'wizard.experience.choiceCountry' | translate"
+                      [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+                      [ngClass]="{
+                'p-invalid': f['country'].invalid && (f['country'].dirty || f['country'].touched)
+              }">
+            </p-select>
+            <small *ngIf="f['country'].invalid && (f['country'].dirty || f['country'].touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
           </div>
-
+        </div>
+        <div class="row g-2 g-md-3 align-items-start">
+          <div class="col-12 d-flex align-items-center gap-2">
+            <input type="checkbox"
+                   id="current"
+                   class="form-check-input"
+                   formControlName="current"
+                   (change)="onCurrentToggle()">
+            <label for="current" class="form-check-label">
+              {{ 'wizard.experience.current' | translate }}
+            </label>
+          </div>
           <div class="row g-2 g-md-3 align-items-start">
             <!-- From -->
             <div class="col-12 col-md-6 d-flex flex-column">
@@ -72,7 +90,7 @@
                 {{ 'validation.noFuture' | translate }}
               </small>
             </div>
-
+            <!-- To -->
             <div class="col-12 col-md-6 d-flex flex-column" *ngIf="!f['current'].value">
               <label class="form-label fw-semibold mb-2" [ngClass]="{'required': !f['current'].value}">
                 <i class="fa-solid fa-calendar-day me-1"></i> {{ 'wizard.experience.to' | translate }}
@@ -112,6 +130,20 @@
         </div>
       </div>
 
+      <div class="row g-2 g-md-3 align-items-start mt-1">
+        <div class="col-12 d-flex flex-column">
+          <label class="form-label fw-semibold mb-2 required">
+            <i class="fa-solid fa-list-check me-1"></i> {{ 'wizard.experience.tasks' | translate }}
+          </label>
+          <textarea rows="2" class="form-control"
+                    formControlName="description"
+                    [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}"></textarea>
+          <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)" class="text-danger mt-1 d-block">
+            {{ 'validation.maxLength' | translate:{max:1000} }}
+          </small>
+        </div>
+      </div>
+
       <div class="mt-3 d-flex flex-column">
         <label class="form-label required">
           {{ 'wizard.experience.attachment' | translate }}
@@ -137,20 +169,6 @@
         <small *ngIf="fileError" class="text-danger mt-1 d-block">
           {{ fileError }}
         </small>
-      </div>
-
-      <div class="row g-2 g-md-3 align-items-start mt-1">
-        <div class="col-12 d-flex flex-column">
-          <label class="form-label fw-semibold mb-2 required">
-            <i class="fa-solid fa-list-check me-1"></i> {{ 'wizard.experience.tasks' | translate }}
-          </label>
-          <textarea rows="2" class="form-control"
-                    formControlName="description"
-                    [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}"></textarea>
-          <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)" class="text-danger mt-1 d-block">
-            {{ 'validation.maxLength' | translate:{max:1000} }}
-          </small>
-        </div>
       </div>
     </div>
   </div>

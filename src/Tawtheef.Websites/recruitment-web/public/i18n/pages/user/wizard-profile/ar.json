@@ -171,9 +171,12 @@
       "tasks": "المهام والمسؤوليات",
       "current": "أعمل هنا حتى الآن",
       "attachment": "إرفاق شهادة خبرة (PDF/صورة)",
+      "country": "بلد الدورة",
+      "choiceCountry": "اختر بلد الدورة",
       "table": {
         "org": "الجهة",
         "title": "المسمى",
+        "country": "الدولة",
         "period": "الفترة",
         "tasks": "المهام",
         "file": "الملف"
@@ -187,9 +190,12 @@
       "period": "الفترة",
       "notes": "ملاحظات",
       "certificate": "شهادة الدورة (PDF/صورة)",
+      "country": "بلد الدورة",
+      "choiceCountry": "اختر بلد الدورة",
       "table": {
         "provider": "الجهة",
         "courseName": "الدورة",
+        "country": "الدولة",
         "period": "الفترة",
         "file": "الملف"
       },

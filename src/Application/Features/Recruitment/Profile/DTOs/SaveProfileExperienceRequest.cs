@@ -16,10 +16,11 @@ public sealed class SaveProfileExperienceRequest
 public sealed class ExperienceUpsertDto
 {
     public Guid? Id { get; set; }
-    public required string Organization { get; set; }
-    public required string Name { get; set; }
+    public required string EmployerName { get; set; }
+    public required string JobTitle { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
+    public Guid CountryId { get; set; }
     public string? Description { get; set; }
 
     public Guid? CertificateId { get; set; }
@@ -29,10 +30,11 @@ public sealed class ExperienceUpsertDto
 public sealed class TrainingCourseUpsertDto
 {
     public Guid? Id { get; set; }
-    public required string Organization { get; set; }
-    public required string Name { get; set; }
+    public required string Provider { get; set; }
+    public required string Title { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
+    public Guid CountryId { get; set; }
     public string? Description { get; set; }
     public Guid? CertificateId { get; set; }
     public int? CertificateFileIndex { get; set; }

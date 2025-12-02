@@ -5,6 +5,7 @@ import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-req
 import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.model';
 import {GUID} from '../../../../shared/types/guid.type';
 import {HttpService} from '../../../../core/http/http.service';
+import {Experience, TrainingCourse} from '../models/experience.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -85,17 +86,18 @@ export class ProfileService {
   }
 
   // ========== EXPERIENCE ==========
-  saveExperienceSection(experiences: any[], courses: any[]) {
+  saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
     const experienceFiles: (File | null | undefined)[] = [];
     const experiencesDto = (experiences ?? []).map(e => {
       const fileIndex = e.file ? experienceFiles.push(e.file) - 1 : null;
 
       return {
         id: e.id ?? null,
-        organization: e.org,
-        name: e.name,
+        employerName: e.employerName,
+        jobTitle: e.jobTitle,
         startDate: e.from,
         endDate: e.current ? null : e.to,
+        countryId: e.country?.id,
         certificateId: e.attachmentId ?? null,
         certificateFileIndex: fileIndex,
         description: e.description,
@@ -108,10 +110,11 @@ export class ProfileService {
 
       return {
         id: c.id ?? null,
-        organization: c.org,
-        name: c.name,
+        title: c.title,
+        provider: c.provider,
         startDate: c.from,
         endDate: c.to,
+        countryId: c.country?.id,
         description: c.description,
         certificateId: c.attachmentId ?? null,
         certificateFileIndex: fileIndex,

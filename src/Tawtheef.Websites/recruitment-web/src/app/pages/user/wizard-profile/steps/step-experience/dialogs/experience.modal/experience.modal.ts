@@ -15,6 +15,9 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { NgClass, NgIf } from '@angular/common';
 import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
+import {Select} from 'primeng/select';
+import {ProfileLookupsService} from '../../../../services/profile-lookups.service';
+import {Experience} from '../../../../models/experience.model';
 
 @Component({
   selector: 'app-experience',
@@ -26,7 +29,8 @@ import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
     NgIf,
     Button,
     InputText,
-    NgClass
+    NgClass,
+    Select
   ],
   templateUrl: './experience.modal.html',
   styleUrl: './experience.modal.scss',
@@ -36,6 +40,7 @@ export class ExperienceModal implements OnInit {
   private ref = inject(DynamicDialogRef);
   private config = inject(DynamicDialogConfig);
   private translate = inject(TranslateService);
+  protected lookups = inject(ProfileLookupsService);
 
   readonly maxFileSize = 1_000_000; // 1MB
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
@@ -47,6 +52,7 @@ export class ExperienceModal implements OnInit {
     {
       org: ['', [Validators.required, Validators.maxLength(150)]],
       name: ['', [Validators.required, Validators.maxLength(150)]],
+      country: [null, [Validators.required]],
       from: [null, [Validators.required]],
       to: [null],
       current: [false],
@@ -123,15 +129,16 @@ export class ExperienceModal implements OnInit {
     const v = this.form.getRawValue();
 
     const payload = {
-      org: v.org,
-      name: v.name,
+      employerName: v.org,
+      jobTitle: v.name,
       from: dateToDateOnly(v.from),
       to: dateToDateOnly(v.current ? null : v.to),
+      country: v.country,
       current: !!v.current,
       description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null,
-    };
+    } as Experience;
 
     this.ref.close(payload);
   }

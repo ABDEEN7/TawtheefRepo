@@ -7,7 +7,7 @@ import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../../core/models
 import {ProfileLookupsService} from './profile-lookups.service';
 import {PhoneMapperService} from './phone-mapper.service';
 import {Degree} from '../models/degree.model';
-import {Experience} from '../models/experience.model';
+import {Experience, TrainingCourse} from '../models/experience.model';
 import {Skill} from '../models/skill.model';
 import {Language} from '../models/language.model';
 import {Attachment} from '../models/attachment.model';
@@ -160,10 +160,11 @@ export function mapProfileStatusToState(
 
     experiences: (dto.experiences ?? []).map(e => ({
       id: e.id,
-      org: e.employerName ?? '',
-      name: e.name ?? e.jobTitle ?? '',
+      employerName: e.employerName ?? '',
+      jobTitle: e.jobTitle ?? '',
       from: e.startDate ?? undefined,
       to: e.endDate ?? undefined,
+      country: mapIdToDropdown(lookups, 'countries', e.countryId),
       current: e.isCurrent,
       description: e.description ?? '',
       fileName: e.attachment?.fileName,
@@ -172,14 +173,15 @@ export function mapProfileStatusToState(
 
     courses: (dto.trainingCourses ?? []).map(t => ({
       id: t.id,
-      name: t.name ?? t.title ?? '',
-      org: t.provider ?? '',
+      title: t.title ?? '',
+      provider: t.provider ?? '',
       from: t.startDate ?? undefined,
       to: t.endDate ?? undefined,
+      country: mapIdToDropdown(lookups, 'countries', t.countryId),
       description: t.description ?? '',
       fileName: t.attachment?.fileName,
       attachmentId: t.attachment?.resourceId,
-    } as Experience)),
+    } as TrainingCourse)),
 
     skills: (dto.skills ?? []).map(s => ({
       id: s.id,
@@ -223,7 +225,7 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
 // Convert backend ID → dropdownOptionsModel
 function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
 'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |
-'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType',
+'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country',
   id?: string | null): dropdownOptionsModel | undefined {
   if (!id) return undefined;
   switch (kind) {

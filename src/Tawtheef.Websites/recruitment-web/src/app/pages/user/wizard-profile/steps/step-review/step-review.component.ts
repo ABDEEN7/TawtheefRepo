@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {finalize} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
 import {Skill} from '../../models/skill.model';
+import {CandidateType} from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-step-review',
@@ -32,9 +33,20 @@ export class StepReviewComponent {
 
   canSubmit = computed(() => this.missing().length === 0);
 
+  get isResidentQatar(): boolean {
+    const type = this.ds.state().candidateType?.backendName as CandidateType | undefined;
+    if (!type) return false;
+
+    return [
+      CandidateType.ResidentQatar,
+      CandidateType.Qatari,
+      CandidateType.SonOfQatariMother,
+      CandidateType.WifeOfQatari
+    ].includes(type);
+  }
   hasNationalAddress = computed(() => {
     const s = this.ds.state();
-    return !!(s.naZone || s.naStreet || s.naBuilding || s.naUnit || s.naFileName);
+    return this.isResidentQatar && !!(s.naZone || s.naStreet || s.naBuilding || s.naUnit || s.naFileName);
   });
 
   hasSponsor = computed(() => {

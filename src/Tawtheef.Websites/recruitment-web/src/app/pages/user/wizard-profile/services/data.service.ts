@@ -2,7 +2,7 @@
 import {ProfileState} from '../models/profile-state.model';
 import {Language} from '../models/language.model';
 import {Degree} from '../models/degree.model';
-import {Experience} from '../models/experience.model';
+import {Experience, TrainingCourse} from '../models/experience.model';
 import {Attachment} from '../models/attachment.model';
 import {CandidateType} from '../../../../core/enums/lookups.enum';
 import {Skill} from '../models/skill.model';
@@ -153,7 +153,7 @@ export class DataService {
   addExp(e: Experience){ this.state.update(s => ({...s, experiences:[...s.experiences, e]})); }
   delExp(i:number){ this.state.update(s => ({...s, experiences: s.experiences.filter((_,x)=>x!==i)})); }
 
-  addCourse(e: Experience){ this.state.update(s => ({...s, courses:[...s.courses, e]})); }
+  addCourse(e: TrainingCourse){ this.state.update(s => ({...s, courses:[...s.courses, e]})); }
   delCourse(i:number){ this.state.update(s => ({...s, courses: s.courses.filter((_,x)=>x!==i)})); }
 
   addLang(l: Language){ this.state.update(s => ({...s, languages:[...s.languages, l]})); }

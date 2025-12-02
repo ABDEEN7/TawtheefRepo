@@ -64,10 +64,11 @@ public sealed class SaveProfileExperienceHandler(
 
             var entity = new Experience
             {
-                Organization  = dto.Organization,
-                Name          = dto.Name,
+                EmployerName  = dto.EmployerName,
+                JobTitle      = dto.JobTitle,
                 StartDate     = dto.StartDate,
                 EndDate       = dto.EndDate,
+                CountryId     = dto.CountryId,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id,
                 Description   = dto.Description
@@ -93,10 +94,11 @@ public sealed class SaveProfileExperienceHandler(
 
             var entity = new TrainingCourse
             {
-                Organization  = dto.Organization,
-                Name          = dto.Name,
+                Title     = dto.Title,
+                Provider  = dto.Provider,
                 StartDate     = dto.StartDate,
                 EndDate       = dto.EndDate,
+                CountryId     = dto.CountryId,
                 Description   = dto.Description,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id

@@ -97,10 +97,12 @@ public sealed class ProfileCompletenessService(
             .Select(e => new ExperienceDto
             {
                 Id           = e.Id,
-                EmployerName = e.Organization,
-                JobTitle     = e.Position,
+                EmployerName = e.EmployerName,
+                JobTitle     = e.JobTitle,
+                CountryId    = e.CountryId,
                 StartDate    = e.StartDate,
                 EndDate      = e.EndDate,
+                Description  = e.Description,
                 IsCurrent    = e.EndDate is null,
                 Attachment   = ToFileRef(e.Certificate)
             })
@@ -111,10 +113,12 @@ public sealed class ProfileCompletenessService(
             .Select(t => new TrainingCourseDto
             {
                 Id        = t.Id,
-                Provider  = t.Organization,
-                Title     = t.Position,
+                Provider  = t.Provider,
+                Title     = t.Title,
+                CountryId    = t.CountryId,
                 StartDate = t.StartDate,
                 EndDate   = t.EndDate,
+                Description   = t.Description,
                 Attachment = ToFileRef(t.Certificate)
             })
             .ToList();

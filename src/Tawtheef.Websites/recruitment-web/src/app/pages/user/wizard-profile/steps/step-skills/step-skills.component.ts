@@ -143,7 +143,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     }
     const state = this.ds.state();
     const skills = state.skills || [];
-    const languages = state.languages || [];
 
     this.saving = true;
     this.profile.saveSkillsSection(skills).subscribe({

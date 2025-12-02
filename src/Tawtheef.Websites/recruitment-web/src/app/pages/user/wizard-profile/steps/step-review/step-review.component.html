@@ -76,11 +76,11 @@
         <div class="fw-semibold">{{ ds.state().sponsorType?.name || '—' }}</div>
       </div>
       <div class="col-md-3" *ngIf="hasSponsor()">
-        <div class="small text-muted">{{ 'wizard.personal.sponsorName' | translate }}</div>
+        <div class="small text-muted">{{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.name`| lowercase | translate }}</div>
         <div class="fw-semibold">{{ ds.state().sponsorEmployerName || '—' }}</div>
       </div>
       <div class="col-md-3" *ngIf="hasSponsor()">
-        <div class="small text-muted">{{ 'wizard.personal.sponsor.individual.qid' | translate }}</div>
+        <div class="small text-muted">{{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.qid`| lowercase | translate }}</div>
         <div class="fw-semibold">{{ ds.state().sponsorEmployerNumber || '—' }}</div>
       </div>
     </div>
@@ -104,7 +104,7 @@
         <div class="small text-muted">{{ 'wizard.contact.email' | translate }}</div>
         <div class="fw-semibold">{{ ds.state().email || '—' }}</div>
       </div>
-      <div class="col-12">
+      <div class="col-12" *ngIf="!hasNationalAddress">
         <div class="small text-muted">{{ 'wizard.contact.address' | translate }}</div>
         <div class="fw-semibold">{{ ds.state().address || '—' }}</div>
       </div>
@@ -176,6 +176,7 @@
         <tr>
           <th>{{ 'wizard.experience.table.org' | translate }}</th>
           <th>{{ 'wizard.experience.table.title' | translate }}</th>
+          <th>{{ 'wizard.experience.country' | translate }}</th>
           <th>{{ 'wizard.experience.period' | translate }}</th>
           <th>{{ 'wizard.experience.tasks' | translate }}</th>
           <th>{{ 'wizard.experience.table.file' | translate }}</th>
@@ -183,8 +184,9 @@
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.org }}</td>
-          <td>{{ r.name }}</td>
+          <td>{{ r.employerName }}</td>
+          <td>{{ r.jobTitle }}</td>
+          <td>{{ r.country!.name }}</td>
           <td>{{ (r.from | date: 'yy/MM') || '—' }} - {{ r.current ? ('wizard.experience.current' | translate) : ((r.to | date: 'yy/MM') || '—') }}</td>
           <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
           <td>{{ r.certificate?.resourceName || r.fileName || '—' }}</td>
@@ -206,6 +208,7 @@
         <tr>
           <th>{{ 'wizard.courses.table.provider' | translate }}</th>
           <th>{{ 'wizard.courses.table.courseName' | translate }}</th>
+          <th>{{ 'wizard.experience.country' | translate }}</th>
           <th>{{ 'wizard.courses.period' | translate }}</th>
           <th>{{ 'wizard.courses.notes' | translate }}</th>
           <th>{{ 'wizard.courses.table.file' | translate }}</th>
@@ -213,8 +216,9 @@
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.org }}</td>
-          <td>{{ r.name }}</td>
+          <td>{{ r.provider }}</td>
+          <td>{{ r.title }}</td>
+          <td>{{ r.country!.name }}</td>
           <td>{{ (r.from | date: 'yy/MM') || '—' }} - {{ (r.to | date: 'yy/MM') || '—' }}</td>
           <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
           <td>{{ r.certificate?.resourceName || r.fileName || '—' }}</td>

@@ -1,14 +1,29 @@
 import {GUID} from '../../../../shared/types/guid.type';
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 
 export interface Experience {
   id?: GUID;
-  org: string;
-  name: string;
+  employerName: string;
+  jobTitle: string;
   from?: string;
   to?: string;
+  country: dropdownOptionsModel | null | undefined;
   description?: string;
   fileName?: string;
   file?: File | null;
   attachmentId?: string | null;
   current?: boolean;
+}
+export interface TrainingCourse {
+  id?: GUID;
+  title: string;
+  provider: string;
+  country: dropdownOptionsModel | null | undefined;
+  from?: string;
+  to?: string;
+  description?: string;
+
+  fileName?: string;
+  file?: File | null;
+  attachmentId?: string | null;
 }

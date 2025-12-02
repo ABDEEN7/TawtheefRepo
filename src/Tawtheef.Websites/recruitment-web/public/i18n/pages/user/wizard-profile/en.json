@@ -40,7 +40,6 @@
       "hasDisability": "Do you have a disability?",
       "disabilityType": "Disability Type",
       "sponsorType": "Sponsor Type",
-      "sponsorName": "Establishment Name",
       "sponsor": {
         "company": {
           "name": "Establishment Name",
@@ -184,6 +183,8 @@
       "attachment": "Experience certificate (PDF/image)",
       "deleteError": "Failed to delete experience. Please try again.",
       "saveError": "Failed to save experience section. Please try again.",
+      "country": "Country",
+      "choiceCountry": "Choose country",
       "validation": {
         "noRows": "Please add at least one experience."
       },
@@ -204,6 +205,8 @@
       "notes": "Notes (optional)",
       "certificate": "Course certificate (PDF/image)",
       "deleteError": "Failed to delete course. Please try again.",
+      "country": "Country",
+      "choiceCountry": "Choose country",
       "table": {
         "provider": "Provider",
         "courseName": "Course",

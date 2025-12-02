@@ -109,27 +109,27 @@ public sealed class QualificationDto
 public sealed class ExperienceDto
 {
     public Guid Id { get; init; }
-    public string? Name { get; init; }
     public string? Description { get; init; }
     public string? EmployerName { get; init; }
     public string? JobTitle { get; init; }
+    public Guid? CountryId { get; init; }
     public DateOnly? StartDate { get; init; }
     public DateOnly? EndDate { get; init; }
     public bool IsCurrent { get; init; }
 
-    public FileRefDto? Attachment { get; init; }      // ملف إثبات الخبرة إن وجد
+    public FileRefDto? Attachment { get; init; }
 }
 
 // ====== Training Courses ======
 public sealed class TrainingCourseDto
 {
     public Guid Id { get; init; }
-    public string? Name { get; init; }
-    public string? Description { get; init; }
     public string? Title { get; init; }
     public string? Provider { get; init; }
+    public Guid? CountryId { get; init; }
     public DateOnly? StartDate { get; init; }
     public DateOnly? EndDate { get; init; }
+    public string? Description { get; init; }
 
     public FileRefDto? Attachment { get; init; }
 }

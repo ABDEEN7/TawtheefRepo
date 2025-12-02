@@ -8,6 +8,9 @@ import { InputText } from 'primeng/inputtext';
 import {NgClass, NgIf} from '@angular/common';
 import {periodRangeValidator} from '../../../../../../../shared/validator/period-range,validator';
 import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
+import {TrainingCourse} from '../../../../models/experience.model';
+import {Select} from 'primeng/select';
+import {ProfileLookupsService} from '../../../../services/profile-lookups.service';
 
 @Component({
   selector: 'app-course',
@@ -20,6 +23,7 @@ import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
     InputText,
     NgClass,
     NgIf,
+    Select,
   ],
   templateUrl: './course.modal.html',
   styleUrl: './course.modal.scss',
@@ -29,6 +33,7 @@ export class CourseModal implements OnInit {
   private ref = inject(DynamicDialogRef);
   private config = inject(DynamicDialogConfig);
   private translate = inject(TranslateService);
+  protected lookups = inject(ProfileLookupsService);
 
   readonly maxFileSize = 1_000_000; // 1MB
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
@@ -37,6 +42,7 @@ export class CourseModal implements OnInit {
   form: FormGroup = this.fb.group({
     org: ['', [Validators.required, Validators.maxLength(150)]],
     name: ['', [Validators.required, Validators.maxLength(150)]],
+    country: [null, [Validators.required]],
     period: [null, [Validators.required, periodRangeValidator]],
     description: ['', [Validators.maxLength(500)]],
     fileName: [''],
@@ -85,14 +91,15 @@ export class CourseModal implements OnInit {
     const to   = period && period.length > 1 ? dateToDateOnly(period[1]) : null;
 
     const payload = {
-      org: v.org,
-      name: v.name,
+      title: v.name,
+      provider: v.org,
       from,
       to,
+      country: v.country,
       description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null
-    };
+    } as TrainingCourse;
 
     this.ref.close(payload);
   }

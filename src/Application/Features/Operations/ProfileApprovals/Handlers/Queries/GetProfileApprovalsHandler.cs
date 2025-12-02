@@ -42,7 +42,7 @@ public class GetProfileApprovalsHandler(IUnitOfWork uow)
             .Select(g => new
             {
                 g.Key,
-                Pending = g.Count(r => r.Status is ReviewStatus.Pending or ReviewStatus.ChangesRequested || r.IsOutdated),
+                Pending = g.Count(r => (r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.ChangesRequested) || r.IsOutdated),
                 OverallStatus =
                     g.Any(r => r.Status == ReviewStatus.Rejected)
                         ? ReviewStatus.Rejected

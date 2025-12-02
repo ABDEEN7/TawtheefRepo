@@ -256,12 +256,12 @@
              (click)="sponsorInput.click()">
 
           <div class="upload-field__icon">
-            <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().sponsorCardFileName"/>
-            <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().sponsorCardFileName"/>
+            <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().sponsorCardName"/>
+            <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().sponsorCardName"/>
           </div>
 
           <div class="upload-field__text">
-            {{ ds.state().sponsorCardFileName || (`wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate) }}
+            {{ ds.state().sponsorCardName || (`wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate) }}
           </div>
 
           <input #sponsorInput

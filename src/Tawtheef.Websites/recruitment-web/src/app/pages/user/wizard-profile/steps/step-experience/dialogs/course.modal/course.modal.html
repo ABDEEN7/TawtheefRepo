@@ -37,12 +37,30 @@
         </div>
 
         <div class="row g-2 g-md-3 align-items-start">
-          <div class="col-12 d-flex flex-column">
+          <div class="col-12 col-md-6 d-flex flex-column">
+            <label for="country" class="form-label required fw-semibold mb-2">
+              {{ 'wizard.courses.country' | translate }}
+            </label>
+            <p-select size="small" [filter]="true" [filterBy]="'name'"
+                      inputId="country"
+                      formControlName="country"
+                      [options]="lookups.countries()" optionLabel="name"
+                      [placeholder]="'wizard.courses.choiceCountry' | translate"
+                      [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+                      [ngClass]="{
+                'p-invalid': f['country'].invalid && (f['country'].dirty || f['country'].touched)
+              }">
+            </p-select>
+            <small *ngIf="f['country'].invalid && (f['country'].dirty || f['country'].touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+          </div>
+          <div class="col-12 col-md-6 d-flex flex-column">
             <label class="form-label fw-semibold mb-2 required">
               <i class="fa-solid fa-calendar-day me-1"></i>
               {{ 'wizard.courses.period' | translate }}
             </label>
-
             <p-date-picker
               formControlName="period"
               selectionMode="range"
@@ -55,12 +73,10 @@
           f['period'].invalid && (f['period'].dirty || f['period'].touched)
       }">
             </p-date-picker>
-
             <small *ngIf="f['period'].hasError('required') && (f['period'].dirty || f['period'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
-
             <small *ngIf="f['period'].hasError('periodRange') && (f['period'].dirty || f['period'].touched)"
                    class="text-danger mt-1 d-block">
               {{ 'validation.dateRange' | translate }}

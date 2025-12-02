@@ -110,16 +110,20 @@ export interface TrainingCourseDto {
   id: GUID;
   title?: string | null;
   provider?: string | null;
+  countryId: GUID;
   startDate?: string | null;
   endDate?: string | null;
+  description?: string | null;
   attachment?: FileRefDto | null;
 }
 export interface ExperienceDto {
   id: GUID;
   employerName?: string | null;
   jobTitle?: string | null;
-  startDate?: string | null; // DateOnly → string
+  countryId: GUID;
+  startDate?: string | null;
   endDate?: string | null;
+  description?: string | null;
   isCurrent: boolean;
   attachment?: FileRefDto | null;
 }
