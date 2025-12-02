@@ -79,6 +79,8 @@ export class StepPersonalComponent {
     const ref = this.ds.state().sponsorCardFile;
     if (ref?.url) {
       this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
+    }else if(ref?.file){
+      this.fileUtils.previewBlob(ref?.file);
     }
   }
 
@@ -87,7 +89,8 @@ export class StepPersonalComponent {
     const file = input.files?.[0];
     if (!file) return;
     this.sponsorCardLocalFile = file;
-    this.ds.up('sponsorCardFile', { resourceId: 'local', fileName: file.name } as any);
+    this.ds.up('sponsorCardName', file.name);
+    this.ds.up('sponsorCardFile', { resourceId: 'local', fileName: file.name, file: file } as any);
     input.value = '';
   }
   onNext() {

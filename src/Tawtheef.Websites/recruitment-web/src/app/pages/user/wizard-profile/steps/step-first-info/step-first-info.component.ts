@@ -56,22 +56,22 @@ export class StepFirstInfoComponent {
     switch (kind) {
       case 'cv':
         this.cvFile = file;
-        this.ds.up('cvFile', { resourceId: 'local', resourceName: file.name });
+        this.ds.up('cvFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('cvName', file.name);
         break;
       case 'id':
         this.idFile = file;
-        this.ds.up('idFile', { resourceId: 'local', resourceName: file.name });
+        this.ds.up('idFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('idName', file.name);
         break;
       case 'birth':
         this.birthCertificateFile = file;
-        this.ds.up('birthCertificateFile', { resourceId: 'local', resourceName: file.name });
+        this.ds.up('birthCertificateFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('birthCertificateName', file.name);
         break;
       case 'marriage':
         this.marriageCertificateFile = file;
-        this.ds.up('marriageCertificateFile', {resourceId: 'local', resourceName: file.name });
+        this.ds.up('marriageCertificateFile', {resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('marriageCertificateName', file.name);
         break;
     }
@@ -131,13 +131,33 @@ export class StepFirstInfoComponent {
   private getLocalFile(kind: 'cv' | 'id' | 'birth' | 'marriage'): File | null {
     switch (kind) {
       case 'cv':
-        return this.cvFile;
+        if(this.cvFile){
+          return this.cvFile;
+        }else{
+          const state = this.ds.state();
+          return state.cvFile?.file ?? null;
+        }
       case 'id':
-        return this.idFile;
+        if(this.idFile){
+          return this.idFile;
+        }else{
+          const state = this.ds.state();
+          return state.idFile?.file ?? null;
+        }
       case 'birth':
-        return this.birthCertificateFile;
+        if(this.birthCertificateFile){
+          return this.birthCertificateFile;
+        }else{
+          const state = this.ds.state();
+          return state.birthCertificateFile?.file ?? null;
+        }
       case 'marriage':
-        return this.marriageCertificateFile;
+        if(this.marriageCertificateFile){
+          return this.marriageCertificateFile;
+        }else{
+          const state = this.ds.state();
+          return state.marriageCertificateFile?.file ?? null;
+        }
     }
   }
 

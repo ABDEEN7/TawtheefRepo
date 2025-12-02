@@ -351,7 +351,8 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     this.naFileError = null;
     this.naLocalFile = file;
-    this.ds.up('naFile', { resourceId: 'local', fileName: file.name } as any);
+    this.ds.up('naFileName', file.name);
+    this.ds.up('naFile', { resourceId: 'local', fileName: file.name, file: file } as any);
     input.value = '';
   }
   onNext(): void {
@@ -388,6 +389,8 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const ref = this.ds.state().naFile;
     if (ref?.url) {
       this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
+    }else if(ref?.file){
+      this.fileUtils.previewBlob(ref?.file);
     }
   }
 }

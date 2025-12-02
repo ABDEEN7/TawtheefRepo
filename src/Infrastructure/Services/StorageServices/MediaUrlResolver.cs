@@ -47,7 +47,7 @@ public sealed class MediaUrlResolver(IOptions<AppConfigSettings> cfg, IFileStora
     public string ResolvePrivate(string blobKey)
     {
         var enc = EncodeBlobKey(blobKey);
-        return $"{_apiBase}/resource/{enc}";
+        return $"{_apiBase}/resources/{enc}";
     }
 
     // OPTIONAL: signed private links to prevent tampering (recommended)
@@ -58,7 +58,7 @@ public sealed class MediaUrlResolver(IOptions<AppConfigSettings> cfg, IFileStora
         var exp = DateTimeOffset.UtcNow.Add(ttl).ToUnixTimeSeconds();
         var payload = $"{encBlob}.{exp}";
         var sig = ComputeHmacSha256Base64Url(key, payload);
-        return $"{_apiBase}/resource/dl?b={encBlob}&exp={exp}&sig={sig}";
+        return $"{_apiBase}/resources/dl?b={encBlob}&exp={exp}&sig={sig}";
     }
 
     private static string EncodeBlobKey(string blobKey)

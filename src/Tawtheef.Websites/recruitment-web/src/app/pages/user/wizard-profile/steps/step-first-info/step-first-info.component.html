@@ -18,17 +18,10 @@
     <div class="col-12"><hr></div>
     <!-- CV -->
     <div class="col-md-6">
-      <label class="form-label required d-flex justify-content-between align-items-center">
+      <label class="form-label required d-flex align-items-center">
         <span class="d-flex align-items-center gap-2">
           {{ 'wizard.prereq.cvLabel' | translate }}
-          <button *ngIf="canPreview('cv')"
-                  type="button"
-                  class="btn btn-link p-0 fz-2xs"
-                  (click)="previewFile('cv', $event)">
-            <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.view' | translate }}
-          </button>
         </span>
-        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
       </label>
 
       <div class="upload-field"
@@ -54,17 +47,10 @@
     </div>
     <!-- ID -->
     <div class="col-md-6">
-      <label class="form-label required d-flex justify-content-between align-items-center">
+      <label class="form-label required d-flex align-items-center">
         <span class="d-flex align-items-center gap-2">
           {{ 'wizard.prereq.idLabel' | translate }}
-          <button *ngIf="canPreview('id')"
-                  type="button"
-                  class="btn btn-link p-0 fz-2xs"
-                  (click)="previewFile('id', $event)">
-            <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.view' | translate }}
-          </button>
         </span>
-        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
       </label>
 
       <div class="upload-field"

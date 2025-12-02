@@ -10,6 +10,7 @@ export interface UploadedFileRef {
   resourceId: string;
   resourceName: string;
   url?: string | null;
+  file?: File | null;
 }
 export interface ProfileState {
   // prereq
