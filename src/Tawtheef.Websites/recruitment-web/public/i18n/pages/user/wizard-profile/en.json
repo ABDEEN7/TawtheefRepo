@@ -77,12 +77,21 @@
       "nameAr": "Full name (Arabic)",
       "nameEn": "Full name (English)",
       "qid": "National Number",
+      "qidExpiry": "QID expiry date",
       "dob": "Date of birth",
       "nationality": "Nationality",
       "gender": "Gender",
       "religion": "Religion",
       "marital": "Marital status",
       "children": "Children count",
+      "verify": {
+        "title": "Verify QID",
+        "button": "Verify QID information",
+        "loading": "Verifying...",
+        "success": "We fetched your information successfully.",
+        "missing": "Please enter your QID and expiry date before verifying.",
+        "error": "We couldn't verify your details. Please check the QID and expiry date."
+      },
       "prerequisites": "Prerequisites review",
       "review": {
         "title": "Prerequisites have been completed",
@@ -94,6 +103,14 @@
         "idCard": "ID Card",
         "edit": "Edit Prerequisites"
       }
+    },
+    "verify": {
+      "title": "Verify QID",
+      "button": "Verify QID information",
+      "loading": "Verifying...",
+      "success": "We fetched your information successfully.",
+      "missing": "Please enter your QID and expiry date before verifying.",
+      "error": "We couldn't verify your details. Please check the QID and expiry date."
     },
     "contact": {
       "country": "Country",
@@ -354,6 +371,9 @@
         },
         "qid": {
           "required": "Please enter national number"
+        },
+        "qidExpiry": {
+          "required": "Please enter QID expiry date"
         },
         "dob": {
           "required": "Please enter date of birth"

@@ -1,4 +1,5 @@
 ﻿import { Injectable, inject } from '@angular/core';
+import {HttpParams} from '@angular/common/http';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
 import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
@@ -7,6 +8,7 @@ import {GUID} from '../../../../shared/types/guid.type';
 import {HttpService} from '../../../../core/http/http.service';
 import {Experience, TrainingCourse} from '../models/experience.model';
 import {of} from 'rxjs';
+import {MoiPersonalInfo} from '../models/moi-personal-info.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -43,6 +45,14 @@ export class ProfileService {
     });
 
     return this.http.post(this.endpoints.user.profile.savePersonal, formData);
+  }
+
+  checkProfile(qid: string, expiryDate: string) {
+    const params = new HttpParams()
+      .set('qid', qid)
+      .set('expiryDate', expiryDate);
+
+    return this.http.get<MoiPersonalInfo>(this.endpoints.user.profile.checkProfile, { params });
   }
 
   // ========== CONTACT ==========

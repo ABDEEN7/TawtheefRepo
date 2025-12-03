@@ -40,6 +40,7 @@ public sealed class ProfileStatusDto
     public bool PhoneVerified { get; init; }
 
     public string? NationalNumber { get; init; }
+    public DateOnly? QIDExpiry { get; init; }
     public DateOnly? BirthDate { get; init; }
     public Guid? NationalityId { get; init; }
     public Guid? GenderId { get; init; }
