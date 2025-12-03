@@ -42,7 +42,9 @@ public sealed class SaveProfilePersonalHandler(
         profile.ChildrenCount   = r.ChildrenCount ?? profile.ChildrenCount;
 
         profile.HasDisability    = r.HasDisability;
-        profile.DisabilityDetails = r.DisabilityDetails;
+        profile.DisabilityDetails = r.HasDisability
+            ? r.DisabilityDetails
+            : null;
 
 
         if (!string.IsNullOrWhiteSpace(r.SponsorEmployerName) && !string.IsNullOrWhiteSpace(r.SponsorEmployerNumber))

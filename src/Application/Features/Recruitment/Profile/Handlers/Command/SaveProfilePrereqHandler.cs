@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -17,6 +18,8 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
         var profileRepo = uow.GetEntityRepository<UserProfile>();
 
         var profile = await profileRepo.DbSet
+            .Include(p => p.SponsorProfile)
+            .Include(p => p.ResidenceAddress)
             .SingleOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
@@ -34,6 +37,12 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
         profile.CandidateTypeId = r.CandidateTypeId;
         profile.TargetEntityId  = r.TargetEntityId;
 
+        var needsSponsor = profile.CandidateTypeId == CandidateTypeIds.ResidentQatar;
+        var needsBirthCertificate = profile.CandidateTypeId == CandidateTypeIds.SonOfQatariMother;
+        var needsMarriageCertificate = profile.CandidateTypeId == CandidateTypeIds.WifeOfQatari;
+        var requiresNationalAddress = profile.CandidateTypeId != CandidateTypeIds.NonQatari
+            && profile.CandidateTypeId != CandidateTypeIds.GCC;
+
         // CV
         var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, "cv");
         if (cvResult.IsFailed)
@@ -47,18 +56,34 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
         profile.NationalCardId = idResult.Value;
 
         // Birth Certificate
-        var birthResult = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId, "birth-certificate");
-        if (birthResult.IsFailed)
-            return Result.Fail<Unit>(birthResult.Errors);
-        profile.BirthdayCertificateId = birthResult.Value;
+        if (needsBirthCertificate)
+        {
+            var birthResult = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId, "birth-certificate");
+            if (birthResult.IsFailed)
+                return Result.Fail<Unit>(birthResult.Errors);
+            profile.BirthdayCertificateId = birthResult.Value;
+        }
+        else
+        {
+            profile.BirthdayCertificateId = null;
+        }
 
         // Marriage Certificate
-        var marriageResult = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, "marriage-certificate");
-        if (marriageResult.IsFailed)
-            return Result.Fail<Unit>(marriageResult.Errors);
-        profile.MarriageCertificateId = marriageResult.Value;
+        if (needsMarriageCertificate)
+        {
+            var marriageResult = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, "marriage-certificate");
+            if (marriageResult.IsFailed)
+                return Result.Fail<Unit>(marriageResult.Errors);
+            profile.MarriageCertificateId = marriageResult.Value;
+        }
+        else
+        {
+            profile.MarriageCertificateId = null;
+        }
 
         profile.IsDraft = true;
+
+        CleanCandidateTypeDependents();
 
         await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Personal, ct);
         if (profile.ResumeAttachmentId is not null)
@@ -72,6 +97,26 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
+
+        void CleanCandidateTypeDependents()
+        {
+            if (!needsSponsor)
+            {
+                profile.SponsorProfile = null;
+                profile.SponsorProfileId = null;
+            }
+
+            if (!requiresNationalAddress)
+            {
+                profile.ResidenceAddress = null;
+                profile.ResidenceAddressId = null;
+                profile.ResidenceAddressCertificateId = null;
+            }
+            else
+            {
+                profile.Address = null;
+            }
+        }
 
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId, string category)
         {
