@@ -24,24 +24,23 @@ export class DataService {
     emailVerified: false, phoneVerified: false,
   });
 
-  get isNeedSponsor(){
-    return [CandidateType.ResidentQatar].includes(
-      this.state().candidateType?.backendName as CandidateType
-    );
-  }
-  get isNeedBirthCertificate() {
-    const t = this.state().candidateType?.backendName as CandidateType | undefined;
-    if (!t) return false;
-    return [CandidateType.SonOfQatariMother].includes(t);
+  private candidateTypeFromState(state: ProfileState): CandidateType | undefined {
+    return state.candidateType?.backendName as CandidateType | undefined;
   }
 
-  get isNeedMarriageCertificate() {
-    const t = this.state().candidateType?.backendName as CandidateType | undefined;
-    if (!t) return false;
-    return [CandidateType.WifeOfQatari].includes(t);
+  private candidateTypeNeedsSponsor(type: CandidateType | undefined): boolean {
+    return !!type && [CandidateType.ResidentQatar].includes(type);
   }
-  get isResidentQatar(): boolean {
-    const type = this.state().candidateType?.backendName as CandidateType | undefined;
+
+  private candidateTypeNeedsBirthCertificate(type: CandidateType | undefined): boolean {
+    return !!type && [CandidateType.SonOfQatariMother].includes(type);
+  }
+
+  private candidateTypeNeedsMarriageCertificate(type: CandidateType | undefined): boolean {
+    return !!type && [CandidateType.WifeOfQatari].includes(type);
+  }
+
+  private candidateTypeIsResident(type: CandidateType | undefined): boolean {
     if (!type) return false;
 
     return [
@@ -50,6 +49,24 @@ export class DataService {
       CandidateType.SonOfQatariMother,
       CandidateType.WifeOfQatari
     ].includes(type);
+  }
+
+  get isNeedSponsor(){
+    return this.candidateTypeNeedsSponsor(this.candidateTypeFromState(this.state()));
+  }
+  get isNeedBirthCertificate() {
+    const t = this.candidateTypeFromState(this.state());
+    if (!t) return false;
+    return this.candidateTypeNeedsBirthCertificate(t);
+  }
+
+  get isNeedMarriageCertificate() {
+    const t = this.candidateTypeFromState(this.state());
+    if (!t) return false;
+    return this.candidateTypeNeedsMarriageCertificate(t);
+  }
+  get isResidentQatar(): boolean {
+    return this.candidateTypeIsResident(this.candidateTypeFromState(this.state()));
   }
 
   private isFilledScalar = (val: unknown) => {
@@ -186,7 +203,65 @@ export class DataService {
   });
 
   up<K extends keyof ProfileState>(key: K, val: ProfileState[K] | null) {
-    this.state.update(s => ({ ...s, [key]: val }));
+    this.state.update(s => {
+      const updated = { ...s, [key]: val } as ProfileState;
+
+      if (key === 'candidateType') {
+        return this.cleanCandidateTypeDependents(updated);
+      }
+
+      if (key === 'hasDisability') {
+        return this.cleanDisabilityDependents(updated);
+      }
+
+      return updated;
+    });
+  }
+
+  private cleanDisabilityDependents(state: ProfileState): ProfileState {
+    const next: ProfileState = { ...state };
+
+    if (!next.hasDisability) {
+      next.disabilityDetails = null;
+    }
+
+    return next;
+  }
+
+  private cleanCandidateTypeDependents(state: ProfileState): ProfileState {
+    const type = this.candidateTypeFromState(state);
+    const next: ProfileState = { ...state };
+
+    if (!this.candidateTypeNeedsSponsor(type)) {
+      next.sponsorType = null;
+      next.sponsorEmployerName = null;
+      next.sponsorEmployerNumber = null;
+      next.sponsorCardName = null;
+      next.sponsorCardFile = null;
+    }
+
+    if (!this.candidateTypeNeedsBirthCertificate(type)) {
+      next.birthCertificateName = null;
+      next.birthCertificateFile = null;
+    }
+
+    if (!this.candidateTypeNeedsMarriageCertificate(type)) {
+      next.marriageCertificateName = null;
+      next.marriageCertificateFile = null;
+    }
+
+    if (!this.candidateTypeIsResident(type)) {
+      next.naZone = null;
+      next.naStreet = null;
+      next.naBuilding = null;
+      next.naUnit = null;
+      next.naFileName = null;
+      next.naFile = null;
+    } else {
+      next.address = undefined;
+    }
+
+    return next;
   }
 
   addDegree(d: Degree){ this.state.update(s => ({...s, degrees:[...s.degrees, d]})); }
