@@ -84,6 +84,14 @@
       "religion": "Religion",
       "marital": "Marital status",
       "children": "Children count",
+      "verify": {
+        "title": "Verify QID",
+        "button": "Verify QID information",
+        "loading": "Verifying...",
+        "success": "We fetched your information successfully.",
+        "missing": "Please enter your QID and expiry date before verifying.",
+        "error": "We couldn't verify your details. Please check the QID and expiry date."
+      },
       "prerequisites": "Prerequisites review",
       "review": {
         "title": "Prerequisites have been completed",
