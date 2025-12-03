@@ -80,15 +80,6 @@ public class DegreeConfiguration : LookupBaseConfiguration<Degree>
                 NameEn = "Primary",
                 DescriptionAr = "ابتدائي",
                 DescriptionEn = "Primary"
-            },
-            new Degree
-            {
-                Id = DegreeIds.NoQualifications,
-                BackendName = nameof(DegreeIds.NoQualifications),
-                NameAr = "بدون مؤهل",
-                NameEn = "No Qualifications",
-                DescriptionAr = "بدون مؤهل",
-                DescriptionEn = "No Qualifications"
             }
         );
     }

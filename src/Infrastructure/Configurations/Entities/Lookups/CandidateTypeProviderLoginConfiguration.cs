@@ -21,11 +21,6 @@ public class CandidateTypeProviderLoginConfiguration
             new CandidateTypeProviderLogin
             {
                 ProviderLoginId = ProviderLoginIds.QatarPass,
-                CandidateTypeId = CandidateTypeIds.Qatari,
-            },
-            new CandidateTypeProviderLogin
-            {
-                ProviderLoginId = ProviderLoginIds.QatarPass,
                 CandidateTypeId = CandidateTypeIds.SonOfQatariMother,
             },
             new CandidateTypeProviderLogin

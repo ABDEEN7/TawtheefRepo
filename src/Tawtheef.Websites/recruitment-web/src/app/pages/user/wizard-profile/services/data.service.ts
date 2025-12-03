@@ -7,7 +7,6 @@ import {Attachment} from '../models/attachment.model';
 import {Skill} from '../models/skill.model';
 import {UserService} from '../../../../core/auth/user.service';
 import {NationalityMapperService, PhoneMapperService} from './phone-mapper.service';
-import {CountryISO} from 'ngx-intl-tel-input';
 import {
   candidateTypeFromState,
   candidateTypeIsResident,

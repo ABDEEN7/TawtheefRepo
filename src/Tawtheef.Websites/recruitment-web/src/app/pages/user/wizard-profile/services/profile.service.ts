@@ -6,6 +6,7 @@ import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.
 import {GUID} from '../../../../shared/types/guid.type';
 import {HttpService} from '../../../../core/http/http.service';
 import {Experience, TrainingCourse} from '../models/experience.model';
+import {of} from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -133,7 +134,7 @@ export class ProfileService {
   // ========== EXPERIENCE ==========
   saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
     const experienceFiles: (File | null | undefined)[] = [];
-    const experiencesDto = (experiences ?? []).map(e => {
+    const experiencesDto = (experiences ?? []).filter(e=> !e.id).map(e => {
       const fileIndex = e.file ? experienceFiles.push(e.file) - 1 : null;
 
       return {
@@ -148,9 +149,8 @@ export class ProfileService {
         description: e.description,
       };
     });
-
     const trainingCourseFiles: (File | null | undefined)[] = [];
-    const coursesDto = (courses ?? []).map(c => {
+    const coursesDto = (courses ?? []).filter(e=> !e.id).map(c => {
       const fileIndex = c.file ? trainingCourseFiles.push(c.file) - 1 : null;
 
       return {
@@ -166,18 +166,19 @@ export class ProfileService {
       };
     });
 
+    if(experiencesDto.length === 0 && coursesDto.length === 0)
+      return of(null);
+
     const formData = this.buildFormData({
       submit: false,
       experiencesJson: experiencesDto,
       trainingCoursesJson: coursesDto
     });
-
     experienceFiles.forEach(f => {
       if (f) {
         formData.append('ExperienceFiles', f);
       }
     });
-
     trainingCourseFiles.forEach(f => {
       if (f) {
         formData.append('TrainingCourseFiles', f);

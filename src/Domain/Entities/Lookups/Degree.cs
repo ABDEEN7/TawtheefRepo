@@ -13,7 +13,6 @@ public static class DegreeIds
     public static readonly Guid Secondary = Guid.Parse("ebf2faa1-5ce6-4a04-9472-2746bfbbd252");
     public static readonly Guid Preparatory = Guid.Parse("f1a31fe6-ba80-46cb-b24b-f402bcb4fdec");
     public static readonly Guid Primary = Guid.Parse("6e453f48-5f2f-4f98-8b76-f416cdd4811b");
-    public static readonly Guid NoQualifications = Guid.Parse("b4e889bb-a35c-46b6-8219-7e0600c71ce1");
 }
 
 [Table(nameof(Degree), Schema = Schemas.Lookup)]

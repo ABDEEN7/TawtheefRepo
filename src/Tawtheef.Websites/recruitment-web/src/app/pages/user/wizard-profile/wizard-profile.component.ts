@@ -106,6 +106,7 @@ export class WizardProfileComponent implements OnInit {
         this.avatarPreviewUrl = state.avatar ?? null;
         this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state));
         this.loading = false;
+        this.moveToFirstInvalidStep();
         return;
       }
       this.auth.getAuthBootstrap$()
@@ -120,9 +121,20 @@ export class WizardProfileComponent implements OnInit {
           }
           this.avatarPreviewUrl = b.avatar ?? null;
           this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto));
+          this.moveToFirstInvalidStep();
         });
     })
+  }
 
+  moveToFirstInvalidStep() {
+    //get the first step not valid by ds.stepValidity
+    const firstInvalidStep = Array.from({length: this.total}, (_, i) => i + 1).find(i => !this.isStepValid(i));
+    if (firstInvalidStep) {
+      this.step = firstInvalidStep;
+    }else{
+      //move to the last step
+      this.step = this.total;
+    }
   }
 
   canGoTo(targetStep: number): boolean {

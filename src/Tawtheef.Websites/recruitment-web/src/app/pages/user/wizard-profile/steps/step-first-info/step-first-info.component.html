@@ -46,10 +46,14 @@
       </div>
     </div>
     <!-- ID -->
-    <div class="col-md-6">
+    <div class="col-md-6" *ngIf="ds.state().candidateType">
       <label class="form-label required d-flex align-items-center">
         <span class="d-flex align-items-center gap-2">
-          {{ 'wizard.prereq.idLabel' | translate }}
+          @if(!ds.isResidentQatar){
+            {{ `wizard.prereq.id.${ds.state().candidateType?.backendName}.label` | translate }}
+          } @else {
+            {{ 'wizard.prereq.idLabel' | translate }}
+          }
         </span>
       </label>
 

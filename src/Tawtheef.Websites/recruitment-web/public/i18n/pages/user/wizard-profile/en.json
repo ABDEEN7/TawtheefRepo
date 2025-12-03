@@ -76,7 +76,7 @@
       },
       "nameAr": "Full name (Arabic)",
       "nameEn": "Full name (English)",
-      "qid": "QID",
+      "qid": "National Number",
       "dob": "Date of birth",
       "nationality": "Nationality",
       "gender": "Gender",
@@ -193,6 +193,7 @@
       "table": {
         "org": "Organization",
         "title": "Title",
+        "country": "Country",
         "period": "Period",
         "tasks": "Tasks",
         "file": "File"
@@ -212,6 +213,7 @@
       "table": {
         "provider": "Provider",
         "courseName": "Course",
+        "country": "Country",
         "period": "Period",
         "file": "File"
       },
@@ -291,7 +293,15 @@
       "candidateType": "Candidate category",
       "targetEntity": "Target entity",
       "cvLabel": "Upload CV (PDF)",
-      "idLabel": "Upload ID (Image / PDF)",
+      "idLabel": "Upload ID card",
+      "id": {
+        "GCC": {
+          "label": "Upload ID card/Passport (PDF or image)"
+        },
+        "NonQatari": {
+          "label": "Upload Passport (PDF or image)"
+        }
+      },
       "dropOrClick": "Drag & drop or click",
       "startProfile": "Start profile creation",
       "birthCertificate": "Birth certificate",
@@ -343,7 +353,7 @@
           "required": "Please enter name in English"
         },
         "qid": {
-          "required": "Please enter QID number"
+          "required": "Please enter national number"
         },
         "dob": {
           "required": "Please enter date of birth"
