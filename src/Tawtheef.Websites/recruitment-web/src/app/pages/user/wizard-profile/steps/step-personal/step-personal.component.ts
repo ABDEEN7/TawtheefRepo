@@ -13,6 +13,7 @@ import {createStepValiditySignal} from '../../state/profile-step-validity.signal
 import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
 import {FileSlot, canPreviewFile, createFileSlot, displayedFileName, fileSlotSignature, fileToUpload, previewFileFromSlot, previewUrlFromSlot, setLocalFile, updateRemote} from '../../utils/file-slot';
+import {MoiPersonalInfo} from '../../models/moi-personal-info.model';
 
 @Component({
   selector: 'app-step-personal',
@@ -39,11 +40,50 @@ export class StepPersonalComponent implements OnInit {
   }
 
   savingPersonal = false;
+  verifyingMoi = false;
   private sponsorCard: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);
+  }
+
+  verifyMoiProfile() {
+    const state = this.ds.state();
+    if (!state.qid || !state.qidExpiry) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translate.instant('wizard.personal.verify.title'),
+        detail: this.translate.instant('wizard.personal.verify.missing'),
+        life: 4000,
+      });
+      return;
+    }
+
+    this.verifyingMoi = true;
+    this.profileService
+      .checkProfile(state.qid, state.qidExpiry)
+      .pipe(finalize(() => this.verifyingMoi = false))
+      .subscribe({
+        next: res => {
+          this.ds.applyMoiPersonalInfo(this.normalizeMoiResponse(res));
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail: this.translate.instant('wizard.personal.verify.success'),
+            life: 3000,
+          });
+        },
+        error: err => {
+          const detail = err?.error?.message || err?.error || this.translate.instant('wizard.personal.verify.error');
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail,
+            life: 5000,
+          });
+        }
+      });
   }
 
   updateChildren(value: any) {
@@ -144,4 +184,26 @@ export class StepPersonalComponent implements OnInit {
 
   protected readonly dateToDateOnly = dateToDateOnly;
   protected readonly SponsorType = SponsorType;
+
+  private normalizeMoiResponse(raw: any): MoiPersonalInfo {
+    const pick = (key: string) => raw?.[key] ?? raw?.[key.charAt(0).toUpperCase() + key.slice(1)];
+
+    return {
+      qid: pick('qid') ?? '',
+      arabicName1: pick('arabicName1') ?? pick('arabicFirstName') ?? '',
+      arabicName2: pick('arabicName2') ?? pick('arabicSecondName') ?? null,
+      arabicName3: pick('arabicName3') ?? pick('arabicThirdName') ?? null,
+      arabicName4: pick('arabicName4') ?? pick('arabicFourthName') ?? null,
+      arabicName5: pick('arabicName5') ?? pick('arabicFamilyName') ?? '',
+      englishName1: pick('englishName1') ?? pick('englishFirstName') ?? '',
+      englishName2: pick('englishName2') ?? pick('englishSecondName') ?? null,
+      englishName3: pick('englishName3') ?? pick('englishThirdName') ?? null,
+      englishName4: pick('englishName4') ?? pick('englishFourthName') ?? null,
+      englishName5: pick('englishName5') ?? pick('englishFamilyName') ?? '',
+      dateOfBirth: pick('dateOfBirth') ?? '',
+      qidExpiry: pick('qidExpiry') ?? '',
+      nationalityCode: pick('nationalityCode') ?? '',
+      gender: pick('gender') ?? '',
+    };
+  }
 }

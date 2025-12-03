@@ -30,6 +30,7 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
     fullNameAr: state.fullNameAr ?? null,
     fullNameEn: state.fullNameEn ?? null,
     nationalNumber: state.qid ?? null,
+    qidExpiry: state.qidExpiry ?? null,
     birthDate: state.dob ?? null,
 
     nationalityId: state.nationality?.id ?? null,
@@ -103,6 +104,7 @@ export function mapProfileStatusToState(
     fullNameEn: dto.fullNameEn ?? undefined,
 
     qid: dto.nationalNumber ?? prefill?.qid ?? undefined,
+    qidExpiry: dto.qidExpiry ?? undefined,
 
     nationality: mapIdToDropdown(lookups, 'nationality', dto.nationalityId ?? prefill?.nationality ?? undefined),
     gender: mapIdToDropdown(lookups, 'gender', dto.genderId ?? prefill?.gender ?? undefined),
