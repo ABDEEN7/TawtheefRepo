@@ -179,6 +179,8 @@ namespace Tawtheef.Infrastructure
             services.AddHttpClient<IQatarPassClient, QatarPassClient>();
             services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
             services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>();
+            services.Configure<HodhodSmsSettings>(configuration.GetSection(MoiSettings.SectionName));
+            services.AddHttpClient<IMoiClient, MoiClient>();
         }
 
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)

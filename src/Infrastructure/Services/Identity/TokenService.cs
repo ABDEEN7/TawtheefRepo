@@ -34,6 +34,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         await sessions.SetCurrentAsync(user.Id, sid, device, ct);
         var refreshToken = GenerateRefreshToken(user.Id, sid);
         user.RefreshTokens.Add(refreshToken);
+        user.LastLoginDate = time.GetUtcNow().DateTime;
         await userManager.UpdateSecurityStampAsync(user);
 
         var userType = await uow.GetEntityRepository<UserType>().DbSet

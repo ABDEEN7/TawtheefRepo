@@ -88,6 +88,7 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                 RuleFor(x => x.Request.FullNameEn).NotEmpty();
                 RuleFor(x => x.Request.NationalNumber).NotEmpty();
                 RuleFor(x => x.Request.BirthDate).NotNull();
+                RuleFor(x => x.Request.QIDExpiry).NotNull();
 
                 RuleFor(x => x.Request.NationalityId).NotNull();
                 RuleFor(x => x.Request.GenderId).NotNull();
@@ -103,10 +104,11 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                     RuleFor(x => x.Request.DisabilityDetails).NotEmpty();
                 });
 
-                When(x => x.Request.SponsorTypeId.HasValue, () =>
+                When(x => x.Request.SponsorTypeId.HasValue, () => 
                 {
                     RuleFor(x => x.Request.SponsorEmployerName).NotEmpty();
                     RuleFor(x => x.Request.SponsorEmployerNumber).NotEmpty();
+                    RuleFor(x => x.Request.QIDExpiry).NotEmpty();
 
                     RuleFor(x => x.Request)
                         .Must(r =>

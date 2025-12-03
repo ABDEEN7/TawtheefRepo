@@ -30,6 +30,7 @@ public class UserProfile : EventEntity
     /// National ID number (e.g. QID)
     /// </summary>
     public string? NationalNumber { get; set; }
+    public DateOnly? QIDExpiry { get; set; }
 
     public DateOnly? BirthDate { get; set; }
 

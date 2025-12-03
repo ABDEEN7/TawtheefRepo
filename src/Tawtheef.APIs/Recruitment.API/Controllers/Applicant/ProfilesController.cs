@@ -159,14 +159,17 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
-
-    [HttpGet("me")]
-    public async Task<IActionResult> GetMyProfile(CancellationToken ct)
+    
+    // request check moe data for user
+    [HttpGet("check-profile")]
+    public async Task<IActionResult> CheckProfile([FromQuery] CheckProfileMOI query, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(new GetFullUserProfileQuery(UserId.Value), ct); // create DTO with all fields needed by wizard
+        var cmd = new GetPersonalInformationByQidQuery(UserId.Value, query);
+        var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
+    
     #region Lookups
     [HttpGet("lookups/skill-search")]
     public async Task<IActionResult> Search([FromQuery] SearchSkillsQuery query)

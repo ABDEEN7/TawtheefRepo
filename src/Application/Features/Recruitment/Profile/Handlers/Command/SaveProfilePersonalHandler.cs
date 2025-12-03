@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -34,6 +35,7 @@ public sealed class SaveProfilePersonalHandler(
         user.FullNameEn = r.FullNameEn ?? user.FullNameEn;
         profile.NationalNumber = r.NationalNumber ?? profile.NationalNumber;
         profile.BirthDate      = r.BirthDate ?? profile.BirthDate;
+        profile.QIDExpiry      = r.QIDExpiry ?? profile.QIDExpiry;
 
         profile.NationalityId   = r.NationalityId ?? profile.NationalityId;
         profile.GenderId        = r.GenderId;
@@ -59,13 +61,15 @@ public sealed class SaveProfilePersonalHandler(
                 {
                     SponsorName = r.SponsorEmployerName,
                     SponsorNumber = r.SponsorEmployerNumber,
-                    SponsorCardId = idResult.Value
+                    QIDExpiry = r.QIDExpiry!.Value,
+                    SponsorCardId = idResult.Value,
                 };
             }
             else
             {
                 profile.SponsorProfile.SponsorName = r.SponsorEmployerName;
                 profile.SponsorProfile.SponsorNumber = r.SponsorEmployerNumber;
+                profile.SponsorProfile.QIDExpiry = r.QIDExpiry!.Value;
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
 
@@ -73,7 +77,7 @@ public sealed class SaveProfilePersonalHandler(
             {
                 await reviewService.TouchAttachmentAsync(
                     profile.Id,
-                    Domain.Entities.Recruitment.ProfileSection.Personal,
+                    ProfileSection.Personal,
                     "Sponsor Card",
                     idResult.Value.Value,
                     ct);
@@ -82,7 +86,7 @@ public sealed class SaveProfilePersonalHandler(
 
         profile.IsDraft = true;
 
-        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Personal, ct);
+        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         

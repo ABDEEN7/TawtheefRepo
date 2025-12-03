@@ -9,6 +9,7 @@ public sealed class SaveProfilePersonalRequest
     public string? FullNameAr { get; set; }
     public string? FullNameEn { get; set; }
     public string? NationalNumber { get; set; }
+    public DateOnly? QIDExpiry { get; set; }
     public DateOnly? BirthDate { get; set; }
 
     public Guid? NationalityId { get; set; }
@@ -23,6 +24,7 @@ public sealed class SaveProfilePersonalRequest
     public Guid? SponsorTypeId { get; set; }
     public string? SponsorEmployerName { get; set; }
     public string? SponsorEmployerNumber { get; set; }
+    public DateOnly? SponsorCardExpiryData { get; set; }
     public IFormFile? SponsorCard { get; set; }
     public string? SponsorCardFileName { get; set; }
 }
