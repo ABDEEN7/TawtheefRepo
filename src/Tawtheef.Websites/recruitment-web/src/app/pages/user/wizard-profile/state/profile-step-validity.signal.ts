@@ -4,9 +4,51 @@ import {
   FieldError, StepValidationResult,
   StepValidityResult,
 } from '../models/profile-validation.model';
-import { isFilledScalar } from '../utils/profile-validation.utils';
 import {ProfileState} from '../models/profile-state.model';
 import {CandidateType} from '../../../../core/enums/lookups.enum';
+
+export function isFilledField(value: unknown): boolean {
+  if (value === null || value === undefined) return false;
+
+  if (typeof value === 'string') return value.trim().length > 0;
+  if (typeof value === 'number') return Number.isFinite(value);
+  if (typeof value === 'boolean') return value;
+
+  if (typeof value === 'object') {
+    const v: any = value;
+    if ('id' in v && v.id !== null && v.id !== undefined) return true;
+    if ('value' in v && v.value !== null && v.value !== undefined) return true;
+  }
+
+  return !!value;
+}
+
+export function candidateTypeFromState(state: ProfileState): CandidateType | undefined {
+  return state.candidateType?.backendName as CandidateType | undefined;
+}
+
+export function candidateTypeNeedsSponsor(type: CandidateType | undefined): boolean {
+  return !!type && [CandidateType.ResidentQatar].includes(type);
+}
+
+export function candidateTypeNeedsBirthCertificate(type: CandidateType | undefined): boolean {
+  return !!type && [CandidateType.SonOfQatariMother].includes(type);
+}
+
+export function candidateTypeNeedsMarriageCertificate(type: CandidateType | undefined): boolean {
+  return !!type && [CandidateType.WifeOfQatari].includes(type);
+}
+
+export function candidateTypeIsResident(type: CandidateType | undefined): boolean {
+  if (!type) return false;
+
+  return [
+    CandidateType.ResidentQatar,
+    CandidateType.Qatari,
+    CandidateType.SonOfQatariMother,
+    CandidateType.WifeOfQatari
+  ].includes(type);
+}
 
 /** Small helper to push a "required" error using VALIDATION_KEYS */
 function addRequiredError(
@@ -32,31 +74,31 @@ function addRequiredError(
 function validateBasicStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
 
-  if (!isFilledScalar(s.candidateType)) {
+  const backendType = candidateTypeFromState(s);
+  const needsMarriageCertificate = candidateTypeNeedsMarriageCertificate(backendType);
+  const needsBirthCertificate = candidateTypeNeedsBirthCertificate(backendType);
+
+  if (!isFilledField(s.candidateType)) {
     addRequiredError(errors, 'basic', 'candidateType');
   }
 
-  if (!isFilledScalar(s.targetEntity)) {
+  if (!isFilledField(s.targetEntity)) {
     addRequiredError(errors, 'basic', 'targetEntity');
   }
 
-  if (!isFilledScalar(s.cvName)) {
+  if (!isFilledField(s.cvName)) {
     addRequiredError(errors, 'basic', 'cvName');
   }
 
-  if (!isFilledScalar(s.idName)) {
+  if (!isFilledField(s.idName)) {
     addRequiredError(errors, 'basic', 'idName');
   }
 
-  const backendType = s.candidateType?.backendName as CandidateType | undefined;
-  const isWifeOfQatari = backendType === CandidateType.WifeOfQatari;
-  const isSonOfQatariMother = backendType === CandidateType.SonOfQatariMother;
-
-  if (isWifeOfQatari && !isFilledScalar(s.marriageCertificateName)) {
+  if (needsMarriageCertificate && !isFilledField(s.marriageCertificateName)) {
     addRequiredError(errors, 'basic', 'marriageCertificateName');
   }
 
-  if (isSonOfQatariMother && !isFilledScalar(s.birthCertificateName)) {
+  if (needsBirthCertificate && !isFilledField(s.birthCertificateName)) {
     addRequiredError(errors, 'basic', 'birthCertificateName');
   }
 
@@ -70,57 +112,60 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
 function validatePersonalStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
 
-  if (!isFilledScalar(s.fullNameAr)) {
+  const needsSponsor = candidateTypeNeedsSponsor(candidateTypeFromState(s));
+
+  if (!isFilledField(s.fullNameAr)) {
     addRequiredError(errors, 'personal', 'fullNameAr');
   }
 
-  if (!isFilledScalar(s.fullNameEn)) {
+  if (!isFilledField(s.fullNameEn)) {
     addRequiredError(errors, 'personal', 'fullNameEn');
   }
 
-  if (!isFilledScalar(s.qid)) {
+  if (!isFilledField(s.qid)) {
     addRequiredError(errors, 'personal', 'qid');
   }
 
-  if (!isFilledScalar(s.dob)) {
+  if (!isFilledField(s.dob)) {
     addRequiredError(errors, 'personal', 'dob');
   }
 
-  if (!isFilledScalar(s.nationality)) {
+  if (!isFilledField(s.nationality)) {
     addRequiredError(errors, 'personal', 'nationality');
   }
 
-  if (!isFilledScalar(s.gender)) {
+  if (!isFilledField(s.gender)) {
     addRequiredError(errors, 'personal', 'gender');
   }
 
-  if (!isFilledScalar(s.religion)) {
+  if (!isFilledField(s.religion)) {
     addRequiredError(errors, 'personal', 'religion');
   }
 
-  if (!isFilledScalar(s.marital)) {
+  if (!isFilledField(s.marital)) {
     addRequiredError(errors, 'personal', 'marital');
   }
 
-  if (s.hasDisability && !isFilledScalar(s.disabilityDetails)) {
+  if (s.hasDisability && !isFilledField(s.disabilityDetails)) {
     addRequiredError(errors, 'personal', 'disabilityDetails');
   }
 
-  // sponsor block
-  if (!isFilledScalar(s.sponsorType)) {
-    addRequiredError(errors, 'personal', 'sponsorType');
-  }
+  if (needsSponsor) {
+    if (!isFilledField(s.sponsorType)) {
+      addRequiredError(errors, 'personal', 'sponsorType');
+    }
 
-  if (!isFilledScalar(s.sponsorEmployerName)) {
-    addRequiredError(errors, 'personal', 'sponsorEmployerName');
-  }
+    if (!isFilledField(s.sponsorEmployerName)) {
+      addRequiredError(errors, 'personal', 'sponsorEmployerName');
+    }
 
-  if (!isFilledScalar(s.sponsorEmployerNumber)) {
-    addRequiredError(errors, 'personal', 'sponsorEmployerNumber');
-  }
+    if (!isFilledField(s.sponsorEmployerNumber)) {
+      addRequiredError(errors, 'personal', 'sponsorEmployerNumber');
+    }
 
-  if (!isFilledScalar(s.sponsorCardName)) {
-    addRequiredError(errors, 'personal', 'sponsorCardName');
+    if (!isFilledField(s.sponsorCardName)) {
+      addRequiredError(errors, 'personal', 'sponsorCardName');
+    }
   }
 
   return {
@@ -133,7 +178,7 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 function validateContactStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
 
-  if (!isFilledScalar(s.country)) {
+  if (!isFilledField(s.country)) {
     addRequiredError(errors, 'contact', 'country');
   }
 
@@ -147,7 +192,7 @@ function validateContactStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'contact', 'phoneVerified');
   }
 
-  if (!isFilledScalar(s.email)) {
+  if (!isFilledField(s.email)) {
     addRequiredError(errors, 'contact', 'email');
   }
 
@@ -156,76 +201,124 @@ function validateContactStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'contact', 'emailVerified');
   }
 
-  // هنا حسب تصميمك: إن كنت تريد العنوان إلزامي:
-  if(!isResidentQatar()){
-  if (!isFilledScalar(s.address))
-    addRequiredError(errors, 'contact', 'address');
-  }else{
-    if(!isFilledScalar(s.naZone))
-      addRequiredError(errors, 'contact', 'naZone');
-    if(!isFilledScalar(s.naStreet))
-      addRequiredError(errors, 'contact', 'naStreet');
-    if(!isFilledScalar(s.naBuilding))
-      addRequiredError(errors, 'contact', 'naBuilding');
+  const isResident = candidateTypeIsResident(candidateTypeFromState(s));
 
-    if(!isFilledScalar(s.naFileName))
-      addRequiredError(errors, 'contact', 'naFileName');
+  if (!isResident) {
+    if (!isFilledField(s.address)) {
+      addRequiredError(errors, 'contact', 'address');
+    }
+  } else {
+    if (!isFilledField(s.naZone)) {
+      addRequiredError(errors, 'contact', 'naZone');
+    }
+
+    if (!isFilledField(s.naStreet)) {
+      addRequiredError(errors, 'contact', 'naStreet');
+    }
+
+    if (!isFilledField(s.naBuilding)) {
+      addRequiredError(errors, 'contact', 'naBuilding');
+    }
+
+    if (!isFilledField(s.naFileName)) {
+      errors.push({
+        field: 'naFileName',
+        i18nKey: VALIDATION_KEYS.contact.naFiler || 'wizard.profile.contact.naFileName.required',
+      });
+    }
   }
 
   return {
     valid: errors.length === 0,
     errors,
   };
-
-  function isResidentQatar(): boolean {
-    const type = s.candidateType?.backendName as CandidateType | undefined;
-    if (!type) return false;
-
-    return [
-      CandidateType.ResidentQatar,
-      CandidateType.Qatari,
-      CandidateType.SonOfQatariMother,
-      CandidateType.WifeOfQatari
-    ].includes(type);
-  }
 }
 
 /* ========== DEGREES / EXPERIENCE / SKILLS / ATTACHMENTS ========== */
 
 function validateDegreesStep(s: ProfileState): StepValidationResult {
+  const errors: FieldError[] = [];
   const hasDegrees = Array.isArray(s.degrees) && s.degrees.length > 0;
 
   if (!hasDegrees) {
-    return {
-      valid: false,
-      errors: [
-        {
-          field: 'degrees',
-          i18nKey: 'wizard.profile.degrees.atLeastOne.required',
-        },
-      ],
-    };
+    errors.push({
+      field: 'degrees',
+      i18nKey: 'wizard.profile.degrees.atLeastOne.required',
+    });
   }
 
-  return { valid: true, errors: [] };
+  s.degrees?.forEach((degree, index) => {
+    if (!degree?.certificate || !isFilledField(degree.certificate.resourceName)) {
+      errors.push({
+        field: `degrees[${index}].certificate`,
+        i18nKey: 'wizard.profile.degrees.certificate.required',
+      });
+    }
+
+    if (!(degree?.file || degree?.attachmentId)) {
+      errors.push({
+        field: `degrees[${index}].attachment`,
+        i18nKey: 'wizard.profile.degrees.attachment.required',
+      });
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
 }
 
 function validateExperienceStep(s: ProfileState): StepValidationResult {
-  const hasExp = Array.isArray(s.experiences) && s.experiences.length > 0;
+  const errors: FieldError[] = [];
 
-  if (!hasExp) {
-    return {
-      valid: false,
-      errors: [
-        {
-          field: 'experiences',
-          i18nKey: 'wizard.profile.experience.atLeastOne.required',
-        },
-      ],
-    };
+  const hasExperiences = Array.isArray(s.experiences) && s.experiences.length > 0;
+  const hasCourses = Array.isArray(s.courses) && s.courses.length > 0;
+
+  if (!hasExperiences) {
+    errors.push({
+      field: 'experiences',
+      i18nKey: 'wizard.profile.experience.atLeastOne.required',
+    });
   }
 
-  return { valid: true, errors: [] };
+  if (!hasCourses) {
+    errors.push({
+      field: 'courses',
+      i18nKey: 'wizard.profile.courses.atLeastOne.required',
+    });
+  }
+
+  s.experiences?.forEach((experience, index) => {
+    if (!experience?.attachment || !isFilledField(experience.attachment.resourceName)) {
+      errors.push({
+        field: `experiences[${index}].attachment`,
+        i18nKey: 'wizard.profile.experience.attachment.required',
+      });
+    }
+
+    if (!(experience?.file || experience?.attachmentId)) {
+      errors.push({
+        field: `experiences[${index}].file`,
+        i18nKey: 'wizard.profile.experience.file.required',
+      });
+    }
+  });
+
+  s.courses?.forEach((course, index) => {
+    if (!course?.attachment || !isFilledField(course.attachment.resourceName)) {
+      errors.push({
+        field: `courses[${index}].attachment`,
+        i18nKey: 'wizard.profile.courses.attachment.required',
+      });
+    }
+
+    if (!(course?.file || course?.attachmentId)) {
+      errors.push({
+        field: `courses[${index}].file`,
+        i18nKey: 'wizard.profile.courses.file.required',
+      });
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
 }
 
 function validateSkillsStep(s: ProfileState): StepValidationResult {
@@ -264,12 +357,34 @@ function validateLanguagesStep(s: ProfileState): StepValidationResult {
   return { valid: true, errors: [] };
 }
 
-// حالياً لا توجد قواعد إلزامية للمرفقات
 function validateAttachmentsStep(s: ProfileState): StepValidationResult {
-  // مثال: لو حابة نفرض مرفق واحد على الأقل:
-  // const hasAttachments = Array.isArray(s.attachments) && s.attachments.length > 0;
-  // if (!hasAttachments) { ... }
-  return { valid: true, errors: [] };
+  const errors: FieldError[] = [];
+  const hasAttachments = Array.isArray(s.attachments) && s.attachments.length > 0;
+
+  if (!hasAttachments) {
+    errors.push({
+      field: 'attachments',
+      i18nKey: 'wizard.profile.attachments.atLeastOne.required',
+    });
+  }
+
+  s.attachments?.forEach((attachment, index) => {
+    if (!isFilledField(attachment?.fileName ?? attachment?.name)) {
+      errors.push({
+        field: `attachments[${index}].fileName`,
+        i18nKey: 'wizard.profile.attachments.fileName.required',
+      });
+    }
+
+    if (!(attachment?.file || attachment?.attachmentId)) {
+      errors.push({
+        field: `attachments[${index}].file`,
+        i18nKey: 'wizard.profile.attachments.file.required',
+      });
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
 }
 
 /* ========== MAIN SIGNAL ========== */
