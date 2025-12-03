@@ -55,6 +55,7 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.Phone, src => src.user.PhoneNumber ?? src.prefill.Phone)
             .Map(dest => dest.PhoneVerified, src => src.user.PhoneNumberConfirmed)
             .Map(dest => dest.NationalNumber, src => src.profile.NationalNumber ?? src.prefill.Qid)
+            .Map(dest => dest.QIDExpiry, src => src.profile.QIDExpiry)
             .Map(dest => dest.SponsorTypeId, src => src.profile.SponsorProfile == null ? null : (Guid?)src.profile.SponsorProfile.SponsorTypeId)
             .Map(dest => dest.SponsorEmployerName, src => src.profile.SponsorProfile == null ? null : src.profile.SponsorProfile.SponsorName)
             .Map(dest => dest.SponsorEmployerNumber, src => src.profile.SponsorProfile == null ? null : src.profile.SponsorProfile.SponsorNumber)

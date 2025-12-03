@@ -11,6 +11,7 @@
     fullNameAr: 'wizard.profile.personal.fullNameAr.required',
     fullNameEn: 'wizard.profile.personal.fullNameEn.required',
     qid: 'wizard.profile.personal.qid.required',
+    qidExpiry: 'wizard.profile.personal.qidExpiry.required',
     dob: 'wizard.profile.personal.dob.required',
     nationality: 'wizard.profile.personal.nationality.required',
     gender: 'wizard.profile.personal.gender.required',

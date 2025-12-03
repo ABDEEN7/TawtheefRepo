@@ -42,6 +42,10 @@
         <div class="small text-muted">{{ 'wizard.personal.qid' | translate }}</div>
         <div class="fw-semibold">{{ ds.state().qid || '—' }}</div>
       </div>
+      <div class="col-md-4" *ngIf="ds.isResidentQatar">
+        <div class="small text-muted">{{ 'wizard.personal.qidExpiry' | translate }}</div>
+        <div class="fw-semibold">{{ ds.state().qidExpiry || '—' }}</div>
+      </div>
 
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.personal.dob' | translate }}</div>

@@ -7,6 +7,8 @@ import {Attachment} from '../models/attachment.model';
 import {Skill} from '../models/skill.model';
 import {UserService} from '../../../../core/auth/user.service';
 import {NationalityMapperService, PhoneMapperService} from './phone-mapper.service';
+import {ProfileLookupsService} from './profile-lookups.service';
+import {MoiPersonalInfo, buildArabicFullName, buildEnglishFullName} from '../models/moi-personal-info.model';
 import {
   candidateTypeFromState,
   candidateTypeIsResident,
@@ -23,6 +25,7 @@ export class DataService {
   nationalityMapperService = inject(NationalityMapperService);
   phoneMapperService = inject(PhoneMapperService);
   userService = inject(UserService);
+  lookups = inject(ProfileLookupsService);
   state = signal<ProfileState>({
     degrees: [], experiences: [], courses: [],
     skills: [], languages: [], attachments: [],
@@ -55,7 +58,7 @@ export class DataService {
     return !!l[key];
   }
 
-  private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email'];
+  private lockableKeys: (keyof ProfileState)[] = ['qid','qidExpiry','dob','nationality','gender','phone','email','fullNameAr','fullNameEn'];
   prefillFromBootstrap(userData: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...userData }));
     this.lockedPrefillData();
@@ -174,6 +177,35 @@ export class DataService {
     }
 
     return next;
+  }
+
+  applyMoiPersonalInfo(info: MoiPersonalInfo) {
+    const nationality = this.nationalityMapperService.toNationalityObject(String(info.nationalityCode));
+    const gender = this.lookups.genders().find(g => g.backendName?.toUpperCase() === info.gender?.toUpperCase());
+    const arabicFullName = buildArabicFullName(info);
+    const englishFullName = buildEnglishFullName(info);
+
+    this.state.update(s => ({
+      ...s,
+      fullNameAr: arabicFullName || s.fullNameAr,
+      fullNameEn: englishFullName || s.fullNameEn,
+      qid: info.qid || s.qid,
+      qidExpiry: info.qidExpiry || s.qidExpiry,
+      dob: info.dateOfBirth || s.dob,
+      nationality: nationality ?? s.nationality,
+      gender: gender ?? s.gender,
+    }));
+
+    this.locked.update(m => ({
+      ...m,
+      fullNameAr: !!arabicFullName || m.fullNameAr,
+      fullNameEn: !!englishFullName || m.fullNameEn,
+      qid: !!info.qid || m.qid,
+      qidExpiry: !!info.qidExpiry || m.qidExpiry,
+      dob: !!info.dateOfBirth || m.dob,
+      nationality: (!!nationality) || m.nationality,
+      gender: (!!gender) || m.gender,
+    }));
   }
 
   addDegree(d: Degree){ this.state.update(s => ({...s, degrees:[...s.degrees, d]})); }

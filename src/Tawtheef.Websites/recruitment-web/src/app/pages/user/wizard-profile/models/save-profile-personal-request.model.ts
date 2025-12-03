@@ -4,6 +4,7 @@
   fullNameAr: string | null;
   fullNameEn: string | null;
   nationalNumber: string | null;
+  qidExpiry: string | null;
   birthDate: string | null;
 
   nationalityId: string | null;

@@ -29,6 +29,7 @@ export interface ProfileState {
   fullNameAr?: string;
   fullNameEn?: string;
   qid?: string | null;
+  qidExpiry?: string | null;
   nationality?: dropdownOptionsModel | null;
   gender?: dropdownOptionsModel;
   religion?: dropdownOptionsModel;

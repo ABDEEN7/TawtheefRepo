@@ -49,6 +49,7 @@ export interface ProfileStatusDto {
   targetEntityId?: string | null;
 
   nationalNumber?: string | null;
+  qidExpiry?: string | null;
   birthDate?: string | null;
   nationalityId?: string | null;
   genderId?: string | null;

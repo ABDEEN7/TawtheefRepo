@@ -113,6 +113,7 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
 
   const needsSponsor = candidateTypeNeedsSponsor(candidateTypeFromState(s));
+  const isResident = candidateTypeIsResident(candidateTypeFromState(s));
 
   if (!isFilledField(s.fullNameAr)) {
     addRequiredError(errors, 'personal', 'fullNameAr');
@@ -124,6 +125,10 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 
   if (!isFilledField(s.qid)) {
     addRequiredError(errors, 'personal', 'qid');
+  }
+
+  if (isResident && !isFilledField(s.qidExpiry)) {
+    addRequiredError(errors, 'personal', 'qidExpiry');
   }
 
   if (!isFilledField(s.dob)) {
