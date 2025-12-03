@@ -175,9 +175,9 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     [HttpGet("lookups/candidate-types")]
-    public async Task<IActionResult> GetCandidateTypes()
+    public async Task<IActionResult> GetCandidateTypes([FromQuery] string provider)
     {
-        var result = await mediator.Send(new GetCandidateTypesQuery());
+        var result = await mediator.Send(new GetCandidateTypesByProviderQuery(provider));
         return result.ToActionResult();
     }
 
