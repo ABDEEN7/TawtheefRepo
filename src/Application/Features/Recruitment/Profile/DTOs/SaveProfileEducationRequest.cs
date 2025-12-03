@@ -6,11 +6,12 @@ public sealed record SaveProfileEducationRequest
 {
     public bool Submit { get; set; }
     public required string DegreesJson { get; set; }
-    public required List<IFormFile> DegreeFiles { get; set; }
+    public List<IFormFile?> DegreeFiles { get; set; } = [];
 }
 
 public sealed record SaveProfileEducationDegreeDto
 {
+    public Guid? Id { get; set; }
     public Guid DegreeId { get; set; }
     public Guid GradCountryId { get; set; }
     public Guid? UniversityId { get; set; }
@@ -20,4 +21,7 @@ public sealed record SaveProfileEducationDegreeDto
     public Guid? GradeId { get; set; }
     public int? GradYear { get; set; }
     public decimal? Gpa { get; set; }
+    public Guid? CertificateId { get; set; }
+    public int? FileIndex { get; set; }
+    public string? ExistingFileName { get; set; }
 }

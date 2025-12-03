@@ -58,9 +58,17 @@ export class ProfileService {
 
   // ========== Degrees ==========
   saveEducationSection(degrees: any[]) {
-    const newDegrees = degrees.filter(d=> !d.attachmentId);
-    const dto = {
-      degreesJson: newDegrees.filter(d=> !d.attachmentId).map(d => ({
+    let fileCursor = 0;
+    const degreeFiles: (File | null | undefined)[] = [];
+
+    const payload = (degrees ?? []).map(d => {
+      const fileIndex = d.file ? fileCursor++ : null;
+      if (d.file) {
+        degreeFiles.push(d.file);
+      }
+
+      return {
+        id: d.id ?? null,
         degreeId: d.degree.id,
         gradCountryId: d.gradCountry.id,
         universityId: d.university.id,
@@ -70,13 +78,16 @@ export class ProfileService {
         studyTypeId: d.studySystem.id,
         gpa: d.gpa,
         gradeId: d.grade.id,
-        fileName: d.fileName
-      })),
-    };
-    const formData = this.buildFormData(dto);
-    newDegrees.forEach(d => {
-      if (d.file) {
-        formData.append('DegreeFiles', d.file);
+        certificateId: d.attachmentId ?? null,
+        fileIndex,
+        existingFileName: d.certificate?.resourceName ?? d.certificateName ?? d.fileName ?? null,
+      };
+    });
+
+    const formData = this.buildFormData({ degreesJson: payload });
+    degreeFiles.forEach(f => {
+      if (f) {
+        formData.append('DegreeFiles', f);
       }
     });
     return this.http.post(this.endpoints.user.profile.saveEducation, formData);

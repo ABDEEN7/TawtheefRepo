@@ -4,7 +4,7 @@ export interface NationalAddressDto {
   street: string | null;
   building: string | null;
   unit: string | null;
-  fileName: string | null;
+  nationalAddressFileName: string | null;
 }
 
 export interface SaveProfileContactRequestDto {
