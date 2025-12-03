@@ -169,8 +169,7 @@ export class ProfileService {
     const formData = this.buildFormData({
       submit: false,
       experiencesJson: experiencesDto,
-      trainingCoursesJson: coursesDto,
-      achievements: [],
+      trainingCoursesJson: coursesDto
     });
 
     experienceFiles.forEach(f => {
