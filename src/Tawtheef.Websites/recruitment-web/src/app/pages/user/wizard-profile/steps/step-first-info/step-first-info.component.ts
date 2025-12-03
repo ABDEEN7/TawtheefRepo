@@ -49,6 +49,10 @@ export class StepFirstInfoComponent implements OnInit {
     this.lastSubmittedSignature = null;
   }
 
+  onCandidateTypeChange(option: any) {
+    this.ds.up('candidateType', option);
+  }
+
   onFileSelected(kind: 'cv' | 'id' | 'birth' | 'marriage', event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;

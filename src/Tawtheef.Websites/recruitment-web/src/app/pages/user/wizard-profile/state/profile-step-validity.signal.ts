@@ -77,6 +77,7 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
   const backendType = candidateTypeFromState(s);
   const needsMarriageCertificate = candidateTypeNeedsMarriageCertificate(backendType);
   const needsBirthCertificate = candidateTypeNeedsBirthCertificate(backendType);
+  const isResident = candidateTypeIsResident(backendType);
 
   if (!isFilledField(s.candidateType)) {
     addRequiredError(errors, 'basic', 'candidateType');
@@ -84,6 +85,10 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
 
   if (!isFilledField(s.targetEntity)) {
     addRequiredError(errors, 'basic', 'targetEntity');
+  }
+
+  if (!isResident && !isFilledField(s.office)) {
+    addRequiredError(errors, 'basic', 'office');
   }
 
   if (!isFilledField(s.cvName)) {

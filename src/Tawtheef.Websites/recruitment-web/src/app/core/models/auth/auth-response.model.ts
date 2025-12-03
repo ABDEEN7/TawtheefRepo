@@ -47,6 +47,7 @@ export interface ProfileStatusDto {
   // ===== Scalars =====
   candidateTypeId?: string | null;
   targetEntityId?: string | null;
+  officeId?: string | null;
 
   nationalNumber?: string | null;
   qidExpiry?: string | null;

@@ -299,6 +299,7 @@
       "selectInterviewPlace": "Select interview place",
       "selectCandidateType": "Select candidate type",
       "selectTargetEntity": "Select target entity",
+      "selectOffice": "Select office",
       "selectDisabilityType": "Enter disability type",
       "selectSponsorType": "Select sponsor type",
       "uploadEstablishmentCard": "Upload establishment card",
@@ -309,6 +310,7 @@
       "title": "Prerequisites to start",
       "candidateType": "Candidate category",
       "targetEntity": "Target entity",
+      "officeLabel": "Accredited office",
       "cvLabel": "Upload CV (PDF)",
       "idLabel": "Upload ID card",
       "id": {
@@ -348,6 +350,9 @@
         },
         "targetEntity": {
           "required": "Please select target entity"
+        },
+        "office": {
+          "required": "Please select an accredited office"
         },
         "cv": {
           "required": "Please attach your CV"
