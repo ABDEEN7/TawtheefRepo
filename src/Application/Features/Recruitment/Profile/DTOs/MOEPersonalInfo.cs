@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.DTOs;
@@ -80,6 +81,7 @@ public class MOEPersonalInfo
     public DateOnly ResidencyIssueDate { get; set; }
 
     [DataMember]
+    [AllowedValues("MALE", "FEMALE", ErrorMessage = "Gender must be either 'MALE' or 'FEMALE'.")]
     public required string Gender { get; set; }
 
     [DataMember]
