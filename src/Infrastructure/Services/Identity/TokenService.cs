@@ -62,7 +62,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email!),
+            new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
             new(nameof(user.UserType), userType.BackendName),
             new(ClaimTypes.Role, userType.BackendName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
+using Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Infrastructure.Services.Authorization;
@@ -49,15 +50,11 @@ public sealed class ProfileCompletenessService(
             .Include(p => p.TrainingCourses)!.ThenInclude(a => a.Certificate)
             .FirstOrDefaultAsync(p => p.UserId == userId, ct);
 
-        if (profile is null)
-        {
-            return new ProfileStatusDto
-            {
-                IsComplete = false,
-                IsDraft    = false
-            };
-        }
+        profile ??= new UserProfile();
         var prefill = await BuildPrefillAsync(user, ct);
+        user.Email = (user.Email?.Contains(ConstantQatarPass.PlaceholderEmailDomain) ?? true) ? null : user.Email;
+        user.FullNameAr = user.FullNameAr.Contains(ConstantQatarPass.DefaultDisplayName) ? string.Empty : user.FullNameAr;
+        user.FullNameEn = user.FullNameEn.Contains(ConstantQatarPass.DefaultDisplayName) ? string.Empty : user.FullNameEn;
 
         return mapper.Map<ProfileStatusDto>((profile, user, prefill));
     }
