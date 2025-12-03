@@ -103,15 +103,17 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                     RuleFor(x => x.Request.DisabilityDetails).NotEmpty();
                 });
 
-                RuleFor(x => x.Request.SponsorTypeId).NotNull();
-                RuleFor(x => x.Request.SponsorEmployerName).NotEmpty();
-                RuleFor(x => x.Request.SponsorEmployerNumber).NotEmpty();
-
-                RuleFor(x => x.Request.SponsorCard)
-                    .Cascade(CascadeMode.Stop)
-                    .NotNull().WithMessage(ErrorsCodes.SponsorCardRequired)
-                    .Must(FileValidationHelpers.HasFile)
-                    .WithMessage(ErrorsCodes.SponsorCardFileRequired);
+                When(x => x.Request.SponsorTypeId.HasValue, () =>
+                {
+                    RuleFor(x => x.Request.SponsorEmployerName).NotEmpty();
+                    RuleFor(x => x.Request.SponsorEmployerNumber).NotEmpty();
+                
+                    RuleFor(x => x.Request.SponsorCard)
+                        .Cascade(CascadeMode.Stop)
+                        .NotNull().WithMessage(ErrorsCodes.SponsorCardRequired)
+                        .Must(FileValidationHelpers.HasFile)
+                        .WithMessage(ErrorsCodes.SponsorCardFileRequired);
+                });
             });
     }
 }
@@ -136,14 +138,17 @@ public sealed class SaveProfileContactCommandValidator : AbstractValidator<SaveP
                 RuleFor(x => x.Request)
                     .Must(r => !string.IsNullOrWhiteSpace(r.Address) ||
                                r.NationalAddress is not null)
-                    .WithMessage("Either Address or National Address is required.");
+                    .WithMessage(ErrorsCodes.AddressRequired);
 
                 When(x => x.Request.NationalAddress is not null, () =>
                 {
                     RuleFor(x => x.Request.NationalAddress!.Zone).GreaterThan(0);
                     RuleFor(x => x.Request.NationalAddress!.Street).GreaterThan(0);
                     RuleFor(x => x.Request.NationalAddress!.Building).GreaterThan(0);
+                    
                     RuleFor(x => x.Request.NationalAddress!.NationalAddress)
+                        .Cascade(CascadeMode.Stop)
+                        .NotNull().WithMessage(ErrorsCodes.NationalAddressRequired)
                         .Must(FileValidationHelpers.HasFile)
                         .WithMessage(ErrorsCodes.NationalAddressDocumentRequired);
                 });

@@ -136,7 +136,7 @@ export class StepPersonalComponent implements OnInit {
       const sponsorCard = {
         localName: this.sponsorCardLocalFile?.name ?? null,
         resourceId: state.sponsorCardFile?.resourceId ?? null,
-        resourceName: state.sponsorCardFile?.resourceName ?? state.sponsorCardFile?.fileName ?? null,
+        resourceName: state.sponsorCardFile?.resourceName ?? null,
       };
       return JSON.stringify({ dto, sponsorCard });
     } catch {

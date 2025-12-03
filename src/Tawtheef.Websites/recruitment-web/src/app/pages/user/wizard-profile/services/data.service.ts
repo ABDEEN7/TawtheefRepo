@@ -168,7 +168,7 @@ export class DataService {
 
     const skillsValid    = Array.isArray(s.skills) && s.skills.length > 0;
     const languagesValid = Array.isArray(s.languages) && s.languages.length  > 0;
-    
+
     const attachmentsValid = Array.isArray(s.attachments) &&
       s.attachments.length > 0 &&
       s.attachments.every(a => this.isFilledScalar(a.fileName ?? a.name) && (!!a.file || !!a.attachmentId));

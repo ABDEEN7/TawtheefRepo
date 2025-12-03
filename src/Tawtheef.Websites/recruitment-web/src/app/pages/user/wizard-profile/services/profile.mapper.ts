@@ -67,6 +67,7 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
         street: state.naStreet ?? null,
         building: state.naBuilding ?? null,
         unit: state.naUnit ?? null,
+        fileName: state.naFileName ?? null,
       } : null,
   };
 }

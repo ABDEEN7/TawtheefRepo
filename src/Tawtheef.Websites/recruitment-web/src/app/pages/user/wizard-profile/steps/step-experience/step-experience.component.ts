@@ -40,7 +40,7 @@ export class StepExperienceComponent implements OnInit {
 
   ngOnInit(): void {
     const state = this.ds.state();
-    const signature = this.buildSignature(state.experiences);
+    const signature = this.buildSignature(state.experiences, state.courses);
     this.lastSubmittedSignature = signature;
   }
   // ========== EXPERIENCES ==========
@@ -202,7 +202,7 @@ export class StepExperienceComponent implements OnInit {
       current: e.current ?? false,
       description: e.description ?? '',
       attachmentId: e.attachmentId ?? null,
-      fileName: e.file?.name ?? e.attachment?.resourceName ?? e.attachment?.fileName ?? null,
+      fileName: e.file?.name ?? e.attachment?.resourceName ?? null,
     }));
 
     const courseSignature = (courses ?? []).map(c => ({
@@ -214,7 +214,7 @@ export class StepExperienceComponent implements OnInit {
       countryId: c.country?.id ?? null,
       description: c.description ?? '',
       attachmentId: c.attachmentId ?? null,
-      fileName: c.file?.name ?? c.attachment?.resourceName ?? c.attachment?.fileName ?? null,
+      fileName: c.file?.name ?? c.attachment?.resourceName ?? null,
     }));
 
     return JSON.stringify({ experienceSignature, courseSignature });

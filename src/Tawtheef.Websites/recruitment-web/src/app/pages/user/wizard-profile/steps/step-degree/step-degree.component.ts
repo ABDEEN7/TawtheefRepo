@@ -160,7 +160,7 @@ export class StepDegreeComponent implements OnInit {
         gpa: d.gpa ?? null,
         gradeId: d.grade?.id ?? null,
         attachmentId: d.attachmentId ?? null,
-        fileName: d.file?.name ?? d.certificate?.resourceName ?? d.certificate?.fileName ?? null,
+        fileName: d.file?.name ?? d.certificate?.resourceName ?? null,
       }))
     );
   }

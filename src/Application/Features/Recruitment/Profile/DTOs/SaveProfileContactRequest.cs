@@ -19,5 +19,6 @@ public sealed class NationalAddressDto
     public int Street { get; set; }
     public int Building { get; set; }
     public int Unit { get; set; }
+    public string? FileName { get; set; }
     public required IFormFile NationalAddress { get; set; }
 }

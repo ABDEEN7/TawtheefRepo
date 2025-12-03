@@ -401,7 +401,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
       const nationalAddress = {
         localName: this.naLocalFile?.name ?? null,
         resourceId: state.naFile?.resourceId ?? null,
-        resourceName: state.naFile?.resourceName ?? state.naFile?.fileName ?? null,
+        resourceName: state.naFile?.resourceName ?? null,
       };
 
       const contactInfo = {
