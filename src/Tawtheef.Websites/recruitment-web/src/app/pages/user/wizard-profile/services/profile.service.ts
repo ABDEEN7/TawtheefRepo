@@ -49,9 +49,43 @@ export class ProfileService {
     dto: SaveProfileContactRequestDto,
     files?: { nationalAddressFile?: File | null }
   ) {
-    const formData = this.buildFormData(dto, {
-      nationalAddressFile: files?.nationalAddressFile ?? null
-    });
+    const formData = new FormData();
+
+    if (dto.submit !== null && dto.submit !== undefined) {
+      formData.append('submit', String(dto.submit));
+    }
+    if (dto.residenceCountryId) {
+      formData.append('residenceCountryId', dto.residenceCountryId);
+    }
+    if (dto.interviewLocationId) {
+      formData.append('interviewLocationId', dto.interviewLocationId);
+    }
+    if (dto.address) {
+      formData.append('address', dto.address);
+    }
+
+    if (dto.nationalAddress) {
+      const na = dto.nationalAddress;
+      if (na.zone !== null && na.zone !== undefined) {
+        formData.append('nationalAddress.zone', String(na.zone));
+      }
+      if (na.street !== null && na.street !== undefined) {
+        formData.append('nationalAddress.street', String(na.street));
+      }
+      if (na.building !== null && na.building !== undefined) {
+        formData.append('nationalAddress.building', String(na.building));
+      }
+      if (na.unit !== null && na.unit !== undefined) {
+        formData.append('nationalAddress.unit', String(na.unit));
+      }
+      if (na.nationalAddressFileName) {
+        formData.append('nationalAddress.nationalAddressFileName', na.nationalAddressFileName);
+      }
+    }
+
+    if (files?.nationalAddressFile) {
+      formData.append('nationalAddress.nationalAddress', files.nationalAddressFile);
+    }
 
     return this.http.post(this.endpoints.user.profile.saveContact, formData);
   }

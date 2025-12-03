@@ -53,7 +53,8 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
     !!state.naStreet ||
     !!state.naBuilding ||
     !!state.naUnit ||
-    !!state.naFile;
+    !!state.naFile ||
+    !!state.naFileName;
 
   return {
     submit: false,
