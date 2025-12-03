@@ -1,11 +1,11 @@
 ﻿import { inject, Injectable, signal } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpParams} from '@angular/common/http';
 import {forkJoin, Observable} from 'rxjs';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
-import {SkillDto} from '../models/skill-dto.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {catchError, map} from 'rxjs/operators';
 import {HttpService} from '../../../../core/http/http.service';
+import {UserService} from '../../../../core/auth/user.service';
 
 export interface CountryDto extends dropdownOptionsModel {
   code: string;
@@ -15,6 +15,7 @@ export interface CountryDto extends dropdownOptionsModel {
 export class ProfileLookupsService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
+  private userService = inject(UserService);
 
   loading = signal<boolean>(false);
   loaded = signal<boolean>(false);
@@ -44,8 +45,9 @@ export class ProfileLookupsService {
 
     this.loading.set(true);
 
+    const provider = this.userService.getPrefill()?.provider ?? '';
     return forkJoin({
-      candidateTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.candidateTypes),
+      candidateTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.candidateTypes, { provider }),
       targetEntities: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.targetEntities),
       genders: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.genders),
       religions: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.religions),

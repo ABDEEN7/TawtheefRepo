@@ -102,8 +102,6 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'personal', 'marital');
   }
 
-  // hasDisability حالياً bool غير nullable
-  // لو حابة تجبري المستخدم يختار، حوّليها في ProfileState إلى: hasDisability?: boolean | null;
   if (s.hasDisability && !isFilledScalar(s.disabilityDetails)) {
     addRequiredError(errors, 'personal', 'disabilityDetails');
   }
