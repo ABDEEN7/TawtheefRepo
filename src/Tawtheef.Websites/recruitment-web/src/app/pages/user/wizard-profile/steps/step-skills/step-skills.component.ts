@@ -51,7 +51,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const state = this.ds.state();
     const signature = this.buildSignature(state.skills);
-    this.lastSubmittedSignature = signature;
+    this.lastSubmittedSignature = null;
 
     this.sub = this.search$
       .pipe(

@@ -12,6 +12,7 @@ import {dateToDateOnly} from '../../../../../shared/types/dateOnly.type';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {FileSlot, canPreviewFile, createFileSlot, displayedFileName, fileSlotSignature, fileToUpload, previewFileFromSlot, previewUrlFromSlot, setLocalFile, updateRemote} from '../../utils/file-slot';
 
 @Component({
   selector: 'app-step-personal',
@@ -38,7 +39,7 @@ export class StepPersonalComponent implements OnInit {
   }
 
   savingPersonal = false;
-  private sponsorCardLocalFile: File | null = null;
+  private sponsorCard: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
@@ -60,7 +61,8 @@ export class StepPersonalComponent implements OnInit {
   ngOnInit(): void {
     const state = this.ds.state();
     const dto = mapPersonalSection(state);
-    this.lastSubmittedSignature = this.buildSignature(dto, state);
+    updateRemote(this.sponsorCard, state.sponsorCardFile);
+    this.lastSubmittedSignature = null;
   }
 
   get showChildrenField(): boolean {
@@ -73,16 +75,17 @@ export class StepPersonalComponent implements OnInit {
 
   previewSponsorCard(ev?: Event) {
     ev?.stopPropagation();
-    if (this.sponsorCardLocalFile) {
-      this.fileUtils.previewBlob(this.sponsorCardLocalFile);
+    if (!canPreviewFile(this.sponsorCard)) return;
+
+    const local = previewFileFromSlot(this.sponsorCard);
+    if (local) {
+      this.fileUtils.previewBlob(local);
       return;
     }
 
-    const ref = this.ds.state().sponsorCardFile;
-    if (ref?.url) {
-      this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
-    }else if(ref?.file){
-      this.fileUtils.previewBlob(ref?.file);
+    const url = previewUrlFromSlot(this.sponsorCard);
+    if (url) {
+      this.fileUtils.previewUrl(url, displayedFileName(this.sponsorCard), false);
     }
   }
 
@@ -90,7 +93,7 @@ export class StepPersonalComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-    this.sponsorCardLocalFile = file;
+    setLocalFile(this.sponsorCard, file);
     this.ds.up('sponsorCardName', file.name);
     this.ds.up('sponsorCardFile', { resourceId: 'local', fileName: file.name, file: file } as any);
     input.value = '';
@@ -108,7 +111,7 @@ export class StepPersonalComponent implements OnInit {
 
     const s = this.ds.state();
     const dto = mapPersonalSection(s);
-    const signature = this.buildSignature(dto, s);
+    const signature = this.buildSignature(dto);
 
     if (signature && signature === this.lastSubmittedSignature) {
       this.next.emit();
@@ -118,7 +121,7 @@ export class StepPersonalComponent implements OnInit {
     this.savingPersonal = true;
 
     this.profileService
-      .savePersonalSection(dto, { sponsorCardFile: this.sponsorCardLocalFile })
+      .savePersonalSection(dto, { sponsorCardFile: fileToUpload(this.sponsorCard) })
       .pipe(finalize(() => this.savingPersonal = false))
       .subscribe({
         next: () => {
@@ -131,14 +134,9 @@ export class StepPersonalComponent implements OnInit {
       });
   }
 
-  private buildSignature(dto: ReturnType<typeof mapPersonalSection>, state: ReturnType<typeof this.ds.state>): string | null {
+  private buildSignature(dto: ReturnType<typeof mapPersonalSection>): string | null {
     try {
-      const sponsorCard = {
-        localName: this.sponsorCardLocalFile?.name ?? null,
-        resourceId: state.sponsorCardFile?.resourceId ?? null,
-        resourceName: state.sponsorCardFile?.resourceName ?? null,
-      };
-      return JSON.stringify({ dto, sponsorCard });
+      return JSON.stringify({ dto, sponsorCard: fileSlotSignature(this.sponsorCard) });
     } catch {
       return null;
     }

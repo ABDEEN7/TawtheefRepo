@@ -41,7 +41,7 @@ export class StepExperienceComponent implements OnInit {
   ngOnInit(): void {
     const state = this.ds.state();
     const signature = this.buildSignature(state.experiences, state.courses);
-    this.lastSubmittedSignature = signature;
+    this.lastSubmittedSignature = null;
   }
   // ========== EXPERIENCES ==========
 

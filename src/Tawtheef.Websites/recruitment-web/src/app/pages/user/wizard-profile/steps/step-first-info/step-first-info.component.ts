@@ -8,6 +8,7 @@ import {mapPrereqSection} from '../../services/profile.mapper';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {FileSlot, createFileSlot, fileSlotSignature, fileToUpload, previewFileFromSlot, previewUrlFromSlot, setLocalFile, updateRemote} from '../../utils/file-slot';
 
 @Component({
   selector: 'app-step-first-info',
@@ -25,10 +26,10 @@ export class StepFirstInfoComponent implements OnInit {
   messageService   = inject(MessageService);
   fileUtils = inject(FileUtilsService);
 
-  private cvFile: File | null = null;
-  private idFile: File | null = null;
-  private birthCertificateFile: File | null = null;
-  private marriageCertificateFile: File | null = null;
+  private cvFile: FileSlot = createFileSlot();
+  private idFile: FileSlot = createFileSlot();
+  private birthCertificateFile: FileSlot = createFileSlot();
+  private marriageCertificateFile: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -40,8 +41,12 @@ export class StepFirstInfoComponent implements OnInit {
 
   ngOnInit(): void {
     const state = this.ds.state();
-    const payload = mapPrereqSection(state);
-    this.lastSubmittedSignature = this.buildSignature(payload, state);
+    updateRemote(this.cvFile, state.cvFile);
+    updateRemote(this.idFile, state.idFile);
+    updateRemote(this.birthCertificateFile, state.birthCertificateFile);
+    updateRemote(this.marriageCertificateFile, state.marriageCertificateFile);
+
+    this.lastSubmittedSignature = null;
   }
 
   onFileSelected(kind: 'cv' | 'id' | 'birth' | 'marriage', event: Event) {
@@ -50,22 +55,22 @@ export class StepFirstInfoComponent implements OnInit {
     if (!file) return;
     switch (kind) {
       case 'cv':
-        this.cvFile = file;
+        setLocalFile(this.cvFile, file);
         this.ds.up('cvFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('cvName', file.name);
         break;
       case 'id':
-        this.idFile = file;
+        setLocalFile(this.idFile, file);
         this.ds.up('idFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('idName', file.name);
         break;
       case 'birth':
-        this.birthCertificateFile = file;
+        setLocalFile(this.birthCertificateFile, file);
         this.ds.up('birthCertificateFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('birthCertificateName', file.name);
         break;
       case 'marriage':
-        this.marriageCertificateFile = file;
+        setLocalFile(this.marriageCertificateFile, file);
         this.ds.up('marriageCertificateFile', {resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('marriageCertificateName', file.name);
         break;
@@ -86,7 +91,7 @@ export class StepFirstInfoComponent implements OnInit {
 
     const state = this.ds.state();
     const payload = mapPrereqSection(state);
-    const signature = this.buildSignature(payload, state);
+    const signature = this.buildSignature(payload);
     if (signature && signature === this.lastSubmittedSignature) {
       this.next.emit();
       return;
@@ -95,10 +100,10 @@ export class StepFirstInfoComponent implements OnInit {
     this.saving = true;
     this.profile
       .savePrereq(payload, {
-        cvFile: this.cvFile,
-        idFile: this.idFile,
-        birthCertificateFile: this.birthCertificateFile,
-        marriageCertificateFile: this.marriageCertificateFile
+        cvFile: fileToUpload(this.cvFile),
+        idFile: fileToUpload(this.idFile),
+        birthCertificateFile: fileToUpload(this.birthCertificateFile),
+        marriageCertificateFile: fileToUpload(this.marriageCertificateFile)
       }).subscribe({
       next: () => {
         this.saving = false;
@@ -118,25 +123,25 @@ export class StepFirstInfoComponent implements OnInit {
 
   previewFile(kind: 'cv' | 'id' | 'birth' | 'marriage', ev?: Event) {
     ev?.stopPropagation();
-    const local = this.getLocalFile(kind);
+    const local = previewFileFromSlot(this.getSlot(kind));
     if (local) {
       this.fileUtils.previewBlob(local);
       return;
     }
 
-    const ref = this.getFileRef(kind);
-    if (ref?.url) {
-      this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
+    const ref = previewUrlFromSlot(this.getSlot(kind));
+    if (ref) {
+      this.fileUtils.previewUrl(ref, this.getSlot(kind).remote?.resourceName || '', false);
     }
   }
 
-  private buildSignature(payload: ReturnType<typeof mapPrereqSection>, state: ReturnType<typeof this.ds.state>): string | null {
+  private buildSignature(payload: ReturnType<typeof mapPrereqSection>): string | null {
     try {
       const files = {
-        cv: this.fileSignature(this.cvFile, state.cvFile),
-        id: this.fileSignature(this.idFile, state.idFile),
-        birth: this.fileSignature(this.birthCertificateFile, state.birthCertificateFile),
-        marriage: this.fileSignature(this.marriageCertificateFile, state.marriageCertificateFile),
+        cv: fileSlotSignature(this.cvFile),
+        id: fileSlotSignature(this.idFile),
+        birth: fileSlotSignature(this.birthCertificateFile),
+        marriage: fileSlotSignature(this.marriageCertificateFile),
       };
       return JSON.stringify({ payload, files });
     } catch {
@@ -144,58 +149,16 @@ export class StepFirstInfoComponent implements OnInit {
     }
   }
 
-  private fileSignature(local: File | null, remote: any) {
-    return {
-      localName: local?.name ?? null,
-      resourceId: remote?.resourceId ?? null,
-      resourceName: remote?.resourceName ?? remote?.fileName ?? null,
-    };
-  }
-
-  private getLocalFile(kind: 'cv' | 'id' | 'birth' | 'marriage'): File | null {
+  private getSlot(kind: 'cv' | 'id' | 'birth' | 'marriage'): FileSlot {
     switch (kind) {
       case 'cv':
-        if(this.cvFile){
-          return this.cvFile;
-        }else{
-          const state = this.ds.state();
-          return state.cvFile?.file ?? null;
-        }
+        return this.cvFile;
       case 'id':
-        if(this.idFile){
-          return this.idFile;
-        }else{
-          const state = this.ds.state();
-          return state.idFile?.file ?? null;
-        }
+        return this.idFile;
       case 'birth':
-        if(this.birthCertificateFile){
-          return this.birthCertificateFile;
-        }else{
-          const state = this.ds.state();
-          return state.birthCertificateFile?.file ?? null;
-        }
+        return this.birthCertificateFile;
       case 'marriage':
-        if(this.marriageCertificateFile){
-          return this.marriageCertificateFile;
-        }else{
-          const state = this.ds.state();
-          return state.marriageCertificateFile?.file ?? null;
-        }
-    }
-  }
-
-  private getFileRef(kind: 'cv' | 'id' | 'birth' | 'marriage') {
-    const state = this.ds.state();
-    switch (kind) {
-      case 'cv':
-        return state.cvFile;
-      case 'id':
-        return state.idFile;
-      case 'birth':
-        return state.birthCertificateFile;
-      case 'marriage':
-        return state.marriageCertificateFile;
+        return this.marriageCertificateFile;
     }
   }
 }
