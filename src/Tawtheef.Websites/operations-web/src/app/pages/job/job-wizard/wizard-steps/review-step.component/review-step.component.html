@@ -11,7 +11,7 @@
         <div class="small-muted">{{ 'job_wizard.steps.basics.gender' | translate }}</div>
         <div class="mb-1"> {{jobSignal().genderId}}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ lookupsService.getWorkLocations(jobSignal().workLocationId)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ lookupsService.getDegrees(jobSignal().degreeIds)}}</div>
+        <!-- <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ lookupsService.getDegrees(jobSignal().degrees.map(deg => deg.degreeId))}}</div> -->
         <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ lookupsService.getMajor(jobSignal().majorId)}}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ lookupsService.getTypeOfWork(jobSignal().workTypeId)}}</div>
         <div class="small-muted">{{ 'job_wizard.steps.basics.vacancies' | translate }}</div><div class="mb-1">{{ jobSignal().vacancies || '—' }}</div>

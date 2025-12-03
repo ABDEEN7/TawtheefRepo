@@ -1,0 +1,78 @@
+<div class="card card-lite p-3 mb-3" [formGroup]="form">
+  <h6 class="mb-3 text-brand fw-bold">
+    {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
+  </h6>
+
+  <!-- Add Responsibility Section -->
+  <div class="border rounded p-3 mb-3 bg-light">
+    <div class="row">
+      <div class="col-md-12">
+        <label class="form-label fw-bold text-muted small">
+          {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR_PLACEHOLDER' | translate }}
+        </label>
+        <textarea
+          [(ngModel)]="newResponsibilityText"
+          [ngModelOptions]="{ standalone: true }"
+          class="form-control"
+          rows="3"
+          placeholder="{{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate }}"
+          (keydown.enter)="$event.preventDefault(); addResponsibility()">
+        </textarea>
+      </div>
+    </div>
+    
+    <div class="text-end mt-3">
+      <button class="btn btn-brand" (click)="addResponsibility()">
+        {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_RESPONSIBILITY' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Responsibilities List -->
+  <div formArrayName="responsibilities">
+    @for (responsibilityControl of responsibilitiesArray.controls; track $index; let i = $index) {
+      <div class="card mb-3">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <span class="fw-bold">
+            {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY' | translate }} {{ i + 1 }}
+          </span>
+          <button 
+            class="btn btn-sm btn-outline-danger"
+            (click)="removeResponsibility(i)"
+            type="button">
+            <i class="fa fa-trash"></i> {{ 'COMMON.DELETE' | translate }}
+          </button>
+        </div>
+        
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <h6 class="text-muted small mb-2">
+                {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR_PLACEHOLDER' | translate }}
+              </h6>
+              <textarea
+                [formControl]="responsibilityControl"
+                class="form-control"
+                rows="3"
+                placeholder="{{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate }}">
+              </textarea>
+              
+              @if (responsibilityControl.invalid && responsibilityControl.touched) {
+                <div class="text-danger small mt-1">
+                  {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    
+    @if (responsibilitiesArray.length === 0) {
+      <div class="text-center py-5">
+        <i class="fa fa-tasks fa-3x text-muted mb-3"></i>
+        <p class="text-muted">{{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE' | translate }}</p>
+      </div>
+    }
+  </div>
+</div>

@@ -14,7 +14,7 @@ export class SidebarComponent implements OnInit {
   private translationService = inject(TranslateService);
   @Output() toggleSidebar = new EventEmitter<void>();
   
-  isCollapsed = false;
+  isCollapsed = true;
   activeItem = '';
   
   menuItems = [

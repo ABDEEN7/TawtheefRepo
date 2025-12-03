@@ -4,4 +4,4 @@ using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 
-public record UpdateJobCommand(UpdateJobDto Job) : IRequest<IResult<Unit>>;
+public record UpdateJobCommand(Guid JobId, UpdateJobDto Job) : IRequest<IResult<Unit>>;

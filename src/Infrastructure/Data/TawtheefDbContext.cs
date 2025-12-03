@@ -63,6 +63,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Country> Country { get; set; }
     public DbSet<Major> Major { get; set; }
     public DbSet<SkillType> SkillType { get; set; }
+    public DbSet<SkillRequirementType> SkillRequirementType { get; set; }
     public DbSet<University> University { get; set; }
 
     // Base User Tables
@@ -94,9 +95,11 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<JobQuota> JobQuotas { get; set; }
     public DbSet<JobSkill> JobSkills { get; set; }
     public DbSet<ResidentBreakdown> ResidentBreakdowns { get; set; }
-    
-    // Notification Tables
-    public DbSet<EmailQueue> EmailQueues { get; set; }
+    public DbSet<JobResponsibility> JobResponsibilities { get; set; }
+    public DbSet<JobRequiredAttachment> JobRequiredAttachments { get; set; }
+
+// Notification Tables
+public DbSet<EmailQueue> EmailQueues { get; set; }
     public DbSet<EmailTemplate> EmailTemplates { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     

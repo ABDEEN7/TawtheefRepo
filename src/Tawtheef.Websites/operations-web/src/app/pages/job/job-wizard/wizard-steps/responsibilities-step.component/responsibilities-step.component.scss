@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.form-control {
+  border: 1px solid #dee2e6;
+  
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+}
+
+textarea.form-control {
+  resize: vertical;
+}
+
+.btn-brand {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}

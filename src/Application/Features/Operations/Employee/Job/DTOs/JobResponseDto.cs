@@ -1,40 +1,48 @@
 using Tawtheef.Application.Common.Models;
-using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
-namespace Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
+namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
-public record JobResponseDto
+public class JobResponseDto
 {
-    public Guid Id { get; init; }
-    
-    // Base entity properties
-    public Guid? CreatedById { get; init; }
-    public DateTimeOffset CreatedDate { get; init; }
-    public Guid? UpdatedById { get; init; }
-    public DateTimeOffset? UpdatedDate { get; init; }
-    
-    // Job properties
-    public required string Title { get; init; }
-    public int Vacancies { get; init; }
-    public DateTimeOffset Deadline { get; init; }
-    public required string Description { get; init; }
-    public required string Benefits { get; init; }
-    public DateTimeOffset? PublishAt { get; init; }
-    
-    // Navigation properties as DropdownOptions
-    public DropdownOptions? RequestingDepartment { get; init; }
-    public DropdownOptions? JobCategory { get; init; }
-    public DropdownOptions? Gender { get; init; }
-    public DropdownOptions? WorkLocation { get; init; }
-    public DropdownOptions? Major { get; init; }
-    public DropdownOptions? WorkType { get; init; }
-    public DropdownOptions? Status { get; init; }
-    
-    // Complex objects
-    public JobQuotasResponseDto? Quota { get; init; }
-    
+    public Guid Id { get; set; }
+
+    // Basic Job Information
+    public string Title { get; set; } = string.Empty;
+    public int Vacancies { get; set; }
+    public DateTimeOffset Deadline { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public string Benefits { get; set; } = string.Empty;
+    public string? Overview { get; set; }
+    public string? QualificationsDescription { get; set; }
+    public DateTimeOffset? PublishAt { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
+    public DateTimeOffset? ModifiedDate { get; set; }
+    public string? CreatedBy { get; set; }
+    public string? ModifiedBy { get; set; }
+
+    // Requirements
+    public int MinimumExperienceYears { get; set; }
+    public int MinimumAge { get; set; }
+    public int MaximumAge { get; set; }
+
+    // Lookups
+    public DropdownOptions Sector { get; set; } = default!;
+    public DropdownOptions Management { get; set; } = default!;
+    public DropdownOptions Department { get; set; } = default!;
+    public DropdownOptions JobCategory { get; set; } = default!;
+    public DropdownOptions? Gender { get; set; }
+    public DropdownOptions WorkLocation { get; set; } = default!;
+    public DropdownOptions Major { get; set; } = default!;
+    public DropdownOptions? SubMajor { get; set; }
+    public DropdownOptions WorkType { get; set; } = default!;
+    public DropdownOptions Status { get; set; } = default!;
+
+    public JobQuotaResponseDto Quota { get; set; } = default!;
+
     // Collections
-    public ICollection<DropdownOptions> Degrees { get; init; } = [];
-    public ICollection<string> Conditions { get; init; } = [];
-    public ICollection<string> Skills { get; init; } = [];
+    public List<JobDegreeResponseDto> Degrees { get; set; } = [];
+    public List<JobConditionResponseDto> Conditions { get; set; } = [];
+    public List<JobSkillResponseDto> Skills { get; set; } = [];
+    public List<JobResponsibilityResponseDto> Responsibilities { get; set; } = [];
+    public List<JobRequiredAttachmentResponseDto> RequiredAttachments { get; set; } = [];
 }

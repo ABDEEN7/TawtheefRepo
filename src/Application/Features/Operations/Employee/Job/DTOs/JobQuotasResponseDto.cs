@@ -1,12 +1,12 @@
 namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
-public record JobQuotasResponseDto
+public class JobQuotaResponseDto
 {
-    public decimal QatariCitizens { get; init; }
-    public decimal QatarMother { get; init; }
-    public decimal NonQatariSpouse { get; init; }
-    public decimal Gcc { get; init; }
-    public decimal QuGrads { get; init; }
-    public decimal Residents { get; init; }
-    public List<ResidentBreakdownResponseDto> ResidentsBreakdowns { get; init; } = [];
+    public decimal QatariCitizens { get; set; }
+    public decimal QatarMother { get; set; }
+    public decimal NonQatariSpouse { get; set; }
+    public decimal Gcc { get; set; }
+    public decimal QuGrads { get; set; }
+    public decimal Residents { get; set; }
+    public List<ResidentBreakdownResponseDto> ResidentsBreakdowns { get; set; } = new();
 }

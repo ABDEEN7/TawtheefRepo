@@ -81,16 +81,16 @@
               <tr>
                 <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
                 <td class="fw-bold">{{ job.title }}</td>
-                <td>{{ job.requestingDepartment?.name}}</td>
+                <td>{{ job.department.name}}</td>
                 <td>
-                  <span class="badge-soft {{ job.jobCategory?.backendName }}">
-                    {{ job.jobCategory?.name}}
+                  <span class="badge-soft {{ job.jobCategory.backendName }}">
+                    {{ job.jobCategory.name}}
                   </span>
                 </td>
                 <td>{{ job.vacancies || 0 }}</td>
                 <td>
-                  <span class="status-pill status-{{ job.status?.backendName }}">
-                    {{ job.status?.name}}
+                  <span class="status-pill status-{{ job.status.backendName }}">
+                    {{ job.status.name}}
                   </span>
                 </td>
                 <td class="text-end">

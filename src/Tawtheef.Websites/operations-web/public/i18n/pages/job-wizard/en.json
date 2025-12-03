@@ -1,185 +1,118 @@
 {
-  "job_wizard": {
-    "status": "Job Status",
-    "create_job": "Create New Job",
-    "enter_details": "Enter the details through the following steps, then publish the job",
-    "edit_job": "Edit Job",
-    "edit_details": "Edit job details and requirements",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BASICS": "Basics",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW": "Overview",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS": "Qualifications",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES": "Responsibilities",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS": "Conditions",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS": "Skills",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS": "Attachments",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS": "Benefits",
 
-    "navigation": {
-      "wizard_steps": {
-        "basics": "Basics",
-        "quotas": "Nationality Quotas",
-        "conditions": "Conditions",
-        "skills": "Skills",
-        "description_benefits": "Description & Benefits",
-        "review": "Review & Publish"
-      }
-    },
+  "JOB_WIZARD.SHARED.BUTTONS.BACK": "Back",
+  "JOB_WIZARD.SHARED.BUTTONS.NEXT": "Next",
+  "JOB_WIZARD.EDIT_JOB": "Edit Job",
+  "JOB_WIZARD.CREATE_JOB": "Create Job",
+  "JOB_WIZARD.EDIT_DETAILS": "Edit job details",
+  "JOB_WIZARD.ENTER_DETAILS": "Enter job details",
+  "JOB_WIZARD.SHARED.BUTTONS.EDIT_JOB": "Save Changes",
+  "JOB_WIZARD.SHARED.BUTTONS.PUBLISH_JOB": "Publish Job",
+  "savedSuccessfully": "Saved successfully",
 
-    "shared": {
-      "buttons": {
-        "add": "Add",
-        "cancel": "Cancel",
-        "confirm": "Confirm",
-        "publish_job": "Publish Job",
-        "save": "Save",
-        "next": "Next",
-        "back": "Back",
-        "edit_job": "Edit Job"
-      },
-      "placeholders": {
-        "search_select": "Type to search and select",
-        "enter_text": "Enter text",
-        "select_option": "Select an option",
-        "enter_number": "Enter a number"
-      }
-    },
+    "JOB_WIZARD.STEPS.BASICS.TITLE": "Basic Information",
+  "JOB_WIZARD.STEPS.BASICS.SUBTITLE": "Enter the basic job details",
 
-    "validation": {
-      "total_100_percent": "The total must equal 100%",
-      "min_vacancies": "Vacancies must be at least one",
-      "add_job_skill_detail": "Please enter a skill before adding",
-      "add_job_cond_detail": "Please enter a condition before adding"
-    },
+  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT": "Management",
+  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER": "Select management",
 
-    "steps": {
-      "basics": {
-        "title": "Basics",
-        "select_type": "Select Type",
-        "requesting_dept": "Requesting Department",
-        "requesting_dept_placeholder": "Type to search and select department",
-        "requesting_dept_hint": "You can type to search, then choose the department from the list.",
-        "job_title": "Job Title",
-        "job_title_placeholder": "Enter the job title",
-        "job_category": "Job Category",
-        "job_category_placeholder": "Select a category",
-        "categories": {
-          "academic": "Academic",
-          "administrative": "Administrative",
-          "labor": "Labor"
-        },
-        "gender": "Gender",
-        "genders": {
-          "all": "All",
-          "male": "Male",
-          "female": "Female"
-        },
-        "work_entity": "Work Entity",
-        "work_entity_placeholder": "Select work entity",
-        "entities": {
-          "schools": "Schools",
-          "ministry": "Ministry"
-        },
-        "major": "Major",
-        "major_placeholder": "Type to search and select major",
-        "degree": "Academic Degree (Multiple Selection)",
-        "degree_placeholder": "Select one or more degrees...",
-        "work_type": "Work Type",
-        "work_type_placeholder": "Select work type",
-        "work_types": {
-          "full": "Full Time",
-          "part": "Part Time"
-        },
-        "vacancies": "Number of Vacancies",
-        "vacancies_placeholder": "Example: 3",
-        "deadline": "Deadline"
-      },
+  "JOB_WIZARD.STEPS.BASICS.SECTOR": "Sector",
+  "JOB_WIZARD.STEPS.BASICS.SECTOR_PLACEHOLDER": "Select sector",
 
-      "quotas": {
-        "title": "Target Quotas by Nationality",
-        "qatariCitizens": "Qatari Citizens (%)",
-        "qatarMother": "Children of Qatari Mothers (%)",
-        "nonQatariSpouse": "Non-Qatari Spouse Married to Qatari (%)",
-        "gcc": "GCC Nationals (%)",
-        "quGrads": "Qatar University Graduates (%)",
-        "residents": "Residents in Qatar (%)",
-        "residents_details_button": "Residents Breakdown",
-        "validation": {
-          "sum_hint": "The total should preferably be 100% before publishing.",
-          "sum_label": "Total",
-          "sum_state": "(Total must equal 100%)",
-          "breakdowns_invalid":"  Sum of residents breakdowns must equal total residents",
-          "sum_valid": "(Complete)"
-        }
-      },
+  "JOB_WIZARD.STEPS.BASICS.DEPARTMENT": "Department",
+  "JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER": "Select department",
 
-      "conditions": {
-        "title": "Conditions",
-        "placeholder": "Enter a clear condition (e.g., C1 language level or higher)",
-        "empty_state": "No conditions added yet",
-        "add_condition": "Add Condition"
-      },
+  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE": "Work Type",
+  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE_PLACEHOLDER": "Select work type",
 
-      "skills": {
-        "title": "Required Skills",
-        "placeholder": "Enter a new skill",
-        "empty_state": "No skills added yet",
-        "add_skill": "Add Skill"
-      },
+  "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY": "Job Category",
+  "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY_PLACEHOLDER": "Select job category",
 
-      "description_benefits": {
-        "title": "Description & Benefits",
-        "description": "Description",
-        "description_placeholder": "Enter the job description...",
-        "benefits": "Benefits",
-        "benefits_placeholder": "Enter job benefits...",
-        "responsibilities": "Key Responsibilities",
-        "responsibilities_placeholder": "Enter key responsibilities..."
-      },
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE": "Job Title",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER": "Enter job title",
 
-      "review": {
-        "title": "Review & Publish",
-        "download_pdf": "Download PDF",
-        "sections": {
-          "basics": "Basic Information",
-          "quotas": "Target Quotas by Nationality",
-          "conditions": "Conditions",
-          "skills": "Required Skills",
-          "description_benefits": "Description & Benefits"
-        }
-      }
-    },
+  "JOB_WIZARD.STEPS.BASICS.MAJOR": "Major",
+  "JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER": "Select major",
 
-    "modals": {
-      "residents": {
-        "title": "Residents Breakdown by Nationality",
-        "description": "Add or edit resident percentages for each nationality. The total must match the 'Residents' percentage from the previous step.",
-        "nationality": "Nationality",
-        "percent": "Percentage",
-        "empty_state": "No percentages added yet",
-        "total": "Total Residents Breakdown",
-        "btn_add": "Add",
-        "close": "Close",
-        "save": "Save Breakdown",
-        "target": "Target",
-        "remaining": "Remaining",
-        "exceeded_target": "Exceeds target percentage",
-        "exceeds_remaining": "Cannot exceed {{remaining}}% remaining"
-      }
-    },
+  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR": "Sub Major",
+  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER": "Select sub major",
 
-    "notifications": {
-      "success": {
-        "job_created": "Job created successfully",
-        "job_published": "Job published successfully"
-      },
-      "errors": {
-        "validation_failed": "Please review the entered data",
-        "server_error": "A server error occurred"
-      },
-      "warning": "Warning"
-    }
-  },
+  "JOB_WIZARD.STEPS.BASICS.GENDER": "Gender",
+  "JOB_WIZARD.STEPS.BASICS.GENDER_PLACEHOLDER": "Select gender",
 
-  "steps": {
-    "skills": {
-      "placeholder": "Enter a new skill"
-    }
-  },
+  "JOB_WIZARD.STEPS.BASICS.WORK_LOCATION": "Work Location",
+  "JOB_WIZARD.STEPS.BASICS.WORK_LOCATION_PLACEHOLDER": "Select work location",
 
-  "PhD": "PhD",
-  "Masters": "Master’s",
-  "Bachelors": "Bachelor’s",
-  "PhD، Masters": "PhD, Master’s"
+  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE": "Minimum Experience (Years)",
+  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE_PLACEHOLDER": "Enter minimum years of experience",
+
+  "JOB_WIZARD.STEPS.BASICS.VACANCIES": "Vacancies",
+  "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "Enter number of vacancies",
+
+  "JOB_WIZARD.STEPS.BASICS.DEADLINE": "Application Deadline",
+
+  "JOB_WIZARD.STEPS.BASICS.MIN_AGE": "Minimum Age",
+  "JOB_WIZARD.STEPS.BASICS.MIN_AGE_PLACEHOLDER": "Enter minimum age",
+
+  "JOB_WIZARD.STEPS.BASICS.MAX_AGE": "Maximum Age",
+  "JOB_WIZARD.STEPS.BASICS.MAX_AGE_PLACEHOLDER": "Enter maximum age",
+
+  "JOB_WIZARD.VALIDATION.MIN_EXPERIENCE": "Minimum experience is not valid",
+  "JOB_WIZARD.VALIDATION.MIN_VACANCIES": "Minimum vacancies must be at least 1",
+  "JOB_WIZARD.VALIDATION.MIN_GREATER_THAN_MAX": "Minimum age cannot be greater than maximum age",
+  "JOB_WIZARD.VALIDATION.AGE_RANGE": "Age must be between 0 and 100",
+
+  
+  "JOB_WIZARD.STEPS.ATTACHMENTS.TITLE": "Attachments",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT": "Attachment",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME": "Attachment Name",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_PLACEHOLDER": "Enter attachment name",
+  "JOB_WIZARD.VALIDATION.ATTACHMENT_NAME_REQUIRED": "Attachment name is required",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.MANDATORY": "Mandatory",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE": "No attachments added yet",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ADD_ATTACHMENT": "Add Attachment",
+  
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_RESPONSIBILITY": "Add Responsibility",
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY": "Responsibility",
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE": "No responsibilities added yet",
+
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR_PLACEHOLDER": "Enter the description in Arabic",
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN_PLACEHOLDER": "Enter the description in English",
+
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER": "Description in Arabic",
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_EN_PLACEHOLDER": "Description in English",
+
+  "JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER": "Enter the description in Arabic",
+  "JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_EN_PLACEHOLDER": "Description in English",
+  "JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_EN_PLACEHOLDER": "Enter the description in English",
+
+  "JOB_WIZARD.STEPS.CONDITIONS.ADD_CONDITIONSY": "Add Condition",
+  "JOB_WIZARD.STEPS.CONDITIONS.CONDITION": "Condition",
+  "JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE": "No conditions added yet",
+
+  "JOB_WIZARD.STEPS.SKILLS.TILTLE": "Required Skills",
+  "JOB_WIZARD.STEPS.SKILLS.ADD_SKILL": "Add Skill",
+  "JOB_WIZARD.STEPS.SKILLS.SKILL": "Skill",
+  "JOB_WIZARD.STEPS.SKILLS.SKILL_PLACEHOLDER": "Select a skill",
+  "JOB_WIZARD.STEPS.SKILLS.SHOW_TO_APPLICANTS": "Show to applicants",
+  "JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE": "No skills added yet.",
+
+  "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION": "Benefits Description",
+  "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_PLACEHOLDER": "Enter benefits description",
+
+  "JOB_WIZARD.VALIDATION.WARNING": "Warning",
+  "JOB_WIZARD.VALIDATION.ADD_RESPONSIBILITY_DETAIL": "Please add at least one responsibility before proceeding.",
+  "JOB_WIZARD.VALIDATION.WARRNING": "Warning",
+  "VALIDATION.REQUIRED_FIELD": "This field is required",
+  "COMMON.DELETE": "Delete",
+  "COMMON.REMOVE": "Remove"
+
 }

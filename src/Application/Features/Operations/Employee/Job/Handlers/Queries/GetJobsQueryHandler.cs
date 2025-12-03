@@ -3,7 +3,7 @@ using MapsterMapper;
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Models.Pagination;
-using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
+using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;

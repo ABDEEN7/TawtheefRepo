@@ -1,0 +1,97 @@
+<div class="card card-lite p-3 mb-3" [formGroup]="form">
+  <h6 class="mb-3 text-brand fw-bold">
+    {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.TITLE' | translate }}
+  </h6>
+
+  <!-- Attachments List -->
+  <div formArrayName="attachments">
+    @for (attachmentGroup of attachmentsArray.controls; track $index; let i = $index) {
+      <div class="attachment-card mb-3 border rounded">
+        <div class="card-header bg-light py-2 px-3">
+          <div class="d-flex align-items-center">
+            <span class="badge bg-secondary me-2">{{ i + 1 }}</span>
+            <h6 class="mb-0 fw-bold text-dark">
+              {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT' | translate }}
+            </h6>
+            <button 
+              class="btn btn-sm btn-link text-danger ms-auto p-0" 
+              (click)="removeAttachment(i)" 
+              type="button"
+              [title]="'COMMON.REMOVE' | translate">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="card-body p-3" [formGroup]="attachmentGroup">
+          <!-- Attachment Name -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <label class="form-label fw-bold text-dark mb-2">
+                {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME' | translate }}
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="fa fa-file-text text-muted"></i>
+                </span>
+                <input 
+                  type="text" 
+                  formControlName="title" 
+                  class="form-control border-start-0"
+                  [placeholder]="'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_PLACEHOLDER' | translate">
+              </div>
+              
+              @if (attachmentGroup.get('title')?.invalid && attachmentGroup.get('title')?.touched) {
+                <div class="text-danger small mt-1">
+                  {{ 'JOB_WIZARD.VALIDATION.ATTACHMENT_NAME_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Mandatory Switch -->
+          <div class="row">
+            <div class="col-12">
+              <div class="form-check form-switch d-flex align-items-center">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  formControlName="isMandatory"
+                  [id]="'isMandatory' + i"
+                  role="switch">
+                <label 
+                  class="form-check-label fw-bold text-dark ms-3" 
+                  [for]="'isMandatory' + i">
+                  {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.MANDATORY' | translate }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    
+    <!-- Empty State -->
+    @if (attachmentsArray.length === 0) {
+      <div class="empty-state text-center py-5 border rounded bg-light">
+        <div class="empty-icon mb-3">
+          <i class="fa fa-paperclip fa-3x text-muted"></i>
+        </div>
+        <p class="text-muted mb-0">
+          {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE' | translate }}
+        </p>
+      </div>
+    }
+  </div>
+
+  <!-- Add Attachment Button -->
+  <div class="mt-3">
+    <button 
+      class="btn btn-outline-brand w-100 py-2" 
+      (click)="addAttachment()"
+      type="button">
+      <i class="fa fa-plus me-2"></i>
+      {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ADD_ATTACHMENT' | translate }}
+    </button>
+  </div>
+</div>

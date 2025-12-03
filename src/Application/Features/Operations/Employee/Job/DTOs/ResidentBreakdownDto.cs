@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
-public record ResidentBreakdownDto
-{
-    public Guid NationalityId { get; init; }
-    public decimal Percentage { get; init; }
+public class ResidentBreakdownDto
+{    
+    public Guid? Id { get; set; }
+    public Guid NationalityId { get; set; }
+    public decimal Percentage { get; set; }
 }

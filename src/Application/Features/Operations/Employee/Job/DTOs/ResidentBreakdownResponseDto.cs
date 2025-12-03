@@ -2,8 +2,9 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
-public record ResidentBreakdownResponseDto
+public class ResidentBreakdownResponseDto
 {
-    public DropdownOptions? Nationality { get; init; } // Now returns DropdownOptions
-    public decimal Percentage { get; init; }
+    public Guid Id { get; set; }
+    public DropdownOptions? Nationality { get; set; }
+    public decimal Percentage { get; set; }
 }

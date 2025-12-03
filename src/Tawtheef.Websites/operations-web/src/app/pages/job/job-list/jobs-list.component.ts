@@ -2,12 +2,11 @@ import { Component, computed, inject, OnInit, signal, ViewEncapsulation } from '
 import { Router } from '@angular/router';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import {JobService} from '../services/job.service';
-import {Job} from '../models/job.model';
 import {PointsConfigModalComponent} from '../modals/points-config-modal/points-config-modal.component';
 import { JobLookupService } from '../services/job-lookup.service';
 import { PaginatedRequest } from '../../../core/models/paginated-request.model';
 import { JobQueryFilter } from '../models/job-query-filter.model';
-import { JobResponseDto } from '../models/job-response-Dto';
+import { JobResponseDto } from '../models/job-response-model';
 
 @Component({
   selector: 'app-job-list',

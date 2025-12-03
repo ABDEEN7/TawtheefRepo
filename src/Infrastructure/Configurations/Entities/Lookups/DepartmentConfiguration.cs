@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
@@ -12,6 +13,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.InformationSystems,
+                ManagementId = ManagmentIds.Minister,
                 BackendName = nameof(DepartmentIds.InformationSystems),
                 NameEn = "Information Systems",
                 NameAr = "نظام الاعتماد",
@@ -22,6 +24,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.HumanResources,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.HumanResources),
                 NameEn = "Human Resources",
                 NameAr = "الموارد البشرية",
@@ -32,6 +35,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.AdministrativeFinancialAffairs,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.AdministrativeFinancialAffairs),
                 NameEn = "Administrative and Financial Affairs",
                 NameAr = "الشؤون الادارية والمالية",
@@ -42,6 +46,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.Evaluation,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.Evaluation),
                 NameEn = "Evaluation",
                 NameAr = "التقويم",
@@ -52,6 +57,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.Curriculum,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.Curriculum),
                 NameEn = "Curriculum",
                 NameAr = "المناهج",
@@ -62,6 +68,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.EarlyChildhoodEducation,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.EarlyChildhoodEducation),
                 NameEn = "Early Childhood Education",
                 NameAr = "تعليم الطفولة المبكرة",
@@ -72,6 +79,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.HigherEducation,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.HigherEducation),
                 NameEn = "Higher Education",
                 NameAr = "التعليم العالي",
@@ -82,6 +90,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.PrimaryEducation,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.PrimaryEducation),
                 NameEn = "Primary Education",
                 NameAr = "التعليم الابتدائي",
@@ -92,6 +101,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.SchoolAffairs,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.SchoolAffairs),
                 NameEn = "School Affairs",
                 NameAr = "شؤون المدارس",
@@ -102,6 +112,7 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
             new Department
             {
                 Id = DepartmentIds.CommunicationsMedia,
+                ManagementId = ManagmentIds.TrainingCenter,
                 BackendName = nameof(DepartmentIds.CommunicationsMedia),
                 NameEn = "Communications and Media",
                 NameAr = "الاتصالات والاعلام",
@@ -110,5 +121,10 @@ public class DepartmentConfiguration : LookupBaseConfiguration<Department>
                 DisplayOrder = 10
             }
         );
+
+        builder.HasOne(d => d.Management)
+            .WithMany()
+            .HasForeignKey(d => d.ManagementId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

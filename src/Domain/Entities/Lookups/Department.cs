@@ -22,5 +22,6 @@ public static class DepartmentIds
 [Table(nameof(Department), Schema = Schemas.Lookup)]
 public class Department : LookupBase
 {
-    
+    public Guid ManagementId { get; set; }
+    public Managment? Management { get; set; }
 }

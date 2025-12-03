@@ -6,17 +6,16 @@ import {Job} from '../../../models/job.model';
 import {debounceTime, filter} from 'rxjs';
 
 @Component({
-  selector: 'app-description-step',
+  selector: 'app-benefits-step',
   standalone: false,
-  templateUrl: './description-step.component.html',
-  styleUrls: ['./description-step.component.scss']
+  templateUrl: './benefits-step.component.html',
+  styleUrls: ['./benefits-step.component.scss']
 })
-export class DescriptionStepComponent implements WizardStepComponent, OnInit {
+export class BenefitsStepComponent implements WizardStepComponent, OnInit {
   fb = inject(FormBuilder);
   jobService = inject(JobService);
 
   readonly form = this.fb.group({
-    desc: ['', Validators.required],
     benefits: ['', Validators.required]
   });
 
@@ -25,9 +24,9 @@ export class DescriptionStepComponent implements WizardStepComponent, OnInit {
 
     this.form.valueChanges.pipe(
       debounceTime(300),
-      filter(() => this.form.valid) // Only update service when valid
+      filter(() => this.form.valid)
     ).subscribe(values => {
-      this.jobService.updateCurrentJobDescription(values.desc ?? '', values.benefits ?? '');
+      this.jobService.updateCurrentJobBenefits(values.benefits || '');
     });
   }
 
@@ -38,7 +37,6 @@ export class DescriptionStepComponent implements WizardStepComponent, OnInit {
   setJobData(currentJob: Job) {
     if (currentJob.description) {
       this.form.patchValue({
-        desc: currentJob.description,
         benefits: currentJob.benefits
       });
     }

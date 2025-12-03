@@ -13,6 +13,18 @@ namespace Operations.API.Controllers.Employee;
 public class JobController(IMediator mediator) : ControllerBase
 {
     #region Lookups
+    [HttpGet("lookups/sectors")]
+    public async Task<IActionResult> GetSectors()
+    {
+        var result = await mediator.Send(new GetSectorsQuery());
+        return result.ToActionResult();
+    }
+    [HttpGet("lookups/managments")]
+    public async Task<IActionResult> GetManagments()
+    {
+        var result = await mediator.Send(new GetManagemntsQuery());
+        return result.ToActionResult();
+    }
     [HttpGet("lookups/departments")]
     public async Task<IActionResult> GetDepartments()
     {
@@ -26,7 +38,21 @@ public class JobController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetMajorsQuery());
         return result.ToActionResult();
     }
-    
+
+    [HttpGet("lookups/sub-majors")]
+    public async Task<IActionResult> GetSubMajors([FromQuery] Guid majorId)
+    {
+        var result = await mediator.Send(new GetSubMajorsQuery(majorId));
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/skills")]
+    public async Task<IActionResult> GetSkills()
+    {
+        var result = await mediator.Send(new GetSkillsQuery());
+        return result.ToActionResult();
+    }
+
     [HttpGet("lookups/degrees")]
     public async Task<IActionResult> GetDegrees()
     {

@@ -11,23 +11,53 @@ public class SectorConfiguration : LookupBaseConfiguration<Sector>
         builder.HasData(
             new Sector
             {
-                Id = SectorIds.Schools,
-                BackendName = nameof(SectorIds.Schools),
-                NameEn = "Schools",
-                NameAr = "المدارس",
-                DescriptionAr = "قطاع المدارس",
-                DescriptionEn = "Sector for schools",
-                DisplayOrder = 1
+                Id = SectorIds.DeputyMinisterSector,
+                BackendName = nameof(SectorIds.DeputyMinisterSector),
+                NameEn = "Deputy Minister Sector",
+                NameAr = "سعادة الوكيل",
+                DescriptionAr = "قطاع سعادة الوكيل",
+                DescriptionEn = "Deputy Minister Sector",
+                DisplayOrder = 3
             },
             new Sector
             {
-                Id = SectorIds.Ministry,
-                BackendName = nameof(SectorIds.Ministry),
-                NameEn = "Ministry",
-                NameAr = "الوزارة",
-                DescriptionAr = "قطاع الوزارة",
-                DescriptionEn = "Sector for ministry",
-                DisplayOrder = 2
+                Id = SectorIds.GeneralEducationSector,
+                BackendName = nameof(SectorIds.GeneralEducationSector),
+                NameEn = "General Education Sector",
+                NameAr = "التعليم العام",
+                DescriptionAr = "قطاع التعليم العام",
+                DescriptionEn = "General Education Sector",
+                DisplayOrder = 4
+            },
+            new Sector
+            {
+                Id = SectorIds.PrivateEducationSector,
+                BackendName = nameof(SectorIds.PrivateEducationSector),
+                NameEn = "Private Education Sector",
+                NameAr = "التعليم الخاص",
+                DescriptionAr = "قطاع التعليم الخاص",
+                DescriptionEn = "Private Education Sector",
+                DisplayOrder = 5
+            },
+            new Sector
+            {
+                Id = SectorIds.AssessmentSector,
+                BackendName = nameof(SectorIds.AssessmentSector),
+                NameEn = "Assessment Sector",
+                NameAr = "التقييم",
+                DescriptionAr = "قطاع التقييم",
+                DescriptionEn = "Assessment Sector",
+                DisplayOrder = 6
+            },
+            new Sector
+            {
+                Id = SectorIds.SharedServicesSector,
+                BackendName = nameof(SectorIds.SharedServicesSector),
+                NameEn = "Shared Services Sector",
+                NameAr = "الخدمات المشتركة",
+                DescriptionAr = "قطاع الخدمات المشتركة",
+                DescriptionEn = "Shared Services Sector",
+                DisplayOrder = 7
             }
         );
     }

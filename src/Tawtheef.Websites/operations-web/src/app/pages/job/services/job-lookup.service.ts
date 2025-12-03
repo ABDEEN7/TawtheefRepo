@@ -8,7 +8,7 @@ import { GUID } from '../../../shared/types/guid.type';
 
 @Injectable({ providedIn: 'root' })
 export class JobLookupService {
- private http = inject(HttpClient);
+  private http = inject(HttpClient);
   private endpoints = inject(EndpointsService);
   private notificationService = inject(NotificationService);
 
@@ -25,11 +25,18 @@ export class JobLookupService {
   nationalities = signal<Lookups[]>([]);
   jobStatus = signal<Lookups[]>([]);
   jobInvitesStatus = signal<Lookups[]>([]);
+  managements = signal<Lookups[]>([]);
+  sectors = signal<Lookups[]>([]);
+  skills = signal<Lookups[]>([]);
+  subMajors = signal<Lookups[]>([]);
   loadAll() {
     if (this.loaded()) return;
     this.loading.set(true);
 
     forkJoin({
+      sectors: this.http.get<Lookups[]>(this.endpoints.job.lookups.sectors),
+      skills : this.http.get<Lookups[]>(this.endpoints.job.lookups.skills),
+      managements: this.http.get<Lookups[]>(this.endpoints.job.lookups.managements),
       departments: this.http.get<Lookups[]>(this.endpoints.job.lookups.departments),
       majors: this.http.get<Lookups[]>(this.endpoints.job.lookups.majors),
       degrees: this.http.get<Lookups[]>(this.endpoints.job.lookups.degrees),
@@ -42,6 +49,9 @@ export class JobLookupService {
       jobInvitesStatus : this.http.get<Lookups[]>(this.endpoints.job.lookups.jobInvitesStatus)
     }).subscribe({
       next: (res) => {
+        this.sectors.set([...res.sectors]);
+        this.skills.set([...res.skills])
+        this.managements.set([...res.managements]); 
         this.departments.set([...res.departments]);
         this.majors.set([...res.majors]);
         this.degrees.set([...res.degrees]);
@@ -62,18 +72,17 @@ export class JobLookupService {
     });
   }
 
-  getRequestingDepartment(id : string) : string{
-   return this.departments().find(dept => dept.id == id)?.name || ''
+  loadSubMajorsByMajor(majorId: string) {
+    return this.http.get<Lookups[]>(this.endpoints.job.lookups.subMajors + `?majorId=${majorId}`).subscribe(subMajors =>{
+      this.subMajors.set([...subMajors])
+    });
   }
+  
+
   getJobCategoryLable(id : string) : string{
    return this.jobCategories().find(jobcat => jobcat.id == id)?.name || ''
   }
 
-  getGender(ids : string[]) : string{
-    let splitedNames : string[] = []
-    ids.forEach(id =>{splitedNames.push(this.genders().find(gender =>gender.id == id)?.name || '')})
-    return splitedNames.join(',')
-  }
   getWorkLocations(id : string | undefined) :string{
        return this.workLocations().find(en => en.id == id)?.name || ''
   }
@@ -96,9 +105,5 @@ export class JobLookupService {
 
   getStatus(statusId: string | undefined){
     return this.jobStatus().find((jobStatus) => jobStatus?.id == statusId)?.name || ''
-  }
-
-  getJobInitesStatus(inviteStatusId : string | undefined){
-    return this.jobInvitesStatus().find((inviteStatus)=>inviteStatus?.id == inviteStatusId)?.name || ''
   }
 }

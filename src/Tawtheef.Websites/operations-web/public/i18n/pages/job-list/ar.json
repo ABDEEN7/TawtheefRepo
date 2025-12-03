@@ -19,7 +19,7 @@
     "draft": "مسودة",
     "job": {
       "title": "المسمى الوظيفي",
-      "requesting_dept": "الجهة الطالبة للوظيفة",
+      "requesting_dept": "الجهة الطالبة",
       "job_category": "نوع الوظيفة",
       "vacancies": "عدد الشواغر",
       "status": "حالة الوظيفة"

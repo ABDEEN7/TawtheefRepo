@@ -9,7 +9,7 @@ public class JobCondition: EventEntity
 {
     public Guid JobId { get; set; }
     public Job? Job { get; set; }
-    public int Order { get; set; }
+
     [MaxLength(100)]
     public required string Text { get; set; }
 }

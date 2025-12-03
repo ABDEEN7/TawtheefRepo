@@ -4,8 +4,8 @@ using MapsterMapper;
 using MediatR;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories;
-using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
+using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
@@ -14,7 +14,7 @@ public class GetJobByIdQueryHandler(IJobRepository jobRepository,IMapper mapper)
 {
     public async Task<IResult<JobResponseDto>> Handle(GetJobByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = await jobRepository.GetByIdWithDetailsAsync(request.jobId);
+        var result = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
 
         if (result.IsFailed)
             return Result.Fail<JobResponseDto>(result.Errors);

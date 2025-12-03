@@ -9,7 +9,7 @@ import {JobService} from './job.service';
 import {Job} from '../models/job.model';
 import { GUID } from '../../../shared/types/guid.type';
 import { NotificationService } from '../../../core/services/notification.service';
-import { JobResponseDto } from '../models/job-response-Dto';
+import { JobResponseDto } from '../models/job-response-model';
 
 @Injectable({
   providedIn: 'root'

@@ -1,14 +1,20 @@
 import { GUID } from "../../../shared/types/guid.type";
 
 export interface JobBasics {
-  requestingDepartmentId: GUID;
-  title: string;
-  jobCategoryId: GUID;
-  genderId: GUID;
-  workLocationId: GUID;
-  majorId: GUID;
-  workTypeId: GUID;
-  vacancies: number;
-  deadline: Date | null;
-  degreeIds: GUID[];
+  title: string;                    
+  vacancies: number;               
+  deadline: Date | null;            
+  sectorId: GUID;                   
+  managementId: GUID;               
+  requestingDepartmentId: GUID;     
+  jobCategoryId: GUID;              
+  workTypeId: GUID;                
+  majorId: GUID;                    
+  subMajorId?: GUID;                
+  genderId?: GUID;                  
+  degreeIds: GUID[];               
+  workLocationId: GUID;                
+  minimumExperienceYears?: number;   
+  minimumAge?: number;               
+  maximumAge?: number;               
 }

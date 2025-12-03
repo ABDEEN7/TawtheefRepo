@@ -1,20 +1,43 @@
-namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
-public record CreateJobDto
+namespace Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
+
+public class CreateJobDto
 {
-    public string Title { get; init; } = string.Empty;
-    public Guid RequestingDepartmentId { get; init; }
-    public Guid JobCategoryId { get; init; }
-    public Guid GenderId { get; init; }
-    public Guid WorkLocationId { get; init; }
-    public Guid MajorId { get; init; }
-    public Guid WorkTypeId { get; init; }
-    public int Vacancies { get; init; }
-    public DateTimeOffset Deadline { get; init; }
-    public required JobQuotaDto Quota { get; init; } 
-    public string? Description { get; init; }
-    public string? Benefits { get; init; }
-    public List<string> Conditions { get; init; } = [];
-    public List<string> Skills { get; init; } = [];
-    public List<Guid> DegreeIds { get; init; } = [];
+    // Basic Information
+    public required string Title { get; set; }
+    public required int Vacancies { get; set; }
+    public DateTimeOffset Deadline { get; set; }
+    public required string Description { get; set; }
+    public required string Benefits { get; set; }
+    public string? Overview { get; set; }
+    public string? QualificationsDescription { get; set; }
+    public DateTimeOffset? PublishAt { get; set; }
+
+    // Requirements
+    public int MinimumExperienceYears { get; set; }
+    public int MinimumAge { get; set; }
+    public int MaximumAge { get; set; }
+
+    // Foreign keys
+    public Guid SectorId { get; set; }
+    public Guid ManagementId { get; set; }
+    public Guid RequestingDepartmentId { get; set; }
+    public Guid JobCategoryId { get; set; }
+    public Guid GenderId { get; set; }
+    public Guid WorkLocationId { get; set; }
+    public Guid MajorId { get; set; }
+    public Guid? SubMajorId { get; set; }
+    public Guid WorkTypeId { get; set; }
+    public Guid? StatusId { get; set; }
+
+    // Quota
+    public JobQuotaDto Quota { get; set; } = default!;
+
+    // Collections
+    public List<JobDegreeDto> Degrees { get; set; } = [];
+    public List<JobConditionDto> Conditions { get; set; } = [];
+    public List<JobSkillDto> Skills { get; set; } = [];
+    public List<JobResponsibilityDto> Responsibilities { get; set; } = [];
+    public List<RequiredAttachmentDto> RequiredAttachments { get; set; } = [];
 }

@@ -8,7 +8,7 @@ import { JobLookupService } from '../services/job-lookup.service';
 import { InviteDetails } from '../models/invite-details.model';
 import { KPIs } from '../models/kpis.model';
 import { JobInvitesService } from '../services/job-invites.service';
-import { JobResponseDto } from '../models/job-response-Dto';
+import { JobResponseDto } from '../models/job-response-model';
 
 @Component({
   selector: 'app-job-invites-details',

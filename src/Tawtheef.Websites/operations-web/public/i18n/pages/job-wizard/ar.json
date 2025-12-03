@@ -1,182 +1,131 @@
 {
-  "job_wizard": {
-    "status": "حالة الوظيفة",
-    "create_job": "إنشاء وظيفة جديدة",
-    "enter_details": "أدخل التفاصيل عبر الخطوات التالية ثم انشر الوظيفة",
-    "edit_job": "تعديل الوظيفة",
-    "edit_details": "تعديل تفاصيل ومتطلبات الوظيفة",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BASICS": "الأساسيات",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW": "نظرة عامة",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS": "المؤهلات",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES": "المسؤوليات",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS": "الشروط",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS": "المهارات",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS": "المرفقات",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS": "المزايا",
 
-    "navigation": {
-      "wizard_steps": {
-        "basics": "الأساسيات",
-        "quotas": "النسب حسب الجنسية",
-        "conditions": "الشروط",
-        "skills": "المهارات",
-        "description_benefits": "الوصف والمزايا",
-        "review": "المراجعة والنشر"
-      }
-    },
+  "JOB_WIZARD.SHARED.BUTTONS.BACK": "رجوع",
+  "JOB_WIZARD.SHARED.BUTTONS.NEXT": "التالي",
+  "JOB_WIZARD.EDIT_JOB": "تعديل الوظيفة",
+  "JOB_WIZARD.CREATE_JOB": "إنشاء وظيفة جديدة ",
+  "JOB_WIZARD.EDIT_DETAILS": "تعديل تفاصيل الوظيفة",
+  "JOB_WIZARD.ENTER_DETAILS": "يرجى اسنكمال البيانات المطلوبة عبر الخطوات التالية لاتمام انشاء وظيفة جديدة ",
+  "JOB_WIZARD.SHARED.BUTTONS.EDIT_JOB": "حفظ التعديلات",
+  "JOB_WIZARD.SHARED.BUTTONS.PUBLISH_JOB": "نشر الوظيفة",
+  "savedSuccessfully": "تم الحفظ بنجاح",
 
-    "shared": {
-      "buttons": {
-        "add": "إضافة",
-        "cancel": "إلغاء",
-        "confirm": "تأكيد",
-        "publish_job": "نشر الوظيفة",
-        "save": "حفظ",
-        "next": "التالي",
-        "back": "السابق",
-        "edit_job": "تعديل الوظيفة"
-      },
-      "placeholders": {
-        "search_select": "اكتب للبحث ثم اختر",
-        "enter_text": "أدخل النص",
-        "select_option": "اختر خيارًا",
-        "enter_number": "أدخل رقمًا"
-      }
-    },
+   "JOB_WIZARD.STEPS.BASICS.TITLE": "المعلومات الأساسية",
+  "JOB_WIZARD.STEPS.BASICS.SUBTITLE": "أدخل التفاصيل الأساسية للوظيفة",
 
-    "validation": {
-      "total_100_percent": "المجموع يجب أن يساوي 100%",
-      "min_vacancies": "يجب أن يكون عدد الشواغر على الأقل واحد",
-      "add_job_skill_detail": "الرجاء إدخال مهارة قبل الإضافة",
-      "add_job_cond_detail": "الرجاء إدخال شرط قبل الإضافة",
-      "sum_hint": "المجموع يُفضّل أن يساوي 100% قبل النشر.",
-      "sum_label": "المجموع",
-      "sum_state": "(المجموع يجب أن يساوي 100%)",
-      "breakdowns_invalid":"يجب أن يساوي مجموع تفاصيل المقيمين إجمالي المقيمين",
-      "sum_valid": "(مكتمل)"
-    },
+  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT": "الإدارة",
+  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER": "اختر الإدارة",
 
-    "steps": {
-      "basics": {
-        "title": "الأساسيات",
-        "select_type": "اختر النوع",
-        "requesting_dept": "الجهة الطالبة للوظيفة",
-        "requesting_dept_placeholder": "اكتب للبحث ثم اختر الإدارة",
-        "requesting_dept_hint": "يمكنك الكتابة للبحث ثم اختيار الإدارة من القائمة.",
-        "job_title": "المسمى الوظيفي",
-        "job_title_placeholder": "أدخل المسمى الوظيفي",
-        "job_category": "نوع الوظيفة",
-        "job_category_placeholder": "اختر النوع",
-        "categories": {
-          "academic": "أكاديمية",
-          "administrative": "إدارية",
-          "labor": "عمالية"
-        },
-        "gender": "الجنس",
-        "genders": {
-          "all": "الكل",
-          "male": "ذكر",
-          "female": "أنثى"
-        },
-        "work_entity": "مكان العمل",
-        "work_entity_placeholder": "اختر مكان العمل",
-        "entities": {
-          "schools": "المدارس",
-          "ministry": "الوزارة"
-        },
-        "major": "التخصص",
-        "major_placeholder": "اكتب للبحث ثم اختر التخصص",
-        "degree": "الدرجة العلمية (اختيار متعدد)",
-        "degree_placeholder": "اختر درجة أو أكثر...",
-        "work_type": "نوع الدوام",
-        "work_type_placeholder": "اختر نوع الدوام",
-        "work_types": {
-          "full": "دوام كامل",
-          "part": "دوام جزئي"
-        },
-        "vacancies": "عدد الشواغر",
-        "vacancies_placeholder": "مثال: 3",
-        "deadline": "تاريخ الإغلاق"
-      },
+  "JOB_WIZARD.STEPS.BASICS.SECTOR": "القطاع",
+  "JOB_WIZARD.STEPS.BASICS.SECTOR_PLACEHOLDER": "اختر القطاع",
 
-      "quotas": {
-        "title": "النسبة المستهدفة حسب الجنسية",
-        "qatariCitizens": "المواطنون القطريون (%)",
-        "qatarMother": "أبناء المرأة القطرية المتزوجة من غير قطري (%)",
-        "nonQatariSpouse": "الزوج غير القطري المتزوج من قطرية أو قطري (%)",
-        "gcc": "مواطنو دول مجلس التعاون الخليجي (%)",
-        "quGrads": "خريجو جامعة قطر (%)",
-        "residents": "مقيم في دولة قطر (%)",
-        "residents_details_button": "تفصيل المقيمين"
-      },
+  "JOB_WIZARD.STEPS.BASICS.DEPARTMENT": "الجهة الطالبة",
+  "JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER": "اختر الجهة الطالبة",
 
-      "conditions": {
-        "title": "الشروط",
-        "placeholder": "أدخل شرطًا واضحًا (مثال: مستوى لغة C1 أو أعلى)",
-        "empty_state": "لا توجد شروط بعد",
-        "add_condition": "إضافة شرط"
-      },
+  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE": "نوع الدوام",
+  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE_PLACEHOLDER": "اختر نوع الدوام",
 
-      "skills": {
-        "title": "المهارات المطلوبة",
-        "placeholder": "أدخل مهارة جديدة",
-        "empty_state": "لا توجد مهارات بعد",
-        "add_skill": "إضافة مهارة"
-      },
+  "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY": "نوغ الوظيفة",
+  "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY_PLACEHOLDER": "اختر نوع الوظيفة",
 
-      "description_benefits": {
-        "title": "الوصف والمزايا",
-        "description": "الوصف",
-        "description_placeholder": "أدخل وصف الوظيفة...",
-        "benefits": "المزايا",
-        "benefits_placeholder": "أدخل مزايا الوظيفة...",
-        "responsibilities": "المسؤوليات الأساسية",
-        "responsibilities_placeholder": "أدخل المسؤوليات الأساسية..."
-      },
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE": "المسمى الوظيفي",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER": "أدخل المسمى الوظيفي",
 
-      "review": {
-        "title": "المراجعة والنشر",
-        "download_pdf": "تحميل PDF",
-        "sections": {
-          "basics": "البيانات الأساسية",
-          "quotas": "النسبة المستهدفة حسب الجنسية",
-          "conditions": "الشروط",
-          "skills": "المهارات المطلوبة",
-          "description_benefits": "الوصف والمزايا"
-        }
-      }
-    },
+  "JOB_WIZARD.STEPS.BASICS.MAJOR": "التخصص الرئيسي",
+  "JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER": "اختر التخصص",
 
-    "modals": {
-      "residents": {
-        "title": "تفصيل نسب المقيمين حسب الجنسية",
-        "description": "أضف أو عدّل نسب المقيمين لكل جنسية بحيث يساوي مجموعها نسبة \"المقيمين\" المحددة في الخطوة السابقة.",
-        "nationality": "الجنسية",
-        "percent": "النسبة",
-        "empty_state": "لا توجد نسب بعد",
-        "total": "مجموع تفصيل المقيمين",
-        "btn_add": "إضافة",
-        "close": "إغلاق",
-        "save": "حفظ التفصيل",
-        "residents": {
-          "target": "الهدف",
-          "remaining": "المتبقي",
-          "exceeded_target": "يتجاوز النسبة المستهدفة",
-          "exceeds_remaining": "لا يمكن أن يتجاوز {{remaining}}٪ المتبقية"
-        }
-      }
-    },
+  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR": "التخصص الفرعي",
+  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER": "اختر التخصص الفرعي",
 
-    "notifications": {
-      "success": {
-        "job_created": "تم إنشاء الوظيفة بنجاح",
-        "job_published": "تم نشر الوظيفة بنجاح"
-      },
-      "errors": {
-        "server_error": "حدث خطأ في الخادم"
-      },
-      "warning": "تحذير"
-    }
-  },
-  "steps": {
-    "skills": {
-      "placeholder": "أدخل مهارة جديدة"
-    }
-  },
-  "PhD": "دكتوراه",
-  "Masters": "ماجستير",
-  "Bachelors": "بكالوريوس",
-  "PhD، Masters": "دكتوراه، ماجستير"
+  "JOB_WIZARD.STEPS.BASICS.GENDER": "الجنس",
+  "JOB_WIZARD.STEPS.BASICS.GENDER_PLACEHOLDER": "اختر الجنس",
+
+  "JOB_WIZARD.STEPS.BASICS.WORK_LOCATION": "مكان العمل",
+  "JOB_WIZARD.STEPS.BASICS.WORK_LOCATION_PLACEHOLDER": "اختر مكان العمل",
+
+  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE": "سنوات الخبرة",
+  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE_PLACEHOLDER": "أدخل الحد الأدنى لسنوات الخبرة",
+
+  "JOB_WIZARD.STEPS.BASICS.VACANCIES": "عدد الشواغر",
+  "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "أدخل عدد الشواغر",
+
+  "JOB_WIZARD.STEPS.BASICS.DEADLINE": "تاريخ الاغلاق",
+
+  "JOB_WIZARD.STEPS.BASICS.MIN_AGE": "الحد الأدنى للعمر",
+  "JOB_WIZARD.STEPS.BASICS.MIN_AGE_PLACEHOLDER": "أدخل الحد الأدنى للعمر",
+
+  "JOB_WIZARD.STEPS.BASICS.MAX_AGE": "الحد الأقصى للعمر",
+  "JOB_WIZARD.STEPS.BASICS.MAX_AGE_PLACEHOLDER": "أدخل الحد الأقصى للعمر",
+
+  "JOB_WIZARD.VALIDATION.MIN_EXPERIENCE": "الحد الأدنى للخبرة غير صحيح",
+  "JOB_WIZARD.VALIDATION.MIN_VACANCIES": "يجب أن يكون الحد الأدنى للشواغر 1 على الأقل",
+  "JOB_WIZARD.VALIDATION.MIN_GREATER_THAN_MAX": "لا يمكن أن يكون الحد الأدنى للعمر أكبر من الحد الأقصى",
+  "JOB_WIZARD.VALIDATION.AGE_RANGE": "يجب أن يكون العمر بين 0 و 100",
+
+  
+  "JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_AR": "الوصف (بالعربية)",
+  "JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_PLACEHOLDER": "أدخل وصف الوظيفة هنا",
+
+  "JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS": "الدرجة العلمية",
+
+  "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ARABIC": "الوصف  (بالعربية)",
+  "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ARABIC_PLACEHOLDER": "أدخل وصف المؤهلات باللغة العربية",
+
+  "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ENGLISH": "الوصف  (بالإنجليزية)",
+  "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ENGLISH_PLACEHOLDER": "أدخل وصف المؤهلات باللغة الإنجليزية",
+  
+  "JOB_WIZARD.STEPS.ATTACHMENTS.TITLE": "المرفقات",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT": "مرفق",
+  "COMMON.REMOVE": "حذف",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME": "اسم المرفق",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_PLACEHOLDER": "أدخل اسم المرفق",
+  "JOB_WIZARD.VALIDATION.ATTACHMENT_NAME_REQUIRED": "اسم المرفق مطلوب",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.MANDATORY": "إلزامي",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE": "لا توجد مرفقات مضافة بعد",
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ADD_ATTACHMENT": "إضافة مرفق",
+
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_RESPONSIBILITY": "إضافة مسؤولية",
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY": "مسؤولية",
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE": "لا توجد مسؤوليات مضافة بعد",
+
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR_PLACEHOLDER": "أدخل الوصف بالعربية",
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN_PLACEHOLDER": "أدخل الوصف بالإنجليزية",
+
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER": "الوصف بالعربية",
+  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_EN_PLACEHOLDER": "الوصف بالإنجليزية",
+
+  "JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER": "أدخل الوصف باللغة العربية",
+  "JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_EN_PLACEHOLDER": "الوصف الإنجليزية",
+  "JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR_PLACEHOLDER": "الوصف بالعربية",
+  "JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_EN_PLACEHOLDER": "أدخل الوصف باللغة الإنجليزية",
+
+  "JOB_WIZARD.STEPS.CONDITIONS.ADD_CONDITIONSY": "إضافة شرط",
+  "JOB_WIZARD.STEPS.CONDITIONS.CONDITION": "شرط",
+  "JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE": "لا توجد شروط مضافة بعد",
+
+  "JOB_WIZARD.STEPS.SKILLS.TILTLE": "المهارات المطلوبة",
+  "JOB_WIZARD.STEPS.SKILLS.ADD_SKILL": "إضافة مهارة",
+  "JOB_WIZARD.STEPS.SKILLS.SKILL": "المهارة",
+  "JOB_WIZARD.STEPS.SKILLS.SKILL_PLACEHOLDER": "اختر مهارة",
+  "JOB_WIZARD.STEPS.SKILLS.SHOW_TO_APPLICANTS": "عرض للمتقدمين",
+  "JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE": "لا توجد مهارات مضافة حتى الآن.",
+
+  "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION": "وصف المزايا",
+  "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_PLACEHOLDER": "أدخل وصف المزايا",
+
+  "JOB_WIZARD.VALIDATION.WARNING": "تحذير",
+  "JOB_WIZARD.VALIDATION.ADD_RESPONSIBILITY_DETAIL": "يرجى إضافة مسؤولية واحدة على الأقل قبل المتابعة.",
+  "VALIDATION.REQUIRED_FIELD": "هذا الحقل مطلوب",
+  "JOB_WIZARD.VALIDATION.WARRNING": "تحذير",
+  "COMMON.DELETE": "حذف"
+
+
 }

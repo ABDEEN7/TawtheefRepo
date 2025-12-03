@@ -14,15 +14,17 @@ import {JobService} from '../../services/job.service';
 import {NotificationService} from '../../../../core/services/notification.service';
 import {WizardStepComponent} from '../wizard-steps/base/wizard-step.component';
 import {BasicsStepComponent} from '../wizard-steps/basics-step.component/basics-step.component';
-import {QuotasStepComponent} from '../wizard-steps/quotas-step.component/quotas-step.component';
 import {ConditionsStepComponent} from '../wizard-steps/conditions-step.component/conditions-step.component';
 import {SkillsStepComponent} from '../wizard-steps/skills-step.component/skills-step.component';
-import {DescriptionStepComponent} from '../wizard-steps/description-step.component/description-step.component';
-import {ReviewStepComponent} from '../wizard-steps/review-step.component/review-step.component';
 import {Job} from '../../models/job.model';
 import { GUID } from '../../../../shared/types/guid.type';
 import { GuidUtils } from '../../../../core/utils/guid-utils';
 import { JobLookupService } from '../../services/job-lookup.service';
+import { QualificationsStepComponent } from '../wizard-steps/qualifications-step.component/qualifications-step.component';
+import { ResponsibilitiesStepComponent } from '../wizard-steps/responsibilities-step.component/responsibilities-step.component';
+import { OverviewStepComponent } from '../wizard-steps/overview-step.component.ts/overview-step.component';
+import { BenefitsStepComponent } from '../wizard-steps/benefits-step.component/benefits-step.component';
+import { AttachmentStepComponent } from '../wizard-steps/attachment-step.component/attachment-step.component';
 
 @Component({
   selector: 'app-wizard',
@@ -44,11 +46,13 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
 
   stepClasses: Type<WizardStepComponent>[] = [
     BasicsStepComponent,
-    QuotasStepComponent,
+    OverviewStepComponent,
+    QualificationsStepComponent,
+    ResponsibilitiesStepComponent,
     ConditionsStepComponent,
     SkillsStepComponent,
-    DescriptionStepComponent,
-    ReviewStepComponent,
+    AttachmentStepComponent,
+    BenefitsStepComponent,
   ];
 
   @ViewChild('stepsContainer', {read: ViewContainerRef, static: true})
@@ -160,13 +164,8 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
 
   saveJob(): void {
     const currentJob = this.jobService.newJob();
-    const jobToSave: Job = {
-      ...currentJob,
-      status: this.lookupsService.jobStatus().find(jobStatus => jobStatus.backendName == "open")?.id || '',
-      ...(this.isEditMode && this.jobId && {id: this.jobId}),
-    };
 
-    this.jobService.saveJob(jobToSave).subscribe({
+    this.jobService.saveJob(currentJob).subscribe({
       next: () => {
         this.notificationService.success("savedSuccessfully")
         this.router.navigate(['/jobs']).then();
@@ -178,16 +177,16 @@ export class JobWizardComponent implements AfterViewInit, OnInit {
   }
 
   getHeaderTitle(): string {
-    return this.isEditMode ? 'job_wizard.edit_job' : 'job_wizard.create_job';
+    return this.isEditMode ? 'JOB_WIZARD.EDIT_JOB' : 'JOB_WIZARD.CREATE_JOB';
   }
 
   getHeaderSubtitle(): string {
-    return this.isEditMode ? 'job_wizard.edit_details' : 'job_wizard.enter_details';
+    return this.isEditMode ? 'JOB_WIZARD.EDIT_DETAILS' : 'JOB_WIZARD.ENTER_DETAILS';
   }
 
   getSaveButtonText(): string {
     return this.isEditMode
-      ? 'job_wizard.shared.buttons.edit_job'
-      : 'job_wizard.shared.buttons.publish_job';
+      ? 'JOB_WIZARD.SHARED.BUTTONS.EDIT_JOB'
+      : 'JOB_WIZARD.SHARED.BUTTONS.PUBLISH_JOB';
   }
 }

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
@@ -10,7 +11,9 @@ public class JobSkill: EventEntity
 {
     public Guid JobId { get; set; }
     public Job? Job { get; set; }
-    public int Order { get; set; }
-    [MaxLength(100)]
-    public required string Text { get; set; }
+
+    public Guid? SkillId { get; set; }
+    public Skill? Skill { get; set; }
+
+    public bool ShowToApplicants { get; set; }
 }

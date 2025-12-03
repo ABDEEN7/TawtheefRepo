@@ -5,15 +5,21 @@ import {Job} from '../models/job.model';
 import {JobBasics} from '../models/job-basics.models';
 import {PointsConfig} from '../models/points-config.model';
 import {HttpService} from '../../../core/http/http.service';
-import { GUID } from '../../../shared/types/guid.type';
-import { EndpointsService } from '../../../core/http/endpoints.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { JobQuota } from '../models/job-quotas.models';
-import { JobResponseDto } from '../models/job-response-Dto';
-import { PaginatedResult } from '../../../core/models/paginated-result.model';
-import { PaginationMetadata } from '../../../core/models/pagination-metadata.model';
-import { PaginatedRequest } from '../../../core/models/paginated-request.model';
-import { JobQueryFilter } from '../models/job-query-filter.model';
+import {GUID} from '../../../shared/types/guid.type';
+import {EndpointsService} from '../../../core/http/endpoints.service';
+import {NotificationService} from '../../../core/services/notification.service';
+import {JobQuota} from '../models/job-quotas.models';
+import {JobResponseDto} from '../models/job-response-model';
+import {PaginatedResult} from '../../../core/models/paginated-result.model';
+import {PaginationMetadata} from '../../../core/models/pagination-metadata.model';
+import {PaginatedRequest} from '../../../core/models/paginated-request.model';
+import {JobQueryFilter} from '../models/job-query-filter.model';
+import {JobCondition} from '../models/job-condition.model';
+import {JobSkill} from '../models/job-skill.model';
+import {JobDegree} from '../models/job-degree.model';
+import {JobResponsibility} from '../models/job-responsibility.model';
+import {RequiredAttachment} from '../models/required-attachment.model';
+import { text } from '@primeuix/themes/aura/inlinemessage';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +42,7 @@ export class JobService {
 
   loadJobs(pagination?: PaginatedRequest, filter?: JobQueryFilter): void {
     const queryParams: any = {};
-    
+
     if (pagination) {
       if (pagination.pageNumber !== undefined) queryParams['Pagination.PageNumber'] = pagination.pageNumber;
       if (pagination.pageSize !== undefined) queryParams['Pagination.PageSize'] = pagination.pageSize;
@@ -68,20 +74,88 @@ export class JobService {
   loadJob(id: GUID): Observable<JobResponseDto> {
     return this.httpService.get<JobResponseDto>(`${this.endpoints.job.job}/${id}`).pipe(
       tap(job => {
-        this._currentJob.set(job)
+        this._currentJob.set(job);
         this.setJobForEdit(job);
       }),
     );
   }
 
   // ==================== SAVE OPERATIONS ====================
-  saveJob(job: Job): Observable<Job> {
-    const command = {
-    job: job
-  };
+  saveJob(job: Job): Observable<any> {
+    // Prepare the request body according to Swagger spec
+    const requestBody = {
+      job: {
+        // Basic Information
+        title: job.title,
+        vacancies: job.vacancies,
+        deadline: job.deadline ? job.deadline.toISOString() : null,
+        description: job.description,
+        benefits: job.benefits,
+        overview: job.overview || '',
+        qualificationsDescription: job.qualificationsDescription || '',
+        publishAt: job.publishAt ? job.publishAt.toISOString() : null,
+
+        // Requirements
+        minimumExperienceYears: job.minimumExperienceYears,
+        minimumAge: job.minimumAge,
+        maximumAge: job.maximumAge,
+
+        // Foreign keys - ensure they're valid GUIDs (not empty strings)
+        sectorId: job.sectorId || null,
+        managementId: job.managementId || null,
+        requestingDepartmentId: job.requestingDepartmentId || null,
+        jobCategoryId: job.jobCategoryId || null,
+        genderId: job.genderId || null,
+        workLocationId: job.workLocationId || null,
+        majorId: job.majorId || null,
+        subMajorId: job.subMajorId || null,
+        workTypeId: job.workTypeId || null,
+        statusId: job.statusId, // This can be null for new jobs
+
+        // Quota
+        quota: {
+          qatariCitizens: job.quota.qatariCitizens || 0,
+          qatarMother: job.quota.qatarMother || 0,
+          nonQatariSpouse: job.quota.nonQatariSpouse || 0,
+          gcc: job.quota.gcc || 0,
+          quGrads: job.quota.quGrads || 0,
+          residents: job.quota.residents || 0,
+          residentsBreakdowns: (job.quota.residentsBreakdowns || []).map(item => ({
+            nationalityId: item.nationalityId || null,
+            percentage: item.percentage || 0
+          }))
+        },
+
+        // Collections
+        degrees: (job.degrees || []).map(deg => ({
+          degreeId: deg.degreeId || null
+        })),
+
+        conditions: (job.conditions || []).map((cond, index) => ({
+          text: cond.text,
+        })),
+
+        skills: (job.skills || []).map(skill => ({
+          skillId: skill.skillId || null,
+          showToApplicants: skill.showToApplicants !== undefined ? skill.showToApplicants : true
+        })),
+
+        responsibilities: (job.responsibilities || []).map((resp, index) => ({
+          text: resp.text,
+        })),
+
+        requiredAttachments: (job.requiredAttachments || []).map(att => ({
+          title: att.title || '',
+          isMandatory: att.isMandatory !== undefined ? att.isMandatory : true
+        }))
+      }
+    };
+
+    console.log('Saving job with data:', requestBody);
+
     const operation = job.id
-      ? this.httpService.put<Job>(this.endpoints.job.job, command)
-      : this.httpService.post<Job>(this.endpoints.job.job, command);
+      ? this.httpService.put(`${this.endpoints.job.job}/${job.id}`, requestBody)
+      : this.httpService.post(this.endpoints.job.job, requestBody);
 
     return operation;
   }
@@ -91,13 +165,13 @@ export class JobService {
     if (currentJob?.id !== jobId) return of(null);
 
     const updatedJob = {...currentJob, pointsConfig};
-    return this.httpService.put<JobResponseDto>(this.endpoints.job.job +`/${jobId}`, updatedJob).pipe(
+    return this.httpService.put<JobResponseDto>(this.endpoints.job.job + `/${jobId}`, updatedJob).pipe(
       tap(savedJob => this._currentJob.set(savedJob))
     );
   }
 
   // ==================== UPDATE OPERATIONS ====================
-  updateCurrentJobBasics(updatedJob: Partial<JobBasics>): void {
+  updateCurrentJobBasics(updatedJob: Partial<Job>): void {
     this._newJob.update(job => ({
       ...job,
       requestingDepartmentId: updatedJob.requestingDepartmentId || job.requestingDepartmentId,
@@ -109,48 +183,84 @@ export class JobService {
       workTypeId: updatedJob.workTypeId || job.workTypeId,
       vacancies: updatedJob.vacancies ?? job.vacancies,
       deadline: updatedJob.deadline ?? job.deadline,
-      degreeIds : updatedJob.degreeIds || job.degreeIds
+      sectorId: updatedJob.sectorId || job.sectorId,
+      managementId: updatedJob.managementId || job.managementId,
+      overview: updatedJob.overview || job.overview,
+      qualificationsDescription: updatedJob.qualificationsDescription || job.qualificationsDescription,
+      publishAt: updatedJob.publishAt ?? job.publishAt,
+      minimumAge: updatedJob.minimumAge ?? job.minimumAge,
+      maximumAge: updatedJob.maximumAge ?? job.maximumAge,
+      minimumExperienceYears: updatedJob.minimumExperienceYears ?? job.minimumExperienceYears
     }));
   }
 
   updateCurrentJobQuota(quotas: Partial<JobQuota>): void {
     this._newJob.update(job => ({
       ...job,
-      quota: {...job.quota, ...quotas,}
+      quota: {...job.quota, ...quotas}
     }));
   }
 
-  updateCurrentJobConditions(conditions: string[]): void {
+  updateCurrentJobConditions(conditions: JobCondition[]): void {
     this._newJob.update(job => ({...job, conditions}));
   }
 
-  updateCurrentJobSkills(skills: string[]): void {
+  updateCurrentJobResponsibilities(responsibilities: JobResponsibility[]): void {
+    this._newJob.update(job => ({...job, responsibilities}));
+  }
+
+  updateCurrentJobSkills(skills: JobSkill[]): void {
     this._newJob.update(job => ({...job, skills}));
   }
 
-  updateCurrentJobDescription(description: string, benefits: string): void {
-    this._newJob.update(job => ({...job, description, benefits}));
+  updateCurrentJobDescription(description: string): void {
+    this._newJob.update(job => ({...job, description}));
+  }
+
+  updateCurrentJobBenefits(benefits: string): void {
+    this._newJob.update(job => ({...job, benefits}));
+  }
+
+ updateCurrentJobAttachments(requiredAttachments: RequiredAttachment[]) {
+  this._newJob.update(job => ({...job, requiredAttachments}))
+}
+
+  updateCurrentJobOverView(overview: string): void {
+    this._newJob.update(job => ({...job, overview}));
+  }
+
+  updateCurrentJobQualifications(degrees: JobDegree[], description: string): void {
+  this._newJob.update(job=>({...job,degrees,qualificationsDescription:description}))
   }
 
   setJobForEdit(job: JobResponseDto): void {
-    // Convert JobResponseDto to Job model for editing
     const editJob: Job = {
       id: job.id,
-      requestingDepartmentId: job.requestingDepartment?.id || '' as GUID,
+      requestingDepartmentId: job.department?.id || '' as GUID,
       title: job.title,
       jobCategoryId: job.jobCategory?.id || '' as GUID,
       genderId: job.gender?.id || '' as GUID,
       workLocationId: job.workLocation?.id || '' as GUID,
       majorId: job.major?.id || '' as GUID,
       workTypeId: job.workType?.id || '' as GUID,
-      statusId : job.status?.id || '' as GUID,
+      statusId: job.status?.id || null,
       vacancies: job.vacancies,
       deadline: job.deadline ? new Date(job.deadline) : null,
       description: job.description,
       benefits: job.benefits,
-      conditions: job.conditions || [],
-      skills: job.skills || [],
-      degreeIds: job.degrees?.map(d => d.id) || [],
+      overview: job.overview,
+      qualificationsDescription: job.qualificationsDescription,
+      publishAt: job.publishAt ? new Date(job.publishAt) : null,
+      conditions: (job.conditions || []).map(cond => ({
+        text: cond.text || '',
+      })),
+      skills: (job.skills || []).map(skill => ({
+        skillId: skill.skill?.skill.id || '' as GUID,
+        showToApplicants: skill.showToApplicants
+      })),
+      degrees: job.degrees ? job.degrees.map(deg => ({
+        degreeId: deg.degree?.id || '' as GUID,
+      })) : [],
       quota: job.quota ? {
         qatariCitizens: job.quota.qatariCitizens || 0,
         qatarMother: job.quota.qatarMother || 0,
@@ -159,28 +269,30 @@ export class JobService {
         quGrads: job.quota.quGrads || 0,
         residents: job.quota.residents || 0,
         residentsBreakdowns: (job.quota.residentsBreakdowns || []).map(item => ({
-        nationalityId: item.nationality?.id || '' as GUID,
-        percentage : item.percentage
+          nationalityId: item.nationality?.id || '' as GUID,
+          percentage: item.percentage
+        }))
+      } : this.createEmptyJob().quota,
+      minimumExperienceYears: job.minimumExperienceYears,
+      minimumAge: job.minimumAge,
+      maximumAge: job.maximumAge,
+      sectorId: job.sector?.id || '' as GUID,
+      managementId: job.management?.id || '' as GUID,
+      subMajorId: job.subMajor?.id || '' as GUID,
+      responsibilities: (job.responsibilities || []).map(resp => ({
+        text: resp.text || '',
+      })),
+      requiredAttachments: (job.requiredAttachments || []).map(att => ({
+        title: att.title,
+        isMandatory: att.isMandatory
       }))
-    } : this.createEmptyJob().quota
     };
-    
+
     this._newJob.set(editJob);
   }
 
   private createEmptyJob(): Job {
     return {
-
-      requestingDepartmentId: '' as GUID,
-      title: '',
-      jobCategoryId: '' as GUID,
-      genderId: '' as GUID,
-      workLocationId: '' as GUID,
-      majorId: '' as GUID,
-      workTypeId: '' as GUID,
-      statusId:'' as GUID,
-      vacancies: 0,
-      deadline: null,
       quota: {
         qatariCitizens: 0,
         qatarMother: 0,
@@ -192,9 +304,30 @@ export class JobService {
       },
       conditions: [],
       skills: [],
-      degreeIds: [],
+      degrees: [],
       description: '',
-      benefits: ''
+      benefits: '',
+      title: '',
+      vacancies: 0,
+      deadline: null,
+      overview: '',
+      qualificationsDescription: '',
+      publishAt: null,
+      minimumExperienceYears: 0,
+      minimumAge: 0,
+      maximumAge: 0,
+      requestingDepartmentId: '' as GUID,
+      sectorId: '' as GUID,
+      managementId: '' as GUID,
+      jobCategoryId: '' as GUID,
+      workLocationId: '' as GUID,
+      majorId: '' as GUID,
+      subMajorId: '' as GUID,
+      workTypeId: '' as GUID,
+      statusId: null,
+      genderId: '' as GUID,
+      responsibilities: [],
+      requiredAttachments: []
     };
   }
 }

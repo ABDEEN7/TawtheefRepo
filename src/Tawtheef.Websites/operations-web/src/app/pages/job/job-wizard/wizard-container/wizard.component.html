@@ -26,7 +26,7 @@
           [disabled]="step === 1"
         >
           <i class="fa fa-arrow-right"></i>
-          {{ 'job_wizard.shared.buttons.back' | translate }}
+          {{ 'JOB_WIZARD.SHARED.BUTTONS.BACK' | translate }}
         </button>
 
         @if (step < total) {
@@ -35,7 +35,7 @@
             (click)="next()"
             [disabled]="!isCurrentStepValid()"
           >
-            {{ 'job_wizard.shared.buttons.next' | translate }}
+            {{ 'JOB_WIZARD.SHARED.BUTTONS.NEXT' | translate }}
             <i class="fa fa-arrow-left"></i>
           </button>
         } @else {
