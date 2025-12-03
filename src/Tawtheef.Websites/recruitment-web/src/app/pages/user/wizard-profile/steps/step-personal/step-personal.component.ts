@@ -4,7 +4,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { ProfileState } from '../../models/profile-state.model';
-import {CandidateType, MaritalStatus, SponsorType} from '../../../../../core/enums/lookups.enum';
+import {MaritalStatus, SponsorType} from '../../../../../core/enums/lookups.enum';
 import {mapPersonalSection} from '../../services/profile.mapper';
 import {finalize} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
@@ -41,6 +41,7 @@ export class StepPersonalComponent implements OnInit {
 
   savingPersonal = false;
   verifyingMoi = false;
+  verifyingSponsor = false;
   private sponsorCard: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
@@ -67,6 +68,47 @@ export class StepPersonalComponent implements OnInit {
       .subscribe({
         next: res => {
           this.ds.applyMoiPersonalInfo(this.normalizeMoiResponse(res));
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail: this.translate.instant('wizard.personal.verify.success'),
+            life: 3000,
+          });
+        },
+        error: err => {
+          const detail = err?.error?.message || err?.error || this.translate.instant('wizard.personal.verify.error');
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail,
+            life: 5000,
+          });
+        }
+      });
+  }
+
+  verifySponsorProfile() {
+    const state = this.ds.state();
+
+    if (state.sponsorType?.backendName !== SponsorType.Individual) return;
+
+    if (!state.sponsorEmployerNumber || !state.sponsorQidExpiry) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translate.instant('wizard.personal.verify.title'),
+        detail: this.translate.instant('wizard.personal.verify.missing'),
+        life: 4000,
+      });
+      return;
+    }
+
+    this.verifyingSponsor = true;
+    this.profileService
+      .checkProfile(state.sponsorEmployerNumber, state.sponsorQidExpiry)
+      .pipe(finalize(() => this.verifyingSponsor = false))
+      .subscribe({
+        next: res => {
+          this.ds.applySponsorPersonalInfo(this.normalizeMoiResponse(res));
           this.messageService.add({
             severity: 'success',
             summary: this.translate.instant('wizard.personal.verify.title'),

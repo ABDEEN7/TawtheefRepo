@@ -17,6 +17,7 @@ import {
   candidateTypeNeedsSponsor,
   createStepValiditySignal,
 } from '../state/profile-step-validity.signal';
+import {SponsorType} from '../../../../core/enums/lookups.enum';
 import {NationalityMapperService} from './nationality-mapper.service';
 
 
@@ -51,15 +52,23 @@ export class DataService {
   get isResidentQatar(): boolean {
     return candidateTypeIsResident(candidateTypeFromState(this.state()));
   }
+  get isIndividualSponsor(): boolean {
+    return this.state().sponsorType?.backendName === SponsorType.Individual;
+  }
 
   private locked = signal<Partial<Record<keyof ProfileState, boolean>>>({});
 
   isLocked<K extends keyof ProfileState>(key: K): boolean {
     const l = this.locked();
-    return !!l[key];
+    if (l[key]) return true;
+
+    if (this.isResidentQatar && (key === 'fullNameAr' || key === 'fullNameEn')) return true;
+    if (this.isIndividualSponsor && key === 'sponsorEmployerName') return true;
+
+    return false;
   }
 
-  private lockableKeys: (keyof ProfileState)[] = ['qid','qidExpiry','dob','nationality','gender','phone','email','fullNameAr','fullNameEn'];
+  private lockableKeys: (keyof ProfileState)[] = ['qid','qidExpiry','dob','nationality','gender','phone','email','fullNameAr','fullNameEn','sponsorEmployerName','sponsorEmployerNumber','sponsorQidExpiry'];
   prefillFromBootstrap(userData: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...userData }));
     this.lockedPrefillData();
@@ -152,6 +161,7 @@ export class DataService {
       next.sponsorType = null;
       next.sponsorEmployerName = null;
       next.sponsorEmployerNumber = null;
+      next.sponsorQidExpiry = null;
       next.sponsorCardName = null;
       next.sponsorCardFile = null;
     }
@@ -206,6 +216,26 @@ export class DataService {
       dob: !!info.dateOfBirth || m.dob,
       nationality: (!!nationality) || m.nationality,
       gender: (!!gender) || m.gender,
+    }));
+  }
+
+  applySponsorPersonalInfo(info: MoiPersonalInfo) {
+    const arabicFullName = buildArabicFullName(info);
+    const englishFullName = buildEnglishFullName(info);
+    const sponsorName = arabicFullName || englishFullName || this.state().sponsorEmployerName;
+
+    this.state.update(s => ({
+      ...s,
+      sponsorEmployerName: sponsorName || s.sponsorEmployerName,
+      sponsorEmployerNumber: info.qid || s.sponsorEmployerNumber,
+      sponsorQidExpiry: info.qidExpiry || s.sponsorQidExpiry,
+    }));
+
+    this.locked.update(m => ({
+      ...m,
+      sponsorEmployerName: !!sponsorName || m.sponsorEmployerName,
+      sponsorEmployerNumber: !!info.qid || m.sponsorEmployerNumber,
+      sponsorQidExpiry: !!info.qidExpiry || m.sponsorQidExpiry,
     }));
   }
 

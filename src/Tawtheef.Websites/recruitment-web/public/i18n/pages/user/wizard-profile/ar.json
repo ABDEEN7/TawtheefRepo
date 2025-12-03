@@ -348,6 +348,7 @@
         "sponsorType": { "required": "يرجى اختيار نوع الكفيل" },
         "sponsorEmployerName": { "required": "يرجى إدخال اسم جهة العمل" },
         "sponsorEmployerNumber": { "required": "يرجى إدخال رقم جهة العمل" },
+        "sponsorQidExpiry": { "required": "يرجى إدخال تاريخ انتهاء هوية الكفيل" },
         "sponsorCard": { "required": "يرجى إرفاق بطاقة الكفيل" }
       },
       "contact": {

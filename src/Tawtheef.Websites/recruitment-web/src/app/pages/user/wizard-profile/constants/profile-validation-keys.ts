@@ -21,6 +21,7 @@
     sponsorType: 'wizard.profile.personal.sponsorType.required',
     sponsorEmployerName: 'wizard.profile.personal.sponsorEmployerName.required',
     sponsorEmployerNumber: 'wizard.profile.personal.sponsorEmployerNumber.required',
+    sponsorQidExpiry: 'wizard.profile.personal.sponsorQidExpiry.required',
     sponsorCardName: 'wizard.profile.personal.sponsorCard.required',
   },
   contact: {
