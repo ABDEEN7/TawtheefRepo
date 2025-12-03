@@ -118,7 +118,7 @@ export class StepFirstInfoComponent implements OnInit {
   }
 
   canPreview(kind: 'cv' | 'id' | 'birth' | 'marriage'): boolean {
-    return !!this.getLocalFile(kind) || !!this.getFileRef(kind)?.url;
+    return !!this.getSlot(kind) || !!this.getSlot(kind)?.remote?.url;
   }
 
   previewFile(kind: 'cv' | 'id' | 'birth' | 'marriage', ev?: Event) {

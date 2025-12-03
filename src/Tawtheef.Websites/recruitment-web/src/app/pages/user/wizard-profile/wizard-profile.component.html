@@ -57,7 +57,7 @@
 
       <div *ngIf="!loading">
         <app-step-first-info  *ngIf="step===1" (next)="next()"></app-step-first-info>
-        <app-step-personal    *ngIf="step===2" (next)="next()"></app-step-personal>
+        <app-step-personal    *ngIf="step===2" (back)="prev()" (next)="next()"></app-step-personal>
         <app-step-contact     *ngIf="step===3" (back)="prev()" (next)="next()"></app-step-contact>
         <app-step-degrees     *ngIf="step===4" (back)="prev()" (next)="next()"></app-step-degrees>
         <app-step-experience  *ngIf="step===5" (back)="prev()" (next)="next()"></app-step-experience>
