@@ -271,6 +271,7 @@
       "selectInterviewPlace": "اختر مكان المقابلة",
       "selectCandidateType": "اختر فئة المرشح",
       "selectTargetEntity": "اختر الجهة المستهدفة",
+      "selectOffice": "اختر المكتب المعتمد",
       "selectDisabilityType": "ادخل نوع الإعاقة",
       "selectSponsorType": "اختر نوع الكفيل",
       "uploadEstablishmentCard": "ارفع بطاقة قيد المنشأة",
@@ -281,6 +282,7 @@
       "title": "المتطلبات القبلية للبدء",
       "candidateType": "فئة المرشح",
       "targetEntity": "الجهة المستهدفة",
+      "officeLabel": "المكتب المعتمد",
       "cvLabel": "رفع السيرة الذاتية (PDF)",
       "idLabel": "رفع البطاقة الشخصية (PDF أو صورة)",
       "id": {
@@ -320,6 +322,9 @@
         },
         "targetEntity": {
           "required": "يرجى اختيار الجهة المستهدفة"
+        },
+        "office": {
+          "required": "يرجى اختيار المكتب المعتمد"
         },
         "cv": {
           "required": "يرجى إرفاق السيرة الذاتية"

@@ -20,6 +20,9 @@ public class UserProfile : EventEntity
     public Guid TargetEntityId { get; set; }
     public TargetEntity? TargetEntity { get; set; }
 
+    public Guid? OfficeId { get; set; }
+    public Office? Office { get; set; }
+
     public Guid? ResumeAttachmentId { get; set; }
     public Resource? ResumeAttachment { get; set; }
 
@@ -162,6 +165,9 @@ public class UserProfile : EventEntity
         else
         {
             if (string.IsNullOrWhiteSpace(Address))
+                return false;
+
+            if (OfficeId is null || OfficeId == Guid.Empty)
                 return false;
         }
 

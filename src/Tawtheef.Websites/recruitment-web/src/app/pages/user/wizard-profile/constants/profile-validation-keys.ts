@@ -2,6 +2,7 @@
   basic: {
     candidateType: 'wizard.profile.basic.candidateType.required',
     targetEntity: 'wizard.profile.basic.targetEntity.required',
+    office: 'wizard.profile.basic.office.required',
     cvName: 'wizard.profile.basic.cv.required',
     idName: 'wizard.profile.basic.id.required',
     marriageCertificateName: 'wizard.profile.basic.marriageCertificate.required',

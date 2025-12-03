@@ -30,6 +30,7 @@ public sealed class ProfileStatusDto
     // ===== Scalars من UserProfile =====
     public Guid? CandidateTypeId { get; init; }
     public Guid? TargetEntityId { get; init; }
+    public Guid? OfficeId { get; init; }
 
     public string? Avatar { get; init; }
     public string? FullNameAr { get; init; }

@@ -32,6 +32,7 @@ public sealed class ProfileCompletenessService(
             .Include(p => p.ResidenceAddressCertificate)
             .Include(p => p.BirthdayCertificate)
             .Include(p => p.MarriageCertificate)
+            .Include(p => p.Office)
             // Additional attachments
             .Include(p => p.AdditionalAttachments!)
                 .ThenInclude(a => a.Attachment)
