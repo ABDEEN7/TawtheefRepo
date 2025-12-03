@@ -6,7 +6,7 @@ import {Experience, TrainingCourse} from '../models/experience.model';
 import {Attachment} from '../models/attachment.model';
 import {Skill} from '../models/skill.model';
 import {UserService} from '../../../../core/auth/user.service';
-import {NationalityMapperService, PhoneMapperService} from './phone-mapper.service';
+import {PhoneMapperService} from './phone-mapper.service';
 import {ProfileLookupsService} from './profile-lookups.service';
 import {MoiPersonalInfo, buildArabicFullName, buildEnglishFullName} from '../models/moi-personal-info.model';
 import {
@@ -17,6 +17,7 @@ import {
   candidateTypeNeedsSponsor,
   createStepValiditySignal,
 } from '../state/profile-step-validity.signal';
+import {NationalityMapperService} from './nationality-mapper.service';
 
 
 

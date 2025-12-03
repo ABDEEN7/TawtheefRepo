@@ -48,11 +48,7 @@ export class ProfileService {
   }
 
   checkProfile(qid: string, expiryDate: string) {
-    const params = new HttpParams()
-      .set('qid', qid)
-      .set('expiryDate', expiryDate);
-
-    return this.http.get<MoiPersonalInfo>(this.endpoints.user.profile.checkProfile, { params });
+    return this.http.get<MoiPersonalInfo>(this.endpoints.user.profile.checkProfile, { qid, expiryDate });
   }
 
   // ========== CONTACT ==========

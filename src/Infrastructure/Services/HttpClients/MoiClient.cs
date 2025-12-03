@@ -9,36 +9,54 @@ using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 
+
 public sealed class MoiClient : IMoiClient
 {
     private readonly HttpClient _http;
-    private readonly MoiSettings _opt;
 
     public MoiClient(HttpClient http, IOptions<MoiSettings> opt)
     {
         _http = http;
-        _opt  = opt.Value;
-        _http.BaseAddress ??= new Uri(_opt.BaseUrl);
-        // _http.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/xml"));
-        var byteArray = Encoding.ASCII.GetBytes($"{_opt.Username}:{_opt.Password}");
-        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+        _http.BaseAddress ??= new Uri(opt.Value.BaseUrl);
         _http.Timeout = TimeSpan.FromSeconds(10);
     }
 
-    public async Task<IResult<MOEPersonalInfo>> GetPersonalInfoAsync(string qid, DateOnly expiryData, CancellationToken ct = default)
+    public async Task<IResult<MOEPersonalInfo>> GetPersonalInfoAsync(
+        string qid,
+        DateOnly expiryDate,
+        CancellationToken ct = default)
     {
-        var url = $"GetPersonalInfo?qid={qid}&ExpiryDate=${expiryData.ToString("yyyy-MM-dd")}";
-        using var response = await _http.GetAsync(url, ct);
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var url = $"GetPersonalInfo?Qid={qid}&ExpiryDate={expiryDate:yyyy-MM-dd}";
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+            using var response = await _http.SendAsync(request, ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Content.ReadAsStringAsync(ct);
+                return Result.Fail<MOEPersonalInfo>(
+                    $"MOI API error: {(int)response.StatusCode} {response.ReasonPhrase}. Body: {body}");
+            }
 
-        await using var stream = await response.Content.ReadAsStreamAsync(ct);
-        var serializer = new DataContractSerializer(typeof(PersonalInfoApiResponse));
-        if (serializer.ReadObject(stream) is not PersonalInfoApiResponse apiResponse)
-            return Result.Fail<MOEPersonalInfo>("Failed to deserialize MOI response");
+            await using var stream = await response.Content.ReadAsStreamAsync(ct);
 
-        if (!apiResponse.IsSuccess)
-            return Result.Fail<MOEPersonalInfo>(apiResponse.Message ?? "MOI API returned failure");
+            var serializer = new DataContractSerializer(typeof(PersonalInfoApiResponse));
+            if (serializer.ReadObject(stream) is not PersonalInfoApiResponse apiResponse)
+                return Result.Fail<MOEPersonalInfo>("Failed to deserialize MOI response");
 
-        return Result.Ok(apiResponse.ResponseData!);
+            if (!apiResponse.IsSuccess)
+                return Result.Fail<MOEPersonalInfo>(apiResponse.Message ?? "MOI API returned failure");
+
+            if (apiResponse.ResponseData is null)
+                return Result.Fail<MOEPersonalInfo>("MOI API returned no data");
+
+            return Result.Ok(apiResponse.ResponseData);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<MOEPersonalInfo>($"Exception calling MOI API: {ex.Message}");
+        }
     }
 }
+

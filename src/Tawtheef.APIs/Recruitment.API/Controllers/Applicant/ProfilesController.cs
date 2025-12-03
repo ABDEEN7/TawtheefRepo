@@ -215,7 +215,9 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     [HttpGet("lookups/countries")]
     public async Task<IActionResult> Countries()
     {
-        var result = await mediator.Send(new GetCountriesQuery());
+        //get language from header
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetCountriesQuery { Language = language });
         return result.ToActionResult();
     }
 

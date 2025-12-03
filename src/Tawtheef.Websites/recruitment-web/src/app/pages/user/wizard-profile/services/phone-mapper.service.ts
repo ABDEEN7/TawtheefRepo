@@ -1,8 +1,6 @@
-﻿import {inject, Injectable} from '@angular/core';
-import {PhoneNumberUtil, PhoneNumberFormat} from 'google-libphonenumber';
+﻿import {Injectable} from '@angular/core';
+import {PhoneNumberFormat, PhoneNumberUtil} from 'google-libphonenumber';
 import {PhoneNumber as AppPhoneNumber} from '../models/phone-number.model';
-import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
-import {ProfileLookupsService} from './profile-lookups.service';
 
 @Injectable({providedIn: 'root'})
 export class PhoneMapperService {
@@ -46,18 +44,5 @@ export class PhoneMapperService {
       console.error('Error parsing phone number:', raw, err);
       return null;
     }
-  }
-}
-@Injectable({providedIn: 'root'})
-export class NationalityMapperService {
-  private lookups = inject(ProfileLookupsService);
-
-  /**
-   * raw: can be either +962777123456 or 0777123456
-   * defaultRegion: used when number doesn't start with + (e.g. JO, SA, AE...)
-   */
-  toNationalityObject(raw?: string | null | undefined): dropdownOptionsModel | null {
-    if (!raw) return null;
-    return this.lookups.nationalities().find(x => x.code === raw || x.id == raw) ?? null;
   }
 }

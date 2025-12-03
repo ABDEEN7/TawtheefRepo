@@ -5,4 +5,5 @@ export interface dropdownOptionsModel {
   backendName: string;
   name: string;
   description: string;
+  additionalData?: any | null | undefined;
 }
