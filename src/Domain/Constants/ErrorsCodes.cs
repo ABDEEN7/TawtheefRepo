@@ -140,6 +140,10 @@ public class ErrorsCodes
     public const string InvalidTrainingCourseFileIndex = "INVALID_TRAINING_COURSE_FILE_INDEX";
     public const string InvalidExperienceFile = "INVALID_EXPERIENCE_FILE";
     public const string InvalidTrainingCourseFile = "INVALID_TRAINING_COURSE_FILE";
+    public const string ExperienceDescriptionTooLong = "EXPERIENCE_DESCRIPTION_TOO_LONG";
+    public const string TrainingDescriptionTooLong = "TRAINING_DESCRIPTION_TOO_LONG";
+    public const string ExperienceFileTooLarge = "EXPERIENCE_FILE_TOO_LARGE";
+    public const string TrainingCourseFileTooLarge = "TRAINING_COURSE_FILE_TOO_LARGE";
     public const string InvalidAttachmentsJson = "INVALID_ATTACHMENTS_JSON";
     public const string InvalidAttachmentFileIndex = "INVALID_ATTACHMENT_FILE_INDEX";
     public const string InvalidAttachmentFile = "INVALID_ATTACHMENT_FILE";
