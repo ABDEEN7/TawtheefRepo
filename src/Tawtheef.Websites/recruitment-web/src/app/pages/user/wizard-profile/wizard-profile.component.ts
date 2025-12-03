@@ -13,6 +13,7 @@ import {AvatarModal} from './steps/step-personal/dialogs/avatar.modal/avatar.mod
 import {DialogService} from 'primeng/dynamicdialog';
 import {PhoneMapperService} from './services/phone-mapper.service';
 import {mapProfileStatusToState} from './services/profile.mapper';
+import {UserService} from '../../core/auth/user.service';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -29,6 +30,7 @@ export class WizardProfileComponent implements OnInit {
   lookups = inject(ProfileLookupsService);
   language = inject(LanguageService);
   phoneMapper = inject(PhoneMapperService);
+  userService = inject(UserService);
 
   avatarPreviewUrl: string | null = null;
 
@@ -104,7 +106,7 @@ export class WizardProfileComponent implements OnInit {
       const state = nav?.extras.state as ProfileStatusDto | null;
       if (state) {
         this.avatarPreviewUrl = state.avatar ?? null;
-        this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state));
+        this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state, this.userService.getPrefill()));
         this.loading = false;
         this.moveToFirstInvalidStep();
         return;
@@ -120,7 +122,7 @@ export class WizardProfileComponent implements OnInit {
             return;
           }
           this.avatarPreviewUrl = b.avatar ?? null;
-          this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto));
+          this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto, this.userService.getPrefill()));
           this.moveToFirstInvalidStep();
         });
     })
