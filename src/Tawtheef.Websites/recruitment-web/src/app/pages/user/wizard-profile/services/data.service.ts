@@ -9,6 +9,8 @@ import {UserService} from '../../../../core/auth/user.service';
 import {PhoneMapperService} from './phone-mapper.service';
 import {ProfileLookupsService} from './profile-lookups.service';
 import {MoiPersonalInfo, buildArabicFullName, buildEnglishFullName} from '../models/moi-personal-info.model';
+import {ProfileService} from './profile.service';
+import {normalizeMoiResponse} from './moi-response-normalizer';
 import {
   candidateTypeFromState,
   candidateTypeIsResident,
@@ -19,6 +21,7 @@ import {
 } from '../state/profile-step-validity.signal';
 import {SponsorType} from '../../../../core/enums/lookups.enum';
 import {NationalityMapperService} from './nationality-mapper.service';
+import {take} from 'rxjs';
 
 
 
@@ -28,6 +31,7 @@ export class DataService {
   phoneMapperService = inject(PhoneMapperService);
   userService = inject(UserService);
   lookups = inject(ProfileLookupsService);
+  profileService = inject(ProfileService);
   state = signal<ProfileState>({
     degrees: [], experiences: [], courses: [],
     skills: [], languages: [], attachments: [],
@@ -72,6 +76,7 @@ export class DataService {
   prefillFromBootstrap(userData: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...userData }));
     this.lockedPrefillData();
+    this.prefillFromCheckProfile();
   }
   private lockedPrefillData() {
     const prefill = this.userService.getPrefill();
@@ -195,6 +200,7 @@ export class DataService {
     const gender = this.lookups.genders().find(g => g.backendName?.toUpperCase() === info.gender?.toUpperCase());
     const arabicFullName = buildArabicFullName(info);
     const englishFullName = buildEnglishFullName(info);
+    const shouldLockCheckProfile = this.isResidentQatar;
 
     this.state.update(s => ({
       ...s,
@@ -209,14 +215,29 @@ export class DataService {
 
     this.locked.update(m => ({
       ...m,
-      fullNameAr: !!arabicFullName || m.fullNameAr,
-      fullNameEn: !!englishFullName || m.fullNameEn,
-      qid: !!info.qid || m.qid,
-      qidExpiry: !!info.qidExpiry || m.qidExpiry,
-      dob: !!info.dateOfBirth || m.dob,
-      nationality: (!!nationality) || m.nationality,
-      gender: (!!gender) || m.gender,
+      fullNameAr: (shouldLockCheckProfile && !!arabicFullName) || m.fullNameAr,
+      fullNameEn: (shouldLockCheckProfile && !!englishFullName) || m.fullNameEn,
+      qid: (shouldLockCheckProfile && !!info.qid) || m.qid,
+      qidExpiry: (shouldLockCheckProfile && !!info.qidExpiry) || m.qidExpiry,
+      dob: (shouldLockCheckProfile && !!info.dateOfBirth) || m.dob,
+      nationality: (shouldLockCheckProfile && !!nationality) || m.nationality,
+      gender: (shouldLockCheckProfile && !!gender) || m.gender,
     }));
+  }
+
+  private prefillFromCheckProfile() {
+    if (!this.isResidentQatar) return;
+
+    const { qid, qidExpiry } = this.state();
+    if (!qid || !qidExpiry) return;
+
+    this.profileService
+      .checkProfile(qid, qidExpiry)
+      .pipe(take(1))
+      .subscribe({
+        next: res => this.applyMoiPersonalInfo(normalizeMoiResponse(res)),
+        error: err => console.error(err),
+      });
   }
 
   applySponsorPersonalInfo(info: MoiPersonalInfo) {
