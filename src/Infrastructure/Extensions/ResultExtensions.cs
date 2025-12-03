@@ -1,9 +1,9 @@
-using System;
 using System.Diagnostics;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Models;
+using Error = FluentResults.Error;
 
 namespace Tawtheef.Infrastructure.Extensions;
 
