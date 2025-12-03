@@ -24,4 +24,5 @@ public sealed class SaveProfilePersonalRequest
     public string? SponsorEmployerName { get; set; }
     public string? SponsorEmployerNumber { get; set; }
     public IFormFile? SponsorCard { get; set; }
+    public string? SponsorCardFileName { get; set; }
 }

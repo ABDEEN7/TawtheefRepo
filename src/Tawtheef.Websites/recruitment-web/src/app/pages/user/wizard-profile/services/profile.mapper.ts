@@ -44,6 +44,7 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
     sponsorEmployerName: state.sponsorEmployerName ?? null,
     sponsorEmployerNumber: state.sponsorEmployerNumber ?? null,
     sponsorTypeId: state.sponsorType?.id ?? null,
+    sponsorCardFileName: state.sponsorCardName ?? null,
   };
 }
 export function mapContactSection(state: ProfileState): SaveProfileContactRequestDto {
@@ -67,7 +68,7 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
         street: state.naStreet ?? null,
         building: state.naBuilding ?? null,
         unit: state.naUnit ?? null,
-        fileName: state.naFileName ?? null,
+        nationalAddressFileName: state.naFileName ?? null,
       } : null,
   };
 }
@@ -157,6 +158,7 @@ export function mapProfileStatusToState(
       grade: mapIdToDropdown(lookups, 'ratingGrade', q.gradeId),
       certificate: mapFile(q.attachment),
       attachmentId: q.attachment?.resourceId,
+      certificateName: q.attachment?.fileName,
     } as Degree)),
 
     experiences: (dto.experiences ?? []).map(e => ({

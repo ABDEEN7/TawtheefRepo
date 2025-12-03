@@ -107,12 +107,12 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                 {
                     RuleFor(x => x.Request.SponsorEmployerName).NotEmpty();
                     RuleFor(x => x.Request.SponsorEmployerNumber).NotEmpty();
-                
-                    RuleFor(x => x.Request.SponsorCard)
-                        .Cascade(CascadeMode.Stop)
-                        .NotNull().WithMessage(ErrorsCodes.SponsorCardRequired)
-                        .Must(FileValidationHelpers.HasFile)
-                        .WithMessage(ErrorsCodes.SponsorCardFileRequired);
+
+                    RuleFor(x => x.Request)
+                        .Must(r =>
+                            FileValidationHelpers.HasFile(r.SponsorCard) ||
+                            FileValidationHelpers.HasExisting(r.SponsorCardFileName))
+                        .WithMessage(ErrorsCodes.SponsorCardRequired);
                 });
             });
     }
@@ -145,11 +145,11 @@ public sealed class SaveProfileContactCommandValidator : AbstractValidator<SaveP
                     RuleFor(x => x.Request.NationalAddress!.Zone).GreaterThan(0);
                     RuleFor(x => x.Request.NationalAddress!.Street).GreaterThan(0);
                     RuleFor(x => x.Request.NationalAddress!.Building).GreaterThan(0);
-                    
-                    RuleFor(x => x.Request.NationalAddress!.NationalAddress)
-                        .Cascade(CascadeMode.Stop)
-                        .NotNull().WithMessage(ErrorsCodes.NationalAddressRequired)
-                        .Must(FileValidationHelpers.HasFile)
+
+                    RuleFor(x => x.Request.NationalAddress!)
+                        .Must(na =>
+                            FileValidationHelpers.HasFile(na.NationalAddress) ||
+                            FileValidationHelpers.HasExisting(na.NationalAddressFileName))
                         .WithMessage(ErrorsCodes.NationalAddressDocumentRequired);
                 });
             });
@@ -171,12 +171,6 @@ public sealed class SaveProfileEducationCommandValidator : AbstractValidator<Sav
             .DependentRules(() =>
             {
                 RuleFor(x => x.Request.DegreesJson).NotEmpty();
-
-                RuleFor(x => x.Request.DegreeFiles)
-                    .Cascade(CascadeMode.Stop)
-                    .NotNull().WithMessage(ErrorsCodes.DegreeFileRequired)
-                    .Must(files => files!.Count > 0 && files.All(FileValidationHelpers.HasFile))
-                    .WithMessage(ErrorsCodes.DegreeFileRequired);
             });
     }
 }
