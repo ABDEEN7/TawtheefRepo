@@ -52,7 +52,7 @@ export class StepAttachmentsComponent implements OnInit {
       row.disable({ emitEvent: false });
     });
 
-    this.lastSubmittedSignature = this.buildSignature(attachments);
+    this.lastSubmittedSignature = null;
   }
 
   // ======== FormArray helper ========

@@ -38,7 +38,7 @@ export class StepDegreeComponent implements OnInit {
   ngOnInit(): void {
     const state = this.ds.state();
     const signature = this.buildSignature(state.degrees);
-    this.lastSubmittedSignature = signature;
+    this.lastSubmittedSignature = null;
   }
 
   add() {

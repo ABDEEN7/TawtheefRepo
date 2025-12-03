@@ -22,6 +22,7 @@ import { mapContactSection } from '../../services/profile.mapper';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {FileSlot, canPreviewFile, createFileSlot, displayedFileName, fileSlotSignature, fileToUpload, previewFileFromSlot, previewUrlFromSlot, setLocalFile, updateRemote} from '../../utils/file-slot';
 
 type VerificationStatus =
   | 'idle'
@@ -67,7 +68,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   naFileError: string | null = null;
   maxNaFileSize = 2 * 1024 * 1024; // 2MB
   allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
-  private naLocalFile: File | null = null;
+  private naLocalFile: FileSlot = createFileSlot();
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -130,7 +131,8 @@ export class StepContactComponent implements OnInit, OnDestroy {
     }
 
     const dto = mapContactSection(state);
-    this.lastSubmittedSignature = this.buildSignature(dto, state);
+    updateRemote(this.naLocalFile, state.naFile);
+    this.lastSubmittedSignature = null;
   }
 
   ngOnDestroy(): void {
@@ -343,7 +345,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     }
 
     this.naFileError = null;
-    this.naLocalFile = file;
+    setLocalFile(this.naLocalFile, file);
     this.ds.up('naFileName', file.name);
     this.ds.up('naFile', { resourceId: 'local', fileName: file.name, file: file } as any);
     input.value = '';
@@ -370,7 +372,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     this.savingContact = true;
     this.profileService
-      .saveContactSection(dto, { nationalAddressFile: this.naLocalFile })
+      .saveContactSection(dto, { nationalAddressFile: fileToUpload(this.naLocalFile) })
       .pipe(finalize(() => (this.savingContact = false)))
       .subscribe({
         next: () => {
@@ -383,26 +385,23 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   previewNaFile(ev?: Event): void {
     ev?.stopPropagation();
-    if (this.naLocalFile) {
-      this.fileUtils.previewBlob(this.naLocalFile);
+    if (!canPreviewFile(this.naLocalFile)) return;
+
+    const local = previewFileFromSlot(this.naLocalFile);
+    if (local) {
+      this.fileUtils.previewBlob(local);
       return;
     }
 
-    const ref = this.ds.state().naFile;
-    if (ref?.url) {
-      this.fileUtils.previewUrl(ref.url, ref.resourceName || '', false);
-    }else if(ref?.file){
-      this.fileUtils.previewBlob(ref?.file);
+    const url = previewUrlFromSlot(this.naLocalFile);
+    if (url) {
+      this.fileUtils.previewUrl(url, displayedFileName(this.naLocalFile), false);
     }
   }
 
   private buildSignature(dto: ReturnType<typeof mapContactSection>, state: ReturnType<typeof this.ds.state>): string | null {
     try {
-      const nationalAddress = {
-        localName: this.naLocalFile?.name ?? null,
-        resourceId: state.naFile?.resourceId ?? null,
-        resourceName: state.naFile?.resourceName ?? null,
-      };
+      const nationalAddress = fileSlotSignature(this.naLocalFile);
 
       const contactInfo = {
         phone: state.phone?.e164Number ?? null,

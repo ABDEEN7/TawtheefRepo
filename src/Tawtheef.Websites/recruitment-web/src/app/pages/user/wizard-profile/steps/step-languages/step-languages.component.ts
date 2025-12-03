@@ -38,7 +38,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const state = this.ds.state();
     const signature = this.buildSignature(state.languages);
-    this.lastSubmittedSignature = signature;
+    this.lastSubmittedSignature = null;
   }
 
   addLang(): void {
