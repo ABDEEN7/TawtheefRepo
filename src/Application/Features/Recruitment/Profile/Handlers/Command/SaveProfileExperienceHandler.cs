@@ -45,6 +45,9 @@ public sealed class SaveProfileExperienceHandler(
 
         var experiences = experiencesResult.Value;
         var trainings = trainingsResult.Value;
+        var lengthValidationResult = ValidateTextLengths(experiences, trainings);
+        if (lengthValidationResult.IsFailed)
+            return Result.Fail<Unit>(lengthValidationResult.Errors);
         var experienceFiles = cmd.Request.ExperienceFiles;
         var trainingFiles   = cmd.Request.TrainingCourseFiles;
 
@@ -57,6 +60,8 @@ public sealed class SaveProfileExperienceHandler(
                 experienceFiles,
                 ErrorsCodes.InvalidExperienceFileIndex,
                 ErrorsCodes.InvalidExperienceFile,
+                ErrorsCodes.ExperienceFileTooLarge,
+                ProfileLimits.MaxExperienceFileSizeBytes,
                 "experience",
                 ct);
 
@@ -88,6 +93,8 @@ public sealed class SaveProfileExperienceHandler(
                 trainingFiles,
                 ErrorsCodes.InvalidTrainingCourseFileIndex,
                 ErrorsCodes.InvalidTrainingCourseFile,
+                ErrorsCodes.TrainingCourseFileTooLarge,
+                ProfileLimits.MaxTrainingFileSizeBytes,
                 "training",
                 ct);
 
@@ -157,6 +164,8 @@ public sealed class SaveProfileExperienceHandler(
             IReadOnlyList<IFormFile> files,
             string invalidIndexError,
             string invalidFileError,
+            string fileTooLargeError,
+            long maxFileSizeBytes,
             string category,
             CancellationToken cancellationToken)
         {
@@ -170,6 +179,9 @@ public sealed class SaveProfileExperienceHandler(
             if (file is not { Length: > 0 })
                 return Result.Fail<Guid?>(invalidFileError);
 
+            if (file.Length > maxFileSizeBytes)
+                return Result.Fail<Guid?>(fileTooLargeError);
+
             var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, category, file, false, cancellationToken);
             var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
@@ -178,6 +190,31 @@ public sealed class SaveProfileExperienceHandler(
                 return Result.Fail<Guid?>(uploadResult.Errors);
 
             return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        }
+
+        static Result ValidateTextLengths(
+            IEnumerable<ExperienceUpsertDto> experiencesToValidate,
+            IEnumerable<TrainingCourseUpsertDto> trainingsToValidate)
+        {
+            foreach (var experience in experiencesToValidate)
+            {
+                if (!string.IsNullOrEmpty(experience.Description) &&
+                    experience.Description.Length > ProfileLimits.ExperienceDescriptionMaxLength)
+                {
+                    return Result.Fail(ErrorsCodes.ExperienceDescriptionTooLong);
+                }
+            }
+
+            foreach (var training in trainingsToValidate)
+            {
+                if (!string.IsNullOrEmpty(training.Description) &&
+                    training.Description.Length > ProfileLimits.TrainingDescriptionMaxLength)
+                {
+                    return Result.Fail(ErrorsCodes.TrainingDescriptionTooLong);
+                }
+            }
+
+            return Result.Ok();
         }
     }
 }
