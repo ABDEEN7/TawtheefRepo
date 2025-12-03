@@ -73,6 +73,7 @@ export interface ProfileStatusDto {
   sponsorTypeId?: string | null;
   sponsorEmployerName?: string | null;
   sponsorEmployerNumber?: string | null;
+  sponsorQidExpiry?: string | null;
   sponsorCard?: FileRefDto | null;
 
   // ===== Attachments =====

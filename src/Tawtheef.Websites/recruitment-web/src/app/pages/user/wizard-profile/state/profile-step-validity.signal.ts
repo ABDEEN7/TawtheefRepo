@@ -5,7 +5,7 @@ import {
   StepValidityResult,
 } from '../models/profile-validation.model';
 import {ProfileState} from '../models/profile-state.model';
-import {CandidateType} from '../../../../core/enums/lookups.enum';
+import {CandidateType, SponsorType} from '../../../../core/enums/lookups.enum';
 
 export function isFilledField(value: unknown): boolean {
   if (value === null || value === undefined) return false;
@@ -114,6 +114,7 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 
   const needsSponsor = candidateTypeNeedsSponsor(candidateTypeFromState(s));
   const isResident = candidateTypeIsResident(candidateTypeFromState(s));
+  const isIndividualSponsor = s.sponsorType?.backendName === SponsorType.Individual;
 
   if (!isFilledField(s.fullNameAr)) {
     addRequiredError(errors, 'personal', 'fullNameAr');
@@ -166,6 +167,10 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 
     if (!isFilledField(s.sponsorEmployerNumber)) {
       addRequiredError(errors, 'personal', 'sponsorEmployerNumber');
+    }
+
+    if (isIndividualSponsor && !isFilledField(s.sponsorQidExpiry)) {
+      addRequiredError(errors, 'personal', 'sponsorQidExpiry');
     }
 
     if (!isFilledField(s.sponsorCardName)) {

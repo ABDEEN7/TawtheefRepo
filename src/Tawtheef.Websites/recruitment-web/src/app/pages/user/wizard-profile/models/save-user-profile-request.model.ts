@@ -43,6 +43,7 @@ hasDisability: boolean;
 disabilityDetails?: string | null;
 sponsorEmployerName?: string | null;
 sponsorEmployerNumber?: string | null;
+sponsorQidExpiry?: string | null;
 sponsorCardName?: string | null;
 sponsorTypeId?: string | null;
 

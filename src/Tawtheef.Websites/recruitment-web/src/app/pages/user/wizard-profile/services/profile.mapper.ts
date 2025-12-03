@@ -44,6 +44,7 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
 
     sponsorEmployerName: state.sponsorEmployerName ?? null,
     sponsorEmployerNumber: state.sponsorEmployerNumber ?? null,
+    sponsorQidExpiry: state.sponsorQidExpiry ?? null,
     sponsorTypeId: state.sponsorType?.id ?? null,
     sponsorCardFileName: state.sponsorCardName ?? null,
   };
@@ -121,6 +122,7 @@ export function mapProfileStatusToState(
 
     sponsorEmployerName: dto.sponsorEmployerName,
     sponsorEmployerNumber: dto.sponsorEmployerNumber,
+    sponsorQidExpiry: dto.sponsorQidExpiry,
     sponsorCardName: dto.sponsorCard?.fileName ?? null,
     sponsorCardFile: mapFile(dto.sponsorCard),
 

@@ -11,6 +11,8 @@
         [ngModel]="ds.state().fullNameAr"
         (ngModelChange)="updateField('fullNameAr', $event)"
         placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+        [readonly]="ds.isLocked('fullNameAr')"
+        [ngClass]="{ 'locked-field': ds.isLocked('fullNameAr') }"
       />
     </div>
 
@@ -25,6 +27,8 @@
         [ngModel]="ds.state().fullNameEn"
         (ngModelChange)="updateField('fullNameEn', $event)"
         placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+        [readonly]="ds.isLocked('fullNameEn')"
+        [ngClass]="{ 'locked-field': ds.isLocked('fullNameEn') }"
       />
     </div>
 
@@ -253,6 +257,8 @@
             [ngModel]="ds.state().sponsorEmployerName"
             (ngModelChange)="updateField('sponsorEmployerName', $event)"
             placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+            [readonly]="ds.isLocked('sponsorEmployerName')"
+            [ngClass]="{ 'locked-field': ds.isLocked('sponsorEmployerName') }"
           />
         </div>
         <!-- Sponsor Employer Number (Ministry of Labor) -->
@@ -270,6 +276,25 @@
             (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
             placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
           />
+        </div>
+        <div class="col-md-4" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
+          <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
+          <p-date-picker name="sponsorQidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
+            [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
+            size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
+            [disabled]="ds.isLocked('sponsorQidExpiry')" [ngClass]="{ 'locked-field': ds.isLocked('sponsorQidExpiry') }" fluid>
+          </p-date-picker>
+        </div>
+        <div class="col-md-4 d-flex align-items-end" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
+          <button class="btn btn-outline-primary w-100" type="button" (click)="verifySponsorProfile()" [disabled]="verifyingSponsor">
+            <span *ngIf="!verifyingSponsor">
+              {{ 'wizard.personal.verify.button' | translate }}
+            </span>
+            <span *ngIf="verifyingSponsor">
+              <i class="fa-solid fa-spinner fa-spin me-1"></i>
+              {{ 'wizard.personal.verify.loading' | translate }}
+            </span>
+          </button>
         </div>
         <!-- Establishment Registration Card -->
         <div class="col-md-6">

@@ -42,6 +42,7 @@ export interface ProfileState {
   sponsorType?: dropdownOptionsModel | null;
   sponsorEmployerName?: string | null;
   sponsorEmployerNumber?: string | null;
+  sponsorQidExpiry?: string | null;
   sponsorCardName?: string | null;
   sponsorCardFile?: UploadedFileRef | null;
 

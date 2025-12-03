@@ -402,6 +402,9 @@
         "sponsorEmployerNumber": {
           "required": "Please enter employer number"
         },
+        "sponsorQidExpiry": {
+          "required": "Please enter sponsor QID expiry date"
+        },
         "sponsorCard": {
           "required": "Please attach sponsor card"
         }
