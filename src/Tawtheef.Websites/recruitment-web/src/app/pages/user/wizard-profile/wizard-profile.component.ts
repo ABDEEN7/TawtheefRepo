@@ -5,7 +5,7 @@ import {LanguageService} from '../../../core/services/language.service';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../core/auth/auth.service';
 import {take} from 'rxjs';
-import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../core/models/auth/auth-response.model';
+import {ProfileStatusDto} from '../../../core/models/auth/auth-response.model';
 import {routes} from '../../../routes/routes';
 import {finalize} from 'rxjs/operators';
 import {ProfileLookupsService} from './services/profile-lookups.service';
@@ -13,7 +13,7 @@ import {AvatarModal} from './steps/step-personal/dialogs/avatar.modal/avatar.mod
 import {DialogService} from 'primeng/dynamicdialog';
 import {PhoneMapperService} from './services/phone-mapper.service';
 import {mapProfileStatusToState} from './services/profile.mapper';
-import {UserService} from '../../core/auth/user.service';
+import {UserService} from '../../../core/auth/user.service';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -96,10 +96,6 @@ export class WizardProfileComponent implements OnInit {
     return Math.min(this.total, completeCount + reviewUnlocked);
   }
 
-  progressPercentage(): number {
-    return Math.round((this.completedSteps() / this.total) * 100);
-  }
-
   ngOnInit(): void {
     this.lookups.loadAll().subscribe(() => {
       const nav = this.router.currentNavigation();
@@ -130,7 +126,9 @@ export class WizardProfileComponent implements OnInit {
 
   moveToFirstInvalidStep() {
     //get the first step not valid by ds.stepValidity
-    const firstInvalidStep = Array.from({length: this.total}, (_, i) => i + 1).find(i => !this.isStepValid(i));
+    const firstInvalidStep =
+      Array.from({length: this.total}, (_, i) => i + 1)
+      .find(i => !this.isStepValid(i));
     if (firstInvalidStep) {
       this.step = firstInvalidStep;
     }else{

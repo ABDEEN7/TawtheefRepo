@@ -72,7 +72,7 @@ export class DataService {
     return false;
   }
 
-  private lockableKeys: (keyof ProfileState)[] = ['qid','qidExpiry','dob','nationality','gender','phone','email','fullNameAr','fullNameEn','sponsorEmployerName','sponsorEmployerNumber','sponsorQidExpiry'];
+  private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email','fullNameAr','fullNameEn','sponsorEmployerName','sponsorEmployerNumber'];
   prefillFromBootstrap(userData: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...userData }));
     this.lockedPrefillData();
@@ -218,7 +218,6 @@ export class DataService {
       fullNameAr: (shouldLockCheckProfile && !!arabicFullName) || m.fullNameAr,
       fullNameEn: (shouldLockCheckProfile && !!englishFullName) || m.fullNameEn,
       qid: (shouldLockCheckProfile && !!info.qid) || m.qid,
-      qidExpiry: (shouldLockCheckProfile && !!info.qidExpiry) || m.qidExpiry,
       dob: (shouldLockCheckProfile && !!info.dateOfBirth) || m.dob,
       nationality: (shouldLockCheckProfile && !!nationality) || m.nationality,
       gender: (shouldLockCheckProfile && !!gender) || m.gender,

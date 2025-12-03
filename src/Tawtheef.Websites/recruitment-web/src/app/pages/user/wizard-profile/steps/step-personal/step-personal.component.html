@@ -56,8 +56,7 @@
       <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
       <p-date-picker name="qidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
         [ngModel]="ds.state().qidExpiry" (onSelect)="updateField('qidExpiry', dateToDateOnly($event))"
-        size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
-        [disabled]="ds.isLocked('qidExpiry')" [ngClass]="{ 'locked-field': ds.isLocked('qidExpiry') }" fluid>
+        size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"  fluid>
       </p-date-picker>
       <small *ngIf="ds.isLocked('qidExpiry')" class="fz-2xs text-muted">
         {{ 'wizard.accountFieldNote' | translate }}
@@ -91,7 +90,7 @@
         size="small"
         [placeholder]="'wizard.placeholders.selectNationality' | translate"
         class="w-full md:w-56"
-        [disabled]="ds.isLocked('nationality')"
+        [readonly]="ds.isLocked('nationality')"
         [ngClass]="{ 'locked-field': ds.isLocked('nationality') }"
       ></p-select>
       <small *ngIf="ds.isLocked('nationality')" class="fz-2xs text-muted">
@@ -119,7 +118,7 @@
         [ngModel]="ds.state().gender" (ngModelChange)="updateField('gender', $event)"
         [filter]="false" optionLabel="name" size="small"
         [placeholder]="'wizard.placeholders.selectGender' | translate"
-        class="w-full md:w-56" [disabled]="ds.isLocked('gender')"
+        class="w-full md:w-56" [readonly]="ds.isLocked('gender')"
         [ngClass]="{ 'locked-field': ds.isLocked('gender') }"
       ></p-select>
       <small *ngIf="ds.isLocked('gender')" class="fz-2xs text-muted">
@@ -281,8 +280,7 @@
           <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
           <p-date-picker name="sponsorQidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
             [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
-            size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
-            [disabled]="ds.isLocked('sponsorQidExpiry')" [ngClass]="{ 'locked-field': ds.isLocked('sponsorQidExpiry') }" fluid>
+            size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
           </p-date-picker>
         </div>
         <div class="col-md-4 d-flex align-items-end" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
