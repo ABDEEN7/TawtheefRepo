@@ -1003,6 +1003,53 @@ namespace Tawtheef.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.CandidateTypeProviderLogin", b =>
+                {
+                    b.Property<Guid>("CandidateTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProviderLoginId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CandidateTypeId", "ProviderLoginId");
+
+                    b.HasIndex("ProviderLoginId");
+
+                    b.ToTable("CandidateTypeProviderLogin", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            CandidateTypeId = new Guid("268d49f6-0dda-4dd6-8346-be355c553496"),
+                            ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
+                        },
+                        new
+                        {
+                            CandidateTypeId = new Guid("744256ea-4ee0-4a63-b071-8810895a33dc"),
+                            ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
+                        },
+                        new
+                        {
+                            CandidateTypeId = new Guid("ce67465e-6fed-4a83-9161-8eba16a79af3"),
+                            ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
+                        },
+                        new
+                        {
+                            CandidateTypeId = new Guid("7b06bc91-88b3-46ec-b6cc-ef2338864d41"),
+                            ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
+                        },
+                        new
+                        {
+                            CandidateTypeId = new Guid("50f14c55-d5f0-4bba-930e-ab73b012e6cb"),
+                            ProviderLoginId = new Guid("0d1ab8a4-2b89-4dcc-aa6f-6ec92ccb887c")
+                        },
+                        new
+                        {
+                            CandidateTypeId = new Guid("42b374d1-8032-44d7-95bd-ff5a64abbc95"),
+                            ProviderLoginId = new Guid("0d1ab8a4-2b89-4dcc-aa6f-6ec92ccb887c")
+                        });
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.Degree", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2662,6 +2709,112 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("University", "lkp");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ProviderLogin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ProviderLogin", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("0d1ab8a4-2b89-4dcc-aa6f-6ec92ccb887c"),
+                            BackendName = "Google",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DisplayOrder = 1,
+                            IsDeleted = false,
+                            NameAr = "جوجل",
+                            NameEn = "Google"
+                        },
+                        new
+                        {
+                            Id = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85"),
+                            BackendName = "QatarPass",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DisplayOrder = 2,
+                            IsDeleted = false,
+                            NameAr = "قطر باس",
+                            NameEn = "QatarPass"
+                        },
+                        new
+                        {
+                            Id = new Guid("e0575116-ea2b-4917-965f-214048a4c78b"),
+                            BackendName = "Azure",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DisplayOrder = 3,
+                            IsDeleted = false,
+                            NameAr = "أزور",
+                            NameEn = "Azure"
+                        });
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RatingGrade", b =>
@@ -4722,7 +4875,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NationalNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid?>("NationalityId")
                         .HasColumnType("uniqueidentifier");
@@ -4778,6 +4931,10 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("MarriageCertificateId");
 
                     b.HasIndex("NationalCardId");
+
+                    b.HasIndex("NationalNumber")
+                        .IsUnique()
+                        .HasFilter("[NationalNumber] IS NOT NULL");
 
                     b.HasIndex("NationalityId");
 
@@ -5483,6 +5640,25 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.CandidateTypeProviderLogin", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.CandidateType", "CandidateType")
+                        .WithMany("CandidateTypeProviderLogins")
+                        .HasForeignKey("CandidateTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.ProviderLogin", "ProviderLogin")
+                        .WithMany("CandidateTypeProviderLogins")
+                        .HasForeignKey("ProviderLoginId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CandidateType");
+
+                    b.Navigation("ProviderLogin");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.Degree", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -5834,6 +6010,30 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("City");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ProviderLogin", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CreatedBy");
 
@@ -6718,9 +6918,19 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.CandidateType", b =>
+                {
+                    b.Navigation("CandidateTypeProviderLogins");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", b =>
                 {
                     b.Navigation("SubMajors");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ProviderLogin", b =>
+                {
+                    b.Navigation("CandidateTypeProviderLogins");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Invitation", b =>
