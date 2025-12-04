@@ -29,6 +29,9 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
     public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct)
     {
+        if (user.Status.BlocksLogin())
+            return Result.Fail<AuthResponse>(ErrorsCodes.AccountStatusNotAllowedForLogin);
+
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
         await sessions.SetCurrentAsync(user.Id, sid, device, ct);

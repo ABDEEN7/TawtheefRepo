@@ -51,8 +51,6 @@ public sealed class SaveProfileLanguagesHandler(
             }).ToList();
 
         await langRepo.AddRangeAsync(languages);
-        profile.IsDraft = !cmd.Request.Submit;
-
         await reviewService.TouchSectionAsync(profile.Id, ProfileSection.SkillsLanguages, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
