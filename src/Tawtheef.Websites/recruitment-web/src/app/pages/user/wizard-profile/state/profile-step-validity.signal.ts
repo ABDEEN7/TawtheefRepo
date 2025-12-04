@@ -336,6 +336,39 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
   return { valid: errors.length === 0, errors };
 }
 
+function validateAchievementsStep(s: ProfileState): StepValidationResult {
+  const errors: FieldError[] = [];
+  const hasAchievements = Array.isArray(s.achievements) && s.achievements.length > 0;
+
+  if (!hasAchievements) {
+    errors.push({
+      field: 'achievements',
+      i18nKey: 'wizard.profile.achievements.atLeastOne.required',
+    });
+  }
+
+  s.achievements?.forEach((achievement, index) => {
+    if (!achievement?.achievementType) {
+      errors.push({ field: `achievements[${index}].achievementType`, i18nKey: 'wizard.profile.achievements.type.required' });
+    }
+    if (!achievement?.attachment || !isFilledField(achievement.attachment.resourceName)) {
+      errors.push({
+        field: `achievements[${index}].attachment`,
+        i18nKey: 'wizard.profile.achievements.attachment.required',
+      });
+    }
+
+    if (!(achievement?.file || achievement?.attachmentId)) {
+      errors.push({
+        field: `achievements[${index}].file`,
+        i18nKey: 'wizard.profile.achievements.file.required',
+      });
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
+}
+
 function validateSkillsStep(s: ProfileState): StepValidationResult {
   const hasSkills = Array.isArray(s.skills) && s.skills.length > 0;
 
@@ -416,6 +449,7 @@ export function createStepValiditySignal(
       contact:     validateContactStep(s),
       degrees:     validateDegreesStep(s),
       experience:  validateExperienceStep(s),
+      achievements: validateAchievementsStep(s),
       skills:      validateSkillsStep(s),
       languages:   validateLanguagesStep(s),
       attachments: validateAttachmentsStep(s),

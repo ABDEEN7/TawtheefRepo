@@ -222,6 +222,30 @@ public sealed class SaveProfileExperienceCommandValidator : AbstractValidator<Sa
 
 #endregion
 
+#region Profile Achievements
+
+public sealed class SaveProfileAchievementCommandValidator : AbstractValidator<SaveProfileAchievementCommand>
+{
+    public SaveProfileAchievementCommandValidator()
+    {
+        RuleFor(x => x.UserId).NotEmpty();
+
+        RuleFor(x => x.Request)
+            .NotNull()
+            .DependentRules(() =>
+            {
+                RuleFor(x => x.Request.AchievementsJson).NotEmpty();
+                RuleFor(x => x.Request.AchievementFiles).NotNull();
+
+                RuleForEach(x => x.Request.AchievementFiles)
+                    .Must(file => file is null || file.Length <= ProfileLimits.MaxAchievementFileSizeBytes)
+                    .WithMessage(ErrorsCodes.AchievementFileTooLarge);
+            });
+    }
+}
+
+#endregion
+
 #region Profile Skills
 
 public sealed class SaveProfileSkillsCommandValidator : AbstractValidator<SaveProfileSkillsCommand>
@@ -334,6 +358,18 @@ internal sealed class TrainingCourseUpsertValidator : AbstractValidator<Training
         RuleFor(x => x.EndDate)
             .GreaterThanOrEqualTo(x => x.StartDate)
             .When(x => x.EndDate.HasValue);
+    }
+}
+
+internal sealed class AchievementUpsertValidator : AbstractValidator<AchievementUpsertDto>
+{
+    public AchievementUpsertValidator()
+    {
+        RuleFor(x => x.Title).NotEmpty();
+        RuleFor(x => x.IssuingAuthority).NotEmpty();
+        RuleFor(x => x.CountryId).NotEmpty();
+        RuleFor(x => x.AchievementTypeId).NotEmpty();
+        RuleFor(x => x.IssueDate).NotNull();
     }
 }
 

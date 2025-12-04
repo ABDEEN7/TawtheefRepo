@@ -2,6 +2,7 @@ import {Degree} from "./degree.model";
 import {Attachment} from './attachment.model';
 import {Language} from './language.model';
 import {Experience, TrainingCourse} from './experience.model';
+import {Achievement} from './achievement.model';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {PhoneNumber} from './phone-number.model';
 import {Skill} from './skill.model';
@@ -66,6 +67,7 @@ export interface ProfileState {
   degrees: Degree[];
   experiences: Experience[];
   courses: TrainingCourse[];
+  achievements: Achievement[];
   skills: Skill[];
   languages: Language[];
   attachments: Attachment[];
