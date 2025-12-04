@@ -31,6 +31,13 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
                 RuleFor(x => x.Request.CandidateTypeId).NotEmpty();
                 RuleFor(x => x.Request.TargetEntityId).NotEmpty();
 
+                When(x => RequiresOfficeSelection(x.Request), () =>
+                {
+                    RuleFor(x => x.Request.OfficeId)
+                        .NotEmpty()
+                        .WithMessage(ErrorsCodes.OfficeRequired);
+                });
+
                 RuleFor(x => x.Request.CvFile)
                     .Must((cmd, file) => FileValidationHelpers.HasFile(file) ||
                                          FileValidationHelpers.HasExisting(cmd.Request.CvFileName))
@@ -64,6 +71,9 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
 
     private static bool RequiresMarriageCertificate(SaveProfilePrereqRequest r)
         => r.CandidateTypeId == CandidateTypeIds.WifeOfQatari;
+
+    private static bool RequiresOfficeSelection(SaveProfilePrereqRequest r)
+        => r.CandidateTypeId == CandidateTypeIds.NonQatari || r.CandidateTypeId == CandidateTypeIds.GCC;
 
     private static bool HasExistingMarriageFile(SaveProfilePrereqRequest r)
         => FileValidationHelpers.HasExisting(r.MarriageCertificateFileName) ||
@@ -198,6 +208,14 @@ public sealed class SaveProfileExperienceCommandValidator : AbstractValidator<Sa
                 RuleFor(x => x.Request.TrainingCoursesJson).NotNull();
                 RuleFor(x => x.Request.ExperienceFiles).NotNull();
                 RuleFor(x => x.Request.TrainingCourseFiles).NotNull();
+
+                RuleForEach(x => x.Request.ExperienceFiles)
+                    .Must(file => file is null || file.Length <= ProfileLimits.MaxExperienceFileSizeBytes)
+                    .WithMessage(ErrorsCodes.ExperienceFileTooLarge);
+
+                RuleForEach(x => x.Request.TrainingCourseFiles)
+                    .Must(file => file is null || file.Length <= ProfileLimits.MaxTrainingFileSizeBytes)
+                    .WithMessage(ErrorsCodes.TrainingCourseFileTooLarge);
             });
     }
 }

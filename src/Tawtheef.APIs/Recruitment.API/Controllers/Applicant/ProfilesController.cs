@@ -286,5 +286,13 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("lookups/offices")]
+    public async Task<IActionResult> GetOffices([FromQuery] GetOfficesQuery query)
+    {
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(query with { Language = language });
+        return result.ToActionResult();
+    }
+
     #endregion
 }

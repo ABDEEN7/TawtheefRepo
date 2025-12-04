@@ -137,9 +137,10 @@
           </label>
           <textarea rows="2" class="form-control"
                     formControlName="description"
+                    [attr.maxlength]="limits.descriptionMaxLength"
                     [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}"></textarea>
           <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)" class="text-danger mt-1 d-block">
-            {{ 'validation.maxLength' | translate:{max:1000} }}
+            {{ 'validation.maxLength' | translate:{max: limits.descriptionMaxLength} }}
           </small>
         </div>
       </div>

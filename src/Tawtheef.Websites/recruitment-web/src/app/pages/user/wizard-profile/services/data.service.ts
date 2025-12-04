@@ -192,6 +192,10 @@ export class DataService {
       next.address = undefined;
     }
 
+    if (candidateTypeIsResident(type)) {
+      next.office = null;
+    }
+
     return next;
   }
 

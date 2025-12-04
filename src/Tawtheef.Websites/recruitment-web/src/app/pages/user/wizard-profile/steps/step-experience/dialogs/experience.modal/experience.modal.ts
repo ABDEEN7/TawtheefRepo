@@ -19,6 +19,7 @@ import {Select} from 'primeng/select';
 import {ProfileLookupsService} from '../../../../services/profile-lookups.service';
 import {Experience} from '../../../../models/experience.model';
 import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
+import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
 
 @Component({
   selector: 'app-experience',
@@ -44,7 +45,7 @@ export class ExperienceModal implements OnInit {
   protected lookups = inject(ProfileLookupsService);
   private fileUtils = inject(FileUtilsService);
 
-  readonly maxFileSize = 1_000_000; // 1MB
+  readonly limits = EXPERIENCE_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
@@ -59,7 +60,7 @@ export class ExperienceModal implements OnInit {
       from: [null, [Validators.required]],
       to: [null],
       current: [false],
-      description: ['', [Validators.maxLength(1000)]],
+      description: ['', [Validators.maxLength(this.limits.descriptionMaxLength)]],
       fileName: [''],
       file: [null, Validators.required], // ✅ required
     },
@@ -110,8 +111,8 @@ export class ExperienceModal implements OnInit {
       return;
     }
 
-    if (file.size > this.maxFileSize) {
-      this.fileError = this.translate.instant('validation.fileSize', { size: '1MB' });
+    if (file.size > this.limits.maxFileSizeBytes) {
+      this.fileError = this.translate.instant('validation.fileSize', { size: this.limits.maxFileSizeLabel });
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }

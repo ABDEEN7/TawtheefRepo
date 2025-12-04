@@ -12,6 +12,7 @@ import {TrainingCourse} from '../../../../models/experience.model';
 import {Select} from 'primeng/select';
 import {ProfileLookupsService} from '../../../../services/profile-lookups.service';
 import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
+import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
 
 @Component({
   selector: 'app-course',
@@ -37,7 +38,7 @@ export class CourseModal implements OnInit {
   protected lookups = inject(ProfileLookupsService);
   private fileUtils = inject(FileUtilsService);
 
-  readonly maxFileSize = 1_000_000; // 1MB
+  readonly limits = EXPERIENCE_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
@@ -47,7 +48,7 @@ export class CourseModal implements OnInit {
     name: ['', [Validators.required, Validators.maxLength(150)]],
     country: [null, [Validators.required]],
     period: [null, [Validators.required, periodRangeValidator]],
-    description: ['', [Validators.maxLength(500)]],
+    description: ['', [Validators.maxLength(this.limits.descriptionMaxLength)]],
     fileName: [''],
     file: [null, Validators.required],
   });
@@ -71,8 +72,8 @@ export class CourseModal implements OnInit {
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }
-    if (file.size > this.maxFileSize) {
-      this.fileError = this.translate.instant('validation.fileSize', { size: '1MB' });
+    if (file.size > this.limits.maxFileSizeBytes) {
+      this.fileError = this.translate.instant('validation.fileSize', { size: this.limits.maxFileSizeLabel });
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }

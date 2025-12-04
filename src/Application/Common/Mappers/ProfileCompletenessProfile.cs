@@ -60,6 +60,7 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.SponsorEmployerName, src => src.profile.SponsorProfile == null ? null : src.profile.SponsorProfile.SponsorName)
             .Map(dest => dest.SponsorEmployerNumber, src => src.profile.SponsorProfile == null ? null : src.profile.SponsorProfile.SponsorNumber)
             .Map(dest => dest.SponsorCard, src => src.profile.SponsorProfile == null ? null : src.profile.SponsorProfile.SponsorCard)
+            .Map(dest => dest.OfficeId, src => src.profile.OfficeId)
             .Map(dest => dest.naZone, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.ZoneNo)
             .Map(dest => dest.naStreet, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.StreetNo)
             .Map(dest => dest.naBuilding, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.BuildingNo)

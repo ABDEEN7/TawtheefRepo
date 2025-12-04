@@ -40,8 +40,11 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
         var needsSponsor = profile.CandidateTypeId == CandidateTypeIds.ResidentQatar;
         var needsBirthCertificate = profile.CandidateTypeId == CandidateTypeIds.SonOfQatariMother;
         var needsMarriageCertificate = profile.CandidateTypeId == CandidateTypeIds.WifeOfQatari;
+        var needsOffice = profile.CandidateTypeId is CandidateTypeIds.NonQatari or CandidateTypeIds.GCC;
         var requiresNationalAddress = profile.CandidateTypeId != CandidateTypeIds.NonQatari
             && profile.CandidateTypeId != CandidateTypeIds.GCC;
+
+        profile.OfficeId = needsOffice ? r.OfficeId : null;
 
         // CV
         var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, "cv");
@@ -115,6 +118,12 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
             else
             {
                 profile.Address = null;
+            }
+
+            if (!needsOffice)
+            {
+                profile.Office = null;
+                profile.OfficeId = null;
             }
         }
 
