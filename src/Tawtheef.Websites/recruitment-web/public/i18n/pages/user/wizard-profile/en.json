@@ -33,8 +33,10 @@
       "finalSave": "Submit",
       "add": "Add",
       "upload": "Upload",
+      "preview": "Preview",
       "cancel": "Cancel",
-      "saveDraft": "Save Draft"
+      "saveDraft": "Save Draft",
+      "saving": "Saving..."
     },
     "personal": {
       "hasDisability": "Do you have a disability?",
@@ -44,12 +46,12 @@
         "company": {
           "name": "Establishment Name",
           "qid": "Establishment Number (Ministry of Labor)",
-          "card": "Establishment Registration Card"
+          "card": "Establishment Registration Card (Image, PDF)"
         },
         "individual": {
           "name": "Establishment Name",
           "qid": "Sponsor QID Number",
-          "card": "Sponsor Registration Card"
+          "card": "Sponsor Registration Card (Image, PDF)"
         }
       },
       "avatar": {
@@ -74,13 +76,22 @@
       },
       "nameAr": "Full name (Arabic)",
       "nameEn": "Full name (English)",
-      "qid": "QID",
+      "qid": "National Number",
+      "qidExpiry": "QID expiry date",
       "dob": "Date of birth",
       "nationality": "Nationality",
       "gender": "Gender",
       "religion": "Religion",
       "marital": "Marital status",
       "children": "Children count",
+      "verify": {
+        "title": "Verify QID",
+        "button": "Verify QID information",
+        "loading": "Verifying...",
+        "success": "We fetched your information successfully.",
+        "missing": "Please enter your QID and expiry date before verifying.",
+        "error": "We couldn't verify your details. Please check the QID and expiry date."
+      },
       "prerequisites": "Prerequisites review",
       "review": {
         "title": "Prerequisites have been completed",
@@ -92,6 +103,14 @@
         "idCard": "ID Card",
         "edit": "Edit Prerequisites"
       }
+    },
+    "verify": {
+      "title": "Verify QID",
+      "button": "Verify QID information",
+      "loading": "Verifying...",
+      "success": "We fetched your information successfully.",
+      "missing": "Please enter your QID and expiry date before verifying.",
+      "error": "We couldn't verify your details. Please check the QID and expiry date."
     },
     "contact": {
       "country": "Country",
@@ -191,6 +210,7 @@
       "table": {
         "org": "Organization",
         "title": "Title",
+        "country": "Country",
         "period": "Period",
         "tasks": "Tasks",
         "file": "File"
@@ -210,6 +230,7 @@
       "table": {
         "provider": "Provider",
         "courseName": "Course",
+        "country": "Country",
         "period": "Period",
         "file": "File"
       },
@@ -232,7 +253,7 @@
         "Excellent"
       ],
       "hint": "Write 3 or more characters to search for skills from the provider.",
-      "placeholder": "ابحث عن مهارة (مثلاً: Java, Angular, SQL)",
+      "placeholder": "Start typing to search skills...",
       "typeMore": "Write 3 or more characters to start searching...",
       "noResults": "No results found.",
       "max10": "Showing up to 10 results per search.",
@@ -278,6 +299,7 @@
       "selectInterviewPlace": "Select interview place",
       "selectCandidateType": "Select candidate type",
       "selectTargetEntity": "Select target entity",
+      "selectOffice": "Select office",
       "selectDisabilityType": "Enter disability type",
       "selectSponsorType": "Select sponsor type",
       "uploadEstablishmentCard": "Upload establishment card",
@@ -288,8 +310,17 @@
       "title": "Prerequisites to start",
       "candidateType": "Candidate category",
       "targetEntity": "Target entity",
+      "officeLabel": "Accredited office",
       "cvLabel": "Upload CV (PDF)",
-      "idLabel": "Upload ID (Image / PDF)",
+      "idLabel": "Upload ID card",
+      "id": {
+        "GCC": {
+          "label": "Upload ID card/Passport (PDF or image)"
+        },
+        "NonQatari": {
+          "label": "Upload Passport (PDF or image)"
+        }
+      },
       "dropOrClick": "Drag & drop or click",
       "startProfile": "Start profile creation",
       "birthCertificate": "Birth certificate",
@@ -320,6 +351,9 @@
         "targetEntity": {
           "required": "Please select target entity"
         },
+        "office": {
+          "required": "Please select an accredited office"
+        },
         "cv": {
           "required": "Please attach your CV"
         },
@@ -341,7 +375,10 @@
           "required": "Please enter name in English"
         },
         "qid": {
-          "required": "Please enter QID number"
+          "required": "Please enter national number"
+        },
+        "qidExpiry": {
+          "required": "Please enter QID expiry date"
         },
         "dob": {
           "required": "Please enter date of birth"
@@ -369,6 +406,9 @@
         },
         "sponsorEmployerNumber": {
           "required": "Please enter employer number"
+        },
+        "sponsorQidExpiry": {
+          "required": "Please enter sponsor QID expiry date"
         },
         "sponsorCard": {
           "required": "Please attach sponsor card"

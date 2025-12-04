@@ -2,6 +2,7 @@
   basic: {
     candidateType: 'wizard.profile.basic.candidateType.required',
     targetEntity: 'wizard.profile.basic.targetEntity.required',
+    office: 'wizard.profile.basic.office.required',
     cvName: 'wizard.profile.basic.cv.required',
     idName: 'wizard.profile.basic.id.required',
     marriageCertificateName: 'wizard.profile.basic.marriageCertificate.required',
@@ -11,6 +12,7 @@
     fullNameAr: 'wizard.profile.personal.fullNameAr.required',
     fullNameEn: 'wizard.profile.personal.fullNameEn.required',
     qid: 'wizard.profile.personal.qid.required',
+    qidExpiry: 'wizard.profile.personal.qidExpiry.required',
     dob: 'wizard.profile.personal.dob.required',
     nationality: 'wizard.profile.personal.nationality.required',
     gender: 'wizard.profile.personal.gender.required',
@@ -20,6 +22,7 @@
     sponsorType: 'wizard.profile.personal.sponsorType.required',
     sponsorEmployerName: 'wizard.profile.personal.sponsorEmployerName.required',
     sponsorEmployerNumber: 'wizard.profile.personal.sponsorEmployerNumber.required',
+    sponsorQidExpiry: 'wizard.profile.personal.sponsorQidExpiry.required',
     sponsorCardName: 'wizard.profile.personal.sponsorCard.required',
   },
   contact: {

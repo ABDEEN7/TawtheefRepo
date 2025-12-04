@@ -97,6 +97,7 @@ app.UseForwardedHeaders();
 
 app.UseLanguageMiddleware();
 
+app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseSerilogRequestLogging(opts =>

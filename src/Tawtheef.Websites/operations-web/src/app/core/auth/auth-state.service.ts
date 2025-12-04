@@ -6,6 +6,9 @@ import { EndpointsService } from '../http/endpoints.service';
 import { TokenService } from './token.service';
 import { UserService } from './user.service';
 import { routes } from '../../routes/routes';
+import {HttpHeaders} from '@angular/common/http';
+import {HDR} from '../utils/headers.flags';
+import {finalize} from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {
@@ -69,16 +72,25 @@ export class AuthStateService {
     const doLocalClear = () => {
       this.tokenService.clearTokens();
       this.userService.clearCurrentUser();
-      this.setAuthenticated(false);
-      this.router.navigate([this.routes.home]); // e.g. '/'
+      this.isAuthenticatedSubject.next(false);
+      this.router.navigate([this.routes.home]);
     };
 
-    if (!callServer) return doLocalClear();
+    if (!callServer) {
+      doLocalClear();
+      return;
+    }
 
-    this.http.post(this.endpoints.auth.logout, {})
+    const headers = new HttpHeaders({
+      [HDR.SkipError]: 'true',    // no toasts
+      [HDR.SkipRefresh]: 'true',  // don't try refresh on 401 here
+      [HDR.LogoutFlow]: 'true',   // let interceptors know this is logout flow
+    });
+
+    this.http.post(this.endpoints.auth.logout, {}, null, { headers })
       .pipe(
-        tap(() => doLocalClear()),
-        catchError(() => { doLocalClear(); return of(null); })
+        catchError(() => of(null)), // ignore any server error
+        finalize(doLocalClear)      // ALWAYS clear locally
       )
       .subscribe();
   }

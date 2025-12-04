@@ -21,6 +21,8 @@ import { ProfileService } from '../../services/profile.service';
 import { mapContactSection } from '../../services/profile.mapper';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {FileSlot, canPreviewFile, createFileSlot, displayedFileName, fileSlotSignature, fileToUpload, previewFileFromSlot, previewUrlFromSlot, setLocalFile, updateRemote} from '../../utils/file-slot';
 
 type VerificationStatus =
   | 'idle'
@@ -61,11 +63,12 @@ export class StepContactComponent implements OnInit, OnDestroy {
   geoIp = inject(GeoIpService);
   profileService = inject(ProfileService);
   messageService = inject(MessageService);
+  fileUtils = inject(FileUtilsService);
 
   naFileError: string | null = null;
   maxNaFileSize = 2 * 1024 * 1024; // 2MB
   allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
-  private naLocalFile: File | null = null;
+  private naLocalFile: FileSlot = createFileSlot();
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -100,18 +103,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   selectedCountryIso2: CountryISO = CountryISO.Qatar;
   savingContact = false;
-
-  get isResidentQatar(): boolean {
-    const type = this.ds.state().candidateType?.backendName as CandidateType | undefined;
-    if (!type) return false;
-
-    return [
-      CandidateType.ResidentQatar,
-      CandidateType.Qatari,
-      CandidateType.SonOfQatariMother,
-      CandidateType.WifeOfQatari
-    ].includes(type);
-  }
+  private lastSubmittedSignature: string | null = null;
 
   ngOnInit(): void {
     this.geoIp.getCountryIso2().subscribe(code => {
@@ -137,6 +129,10 @@ export class StepContactComponent implements OnInit, OnDestroy {
     if (state.emailVerified) {
       this.email.status = 'verified';
     }
+
+    const dto = mapContactSection(state);
+    updateRemote(this.naLocalFile, state.naFile);
+    this.lastSubmittedSignature = null;
   }
 
   ngOnDestroy(): void {
@@ -176,11 +172,12 @@ export class StepContactComponent implements OnInit, OnDestroy {
       this.phone.value = value.e164Number;
       this.ds.up('phone', value);
 
-      if (this.phone.status === 'verified') {
+      if (this.phone.status === 'verified' && (value.e164Number !== this.ds.state().phone?.e164Number || !this.ds.state().phoneVerified)) {
         this.phone.status = 'idle';
         this.ds.up('phoneVerified', false);
       }
-    } else {
+    }
+    else {
       this.phone.value = null;
       this.ds.up('phone', null);
     }
@@ -348,8 +345,9 @@ export class StepContactComponent implements OnInit, OnDestroy {
     }
 
     this.naFileError = null;
-    this.naLocalFile = file;
-    this.ds.up('naFile', { resourceId: 'local', fileName: file.name } as any);
+    setLocalFile(this.naLocalFile, file);
+    this.ds.up('naFileName', file.name);
+    this.ds.up('naFile', { resourceId: 'local', fileName: file.name, file: file } as any);
     input.value = '';
   }
   onNext(): void {
@@ -365,14 +363,56 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     const s = this.ds.state();
     const dto = mapContactSection(s);
+    const signature = this.buildSignature(dto, s);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
 
     this.savingContact = true;
     this.profileService
-      .saveContactSection(dto, { nationalAddressFile: this.naLocalFile })
+      .saveContactSection(dto, { nationalAddressFile: fileToUpload(this.naLocalFile) })
       .pipe(finalize(() => (this.savingContact = false)))
       .subscribe({
-        next: () => this.next.emit(),
+        next: () => {
+          this.lastSubmittedSignature = signature;
+          this.next.emit();
+        },
         error: err => console.error(err)
       });
+  }
+
+  previewNaFile(ev?: Event): void {
+    ev?.stopPropagation();
+    if (!canPreviewFile(this.naLocalFile)) return;
+
+    const local = previewFileFromSlot(this.naLocalFile);
+    if (local) {
+      this.fileUtils.previewBlob(local);
+      return;
+    }
+
+    const url = previewUrlFromSlot(this.naLocalFile);
+    if (url) {
+      this.fileUtils.previewUrl(url, displayedFileName(this.naLocalFile), false);
+    }
+  }
+
+  private buildSignature(dto: ReturnType<typeof mapContactSection>, state: ReturnType<typeof this.ds.state>): string | null {
+    try {
+      const nationalAddress = fileSlotSignature(this.naLocalFile);
+
+      const contactInfo = {
+        phone: state.phone?.e164Number ?? null,
+        phoneVerified: state.phoneVerified ?? false,
+        email: state.email ?? null,
+        emailVerified: state.emailVerified ?? false,
+      };
+
+      return JSON.stringify({ dto, nationalAddress, contactInfo });
+    } catch {
+      return null;
+    }
   }
 }

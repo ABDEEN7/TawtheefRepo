@@ -1,4 +1,5 @@
 ﻿using Tawtheef.Application.Common.Models;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
@@ -25,11 +26,12 @@ public sealed class ProfilePrefillDto
 public sealed class ProfileStatusDto
 {
     public bool IsComplete { get; init; }
-    public bool IsDraft { get; init; }
+    public UserStatus Status { get; init; }
 
     // ===== Scalars من UserProfile =====
     public Guid? CandidateTypeId { get; init; }
     public Guid? TargetEntityId { get; init; }
+    public Guid? OfficeId { get; init; }
 
     public string? Avatar { get; init; }
     public string? FullNameAr { get; init; }
@@ -40,6 +42,7 @@ public sealed class ProfileStatusDto
     public bool PhoneVerified { get; init; }
 
     public string? NationalNumber { get; init; }
+    public DateOnly? QIDExpiry { get; init; }
     public DateOnly? BirthDate { get; init; }
     public Guid? NationalityId { get; init; }
     public Guid? GenderId { get; init; }
@@ -84,6 +87,7 @@ public sealed class FileRefDto
 {
     public Guid ResourceId { get; init; }
     public string FileName { get; init; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
 }
 
 // ====== Qualifications ======

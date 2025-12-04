@@ -12,6 +12,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Configurations.Settings;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
@@ -29,11 +30,15 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
     public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct)
     {
+        if (user.Status.BlocksLogin())
+            return Result.Fail<AuthResponse>(ErrorsCodes.AccountStatusNotAllowedForLogin);
+
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
         await sessions.SetCurrentAsync(user.Id, sid, device, ct);
         var refreshToken = GenerateRefreshToken(user.Id, sid);
         user.RefreshTokens.Add(refreshToken);
+        user.LastLoginDate = time.GetUtcNow().DateTime;
         await userManager.UpdateSecurityStampAsync(user);
 
         var userType = await uow.GetEntityRepository<UserType>().DbSet
@@ -61,7 +66,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email!),
+            new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
             new(nameof(user.UserType), userType.BackendName),
             new(ClaimTypes.Role, userType.BackendName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

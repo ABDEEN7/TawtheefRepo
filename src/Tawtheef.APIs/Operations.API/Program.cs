@@ -95,6 +95,7 @@ var app = builder.Build();
 app.UseForwardedHeaders();
 
 app.UseLanguageMiddleware();
+app.UseMiddleware<RequestSanitizationMiddleware>();
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 

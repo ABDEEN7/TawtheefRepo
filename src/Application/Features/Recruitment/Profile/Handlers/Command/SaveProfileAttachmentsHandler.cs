@@ -17,7 +17,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -36,6 +37,10 @@ public sealed class SaveProfileAttachmentsHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var validationResult = validationService.ValidateAttachments(profile);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         var attachmentsResult = Deserialize(cmd.Request.AttachmentsJson);
         if (attachmentsResult.IsFailed)
@@ -84,8 +89,6 @@ public sealed class SaveProfileAttachmentsHandler(
             reviewAttachments.Add(attachment);
         }
 
-        profile.IsDraft = !cmd.Request.Submit;
-
         await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, ct);
         foreach (var attachment in reviewAttachments)
         {
@@ -130,7 +133,10 @@ public sealed class SaveProfileAttachmentsHandler(
             if (file is not { Length: > 0 })
                 return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
 
-            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), cancellationToken);
+            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "additional", file, false, cancellationToken);
+            var uploadResult = await mediator.Send(
+                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                cancellationToken);
             if (uploadResult.IsFailed)
                 return Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors);
 

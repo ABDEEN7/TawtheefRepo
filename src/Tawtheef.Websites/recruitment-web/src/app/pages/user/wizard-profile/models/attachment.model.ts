@@ -1,3 +1,5 @@
+import {UploadedFileRef} from './profile-state.model';
+
 export interface Attachment {
   id?: string;
   name: string;
@@ -6,5 +8,5 @@ export interface Attachment {
   type?: string;
   size?: number;
   file?: File;
-  url?: string;
+  fileRef?: UploadedFileRef | null;
 }

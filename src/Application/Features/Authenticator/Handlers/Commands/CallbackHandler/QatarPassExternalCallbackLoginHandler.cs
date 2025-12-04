@@ -13,15 +13,18 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
+public class ConstantQatarPass
+{
+    public const string Provider = "QatarPass";
+    public const string DefaultDisplayName = "Qatar Pass";
+    public const string PlaceholderEmailDomain = "@login.local";
+}
 public sealed class QatarPassExternalCallbackLoginHandler(
     UserManager<User> userManager,
     ITokenService tokenService,
     IQatarPassClient qatarPassClient
 ) : BaseExternalCallbackLoginHandler, IRequestHandler<QatarPassExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
-    private const string Provider = "QatarPass";
-    private const string DefaultDisplayName = "Qatar Pass User";
-    private const string PlaceholderEmailDomain = "@login.local";
 
     public async Task<IResult<AuthResponse>> Handle(QatarPassExternalCallbackLoginCommand request, CancellationToken ct)
     {
@@ -44,10 +47,10 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         var providerKey = qp.UserQid.Trim();
         var normalizedPhone = NormalizePhone(qp.MobileNumber);
 
-        var placeholderEmail = $"qp{providerKey}{PlaceholderEmailDomain}";
+        var placeholderEmail = $"qp{providerKey}{ConstantQatarPass.PlaceholderEmailDomain}";
 
         // 2) If already linked → issue tokens
-        var linked = await userManager.FindByLoginAsync(Provider, providerKey);
+        var linked = await userManager.FindByLoginAsync(ConstantQatarPass.Provider, providerKey);
         if (linked is not null)
             return await UpsertClaimsAndIssueAsync(linked, qp, normalizedPhone, ct);
 
@@ -99,8 +102,8 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         QatarPassAccount qp,
         CancellationToken ct)
     {
-        var placeholderEmail = $"qp{providerKey}{PlaceholderEmailDomain}";
-        var newUserResult = User.Register(placeholderEmail, DefaultDisplayName, UserTypeIds.Applicant);
+        var placeholderEmail = $"qp{providerKey}{ConstantQatarPass.PlaceholderEmailDomain}";
+        var newUserResult = User.Register(placeholderEmail, ConstantQatarPass.DefaultDisplayName, UserTypeIds.Applicant);
         if (newUserResult.IsFailed) return Result.Fail<AuthResponse>(newUserResult.Errors);
 
         var newUser = (ApplicantUser)newUserResult.Value;
@@ -122,7 +125,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
 
     private async Task<Result> LinkLoginAsync(User user, string providerKey)
     {
-        var addLogin = await userManager.AddLoginAsync(user, new UserLoginInfo(Provider, providerKey, Provider));
+        var addLogin = await userManager.AddLoginAsync(user, new UserLoginInfo(ConstantQatarPass.Provider, providerKey, ConstantQatarPass.Provider));
         return addLogin.Succeeded
             ? Result.Ok()
             : Result.Fail(string.Join(", ", addLogin.Errors.Select(e => e.Description)));

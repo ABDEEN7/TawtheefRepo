@@ -12,7 +12,10 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfileContactHandler(
-    IUnitOfWork uow, IMediator mediator, IProfileReviewService reviewService
+    IUnitOfWork uow,
+    IMediator mediator,
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileContactCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileContactCommand cmd, CancellationToken ct)
@@ -24,6 +27,10 @@ public sealed class SaveProfileContactHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var validationResult = validationService.ValidateContact(profile, cmd.Request);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
 
@@ -63,8 +70,6 @@ public sealed class SaveProfileContactHandler(
                     ct);
             }
         }
-        profile.IsDraft = true;
-
         await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
@@ -74,7 +79,10 @@ public sealed class SaveProfileContactHandler(
             if (file is null || file.Length == 0)
                 return Result.Ok(existingId);
 
-            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), ct);
+            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "national-address", file, false, ct);
+            var uploadResult = await mediator.Send(
+                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                ct);
             if (uploadResult.IsFailed)
                 return Result.Fail<Guid?>(uploadResult.Errors);
 

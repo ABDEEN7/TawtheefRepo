@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
@@ -7,16 +8,22 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Domain.Entities.Users;
 
 [Table(nameof(UserProfile), Schema = Schemas.Applicant)]
+[Index(nameof(NationalNumber), IsUnique = true)]
 public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }
     public ApplicantUser? User { get; set; }
+
+    public UserStatus Status { get; set; } = UserStatus.InCreation;
 
     public Guid CandidateTypeId { get; set; }
     public CandidateType? CandidateType { get; set; }
 
     public Guid TargetEntityId { get; set; }
     public TargetEntity? TargetEntity { get; set; }
+
+    public Guid? OfficeId { get; set; }
+    public Office? Office { get; set; }
 
     public Guid? ResumeAttachmentId { get; set; }
     public Resource? ResumeAttachment { get; set; }
@@ -28,6 +35,7 @@ public class UserProfile : EventEntity
     /// National ID number (e.g. QID)
     /// </summary>
     public string? NationalNumber { get; set; }
+    public DateOnly? QIDExpiry { get; set; }
 
     public DateOnly? BirthDate { get; set; }
 
@@ -85,8 +93,6 @@ public class UserProfile : EventEntity
     public Guid? MarriageCertificateId { get; set; }
     public Resource? MarriageCertificate { get; set; }
 
-    public bool IsDraft { get; set; } = true;
-
     public ICollection<Qualification>? Qualifications { get; set; } = [];
     public ICollection<Experience>? Experiences { get; set; } = [];
     public ICollection<TrainingCourse>? TrainingCourses { get; set; } = [];
@@ -96,8 +102,6 @@ public class UserProfile : EventEntity
 
     public bool IsCompleted()
     {
-        if (IsDraft)
-            return false;
         if (CandidateTypeId == Guid.Empty)
             return false;
         if (TargetEntityId == Guid.Empty)
@@ -159,6 +163,9 @@ public class UserProfile : EventEntity
         else
         {
             if (string.IsNullOrWhiteSpace(Address))
+                return false;
+
+            if (OfficeId is null || OfficeId == Guid.Empty)
                 return false;
         }
 

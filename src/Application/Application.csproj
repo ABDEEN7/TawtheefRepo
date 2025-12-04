@@ -40,7 +40,6 @@
       <Folder Include="Features\Operations\Admin\" />
       <Folder Include="Features\Operations\Applicant\" />
       <Folder Include="Features\Operations\Employee\" />
-      <Folder Include="Features\Recruitment\Profile\Handlers\Queries\" />
       <Folder Include="Features\Recruitment\Website\" />
     </ItemGroup>
 

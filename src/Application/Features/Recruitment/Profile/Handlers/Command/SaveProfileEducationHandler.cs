@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text.Json;
 using FluentResults;
 using MediatR;
@@ -14,7 +15,11 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator mediator, IProfileReviewService reviewService)
+public sealed class SaveProfileEducationHandler(
+    IUnitOfWork uow,
+    IMediator mediator,
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService)
     : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
 {
     // JSON options مرة واحدة بدل ما نعيد إنشائها
@@ -41,6 +46,10 @@ public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator media
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        var validationResult = validationService.ValidateEducation(profile);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
+
         var json = cmd.Request.DegreesJson;
         if (string.IsNullOrWhiteSpace(json))
             return Result.Fail<Unit>(ErrorsCodes.InvalidDegreesJson);
@@ -51,57 +60,86 @@ public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator media
 
         var degrees = deserializeResult.Value;
 
-        var files = cmd.Request.DegreeFiles;
+        var files = cmd.Request.DegreeFiles ?? new List<IFormFile?>();
         if (degrees.Count == 0)
             return Result.Fail<Unit>(ErrorsCodes.InvalidDegreesJson);
-
-        if (degrees.Count != files.Count)
-            return Result.Fail<Unit>(ErrorsCodes.InvalidDegreesCount);
 
         var degreesValidation = ValidateDegrees(degrees);
         if (degreesValidation.IsFailed)
             return Result.Fail<Unit>(degreesValidation.Errors);
 
-        var filesValidation = ValidateDegreeFiles(files);
+        var filesValidation = ValidateDegreeFiles(degrees, files);
         if (filesValidation.IsFailed)
             return Result.Fail<Unit>(filesValidation.Errors);
 
         var newQualifications = new List<Qualification>();
+        var updatedQualifications = new List<Qualification>();
 
-        for (var i = 0; i < degrees.Count; i++)
+        var existingQualifications = await educationRepo.DbSet
+            .Include(q => q.Certificate)
+            .Where(q => q.UserProfileId == profile.Id)
+            .ToListAsync(ct);
+
+        foreach (var dto in degrees)
         {
-            var dto  = degrees[i];
-            var file = files[i];
+            var file = ResolveFile(dto, files);
+            var existingQualification = dto.Id.HasValue
+                ? existingQualifications.FirstOrDefault(q => q.Id == dto.Id.Value)
+                : null;
 
-            var uploadResult = await mediator.Send(new UploadAttachmentCommand(file), ct);
-            if (uploadResult.IsFailed)
-                return Result.Fail<Unit>(uploadResult.Errors);
+            var hasNewFile = FileValidationHelpers.HasFile(file);
+            var hasExistingFile = FileValidationHelpers.HasExisting(dto.ExistingFileName) ||
+                                  dto.CertificateId is not null ||
+                                  (existingQualification?.CertificateId is not null);
 
-            var attachmentId = uploadResult.Value.ResourceId;
+            if (!hasNewFile && !hasExistingFile)
+                return Result.Fail<Unit>(ErrorsCodes.DegreeFileRequired);
 
-            var edu = new Qualification
+            var attachmentIdResult = await UploadIfNeededAsync(cmd, file, ct);
+            if (attachmentIdResult.IsFailed)
+                return Result.Fail<Unit>(attachmentIdResult.Errors);
+
+            var attachmentId = attachmentIdResult.Value ?? existingQualification?.CertificateId ?? dto.CertificateId;
+
+            if (existingQualification is null)
             {
-                UserProfileId  = profile.Id,
-                DegreeId       = dto.DegreeId,
-                CountryId      = dto.GradCountryId,
-                UniversityId   = dto.UniversityId,
-                MajorId        = dto.MajorId,
-                SubMajorId     = dto.SubMajorId,
-                StudyTypeId    = dto.StudyTypeId,
-                RatingId       = dto.GradeId,
-                GraduationYear = dto.GradYear,
-                GPA            = dto.Gpa,
-                CertificateId  = attachmentId,
-            };
+                var edu = new Qualification
+                {
+                    UserProfileId  = profile.Id,
+                    DegreeId       = dto.DegreeId,
+                    CountryId      = dto.GradCountryId,
+                    UniversityId   = dto.UniversityId,
+                    MajorId        = dto.MajorId,
+                    SubMajorId     = dto.SubMajorId,
+                    StudyTypeId    = dto.StudyTypeId,
+                    RatingId       = dto.GradeId,
+                    GraduationYear = dto.GradYear,
+                    GPA            = dto.Gpa,
+                    CertificateId  = attachmentId,
+                };
 
-            newQualifications.Add(edu);
-            await educationRepo.AddAsync(edu);
+                newQualifications.Add(edu);
+                await educationRepo.AddAsync(edu);
+            }
+            else
+            {
+                existingQualification.DegreeId       = dto.DegreeId;
+                existingQualification.CountryId      = dto.GradCountryId;
+                existingQualification.UniversityId   = dto.UniversityId;
+                existingQualification.MajorId        = dto.MajorId;
+                existingQualification.SubMajorId     = dto.SubMajorId;
+                existingQualification.StudyTypeId    = dto.StudyTypeId;
+                existingQualification.RatingId       = dto.GradeId;
+                existingQualification.GraduationYear = dto.GradYear;
+                existingQualification.GPA            = dto.Gpa;
+                existingQualification.CertificateId  = attachmentId;
+
+                updatedQualifications.Add(existingQualification);
+            }
         }
 
-        profile.IsDraft = true;
-
         await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Qualifications, ct);
-        foreach (var qualification in newQualifications)
+        foreach (var qualification in newQualifications.Concat(updatedQualifications))
         {
             await reviewService.TouchRowAsync(
                 profile.Id,
@@ -178,11 +216,55 @@ public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator media
         return Result.Ok();
     }
 
-    private static Result ValidateDegreeFiles(IReadOnlyList<IFormFile?>? degreeFiles)
+    private static IFormFile? ResolveFile(SaveProfileEducationDegreeDto dto, IReadOnlyList<IFormFile?> files)
     {
-        if (degreeFiles is null || degreeFiles.Count == 0 || degreeFiles.Any(file => file is null || file.Length == 0))
-            return Result.Fail(ErrorsCodes.InvalidDegreeFile);
+        if (dto.FileIndex is null)
+            return null;
+
+        return dto.FileIndex.Value >= 0 && dto.FileIndex.Value < files.Count
+            ? files[dto.FileIndex.Value]
+            : null;
+    }
+
+    private static Result ValidateDegreeFiles(
+        IReadOnlyList<SaveProfileEducationDegreeDto> degrees,
+        IReadOnlyList<IFormFile?> degreeFiles)
+    {
+        if (degreeFiles is null)
+            return Result.Ok();
+
+        foreach (var degree in degrees)
+        {
+            if (degree.FileIndex is null)
+                continue;
+
+            if (degree.FileIndex.Value < 0 || degree.FileIndex.Value >= degreeFiles.Count)
+                return Result.Fail(ErrorsCodes.InvalidDegreeFile);
+
+            var file = degreeFiles[degree.FileIndex.Value];
+            if (!FileValidationHelpers.HasFile(file))
+                return Result.Fail(ErrorsCodes.InvalidDegreeFile);
+        }
 
         return Result.Ok();
+    }
+
+    private async Task<Result<Guid?>> UploadIfNeededAsync(
+        SaveProfileEducationCommand cmd,
+        IFormFile? file,
+        CancellationToken ct)
+    {
+        if (!FileValidationHelpers.HasFile(file))
+            return Result.Ok<Guid?>(null);
+
+        var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "education", file!, false, ct);
+        var uploadResult = await mediator.Send(
+            new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
+            ct);
+
+        if (uploadResult.IsFailed)
+            return Result.Fail<Guid?>(uploadResult.Errors);
+
+        return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 }

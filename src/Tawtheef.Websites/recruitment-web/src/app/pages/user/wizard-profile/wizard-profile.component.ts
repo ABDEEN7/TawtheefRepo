@@ -5,7 +5,7 @@ import {LanguageService} from '../../../core/services/language.service';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../core/auth/auth.service';
 import {take} from 'rxjs';
-import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../core/models/auth/auth-response.model';
+import {ProfileStatusDto} from '../../../core/models/auth/auth-response.model';
 import {routes} from '../../../routes/routes';
 import {finalize} from 'rxjs/operators';
 import {ProfileLookupsService} from './services/profile-lookups.service';
@@ -13,6 +13,7 @@ import {AvatarModal} from './steps/step-personal/dialogs/avatar.modal/avatar.mod
 import {DialogService} from 'primeng/dynamicdialog';
 import {PhoneMapperService} from './services/phone-mapper.service';
 import {mapProfileStatusToState} from './services/profile.mapper';
+import {UserService} from '../../../core/auth/user.service';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -29,6 +30,7 @@ export class WizardProfileComponent implements OnInit {
   lookups = inject(ProfileLookupsService);
   language = inject(LanguageService);
   phoneMapper = inject(PhoneMapperService);
+  userService = inject(UserService);
 
   avatarPreviewUrl: string | null = null;
 
@@ -94,18 +96,15 @@ export class WizardProfileComponent implements OnInit {
     return Math.min(this.total, completeCount + reviewUnlocked);
   }
 
-  progressPercentage(): number {
-    return Math.round((this.completedSteps() / this.total) * 100);
-  }
-
   ngOnInit(): void {
     this.lookups.loadAll().subscribe(() => {
       const nav = this.router.currentNavigation();
       const state = nav?.extras.state as ProfileStatusDto | null;
       if (state) {
         this.avatarPreviewUrl = state.avatar ?? null;
-        this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state));
+        this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state, this.userService.getPrefill()));
         this.loading = false;
+        this.moveToFirstInvalidStep();
         return;
       }
       this.auth.getAuthBootstrap$()
@@ -119,10 +118,23 @@ export class WizardProfileComponent implements OnInit {
             return;
           }
           this.avatarPreviewUrl = b.avatar ?? null;
-          this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto));
+          this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto, this.userService.getPrefill()));
+          this.moveToFirstInvalidStep();
         });
     })
+  }
 
+  moveToFirstInvalidStep() {
+    //get the first step not valid by ds.stepValidity
+    const firstInvalidStep =
+      Array.from({length: this.total}, (_, i) => i + 1)
+      .find(i => !this.isStepValid(i));
+    if (firstInvalidStep) {
+      this.step = firstInvalidStep;
+    }else{
+      //move to the last step
+      this.step = this.total;
+    }
   }
 
   canGoTo(targetStep: number): boolean {
