@@ -6,6 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -40,7 +41,7 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
         var needsSponsor = profile.CandidateTypeId == CandidateTypeIds.ResidentQatar;
         var needsBirthCertificate = profile.CandidateTypeId == CandidateTypeIds.SonOfQatariMother;
         var needsMarriageCertificate = profile.CandidateTypeId == CandidateTypeIds.WifeOfQatari;
-        var needsOffice = profile.CandidateTypeId is CandidateTypeIds.NonQatari or CandidateTypeIds.GCC;
+        var needsOffice = profile.CandidateTypeId == CandidateTypeIds.NonQatari || profile.CandidateTypeId == CandidateTypeIds.GCC;
         var requiresNationalAddress = profile.CandidateTypeId != CandidateTypeIds.NonQatari
             && profile.CandidateTypeId != CandidateTypeIds.GCC;
 
@@ -88,15 +89,15 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
 
         CleanCandidateTypeDependents();
 
-        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Personal, ct);
+        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, ct);
         if (profile.ResumeAttachmentId is not null)
-            await reviewService.TouchAttachmentAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, "Resume", profile.ResumeAttachmentId.Value, ct);
+            await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Attachments, "Resume", profile.ResumeAttachmentId.Value, ct);
         if (profile.NationalCardId is not null)
-            await reviewService.TouchAttachmentAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, "NationalCard", profile.NationalCardId.Value, ct);
+            await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Attachments, "NationalCard", profile.NationalCardId.Value, ct);
         if (profile.BirthdayCertificateId is not null)
-            await reviewService.TouchAttachmentAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, "BirthCertificate", profile.BirthdayCertificateId.Value, ct);
+            await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Attachments, "BirthCertificate", profile.BirthdayCertificateId.Value, ct);
         if (profile.MarriageCertificateId is not null)
-            await reviewService.TouchAttachmentAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, "MarriageCertificate", profile.MarriageCertificateId.Value, ct);
+            await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Attachments, "MarriageCertificate", profile.MarriageCertificateId.Value, ct);
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
