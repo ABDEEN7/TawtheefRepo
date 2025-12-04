@@ -204,8 +204,8 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
 
     private static bool AllowsSponsor(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.ResidentQatar;
     private static bool RequiresSponsor(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.ResidentQatar;
-    private static bool RequiresNationalAddress(Guid candidateTypeId) => candidateTypeId is not CandidateTypeIds.NonQatari and not CandidateTypeIds.GCC;
-    private static bool RequiresOffice(Guid candidateTypeId) => candidateTypeId is CandidateTypeIds.NonQatari or CandidateTypeIds.GCC;
+    private static bool RequiresNationalAddress(Guid candidateTypeId) => candidateTypeId != CandidateTypeIds.NonQatari && candidateTypeId != CandidateTypeIds.GCC;
+    private static bool RequiresOffice(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.NonQatari || candidateTypeId == CandidateTypeIds.GCC;
     private static bool RequiresBirthCertificate(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.SonOfQatariMother;
     private static bool RequiresMarriageCertificate(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.WifeOfQatari;
     private static bool HasSponsorPayload(SaveProfilePersonalRequest request) =>
