@@ -168,6 +168,11 @@ public class ErrorsCodes
     public const string InvalidAttachmentSize = "INVALID_ATTACHMENT_SIZE";
     public const string AttachmentNotFound = "ATTACHMENT_NOT_FOUND";
 
+    public const string PreviousProfileStepIncomplete = "PREVIOUS_PROFILE_STEP_INCOMPLETE";
+    public const string CandidateTypeChangeNotAllowed = "CANDIDATE_TYPE_CHANGE_NOT_ALLOWED";
+    public const string SponsorNotAllowed = "SPONSOR_NOT_ALLOWED";
+    public const string NationalAddressNotAllowed = "NATIONAL_ADDRESS_NOT_ALLOWED";
+
     #endregion
 }
 

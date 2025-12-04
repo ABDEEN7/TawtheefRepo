@@ -17,7 +17,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -36,6 +37,10 @@ public sealed class SaveProfileAttachmentsHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var validationResult = validationService.ValidateAttachments(profile);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         var attachmentsResult = Deserialize(cmd.Request.AttachmentsJson);
         if (attachmentsResult.IsFailed)

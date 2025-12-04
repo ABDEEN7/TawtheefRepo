@@ -11,7 +11,11 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator, IProfileReviewService reviewService)
+public sealed class SaveProfilePrereqHandler(
+    IUnitOfWork uow,
+    IMediator mediator,
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService)
     : IRequestHandler<SaveProfilePrereqCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePrereqCommand cmd, CancellationToken ct)
@@ -32,6 +36,10 @@ public sealed class SaveProfilePrereqHandler(IUnitOfWork uow, IMediator mediator
             };
             await profileRepo.AddAsync(profile);
         }
+
+        var validationResult = validationService.ValidatePrerequisites(profile, cmd.Request);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
 
