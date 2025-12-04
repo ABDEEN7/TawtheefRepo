@@ -27,6 +27,7 @@ public sealed class SubmitUserProfileHandler(
             .Include(p => p.Qualifications)
             .Include(p => p.Experiences)
             .Include(p => p.TrainingCourses)
+            .Include(p => p.Achievements)
             .Include(p => p.Skills)
             .Include(p => p.Languages)
             .Include(p => p.AdditionalAttachments)
@@ -52,6 +53,7 @@ public sealed class SubmitUserProfileHandler(
             Qualifications   = profile.Qualifications,
             Experiences      = profile.Experiences,
             TrainingCourses  = profile.TrainingCourses,
+            Achievements     = profile.Achievements,
             Skills           = profile.Skills,
             Languages        = profile.Languages,
             Attachments      = profile.AdditionalAttachments,

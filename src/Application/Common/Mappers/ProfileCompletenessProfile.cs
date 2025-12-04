@@ -31,6 +31,10 @@ public sealed class ProfileCompletenessProfile : IRegister
         config.NewConfig<TrainingCourse, TrainingCourseDto>()
             .Map(dest => dest.Attachment, src => src.Certificate);
 
+        config.NewConfig<Achievement, AchievementDto>()
+            .Map(dest => dest.Attachment, src => src.Attachment)
+            .Map(dest => dest.AchievementType, src => src.AchievementType);
+
         config.NewConfig<ProfileSkill, SkillDto>()
             .Map(dest => dest.Skill, src => src.Skill);
 
@@ -74,6 +78,7 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.Qualifications, src => src.profile.Qualifications)
             .Map(dest => dest.Experiences, src => src.profile.Experiences)
             .Map(dest => dest.TrainingCourses, src => src.profile.TrainingCourses)
+            .Map(dest => dest.Achievements, src => src.profile.Achievements)
             .Map(dest => dest.Skills, src => src.profile.Skills)
             .Map(dest => dest.Languages, src => src.profile.Languages)
             ;

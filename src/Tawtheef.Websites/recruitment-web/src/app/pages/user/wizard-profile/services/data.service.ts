@@ -3,6 +3,7 @@ import {ProfileState} from '../models/profile-state.model';
 import {Language} from '../models/language.model';
 import {Degree} from '../models/degree.model';
 import {Experience, TrainingCourse} from '../models/experience.model';
+import {Achievement} from '../models/achievement.model';
 import {Attachment} from '../models/attachment.model';
 import {Skill} from '../models/skill.model';
 import {UserService} from '../../../../core/auth/user.service';
@@ -33,7 +34,7 @@ export class DataService {
   lookups = inject(ProfileLookupsService);
   profileService = inject(ProfileService);
   state = signal<ProfileState>({
-    degrees: [], experiences: [], courses: [],
+    degrees: [], experiences: [], courses: [], achievements: [],
     skills: [], languages: [], attachments: [],
     available: true, hasDisability: false,
     emailVerified: false, phoneVerified: false,
@@ -271,6 +272,10 @@ export class DataService {
 
   addCourse(e: TrainingCourse){ this.state.update(s => ({...s, courses:[...s.courses, e]})); }
   delCourse(i:number){ this.state.update(s => ({...s, courses: s.courses.filter((_,x)=>x!==i)})); }
+
+  addAchievement(a: Achievement){ this.state.update(s => ({...s, achievements:[...s.achievements, a]})); }
+  updateAchievement(i: number, a: Achievement){ this.state.update(s => ({...s, achievements: s.achievements.map((item,idx)=> idx===i ? a : item)})); }
+  delAchievement(i:number){ this.state.update(s => ({...s, achievements: s.achievements.filter((_,x)=>x!==i)})); }
 
   addLang(l: Language){ this.state.update(s => ({...s, languages:[...s.languages, l]})); }
   delLang(i:number){ this.state.update(s => ({...s, languages: s.languages.filter((_,x)=>x!==i)})); }

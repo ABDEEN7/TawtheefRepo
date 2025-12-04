@@ -76,6 +76,15 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPost("achievements")]
+    public async Task<IActionResult> SaveAchievements([FromForm] SaveProfileAchievementRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileAchievementCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
     [HttpDelete("experience/{experienceId}/delete")]
     public async Task<IActionResult> DeleteExperience([FromRoute] DeleteProfileExperienceCommand command, CancellationToken ct)
     {
@@ -255,6 +264,13 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetStudyTypes()
     {
         var result = await mediator.Send(new GetStudyTypesQuery());
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/achievement-types")]
+    public async Task<IActionResult> GetAchievementTypes()
+    {
+        var result = await mediator.Send(new GetAchievementTypesQuery());
         return result.ToActionResult();
     }
     

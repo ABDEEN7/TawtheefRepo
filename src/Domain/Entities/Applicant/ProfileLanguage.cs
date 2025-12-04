@@ -11,6 +11,16 @@ public class ProfileLanguage : EventEntity
     public Guid LanguageId { get; set; }
     public Language? Language { get; set; }
     
+    public Guid SpeakingLevelId { get; set; }
+    public LanguageLevel? SpeakingLevel { get; set; }
+
+    public Guid WritingLevelId { get; set; }
+    public LanguageLevel? WritingLevel { get; set; }
+
+    public Guid ReadingLevelId { get; set; }
+    public LanguageLevel? ReadingLevel { get; set; }
+
+    // Legacy overall level, kept for backward compatibility with existing schema
     public Guid LevelId { get; set; }
     public LanguageLevel? Level { get; set; }
     

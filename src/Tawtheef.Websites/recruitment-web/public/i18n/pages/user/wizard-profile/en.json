@@ -245,6 +245,9 @@
       "skill": "Skills (Tags)",
       "languages": "Languages",
       "language": "Language",
+      "speaking": "Speaking",
+      "writing": "Writing",
+      "reading": "Reading",
       "level": "Level",
       "levels": [
         "Beginner",
@@ -260,6 +263,9 @@
       "languagesHint": "Add your languages and proficiency levels.",
       "selectLanguage": "Choose language",
       "selectLevel": "Choose level",
+      "selectSpeakingLevel": "Choose speaking level",
+      "selectWritingLevel": "Choose writing level",
+      "selectReadingLevel": "Choose reading level",
       "saveError": "Failed to save skills section. Please try again."
     },
     "attachments": {
@@ -451,7 +457,10 @@
         "required": "Please add at least one skill"
       },
       "languages": {
-        "required": "Please add at least one language"
+        "required": "Please add at least one language",
+        "speaking": { "required": "Please choose a speaking level" },
+        "writing": { "required": "Please choose a writing level" },
+        "reading": { "required": "Please choose a reading level" }
       }
     }
   }
