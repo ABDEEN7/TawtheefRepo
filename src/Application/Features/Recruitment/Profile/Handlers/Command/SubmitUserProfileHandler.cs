@@ -71,7 +71,6 @@ public sealed class SubmitUserProfileHandler(
         };
 
         await submissionRepo.AddAsync(submission);
-        profile.Status = UserStatus.Submitted;
         if (profile.User is not null)
         {
             profile.User.Status = UserStatus.Submitted;

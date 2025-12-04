@@ -13,9 +13,7 @@ public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }
     public ApplicantUser? User { get; set; }
-
-    public UserStatus Status { get; set; } = UserStatus.InCreation;
-
+    
     public Guid CandidateTypeId { get; set; }
     public CandidateType? CandidateType { get; set; }
 

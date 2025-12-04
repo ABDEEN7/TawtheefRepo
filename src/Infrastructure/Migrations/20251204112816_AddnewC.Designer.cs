@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    partial class TawtheefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251204112816_AddnewC")]
+    partial class AddnewC
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -705,7 +708,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ContactVerification", (string)null);
+                    b.ToTable("ContactVerification");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Auth.RefreshToken", b =>
@@ -785,7 +788,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Logger.EntityLog", b =>
@@ -864,7 +867,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EntityLog", (string)null);
+                    b.ToTable("EntityLog");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.CandidateType", b =>
@@ -3823,7 +3826,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmailQueues", (string)null);
+                    b.ToTable("EmailQueues");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.EmailTemplate", b =>
@@ -3883,7 +3886,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmailTemplates", (string)null);
+                    b.ToTable("EmailTemplates");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.Notification", b =>
@@ -3970,7 +3973,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("Status", "Channel");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.HistoryInvitation", b =>
@@ -4028,7 +4031,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("HistoryInvitation", (string)null);
+                    b.ToTable("HistoryInvitation");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Invitation", b =>
@@ -4094,7 +4097,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Invitations", (string)null);
+                    b.ToTable("Invitations");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Job", b =>
@@ -4686,7 +4689,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Resources", (string)null);
+                    b.ToTable("Resources");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.SponsorProfile", b =>
@@ -4857,6 +4860,13 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("InCreation");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -4949,9 +4959,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
-                    b.Property<bool>("IsDraft")
-                        .HasColumnType("bit");
-
                     b.Property<Guid?>("MaritalStatusId")
                         .HasColumnType("uniqueidentifier");
 
@@ -4990,6 +4997,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<Guid?>("SponsorProfileId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("InCreation");
 
                     b.Property<Guid>("TargetEntityId")
                         .HasColumnType("uniqueidentifier");
@@ -5124,7 +5138,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSession", (string)null);
+                    b.ToTable("UserSession");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.AdminUser", b =>
@@ -5153,6 +5167,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEIgyaMwrHltJioEPUc/0/KfGb2iA529lr04a/6+LmeVbtJZ1fV3px6oeRlalT1GI/Q==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
+                            Status = "InCreation",
                             TwoFactorEnabled = false,
                             UserName = "admin@tawtheef.com",
                             UserTypeId = new Guid("c3d4e5f6-a7b8-6a95-0c3d-7e8f9a0b1c2d")
@@ -5185,6 +5200,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEN8QCL2z2kO862Y8bQpTxN7RPyssbCDnnWOBERadOw0vaVF5WAL3D/axQfbD1BgXKA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "18cc15bc-1783-40d9-a3b5-d26dd57c3f6c",
+                            Status = "InCreation",
                             TwoFactorEnabled = false,
                             UserName = "qa.a@tawtheef.com",
                             UserTypeId = new Guid("b2c3d4e5-f6a7-5984-9b2c-6d7e8f9a0b1c")
@@ -5217,6 +5233,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEGcM+djZ3c2Q/N1kjZpDwcwjH2sfsRHkNS5H4lObrCaoiN238MHwgDFbLXiNsm5J4A==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "55669db7-ef3a-493f-89a6-a1d608403f83",
+                            Status = "InCreation",
                             TwoFactorEnabled = false,
                             UserName = "qa.e@tawtheef.com",
                             UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
