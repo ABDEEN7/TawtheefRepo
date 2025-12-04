@@ -16,7 +16,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 public sealed class SaveProfileExperienceHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileExperienceCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -34,6 +35,10 @@ public sealed class SaveProfileExperienceHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var validationResult = validationService.ValidateExperience(profile);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         var experiencesResult = DeserializeExperiences(cmd.Request.ExperiencesJson);
         if (experiencesResult.IsFailed)

@@ -14,7 +14,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfileLanguagesHandler(
     IUnitOfWork uow,
-    IProfileReviewService reviewService
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileLanguagesCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileLanguagesCommand cmd, CancellationToken ct)
@@ -29,6 +30,10 @@ public sealed class SaveProfileLanguagesHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var validationResult = validationService.ValidateSkillsAndLanguages(profile);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         if(cmd.Request.Languages.Count == 0)
             return Result.Ok(Unit.Value);

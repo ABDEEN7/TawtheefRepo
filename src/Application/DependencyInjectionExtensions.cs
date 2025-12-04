@@ -30,6 +30,7 @@ namespace Tawtheef.Application
             services.AddSingleton(TimeProvider.System);
 
             services.AddScoped<Common.Services.IProfileReviewService, Common.Services.ProfileReviewService>();
+            services.AddScoped<Common.Services.IProfileStepValidationService, Common.Services.ProfileStepValidationService>();
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));

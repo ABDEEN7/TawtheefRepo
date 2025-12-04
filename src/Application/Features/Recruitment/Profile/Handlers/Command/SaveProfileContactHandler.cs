@@ -12,7 +12,10 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfileContactHandler(
-    IUnitOfWork uow, IMediator mediator, IProfileReviewService reviewService
+    IUnitOfWork uow,
+    IMediator mediator,
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileContactCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileContactCommand cmd, CancellationToken ct)
@@ -24,6 +27,10 @@ public sealed class SaveProfileContactHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var validationResult = validationService.ValidateContact(profile, cmd.Request);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
 

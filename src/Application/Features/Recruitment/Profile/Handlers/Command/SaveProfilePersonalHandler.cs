@@ -13,7 +13,11 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfilePersonalHandler(
-    IUnitOfWork uow, IMediator mediator,UserManager<User> userManager, IProfileReviewService reviewService
+    IUnitOfWork uow,
+    IMediator mediator,
+    UserManager<User> userManager,
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService
     ) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePersonalCommand cmd, CancellationToken ct)
@@ -28,6 +32,10 @@ public sealed class SaveProfilePersonalHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var validationResult = validationService.ValidatePersonal(profile, cmd.Request);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
 

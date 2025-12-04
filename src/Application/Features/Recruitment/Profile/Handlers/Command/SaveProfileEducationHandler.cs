@@ -15,7 +15,11 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator mediator, IProfileReviewService reviewService)
+public sealed class SaveProfileEducationHandler(
+    IUnitOfWork uow,
+    IMediator mediator,
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService)
     : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
 {
     // JSON options مرة واحدة بدل ما نعيد إنشائها
@@ -41,6 +45,10 @@ public sealed class SaveProfileEducationHandler(IUnitOfWork uow, IMediator media
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        var validationResult = validationService.ValidateEducation(profile);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
 
         var json = cmd.Request.DegreesJson;
         if (string.IsNullOrWhiteSpace(json))
