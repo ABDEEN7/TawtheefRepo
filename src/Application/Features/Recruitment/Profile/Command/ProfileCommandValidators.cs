@@ -290,7 +290,9 @@ public sealed class SaveProfileLanguagesCommandValidator : AbstractValidator<Sav
                     .ChildRules(lang =>
                     {
                         lang.RuleFor(l => l.LanguageId).NotEmpty();
-                        lang.RuleFor(l => l.LevelId).NotEmpty();
+                        lang.RuleFor(l => l.SpeakingLevelId).NotEmpty();
+                        lang.RuleFor(l => l.WritingLevelId).NotEmpty();
+                        lang.RuleFor(l => l.ReadingLevelId).NotEmpty();
                     });
 
                 RuleFor(x => x.Request)

@@ -318,7 +318,16 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("ReadingLevelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SpeakingLevelId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("LevelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WritingLevelId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
@@ -340,7 +349,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("LanguageId");
 
+                    b.HasIndex("ReadingLevelId");
+
+                    b.HasIndex("SpeakingLevelId");
+
                     b.HasIndex("LevelId");
+
+                    b.HasIndex("WritingLevelId");
 
                     b.HasIndex("UpdatedById");
 
@@ -5389,9 +5404,27 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.LanguageLevel", "ReadingLevel")
+                        .WithMany()
+                        .HasForeignKey("ReadingLevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.LanguageLevel", "SpeakingLevel")
+                        .WithMany()
+                        .HasForeignKey("SpeakingLevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.LanguageLevel", "Level")
                         .WithMany()
                         .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.LanguageLevel", "WritingLevel")
+                        .WithMany()
+                        .HasForeignKey("WritingLevelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -5412,7 +5445,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("Language");
 
+                    b.Navigation("ReadingLevel");
+
+                    b.Navigation("SpeakingLevel");
+
                     b.Navigation("Level");
+
+                    b.Navigation("WritingLevel");
 
                     b.Navigation("UpdatedBy");
 

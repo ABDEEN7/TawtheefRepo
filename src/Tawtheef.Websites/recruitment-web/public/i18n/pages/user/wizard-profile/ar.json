@@ -232,9 +232,15 @@
       "languages": "اللغات",
       "languagesHint": "أضف لغاتك ومستوى إجادتك.",
       "language": "اللغة",
+      "speaking": "التحدث",
+      "writing": "الكتابة",
+      "reading": "القراءة",
       "level": "المستوى",
       "selectLanguage": "اختر اللغة",
-      "selectLevel": "اختر المستوى"
+      "selectLevel": "اختر المستوى",
+      "selectSpeakingLevel": "اختر مستوى التحدث",
+      "selectWritingLevel": "اختر مستوى الكتابة",
+      "selectReadingLevel": "اختر مستوى القراءة"
     },
     "attachments": {
       "title": "المرفقات",
@@ -379,7 +385,10 @@
         "required": "يرجى إضافة مهارة واحدة على الأقل"
       },
       "languages": {
-        "required": "يرجى إضافة لغة واحدة على الأقل"
+        "required": "يرجى إضافة لغة واحدة على الأقل",
+        "speaking": { "required": "يرجى اختيار مستوى التحدث" },
+        "writing": { "required": "يرجى اختيار مستوى الكتابة" },
+        "reading": { "required": "يرجى اختيار مستوى القراءة" }
       }
     }
   }

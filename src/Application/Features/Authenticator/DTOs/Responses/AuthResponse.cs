@@ -168,7 +168,9 @@ public sealed class LanguageDto
     public Guid Id { get; init; }
     public Guid LanguageId { get; init; }
     public DropdownOptions? Language { get; init; }
-    public Guid LevelId { get; init; }
+    public Guid SpeakingLevelId { get; init; }
+    public Guid WritingLevelId { get; init; }
+    public Guid ReadingLevelId { get; init; }
     public bool IsNative { get; init; }
 }
 

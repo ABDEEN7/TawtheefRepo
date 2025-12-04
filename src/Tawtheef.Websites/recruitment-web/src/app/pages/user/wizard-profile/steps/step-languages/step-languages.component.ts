@@ -33,7 +33,9 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   }
 
   newLanguage?: dropdownOptionsModel;
-  newLevel?: dropdownOptionsModel;
+  newSpeakingLevel?: dropdownOptionsModel;
+  newWritingLevel?: dropdownOptionsModel;
+  newReadingLevel?: dropdownOptionsModel;
 
   ngOnInit(): void {
     const state = this.ds.state();
@@ -42,14 +44,18 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   }
 
   addLang(): void {
-    if (this.newLanguage && this.newLevel) {
+    if (this.newLanguage && this.newSpeakingLevel && this.newWritingLevel && this.newReadingLevel) {
       this.ds.addLang({
         langId: this.newLanguage.id,
         lang: this.newLanguage,
-        levelId: this.newLevel.id,
-        level: this.newLevel
+        speakingLevelId: this.newSpeakingLevel.id,
+        speakingLevel: this.newSpeakingLevel,
+        writingLevelId: this.newWritingLevel.id,
+        writingLevel: this.newWritingLevel,
+        readingLevelId: this.newReadingLevel.id,
+        readingLevel: this.newReadingLevel,
       });
-      this.newLanguage = this.newLevel = undefined;
+      this.newLanguage = this.newSpeakingLevel = this.newWritingLevel = this.newReadingLevel = undefined;
     }
   }
 
@@ -120,7 +126,9 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       (languages ?? []).map(l => ({
         id: l.id ?? null,
         languageId: l.langId ?? l.languageId ?? l.id ?? null,
-        levelId: l.levelId ?? l.level?.id ?? l.level ?? null,
+        speakingLevelId: l.speakingLevelId ?? l.speakingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level ?? null,
+        writingLevelId: l.writingLevelId ?? l.writingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level ?? null,
+        readingLevelId: l.readingLevelId ?? l.readingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level ?? null,
       }))
     );
   }

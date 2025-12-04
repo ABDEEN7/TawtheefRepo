@@ -256,7 +256,9 @@ export class ProfileService {
       submit: false,
       languages: (languages ?? []).map(l => ({
         languageId: l.langId ?? l.languageId ?? l.id ?? l,
-        levelId: l.levelId ?? l.level?.id ?? l.level,
+        speakingLevelId: l.speakingLevelId ?? l.speakingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level,
+        writingLevelId: l.writingLevelId ?? l.writingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level,
+        readingLevelId: l.readingLevelId ?? l.readingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level,
       })),
     };
 
