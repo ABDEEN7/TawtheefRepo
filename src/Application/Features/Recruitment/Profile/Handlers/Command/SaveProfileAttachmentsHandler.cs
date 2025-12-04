@@ -89,8 +89,6 @@ public sealed class SaveProfileAttachmentsHandler(
             reviewAttachments.Add(attachment);
         }
 
-        profile.IsDraft = !cmd.Request.Submit;
-
         await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, ct);
         foreach (var attachment in reviewAttachments)
         {

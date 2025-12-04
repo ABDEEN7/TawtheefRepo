@@ -92,8 +92,6 @@ public sealed class SaveProfilePersonalHandler(
             }
         }
 
-        profile.IsDraft = true;
-
         await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

@@ -122,8 +122,6 @@ public sealed class SaveProfileExperienceHandler(
             newTrainings.Add(entity);
         }
 
-        profile.IsDraft = !cmd.Request.Submit;
-
         await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, ct);
         foreach (var experience in newExperiences)
         {

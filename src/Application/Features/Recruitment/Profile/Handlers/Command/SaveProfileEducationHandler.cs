@@ -138,8 +138,6 @@ public sealed class SaveProfileEducationHandler(
             }
         }
 
-        profile.IsDraft = true;
-
         await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Qualifications, ct);
         foreach (var qualification in newQualifications.Concat(updatedQualifications))
         {

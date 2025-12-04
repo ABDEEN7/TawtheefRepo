@@ -30,6 +30,7 @@ public class ErrorsCodes
     public const string UserNotFound = "USER_NOT_FOUND";
     public const string SessionExpired = "SESSION_EXPIRED";
     public const string EmailNotVerified = "EMAIL_NOT_VERIFIED";
+    public const string AccountStatusNotAllowedForLogin = "ACCOUNT_STATUS_NOT_ALLOWED_FOR_LOGIN";
     public const string YourAccountRequiresAdminApproval = "YOUR_ACCOUNT_REQUIRES_ADMIN_APPROVAL";
     public const string SocialAccountNotLinked = "SOCIAL_ACCOUNT_NOT_LINKED";
     public const string UnlinkSocialAccountFailed = "UNLINK_SOCIAL_ACCOUNT_FAILED";

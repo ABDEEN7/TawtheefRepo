@@ -1,4 +1,5 @@
 ﻿using Tawtheef.Application.Common.Models;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
@@ -25,7 +26,7 @@ public sealed class ProfilePrefillDto
 public sealed class ProfileStatusDto
 {
     public bool IsComplete { get; init; }
-    public bool IsDraft { get; init; }
+    public UserStatus Status { get; init; }
 
     // ===== Scalars من UserProfile =====
     public Guid? CandidateTypeId { get; init; }
