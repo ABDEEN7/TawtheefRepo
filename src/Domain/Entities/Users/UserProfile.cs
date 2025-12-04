@@ -14,6 +14,8 @@ public class UserProfile : EventEntity
     public Guid UserId { get; set; }
     public ApplicantUser? User { get; set; }
 
+    public UserStatus Status { get; set; } = UserStatus.InCreation;
+
     public Guid CandidateTypeId { get; set; }
     public CandidateType? CandidateType { get; set; }
 
@@ -91,8 +93,6 @@ public class UserProfile : EventEntity
     public Guid? MarriageCertificateId { get; set; }
     public Resource? MarriageCertificate { get; set; }
 
-    public bool IsDraft { get; set; } = true;
-
     public ICollection<Qualification>? Qualifications { get; set; } = [];
     public ICollection<Experience>? Experiences { get; set; } = [];
     public ICollection<TrainingCourse>? TrainingCourses { get; set; } = [];
@@ -102,8 +102,6 @@ public class UserProfile : EventEntity
 
     public bool IsCompleted()
     {
-        if (IsDraft)
-            return false;
         if (CandidateTypeId == Guid.Empty)
             return false;
         if (TargetEntityId == Guid.Empty)

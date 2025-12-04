@@ -70,8 +70,6 @@ public sealed class SaveProfileContactHandler(
                     ct);
             }
         }
-        profile.IsDraft = true;
-
         await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

@@ -31,8 +31,7 @@ public sealed class SaveProfilePrereqHandler(
         {
             profile = new UserProfile
             {
-                UserId  = cmd.UserId,
-                IsDraft = true
+                UserId  = cmd.UserId
             };
             await profileRepo.AddAsync(profile);
         }
@@ -92,8 +91,6 @@ public sealed class SaveProfilePrereqHandler(
         {
             profile.MarriageCertificateId = null;
         }
-
-        profile.IsDraft = true;
 
         CleanCandidateTypeDependents();
 

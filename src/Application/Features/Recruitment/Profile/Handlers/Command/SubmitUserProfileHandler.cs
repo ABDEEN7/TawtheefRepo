@@ -23,6 +23,7 @@ public sealed class SubmitUserProfileHandler(
         var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
 
         var profile = await profileRepo.DbSet
+            .Include(p => p.User)
             .Include(p => p.Qualifications)
             .Include(p => p.Experiences)
             .Include(p => p.TrainingCourses)
@@ -70,7 +71,11 @@ public sealed class SubmitUserProfileHandler(
         };
 
         await submissionRepo.AddAsync(submission);
-        profile.IsDraft = false;
+        profile.Status = UserStatus.Submitted;
+        if (profile.User is not null)
+        {
+            profile.User.Status = UserStatus.Submitted;
+        }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
