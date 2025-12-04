@@ -100,7 +100,9 @@ export interface AdditionalAttachmentDto {
 export interface LanguageDto {
   id: GUID;
   languageId: string;
-  levelId: string;
+  speakingLevelId: string;
+  writingLevelId: string;
+  readingLevelId: string;
   isNative: boolean;
 }
 export interface SkillDto {

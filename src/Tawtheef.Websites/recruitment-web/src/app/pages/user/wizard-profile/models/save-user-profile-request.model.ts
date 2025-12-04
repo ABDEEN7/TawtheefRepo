@@ -81,7 +81,9 @@ export interface TrainingCourseDto extends ExperienceDto {}
 
 export interface LanguageDto {
   languageId: string;
-  languageLevelId: string;
+  speakingLevelId: string;
+  writingLevelId: string;
+  readingLevelId: string;
 }
 
 export interface AttachmentDto {

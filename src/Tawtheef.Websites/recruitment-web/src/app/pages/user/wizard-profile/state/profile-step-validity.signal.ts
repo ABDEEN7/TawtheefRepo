@@ -389,6 +389,7 @@ function validateSkillsStep(s: ProfileState): StepValidationResult {
 
 function validateLanguagesStep(s: ProfileState): StepValidationResult {
   const hasLanguages = Array.isArray(s.languages) && s.languages.length > 0;
+  const errors: FieldError[] = [];
 
   if (!hasLanguages) {
     return {
@@ -400,6 +401,33 @@ function validateLanguagesStep(s: ProfileState): StepValidationResult {
         },
       ],
     };
+  }
+
+  s.languages?.forEach((lang, index) => {
+    if (!isFilledField(lang?.speakingLevelId ?? lang?.speakingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].speakingLevelId`,
+        i18nKey: 'wizard.profile.languages.speaking.required',
+      });
+    }
+
+    if (!isFilledField(lang?.writingLevelId ?? lang?.writingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].writingLevelId`,
+        i18nKey: 'wizard.profile.languages.writing.required',
+      });
+    }
+
+    if (!isFilledField(lang?.readingLevelId ?? lang?.readingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].readingLevelId`,
+        i18nKey: 'wizard.profile.languages.reading.required',
+      });
+    }
+  });
+
+  if (errors.length) {
+    return { valid: false, errors };
   }
 
   return { valid: true, errors: [] };
