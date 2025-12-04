@@ -10,7 +10,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 @Component({
   selector: 'app-profile-approval-list-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './profile-approval-list.page.html',
   styleUrl: './profile-approval-list.page.scss',
 })
