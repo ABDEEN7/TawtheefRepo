@@ -273,6 +273,50 @@
     </p-table>
   </div>
 
+  <!-- Achievements -->
+  <div class="border rounded-3 p-3 mb-3">
+    <div class="fw-bold mb-2" style="color:#7b1e3a">
+      <i class="fa-solid fa-trophy me-1"></i> {{ 'wizard.steps.achievements' | translate }}
+    </div>
+    <p-table [value]="ds.state().achievements">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'wizard.achievements.table.type' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.name' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.issuer' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.country' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.issueDate' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.description' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.file' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-r>
+        <tr>
+          <td>{{ r.achievementType?.name }}</td>
+          <td>{{ r.title }}</td>
+          <td>{{ r.issuingAuthority }}</td>
+          <td>{{ r.country?.name || '—' }}</td>
+          <td>{{ r.issueDate ? (r.issueDate | date:'dd/MM/yyyy') : '—' }}</td>
+          <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
+          <td>
+            <ng-container *ngIf="r.fileName || r.file?.name; else noAchievementReviewFile">
+              <div class="d-flex align-items-center gap-2">
+                <span>{{ r.fileName || r.file?.name }}</span>
+                <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.attachment, r.file, r.fileName, $event)">
+                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                </button>
+              </div>
+            </ng-container>
+            <ng-template #noAchievementReviewFile>—</ng-template>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="7" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+
   <!-- Skills -->
   <div class="border rounded-3 p-3 mb-3">
     <div class="fw-bold mb-2" style="color:#7b1e3a">

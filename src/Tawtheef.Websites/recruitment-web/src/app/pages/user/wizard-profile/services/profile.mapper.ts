@@ -8,6 +8,7 @@ import {ProfileLookupsService} from './profile-lookups.service';
 import {PhoneMapperService} from './phone-mapper.service';
 import {Degree} from '../models/degree.model';
 import {Experience, TrainingCourse} from '../models/experience.model';
+import {Achievement} from '../models/achievement.model';
 import {Skill} from '../models/skill.model';
 import {Language} from '../models/language.model';
 import {Attachment} from '../models/attachment.model';
@@ -195,6 +196,19 @@ export function mapProfileStatusToState(
       attachment: mapFile(t.attachment),
     } as TrainingCourse)),
 
+    achievements: (dto.achievements ?? []).map(a => ({
+      id: a.id,
+      achievementType: mapIdToDropdown(lookups, 'achievementTypes', a.achievementTypeId),
+      title: a.title ?? '',
+      issuingAuthority: a.issuingAuthority ?? '',
+      country: mapIdToDropdown(lookups, 'countries', a.countryId),
+      issueDate: a.issueDate ?? undefined,
+      description: a.description ?? '',
+      attachmentId: a.attachment?.resourceId,
+      fileName: a.attachment?.fileName,
+      attachment: mapFile(a.attachment),
+    } as Achievement)),
+
     skills: (dto.skills ?? []).map(s => ({
       id: s.id,
       skillId: s.skillId,
@@ -239,7 +253,7 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
 // Convert backend ID → dropdownOptionsModel
 function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
 'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |
-'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'office',
+'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'office' | 'achievementTypes',
   id?: string | null): dropdownOptionsModel | undefined {
   if (!id) return undefined;
   switch (kind) {
@@ -261,6 +275,8 @@ function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' |
       return lookups.degrees().find(d => d.id === id);
     case 'ratingGrade':
       return lookups.ratingGrades().find(rg => rg.id === id);
+    case 'achievementTypes':
+      return lookups.achievementTypes().find(a => a.id === id);
     case 'language':
       return lookups.languages().find(l => l.id === id);
     case 'languageLevel':

@@ -7,6 +7,7 @@ import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.
 import {GUID} from '../../../../shared/types/guid.type';
 import {HttpService} from '../../../../core/http/http.service';
 import {Experience, TrainingCourse} from '../models/experience.model';
+import {Achievement} from '../models/achievement.model';
 import {of} from 'rxjs';
 import {MoiPersonalInfo} from '../models/moi-personal-info.model';
 
@@ -198,6 +199,41 @@ export class ProfileService {
   }
   deleteTrainingCourse(courseId: GUID){
     return this.http.delete(this.endpoints.user.profile.deleteTrainingCourse(courseId));
+  }
+
+  saveAchievementsSection(achievements: Achievement[]) {
+    const files: (File | null | undefined)[] = [];
+    const payload = (achievements ?? []).map(a => {
+      const fileIndex = a.file ? files.push(a.file) - 1 : null;
+      return {
+        id: a.id ?? null,
+        achievementTypeId: a.achievementType?.id,
+        title: a.title,
+        issuingAuthority: a.issuingAuthority,
+        countryId: a.country?.id,
+        issueDate: a.issueDate,
+        description: a.description,
+        attachmentId: a.attachmentId ?? null,
+        certificateFileIndex: fileIndex,
+      };
+    });
+
+    const formData = this.buildFormData({
+      submit: false,
+      achievementsJson: payload,
+    });
+
+    files.forEach(f => {
+      if (f) {
+        formData.append('AchievementFiles', f);
+      }
+    });
+
+    return this.http.post(this.endpoints.user.profile.saveAchievements, formData);
+  }
+
+  deleteAchievement(id: GUID){
+    return this.http.delete(this.endpoints.user.profile.deleteAchievement(id));
   }
 
   // ========== SKILLS & LANGUAGES ==========
