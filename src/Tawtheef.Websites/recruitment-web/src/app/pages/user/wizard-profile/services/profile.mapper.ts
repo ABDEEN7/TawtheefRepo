@@ -17,6 +17,7 @@ export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestM
     submit: false,
     candidateTypeId: state.candidateType!.id,
     targetEntityId: state.targetEntity!.id,
+    officeId: state.office?.id ?? null,
     cvFileName: state.cvName,
     idFileName: state.idName,
     birthCertificateFileName: state.birthCertificateName,
@@ -30,6 +31,7 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
     fullNameAr: state.fullNameAr ?? null,
     fullNameEn: state.fullNameEn ?? null,
     nationalNumber: state.qid ?? null,
+    qidExpiry: state.qidExpiry ?? null,
     birthDate: state.dob ?? null,
 
     nationalityId: state.nationality?.id ?? null,
@@ -43,7 +45,9 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
 
     sponsorEmployerName: state.sponsorEmployerName ?? null,
     sponsorEmployerNumber: state.sponsorEmployerNumber ?? null,
+    sponsorQidExpiry: state.sponsorQidExpiry ?? null,
     sponsorTypeId: state.sponsorType?.id ?? null,
+    sponsorCardFileName: state.sponsorCardName ?? null,
   };
 }
 export function mapContactSection(state: ProfileState): SaveProfileContactRequestDto {
@@ -52,7 +56,8 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
     !!state.naStreet ||
     !!state.naBuilding ||
     !!state.naUnit ||
-    !!state.naFile;
+    !!state.naFile ||
+    !!state.naFileName;
 
   return {
     submit: false,
@@ -67,6 +72,7 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
         street: state.naStreet ?? null,
         building: state.naBuilding ?? null,
         unit: state.naUnit ?? null,
+        nationalAddressFileName: state.naFileName ?? null,
       } : null,
   };
 }
@@ -81,6 +87,7 @@ export function mapProfileStatusToState(
     // ----------- Prereq -----------
     candidateType: mapIdToDropdown(lookups, 'candidateType', dto.candidateTypeId) as dropdownOptionsModel,
     targetEntity: mapIdToDropdown(lookups, 'targetEntity', dto.targetEntityId) as dropdownOptionsModel,
+    office: mapIdToDropdown(lookups, 'office', dto.officeId) as dropdownOptionsModel,
 
     // Attachments
     cvFile: mapFile(dto.resumeAttachment),
@@ -100,6 +107,7 @@ export function mapProfileStatusToState(
     fullNameEn: dto.fullNameEn ?? undefined,
 
     qid: dto.nationalNumber ?? prefill?.qid ?? undefined,
+    qidExpiry: dto.qidExpiry ?? undefined,
 
     nationality: mapIdToDropdown(lookups, 'nationality', dto.nationalityId ?? prefill?.nationality ?? undefined),
     gender: mapIdToDropdown(lookups, 'gender', dto.genderId ?? prefill?.gender ?? undefined),
@@ -116,6 +124,7 @@ export function mapProfileStatusToState(
 
     sponsorEmployerName: dto.sponsorEmployerName,
     sponsorEmployerNumber: dto.sponsorEmployerNumber,
+    sponsorQidExpiry: dto.sponsorQidExpiry,
     sponsorCardName: dto.sponsorCard?.fileName ?? null,
     sponsorCardFile: mapFile(dto.sponsorCard),
 
@@ -156,6 +165,7 @@ export function mapProfileStatusToState(
       grade: mapIdToDropdown(lookups, 'ratingGrade', q.gradeId),
       certificate: mapFile(q.attachment),
       attachmentId: q.attachment?.resourceId,
+      certificateName: q.attachment?.fileName,
     } as Degree)),
 
     experiences: (dto.experiences ?? []).map(e => ({
@@ -169,6 +179,7 @@ export function mapProfileStatusToState(
       description: e.description ?? '',
       fileName: e.attachment?.fileName,
       attachmentId: e.attachment?.resourceId,
+      attachment: mapFile(e.attachment),
     } as Experience)),
 
     courses: (dto.trainingCourses ?? []).map(t => ({
@@ -181,6 +192,7 @@ export function mapProfileStatusToState(
       description: t.description ?? '',
       fileName: t.attachment?.fileName,
       attachmentId: t.attachment?.resourceId,
+      attachment: mapFile(t.attachment),
     } as TrainingCourse)),
 
     skills: (dto.skills ?? []).map(s => ({
@@ -204,6 +216,7 @@ export function mapProfileStatusToState(
       name: a.title ?? '',
       fileName: a.file?.fileName,
       attachmentId: a.file?.resourceId,
+      fileRef: mapFile(a.file),
       // file: this.mapFile(a.file)!,
     } as Attachment)),
 
@@ -219,13 +232,14 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
   return {
     resourceId: ref.resourceId,
     resourceName: ref.fileName,
+    url: ref.url ?? null,
   };
 }
 
 // Convert backend ID → dropdownOptionsModel
 function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
 'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |
-'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country',
+'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'office',
   id?: string | null): dropdownOptionsModel | undefined {
   if (!id) return undefined;
   switch (kind) {
@@ -259,6 +273,8 @@ function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' |
       return lookups.graduationCountry().find(gc => gc.id === id);
     case 'sponsorType':
       return lookups.sponsorTypes().find(st => st.id === id);
+    case 'office':
+      return lookups.offices().find(o => o.id === id);
     case 'countries':
       return lookups.countries().find(c => c.id === id);
     default:

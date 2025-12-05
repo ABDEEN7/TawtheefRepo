@@ -159,14 +159,17 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
-
-    [HttpGet("me")]
-    public async Task<IActionResult> GetMyProfile(CancellationToken ct)
+    
+    // request check moe data for user
+    [HttpGet("check-profile")]
+    public async Task<IActionResult> CheckProfile([FromQuery] CheckProfileMOI query, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(new GetFullUserProfileQuery(UserId.Value), ct); // create DTO with all fields needed by wizard
+        var cmd = new GetPersonalInformationByQidQuery(UserId.Value, query);
+        var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
+    
     #region Lookups
     [HttpGet("lookups/skill-search")]
     public async Task<IActionResult> Search([FromQuery] SearchSkillsQuery query)
@@ -175,9 +178,9 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     [HttpGet("lookups/candidate-types")]
-    public async Task<IActionResult> GetCandidateTypes()
+    public async Task<IActionResult> GetCandidateTypes([FromQuery] string provider)
     {
-        var result = await mediator.Send(new GetCandidateTypesQuery());
+        var result = await mediator.Send(new GetCandidateTypesByProviderQuery(provider));
         return result.ToActionResult();
     }
 
@@ -212,7 +215,9 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     [HttpGet("lookups/countries")]
     public async Task<IActionResult> Countries()
     {
-        var result = await mediator.Send(new GetCountriesQuery());
+        //get language from header
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetCountriesQuery { Language = language });
         return result.ToActionResult();
     }
 
@@ -278,6 +283,14 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetSponsorTypes()
     {
         var result = await mediator.Send(new GetSponsorTypesQuery());
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/offices")]
+    public async Task<IActionResult> GetOffices([FromQuery] GetOfficesQuery query)
+    {
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(query with { Language = language });
         return result.ToActionResult();
     }
 

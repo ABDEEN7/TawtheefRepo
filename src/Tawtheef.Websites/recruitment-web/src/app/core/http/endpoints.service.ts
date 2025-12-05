@@ -42,6 +42,7 @@ export class EndpointsService {
       saveLanguages: this.getFullUrl(`/profiles/languages`),
       saveReferences: this.getFullUrl(`/profiles/references`),
       submit: this.getFullUrl(`/profiles/submit`),
+      checkProfile: this.getFullUrl(`/profiles/check-profile`),
     },
     verify:{
       phone:{
@@ -75,6 +76,7 @@ export class EndpointsService {
       languages: this.getFullUrl(`/profiles/lookups/languages`),
       languageLevels: this.getFullUrl(`/profiles/lookups/language-levels`),
       sponsorTypes: this.getFullUrl(`/profiles/lookups/sponsor-types`),
+      offices: this.getFullUrl(`/profiles/lookups/offices`),
       skill: this.getFullUrl(`/profiles/lookups/skill-search`),
     }
   }

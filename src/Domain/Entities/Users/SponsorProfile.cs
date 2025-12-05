@@ -16,6 +16,9 @@ public class SponsorProfile : EventEntity
     [MaxLength(50)]
     public required string SponsorNumber { get; set; }
     
+    
+    public DateOnly QIDExpiry { get; set; }
+    
     public Guid? SponsorCardId { get; set; }
     public Resource? SponsorCard { get; set; }
 }

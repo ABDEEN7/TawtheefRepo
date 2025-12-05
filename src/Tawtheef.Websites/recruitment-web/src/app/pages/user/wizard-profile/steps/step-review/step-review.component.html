@@ -15,6 +15,13 @@
     <div class="fw-bold">{{ errorText() }}</div>
   </div>
 
+  <div *ngIf="missing().length" class="alert alert-warning">
+    <div class="fw-bold mb-1">{{ 'wizard.review.missingWarningTitle' | translate }}</div>
+    <ul class="mb-0 ps-3">
+      <li *ngFor="let key of missing()">{{ key | translate }}</li>
+    </ul>
+  </div>
+
   <!-- Personal -->
   <div class="border rounded-3 p-3 mb-3">
     <div class="d-flex align-items-center justify-content-between mb-2">
@@ -34,6 +41,10 @@
       <div class="col-md-4">
         <div class="small text-muted">{{ 'wizard.personal.qid' | translate }}</div>
         <div class="fw-semibold">{{ ds.state().qid || '—' }}</div>
+      </div>
+      <div class="col-md-4" *ngIf="ds.isResidentQatar">
+        <div class="small text-muted">{{ 'wizard.personal.qidExpiry' | translate }}</div>
+        <div class="fw-semibold">{{ ds.state().qidExpiry || '—' }}</div>
       </div>
 
       <div class="col-md-3">
@@ -98,7 +109,7 @@
       </div>
       <div class="col-md-3">
         <div class="small text-muted">{{ 'wizard.contact.phone' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().phone || '—' }}</div>
+        <div class="fw-semibold" style="direction: ltr; text-align: end;">{{ ds.state().phone?.internationalNumber || '—' }}</div>
       </div>
       <div class="col-md-4">
         <div class="small text-muted">{{ 'wizard.contact.email' | translate }}</div>
@@ -149,6 +160,7 @@
           <th>{{ 'wizard.degrees.university' | translate }}</th>
           <th>{{ 'wizard.degrees.gradYear' | translate }}</th>
           <th>{{ 'wizard.degrees.gradCountry' | translate }}</th>
+          <th>{{ 'wizard.degrees.degreeFile' | translate }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
@@ -158,10 +170,21 @@
           <td>{{ r.university?.name || '—' }}</td>
           <td>{{ r.gradYear || '—' }}</td>
           <td>{{ r.gradCountry?.name || '—' }}</td>
+          <td>
+            <ng-container *ngIf="r.certificate?.resourceName || r.file?.name; else noDegreeReviewFile">
+              <div class="d-flex align-items-center gap-2">
+                <span>{{ r.certificate?.resourceName || r.file?.name }}</span>
+                <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.certificate, r.file, r.certificate?.resourceName || r.file?.name, $event)">
+                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                </button>
+              </div>
+            </ng-container>
+            <ng-template #noDegreeReviewFile>—</ng-template>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="5" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+        <tr><td colspan="6" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
       </ng-template>
     </p-table>
   </div>
@@ -189,7 +212,17 @@
           <td>{{ r.country!.name }}</td>
           <td>{{ (r.from | date: 'yy/MM') || '—' }} - {{ r.current ? ('wizard.experience.current' | translate) : ((r.to | date: 'yy/MM') || '—') }}</td>
           <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
-          <td>{{ r.certificate?.resourceName || r.fileName || '—' }}</td>
+          <td>
+            <ng-container *ngIf="r.certificate?.resourceName || r.fileName || r.file?.name; else noExpReviewFile">
+              <div class="d-flex align-items-center gap-2">
+                <span>{{ r.certificate?.resourceName || r.fileName || r.file?.name }}</span>
+                <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.attachment ?? r.certificate, r.file, r.fileName || r.certificate?.resourceName, $event)">
+                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                </button>
+              </div>
+            </ng-container>
+            <ng-template #noExpReviewFile>—</ng-template>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -221,7 +254,17 @@
           <td>{{ r.country!.name }}</td>
           <td>{{ (r.from | date: 'yy/MM') || '—' }} - {{ (r.to | date: 'yy/MM') || '—' }}</td>
           <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
-          <td>{{ r.certificate?.resourceName || r.fileName || '—' }}</td>
+          <td>
+            <ng-container *ngIf="r.certificate?.resourceName || r.fileName || r.file?.name; else noCourseReviewFile">
+              <div class="d-flex align-items-center gap-2">
+                <span>{{ r.certificate?.resourceName || r.fileName || r.file?.name }}</span>
+                <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.attachment ?? r.certificate, r.file, r.fileName || r.certificate?.resourceName, $event)">
+                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                </button>
+              </div>
+            </ng-container>
+            <ng-template #noCourseReviewFile>—</ng-template>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -287,7 +330,17 @@
       <ng-template pTemplate="body" let-r>
         <tr>
           <td>{{ r.name }}</td>
-          <td>{{ r.fileName }}</td>
+          <td>
+            <ng-container *ngIf="r.fileName; else noAttachmentReviewFile">
+              <div class="d-flex align-items-center gap-2">
+                <span>{{ r.fileName }}</span>
+                <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.fileRef, r.file, r.fileName, $event)">
+                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                </button>
+              </div>
+            </ng-container>
+            <ng-template #noAttachmentReviewFile>—</ng-template>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

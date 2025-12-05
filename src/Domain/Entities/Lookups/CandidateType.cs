@@ -15,5 +15,5 @@ public static class CandidateTypeIds
 [Table(nameof(CandidateType), Schema = Schemas.Lookup)]
 public class CandidateType : LookupBase
 {
-    
+    public virtual ICollection<CandidateTypeProviderLogin> CandidateTypeProviderLogins { get; set; } = [];
 }

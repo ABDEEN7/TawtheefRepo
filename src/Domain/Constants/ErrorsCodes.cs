@@ -30,6 +30,7 @@ public class ErrorsCodes
     public const string UserNotFound = "USER_NOT_FOUND";
     public const string SessionExpired = "SESSION_EXPIRED";
     public const string EmailNotVerified = "EMAIL_NOT_VERIFIED";
+    public const string AccountStatusNotAllowedForLogin = "ACCOUNT_STATUS_NOT_ALLOWED_FOR_LOGIN";
     public const string YourAccountRequiresAdminApproval = "YOUR_ACCOUNT_REQUIRES_ADMIN_APPROVAL";
     public const string SocialAccountNotLinked = "SOCIAL_ACCOUNT_NOT_LINKED";
     public const string UnlinkSocialAccountFailed = "UNLINK_SOCIAL_ACCOUNT_FAILED";
@@ -68,6 +69,7 @@ public class ErrorsCodes
     #endregion
 
     #region Update Profile Errors
+    public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";
@@ -139,6 +141,10 @@ public class ErrorsCodes
     public const string InvalidTrainingCourseFileIndex = "INVALID_TRAINING_COURSE_FILE_INDEX";
     public const string InvalidExperienceFile = "INVALID_EXPERIENCE_FILE";
     public const string InvalidTrainingCourseFile = "INVALID_TRAINING_COURSE_FILE";
+    public const string ExperienceDescriptionTooLong = "EXPERIENCE_DESCRIPTION_TOO_LONG";
+    public const string TrainingDescriptionTooLong = "TRAINING_DESCRIPTION_TOO_LONG";
+    public const string ExperienceFileTooLarge = "EXPERIENCE_FILE_TOO_LARGE";
+    public const string TrainingCourseFileTooLarge = "TRAINING_COURSE_FILE_TOO_LARGE";
     public const string InvalidAttachmentsJson = "INVALID_ATTACHMENTS_JSON";
     public const string InvalidAttachmentFileIndex = "INVALID_ATTACHMENT_FILE_INDEX";
     public const string InvalidAttachmentFile = "INVALID_ATTACHMENT_FILE";
@@ -148,6 +154,9 @@ public class ErrorsCodes
     public const string BirthCertificateFileRequired = "BIRTH_CERTIFICATE_FILE_REQUIRED";
     public const string SponsorCardRequired = "SPONSOR_CARD_REQUIRED";
     public const string SponsorCardFileRequired = "SPONSOR_CARD_FILE_REQUIRED";
+    public const string OfficeRequired = "OFFICE_REQUIRED";
+    public const string AddressRequired = "ADDRESS_REQUIRED";
+    public const string NationalAddressRequired = "NATIONAL_ADDRESS_REQUIRED";
     public const string NationalAddressDocumentRequired = "NATIONAL_ADDRESS_DOCUMENT_REQUIRED";
     public const string DegreeFileRequired = "DEGREE_FILE_REQUIRED";
     public const string ExperienceRequired = "EXPERIENCE_REQUIRED";
@@ -159,6 +168,11 @@ public class ErrorsCodes
     public const string InvalidAttachmentType = "INVALID_ATTACHMENT_TYPE";
     public const string InvalidAttachmentSize = "INVALID_ATTACHMENT_SIZE";
     public const string AttachmentNotFound = "ATTACHMENT_NOT_FOUND";
+
+    public const string PreviousProfileStepIncomplete = "PREVIOUS_PROFILE_STEP_INCOMPLETE";
+    public const string CandidateTypeChangeNotAllowed = "CANDIDATE_TYPE_CHANGE_NOT_ALLOWED";
+    public const string SponsorNotAllowed = "SPONSOR_NOT_ALLOWED";
+    public const string NationalAddressNotAllowed = "NATIONAL_ADDRESS_NOT_ALLOWED";
 
     #endregion
 }

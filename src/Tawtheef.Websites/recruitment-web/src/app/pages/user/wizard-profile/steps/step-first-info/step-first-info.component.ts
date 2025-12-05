@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { DataService } from '../../services/data.service';
@@ -7,6 +7,8 @@ import { ProfileService } from '../../services/profile.service';
 import {mapPrereqSection} from '../../services/profile.mapper';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {FileSlot, createFileSlot, fileSlotSignature, fileToUpload, previewFileFromSlot, previewUrlFromSlot, setLocalFile, updateRemote} from '../../utils/file-slot';
 
 @Component({
   selector: 'app-step-first-info',
@@ -14,7 +16,7 @@ import {MessageService} from 'primeng/api';
   styleUrl: './step-first-info.component.scss',
   standalone: false
 })
-export class StepFirstInfoComponent {
+export class StepFirstInfoComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
 
   ds        = inject(DataService);
@@ -22,11 +24,13 @@ export class StepFirstInfoComponent {
   lookups   = inject(ProfileLookupsService);
   profile   = inject(ProfileService);
   messageService   = inject(MessageService);
+  fileUtils = inject(FileUtilsService);
 
-  private cvFile: File | null = null;
-  private idFile: File | null = null;
-  private birthCertificateFile: File | null = null;
-  private marriageCertificateFile: File | null = null;
+  private cvFile: FileSlot = createFileSlot();
+  private idFile: FileSlot = createFileSlot();
+  private birthCertificateFile: FileSlot = createFileSlot();
+  private marriageCertificateFile: FileSlot = createFileSlot();
+  private lastSubmittedSignature: string | null = null;
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
@@ -35,16 +39,18 @@ export class StepFirstInfoComponent {
 
   saving = false;
 
-  get isNeedBirthCertificate() {
-    const t = this.ds.state().candidateType?.backendName as CandidateType | undefined;
-    if (!t) return false;
-    return [CandidateType.SonOfQatariMother].includes(t);
+  ngOnInit(): void {
+    const state = this.ds.state();
+    updateRemote(this.cvFile, state.cvFile);
+    updateRemote(this.idFile, state.idFile);
+    updateRemote(this.birthCertificateFile, state.birthCertificateFile);
+    updateRemote(this.marriageCertificateFile, state.marriageCertificateFile);
+
+    this.lastSubmittedSignature = null;
   }
 
-  get isNeedMarriageCertificate() {
-    const t = this.ds.state().candidateType?.backendName as CandidateType | undefined;
-    if (!t) return false;
-    return [CandidateType.WifeOfQatari].includes(t);
+  onCandidateTypeChange(option: any) {
+    this.ds.up('candidateType', option);
   }
 
   onFileSelected(kind: 'cv' | 'id' | 'birth' | 'marriage', event: Event) {
@@ -53,23 +59,23 @@ export class StepFirstInfoComponent {
     if (!file) return;
     switch (kind) {
       case 'cv':
-        this.cvFile = file;
-        this.ds.up('cvFile', { resourceId: 'local', resourceName: file.name });
+        setLocalFile(this.cvFile, file);
+        this.ds.up('cvFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('cvName', file.name);
         break;
       case 'id':
-        this.idFile = file;
-        this.ds.up('idFile', { resourceId: 'local', resourceName: file.name });
+        setLocalFile(this.idFile, file);
+        this.ds.up('idFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('idName', file.name);
         break;
       case 'birth':
-        this.birthCertificateFile = file;
-        this.ds.up('birthCertificateFile', { resourceId: 'local', resourceName: file.name });
+        setLocalFile(this.birthCertificateFile, file);
+        this.ds.up('birthCertificateFile', { resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('birthCertificateName', file.name);
         break;
       case 'marriage':
-        this.marriageCertificateFile = file;
-        this.ds.up('marriageCertificateFile', {resourceId: 'local', resourceName: file.name });
+        setLocalFile(this.marriageCertificateFile, file);
+        this.ds.up('marriageCertificateFile', {resourceId: 'local', resourceName: file.name, file: file });
         this.ds.up('marriageCertificateName', file.name);
         break;
     }
@@ -89,16 +95,23 @@ export class StepFirstInfoComponent {
 
     const state = this.ds.state();
     const payload = mapPrereqSection(state);
+    const signature = this.buildSignature(payload);
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
+
     this.saving = true;
     this.profile
       .savePrereq(payload, {
-        cvFile: this.cvFile,
-        idFile: this.idFile,
-        birthCertificateFile: this.birthCertificateFile,
-        marriageCertificateFile: this.marriageCertificateFile
+        cvFile: fileToUpload(this.cvFile),
+        idFile: fileToUpload(this.idFile),
+        birthCertificateFile: fileToUpload(this.birthCertificateFile),
+        marriageCertificateFile: fileToUpload(this.marriageCertificateFile)
       }).subscribe({
       next: () => {
         this.saving = false;
+        this.lastSubmittedSignature = signature;
         this.next.emit();
       },
       error: err => {
@@ -106,5 +119,50 @@ export class StepFirstInfoComponent {
         this.saving = false;
       }
     });
+  }
+
+  canPreview(kind: 'cv' | 'id' | 'birth' | 'marriage'): boolean {
+    return !!this.getSlot(kind) || !!this.getSlot(kind)?.remote?.url;
+  }
+
+  previewFile(kind: 'cv' | 'id' | 'birth' | 'marriage', ev?: Event) {
+    ev?.stopPropagation();
+    const local = previewFileFromSlot(this.getSlot(kind));
+    if (local) {
+      this.fileUtils.previewBlob(local);
+      return;
+    }
+
+    const ref = previewUrlFromSlot(this.getSlot(kind));
+    if (ref) {
+      this.fileUtils.previewUrl(ref, this.getSlot(kind).remote?.resourceName || '', false);
+    }
+  }
+
+  private buildSignature(payload: ReturnType<typeof mapPrereqSection>): string | null {
+    try {
+      const files = {
+        cv: fileSlotSignature(this.cvFile),
+        id: fileSlotSignature(this.idFile),
+        birth: fileSlotSignature(this.birthCertificateFile),
+        marriage: fileSlotSignature(this.marriageCertificateFile),
+      };
+      return JSON.stringify({ payload, files });
+    } catch {
+      return null;
+    }
+  }
+
+  private getSlot(kind: 'cv' | 'id' | 'birth' | 'marriage'): FileSlot {
+    switch (kind) {
+      case 'cv':
+        return this.cvFile;
+      case 'id':
+        return this.idFile;
+      case 'birth':
+        return this.birthCertificateFile;
+      case 'marriage':
+        return this.marriageCertificateFile;
+    }
   }
 }

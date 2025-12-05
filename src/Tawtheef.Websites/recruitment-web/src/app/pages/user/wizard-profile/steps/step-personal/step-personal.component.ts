@@ -1,16 +1,19 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { ProfileState } from '../../models/profile-state.model';
-import {CandidateType, MaritalStatus, SponsorType} from '../../../../../core/enums/lookups.enum';
+import {MaritalStatus, SponsorType} from '../../../../../core/enums/lookups.enum';
 import {mapPersonalSection} from '../../services/profile.mapper';
 import {finalize} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
 import {dateToDateOnly} from '../../../../../shared/types/dateOnly.type';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {FileSlot, canPreviewFile, createFileSlot, displayedFileName, fileSlotSignature, fileToUpload, previewFileFromSlot, previewUrlFromSlot, setLocalFile, updateRemote} from '../../utils/file-slot';
+import {normalizeMoiResponse} from '../../services/moi-response-normalizer';
 
 @Component({
   selector: 'app-step-personal',
@@ -18,7 +21,7 @@ import {MessageService} from 'primeng/api';
   styleUrl: './step-personal.component.scss',
   standalone: false,
 })
-export class StepPersonalComponent {
+export class StepPersonalComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
@@ -28,6 +31,7 @@ export class StepPersonalComponent {
   lookups = inject(ProfileLookupsService);
   profileService = inject(ProfileService);
   messageService = inject(MessageService);
+  fileUtils = inject(FileUtilsService);
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -36,15 +40,92 @@ export class StepPersonalComponent {
   }
 
   savingPersonal = false;
-  private sponsorCardLocalFile: File | null = null;
-  get isNeedSponsor(){
-    return [CandidateType.ResidentQatar].includes(
-      this.ds.state().candidateType?.backendName as CandidateType
-    );
-  }
+  verifyingMoi = false;
+  verifyingSponsor = false;
+  private sponsorCard: FileSlot = createFileSlot();
+  private lastSubmittedSignature: string | null = null;
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);
+  }
+
+  verifyMoiProfile() {
+    const state = this.ds.state();
+    if (!state.qid || !state.qidExpiry) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translate.instant('wizard.personal.verify.title'),
+        detail: this.translate.instant('wizard.personal.verify.missing'),
+        life: 4000,
+      });
+      return;
+    }
+
+    this.verifyingMoi = true;
+    this.profileService
+      .checkProfile(state.qid, state.qidExpiry)
+      .pipe(finalize(() => this.verifyingMoi = false))
+      .subscribe({
+        next: res => {
+          this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail: this.translate.instant('wizard.personal.verify.success'),
+            life: 3000,
+          });
+        },
+        error: err => {
+          const detail = err?.error?.message || err?.error || this.translate.instant('wizard.personal.verify.error');
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail,
+            life: 5000,
+          });
+        }
+      });
+  }
+
+  verifySponsorProfile() {
+    const state = this.ds.state();
+
+    if (state.sponsorType?.backendName !== SponsorType.Individual) return;
+
+    if (!state.sponsorEmployerNumber || !state.sponsorQidExpiry) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translate.instant('wizard.personal.verify.title'),
+        detail: this.translate.instant('wizard.personal.verify.missing'),
+        life: 4000,
+      });
+      return;
+    }
+
+    this.verifyingSponsor = true;
+    this.profileService
+      .checkProfile(state.sponsorEmployerNumber, state.sponsorQidExpiry)
+      .pipe(finalize(() => this.verifyingSponsor = false))
+      .subscribe({
+        next: res => {
+          this.ds.applySponsorPersonalInfo(normalizeMoiResponse(res));
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail: this.translate.instant('wizard.personal.verify.success'),
+            life: 3000,
+          });
+        },
+        error: err => {
+          const detail = err?.error?.message || err?.error || this.translate.instant('wizard.personal.verify.error');
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail,
+            life: 5000,
+          });
+        }
+      });
   }
 
   updateChildren(value: any) {
@@ -59,6 +140,13 @@ export class StepPersonalComponent {
     }
   }
 
+  ngOnInit(): void {
+    const state = this.ds.state();
+    const dto = mapPersonalSection(state);
+    updateRemote(this.sponsorCard, state.sponsorCardFile);
+    this.lastSubmittedSignature = null;
+  }
+
   get showChildrenField(): boolean {
     const marital = this.ds.state().marital as any;
     return !!marital && marital.backendName !== MaritalStatus.Single;
@@ -67,12 +155,29 @@ export class StepPersonalComponent {
     return this.ds.state().hasDisability;
   }
 
+  previewSponsorCard(ev?: Event) {
+    ev?.stopPropagation();
+    if (!canPreviewFile(this.sponsorCard)) return;
+
+    const local = previewFileFromSlot(this.sponsorCard);
+    if (local) {
+      this.fileUtils.previewBlob(local);
+      return;
+    }
+
+    const url = previewUrlFromSlot(this.sponsorCard);
+    if (url) {
+      this.fileUtils.previewUrl(url, displayedFileName(this.sponsorCard), false);
+    }
+  }
+
   onSponsorCardSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-    this.sponsorCardLocalFile = file;
-    this.ds.up('sponsorCardFile', { resourceId: 'local', fileName: file.name } as any);
+    setLocalFile(this.sponsorCard, file);
+    this.ds.up('sponsorCardName', file.name);
+    this.ds.up('sponsorCardFile', { resourceId: 'local', fileName: file.name, file: file } as any);
     input.value = '';
   }
   onNext() {
@@ -88,14 +193,21 @@ export class StepPersonalComponent {
 
     const s = this.ds.state();
     const dto = mapPersonalSection(s);
+    const signature = this.buildSignature(dto);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
 
     this.savingPersonal = true;
 
     this.profileService
-      .savePersonalSection(dto, { sponsorCardFile: this.sponsorCardLocalFile })
+      .savePersonalSection(dto, { sponsorCardFile: fileToUpload(this.sponsorCard) })
       .pipe(finalize(() => this.savingPersonal = false))
       .subscribe({
         next: () => {
+          this.lastSubmittedSignature = signature;
           this.next.emit();
         },
         error: (err) => {
@@ -104,6 +216,15 @@ export class StepPersonalComponent {
       });
   }
 
+  private buildSignature(dto: ReturnType<typeof mapPersonalSection>): string | null {
+    try {
+      return JSON.stringify({ dto, sponsorCard: fileSlotSignature(this.sponsorCard) });
+    } catch {
+      return null;
+    }
+  }
+
   protected readonly dateToDateOnly = dateToDateOnly;
   protected readonly SponsorType = SponsorType;
+
 }

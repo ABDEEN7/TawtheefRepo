@@ -9,7 +9,12 @@ public class ApplicationUserConfiguration<T> : IEntityTypeConfiguration<T> where
     public virtual void Configure(EntityTypeBuilder<T> builder)
     {
         builder.HasIndex(u => u.Email).IsUnique();
-                  
+
+        builder.Property(u => u.Status)
+            .HasMaxLength(50)
+            .HasConversion<string>()
+            .HasDefaultValue(UserStatus.InCreation);
+
         builder.HasOne(u => u.UserType)
             .WithMany()
             .HasForeignKey(u => u.UserTypeId)

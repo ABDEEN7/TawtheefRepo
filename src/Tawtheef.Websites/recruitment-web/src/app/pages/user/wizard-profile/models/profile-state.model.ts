@@ -9,11 +9,14 @@ import {Skill} from './skill.model';
 export interface UploadedFileRef {
   resourceId: string;
   resourceName: string;
+  url?: string | null;
+  file?: File | null;
 }
 export interface ProfileState {
   // prereq
   candidateType?: dropdownOptionsModel;
   targetEntity?: dropdownOptionsModel;
+  office?: dropdownOptionsModel | null;
   cvName?: string | null;
   cvFile?: UploadedFileRef | null;
   idName?: string | null;
@@ -26,8 +29,9 @@ export interface ProfileState {
   // personal
   fullNameAr?: string;
   fullNameEn?: string;
-  qid?: string;
-  nationality?: dropdownOptionsModel;
+  qid?: string | null;
+  qidExpiry?: string | null;
+  nationality?: dropdownOptionsModel | null;
   gender?: dropdownOptionsModel;
   religion?: dropdownOptionsModel;
   marital?: dropdownOptionsModel;
@@ -39,6 +43,7 @@ export interface ProfileState {
   sponsorType?: dropdownOptionsModel | null;
   sponsorEmployerName?: string | null;
   sponsorEmployerNumber?: string | null;
+  sponsorQidExpiry?: string | null;
   sponsorCardName?: string | null;
   sponsorCardFile?: UploadedFileRef | null;
 
@@ -46,9 +51,9 @@ export interface ProfileState {
   country?: dropdownOptionsModel;
   address?: string;
   phone?: PhoneNumber | null;
-  phoneVerified: boolean;
-  email?: string;
-  emailVerified: boolean;
+  phoneVerified: boolean | null;
+  email?: string | null;
+  emailVerified: boolean | null;
   interviewPlace?: dropdownOptionsModel;
   naZone?: string | null;
   naStreet?: string | null;

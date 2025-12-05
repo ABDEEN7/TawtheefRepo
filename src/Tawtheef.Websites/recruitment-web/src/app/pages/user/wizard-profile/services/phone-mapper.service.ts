@@ -1,5 +1,5 @@
 ﻿import {Injectable} from '@angular/core';
-import {PhoneNumberUtil, PhoneNumberFormat} from 'google-libphonenumber';
+import {PhoneNumberFormat, PhoneNumberUtil} from 'google-libphonenumber';
 import {PhoneNumber as AppPhoneNumber} from '../models/phone-number.model';
 
 @Injectable({providedIn: 'root'})

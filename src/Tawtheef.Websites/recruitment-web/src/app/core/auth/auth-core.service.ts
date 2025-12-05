@@ -93,24 +93,30 @@ export class AuthCoreService {
   }
 
   refreshToken(): Observable<string | null> {
-    return this.http.post<TokenModel>(this.endpoints.auth.refresh, {
-      accessToken: this.tokenService.getToken(),
-      refreshToken: this.tokenService.getRefreshToken()
-    }).pipe(
-      map(response => {
-        if (response.accessToken) {
-          this.tokenService.persistTokens({
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken
-          });
-          return response.accessToken;
-        }
-        return null;
-      }),
-      catchError(() => {
-        this.authState.logout();
-        return of(null);
-      })
-    );
+    if(this.authState.isAuthenticated()) {
+      return this.http.post<TokenModel>(this.endpoints.auth.refresh, {
+        accessToken: this.tokenService.getToken(),
+        refreshToken: this.tokenService.getRefreshToken()
+      }).pipe(
+        map(response => {
+          if (response.accessToken) {
+            this.tokenService.persistTokens({
+              accessToken: response.accessToken,
+              refreshToken: response.refreshToken
+            });
+            return response.accessToken;
+          }
+          return null;
+        }),
+        catchError(() => {
+          this.authState.logout();
+          return of(null);
+        })
+      );
+    }
+    else{
+      this.authState.logout();
+      return of(null);
+    }
   }
 }

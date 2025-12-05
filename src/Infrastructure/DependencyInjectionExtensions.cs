@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -18,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -179,6 +181,20 @@ namespace Tawtheef.Infrastructure
             services.AddHttpClient<IQatarPassClient, QatarPassClient>();
             services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
             services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>();
+            services.Configure<MoiSettings>(configuration.GetSection(MoiSettings.SectionName));
+            services.AddHttpClient<IMoiClient, MoiClient>().ConfigurePrimaryHttpMessageHandler(sp => {
+                var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+                var handler = new HttpClientHandler
+                {
+                    Credentials = new NetworkCredential(opt.Username, opt.Password),
+                    UseCookies = true,
+                    CookieContainer = new CookieContainer(),
+                    PreAuthenticate = false,
+                    UseDefaultCredentials = false
+                };
+
+                return handler;
+            });
         }
 
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)

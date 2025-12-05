@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -7,6 +7,10 @@ import { CourseModal } from './dialogs/course.modal/course.modal';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
 import {ProfileService} from '../../services/profile.service';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {Experience, TrainingCourse} from '../../models/experience.model';
+import {FileRefDto} from '../../../../../core/models/auth/auth-response.model';
+import {UploadedFileRef} from '../../models/profile-state.model';
 
 @Component({
   selector: 'app-step-experience',
@@ -14,7 +18,7 @@ import {ProfileService} from '../../services/profile.service';
   styleUrl: './step-experience.component.scss',
   standalone: false,
 })
-export class StepExperienceComponent {
+export class StepExperienceComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
@@ -23,13 +27,21 @@ export class StepExperienceComponent {
   translate = inject(TranslateService);
   messageService = inject(MessageService);
   profile = inject(ProfileService);
+  fileUtils = inject(FileUtilsService);
 
   saving = false;
+  private lastSubmittedSignature: string | null = null;
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
     return validity['experience'];
+  }
+
+  ngOnInit(): void {
+    const state = this.ds.state();
+    const signature = this.buildSignature(state.experiences, state.courses);
+    this.lastSubmittedSignature = null;
   }
   // ========== EXPERIENCES ==========
 
@@ -67,6 +79,10 @@ export class StepExperienceComponent {
     } else {
       this.ds.delExp(index);
     }
+  }
+
+  previewExperience(exp: Experience, ev?: Event): void {
+    this.previewAttachment(exp.attachment, exp.file, exp.fileName, ev);
   }
 
   // ========== COURSES ==========
@@ -107,6 +123,10 @@ export class StepExperienceComponent {
     }
   }
 
+  previewCourse(course: TrainingCourse, ev?: Event): void {
+    this.previewAttachment(course.attachment, course.file, course.fileName, ev);
+  }
+
   onNext() {
     if (!this.step.valid) {
       this.messageService.add({
@@ -120,6 +140,13 @@ export class StepExperienceComponent {
     const state = this.ds.state();
     const experiences = state.experiences || [];
     const courses = state.courses || [];
+    const signature = this.buildSignature(experiences, courses);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
+
     if (!experiences.length) {
       this.messageService.add({
         severity: 'error',
@@ -134,6 +161,7 @@ export class StepExperienceComponent {
     this.profile.saveExperienceSection(experiences, courses).subscribe({
       next: () => {
         this.saving = false;
+        this.lastSubmittedSignature = signature;
         this.next.emit();
       },
       error: err => {
@@ -147,5 +175,48 @@ export class StepExperienceComponent {
         });
       },
     });
+  }
+
+  private previewAttachment(ref?: UploadedFileRef | null, file?: File | null, fallbackName?: string | null, ev?: Event) {
+    ev?.stopPropagation();
+    if (file) {
+      this.fileUtils.previewBlob(file);
+      return;
+    }
+
+    if (ref?.url) {
+      this.fileUtils.previewUrl(ref.url, ref.resourceName || fallbackName || '', false);
+    }else if(ref?.file){
+      this.fileUtils.previewBlob(ref!.file);
+    }
+  }
+
+  private buildSignature(experiences: Experience[], courses: TrainingCourse[]): string {
+    const experienceSignature = (experiences ?? []).map(e => ({
+      id: e.id ?? null,
+      employerName: e.employerName ?? '',
+      jobTitle: e.jobTitle ?? '',
+      from: e.from ?? null,
+      to: e.to ?? null,
+      countryId: e.country?.id ?? null,
+      current: e.current ?? false,
+      description: e.description ?? '',
+      attachmentId: e.attachmentId ?? null,
+      fileName: e.file?.name ?? e.attachment?.resourceName ?? null,
+    }));
+
+    const courseSignature = (courses ?? []).map(c => ({
+      id: c.id ?? null,
+      title: c.title ?? '',
+      provider: c.provider ?? '',
+      from: c.from ?? null,
+      to: c.to ?? null,
+      countryId: c.country?.id ?? null,
+      description: c.description ?? '',
+      attachmentId: c.attachmentId ?? null,
+      fileName: c.file?.name ?? c.attachment?.resourceName ?? null,
+    }));
+
+    return JSON.stringify({ experienceSignature, courseSignature });
   }
 }

@@ -4,15 +4,34 @@ import {Language} from '../models/language.model';
 import {Degree} from '../models/degree.model';
 import {Experience, TrainingCourse} from '../models/experience.model';
 import {Attachment} from '../models/attachment.model';
-import {CandidateType} from '../../../../core/enums/lookups.enum';
 import {Skill} from '../models/skill.model';
 import {UserService} from '../../../../core/auth/user.service';
+import {PhoneMapperService} from './phone-mapper.service';
+import {ProfileLookupsService} from './profile-lookups.service';
+import {MoiPersonalInfo, buildArabicFullName, buildEnglishFullName} from '../models/moi-personal-info.model';
+import {ProfileService} from './profile.service';
+import {normalizeMoiResponse} from './moi-response-normalizer';
+import {
+  candidateTypeFromState,
+  candidateTypeIsResident,
+  candidateTypeNeedsBirthCertificate,
+  candidateTypeNeedsMarriageCertificate,
+  candidateTypeNeedsSponsor,
+  createStepValiditySignal,
+} from '../state/profile-step-validity.signal';
+import {SponsorType} from '../../../../core/enums/lookups.enum';
+import {NationalityMapperService} from './nationality-mapper.service';
+import {take} from 'rxjs';
 
 
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
+  nationalityMapperService = inject(NationalityMapperService);
+  phoneMapperService = inject(PhoneMapperService);
   userService = inject(UserService);
+  lookups = inject(ProfileLookupsService);
+  profileService = inject(ProfileService);
   state = signal<ProfileState>({
     degrees: [], experiences: [], courses: [],
     skills: [], languages: [], attachments: [],
@@ -20,134 +39,231 @@ export class DataService {
     emailVerified: false, phoneVerified: false,
   });
 
-  private isFilledScalar = (val: unknown) => {
-    if (typeof val === 'string') return val.trim().length > 0;
-    if (typeof val === 'number') return Number.isFinite(val); // counts even 0
-    if (typeof val === 'boolean') return val as boolean; // counts even 0
-    return !!val;
-  };
+  get isNeedSponsor(){
+    return candidateTypeNeedsSponsor(candidateTypeFromState(this.state()));
+  }
+  get isNeedBirthCertificate() {
+    const t = candidateTypeFromState(this.state());
+    if (!t) return false;
+    return candidateTypeNeedsBirthCertificate(t);
+  }
+
+  get isNeedMarriageCertificate() {
+    const t = candidateTypeFromState(this.state());
+    if (!t) return false;
+    return candidateTypeNeedsMarriageCertificate(t);
+  }
+  get isResidentQatar(): boolean {
+    return candidateTypeIsResident(candidateTypeFromState(this.state()));
+  }
+  get isIndividualSponsor(): boolean {
+    return this.state().sponsorType?.backendName === SponsorType.Individual;
+  }
 
   private locked = signal<Partial<Record<keyof ProfileState, boolean>>>({});
 
   isLocked<K extends keyof ProfileState>(key: K): boolean {
     const l = this.locked();
-    return !!l[key];
+    if (l[key]) return true;
+
+    if (this.isResidentQatar && (key === 'fullNameAr' || key === 'fullNameEn')) return true;
+    if (this.isIndividualSponsor && key === 'sponsorEmployerName') return true;
+
+    return false;
   }
 
-  private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email'];
-  prefillFromBootstrap(prefill: Partial<ProfileState>) {
-    this.state.update(s => ({ ...s, ...prefill }));
+  private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email','fullNameAr','fullNameEn','sponsorEmployerName','sponsorEmployerNumber'];
+  prefillFromBootstrap(userData: Partial<ProfileState>) {
+    this.state.update(s => ({ ...s, ...userData }));
     this.lockedPrefillData();
+    this.prefillFromCheckProfile();
   }
-
-  lockedPrefillData(){
+  private lockedPrefillData() {
     const prefill = this.userService.getPrefill();
     if (!prefill) return;
-    const dataPrefill = {
+
+    const state = this.state();
+    const prefillMap: Partial<ProfileState> = {
       email: prefill.email,
       emailVerified: prefill.emailVerified,
-      phone: prefill.phone,
+      phone: this.phoneMapperService.toPhoneObject(prefill.phone),
       phoneVerified: prefill.phoneVerified,
-      nationality: prefill.nationality,
-      qid: prefill.qid
-    } as ProfileState;
+      nationality: this.nationalityMapperService.toNationalityObject(prefill.nationality),
+      qid: prefill.qid,
+    };
+
     this.locked.update(m => {
       const copy = { ...m };
-      for (const k of Object.keys(dataPrefill) as (keyof ProfileState)[]) {
-        if (!this.lockableKeys.includes(k)) continue;
-        const value = dataPrefill[k];
-        const hasValue =
-          value !== null && value !== undefined &&
-          (typeof value !== 'string' || value.trim().length > 0);
 
-        if (hasValue) {
-          copy[k] = true;
+      for (const k of Object.keys(prefillMap) as (keyof ProfileState)[]) {
+        if (!this.lockableKeys.includes(k)) continue;
+
+        const prefillValue = prefillMap[k];
+        if (prefillValue === null || prefillValue === undefined) {
+          copy[k] = false;
+          continue;
         }
+
+        const currentValue = state[k];
+        const matches =
+          typeof currentValue === 'string' && typeof prefillValue === 'string'
+            ? currentValue.trim().toLowerCase() === prefillValue.trim().toLowerCase()
+            : JSON.stringify(currentValue) === JSON.stringify(prefillValue);
+        copy[k] = matches;
       }
+
       return copy;
     });
   }
 
+  stepValidationDetailed = createStepValiditySignal(this.state);
+
   stepValidity = computed(() => {
-    const s = this.state();
-
-    const basicValidExceptionCase =
-      ![CandidateType.WifeOfQatari, CandidateType.SonOfQatariMother].includes(s.candidateType?.backendName as CandidateType) ||
-      (s.candidateType?.backendName == CandidateType.WifeOfQatari && this.isFilledScalar(s.marriageCertificateName)) ||
-      (s.candidateType?.backendName == CandidateType.SonOfQatariMother && this.isFilledScalar(s.birthCertificateName));
-
-
-    const basicValid =
-      this.isFilledScalar(s.candidateType) &&
-      this.isFilledScalar(s.targetEntity) &&
-      this.isFilledScalar(s.cvName) &&
-      this.isFilledScalar(s.idName) &&
-      basicValidExceptionCase;
-
-    const hasDisabilityValid = s.hasDisability !== null && s.hasDisability !== undefined;
-    const disabilityTypeValid =
-      !s.hasDisability || this.isFilledScalar(s.disabilityDetails);
-
-    const sponsorValid =
-      this.isFilledScalar(s.sponsorType) &&
-      this.isFilledScalar(s.sponsorEmployerName) &&
-      this.isFilledScalar(s.sponsorEmployerNumber) &&
-      this.isFilledScalar(s.sponsorCardName);
-
-    const personalValid =
-      this.isFilledScalar(s.fullNameAr) &&
-      this.isFilledScalar(s.fullNameEn) &&
-      this.isFilledScalar(s.qid) &&
-      this.isFilledScalar(s.dob) &&
-      this.isFilledScalar(s.nationality) &&
-      this.isFilledScalar(s.gender) &&
-      this.isFilledScalar(s.religion) &&
-      this.isFilledScalar(s.marital) &&
-      hasDisabilityValid &&
-      disabilityTypeValid &&
-      sponsorValid;
-
-    const contactValid =
-      this.isFilledScalar(s.country) &&
-      this.isFilledScalar(s.phone) &&
-      this.isFilledScalar(s.phoneVerified) &&
-      this.isFilledScalar(s.email) &&
-      this.isFilledScalar(s.emailVerified) &&
-      this.isFilledScalar(s.address);
-
-    const degreesValid   = Array.isArray(s.degrees) && s.degrees.length > 0;
-    const expValid       = Array.isArray(s.experiences) && s.experiences.length > 0;
-    const skillsValid    = Array.isArray(s.skills) && s.skills.length > 0;
-    const languagesValid = Array.isArray(s.languages) && s.languages.length  > 0;
-    const attachmentsValid = Array.isArray(s.attachments) &&
-      s.attachments.length > 0 &&
-      s.attachments.every(a => this.isFilledScalar(a.fileName ?? a.name) && (!!a.file || !!a.attachmentId));
-
+    const v = this.stepValidationDetailed();
     return {
-      basic: basicValid,
-      personal: personalValid,
-      contact: contactValid,
-      degrees: degreesValid,
-      experience: expValid,
-      skills: skillsValid,
-      languages: languagesValid,
-      attachments: attachmentsValid,
+      basic: v.basic.valid,
+      personal: v.personal.valid,
+      contact: v.contact.valid,
+      degrees: v.degrees.valid,
+      experience: v.experience.valid,
+      skills: v.skills.valid,
+      languages: v.languages.valid,
+      attachments: v.attachments.valid,
     } as const;
   });
 
   up<K extends keyof ProfileState>(key: K, val: ProfileState[K] | null) {
-    this.state.update(s => ({ ...s, [key]: val }));
+    this.state.update(s => {
+      const updated = { ...s, [key]: val } as ProfileState;
+
+      if (key === 'candidateType') {
+        return this.cleanCandidateTypeDependents(updated);
+      }
+
+      if (key === 'hasDisability') {
+        return this.cleanDisabilityDependents(updated);
+      }
+
+      return updated;
+    });
+  }
+
+  private cleanDisabilityDependents(state: ProfileState): ProfileState {
+    const next: ProfileState = { ...state };
+
+    if (!next.hasDisability) {
+      next.disabilityDetails = null;
+    }
+
+    return next;
+  }
+
+  private cleanCandidateTypeDependents(state: ProfileState): ProfileState {
+    const type = candidateTypeFromState(state);
+    const next: ProfileState = { ...state };
+
+    if (!candidateTypeNeedsSponsor(type)) {
+      next.sponsorType = null;
+      next.sponsorEmployerName = null;
+      next.sponsorEmployerNumber = null;
+      next.sponsorQidExpiry = null;
+      next.sponsorCardName = null;
+      next.sponsorCardFile = null;
+    }
+
+    if (!candidateTypeNeedsBirthCertificate(type)) {
+      next.birthCertificateName = null;
+      next.birthCertificateFile = null;
+    }
+
+    if (!candidateTypeNeedsMarriageCertificate(type)) {
+      next.marriageCertificateName = null;
+      next.marriageCertificateFile = null;
+    }
+
+    if (!candidateTypeIsResident(type)) {
+      next.naZone = null;
+      next.naStreet = null;
+      next.naBuilding = null;
+      next.naUnit = null;
+      next.naFileName = null;
+      next.naFile = null;
+    } else {
+      next.address = undefined;
+    }
+
+    if (candidateTypeIsResident(type)) {
+      next.office = null;
+    }
+
+    return next;
+  }
+
+  applyMoiPersonalInfo(info: MoiPersonalInfo) {
+    const nationality = this.nationalityMapperService.toNationalityObject(String(info.nationalityCode));
+    const gender = this.lookups.genders().find(g => g.backendName?.toUpperCase() === info.gender?.toUpperCase());
+    const arabicFullName = buildArabicFullName(info);
+    const englishFullName = buildEnglishFullName(info);
+    const shouldLockCheckProfile = this.isResidentQatar;
+
+    this.state.update(s => ({
+      ...s,
+      fullNameAr: arabicFullName || s.fullNameAr,
+      fullNameEn: englishFullName || s.fullNameEn,
+      qid: info.qid || s.qid,
+      qidExpiry: info.qidExpiry || s.qidExpiry,
+      dob: info.dateOfBirth || s.dob,
+      nationality: nationality ?? s.nationality,
+      gender: gender ?? s.gender,
+    }));
+
+    this.locked.update(m => ({
+      ...m,
+      fullNameAr: (shouldLockCheckProfile && !!arabicFullName) || m.fullNameAr,
+      fullNameEn: (shouldLockCheckProfile && !!englishFullName) || m.fullNameEn,
+      qid: (shouldLockCheckProfile && !!info.qid) || m.qid,
+      dob: (shouldLockCheckProfile && !!info.dateOfBirth) || m.dob,
+      nationality: (shouldLockCheckProfile && !!nationality) || m.nationality,
+      gender: (shouldLockCheckProfile && !!gender) || m.gender,
+    }));
+  }
+
+  private prefillFromCheckProfile() {
+    if (!this.isResidentQatar) return;
+
+    const { qid, qidExpiry } = this.state();
+    if (!qid || !qidExpiry) return;
+
+    this.profileService
+      .checkProfile(qid, qidExpiry)
+      .pipe(take(1))
+      .subscribe({
+        next: res => this.applyMoiPersonalInfo(normalizeMoiResponse(res)),
+        error: err => console.error(err),
+      });
+  }
+
+  applySponsorPersonalInfo(info: MoiPersonalInfo) {
+    const arabicFullName = buildArabicFullName(info);
+    const englishFullName = buildEnglishFullName(info);
+    const sponsorName = arabicFullName || englishFullName || this.state().sponsorEmployerName;
+
+    this.state.update(s => ({
+      ...s,
+      sponsorEmployerName: sponsorName || s.sponsorEmployerName,
+      sponsorEmployerNumber: info.qid || s.sponsorEmployerNumber,
+      sponsorQidExpiry: info.qidExpiry || s.sponsorQidExpiry,
+    }));
+
+    this.locked.update(m => ({
+      ...m,
+      sponsorEmployerName: !!sponsorName || m.sponsorEmployerName,
+      sponsorEmployerNumber: !!info.qid || m.sponsorEmployerNumber,
+      sponsorQidExpiry: !!info.qidExpiry || m.sponsorQidExpiry,
+    }));
   }
 
   addDegree(d: Degree){ this.state.update(s => ({...s, degrees:[...s.degrees, d]})); }
-  updateDegree(index: number, patch: Partial<Degree>) {
-    this.state.update(s => ({
-      ...s,
-      degrees: s.degrees.map((d, i) =>
-        i === index ? { ...d, ...patch } : d
-      ),
-    }));
-  }
   delDegree(i:number){ this.state.update(s => ({...s, degrees: s.degrees.filter((_,x)=>x!==i)})); }
 
   addExp(e: Experience){ this.state.update(s => ({...s, experiences:[...s.experiences, e]})); }

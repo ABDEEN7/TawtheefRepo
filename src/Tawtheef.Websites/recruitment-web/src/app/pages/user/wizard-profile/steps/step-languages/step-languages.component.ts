@@ -24,6 +24,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   profile = inject(ProfileService);
 
   saving = false;
+  private lastSubmittedSignature: string | null = null;
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -34,7 +35,11 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   newLanguage?: dropdownOptionsModel;
   newLevel?: dropdownOptionsModel;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const state = this.ds.state();
+    const signature = this.buildSignature(state.languages);
+    this.lastSubmittedSignature = null;
+  }
 
   addLang(): void {
     if (this.newLanguage && this.newLevel) {
@@ -83,11 +88,18 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
 
     const state = this.ds.state();
     const languages = state.languages || [];
+    const signature = this.buildSignature(languages);
+
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
 
     this.saving = true;
     this.profile.saveLanguagesSection(languages).subscribe({
       next: () => {
         this.saving = false;
+        this.lastSubmittedSignature = signature;
         this.next.emit();
       },
       error: err => {
@@ -101,6 +113,16 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
         });
       },
     });
+  }
+
+  private buildSignature(languages: any[]): string {
+    return JSON.stringify(
+      (languages ?? []).map(l => ({
+        id: l.id ?? null,
+        languageId: l.langId ?? l.languageId ?? l.id ?? null,
+        levelId: l.levelId ?? l.level?.id ?? l.level ?? null,
+      }))
+    );
   }
 
   ngOnDestroy(): void {}

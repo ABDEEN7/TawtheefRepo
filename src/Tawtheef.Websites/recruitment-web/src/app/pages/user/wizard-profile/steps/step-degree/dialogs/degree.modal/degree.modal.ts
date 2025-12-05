@@ -21,6 +21,8 @@ import {Degree} from '../../../../models/degree.model';
 import {EndpointsService} from '../../../../../../../core/http/endpoints.service';
 import {RemoteSelectComponent} from '../../../../../../../shared/components/remote-select/remote-select';
 import * as Lookups from '../../../../../../../core/enums/lookups.enum';
+import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
+import {UploadedFileRef} from '../../../../models/profile-state.model';
 
 @Component({
   selector: 'app-qualification',
@@ -45,6 +47,7 @@ export class DegreeModal implements OnInit {
   protected lookups = inject(ProfileLookupsService);
   protected ref = inject(DynamicDialogRef);
   protected endpoints = inject(EndpointsService);
+  private fileUtils = inject(FileUtilsService);
 
   minYear = 1970;
   maxYear = new Date().getFullYear();
@@ -54,6 +57,7 @@ export class DegreeModal implements OnInit {
   maxFileSize = 1_000_000; // 1MB
   fileError: string | null = null;
   allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  initialCertificate: UploadedFileRef | null = null;
 
   form: FormGroup = this.fb.group({
     degree: [null, Validators.required],
@@ -81,6 +85,7 @@ export class DegreeModal implements OnInit {
   ngOnInit() {
     if (this.config.data && this.config.data.initialValue) {
       this.form.patchValue(this.config.data.initialValue);
+      this.initialCertificate = (this.config.data.initialValue as Degree)?.certificate ?? null;
     }
 
     this.updateQualificationValidators();
@@ -212,6 +217,18 @@ export class DegreeModal implements OnInit {
     this.degreeFile = file;
     this.form.patchValue({ degreeFileName: file.name });
     input.value = '';
+  }
+
+  previewFile(ev?: Event): void {
+    ev?.stopPropagation();
+    if (this.degreeFile) {
+      this.fileUtils.previewBlob(this.degreeFile);
+      return;
+    }
+
+    if (this.initialCertificate?.url) {
+      this.fileUtils.previewUrl(this.initialCertificate.url, this.initialCertificate.resourceName || '', false);
+    }
   }
 
   get f() {

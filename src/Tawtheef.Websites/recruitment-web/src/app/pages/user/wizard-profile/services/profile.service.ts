@@ -1,4 +1,5 @@
 ﻿import { Injectable, inject } from '@angular/core';
+import {HttpParams} from '@angular/common/http';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
 import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
@@ -6,6 +7,8 @@ import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.
 import {GUID} from '../../../../shared/types/guid.type';
 import {HttpService} from '../../../../core/http/http.service';
 import {Experience, TrainingCourse} from '../models/experience.model';
+import {of} from 'rxjs';
+import {MoiPersonalInfo} from '../models/moi-personal-info.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -44,23 +47,69 @@ export class ProfileService {
     return this.http.post(this.endpoints.user.profile.savePersonal, formData);
   }
 
+  checkProfile(qid: string, expiryDate: string) {
+    return this.http.get<MoiPersonalInfo>(this.endpoints.user.profile.checkProfile, { qid, expiryDate });
+  }
+
   // ========== CONTACT ==========
   saveContactSection(
     dto: SaveProfileContactRequestDto,
     files?: { nationalAddressFile?: File | null }
   ) {
-    const formData = this.buildFormData(dto, {
-      nationalAddressFile: files?.nationalAddressFile ?? null
-    });
+    const formData = new FormData();
+
+    if (dto.submit !== null && dto.submit !== undefined) {
+      formData.append('submit', String(dto.submit));
+    }
+    if (dto.residenceCountryId) {
+      formData.append('residenceCountryId', dto.residenceCountryId);
+    }
+    if (dto.interviewLocationId) {
+      formData.append('interviewLocationId', dto.interviewLocationId);
+    }
+    if (dto.address) {
+      formData.append('address', dto.address);
+    }
+
+    if (dto.nationalAddress) {
+      const na = dto.nationalAddress;
+      if (na.zone !== null && na.zone !== undefined) {
+        formData.append('nationalAddress.zone', String(na.zone));
+      }
+      if (na.street !== null && na.street !== undefined) {
+        formData.append('nationalAddress.street', String(na.street));
+      }
+      if (na.building !== null && na.building !== undefined) {
+        formData.append('nationalAddress.building', String(na.building));
+      }
+      if (na.unit !== null && na.unit !== undefined) {
+        formData.append('nationalAddress.unit', String(na.unit));
+      }
+      if (na.nationalAddressFileName) {
+        formData.append('nationalAddress.nationalAddressFileName', na.nationalAddressFileName);
+      }
+    }
+
+    if (files?.nationalAddressFile) {
+      formData.append('nationalAddress.nationalAddress', files.nationalAddressFile);
+    }
 
     return this.http.post(this.endpoints.user.profile.saveContact, formData);
   }
 
   // ========== Degrees ==========
   saveEducationSection(degrees: any[]) {
-    const newDegrees = degrees.filter(d=> !d.attachmentId);
-    const dto = {
-      degreesJson: newDegrees.filter(d=> !d.attachmentId).map(d => ({
+    let fileCursor = 0;
+    const degreeFiles: (File | null | undefined)[] = [];
+
+    const payload = (degrees ?? []).map(d => {
+      const fileIndex = d.file ? fileCursor++ : null;
+      if (d.file) {
+        degreeFiles.push(d.file);
+      }
+
+      return {
+        id: d.id ?? null,
         degreeId: d.degree.id,
         gradCountryId: d.gradCountry.id,
         universityId: d.university.id,
@@ -70,13 +119,16 @@ export class ProfileService {
         studyTypeId: d.studySystem.id,
         gpa: d.gpa,
         gradeId: d.grade.id,
-        fileName: d.fileName
-      })),
-    };
-    const formData = this.buildFormData(dto);
-    newDegrees.forEach(d => {
-      if (d.file) {
-        formData.append('DegreeFiles', d.file);
+        certificateId: d.attachmentId ?? null,
+        fileIndex,
+        existingFileName: d.certificate?.resourceName ?? d.certificateName ?? d.fileName ?? null,
+      };
+    });
+
+    const formData = this.buildFormData({ degreesJson: payload });
+    degreeFiles.forEach(f => {
+      if (f) {
+        formData.append('DegreeFiles', f);
       }
     });
     return this.http.post(this.endpoints.user.profile.saveEducation, formData);
@@ -88,7 +140,7 @@ export class ProfileService {
   // ========== EXPERIENCE ==========
   saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
     const experienceFiles: (File | null | undefined)[] = [];
-    const experiencesDto = (experiences ?? []).map(e => {
+    const experiencesDto = (experiences ?? []).filter(e=> !e.id).map(e => {
       const fileIndex = e.file ? experienceFiles.push(e.file) - 1 : null;
 
       return {
@@ -103,9 +155,8 @@ export class ProfileService {
         description: e.description,
       };
     });
-
     const trainingCourseFiles: (File | null | undefined)[] = [];
-    const coursesDto = (courses ?? []).map(c => {
+    const coursesDto = (courses ?? []).filter(e=> !e.id).map(c => {
       const fileIndex = c.file ? trainingCourseFiles.push(c.file) - 1 : null;
 
       return {
@@ -121,19 +172,19 @@ export class ProfileService {
       };
     });
 
+    if(experiencesDto.length === 0 && coursesDto.length === 0)
+      return of(null);
+
     const formData = this.buildFormData({
       submit: false,
       experiencesJson: experiencesDto,
-      trainingCoursesJson: coursesDto,
-      achievements: [],
+      trainingCoursesJson: coursesDto
     });
-
     experienceFiles.forEach(f => {
       if (f) {
         formData.append('ExperienceFiles', f);
       }
     });
-
     trainingCourseFiles.forEach(f => {
       if (f) {
         formData.append('TrainingCourseFiles', f);

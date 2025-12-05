@@ -33,7 +33,17 @@
         <td>{{ r.studySystem.name || '—' }}</td>
         <td>{{ r.gpa || '—' }}</td>
         <td>{{ r.grade.name || '—' }}</td>
-        <td>{{ r.certificate?.resourceName || r.file?.name|| '—' }}</td>
+        <td>
+          <ng-container *ngIf="r.certificate?.resourceName || r.file?.name; else noDegreeFile">
+            <div class="d-flex align-items-center gap-2">
+              <span>{{ r.certificate?.resourceName || r.file?.name }}</span>
+              <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r, $event)">
+                <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+              </button>
+            </div>
+          </ng-container>
+          <ng-template #noDegreeFile>—</ng-template>
+        </td>
         <td class="text-end">
           <button class="btn btn-sm btn-outline-danger" (click)="del(i)">
             <i class="fa-solid fa-trash"></i>

@@ -23,19 +23,23 @@ public sealed class SubmitUserProfileHandler(
         var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
 
         var profile = await profileRepo.DbSet
+            .Include(p => p.User)
             .Include(p => p.Qualifications)
             .Include(p => p.Experiences)
             .Include(p => p.TrainingCourses)
             .Include(p => p.Skills)
             .Include(p => p.Languages)
             .Include(p => p.AdditionalAttachments)
+            .Include(p => p.SponsorProfile)
             .Include(p => p.ResidenceAddress)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+        
+        if(!profile.IsCompleted())
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotCompleted);
 
-        // TODO: هنا ممكن تتحقق أن كل الـ Sections مكتملة قبل السماح بالـ Submit
         var lastVersion = await submissionRepo.DbSet
             .Where(s => s.UserProfileId == profile.Id)
             .OrderByDescending(s => s.Version)
@@ -51,7 +55,8 @@ public sealed class SubmitUserProfileHandler(
             Skills           = profile.Skills,
             Languages        = profile.Languages,
             Attachments      = profile.AdditionalAttachments,
-            Address          = profile.ResidenceAddress
+            ResidenceAddress = profile.ResidenceAddress,
+            SponsorProfile   = profile.SponsorProfile
         };
 
         var json = JsonSerializer.Serialize(snapshot,
@@ -66,7 +71,11 @@ public sealed class SubmitUserProfileHandler(
         };
 
         await submissionRepo.AddAsync(submission);
-        profile.IsDraft = false;
+        profile.Status = UserStatus.Submitted;
+        if (profile.User is not null)
+        {
+            profile.User.Status = UserStatus.Submitted;
+        }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

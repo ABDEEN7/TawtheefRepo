@@ -32,7 +32,17 @@
           {{ r.current ? ('common.present' | translate) : (r.to ? (r.to | date:'MM/yyyy') : '—') }}
         </td>
         <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
-        <td>{{ r.fileName || '—' }}</td>
+        <td>
+          <ng-container *ngIf="r.fileName || r.file?.name; else noExpFile">
+            <div class="d-flex align-items-center gap-2">
+              <span>{{ r.fileName || r.file?.name }}</span>
+              <button class="btn btn-link p-0 text-decoration-none" (click)="previewExperience(r, $event)">
+                <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+              </button>
+            </div>
+          </ng-container>
+          <ng-template #noExpFile>—</ng-template>
+        </td>
         <td class="text-end">
           <button class="btn btn-sm btn-outline-danger" (click)="removeExperience(i)">
             <i class="fa-solid fa-trash"></i>
@@ -79,7 +89,17 @@
           {{ r.to ? (r.to | date:'MM/yyyy') : 'Present' }}
         </td>
         <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
-        <td>{{ r.fileName || '—' }}</td>
+        <td>
+          <ng-container *ngIf="r.fileName || r.file?.name; else noCourseFile">
+            <div class="d-flex align-items-center gap-2">
+              <span>{{ r.fileName || r.file?.name }}</span>
+              <button class="btn btn-link p-0 text-decoration-none" (click)="previewCourse(r, $event)">
+                <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+              </button>
+            </div>
+          </ng-container>
+          <ng-template #noCourseFile>—</ng-template>
+        </td>
         <td class="text-end">
           <button class="btn btn-sm btn-outline-danger" (click)="removeCourse(i)">
             <i class="fa-solid fa-trash"></i>

@@ -6,6 +6,8 @@ import {createStepValiditySignal} from '../../state/profile-step-validity.signal
 import {TranslateService} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import {ProfileService} from '../../services/profile.service';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {UploadedFileRef} from '../../models/profile-state.model';
 
 @Component({
   selector: 'app-step-attachments',
@@ -22,8 +24,10 @@ export class StepAttachmentsComponent implements OnInit {
   translate = inject(TranslateService);
   messageService = inject(MessageService);
   profile = inject(ProfileService);
+  fileUtils = inject(FileUtilsService);
 
   saving = false;
+  private lastSubmittedSignature: string | null = null;
 
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
@@ -32,6 +36,7 @@ export class StepAttachmentsComponent implements OnInit {
   }
 
   private filesStore: (File | null)[] = [];
+  private fileRefs: (UploadedFileRef | null)[] = [];
 
   form: FormGroup = this.fb.group({
     rows: this.fb.array([]),
@@ -40,11 +45,14 @@ export class StepAttachmentsComponent implements OnInit {
   ngOnInit(): void {
     const attachments = this.ds.state().attachments || [];
     attachments.forEach((att: any, idx: number) => {
-      const row = this.createRow(att.name ?? '', att.fileName ?? att.name ?? '', true, att.id, att.attachmentId);
+      const row = this.createRow(att.name ?? '', att.fileName ?? att.fileRef?.resourceName ?? att.name ?? '', true, att.id, att.attachmentId);
       this.rows.push(row);
       this.filesStore[idx] = att.file ?? null;
+      this.fileRefs[idx] = att.fileRef ?? null;
       row.disable({ emitEvent: false });
     });
+
+    this.lastSubmittedSignature = null;
   }
 
   // ======== FormArray helper ========
@@ -71,11 +79,13 @@ export class StepAttachmentsComponent implements OnInit {
   addRow(): void {
     this.rows.push(this.createRow());
     this.filesStore.push(null);
+    this.fileRefs.push(null);
   }
 
   removeRow(i: number): void {
     this.rows.removeAt(i);
     this.filesStore.splice(i, 1);
+    this.fileRefs.splice(i, 1);
   }
 
   confirmRow(i: number): void {
@@ -100,6 +110,7 @@ export class StepAttachmentsComponent implements OnInit {
 
     if (file) {
       this.filesStore[i] = file;
+      this.fileRefs[i] = null;
       grp.patchValue({ file, fileName: file.name });
       grp.updateValueAndValidity({ emitEvent: false });
     }
@@ -108,6 +119,7 @@ export class StepAttachmentsComponent implements OnInit {
   changeFile(i: number): void {
     const grp = this.rows.at(i) as FormGroup;
     this.filesStore[i] = null;
+    this.fileRefs[i] = null;
     grp.patchValue({ file: null, fileName: '' });
   }
 
@@ -166,16 +178,24 @@ export class StepAttachmentsComponent implements OnInit {
         name: title,
         fileName,
         file: this.filesStore[index] ?? null,
+        fileRef: this.fileRefs[index] ?? null,
       } as Attachment;
     });
 
     // حفظ في الـ DataService
     this.ds.up('attachments', attachments as any);
 
+    const signature = this.buildSignature(attachments);
+    if (signature && signature === this.lastSubmittedSignature) {
+      this.next.emit();
+      return;
+    }
+
     this.saving = true;
     this.profile.saveAttachmentsSection(attachments).subscribe({
       next: () => {
         this.saving = false;
+        this.lastSubmittedSignature = signature;
         this.next.emit();
       },
       error: err => {
@@ -189,5 +209,36 @@ export class StepAttachmentsComponent implements OnInit {
         });
       },
     });
+  }
+
+  previewFile(i: number, ev?: Event): void {
+    ev?.stopPropagation();
+    const local = this.filesStore[i];
+    if (local) {
+      this.fileUtils.previewBlob(local);
+      return;
+    }
+
+    const ref = this.fileRefs[i];
+    if (ref?.url) {
+      this.fileUtils.previewUrl(ref.url, ref.resourceName || this.getFileName(i), false);
+    }
+  }
+
+  private buildSignature(attachments: Attachment[]): string {
+    return JSON.stringify(
+      (attachments ?? []).map((a, index) => ({
+        id: a.id ?? null,
+        attachmentId: a.attachmentId ?? null,
+        name: a.name ?? '',
+        fileName: a.file?.name ?? a.fileName ?? a.fileRef?.resourceName ?? null,
+        refId: a.fileRef?.resourceId ?? null,
+        localStoreName: this.filesStore[index]?.name ?? null,
+      }))
+    );
+  }
+
+  canPreview(i: number): boolean {
+    return !!this.filesStore[i] || !!this.fileRefs[i]?.url;
   }
 }

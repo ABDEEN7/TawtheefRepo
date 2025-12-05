@@ -14,7 +14,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SaveProfileSkillsHandler(
     IUnitOfWork uow,
-    IProfileReviewService reviewService
+    IProfileReviewService reviewService,
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileSkillsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileSkillsCommand cmd, CancellationToken ct)
@@ -29,7 +30,11 @@ public sealed class SaveProfileSkillsHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
-        
+
+        var validationResult = validationService.ValidateSkillsAndLanguages(profile);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
+
         if(cmd.Request.Skills.Count == 0)
             return Result.Ok(Unit.Value);
         
@@ -48,7 +53,6 @@ public sealed class SaveProfileSkillsHandler(
             }).ToList();
         
         await skillRepo.AddRangeAsync(skills);
-        profile.IsDraft = !cmd.Request.Submit;
         await reviewService.TouchSectionAsync(profile.Id, ProfileSection.SkillsLanguages, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
