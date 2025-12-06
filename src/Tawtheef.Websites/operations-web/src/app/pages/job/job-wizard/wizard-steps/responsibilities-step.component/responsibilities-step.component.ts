@@ -17,12 +17,10 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
   
   jobData!: Job;
   
-  // Form definition
   readonly form = this.fb.group({
     responsibilities: this.fb.array([])
   }) as FormGroup;
   
-  // State
   newResponsibilityAr = '';
   newResponsibilityEn = '';
   private readonly destroy$ = new Subject<void>();
@@ -47,12 +45,10 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
     this.destroy$.complete();
   }
 
-  // Get responsibilities form array
   get responsibilitiesArray(): FormArray {
     return this.form.get('responsibilities') as FormArray;
   }
 
-  // Get specific responsibility form group
   getResponsibilityGroup(index: number): FormGroup {
     return this.responsibilitiesArray.at(index) as FormGroup;
   }

@@ -17,7 +17,6 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   
   jobData!: Job;
   
-  // Form definition
   readonly form: FormGroup = this.fb.group({
     attachments: this.fb.array([])
   });
@@ -25,13 +24,11 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    // Load initial data if available
     const currentJob = this.jobService.getCurrentJob();
     if (currentJob) {
       this.setJobData(currentJob);
     }
     
-    // Subscribe to form changes
     this.form.valueChanges.pipe(
       debounceTime(300),
       filter(() => this.form.valid),
@@ -46,12 +43,10 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     this.destroy$.complete();
   }
 
-  // Get attachments form array
   get attachmentsArray(): FormArray {
     return this.form.get('attachments') as FormArray;
   }
 
-  // Get specific attachment form group
   getAttachmentGroup(index: number): FormGroup {
     return this.attachmentsArray.at(index) as FormGroup;
   }
@@ -82,9 +77,8 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   }
 
   isValid(): boolean {
-    // Attachments are optional, but if added, they must be valid
     if (this.attachmentsArray.length === 0) {
-      return true; // No attachments is okay
+      return true;
     }
     
     return this.form.valid;
@@ -115,7 +109,6 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     }
   }
 
-  // Check if attachment has Arabic title
   hasArabicTitle(index: number): boolean {
     const group = this.getAttachmentGroup(index);
     const titleAr = group.get('titleAr')?.value?.trim();

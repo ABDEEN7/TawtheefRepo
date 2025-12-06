@@ -23,6 +23,7 @@ public class JobRepository(IGenericRepository<Job> repository)
     {
         var baseQuery = _repository.DbSet
             .AsNoTracking()
+            .Where(job => !job.IsDeleted)
             .Include(j => j.JobQuota)
                 .ThenInclude(q => q!.ResidentsBreakdowns)
                     .ThenInclude(rb => rb.Nationality)
@@ -57,7 +58,7 @@ public class JobRepository(IGenericRepository<Job> repository)
     public async Task<IResult<Job>> GetByIdWithDetailsAsync(Guid id)
     {
         var job = await _repository.DbSet
-            .AsNoTracking()
+            .Where(job=> !job.IsDeleted)
             .Include(j => j.JobQuota)
                 .ThenInclude(q => q!.ResidentsBreakdowns)
                     .ThenInclude(rb => rb.Nationality)

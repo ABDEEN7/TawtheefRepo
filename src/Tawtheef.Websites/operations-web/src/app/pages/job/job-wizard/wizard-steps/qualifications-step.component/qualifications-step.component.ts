@@ -31,7 +31,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     this.form.valueChanges.pipe(
       debounceTime(300),
       filter(() => this.form.valid)
-    ).subscribe(values => {
+    ).subscribe(_ => {
       this.updateJobData();
     });
     

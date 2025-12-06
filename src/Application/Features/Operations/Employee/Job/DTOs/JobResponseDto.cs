@@ -1,4 +1,5 @@
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
@@ -18,8 +19,8 @@ public class JobResponseDto
     public DateTimeOffset? PublishAt { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
     public DateTimeOffset? ModifiedDate { get; set; }
-    public string? CreatedBy { get; set; }
-    public string? ModifiedBy { get; set; }
+    public User? CreatedBy { get; set; }
+    public User? ModifiedBy { get; set; }
     public int YearsOfExperience { get; set; }
     public int MinimumAge { get; set; }
     public int MaximumAge { get; set; }

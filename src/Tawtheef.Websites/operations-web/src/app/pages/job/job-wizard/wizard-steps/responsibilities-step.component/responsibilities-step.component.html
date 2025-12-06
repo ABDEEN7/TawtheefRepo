@@ -13,14 +13,12 @@
         </div>
       </div>
 
-      <!-- Add Responsibility Section -->
       <div class="border rounded p-3 mb-4 bg-light">
         <h5 class="fw-bold mb-3">
           {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_NEW' | translate }}
         </h5>
         
         <div class="row g-3">
-          <!-- Arabic Responsibility -->
           <div class="col-md-6">
             <label class="form-label fw-bold">
               <span class="text-danger">*</span>
@@ -37,7 +35,6 @@
             </textarea>
           </div>
           
-          <!-- English Responsibility -->
           <div class="col-md-6">
             <label class="form-label fw-bold">
               {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN' | translate }}
@@ -65,7 +62,6 @@
         </div>
       </div>
 
-      <!-- Responsibilities List -->
       <div formArrayName="responsibilities">
         @if (responsibilitiesArray.length === 0) {
           <div class="text-center py-5 border rounded">
@@ -105,7 +101,6 @@
               
               <div class="card-body">
                 <div class="row g-3">
-                  <!-- Arabic Text -->
                   <div class="col-md-6">
                     <label class="form-label fw-bold">
                       <span class="text-danger">*</span>
@@ -133,7 +128,6 @@
                     }
                   </div>
                   
-                  <!-- English Text -->
                   <div class="col-md-6">
                     <label class="form-label fw-bold">
                       {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN' | translate }}
@@ -160,7 +154,6 @@
         }
       </div>
       
-      <!-- Validation Summary -->
       @if (!isValid() && form.touched) {
         <div class="alert alert-warning mt-4">
           <i class="fa fa-exclamation-triangle me-2"></i>

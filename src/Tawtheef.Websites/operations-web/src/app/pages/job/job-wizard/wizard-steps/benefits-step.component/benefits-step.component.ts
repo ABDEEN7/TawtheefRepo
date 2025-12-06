@@ -23,13 +23,11 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
   });
 
   ngOnInit(): void {
-    // Load initial data if available
     const currentJob = this.jobService.getCurrentJob();
     if (currentJob) {
       this.setJobData(currentJob);
     }
     
-    // Subscribe to form changes
     this.form.valueChanges.pipe(
       debounceTime(300),
       filter(() => this.form.valid)

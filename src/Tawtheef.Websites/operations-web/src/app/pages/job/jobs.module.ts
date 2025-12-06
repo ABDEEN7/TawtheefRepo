@@ -33,6 +33,7 @@ import { QualificationsStepComponent } from './job-wizard/wizard-steps/qualifica
 import { ResponsibilitiesStepComponent } from './job-wizard/wizard-steps/responsibilities-step.component/responsibilities-step.component';
 import { AttachmentStepComponent } from './job-wizard/wizard-steps/attachment-step.component/attachment-step.component';
 import { BenefitsStepComponent } from './job-wizard/wizard-steps/benefits-step.component/benefits-step.component';
+import { Toast } from "primeng/toast";
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { BenefitsStepComponent } from './job-wizard/wizard-steps/benefits-step.c
     PointsConfigModalComponent,
     NgOptimizedImage,
     MultiSelectModule,
-    Scroller
+    Scroller,
+    Toast
 ],
   exports: [
     JobDetailsComponent,

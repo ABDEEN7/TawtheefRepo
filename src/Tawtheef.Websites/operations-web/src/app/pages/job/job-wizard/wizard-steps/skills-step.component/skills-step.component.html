@@ -13,7 +13,6 @@
         </div>
       </div>
 
-      <!-- Add Skill Button -->
       <div class="mb-4">
         <button class="btn btn-outline-brand" (click)="addSkill()" type="button">
           <i class="fa fa-plus me-2"></i>
@@ -21,7 +20,6 @@
         </button>
       </div>
 
-      <!-- Skills List -->
       <div formArrayName="jobSkills">
         @if (jobSkillsArray.length === 0) {
           <div class="text-center py-5 border rounded">
@@ -59,7 +57,6 @@
               
               <div class="card-body">
                 <div class="row g-3 align-items-center">
-                  <!-- Skill Selection -->
                   <div class="col-md-6">
                     <label class="form-label fw-bold">
                       {{ 'JOB_WIZARD.STEPS.SKILLS.SKILL_NAME' | translate }}
@@ -84,7 +81,6 @@
                     }
                   </div>
 
-                  <!-- Show to Applicants Toggle -->
                   <div class="col-md-4">
                     <div class="form-check form-switch">
                       <input 
@@ -102,7 +98,6 @@
                     </div>
                   </div>
 
-                  <!-- Skill Info Display -->
                   @if (isSkillSelected(i)) {
                     <div class="col-12 mt-2">
                       <div class="alert alert-light border">
@@ -125,7 +120,6 @@
         }
       </div>
       
-      <!-- Validation Summary -->
       @if (!isValid() && form.touched && jobSkillsArray.length > 0) {
         <div class="alert alert-warning mt-4">
           <i class="fa fa-exclamation-triangle me-2"></i>

@@ -16,7 +16,6 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   
   jobData!: Job;
   
-  // Form definition
   readonly form = this.fb.group({
     conditions: this.fb.array([])
   }) as FormGroup;
@@ -45,12 +44,10 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
     this.destroy$.complete();
   }
 
-  // Get conditions form array
   get conditionsArray(): FormArray {
     return this.form.get('conditions') as FormArray;
   }
 
-  // Get specific condition form group
   getConditionGroup(index: number): FormGroup {
     return this.conditionsArray.at(index) as FormGroup;
   }

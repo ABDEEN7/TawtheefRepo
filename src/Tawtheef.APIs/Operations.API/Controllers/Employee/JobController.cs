@@ -19,19 +19,20 @@ public class JobController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetSectorsQuery());
         return result.ToActionResult();
     }
-    [HttpGet("lookups/managments")]
-    public async Task<IActionResult> GetManagments()
+    [HttpGet("lookups/managements")]
+    public async Task<IActionResult> GetManagements([FromQuery] Guid sectorId)
     {
-        var result = await mediator.Send(new GetManagemntsQuery());
+        var result = await mediator.Send(new GetManagementsBySectorQuery(sectorId));
         return result.ToActionResult();
     }
+
     [HttpGet("lookups/departments")]
-    public async Task<IActionResult> GetDepartments()
+    public async Task<IActionResult> GetDepartments([FromQuery] Guid managementId)
     {
-        var result = await mediator.Send(new GetDepartmentsQuery());
+        var result = await mediator.Send(new GetDepartmentsByManagementQuery(managementId));
         return result.ToActionResult();
     }
-    
+
     [HttpGet("lookups/majors")]
     public async Task<IActionResult> GetMajors()
     {
@@ -77,7 +78,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [HttpGet("lookups/genders")]
     public async Task<IActionResult> GetGenders()
     {
-        var result = await mediator.Send(new GetGendersQuery());
+        var result = await mediator.Send(new GetGendersWithAllQuery());
         return result.ToActionResult();
     }
     
@@ -147,12 +148,12 @@ public class JobController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPatch("{id:guid}/status")]
+    [HttpPut("{id:guid}/status")]
     public async Task<IActionResult> ChangeJobStatus(
     Guid id,
-    [FromBody] Guid newStatusId)
+    [FromQuery] Guid statusId)
     {
-        var command = new ChangeJobStatusCommand(id, newStatusId);
+        var command = new ChangeJobStatusCommand(id, statusId);
         var result = await mediator.Send(command);
         return result.ToActionResult();
     }

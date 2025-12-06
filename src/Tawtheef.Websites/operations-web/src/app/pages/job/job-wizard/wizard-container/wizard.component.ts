@@ -4,6 +4,7 @@ import {
   Component,
   ComponentRef,
   inject,
+  OnDestroy,
   OnInit,
   Type,
   ViewChild,
@@ -12,8 +13,10 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { JobService } from '../../services/job.service';
-import { NotificationService } from '../../../../core/services/notification.service';
 import { WizardStepComponent } from '../wizard-steps/base/wizard-step.component';
 import { ConditionsStepComponent } from '../wizard-steps/conditions-step.component/conditions-step.component';
 import { SkillsStepComponent } from '../wizard-steps/skills-step.component/skills-step.component';
@@ -34,21 +37,29 @@ import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic
   templateUrl: './wizard.component.html',
   styleUrls: ['./wizard.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  providers: [MessageService]
 })
-export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'abstract' keyword
+export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private notificationService = inject(NotificationService);
+  private messageService = inject(MessageService);
   private dialogService = inject(DialogService);
+  private translateService = inject(TranslateService);
   lookupsService = inject(JobLookupService);
+  
+  private destroy$ = new Subject<void>();
+  private retryCount = 0;
+  private maxRetries = 20;
   
   step = 1;
   isEditMode = false;
   jobId: GUID = GuidUtils.emptyGuid;
   isLoading = false;
   hasBasicData = false;
+  stepsLoaded = false;
+  showContainer = false; // New flag to control container visibility
 
   stepClasses: Type<WizardStepComponent>[] = [
     OverviewStepComponent,
@@ -61,7 +72,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
     ReviewStepComponent 
   ];
 
-  @ViewChild('stepsContainer', { read: ViewContainerRef, static: true })
+  @ViewChild('stepsContainer', { read: ViewContainerRef, static: false })
   private container!: ViewContainerRef;
 
   private stepRefs: ComponentRef<WizardStepComponent>[] = [];
@@ -75,7 +86,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
   }
 
   get showWizardContent(): boolean {
-    return this.isEditMode && this.hasBasicData;
+    return this.hasBasicData;
   }
 
   ngOnInit(): void {
@@ -92,14 +103,20 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
       
       setTimeout(() => {
         this.openBasicDataPopup();
-      }, 800);
+      }, 300);
     }
   }
 
   ngAfterViewInit(): void {
-    if (this.isEditMode && this.jobId && !this.hasBasicData) {
+    if (this.isEditMode && this.jobId) {
       this.loadJobForWizard();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.cleanupSteps();
   }
 
   private openBasicDataPopup(): void {
@@ -115,65 +132,123 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
       }
     });
 
-    ref?.onClose.subscribe((result) => {
-      if (result?.success && result?.jobId) {
-        this.hasBasicData = true;
-        this.jobId = result.jobId;
-        this.isEditMode = true;
-        
-        this.loadJobForWizard();
-      } else {
-        this.router.navigate(['/jobs']);
-      }
-    });
+    ref?.onClose
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result) => {
+        if (result?.success && result?.jobId) {
+          this.hasBasicData = true;
+          this.jobId = result.jobId;
+          this.isEditMode = true;
+          
+          this.loadJobForWizard();
+        } else {
+          this.router.navigate(['/jobs']);
+        }
+      });
   }
 
   private loadJobForWizard(): void {
     this.isLoading = true;
-    this.jobService.loadJobForEdit(this.jobId).subscribe({
-      next: () => {
-        const job = this.jobService.getCurrentJob();
-        if (job?.majorId) {
-          this.lookupsService.loadSkillsByMajor(job.majorId);
-        }
+    this.showContainer = false;
+    this.stepsLoaded = false;
+    this.retryCount = 0;
         
-        this.hasBasicData = true;
-        this.loadSteps();
-        this.showActive();
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.notificationService.error('فشل في تحميل الوظيفة');
-        this.isLoading = false;
-        this.router.navigate(['/jobs']);
+    this.jobService.loadJobForEdit(this.jobId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          const job = this.jobService.getCurrentJob();
+          
+          if (job?.majorId) {
+            this.lookupsService.loadSkillsByMajor(job.majorId);
+          }
+          
+          this.hasBasicData = true;
+          this.showContainer = true; 
+          this.isLoading = false;
+          
+          this.cdr.detectChanges();
+          this.initializeSteps();
+        },
+        error: (error) => {
+          this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED');
+          this.isLoading = false;
+          this.router.navigate(['/jobs']);
+        }
+      });
+  }
+
+  private initializeSteps(): void {    
+    if (!this.container) {
+      this.retryCount++;
+      
+      if (this.retryCount >= this.maxRetries) {
+        this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_STEPS_FAILED');
+        return;
       }
-    });
+      return;
+    }
+    
+    try {
+      this.loadSteps();
+    } catch (error) {
+      this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_STEPS_FAILED');
+    }
   }
 
   private loadSteps(): void {
-    this.container.clear();
-    this.stepRefs = this.stepClasses.map((cls) => {
-      const ref = this.container.createComponent(cls);
-
-      if (ref.instance.setJobData) {
-        const currentJob = this.jobService.getCurrentJob();
-        if (currentJob) {
-          ref.instance.setJobData(currentJob);
+    this.cleanupSteps();    
+    try {
+      const currentJob = this.jobService.getCurrentJob();
+      
+      this.stepRefs = this.stepClasses.map((stepClass, index) => {
+        const componentRef = this.container.createComponent(stepClass);
+        
+        if (componentRef.instance.setJobData && currentJob) {
+          componentRef.instance.setJobData(currentJob);
         }
-      }
+        
+        const element = componentRef.location.nativeElement as HTMLElement;
+        element.style.display = 'none';
+        
+        
+        return componentRef;
+      });
+      
+      this.stepsLoaded = true;
+      
+      this.showActive();
+      this.cdr.detectChanges();
+      
+    } catch (error) {
+      this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_STEPS_FAILED');
+      throw error;
+    }
+  }
 
-      (ref.location.nativeElement as HTMLElement).style.display = 'none';
-      return ref;
-    });
-    this.cdr.detectChanges();
+  private cleanupSteps(): void {
+    if (this.stepRefs.length > 0) {
+      this.stepRefs.forEach(ref => ref.destroy());
+      this.stepRefs = [];
+    }
+    
+    if (this.container) {
+      this.container.clear();
+    }
   }
 
   private showActive(): void {
-    this.stepRefs.forEach((r, i) => {
-      const el = r.location.nativeElement as HTMLElement;
-      el.style.display = i === this.step - 1 ? 'block' : 'none';
+    if (!this.stepRefs.length) {
+      return;
+    }
+    
+    
+    this.stepRefs.forEach((ref, index) => {
+      const element = ref.location.nativeElement as HTMLElement;
+      const isActive = index === this.step - 1;
+      element.style.display = isActive ? 'block' : 'none';
     });
+    
     this.cdr.detectChanges();
   }
 
@@ -187,7 +262,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
         this.scrollToActive();
       }
     } else {
-      this.notificationService.warn('يرجى إكمال جميع الحقول الإلزامية في هذه الخطوة');
+      this.showWarnMessage('JOB_WIZARD.WARNINGS.COMPLETE_REQUIRED_FIELDS');
     }
   }
 
@@ -199,10 +274,14 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
     }
   }
 
-  goTo(n: number): void {
-    if (n > this.step) {
+  goTo(stepNumber: number): void {
+    if (stepNumber < 1 || stepNumber > this.total) {
+      return;
+    }
+    
+    if (stepNumber > this.step) {
       let canProceed = true;
-      for (let i = this.step; i < n; i++) {
+      for (let i = this.step - 1; i < stepNumber - 1; i++) {
         if (!this.stepRefs[i]?.instance.isValid()) {
           canProceed = false;
           break;
@@ -210,12 +289,12 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
       }
       
       if (!canProceed) {
-        this.notificationService.warn('يجب إكمال الخطوات السابقة أولاً');
+        this.showWarnMessage('JOB_WIZARD.WARNINGS.COMPLETE_PREVIOUS_STEPS');
         return;
       }
     }
     
-    this.step = n;
+    this.step = stepNumber;
     this.showActive();
     this.scrollToActive();
   }
@@ -227,7 +306,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
 
   private scrollToActive(): void {
     setTimeout(() => {
-      const el = document.querySelector('.step.active');
+      const el = document.querySelector('.step-label.active');
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
   }
@@ -243,48 +322,86 @@ export class JobWizardComponent implements AfterViewInit, OnInit { // REMOVED 'a
 
   submitForApproval(): void {
     if (!this.jobId) {
-      this.notificationService.error('لا يوجد معرف للوظيفة');
+      this.showErrorMessage('JOB_WIZARD.ERRORS.NO_JOB_ID');
       return;
     }
 
     if (!this.canGoToReview()) {
-      this.notificationService.error('يرجى إكمال جميع الخطوات قبل الإرسال');
+      this.showErrorMessage('JOB_WIZARD.ERRORS.COMPLETE_ALL_STEPS');
       return;
     }
 
     this.isLoading = true;
-    this.jobService.submitJobForApproval(this.jobId).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.notificationService.success('تم إرسال الوظيفة للاعتماد بنجاح');
-        this.router.navigate(['/jobs']);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this.notificationService.error(err.message || 'فشل في إرسال الوظيفة للاعتماد');
-      }
-    });
+    this.jobService.submitJobForApproval(this.jobId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.showSuccessMessage('JOB_WIZARD.SUCCESS.JOB_SUBMITTED');
+          this.router.navigate(['/jobs']);
+        },
+        error: (err) => {
+          this.isLoading = false;
+          const errorMessage = err.message || 'JOB_WIZARD.ERRORS.SUBMIT_JOB_FAILED';
+          this.showErrorMessage(errorMessage);
+        }
+      });
   }
 
   cancelWizard(): void {
-    if (confirm('هل تريد إلغاء العملية؟ سيتم فقدان جميع التغييرات غير المحفوظة.')) {
+    const confirmMessage = this.translateService.instant('JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD');
+    if (confirm(confirmMessage)) {
       this.router.navigate(['/jobs']);
     }
   }
 
+  private showSuccessMessage(key: string, detail?: string): void {
+    const summary = this.translateService.instant(key);
+    const detailText = detail ? this.translateService.instant(detail) : '';
+    
+    this.messageService.add({
+      severity: 'success',
+      summary: summary,
+      detail: detailText,
+      life: 5000
+    });
+  }
+
+  private showErrorMessage(key: string, detail?: string): void {
+    const summary = this.translateService.instant(key);
+    const detailText = detail ? this.translateService.instant(detail) : '';
+    
+    this.messageService.add({
+      severity: 'error',
+      summary: summary,
+      detail: detailText,
+      life: 7000
+    });
+  }
+
+  private showWarnMessage(key: string, detail?: string): void {
+    const summary = this.translateService.instant(key);
+    const detailText = detail ? this.translateService.instant(detail) : '';
+    
+    this.messageService.add({
+      severity: 'warn',
+      summary: summary,
+      detail: detailText,
+      life: 5000
+    });
+  }
+
   getHeaderTitle(): string {
-    return this.isEditMode ? 'JOB_WIZARD.EDIT_JOB' : 'JOB_WIZARD.CREATE_JOB';
+    return this.isEditMode ? 'JOB_WIZARD.TITLES.EDIT_JOB' : 'JOB_WIZARD.TITLES.CREATE_JOB';
   }
 
   getHeaderSubtitle(): string {
-    return this.isEditMode ? 'JOB_WIZARD.EDIT_DETAILS' : 'JOB_WIZARD.ENTER_DETAILS';
+    return this.isEditMode ? 'JOB_WIZARD.SUBTITLES.EDIT_DETAILS' : 'JOB_WIZARD.SUBTITLES.ENTER_DETAILS';
   }
 
   getSaveButtonText(): string {
-    if (this.step === this.total) {
-      return 'JOB_WIZARD.SHARED.BUTTONS.SUBMIT_FOR_APPROVAL';
-    } else {
-      return 'JOB_WIZARD.SHARED.BUTTONS.NEXT';
-    }
+    return this.step === this.total 
+      ? 'JOB_WIZARD.BUTTONS.SUBMIT_FOR_APPROVAL' 
+      : 'JOB_WIZARD.BUTTONS.NEXT';
   }
 }

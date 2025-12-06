@@ -278,12 +278,12 @@ export class JobService {
     return this.httpService.delete<void>(`${this.endpoints.job.job}/${jobId}`);
   }
 
-  changeStatus(jobId: GUID, newStatusId: GUID): Observable<void> {
-    return this.httpService.put<void>(
-      `${this.endpoints.job.job}/${jobId}/status`,
-      newStatusId
-    );
-  }
+  changeStatus(jobId: GUID, statusId: GUID): Observable<void> {
+  return this.httpService.put<void>(
+    `${this.endpoints.job.job}/${jobId}/status?statusId=${statusId}`,
+    null
+  );
+}
 
   submitForApproval(jobId: GUID, statusId: GUID): Observable<void> {
     return this.changeStatus(jobId, statusId);

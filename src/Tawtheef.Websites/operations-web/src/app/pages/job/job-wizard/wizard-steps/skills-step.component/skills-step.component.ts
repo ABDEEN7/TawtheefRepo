@@ -20,35 +20,29 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   
   jobData!: Job;
   
-  // Form definition
   readonly form = this.fb.group({
     jobSkills: this.fb.array([])
   }) as FormGroup;
 
   ngOnInit() {
-    // Load skills based on major when job data is available
     const currentJob = this.jobService.getCurrentJob();
     if (currentJob) {
       this.setJobData(currentJob);
       
-      // Load skills for the selected major
       if (currentJob.majorId) {
         this.lookupsService.loadSkillsByMajor(currentJob.majorId);
       }
     }
     
-    // Subscribe to form changes
     this.form.valueChanges.subscribe(() => {
       this.updateJobData();
     });
   }
 
-  // Get skills form array
   get jobSkillsArray(): FormArray {
     return this.form.get('jobSkills') as FormArray;
   }
 
-  // Get specific skill form group
   getSkillGroup(index: number): FormGroup {
     return this.jobSkillsArray.at(index) as FormGroup;
   }
@@ -83,9 +77,8 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   }
 
   isValid() { 
-    // Skills are optional, but if added, they must be valid
     if (this.jobSkillsArray.length === 0) {
-      return true; // No skills is okay
+      return true; 
     }
     
     return this.form.valid;
@@ -95,7 +88,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
     const skills = this.jobSkillsArray.controls
       .filter(control => {
         const group = control as FormGroup;
-        return group.get('skillId')?.value; // Only include skills with a selected skill
+        return group.get('skillId')?.value; 
       })
       .map(control => {
         const group = control as FormGroup;
@@ -108,13 +101,11 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
     this.jobService.updateCurrentJobSkills(skills);
   }
 
-  // Helper to check if a skill is selected
   isSkillSelected(index: number): boolean {
     const group = this.getSkillGroup(index);
     return !!group.get('skillId')?.value;
   }
 
-  // Get skill name for display
   getSkillName(skillId: GUID): string {
     const skill = this.lookupsService.skills().find(s => s.id === skillId);
     return skill?.name || '';
