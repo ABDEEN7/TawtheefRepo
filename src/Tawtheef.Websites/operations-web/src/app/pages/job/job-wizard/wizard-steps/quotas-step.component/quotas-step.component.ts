@@ -47,7 +47,7 @@ export class QuotasStepComponent implements WizardStepComponent, OnInit {
 }
 
   ngOnInit() {
-    this.setJobData(this.jobService.newJob());
+    this.setJobData(this.jobService.getCurrentJob());
 
     this.form.valueChanges
       .pipe(
@@ -91,8 +91,8 @@ export class QuotasStepComponent implements WizardStepComponent, OnInit {
   return this.form.valid && this.totalQuota() === 100;
 }
 
-  setJobData(currentJob: Job) {
-    if (currentJob.quota) {
+  setJobData(currentJob: Job | null) {
+    if (currentJob?.quota) {
       this.form.patchValue({
         qatariCitizens: currentJob.quota.qatariCitizens ?? 0,
         qatarMother: currentJob.quota.qatarMother ?? 0,

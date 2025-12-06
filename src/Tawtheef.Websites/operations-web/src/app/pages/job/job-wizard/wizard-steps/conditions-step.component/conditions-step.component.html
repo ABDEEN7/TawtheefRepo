@@ -1,78 +1,177 @@
-<div class="card card-lite p-3 mb-3" [formGroup]="form">
-  <h6 class="mb-3 text-brand fw-bold">
-    {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS' | translate }}
-  </h6>
+<div class="step-content">
+  <form [formGroup]="form">
+    <div class="card card-lite p-3">
+      <div class="d-flex align-items-center mb-4">
+        <i class="fa fa-list-check text-brand fs-4 me-3"></i>
+        <div>
+          <h4 class="text-brand fw-bold mb-1">
+            {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS' | translate }}
+          </h4>
+          <p class="small-muted mb-0">
+            {{ 'JOB_WIZARD.STEPS.CONDITIONS.SUBTITLE' | translate }}
+          </p>
+        </div>
+      </div>
 
-  <!-- Add Condition Section -->
-  <div class="border rounded p-3 mb-3 bg-light">
-    <div class="row">
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted small">
-          {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR_PLACEHOLDER' | translate }}
-        </label>
-        <textarea
-          [(ngModel)]="newCondition"
-          [ngModelOptions]="{ standalone: true }"
-          class="form-control"
-          rows="3"
-          placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate }}"
-          (keydown.enter)="$event.preventDefault(); addCondition()">
-        </textarea>
+      <!-- Add Condition Section -->
+      <div class="border rounded p-3 mb-4 bg-light">
+        <h5 class="fw-bold mb-3">
+          {{ 'JOB_WIZARD.STEPS.CONDITIONS.ADD_NEW' | translate }}
+        </h5>
+        
+        <div class="row g-3">
+          <!-- Arabic Condition -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold">
+              <span class="text-danger">*</span>
+              {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR' | translate }}
+            </label>
+            <textarea
+              [(ngModel)]="newConditionAr"
+              [ngModelOptions]="{ standalone: true }"
+              class="form-control"
+              rows="3"
+              dir="rtl"
+              placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate }}"
+              (keydown.enter)="$event.preventDefault(); addCondition()">
+            </textarea>
+          </div>
+          
+          <!-- English Condition -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold">
+              {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_EN' | translate }}
+            </label>
+            <textarea
+              [(ngModel)]="newConditionEn"
+              [ngModelOptions]="{ standalone: true }"
+              class="form-control"
+              rows="3"
+              dir="ltr"
+              placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_EN_PLACEHOLDER' | translate }}"
+              (keydown.enter)="$event.preventDefault(); addCondition()">
+            </textarea>
+          </div>
+        </div>
+        
+        <div class="text-end mt-3">
+          <button 
+            class="btn btn-brand" 
+            (click)="addCondition()"
+            type="button">
+            <i class="fa fa-plus me-2"></i>
+            {{ 'JOB_WIZARD.STEPS.CONDITIONS.ADD_CONDITION' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <div formArrayName="conditions">
+  @if (conditionsArray.length === 0) {
+    <div class="text-center py-5 border rounded">
+      <i class="fa fa-tasks fa-3x text-muted mb-3"></i>
+      <h6 class="text-muted">{{ 'JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE_TITLE' | translate }}</h6>
+      <p class="text-muted small">{{ 'JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE_DESC' | translate }}</p>
+      <div class="alert alert-info mt-3">
+        <i class="fa fa-info-circle me-2"></i>
+        {{ 'JOB_WIZARD.STEPS.CONDITIONS.AT_LEAST_ONE' | translate }}
       </div>
     </div>
+  } @else {
+    <h5 class="fw-bold mb-3">
+      {{ 'JOB_WIZARD.STEPS.CONDITIONS.LIST_TITLE' | translate }}
+      <span class="badge bg-brand ms-2">{{ conditionsArray.length }}</span>
+    </h5>
     
-    <div class="text-end mt-3">
-      <button class="btn btn-brand" (click)="addCondition()">
-        {{ 'JOB_WIZARD.STEPS.CONDITIONS.ADD_CONDITION' | translate }}
-      </button>
-    </div>
-  </div>
-
-  <!-- Conditions List -->
-  <div formArrayName="conditions">
-    @for (conditionControl of conditionsArray.controls; track $index; let i = $index) {
-      <div class="card mb-3">
+    @for (condition of conditionsArray.controls; track $index; let i = $index) {
+      <div class="card mb-3" [formGroupName]="i">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
           <span class="fw-bold">
             {{ 'JOB_WIZARD.STEPS.CONDITIONS.CONDITION' | translate }} {{ i + 1 }}
           </span>
-          <button 
-            class="btn btn-sm btn-outline-danger"
-            (click)="removeCondition(i)"
-            type="button">
-            <i class="fa fa-trash"></i> {{ 'COMMON.DELETE' | translate }}
-          </button>
+          
+          <div class="btn-group btn-group-sm">
+            @if (conditionsArray.length > 1) {
+              <button 
+                class="btn btn-outline-danger"
+                (click)="removeCondition(i)"
+                type="button"
+                [title]="'JOB_WIZARD.STEPS.CONDITIONS.REMOVE' | translate">
+                <i class="fa fa-trash"></i>
+              </button>
+            }
+          </div>
         </div>
         
         <div class="card-body">
-          <div class="row">
+          <div class="row g-3">
+
+            <!-- Arabic Text -->
             <div class="col-md-6">
-              <h6 class="text-muted small mb-2">
-                {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR_PLACEHOLDER' | translate }}
-              </h6>
+              <label class="form-label fw-bold">
+                <span class="text-danger">*</span>
+                {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR' | translate }}
+              </label>
               <textarea
-                [formControl]="conditionControl"
+                formControlName="textAr"
                 class="form-control"
                 rows="3"
+                dir="rtl"
                 placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate }}">
               </textarea>
               
-              @if (conditionControl.invalid && conditionControl.touched) {
+              @if (getConditionGroup(i).controls['textAr'].invalid && getConditionGroup(i).controls['textAr'].touched) {
                 <div class="text-danger small mt-1">
-                  {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                  @if (getConditionGroup(i).controls['textAr'].errors?.['required']) {
+                    <i class="fa fa-exclamation-circle me-1"></i>
+                    {{ 'JOB_WIZARD.VALIDATION.CONDITION_AR_REQUIRED' | translate }}
+                  }
+                  @if (getConditionGroup(i).controls['textAr'].errors?.['maxlength']) {
+                    <i class="fa fa-exclamation-circle me-1"></i>
+                    {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate: {max: 500} }}
+                  }
                 </div>
               }
             </div>
+
+            <!-- English Text -->
+            <div class="col-md-6">
+              <label class="form-label fw-bold">
+                {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_EN' | translate }}
+              </label>
+              <textarea
+                formControlName="textEn"
+                class="form-control"
+                rows="3"
+                dir="ltr"
+                placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_EN_PLACEHOLDER' | translate }}">
+              </textarea>
+              
+              @if (getConditionGroup(i).controls['textEn'].invalid && getConditionGroup(i).controls['textEn'].touched) {
+                <div class="text-danger small mt-1">
+                  <i class="fa fa-exclamation-circle me-1"></i>
+                  {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate: {max: 500} }}
+                </div>
+              }
+            </div>
+
           </div>
         </div>
       </div>
     }
-    
-    @if (conditionsArray.length === 0) {
-      <div class="text-center py-5">
-        <i class="fa fa-tasks fa-3x text-muted mb-3"></i>
-        <p class="text-muted">{{ 'JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE' | translate }}</p>
-      </div>
-    }
-  </div>
+  }
+</div>
+      
+      <!-- Validation Summary -->
+      @if (!isValid() && form.touched) {
+        <div class="alert alert-warning mt-4">
+          <i class="fa fa-exclamation-triangle me-2"></i>
+          @if (conditionsArray.length === 0) {
+            {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_CONDITION' | translate }}
+          } @else {
+            {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_CONDITIONS' | translate }}
+          }
+        </div>
+      }
+    </div>
+  </form>
 </div>

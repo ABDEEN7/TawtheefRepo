@@ -146,5 +146,15 @@ public class JobController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new DeleteJobCommand(id));
         return result.ToActionResult();
     }
+
+    [HttpPatch("{id:guid}/status")]
+    public async Task<IActionResult> ChangeJobStatus(
+    Guid id,
+    [FromBody] Guid newStatusId)
+    {
+        var command = new ChangeJobStatusCommand(id, newStatusId);
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
     #endregion
 }

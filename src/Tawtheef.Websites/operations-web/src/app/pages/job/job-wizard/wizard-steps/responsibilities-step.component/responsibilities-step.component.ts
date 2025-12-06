@@ -1,12 +1,9 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
-import { MessageService } from 'primeng/api';
 import { Job } from '../../../models/job.model';
-import { JobResponsibility } from '../../../models/job-responsibility.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-responsibilities-step',
@@ -14,30 +11,35 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './responsibilities-step.component.html',
   styleUrls: ['./responsibilities-step.component.scss'],
 })
-export class ResponsibilitiesStepComponent implements WizardStepComponent, OnInit, OnDestroy {
-  // Services
+export class ResponsibilitiesStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
-  private readonly jobService = inject(JobService);
-  private readonly messageService = inject(MessageService);
-  private readonly translationService = inject(TranslateService);
+  protected readonly jobService = inject(JobService);
   
-  // Form
+  jobData!: Job;
+  
+  // Form definition
   readonly form = this.fb.group({
-    responsibilities: this.fb.array<FormControl<string>>([], [Validators.required])
-  });
+    responsibilities: this.fb.array([])
+  }) as FormGroup;
   
   // State
-  newResponsibilityText = '';
+  newResponsibilityAr = '';
+  newResponsibilityEn = '';
   private readonly destroy$ = new Subject<void>();
 
-  // Getters
-  get responsibilitiesArray(): FormArray<FormControl<string>> {
-    return this.form.controls.responsibilities;
-  }
-
   ngOnInit(): void {
-    this.initializeForm();
-    this.setupFormSubscription();
+    this.form.valueChanges.pipe(
+      debounceTime(300),
+      filter(() => this.form.valid),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.updateJobData();
+    });
+    
+    const currentJob = this.jobService.getCurrentJob();
+    if (currentJob) {
+      this.setJobData(currentJob);
+    }
   }
 
   ngOnDestroy(): void {
@@ -45,95 +47,69 @@ export class ResponsibilitiesStepComponent implements WizardStepComponent, OnIni
     this.destroy$.complete();
   }
 
-  /**
-   * Initialize form with existing job data
-   */
-  private initializeForm(): void {
-    const job = this.jobService.newJob();
-    this.setJobData(job);
+  // Get responsibilities form array
+  get responsibilitiesArray(): FormArray {
+    return this.form.get('responsibilities') as FormArray;
   }
 
-  /**
-   * Setup form value changes subscription with debounce
-   */
-  private setupFormSubscription(): void {
-    this.form.valueChanges.pipe(
-      debounceTime(300),
-      filter(() => this.form.valid),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      this.saveResponsibilitiesToService();
-    });
+  // Get specific responsibility form group
+  getResponsibilityGroup(index: number): FormGroup {
+    return this.responsibilitiesArray.at(index) as FormGroup;
   }
 
-  /**
-   * Populate form with job responsibilities
-   */
   setJobData(job: Job): void {
+    this.jobData = job;
     this.responsibilitiesArray.clear();
     
     if (job.responsibilities?.length) {
       job.responsibilities.forEach(responsibility => {
-        this.addResponsibilityToForm(responsibility.text);
+        this.addResponsibilityToForm(responsibility.textAr, responsibility.textEn);
       });
     }
-    
-    this.form.updateValueAndValidity();
   }
 
-  /**
-   * Add new responsibility from input field
-   */
   addResponsibility(): void {
-    const textValue = this.newResponsibilityText.trim();
+    const trimmedAr = this.newResponsibilityAr.trim();
     
-    if (!textValue) {
-      this.showValidationWarning();
+    if (!trimmedAr) {
       return;
     }
     
-    this.addResponsibilityToForm(textValue);
-    this.clearInput();
+    this.addResponsibilityToForm(trimmedAr, this.newResponsibilityEn.trim());
+    this.newResponsibilityAr = '';
+    this.newResponsibilityEn = '';
   }
 
-  /**
-   * Remove responsibility at index
-   */
   removeResponsibility(index: number): void {
-    this.responsibilitiesArray.removeAt(index);
+    if (this.responsibilitiesArray.length > 1) {
+      this.responsibilitiesArray.removeAt(index);
+    }
   }
 
-  /**
-   * Check if form is valid
-   */
   isValid(): boolean {
     return this.form.valid && this.responsibilitiesArray.length > 0;
   }
 
-  // Private helper methods
-  private addResponsibilityToForm(text: string): void {
-    const control = this.fb.nonNullable.control(text, Validators.required);
-    this.responsibilitiesArray.push(control);
-  }
-
-  private saveResponsibilitiesToService(): void {
-    const responsibilities: JobResponsibility[] = this.responsibilitiesArray.controls.map(control => ({
-      text: control.value
-    }));
-    
-    this.jobService.updateCurrentJobResponsibilities(responsibilities);
-  }
-
-  private showValidationWarning(): void {
-    this.messageService.add({
-      severity: 'warn',
-      summary: this.translationService.instant('JOB_WIZARD.VALIDATION.WARNING'),
-      detail: this.translationService.instant('JOB_WIZARD.VALIDATION.ADD_RESPONSIBILITY_DETAIL'),
-      life: 2500,
+  private addResponsibilityToForm(textAr: string, textEn: string = ''): void {
+    const responsibilityGroup = this.fb.group({
+      textAr: [textAr, [Validators.required, Validators.maxLength(500)]],
+      textEn: [textEn, [Validators.maxLength(500)]]
     });
+    
+    this.responsibilitiesArray.push(responsibilityGroup);
   }
 
-  private clearInput(): void {
-    this.newResponsibilityText = '';
+  private updateJobData(): void {
+    if (this.form.valid) {
+      const responsibilities = this.responsibilitiesArray.controls.map(control => {
+        const group = control as FormGroup;
+        return {
+          textAr: group.get('textAr')?.value || '',
+          textEn: group.get('textEn')?.value || ''
+        };
+      });
+      
+      this.jobService.updateCurrentJobResponsibilities(responsibilities);
+    }
   }
 }

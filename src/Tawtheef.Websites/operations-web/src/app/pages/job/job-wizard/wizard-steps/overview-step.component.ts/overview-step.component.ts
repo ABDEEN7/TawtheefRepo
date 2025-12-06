@@ -1,47 +1,56 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { WizardStepComponent } from '../base/wizard-step.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
+import { JobLookupService } from '../../../services/job-lookup.service';
 import { JobService } from '../../../services/job.service';
-import { debounceTime, filter } from 'rxjs';
 
 @Component({
   selector: 'app-overview-step',
-  standalone:false,
   templateUrl: './overview-step.component.html',
-  styleUrl: './overview-step.component.scss',
+  styleUrls: ['./overview-step.component.scss'],
+  standalone:false
 })
-export class OverviewStepComponent implements WizardStepComponent, OnInit {
+export class OverviewStepComponent extends WizardStepComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private jobService = inject(JobService);
-
-  
+  protected jobService = inject(JobService);
+  protected lookupsService = inject(JobLookupService);
 
   readonly form = this.fb.group({
-    overview: ['', Validators.required],
+    overviewAr: ['', Validators.required],
+    overviewEn: ['', Validators.required],
   });
+  jobData!: Job;
 
   ngOnInit(): void {
-      this.setJobData(this.jobService.newJob());
-  
-      this.form.valueChanges.pipe(
-        debounceTime(300),
-        filter(() => this.form.valid)
-      ).subscribe(values => {
-        this.jobService.updateCurrentJobOverView(values.overview ?? '');
+    this.form.valueChanges.subscribe(() => {
+      this.updateJobData();
+    });
+  }
+
+  setJobData(data: Job): void {
+    this.jobData = data;
+    this.loadData();
+  }
+
+  private loadData(): void {
+    if (this.jobData) {
+      this.form.patchValue({
+        overviewAr: this.jobData.overviewAr || '',
+        overviewEn: this.jobData.overviewEn || '',
       });
     }
-  
-    isValid() {
-      return true;
-    }
-  
-    setJobData(currentJob: Job) {
-      if (currentJob.description) {
-        this.form.patchValue({
-          overview: currentJob.overview,
-        });
-      }
-    }
+  }
 
+  private updateJobData(): void {
+    if (this.form.valid) {
+      const { overviewAr, overviewEn } = this.form.value;
+      if(overviewAr && overviewEn)
+      this.jobService.updateCurrentJobOverview(overviewAr, overviewEn);
+    }
+  }
+
+  isValid(): boolean {
+    return this.form.valid;
+  }
 }

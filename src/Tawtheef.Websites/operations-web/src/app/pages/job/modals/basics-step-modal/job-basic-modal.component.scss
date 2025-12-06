@@ -1,0 +1,180 @@
+.job-basic-modal {
+  .modal-header {
+    background: linear-gradient(135deg, #89153d 0%, #a61e4d 100%);
+    color: white;
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+    border-radius: 8px 8px 0 0;
+    
+    .modal-title {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+    
+    .btn-close {
+      filter: invert(1) brightness(2);
+      opacity: 0.8;
+      background: none;
+      font-size: 1.2rem;
+      
+      &:hover {
+        opacity: 1;
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+  
+  .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 1.5rem;
+    
+    .form-label {
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+    
+    .form-control,
+    .p-select {
+      border-radius: 6px;
+      border: 1px solid #ced4da;
+      transition: all 0.2s;
+      
+      &:focus {
+        border-color: #89153d;
+        box-shadow: 0 0 0 0.2rem rgba(137, 21, 61, 0.25);
+      }
+      
+      &:disabled {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+      }
+    }
+    
+    .text-danger {
+      font-size: 0.8rem;
+    }
+    
+    .alert {
+      border-radius: 6px;
+      font-size: 0.875rem;
+    }
+  }
+  
+  .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+    
+    .btn {
+      min-width: 120px;
+      border-radius: 6px;
+      font-weight: 500;
+      padding: 0.5rem 1.5rem;
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      
+      &.btn-primary {
+        background: linear-gradient(135deg, #89153d 0%, #a61e4d 100%);
+        border: none;
+        
+        &:hover:not(:disabled) {
+          background: linear-gradient(135deg, #7a1335 0%, #951b44 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(137, 21, 61, 0.3);
+        }
+      }
+      
+      &.btn-secondary {
+        background: #6c757d;
+        border: none;
+        
+        &:hover:not(:disabled) {
+          background: #5a6268;
+        }
+      }
+    }
+  }
+  
+  // PrimeNG DatePicker Customization
+  ::ng-deep .p-datepicker {
+    .p-datepicker-input {
+      width: 100%;
+      padding: 0.375rem 0.75rem;
+      border-radius: 6px;
+    }
+    
+    .p-datepicker-input-icon-container {
+      right: 0.75rem;
+      left: auto;
+    }
+  }
+  
+  // PrimeNG Select Customization
+  ::ng-deep .p-select {
+    .p-select-label {
+      padding: 0.375rem 0.75rem;
+    }
+    
+    .p-select-trigger {
+      border-radius: 0 6px 6px 0;
+    }
+  }
+  
+  // Responsive Design
+  @media (max-width: 768px) {
+    .modal-header {
+      padding: 1rem;
+      
+      .modal-title {
+        font-size: 1.1rem;
+      }
+    }
+    
+    .modal-body {
+      padding: 1rem;
+      max-height: 60vh;
+      
+      .row {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+      }
+      
+      .col-md-6 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+    }
+    
+    .modal-footer {
+      padding: 0.75rem 1rem;
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+::ng-deep .custom-bootstrap-dialog {
+  .p-dialog-content {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  
+  .p-dialog-header-close {
+    display: none;
+  }
+}

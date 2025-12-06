@@ -1,14 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { WizardStepComponent } from '../base/wizard-step.component';
-import { FormBuilder, Validators, FormArray } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
-import { debounceTime, filter } from 'rxjs';
+import { FormBuilder, Validators, FormArray, FormGroup } from '@angular/forms';
 import { Job } from '../../../models/job.model';
 import { JobService } from '../../../services/job.service';
 import { JobSkill } from '../../../models/job-skill.model';
 import { JobLookupService } from '../../../services/job-lookup.service';
-import { Lookups } from '../../../../../core/models/lookups.model';
+import { GUID } from '../../../../../shared/types/guid.type';
 
 @Component({
   selector: 'app-skills-step',
@@ -16,59 +13,110 @@ import { Lookups } from '../../../../../core/models/lookups.model';
   templateUrl: './skills-step.component.html',
   styleUrls: ['./skills-step.component.scss'],
 })
-export class SkillsStepComponent implements WizardStepComponent, OnInit {
-  fb = inject(FormBuilder);
-  jobService = inject(JobService);
-  messageService = inject(MessageService);
-  translationService = inject(TranslateService);
-  lookupsService = inject(JobLookupService)
-
-  skillsOptions : Lookups[] = this.lookupsService.skills();
-  skills: JobSkill[] = [];
+export class SkillsStepComponent extends WizardStepComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  protected jobService = inject(JobService);
+  protected lookupsService = inject(JobLookupService);
+  
+  jobData!: Job;
+  
+  // Form definition
   readonly form = this.fb.group({
-    jobSkills: this.fb.array<any>([], [Validators.required])
-  });
-
-  get items() { return this.form.controls.jobSkills as FormArray; }
+    jobSkills: this.fb.array([])
+  }) as FormGroup;
 
   ngOnInit() {
-    this.setJobData(this.jobService.newJob());
-
-    this.form.valueChanges.pipe(
-      debounceTime(300),
-      filter(() => this.form.valid)
-    ).subscribe(() => {
-      this.jobService.updateCurrentJobSkills(this.items.value);
+    // Load skills based on major when job data is available
+    const currentJob = this.jobService.getCurrentJob();
+    if (currentJob) {
+      this.setJobData(currentJob);
+      
+      // Load skills for the selected major
+      if (currentJob.majorId) {
+        this.lookupsService.loadSkillsByMajor(currentJob.majorId);
+      }
+    }
+    
+    // Subscribe to form changes
+    this.form.valueChanges.subscribe(() => {
+      this.updateJobData();
     });
   }
 
+  // Get skills form array
+  get jobSkillsArray(): FormArray {
+    return this.form.get('jobSkills') as FormArray;
+  }
 
-  createSkillFormGroup(skill: JobSkill = { skillId: undefined, showToApplicants: false }) {
-    return this.fb.group({
-      skillId: [skill.skillId, [Validators.required]],
-      showToApplicants: [skill.showToApplicants || false]
-    });
+  // Get specific skill form group
+  getSkillGroup(index: number): FormGroup {
+    return this.jobSkillsArray.at(index) as FormGroup;
   }
 
   addSkill() {
-    this.items.push(this.createSkillFormGroup());
+    const skillGroup = this.fb.group({
+      skillId: ['', [Validators.required]],
+      showToApplicants: [true]
+    });
+    
+    this.jobSkillsArray.push(skillGroup);
   }
 
   removeSkill(i: number) {
-    this.items.removeAt(i);
+    this.jobSkillsArray.removeAt(i);
   }
 
   setJobData(job: Job): void {
-    if (job.skills && job.skills.length > 0) {
-      this.items.clear();
-      job.skills.forEach((jobSkill: JobSkill) => {
-        this.items.push(this.createSkillFormGroup(jobSkill));
+    this.jobData = job;
+    this.jobSkillsArray.clear();
+    
+    if (job.skills?.length) {
+      job.skills.forEach((skill: JobSkill) => {
+        const skillGroup = this.fb.group({
+          skillId: [skill.skillId, [Validators.required]],
+          showToApplicants: [skill.showToApplicants || false]
+        });
+        
+        this.jobSkillsArray.push(skillGroup);
       });
-      this.form.updateValueAndValidity();
     }
   }
 
   isValid() { 
-    return true; 
+    // Skills are optional, but if added, they must be valid
+    if (this.jobSkillsArray.length === 0) {
+      return true; // No skills is okay
+    }
+    
+    return this.form.valid;
+  }
+
+  private updateJobData(): void {
+    const skills = this.jobSkillsArray.controls
+      .filter(control => {
+        const group = control as FormGroup;
+        return group.get('skillId')?.value; // Only include skills with a selected skill
+      })
+      .map(control => {
+        const group = control as FormGroup;
+        return {
+          skillId: group.get('skillId')?.value || '' as GUID,
+          showToApplicants: group.get('showToApplicants')?.value || false
+        };
+      });
+    
+    this.jobService.updateCurrentJobSkills(skills);
+  }
+
+  // Helper to check if a skill is selected
+  isSkillSelected(index: number): boolean {
+    const group = this.getSkillGroup(index);
+    return !!group.get('skillId')?.value;
+  }
+
+  // Get skill name for display
+  getSkillName(skillId: GUID): string {
+    const skill = this.lookupsService.skills().find(s => s.id === skillId);
+    return skill?.name || '';
   }
 }

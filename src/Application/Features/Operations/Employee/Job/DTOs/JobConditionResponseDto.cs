@@ -3,6 +3,9 @@
 public class JobConditionResponseDto
 {
     public Guid Id { get; set; }
-    public int Order { get; set; }
-    public string Text { get; set; } = string.Empty;
+    public Guid JobId { get; set; }
+    public required string TextAr { get; set; }
+    public required string TextEn { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public DateTime? LastModifiedDate { get; set; }
 }

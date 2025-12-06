@@ -13,73 +13,79 @@ namespace Tawtheef.Application.Common.Mappers
         {
             config.NewConfig<CreateJobDto, Job>()
                 .Map(dest => dest.Id, _ => Guid.NewGuid())
-                .Map(dest => dest.StatusId, _ => JobStatusIds.Draft)
+                .Map(dest => dest.JobStatusId, _ => JobStatusIds.Draft)
                 .AfterMapping((src, dest) =>
                 {
                     var jobId = dest.Id;
 
-                    dest.Degrees = [.. src.Degrees.Select(degree => new JobDegree
+                    dest.JobDegrees = src.Degrees?.Select(degree => new JobDegree
                     {
                         Id = Guid.NewGuid(),
                         DegreeId = degree.DegreeId,
                         JobId = jobId
-                    })];
+                    }).ToList() ?? [];
 
-                    dest.Conditions = [.. src.Conditions.Select(cond => new JobCondition
+                    dest.JobConditions = src.Conditions?.Select(cond => new JobCondition
                     {
                         Id = Guid.NewGuid(),
                         JobId = jobId,
-                        Text = cond.Text,
-                    })];
+                        TextAr = cond.TextAr,
+                        TextEn = cond.TextEn,
+                    }).ToList() ?? [];
 
-                    dest.Skills = [.. src.Skills.Select(skill => new JobSkill
+                    dest.JobSkills = src.Skills?.Select(skill => new JobSkill
                     {
                         Id = Guid.NewGuid(),
-                        JobId = jobId, 
+                        JobId = jobId,
                         ShowToApplicants = skill.ShowToApplicants,
                         SkillId = skill.SkillId
-                    })];
+                    }).ToList() ?? [];
 
-                    dest.Responsibilities = [.. src.Responsibilities.Select(resp => new JobResponsibility
+                    dest.JobResponsibilities = src.Responsibilities!.Select(resp => new JobResponsibility
                     {
                         Id = Guid.NewGuid(),
                         JobId = jobId,
-                        Text = resp.Text,
-                    })];
+                        TitleAr = resp.TextAr,
+                        TitleEn = resp.TextEn,
+                    }).ToList() ?? [];
 
-                    dest.RequiredAttachments = src.RequiredAttachments?.Select(a =>
+                    dest.JobRequiredAttachments = src.RequiredAttachments?.Select(a =>
                         new JobRequiredAttachment
                         {
                             Id = Guid.NewGuid(),
                             JobId = jobId,
-                            Title = a.Title,
+                            TitleAr = a.TitleAr,
+                            TitleEn = a.TitleEn,
                             IsMandatory = a.IsMandatory
                         }).ToList() ?? [];
 
-                    dest.Quota = MapQuota(src.Quota, jobId);
+                    dest.JobQuota = src.Quota != null
+                        ? MapQuota(src.Quota, jobId)
+                        : null;
                 });
+
 
             config.NewConfig<UpdateJobDto, Job>()
                 .Ignore(dest => dest.Id)
-                .Ignore(dest => dest.StatusId)
+                .Ignore(dest => dest.JobStatusId)
                 .Ignore(dest => dest.Invitations)
                 .AfterMapping((src, dest) =>
                 {
-                    if (dest.Quota == null)
+                    if (dest.JobQuota == null)
                     {
-                        dest.Quota = MapQuota(src.Quota, dest.Id);
+                        dest.JobQuota = MapQuota(src.Quota, dest.Id);
                     }
                     else
                     {
-                        dest.Quota.QatariCitizens = src.Quota.QatariCitizens;
-                        dest.Quota.QatarMother = src.Quota.QatarMother;
-                        dest.Quota.NonQatariSpouse = src.Quota.NonQatariSpouse;
-                        dest.Quota.Gcc = src.Quota.Gcc;
-                        dest.Quota.QuGrads = src.Quota.QuGrads;
-                        dest.Quota.Residents = src.Quota.Residents;
+                        dest.JobQuota.QatariCitizens = src.Quota!.QatariCitizens;
+                        dest.JobQuota.QatarMother = src.Quota.QatarMother;
+                        dest.JobQuota.NonQatariSpouse = src.Quota.NonQatariSpouse;
+                        dest.JobQuota.Gcc = src.Quota.Gcc;
+                        dest.JobQuota.QuGrads = src.Quota.QuGrads;
+                        dest.JobQuota.Residents = src.Quota.Residents;
 
-                        var quotaId = dest.Quota.Id;
-                        dest.Quota.ResidentsBreakdowns = src.Quota.ResidentsBreakdowns
+                        var quotaId = dest.JobQuota.Id;
+                        dest.JobQuota.ResidentsBreakdowns = src.Quota.ResidentsBreakdowns!
                             .Select(rb => new ResidentBreakdown
                             {
                                 Id = Guid.NewGuid(),
@@ -90,32 +96,56 @@ namespace Tawtheef.Application.Common.Mappers
                     }
                 });
 
+
             config.NewConfig<Job, JobResponseDto>()
-                .Map(dest => dest.Department, src => src.RequestingDepartment)
                 .Map(dest => dest.Sector, src => src.Sector)
                 .Map(dest => dest.Management, src => src.Management)
+                .Map(dest => dest.Department, src => src.Department)
                 .Map(dest => dest.JobCategory, src => src.JobCategory)
-                .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.WorkLocation, src => src.WorkLocation)
+                .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.Major, src => src.Major)
                 .Map(dest => dest.SubMajor, src => src.SubMajor)
                 .Map(dest => dest.WorkType, src => src.WorkType)
-                .Map(dest => dest.Status, src => src.Status)
-                .Map(dest => dest.Quota, src => src.Quota)
-                .Map(dest => dest.Degrees, src => src.Degrees.Select(d => d.Degree))
-                .Map(dest => dest.Conditions, src => src.Conditions)
-                .Map(dest => dest.Skills, src => src.Skills)
-                .Map(dest => dest.Responsibilities, src => src.Responsibilities)
-                .Map(dest => dest.RequiredAttachments, src => src.RequiredAttachments);
+                .Map(dest => dest.Status, src => src.JobStatus)
+                .Map(dest => dest.Quota, src => src.JobQuota)
+                .Map(dest => dest.Degrees, src => src.JobDegrees)
+                .Map(dest => dest.Conditions, src => src.JobConditions)
+                .Map(dest => dest.Skills, src => src.JobSkills)
+                .Map(dest => dest.Responsibilities, src => src.JobResponsibilities)
+                .Map(dest => dest.RequiredAttachments, src => src.JobRequiredAttachments)
+                .TwoWays();
+
 
             config.NewConfig<JobQuota, JobQuotaResponseDto>()
-                .Map(dest => dest.ResidentsBreakdowns, src => src.ResidentsBreakdowns);
+                .Map(dest => dest.ResidentsBreakdowns, src => src.ResidentsBreakdowns)
+                .TwoWays();
 
             config.NewConfig<ResidentBreakdown, ResidentBreakdownResponseDto>()
-                .Map(dest => dest.Nationality, src => src.Nationality);
+                .Map(dest => dest.Nationality, src => src.Nationality)
+                .TwoWays();
+
+            config.NewConfig<JobDegree, JobDegreeResponseDto>()
+                .Map(dest => dest.Degree, src => src.Degree)
+                .TwoWays();
+
+            config.NewConfig<JobCondition, JobConditionResponseDto>()
+                .TwoWays();
+
+            config.NewConfig<JobSkill, JobSkillResponseDto>()
+                .Map(dest => dest.Skill, src => src.Skill)
+                .TwoWays();
+
+            config.NewConfig<JobResponsibility, JobResponsibilityResponseDto>()
+                .TwoWays();
+
+            config.NewConfig<JobRequiredAttachment, JobRequiredAttachmentResponseDto>()
+                .TwoWays();
+
+            config.NewConfig<List<Job>, List<JobResponseDto>>().TwoWays();
         }
 
-        private static JobQuota MapQuota(JobQuotaDto quotaDto, Guid jobId)
+        private static JobQuota MapQuota(JobQuotaRequestDto? quotaDto, Guid jobId)
         {
             var quotaId = Guid.NewGuid();
 
@@ -123,20 +153,21 @@ namespace Tawtheef.Application.Common.Mappers
             {
                 Id = quotaId,
                 JobId = jobId,
-                QatariCitizens = quotaDto.QatariCitizens,
+                QatariCitizens = quotaDto!.QatariCitizens,
                 QatarMother = quotaDto.QatarMother,
                 NonQatariSpouse = quotaDto.NonQatariSpouse,
                 Gcc = quotaDto.Gcc,
                 QuGrads = quotaDto.QuGrads,
                 Residents = quotaDto.Residents,
-                ResidentsBreakdowns = [.. quotaDto.ResidentsBreakdowns
+                ResidentsBreakdowns = quotaDto.ResidentsBreakdowns!
                     .Select(rb => new ResidentBreakdown
                     {
                         Id = Guid.NewGuid(),
                         JobQuotaId = quotaId,
                         NationalityId = rb.NationalityId,
                         Percentage = rb.Percentage
-                    })]
+                    })
+                    .ToList()
             };
         }
     }

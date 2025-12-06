@@ -1,15 +1,14 @@
-using Mapster;
 using FluentResults;
-using MapsterMapper;
 using MediatR;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories;
-using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
+using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
+using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
-public class GetJobByIdQueryHandler(IJobRepository jobRepository,IMapper mapper)
+public class GetJobByIdQueryHandler(IJobRepository jobRepository)
     : IRequestHandler<GetJobByIdQuery, IResult<JobResponseDto>>
 {
     public async Task<IResult<JobResponseDto>> Handle(GetJobByIdQuery request, CancellationToken cancellationToken)
@@ -23,9 +22,7 @@ public class GetJobByIdQueryHandler(IJobRepository jobRepository,IMapper mapper)
 
         if (job is null)
             return Result.Fail<JobResponseDto>(JobValidationMessages.JOB_NOT_FOUND);
-        
-        var jobDto = mapper.Map<JobResponseDto>(job);
-
+        var jobDto = JobManualMapper.Map(job);
         return Result.Ok(jobDto);
     }
 }

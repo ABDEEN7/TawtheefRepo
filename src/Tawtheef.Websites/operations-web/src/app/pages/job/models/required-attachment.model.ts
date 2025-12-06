@@ -1,7 +1,8 @@
 import { GUID } from "../../../shared/types/guid.type";
 
-export interface RequiredAttachment {
+export interface JobRequiredAttachment {
   id?: GUID;
-  title: string;
+  titleAr: string;
+  titleEn: string;
   isMandatory: boolean;
 }

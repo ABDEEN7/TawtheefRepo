@@ -4,7 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {JobDetailsComponent} from './job-details/job-details.component';
 import {StepperComponent} from './job-wizard/stepper/stepper.component';
-import {BasicsStepComponent} from './job-wizard/wizard-steps/basics-step.component/basics-step.component';
+import { JobBasicModalComponent} from './modals/basics-step-modal/job-basic-modal.component';
 import {ConditionsStepComponent} from './job-wizard/wizard-steps/conditions-step.component/conditions-step.component';
 import {QuotasStepComponent} from './job-wizard/wizard-steps/quotas-step.component/quotas-step.component';
 import {ReviewStepComponent} from './job-wizard/wizard-steps/review-step.component/review-step.component';
@@ -42,7 +42,6 @@ import { BenefitsStepComponent } from './job-wizard/wizard-steps/benefits-step.c
     StepperComponent,
     JobWizardComponent,
     ProgressBarComponent,
-    BasicsStepComponent,
     OverviewStepComponent,
     AttachmentStepComponent,
     QualificationsStepComponent,
@@ -52,6 +51,7 @@ import { BenefitsStepComponent } from './job-wizard/wizard-steps/benefits-step.c
     QuotasStepComponent,
     ReviewStepComponent,
     SkillsStepComponent,
+    JobBasicModalComponent
 
   ],
   imports: [

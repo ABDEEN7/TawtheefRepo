@@ -13,7 +13,7 @@ public static class JobRepositoryExtensions
         if (pagination == null || string.IsNullOrWhiteSpace(pagination.SortBy))
         {
             return query.OrderByDescending(j => j.CreatedDate)
-                        .ThenBy(j => j.Title);
+                        .ThenBy(j => j.TitleEn);
         }
 
         var sort = pagination.SortBy.ToLower();
@@ -21,9 +21,9 @@ public static class JobRepositoryExtensions
 
         return sort switch
         {
-            "title" => desc ? query.OrderByDescending(j => j.Title) : query.OrderBy(j => j.Title),
-            "deadline" => desc ? query.OrderByDescending(j => j.Deadline) : query.OrderBy(j => j.Deadline),
-            "vacancies" => desc ? query.OrderByDescending(j => j.Vacancies) : query.OrderBy(j => j.Vacancies),
+            "title" => desc ? query.OrderByDescending(j => j.TitleEn) : query.OrderBy(j => j.TitleEn),
+            "deadline" => desc ? query.OrderByDescending(j => j.ClosingDate) : query.OrderBy(j => j.ClosingDate),
+            "vacancies" => desc ? query.OrderByDescending(j => j.NumberOfVacancies) : query.OrderBy(j => j.NumberOfVacancies),
             "created" or "createddate"
                            => desc ? query.OrderByDescending(j => j.CreatedDate) : query.OrderBy(j => j.CreatedDate),
             "updated" or "updateddate"
@@ -44,16 +44,17 @@ public static class JobRepositoryExtensions
 
             // SEARCH
             .WhereIf(!string.IsNullOrWhiteSpace(filter.SearchTerm),
-                j => j.Title.Contains(filter.SearchTerm!) ||
-                     j.Description.Contains(filter.SearchTerm!) ||
-                     j.Benefits.Contains(filter.SearchTerm!) ||
-                     (j.Overview ?? "").Contains(filter.SearchTerm!) ||
-                     (j.QualificationsDescription ?? "").Contains(filter.SearchTerm!)
+                j => j.TitleAr.Contains(filter.SearchTerm!) ||
+                     j.TitleEn.Contains(filter.SearchTerm!) ||
+                     j.BenefitsAr!.Contains(filter.SearchTerm!) ||
+                     j.BenefitsEn!.Contains(filter.SearchTerm!) ||
+                     (j.OverViewAr ?? "").Contains(filter.SearchTerm!) ||
+                     (j.OverViewEn ?? "").Contains(filter.SearchTerm!)
             )
 
             // BASIC LOOKUP FILTERS
-            .WhereIf(filter.StatusId.HasValue, j => j.StatusId == filter.StatusId)
-            .WhereIf(filter.DepartmentId.HasValue, j => j.RequestingDepartmentId == filter.DepartmentId)
+            .WhereIf(filter.StatusId.HasValue, j => j.JobStatusId == filter.StatusId)
+            .WhereIf(filter.DepartmentId.HasValue, j => j.DepartmentId == filter.DepartmentId)
             .WhereIf(filter.JobCategoryId.HasValue, j => j.JobCategoryId == filter.JobCategoryId)
             .WhereIf(filter.WorkTypeId.HasValue, j => j.WorkTypeId == filter.WorkTypeId)
             .WhereIf(filter.SectorId.HasValue, j => j.SectorId == filter.SectorId)
@@ -68,18 +69,14 @@ public static class JobRepositoryExtensions
             .WhereIf(filter.MaxAge.HasValue, j => j.MaximumAge <= filter.MaxAge)
 
             // EXPERIENCE
-            .WhereIf(filter.MinExperienceYears.HasValue, j => j.MinimumExperienceYears >= filter.MinExperienceYears)
+            .WhereIf(filter.MinExperienceYears.HasValue, j => j.YearsOfExperience >= filter.MinExperienceYears)
 
             // VACANCIES
-            .WhereIf(filter.MinVacancies.HasValue, j => j.Vacancies >= filter.MinVacancies)
-            .WhereIf(filter.MaxVacancies.HasValue, j => j.Vacancies <= filter.MaxVacancies)
+            .WhereIf(filter.MinVacancies.HasValue, j => j.NumberOfVacancies >= filter.MinVacancies)
+            .WhereIf(filter.MaxVacancies.HasValue, j => j.NumberOfVacancies <= filter.MaxVacancies)
 
             // DEADLINE
-            .WhereIf(filter.DeadlineFrom.HasValue, j => j.Deadline >= filter.DeadlineFrom)
-            .WhereIf(filter.DeadlineTo.HasValue, j => j.Deadline <= filter.DeadlineTo)
-
-            // PUBLISH DATE
-            .WhereIf(filter.PublishFrom.HasValue, j => j.PublishAt >= filter.PublishFrom)
-            .WhereIf(filter.PublishTo.HasValue, j => j.PublishAt <= filter.PublishTo);
+            .WhereIf(filter.CloseDateFrom.HasValue, j => j.ClosingDate >= filter.CloseDateFrom)
+            .WhereIf(filter.CloseDateTo.HasValue, j => j.ClosingDate <= filter.CloseDateTo);
     }
 }

@@ -1,0 +1,158 @@
+:host {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+textarea.form-control {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  transition: all 0.2s;
+  resize: vertical;
+  min-height: 150px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  
+  &:focus {
+    border-color: #89153d;
+    box-shadow: 0 0 0 0.2rem rgba(137, 21, 61, 0.15);
+    outline: none;
+  }
+  
+  &[dir="rtl"] {
+    text-align: right;
+    font-family: 'Cairo', sans-serif;
+  }
+  
+  &[dir="ltr"] {
+    text-align: left;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  &.is-invalid {
+    border-color: #dc3545;
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+  }
+}
+
+.progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  
+  .progress-bar {
+    background: linear-gradient(90deg, #89153d 0%, #a61e4d 100%);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+  }
+}
+
+.alert-light {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  
+  .alert-heading {
+    color: #495057;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  
+  p {
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
+}
+
+.form-text {
+  color: #6c757d !important;
+  font-size: 0.85rem;
+  
+  i {
+    color: #ffc107;
+  }
+}
+
+.form-label {
+  font-weight: 600;
+  color: #343a40;
+  
+  .text-danger {
+    font-size: 1.1em;
+    margin-left: 2px;
+  }
+}
+
+.text-danger {
+  font-size: 0.85rem;
+  
+  i {
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 768px) {
+  textarea.form-control {
+    min-height: 120px;
+    font-size: 0.9rem;
+  }
+  
+  .alert-light {
+    padding: 0.75rem;
+    
+    .alert-heading {
+      font-size: 0.9rem;
+    }
+    
+    p {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  textarea.form-control {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+    
+    &:focus {
+      border-color: #89153d;
+      background-color: #2d3748;
+    }
+  }
+  
+  .form-label {
+    color: #e2e8f0;
+  }
+  
+  .form-text {
+    color: #a0aec0 !important;
+  }
+  
+  .alert-light {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    
+    .alert-heading {
+      color: #e2e8f0;
+    }
+    
+    p {
+      color: #a0aec0;
+    }
+  }
+}

@@ -2,41 +2,43 @@ import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
-import { MessageService } from 'primeng/api';
 import { Job } from '../../../models/job.model';
-import { RequiredAttachment } from '../../../models/required-attachment.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-attachments-step',
+  selector: 'app-attachment-step',
   standalone: false,
   templateUrl: './attachment-step.component.html',
   styleUrls: ['./attachment-step.component.scss'],
 })
-export class AttachmentStepComponent implements WizardStepComponent, OnInit, OnDestroy {
-  // Services
-  private readonly fb = inject(FormBuilder);
-  private readonly jobService = inject(JobService);
-  private readonly messageService = inject(MessageService);
-  private readonly translationService = inject(TranslateService);
+export class AttachmentStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
+  private fb = inject(FormBuilder);
+  protected jobService = inject(JobService);
   
-  // Form
-  readonly form = this.fb.group({
-    attachments: this.fb.array<FormGroup>([])
+  jobData!: Job;
+  
+  // Form definition
+  readonly form: FormGroup = this.fb.group({
+    attachments: this.fb.array([])
   });
   
-  // State
   private readonly destroy$ = new Subject<void>();
 
-  // Getters
-  get attachmentsArray(): FormArray<FormGroup> {
-    return this.form.controls.attachments;
-  }
-
   ngOnInit(): void {
-    this.initializeForm();
-    this.setupFormSubscription();
+    // Load initial data if available
+    const currentJob = this.jobService.getCurrentJob();
+    if (currentJob) {
+      this.setJobData(currentJob);
+    }
+    
+    // Subscribe to form changes
+    this.form.valueChanges.pipe(
+      debounceTime(300),
+      filter(() => this.form.valid),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.updateJobData();
+    });
   }
 
   ngOnDestroy(): void {
@@ -44,31 +46,18 @@ export class AttachmentStepComponent implements WizardStepComponent, OnInit, OnD
     this.destroy$.complete();
   }
 
-  /**
-   * Initialize form with existing job data
-   */
-  private initializeForm(): void {
-    const job = this.jobService.newJob();
-    this.setJobData(job);
+  // Get attachments form array
+  get attachmentsArray(): FormArray {
+    return this.form.get('attachments') as FormArray;
   }
 
-  /**
-   * Setup form value changes subscription with debounce
-   */
-  private setupFormSubscription(): void {
-    this.form.valueChanges.pipe(
-      debounceTime(300),
-      filter(() => this.form.valid),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      this.saveAttachmentsToService();
-    });
+  // Get specific attachment form group
+  getAttachmentGroup(index: number): FormGroup {
+    return this.attachmentsArray.at(index) as FormGroup;
   }
 
-  /**
-   * Populate form with job attachments
-   */
   setJobData(job: Job): void {
+    this.jobData = job;
     this.attachmentsArray.clear();
     
     if (job.requiredAttachments?.length) {
@@ -76,63 +65,60 @@ export class AttachmentStepComponent implements WizardStepComponent, OnInit, OnD
         this.addAttachmentToForm(attachment);
       });
     }
-    
-    this.form.updateValueAndValidity();
   }
 
-  /**
-   * Add new attachment
-   */
   addAttachment(): void {
-    const newAttachment: RequiredAttachment = {
-      title: '',
-      isMandatory: false
-    };
+    const attachmentGroup = this.fb.group({
+      titleAr: ['', [Validators.required, Validators.maxLength(200)]],
+      titleEn: ['', [Validators.maxLength(200)]],
+      isMandatory: [false]
+    });
     
-    this.addAttachmentToForm(newAttachment);
+    this.attachmentsArray.push(attachmentGroup);
   }
 
-  /**
-   * Remove attachment at index
-   */
   removeAttachment(index: number): void {
     this.attachmentsArray.removeAt(index);
   }
 
-  /**
-   * Check if form is valid
-   */
   isValid(): boolean {
-    // Check if all attachments have valid titles
-    return this.form.valid && this.allAttachmentsHaveTitles();
+    // Attachments are optional, but if added, they must be valid
+    if (this.attachmentsArray.length === 0) {
+      return true; // No attachments is okay
+    }
+    
+    return this.form.valid;
   }
 
-  // Private helper methods
-  private createAttachmentFormGroup(attachment: RequiredAttachment): FormGroup {
-    return this.fb.group({
-      title: [attachment.title, [Validators.required]],
+  private addAttachmentToForm(attachment: any): void {
+    const attachmentGroup = this.fb.group({
+      titleAr: [attachment.titleAr || '', [Validators.required, Validators.maxLength(200)]],
+      titleEn: [attachment.titleEn || '', [Validators.maxLength(200)]],
       isMandatory: [attachment.isMandatory || false]
     });
-  }
-
-  private addAttachmentToForm(attachment: RequiredAttachment): void {
-    const group = this.createAttachmentFormGroup(attachment);
-    this.attachmentsArray.push(group);
-  }
-
-  private saveAttachmentsToService(): void {
-    const attachments: RequiredAttachment[] = this.attachmentsArray.controls.map(control => ({
-      title: control.get('title')?.value,
-      isMandatory: control.get('isMandatory')?.value || false
-    }));
     
-    this.jobService.updateCurrentJobAttachments(attachments);
+    this.attachmentsArray.push(attachmentGroup);
   }
 
-  private allAttachmentsHaveTitles(): boolean {
-    return this.attachmentsArray.controls.every(control => {
-      const title = control.get('title')?.value?.trim();
-      return title && title.length > 0;
-    });
+  private updateJobData(): void {
+    if (this.form.valid) {
+      const attachments = this.attachmentsArray.controls.map(control => {
+        const group = control as FormGroup;
+        return {
+          titleAr: group.get('titleAr')?.value || '',
+          titleEn: group.get('titleEn')?.value || '',
+          isMandatory: group.get('isMandatory')?.value || false
+        };
+      });
+      
+      this.jobService.updateCurrentJobAttachments(attachments);
+    }
+  }
+
+  // Check if attachment has Arabic title
+  hasArabicTitle(index: number): boolean {
+    const group = this.getAttachmentGroup(index);
+    const titleAr = group.get('titleAr')?.value?.trim();
+    return !!titleAr;
   }
 }

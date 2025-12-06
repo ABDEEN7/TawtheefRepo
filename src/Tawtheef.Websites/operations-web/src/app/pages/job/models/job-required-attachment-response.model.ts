@@ -1,7 +1,11 @@
 import { GUID } from "../../../shared/types/guid.type";
 
-export interface JobRequiredAttachmentResponseDto {
+export interface JobRequiredAttachmentResponse {
   id: GUID;
-  title: string;
+  jobId: string;
+  titleAr: string;
+  titleEn: string;
   isMandatory: boolean;
+  createdDate: Date;
+  lastModifiedDate?: Date;
 }

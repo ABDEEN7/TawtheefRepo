@@ -9,11 +9,7 @@ public class SkillConfiguration : IEntityTypeConfiguration<Skill>
 {
     public void Configure(EntityTypeBuilder<Skill> builder)
     {
-        builder.ToTable(nameof(Skill), Schemas.Lookup);
 
-        builder.Property(s => s.Description).HasMaxLength(500);
-
-        // العلاقات
         builder.HasOne(s => s.Major)
             .WithMany()
             .HasForeignKey(s => s.MajorId)
@@ -29,7 +25,6 @@ public class SkillConfiguration : IEntityTypeConfiguration<Skill>
             .HasForeignKey(s => s.SkillRequirementTypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // فهارس
         builder.HasIndex(s => s.MajorId);
         builder.HasIndex(s => s.SkillTypeId);
         builder.HasIndex(s => s.SkillRequirementTypeId);

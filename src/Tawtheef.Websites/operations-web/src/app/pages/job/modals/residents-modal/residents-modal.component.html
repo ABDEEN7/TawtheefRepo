@@ -73,7 +73,7 @@
           <tbody>
             @for (row of breakdown; track row.nationalityId + row.percentage; let i = $index) {
             <tr>
-              <td>{{ lookupsService.getNationalites(row.nationalityId) }}</td>
+              <td>{{ lookupsService.getNationalitiesName(row.nationalityId) }}</td>
               <td>{{ row.percentage }}%</td>
               <td class="text-end">
                 <button (click)="remove(i)" class="btn btn-sm btn-outline-danger">

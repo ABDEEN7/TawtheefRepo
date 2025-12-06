@@ -67,7 +67,7 @@
       </div>
 
       @for (item of residentsBreakdowns; track item?.nationalityId) {
-        <span class="chip">{{ lookupsService.getNationalites(item?.nationalityId) }}: {{ item?.percentage }}%</span>
+        <span class="chip">{{ lookupsService.getNationalitiesName(item?.nationalityId) }}: {{ item?.percentage }}%</span>
       }
     </div>
   }

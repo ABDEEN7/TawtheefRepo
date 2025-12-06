@@ -1,12 +1,16 @@
 import { Component, computed, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
-import {JobService} from '../services/job.service';
-import {PointsConfigModalComponent} from '../modals/points-config-modal/points-config-modal.component';
+import { JobService } from '../services/job.service';
+import { PointsConfigModalComponent } from '../modals/points-config-modal/points-config-modal.component';
 import { JobLookupService } from '../services/job-lookup.service';
 import { PaginatedRequest } from '../../../core/models/paginated-request.model';
 import { JobQueryFilter } from '../models/job-query-filter.model';
-import { JobResponseDto } from '../models/job-response-model';
+import { JobResponse } from '../models/job-response-model';
+import { GUID } from '../../../shared/types/guid.type';
+import { Job } from '../models/job.model';
+import { PaginationMetadata } from '../../../core/models/pagination-metadata.model';
+import { PaginatedResult } from '../../../core/models/paginated-result.model';
 
 @Component({
   selector: 'app-job-list',
@@ -20,21 +24,21 @@ export class JobListComponent implements OnInit {
   private dialogService = inject(DialogService);
   lookupsService = inject(JobLookupService)
 
-  jobs = this.jobService.jobs;
-  paginationMetadata = this.jobService.paginationMetadata;
+  jobs:PaginatedResult<JobResponse> | undefined;
+  paginationMetadata : PaginationMetadata | undefined;
   
   currentPage = signal(1);
   itemsPerPage = 10;
 
   searchQuery = signal<string>('');
-  filterType = signal<string>('');
-  filterStatus = signal<string>('');
+  filterType = signal<GUID | null>(null);
+  filterStatus = signal<GUID | null>(null);
 
-  totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
-  totalPages = computed(() => this.paginationMetadata()?.totalPages || 0);
+  totalItems = 0
+  totalPages = 0
 
   pagedJobs = computed(() => {
-    return this.jobs();
+    return this.jobs;
   });
 
   ngOnInit() {
@@ -56,7 +60,10 @@ export class JobListComponent implements OnInit {
       statusId: this.filterStatus() || undefined
     };
 
-    this.jobService.loadJobs(pagination, filter);
+    this.jobService.getAll(pagination, filter).subscribe(paginatedData=>{
+      this.jobs = paginatedData
+      this.paginationMetadata = paginatedData.metadata;
+    });
   }
 
   onFilterChange() {
@@ -66,8 +73,8 @@ export class JobListComponent implements OnInit {
 
   clearFilters() {
     this.searchQuery.set('');
-    this.filterType.set('');
-    this.filterStatus.set('');
+    this.filterType.set(null);
+    this.filterStatus.set(null);
     this.currentPage.set(1);
     this.loadJobsWithFilters();
   }
@@ -77,13 +84,21 @@ export class JobListComponent implements OnInit {
     this.loadJobsWithFilters();
   }
 
-  editJob(job: JobResponseDto) {
-    this.router.navigate([`jobs/edit/${job.id}`]).then();
+  editJob(job: JobResponse) {
+    this.router.navigate([`/jobs`, job.id, 'wizard']).then();
   }
 
-  openPointsModal(job: JobResponseDto) {
+  viewJob(job: JobResponse) {
+    this.router.navigate([`/jobs/view`, job.id]).then();
+  }
+
+  createNewJob() {
+    this.router.navigate(['/jobs/create']).then();
+  }
+
+  openPointsModal(job: JobResponse) {
     const ref: DynamicDialogRef | null = this.dialogService.open(PointsConfigModalComponent, {
-      data: { jobId: job.id, jobTitle: job.title },
+      data: { jobId: job.id, jobTitle: job.titleAr },
       width: '80%',
     });
 
@@ -92,5 +107,40 @@ export class JobListComponent implements OnInit {
         this.loadJobsWithFilters();
       }
     });
+  }
+
+  getStatusBadgeClass(statusName: string): string {
+    switch(statusName?.toLowerCase()) {
+      case 'draft':
+        return 'bg-secondary';
+      case 'pending_approval':
+      case 'pending':
+        return 'bg-warning text-dark';
+      case 'approved':
+        return 'bg-success';
+      case 'published':
+        return 'bg-info';
+      case 'closed':
+        return 'bg-dark';
+      case 'rejected':
+        return 'bg-danger';
+      case 'cancelled':
+        return 'bg-secondary';
+      default:
+        return 'bg-light text-dark';
+    }
+  }
+
+  getJobCategoryBadgeClass(categoryName: string): string {
+    switch(categoryName?.toLowerCase()) {
+      case 'academic':
+        return 'bg-primary';
+      case 'administrative':
+        return 'bg-info';
+      case 'labor':
+        return 'bg-warning text-dark';
+      default:
+        return 'bg-secondary';
+    }
   }
 }

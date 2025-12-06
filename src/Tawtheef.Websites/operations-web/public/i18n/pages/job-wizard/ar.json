@@ -1,5 +1,5 @@
 {
-  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BASICS": "الأساسيات",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BASICS": "البيانات الأساسية",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW": "نظرة عامة",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS": "المؤهلات",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES": "المسؤوليات",
@@ -7,125 +7,121 @@
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS": "المهارات",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS": "المرفقات",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS": "المزايا",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.REVIEW": "المراجعة",
+
+  "JOB_WIZARD.HEADER.PROGRESS_LABEL": "التقدم",
+  "JOB_WIZARD.HEADER.CANCEL": "إلغاء",
 
   "JOB_WIZARD.SHARED.BUTTONS.BACK": "رجوع",
   "JOB_WIZARD.SHARED.BUTTONS.NEXT": "التالي",
-  "JOB_WIZARD.EDIT_JOB": "تعديل الوظيفة",
-  "JOB_WIZARD.CREATE_JOB": "إنشاء وظيفة جديدة ",
+  "JOB_WIZARD.SHARED.BUTTONS.SUBMIT_FOR_APPROVAL": "إرسال للاعتماد",
+
+  "JOB_WIZARD.LOADING.PREPARING_WIZARD": "جاري تحضير معالج إنشاء الوظيفة...",
+  "JOB_WIZARD.LOADING.PLEASE_WAIT": "يرجى الانتظار...",
+  "JOB_WIZARD.LOADING.OPEN_MODAL_HINT": "سيتم فتح نافذة لإدخال البيانات الأساسية للوظيفة",
+
+  "JOB_WIZARD.ERROR.LOAD_FAILED": "فشل في تحميل الوظيفة",
+  "JOB_WIZARD.ERROR.COMPLETE_REQUIRED_FIELDS": "يرجى إكمال جميع الحقول الإلزامية في هذه الخطوة",
+  "JOB_WIZARD.ERROR.COMPLETE_PREVIOUS_STEPS": "يجب إكمال الخطوات السابقة أولاً",
+  "JOB_WIZARD.ERROR.NO_JOB_ID": "لا يوجد معرف للوظيفة",
+  "JOB_WIZARD.ERROR.COMPLETE_ALL_STEPS": "يرجى إكمال جميع الخطوات قبل الإرسال",
+  "JOB_WIZARD.ERROR.FAILED_TO_SUBMIT": "فشل في إرسال الوظيفة للاعتماد",
+
+  "JOB_WIZARD.SUCCESS.SUBMITTED_FOR_APPROVAL": "تم إرسال الوظيفة للاعتماد بنجاح",
+
+  "JOB_WIZARD.CONFIRM.CANCEL_WIZARD": "هل تريد إلغاء العملية؟ سيتم فقدان جميع التغييرات غير المحفوظة.",
+
+  "JOB_WIZARD.EDIT_JOB": "تعديل وظيفة",
+  "JOB_WIZARD.CREATE_JOB": "إنشاء وظيفة",
   "JOB_WIZARD.EDIT_DETAILS": "تعديل تفاصيل الوظيفة",
-  "JOB_WIZARD.ENTER_DETAILS": "يرجى اسنكمال البيانات المطلوبة عبر الخطوات التالية لاتمام انشاء وظيفة جديدة ",
-  "JOB_WIZARD.SHARED.BUTTONS.EDIT_JOB": "حفظ التعديلات",
-  "JOB_WIZARD.SHARED.BUTTONS.PUBLISH_JOB": "نشر الوظيفة",
-  "savedSuccessfully": "تم الحفظ بنجاح",
+  "JOB_WIZARD.ENTER_DETAILS": "إدخال تفاصيل الوظيفة",
+  
+   "JOB_WIZARD.HEADER.PROGRESS": "التقدم",
+  "JOB_WIZARD.SHARED.BUTTONS.CANCEL": "إلغاء",
+  "JOB_WIZARD.LOADING.ACCESSIBILITY_LABEL": "جاري التحميل...",
+  "JOB_WIZARD.LOADING.TITLE": "جاري تحضير نموذج إنشاء الوظيفة",
+  "JOB_WIZARD.LOADING.SUBTITLE": "يرجى الانتظار...",
+  "JOB_WIZARD.LOADING.CREATE_HINT": "سيتم فتح نافذة لإدخال البيانات الأساسية للوظيفة",
 
-   "JOB_WIZARD.STEPS.BASICS.TITLE": "المعلومات الأساسية",
-  "JOB_WIZARD.STEPS.BASICS.SUBTITLE": "أدخل التفاصيل الأساسية للوظيفة",
+  "JOB_BASIC_MODAL.TITLE": "البيانات الأساسية للوظيفة",
+  "JOB_BASIC_MODAL.CREATE_TITLE": "إنشاء وظيفة - البيانات الأساسية",
+  "JOB_BASIC_MODAL.EDIT_TITLE": "تعديل وظيفة - البيانات الأساسية",
+  "JOB_BASIC_MODAL.CANCEL_BUTTON": "إلغاء",
+  "JOB_BASIC_MODAL.SAVE_BUTTON": "حفظ",
+  "JOB_BASIC_MODAL.START_CREATION_BUTTON": "بدء الإنشاء",
+  "JOB_BASIC_MODAL.UPDATE_BUTTON": "تحديث",
+  "JOB_BASIC_MODAL.CANCEL_CONFIRM": "هل تريد إلغاء العملية؟ سيتم فقدان جميع التغييرات غير المحفوظة.",
+  "JOB_BASIC_MODAL.LOADING": "جاري التحميل...",
 
-  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT": "الإدارة",
-  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER": "اختر الإدارة",
+  "JOB_BASIC_MODAL.ERROR.LOAD_FAILED": "فشل في تحميل بيانات الوظيفة",
+  "JOB_BASIC_MODAL.ERROR.DUPLICATE_JOB": "توجد وظيفة مكررة بنفس المسمى والجهة والتخصص",
+  "JOB_BASIC_MODAL.SUCCESS.CREATED": "تم إنشاء الوظيفة بنجاح",
+  "JOB_BASIC_MODAL.ERROR.CREATE_FAILED": "فشل في إنشاء الوظيفة",
+  "JOB_BASIC_MODAL.ERROR.CHECK_DUPLICATE": "فشل في التحقق من التكرار",
+  "JOB_BASIC_MODAL.SUCCESS.UPDATED": "تم تحديث البيانات الأساسية بنجاح",
+  "JOB_BASIC_MODAL.ERROR.UPDATE_FAILED": "فشل في تحديث البيانات",
+
+  "COMMON.LOADING": "جاري التحميل...",
+
+  "VALIDATION.REQUIRED_FIELD": "هذا الحقل مطلوب",
 
   "JOB_WIZARD.STEPS.BASICS.SECTOR": "القطاع",
   "JOB_WIZARD.STEPS.BASICS.SECTOR_PLACEHOLDER": "اختر القطاع",
-
-  "JOB_WIZARD.STEPS.BASICS.DEPARTMENT": "الجهة الطالبة",
-  "JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER": "اختر الجهة الطالبة",
-
-  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE": "نوع الدوام",
-  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE_PLACEHOLDER": "اختر نوع الدوام",
-
-  "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY": "نوغ الوظيفة",
-  "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY_PLACEHOLDER": "اختر نوع الوظيفة",
-
-  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE": "المسمى الوظيفي",
-  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER": "أدخل المسمى الوظيفي",
-
-  "JOB_WIZARD.STEPS.BASICS.MAJOR": "التخصص الرئيسي",
-  "JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER": "اختر التخصص",
-
-  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR": "التخصص الفرعي",
-  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER": "اختر التخصص الفرعي",
-
-  "JOB_WIZARD.STEPS.BASICS.GENDER": "الجنس",
-  "JOB_WIZARD.STEPS.BASICS.GENDER_PLACEHOLDER": "اختر الجنس",
-
+  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT": "الإدارة",
+  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER": "اختر الإدارة",
+  "JOB_WIZARD.STEPS.BASICS.DEPARTMENT": "القسم",
+  "JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER": "اختر القسم",
+  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE": "سنوات الخبرة الدنيا",
+  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE_PLACEHOLDER": "أدخل عدد السنوات (0-40)",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR": "المسمى الوظيفي (عربي)",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR_PLACEHOLDER": "أدخل المسمى الوظيفي بالعربية",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN": "المسمى الوظيفي (إنجليزي)",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN_PLACEHOLDER": "أدخل المسمى الوظيفي بالإنجليزية",
+  "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY": "فئة الوظيفة",
+  "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY_PLACEHOLDER": "اختر فئة الوظيفة",
   "JOB_WIZARD.STEPS.BASICS.WORK_LOCATION": "مكان العمل",
   "JOB_WIZARD.STEPS.BASICS.WORK_LOCATION_PLACEHOLDER": "اختر مكان العمل",
-
-  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE": "سنوات الخبرة",
-  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE_PLACEHOLDER": "أدخل الحد الأدنى لسنوات الخبرة",
-
-  "JOB_WIZARD.STEPS.BASICS.VACANCIES": "عدد الشواغر",
-  "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "أدخل عدد الشواغر",
-
-  "JOB_WIZARD.STEPS.BASICS.DEADLINE": "تاريخ الاغلاق",
-
+  "JOB_WIZARD.STEPS.BASICS.MAJOR": "التخصص الرئيسي",
+  "JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER": "اختر التخصص الرئيسي",
+  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR": "التخصص الفرعي",
+  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER": "اختر التخصص الفرعي",
+  "JOB_WIZARD.STEPS.BASICS.GENDER": "الجنس",
+  "JOB_WIZARD.STEPS.BASICS.GENDER_PLACEHOLDER": "اختر الجنس",
+  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE": "نوع الدوام",
+  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE_PLACEHOLDER": "اختر نوع الدوام",
   "JOB_WIZARD.STEPS.BASICS.MIN_AGE": "الحد الأدنى للعمر",
   "JOB_WIZARD.STEPS.BASICS.MIN_AGE_PLACEHOLDER": "أدخل الحد الأدنى للعمر",
-
   "JOB_WIZARD.STEPS.BASICS.MAX_AGE": "الحد الأقصى للعمر",
   "JOB_WIZARD.STEPS.BASICS.MAX_AGE_PLACEHOLDER": "أدخل الحد الأقصى للعمر",
+  "JOB_WIZARD.STEPS.BASICS.VACANCIES": "عدد الشواغر",
+  "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "أدخل عدد الشواغر",
+  "JOB_WIZARD.STEPS.BASICS.DEADLINE": "تاريخ الإغلاق",
 
-  "JOB_WIZARD.VALIDATION.MIN_EXPERIENCE": "الحد الأدنى للخبرة غير صحيح",
-  "JOB_WIZARD.VALIDATION.MIN_VACANCIES": "يجب أن يكون الحد الأدنى للشواغر 1 على الأقل",
-  "JOB_WIZARD.VALIDATION.MIN_GREATER_THAN_MAX": "لا يمكن أن يكون الحد الأدنى للعمر أكبر من الحد الأقصى",
-  "JOB_WIZARD.VALIDATION.AGE_RANGE": "يجب أن يكون العمر بين 0 و 100",
+  "JOB_WIZARD.VALIDATION.SECTOR_REQUIRED": "يجب اختيار القطاع أولاً",
+  "JOB_WIZARD.VALIDATION.MANAGEMENT_REQUIRED": "يجب اختيار الإدارة أولاً",
+  "JOB_WIZARD.VALIDATION.MAJOR_REQUIRED": "يجب اختيار التخصص الرئيسي أولاً",
+  "JOB_WIZARD.VALIDATION.MIN_EXPERIENCE": "يجب أن تكون سنوات الخبرة 0 أو أكثر",
+  "JOB_WIZARD.VALIDATION.AGE_RANGE": "يجب أن يكون العمر ضمن النطاق المسموح",
+  "JOB_WIZARD.VALIDATION.AGE_RANGE_INVALID": "يجب أن يكون الحد الأدنى للعمر أصغر من الحد الأقصى",
+  "JOB_WIZARD.VALIDATION.MIN_VACANCIES": "يجب أن يكون هناك شاغر واحد على الأقل",
+  "JOB_WIZARD.VALIDATION.POSITIVE_INTEGER": "يرجى إدخال رقم صحيح موجب",
+  "JOB_WIZARD.VALIDATION.FUTURE_DATE_REQUIRED": "يرجى اختيار تاريخ مستقبلي",
 
-  
-  "JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_AR": "الوصف (بالعربية)",
-  "JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_PLACEHOLDER": "أدخل وصف الوظيفة هنا",
+  "JOB_WIZARD.VALIDATION.SEQUENCE_SECTOR_REQUIRED": "يجب اختيار القطاع قبل اختيار الإدارة",
+  "JOB_WIZARD.VALIDATION.SEQUENCE_MANAGEMENT_REQUIRED": "يجب اختيار الإدارة قبل اختيار القسم",
+  "JOB_WIZARD.VALIDATION.SEQUENCE_MAJOR_REQUIRED": "يجب اختيار التخصص الرئيسي قبل اختيار التخصص الفرعي",
 
-  "JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS": "الدرجة العلمية",
+  "VALIDATION.JOB.TITLE_AR_REQUIRED": "المسمى الوظيفي (عربي) مطلوب",
+  "VALIDATION.JOB.TITLE_EN_REQUIRED": "المسمى الوظيفي (إنجليزي) مطلوب",
+  "VALIDATION.JOB.SECTOR_REQUIRED": "القطاع مطلوب",
+  "VALIDATION.JOB.MANAGEMENT_REQUIRED": "الإدارة مطلوبة",
+  "VALIDATION.JOB.DEPARTMENT_REQUIRED": "القسم مطلوب",
+  "VALIDATION.JOB.JOB_CATEGORY_REQUIRED": "نوع الوظيفة مطلوب",
+  "VALIDATION.JOB.WORK_LOCATION_REQUIRED": "مكان العمل مطلوب",
+  "VALIDATION.JOB.MAJOR_REQUIRED": "التخصص الرئيسي مطلوب",
+  "VALIDATION.JOB.WORK_TYPE_REQUIRED": "نوع الدوام مطلوب",
 
-  "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ARABIC": "الوصف  (بالعربية)",
-  "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ARABIC_PLACEHOLDER": "أدخل وصف المؤهلات باللغة العربية",
-
-  "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ENGLISH": "الوصف  (بالإنجليزية)",
-  "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ENGLISH_PLACEHOLDER": "أدخل وصف المؤهلات باللغة الإنجليزية",
-  
-  "JOB_WIZARD.STEPS.ATTACHMENTS.TITLE": "المرفقات",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT": "مرفق",
-  "COMMON.REMOVE": "حذف",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME": "اسم المرفق",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_PLACEHOLDER": "أدخل اسم المرفق",
-  "JOB_WIZARD.VALIDATION.ATTACHMENT_NAME_REQUIRED": "اسم المرفق مطلوب",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.MANDATORY": "إلزامي",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE": "لا توجد مرفقات مضافة بعد",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.ADD_ATTACHMENT": "إضافة مرفق",
-
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_RESPONSIBILITY": "إضافة مسؤولية",
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY": "مسؤولية",
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE": "لا توجد مسؤوليات مضافة بعد",
-
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR_PLACEHOLDER": "أدخل الوصف بالعربية",
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN_PLACEHOLDER": "أدخل الوصف بالإنجليزية",
-
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER": "الوصف بالعربية",
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_EN_PLACEHOLDER": "الوصف بالإنجليزية",
-
-  "JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER": "أدخل الوصف باللغة العربية",
-  "JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_EN_PLACEHOLDER": "الوصف الإنجليزية",
-  "JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR_PLACEHOLDER": "الوصف بالعربية",
-  "JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_EN_PLACEHOLDER": "أدخل الوصف باللغة الإنجليزية",
-
-  "JOB_WIZARD.STEPS.CONDITIONS.ADD_CONDITIONSY": "إضافة شرط",
-  "JOB_WIZARD.STEPS.CONDITIONS.CONDITION": "شرط",
-  "JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE": "لا توجد شروط مضافة بعد",
-
-  "JOB_WIZARD.STEPS.SKILLS.TILTLE": "المهارات المطلوبة",
-  "JOB_WIZARD.STEPS.SKILLS.ADD_SKILL": "إضافة مهارة",
-  "JOB_WIZARD.STEPS.SKILLS.SKILL": "المهارة",
-  "JOB_WIZARD.STEPS.SKILLS.SKILL_PLACEHOLDER": "اختر مهارة",
-  "JOB_WIZARD.STEPS.SKILLS.SHOW_TO_APPLICANTS": "عرض للمتقدمين",
-  "JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE": "لا توجد مهارات مضافة حتى الآن.",
-
-  "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION": "وصف المزايا",
-  "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_PLACEHOLDER": "أدخل وصف المزايا",
-
-  "JOB_WIZARD.VALIDATION.WARNING": "تحذير",
-  "JOB_WIZARD.VALIDATION.ADD_RESPONSIBILITY_DETAIL": "يرجى إضافة مسؤولية واحدة على الأقل قبل المتابعة.",
-  "VALIDATION.REQUIRED_FIELD": "هذا الحقل مطلوب",
-  "JOB_WIZARD.VALIDATION.WARRNING": "تحذير",
-  "COMMON.DELETE": "حذف"
-
-
+  "JOB_WIZARD.ERRORS.NO_JOB_TO_SUBMIT": "لا توجد وظيفة للإرسال",
+  "JOB_WIZARD.MESSAGES.DRAFT_SAVED": "تم حفظ مسودة الوظيفة بنجاح",
+  "JOB_WIZARD.MESSAGES.SUBMITTED_FOR_APPROVAL": "تم إرسال الوظيفة للموافقة"
 }

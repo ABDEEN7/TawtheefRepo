@@ -11,6 +11,8 @@ public class JobRequiredAttachment : EventEntity
     public Job? Job { get; set; }
 
     [MaxLength(200)]
-    public required string Title { get; set; }
+    public required string TitleAr { get; set; }
+    [MaxLength(200)]
+    public required string TitleEn { get; set; }
     public bool IsMandatory { get; set; }
 }

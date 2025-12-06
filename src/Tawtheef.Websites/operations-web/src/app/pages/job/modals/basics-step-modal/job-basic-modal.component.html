@@ -1,0 +1,339 @@
+<div class="job-basic-modal">
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="d-flex align-items-center">
+      <i class="fa fa-briefcase me-3 fs-4"></i>
+      <h4 class="modal-title mb-0">
+        {{ getModalTitle() | translate }}
+      </h4>
+    </div>
+    <button class="btn-close" (click)="cancel()" [disabled]="isLoading"></button>
+  </div>
+
+  <!-- Body -->
+  <div class="modal-body" *ngIf="!isLoading; else loadingTemplate">
+    <form [formGroup]="form">
+      <div class="row g-3">
+        <!-- Row 1: Sector & Management -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.SECTOR' | translate }}
+          </label>
+          <p-select
+            [options]="lookupsService.sectors()"
+            formControlName="sectorId"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.SECTOR_PLACEHOLDER' | translate }}"
+            class="w-100">
+          </p-select>
+          @if (form.controls.sectorId.touched && form.controls.sectorId.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+        
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MANAGEMENT' | translate }}
+          </label>
+          <p-select
+            [options]="lookupsService.managements()"
+            formControlName="managementId"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            [disabled]="!form.controls.sectorId.value"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER' | translate }}"
+            class="w-100">
+          </p-select>
+          @if (form.controls.managementId.touched && form.controls.managementId.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+
+        <!-- Row 2: Department & Years of Experience -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.DEPARTMENT' | translate }}
+          </label>
+          <p-select
+            [options]="lookupsService.departments()"
+            formControlName="departmentId"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            [disabled]="!canSelectDepartment()"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER' | translate }}"
+            class="w-100">
+          </p-select>
+          @if (form.controls.departmentId.touched && form.controls.departmentId.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+        
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE' | translate }}
+          </label>
+          <input
+            type="number"
+            min="0"
+            class="form-control"
+            formControlName="yearsOfExperience"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE_PLACEHOLDER' | translate }}">
+          @if (form.controls.yearsOfExperience.touched && form.controls.yearsOfExperience.invalid) {
+            <div class="text-danger small mt-1">
+              @if (form.controls.yearsOfExperience.errors?.['required']) {
+                {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Row 3: Job Titles -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR' | translate }}
+          </label>
+          <input
+            class="form-control"
+            formControlName="titleAr"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR_PLACEHOLDER' | translate }}">
+          @if (form.controls.titleAr.touched && form.controls.titleAr.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN' | translate }}
+          </label>
+          <input
+            class="form-control"
+            formControlName="titleEn"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN_PLACEHOLDER' | translate }}">
+          @if (form.controls.titleEn.touched && form.controls.titleEn.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+
+        <!-- Row 4: Category & Work Location -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY' | translate }}
+          </label>
+          <p-select
+            [options]="lookupsService.jobCategories()"
+            formControlName="jobCategoryId"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY_PLACEHOLDER' | translate }}"
+            class="w-100">
+          </p-select>
+          @if (form.controls.jobCategoryId.touched && form.controls.jobCategoryId.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+        
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.WORK_LOCATION' | translate }}
+          </label>
+          <p-select
+            [options]="lookupsService.workLocations()"
+            formControlName="workLocationId"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.WORK_LOCATION_PLACEHOLDER' | translate }}"
+            class="w-100">
+          </p-select>
+          @if (form.controls.workLocationId.touched && form.controls.workLocationId.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+
+        <!-- Row 5: Major & Sub-major -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MAJOR' | translate }}
+          </label>
+          <p-select
+            [options]="lookupsService.majors()"
+            formControlName="majorId"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER' | translate }}"
+            class="w-100">
+          </p-select>
+          @if (form.controls.majorId.touched && form.controls.majorId.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          @if(canSelectSubMajor()) {
+            <label class="form-label fw-bold">
+              {{ 'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR' | translate }}
+            </label>
+            <p-select
+              [options]="lookupsService.subMajors()"
+              formControlName="subMajorId"
+              optionLabel="name"
+              optionValue="id"
+              [showClear]="true"
+              placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER' | translate }}"
+              class="w-100">
+            </p-select>
+          }
+        </div>
+
+        <!-- Row 6: Gender & Work Type -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            {{ 'JOB_WIZARD.STEPS.BASICS.GENDER' | translate }}
+          </label>
+          <p-select
+            [options]="lookupsService.genders()"
+            formControlName="genderId"
+            [showClear]="true"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.GENDER_PLACEHOLDER' | translate }}"
+            class="w-100">
+          </p-select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.WORK_TYPE' | translate }}
+          </label>
+          <p-select
+            [options]="lookupsService.workTypes()"
+            formControlName="workTypeId"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.WORK_TYPE_PLACEHOLDER' | translate }}"
+            class="w-100">
+          </p-select>
+          @if (form.controls.workTypeId.touched && form.controls.workTypeId.invalid) {
+            <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+
+        <!-- Row 7: Age Range -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MIN_AGE' | translate }}
+          </label>
+          <input
+            type="number"
+            min="18"
+            class="form-control"
+            formControlName="minimumAge"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.MIN_AGE_PLACEHOLDER' | translate }}">
+          @if (form.controls.minimumAge.touched && form.controls.minimumAge.invalid) {
+            <div class="text-danger small mt-1">
+              @if (form.controls.minimumAge.errors?.['required']) {
+                {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+              }
+            </div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MAX_AGE' | translate }}
+          </label>
+          <input
+            type="number"
+            min="18"
+            class="form-control"
+            formControlName="maximumAge"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.MAX_AGE_PLACEHOLDER' | translate }}">
+          @if (form.controls.maximumAge.touched && form.controls.maximumAge.invalid) {
+            <div class="text-danger small mt-1">
+              @if (form.controls.maximumAge.errors?.['required']) {
+                {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Row 8: Vacancies & Deadline -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.VACANCIES' | translate }}
+          </label>
+          <input
+            type="number"
+            min="1"
+            class="form-control"
+            formControlName="numberOfVacancies"
+            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER' | translate }}">
+          @if (form.controls.numberOfVacancies.touched && form.controls.numberOfVacancies.invalid) {
+            <div class="text-danger small mt-1">
+              @if (form.controls.numberOfVacancies.errors?.['required']) {
+                {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+              }
+            </div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-bold">
+            <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.DEADLINE' | translate }}
+          </label>
+          <p-datePicker
+            formControlName="closingDate"
+            [showIcon]="true"
+            inputId="date"
+            dateFormat="dd/mm/yy"
+            placeholder="dd/mm/yyyy"
+            [minDate]="currentDate"
+            (onSelect)="onDateSelect()"
+            class="w-100">
+          </p-datePicker>
+          @if (form.controls.closingDate.touched && form.controls.closingDate.invalid) {
+            <div class="text-danger small mt-1">
+              @if (form.controls.closingDate.errors?.['required']) {
+                {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer with buttons -->
+  <div class="modal-footer">
+    <button 
+      class="btn btn-secondary" 
+      (click)="cancel()"
+      [disabled]="isLoading">
+      {{ 'JOB_BASIC_MODAL.CANCEL_BUTTON' | translate }}
+    </button>
+    
+    <button 
+      class="btn btn-primary" 
+      (click)="isEditMode ? updateJobBasics() : startJobCreation()"
+      [disabled]="isLoading || !form.valid">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+      {{ getSaveButtonText() | translate }}
+    </button>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">{{ 'JOB_BASIC_MODAL.LOADING' | translate }}</span>
+      </div>
+      <p class="mt-3 text-muted">{{ 'COMMON.LOADING' | translate }}</p>
+    </div>
+  </ng-template>
+</div>

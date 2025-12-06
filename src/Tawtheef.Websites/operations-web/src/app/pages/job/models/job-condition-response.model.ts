@@ -1,6 +1,10 @@
 import { GUID } from "../../../shared/types/guid.type";
 
-export interface JobConditionResponseDto {
+export interface JobConditionResponse{
   id: GUID;
-  text: string;
+  jobId: string;
+  textAr: string;
+  textEn: string;
+  createdDate: Date;
+  lastModifiedDate?: Date;
 }

@@ -9,7 +9,7 @@ public class JobResponsibility : EventEntity
 {
     public Guid JobId { get; set; }
     public Job? Job { get; set; }
-
-    [MaxLength(500)]
-    public required string Text { get; set; }
+    public required string TitleAr { get; set; }
+    public required string TitleEn { get; set; }
+    public bool IsMandatory { get; set; }
 }

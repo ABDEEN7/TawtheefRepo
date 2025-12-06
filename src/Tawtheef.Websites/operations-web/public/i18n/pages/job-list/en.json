@@ -1,90 +1,31 @@
 {
-  "job_list": {
-    "available_jobs": "Available Jobs",
-    "review_edit_jobs": "Review and edit published jobs using the table below.",
-    "filters_title": "Search and Filter",
-    "filters_hint": "Type keywords or use filters.",
-    "filters_search_placeholder": "Search by keywords (title, requesting department...)",
-    "filters_select_status": "Status",
-    "points_settings": "Points Settings",
-    "points_title": "Points Setup",
-    "points": "Points",
-    "no_jobs": "No jobs available",
-    "total_matching": "Total Matching",
-    "job": "Job"
-  },
-  "job": {
-    "title": "Job Title",
-    "requesting_dept": "Requesting Department",
-    "job_category": "Job Category",
-    "vacancies": "Number of Vacancies",
-    "status": "Job Status"
-  },
-  "buttons": {
-    "clear_filters": "Clear Filters (Show All)",
-    "edit_title": "Edit",
-    "edit": "Edit",
-    "view_job": "View Job",
-    "previous": "Previous",
-    "next": "Next",
-    "list_points": "View Points"
-  },
-  "steps_basics": {
-    "type_value": "Job Type"
-  },
-  "status": {
-    "job_status": "Job Status",
-    "status_value": "Status"
-  },
-  "modals": {
-    "points": {
-      "title": "Points Settings and Evaluation Tables",
-      "max_limit": "Maximum Limit",
-      "points_table": "Points Table",
-      "rubric_hint": "The total of this table must equal the maximum limit above.",
-      "save_hint": "Settings are saved for this job only."
-    },
-    "rubrics": {
-      "degree": "Degree",
-      "experience": "Experience",
-      "languages": "Languages",
-      "skills": "Skills",
-      "availability": "Availability",
-      "location": "Location & Nationality",
-      "lbl_degree": "Degree",
-      "lbl_experience": "Experience",
-      "lbl_languages": "Languages",
-      "lbl_skills": "Skills",
-      "lbl_availability": "Availability",
-      "lbl_geography": "Geographical Location",
-      "options": {
-        "degree": {
-          "phd": "PhD",
-          "masters": "Master’s Degree",
-          "bachelor": "Bachelor’s Degree",
-          "diploma": "Diploma",
-          "high_school": "High School",
-          "preparatory": "Preparatory School",
-          "elementary": "Elementary School"
-        },
-        "langs": {
-          "two_languages": "Two Languages",
-          "one_strong_language": "One Strong Language",
-          "medium_language": "Intermediate Language",
-          "basic": "Basic Language"
-        },
-        "avail": {
-          "immediate_inside_qatar": "Immediate + Inside Qatar",
-          "within_month": "Within One Month",
-          "outside_country": "Outside the Country",
-          "not_available": "Not Available"
-        },
-        "geo": {
-          "policy_match": "Policy Match",
-          "priority": "Priority",
-          "general": "General"
-        }
-      }
-    }
-  }
+  "job_list.available_jobs": "Available Jobs",
+  "job_list.review_edit_jobs": "Review and edit existing jobs",
+  "job_list.buttons.create_job": "Create Job",
+  "job_list.filters_title": "Filters",
+  "job_list.filters_hint": "Use filters to refine the job list",
+  "job_list.filters_search_placeholder": "Search jobs...",
+  "job_list.job.job_category": "Job Category",
+  "job_list.filters_select_status": "Select Status",
+  "job_list.buttons.clear_filters": "Clear Filters",
+  "job_list.job.titleAr": "Job Title (Arabic)",
+  "job_list.job.titleEn": "Job Title (English)",
+  "job_list.job.requesting_dept": "Requesting Department",
+  "job_list.job.vacancies": "Vacancies",
+  "job_list.job.status": "Status",
+  "job_list.job.created_date": "Created Date",
+  "job_list.job.deadline": "Deadline",
+  "job_list.actions": "Actions",
+  "job_list.points_title": "Points Configuration",
+  "job_list.buttons.edit_title": "Edit Job",
+  "job_list.buttons.view_job": "View Job",
+  "job_list.buttons.more_actions": "More Actions",
+  "job_list.buttons.submit_for_approval": "Submit for Approval",
+  "job_list.buttons.approve": "Approve",
+  "job_list.buttons.reject": "Reject",
+  "job_list.buttons.publish": "Publish",
+  "job_list.buttons.close": "Close",
+  "job_list.buttons.delete": "Delete",
+  "job_list.no_jobs": "No jobs found",
+  "job_list.buttons.create_first_job": "Create the first job"
 }

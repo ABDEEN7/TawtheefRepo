@@ -1,5 +1,5 @@
 {
-  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BASICS": "Basics",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BASICS": "Basic Information",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW": "Overview",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS": "Qualifications",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES": "Responsibilities",
@@ -7,112 +7,120 @@
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS": "Skills",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS": "Attachments",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS": "Benefits",
+  "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.REVIEW": "Review",
+
+  "JOB_WIZARD.HEADER.PROGRESS_LABEL": "Progress",
+  "JOB_WIZARD.HEADER.CANCEL": "Cancel",
 
   "JOB_WIZARD.SHARED.BUTTONS.BACK": "Back",
   "JOB_WIZARD.SHARED.BUTTONS.NEXT": "Next",
+  "JOB_WIZARD.SHARED.BUTTONS.SUBMIT_FOR_APPROVAL": "Submit for Approval",
+
+  "JOB_WIZARD.LOADING.PREPARING_WIZARD": "Preparing job creation wizard...",
+  "JOB_WIZARD.LOADING.PLEASE_WAIT": "Please wait...",
+  "JOB_WIZARD.LOADING.OPEN_MODAL_HINT": "A window will open to enter basic job information",
+
+  "JOB_WIZARD.ERROR.LOAD_FAILED": "Failed to load the job",
+  "JOB_WIZARD.ERROR.COMPLETE_REQUIRED_FIELDS": "Please complete all required fields in this step",
+  "JOB_WIZARD.ERROR.COMPLETE_PREVIOUS_STEPS": "You must complete previous steps first",
+  "JOB_WIZARD.ERROR.NO_JOB_ID": "No job ID found",
+  "JOB_WIZARD.ERROR.COMPLETE_ALL_STEPS": "Please complete all steps before submitting",
+  "JOB_WIZARD.ERROR.FAILED_TO_SUBMIT": "Failed to submit job for approval",
+
+  "JOB_WIZARD.SUCCESS.SUBMITTED_FOR_APPROVAL": "Job submitted for approval successfully",
+
+  "JOB_WIZARD.CONFIRM.CANCEL_WIZARD": "Do you want to cancel? All unsaved changes will be lost.",
+
   "JOB_WIZARD.EDIT_JOB": "Edit Job",
   "JOB_WIZARD.CREATE_JOB": "Create Job",
   "JOB_WIZARD.EDIT_DETAILS": "Edit job details",
   "JOB_WIZARD.ENTER_DETAILS": "Enter job details",
-  "JOB_WIZARD.SHARED.BUTTONS.EDIT_JOB": "Save Changes",
-  "JOB_WIZARD.SHARED.BUTTONS.PUBLISH_JOB": "Publish Job",
-  "savedSuccessfully": "Saved successfully",
 
-    "JOB_WIZARD.STEPS.BASICS.TITLE": "Basic Information",
-  "JOB_WIZARD.STEPS.BASICS.SUBTITLE": "Enter the basic job details",
+  "JOB_WIZARD.HEADER.PROGRESS": "Progress",
+  "JOB_WIZARD.SHARED.BUTTONS.CANCEL": "Cancel",
+  "JOB_WIZARD.LOADING.ACCESSIBILITY_LABEL": "Loading...",
+  "JOB_WIZARD.LOADING.TITLE": "Preparing the job creation form",
+  "JOB_WIZARD.LOADING.SUBTITLE": "Please wait...",
+  "JOB_WIZARD.LOADING.CREATE_HINT": "A window will open to enter the basic job information",
+    "JOB_BASIC_MODAL.TITLE": "Job Basics",
+  "JOB_BASIC_MODAL.CREATE_TITLE": "Create Job - Basic Information",
+  "JOB_BASIC_MODAL.EDIT_TITLE": "Edit Job - Basic Information",
+  "JOB_BASIC_MODAL.CANCEL_BUTTON": "Cancel",
+  "JOB_BASIC_MODAL.SAVE_BUTTON": "Save",
+  "JOB_BASIC_MODAL.START_CREATION_BUTTON": "Start Creation",
+  "JOB_BASIC_MODAL.UPDATE_BUTTON": "Update",
+  "JOB_BASIC_MODAL.CANCEL_CONFIRM": "Do you want to cancel? All unsaved changes will be lost.",
+  "JOB_BASIC_MODAL.LOADING": "Loading...",
 
-  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT": "Management",
-  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER": "Select management",
+  "JOB_BASIC_MODAL.ERROR.LOAD_FAILED": "Failed to load job data",
+  "JOB_BASIC_MODAL.ERROR.DUPLICATE_JOB": "A job with the same title, organization and major already exists",
+  "JOB_BASIC_MODAL.SUCCESS.CREATED": "Job created successfully",
+  "JOB_BASIC_MODAL.ERROR.CREATE_FAILED": "Failed to create the job",
+  "JOB_BASIC_MODAL.ERROR.CHECK_DUPLICATE": "Failed to check for duplicate job",
+  "JOB_BASIC_MODAL.SUCCESS.UPDATED": "Basic data updated successfully",
+  "JOB_BASIC_MODAL.ERROR.UPDATE_FAILED": "Failed to update data",
+
+  "COMMON.LOADING": "Loading...",
+
+  "VALIDATION.REQUIRED_FIELD": "This field is required",
 
   "JOB_WIZARD.STEPS.BASICS.SECTOR": "Sector",
   "JOB_WIZARD.STEPS.BASICS.SECTOR_PLACEHOLDER": "Select sector",
-
+  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT": "Management",
+  "JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER": "Select management",
   "JOB_WIZARD.STEPS.BASICS.DEPARTMENT": "Department",
   "JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER": "Select department",
-
-  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE": "Work Type",
-  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE_PLACEHOLDER": "Select work type",
-
+  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE": "Minimum Years of Experience",
+  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE_PLACEHOLDER": "Enter minimum years (0-40)",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR": "Job Title (Arabic)",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR_PLACEHOLDER": "Enter Arabic job title",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN": "Job Title (English)",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN_PLACEHOLDER": "Enter English job title",
   "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY": "Job Category",
   "JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY_PLACEHOLDER": "Select job category",
-
-  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE": "Job Title",
-  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER": "Enter job title",
-
-  "JOB_WIZARD.STEPS.BASICS.MAJOR": "Major",
-  "JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER": "Select major",
-
-  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR": "Sub Major",
-  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER": "Select sub major",
-
-  "JOB_WIZARD.STEPS.BASICS.GENDER": "Gender",
-  "JOB_WIZARD.STEPS.BASICS.GENDER_PLACEHOLDER": "Select gender",
-
   "JOB_WIZARD.STEPS.BASICS.WORK_LOCATION": "Work Location",
   "JOB_WIZARD.STEPS.BASICS.WORK_LOCATION_PLACEHOLDER": "Select work location",
-
-  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE": "Minimum Experience (Years)",
-  "JOB_WIZARD.STEPS.BASICS.MIN_EXPERIENCE_PLACEHOLDER": "Enter minimum years of experience",
-
-  "JOB_WIZARD.STEPS.BASICS.VACANCIES": "Vacancies",
-  "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "Enter number of vacancies",
-
-  "JOB_WIZARD.STEPS.BASICS.DEADLINE": "Application Deadline",
-
+  "JOB_WIZARD.STEPS.BASICS.MAJOR": "Major",
+  "JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER": "Select major",
+  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR": "Sub-major",
+  "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER": "Select sub-major",
+  "JOB_WIZARD.STEPS.BASICS.GENDER": "Gender",
+  "JOB_WIZARD.STEPS.BASICS.GENDER_PLACEHOLDER": "Select gender",
+  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE": "Work Type",
+  "JOB_WIZARD.STEPS.BASICS.WORK_TYPE_PLACEHOLDER": "Select work type",
   "JOB_WIZARD.STEPS.BASICS.MIN_AGE": "Minimum Age",
   "JOB_WIZARD.STEPS.BASICS.MIN_AGE_PLACEHOLDER": "Enter minimum age",
-
   "JOB_WIZARD.STEPS.BASICS.MAX_AGE": "Maximum Age",
   "JOB_WIZARD.STEPS.BASICS.MAX_AGE_PLACEHOLDER": "Enter maximum age",
+  "JOB_WIZARD.STEPS.BASICS.VACANCIES": "Vacancies",
+  "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "Enter number of vacancies",
+  "JOB_WIZARD.STEPS.BASICS.DEADLINE": "Closing Date",
 
-  "JOB_WIZARD.VALIDATION.MIN_EXPERIENCE": "Minimum experience is not valid",
-  "JOB_WIZARD.VALIDATION.MIN_VACANCIES": "Minimum vacancies must be at least 1",
-  "JOB_WIZARD.VALIDATION.MIN_GREATER_THAN_MAX": "Minimum age cannot be greater than maximum age",
-  "JOB_WIZARD.VALIDATION.AGE_RANGE": "Age must be between 0 and 100",
+  "JOB_WIZARD.VALIDATION.SECTOR_REQUIRED": "Please select a sector first",
+  "JOB_WIZARD.VALIDATION.MANAGEMENT_REQUIRED": "Please select a management first",
+  "JOB_WIZARD.VALIDATION.MAJOR_REQUIRED": "Please select the main major first",
+  "JOB_WIZARD.VALIDATION.MIN_EXPERIENCE": "Minimum experience must be 0 or greater",
+  "JOB_WIZARD.VALIDATION.AGE_RANGE": "Age must be within allowed range",
+  "JOB_WIZARD.VALIDATION.AGE_RANGE_INVALID": "Minimum age must be less than maximum age",
+  "JOB_WIZARD.VALIDATION.MIN_VACANCIES": "At least 1 vacancy is required",
+  "JOB_WIZARD.VALIDATION.POSITIVE_INTEGER": "Please enter a positive integer",
+  "JOB_WIZARD.VALIDATION.FUTURE_DATE_REQUIRED": "Please select a future date",
 
-  
-  "JOB_WIZARD.STEPS.ATTACHMENTS.TITLE": "Attachments",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT": "Attachment",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME": "Attachment Name",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_PLACEHOLDER": "Enter attachment name",
-  "JOB_WIZARD.VALIDATION.ATTACHMENT_NAME_REQUIRED": "Attachment name is required",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.MANDATORY": "Mandatory",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE": "No attachments added yet",
-  "JOB_WIZARD.STEPS.ATTACHMENTS.ADD_ATTACHMENT": "Add Attachment",
-  
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_RESPONSIBILITY": "Add Responsibility",
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY": "Responsibility",
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE": "No responsibilities added yet",
+  "JOB_WIZARD.VALIDATION.SEQUENCE_SECTOR_REQUIRED": "Please select sector before selecting management",
+  "JOB_WIZARD.VALIDATION.SEQUENCE_MANAGEMENT_REQUIRED": "Please select management before selecting department",
+  "JOB_WIZARD.VALIDATION.SEQUENCE_MAJOR_REQUIRED": "Please select main major before selecting sub-major",
 
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR_PLACEHOLDER": "Enter the description in Arabic",
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN_PLACEHOLDER": "Enter the description in English",
+  "VALIDATION.JOB.TITLE_AR_REQUIRED": "Job title (Arabic) is required",
+  "VALIDATION.JOB.TITLE_EN_REQUIRED": "Job title (English) is required",
+  "VALIDATION.JOB.SECTOR_REQUIRED": "Sector is required",
+  "VALIDATION.JOB.MANAGEMENT_REQUIRED": "Management is required",
+  "VALIDATION.JOB.DEPARTMENT_REQUIRED": "Department is required",
+  "VALIDATION.JOB.JOB_CATEGORY_REQUIRED": "Job category is required",
+  "VALIDATION.JOB.WORK_LOCATION_REQUIRED": "Work location is required",
+  "VALIDATION.JOB.MAJOR_REQUIRED": "Major is required",
+  "VALIDATION.JOB.WORK_TYPE_REQUIRED": "Work type is required",
 
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER": "Description in Arabic",
-  "JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_EN_PLACEHOLDER": "Description in English",
-
-  "JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER": "Enter the description in Arabic",
-  "JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_EN_PLACEHOLDER": "Description in English",
-  "JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_EN_PLACEHOLDER": "Enter the description in English",
-
-  "JOB_WIZARD.STEPS.CONDITIONS.ADD_CONDITIONSY": "Add Condition",
-  "JOB_WIZARD.STEPS.CONDITIONS.CONDITION": "Condition",
-  "JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE": "No conditions added yet",
-
-  "JOB_WIZARD.STEPS.SKILLS.TILTLE": "Required Skills",
-  "JOB_WIZARD.STEPS.SKILLS.ADD_SKILL": "Add Skill",
-  "JOB_WIZARD.STEPS.SKILLS.SKILL": "Skill",
-  "JOB_WIZARD.STEPS.SKILLS.SKILL_PLACEHOLDER": "Select a skill",
-  "JOB_WIZARD.STEPS.SKILLS.SHOW_TO_APPLICANTS": "Show to applicants",
-  "JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE": "No skills added yet.",
-
-  "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION": "Benefits Description",
-  "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_PLACEHOLDER": "Enter benefits description",
-
-  "JOB_WIZARD.VALIDATION.WARNING": "Warning",
-  "JOB_WIZARD.VALIDATION.ADD_RESPONSIBILITY_DETAIL": "Please add at least one responsibility before proceeding.",
-  "JOB_WIZARD.VALIDATION.WARRNING": "Warning",
-  "VALIDATION.REQUIRED_FIELD": "This field is required",
-  "COMMON.DELETE": "Delete",
-  "COMMON.REMOVE": "Remove"
-
+  "JOB_WIZARD.ERRORS.NO_JOB_TO_SUBMIT": "No job to submit",
+  "JOB_WIZARD.MESSAGES.DRAFT_SAVED": "Job draft saved successfully",
+  "JOB_WIZARD.MESSAGES.SUBMITTED_FOR_APPROVAL": "Job submitted for approval"
 }

@@ -1,85 +1,299 @@
-<div class="card card-lite p-3 mb-3">
-  <h6 class="mb-3 text-brand fw-bold">{{ 'job_wizard.steps.basics.title' | translate }}</h6>
-
-  <div id="reviewArea" class="row g-3">
-    <!-- Basics -->
-    <div class="col-lg-6">
-      <div class="review-card">
-        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.basics' | translate }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.job_title' | translate }}</div><div class="mb-1 fw-bold">{{ jobSignal().title || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.job_category' | translate }}</div><div class="mb-1">{{lookupsService.getJobCategoryLable(jobSignal().jobCategoryId)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.gender' | translate }}</div>
-        <div class="mb-1"> {{jobSignal().genderId}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.work_entity' | translate }}</div><div class="mb-1">{{ lookupsService.getWorkLocations(jobSignal().workLocationId)}}</div>
-        <!-- <div class="small-muted">{{ 'job_wizard.steps.basics.degree' | translate }}</div><div class="mb-1">{{ lookupsService.getDegrees(jobSignal().degrees.map(deg => deg.degreeId))}}</div> -->
-        <div class="small-muted">{{ 'job_wizard.steps.basics.major' | translate }}</div><div class="mb-1">{{ lookupsService.getMajor(jobSignal().majorId)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.work_type' | translate }}</div><div class="mb-1">{{ lookupsService.getTypeOfWork(jobSignal().workTypeId)}}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.vacancies' | translate }}</div><div class="mb-1">{{ jobSignal().vacancies || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.basics.deadline' | translate }}</div><div class="mb-1">{{ jobSignal().deadline ? (jobSignal().deadline | date:'mediumDate') : '—' }}</div>
+<div class="step-content">
+  <div class="card card-lite p-4">
+    <div class="d-flex align-items-center mb-4">
+      <i class="fa fa-check-circle text-brand fs-4 me-3"></i>
+      <div>
+        <h4 class="text-brand fw-bold mb-1">
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.REVIEW' | translate }}
+        </h4>
+        <p class="small-muted mb-0">
+          {{ 'JOB_WIZARD.STEPS.REVIEW.SUBTITLE' | translate }}
+        </p>
       </div>
     </div>
 
-    <!-- Quotas -->
-    <div class="col-lg-6">
-      <div class="review-card">
-        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.quotas' | translate }}</div>
-        <div class="d-flex flex-wrap gap-1">
-          <span class="chip">{{ 'job_wizard.steps.quotas.qatariCitizens' | translate }}: {{ jobSignal().quota.qatariCitizens || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.qatarMother' | translate }}: {{ jobSignal().quota.qatarMother || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.nonQatariSpouse' | translate }}: {{ jobSignal().quota.nonQatariSpouse || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.gcc' | translate }}: {{ jobSignal().quota.gcc || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.quGrads' | translate }}: {{ jobSignal().quota.quGrads || 0 }}%</span>
-          <span class="chip">{{ 'job_wizard.steps.quotas.residents' | translate }}: {{ jobSignal().quota.residents || 0 }}%</span>
+    <!-- Overview Section -->
+    <div class="review-section mb-4" *ngIf="hasOverview()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-brand mb-0">
+          <i class="fa fa-eye me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW' | translate }}
+        </h5>
+        <button class="btn btn-outline-brand btn-sm" type="button" 
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_OVERVIEW' | translate">
+          <i class="fa fa-edit me-1"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="fw-bold text-muted mb-2">النظرة العامة (عربي):</h6>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.overviewAr)"></div>
+          </div>
+          
+          <div *ngIf="jobData.overviewEn">
+            <h6 class="fw-bold text-muted mb-2">النظرة العامة (إنجليزي):</h6>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.overviewEn)"></div>
+          </div>
         </div>
-        @if (jobSignal().quota.residentsBreakdowns.length) {
-          <div class="small-muted mt-2">{{ 'job_wizard.steps.quotas.residents_details_button' | translate }}</div>
-          <div class="d-flex flex-wrap gap-1">
-            @for (r of jobSignal().quota.residentsBreakdowns; track r.nationalityId) {
-              <span class="chip">{{lookupsService.getNationalites(r.nationalityId) }}: {{ r.percentage }}%</span>
+      </div>
+    </div>
+
+    <!-- Qualifications Section -->
+    <div class="review-section mb-4" *ngIf="hasQualifications()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-brand mb-0">
+          <i class="fa fa-graduation-cap me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS' | translate }}
+        </h5>
+        <button class="btn btn-outline-brand btn-sm" type="button" 
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_QUALIFICATIONS' | translate">
+          <i class="fa fa-edit me-1"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <!-- Degrees -->
+          <div class="mb-3">
+            <h6 class="fw-bold text-muted mb-2">الدرجات العلمية المطلوبة:</h6>
+            <div class="p-3 bg-light rounded">
+              {{ getDegreeNames() }}
+            </div>
+          </div>
+          
+          <!-- Qualifications Description -->
+          <div *ngIf="jobData.qualificationsDescriptionAr" class="mb-3">
+            <h6 class="fw-bold text-muted mb-2">وصف المؤهلات (عربي):</h6>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.qualificationsDescriptionAr)"></div>
+          </div>
+          
+          <div *ngIf="jobData.qualificationsDescriptionEn">
+            <h6 class="fw-bold text-muted mb-2">وصف المؤهلات (إنجليزي):</h6>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.qualificationsDescriptionEn)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Responsibilities Section -->
+    <div class="review-section mb-4" *ngIf="hasResponsibilities()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-brand mb-0">
+          <i class="fa fa-clipboard-check me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
+        </h5>
+        <button class="btn btn-outline-brand btn-sm" type="button" 
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_RESPONSIBILITIES' | translate">
+          <i class="fa fa-edit me-1"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            @for (responsibility of jobData.responsibilities; track $index; let i = $index) {
+              <div class="col-md-6 mb-3">
+                <div class="border rounded p-3">
+                  <h6 class="fw-bold text-muted mb-2">
+                    المسؤولية {{ i + 1 }}
+                  </h6>
+                  <div class="mb-2">
+                    <small class="text-muted">النص (عربي):</small>
+                    <p class="mb-0">{{ responsibility.textAr }}</p>
+                  </div>
+                  @if (responsibility.textEn) {
+                    <div>
+                      <small class="text-muted">النص (إنجليزي):</small>
+                      <p class="mb-0">{{ responsibility.textEn }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
             }
           </div>
-        }
+        </div>
       </div>
     </div>
 
-    <!-- Conditions -->
-    <div class="col-lg-6">
-      <div class="review-card">
-        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.conditions' | translate }}</div>
-        @if (jobSignal().conditions.length) {
-          <ul class="mb-0">
-            @for (c of jobSignal().conditions; track c) { <li>{{ c }}</li> }
-          </ul>
-        } @else { <p>—</p> }
+    <!-- Conditions Section -->
+    <div class="review-section mb-4" *ngIf="hasConditions()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-brand mb-0">
+          <i class="fa fa-list-check me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS' | translate }}
+        </h5>
+        <button class="btn btn-outline-brand btn-sm" type="button" 
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_CONDITIONS' | translate">
+          <i class="fa fa-edit me-1"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            @for (condition of jobData.conditions; track $index; let i = $index) {
+              <div class="col-md-6 mb-3">
+                <div class="border rounded p-3">
+                  <h6 class="fw-bold text-muted mb-2">
+                    الشرط {{ i + 1 }}
+                  </h6>
+                  <div class="mb-2">
+                    <small class="text-muted">النص (عربي):</small>
+                    <p class="mb-0">{{ condition.textAr }}</p>
+                  </div>
+                  @if (condition.textEn) {
+                    <div>
+                      <small class="text-muted">النص (إنجليزي):</small>
+                      <p class="mb-0">{{ condition.textEn }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Skills -->
-    <div class="col-lg-6">
-      <div class="review-card">
-        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.skills' | translate }}</div>
-        @if (jobSignal().skills.length) {
-          <ul class="mb-0">
-            @for (s of jobSignal().skills; track s) { <li>{{ s }}</li> }
-          </ul>
-        } @else { <p>—</p> }
+    <!-- Skills Section -->
+    <div class="review-section mb-4" *ngIf="hasSkills()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-brand mb-0">
+          <i class="fa fa-lightbulb me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS' | translate }}
+        </h5>
+        <button class="btn btn-outline-brand btn-sm" type="button" 
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_SKILLS' | translate">
+          <i class="fa fa-edit me-1"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            @for (skill of jobData.skills; track $index; let i = $index) {
+              <div class="col-md-6 mb-3">
+                <div class="border rounded p-3">
+                  <h6 class="fw-bold text-muted mb-2">
+                    المهارة {{ i + 1 }}
+                  </h6>
+                  <div class="mb-2">
+                    <p class="mb-1">{{ getSkillName(skill.skillId) }}</p>
+                    <span class="badge" [ngClass]="skill.showToApplicants ? 'bg-success' : 'bg-secondary'">
+                      {{ skill.showToApplicants ? 'معروضة للمتقدمين' : 'غير معروضة' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Description & Benefits -->
-    <div class="col-lg-12">
-      <div class="review-card">
-        <div class="review-title mb-2">{{ 'job_wizard.steps.review.sections.description_benefits' | translate }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.description_benefits.description' | translate }}</div><div class="mb-2">{{ jobSignal().description || '—' }}</div>
-        <div class="small-muted">{{ 'job_wizard.steps.description_benefits.benefits' | translate }}</div><div>{{ jobSignal().benefits || '—' }}</div>
+    <!-- Attachments Section -->
+    <div class="review-section mb-4" *ngIf="hasAttachments()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-brand mb-0">
+          <i class="fa fa-paperclip me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS' | translate }}
+        </h5>
+        <button class="btn btn-outline-brand btn-sm" type="button" 
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_ATTACHMENTS' | translate">
+          <i class="fa fa-edit me-1"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            @for (attachment of jobData.requiredAttachments; track $index; let i = $index) {
+              <div class="col-md-6 mb-3">
+                <div class="border rounded p-3">
+                  <h6 class="fw-bold text-muted mb-2">
+                    المستند {{ i + 1 }}
+                  </h6>
+                  <div class="mb-2">
+                    <p class="mb-1">{{ attachment.titleAr }}</p>
+                    @if (attachment.titleEn) {
+                      <small class="text-muted">({{ attachment.titleEn }})</small>
+                    }
+                  </div>
+                  <span class="badge" [ngClass]="attachment.isMandatory ? 'bg-danger' : 'bg-warning text-dark'">
+                    {{ attachment.isMandatory ? 'مستند إلزامي' : 'مستند اختياري' }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Action Buttons -->
-  <div class="d-flex justify-content-end gap-2 mt-3">
-    <button class="btn btn-outline-brand rounded-pill" (click)="downloadPdf()">
-      <i class="fa fa-file-arrow-down"></i> {{ 'job_wizard.steps.review.download_pdf' | translate }}
-    </button>
+    <!-- Benefits Section -->
+    <div class="review-section mb-4" *ngIf="hasBenefits()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-brand mb-0">
+          <i class="fa fa-gift me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS' | translate }}
+        </h5>
+        <button class="btn btn-outline-brand btn-sm" type="button" 
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_BENEFITS' | translate">
+          <i class="fa fa-edit me-1"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="fw-bold text-muted mb-2">المزايا والبدلات (عربي):</h6>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.benefitsAr)"></div>
+          </div>
+          
+          <div *ngIf="jobData.benefitsEn">
+            <h6 class="fw-bold text-muted mb-2">المزايا والبدلات (إنجليزي):</h6>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.benefitsEn)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State Message -->
+    <div *ngIf="!hasOverview() && !hasQualifications() && !hasResponsibilities() && 
+                !hasConditions() && !hasSkills() && !hasAttachments() && !hasBenefits()" 
+         class="text-center py-5 border rounded">
+      <i class="fa fa-clipboard-list fa-3x text-muted mb-3"></i>
+      <h6 class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.EMPTY_TITLE' | translate }}</h6>
+      <p class="text-muted small">{{ 'JOB_WIZARD.STEPS.REVIEW.EMPTY_DESC' | translate }}</p>
+    </div>
+
+    <!-- Submit Section -->
+    <div class="border-top pt-4 mt-4">
+      <div class="alert alert-info">
+        <i class="fa fa-info-circle me-2"></i>
+        {{ 'JOB_WIZARD.STEPS.REVIEW.SUBMIT_INFO' | translate }}
+      </div>
+      
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-outline-secondary" type="button">
+          <i class="fa fa-arrow-right me-2"></i>
+          {{ 'JOB_WIZARD.SHARED.BUTTONS.BACK' | translate }}
+        </button>
+        
+        <button class="btn btn-success" type="button">
+          <i class="fa fa-paper-plane me-2"></i>
+          {{ 'JOB_WIZARD.SHARED.BUTTONS.SUBMIT_FOR_APPROVAL' | translate }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

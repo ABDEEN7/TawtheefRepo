@@ -8,7 +8,7 @@ import { JobLookupService } from '../services/job-lookup.service';
 import { InviteDetails } from '../models/invite-details.model';
 import { KPIs } from '../models/kpis.model';
 import { JobInvitesService } from '../services/job-invites.service';
-import { JobResponseDto } from '../models/job-response-model';
+import { JobResponse } from '../models/job-response-model';
 
 @Component({
   selector: 'app-job-invites-details',
@@ -24,7 +24,7 @@ export class JobInvitesDetailsComponent implements OnInit {
 
   jobId: GUID | null = GuidUtils.emptyGuid;
 
-  job = signal<JobResponseDto | null>(null);
+  job = signal<JobResponse | null>(null);
   allInvites = this.jobInvitesService.invites;
 
   statusFilter = signal<string[]>([]);

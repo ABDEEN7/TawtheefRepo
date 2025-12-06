@@ -4,51 +4,38 @@ import { JobDegree } from './job-degree.model';
 import { JobCondition } from './job-condition.model';
 import { JobSkill } from './job-skill.model';
 import { JobResponsibility } from './job-responsibility.model';
-import { RequiredAttachment } from './required-attachment.model';
+import { JobRequiredAttachment } from './required-attachment.model';
 
 export interface Job {
-  id?: GUID;
-  
-  // Basic Information
-  title: string;
-  vacancies: number;
-  deadline: Date | null;
-  description: string;
-  benefits: string;
-  overview: string;
-  qualificationsDescription?: string;
-  publishAt?: Date | null;
-  
-  // Requirements
-  minimumExperienceYears: number;
+titleAr: string;
+  titleEn: string;
+  sectorId: GUID;
+  managementId: GUID;
+  departmentId: GUID;
+  yearsOfExperience: number;
+  jobCategoryId: GUID;
+  workLocationId: GUID;
+  genderId?: GUID | null;          
+  majorId: GUID;
+  subMajorId?: GUID | null;         
+  workTypeId: GUID;
+  numberOfVacancies: number;
+  closingDate: Date;              
   minimumAge: number;
   maximumAge: number;
   
-  // Foreign keys
-  requestingDepartmentId: GUID;
-  sectorId: GUID;
-  managementId: GUID;
-  jobCategoryId: GUID;
-  genderId?: GUID;
-  workLocationId: GUID;
-  majorId: GUID;
-  subMajorId?: GUID;
-  workTypeId: GUID;
-  statusId: GUID | null;
+  overviewAr?: string;
+  overviewEn?: string;
+  benefitsAr?: string;
+  benefitsEn?: string;
+  qualificationsDescriptionAr?: string;  
+  qualificationsDescriptionEn?: string;  
   
-  // Quota
-  quota: JobQuota;
-  
-  // Collections
-  degrees: JobDegree[];
-  conditions: JobCondition[];
-  skills: JobSkill[];
-  responsibilities: JobResponsibility[];
-  requiredAttachments: RequiredAttachment[];
-  
-  // Metadata
-  status?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  degrees?: JobDegree[];
+  conditions?: JobCondition[];
+  responsibilities?: JobResponsibility[];
+  skills?: JobSkill[];
+  requiredAttachments?: JobRequiredAttachment[];
+  quota?: JobQuota;
 }
 

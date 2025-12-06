@@ -1,8 +1,12 @@
+import { dropdownOptionsModel } from "../../../shared/models/dropdown-options.model";
 import { GUID } from "../../../shared/types/guid.type";
-import { SkillResponseDto } from "./skill-response.model";
 
-export interface JobSkillResponseDto {
+export interface JobSkillResponse {
   id: GUID;
-  skill?: SkillResponseDto;
+  jobId: GUID;
+  skillId: GUID;
+  skill: dropdownOptionsModel;
   showToApplicants: boolean;
+  createdDate: Date;
+  lastModifiedDate?: Date;
 }
