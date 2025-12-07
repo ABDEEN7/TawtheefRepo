@@ -53,6 +53,7 @@
       <label class="form-label required">{{ 'wizard.achievements.issueDate' | translate }}</label>
       <p-date-picker formControlName="issueDate" size="small"
                      [placeholder]="'wizard.achievements.issueDate' | translate"
+                     [maxDate]="today"
                      [ngClass]="{'is-invalid': f['issueDate'].touched && f['issueDate'].invalid}" fluid></p-date-picker>
     </div>
   </div>

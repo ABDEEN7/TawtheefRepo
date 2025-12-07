@@ -56,6 +56,7 @@
       <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
       <p-date-picker name="qidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
         [ngModel]="ds.state().qidExpiry" (onSelect)="updateField('qidExpiry', dateToDateOnly($event))"
+        [maxDate]="today"
         size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"  fluid>
       </p-date-picker>
       <small *ngIf="ds.isLocked('qidExpiry')" class="fz-2xs text-muted">
@@ -103,6 +104,7 @@
       <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
       <p-date-picker name="dob" placeholder="{{ 'wizard.personal.dob' | translate }}"
         [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event))"
+        [maxDate]="today"
         size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
         [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
       </p-date-picker>
@@ -279,8 +281,9 @@
         <div class="col-md-4" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
           <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
           <p-date-picker name="sponsorQidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
-            [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
-            size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
+                         [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
+                         [maxDate]="today"
+                         size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
           </p-date-picker>
         </div>
         <div class="col-md-4 d-flex align-items-end" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
