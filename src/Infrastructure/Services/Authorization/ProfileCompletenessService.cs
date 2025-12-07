@@ -49,6 +49,8 @@ public sealed class ProfileCompletenessService(
                 .ThenInclude(a => a.Certificate)
             .Include(p => p.Experiences)!.ThenInclude(a => a.Certificate)
             .Include(p => p.TrainingCourses)!.ThenInclude(a => a.Certificate)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.Attachment)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.AchievementType)
             .FirstOrDefaultAsync(p => p.UserId == userId, ct);
 
         profile ??= new UserProfile();

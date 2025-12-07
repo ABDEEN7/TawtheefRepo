@@ -4,6 +4,7 @@
   | 'contact'
   | 'degrees'
   | 'experience'
+  | 'achievements'
   | 'skills'
   | 'languages'
   | 'attachments';

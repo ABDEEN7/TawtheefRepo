@@ -91,6 +91,7 @@ export interface ProfileStatusDto {
   trainingCourses?: TrainingCourseDto[] | null;
   skills?: SkillDto[] | null;
   languages?: LanguageDto[] | null;
+  achievements: AchievementDto[];
 }
 export interface AdditionalAttachmentDto {
   id: GUID;
@@ -100,7 +101,9 @@ export interface AdditionalAttachmentDto {
 export interface LanguageDto {
   id: GUID;
   languageId: string;
-  levelId: string;
+  speakingLevelId: string;
+  writingLevelId: string;
+  readingLevelId: string;
   isNative: boolean;
 }
 export interface SkillDto {
@@ -150,4 +153,14 @@ export interface FileRefDto {
   resourceId: GUID;
   fileName: string;
   url?: string | null;
+}
+export interface AchievementDto{
+  id: GUID;
+  achievementTypeId: string;
+  title: string;
+  issuingAuthority: string;
+  countryId?: string | null;
+  issueDate: string;
+  description: string;
+  attachment?: FileRefDto | null;
 }

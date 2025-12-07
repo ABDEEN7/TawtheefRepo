@@ -46,7 +46,9 @@ public sealed class SaveProfileLanguagesHandler(
             .Select(l => new ProfileLanguage
             {
                 LanguageId    = l.LanguageId,
-                LevelId       = l.LevelId,
+                SpeakingLevelId = l.SpeakingLevelId,
+                WritingLevelId  = l.WritingLevelId,
+                ReadingLevelId  = l.ReadingLevelId,
                 UserProfileId = profile.Id
             }).ToList();
 

@@ -336,6 +336,39 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
   return { valid: errors.length === 0, errors };
 }
 
+function validateAchievementsStep(s: ProfileState): StepValidationResult {
+  const errors: FieldError[] = [];
+  const hasAchievements = Array.isArray(s.achievements) && s.achievements.length > 0;
+
+  if (!hasAchievements) {
+    errors.push({
+      field: 'achievements',
+      i18nKey: 'wizard.profile.achievements.atLeastOne.required',
+    });
+  }
+
+  s.achievements?.forEach((achievement, index) => {
+    if (!achievement?.achievementType) {
+      errors.push({ field: `achievements[${index}].achievementType`, i18nKey: 'wizard.profile.achievements.type.required' });
+    }
+    if (!achievement?.attachment || !isFilledField(achievement.attachment.resourceName)) {
+      errors.push({
+        field: `achievements[${index}].attachment`,
+        i18nKey: 'wizard.profile.achievements.attachment.required',
+      });
+    }
+
+    if (!(achievement?.file || achievement?.attachmentId)) {
+      errors.push({
+        field: `achievements[${index}].file`,
+        i18nKey: 'wizard.profile.achievements.file.required',
+      });
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
+}
+
 function validateSkillsStep(s: ProfileState): StepValidationResult {
   const hasSkills = Array.isArray(s.skills) && s.skills.length > 0;
 
@@ -356,6 +389,7 @@ function validateSkillsStep(s: ProfileState): StepValidationResult {
 
 function validateLanguagesStep(s: ProfileState): StepValidationResult {
   const hasLanguages = Array.isArray(s.languages) && s.languages.length > 0;
+  const errors: FieldError[] = [];
 
   if (!hasLanguages) {
     return {
@@ -367,6 +401,33 @@ function validateLanguagesStep(s: ProfileState): StepValidationResult {
         },
       ],
     };
+  }
+
+  s.languages?.forEach((lang, index) => {
+    if (!isFilledField(lang?.speakingLevelId ?? lang?.speakingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].speakingLevelId`,
+        i18nKey: 'wizard.profile.languages.speaking.required',
+      });
+    }
+
+    if (!isFilledField(lang?.writingLevelId ?? lang?.writingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].writingLevelId`,
+        i18nKey: 'wizard.profile.languages.writing.required',
+      });
+    }
+
+    if (!isFilledField(lang?.readingLevelId ?? lang?.readingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].readingLevelId`,
+        i18nKey: 'wizard.profile.languages.reading.required',
+      });
+    }
+  });
+
+  if (errors.length) {
+    return { valid: false, errors };
   }
 
   return { valid: true, errors: [] };
@@ -416,6 +477,7 @@ export function createStepValiditySignal(
       contact:     validateContactStep(s),
       degrees:     validateDegreesStep(s),
       experience:  validateExperienceStep(s),
+      achievements: validateAchievementsStep(s),
       skills:      validateSkillsStep(s),
       languages:   validateLanguagesStep(s),
       attachments: validateAttachmentsStep(s),

@@ -22,6 +22,8 @@ public sealed class SkillUpsertDto
 public sealed class ProfileLanguageUpsertDto
 {
     public Guid LanguageId { get; set; } // Id من جدول Language
-    public Guid LevelId { get; set; }    // Id من جدول LanguageLevel
+    public Guid SpeakingLevelId { get; set; }    // Id من جدول LanguageLevel
+    public Guid WritingLevelId { get; set; }     // Id من جدول LanguageLevel
+    public Guid ReadingLevelId { get; set; }     // Id من جدول LanguageLevel
 }
 
