@@ -86,6 +86,7 @@ export class EndpointsService {
 
   dashboard = {
     candidateInvitations: this.getFullUrl(`/dashboard/get-candidate-invitations`),
+    candidateInvitationStatistics: this.getFullUrl(`/dashboard/candidate-invitation-statistics`),
     lookups: {
       invitationStatuses: this.getFullUrl(`/dashboard/lookups/invitation-statuses`),
       jobCategories: this.getFullUrl(`/dashboard/lookups/job-categories`),

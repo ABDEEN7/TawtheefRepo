@@ -2,25 +2,26 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, of } from 'rxjs';
 
 import {
   CandidateDashboardService,
-  JobRecord,
-  ApiResponse,
-  JOB_TYPE_LABELS,
   JOB_INVITATION_STATUSES,
-  JOB_INVITATION_STATUS_LABELS,
-  STATUS_PILL_CLASSES,
-  TYPE_BADGE_CLASSES,
-  FILTER_OPTIONS,
-  ACTION_CONFIGS,
-  FilterOption,
-  JobType, JobStatus
+  ACTION_CONFIGS, InvitationStatus,
 } from './services/candidate-dashboard.service';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 import {Select} from 'primeng/select';
-import {AnyCatcher} from 'rxjs/internal/AnyCatcher';
+import {CandidateInvitationFilters} from './models/candidate-invitation-filters';
+import {CandidateInvitationModel} from './models/candidate-invitation.model';
+import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
+import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
+
+type ActionConfig = {
+  showApply: boolean;
+  showView: boolean;
+  showTrack: boolean;
+  showDetails: boolean;
+  showWithdraw: boolean;
+};
 
 @Component({
   selector: 'app-dashboard',
@@ -30,261 +31,142 @@ import {AnyCatcher} from 'rxjs/internal/AnyCatcher';
     FormsModule,
     TranslatePipe,
     I18nNamespaceDirective,
-    Select
+    Select,
+    PaginationComponent,
+    Select,
+    TranslatePipe
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
   candidateService = inject(CandidateDashboardService);
-  readonly FILTER_OPTIONS = FILTER_OPTIONS;
 
   // Loading states
-  isLoading = signal(true);
-  isWithdrawing = signal<number | null>(null);
+  isWithdrawing = signal<string | null>(null);
   isRefreshing = signal(false);
 
-  // Error state
-  error = signal<string | null>(null);
-
   // Reactive signals
-  allRecords = signal<JobRecord[]>([]);
-  currentPage = signal(1);
-  itemsPerPage = signal(10);
+  candidateInvitations = this.candidateService.candidateInvitations;
+  paginationMetadata = this.candidateService.paginationMetadata;
+  totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+  totalPages = computed(() => this.paginationMetadata()?.totalPages || 0);
 
   // Filter signals
-  statusFilter = signal<string>('');
-  typeFilter = signal<string>('');
-  entityFilter = signal<string>('');
-  searchFilter = signal<string>('');
-
-  // Computed filtered data
-  filteredRecords = computed(() => {
-    const status = this.statusFilter();
-    const type = this.typeFilter();
-    const entity = this.entityFilter().toLowerCase();
-    const search = this.searchFilter().toLowerCase();
-
-    return this.allRecords().filter(record => {
-      if (status && record.status !== status) return false;
-      if (type && record.type !== type) return false;
-      if (entity && !record.entity.toLowerCase().includes(entity)) return false;
-      if (search && !record.title.toLowerCase().includes(search)) return false;
-      return true;
-    });
-  });
-
-  // Computed paginated data
-  paginatedRecords = computed(() => {
-    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
-    const endIndex = startIndex + this.itemsPerPage();
-    return this.filteredRecords().slice(startIndex, endIndex);
-  });
-
-  // Computed KPIs
-  kpiInvited = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.NEW_INVITATION).length
-  );
-
-  kpiUnderReview = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.UNDER_REVIEW).length
-  );
-
-  kpiWithdrawn = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.REJECTED).length
-  );
-
-  kpiApplied = computed(() =>
-    this.filteredRecords().filter(r => r.status === JOB_INVITATION_STATUSES.SUBMITTED).length
-  );
-
-  // Computed pagination info
-  totalPages = computed(() =>
-    Math.ceil(this.filteredRecords().length / this.itemsPerPage())
-  );
-
-  paginationStats = computed(() => {
-    const total = this.filteredRecords().length;
-    if (total === 0) return { start: 0, end: 0, total: 0 };
-
-    const start = (this.currentPage() - 1) * this.itemsPerPage() + 1;
-    const end = Math.min(start + this.itemsPerPage() - 1, total);
-
-    return { start, end, total };
-  });
+  currentPage = signal(1);
+  itemsPerPage = signal(3);
+  selectedCategory = signal<string>('');
+  selectedDepartment = signal<string>('');
+  selectedInvitationStatus = signal<string>('');
+  jobTitle = signal<string>('');
 
   ngOnInit() {
     this.candidateService.loadCandidateLookups();
-    this.loadData();
-  }
-
-  // Load initial data
-  loadData(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.candidateService.getJobRecords()
-      .pipe(
-        catchError(err => {
-          this.error.set('Failed to load data. Please try again.');
-          console.error('Error loading data:', err);
-          return of({ data: [], message: 'Error', success: false } as ApiResponse<JobRecord[]>);
-        })
-      )
-      .subscribe(response => {
-        this.isLoading.set(false);
-        if (response.success) {
-          this.allRecords.set(response.data);
-        }
-      });
+    this.candidateService.loadCandidateInvitationStatistics();
+    this.loadCandidateInvitations();
   }
 
   // Refresh data
   refreshData(): void {
     this.isRefreshing.set(true);
-    this.candidateService.getJobRecords()
-      .pipe(
-        catchError(err => {
-          this.error.set('Failed to refresh data.');
-          console.error('Error refreshing data:', err);
-          return of({ data: this.allRecords(), message: 'Error', success: false } as ApiResponse<JobRecord[]>);
-        })
-      )
-      .subscribe(response => {
-        this.isRefreshing.set(false);
-        if (response.success) {
-          this.allRecords.set(response.data);
-          this.currentPage.set(1);
-        }
-      });
+    this.loadCandidateInvitations()
   }
 
   // Filter methods
-  onStatusFilterChange(event: any): void {
-    const value = event.value; // PrimeNG event has value property
-    this.statusFilter.set(value ?? '');
-    this.currentPage.set(1);
-  }
 
-  onTypeFilterChange(event: any): void {
-    const value =  event.value;
-    this.typeFilter.set(value ?? '');
-    this.currentPage.set(1);
-  }
+  loadCandidateInvitations() {
+    const searchFilters: CandidateInvitationFilters =  {
+      jobCategoryId: this.selectedCategory() || '',
+      departmentId: this.selectedDepartment() || '',
+      invitationStatusId: this.selectedInvitationStatus() || '',
+      jobTitle: this.jobTitle() || '',
+      pageNumber: this.currentPage(),
+      pageSize: this.itemsPerPage(),
+      sortBy: 'CreatedDate',
+      sortDirection: 'asc'
+    }
 
-  onEntityFilterChange(event: any): void {
-    const value = event.value;
-    this.typeFilter.set(value ?? '');
-    this.currentPage.set(1);
-  }
-
-  onSearchFilterChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchFilter.set(value);
-    this.currentPage.set(1);
+    this.candidateService.loadCandidateInvitations(searchFilters);
   }
 
   // Clear all filters
   clearFilters(): void {
-    this.statusFilter.set('');
-    this.typeFilter.set('');
-    this.entityFilter.set('');
-    this.searchFilter.set('');
+    this.selectedCategory.set('');
+    this.selectedDepartment.set('');
+    this.selectedInvitationStatus.set('');
+    this.jobTitle.set('');
     this.currentPage.set(1);
   }
 
-  // Pagination methods
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages()) {
-      this.currentPage.set(page);
-    }
-  }
-
-  previousPage(): void {
-    if (this.currentPage() > 1) {
-      this.currentPage.update(page => page - 1);
-    }
-  }
-
-  nextPage(): void {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update(page => page + 1);
-    }
-  }
-
   // Action methods
-  withdrawApplication(recordId: number): void {
-    this.isWithdrawing.set(recordId);
-
-    this.candidateService.withdrawApplication(recordId)
-      .pipe(
-        catchError(err => {
-          this.error.set('Failed to withdraw application.');
-          console.error('Error withdrawing application:', err);
-          return of({ data: { id: recordId }, message: 'Error', success: false } as ApiResponse<{id: number}>);
-        })
-      )
-      .subscribe(response => {
-        this.isWithdrawing.set(null);
-        if (response.success) {
-          this.allRecords.update(records =>
-            records.map(record =>
-              record.id === recordId ? { ...record, status: JOB_INVITATION_STATUSES.REJECTED } : record
-            )
-          );
-          this.currentPage.set(1);
-        }
-      });
-  }
-
-  // Helper method for pagination numbers
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    for (let i = 1; i <= this.totalPages(); i++) {
-      pages.push(i);
-    }
-    return pages;
+  withdrawApplication(recordId: string): void {
+    // this.isWithdrawing.set(recordId);
+    //
+    // this.candidateService.withdrawApplication(recordId)
+    //   .subscribe(response => {
+    //     this.isWithdrawing.set(null);
+    //     if (response.success) {
+    //       this.allRecords.update(records =>
+    //         records.map(record =>
+    //           record.id === recordId ? { ...record, status: JOB_INVITATION_STATUSES.REJECTED } : record
+    //         )
+    //       );
+    //       this.currentPage.set(1);
+    //     }
+    //   });
   }
 
   // Helper methods for templates
-  getTypeBadge(type: JobType): string {
-    return TYPE_BADGE_CLASSES[type] || 'badge-soft';
-  }
-
-  getTypeText(type: JobType): string {
-    return JOB_TYPE_LABELS[type] || type;
-  }
-
-  getStatusPill(status: JobStatus): { class: string, text: string } {
-    return {
-      class: STATUS_PILL_CLASSES[status] || 'status-closed',
-      text: JOB_INVITATION_STATUS_LABELS[status] || status
+  getStatusClasses(status: string): string[] {
+    const map: Record<string, string[]> = {
+      NewInvitation: ['bg-info-subtle', 'text-info'],             // new item = info
+      Closed: ['bg-secondary-subtle', 'text-secondary'],          // closed = grey
+      UnderReview: ['bg-warning-subtle', 'text-warning'],         // pending review
+      Approved: ['bg-success-subtle', 'text-success'],            // approved = success
+      Readed: ['bg-primary-subtle', 'text-primary'],              // read = primary
+      Rejected: ['bg-danger-subtle', 'text-danger'],              // rejected = danger
+      Cancelled: ['bg-dark-subtle', 'text-dark'],                 // cancelled = dark
+      RequiresUpdate: ['bg-warning-subtle', 'text-warning'],      // needs update = warning
+      Submitted: ['bg-info-subtle', 'text-info'],                 // submitted = info
     };
+
+    return map[status] || ['bg-secondary-subtle', 'text-secondary']; // fallback style
   }
 
-  getActionButtons(record: JobRecord): {
-    showApply: boolean;
-    showView: boolean;
-    showTrack: boolean;
-    showDetails: boolean;
-    showWithdraw: boolean;
-  } {
-    return ACTION_CONFIGS[record.status] || ACTION_CONFIGS[JOB_INVITATION_STATUSES.CLOSED];
+  getActionButtons(invitationStatus: dropdownOptionsModel): ActionConfig {
+    const status = invitationStatus.backendName as InvitationStatus;
+
+    return ACTION_CONFIGS[status] ?? ACTION_CONFIGS[JOB_INVITATION_STATUSES.CLOSED];
+  }
+
+  // Statistics helpers
+  getNewInvitationCount(): number {
+    return this.candidateService.invitationStatistics()?.newInvitations || 0;
+  }
+
+  getUnderReviewCount(): number {
+    return this.candidateService.invitationStatistics()?.underReview || 0;
+  }
+
+  getWithdrawnCount(): number {
+    return this.candidateService.invitationStatistics()?.withdrawn || 0;
+  }
+
+  getAppliedCount(): number {
+    return this.candidateService.invitationStatistics()?.applied || 0;
   }
 
   // Retry loading data
   retry(): void {
-    this.loadData();
+    this.loadCandidateInvitations();
   }
 
-  // Get filter options with translation support - FIXED VERSION
-  getTranslatedFilterOptions(): { status: FilterOption[], type: FilterOption[] } {
-    return {
-      status: [...FILTER_OPTIONS.STATUS],
-      type: [...FILTER_OPTIONS.TYPE]
-    };
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+    this.loadCandidateInvitations();
   }
 
-  // Alternative simpler approach - just remove the method if not needed
-  // Since we're using FILTER_OPTIONS directly in the template
+  onFilterChange() {
+    this.loadCandidateInvitations();
+  }
 }
