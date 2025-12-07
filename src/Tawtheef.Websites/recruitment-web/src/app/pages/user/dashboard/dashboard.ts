@@ -62,6 +62,7 @@ export class Dashboard implements OnInit {
 
   ngOnInit() {
     this.candidateService.loadCandidateLookups();
+    this.candidateService.loadCandidateInvitationStatistics();
     this.loadCandidateInvitations();
   }
 
@@ -136,6 +137,23 @@ export class Dashboard implements OnInit {
     const status = invitationStatus.backendName as InvitationStatus;
 
     return ACTION_CONFIGS[status] ?? ACTION_CONFIGS[JOB_INVITATION_STATUSES.CLOSED];
+  }
+
+  // Statistics helpers
+  getNewInvitationCount(): number {
+    return this.candidateService.invitationStatistics()?.newInvitations || 0;
+  }
+
+  getUnderReviewCount(): number {
+    return this.candidateService.invitationStatistics()?.underReview || 0;
+  }
+
+  getWithdrawnCount(): number {
+    return this.candidateService.invitationStatistics()?.withdrawn || 0;
+  }
+
+  getAppliedCount(): number {
+    return this.candidateService.invitationStatistics()?.applied || 0;
   }
 
   // Retry loading data

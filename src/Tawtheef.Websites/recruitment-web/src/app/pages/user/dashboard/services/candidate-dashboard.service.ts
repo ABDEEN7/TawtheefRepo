@@ -7,6 +7,7 @@ import {CandidateInvitationFilters} from '../models/candidate-invitation-filters
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 import {CandidateInvitationModel} from '../models/candidate-invitation.model';
 import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
+import {CandidateInvitationStatistics} from '../models/candidate-invitation-statistics.model';
 
 export type InvitationStatus =
   typeof JOB_INVITATION_STATUSES[keyof typeof JOB_INVITATION_STATUSES];
@@ -150,6 +151,8 @@ export class CandidateDashboardService {
   jobCategories   = signal<dropdownOptionsModel[]>([]);
   departments          = signal<dropdownOptionsModel[]>([]);
 
+  invitationStatistics = signal<CandidateInvitationStatistics | null>(null);
+
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
   private _candidateInvitations = signal<CandidateInvitationModel[]>([]);
 
@@ -163,6 +166,12 @@ export class CandidateDashboardService {
         this._candidateInvitations.set(response.items || []);
         this._paginationMetadata.set(response.metadata);
       }),
+    ).subscribe();
+  }
+
+  loadCandidateInvitationStatistics(): void {
+    this.http.get<CandidateInvitationStatistics>(this.endpoints.dashboard.candidateInvitationStatistics).pipe(
+      tap((response) => this.invitationStatistics.set(response)),
     ).subscribe();
   }
 
