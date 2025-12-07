@@ -1,78 +1,18 @@
 ﻿{
-  "app": {
-    "underConstruction": {
-      "websiteUnderConstruction1": "The Website is Under",
-      "websiteUnderConstruction2": "Construction",
-      "constructionMessage": "We are working on fixing the problem. We'll be back soon",
-      "backToHome": "Back to Home"
-    },
-    "error500": {
-      "decorativeElement": "Decorative element",
-      "logoAltText": "Company Logo",
-      "serverErrorImage": "Server Error Illustration",
-      "oops500Error1": "Oops! 500 Internal",
-      "oops500Error2": "Server Error",
-      "serverErrorMessage": "We apologize and are fixing the problem. Please try again at a later stage",
-      "backToHome": "Back to Home"
-    },
-    "error404": {
-      "decorativeElement": "Decorative element",
-      "logoAltText": "Company Logo",
-      "notFoundImage": "Page Not Found Illustration",
-      "ohNoError": "Oh No! Error",
-      "pageNotFoundMessage": "The page you requested could not be found. May the force be with you!",
-      "backToHome": "Back to Home"
-    },
-    "comeSoon": {
-      "decorativeElement": "Decorative element",
-      "logoAltText": "Company Logo",
-      "comingSoon1": "We are Coming",
-      "comingSoon2": " Soon!!!",
-      "stayTunedMessage": "Stay tuned for something amazing",
-      "daysAbbr": "days",
-      "hoursAbbr": "Hrs",
-      "minutesAbbr": "Min",
-      "secondsAbbr": "Sec",
-      "comingSoonImage": "Coming Soon Illustration",
-      "notifyMeTitle": "Notify me when the website is launched",
-      "enterEmailPlaceholder": "Enter your email",
-      "notifyMeButton": "Notify Me!"
-    },
-    "accessDenied": {
-      "decorativeElement": "Decorative element",
-      "logoAltText": "Company Logo",
-      "accessDeniedImage": "Access denied illustration",
-      "accessDeniedTitle": "Access Denied",
-      "accessDeniedMessage": "Sorry, you don't have permission to access this page.",
-      "goHome": "Go to Home",
-      "goDashboard": "Go to Dashboard",
-      "title1": "Access Denied",
-      "title2": "You don't have permission to access this page.",
-      "content": "If you think this is a mistake, please contact administrator.",
-      "contactAdmin": "Contact Administrator",
-      "login": "Login",
-      "needHelp": "Need Help?",
-      "contactSupport": "Contact Support"
-    },
-    "pagination": {
-  "showing": "Showing",
-  "of": "of",
-  "results": "results",
-  "no_results": "No results found",
-  "previous": "Previous",
-  "next": "Next"
-}
-  },
-"validation": {
-  "requiredEmail": "Email is required.",
-  "invalidEmail": "Enter a valid email address.",
-  "requiredPassword": "Password is required.",
-  "minLengthPassword": "Password must be at least {{min}} characters.",
-  "required_filed": "This field is required",
-  "invalid_format": "Invalid format"
-},
-"common": {
-    "ar": "العربية",
-    "en": "English"
-  }
+  "app.pagination.showing": "Showing",
+  "app.pagination.of": "of",
+  "app.pagination.results": "results",
+  "app.pagination.no_results": "No results found",
+  "app.pagination.previous": "Previous",
+  "app.pagination.next": "Next",
+
+  "validation.requiredEmail": "Email is required.",
+  "validation.invalidEmail": "Enter a valid email address.",
+  "validation.requiredPassword": "Password is required.",
+  "validation.minLengthPassword": "Password must be at least {{min}} characters.",
+  "validation.required_filed": "This field is required",
+  "validation.invalid_format": "Invalid format",
+
+  "common.ar": "العربية",
+  "common.en": "English"
 }

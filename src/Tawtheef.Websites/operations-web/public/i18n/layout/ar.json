@@ -1,48 +1,38 @@
 ﻿{
-  "internal": {
-    "footer": {
-      "terms": "الشروط والأحكام",
-      "privacy": "سياسة الخصوصية",
-      "rights": "جميع الحقوق محفوظة © 2025",
-      "ministry": "وزارة التربية والتعليم والتعليم العالي 2025 —جميع الحقوق محفوظة"
-    },
-    "sidebar": {
-      "home": "الرئيسية",
-      "files": "توزيع المنفآت",
-      "approve": "اعتماد المنفآت",
-      "job": "إنشاء وظيفة",
-      "transfer": "الترشيحات",
-      "settings": "الإعدادات",
-      "logout": "الخروج",
-      "confirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
-    },
-    "nav": {
-      "logoAlt": "وزارة التعليم والتعليم العالي",
-      "home": "الرئيسية",
-      "personalProfile": "الملف الشخصي",
-      "jobs": "الوظائف",
-      "jobsSearch": "البحث عن وظائف",
-      "jobsApplications": "طلباتي",
-      "notifications": "الإشعارات",
-      "login": "تسجيل دخول",
-      "userAvatarAlt": "صورة المستخدم",
-      "userProfile": "الملف الشخصي",
-      "userSettings": "الإعدادات",
-      "logout": "تسجيل خروج"
-    }
-  },
-  "public": {
-    "nav": {
-      "about": "عن المنصة",
-      "tracks": "مسارات التوظيف",
-      "why": "لماذا معنا",
-      "success": "قصص نجاح",
-      "faq": "الأسئلة الشائعة",
-      "login": "تسجيل الدخول"
-    },
-    "footer": {
-      "rights": "جميع الحقوق محفوظة © 2025",
-      "ministry": "وزارة التربية والتعليم والتعليم العالي 2025 —جميع الحقوق محفوظة"
-    }
-  }
+  "internal.footer.terms": "الشروط والأحكام",
+  "internal.footer.privacy": "سياسة الخصوصية",
+  "internal.footer.rights": "جميع الحقوق محفوظة © 2025",
+  "internal.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2025 —جميع الحقوق محفوظة",
+
+  "internal.sidebar.home": "الرئيسية",
+  "internal.sidebar.files": "توزيع المنفآت",
+  "internal.sidebar.approve": "اعتماد المنفآت",
+  "internal.sidebar.job": "إنشاء وظيفة",
+  "internal.sidebar.transfer": "الترشيحات",
+  "internal.sidebar.settings": "الإعدادات",
+  "internal.sidebar.logout": "الخروج",
+  "internal.sidebar.confirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+
+  "internal.nav.logoAlt": "وزارة التعليم والتعليم العالي",
+  "internal.nav.home": "الرئيسية",
+  "internal.nav.personalProfile": "الملف الشخصي",
+  "internal.nav.jobs": "الوظائف",
+  "internal.nav.jobsSearch": "البحث عن وظائف",
+  "internal.nav.jobsApplications": "طلباتي",
+  "internal.nav.notifications": "الإشعارات",
+  "internal.nav.login": "تسجيل دخول",
+  "internal.nav.userAvatarAlt": "صورة المستخدم",
+  "internal.nav.userProfile": "الملف الشخصي",
+  "internal.nav.userSettings": "الإعدادات",
+  "internal.nav.logout": "تسجيل خروج",
+
+  "public.nav.about": "عن المنصة",
+  "public.nav.tracks": "مسارات التوظيف",
+  "public.nav.why": "لماذا معنا",
+  "public.nav.success": "قصص نجاح",
+  "public.nav.faq": "الأسئلة الشائعة",
+  "public.nav.login": "تسجيل الدخول",
+
+  "public.footer.rights": "جميع الحقوق محفوظة © 2025",
+  "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2025 —جميع الحقوق محفوظة"
 }
