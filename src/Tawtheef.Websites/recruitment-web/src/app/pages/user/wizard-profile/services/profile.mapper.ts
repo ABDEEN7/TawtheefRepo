@@ -221,12 +221,12 @@ export function mapProfileStatusToState(
       id: l.id,
       langId: l.languageId,
       lang: mapIdToDropdown(lookups, 'language', l.languageId),
-      speakingLevelId: l.speakingLevelId ?? l.levelId,
-      speakingLevel: mapIdToDropdown(lookups, 'languageLevel', l.speakingLevelId ?? l.levelId),
-      writingLevelId: l.writingLevelId ?? l.levelId,
-      writingLevel: mapIdToDropdown(lookups, 'languageLevel', l.writingLevelId ?? l.levelId),
-      readingLevelId: l.readingLevelId ?? l.levelId,
-      readingLevel: mapIdToDropdown(lookups, 'languageLevel', l.readingLevelId ?? l.levelId),
+      speakingLevelId: l.speakingLevelId,
+      speakingLevel: mapIdToDropdown(lookups, 'languageLevel', l.speakingLevelId),
+      writingLevelId: l.writingLevelId,
+      writingLevel: mapIdToDropdown(lookups, 'languageLevel', l.writingLevelId),
+      readingLevelId: l.readingLevelId,
+      readingLevel: mapIdToDropdown(lookups, 'languageLevel', l.readingLevelId),
     } as Language)),
 
     attachments: (dto.additionalAttachments ?? []).map(a => ({

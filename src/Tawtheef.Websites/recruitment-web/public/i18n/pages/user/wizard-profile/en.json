@@ -1,467 +1,327 @@
 ﻿{
-  "wizard": {
-    "errorTitle": "Something went wrong",
-    "validationErrorTitle": "Validation error",
-    "title": "Tawtheef - Candidate Profile",
-    "accountFieldNote": "This field came from your account and cannot be changed.",
-    "steps": {
-      "firstInfo": "Basic Information",
-      "personal": "Personal",
-      "contact": "Contact & Address",
-      "degrees": "Degrees",
-      "experience": "Experience & Courses",
-      "skills": "Skills",
-      "skill": "Skill",
-      "languages": "Languages",
-      "attachments": "Attachments",
-      "review": "Review"
-    },
-    "availability": "Available for hire",
-    "progress": {
-      "label": "Profile completion",
-      "steps": "Step {{current}} of {{total}}",
-      "status": {
-        "complete": "Complete",
-        "pending": "Needs info"
-      }
-    },
-    "buttons": {
-      "prev": "Previous",
-      "next": "Next",
-      "save": "Save",
-      "submit": "Submit",
-      "finalSave": "Submit",
-      "add": "Add",
-      "upload": "Upload",
-      "preview": "Preview",
-      "cancel": "Cancel",
-      "saveDraft": "Save Draft",
-      "saving": "Saving..."
-    },
-    "personal": {
-      "hasDisability": "Do you have a disability?",
-      "disabilityType": "Disability Type",
-      "sponsorType": "Sponsor Type",
-      "sponsor": {
-        "company": {
-          "name": "Establishment Name",
-          "qid": "Establishment Number (Ministry of Labor)",
-          "card": "Establishment Registration Card (Image, PDF)"
-        },
-        "individual": {
-          "name": "Establishment Name",
-          "qid": "Sponsor QID Number",
-          "card": "Sponsor Registration Card (Image, PDF)"
-        }
-      },
-      "avatar": {
-        "alt": "Profile photo",
-        "hint": "Complete your profile to increase your matching score",
-        "uploadLink": "Upload a profile photo",
-        "title": "Upload profile photo",
-        "rulesIntro": "Please follow the rules:",
-        "ruleBg": "Plain white background.",
-        "ruleSize": "Size 4×6 cm (aspect ratio 2:3).",
-        "ruleExt": "Formats: JPG or PNG.",
-        "choose": "Choose image",
-        "previewNote": "Preview only; it won’t be saved automatically.",
-        "save": "Save photo",
-        "errors": {
-          "onlyImage": "Please choose a valid image file.",
-          "maxSize": "Image size must not exceed {{size}} MB.",
-          "ratio": "Aspect ratio must be approximately 2:3.",
-          "loadFailed": "Failed to load the image. Please try a different one."
-        },
-        "reset": "Reset"
-      },
-      "nameAr": "Full name (Arabic)",
-      "nameEn": "Full name (English)",
-      "qid": "National Number",
-      "qidExpiry": "QID expiry date",
-      "dob": "Date of birth",
-      "nationality": "Nationality",
-      "gender": "Gender",
-      "religion": "Religion",
-      "marital": "Marital status",
-      "children": "Children count",
-      "verify": {
-        "title": "Verify QID",
-        "button": "Verify QID information",
-        "loading": "Verifying...",
-        "success": "We fetched your information successfully.",
-        "missing": "Please enter your QID and expiry date before verifying.",
-        "error": "We couldn't verify your details. Please check the QID and expiry date."
-      },
-      "prerequisites": "Prerequisites review",
-      "review": {
-        "title": "Prerequisites have been completed",
-        "statusCompleted": "Completed",
-        "statusMissing": "Missing",
-        "candidateType": "Candidate Type",
-        "targetEntity": "Target Entity",
-        "cv": "Curriculum Vitae",
-        "idCard": "ID Card",
-        "edit": "Edit Prerequisites"
-      }
-    },
-    "verify": {
-      "title": "Verify QID",
-      "button": "Verify QID information",
-      "loading": "Verifying...",
-      "success": "We fetched your information successfully.",
-      "missing": "Please enter your QID and expiry date before verifying.",
-      "error": "We couldn't verify your details. Please check the QID and expiry date."
-    },
-    "contact": {
-      "country": "Country",
-      "dial": "Dial code",
-      "phone": "Mobile",
-      "email": "Email",
-      "address": "Address",
-      "interviewPlace": "Interview location",
-      "emailVerified": "Email verified",
-      "phoneVerified": "Mobile number verified",
-      "phoneSendCode": "Verification code sent",
-      "emailSendVerification": "Verification link sent",
-      "emailOtpPlaceholder": "Enter the verification code sent to your email",
-      "phoneOtpPlaceholder": "Enter the verification code sent to your mobile",
-      "emailSending": "Verification link being sent...",
-      "phoneSending": "Verification code being sent...",
-      "emailFailed": "Verification link failed to send, please try again.",
-      "phoneFailed": "Mobile number verification failed, please try again.",
-      "emailLinkSent": "Verification link sent to your email.",
-      "phoneCodeSent": "Verification code sent to your mobile.",
-      "emailNotVerified": "Email not yet verified.",
-      "phoneNotVerified": "Mobile number not yet verified",
-      "phoneVerifying": "Verifying mobile number...",
-      "emailVerifying": "Verifying email...",
-      "phoneVerify": "Verify mobile number",
-      "emailVerify": "Verify email",
-      "phoneRetryIn": "You can request a new code in {{seconds}} seconds",
-      "emailRetryIn": "You can request a new link in {{seconds}} seconds",
-      "codeSent": {
-        "phone": {
-          "cooldown": "You can request a new code in {{seconds}} seconds",
-          "error": "Failed to send code, please try again."
-        },
-        "email": {
-          "cooldown": "You can request a new code in {{seconds}} seconds",
-          "error": "Failed to send code, please try again."
-        }
-      }
-    },
-    "nationalAddress": {
-      "title": "National Address",
-      "numberLabel": "Address No.:",
-      "zone": "Zone",
-      "street": "Street",
-      "building": "Building",
-      "unit": "Unit",
-      "document": "National Address document",
-      "fileTypeError": "File type must be PDF or an image.",
-      "fileSizeError": "File size must be 1MB or less."
-    },
-    "degrees": {
-      "title": "Degrees",
-      "degree": "Degree",
-      "major": "Major",
-      "main-major": "Main Major",
-      "university": "University",
-      "gradYear": "Year",
-      "gradCountry": "Graduation Country",
-      "degreeFile": "Degree certificate",
-      "studySystem": "Study system",
-      "gpa": "GPA",
-      "grade": "Grade",
-      "choiceDegree": "Choose degree",
-      "choiceGradCountry": "Choose graduation country",
-      "choiceUniversity": "Choose university",
-      "choiceMajor": "Choose major",
-      "choiceStudySystem": "Choose study system",
-      "choiceGrade": "Choose grade",
-      "choiceDegreeFile": "Choose degree file",
-      "add": "Add degree",
-      "deleteError": "Failed to delete degree. Please try again.",
-      "saveError": "Failed to save education section. Please try again.",
-      "validation": {
-        "noRows": "Please add at least one degree."
-      }
-    },
-    "course": {
-      "deleteError": "Failed to delete course. Please try again."
-    },
-    "experience": {
-      "title": "Experience",
-      "org": "Organization",
-      "jobTitle": "Job title",
-      "from": "From (Month/Year)",
-      "to": "To (Month/Year)",
-      "period": "Period",
-      "tasks": "Responsibilities",
-      "current": "I currently work here",
-      "attachment": "Experience certificate (PDF/image)",
-      "deleteError": "Failed to delete experience. Please try again.",
-      "saveError": "Failed to save experience section. Please try again.",
-      "country": "Country",
-      "choiceCountry": "Choose country",
-      "validation": {
-        "noRows": "Please add at least one experience."
-      },
-      "table": {
-        "org": "Organization",
-        "title": "Title",
-        "country": "Country",
-        "period": "Period",
-        "tasks": "Tasks",
-        "file": "File"
-      },
-      "add": "Add experience"
-    },
-    "courses": {
-      "title": "Courses / Training",
-      "provider": "Provider",
-      "courseName": "Course name",
-      "period": "Period",
-      "notes": "Notes (optional)",
-      "certificate": "Course certificate (PDF/image)",
-      "deleteError": "Failed to delete course. Please try again.",
-      "country": "Country",
-      "choiceCountry": "Choose country",
-      "table": {
-        "provider": "Provider",
-        "courseName": "Course",
-        "country": "Country",
-        "period": "Period",
-        "file": "File"
-      },
-      "add": "Add course"
-    },
-    "skill": {
-      "deleteError": "Failed to delete skill. Please try again."
-    },
-    "skills": {
-      "title": "Skills & Languages",
-      "skills": "Skills (Tags)",
-      "skill": "Skills (Tags)",
-      "languages": "Languages",
-      "language": "Language",
-      "speaking": "Speaking",
-      "writing": "Writing",
-      "reading": "Reading",
-      "level": "Level",
-      "levels": [
-        "Beginner",
-        "Intermediate",
-        "Advanced",
-        "Excellent"
-      ],
-      "hint": "Write 3 or more characters to search for skills from the provider.",
-      "placeholder": "Start typing to search skills...",
-      "typeMore": "Write 3 or more characters to start searching...",
-      "noResults": "No results found.",
-      "max10": "Showing up to 10 results per search.",
-      "languagesHint": "Add your languages and proficiency levels.",
-      "selectLanguage": "Choose language",
-      "selectLevel": "Choose level",
-      "selectSpeakingLevel": "Choose speaking level",
-      "selectWritingLevel": "Choose writing level",
-      "selectReadingLevel": "Choose reading level",
-      "saveError": "Failed to save skills section. Please try again."
-    },
-    "attachments": {
-      "title": "Attachments",
-      "attachment": "Attachment title",
-      "file": "File",
-      "add": "Add attachment",
-      "empty": "No attachments added yet.",
-      "saveError": "Failed to save attachments. Please try again.",
-      "change": "Change attachment",
-      "placeholders": {
-        "attachmentTitle": "Example: CV, ID copy"
-      }
-    },
-    "review": {
-      "title": "Review",
-      "missingWarningTitle": "Some required fields are missing before final submission:",
-      "success": "Your profile has been saved successfully.",
-      "errorGeneric": "Failed to submit, please try again.",
-      "submitError": "Failed to submit profile",
-      "saving": "Saving..."
-    },
-    "table": {
-      "actions": "Action",
-      "noRows": "No records yet"
-    },
-    "placeholders": {
-      "search": "Search...",
-      "typeHere": "Type here...",
-      "loading": "Loading...",
-      "selectNationality": "Select nationality",
-      "selectGender": "Select gender",
-      "selectReligion": "Select religion",
-      "selectMaritalStatus": "Select marital status",
-      "selectCountry": "Select country",
-      "selectDialCode": "Select dial code",
-      "selectInterviewPlace": "Select interview place",
-      "selectCandidateType": "Select candidate type",
-      "selectTargetEntity": "Select target entity",
-      "selectOffice": "Select office",
-      "selectDisabilityType": "Enter disability type",
-      "selectSponsorType": "Select sponsor type",
-      "uploadEstablishmentCard": "Upload establishment card",
-      "enterSponsorEmployerName": "Enter establishment name",
-      "enterSponsorEmployerNumber": "Enter establishment number"
-    },
-    "prereq": {
-      "title": "Prerequisites to start",
-      "candidateType": "Candidate category",
-      "targetEntity": "Target entity",
-      "officeLabel": "Accredited office",
-      "cvLabel": "Upload CV (PDF)",
-      "idLabel": "Upload ID card",
-      "id": {
-        "GCC": {
-          "label": "Upload ID card/Passport (PDF or image)"
-        },
-        "NonQatari": {
-          "label": "Upload Passport (PDF or image)"
-        }
-      },
-      "dropOrClick": "Drag & drop or click",
-      "startProfile": "Start profile creation",
-      "birthCertificate": "Birth certificate",
-      "marriageCertificate": "Marriage certificate",
-      "types": {
-        "qatari": "Qatari citizen",
-        "qatarisWomanChildren": "Children of Qatari woman married to non-Qatari",
-        "nonQatariSpouse": "Non-Qatari spouse of Qatari/Qatari woman",
-        "gcc": "GCC citizen",
-        "quGraduate": "Qatar University graduate",
-        "qatarResident": "Resident in Qatar"
-      },
-      "entities": {
-        "ministry": "Ministry",
-        "publicSchools": "Public schools"
-      },
-      "errors": {
-        "cvPdfOnly": "CV must be a PDF file.",
-        "idImageOrPdf": "ID must be an image or PDF.",
-        "maxSize": "File size must not exceed {{size}} MB."
-      }
-    },
-    "profile": {
-      "basic": {
-        "candidateType": {
-          "required": "Please select candidate type"
-        },
-        "targetEntity": {
-          "required": "Please select target entity"
-        },
-        "office": {
-          "required": "Please select an accredited office"
-        },
-        "cv": {
-          "required": "Please attach your CV"
-        },
-        "id": {
-          "required": "Please attach your ID card"
-        },
-        "marriageCertificate": {
-          "required": "Please attach marriage certificate"
-        },
-        "birthCertificate": {
-          "required": "Please attach birth certificate"
-        }
-      },
-      "personal": {
-        "fullNameAr": {
-          "required": "Please enter name in Arabic"
-        },
-        "fullNameEn": {
-          "required": "Please enter name in English"
-        },
-        "qid": {
-          "required": "Please enter national number"
-        },
-        "qidExpiry": {
-          "required": "Please enter QID expiry date"
-        },
-        "dob": {
-          "required": "Please enter date of birth"
-        },
-        "nationality": {
-          "required": "Please select nationality"
-        },
-        "gender": {
-          "required": "Please select gender"
-        },
-        "religion": {
-          "required": "Please select religion"
-        },
-        "marital": {
-          "required": "Please select marital status"
-        },
-        "disabilityDetails": {
-          "required": "Please enter disability details"
-        },
-        "sponsorType": {
-          "required": "Please select sponsor type"
-        },
-        "sponsorEmployerName": {
-          "required": "Please enter employer name"
-        },
-        "sponsorEmployerNumber": {
-          "required": "Please enter employer number"
-        },
-        "sponsorQidExpiry": {
-          "required": "Please enter sponsor QID expiry date"
-        },
-        "sponsorCard": {
-          "required": "Please attach sponsor card"
-        }
-      },
-      "contact": {
-        "country": {
-          "required": "Please select country"
-        },
-        "dialCode": {
-          "required": "Please select dial code"
-        },
-        "phone": {
-          "required": "Please enter mobile number"
-        },
-        "phoneVerified": {
-          "required": "Please verify mobile number"
-        },
-        "email": {
-          "required": "Please enter email address"
-        },
-        "emailVerified": {
-          "required": "Please verify email address"
-        },
-        "address": {
-          "required": "Please enter address"
-        }
-      },
-      "degrees": {
-        "atLeastOne": {
-          "required": "Please add at least one academic qualification"
-        }
-      },
-      "experience": {
-        "atLeastOne": {
-          "required": "Please add at least one work experience"
-        }
-      },
-      "skills": {
-        "required": "Please add at least one skill"
-      },
-      "languages": {
-        "required": "Please add at least one language",
-        "speaking": { "required": "Please choose a speaking level" },
-        "writing": { "required": "Please choose a writing level" },
-        "reading": { "required": "Please choose a reading level" }
-      }
-    }
-  }
+  "wizard.errorTitle": "Something went wrong",
+  "wizard.validationErrorTitle": "Validation error",
+  "wizard.title": "Tawtheef - Candidate Profile",
+  "wizard.placeholders.select": "Select",
+  "wizard.accountFieldNote": "This field came from your account and cannot be changed.",
+  "wizard.steps.firstInfo": "Basic Information",
+  "wizard.steps.personal": "Personal",
+  "wizard.steps.contact": "Contact & Address",
+  "wizard.steps.degrees": "Degrees",
+  "wizard.steps.experience": "Experience & Courses",
+  "wizard.steps.achievements": "Achievements",
+  "wizard.steps.skills": "Skills",
+  "wizard.steps.skill": "Skill",
+  "wizard.steps.languages": "Languages",
+  "wizard.steps.attachments": "Attachments",
+  "wizard.steps.review": "Review",
+  "wizard.availability": "Available for hire",
+  "wizard.progress.label": "Profile completion",
+  "wizard.progress.steps": "Step {{current}} of {{total}}",
+  "wizard.progress.status.complete": "Complete",
+  "wizard.progress.status.pending": "Needs info",
+  "wizard.buttons.prev": "Previous",
+  "wizard.buttons.next": "Next",
+  "wizard.buttons.save": "Save",
+  "wizard.buttons.submit": "Submit",
+  "wizard.buttons.finalSave": "Submit",
+  "wizard.buttons.add": "Add",
+  "wizard.buttons.upload": "Upload",
+  "wizard.buttons.preview": "Preview",
+  "wizard.buttons.cancel": "Cancel",
+  "wizard.buttons.saveDraft": "Save Draft",
+  "wizard.buttons.saving": "Saving...",
+  "wizard.personal.hasDisability": "Do you have a disability?",
+  "wizard.personal.disabilityType": "Disability Type",
+  "wizard.personal.sponsorType": "Sponsor Type",
+  "wizard.personal.sponsor.company.name": "Establishment Name",
+  "wizard.personal.sponsor.company.qid": "Establishment Number (Ministry of Labor)",
+  "wizard.personal.sponsor.company.card": "Establishment Registration Card (Image, PDF)",
+  "wizard.personal.sponsor.individual.name": "Establishment Name",
+  "wizard.personal.sponsor.individual.qid": "Sponsor QID Number",
+  "wizard.personal.sponsor.individual.card": "Sponsor Registration Card (Image, PDF)",
+  "wizard.personal.avatar.alt": "Profile photo",
+  "wizard.personal.avatar.hint": "Complete your profile to increase your matching score",
+  "wizard.personal.avatar.uploadLink": "Upload a profile photo",
+  "wizard.personal.avatar.title": "Upload profile photo",
+  "wizard.personal.avatar.rulesIntro": "Please follow the rules:",
+  "wizard.personal.avatar.ruleBg": "Plain white background.",
+  "wizard.personal.avatar.ruleSize": "Size 4×6 cm (aspect ratio 2:3).",
+  "wizard.personal.avatar.ruleExt": "Formats: JPG or PNG.",
+  "wizard.personal.avatar.choose": "Choose image",
+  "wizard.personal.avatar.previewNote": "Preview only; it won’t be saved automatically.",
+  "wizard.personal.avatar.save": "Save photo",
+  "wizard.personal.avatar.errors.onlyImage": "Please choose a valid image file.",
+  "wizard.personal.avatar.errors.maxSize": "Image size must not exceed {{size}} MB.",
+  "wizard.personal.avatar.errors.ratio": "Aspect ratio must be approximately 2:3.",
+  "wizard.personal.avatar.errors.loadFailed": "Failed to load the image. Please try a different one.",
+  "wizard.personal.avatar.reset": "Reset",
+  "wizard.personal.nameAr": "Full name (Arabic)",
+  "wizard.personal.nameEn": "Full name (English)",
+  "wizard.personal.qid": "National Number",
+  "wizard.personal.qidExpiry": "QID expiry date",
+  "wizard.personal.dob": "Date of birth",
+  "wizard.personal.nationality": "Nationality",
+  "wizard.personal.gender": "Gender",
+  "wizard.personal.religion": "Religion",
+  "wizard.personal.marital": "Marital status",
+  "wizard.personal.children": "Children count",
+  "wizard.personal.verify.title": "Verify QID",
+  "wizard.personal.verify.button": "Verify QID information",
+  "wizard.personal.verify.loading": "Verifying...",
+  "wizard.personal.verify.success": "We fetched your information successfully.",
+  "wizard.personal.verify.missing": "Please enter your QID and expiry date before verifying.",
+  "wizard.personal.verify.error": "We couldn't verify your details. Please check the QID and expiry date.",
+  "wizard.personal.prerequisites": "Prerequisites review",
+  "wizard.personal.review.title": "Prerequisites have been completed",
+  "wizard.personal.review.statusCompleted": "Completed",
+  "wizard.personal.review.statusMissing": "Missing",
+  "wizard.personal.review.candidateType": "Candidate Type",
+  "wizard.personal.review.targetEntity": "Target Entity",
+  "wizard.personal.review.cv": "Curriculum Vitae",
+  "wizard.personal.review.idCard": "ID Card",
+  "wizard.personal.review.edit": "Edit Prerequisites",
+  "wizard.verify.title": "Verify QID",
+  "wizard.verify.button": "Verify QID information",
+  "wizard.verify.loading": "Verifying...",
+  "wizard.verify.success": "We fetched your information successfully.",
+  "wizard.verify.missing": "Please enter your QID and expiry date before verifying.",
+  "wizard.verify.error": "We couldn't verify your details. Please check the QID and expiry date.",
+  "wizard.contact.country": "Country",
+  "wizard.contact.dial": "Dial code",
+  "wizard.contact.phone": "Mobile",
+  "wizard.contact.email": "Email",
+  "wizard.contact.address": "Address",
+  "wizard.contact.interviewPlace": "Interview location",
+  "wizard.contact.emailVerified": "Email verified",
+  "wizard.contact.phoneVerified": "Mobile number verified",
+  "wizard.contact.phoneSendCode": "Verification code sent",
+  "wizard.contact.emailSendVerification": "Verification link sent",
+  "wizard.contact.emailOtpPlaceholder": "Enter the verification code sent to your email",
+  "wizard.contact.phoneOtpPlaceholder": "Enter the verification code sent to your mobile",
+  "wizard.contact.emailSending": "Verification link being sent...",
+  "wizard.contact.phoneSending": "Verification code being sent...",
+  "wizard.contact.emailFailed": "Verification link failed to send, please try again.",
+  "wizard.contact.phoneFailed": "Mobile number verification failed, please try again.",
+  "wizard.contact.emailLinkSent": "Verification link sent to your email.",
+  "wizard.contact.phoneCodeSent": "Verification code sent to your mobile.",
+  "wizard.contact.emailNotVerified": "Email not yet verified.",
+  "wizard.contact.phoneNotVerified": "Mobile number not yet verified",
+  "wizard.contact.phoneVerifying": "Verifying mobile number...",
+  "wizard.contact.emailVerifying": "Verifying email...",
+  "wizard.contact.phoneVerify": "Verify mobile number",
+  "wizard.contact.emailVerify": "Verify email",
+  "wizard.contact.phoneRetryIn": "You can request a new code in {{seconds}} seconds",
+  "wizard.contact.emailRetryIn": "You can request a new link in {{seconds}} seconds",
+  "wizard.contact.codeSent.phone.cooldown": "You can request a new code in {{seconds}} seconds",
+  "wizard.contact.codeSent.phone.error": "Failed to send code, please try again.",
+  "wizard.contact.codeSent.email.cooldown": "You can request a new code in {{seconds}} seconds",
+  "wizard.contact.codeSent.email.error": "Failed to send code, please try again.",
+  "wizard.nationalAddress.title": "National Address",
+  "wizard.nationalAddress.numberLabel": "Address No.:",
+  "wizard.nationalAddress.zone": "Zone",
+  "wizard.nationalAddress.street": "Street",
+  "wizard.nationalAddress.building": "Building",
+  "wizard.nationalAddress.unit": "Unit",
+  "wizard.nationalAddress.document": "National Address document",
+  "wizard.nationalAddress.fileTypeError": "File type must be PDF or an image.",
+  "wizard.nationalAddress.fileSizeError": "File size must be 1MB or less.",
+  "wizard.degrees.title": "Degrees",
+  "wizard.degrees.degree": "Degree",
+  "wizard.degrees.major": "Major",
+  "wizard.degrees.main-major": "Main Major",
+  "wizard.degrees.university": "University",
+  "wizard.degrees.gradYear": "Year",
+  "wizard.degrees.gradCountry": "Graduation Country",
+  "wizard.degrees.degreeFile": "Degree certificate",
+  "wizard.degrees.studySystem": "Study system",
+  "wizard.degrees.gpa": "GPA",
+  "wizard.degrees.grade": "Grade",
+  "wizard.degrees.choiceDegree": "Choose degree",
+  "wizard.degrees.choiceGradCountry": "Choose graduation country",
+  "wizard.degrees.choiceUniversity": "Choose university",
+  "wizard.degrees.choiceMajor": "Choose major",
+  "wizard.degrees.choiceStudySystem": "Choose study system",
+  "wizard.degrees.choiceGrade": "Choose grade",
+  "wizard.degrees.choiceDegreeFile": "Choose degree file",
+  "wizard.degrees.add": "Add degree",
+  "wizard.degrees.deleteError": "Failed to delete degree. Please try again.",
+  "wizard.degrees.saveError": "Failed to save education section. Please try again.",
+  "wizard.degrees.validation.noRows": "Please add at least one degree.",
+  "wizard.course.deleteError": "Failed to delete course. Please try again.",
+  "wizard.experience.title": "Experience",
+  "wizard.experience.org": "Organization",
+  "wizard.experience.jobTitle": "Job title",
+  "wizard.experience.from": "From (Month/Year)",
+  "wizard.experience.to": "To (Month/Year)",
+  "wizard.experience.period": "Period",
+  "wizard.experience.tasks": "Responsibilities",
+  "wizard.experience.current": "I currently work here",
+  "wizard.experience.attachment": "Experience certificate (PDF/image)",
+  "wizard.experience.deleteError": "Failed to delete experience. Please try again.",
+  "wizard.experience.saveError": "Failed to save experience section. Please try again.",
+  "wizard.experience.country": "Country",
+  "wizard.experience.choiceCountry": "Choose country",
+  "wizard.experience.validation.noRows": "Please add at least one experience.",
+  "wizard.experience.table.org": "Organization",
+  "wizard.experience.table.title": "Title",
+  "wizard.experience.table.country": "Country",
+  "wizard.experience.table.period": "Period",
+  "wizard.experience.table.tasks": "Tasks",
+  "wizard.experience.table.file": "File",
+  "wizard.experience.add": "Add experience",
+  "wizard.achievements.add": "Add Achievement",
+  "wizard.achievements.title": "Achievements",
+  "wizard.achievements.type": "Type",
+  "wizard.achievements.name": "Name",
+  "wizard.achievements.issuer": "Provider",
+  "wizard.achievements.country": "Country",
+  "wizard.achievements.choiceCountry": "Choose country",
+  "wizard.achievements.issueDate": "Issue Date",
+  "wizard.achievements.description": "Description",
+  "wizard.achievements.attachment": "Certificate",
+  "wizard.achievements.table.type": "Type",
+  "wizard.achievements.table.name": "Name",
+  "wizard.achievements.table.issuer": "Provider",
+  "wizard.achievements.table.country": "Country",
+  "wizard.achievements.table.issueDate": "Issue Date",
+  "wizard.achievements.table.description": "Description",
+  "wizard.achievements.table.file": "File",
+  "wizard.courses.title": "Courses / Training",
+  "wizard.courses.provider": "Provider",
+  "wizard.courses.courseName": "Course name",
+  "wizard.courses.period": "Period",
+  "wizard.courses.notes": "Notes (optional)",
+  "wizard.courses.certificate": "Course certificate (PDF/image)",
+  "wizard.courses.deleteError": "Failed to delete course. Please try again.",
+  "wizard.courses.country": "Country",
+  "wizard.courses.choiceCountry": "Choose country",
+  "wizard.courses.table.provider": "Provider",
+  "wizard.courses.table.courseName": "Course",
+  "wizard.courses.table.country": "Country",
+  "wizard.courses.table.period": "Period",
+  "wizard.courses.table.file": "File",
+  "wizard.courses.add": "Add course",
+  "wizard.skill.deleteError": "Failed to delete skill. Please try again.",
+  "wizard.skills.title": "Skills & Languages",
+  "wizard.skills.skills": "Skills (Tags)",
+  "wizard.skills.skill": "Skills (Tags)",
+  "wizard.skills.languages": "Languages",
+  "wizard.skills.language": "Language",
+  "wizard.skills.speaking": "Speaking",
+  "wizard.skills.writing": "Writing",
+  "wizard.skills.reading": "Reading",
+  "wizard.skills.level": "Level",
+  "wizard.skills.levels.0": "Beginner",
+  "wizard.skills.levels.1": "Intermediate",
+  "wizard.skills.levels.2": "Advanced",
+  "wizard.skills.levels.3": "Excellent",
+  "wizard.skills.hint": "Write 3 or more characters to search for skills from the provider.",
+  "wizard.skills.placeholder": "Start typing to search skills...",
+  "wizard.skills.typeMore": "Write 3 or more characters to start searching...",
+  "wizard.skills.noResults": "No results found.",
+  "wizard.skills.max10": "Showing up to 10 results per search.",
+  "wizard.skills.languagesHint": "Add your languages and proficiency levels.",
+  "wizard.skills.selectLanguage": "Choose language",
+  "wizard.skills.selectLevel": "Choose level",
+  "wizard.skills.selectSpeakingLevel": "Choose speaking level",
+  "wizard.skills.selectWritingLevel": "Choose writing level",
+  "wizard.skills.selectReadingLevel": "Choose reading level",
+  "wizard.skills.saveError": "Failed to save skills section. Please try again.",
+  "wizard.attachments.title": "Attachments",
+  "wizard.attachments.attachment": "Attachment title",
+  "wizard.attachments.file": "File",
+  "wizard.attachments.add": "Add attachment",
+  "wizard.attachments.empty": "No attachments added yet.",
+  "wizard.attachments.saveError": "Failed to save attachments. Please try again.",
+  "wizard.attachments.change": "Change attachment",
+  "wizard.attachments.placeholders.attachmentTitle": "Example: CV, ID copy",
+  "wizard.review.title": "Review",
+  "wizard.review.missingWarningTitle": "Some required fields are missing before final submission:",
+  "wizard.review.success": "Your profile has been saved successfully.",
+  "wizard.review.errorGeneric": "Failed to submit, please try again.",
+  "wizard.review.submitError": "Failed to submit profile",
+  "wizard.review.saving": "Saving...",
+  "wizard.table.actions": "Action",
+  "wizard.table.noRows": "No records yet",
+  "wizard.placeholders.search": "Search...",
+  "wizard.placeholders.typeHere": "Type here...",
+  "wizard.placeholders.loading": "Loading...",
+  "wizard.placeholders.selectNationality": "Select nationality",
+  "wizard.placeholders.selectGender": "Select gender",
+  "wizard.placeholders.selectReligion": "Select religion",
+  "wizard.placeholders.selectMaritalStatus": "Select marital status",
+  "wizard.placeholders.selectCountry": "Select country",
+  "wizard.placeholders.selectDialCode": "Select dial code",
+  "wizard.placeholders.selectInterviewPlace": "Select interview place",
+  "wizard.placeholders.selectCandidateType": "Select candidate type",
+  "wizard.placeholders.selectTargetEntity": "Select target entity",
+  "wizard.placeholders.selectOffice": "Select office",
+  "wizard.placeholders.selectDisabilityType": "Enter disability type",
+  "wizard.placeholders.selectSponsorType": "Select sponsor type",
+  "wizard.placeholders.uploadEstablishmentCard": "Upload establishment card",
+  "wizard.placeholders.enterSponsorEmployerName": "Enter establishment name",
+  "wizard.placeholders.enterSponsorEmployerNumber": "Enter establishment number",
+  "wizard.prereq.title": "Prerequisites to start",
+  "wizard.prereq.candidateType": "Candidate category",
+  "wizard.prereq.targetEntity": "Target entity",
+  "wizard.prereq.officeLabel": "Accredited office",
+  "wizard.prereq.cvLabel": "Upload CV (PDF)",
+  "wizard.prereq.idLabel": "Upload ID card",
+  "wizard.prereq.id.GCC.label": "Upload ID card/Passport (PDF or image)",
+  "wizard.prereq.id.NonQatari.label": "Upload Passport (PDF or image)",
+  "wizard.prereq.dropOrClick": "Drag & drop or click",
+  "wizard.prereq.startProfile": "Start profile creation",
+  "wizard.prereq.birthCertificate": "Birth certificate",
+  "wizard.prereq.marriageCertificate": "Marriage certificate",
+  "wizard.prereq.types.qatari": "Qatari citizen",
+  "wizard.prereq.types.qatarisWomanChildren": "Children of Qatari woman married to non-Qatari",
+  "wizard.prereq.types.nonQatariSpouse": "Non-Qatari spouse of Qatari/Qatari woman",
+  "wizard.prereq.types.gcc": "GCC citizen",
+  "wizard.prereq.types.quGraduate": "Qatar University graduate",
+  "wizard.prereq.types.qatarResident": "Resident in Qatar",
+  "wizard.prereq.entities.ministry": "Ministry",
+  "wizard.prereq.entities.publicSchools": "Public schools",
+  "wizard.prereq.errors.cvPdfOnly": "CV must be a PDF file.",
+  "wizard.prereq.errors.idImageOrPdf": "ID must be an image or PDF.",
+  "wizard.prereq.errors.maxSize": "File size must not exceed {{size}} MB.",
+  "wizard.profile.basic.candidateType.required": "Please select candidate type",
+  "wizard.profile.basic.targetEntity.required": "Please select target entity",
+  "wizard.profile.basic.office.required": "Please select an accredited office",
+  "wizard.profile.basic.cv.required": "Please attach your CV",
+  "wizard.profile.basic.id.required": "Please attach your ID card",
+  "wizard.profile.basic.marriageCertificate.required": "Please attach marriage certificate",
+  "wizard.profile.basic.birthCertificate.required": "Please attach birth certificate",
+  "wizard.profile.personal.fullNameAr.required": "Please enter name in Arabic",
+  "wizard.profile.personal.fullNameEn.required": "Please enter name in English",
+  "wizard.profile.personal.qid.required": "Please enter national number",
+  "wizard.profile.personal.qidExpiry.required": "Please enter QID expiry date",
+  "wizard.profile.personal.dob.required": "Please enter date of birth",
+  "wizard.profile.personal.nationality.required": "Please select nationality",
+  "wizard.profile.personal.gender.required": "Please select gender",
+  "wizard.profile.personal.religion.required": "Please select religion",
+  "wizard.profile.personal.marital.required": "Please select marital status",
+  "wizard.profile.personal.disabilityDetails.required": "Please enter disability details",
+  "wizard.profile.personal.sponsorType.required": "Please select sponsor type",
+  "wizard.profile.personal.sponsorEmployerName.required": "Please enter employer name",
+  "wizard.profile.personal.sponsorEmployerNumber.required": "Please enter employer number",
+  "wizard.profile.personal.sponsorQidExpiry.required": "Please enter sponsor QID expiry date",
+  "wizard.profile.personal.sponsorCard.required": "Please attach sponsor card",
+  "wizard.profile.contact.country.required": "Please select country",
+  "wizard.profile.contact.dialCode.required": "Please select dial code",
+  "wizard.profile.contact.phone.required": "Please enter mobile number",
+  "wizard.profile.contact.phoneVerified.required": "Please verify mobile number",
+  "wizard.profile.contact.email.required": "Please enter email address",
+  "wizard.profile.contact.emailVerified.required": "Please verify email address",
+  "wizard.profile.contact.address.required": "Please enter address",
+  "wizard.profile.degrees.atLeastOne.required": "Please add at least one academic qualification",
+  "wizard.profile.experience.atLeastOne.required": "Please add at least one work experience",
+  "wizard.profile.skills.required": "Please add at least one skill",
+  "wizard.profile.languages.required": "Please add at least one language",
+  "wizard.profile.languages.speaking.required": "Please choose a speaking level",
+  "wizard.profile.languages.writing.required": "Please choose a writing level",
+  "wizard.profile.languages.reading.required": "Please choose a reading level",
+  "wizard.profile.courses.atLeastOne.required": "Please add at least one course",
+  "wizard.profile.achievements.atLeastOne.required": "Please add at least one achievement",
+  "wizard.profile.attachments.atLeastOne.required": "Please add at least one attachment"
 }

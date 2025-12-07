@@ -6,3 +6,9 @@
   @include brand-gradient; border: none; color: #fff; font-weight: 700; border-radius: 999px; transition: all .25s;
   &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(123,30,58,.3); }
 }
+.mobile-phone {
+  text-align: end;
+  html[dir="ltr"] & {
+    text-align: start;
+  }
+}

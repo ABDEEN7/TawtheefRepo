@@ -14,7 +14,7 @@ public class LanguageLevelConfiguration : LookupBaseConfiguration<LanguageLevel>
                 Id = LanguageLevelIds.Basic,
                 BackendName = nameof(LanguageLevelIds.Basic),
                 NameEn = "Basic",
-                NameAr = "أساسي",
+                NameAr = "مبتدئ",
                 DisplayOrder = 1
             },
             new LanguageLevel
@@ -32,6 +32,14 @@ public class LanguageLevelConfiguration : LookupBaseConfiguration<LanguageLevel>
                 NameEn = "Advanced",
                 NameAr = "متقدم",
                 DisplayOrder = 3
+            },
+            new LanguageLevel
+            {
+                Id = LanguageLevelIds.Expert,
+                BackendName = nameof(LanguageLevelIds.Expert),
+                NameEn = "Expert",
+                NameAr = "خبير",
+                DisplayOrder = 4
             },
             new LanguageLevel
             {

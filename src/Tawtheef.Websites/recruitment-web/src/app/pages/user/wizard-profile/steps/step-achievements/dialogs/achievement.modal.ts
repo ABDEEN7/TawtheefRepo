@@ -31,7 +31,6 @@ export const ACHIEVEMENT_DIALOG_LIMITS = {
     TextareaModule,
     NgIf,
     NgClass,
-    Button,
   ],
   templateUrl: './achievement.modal.html',
   styleUrl: './achievement.modal.scss',

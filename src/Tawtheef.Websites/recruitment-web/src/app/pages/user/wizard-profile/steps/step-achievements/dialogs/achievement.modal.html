@@ -2,16 +2,20 @@
   <div class="row g-3">
     <div class="col-md-6">
       <label class="form-label required">{{ 'wizard.achievements.type' | translate }}</label>
-      <p-select formControlName="achievementType"
+      <p-select
+                size="small"
+                inputId="achievementType"
+                [filter]="true"
+                formControlName="achievementType"
                 [options]="lookups.achievementTypes()"
                 optionLabel="name"
-                optionValue="value"
+                [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
                 [placeholder]="'wizard.placeholders.select' | translate"
-                [ngClass]="{'is-invalid': f['achievementType'].touched && f['achievementType'].invalid}"></p-select>
+                [ngClass]="{'is-invalid': f['achievementType'].touched && f['achievementType'].invalid}" fluid></p-select>
     </div>
     <div class="col-md-6">
       <label class="form-label required">{{ 'wizard.achievements.name' | translate }}</label>
-      <input pInputText type="text" class="form-control"
+      <input pInputText type="text" class="form-control" pSize="small"
              formControlName="title"
              [ngClass]="{'is-invalid': f['title'].touched && f['title'].invalid}"/>
     </div>
@@ -20,27 +24,36 @@
   <div class="row g-3">
     <div class="col-md-6">
       <label class="form-label required">{{ 'wizard.achievements.issuer' | translate }}</label>
-      <input pInputText type="text" class="form-control"
+      <input pInputText type="text" class="form-control" pSize="small"
              formControlName="issuingAuthority"
              [ngClass]="{'is-invalid': f['issuingAuthority'].touched && f['issuingAuthority'].invalid}"/>
     </div>
     <div class="col-md-6">
       <label class="form-label required">{{ 'wizard.achievements.country' | translate }}</label>
-      <p-select formControlName="country"
-                [options]="lookups.countries()"
-                optionLabel="name"
-                [placeholder]="'wizard.placeholders.selectCountry' | translate"
-                [ngClass]="{'is-invalid': f['country'].touched && f['country'].invalid}"></p-select>
+      <p-select size="small"
+                inputId="country"
+                formControlName="country"
+                [options]="lookups.countries()" optionLabel="name"
+                [filter]="true"
+                [placeholder]="'wizard.achievements.choiceCountry' | translate"
+                [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+                [ngClass]="{
+                'p-invalid': f['country'].invalid && (f['country'].dirty || f['country'].touched)
+              }" fluid>
+      </p-select>
+      <small *ngIf="f['country'].invalid && (f['country'].dirty || f['country'].touched)"
+             class="text-danger mt-1 d-block">
+        {{ 'validation.required' | translate }}
+      </small>
     </div>
   </div>
 
   <div class="row g-3">
     <div class="col-md-6">
       <label class="form-label required">{{ 'wizard.achievements.issueDate' | translate }}</label>
-      <p-date-picker formControlName="issueDate"
-                     [showIcon]="true"
+      <p-date-picker formControlName="issueDate" size="small"
                      [placeholder]="'wizard.achievements.issueDate' | translate"
-                     [ngClass]="{'is-invalid': f['issueDate'].touched && f['issueDate'].invalid}"></p-date-picker>
+                     [ngClass]="{'is-invalid': f['issueDate'].touched && f['issueDate'].invalid}" fluid></p-date-picker>
     </div>
   </div>
 
@@ -56,17 +69,40 @@
   </div>
 
   <div class="row g-3">
-    <div class="col-md-6">
-      <label class="form-label required">{{ 'wizard.achievements.attachment' | translate }}</label>
-      <div class="d-flex align-items-center gap-2 flex-wrap">
-        <input type="file" class="form-control" accept=".pdf,image/*" (change)="onUpload($event)" />
-        <button type="button" class="btn btn-outline-secondary" (click)="previewFile($event)" [disabled]="!form.get('file')?.value && !initialAttachmentUrl">
-          <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-        </button>
+    <div class="col-md-6 d-flex flex-column">
+      <label class="form-label required">
+        {{ 'wizard.achievements.attachment' | translate }}
+        <span class="text-muted fz-2xs">(PDF)</span>
+      </label>
+      <div class="upload-field"
+           (click)="naInput.click()">
+
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!f['fileName'].value" alt="upload"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="f['fileName'].value" alt="view"
+               class="cursor-pointer"
+               (click)="previewFile($event)"/>
+        </div>
+
+        <div class="upload-field__text">
+          {{ f['fileName'].value || ('wizard.achievements.attachment' | translate) }}
+        </div>
+
+        <input #naInput
+               type="file"
+               class="d-none"
+               accept=".pdf"
+               (change)="onUpload($event)" />
       </div>
-      <div class="small text-muted" *ngIf="form.get('fileName')?.value">{{ form.get('fileName')?.value }}</div>
-      <div class="text-danger" *ngIf="fileError">{{ fileError }}</div>
-      <div class="text-danger" *ngIf="f['file'].touched && f['file'].invalid">{{ 'wizard.achievements.attachmentRequired' | translate }}</div>
+      <small *ngIf="f['fileName'].invalid && (f['fileName'].dirty || f['fileName'].touched)"
+             class="text-danger mt-1 d-block">
+        {{ 'validation.required' | translate }}
+      </small>
+
+      <small *ngIf="fileError"
+             class="text-danger mt-1 d-block">
+        {{ fileError }}
+      </small>
     </div>
   </div>
 

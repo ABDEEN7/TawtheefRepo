@@ -141,13 +141,13 @@ export class WizardProfileComponent implements OnInit {
   }
 
   canGoTo(targetStep: number): boolean {
-    //if (targetStep === 1) return true;
-    //const validity = this.ds.stepValidity();
-    //for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
-    //  if (!validity[this.orderedValidationSteps[i]]) {
-    //    return false;
-    //  }
-    //}
+    // if (targetStep === 1) return true;
+    // const validity = this.ds.stepValidity();
+    // for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
+    //   if (!validity[this.orderedValidationSteps[i]]) {
+    //     return false;
+    //   }
+    // }
 
     return true;
   }

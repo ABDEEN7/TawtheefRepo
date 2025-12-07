@@ -127,6 +127,7 @@ export class DataService {
       contact: v.contact.valid,
       degrees: v.degrees.valid,
       experience: v.experience.valid,
+      achievements: v.achievements.valid,
       skills: v.skills.valid,
       languages: v.languages.valid,
       attachments: v.attachments.valid,

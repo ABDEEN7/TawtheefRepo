@@ -75,7 +75,7 @@ public sealed class ProfileCompletenessProfile : IRegister
                  src => 
                      src.profile.AdditionalAttachments == null ? null :
                      src.profile.AdditionalAttachments.Where(a => a.Attachment != null))
-            .Map(dest => dest.Qualifications, src => src.profile.Qualifications)
+            .Map(dest => dest.Qualifications, src => src.profile.Qualifications == null ? null : src.profile.Qualifications.OrderBy(q=> q.GraduationYear))
             .Map(dest => dest.Experiences, src => src.profile.Experiences)
             .Map(dest => dest.TrainingCourses, src => src.profile.TrainingCourses)
             .Map(dest => dest.Achievements, src => src.profile.Achievements)
