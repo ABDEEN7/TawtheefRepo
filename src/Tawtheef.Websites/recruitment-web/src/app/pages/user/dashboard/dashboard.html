@@ -1,23 +1,6 @@
-<nav class="navbar navbar-expand-lg sticky-top bg-white shadow-sm" i18nNamespace="pages/user/dashboard">
-  <div class="container">
-    <a class="navbar-brand fw-bold text-brand" href="#">
-      <i class="fa-solid fa-user"></i> {{ 'candidate_dashboard.title' | translate }}
-    </a>
-    <div class="ms-auto d-flex align-items-center gap-2">
-      <button (click)="this.refreshData()"
-              class="btn btn-outline-secondary btn-sm btn-pill"
-              [disabled]="this.isRefreshing()">
-        <i class="fa" [class.fa-refresh]="!this.isRefreshing()" [class.fa-spinner]="this.isRefreshing()" [class.fa-spin]="this.isRefreshing()"></i>
-        {{ this.isRefreshing() ? 'جاري التحديث...' : 'تحديث' }}
-      </button>
-      <a href="./profile" class="btn btn-outline-secondary btn-sm btn-pill">
-        <i class="fa fa-id-card"></i> {{ 'candidate_dashboard.profile' | translate }}
-      </a>
-    </div>
-  </div>
-</nav>
 
-<header class="py-3 header-hero">
+
+<header class="py-3 header-hero" i18nNamespace="pages/user/dashboard">
   <div class="container d-flex align-items-center justify-content-between">
     <div>
       <h4 class="mb-1 text-brand fw-bold">{{ 'candidate_dashboard.subtitle' | translate }}</h4>
@@ -25,7 +8,7 @@
     </div>
     <div class="d-flex align-items-center gap-3">
       <span class="badge rounded-pill text-bg-light border">
-        {{ 'candidate_dashboard.total_records' | translate }}: {{ this.filteredRecords().length }}
+        {{ 'candidate_dashboard.total_records' | translate }}: {{ totalItems() }}
       </span>
     </div>
   </div>
@@ -33,247 +16,216 @@
 
 <main class="py-4">
   <div class="container">
+    <!-- KPIs -->
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center kpi">
+          <div class="small text-muted">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</div>
+          <div class="h4 fw-bold text-primary">0</div>
+<!--          TODO-->
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center kpi">
+          <div class="small text-muted">{{ 'candidate_dashboard.kpi_under_review' | translate }}</div>
+          <div class="h4 fw-bold text-warning">0</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center kpi">
+          <div class="small text-muted">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</div>
+          <div class="h4 fw-bold text-danger">0</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center kpi">
+          <div class="small text-muted">{{ 'candidate_dashboard.kpi_applied' | translate }}</div>
+          <div class="h4 fw-bold text-success">0</div>
+        </div>
+      </div>
+    </div>
 
-    <!-- Error Alert -->
-    @if (this.error()) {
-      <div class="alert alert-danger d-flex align-items-center" role="alert">
-        <i class="fa fa-exclamation-triangle me-2"></i>
-        <div class="flex-grow-1">{{ this.error() }}</div>
-        <button (click)="this.retry()" class="btn btn-sm btn-outline-danger">
-          <i class="fa fa-refresh"></i> إعادة المحاولة
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm p-3 mb-3">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
+          <p-select
+            [options]="candidateService.invitationStatuses()"
+            [showClear]="true"
+            [placeholder]="'candidate_dashboard.filter_all' | translate"
+            name="invitationStatuses"
+            (onChange)="this.onFilterChange()"
+            [filter]="true"
+            [(ngModel)]="selectedInvitationStatus"
+            filterBy="name"
+            optionLabel="name"
+            optionValue="id"
+            size="small"
+            class="form-select form-select-sm"
+          ></p-select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
+          <p-select
+            [options]="candidateService.jobCategories()"
+            [showClear]="true"
+            [placeholder]="'candidate_dashboard.filter_all' | translate"
+            name="jobCategories"
+            (onChange)="this.onFilterChange()"
+            [filter]="true"
+            [(ngModel)]="selectedCategory"
+            filterBy="name"
+            optionLabel="name"
+            optionValue="backendName"
+            size="small"
+            class="form-select form-select-sm"
+          ></p-select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
+          <p-select
+            [options]="candidateService.departments()"
+            [showClear]="true"
+            [placeholder]="'candidate_dashboard.filter_all' | translate"
+            name="departments"
+            (onChange)="this.onFilterChange()"
+            [filter]="true"
+            [(ngModel)]="selectedDepartment"
+            filterBy="name"
+            optionLabel="name"
+            optionValue="id"
+            size="small"
+            class="form-select form-select-sm"
+          ></p-select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>
+          <input
+            [(ngModel)]="jobTitle"
+            (input)="this.onFilterChange()"
+            class="form-control form-control-sm"
+            [placeholder]="'candidate_dashboard.placeholder_search' | translate">
+        </div>
+      </div>
+      <div class="text-end pt-2">
+        <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm btn-pill">
+          <i class="fa fa-rotate-left"></i> {{ 'candidate_dashboard.clear_filters' | translate }}
         </button>
       </div>
-    }
+    </div>
 
-    <!-- Loading State -->
-    @if (this.isLoading()) {
-      <div class="text-center py-5">
-        <div class="spinner-border text-brand" role="status">
-          <span class="visually-hidden">جاري التحميل...</span>
-        </div>
-        <p class="text-muted mt-3">جاري تحميل البيانات...</p>
-      </div>
-    } @else {
-      <!-- KPIs -->
-      <div class="row g-3 mb-3">
-        <div class="col-md-3">
-          <div class="card border-0 shadow-sm p-3 text-center kpi">
-            <div class="small text-muted">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</div>
-            <div class="h4 fw-bold text-primary">{{ this.kpiInvited() }}</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card border-0 shadow-sm p-3 text-center kpi">
-            <div class="small text-muted">{{ 'candidate_dashboard.kpi_under_review' | translate }}</div>
-            <div class="h4 fw-bold text-warning">{{ this.kpiUnderReview() }}</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card border-0 shadow-sm p-3 text-center kpi">
-            <div class="small text-muted">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</div>
-            <div class="h4 fw-bold text-danger">{{ this.kpiWithdrawn() }}</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card border-0 shadow-sm p-3 text-center kpi">
-            <div class="small text-muted">{{ 'candidate_dashboard.kpi_applied' | translate }}</div>
-            <div class="h4 fw-bold text-success">{{ this.kpiApplied() }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Filters -->
-      <div class="card border-0 shadow-sm p-3 mb-3">
-        <div class="row g-2">
-          <div class="col-md-3">
-            <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
-            <p-select
-              [options]="candidateService.invitationStatuses()"
-              [showClear]="true"
-              [placeholder]="'candidate_dashboard.filter_all' | translate"
-              name="invitationStatuses"
-              (onChange)="this.onStatusFilterChange($event)"
-              [filter]="true"
-              filterBy="name"
-              optionLabel="name"
-              optionValue="backendName"
-              size="small"
-              class="form-select form-select-sm"
-            ></p-select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
-            <p-select
-              [options]="candidateService.jobCategories()"
-              [showClear]="true"
-              [placeholder]="'candidate_dashboard.filter_all' | translate"
-              name="jobCategories"
-              (onChange)="this.onTypeFilterChange($event)"
-              [filter]="true"
-              filterBy="name"
-              optionLabel="name"
-              optionValue="backendName"
-              size="small"
-              class="form-select form-select-sm"
-            ></p-select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
-<!--            <input-->
-<!--              [value]="this.entityFilter()"-->
-<!--              (input)="this.onEntityFilterChange($event)"-->
-<!--              class="form-control form-control-sm"-->
-<!--              [placeholder]="'candidate_dashboard.placeholder_entity' | translate">-->
-            <p-select
-              [options]="candidateService.departments()"
-              [showClear]="true"
-              [placeholder]="'candidate_dashboard.filter_all' | translate"
-              name="departments"
-              (onChange)="this.onEntityFilterChange($event)"
-              [filter]="true"
-              filterBy="name"
-              optionLabel="name"
-              optionValue="backendName"
-              size="small"
-              class="form-select form-select-sm"
-            ></p-select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>
-            <input
-              [value]="this.searchFilter()"
-              (input)="this.onSearchFilterChange($event)"
-              class="form-control form-control-sm"
-              [placeholder]="'candidate_dashboard.placeholder_search' | translate">
-          </div>
-        </div>
-        <div class="text-end pt-2">
-          <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm btn-pill">
-            <i class="fa fa-rotate-left"></i> {{ 'candidate_dashboard.clear_filters' | translate }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Table -->
-      <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-            <tr>
-              <th>#</th>
-              <th>{{ 'candidate_dashboard.column_job' | translate }}</th>
-              <th>{{ 'candidate_dashboard.column_entity' | translate }}</th>
-              <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
-              <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
-              <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
-              <th class="text-end">{{ 'candidate_dashboard.column_actions' | translate }}</th>
-            </tr>
-            </thead>
-            <tbody>
-              @if (this.paginatedRecords().length === 0) {
+    <!-- Table -->
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>{{ 'candidate_dashboard.column_job' | translate }}</th>
+            <th>{{ 'candidate_dashboard.column_entity' | translate }}</th>
+            <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
+            <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
+            <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
+            <th class="text-end">{{ 'candidate_dashboard.column_actions' | translate }}</th>
+          </tr>
+          </thead>
+          <tbody>
+            @if (this.candidateInvitations().length === 0) {
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                  {{ 'candidate_dashboard.no_results' | translate }}
+                </td>
+              </tr>
+            } @else {
+              @for (record of this.candidateInvitations(); track record.invitationId; let i = $index) {
                 <tr>
-                  <td colspan="7" class="text-center text-muted py-4">
-                    {{ 'candidate_dashboard.no_results' | translate }}
+                  <td>{{ (this.currentPage() - 1) * this.itemsPerPage() + i + 1 }}</td>
+                  <td class="fw-bold">{{ record.jobTitle }}</td>
+                  <td>{{ record.departmentName }}</td>
+                  <td>
+                    <span [class]="'badge-soft ' + record.jobCategory">
+                      {{ record.jobCategory }}
+                    </span>
                   </td>
-                </tr>
-              } @else {
-                @for (record of this.paginatedRecords(); track record.id; let i = $index) {
-                  <tr>
-                    <td>{{ (this.currentPage() - 1) * this.itemsPerPage() + i + 1 }}</td>
-                    <td class="fw-bold">{{ record.title }}</td>
-                    <td>{{ record.entity }}</td>
-                    <td>
-                      <span [class]="this.getTypeBadge(record.type)">
-                        {{ this.getTypeText(record.type) }}
-                      </span>
-                    </td>
-                    <td>
-                      @let statusInfo = this.getStatusPill(record.status);
-                      <span [class]="'status-pill ' + statusInfo.class">
-                        {{ statusInfo.text }}
-                      </span>
-                    </td>
-                    <td>{{ record.date }}</td>
-                    <td class="text-end">
-                      @let actions = this.getActionButtons(record);
+                  <td>
+                    <span [ngClass]="getStatusClasses(record.invitationStatus.backendName)">
+                      {{ record.invitationStatus.name }}
+                    </span>
+                  </td>
+                  <td>{{ record.createDate }}</td>
+                  <td class="text-end">
+
+                    @if (getActionButtons(record.invitationStatus); as actions) {
+
                       @if (actions.showApply) {
-                        <a [href]="'job-details.html?jobId=' + record.jobId"
+                        <a [href]="'job-details.html?jobId=' + record.invitationId"
                            class="btn btn-sm btn-primary btn-pill">
-                          <i class="fa fa-paper-plane"></i> {{ 'candidate_dashboard.action_apply_now' | translate }}
+                          <i class="fa fa-paper-plane"></i>
+                          {{ 'candidate_dashboard.action_apply_now' | translate }}
                         </a>
                       }
+
                       @if (actions.showView) {
-                        <a [href]="'my-applications.html?jobId=' + record.jobId"
+                        <a [href]="'my-applications.html?jobId=' + record.invitationId"
                            class="btn btn-sm btn-outline-secondary btn-pill">
-                          <i class="fa fa-eye"></i> {{ 'candidate_dashboard.action_view_request' | translate }}
+                          <i class="fa fa-eye"></i>
+                          {{ 'candidate_dashboard.action_view_request' | translate }}
                         </a>
                       }
+
                       @if (actions.showTrack) {
-                        <a [href]="'my-applications.html?jobId=' + record.jobId"
+                        <a [href]="'my-applications.html?jobId=' + record.invitationId"
                            class="btn btn-sm btn-outline-secondary btn-pill">
-                          <i class="fa fa-hourglass-half"></i> {{ 'candidate_dashboard.action_track_status' | translate }}
+                          <i class="fa fa-hourglass-half"></i>
+                          {{ 'candidate_dashboard.action_track_status' | translate }}
                         </a>
                       }
+
                       @if (actions.showDetails) {
-                        <a [href]="'job-details.html?jobId=' + record.jobId"
+                        <a [href]="'job-details.html?jobId=' + record.invitationId"
                            class="btn btn-sm btn-outline-secondary btn-pill">
-                          <i class="fa fa-eye"></i> {{ 'candidate_dashboard.action_view_details' | translate }}
+                          <i class="fa fa-eye"></i>
+                          {{ 'candidate_dashboard.action_view_details' | translate }}
                         </a>
                       }
+
                       @if (actions.showWithdraw) {
-                        <button (click)="this.withdrawApplication(record.id)"
+                        <button (click)="withdrawApplication(record.invitationId)"
                                 class="btn btn-sm btn-outline-danger btn-pill"
-                                [disabled]="this.isWithdrawing() === record.id">
-                          <i class="fa" [class.fa-ban]="this.isWithdrawing() !== record.id" [class.fa-spinner]="this.isWithdrawing() === record.id" [class.fa-spin]="this.isWithdrawing() === record.id"></i>
-                          {{ this.isWithdrawing() === record.id ? 'جاري الإلغاء...' : 'candidate_dashboard.action_withdraw_request' | translate }}
+                                [disabled]="isWithdrawing() === record.invitationId">
+                          <i class="fa"
+                             [class.fa-ban]="isWithdrawing() !== record.invitationId"
+                             [class.fa-spinner]="isWithdrawing() === record.invitationId"
+                             [class.fa-spin]="isWithdrawing() === record.invitationId"></i>
+
+                          {{
+                            isWithdrawing() === record.invitationId
+                              ? 'جاري الإلغاء...'
+                              : ('candidate_dashboard.action_withdraw_request' | translate)
+                          }}
                         </button>
                       }
-                    </td>
-                  </tr>
-                }
+
+                    }
+
+                  </td>
+                </tr>
               }
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Pager -->
-      <div class="d-flex justify-content-between align-items-center p-2 mt-1">
-        <div class="small-muted">
-          @if (this.paginationStats().total > 0) {
-            {{ 'candidate_dashboard.showing_results' | translate:{
-            start: this.paginationStats().start,
-            end: this.paginationStats().end,
-            total: this.paginationStats().total
-          } }}
-          } @else {
-            {{ 'candidate_dashboard.no_results' | translate }}
-          }
-        </div>
-        <nav>
-          <ul class="pagination m-0">
-            <li class="page-item" [class.disabled]="this.currentPage() === 1">
-              <a class="page-link" href="#" (click)="this.previousPage(); $event.preventDefault()">
-                {{ 'candidate_dashboard.pagination_previous' | translate }}
-              </a>
-            </li>
-
-            @for (pageNumber of this.getPageNumbers(); track pageNumber) {
-              <li class="page-item" [class.active]="this.currentPage() === pageNumber">
-                <a class="page-link" href="#" (click)="this.goToPage(pageNumber); $event.preventDefault()">
-                  {{ pageNumber }}
-                </a>
-              </li>
             }
-
-            <li class="page-item" [class.disabled]="this.currentPage() === this.totalPages()">
-              <a class="page-link" href="#" (click)="this.nextPage(); $event.preventDefault()">
-                {{ 'candidate_dashboard.pagination_next' | translate }}
-              </a>
-            </li>
-          </ul>
-        </nav>
+          </tbody>
+        </table>
       </div>
-    }
+    </div>
+
+    <!-- Pagination -->
+    <app-pagination
+      [currentPage]="currentPage()"
+      [totalItems]="totalItems()"
+      [itemsPerPage]="itemsPerPage()"
+      (pageChanged)="onPageChange($event)"
+    >
+    </app-pagination>
+
   </div>
 </main>

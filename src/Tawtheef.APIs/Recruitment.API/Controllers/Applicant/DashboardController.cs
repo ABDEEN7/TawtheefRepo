@@ -39,7 +39,7 @@ public class DashboardController(IMediator mediator) : ControllerBase
 
     #region Retrive Dashboard Data
     [HttpGet("get-candidate-invitations")]
-    public async Task<IActionResult> GetCandidateInvitations([FromBody] GetCandidateInvitationsQuery query)
+    public async Task<IActionResult> GetCandidateInvitations([FromQuery] GetCandidateInvitationsQuery query)
     {
         var result = await mediator.Send(query);
         return result.ToActionResult();
