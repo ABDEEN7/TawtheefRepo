@@ -17,7 +17,7 @@ public class GetJobsQueryHandler(IJobRepository jobRepository)
     {
         var result = await jobRepository.GetFilteredJobsAsync(
             filter: request.Filter ?? new JobQueryFilter(),
-            pagination: request.Pagination ?? new PaginatedRequest()
+            pagination: request.Pagination
         );
 
         if (result.IsFailed)

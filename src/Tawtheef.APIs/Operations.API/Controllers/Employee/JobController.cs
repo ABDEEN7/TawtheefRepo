@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
+using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -126,13 +128,12 @@ public class JobController(IMediator mediator) : ControllerBase
          return result.ToActionResult();
      }
 
-    [HttpGet]
-    public async Task<IActionResult> GetJobs([FromQuery] GetJobsQuery query)
+    [HttpPost("search")]
+    public async Task<IActionResult> GetJobs([FromBody] GetJobsQuery query)
     {
         var result = await mediator.Send(query);
         return result.ToActionResult();
     }
-    
 
     [HttpPut]
     public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)

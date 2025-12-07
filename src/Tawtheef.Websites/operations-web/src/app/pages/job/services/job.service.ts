@@ -15,6 +15,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TranslateService } from '@ngx-translate/core';
 import { JobLookupService } from './job-lookup.service';
 import { JobStatus } from '../../../core/enums/lookups.enum';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -343,8 +344,8 @@ export class JobService {
     pagination: PaginatedRequest = { pageNumber: 1, pageSize: 10 },
     filter?: JobQueryFilter
   ): Observable<PaginatedResult<JobResponse>> {
-    const params = this.buildQueryParams(pagination, filter);
-    return this.httpService.get<PaginatedResult<JobResponse>>(this.endpoints.job.job, params);
+    const payload = {pagination,filter}
+    return this.httpService.post<PaginatedResult<JobResponse>>(this.endpoints.job.searchJob,payload);
   }
 
   clearCurrentJob(): void {
@@ -424,28 +425,6 @@ export class JobService {
         this.jobStatus.set(jobResponse.status.backendName);
       })
     );
-  }
-
-  private buildQueryParams(pagination: PaginatedRequest, filter?: JobQueryFilter): any {
-    const params: any = {
-      pageNumber: (pagination.pageNumber ?? 1).toString(),
-      pageSize: (pagination.pageSize ?? 10).toString()
-    };
-
-    if (pagination.sortBy) {
-      params.sortBy = pagination.sortBy;
-      params.sortDirection = pagination.sortDirection ?? 'desc';
-    }
-
-    if (filter) {
-      Object.entries(filter).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          params[key] = this.formatParamValue(value);
-        }
-      });
-    }
-
-    return params;
   }
 
   private formatParamValue(value: any): string {

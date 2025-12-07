@@ -44,6 +44,7 @@ export class EndpointsService {
 
   job = {
     job : this.getFullUrl('/job'),
+    searchJob : this.getFullUrl('/job/search'),
     lookups: {
       sectors: this.getFullUrl('/job/lookups/sectors'),
       skills: this.getFullUrl('/job/lookups/skills'),
