@@ -171,10 +171,10 @@ public class UpdateJobCommandHandler(
         var existing = job.JobResponsibilities.ToList();
 
         var toRemove = existing
-            .Where(r => !newResponsibilities.Any(nr => nr.TextAr == r.TitleAr))
+            .Where(r => !newResponsibilities.Any(nr => nr.TextAr == r.TextAr))
             .ToList();
 
-        var existingTitles = existing.Select(r => r.TitleAr).ToHashSet();
+        var existingTitles = existing.Select(r => r.TextAr).ToHashSet();
 
         var toAdd = newResponsibilities
             .Where(r => !existingTitles.Contains(r.TextAr))
@@ -182,8 +182,8 @@ public class UpdateJobCommandHandler(
             {
                 Id = Guid.NewGuid(),
                 JobId = job.Id,
-                TitleAr = r.TextAr,
-                TitleEn = r.TextEn
+                TextAr = r.TextAr,
+                TextEn = r.TextEn
             })
             .ToList();
 

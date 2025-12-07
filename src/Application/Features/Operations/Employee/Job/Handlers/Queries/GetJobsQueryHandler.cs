@@ -1,5 +1,5 @@
 using FluentResults;
-using Mapster;
+using MapsterMapper;
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -8,7 +8,7 @@ using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
-public class GetJobsQueryHandler(IJobRepository jobRepository)
+public class GetJobsQueryHandler(IJobRepository jobRepository,IMapper mapper)
     : IRequestHandler<GetJobsQuery, IResult<PaginatedResult<JobResponseDto>>>
 {
     public async Task<IResult<PaginatedResult<JobResponseDto>>> Handle(
@@ -24,7 +24,8 @@ public class GetJobsQueryHandler(IJobRepository jobRepository)
 
         var jobs = result.Value;
 
-        var dtoItems = jobs.Items.Adapt<List<JobResponseDto>>();
+        
+        var dtoItems = mapper.Map<List<JobResponseDto>>(jobs.Items);
 
         var paginatedDto = new PaginatedResult<JobResponseDto>(
             dtoItems,

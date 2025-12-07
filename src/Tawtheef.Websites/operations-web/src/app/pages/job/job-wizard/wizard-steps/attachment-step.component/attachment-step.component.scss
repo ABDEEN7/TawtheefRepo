@@ -1,0 +1,13 @@
+.switch-lg {
+  width: 3rem;
+  height: 1.5rem;
+}
+
+.switch-lg:checked {
+  background-color: #2c7be5;
+  border-color: #2c7be5;
+}
+
+.switch-lg:focus {
+  box-shadow: 0 0 0 0.2rem rgba(44, 123, 229, 0.25);
+}

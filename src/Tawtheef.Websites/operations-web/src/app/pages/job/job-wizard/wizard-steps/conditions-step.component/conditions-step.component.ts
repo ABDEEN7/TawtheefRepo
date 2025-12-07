@@ -8,7 +8,8 @@ import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-conditions-step',
   standalone: false,
-  templateUrl: './conditions-step.component.html'
+  templateUrl: './conditions-step.component.html',
+  styleUrl : './conditions-step.component.scss',
 })
 export class ConditionsStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);

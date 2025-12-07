@@ -27,12 +27,12 @@ export interface JobResponse {
   createdBy?: GUID;
   modifiedBy?: GUID;
   
-  overviewAr?: string;
-  overviewEn?: string;
+  overViewAr?: string;
+  overViewEn?: string;
   benefitsAr?: string;
   benefitsEn?: string;
-  qualificationsDescriptionAr?: string;  
-  qualificationsDescriptionEn?: string; 
+  qualificationDescriptionAr?: string;  
+  qualificationDescriptionEn?: string; 
   
   sector: dropdownOptionsModel;
   management: dropdownOptionsModel;

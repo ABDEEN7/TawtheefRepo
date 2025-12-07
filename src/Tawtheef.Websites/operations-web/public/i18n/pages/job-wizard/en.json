@@ -257,7 +257,7 @@
   "JOB_WIZARD.STEPS.ATTACHMENTS.ADD_ATTACHMENT": "Add Attachment",
   "JOB_WIZARD.VALIDATION.ATTACHMENT_NAME_REQUIRED": "Attachment name in Arabic is required.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_ATTACHMENTS": "Please complete all attachment fields before proceeding.",
-
+  "JOB_WIZARD.STEPS.ATTACHMENTS.ADD_NEW" :"Add New Attachment",
 
   "JOB_WIZARD.STEPS.REVIEW.SUBTITLE": "Review all entered job details before publishing.",
   "JOB_WIZARD.STEPS.REVIEW.EDIT": "Edit",

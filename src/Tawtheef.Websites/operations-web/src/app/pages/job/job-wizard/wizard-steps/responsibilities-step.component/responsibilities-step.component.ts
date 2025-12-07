@@ -64,14 +64,8 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
     }
   }
 
-  addResponsibility(): void {
-    const trimmedAr = this.newResponsibilityAr.trim();
-    
-    if (!trimmedAr) {
-      return;
-    }
-    
-    this.addResponsibilityToForm(trimmedAr, this.newResponsibilityEn.trim());
+  addResponsibility(): void {    
+    this.addResponsibilityToForm(this.newResponsibilityAr.trim(), this.newResponsibilityEn.trim());
     this.newResponsibilityAr = '';
     this.newResponsibilityEn = '';
   }

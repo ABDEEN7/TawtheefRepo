@@ -13,10 +13,6 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
     {
         builder.HasQueryFilter(j => !j.IsDeleted);
 
-
-        builder.Property(j => j.ClosingDate)
-            .HasColumnType("datetime");
-
         builder.HasOne(j => j.Sector)
             .WithMany()
             .HasForeignKey(j => j.SectorId)

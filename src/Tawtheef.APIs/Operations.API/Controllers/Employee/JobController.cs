@@ -50,9 +50,9 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/skills")]
-    public async Task<IActionResult> GetSkills()
+    public async Task<IActionResult> GetSkills([FromQuery] Guid majorId)
     {
-        var result = await mediator.Send(new GetSkillsQuery());
+        var result = await mediator.Send(new GetSkillByMajorQuery(majorId));
         return result.ToActionResult();
     }
 

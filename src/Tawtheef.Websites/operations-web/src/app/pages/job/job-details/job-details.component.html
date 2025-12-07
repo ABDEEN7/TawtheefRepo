@@ -104,7 +104,7 @@
                 <!-- Job Overview -->
                 <div class="mb-4">
                   <h6 class="section-title mb-2">{{ 'job_details.overview' | translate }}</h6>
-                  <div [innerHTML]="job?.overviewAr" class="job-content"></div>
+                  <div [innerHTML]="job?.overViewAr" class="job-content"></div>
                 </div>
 
                 <!-- Responsibilities -->
@@ -150,8 +150,8 @@
                 <!-- Qualifications -->
                 <div class="mb-4">
                   <h6 class="section-title mb-2">{{ 'job_details.qualifications' | translate }}</h6>
-                  @if (job?.qualificationsDescriptionAr) {
-                    <div [innerHTML]="job?.qualificationsDescriptionAr" class="job-content"></div>
+                  @if (job?.qualificationDescriptionAr) {
+                    <div [innerHTML]="job?.qualificationDescriptionAr" class="job-content"></div>
                   }
                   
                   <div class="mt-3">

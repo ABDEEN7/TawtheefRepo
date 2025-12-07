@@ -89,6 +89,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             j.TitleAr == jobDto.TitleAr &&
             j.DepartmentId == jobDto.DepartmentId &&
             j.JobCategoryId == jobDto.JobCategoryId &&
+            j.MajorId == jobDto.MajorId &&
             j.SubMajorId == jobDto.SubMajorId &&
             !j.IsDeleted);
     }

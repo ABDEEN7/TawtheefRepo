@@ -1,168 +1,156 @@
 <div class="step-content">
   <form [formGroup]="form">
-    <div class="card card-lite p-3">
-      <div class="d-flex align-items-center mb-4">
-        <i class="fa fa-paperclip text-brand fs-4 me-3"></i>
-        <div>
-          <h4 class="text-brand fw-bold mb-1">
+    <div class="page-card card card-lite p-4">
+
+      <!-- Header + Add Button -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="row-item">
+          <div class="row-item-icon">
+            <i class="fa fa-paperclip"></i>
+          </div>
+          <div class="row-item-text">
             {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS' | translate }}
-          </h4>
-          <p class="small-muted mb-0">
-            {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.SUBTITLE' | translate }}
-          </p>
+          </div>
+        </div>
+
+        <button class="btn btn-brand btn-add w-50" (click)="addAttachment()" type="button">
+          <i class="fa fa-plus me-2"></i>
+          {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ADD_ATTACHMENT' | translate }}
+        </button>
+      </div>
+
+      <!-- New Attachment Card -->
+      <div class="rounded-card p-4 mb-4 bg-light-custom">
+        <h5 class="fw-bold mb-3 brand-text">
+          {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ADD_NEW' | translate }}
+        </h5>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="field-label">
+              <span class="text-danger">*</span>
+              {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_AR' | translate }}
+            </label>
+            <input
+              [(ngModel)]="form.controls['titleAr']"
+              [ngModelOptions]="{ standalone: true }"
+              type="text"
+              class="form-control custom-input"
+              dir="rtl"
+              placeholder="{{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_AR_PLACEHOLDER' | translate }}">
+          </div>
+
+          <div class="col-md-6">
+            <label class="field-label">
+              {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_EN' | translate }}
+            </label>
+            <input
+              [(ngModel)]="form.controls['titleEn']"
+              [ngModelOptions]="{ standalone: true }"
+              type="text"
+              class="form-control custom-input"
+              dir="ltr"
+              placeholder="{{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_EN_PLACEHOLDER' | translate }}">
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center mt-3">
+          <label class="fw-bold me-3 mb-0">
+            {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.MANDATORY' | translate }}
+          </label>
+          <div class="form-check form-switch m-0">
+            <input
+              class="form-check-input switch-lg"
+              type="checkbox"
+              [(ngModel)]="form.controls['isMandatory']"
+              [ngModelOptions]="{ standalone: true }">
+          </div>
         </div>
       </div>
 
+      <!-- Attachments List -->
       <div formArrayName="attachments">
+
         @if (attachmentsArray.length === 0) {
-          <div class="text-center py-5 border rounded">
+          <div class="empty-card text-center py-5 border rounded">
             <i class="fa fa-paperclip fa-3x text-muted mb-3"></i>
             <h6 class="text-muted">{{ 'JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE_TITLE' | translate }}</h6>
             <p class="text-muted small">{{ 'JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE_DESC' | translate }}</p>
+
             <div class="alert alert-info mt-3">
               <i class="fa fa-info-circle me-2"></i>
               {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.OPTIONAL_INFO' | translate }}
             </div>
           </div>
         } @else {
-          <h5 class="fw-bold mb-3">
+          <h5 class="fw-bold mb-3 brand-text">
             {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.LIST_TITLE' | translate }}
             <span class="badge bg-brand ms-2">{{ attachmentsArray.length }}</span>
           </h5>
-          
+
           @for (attachmentGroup of attachmentsArray.controls; track $index; let i = $index) {
-            <div class="card mb-3" [formGroupName]="i">
+            <div [formGroupName]="i" class="rounded-card mb-3 shadow-sm-sm">
               <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <span class="fw-bold">
+                <span class="fw-bold brand-text">
                   {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT' | translate }} {{ i + 1 }}
                 </span>
-                
-                <div class="btn-group btn-group-sm">
-                  <button 
-                    class="btn btn-outline-danger"
-                    (click)="removeAttachment(i)"
-                    type="button"
-                    [title]="'JOB_WIZARD.STEPS.ATTACHMENTS.REMOVE' | translate">
-                    <i class="fa fa-trash"></i>
-                  </button>
-                </div>
+
+                <button
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="removeAttachment(i)"
+                  type="button"
+                  [title]="'JOB_WIZARD.STEPS.ATTACHMENTS.REMOVE' | translate">
+                  <i class="fa fa-trash"></i>
+                </button>
               </div>
-              
+
               <div class="card-body">
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="form-label fw-bold">
+                    <label class="field-label">
                       <span class="text-danger">*</span>
                       {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_AR' | translate }}
                     </label>
-                    <input
-                      type="text"
-                      formControlName="titleAr"
-                      class="form-control"
-                      dir="rtl"
-                      placeholder="{{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_AR_PLACEHOLDER' | translate }}">
-                    
-                    @if (getAttachmentGroup(i).controls['titleAr'].invalid && getAttachmentGroup(i).controls['titleAr'].touched) {
-                      <div class="text-danger small mt-1">
-                        @if (getAttachmentGroup(i).controls['titleAr'].errors?.['required']) {
-                          <i class="fa fa-exclamation-circle me-1"></i>
-                          {{ 'JOB_WIZARD.VALIDATION.ATTACHMENT_NAME_REQUIRED' | translate }}
-                        }
-                        @if (getAttachmentGroup(i).controls['titleAr'].errors?.['maxlength']) {
-                          <i class="fa fa-exclamation-circle me-1"></i>
-                          {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate: {max: 200} }}
-                        }
-                      </div>
-                    }
+                    <input type="text" formControlName="titleAr" class="form-control custom-input" dir="rtl">
                   </div>
-                  
+
                   <div class="col-md-6">
-                    <label class="form-label fw-bold">
+                    <label class="field-label">
                       {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_EN' | translate }}
                     </label>
-                    <input
-                      type="text"
-                      formControlName="titleEn"
-                      class="form-control"
-                      dir="ltr"
-                      placeholder="{{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_EN_PLACEHOLDER' | translate }}">
-                    
-                    @if (getAttachmentGroup(i).controls['titleEn'].invalid && getAttachmentGroup(i).controls['titleEn'].touched) {
-                      <div class="text-danger small mt-1">
-                        <i class="fa fa-exclamation-circle me-1"></i>
-                        {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate: {max: 200} }}
-                      </div>
-                    }
+                    <input type="text" formControlName="titleEn" class="form-control custom-input" dir="ltr">
                   </div>
-                  
+
                   <div class="col-12">
-                    <div class="form-check form-switch">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        formControlName="isMandatory"
-                        [id]="'isMandatory' + i">
-                      <label class="form-check-label fw-bold ms-2" [for]="'isMandatory' + i">
+                    <div class="d-flex align-items-center mt-2">
+                      <label class="fw-bold me-3 mb-0">
                         {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.MANDATORY' | translate }}
                       </label>
-                    </div>
-                    <div class="form-text text-muted small">
-                      <i class="fa fa-info-circle me-1"></i>
-                      {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.MANDATORY_HELP' | translate }}
-                    </div>
-                  </div>
-                  
-                  @if (hasArabicTitle(i)) {
-                    <div class="col-12 mt-2">
-                      <div class="alert alert-light border">
-                        <div class="row">
-                          <div class="col-md-6">
-                            <small class="fw-bold">{{ 'JOB_WIZARD.STEPS.ATTACHMENTS.PREVIEW_AR' | translate }}:</small>
-                            <div class="text-dark">
-                              {{ getAttachmentGroup(i).controls['titleAr'].value }}
-                              @if (getAttachmentGroup(i).controls['isMandatory'].value) {
-                                <span class="badge bg-danger ms-2">إلزامي</span>
-                              }
-                            </div>
-                          </div>
-                          @if (getAttachmentGroup(i).controls['titleEn'].value) {
-                            <div class="col-md-6">
-                              <small class="fw-bold">{{ 'JOB_WIZARD.STEPS.ATTACHMENTS.PREVIEW_EN' | translate }}:</small>
-                              <div class="text-dark">
-                                {{ getAttachmentGroup(i).controls['titleEn'].value }}
-                                @if (getAttachmentGroup(i).controls['isMandatory'].value) {
-                                  <span class="badge bg-danger ms-2">Mandatory</span>
-                                }
-                              </div>
-                            </div>
-                          }
-                        </div>
+                      <div class="form-check form-switch m-0">
+                        <input class="form-check-input switch-lg" type="checkbox" formControlName="isMandatory">
                       </div>
                     </div>
-                  }
+                  </div>
                 </div>
               </div>
             </div>
-          }
+          } 
         }
-      </div>
-      
-      <div class="mt-3">
-        <button
-          class="btn btn-outline-brand w-100 py-2"
-          (click)="addAttachment()"
-          type="button">
-          <i class="fa fa-plus me-2"></i>
-          {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ADD_ATTACHMENT' | translate }}
-        </button>
+
       </div>
 
-      @if (!isValid() && form.touched && attachmentsArray.length > 0) {
+      @if (!isValid() && form.touched) {
         <div class="alert alert-warning mt-4">
           <i class="fa fa-exclamation-triangle me-2"></i>
-          {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_ATTACHMENTS' | translate }}
+
+          @if (attachmentsArray.length === 0) {
+            {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_ATTACHMENT' | translate }}
+          } @else {
+            {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_ATTACHMENTS' | translate }}
+          }
         </div>
       }
+
     </div>
   </form>
 </div>
