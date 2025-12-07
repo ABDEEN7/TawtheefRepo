@@ -1,62 +1,46 @@
 {
-  "job_invites_details": {
-    "invites_details": "Invites Details",
-    "page_description": "This page displays the people who were sent an invitation for this job and their current status.",
-    "total_invites": "Total Invites",
+  "job_invites_details.invites_details": "Invites Details",
+  "job_invites_details.page_description": "This page displays the people who were sent an invitation for this job and their current status.",
+  "job_invites_details.total_invites": "Total Invites",
 
-    "kpi": {
-      "applied": "Applied",
-      "declined": "Declined",
-      "viewed": "Viewed",
-      "unseen": "Unseen"
-    },
+  "job_invites_details.kpi.applied": "Applied",
+  "job_invites_details.kpi.declined": "Declined",
+  "job_invites_details.kpi.viewed": "Viewed",
+  "job_invites_details.kpi.unseen": "Unseen",
 
-    "filters": {
-      "status": "Status",
-      "search": "Search (candidate name)",
-      "search_placeholder": "Type part of the name...",
-      "clear": "Clear Filters",
-      "all": "All",
-      "applied": "Applied",
-      "declined": "Declined",
-      "viewed": "Viewed",
-      "new": "Unseen"
-    },
+  "job_invites_details.filters.status": "Status",
+  "job_invites_details.filters.search": "Search (candidate name)",
+  "job_invites_details.filters.search_placeholder": "Type part of the name...",
+  "job_invites_details.filters.clear": "Clear Filters",
+  "job_invites_details.filters.all": "All",
+  "job_invites_details.filters.applied": "Applied",
+  "job_invites_details.filters.declined": "Declined",
+  "job_invites_details.filters.viewed": "Viewed",
+  "job_invites_details.filters.new": "Unseen",
 
-    "table": {
-      "candidate": "Candidate",
-      "nationality": "Nationality",
-      "phone": "Phone",
-      "status": "Status",
-      "sent_date": "Sent Date",
-      "applied_date": "Applied Date",
-      "no_invites": "No invites for these filters"
-    },
+  "job_invites_details.table.candidate": "Candidate",
+  "job_invites_details.table.nationality": "Nationality",
+  "job_invites_details.table.phone": "Phone",
+  "job_invites_details.table.status": "Status",
+  "job_invites_details.table.sent_date": "Sent Date",
+  "job_invites_details.table.applied_date": "Applied Date",
+  "job_invites_details.table.no_invites": "No invites for these filters",
 
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next",
-      "no_results": "0 results",
-      "showing": "Showing",
-      "of": "of"
-    },
+  "job_invites_details.pagination.previous": "Previous",
+  "job_invites_details.pagination.next": "Next",
+  "job_invites_details.pagination.no_results": "0 results",
+  "job_invites_details.pagination.showing": "Showing",
+  "job_invites_details.pagination.of": "of",
 
-    "status": {
-      "new": "New",
-      "viewed": "Viewed",
-      "applied": "Applied",
-      "declined": "Declined"
-    },
+  "job_invites_details.status.new": "New",
+  "job_invites_details.status.viewed": "Viewed",
+  "job_invites_details.status.applied": "Applied",
+  "job_invites_details.status.declined": "Declined",
 
-    "Job_status": {
-      "open": "Open",
-      "closed": "Closed",
-      "draft": "Draft"
-    },
+  "job_invites_details.Job_status.open": "Open",
+  "job_invites_details.Job_status.closed": "Closed",
+  "job_invites_details.Job_status.draft": "Draft",
 
-    "entities": {
-      "schools": "Schools",
-      "ministry": "Ministry"
-    }
-  }
+  "job_invites_details.entities.schools": "Schools",
+  "job_invites_details.entities.ministry": "Ministry"
 }

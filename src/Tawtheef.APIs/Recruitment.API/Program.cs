@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using reCAPTCHA.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
@@ -38,9 +37,9 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 );
 
 // ----- Services -----
-builder.Services.AddInfrastructureLayer(builder.Configuration);
+builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationLayer();
-builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
+// builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(PolicyNames.CompletedProfile, 

@@ -7,6 +7,7 @@ import {StepPersonalComponent} from './steps/step-personal/step-personal.compone
 import {StepContactComponent} from './steps/step-contact/step-contact.component';
 import {StepDegreeComponent} from './steps/step-degree/step-degree.component';
 import {StepExperienceComponent} from './steps/step-experience/step-experience.component';
+import {StepAchievementsComponent} from './steps/step-achievements/step-achievements.component';
 import {StepSkillsComponent} from './steps/step-skills/step-skills.component';
 import {StepLanguagesComponent} from './steps/step-languages/step-languages.component';
 import {StepAttachmentsComponent} from './steps/step-attachments/step-attachments.component';
@@ -31,6 +32,7 @@ import {ImageCropperComponent} from 'ngx-image-cropper';
 import {I18nNamespaceDirective} from "../../../shared/directives/i18n-namespace.directive";
 import {StepFirstInfoComponent} from './steps/step-first-info/step-first-info.component';
 import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
+import {TextareaModule} from 'primeng/textarea';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
     StepContactComponent,
     StepDegreeComponent,
     StepExperienceComponent,
+    StepAchievementsComponent,
     StepSkillsComponent,
     StepLanguagesComponent,
     StepAttachmentsComponent,
@@ -66,6 +69,7 @@ import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
     InputNumberModule,
     DatePickerModule,
     InputTextModule,
+    TextareaModule,
     Tooltip,
     FaDirArrowDirective,
     ImageCropperComponent,

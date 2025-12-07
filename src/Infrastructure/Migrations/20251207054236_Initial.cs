@@ -14,10 +14,10 @@ namespace Tawtheef.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "lkp");
+                name: "pro");
 
             migrationBuilder.EnsureSchema(
-                name: "pro");
+                name: "lkp");
 
             migrationBuilder.EnsureSchema(
                 name: "hr");
@@ -58,6 +58,58 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Achievement",
+                schema: "pro",
+                columns: table => new
+                {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AchievementTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IssuingAuthority = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IssueDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AttachmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Achievement", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AchievementType",
+                schema: "lkp",
+                columns: table => new
+                {
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    DeletedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BackendName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    NameAr = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    NameEn = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    DescriptionAr = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DescriptionEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AchievementType", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,6 +166,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FullNameEn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     FullNameAr = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "InCreation"),
                     LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Avatar = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
                     UserTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1765,8 +1818,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         column: x => x.CandidateTypeId,
                         principalSchema: "lkp",
                         principalTable: "CandidateType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CandidateTypeProviderLogin_ProviderLogin_ProviderLoginId",
                         column: x => x.ProviderLoginId,
@@ -2031,8 +2083,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     DisabilityDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SponsorProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     BirthdayCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    MarriageCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    IsDraft = table.Column<bool>(type: "bit", nullable: false)
+                    MarriageCertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2497,7 +2548,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SpeakingLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WritingLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReadingLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -2522,12 +2575,26 @@ namespace Tawtheef.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProfileLanguage_LanguageLevel_LevelId",
-                        column: x => x.LevelId,
+                        name: "FK_ProfileLanguage_LanguageLevel_ReadingLevelId",
+                        column: x => x.ReadingLevelId,
                         principalSchema: "lkp",
                         principalTable: "LanguageLevel",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileLanguage_LanguageLevel_SpeakingLevelId",
+                        column: x => x.SpeakingLevelId,
+                        principalSchema: "lkp",
+                        principalTable: "LanguageLevel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProfileLanguage_LanguageLevel_WritingLevelId",
+                        column: x => x.WritingLevelId,
+                        principalSchema: "lkp",
+                        principalTable: "LanguageLevel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ProfileLanguage_Language_LanguageId",
                         column: x => x.LanguageId,
@@ -3144,6 +3211,66 @@ namespace Tawtheef.Infrastructure.Migrations
                     { new Guid("7b06bc91-88b3-46ec-b6cc-ef2338864d41"), new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85") },
                     { new Guid("ce67465e-6fed-4a83-9161-8eba16a79af3"), new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85") }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_AchievementTypeId",
+                schema: "pro",
+                table: "Achievement",
+                column: "AchievementTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_AttachmentId",
+                schema: "pro",
+                table: "Achievement",
+                column: "AttachmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_CountryId",
+                schema: "pro",
+                table: "Achievement",
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_CreatedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_DeletedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "DeletedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_UpdatedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "UpdatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_UserProfileId",
+                schema: "pro",
+                table: "Achievement",
+                column: "UserProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AchievementType_CreatedById",
+                schema: "lkp",
+                table: "AchievementType",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AchievementType_DeletedById",
+                schema: "lkp",
+                table: "AchievementType",
+                column: "DeletedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AchievementType_UpdatedById",
+                schema: "lkp",
+                table: "AchievementType",
+                column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -4071,10 +4198,16 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "LanguageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProfileLanguage_LevelId",
+                name: "IX_ProfileLanguage_ReadingLevelId",
                 schema: "pro",
                 table: "ProfileLanguage",
-                column: "LevelId");
+                column: "ReadingLevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProfileLanguage_SpeakingLevelId",
+                schema: "pro",
+                table: "ProfileLanguage",
+                column: "SpeakingLevelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileLanguage_UpdatedById",
@@ -4087,6 +4220,12 @@ namespace Tawtheef.Infrastructure.Migrations
                 schema: "pro",
                 table: "ProfileLanguage",
                 column: "UserProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProfileLanguage_WritingLevelId",
+                schema: "pro",
+                table: "ProfileLanguage",
+                column: "WritingLevelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProfileSkill_CreatedById",
@@ -4872,6 +5011,99 @@ namespace Tawtheef.Infrastructure.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_AchievementType_AchievementTypeId",
+                schema: "pro",
+                table: "Achievement",
+                column: "AchievementTypeId",
+                principalSchema: "lkp",
+                principalTable: "AchievementType",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_AspNetUsers_CreatedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "CreatedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_AspNetUsers_DeletedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "DeletedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_AspNetUsers_UpdatedById",
+                schema: "pro",
+                table: "Achievement",
+                column: "UpdatedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_Country_CountryId",
+                schema: "pro",
+                table: "Achievement",
+                column: "CountryId",
+                principalSchema: "lkp",
+                principalTable: "Country",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_Resources_AttachmentId",
+                schema: "pro",
+                table: "Achievement",
+                column: "AttachmentId",
+                principalTable: "Resources",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_UserProfile_UserProfileId",
+                schema: "pro",
+                table: "Achievement",
+                column: "UserProfileId",
+                principalSchema: "app",
+                principalTable: "UserProfile",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AchievementType_AspNetUsers_CreatedById",
+                schema: "lkp",
+                table: "AchievementType",
+                column: "CreatedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AchievementType_AspNetUsers_DeletedById",
+                schema: "lkp",
+                table: "AchievementType",
+                column: "DeletedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AchievementType_AspNetUsers_UpdatedById",
+                schema: "lkp",
+                table: "AchievementType",
+                column: "UpdatedById",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                 table: "AspNetUserClaims",
                 column: "UserId",
@@ -4922,6 +5154,10 @@ namespace Tawtheef.Infrastructure.Migrations
                 name: "FK_UserType_AspNetUsers_UpdatedById",
                 schema: "lkp",
                 table: "UserType");
+
+            migrationBuilder.DropTable(
+                name: "Achievement",
+                schema: "pro");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -5009,6 +5245,10 @@ namespace Tawtheef.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserSession");
+
+            migrationBuilder.DropTable(
+                name: "AchievementType",
+                schema: "lkp");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

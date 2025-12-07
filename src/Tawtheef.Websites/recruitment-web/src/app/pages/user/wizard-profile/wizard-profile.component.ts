@@ -35,7 +35,7 @@ export class WizardProfileComponent implements OnInit {
   avatarPreviewUrl: string | null = null;
 
   step = 1;
-  total = 9;
+  total = 10;
 
   loading = true;
 
@@ -45,6 +45,7 @@ export class WizardProfileComponent implements OnInit {
     'wizard.steps.contact',
     'wizard.steps.degrees',
     'wizard.steps.experience',
+    'wizard.steps.achievements',
     'wizard.steps.skills',
     'wizard.steps.languages',
     'wizard.steps.attachments',
@@ -58,9 +59,10 @@ export class WizardProfileComponent implements OnInit {
     3: 'contact',
     4: 'degrees',
     5: 'experience',
-    6: 'skills',
-    7: 'languages',
-    8: 'attachments',
+    6: 'achievements',
+    7: 'skills',
+    8: 'languages',
+    9: 'attachments',
   };
 
   private orderedValidationSteps: (keyof ReturnType<typeof this.ds.stepValidity>)[] = [
@@ -69,6 +71,7 @@ export class WizardProfileComponent implements OnInit {
     'contact',
     'degrees',
     'experience',
+    'achievements',
     'skills',
     'languages',
     'attachments',
@@ -138,13 +141,13 @@ export class WizardProfileComponent implements OnInit {
   }
 
   canGoTo(targetStep: number): boolean {
-    //if (targetStep === 1) return true;
-    //const validity = this.ds.stepValidity();
-    //for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
-    //  if (!validity[this.orderedValidationSteps[i]]) {
-    //    return false;
-    //  }
-    //}
+    // if (targetStep === 1) return true;
+    // const validity = this.ds.stepValidity();
+    // for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
+    //   if (!validity[this.orderedValidationSteps[i]]) {
+    //     return false;
+    //   }
+    // }
 
     return true;
   }

@@ -1,39 +1,30 @@
 ﻿{
-  "internal": {
-    "nav": {
-      "logoAlt": "Ministry of Education and Higher Education",
-      "home": "Home",
-      "personalProfile": "Personal Profile",
-      "jobs": "Jobs",
-      "jobsSearch": "Search Jobs",
-      "jobsApplications": "My Applications",
-      "languageToggle": "English",
-      "notifications": "Notifications",
-      "login": "Login",
-      "userAvatarAlt": "User Avatar",
-      "userProfile": "Profile",
-      "userSettings": "Settings",
-      "logout": "Logout"
-    },
-    "footer": {
-      "terms": "Terms and Conditions",
-      "privacy": "Privacy Policy",
-      "rights": "All rights reserved © 2025",
-      "ministry": "Ministry of Education and Higher Education — State of Qatar"
-    }
-  },
-  "public": {
-    "nav": {
-      "about": "About",
-      "tracks": "Career Paths",
-      "why": "Why Us",
-      "success": "Success Stories",
-      "faq": "FAQ",
-      "login": "Login"
-    },
-    "footer": {
-      "rights": "All rights reserved © 2025",
-      "ministry": "Ministry of Education and Higher Education — State of Qatar"
-    }
-  }
+  "internal.nav.logoAlt": "Ministry of Education and Higher Education",
+  "internal.nav.home": "Home",
+  "internal.nav.personalProfile": "Personal Profile",
+  "internal.nav.jobs": "Jobs",
+  "internal.nav.jobsSearch": "Search Jobs",
+  "internal.nav.jobsApplications": "My Applications",
+  "internal.nav.languageToggle": "English",
+  "internal.nav.notifications": "Notifications",
+  "internal.nav.login": "Login",
+  "internal.nav.userAvatarAlt": "User Avatar",
+  "internal.nav.userProfile": "Profile",
+  "internal.nav.userSettings": "Settings",
+  "internal.nav.logout": "Logout",
+
+  "internal.footer.terms": "Terms and Conditions",
+  "internal.footer.privacy": "Privacy Policy",
+  "internal.footer.rights": "All rights reserved © 2025",
+  "internal.footer.ministry": "Ministry of Education and Higher Education — State of Qatar",
+
+  "public.nav.about": "About",
+  "public.nav.tracks": "Career Paths",
+  "public.nav.why": "Why Us",
+  "public.nav.success": "Success Stories",
+  "public.nav.faq": "FAQ",
+  "public.nav.login": "Login",
+
+  "public.footer.rights": "All rights reserved © 2025",
+  "public.footer.ministry": "Ministry of Education and Higher Education — State of Qatar"
 }

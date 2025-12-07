@@ -1,78 +1,18 @@
 ﻿{
-  "app": {
-    "underConstruction": {
-      "websiteUnderConstruction1": "الموقع تحت",
-      "websiteUnderConstruction2": "التطوير",
-      "constructionMessage": "نحن نعمل على إصلاح المشكلة. سنعود قريباً",
-      "backToHome": "العودة إلى الصفحة الرئيسية"
-    },
-    "error500": {
-      "decorativeElement": "عنصر زخرفي",
-      "logoAltText": "شعار الشركة",
-      "serverErrorImage": "صورة توضيحية لخطأ في الخادم",
-      "oops500Error1": "عذراً! خطأ 500 داخلي",
-      "oops500Error2": "في الخادم",
-      "serverErrorMessage": "نعتذر ونعمل على إصلاح المشكلة. يرجى المحاولة مرة أخرى في وقت لاحق",
-      "backToHome": "العودة إلى الصفحة الرئيسية"
-    },
-    "error404": {
-      "decorativeElement": "عنصر زخرفي",
-      "logoAltText": "شعار الشركة",
-      "notFoundImage": "صورة توضيحية لصفحة غير موجودة",
-      "ohNoError": "أوه لا! خطأ",
-      "pageNotFoundMessage": "الصفحة التي طلبتها غير موجودة. ربما تكون القوة معك!",
-      "backToHome": "العودة للصفحة الرئيسية"
-    },
-    "comeSoon": {
-      "decorativeElement": "عنصر زخرفي",
-      "logoAltText": "شعار الشركة",
-      "comingSoon1": "سنصل",
-      "comingSoon2": " قريباً!!!",
-      "stayTunedMessage": "ترقبوا شيئاً رائعاً",
-      "daysAbbr": "يوم",
-      "hoursAbbr": "ساعة",
-      "minutesAbbr": "دقيقة",
-      "secondsAbbr": "ثانية",
-      "comingSoonImage": "صورة توضيحية للقريب العاجل",
-      "notifyMeTitle": "أخبرني عند إطلاق الموقع",
-      "enterEmailPlaceholder": "أدخل بريدك الإلكتروني",
-      "notifyMeButton": "أخبرني!"
-    },
-    "accessDenied": {
-      "decorativeElement": "عنصر زخرفي",
-      "logoAltText": "شعار الشركة",
-      "accessDeniedImage": "صورة توضيحية للوصول المرفوض",
-      "accessDeniedTitle": "تم رفض الوصول",
-      "accessDeniedMessage": "عذرًا، ليس لديك الإذن للوصول إلى هذه الصفحة.",
-      "goHome": "العودة إلى الصفحة الرئيسية",
-      "goDashboard": "الذهاب إلى لوحة التحكم",
-      "title1": "تم رفض الوصول",
-      "title2": "ليس لديك الإذن للوصول إلى هذه الصفحة.",
-      "content": "إذا كنت تعتقد أن هذا خطأ، يرجى الاتصال بالمسؤول.",
-      "contactAdmin": "اتصل بالمسؤول",
-      "login": "تسجيل الدخول",
-      "needHelp": "تحتاج مساعدة؟",
-      "contactSupport": "اتصل بالدعم"
-    },
-    "pagination": {
-      "showing": "عرض",
-      "of": "من",
-      "results": "نتيجة",
-      "no_results": "لا توجد نتائج",
-      "previous": "السابق",
-      "next": "التالي"
-    }
-  },
-  "validation": {
-    "requiredEmail": "البريد الإلكتروني مطلوب.",
-    "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
-    "requiredPassword": "كلمة المرور مطلوبة.",
-    "minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل.",
-    "required_filed": "هذا الحقل مطلوب",
-    "invalid_format": "التنسيق غير صحيح"
-  },
-  "common": {
-    "ar": "العربية",
-    "en": "English"
-  }
+  "app.pagination.showing": "عرض",
+  "app.pagination.of": "من",
+  "app.pagination.results": "نتيجة",
+  "app.pagination.no_results": "لا توجد نتائج",
+  "app.pagination.previous": "السابق",
+  "app.pagination.next": "التالي",
+
+  "validation.requiredEmail": "البريد الإلكتروني مطلوب.",
+  "validation.invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
+  "validation.requiredPassword": "كلمة المرور مطلوبة.",
+  "validation.minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل.",
+  "validation.required_filed": "هذا الحقل مطلوب",
+  "validation.invalid_format": "التنسيق غير صحيح",
+
+  "common.ar": "العربية",
+  "common.en": "English"
 }

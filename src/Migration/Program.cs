@@ -363,7 +363,7 @@ public class Program
                     var entity = new Major
                     {
                         Id = Guid.Parse((string)r.Id),
-                        BackendName = ToBackendName((string)r.NameEn),
+                        BackendName = ToBackendName((string)r.BackendName),
                         NameAr = r.NameAr,
                         NameEn = r.NameEn,
                         DescriptionAr = r.DescriptionAr,

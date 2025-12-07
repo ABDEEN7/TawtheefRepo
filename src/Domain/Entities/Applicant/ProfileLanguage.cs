@@ -11,8 +11,14 @@ public class ProfileLanguage : EventEntity
     public Guid LanguageId { get; set; }
     public Language? Language { get; set; }
     
-    public Guid LevelId { get; set; }
-    public LanguageLevel? Level { get; set; }
+    public Guid SpeakingLevelId { get; set; }
+    public LanguageLevel? SpeakingLevel { get; set; }
+
+    public Guid WritingLevelId { get; set; }
+    public LanguageLevel? WritingLevel { get; set; }
+
+    public Guid ReadingLevelId { get; set; }
+    public LanguageLevel? ReadingLevel { get; set; }
     
     public Guid UserProfileId { get; set; }
     public UserProfile? UserProfile { get; set; }

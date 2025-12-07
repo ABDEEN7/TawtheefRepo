@@ -36,8 +36,6 @@ export class StepDegreeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const state = this.ds.state();
-    const signature = this.buildSignature(state.degrees);
     this.lastSubmittedSignature = null;
   }
 
@@ -51,12 +49,12 @@ export class StepDegreeComponent implements OnInit {
       })?.onClose.subscribe((e: Degree) => {
       if (e) {
         this.ds.addDegree(e);
+        this.ds.state().degrees = [...this.ds.state().degrees.sort((a, b) => a.gradYear - b.gradYear), e];
       }
     });
   }
 
   del(i: number) {
-    // reterive degree and check if it already submit to server should be remove from server before remove iot from client
     const degree = this.ds.state().degrees[i];
     if(degree.id){
       this.profile.deleteEduction(degree.id).subscribe({

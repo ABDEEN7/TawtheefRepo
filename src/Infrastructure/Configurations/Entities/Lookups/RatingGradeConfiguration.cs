@@ -11,34 +11,34 @@ public class RatingGradeConfiguration : LookupBaseConfiguration<RatingGrade>
         builder.HasData(
             new RatingGrade
             {
-                Id = RatingGradeIds.Excellent,
-                BackendName = nameof(RatingGradeIds.Excellent),
-                NameEn = "Excellent",
-                NameAr = "ممتاز",
+                Id = RatingGradeIds.Expert,
+                BackendName = nameof(RatingGradeIds.Expert),
+                NameEn = "Expert",
+                NameAr = "خبير",
                 DisplayOrder = 1
             },
             new RatingGrade
             {
-                Id = RatingGradeIds.VeryGood,
-                BackendName = nameof(RatingGradeIds.VeryGood),
-                NameEn = "Very Good",
-                NameAr = "جيد جدًا",
+                Id = RatingGradeIds.Advanced,
+                BackendName = nameof(RatingGradeIds.Advanced),
+                NameEn = "Advanced",
+                NameAr = "متقدم",
                 DisplayOrder = 2
             },
             new RatingGrade
             {
-                Id = RatingGradeIds.Good,
-                BackendName = nameof(RatingGradeIds.Good),
-                NameEn = "Good",
-                NameAr = "جيد",
+                Id = RatingGradeIds.Intermediate,
+                BackendName = nameof(RatingGradeIds.Intermediate),
+                NameEn = "Intermediate",
+                NameAr = "متوسط",
                 DisplayOrder = 3
             },
             new RatingGrade
             {
-                Id = RatingGradeIds.Acceptable,
-                BackendName = nameof(RatingGradeIds.Acceptable),
-                NameEn = "Acceptable",
-                NameAr = "مقبول",
+                Id = RatingGradeIds.Basic,
+                BackendName = nameof(RatingGradeIds.Basic),
+                NameEn = "Basic",
+                NameAr = "أساسي",
                 DisplayOrder = 4
             }
         );

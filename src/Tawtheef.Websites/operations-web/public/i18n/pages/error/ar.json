@@ -1,58 +1,50 @@
 ﻿{
-  "app": {
-    "underConstruction": {
-      "websiteUnderConstruction1": "الموقع تحت",
-      "websiteUnderConstruction2": "التطوير",
-      "constructionMessage": "نحن نعمل على إصلاح المشكلة. سنعود قريباً",
-      "backToHome": "العودة إلى الصفحة الرئيسية"
-    },
-    "error500": {
-      "decorativeElement": "عنصر زخرفي",
-      "logoAltText": "شعار الشركة",
-      "serverErrorImage": "صورة توضيحية لخطأ في الخادم",
-      "oops500Error1": "عذراً! خطأ 500 داخلي",
-      "oops500Error2": "في الخادم",
-      "serverErrorMessage": "نعتذر ونعمل على إصلاح المشكلة. يرجى المحاولة مرة أخرى في وقت لاحق",
-      "backToHome": "العودة إلى الصفحة الرئيسية"
-    },
-    "error404": {
-      "decorativeElement": "عنصر زخرفي",
-      "logoAltText": "شعار الشركة",
-      "notFoundImage": "صورة توضيحية لصفحة غير موجودة",
-      "ohNoError": "أوه لا! خطأ",
-      "pageNotFoundMessage": "الصفحة التي طلبتها غير موجودة. ربما تكون القوة معك!",
-      "backToHome": "العودة للصفحة الرئيسية"
-    },
-    "comeSoon": {
-      "decorativeElement": "عنصر زخرفي",
-      "logoAltText": "شعار الشركة",
-      "comingSoon1": "سنصل",
-      "comingSoon2": " قريباً!!!",
-      "stayTunedMessage": "ترقبوا شيئاً رائعاً",
-      "daysAbbr": "يوم",
-      "hoursAbbr": "ساعة",
-      "minutesAbbr": "دقيقة",
-      "secondsAbbr": "ثانية",
-      "comingSoonImage": "صورة توضيحية للقريب العاجل",
-      "notifyMeTitle": "أخبرني عند إطلاق الموقع",
-      "enterEmailPlaceholder": "أدخل بريدك الإلكتروني",
-      "notifyMeButton": "أخبرني!"
-    },
-    "accessDenied": {
-      "decorativeElement": "عنصر زخرفي",
-      "logoAltText": "شعار الشركة",
-      "accessDeniedImage": "صورة توضيحية للوصول المرفوض",
-      "accessDeniedTitle": "تم رفض الوصول",
-      "accessDeniedMessage": "عذرًا، ليس لديك الإذن للوصول إلى هذه الصفحة.",
-      "goHome": "العودة إلى الصفحة الرئيسية",
-      "goDashboard": "الذهاب إلى لوحة التحكم",
-      "title1": "تم رفض الوصول",
-      "title2": "ليس لديك الإذن للوصول إلى هذه الصفحة.",
-      "content": "إذا كنت تعتقد أن هذا خطأ، يرجى الاتصال بالمسؤول.",
-      "contactAdmin": "اتصل بالمسؤول",
-      "login": "تسجيل الدخول",
-      "needHelp": "تحتاج مساعدة؟",
-      "contactSupport": "اتصل بالدعم"
-    }
-  }
+  "app.underConstruction.websiteUnderConstruction1": "الموقع تحت",
+  "app.underConstruction.websiteUnderConstruction2": "التطوير",
+  "app.underConstruction.constructionMessage": "نحن نعمل على إصلاح المشكلة. سنعود قريباً",
+  "app.underConstruction.backToHome": "العودة إلى الصفحة الرئيسية",
+
+  "app.error500.decorativeElement": "عنصر زخرفي",
+  "app.error500.logoAltText": "شعار الشركة",
+  "app.error500.serverErrorImage": "صورة توضيحية لخطأ في الخادم",
+  "app.error500.oops500Error1": "عذراً! خطأ 500 داخلي",
+  "app.error500.oops500Error2": "في الخادم",
+  "app.error500.serverErrorMessage": "نعتذر ونعمل على إصلاح المشكلة. يرجى المحاولة مرة أخرى في وقت لاحق",
+  "app.error500.backToHome": "العودة إلى الصفحة الرئيسية",
+
+  "app.error404.decorativeElement": "عنصر زخرفي",
+  "app.error404.logoAltText": "شعار الشركة",
+  "app.error404.notFoundImage": "صورة توضيحية لصفحة غير موجودة",
+  "app.error404.ohNoError": "أوه لا! خطأ",
+  "app.error404.pageNotFoundMessage": "الصفحة التي طلبتها غير موجودة. ربما تكون القوة معك!",
+  "app.error404.backToHome": "العودة للصفحة الرئيسية",
+
+  "app.comeSoon.decorativeElement": "عنصر زخرفي",
+  "app.comeSoon.logoAltText": "شعار الشركة",
+  "app.comeSoon.comingSoon1": "سنصل",
+  "app.comeSoon.comingSoon2": " قريباً!!!",
+  "app.comeSoon.stayTunedMessage": "ترقبوا شيئاً رائعاً",
+  "app.comeSoon.daysAbbr": "يوم",
+  "app.comeSoon.hoursAbbr": "ساعة",
+  "app.comeSoon.minutesAbbr": "دقيقة",
+  "app.comeSoon.secondsAbbr": "ثانية",
+  "app.comeSoon.comingSoonImage": "صورة توضيحية للقريب العاجل",
+  "app.comeSoon.notifyMeTitle": "أخبرني عند إطلاق الموقع",
+  "app.comeSoon.enterEmailPlaceholder": "أدخل بريدك الإلكتروني",
+  "app.comeSoon.notifyMeButton": "أخبرني!",
+
+  "app.accessDenied.decorativeElement": "عنصر زخرفي",
+  "app.accessDenied.logoAltText": "شعار الشركة",
+  "app.accessDenied.accessDeniedImage": "صورة توضيحية للوصول المرفوض",
+  "app.accessDenied.accessDeniedTitle": "تم رفض الوصول",
+  "app.accessDenied.accessDeniedMessage": "عذرًا، ليس لديك الإذن للوصول إلى هذه الصفحة.",
+  "app.accessDenied.goHome": "العودة إلى الصفحة الرئيسية",
+  "app.accessDenied.goDashboard": "الذهاب إلى لوحة التحكم",
+  "app.accessDenied.title1": "تم رفض الوصول",
+  "app.accessDenied.title2": "ليس لديك الإذن للوصول إلى هذه الصفحة.",
+  "app.accessDenied.content": "إذا كنت تعتقد أن هذا خطأ، يرجى الاتصال بالمسؤول.",
+  "app.accessDenied.contactAdmin": "اتصل بالمسؤول",
+  "app.accessDenied.login": "تسجيل الدخول",
+  "app.accessDenied.needHelp": "تحتاج مساعدة؟",
+  "app.accessDenied.contactSupport": "اتصل بالدعم"
 }

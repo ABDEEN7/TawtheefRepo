@@ -31,6 +31,10 @@ public sealed class ProfileCompletenessProfile : IRegister
         config.NewConfig<TrainingCourse, TrainingCourseDto>()
             .Map(dest => dest.Attachment, src => src.Certificate);
 
+        config.NewConfig<Achievement, AchievementDto>()
+            .Map(dest => dest.Attachment, src => src.Attachment)
+            .Map(dest => dest.AchievementType, src => src.AchievementType);
+
         config.NewConfig<ProfileSkill, SkillDto>()
             .Map(dest => dest.Skill, src => src.Skill);
 
@@ -40,8 +44,8 @@ public sealed class ProfileCompletenessProfile : IRegister
         config.NewConfig<(UserProfile profile, User user, ProfilePrefillDto prefill), ProfileStatusDto>()
             .Map(dest => dest, src => src.profile)
             .Map(dest => dest.IsComplete,
-                src => src.profile.Status != UserStatus.InCreation && src.profile.IsCompleted())
-            .Map(dest => dest.Status, src => src.profile.Status)
+                src => src.profile.IsCompleted())
+            .Map(dest => dest.Status, src => src.user.Status)
             .Map(dest => dest.Avatar, src => src.user.Avatar ?? src.prefill.Avatar)
             .Map(dest => dest.FullNameAr,
                 src => string.IsNullOrWhiteSpace(src.user.FullNameAr)
@@ -71,9 +75,10 @@ public sealed class ProfileCompletenessProfile : IRegister
                  src => 
                      src.profile.AdditionalAttachments == null ? null :
                      src.profile.AdditionalAttachments.Where(a => a.Attachment != null))
-            .Map(dest => dest.Qualifications, src => src.profile.Qualifications)
+            .Map(dest => dest.Qualifications, src => src.profile.Qualifications == null ? null : src.profile.Qualifications.OrderBy(q=> q.GraduationYear))
             .Map(dest => dest.Experiences, src => src.profile.Experiences)
             .Map(dest => dest.TrainingCourses, src => src.profile.TrainingCourses)
+            .Map(dest => dest.Achievements, src => src.profile.Achievements)
             .Map(dest => dest.Skills, src => src.profile.Skills)
             .Map(dest => dest.Languages, src => src.profile.Languages)
             ;
