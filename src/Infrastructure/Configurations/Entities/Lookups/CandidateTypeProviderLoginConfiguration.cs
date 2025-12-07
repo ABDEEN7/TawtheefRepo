@@ -18,7 +18,10 @@ public class CandidateTypeProviderLoginConfiguration
         builder.HasOne(x => x.ProviderLogin)
             .WithMany(x => x.CandidateTypeProviderLogins)
             .HasForeignKey(x => x.ProviderLoginId);
-
+        
+        builder.HasQueryFilter(x =>
+                !x.ProviderLogin!.IsDeleted && !x.CandidateType!.IsDeleted);
+        
         builder.HasData(
             new CandidateTypeProviderLogin
             {

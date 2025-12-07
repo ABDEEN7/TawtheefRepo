@@ -47,6 +47,7 @@ export class AchievementModal implements OnInit {
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
+  today = new Date();
 
   form: FormGroup = this.fb.group({
     achievementType: [null, Validators.required],

@@ -44,6 +44,7 @@ export class StepPersonalComponent implements OnInit {
   verifyingSponsor = false;
   private sponsorCard: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
+  readonly today = new Date();
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);

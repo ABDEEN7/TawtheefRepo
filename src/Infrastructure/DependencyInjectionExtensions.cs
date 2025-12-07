@@ -437,6 +437,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 
+                services.AddScoped<ILoginAuditService, LoginAuditService>();
                 services.AddScoped<ITokenService, TokenService>();
                 services.AddScoped<IVerificationService, VerificationService>();
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
