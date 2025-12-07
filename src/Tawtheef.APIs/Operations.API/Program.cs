@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using reCAPTCHA.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
@@ -42,8 +41,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
 });
 
 builder.Services.AddApplicationLayer();
-builder.Services.AddInfrastructureLayer(builder.Configuration);
-builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
+builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
+// builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options => {

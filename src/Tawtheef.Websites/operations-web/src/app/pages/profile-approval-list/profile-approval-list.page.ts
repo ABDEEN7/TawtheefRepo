@@ -5,7 +5,6 @@ import { Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ProfileApprovalListItem, ReviewStatus } from '../profile-approval/profile-approval.models';
 import { ProfileApprovalService } from '../profile-approval/profile-approval.service';
-import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile-approval-list-page',

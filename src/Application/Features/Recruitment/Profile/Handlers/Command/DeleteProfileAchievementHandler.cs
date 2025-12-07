@@ -13,11 +13,11 @@ public sealed class DeleteProfileAchievementHandler(IUnitOfWork uow)
     public async Task<IResult<Unit>> Handle(DeleteProfileAchievementCommand request, CancellationToken cancellationToken)
     {
         var repo = uow.GetEntityRepository<Achievement>();
-        var achievement = await repo.GetByIdAsync(request.AchievementId, cancellationToken);
-        if (achievement is null)
+        var achievement = await repo.GetByIdAsync(request.AchievementId);
+        if (achievement.IsFailed || achievement.Value is null)
             return Result.Fail<Unit>(ErrorsCodes.AchievementNotFound);
 
-        await repo.DeleteAsync(achievement, cancellationToken);
+        await repo.DeleteAsync(request.AchievementId);
         await uow.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);
     }

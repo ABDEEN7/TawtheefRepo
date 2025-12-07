@@ -19,10 +19,6 @@ public class ProfileLanguage : EventEntity
 
     public Guid ReadingLevelId { get; set; }
     public LanguageLevel? ReadingLevel { get; set; }
-
-    // Legacy overall level, kept for backward compatibility with existing schema
-    public Guid LevelId { get; set; }
-    public LanguageLevel? Level { get; set; }
     
     public Guid UserProfileId { get; set; }
     public UserProfile? UserProfile { get; set; }
