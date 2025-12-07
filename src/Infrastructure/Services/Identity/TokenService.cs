@@ -16,22 +16,30 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Infrastructure.Extensions;
 
 namespace Tawtheef.Infrastructure.Services.Identity;
 
-public class TokenService(IOptions<JwtSettings> jwtSettings, 
+public class TokenService(IOptions<JwtSettings> jwtSettings,
     UserManager<User> userManager,
     IProfileCompletenessService pcs,
-    ISessionService sessions,              
+    ISessionService sessions,
     IHttpContextAccessor httpContextAccessor,
-    TimeProvider time, IUnitOfWork uow) : ITokenService
+    TimeProvider time, IUnitOfWork uow,
+    ILoginAuditService loginAudit) : ITokenService
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
-    public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct)
+    public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, string loginSource, CancellationToken ct)
     {
         if (user.Status.BlocksLogin())
+        {
+            await loginAudit.LogAsync(
+                new LoginAttemptEntry(user.Id, user.UserTypeId, loginSource, false,
+                    ErrorsCodes.AccountStatusNotAllowedForLogin,
+                    ipAddress: httpContextAccessor.HttpContext?.GetClientIpAddress()), ct);
             return Result.Fail<AuthResponse>(ErrorsCodes.AccountStatusNotAllowedForLogin);
+        }
 
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
@@ -50,7 +58,16 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
                 new Claim(JwtRegisteredClaimNames.Sid, sid),
                 new("profile.completed", data.IsComplete ? "true" : "false")
             ]);
-        
+
+        await loginAudit.LogAsync(new LoginAttemptEntry(
+            user.Id,
+            user.UserTypeId,
+            loginSource,
+            true,
+            sessionId: sid,
+            IpAddress: device?.Ip,
+            AttemptedAt: time.GetUtcNow()), ct);
+
         return Result.Ok(new AuthResponse(
             !data.IsComplete,
             new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, prefill),

@@ -76,6 +76,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<UserProfile> UserProfile { get; set; }
     public DbSet<SponsorProfile> SponsorProfile { get; set; }
     public DbSet<RefreshToken> RefreshToken { get; set; }
+    public DbSet<LoginAttempt> LoginAttempt { get; set; }
     public DbSet<ContactVerification> ContactVerification { get; set; }
     public DbSet<UserSession> UserSession { get; set; }
     
