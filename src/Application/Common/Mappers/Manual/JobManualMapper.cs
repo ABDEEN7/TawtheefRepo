@@ -27,6 +27,15 @@ public static class JobManualMapper
             ModifiedBy  = job.UpdatedBy,
             ModifiedDate = job.UpdatedDate,
 
+            OverViewAr = job.OverViewAr,
+            OverViewEn = job.OverViewEn,
+
+            QualificationDescriptionAr = job.QualificationDescriptionAr,
+            QualificationDescriptionEn = job.QualificationDescriptionEn,
+
+            BenefitsAr = job.BenefitsAr,
+            BenefitsEn = job.BenefitsEn,
+
             Sector = MapDropdown(job.Sector),
             Management = MapDropdown(job.Management),
             Department = MapDropdown(job.Department),

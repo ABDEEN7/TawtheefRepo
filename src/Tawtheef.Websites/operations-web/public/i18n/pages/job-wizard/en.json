@@ -51,6 +51,8 @@
   "JOB_BASIC_MODAL.UPDATE_BUTTON": "Update",
   "JOB_BASIC_MODAL.CANCEL_CONFIRM": "Do you want to cancel? All unsaved changes will be lost.",
   "JOB_BASIC_MODAL.LOADING": "Loading...",
+  "JOB_WIZARD.LOADING_STEPS":"Loading Steps...",
+  "JOB_WIZARD.LOADING_STEPS_FORM":"Loading Steps....",
 
   "JOB_BASIC_MODAL.ERROR.LOAD_FAILED": "Failed to load job data",
   "JOB_BASIC_MODAL.ERROR.DUPLICATE_JOB": "A job with the same title, organization and major already exists",

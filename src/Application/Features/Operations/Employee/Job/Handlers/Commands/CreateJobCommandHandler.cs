@@ -4,6 +4,7 @@ using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
+using Tawtheef.Domain.Entities.Lookups;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
@@ -17,6 +18,7 @@ public class CreateJobCommandHandler(
     {
         
         var job = request.Job.Adapt<JobEntity>();
+        job.JobStatusId = JobStatusIds.Draft;
         var result = await jobRepository.Repository.AddAsync(job);
         if (result.IsFailed)
             return Result.Fail<Guid>(result.Errors);

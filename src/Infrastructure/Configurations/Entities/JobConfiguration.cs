@@ -1,3 +1,4 @@
+using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Common;
@@ -10,6 +11,8 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
 {
     public void Configure(EntityTypeBuilder<Job> builder)
     {
+        builder.HasQueryFilter(j => !j.IsDeleted);
+
 
         builder.Property(j => j.ClosingDate)
             .HasColumnType("datetime");
@@ -72,27 +75,27 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
         builder.HasMany(j => j.JobDegrees)
             .WithOne(d => d.Job)
             .HasForeignKey(d => d.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(j => j.JobConditions)
             .WithOne(c => c.Job)
             .HasForeignKey(c => c.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(j => j.JobSkills)
             .WithOne(s => s.Job)
             .HasForeignKey(s => s.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(j => j.JobResponsibilities)
             .WithOne(r => r.Job)
             .HasForeignKey(r => r.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(j => j.JobRequiredAttachments)
             .WithOne(a => a.Job)
             .HasForeignKey(a => a.JobId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(j => j.Invitations)
             .WithOne(i => i.Job)

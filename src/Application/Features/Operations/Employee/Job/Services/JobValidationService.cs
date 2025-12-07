@@ -54,7 +54,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
     }
 
-    private async Task<List<ValidationFailure>> ValidateSkillsByMajor(CreateJobDto dto)
+    private async Task<List<ValidationFailure>> ValidateSkillsByMajor(UpdateJobDto dto)
     {
         var failures = new List<ValidationFailure>();
 
@@ -63,7 +63,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             var skillRepo = unitOfWork.GetEntityRepository<Skill>();
             List<Skill> skills = await skillRepo.DbSet
                 .AsNoTracking()
-                .Where(d => d.Id == dto.MajorId && d.MajorId == dto.MajorId).ToListAsync();
+                .Where(s => s.MajorId == dto.MajorId).ToListAsync();
 
 
             var validSkillIds = skills.Select(k => k.Id).ToHashSet();

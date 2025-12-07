@@ -266,10 +266,10 @@ export class JobService {
     return this.httpService.get<JobResponse>(`${this.endpoints.job.job}/${jobId}`);
   }
 
-  update(jobId: GUID, request: UpdateJobRequest): Observable<void> {
+  update(jobId: GUID,): Observable<void> {
     const updateCommand: UpdateJobCommand = {
       jobId: jobId,
-      job: request
+      job: this.currentJob() as UpdateJobRequest
     };
     return this.httpService.put<void>(`${this.endpoints.job.job}`, updateCommand);
   }

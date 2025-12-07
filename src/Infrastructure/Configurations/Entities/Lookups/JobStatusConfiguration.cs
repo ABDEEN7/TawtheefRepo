@@ -8,6 +8,7 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
     public override void Configure(EntityTypeBuilder<JobStatus> builder)
     {
         base.Configure(builder);
+
         builder.HasData(
             new JobStatus
             {
@@ -46,8 +47,59 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
                 NameEn = "Cancelled",
                 NameAr = "ملغية",
                 DescriptionEn = "The job has been cancelled and will not be published on the platform.",
-                DescriptionAr = "تم إلغاء الوظيفة ككل ولن يتم نشرها على المنصة (تظهر لمسؤول التوظيف فقط).",
+                DescriptionAr = "تم إلغاء الوظيفة ككل ولن يتم نشرها على المنصة.",
                 DisplayOrder = 4
+            },
+
+            new JobStatus
+            {
+                Id = JobStatusIds.PendingApproval,
+                BackendName = nameof(JobStatusIds.PendingApproval),
+                NameEn = "Pending Approval",
+                NameAr = "قيد الموافقة",
+                DescriptionEn = "Job is waiting for approval.",
+                DescriptionAr = "الوظيفة قيد الموافقة.",
+                DisplayOrder = 5
+            },
+            new JobStatus
+            {
+                Id = JobStatusIds.Approved,
+                BackendName = nameof(JobStatusIds.Approved),
+                NameEn = "Approved",
+                NameAr = "معتمدة",
+                DescriptionEn = "Job was approved.",
+                DescriptionAr = "تم اعتماد الوظيفة.",
+                DisplayOrder = 6
+            },
+            new JobStatus
+            {
+                Id = JobStatusIds.ReadyForAnnouncement,
+                BackendName = nameof(JobStatusIds.ReadyForAnnouncement),
+                NameEn = "Ready For Announcement",
+                NameAr = "جاهزة للإعلان",
+                DescriptionEn = "Job is ready to be announced.",
+                DescriptionAr = "الوظيفة جاهزة للإعلان.",
+                DisplayOrder = 7
+            },
+            new JobStatus
+            {
+                Id = JobStatusIds.Published,
+                BackendName = nameof(JobStatusIds.Published),
+                NameEn = "Published",
+                NameAr = "منشورة",
+                DescriptionEn = "Job is published.",
+                DescriptionAr = "تم نشر الوظيفة.",
+                DisplayOrder = 8
+            },
+            new JobStatus
+            {
+                Id = JobStatusIds.Rejected,
+                BackendName = nameof(JobStatusIds.Rejected),
+                NameEn = "Rejected",
+                NameAr = "مرفوضة",
+                DescriptionEn = "Job was rejected.",
+                DescriptionAr = "تم رفض الوظيفة.",
+                DisplayOrder = 9
             }
         );
     }

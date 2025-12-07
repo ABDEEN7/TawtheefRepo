@@ -1,20 +1,7 @@
 <div class="job-basic-modal">
-  <!-- Header -->
-  <div class="modal-header">
-    <div class="d-flex align-items-center">
-      <i class="fa fa-briefcase me-3 fs-4"></i>
-      <h4 class="modal-title mb-0">
-        {{ getModalTitle() | translate }}
-      </h4>
-    </div>
-    <button class="btn-close" (click)="cancel()" [disabled]="isLoading"></button>
-  </div>
-
-  <!-- Body -->
   <div class="modal-body" *ngIf="!isLoading; else loadingTemplate">
     <form [formGroup]="form">
       <div class="row g-3">
-        <!-- Row 1: Sector & Management -->
         <div class="col-md-6">
           <label class="form-label fw-bold">
             <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.SECTOR' | translate }}
@@ -52,7 +39,6 @@
           }
         </div>
 
-        <!-- Row 2: Department & Years of Experience -->
         <div class="col-md-6">
           <label class="form-label fw-bold">
             <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.DEPARTMENT' | translate }}
@@ -91,7 +77,6 @@
           }
         </div>
 
-        <!-- Row 3: Job Titles -->
         <div class="col-md-6">
           <label class="form-label fw-bold">
             <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR' | translate }}
@@ -118,7 +103,6 @@
           }
         </div>
 
-        <!-- Row 4: Category & Work Location -->
         <div class="col-md-6">
           <label class="form-label fw-bold">
             <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY' | translate }}
@@ -155,7 +139,6 @@
           }
         </div>
 
-        <!-- Row 5: Major & Sub-major -->
         <div class="col-md-6">
           <label class="form-label fw-bold">
             <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MAJOR' | translate }}
@@ -191,7 +174,6 @@
           }
         </div>
 
-        <!-- Row 6: Gender & Work Type -->
         <div class="col-md-6">
           <label class="form-label fw-bold">
             {{ 'JOB_WIZARD.STEPS.BASICS.GENDER' | translate }}
@@ -225,7 +207,6 @@
           }
         </div>
 
-        <!-- Row 7: Age Range -->
         <div class="col-md-6">
           <label class="form-label fw-bold">
             <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MIN_AGE' | translate }}
@@ -264,7 +245,6 @@
           }
         </div>
 
-        <!-- Row 8: Vacancies & Deadline -->
         <div class="col-md-6">
           <label class="form-label fw-bold">
             <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.VACANCIES' | translate }}
@@ -310,17 +290,16 @@
     </form>
   </div>
 
-  <!-- Footer with buttons -->
   <div class="modal-footer">
     <button 
-      class="btn btn-secondary" 
+      class="btn btn-secondary ms-2" 
       (click)="cancel()"
       [disabled]="isLoading">
       {{ 'JOB_BASIC_MODAL.CANCEL_BUTTON' | translate }}
     </button>
     
     <button 
-      class="btn btn-primary" 
+      class="btn btn-primary ms-2" 
       (click)="isEditMode ? updateJobBasics() : startJobCreation()"
       [disabled]="isLoading || !form.valid">
       <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>

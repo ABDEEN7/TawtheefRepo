@@ -123,8 +123,9 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     const ref = this.dialogService.open(JobBasicModalComponent, {
       width: '950px',
       modal: true,
+      header:this.translateService.instant("JOB_BASIC_MODAL.TITLE"),
       styleClass: 'custom-bootstrap-dialog',
-      closable: false,
+      closable: true,
       closeOnEscape: false,
       data: {
         isCreateMode: true,
@@ -332,7 +333,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    this.jobService.submitJobForApproval(this.jobId)
+    this.jobService.update(this.jobId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {

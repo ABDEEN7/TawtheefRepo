@@ -92,8 +92,8 @@ export class JobListComponent implements OnInit {
     this.loadJobsWithFilters();
   }
 
- editJob(job: JobResponse) {
-  this.router.navigate([`/jobs/edit`, job.id, 'wizard']).then();
+editJob(job: JobResponse) {
+  this.router.navigate(['/jobs/edit', job.id]).then();
 }
 
   viewJob(job: JobResponse) {

@@ -44,14 +44,14 @@
   "JOB_WIZARD.LOADING.CREATE_HINT": "سيتم فتح نافذة لإدخال البيانات الأساسية للوظيفة",
 
   "JOB_BASIC_MODAL.TITLE": "البيانات الأساسية للوظيفة",
-  "JOB_BASIC_MODAL.CREATE_TITLE": "إنشاء وظيفة - البيانات الأساسية",
-  "JOB_BASIC_MODAL.EDIT_TITLE": "تعديل وظيفة - البيانات الأساسية",
   "JOB_BASIC_MODAL.CANCEL_BUTTON": "إلغاء",
   "JOB_BASIC_MODAL.SAVE_BUTTON": "حفظ",
   "JOB_BASIC_MODAL.START_CREATION_BUTTON": "بدء الإنشاء",
   "JOB_BASIC_MODAL.UPDATE_BUTTON": "تحديث",
   "JOB_BASIC_MODAL.CANCEL_CONFIRM": "هل تريد إلغاء العملية؟ سيتم فقدان جميع التغييرات غير المحفوظة.",
   "JOB_BASIC_MODAL.LOADING": "جاري التحميل...",
+  "JOB_WIZARD.LOADING_STEPS" : "جاري تحميل الخطوات...",
+  "JOB_WIZARD.LOADING_STEPS_FORM":"جاري تحضير نموذج إنشاء الوظيفة...",
 
   "JOB_BASIC_MODAL.ERROR.LOAD_FAILED": "فشل في تحميل بيانات الوظيفة",
   "JOB_BASIC_MODAL.ERROR.DUPLICATE_JOB": "توجد وظيفة مكررة بنفس المسمى والجهة والتخصص",

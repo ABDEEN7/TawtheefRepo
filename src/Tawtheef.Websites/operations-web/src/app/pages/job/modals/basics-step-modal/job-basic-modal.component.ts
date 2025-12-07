@@ -259,7 +259,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       maximumAge: formValue.maximumAge
     };
 
-    this.jobService.update(this.jobId, updateData as any).subscribe({
+    this.jobService.update(this.jobId).subscribe({
       next: () => {
         this.isLoading = false;
         this.notificationService.success(this.translationService.instant('JOB_BASIC_MODAL.SUCCESS.UPDATED'));
@@ -294,15 +294,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       return 'JOB_BASIC_MODAL.START_CREATION_BUTTON';
     }
     return 'JOB_BASIC_MODAL.SAVE_BUTTON';
-  }
-
-  getModalTitle(): string {
-    if (this.isCreateMode) {
-      return 'JOB_BASIC_MODAL.CREATE_TITLE';
-    } else if (this.isEditMode) {
-      return 'JOB_BASIC_MODAL.EDIT_TITLE';
-    }
-    return 'JOB_BASIC_MODAL.TITLE';
   }
 
   isFieldRequired(fieldName: string): boolean {

@@ -86,11 +86,12 @@ public class Job : EventEntity
     public virtual WorkType? WorkType { get; set; }
     public virtual JobStatus? JobStatus { get; set; }
 
-    public virtual ICollection<JobDegree> JobDegrees { get; set; } = []; 
-    public virtual ICollection<JobCondition> JobConditions { get; set; } = [];
-    public virtual ICollection<JobSkill> JobSkills { get; set; } = [];
-    public virtual ICollection<JobResponsibility> JobResponsibilities { get; set; } = [];
-    public virtual ICollection<JobRequiredAttachment> JobRequiredAttachments { get; set; } = [];
+    public virtual ICollection<JobDegree> JobDegrees { get; set; } = new List<JobDegree>();
+    public virtual ICollection<JobCondition> JobConditions { get; set; } = new List<JobCondition>();
+    public virtual ICollection<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
+    public virtual ICollection<JobResponsibility> JobResponsibilities { get; set; } = new List<JobResponsibility>();
+    public virtual ICollection<JobRequiredAttachment> JobRequiredAttachments { get; set; } = new List<JobRequiredAttachment>();
+    public virtual ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
+
     public virtual JobQuota? JobQuota { get; set; }
-    public virtual ICollection<Invitation> Invitations { get; set; } = [];
 }
