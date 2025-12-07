@@ -16,34 +16,18 @@ public class GoogleExternalCallbackLoginHandler(
     SignInManager<User> signInManager,
     ITokenService tokenService,
     ILoginAuditService loginAudit
-) : BaseExternalCallbackLoginHandler, IRequestHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
+) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
+    protected override string _provider => "Google";
+    protected override Guid _defaultUserType => UserTypeIds.Applicant;
     public async Task<IResult<AuthResponse>> Handle(GoogleExternalCallbackLoginCommand request, CancellationToken cancellationToken)
     {
-        const string provider = "Google";
-        var defaultUserType = UserTypeIds.Applicant;
-
-        async Task<IResult<AuthResponse>> LogFailureAsync(string reason, Guid? userId = null, Guid? userTypeId = null)
-        {
-            await loginAudit.LogAsync(new LoginAttemptEntry(userId, userTypeId ?? defaultUserType, provider, false, reason),
-                cancellationToken);
-            return Result.Fail<AuthResponse>(reason);
-        }
-
-        async Task<IResult<AuthResponse>> LogFailureAsync(IEnumerable<IError> errors, Guid? userId = null, Guid? userTypeId = null)
-        {
-            var reason = string.Join(", ", errors.Select(e => e.Message));
-            await loginAudit.LogAsync(new LoginAttemptEntry(userId, userTypeId ?? defaultUserType, provider, false, reason),
-                cancellationToken);
-            return Result.Fail<AuthResponse>(errors);
-        }
-
         if (request.RemoteError != null)
-            return await LogFailureAsync(ErrorsCodes.ExternalLoginError(request.RemoteError));
+            return await LogFailureAsync(ErrorsCodes.ExternalLoginError(request.RemoteError), ct: cancellationToken);
 
         var info = await signInManager.GetExternalLoginInfoAsync();
         if (info == null)
-            return await LogFailureAsync(ErrorsCodes.ExternalLoginInfoNotFound);
+            return await LogFailureAsync(ErrorsCodes.ExternalLoginInfoNotFound, ct: cancellationToken);
 
         // If already linked, sign in directly
         var result = await signInManager.ExternalLoginSignInAsync(
@@ -53,31 +37,31 @@ public class GoogleExternalCallbackLoginHandler(
         {
             var linkedUser = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (linkedUser == null)
-                return await LogFailureAsync(ErrorsCodes.ExternalLoginUserNotFound, linkedUser?.Id, linkedUser?.UserTypeId);
+                return await LogFailureAsync(ErrorsCodes.ExternalLoginUserNotFound, linkedUser?.Id, linkedUser?.UserTypeId, ct: cancellationToken);
 
             // Update tokens from provider & upsert claims
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
             await UpsertProviderClaimsAsync(userManager, linkedUser, info);
 
-            return await tokenService.IssueTokensAsync(linkedUser, provider, cancellationToken);
+            return await tokenService.IssueTokensAsync(linkedUser, _provider, cancellationToken);
         }
 
         // Not linked yet: use email to attach or create a new user
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
         if (string.IsNullOrWhiteSpace(email))
-            return await LogFailureAsync(ErrorsCodes.ExternalLoginEmailNotFound);
+            return await LogFailureAsync(ErrorsCodes.ExternalLoginEmailNotFound, ct: cancellationToken);
 
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser != null)
         {
             var duplicate = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (duplicate != null && duplicate.Id != existingUser.Id)
-                return await LogFailureAsync(ErrorsCodes.ExternalLoginAlreadyLinked, existingUser.Id, existingUser.UserTypeId);
+                return await LogFailureAsync(ErrorsCodes.ExternalLoginAlreadyLinked, existingUser.Id, existingUser.UserTypeId, ct: cancellationToken);
 
             var addLoginResult = await userManager.AddLoginAsync(existingUser, info);
             if (!addLoginResult.Succeeded)
                 return await LogFailureAsync(string.Join(", ", addLoginResult.Errors.Select(e => e.Description)),
-                    existingUser.Id, existingUser.UserTypeId);
+                    existingUser.Id, existingUser.UserTypeId, ct: cancellationToken);
 
             // Update provider tokens & claims snapshot
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
@@ -85,7 +69,7 @@ public class GoogleExternalCallbackLoginHandler(
 
             await signInManager.SignInAsync(existingUser, isPersistent: false);
             
-            return await tokenService.IssueTokensAsync(existingUser, provider, cancellationToken);
+            return await tokenService.IssueTokensAsync(existingUser, _provider, cancellationToken);
         }
 
         // Create new user from claims (names can be missing for Google/AzureAD on later logins)
@@ -112,25 +96,25 @@ public class GoogleExternalCallbackLoginHandler(
 
         var newUserResult = User.Register(email,$"{givenName} {surname}".Trim(), UserTypeIds.Applicant);
         if(newUserResult.IsFailed)
-            return await LogFailureAsync(newUserResult.Errors);
+            return await LogFailureAsync(newUserResult.Errors, ct: cancellationToken);
         
         var newUser = (ApplicantUser)newUserResult.Value;
         var createResult = await userManager.CreateAsync(newUser);
         if (!createResult.Succeeded)
-            return await LogFailureAsync(string.Join(", ", createResult.Errors.Select(e => e.Description)), newUser.Id, newUser.UserTypeId);
+            return await LogFailureAsync(string.Join(", ", createResult.Errors.Select(e => e.Description)), newUser.Id, newUser.UserTypeId, ct: cancellationToken);
 
         var addLogin = await userManager.AddLoginAsync(newUser, info);
         if (!addLogin.Succeeded)
         {
             var errors = addLogin.Errors.Select(e => e.Description);
-            return await LogFailureAsync(string.Join(", ", errors), newUser.Id, newUser.UserTypeId);
+            return await LogFailureAsync(string.Join(", ", errors), newUser.Id, newUser.UserTypeId, ct: cancellationToken);
         }
 
         // Save tokens & claims
         await signInManager.UpdateExternalAuthenticationTokensAsync(info);
         await UpsertProviderClaimsAsync(userManager, newUser, info);
 
-        return await tokenService.IssueTokensAsync(newUser, provider, cancellationToken);
+        return await tokenService.IssueTokensAsync(newUser, _provider, cancellationToken);
     }
 
     private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, ExternalLoginInfo info)

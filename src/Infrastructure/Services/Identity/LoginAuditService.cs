@@ -27,7 +27,7 @@ public sealed class LoginAuditService(
             IpAddress = ip
         };
 
-        await uow.GetEntityRepository<LoginAttempt>().AddAsync(attempt, ct);
+        await uow.GetEntityRepository<LoginAttempt>().AddAsync(attempt);
         await uow.SaveChangesAsync(ct);
     }
 }

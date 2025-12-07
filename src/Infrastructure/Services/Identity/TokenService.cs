@@ -37,7 +37,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             await loginAudit.LogAsync(
                 new LoginAttemptEntry(user.Id, user.UserTypeId, loginSource, false,
                     ErrorsCodes.AccountStatusNotAllowedForLogin,
-                    ipAddress: httpContextAccessor.HttpContext?.GetClientIpAddress()), ct);
+                    IpAddress: httpContextAccessor.HttpContext?.GetClientIpAddress()), ct);
             return Result.Fail<AuthResponse>(ErrorsCodes.AccountStatusNotAllowedForLogin);
         }
 
@@ -64,7 +64,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             user.UserTypeId,
             loginSource,
             true,
-            sessionId: sid,
+            SessionId: sid,
             IpAddress: device?.Ip,
             AttemptedAt: time.GetUtcNow()), ct);
 
