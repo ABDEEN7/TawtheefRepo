@@ -114,6 +114,7 @@
             <p-date-picker size="small"
               inputId="gradYear" [showIcon]="false"
               formControlName="gradYear" view="year" dateFormat="yy"
+              [maxDate]="today"
               [appendTo]="'body'"
               [ngClass]="{'p-invalid': (f['gradYear'].invalid || yearError) && (f['gradYear'].dirty || f['gradYear'].touched)}"
               (onSelect)="validateYear()" (onInput)="validateYear()"

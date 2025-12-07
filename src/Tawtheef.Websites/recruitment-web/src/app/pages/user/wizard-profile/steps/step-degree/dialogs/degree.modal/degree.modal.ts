@@ -51,6 +51,7 @@ export class DegreeModal implements OnInit {
 
   minYear = 1970;
   maxYear = new Date().getFullYear();
+  today = new Date();
   yearError = false;
 
   degreeFile: File | null = null;
