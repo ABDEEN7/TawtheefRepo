@@ -38,6 +38,7 @@ using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Data.Interceptors;
 using Tawtheef.Infrastructure.Repositories;
 using Tawtheef.Infrastructure.Repositories.Base;
+using Tawtheef.Infrastructure.Services.Identity;
 using Tawtheef.Infrastructure.Services.Authorization;
 using Tawtheef.Infrastructure.Services.Environment;
 using Tawtheef.Infrastructure.Services.HttpClients;
@@ -437,6 +438,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 
+                services.AddScoped<ILoginAuditService, LoginAuditService>();
                 services.AddScoped<ITokenService, TokenService>();
                 services.AddScoped<IVerificationService, VerificationService>();
                 services.AddScoped<ICurrentUserService, CurrentUserService>();

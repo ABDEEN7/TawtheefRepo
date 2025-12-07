@@ -68,7 +68,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
             if (string.IsNullOrEmpty(currentSid) || !string.Equals(currentSid, stored.SecurityStamp, StringComparison.Ordinal))
                 return Result.Fail<TokenResponse>(ErrorsCodes.SessionRevoked);
 
-            var authResponseResult = await tokenService.IssueTokensAsync(user, cancellationToken);
+            var authResponseResult = await tokenService.IssueTokensAsync(user, "RefreshToken", cancellationToken);
             if (authResponseResult.IsFailed)
                 return Result.Fail<TokenResponse>(authResponseResult.Errors);
             
