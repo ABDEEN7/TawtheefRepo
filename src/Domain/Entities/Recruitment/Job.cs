@@ -54,10 +54,10 @@ public class Job : EventEntity
     public int NumberOfVacancies { get; set; }
 
     [Required(ErrorMessage = JobValidationMessages.CLOSING_DATE_REQUIRED)]
-    public DateTime ClosingDate { get; set; }
+    public DateTimeOffset ClosingDate { get; set; }
 
-    public DateTime? PublishAt { get; set; }  
-    public DateTime? CancelledAt { get; set; }
+    public DateTimeOffset? PublishAt { get; set; }  
+    public DateTimeOffset? CancelledAt { get; set; }
 
     [Required(ErrorMessage = JobValidationMessages.MINIMUM_AGE_REQUIRED)]
     public int MinimumAge { get; set; }
@@ -68,12 +68,12 @@ public class Job : EventEntity
     [Required(ErrorMessage = JobValidationMessages.JOB_STATUS_REQUIRED)]
     public Guid JobStatusId { get; set; }
 
-    public string? OverViewAr { get; set; } = string.Empty;
-    public string? OverViewEn { get; set; } = string.Empty;
-    public string? BenefitsAr { get; set; } = string.Empty;
-    public string? BenefitsEn { get; set; } = string.Empty;
-    public string? QualificationDescriptionAr { get; set; } = string.Empty;
-    public string? QualificationDescriptionEn { get; set; } = string.Empty;
+    public string? OverViewAr { get; set; }
+    public string? OverViewEn { get; set; } 
+    public string? BenefitsAr { get; set; } 
+    public string? BenefitsEn { get; set; } 
+    public string? QualificationDescriptionAr { get; set; }
+    public string? QualificationDescriptionEn { get; set; } 
 
     public virtual Sector? Sector { get; set; }
     public virtual Managment? Management { get; set; }
@@ -86,12 +86,12 @@ public class Job : EventEntity
     public virtual WorkType? WorkType { get; set; }
     public virtual JobStatus? JobStatus { get; set; }
 
-    public virtual ICollection<JobDegree> JobDegrees { get; set; } = new List<JobDegree>();
-    public virtual ICollection<JobCondition> JobConditions { get; set; } = new List<JobCondition>();
-    public virtual ICollection<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
-    public virtual ICollection<JobResponsibility> JobResponsibilities { get; set; } = new List<JobResponsibility>();
-    public virtual ICollection<JobRequiredAttachment> JobRequiredAttachments { get; set; } = new List<JobRequiredAttachment>();
-    public virtual ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
+    public virtual List<JobDegree> JobDegrees { get; set; } = new List<JobDegree>();
+    public virtual List<JobCondition> JobConditions { get; set; } = new List<JobCondition>();
+    public virtual List<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
+    public virtual List<JobResponsibility> JobResponsibilities { get; set; } = new List<JobResponsibility>();
+    public virtual List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = new List<JobRequiredAttachment>();
+    public virtual List<Invitation> Invitations { get; set; } = new List<Invitation>();
 
     public virtual JobQuota? JobQuota { get; set; }
 }

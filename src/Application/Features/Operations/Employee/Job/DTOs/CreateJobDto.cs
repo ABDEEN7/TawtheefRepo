@@ -47,7 +47,7 @@ public class CreateJobDto
     public int NumberOfVacancies { get; set; }
 
     [Required(ErrorMessage = JobValidationMessages.CLOSING_DATE_REQUIRED)]
-    public DateTime ClosingDate { get; set; }
+    public DateTimeOffset ClosingDate { get; set; }
 
     [Required(ErrorMessage = JobValidationMessages.MINIMUM_AGE_REQUIRED)]
     public int MinimumAge { get; set; }

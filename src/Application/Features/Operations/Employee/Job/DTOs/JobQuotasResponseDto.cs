@@ -11,6 +11,6 @@ public class JobQuotaResponseDto
     public required decimal QuGrads { get; set; }
     public required decimal Residents { get; set; }
     public List<ResidentBreakdownResponseDto>? ResidentsBreakdowns { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? LastModifiedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
+    public DateTimeOffset? LastModifiedDate { get; set; }
 }

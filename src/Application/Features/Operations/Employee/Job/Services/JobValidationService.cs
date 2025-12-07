@@ -1,6 +1,5 @@
 ﻿using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
@@ -94,7 +93,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             !j.IsDeleted);
     }
 
-    public Task<ValidationResult> ValidateForUpdate(UpdateJobDto dto, JobEntity existingJob)
+    public async Task<ValidationResult> ValidateForUpdate(UpdateJobDto dto, JobEntity existingJob)
     {
         var failures = new List<ValidationFailure>();
 
@@ -169,7 +168,10 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             failures.Add(new ValidationFailure("Skills", JobValidationMessages.CANNOT_MODIFY_SKILLS));
         }
 
-        return Task.FromResult(failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult());
+        var skillMajorErrors = await ValidateSkillsByMajor(dto);
+        failures.AddRange(skillMajorErrors);
+
+        return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
     }
 
     public Task<ValidationResult> ValidateStatusChange(JobEntity job, Guid newStatusId)

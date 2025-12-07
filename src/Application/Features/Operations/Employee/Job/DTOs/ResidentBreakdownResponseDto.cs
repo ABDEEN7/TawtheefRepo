@@ -9,6 +9,6 @@ public class ResidentBreakdownResponseDto
     public required Guid NationalityId { get; set; }
     public required DropdownOptions? Nationality { get; set; }
     public required decimal Percentage { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? LastModifiedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
+    public DateTimeOffset? LastModifiedDate { get; set; }
 }

@@ -6,8 +6,8 @@ public class UpdateJobDto : CreateJobDto
 {
     public Guid Id { get; set; }
     public Guid JobStatusId { get; set; }
-    public DateTime? PublishAt { get; set; }
-    public DateTime? CancelledAt { get; set; }
+    public DateTimeOffset? PublishAt { get; set; }
+    public DateTimeOffset? CancelledAt { get; set; }
 
     public string? OverviewAr { get; set; }
     public string? OverviewEn { get; set; }

@@ -10,7 +10,7 @@ public static class JobBusinessRules
         string titleAr, string titleEn,
         Guid sectorId, Guid managementId, Guid departmentId,
         Guid jobCategoryId, Guid workLocationId, Guid workTypeId,
-        Guid majorId, int numberOfVacancies, DateTime closingDate,
+        Guid majorId, int numberOfVacancies, DateTimeOffset closingDate,
         int minimumAge, int maximumAge, int yearsOfExperience)
     {
         return !string.IsNullOrWhiteSpace(titleAr) &&
@@ -23,7 +23,7 @@ public static class JobBusinessRules
                workTypeId != Guid.Empty &&
                majorId != Guid.Empty &&
                numberOfVacancies > 0 &&
-               closingDate > DateTime.Today &&
+               closingDate > DateTimeOffset.Now &&
                minimumAge > 0 &&
                maximumAge > 0 &&
                maximumAge > minimumAge &&
@@ -35,9 +35,9 @@ public static class JobBusinessRules
         return numberOfVacancies > 0;
     }
 
-    public static bool IsValidClosingDate(DateTime closingDate)
+    public static bool IsValidClosingDate(DateTimeOffset closingDate)
     {
-        return closingDate.Date > DateTime.Today;
+        return closingDate.Date > DateTimeOffset.Now;
     }
 
     public static (bool IsValid, string ErrorMessage) ValidateAgeRange(

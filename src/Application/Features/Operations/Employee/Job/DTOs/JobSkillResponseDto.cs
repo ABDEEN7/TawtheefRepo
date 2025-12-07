@@ -9,6 +9,6 @@ public class JobSkillResponseDto
     public required Guid SkillId { get; set; }
     public required DropdownOptions? Skill { get; set; }
     public required bool ShowToApplicants { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? LastModifiedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
+    public DateTimeOffset? LastModifiedDate { get; set; }
 }

@@ -7,6 +7,6 @@ public class JobRequiredAttachmentResponseDto
     public required string TitleAr { get; set; }
     public required string TitleEn { get; set; }
     public required bool IsMandatory { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? LastModifiedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
+    public DateTimeOffset? LastModifiedDate { get; set; }
 }

@@ -6,6 +6,6 @@ public class JobResponsibilityResponseDto
     public Guid JobId { get; set; }
     public required string TextAr { get; set; }
     public required string TextEn { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? LastModifiedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
+    public DateTimeOffset? LastModifiedDate { get; set; }
 }
