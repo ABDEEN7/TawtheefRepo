@@ -1,14 +1,10 @@
 ﻿{
-  "auth": {
-    "login": {
-      "ministry_name": "Ministry of Education and Higher Education",
-      "tawtheef": "Tawtheef",
-      "choose_residency": "Please select your status:",
-      "mode_resident": "I reside in Qatar",
-      "mode_nonresident": "I am not residing in Qatar",
-      "tawtheeq_cta": "Login via National Authentication (Residents in Qatar)",
-      "google_cta": "Sign in with Google (Non-residents)",
-      "footer_owner": "Ministry of Education and Higher Education – IT Department"
-    }
-  }
+  "auth.login.ministry_name": "Ministry of Education and Higher Education",
+  "auth.login.tawtheef": "Tawtheef",
+  "auth.login.choose_residency": "Please select your status:",
+  "auth.login.mode_resident": "I reside in Qatar",
+  "auth.login.mode_nonresident": "I am not residing in Qatar",
+  "auth.login.tawtheeq_cta": "Login via National Authentication (Residents in Qatar)",
+  "auth.login.google_cta": "Sign in with Google (Non-residents)",
+  "auth.login.footer_owner": "Ministry of Education and Higher Education – IT Department"
 }
