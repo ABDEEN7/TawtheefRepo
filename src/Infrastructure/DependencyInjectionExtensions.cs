@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
@@ -65,7 +66,7 @@ namespace Tawtheef.Infrastructure
         /// <summary>
         /// Registers all infrastructure services (DB, repos, auth, notifications, storage, etc).
         /// </summary>
-        public static void AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration)
+        public static void AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
         {
             // Feature flags
             services.AddFeatureManagement();
@@ -81,7 +82,7 @@ namespace Tawtheef.Infrastructure
             services.AddServices(configuration);
 
             // Data & Repositories
-            services.AddDbContext(configuration);
+            services.AddDbContext(configuration, env);
             services.AddRepositories();
 
             // Authentication & Authorization
@@ -109,11 +110,11 @@ namespace Tawtheef.Infrastructure
         /// <summary>
         /// Adds the TawtheefDbContext and Identity configuration.
         /// </summary>
-        private static void AddDbContext(this IServiceCollection services, IConfiguration configuration)
+        private static void AddDbContext(this IServiceCollection services, IConfiguration configuration,
+            IHostEnvironment env)
         {
             // Connection string kept for potential conditional logic later
             var cs = configuration.GetConnectionString("DefaultConnection");
-
             services.AddScoped<AuditableEntityInterceptor>();
 
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
@@ -125,10 +126,13 @@ namespace Tawtheef.Infrastructure
                     })
                     .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
                 
-                options
-                    .EnableSensitiveDataLogging()
-                    .EnableDetailedErrors()
-                    .LogTo(Console.WriteLine, LogLevel.Information);
+                if (env.IsDevelopment())
+                {
+                    options
+                        .EnableSensitiveDataLogging()
+                        .EnableDetailedErrors()
+                        .LogTo(Console.WriteLine, LogLevel.Information);
+                }
             });
 
             services.AddIdentity<User, IdentityRole<Guid>>(options =>
@@ -435,6 +439,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 
+                services.AddScoped<ILoginAuditService, LoginAuditService>();
                 services.AddScoped<ITokenService, TokenService>();
                 services.AddScoped<IVerificationService, VerificationService>();
                 services.AddScoped<ICurrentUserService, CurrentUserService>();

@@ -1,36 +1,34 @@
 ﻿{
-  "profileList": {
-    "title": "اعتماد الملفات",
-    "subtitle": "قائمة الملفات الشخصية المقدمة من المرشحين",
-    "totalAssignedFiles": "إجمالي الملفات المسندة",
-    "assignedFiles": "الملفات المسندة",
-    "searchPlaceholder": "ابحث بالاسم / التخصص / الحالة / الرقم…",
+  "profileList.title": "Profile Approval",
+  "profileList.subtitle": "List of candidate personal files submitted",
+  "profileList.totalAssignedFiles": "Total assigned files",
+  "profileList.assignedFiles": "Assigned Files",
+  "profileList.searchPlaceholder": "Search by name / specialization / status / ID…",
 
-    "allStatuses": "كل الحالات",
-    "statusPendingReview": "بانتظار المراجعة",
-    "statusUnderApproval": "قيد الاعتماد",
-    "statusCompleted": "مكتمل",
-    "statusNeedsCorrection": "يحتاج تصحيح",
+  "profileList.allStatuses": "All Statuses",
+  "profileList.statusPendingReview": "Pending Review",
+  "profileList.statusUnderApproval": "Under Approval",
+  "profileList.statusCompleted": "Completed",
+  "profileList.statusNeedsCorrection": "Needs Correction",
 
-    "allEntities": "كل الجهات",
-    "entitySchools": "المدارس",
-    "entityMinistry": "الوزارة",
+  "profileList.allEntities": "All Entities",
+  "profileList.entitySchools": "Schools",
+  "profileList.entityMinistry": "Ministry",
 
-    "page": "صفحة",
-    "clearFilter": "إلغاء التصفية",
+  "profileList.page": "Page",
+  "profileList.clearFilter": "Clear filter",
 
-    "candidateName": "اسم المرشح",
-    "specialization": "التخصص",
-    "targetEntity": "الجهة المستهدفة",
-    "submissionDate": "تاريخ التقديم",
-    "status": "الحالة",
-    "actions": "الإجراءات",
-    "approveFile": "اعتماد الملف",
+  "profileList.candidateName": "Candidate Name",
+  "profileList.specialization": "Specialization",
+  "profileList.targetEntity": "Target Entity",
+  "profileList.submissionDate": "Submission Date",
+  "profileList.status": "Status",
+  "profileList.actions": "Actions",
+  "profileList.approveFile": "Approve file",
 
-    "noResults": "لا توجد نتائج مطابقة.",
-    "of": "من",
-    "file": "ملف",
-    "previous": "السابق",
-    "next": "التالي"
-  }
+  "profileList.noResults": "No matching results.",
+  "profileList.of": "of",
+  "profileList.file": "file",
+  "profileList.previous": "Previous",
+  "profileList.next": "Next"
 }

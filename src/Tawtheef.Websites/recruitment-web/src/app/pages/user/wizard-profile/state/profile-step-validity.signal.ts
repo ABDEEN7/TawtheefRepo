@@ -7,6 +7,19 @@ import {
 import {ProfileState} from '../models/profile-state.model';
 import {CandidateType, SponsorType} from '../../../../core/enums/lookups.enum';
 
+function parseDate(value?: string | null): Date | null {
+  if (!value) return null;
+
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function startOfToday(): Date {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now;
+}
+
 export function isFilledField(value: unknown): boolean {
   if (value === null || value === undefined) return false;
 
@@ -254,6 +267,8 @@ function validateContactStep(s: ProfileState): StepValidationResult {
 function validateDegreesStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   const hasDegrees = Array.isArray(s.degrees) && s.degrees.length > 0;
+  const today = startOfToday();
+  const dobYear = parseDate(s.dob)?.getFullYear() ?? null;
 
   if (!hasDegrees) {
     errors.push({
@@ -276,6 +291,25 @@ function validateDegreesStep(s: ProfileState): StepValidationResult {
         i18nKey: 'wizard.profile.degrees.attachment.required',
       });
     }
+
+    if (degree?.gradYear) {
+      const gradYear = Number(degree.gradYear);
+      if (Number.isFinite(gradYear)) {
+        if (gradYear > today.getFullYear()) {
+          errors.push({
+            field: `degrees[${index}].gradYear`,
+            i18nKey: 'wizard.profile.degrees.gradYear.future',
+          });
+        }
+
+        if (dobYear && gradYear < dobYear) {
+          errors.push({
+            field: `degrees[${index}].gradYear`,
+            i18nKey: 'wizard.profile.degrees.gradYear.beforeDob',
+          });
+        }
+      }
+    }
   });
 
   return { valid: errors.length === 0, errors };
@@ -286,6 +320,15 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
 
   const hasExperiences = Array.isArray(s.experiences) && s.experiences.length > 0;
   const hasCourses = Array.isArray(s.courses) && s.courses.length > 0;
+  const today = startOfToday();
+  const earliestGradYear = s.degrees
+    ?.map(d => d.gradYear)
+    .filter((y): y is number => Number.isFinite(y))
+    .reduce<number | null>((min, current) => {
+      if (min === null) return current;
+      return current < min ? current : min;
+    }, null);
+  const earliestGraduationDate = earliestGradYear ? new Date(earliestGradYear, 0, 1) : null;
 
   if (!hasExperiences) {
     errors.push({
@@ -315,6 +358,37 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
         i18nKey: 'wizard.profile.experience.file.required',
       });
     }
+
+    const startDate = parseDate(experience?.from);
+    const endDate = parseDate(experience?.to);
+
+    if (startDate && startDate.getTime() > today.getTime()) {
+      errors.push({
+        field: `experiences[${index}].from`,
+        i18nKey: 'wizard.profile.experience.futureDate',
+      });
+    }
+
+    if (endDate && endDate.getTime() > today.getTime()) {
+      errors.push({
+        field: `experiences[${index}].to`,
+        i18nKey: 'wizard.profile.experience.futureDate',
+      });
+    }
+
+    if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
+      errors.push({
+        field: `experiences[${index}].to`,
+        i18nKey: 'wizard.profile.experience.invalidRange',
+      });
+    }
+
+    if (earliestGraduationDate && startDate && startDate.getTime() < earliestGraduationDate.getTime()) {
+      errors.push({
+        field: `experiences[${index}].from`,
+        i18nKey: 'wizard.profile.experience.beforeGraduation',
+      });
+    }
   });
 
   s.courses?.forEach((course, index) => {
@@ -329,6 +403,78 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       errors.push({
         field: `courses[${index}].file`,
         i18nKey: 'wizard.profile.courses.file.required',
+      });
+    }
+
+    const startDate = parseDate(course?.from);
+    const endDate = parseDate(course?.to);
+
+    if ((startDate && startDate.getTime() > today.getTime()) || (endDate && endDate.getTime() > today.getTime())) {
+      errors.push({
+        field: `courses[${index}].from`,
+        i18nKey: 'wizard.profile.courses.futureDate',
+      });
+    }
+  });
+
+  const ranges = s.experiences
+    ?.map((exp, index) => {
+      const start = parseDate(exp.from);
+      const end = exp.current ? today : parseDate(exp.to) ?? today;
+      return start
+        ? {
+            start,
+            end,
+            index,
+          }
+        : null;
+    })
+    .filter((r): r is { start: Date; end: Date; index: number } => !!r)
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+  if (ranges && ranges.length > 1) {
+    for (let i = 1; i < ranges.length; i++) {
+      const prev = ranges[i - 1];
+      const curr = ranges[i];
+      if (curr.start.getTime() <= prev.end.getTime()) {
+        errors.push({
+          field: 'experiences',
+          i18nKey: 'wizard.profile.experience.overlap',
+        });
+        break;
+      }
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+function validateAchievementsStep(s: ProfileState): StepValidationResult {
+  const errors: FieldError[] = [];
+  const hasAchievements = Array.isArray(s.achievements) && s.achievements.length > 0;
+
+  if (!hasAchievements) {
+    errors.push({
+      field: 'achievements',
+      i18nKey: 'wizard.profile.achievements.atLeastOne.required',
+    });
+  }
+
+  s.achievements?.forEach((achievement, index) => {
+    if (!achievement?.achievementType) {
+      errors.push({ field: `achievements[${index}].achievementType`, i18nKey: 'wizard.profile.achievements.type.required' });
+    }
+    if (!achievement?.attachment || !isFilledField(achievement.attachment.resourceName)) {
+      errors.push({
+        field: `achievements[${index}].attachment`,
+        i18nKey: 'wizard.profile.achievements.attachment.required',
+      });
+    }
+
+    if (!(achievement?.file || achievement?.attachmentId)) {
+      errors.push({
+        field: `achievements[${index}].file`,
+        i18nKey: 'wizard.profile.achievements.file.required',
       });
     }
   });
@@ -356,6 +502,7 @@ function validateSkillsStep(s: ProfileState): StepValidationResult {
 
 function validateLanguagesStep(s: ProfileState): StepValidationResult {
   const hasLanguages = Array.isArray(s.languages) && s.languages.length > 0;
+  const errors: FieldError[] = [];
 
   if (!hasLanguages) {
     return {
@@ -367,6 +514,33 @@ function validateLanguagesStep(s: ProfileState): StepValidationResult {
         },
       ],
     };
+  }
+
+  s.languages?.forEach((lang, index) => {
+    if (!isFilledField(lang?.speakingLevelId ?? lang?.speakingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].speakingLevelId`,
+        i18nKey: 'wizard.profile.languages.speaking.required',
+      });
+    }
+
+    if (!isFilledField(lang?.writingLevelId ?? lang?.writingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].writingLevelId`,
+        i18nKey: 'wizard.profile.languages.writing.required',
+      });
+    }
+
+    if (!isFilledField(lang?.readingLevelId ?? lang?.readingLevel?.id)) {
+      errors.push({
+        field: `languages[${index}].readingLevelId`,
+        i18nKey: 'wizard.profile.languages.reading.required',
+      });
+    }
+  });
+
+  if (errors.length) {
+    return { valid: false, errors };
   }
 
   return { valid: true, errors: [] };
@@ -416,6 +590,7 @@ export function createStepValiditySignal(
       contact:     validateContactStep(s),
       degrees:     validateDegreesStep(s),
       experience:  validateExperienceStep(s),
+      achievements: validateAchievementsStep(s),
       skills:      validateSkillsStep(s),
       languages:   validateLanguagesStep(s),
       attachments: validateAttachmentsStep(s),

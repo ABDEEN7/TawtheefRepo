@@ -51,6 +51,7 @@ export class DegreeModal implements OnInit {
 
   minYear = 1970;
   maxYear = new Date().getFullYear();
+  today = new Date();
   yearError = false;
 
   degreeFile: File | null = null;
@@ -116,25 +117,21 @@ export class DegreeModal implements OnInit {
       ]);
       grade?.setValidators([Validators.required]);
     } else {
-      // نحذف الفاليديشن ونفضي القيمة
       [uni, major, subMajor, gradYear, studySystem, gpa, grade].forEach(c => {
         c?.clearValidators();
         c?.setValue(null);
         c?.updateValueAndValidity({ emitEvent: false });
       });
 
-      // بما إننا ما نحتاج معلومات المؤهل، ما في داعي لـ yearError
       this.yearError = false;
     }
 
-    // تحديث الـ validity للحقول اللي عليها Validators
     [uni, major, subMajor, gradYear, studySystem, gpa, grade].forEach(c => {
       c?.updateValueAndValidity({ emitEvent: false });
     });
   }
 
   validateYear(): void {
-    // لو مش محتاج معلومات المؤهل، تجاهل الـ yearError
     if (!this.isQualification) {
       this.yearError = false;
       return;
@@ -155,7 +152,6 @@ export class DegreeModal implements OnInit {
   }
 
   onSave() {
-    // الآن form.invalid راح يكون صحيح حسب نوع الدرجة
     if (this.form.invalid || this.yearError || !this.degreeFile) {
       this.form.markAllAsTouched();
       return;
@@ -186,7 +182,7 @@ export class DegreeModal implements OnInit {
 
     this.ref.close(payload);
   }
-  // onUpload كما هي عندك تقريباً (مع تصحيح بسيط)
+
   onUpload(evt: Event): void {
     this.fileError = null;
     const input = evt.target as HTMLInputElement;

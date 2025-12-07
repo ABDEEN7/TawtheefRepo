@@ -15,10 +15,8 @@
               [options]="lookups.degrees()" optionLabel="name"
               [filter]="true"
               [placeholder]="'wizard.degrees.choiceDegree' | translate"
-                      [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
-              [ngClass]="{
-                'p-invalid': f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)
-              }" fluid>
+              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [ngClass]="{'p-invalid': f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)}" fluid>
             </p-select>
             <small *ngIf="f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)"
                    class="text-danger mt-1 d-block">
@@ -37,9 +35,7 @@
               [filter]="true"
               [placeholder]="'wizard.degrees.choiceGradCountry' | translate"
               [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
-              [ngClass]="{
-                'p-invalid': f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)
-              }" fluid>
+              [ngClass]="{'p-invalid': f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)}" fluid>
             </p-select>
             <small *ngIf="f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)"
                    class="text-danger mt-1 d-block">
@@ -58,8 +54,7 @@
               [searchUrl]="endpoints.profile.lookups.universities"
               [placeholder]="'wizard.degrees.choiceUniversity' | translate"
               optionLabel="name"
-              [appendTo]="'body'"
-              [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
               [invalid]="f['university'].invalid && (f['university'].dirty || f['university'].touched)">
             </app-remote-select>
             <small *ngIf="f['university'].invalid && (f['university'].dirty || f['university'].touched)"
@@ -80,8 +75,7 @@
               [searchUrl]="endpoints.profile.lookups.majors"
               [placeholder]="'wizard.degrees.choiceMajor' | translate"
               optionLabel="name"
-              [appendTo]="'body'"
-              [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
               [invalid]="f['major'].invalid && (f['major'].dirty || f['major'].touched)">
             </app-remote-select>
             <small *ngIf="f['major'].invalid && (f['major'].dirty || f['major'].touched)"
@@ -101,8 +95,7 @@
               [searchUrl]="endpoints.profile.lookups.subMajors"
               [placeholder]="'wizard.degrees.choiceMajor' | translate"
               optionLabel="name"
-              [appendTo]="'body'"
-              [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
               [invalid]="f['subMajor'].invalid && (f['subMajor'].dirty || f['subMajor'].touched)">
             </app-remote-select>
             <small *ngIf="f['subMajor'].invalid && (f['subMajor'].dirty || f['subMajor'].touched)"
@@ -112,7 +105,7 @@
           </div>
         </div>
         <!-- ROW 3: 3 fields -->
-        <div class="row g-2 align-items-start mt-1" *ngIf="isQualification">
+        <div class="row g-2 align-items-start mt-1">
           <!-- gradYear -->
           <div class="col-12 col-md-4 d-flex flex-column">
             <label for="gradYear" class="form-label required fw-semibold mb-2">
@@ -121,6 +114,8 @@
             <p-date-picker size="small"
               inputId="gradYear" [showIcon]="false"
               formControlName="gradYear" view="year" dateFormat="yy"
+              [maxDate]="today"
+              [appendTo]="'body'"
               [ngClass]="{'p-invalid': (f['gradYear'].invalid || yearError) && (f['gradYear'].dirty || f['gradYear'].touched)}"
               (onSelect)="validateYear()" (onInput)="validateYear()"
               fluid>
@@ -135,7 +130,7 @@
             </small>
           </div>
           <!-- studySystem -->
-          <div class="col-12 col-md-4 d-flex flex-column">
+          <div class="col-12 col-md-4 d-flex flex-column" *ngIf="isQualification">
             <label for="studySystem" class="form-label required fw-semibold mb-2">
               {{ 'wizard.degrees.studySystem' | translate }}
             </label>
@@ -144,7 +139,7 @@
               formControlName="studySystem"
               [options]="lookups.studyTypes()" optionLabel="name"
               [placeholder]="'wizard.degrees.choiceStudySystem' | translate"
-                      [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
               [ngClass]="{
                 'p-invalid': f['studySystem'].invalid && (f['studySystem'].dirty || f['studySystem'].touched)
               }">
@@ -166,9 +161,7 @@
               [min]="0" [max]="100"
               [maxlength]="5"
               [showButtons]="false"
-              [ngClass]="{
-                'p-invalid': f['gpa'].invalid && (f['gpa'].dirty || f['gpa'].touched)
-              }">
+              [ngClass]="{'p-invalid': f['gpa'].invalid && (f['gpa'].dirty || f['gpa'].touched)}">
             </p-inputNumber>
             <small *ngIf="f['gpa']?.errors?.['required'] && (f['gpa'].dirty || f['gpa'].touched)"
                    class="text-danger mt-1 d-block">
@@ -192,7 +185,7 @@
               formControlName="grade"
               [options]="lookups.ratingGrades()" optionLabel="name"
               [placeholder]="'wizard.degrees.choiceGrade' | translate"
-                      [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
               [ngClass]="{
                 'p-invalid': f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)
               }">

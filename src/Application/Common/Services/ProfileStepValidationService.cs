@@ -14,6 +14,7 @@ public interface IProfileStepValidationService
     Result ValidateContact(UserProfile profile, SaveProfileContactRequest request);
     Result ValidateEducation(UserProfile profile);
     Result ValidateExperience(UserProfile profile);
+    Result ValidateAchievements(UserProfile profile);
     Result ValidateSkillsAndLanguages(UserProfile profile);
     Result ValidateAttachments(UserProfile profile);
 }
@@ -27,8 +28,9 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         Contact = 2,
         Education = 3,
         Experience = 4,
-        SkillsLanguages = 5,
-        Attachments = 6
+        Achievements = 5,
+        SkillsLanguages = 6,
+        Attachments = 7
     }
 
     private static readonly ProfileStep[] StepOrder =
@@ -38,6 +40,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         ProfileStep.Contact,
         ProfileStep.Education,
         ProfileStep.Experience,
+        ProfileStep.Achievements,
         ProfileStep.SkillsLanguages,
         ProfileStep.Attachments
     ];
@@ -94,6 +97,11 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         return EnsurePreviousStepsCompleted(profile, ProfileStep.Experience);
     }
 
+    public Result ValidateAchievements(UserProfile profile)
+    {
+        return EnsurePreviousStepsCompleted(profile, ProfileStep.Achievements);
+    }
+
     public Result ValidateSkillsAndLanguages(UserProfile profile)
     {
         return EnsurePreviousStepsCompleted(profile, ProfileStep.SkillsLanguages);
@@ -134,6 +142,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         ProfileStep.Contact => IsContactComplete(profile),
         ProfileStep.Education => profile.Qualifications is { Count: > 0 },
         ProfileStep.Experience => profile.Experiences is { Count: > 0 } || profile.TrainingCourses is { Count: > 0 },
+        ProfileStep.Achievements => profile.Achievements is { Count: > 0 },
         ProfileStep.SkillsLanguages => profile.Skills is { Count: > 0 } && profile.Languages is { Count: > 0 },
         ProfileStep.Attachments => profile.AdditionalAttachments is { Count: > 0 },
         _ => false

@@ -6,6 +6,6 @@ namespace Tawtheef.Application.Common.Interfaces.Services;
 
 public interface ITokenService
 {
-    Task<IResult<AuthResponse>> IssueTokensAsync(User user, CancellationToken ct);
+    Task<IResult<AuthResponse>> IssueTokensAsync(User user, string loginSource, CancellationToken ct);
     Task RevokeAllAsync(Guid userId, CancellationToken ct);
 }

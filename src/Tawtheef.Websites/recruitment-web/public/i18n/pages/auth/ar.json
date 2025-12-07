@@ -1,15 +1,10 @@
 ﻿{
-  "auth": {
-    "login": {
-      "ministry_name": "وزارة التربية والتعليم والتعليم العالي",
-      "tawtheef": "توظيف",
-      "choose_residency": "يرجى تحديد حالتك:",
-      "mode_resident": "أنا مقيم في قطر",
-      "mode_nonresident": "لست مقيمًا في قطر",
-      "tawtheeq_cta": "الدخول عبر نظام التوثيق الوطني (مقيمون داخل قطر)",
-      "google_cta": "تسجيل الدخول بحساب Google (لغير المقيمين)",
-      "footer_owner": "وزارة التربية والتعليم والتعليم العالي – إدارة نظم المعلومات"
-    }
-  }
-
+  "auth.login.ministry_name": "وزارة التربية والتعليم والتعليم العالي",
+  "auth.login.tawtheef": "توظيف",
+  "auth.login.choose_residency": "يرجى تحديد حالتك:",
+  "auth.login.mode_resident": "أنا مقيم في قطر",
+  "auth.login.mode_nonresident": "لست مقيمًا في قطر",
+  "auth.login.tawtheeq_cta": "الدخول عبر نظام التوثيق الوطني (مقيمون داخل قطر)",
+  "auth.login.google_cta": "تسجيل الدخول بحساب Google (لغير المقيمين)",
+  "auth.login.footer_owner": "وزارة التربية والتعليم والتعليم العالي – إدارة نظم المعلومات"
 }

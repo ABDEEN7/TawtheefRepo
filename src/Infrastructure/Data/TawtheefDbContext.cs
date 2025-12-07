@@ -51,6 +51,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<LanguageLevel> LanguageLevel { get; set; }
     public DbSet<MaritalStatus> MaritalStatus { get; set; }
     public DbSet<RatingGrade> RatingGrade { get; set; }
+    public DbSet<AchievementType> AchievementType { get; set; }
     public DbSet<Religion> Religion { get; set; }
     public DbSet<Managment> Managment { get; set; }
     public DbSet<Sector> Sector { get; set; }
@@ -77,6 +78,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<UserProfile> UserProfile { get; set; }
     public DbSet<SponsorProfile> SponsorProfile { get; set; }
     public DbSet<RefreshToken> RefreshToken { get; set; }
+    public DbSet<LoginAttempt> LoginAttempt { get; set; }
     public DbSet<ContactVerification> ContactVerification { get; set; }
     public DbSet<UserSession> UserSession { get; set; }
     
@@ -87,6 +89,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<ProfileLanguage> LanguageProficiency { get; set; }
     public DbSet<ResidenceAddress> ResidenceAddress { get; set; }
     public DbSet<TrainingCourse> TrainingCourse { get; set; }
+    public DbSet<Achievement> Achievement { get; set; }
     public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicant { get; set; }
 
     public DbSet<ReviewItem> ReviewItem { get; set; }

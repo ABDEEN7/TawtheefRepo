@@ -80,6 +80,7 @@ public sealed class ProfileStatusDto
     public IReadOnlyList<QualificationDto>? Qualifications { get; init; }
     public IReadOnlyList<ExperienceDto>? Experiences { get; init; }
     public IReadOnlyList<TrainingCourseDto>? TrainingCourses { get; init; }
+    public IReadOnlyList<AchievementDto>? Achievements { get; init; }
     public IReadOnlyList<SkillDto>? Skills { get; init; }
     public IReadOnlyList<LanguageDto>? Languages { get; init; }
 }
@@ -138,6 +139,20 @@ public sealed class TrainingCourseDto
     public FileRefDto? Attachment { get; init; }
 }
 
+// ====== Achievements ======
+public sealed class AchievementDto
+{
+    public Guid Id { get; init; }
+    public Guid AchievementTypeId { get; init; }
+    public DropdownOptions? AchievementType { get; init; }
+    public string? Title { get; init; }
+    public string? IssuingAuthority { get; init; }
+    public Guid? CountryId { get; init; }
+    public DateOnly? IssueDate { get; init; }
+    public string? Description { get; init; }
+    public FileRefDto? Attachment { get; init; }
+}
+
 // ====== Skills ======
 public sealed class SkillDto
 {
@@ -153,7 +168,9 @@ public sealed class LanguageDto
     public Guid Id { get; init; }
     public Guid LanguageId { get; init; }
     public DropdownOptions? Language { get; init; }
-    public Guid LevelId { get; init; }
+    public Guid SpeakingLevelId { get; init; }
+    public Guid WritingLevelId { get; init; }
+    public Guid ReadingLevelId { get; init; }
     public bool IsNative { get; init; }
 }
 

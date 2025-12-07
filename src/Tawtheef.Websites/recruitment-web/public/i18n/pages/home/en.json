@@ -1,72 +1,48 @@
 ﻿{
-  "home": {
-    "title": "Tawtheef",
-    "hero": {
-      "kicker": "Qatar • Education Careers",
-      "title": "We attract talents to build Qatar’s educational future",
-      "subtitle": "The official recruitment platform of the Ministry of Education and Higher Education — a seamless digital experience.",
-      "cta1": "Explore Paths",
-      "cta2": "Login"
-    },
-    "about": {
-      "title": "About the Platform",
-      "desc": "A unified gateway for recruiting educators and administrators — with fairness, transparency, and a smooth digital journey."
-    },
-    "tracks": {
-      "title": "Career Paths",
-      "desc": "Choose the path that fits your expertise — Schools or Ministry departments.",
-      "cta": "Explore",
-      "items": {
-        "schools": {
-          "title": "Schools",
-          "desc": "Teaching and administrative roles in public schools — curricula, supervision, and more."
-        },
-        "ministry": {
-          "title": "Ministry",
-          "desc": "Specialized roles across MOEHE departments — IT, teacher affairs, planning & evaluation."
-        }
-      }
-    },
-    "why": {
-      "title": "Why Us",
-      "desc": "A fair, transparent, fully digital hiring journey.",
-      "items": {
-        "fair": {
-          "title": "Fair Selection",
-          "desc": "Clear criteria and equal opportunity."
-        },
-        "digital": {
-          "title": "Digital Journey",
-          "desc": "Apply and track applications in one place."
-        },
-        "transparent": {
-          "title": "Transparency",
-          "desc": "Real-time status updates and accurate notifications."
-        },
-        "support": {
-          "title": "Live Support",
-          "desc": "Helpdesk ready to answer your questions."
-        }
-      }
-    },
-    "success": {
-      "title": "Success Stories",
-      "desc": "Tangible results that demonstrate the platform’s impact.",
-      "placementRate": "Candidate placement rate",
-      "avgReviewTime": "Average review time",
-      "partners": "Education partners"
-    },
-    "faq": {
-      "title": "FAQ",
-      "desc": "Answers to common questions about registration and applications.",
-      "q1": "How do I create an account and start applying?",
-      "a1": "Click “Login”, complete your basic details, then open Jobs, pick a role, and submit your application.",
-      "q2": "Can I edit my application after submitting?",
-      "a2": "You can update your profile anytime. Submitted applications can’t be edited, but you may withdraw and reapply.",
-      "q3": "How long does review take?",
-      "a3": "We target an initial review within 48 hours. You’ll receive updates via email and your dashboard.",
-      "q4": "Are Qataris prioritized?",
-      "a4": "Selection follows MOEHE criteria with workforce localization considered whenever the required skills are available."
-    }
-  }
+  "home.title": "Tawtheef",
+
+  "home.hero.kicker": "Qatar • Education Careers",
+  "home.hero.title": "We attract talents to build Qatar’s educational future",
+  "home.hero.subtitle": "The official recruitment platform of the Ministry of Education and Higher Education — a seamless digital experience.",
+  "home.hero.cta1": "Explore Paths",
+  "home.hero.cta2": "Login",
+
+  "home.about.title": "About the Platform",
+  "home.about.desc": "A unified gateway for recruiting educators and administrators — with fairness, transparency, and a smooth digital journey.",
+
+  "home.tracks.title": "Career Paths",
+  "home.tracks.desc": "Choose the path that fits your expertise — Schools or Ministry departments.",
+  "home.tracks.cta": "Explore",
+  "home.tracks.items.schools.title": "Schools",
+  "home.tracks.items.schools.desc": "Teaching and administrative roles in public schools — curricula, supervision, and more.",
+  "home.tracks.items.ministry.title": "Ministry",
+  "home.tracks.items.ministry.desc": "Specialized roles across MOEHE departments — IT, teacher affairs, planning & evaluation.",
+
+  "home.why.title": "Why Us",
+  "home.why.desc": "A fair, transparent, fully digital hiring journey.",
+  "home.why.items.fair.title": "Fair Selection",
+  "home.why.items.fair.desc": "Clear criteria and equal opportunity.",
+  "home.why.items.digital.title": "Digital Journey",
+  "home.why.items.digital.desc": "Apply and track applications in one place.",
+  "home.why.items.transparent.title": "Transparency",
+  "home.why.items.transparent.desc": "Real-time status updates and accurate notifications.",
+  "home.why.items.support.title": "Live Support",
+  "home.why.items.support.desc": "Helpdesk ready to answer your questions.",
+
+  "home.success.title": "Success Stories",
+  "home.success.desc": "Tangible results that demonstrate the platform’s impact.",
+  "home.success.placementRate": "Candidate placement rate",
+  "home.success.avgReviewTime": "Average review time",
+  "home.success.partners": "Education partners",
+
+  "home.faq.title": "FAQ",
+  "home.faq.desc": "Answers to common questions about registration and applications.",
+  "home.faq.q1": "How do I create an account and start applying?",
+  "home.faq.a1": "Click “Login”, complete your basic details, then open Jobs, pick a role, and submit your application.",
+  "home.faq.q2": "Can I edit my application after submitting?",
+  "home.faq.a2": "You can update your profile anytime. Submitted applications can’t be edited, but you may withdraw and reapply.",
+  "home.faq.q3": "How long does review take?",
+  "home.faq.a3": "We target an initial review within 48 hours. You’ll receive updates via email and your dashboard.",
+  "home.faq.q4": "Are Qataris prioritized?",
+  "home.faq.a4": "Selection follows MOEHE criteria with workforce localization considered whenever the required skills are available."
 }

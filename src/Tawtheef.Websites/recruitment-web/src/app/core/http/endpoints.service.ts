@@ -36,6 +36,8 @@ export class EndpointsService {
       saveExperience: this.getFullUrl(`/profiles/experience`),
       deleteExperience: (id: string) => this.getFullUrl(`/profiles/experience/${id}/delete`),
       deleteTrainingCourse: (id: string) => this.getFullUrl(`/profiles/training/${id}/delete`),
+      saveAchievements: this.getFullUrl(`/profiles/achievements`),
+      deleteAchievement: (id: string) => this.getFullUrl(`/profiles/achievement/${id}/delete`),
       saveSkills: this.getFullUrl(`/profiles/skills`),
       deleteSkill: (id: string) => this.getFullUrl(`/profiles/skills/${id}/delete`),
       deleteLanguage: (id: string) => this.getFullUrl(`/profiles/languages/${id}/delete`),
@@ -72,6 +74,7 @@ export class EndpointsService {
       majors: this.getFullUrl(`/profiles/lookups/majors`),
       subMajors: this.getFullUrl(`/profiles/lookups/sub-majors`),
       studyTypes: this.getFullUrl(`/profiles/lookups/study-types`),
+      achievementTypes: this.getFullUrl(`/profiles/lookups/achievement-types`),
       ratingGrades: this.getFullUrl(`/profiles/lookups/rating-grades`),
       languages: this.getFullUrl(`/profiles/lookups/languages`),
       languageLevels: this.getFullUrl(`/profiles/lookups/language-levels`),
@@ -83,6 +86,7 @@ export class EndpointsService {
 
   dashboard = {
     candidateInvitations: this.getFullUrl(`/dashboard/get-candidate-invitations`),
+    candidateInvitationStatistics: this.getFullUrl(`/dashboard/candidate-invitation-statistics`),
     lookups: {
       invitationStatuses: this.getFullUrl(`/dashboard/lookups/invitation-statuses`),
       jobCategories: this.getFullUrl(`/dashboard/lookups/job-categories`),

@@ -66,6 +66,7 @@
               selectionMode="range"
               view="month"
               dateFormat="yy-mm"
+              [maxDate]="today"
               fluid
               (onSelect)="touchPeriod()"
               [ngClass]="{
