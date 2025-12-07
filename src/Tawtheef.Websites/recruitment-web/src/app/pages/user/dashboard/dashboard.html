@@ -21,26 +21,26 @@
       <div class="col-md-3">
         <div class="card border-0 shadow-sm p-3 text-center kpi">
           <div class="small text-muted">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</div>
-          <div class="h4 fw-bold text-primary">0</div>
+          <div class="h4 fw-bold text-primary">{{ getNewInvitationCount() }}</div>
 <!--          TODO-->
         </div>
       </div>
       <div class="col-md-3">
         <div class="card border-0 shadow-sm p-3 text-center kpi">
           <div class="small text-muted">{{ 'candidate_dashboard.kpi_under_review' | translate }}</div>
-          <div class="h4 fw-bold text-warning">0</div>
+          <div class="h4 fw-bold text-warning">{{ getUnderReviewCount() }}</div>
         </div>
       </div>
       <div class="col-md-3">
         <div class="card border-0 shadow-sm p-3 text-center kpi">
           <div class="small text-muted">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</div>
-          <div class="h4 fw-bold text-danger">0</div>
+          <div class="h4 fw-bold text-danger">{{ getWithdrawnCount() }}</div>
         </div>
       </div>
       <div class="col-md-3">
         <div class="card border-0 shadow-sm p-3 text-center kpi">
           <div class="small text-muted">{{ 'candidate_dashboard.kpi_applied' | translate }}</div>
-          <div class="h4 fw-bold text-success">0</div>
+          <div class="h4 fw-bold text-success">{{ getAppliedCount() }}</div>
         </div>
       </div>
     </div>

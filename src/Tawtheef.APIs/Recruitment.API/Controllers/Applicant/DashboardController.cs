@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -5,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Dashboard.DTOs;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Recruitment.API.Controllers.Applicant;
@@ -14,6 +17,12 @@ namespace Recruitment.API.Controllers.Applicant;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class DashboardController(IMediator mediator) : ControllerBase
 {
+    private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
+    {
+        null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
+        var id => Result.Ok(Guid.Parse(id))
+    };
+
     #region Lookups
     [HttpGet("lookups/invitation-statuses")]
     public async Task<IActionResult> GetInvitationStatuses()
@@ -42,6 +51,15 @@ public class DashboardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetCandidateInvitations([FromQuery] GetCandidateInvitationsQuery query)
     {
         var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("candidate-invitation-statistics")]
+    public async Task<IActionResult> GetCandidateInvitationStatistics()
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetCandidateInvitationStatisticsQuery(UserId.Value));
         return result.ToActionResult();
     }
     #endregion
