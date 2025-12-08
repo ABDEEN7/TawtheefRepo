@@ -90,6 +90,20 @@ export enum JobStatus {
 }
 
 /* ---------------------------------------------
+   Profile Status
+---------------------------------------------- */
+export enum ProfileStatus {
+  InCreation = "InCreation",
+  Submitted = "Submitted",
+  UnderReview = "UnderReview",
+  RequiresUpdate = "RequiresUpdate",
+  Approved = "Approved",
+  Rejected = "Rejected",
+  Cancelled = "Cancelled",
+  AdminCancelled = "AdminCancelled",
+}
+
+/* ---------------------------------------------
    Language
 ---------------------------------------------- */
 export enum Language {

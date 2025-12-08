@@ -183,5 +183,15 @@ public class ErrorsCodes
     public const string NationalAddressNotAllowed = "NATIONAL_ADDRESS_NOT_ALLOWED";
 
     #endregion
+
+    #region Profile Distribution
+    public const string DistributionEmployeeNotActive = "DISTRIBUTION_EMPLOYEE_NOT_ACTIVE";
+    public const string DistributionProfilesNotFound = "DISTRIBUTION_PROFILES_NOT_FOUND";
+    public const string DistributionFinalStatusNotAllowed = "DISTRIBUTION_FINAL_STATUS_NOT_ALLOWED";
+    public const string DistributionStatusNotAssignable = "DISTRIBUTION_STATUS_NOT_ASSIGNABLE";
+    public const string DistributionNoEligibleEmployees = "DISTRIBUTION_NO_ELIGIBLE_EMPLOYEES";
+    public const string DistributionNoAssignableProfiles = "DISTRIBUTION_NO_ASSIGNABLE_PROFILES";
+    public const string DistributionModeRequired = "DISTRIBUTION_MODE_REQUIRED";
+    #endregion
 }
 
