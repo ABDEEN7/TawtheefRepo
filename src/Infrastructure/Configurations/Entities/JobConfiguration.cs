@@ -1,6 +1,9 @@
+using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities;
 
@@ -8,74 +11,126 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
 {
     public void Configure(EntityTypeBuilder<Job> builder)
     {
-        // Navigation Property Configurations
-        builder.HasOne(j => j.RequestingDepartment)
+        builder.HasQueryFilter(j => !j.IsDeleted);
+
+        builder.HasOne(j => j.Sector)
             .WithMany()
-            .HasForeignKey(j => j.RequestingDepartmentId)
-            .IsRequired()
+            .HasForeignKey(j => j.SectorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(j => j.Management)
+            .WithMany()
+            .HasForeignKey(j => j.ManagementId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(j => j.Department)
+            .WithMany()
+            .HasForeignKey(j => j.DepartmentId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(j => j.JobCategory)
             .WithMany()
             .HasForeignKey(j => j.JobCategoryId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(j => j.Gender)
             .WithMany()
             .HasForeignKey(j => j.GenderId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(j => j.WorkLocation)
             .WithMany()
             .HasForeignKey(j => j.WorkLocationId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(j => j.Major)
             .WithMany()
             .HasForeignKey(j => j.MajorId)
-            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(j => j.SubMajor)
+            .WithMany()
+            .HasForeignKey(j => j.SubMajorId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(j => j.WorkType)
             .WithMany()
             .HasForeignKey(j => j.WorkTypeId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(j => j.Status)
+        builder.HasOne(j => j.JobStatus)
             .WithMany()
-            .HasForeignKey(j => j.StatusId)
+            .HasForeignKey(j => j.JobStatusId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // One-to-One with JobQuotas
-        builder.HasOne(j => j.Quota)
-            .WithOne(q => q.Job)
-            .HasForeignKey<Job>(j => j.QuotaId) 
-            .OnDelete(DeleteBehavior.Restrict);
-            
-        // One-to-Many Relationships
-        builder.HasMany(j => j.Skills)
-            .WithOne(s => s.Job)
-            .HasForeignKey(s => s.JobId)
-            .OnDelete(DeleteBehavior.Restrict);
-            
-        builder.HasMany(j => j.Conditions)
-            .WithOne(c => c.Job)
-            .HasForeignKey(c => c.JobId)
-            .OnDelete(DeleteBehavior.Restrict);
-            
-        builder.HasMany(j => j.Degrees)
+        builder.HasOne(j => j.JobQuota)
+           .WithOne(q => q.Job)
+           .HasForeignKey<JobQuota>(q => q.JobId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(j => j.JobDegrees)
             .WithOne(d => d.Job)
             .HasForeignKey(d => d.JobId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Indexes for better performance
-        builder.HasIndex(j => j.StatusId);
-        builder.HasIndex(j => j.RequestingDepartmentId);
-        builder.HasIndex(j => j.Deadline);
-        builder.HasIndex(j => new { j.IsDeleted, j.Deadline });
+        builder.HasMany(j => j.JobConditions)
+            .WithOne(c => c.Job)
+            .HasForeignKey(c => c.JobId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(j => j.JobSkills)
+            .WithOne(s => s.Job)
+            .HasForeignKey(s => s.JobId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(j => j.JobResponsibilities)
+            .WithOne(r => r.Job)
+            .HasForeignKey(r => r.JobId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(j => j.JobRequiredAttachments)
+            .WithOne(a => a.Job)
+            .HasForeignKey(a => a.JobId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(j => j.Invitations)
+            .WithOne(i => i.Job)
+            .HasForeignKey(i => i.JobId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(j => new
+        {
+            j.TitleAr,
+            j.DepartmentId,
+            j.JobCategoryId,
+            j.SubMajorId
+        })
+        .IsUnique()
+        .HasFilter($"[{nameof(EventEntity.IsDeleted)}] = 0")
+        .HasDatabaseName("IX_Job_Unique_Title_Department_Category_SubMajor");
+
+        builder.HasIndex(j => j.SectorId)
+            .HasDatabaseName("IX_Job_SectorId");
+
+        builder.HasIndex(j => j.ManagementId)
+            .HasDatabaseName("IX_Job_ManagementId");
+
+        builder.HasIndex(j => j.DepartmentId)
+            .HasDatabaseName("IX_Job_DepartmentId");
+
+        builder.HasIndex(j => j.JobStatusId)
+            .HasDatabaseName("IX_Job_JobStatusId");
+
+        builder.HasIndex(j => j.ClosingDate)
+            .HasDatabaseName("IX_Job_ClosingDate");
+
+        builder.HasIndex(j => new { j.IsDeleted, j.JobStatusId })
+            .HasDatabaseName("IX_Job_Deleted_Status");
+
+        builder.HasIndex(j => new { j.IsDeleted, j.ClosingDate })
+            .HasDatabaseName("IX_Job_Deleted_ClosingDate");
+
+        builder.HasIndex(j => new { j.JobStatusId, j.ClosingDate, j.IsDeleted })
+            .HasDatabaseName("IX_Job_Status_ClosingDate_Deleted");
     }
 }

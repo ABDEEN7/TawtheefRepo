@@ -1,98 +1,57 @@
 {
-  "job_list": {
-    "available_jobs": "الوظائف المتاحة",
-    "review_edit_jobs": "استعرض وعدّل الوظائف المنشورة من خلال الجدول التالي.",
-    "filters_title": "بحث وتصفية",
-    "filters_hint": "اكتب كلمات مفتاحية أو استخدم المرشّحات.",
-    "filters_search_placeholder": "بحث بالكلمات (المسمى، الجهة الطالبة...)",
-    "filters_select_status": "الحالة",
-    "points_settings": "إعدادات النقاط",
-    "points_title": "إعداد النقاط",
-    "points": "النقاط",
-    "no_jobs": "لا توجد وظائف",
-    "total_matching": "إجمالي مطابق",
-    "academic": "أكاديمية",
-    "administrative": "إدارية",
-    "labor": "عمالية",
-    "open": "مفتوحة",
-    "closed": "مغلقة",
-    "draft": "مسودة",
-    "job": {
-      "title": "المسمى الوظيفي",
-      "requesting_dept": "الجهة الطالبة للوظيفة",
-      "job_category": "نوع الوظيفة",
-      "vacancies": "عدد الشواغر",
-      "status": "حالة الوظيفة"
-    },
-    "buttons": {
-      "clear_filters": "إلغاء التصفية (عرض الكل)",
-      "edit_title": "تعديل",
-      "edit": "تعديل",
-      "view_job": "عرض الوظيفة",
-      "previous": "السابق",
-      "next": "التالي",
-      "list_points": "النقاط",
-      "save": "حفظ",
-      "reset_defaults": "إعادة إلى الافتراضيات"
-    },
-    "steps_basics": {
-      "type_value": "نوع الوظيفة"
-    },
-    "status": {
-      "job_status": "حالة الوظيفة",
-      "status_value": "الحالة"
-    },
-
-    "modals": {
-      "points": {
-        "title": "إعدادات النقاط و جداول المفاضلة",
-        "max_limit": "حد أقصى",
-        "points_table": "جدول النقاط",
-        "rubric_hint": "يجب أن يساوي مجموع هذا الجدول الحد الأقصى للبند أعلاه",
-        "save_hint": "يتم حفظ الإعدادات لهذه الوظيفة فقط"
-      },
-      "rubrics": {
-        "degree": "المؤهل",
-        "experience": "الخبرة",
-        "languages": "اللغات",
-        "skills": "المهارات",
-        "availability": "التوفر",
-        "location": "الموقع والجنسية",
-        "lbl_degree": "المؤهل",
-        "lbl_experience": "الخبرة",
-        "lbl_languages": "اللغات",
-        "lbl_skills": "المهارات",
-        "lbl_availability": "التوفر",
-        "lbl_geography": "الموقع الجغرافي",
-        "options": {
-          "degree": {
-            "phd": "دكتوراه",
-            "masters": "ماجستير",
-            "bachelor": "بكالوريوس",
-            "diploma": "دبلوم",
-            "high_school": "ثانوي",
-            "preparatory": "الإعدادية",
-            "elementary": "الابتدائية"
-          },
-          "langs": {
-            "two_languages": "لغتان",
-            "one_strong_language": "لغة واحدة قوية",
-            "medium_language": "لغة متوسطة",
-            "basic": "أساسية"
-          },
-          "avail": {
-            "immediate_inside_qatar": "فوري + داخل قطر",
-            "within_month": "خلال شهر",
-            "outside_country": "خارج الدولة",
-            "not_available": "غير متاح"
-          },
-          "geo": {
-            "policy_match": "مطابق للسياسة",
-            "priority": "أولوية",
-            "general": "عام"
-          }
-        }
-      }
-    }
-  }
+  "JOB_LIST_AVAILABLE_JOBS": "الوظائف المتاحة",
+  "JOB_LIST_REVIEW_EDIT_JOBS": "مراجعة وتعديل قائمة الوظائف",
+  "JOB_LIST_NO_JOBS_FOUND": "لم يتم العثور على وظائف",
+  
+  "JOB_LIST_FILTERS_TITLE": "الفلاتر",
+  "JOB_LIST_FILTERS_HINT": "تصفية الوظائف حسب البحث أو التصنيف أو الحالة",
+  
+  "JOB_LIST_FILTERS_SEARCH_PLACEHOLDER": "بحث في الوظائف...",
+  "JOB_LIST_FILTERS_JOB_CATEGORY": "تصنيف الوظيفة",
+  "JOB_LIST_FILTERS_STATUS": "الحالة",
+  
+  "JOB_LIST_COLUMNS_TITLE_AR": "العنوان بالعربية",
+  "JOB_LIST_COLUMNS_TITLE_EN": "العنوان بالإنجليزية",
+  "JOB_LIST_COLUMNS_JOB_CATEGORY": "التصنيف",
+  "JOB_LIST_COLUMNS_VACANCIES": "عدد الشواغر",
+  "JOB_LIST_COLUMNS_STATUS": "الحالة",
+  "JOB_LIST_COLUMNS_DEADLINE": "تاريخ الإنتهاء",
+  "JOB_LIST_COLUMNS_ACTIONS": "الإجراءات",
+  
+  "JOB_LIST_BUTTONS_CREATE_JOB": "إنشاء وظيفة",
+  "JOB_LIST_BUTTONS_CREATE_FIRST_JOB": "أنشئ وظيفتك الأولى",
+  "JOB_LIST_BUTTONS_CLEAR_FILTERS": "مسح الفلاتر",
+  "JOB_LIST_BUTTONS_EDIT": "تعديل الوظيفة",
+  "JOB_LIST_BUTTONS_VIEW": "عرض الوظيفة",
+  "JOB_LIST_BUTTONS_POINTS_CONFIG": "تكوين النقاط",
+  "JOB_LIST_BUTTONS_MORE_ACTIONS": "المزيد من الإجراءات",
+  "JOB_LIST_BUTTONS_APPROVE": "الموافقة",
+  "JOB_LIST_BUTTONS_REJECT": "الرفض",
+  "JOB_LIST_BUTTONS_PUBLISH": "النشر",
+  "JOB_LIST_BUTTONS_CLOSE": "إغلاق",
+  "JOB_LIST_BUTTONS_REOPEN": "إعادة فتح",
+  "JOB_LIST_BUTTONS_CANCEL": "إلغاء",
+  "JOB_LIST_BUTTONS_DELETE": "حذف",
+  
+  "JOB_LIST_CONFIRMATIONS_REJECT_JOB": "هل أنت متأكد من رفض هذه الوظيفة؟",
+  "JOB_LIST_CONFIRMATIONS_CLOSE_JOB": "هل أنت متأكد من إغلاق هذه الوظيفة؟ سيتوقف استقبال الطلبات.",
+  "JOB_LIST_CONFIRMATIONS_CANCEL_JOB": "هل أنت متأكد من إلغاء هذه الوظيفة؟",
+  "JOB_LIST_CONFIRMATIONS_DELETE_JOB": "هل أنت متأكد من حذف هذه الوظيفة؟ لا يمكن التراجع عن هذا الإجراء.",
+  
+  "JOB_LIST_MESSAGES_JOB_APPROVED": "تمت الموافقة على الوظيفة بنجاح",
+  "JOB_LIST_MESSAGES_JOB_REJECTED": "تم رفض الوظيفة بنجاح",
+  "JOB_LIST_MESSAGES_JOB_PUBLISHED": "تم نشر الوظيفة بنجاح",
+  "JOB_LIST_MESSAGES_JOB_CLOSED": "تم إغلاق الوظيفة بنجاح",
+  "JOB_LIST_MESSAGES_JOB_REOPENED": "تم إعادة فتح الوظيفة بنجاح",
+  "JOB_LIST_MESSAGES_JOB_CANCELLED": "تم إلغاء الوظيفة بنجاح",
+  "JOB_LIST_MESSAGES_JOB_DELETED": "تم حذف الوظيفة بنجاح",
+  
+  "JOB_LIST_ERRORS_LOAD_JOBS_FAILED": "فشل تحميل الوظائف. يرجى المحاولة مرة أخرى.",
+  "JOB_LIST_ERRORS_APPROVE_FAILED": "فشل الموافقة على الوظيفة. يرجى المحاولة مرة أخرى.",
+  "JOB_LIST_ERRORS_REJECT_FAILED": "فشل رفض الوظيفة. يرجى المحاولة مرة أخرى.",
+  "JOB_LIST_ERRORS_PUBLISH_FAILED": "فشل نشر الوظيفة. يرجى المحاولة مرة أخرى.",
+  "JOB_LIST_ERRORS_CLOSE_FAILED": "فشل إغلاق الوظيفة. يرجى المحاولة مرة أخرى.",
+  "JOB_LIST_ERRORS_REOPEN_FAILED": "فشل إعادة فتح الوظيفة. يرجى المحاولة مرة أخرى.",
+  "JOB_LIST_ERRORS_CANCEL_FAILED": "فشل إلغاء الوظيفة. يرجى المحاولة مرة أخرى.",
+  "JOB_LIST_ERRORS_DELETE_FAILED": "فشل حذف الوظيفة. يرجى المحاولة مرة أخرى."
 }

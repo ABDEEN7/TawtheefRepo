@@ -12,8 +12,9 @@ public class JobInvitationSummaryProfile: IRegister
     {
         config.NewConfig<Job, JobInvitationSummaryDto>()
             .Map(dest => dest.JobId, src => src.Id)
-            .Map(dest => dest.JobName, src => src.Title)
-            .Map(dest => dest.JobStatus, src => src.Status!)
+            .Map(dest => dest.JobName, src => src.TitleAr)
+            .Map(dest => dest.JobName, src => src.TitleEn)
+            .Map(dest => dest.JobStatus, src => src.JobStatus!)
             .Map(dest => dest.InvitationCount, src => src.Invitations.Count)
             .Map(dest => dest.ApplicantsCount, 
                 src => src.Invitations.Count(i => i.IsAccepted == true))
@@ -25,7 +26,7 @@ public class JobInvitationSummaryProfile: IRegister
             .AfterMapping((src, dest) =>
             {
                 var localized = MapContext.Current!.GetService<ILocalizationService>();
-                dest.DepartmentName = localized.GetLocalizedName(src.RequestingDepartment);
+                dest.DepartmentName = localized.GetLocalizedName(src.Department);
                 dest.JobCategory = localized.GetLocalizedName(src.JobCategory);
             });
     }

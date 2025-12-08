@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
+using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -13,20 +15,47 @@ namespace Operations.API.Controllers.Employee;
 public class JobController(IMediator mediator) : ControllerBase
 {
     #region Lookups
-    [HttpGet("lookups/departments")]
-    public async Task<IActionResult> GetDepartments()
+    [HttpGet("lookups/sectors")]
+    public async Task<IActionResult> GetSectors()
     {
-        var result = await mediator.Send(new GetDepartmentsQuery());
+        var result = await mediator.Send(new GetSectorsQuery());
         return result.ToActionResult();
     }
-    
+    [HttpGet("lookups/managements")]
+    public async Task<IActionResult> GetManagements([FromQuery] Guid sectorId)
+    {
+        var result = await mediator.Send(new GetManagementsBySectorQuery(sectorId));
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/departments")]
+    public async Task<IActionResult> GetDepartments([FromQuery] Guid managementId)
+    {
+        var result = await mediator.Send(new GetDepartmentsByManagementQuery(managementId));
+        return result.ToActionResult();
+    }
+
     [HttpGet("lookups/majors")]
     public async Task<IActionResult> GetMajors()
     {
         var result = await mediator.Send(new GetMajorsQuery());
         return result.ToActionResult();
     }
-    
+
+    [HttpGet("lookups/sub-majors")]
+    public async Task<IActionResult> GetSubMajors([FromQuery] Guid majorId)
+    {
+        var result = await mediator.Send(new GetSubMajorsQuery(majorId));
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/skills")]
+    public async Task<IActionResult> GetSkills([FromQuery] Guid majorId)
+    {
+        var result = await mediator.Send(new GetSkillByMajorQuery(majorId));
+        return result.ToActionResult();
+    }
+
     [HttpGet("lookups/degrees")]
     public async Task<IActionResult> GetDegrees()
     {
@@ -51,7 +80,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [HttpGet("lookups/genders")]
     public async Task<IActionResult> GetGenders()
     {
-        var result = await mediator.Send(new GetGendersQuery());
+        var result = await mediator.Send(new GetGendersWithAllQuery());
         return result.ToActionResult();
     }
     
@@ -99,13 +128,12 @@ public class JobController(IMediator mediator) : ControllerBase
          return result.ToActionResult();
      }
 
-    [HttpGet]
-    public async Task<IActionResult> GetJobs([FromQuery] GetJobsQuery query)
+    [HttpPost("search")]
+    public async Task<IActionResult> GetJobs([FromBody] GetJobsQuery query)
     {
         var result = await mediator.Send(query);
         return result.ToActionResult();
     }
-    
 
     [HttpPut]
     public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
@@ -118,6 +146,16 @@ public class JobController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteJob(Guid id)
     {
         var result = await mediator.Send(new DeleteJobCommand(id));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/status")]
+    public async Task<IActionResult> ChangeJobStatus(
+    Guid id,
+    [FromQuery] Guid statusId)
+    {
+        var command = new ChangeJobStatusCommand(id, statusId);
+        var result = await mediator.Send(command);
         return result.ToActionResult();
     }
     #endregion

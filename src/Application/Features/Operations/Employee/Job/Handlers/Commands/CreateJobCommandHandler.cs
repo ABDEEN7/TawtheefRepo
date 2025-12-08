@@ -4,6 +4,7 @@ using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
+using Tawtheef.Domain.Entities.Lookups;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
@@ -15,14 +16,15 @@ public class CreateJobCommandHandler(
 {
     public async Task<IResult<Guid>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
-                var job = request.Job.Adapt<JobEntity>();
-                
-                var result = await jobRepository.Repository.AddAsync(job);
-                if (result.IsFailed)
-                    return Result.Fail<Guid>(result.Errors);
-                
-                await unitOfWork.SaveChangesAsync(cancellationToken);
-                
-                return Result.Ok(job.Id);
+        
+        var job = request.Job.Adapt<JobEntity>();
+        job.JobStatusId = JobStatusIds.Draft;
+        var result = await jobRepository.Repository.AddAsync(job);
+        if (result.IsFailed)
+            return Result.Fail<Guid>(result.Errors);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result.Ok(job.Id);
     }
 }

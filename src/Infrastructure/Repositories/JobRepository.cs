@@ -1,70 +1,99 @@
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.Job.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Repositories.Base;
 
 namespace Tawtheef.Infrastructure.Repositories;
 
-public class JobRepository (IGenericRepository<Job> repository) : BaseRepository<Job>(repository), IJobRepository
+public class JobRepository(IGenericRepository<Job> repository)
+    : BaseRepository<Job>(repository), IJobRepository
 {
     private readonly IGenericRepository<Job> _repository = repository;
 
     public async Task<IResult<PaginatedResult<Job>>> GetFilteredJobsAsync(
-        JobQueryFilter filter,
-        PaginatedRequest pagination)
+    JobQueryFilter filter,
+    PaginatedRequest pagination)
     {
-        var query = _repository.DbSet.AsQueryable();
-
-        query = query
-            .Include(j => j.RequestingDepartment)
+        var baseQuery = _repository.DbSet
+            .AsNoTracking()
+            .Where(job => !job.IsDeleted)
+            .Include(j => j.JobQuota)
+                .ThenInclude(q => q!.ResidentsBreakdowns)
+                    .ThenInclude(rb => rb.Nationality)
+            .Include(j => j.JobDegrees)
+                .ThenInclude(d => d.Degree)
+            .Include(j => j.Department)
             .Include(j => j.JobCategory)
             .Include(j => j.WorkType)
-            .Include(j => j.Status)
+            .Include(j => j.JobStatus)
             .Include(j => j.Gender)
             .Include(j => j.Major)
+            .Include(j => j.SubMajor)
+            .Include(j => j.Sector)
+            .Include(j => j.Management)
             .Include(j => j.WorkLocation)
-            .Include(j => j.Skills)
-            .Include(j => j.Conditions)
-            .Include(j => j.Degrees).ThenInclude(
-                d => d.Degree)
-            .Include(j => j.Invitations)
-            .Include(j => j.Quota)
-            .ThenInclude(q => q!.ResidentsBreakdowns);
-        
+            .Include(j => j.JobConditions)
+            .Include(j => j.JobSkills)
+            .Include(j => j.JobResponsibilities)
+            .Include(j => j.JobRequiredAttachments)
+            .Include(j => j.Invitations);
 
-        query = query.ApplyJobFilter(filter);
+        var filteredQuery = baseQuery.ApplyJobFilter(filter);
 
-        var result = await query.ToPaginatedListAsync(pagination);
+        var sortedQuery = filteredQuery.ApplySorting(pagination);
+
+        var result = await sortedQuery.ToPaginatedListAsync(pagination);
 
         return Result.Ok(result);
     }
-    
+
+
     public async Task<IResult<Job>> GetByIdWithDetailsAsync(Guid id)
     {
         var job = await _repository.DbSet
-            .Include(j => j.RequestingDepartment)
+            .Where(job=> !job.IsDeleted)
+            .Include(j => j.JobQuota)
+                .ThenInclude(q => q!.ResidentsBreakdowns)
+                    .ThenInclude(rb => rb.Nationality)
+            .Include(j => j.JobDegrees)
+                .ThenInclude(d => d.Degree)
+            .Include(j => j.Department)
             .Include(j => j.JobCategory)
             .Include(j => j.WorkType)
-            .Include(j => j.Status)
+            .Include(j => j.JobStatus)
             .Include(j => j.Gender)
             .Include(j => j.Major)
+            .Include(j => j.SubMajor)
+            .Include(j => j.Sector)
+            .Include(j => j.Management)
             .Include(j => j.WorkLocation)
-            .Include(j => j.Skills)
-            .Include(j => j.Conditions)
-            .Include(j => j.Degrees)
-            .ThenInclude(de => de.Degree)
+            .Include(j => j.JobConditions)
+            .Include(j => j.JobSkills)
+            .Include(j => j.JobResponsibilities)
+            .Include(j => j.JobRequiredAttachments)
             .Include(j => j.Invitations)
-            .Include(j => j.Quota)
-            .ThenInclude(q => q!.ResidentsBreakdowns).ThenInclude(rs=>rs.Nationality)
+
             .FirstOrDefaultAsync(j => j.Id == id);
 
-        return job is null ? Result.Fail<Job>(JobValidationMessages.JOB_NOT_FOUND) : Result.Ok(job);
+        return job is null
+            ? Result.Fail<Job>(JobValidationMessages.JOB_NOT_FOUND)
+            : Result.Ok(job);
+    }
+
+    public async Task<IList<Job>> GetJobsToAutoCloseAsync(DateTime currentDate)
+    {
+         var jobs = await _repository.DbSet
+        .AsNoTracking()
+        .Where(j => j.ClosingDate <= currentDate && !j.IsDeleted)
+        .ToListAsync();
+
+        return jobs;
     }
 }

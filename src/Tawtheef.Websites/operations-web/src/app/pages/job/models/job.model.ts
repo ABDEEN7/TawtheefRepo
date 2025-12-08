@@ -1,25 +1,41 @@
 import { JobQuota } from './job-quotas.models';
 import { GUID } from '../../../shared/types/guid.type';
+import { JobDegree } from './job-degree.model';
+import { JobCondition } from './job-condition.model';
+import { JobSkill } from './job-skill.model';
+import { JobResponsibility } from './job-responsibility.model';
+import { JobRequiredAttachment } from './required-attachment.model';
 
 export interface Job {
-  id?: GUID;
-  requestingDepartmentId:GUID;
-  title: string;
+titleAr: string;
+  titleEn: string;
+  sectorId: GUID;
+  managementId: GUID;
+  departmentId: GUID;
+  yearsOfExperience: number;
   jobCategoryId: GUID;
-  genderId: GUID;
   workLocationId: GUID;
+  genderId?: GUID | null;          
   majorId: GUID;
+  subMajorId?: GUID | null;         
   workTypeId: GUID;
-  statusId :GUID;
-  vacancies: number;
-  deadline: Date | null;
-  quota: JobQuota;
-  description: string;
-  benefits: string;
-  conditions: string[];
-  skills: string[];
-  degreeIds: GUID[];
-  status?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  numberOfVacancies: number;
+  closingDate: Date;              
+  minimumAge: number;
+  maximumAge: number;
+  
+  overviewAr?: string;
+  overviewEn?: string;
+  benefitsAr?: string;
+  benefitsEn?: string;
+  qualificationsDescriptionAr?: string;  
+  qualificationsDescriptionEn?: string;  
+  
+  degrees?: JobDegree[];
+  conditions?: JobCondition[];
+  responsibilities?: JobResponsibility[];
+  skills?: JobSkill[];
+  requiredAttachments?: JobRequiredAttachment[];
+  quota?: JobQuota;
 }
+

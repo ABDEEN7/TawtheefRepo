@@ -1,23 +1,25 @@
+﻿using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
+
 namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
-public record UpdateJobDto
+public class UpdateJobDto : CreateJobDto
 {
-    public Guid Id { get; init; }
-    public string Title { get; init; } = string.Empty;
-    public Guid RequestingDepartmentId { get; init; }
-    public Guid JobCategoryId { get; init; }
-    public Guid GenderId { get; init; }
-    public Guid WorkLocationId { get; init; }
-    public Guid MajorId { get; init; }
-    public Guid WorkTypeId { get; init; }
-    public int Vacancies { get; init; }
-    public DateTimeOffset Deadline { get; init; }
-    public required JobQuotaDto Quota { get; init; }
-    public required string Description { get; init; }
-    public required string Benefits { get; init; }
-    public List<string> Conditions { get; init; } = [];
-    public List<string> Skills { get; init; } = [];
-    public List<Guid> DegreeIds { get; init; } = [];
-    public Guid StatusId { get; init; }
+    public Guid Id { get; set; }
+    public Guid JobStatusId { get; set; }
+    public DateTimeOffset? PublishAt { get; set; }
+    public DateTimeOffset? CancelledAt { get; set; }
 
+    public string? OverviewAr { get; set; }
+    public string? OverviewEn { get; set; }
+    public string? BenefitsAr { get; set; }
+    public string? BenefitsEn { get; set; }
+    public string? QualificationsDescriptionAr { get; set; }
+    public string? QualificationsDescriptionEn { get; set; }
+
+    public List<JobDegreeRequestDto>? Degrees { get; set; }
+    public List<JobConditionRequestDto>? Conditions { get; set; }
+    public List<JobResponsibilityRequestDto>? Responsibilities { get; set; }
+    public List<JobSkillRequestDto>? Skills { get; set; }
+    public List<JobRequiredAttachmentRequestDto>? RequiredAttachments { get; set; }
+    public JobQuotaRequestDto? Quota { get; set; }
 }

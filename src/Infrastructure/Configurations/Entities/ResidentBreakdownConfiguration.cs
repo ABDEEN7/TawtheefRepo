@@ -12,5 +12,8 @@ public class ResidentBreakdownConfiguration : IEntityTypeConfiguration<ResidentB
             .WithMany()
             .HasForeignKey(rb => rb.NationalityId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(rb => rb.JobQuotaId);
+        builder.HasIndex(rb => rb.NationalityId);
     }
 }

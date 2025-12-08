@@ -1,16 +1,292 @@
-.stepper .nav-link {
-  border: 1px dashed var(--border);
-  border-radius: 999px;
-  padding: .55rem 1rem;
-  margin: .25rem;
-  color: var(--muted);
-  font-weight: 700;
-  transition: .25s;
-  cursor: pointer; /* 👈 add this line */
+.stepper-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  gap: 10px;
+
+  background: #fbfbfb;
+  border: 1px solid #cbcbcb;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 1262px;
+  height: 120px;
+  margin: 0 auto;
 }
-.stepper .nav-link.active {
-  color: #fff;
-  background: linear-gradient(135deg, var(--brand), var(--accent));
-  border-color: transparent;
-  box-shadow: 0 8px 20px rgba(123,30,58,.25);
+
+.stepper {
+  display: flex;
+  width: 100%;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 100px;
+}
+
+.step-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  z-index: 1;
+}
+
+.step-label-container {
+  position: absolute;
+  top: -40px;
+  padding-left: 100px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.step-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  font-family: 'Cairo', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: right;
+  letter-spacing: -0.18px;
+  color: #999999;
+  white-space: nowrap;
+
+  i {
+    font-size: 14px;
+    margin-left: 4px;
+  }
+
+  &.active {
+    color: #89153d;
+  }
+
+  &.completed {
+    color: #666766;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.step-progress {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.step-circle {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #cbcbcb;
+  border-radius: 50%;
+  background: #fbfbfb;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  flex-shrink: 0;
+  z-index: 2;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(137, 21, 61, 0.1);
+  }
+
+  &.active {
+    border-color: #89153d;
+
+    .inner-circle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #89153d;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  &.completed {
+    background: #89153d;
+    border-color: #89153d;
+
+    .checkmark {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      .checkmark-line {
+        position: absolute;
+        width: 13.33px;
+        height: 10.83px;
+        left: 3.33px;
+        top: 4.59px;
+        background: #ffffff;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+      }
+    }
+  }
+}
+
+.connector-line {
+  height: 3px;
+  flex: 1;
+  background: #cbcbcb;
+  border-radius: 22px;
+  margin: 0 -2px;
+  transition: background 0.3s ease;
+
+  &.completed {
+    background: #89153d;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .stepper-container {
+    padding: 20px;
+    height: 100px;
+  }
+
+  .step-label {
+    font-size: 14px;
+
+    i {
+      font-size: 12px;
+    }
+  }
+
+  .step-circle {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 992px) {
+  .stepper-container {
+    height: 90px;
+    padding: 16px;
+  }
+
+  .step-label-container {
+    top: -35px;
+  }
+
+  .step-label {
+    font-size: 12px;
+
+    i {
+      display: none;
+    }
+  }
+
+  .step-circle {
+    width: 24px;
+    height: 24px;
+
+    .inner-circle {
+      width: 8px;
+      height: 8px;
+    }
+
+    .checkmark {
+      width: 16px;
+      height: 16px;
+
+      .checkmark-line {
+        width: 10px;
+        height: 8px;
+        left: 3px;
+        top: 4px;
+      }
+    }
+  }
+
+  .connector-line {
+    height: 2px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stepper-container {
+    height: 80px;
+    border-radius: 16px;
+  }
+
+  .step-label {
+    span {
+      display: none;
+    }
+
+    i {
+      display: block;
+      font-size: 14px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .stepper-container {
+    padding: 12px;
+    height: 70px;
+  }
+
+  .step-label-container {
+    top: -30px;
+  }
+
+  .step-circle {
+    width: 20px;
+    height: 20px;
+    border-width: 1.5px;
+
+    .inner-circle {
+      width: 6px;
+      height: 6px;
+    }
+
+    .checkmark {
+      width: 12px;
+      height: 12px;
+
+      .checkmark-line {
+        width: 8px;
+        height: 6px;
+        left: 2px;
+        top: 3px;
+      }
+    }
+  }
+
+  .connector-line {
+    height: 1.5px;
+  }
+}
+
+/* For very small screens, hide some steps */
+@media (max-width: 480px) {
+  .stepper {
+    justify-content: space-around;
+  }
+
+  .step-wrapper:nth-child(odd) .step-label {
+    display: none;
+  }
 }

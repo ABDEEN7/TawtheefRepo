@@ -1,9 +1,9 @@
 using FluentResults;
 using MediatR;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
+using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
 

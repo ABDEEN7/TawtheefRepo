@@ -19,11 +19,11 @@ public sealed class GetJobInvitationSummaryQueryHandler(IUnitOfWork unitOfWork, 
             .AsNoTracking()
             .Include(i => i.JobCategory)
             .Include(i => i.Invitations)
-            .Include(i => i.RequestingDepartment)
-            .Include(i => i.Status)
+            .Include(i => i.Department)
+            .Include(i => i.JobStatus)
             .WhereIf(query.JobCategoryId is not null, i => i.JobCategoryId == query.JobCategoryId)
-            .WhereIf(query.DepartmentId is not null, i => i.RequestingDepartmentId == query.DepartmentId)
-            .WhereIf(query.JobStatusId is not null, i => i.StatusId == query.JobStatusId)
+            .WhereIf(query.DepartmentId is not null, i => i.DepartmentId == query.DepartmentId)
+            .WhereIf(query.JobStatusId is not null, i => i.JobStatusId == query.JobStatusId)
             .ToPaginatedListAsync<Domain.Entities.Recruitment.Job, JobInvitationSummaryDto>(mapper, query, cancellationToken);
 
         return Result.Ok(invitations);

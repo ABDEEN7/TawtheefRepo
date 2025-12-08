@@ -1,6 +1,6 @@
 using FluentResults;
 using MediatR;
-using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 

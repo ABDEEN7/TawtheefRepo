@@ -1,20 +1,57 @@
-namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+using System.ComponentModel.DataAnnotations;
+using Tawtheef.Domain.Constants;
 
-public record CreateJobDto
+namespace Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
+
+public class CreateJobDto
 {
-    public string Title { get; init; } = string.Empty;
-    public Guid RequestingDepartmentId { get; init; }
-    public Guid JobCategoryId { get; init; }
-    public Guid GenderId { get; init; }
-    public Guid WorkLocationId { get; init; }
-    public Guid MajorId { get; init; }
-    public Guid WorkTypeId { get; init; }
-    public int Vacancies { get; init; }
-    public DateTimeOffset Deadline { get; init; }
-    public required JobQuotaDto Quota { get; init; } 
-    public string? Description { get; init; }
-    public string? Benefits { get; init; }
-    public List<string> Conditions { get; init; } = [];
-    public List<string> Skills { get; init; } = [];
-    public List<Guid> DegreeIds { get; init; } = [];
+    [Required(ErrorMessage = JobValidationMessages.JOB_TITLE_AR_REQUIRED)]
+    [MaxLength(500)]
+    public required string TitleAr { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.JOB_TITLE_EN_REQUIRED)]
+    [MaxLength(500)]
+    public required string TitleEn { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.SECTOR_REQUIRED)]
+    public Guid SectorId { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.MANAGEMENT_REQUIRED)]
+    public Guid ManagementId { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.DEPARTMENT_REQUIRED)]
+    public Guid DepartmentId { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.YEARS_EXPERIENCE_REQUIRED)]
+    [Range(0, 100)]
+    public int YearsOfExperience { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.JOB_CATEGORY_REQUIRED)]
+    public Guid JobCategoryId { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.WORK_LOCATION_REQUIRED)]
+    public Guid WorkLocationId { get; set; }
+
+    public Guid? GenderId { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.MAJOR_REQUIRED)]
+    public Guid MajorId { get; set; }
+
+    public Guid? SubMajorId { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.WORK_TYPE_REQUIRED)]
+    public Guid WorkTypeId { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.VACANCIES_REQUIRED)]
+    [Range(1, int.MaxValue)]
+    public int NumberOfVacancies { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.CLOSING_DATE_REQUIRED)]
+    public DateTimeOffset ClosingDate { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.MINIMUM_AGE_REQUIRED)]
+    public int MinimumAge { get; set; }
+
+    [Required(ErrorMessage = JobValidationMessages.MAXIMUM_AGE_REQUIRED)]
+    public int MaximumAge { get; set; }
 }

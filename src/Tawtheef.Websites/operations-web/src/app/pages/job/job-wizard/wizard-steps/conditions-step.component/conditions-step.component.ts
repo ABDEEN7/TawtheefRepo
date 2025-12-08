@@ -1,73 +1,111 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {FormBuilder, FormArray, Validators} from '@angular/forms';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
-import { MessageService } from 'primeng/api';
-import {Job} from '../../../models/job.model';
-import {debounceTime, filter} from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
+import { Job } from '../../../models/job.model';
+import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
+
 @Component({
   selector: 'app-conditions-step',
   standalone: false,
-  providers:[MessageService],
-  templateUrl: './conditions-step.component.html'
+  templateUrl: './conditions-step.component.html',
+  styleUrl : './conditions-step.component.scss',
 })
-export class ConditionsStepComponent implements WizardStepComponent,OnInit {
-  fb = inject(FormBuilder);
-  jobService = inject(JobService);
-  messageService = inject(MessageService);
-  translationService = inject(TranslateService)
-
+export class ConditionsStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
+  private readonly fb = inject(FormBuilder);
+  protected readonly jobService = inject(JobService);
+  
+  jobData!: Job;
+  
   readonly form = this.fb.group({
-    items: this.fb.array<string>([],[Validators.required])
-  });
+    conditions: this.fb.array([])
+  }) as FormGroup;
+  
+  newConditionAr = '';
+  newConditionEn = '';
+  private readonly destroy$ = new Subject<void>();
 
-  get items() { return this.form.controls.items as FormArray; }
-
-  newCond = '';
-
-  ngOnInit() {
-    this.setJobData(this.jobService.newJob());
-
+  ngOnInit(): void {
     this.form.valueChanges.pipe(
       debounceTime(300),
-      filter(() => this.form.valid) // Only update service when valid
+      filter(() => this.form.valid),
+      takeUntil(this.destroy$)
     ).subscribe(() => {
-      this.jobService.updateCurrentJobConditions(this.items.controls.map(c => c.value));
+      this.updateJobData();
     });
-  }
-
-  setJobData(job: Job): void {
-    if (job.conditions) {
-      this.items.clear();
-        job.conditions.forEach(cond  => {
-          this.items.push(this.fb.nonNullable.control(cond));
-        });
-      this.form.updateValueAndValidity();
+    
+    const currentJob = this.jobService.getCurrentJob();
+    if (currentJob) {
+      this.setJobData(currentJob);
     }
   }
 
-  add() {
-    const value = this.newCond.trim();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    if (!value) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: this.translationService.instant('job_wizard.notifications.warning'),
-      detail: this.translationService.instant('job_wizard.validation.add_job_cond_detail'),
-      life: 2500,
+  get conditionsArray(): FormArray {
+    return this.form.get('conditions') as FormArray;
+  }
+
+  getConditionGroup(index: number): FormGroup {
+    return this.conditionsArray.at(index) as FormGroup;
+  }
+
+  setJobData(job: Job): void {
+    this.jobData = job;
+    this.conditionsArray.clear();
+    
+    if (job.conditions?.length) {
+      job.conditions.forEach(condition => {
+        this.addConditionToForm(condition.textAr, condition.textEn);
+      });
+    }
+  }
+
+  addCondition(): void {
+    const trimmedAr = this.newConditionAr.trim();
+    
+    if (!trimmedAr) {
+      return;
+    }
+    
+    this.addConditionToForm(trimmedAr, this.newConditionEn.trim());
+    this.newConditionAr = '';
+    this.newConditionEn = '';
+  }
+
+  removeCondition(index: number): void {
+    if (this.conditionsArray.length > 1) {
+      this.conditionsArray.removeAt(index);
+    }
+  }
+
+  isValid(): boolean {
+    return this.form.valid && this.conditionsArray.length > 0;
+  }
+
+  private addConditionToForm(textAr: string, textEn: string = ''): void {
+    const conditionGroup = this.fb.group({
+      textAr: [textAr, [Validators.required, Validators.maxLength(500)]],
+      textEn: [textEn, [Validators.maxLength(500)]]
     });
-    return;
+    
+    this.conditionsArray.push(conditionGroup);
   }
 
-    this.items.push(this.fb.nonNullable.control(value));
-    this.newCond = '';
+  private updateJobData(): void {
+    if (this.form.valid) {
+      const conditions = this.conditionsArray.controls.map(control => {
+        const group = control as FormGroup;
+        return {
+          textAr: group.get('textAr')?.value || '',
+          textEn: group.get('textEn')?.value || ''
+        };
+      });
+      
+      this.jobService.updateCurrentJobConditions(conditions);
+    }
   }
-
-  remove(i: number) {
-    this.items.removeAt(i);
-  }
-
-  isValid() { return this.form.valid }
-
 }

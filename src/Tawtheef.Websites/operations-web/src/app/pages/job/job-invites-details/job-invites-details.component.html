@@ -4,15 +4,15 @@
       <div>
         <h4 class="mb-1 text-brand fw-bold">
           {{ 'job_invites_details.invites_details' | translate }}—
-          <span>{{ job()?.title }}</span>
+          <span>{{ job()?.titleAr }}</span>
         </h4>
         <div class="text-muted small">{{ 'job_invites_details.page_description' | translate }}</div>
       </div>
       <div class="d-flex align-items-center gap-3">
         @if (job(); as currentJob) {
-        <span [class]="getTypeClass(currentJob.workType?.backendName)">
-          {{ 'job_invites_details.entities.' + currentJob.workLocation?.backendName | translate }} —
-          {{ lookupsService.getStatus(currentJob.status?.backendName)}}
+        <span [class]="getTypeClass(currentJob.workType.backendName)">
+          {{ 'job_invites_details.entities.' + currentJob.workLocation.backendName | translate }} —
+          {{ currentJob.status.name}}
         </span>
         }
         <span class="badge rounded-pill text-bg-light border">

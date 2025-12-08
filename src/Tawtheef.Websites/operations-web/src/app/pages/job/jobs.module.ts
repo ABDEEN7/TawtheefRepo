@@ -4,9 +4,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {JobDetailsComponent} from './job-details/job-details.component';
 import {StepperComponent} from './job-wizard/stepper/stepper.component';
-import {BasicsStepComponent} from './job-wizard/wizard-steps/basics-step.component/basics-step.component';
+import { JobBasicModalComponent} from './modals/basics-step-modal/job-basic-modal.component';
 import {ConditionsStepComponent} from './job-wizard/wizard-steps/conditions-step.component/conditions-step.component';
-import {DescriptionStepComponent} from './job-wizard/wizard-steps/description-step.component/description-step.component';
 import {QuotasStepComponent} from './job-wizard/wizard-steps/quotas-step.component/quotas-step.component';
 import {ReviewStepComponent} from './job-wizard/wizard-steps/review-step.component/review-step.component';
 import {SkillsStepComponent} from './job-wizard/wizard-steps/skills-step.component/skills-step.component';
@@ -29,6 +28,12 @@ import {PaginationComponent} from '../../shared/components/pagination/pagination
 import { MultiSelectModule } from 'primeng/multiselect';
 import { JobInvitesDetailsComponent } from './job-invites-details/job-invites-details.component';
 import { Scroller } from "primeng/scroller";
+import { OverviewStepComponent } from './job-wizard/wizard-steps/overview-step.component.ts/overview-step.component';
+import { QualificationsStepComponent } from './job-wizard/wizard-steps/qualifications-step.component/qualifications-step.component';
+import { ResponsibilitiesStepComponent } from './job-wizard/wizard-steps/responsibilities-step.component/responsibilities-step.component';
+import { AttachmentStepComponent } from './job-wizard/wizard-steps/attachment-step.component/attachment-step.component';
+import { BenefitsStepComponent } from './job-wizard/wizard-steps/benefits-step.component/benefits-step.component';
+import { Toast } from "primeng/toast";
 
 @NgModule({
   declarations: [
@@ -38,12 +43,16 @@ import { Scroller } from "primeng/scroller";
     StepperComponent,
     JobWizardComponent,
     ProgressBarComponent,
-    BasicsStepComponent,
+    OverviewStepComponent,
+    AttachmentStepComponent,
+    QualificationsStepComponent,
+    BenefitsStepComponent,
+    ResponsibilitiesStepComponent,
     ConditionsStepComponent,
-    DescriptionStepComponent,
     QuotasStepComponent,
     ReviewStepComponent,
     SkillsStepComponent,
+    JobBasicModalComponent
 
   ],
   imports: [
@@ -65,7 +74,8 @@ import { Scroller } from "primeng/scroller";
     PointsConfigModalComponent,
     NgOptimizedImage,
     MultiSelectModule,
-    Scroller
+    Scroller,
+    Toast
 ],
   exports: [
     JobDetailsComponent,

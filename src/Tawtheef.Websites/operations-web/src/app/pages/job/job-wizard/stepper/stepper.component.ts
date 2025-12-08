@@ -1,21 +1,57 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { icon } from '@primeuix/themes/aura/avatar';
+import { label } from '@primeuix/themes/aura/metergroup';
 
 @Component({
   selector: 'app-stepper',
   standalone: false,
   templateUrl: './stepper.component.html',
-  styleUrls: ['./stepper.component.scss']
+  styleUrls: ['./stepper.component.scss'],
 })
 export class StepperComponent {
   @Input() current = 1;
   @Output() stepChange = new EventEmitter<number>();
 
   steps = [
-    { id: 1, icon: 'fa fa-clipboard-list', label: 'job_wizard.navigation.wizard_steps.basics' },
-    { id: 2, icon: 'fa fa-flag', label: 'job_wizard.navigation.wizard_steps.quotas' },
-    { id: 3, icon: 'fa fa-list-check', label: 'job_wizard.navigation.wizard_steps.conditions' },
-    { id: 4, icon: 'fa fa-lightbulb', label: 'job_wizard.navigation.wizard_steps.skills' },
-    { id: 5, icon: 'fa fa-file-lines', label: 'job_wizard.navigation.wizard_steps.description_benefits' },
-    { id: 6, icon: 'fa fa-eye', label: 'job_wizard.navigation.wizard_steps.review' }
+    {
+      id: 1,
+      label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BASICS',
+      icon: 'fa fa-info-circle'
+    },
+    {
+      id: 2,
+      label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW',
+      icon: 'fa fa-info-circle',
+    },
+    {
+      id: 3,
+      label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS',
+      icon: 'fa fa-graduation-cap',
+    },
+    {
+      id: 4,
+      label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES',
+      icon: 'fa fa-clipboard-check',
+    },
+    {
+      id: 5,
+      label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS',
+      icon: 'fa fa-list-check',
+    },
+    {
+      id: 6,
+      label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS',
+      icon: 'fa fa-lightbulb',
+    },
+    {
+      id: 7,
+      label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS',
+      icon: 'fa fa-paperclip',
+    },
+    {
+      id: 8,
+      label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS',
+      icon: 'fa fa-gift',
+    },
   ];
 }

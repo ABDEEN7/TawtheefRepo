@@ -163,6 +163,8 @@ namespace Tawtheef.Infrastructure
                 .AddScoped<IJobDegreeRepository, JobDegreeRepository>()
                 .AddScoped<IJobQuotaRepository, JobQuotaRepository>()
                 .AddScoped<IJobSkillRepository, JobSkillRepository>()
+                .AddScoped<IJobResponsibilityRepository, JobResponsibilityRepository>()
+                .AddScoped<IJobRequiredAttachmentRepository, JobRequiredAttachmentRepository>()
                 .AddScoped<IResidentsBreakdownRepository, ResidentsBreakdownRepository>();
         }
 

@@ -5,6 +5,9 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application.Common.Behaviours;
+using Tawtheef.Application.Features.Operations.Employee.Job.Interfaces;
+using Tawtheef.Application.Features.Operations.Employee.Job.Services;
+using Tawtheef.Application.Features.Operations.Employee.Job.Services.Background;
 
 namespace Tawtheef.Application
 {
@@ -23,6 +26,7 @@ namespace Tawtheef.Application
             RegisterMediator(services);
             RegisterValidators(services);
 
+            services.AddHostedService<JobAutoClosureService>();
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
 
@@ -30,6 +34,8 @@ namespace Tawtheef.Application
             services.AddSingleton(TimeProvider.System);
 
             services.AddScoped<Common.Services.IProfileReviewService, Common.Services.ProfileReviewService>();
+            services.AddScoped<IJobValidationService, JobValidationService>();
+
             services.AddScoped<Common.Services.IProfileStepValidationService, Common.Services.ProfileStepValidationService>();
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

@@ -1,29 +1,186 @@
-<div class="card card-lite p-3 mb-3" [formGroup]="form">
-  <h6 class="mb-3 text-brand fw-bold">{{ 'job_wizard.steps.conditions.title' | translate }}</h6>
+<div class="step-content">
+  <form [formGroup]="form">
+    <div class="page-card card card-lite p-4">
 
-  <div class="input-group mb-2">
-    <input [(ngModel)]="newCond" [ngModelOptions]="{standalone: true}" class="form-control"
-           placeholder="{{ 'job_wizard.steps.conditions.placeholder' | translate }}">
-    <button class="btn btn-outline-brand" (click)="add()">
-      {{ 'job_wizard.steps.conditions.add_condition' | translate }}
-    </button>
-  </div>
+      <!-- Header + Add Button -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="row-item">
+          <div class="row-item-icon">
+            <i class="fa fa-list-check"></i>
+          </div>
+          <div class="row-item-text">
+            {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS' | translate }}
+          </div>
+        </div>
 
-  <ul class="list-group">
-    <ng-container formArrayName="items">
-      @for (ctrl of items.controls; track $index; let i = $index) {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <input [formControlName]="i" id="{{ctrl}}" class="form-control border-0 flex-fill" readonly>
-          <button class="btn btn-sm btn-outline-danger delCond" (click)="remove(i)">
-            <i class="fa fa-trash"></i>
-          </button>
-        </li>
+        <button class="btn btn-brand btn-add w-50" (click)="addCondition()" type="button">
+          <i class="fa fa-plus me-2"></i>
+          {{ 'JOB_WIZARD.STEPS.CONDITIONS.ADD_CONDITION' | translate }}
+        </button>
+      </div>
+
+      <!-- New Condition Card -->
+      <div class="rounded-card p-4 mb-4 bg-light-custom">
+        <h5 class="fw-bold mb-3 brand-text">
+          {{ 'JOB_WIZARD.STEPS.CONDITIONS.ADD_NEW' | translate }}
+        </h5>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="field-label">
+              <span class="text-danger">*</span>
+              {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR' | translate }}
+            </label>
+
+            <textarea
+              [(ngModel)]="newConditionAr"
+              [ngModelOptions]="{ standalone: true }"
+              class="form-control custom-input"
+              rows="3"
+              dir="rtl"
+              placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate }}"
+              (keydown.enter)="$event.preventDefault(); addCondition()"
+            ></textarea>
+          </div>
+
+          <div class="col-md-6">
+            <label class="field-label">
+              {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_EN' | translate }}
+            </label>
+
+            <textarea
+              [(ngModel)]="newConditionEn"
+              [ngModelOptions]="{ standalone: true }"
+              class="form-control custom-input"
+              rows="3"
+              dir="ltr"
+              placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_EN_PLACEHOLDER' | translate }}"
+              (keydown.enter)="$event.preventDefault(); addCondition()"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conditions List -->
+      <div formArrayName="conditions">
+
+        @if (conditionsArray.length === 0) {
+
+        <div class="empty-card text-center py-5 border rounded">
+          <i class="fa fa-tasks fa-3x text-muted mb-3"></i>
+          <h6 class="text-muted">
+            {{ 'JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE_TITLE' | translate }}
+          </h6>
+          <p class="text-muted small">
+            {{ 'JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE_DESC' | translate }}
+          </p>
+
+          <div class="alert alert-info mt-3">
+            <i class="fa fa-info-circle me-2"></i>
+            {{ 'JOB_WIZARD.STEPS.CONDITIONS.AT_LEAST_ONE' | translate }}
+          </div>
+        </div>
+
+        } @else {
+
+        <h5 class="fw-bold mb-3 brand-text">
+          {{ 'JOB_WIZARD.STEPS.CONDITIONS.LIST_TITLE' | translate }}
+          <span class="badge bg-brand ms-2">{{ conditionsArray.length }}</span>
+        </h5>
+
+        @for (condition of conditionsArray.controls; track $index; let i = $index) {
+
+        <div class="rounded-card mb-3 shadow-sm-sm" [formGroupName]="i">
+
+          <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <span class="fw-bold brand-text">
+              {{ 'JOB_WIZARD.STEPS.CONDITIONS.CONDITION' | translate }} {{ i + 1 }}
+            </span>
+
+            @if (conditionsArray.length > 1) {
+            <button
+              class="btn btn-outline-danger btn-sm"
+              (click)="removeCondition(i)"
+              type="button"
+              [title]="'JOB_WIZARD.STEPS.CONDITIONS.REMOVE' | translate"
+            >
+              <i class="fa fa-trash"></i>
+            </button>
+            }
+          </div>
+
+          <div class="card-body">
+            <div class="row g-3">
+
+              <div class="col-md-6">
+                <label class="field-label">
+                  <span class="text-danger">*</span>
+                  {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR' | translate }}
+                </label>
+
+                <textarea
+                  formControlName="textAr"
+                  class="form-control custom-input"
+                  rows="3"
+                  dir="rtl"
+                  placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate }}"
+                ></textarea>
+
+                @if (getConditionGroup(i).controls['textAr'].invalid && getConditionGroup(i).controls['textAr'].touched) {
+                <div class="text-danger small mt-1">
+                  @if (getConditionGroup(i).controls['textAr'].errors?.['required']) {
+                  <i class="fa fa-exclamation-circle me-1"></i>
+                  {{ 'JOB_WIZARD.VALIDATION.CONDITION_AR_REQUIRED' | translate }}
+                  }
+                  @if (getConditionGroup(i).controls['textAr'].errors?.['maxlength']) {
+                  <i class="fa fa-exclamation-circle me-1"></i>
+                  {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate : { max: 500 } }}
+                  }
+                </div>
+                }
+              </div>
+
+              <div class="col-md-6">
+                <label class="field-label">
+                  {{ 'JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_EN' | translate }}
+                </label>
+
+                <textarea
+                  formControlName="textEn"
+                  class="form-control custom-input"
+                  rows="3"
+                  dir="ltr"
+                  placeholder="{{ 'JOB_WIZARD.STEPS.CONDITIONS.ITEM_DESCRIPTION_EN_PLACEHOLDER' | translate }}"
+                ></textarea>
+
+                @if (getConditionGroup(i).controls['textEn'].invalid && getConditionGroup(i).controls['textEn'].touched) {
+                <div class="text-danger small mt-1">
+                  <i class="fa fa-exclamation-circle me-1"></i>
+                  {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate : { max: 500 } }}
+                </div>
+                }
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        } }
+      </div>
+
+      @if (!isValid() && form.touched) {
+      <div class="alert alert-warning mt-4">
+        <i class="fa fa-exclamation-triangle me-2"></i>
+
+        @if (conditionsArray.length === 0) {
+        {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_CONDITION' | translate }}
+        } @else {
+        {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_CONDITIONS' | translate }}
+        }
+      </div>
       }
-    </ng-container>
-    @if (items.length === 0) {
-      <li class="list-group-item text-center text-muted">
-        {{ 'job_wizard.steps.conditions.empty_state' | translate }}
-      </li>
-    }
-  </ul>
+
+    </div>
+  </form>
 </div>

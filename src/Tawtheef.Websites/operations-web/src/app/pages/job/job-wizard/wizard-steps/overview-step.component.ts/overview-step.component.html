@@ -1,0 +1,69 @@
+<form [formGroup]="form">
+  <div class="card card-lite p-3 mb-3">
+
+    <!-- Step Header Row -->
+    <div class="row-item">
+      <div class="row-item-icon">
+        <i class="fa fa-eye"></i>
+      </div>
+      <div class="row-item-text">
+        {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW' | translate }}
+      </div>
+    </div>
+
+    <!-- Arabic Description -->
+    <div class="custom-textarea-container">
+      <label class="field-label">
+        <span class="required-asterisk">*</span>
+        <span class="label-text">
+          {{ 'JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_AR' | translate }}
+        </span>
+      </label>
+      <div class="custom-textarea-wrapper">
+        <textarea
+          formControlName="overviewAr"
+          class="custom-textarea"
+          rows="8"
+          dir="rtl"
+          placeholder="{{ 'JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_AR_PLACEHOLDER' | translate }}"
+          [class.is-invalid]="form.controls.overviewAr.touched && form.controls.overviewAr.invalid">
+        </textarea>
+        <div class="custom-scrollbar">
+          <div class="scroll-bar"><div class="bar"></div></div>
+        </div>
+      </div>
+      @if(form.controls.overviewAr.touched && form.controls.overviewAr.invalid){
+      <div class="text-danger small mt-1">
+        {{ 'JOB_WIZARD.VALIDATION.OVERVIEW_REQUIRED' | translate }}
+      </div>
+    }
+    </div>
+
+    <div class="custom-textarea-container">
+      <label class="field-label">
+        <span class="required-asterisk">*</span>
+        <span class="label-text">
+          {{ 'JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_EN' | translate }}
+        </span>
+      </label>
+      <div class="custom-textarea-wrapper">
+        <textarea
+          formControlName="overviewEn"
+          class="custom-textarea"
+          rows="8"
+          dir="ltr"
+          placeholder="{{ 'JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_EN_PLACEHOLDER' | translate }}">
+        </textarea>
+        <div class="custom-scrollbar">
+          <div class="scroll-bar"><div class="bar"></div></div>
+        </div>
+      </div>
+      @if(form.controls.overviewEn.touched && form.controls.overviewEn.invalid){
+      <div class="text-danger small mt-1">
+        {{ 'JOB_WIZARD.VALIDATION.OVERVIEW_REQUIRED' | translate }}
+      </div>
+    }
+    </div>
+
+  </div>
+</form>

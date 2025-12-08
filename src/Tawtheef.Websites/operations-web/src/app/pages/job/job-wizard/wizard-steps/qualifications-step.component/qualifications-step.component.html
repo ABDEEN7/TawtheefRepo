@@ -1,0 +1,118 @@
+<form [formGroup]="form">
+  <div class="card card-lite p-3">
+
+    <div class="row-item">
+      <div class="row-item-icon">
+        <i class="fa fa-graduation-cap"></i>
+      </div>
+      <div class="row-item-text">
+        {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS' | translate }}
+      </div>
+    </div>
+
+    <div class="mb-4">
+
+      <label class="field-label">
+        <span class="required-asterisk">*</span>
+        <span class="label-text">
+          {{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS' | translate }}
+        </span>
+      </label>
+
+      @if (lookupsService.degrees().length === 0) {
+        <div class="alert alert-info">
+          <i class="fa fa-info-circle me-2"></i>
+          {{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.LOADING_DEGREES' | translate }}
+        </div>
+      } @else {
+        <div class="d-flex flex-wrap gap-4">
+          @for (degree of lookupsService.degrees(); track degree.id) {
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                [id]="'degree-' + degree.id"
+                [checked]="isDegreeChecked(degree.id)"
+                (change)="toggleDegree(degree.id, $event)"
+              >
+              <label class="form-check-label" [for]="'degree-' + degree.id">
+                {{ degree.name }}
+              </label>
+            </div>
+          }
+        </div>
+
+        @if (form.controls.degrees.touched && form.controls.degrees.invalid) {
+          <div class="text-danger small mt-2">
+            <i class="fa fa-exclamation-circle me-1"></i>
+            {{ 'JOB_WIZARD.VALIDATION.DEGREES_REQUIRED' | translate }}
+          </div>
+        }
+      }
+    </div>
+
+    <hr class="my-4">
+
+    <div class="custom-textarea-container">
+      <label class="field-label">
+        <span class="required-asterisk">*</span>
+        <span class="label-text">
+          {{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ARABIC' | translate }}
+        </span>
+        
+      </label>
+
+      <div class="custom-textarea-wrapper">
+        <textarea
+          formControlName="qualificationsDescriptionAr"
+          class="custom-textarea"
+          dir="rtl"
+          rows="8"
+          placeholder="{{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ARABIC_PLACEHOLDER' | translate }}"
+          [class.is-invalid]="form.controls.qualificationsDescriptionAr.touched && form.controls.qualificationsDescriptionAr.invalid">
+        </textarea>
+
+        <div class="custom-scrollbar">
+          <div class="scroll-bar"></div>
+        </div>
+      </div>
+
+      @if(form.controls.qualificationsDescriptionAr.touched && form.controls.qualificationsDescriptionAr.invalid){
+      <div class="text-danger small mt-1">
+        {{ 'JOB_WIZARD.VALIDATION.OVERVIEW_REQUIRED' | translate }}
+      </div>
+    }
+    </div>
+
+    <!-- English Description (Matching Overview Design) -->
+    <div class="custom-textarea-container mt-4">
+      <label class="field-label">
+        <span class="required-asterisk">*</span>
+        <span class="label-text">
+          {{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ENGLISH' | translate }}
+        </span>
+      </label>
+
+      <div class="custom-textarea-wrapper">
+        <textarea
+          formControlName="qualificationsDescriptionEn"
+          class="custom-textarea"
+          dir="ltr"
+          rows="8"
+          placeholder="{{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ENGLISH_PLACEHOLDER' | translate }}">
+        </textarea>
+
+        <div class="custom-scrollbar">
+          <div class="scroll-bar"></div>
+        </div>
+      </div>
+    </div>
+
+   @if(form.controls.qualificationsDescriptionEn.touched && form.controls.qualificationsDescriptionEn.invalid){
+      <div class="text-danger small mt-1">
+        {{ 'JOB_WIZARD.VALIDATION.OVERVIEW_REQUIRED' | translate }}
+      </div>
+    }
+
+  </div>
+</form>
