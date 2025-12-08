@@ -12,12 +12,13 @@ public class CandidateInvitationProfile: IRegister
     {
         config.NewConfig<Invitation, CandidateInvitationsDto>()
             .Map(dest => dest.InvitationId, src => src.Id)
-            .Map(dest => dest.JobTitle, src => src.Job!.Title)
+            .Map(dest => dest.JobTitle, src => src.Job!.TitleAr)
+            .Map(dest => dest.JobTitle, src => src.Job!.TitleEn)
             .Map(dest => dest.InvitationStatus, src => src.InvitationStatus!)
             .AfterMapping((src, dest) =>
             {
                 var localized = MapContext.Current!.GetService<ILocalizationService>();
-                dest.DepartmentName = localized.GetLocalizedName(src.Job!.RequestingDepartment);
+                dest.DepartmentName = localized.GetLocalizedName(src.Job!.Department);
                 dest.JobCategory = localized.GetLocalizedName(src.Job.JobCategory);
             });
     }
