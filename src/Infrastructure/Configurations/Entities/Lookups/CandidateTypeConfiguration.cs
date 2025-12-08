@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
@@ -69,6 +68,36 @@ public class CandidateTypeConfiguration : LookupBaseConfiguration<CandidateType>
                 DescriptionAr = "الزوج أو الزوجة غير قطري/ة المتزوج/ة من قطري/ة",
                 DescriptionEn = "Non-Qatari spouse married to a Qatari",
                 DisplayOrder = 6
+            }
+        );
+    }
+}
+
+public class AchievementTypeConfiguration : LookupBaseConfiguration<AchievementType>
+{
+    public override void Configure(EntityTypeBuilder<AchievementType> builder)
+    {
+        base.Configure(builder);
+        builder.HasData(
+            new AchievementType
+            {
+                Id = AchievementTypeIds.Certificate,
+                BackendName = nameof(AchievementTypeIds.Certificate),
+                NameEn = "Certificate",
+                NameAr = "شهادة",
+                DescriptionAr = "شهادة",
+                DescriptionEn = "Certificate",
+                DisplayOrder = 1
+            },
+            new AchievementType
+            {
+                Id = AchievementTypeIds.Award,
+                BackendName = nameof(AchievementTypeIds.Award),
+                NameEn = "Award",
+                NameAr = "جائزة",
+                DescriptionAr = "جائزة",
+                DescriptionEn = "Award",
+                DisplayOrder = 2
             }
         );
     }

@@ -144,7 +144,7 @@ export class StepPersonalComponent implements OnInit {
   ngOnInit(): void {
     const state = this.ds.state();
     const dto = mapPersonalSection(state);
-    updateRemote(this.sponsorCard, state.sponsorCardFile);
+    updateRemote(this.sponsorCard, state.sponsorCard);
     this.lastSubmittedSignature = null;
   }
 
@@ -178,7 +178,7 @@ export class StepPersonalComponent implements OnInit {
     if (!file) return;
     setLocalFile(this.sponsorCard, file);
     this.ds.up('sponsorCardName', file.name);
-    this.ds.up('sponsorCardFile', { resourceId: 'local', fileName: file.name, file: file } as any);
+    this.ds.up('sponsorCard', { resourceId: 'local', fileName: file.name, file: file } as any);
     input.value = '';
   }
   onNext() {
@@ -204,7 +204,7 @@ export class StepPersonalComponent implements OnInit {
     this.savingPersonal = true;
 
     this.profileService
-      .savePersonalSection(dto, { sponsorCardFile: fileToUpload(this.sponsorCard) })
+      .savePersonalSection(dto, { sponsorCard: fileToUpload(this.sponsorCard) })
       .pipe(finalize(() => this.savingPersonal = false))
       .subscribe({
         next: () => {

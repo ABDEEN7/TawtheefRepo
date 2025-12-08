@@ -278,17 +278,10 @@ function validateDegreesStep(s: ProfileState): StepValidationResult {
   }
 
   s.degrees?.forEach((degree, index) => {
-    if (!degree?.certificate || !isFilledField(degree.certificate.resourceName)) {
+    if ((!degree.file || !degree.fileName) && !degree.attachmentId) {
       errors.push({
         field: `degrees[${index}].certificate`,
         i18nKey: 'wizard.profile.degrees.certificate.required',
-      });
-    }
-
-    if (!(degree?.file || degree?.attachmentId)) {
-      errors.push({
-        field: `degrees[${index}].attachment`,
-        i18nKey: 'wizard.profile.degrees.attachment.required',
       });
     }
 
@@ -345,17 +338,11 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
   }
 
   s.experiences?.forEach((experience, index) => {
-    if (!experience?.attachment || !isFilledField(experience.attachment.resourceName)) {
+
+    if ((!experience.file || !experience.fileName) && !experience.attachmentId) {
       errors.push({
         field: `experiences[${index}].attachment`,
         i18nKey: 'wizard.profile.experience.attachment.required',
-      });
-    }
-
-    if (!(experience?.file || experience?.attachmentId)) {
-      errors.push({
-        field: `experiences[${index}].file`,
-        i18nKey: 'wizard.profile.experience.file.required',
       });
     }
 
@@ -392,17 +379,10 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
   });
 
   s.courses?.forEach((course, index) => {
-    if (!course?.attachment || !isFilledField(course.attachment.resourceName)) {
+    if ((!course.file || !course.fileName) && !course.attachmentId) {
       errors.push({
         field: `courses[${index}].attachment`,
         i18nKey: 'wizard.profile.courses.attachment.required',
-      });
-    }
-
-    if (!(course?.file || course?.attachmentId)) {
-      errors.push({
-        field: `courses[${index}].file`,
-        i18nKey: 'wizard.profile.courses.file.required',
       });
     }
 
@@ -421,13 +401,7 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
     ?.map((exp, index) => {
       const start = parseDate(exp.from);
       const end = exp.current ? today : parseDate(exp.to) ?? today;
-      return start
-        ? {
-            start,
-            end,
-            index,
-          }
-        : null;
+      return start ? { start, end, index } : null;
     })
     .filter((r): r is { start: Date; end: Date; index: number } => !!r)
     .sort((a, b) => a.start.getTime() - b.start.getTime());
@@ -464,17 +438,10 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
     if (!achievement?.achievementType) {
       errors.push({ field: `achievements[${index}].achievementType`, i18nKey: 'wizard.profile.achievements.type.required' });
     }
-    if (!achievement?.attachment || !isFilledField(achievement.attachment.resourceName)) {
+    if ((!achievement.file || !achievement.fileName) && !achievement.attachmentId) {
       errors.push({
         field: `achievements[${index}].attachment`,
         i18nKey: 'wizard.profile.achievements.attachment.required',
-      });
-    }
-
-    if (!(achievement?.file || achievement?.attachmentId)) {
-      errors.push({
-        field: `achievements[${index}].file`,
-        i18nKey: 'wizard.profile.achievements.file.required',
       });
     }
   });
@@ -484,7 +451,6 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
 
 function validateSkillsStep(s: ProfileState): StepValidationResult {
   const hasSkills = Array.isArray(s.skills) && s.skills.length > 0;
-
   if (!hasSkills) {
     return {
       valid: false,

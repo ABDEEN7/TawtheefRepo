@@ -182,7 +182,7 @@
   "wizard.courses.provider": "الجهة المانحة",
   "wizard.courses.courseName": "اسم الدورة",
   "wizard.courses.period": "الفترة",
-  "wizard.courses.notes": "ملاحظات",
+  "wizard.courses.notes": "شرح الدورة",
   "wizard.courses.certificate": "شهادة الدورة (PDF/صورة)",
   "wizard.courses.country": "بلد الدورة",
   "wizard.courses.choiceCountry": "اختر بلد الدورة",
@@ -316,5 +316,9 @@
   "wizard.profile.courses.atLeastOne.required": "يجب إضافة دورة تدريبية واحدة على الأقل",
   "wizard.profile.courses.futureDate": "تواريخ الدورات التدريبية لا يمكن أن تكون مستقبلية",
   "wizard.profile.achievements.atLeastOne.required": "يجب إضافة إنجاز واحد على الأقل",
-  "wizard.profile.attachments.atLeastOne.required": "يجب إضافة مرفق واحد على الأقل"
+  "wizard.profile.attachments.atLeastOne.required": "يجب إضافة مرفق واحد على الأقل",
+  "wizard.profile.courses.attachment.required": "يرجى إرفاق شهادة الدورة",
+  "wizard.profile.experience.attachment.required": "يرجى إرفاق شهادة الخبرة",
+  "wizard.profile.achievements.attachment.required": "يرجى إرفاق شهادة الإنجاز",
+  "wizard.profile.degrees.certificate.required": "يرجى إرفاق شهادة المؤهل"
 }

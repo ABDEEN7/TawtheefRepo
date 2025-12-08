@@ -65,6 +65,7 @@ public sealed class ProfileStatusDto
     
     public string? SponsorEmployerName { get; set; }
     public string? SponsorEmployerNumber { get; set; }
+    public DateOnly? SponsorQidExpiry { get; set; }
     public FileRefDto? SponsorCard { get; set; }
     public Guid? SponsorTypeId { get; set; }
 

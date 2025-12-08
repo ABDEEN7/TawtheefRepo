@@ -24,8 +24,12 @@ public sealed class SaveProfileSkillsHandler(
         var skillRepo   = uow.GetEntityRepository<ProfileSkill>();
 
         var profile = await profileRepo.DbSet
+            .Include(p => p.ResidenceAddress)
+            .Include(p => p.Qualifications)
+            .Include(p => p.Experiences)
+            .Include(p => p.TrainingCourses)
+            .Include(p => p.Achievements)
             .Include(p => p.Skills)
-            .Include(p => p.Languages)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)

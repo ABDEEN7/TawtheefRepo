@@ -9,6 +9,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -29,6 +30,10 @@ public sealed class SaveProfileAchievementHandler(
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var profile = await profileRepo.DbSet
+            .Include(p => p.ResidenceAddress)
+            .Include(p => p.Qualifications)
+            .Include(p => p.Experiences)
+            .Include(p => p.TrainingCourses)
             .Include(p => p.Achievements)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
@@ -82,10 +87,10 @@ public sealed class SaveProfileAchievementHandler(
             newAchievements.Add(entity);
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, ct);
+        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
         foreach (var achievement in newAchievements)
         {
-            await reviewService.TouchRowAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, nameof(Achievement), achievement.Id, ct);
+            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Achievement), achievement.Id, ct);
         }
 
         await uow.SaveChangesAsync(ct);

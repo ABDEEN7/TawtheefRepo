@@ -67,6 +67,7 @@ public sealed class SaveProfilePersonalHandler(
             {
                 profile.SponsorProfile = new SponsorProfile
                 {
+                    SponsorTypeId = r.SponsorTypeId!.Value,
                     SponsorName = r.SponsorEmployerName,
                     SponsorNumber = r.SponsorEmployerNumber,
                     QIDExpiry = r.QIDExpiry!.Value,
@@ -75,6 +76,7 @@ public sealed class SaveProfilePersonalHandler(
             }
             else
             {
+                profile.SponsorProfile.SponsorTypeId = r.SponsorTypeId!.Value;
                 profile.SponsorProfile.SponsorName = r.SponsorEmployerName;
                 profile.SponsorProfile.SponsorNumber = r.SponsorEmployerNumber;
                 profile.SponsorProfile.QIDExpiry = r.QIDExpiry!.Value;

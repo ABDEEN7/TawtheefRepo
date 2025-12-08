@@ -39,10 +39,10 @@ export class ProfileService {
   // ========== PERSONAL ==========
   savePersonalSection(
     dto: SaveProfilePersonalRequestDto,
-    files?: { sponsorCardFile?: File | null }
+    files?: { sponsorCard?: File | null }
   ) {
     const formData = this.buildFormData(dto, {
-      sponsorCardFile: files?.sponsorCardFile ?? null
+      sponsorCard: files?.sponsorCard ?? null
     });
 
     return this.http.post(this.endpoints.user.profile.savePersonal, formData);

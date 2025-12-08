@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Text.Json;
 using FluentResults;
 using MediatR;
@@ -11,6 +10,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -40,7 +40,7 @@ public sealed class SaveProfileEducationHandler(
         var profileRepo   = uow.GetEntityRepository<UserProfile>();
         var educationRepo = uow.GetEntityRepository<Qualification>();
 
-        var profile = await profileRepo.DbSet
+        var profile = await profileRepo.DbSet.Include(p=>p.ResidenceAddress)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)
@@ -60,7 +60,7 @@ public sealed class SaveProfileEducationHandler(
 
         var degrees = deserializeResult.Value;
 
-        var files = cmd.Request.DegreeFiles ?? new List<IFormFile?>();
+        var files = cmd.Request.DegreeFiles;
         if (degrees.Count == 0)
             return Result.Fail<Unit>(ErrorsCodes.InvalidDegreesJson);
 
@@ -138,12 +138,12 @@ public sealed class SaveProfileEducationHandler(
             }
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Qualifications, ct);
+        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Qualifications, ct);
         foreach (var qualification in newQualifications.Concat(updatedQualifications))
         {
             await reviewService.TouchRowAsync(
                 profile.Id,
-                Domain.Entities.Recruitment.ProfileSection.Qualifications,
+                ProfileSection.Qualifications,
                 nameof(Qualification),
                 qualification.Id,
                 ct);
@@ -230,9 +230,6 @@ public sealed class SaveProfileEducationHandler(
         IReadOnlyList<SaveProfileEducationDegreeDto> degrees,
         IReadOnlyList<IFormFile?> degreeFiles)
     {
-        if (degreeFiles is null)
-            return Result.Ok();
-
         foreach (var degree in degrees)
         {
             if (degree.FileIndex is null)

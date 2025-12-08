@@ -9,6 +9,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -32,6 +33,13 @@ public sealed class SaveProfileAttachmentsHandler(
         var attachRepo  = uow.GetEntityRepository<ProfileAdditionalAttachment>();
 
         var profile = await profileRepo.DbSet
+            .Include(p => p.ResidenceAddress)
+            .Include(p => p.Qualifications)
+            .Include(p => p.Experiences)
+            .Include(p => p.TrainingCourses)
+            .Include(p => p.Achievements)
+            .Include(p => p.Skills)
+            .Include(p => p.Languages)
             .Include(p => p.AdditionalAttachments)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
@@ -89,12 +97,12 @@ public sealed class SaveProfileAttachmentsHandler(
             reviewAttachments.Add(attachment);
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Attachments, ct);
+        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Attachments, ct);
         foreach (var attachment in reviewAttachments)
         {
             await reviewService.TouchAttachmentAsync(
                 profile.Id,
-                Domain.Entities.Recruitment.ProfileSection.Attachments,
+                ProfileSection.Attachments,
                 attachment.FileName,
                 attachment.AttachmentId,
                 ct);
