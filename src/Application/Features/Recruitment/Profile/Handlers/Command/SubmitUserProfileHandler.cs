@@ -24,15 +24,13 @@ public sealed class SubmitUserProfileHandler(
 
         var profile = await profileRepo.DbSet
             .Include(p => p.User)
+            .Include(p => p.ResidenceAddress)
             .Include(p => p.Qualifications)
             .Include(p => p.Experiences)
             .Include(p => p.TrainingCourses)
             .Include(p => p.Achievements)
             .Include(p => p.Skills)
             .Include(p => p.Languages)
-            .Include(p => p.AdditionalAttachments)
-            .Include(p => p.SponsorProfile)
-            .Include(p => p.ResidenceAddress)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
 
         if (profile is null)

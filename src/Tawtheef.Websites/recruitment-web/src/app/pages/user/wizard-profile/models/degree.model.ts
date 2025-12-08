@@ -13,8 +13,8 @@ export interface Degree {
   studySystem: dropdownOptionsModel | null | undefined;
   gpa: number;
   grade: dropdownOptionsModel | null | undefined;
-  certificateName?: string;
   certificate?: UploadedFileRef | null;
   file?: File | null;
+  fileName?: string;
   attachmentId?: string | null;
 }

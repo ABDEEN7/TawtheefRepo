@@ -127,7 +127,7 @@ export function mapProfileStatusToState(
     sponsorEmployerNumber: dto.sponsorEmployerNumber,
     sponsorQidExpiry: dto.sponsorQidExpiry,
     sponsorCardName: dto.sponsorCard?.fileName ?? null,
-    sponsorCardFile: mapFile(dto.sponsorCard),
+    sponsorCard: mapFile(dto.sponsorCard),
 
     // ----------- Contact -----------
     country: mapIdToDropdown(lookups, 'countries', dto.residenceCountryId),
@@ -166,7 +166,7 @@ export function mapProfileStatusToState(
       grade: mapIdToDropdown(lookups, 'ratingGrade', q.gradeId),
       certificate: mapFile(q.attachment),
       attachmentId: q.attachment?.resourceId,
-      certificateName: q.attachment?.fileName,
+      fileName: q.attachment?.fileName,
     } as Degree)),
 
     experiences: (dto.experiences ?? []).map(e => ({

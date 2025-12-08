@@ -28,7 +28,7 @@ public class ConfirmEmailVerificationCommandHandler(
                 v.UserId == request.UserId &&
                 v.Type == ContactVerificationType.Email &&
                 v.Destination == request.Email &&
-                !v.IsUsed &&
+                !v.UsedAt.HasValue &&
                 v.ExpiresAt >= now)
             .OrderByDescending(v => v.CreatedDate)
             .FirstOrDefaultAsync(cancellationToken);

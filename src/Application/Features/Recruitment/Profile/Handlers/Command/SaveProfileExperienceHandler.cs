@@ -9,6 +9,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -29,6 +30,8 @@ public sealed class SaveProfileExperienceHandler(
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var profile = await profileRepo.DbSet
+            .Include(p => p.ResidenceAddress)
+            .Include(p => p.Qualifications)
             .Include(p => p.Experiences)
             .Include(p => p.TrainingCourses)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
@@ -122,15 +125,15 @@ public sealed class SaveProfileExperienceHandler(
             newTrainings.Add(entity);
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, ct);
+        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
         foreach (var experience in newExperiences)
         {
-            await reviewService.TouchRowAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, nameof(Experience), experience.Id, ct);
+            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Experience), experience.Id, ct);
         }
 
         foreach (var training in newTrainings)
         {
-            await reviewService.TouchRowAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Experience, nameof(TrainingCourse), training.Id, ct);
+            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(TrainingCourse), training.Id, ct);
         }
 
         await uow.SaveChangesAsync(ct);

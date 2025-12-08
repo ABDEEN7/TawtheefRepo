@@ -28,7 +28,7 @@ public class ConfirmPhoneVerificationCommandHandler(
                 v.UserId == request.UserId &&
                 v.Type == ContactVerificationType.Phone &&
                 v.Destination == request.PhoneE164 &&
-                !v.IsUsed &&
+                !v.UsedAt.HasValue &&
                 v.ExpiresAt >= now)
             .OrderByDescending(v => v.CreatedDate)
             .FirstOrDefaultAsync(cancellationToken);

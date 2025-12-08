@@ -95,7 +95,6 @@ export class ProfileLookupsService {
     );
   }
   searchSkills(query: string): Observable<dropdownOptionsModel[]> {
-    const params = new HttpParams().set('search', query);
-    return this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.skill, { params });
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.skill, { 'search': query });
   }
 }

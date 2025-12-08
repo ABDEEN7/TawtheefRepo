@@ -49,7 +49,7 @@ export class StepDegreeComponent implements OnInit {
       })?.onClose.subscribe((e: Degree) => {
       if (e) {
         this.ds.addDegree(e);
-        this.ds.state().degrees = [...this.ds.state().degrees.sort((a, b) => a.gradYear - b.gradYear), e];
+        this.ds.state().degrees = [...this.ds.state().degrees.sort((a, b) => a.gradYear - b.gradYear)];
       }
     });
   }

@@ -170,7 +170,7 @@ export class DataService {
       next.sponsorEmployerNumber = null;
       next.sponsorQidExpiry = null;
       next.sponsorCardName = null;
-      next.sponsorCardFile = null;
+      next.sponsorCard = null;
     }
 
     if (!candidateTypeNeedsBirthCertificate(type)) {
