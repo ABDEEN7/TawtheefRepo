@@ -14,7 +14,7 @@
   "internal.nav.logout": "Logout",
 
   "internal.sidebar.home": "Home",
-  "internal.sidebar.files": "Facility Distribution",
+  "internal.sidebar.distribution": "Facility Distribution",
   "internal.sidebar.approve": "Approve Facilities",
   "internal.sidebar.job": "Create Job",
   "internal.sidebar.transfer": "Nominations",

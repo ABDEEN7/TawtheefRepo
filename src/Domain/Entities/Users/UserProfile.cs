@@ -4,6 +4,7 @@ using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Domain.Entities.Users;
 
@@ -98,6 +99,7 @@ public class UserProfile : EventEntity
     public ICollection<ProfileSkill>? Skills { get; set; } = [];
     public ICollection<ProfileLanguage>? Languages { get; set; } = [];
     public ICollection<ProfileAdditionalAttachment>? AdditionalAttachments { get; set; } = [];
+    public ICollection<ProfileAssignment> ProfileAssignments { get; set; } = [];
     
     public UserProfileStatus Status { get; set; } = UserProfileStatus.InCreation;
 

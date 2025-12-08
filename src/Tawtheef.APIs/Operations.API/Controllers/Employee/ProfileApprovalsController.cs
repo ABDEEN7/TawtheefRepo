@@ -14,7 +14,7 @@ namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/profile-approvals")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileApprovalsController(IMediator mediator) : ControllerBase
 {
     private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch

@@ -13,14 +13,15 @@ import { TranslatePipe, TranslateService} from '@ngx-translate/core';
 export class SidebarComponent implements OnInit {
   private translationService = inject(TranslateService);
   @Output() toggleSidebar = new EventEmitter<void>();
-  
+
   isCollapsed = true;
   activeItem = '';
-  
+
   menuItems = [
     { key: 'home', label: 'internal.sidebar.home', icon: 'assets/img/icons/home.svg', route: '/dashboard' },
-    { key: 'files', label: 'internal.sidebar.files', icon: 'assets/img/icons/files.svg', route: '/facilities' },
-    { key: 'approve', label: 'internal.sidebar.approve', icon: 'assets/img/icons/approve.svg', route: '/approval' },
+    { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'assets/img/icons/files.svg', route: '/profile-distribution' },
+    { key: 'approve-job', label: 'internal.sidebar.approve-job', icon: 'assets/img/icons/approve.svg', route: '/approval-job' },
+    { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: '/approval-profile' },
     { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: '/jobs/create' },
     { key: 'transfer', label: 'internal.sidebar.transfer', icon: 'assets/img/icons/transfer.svg', route: '/nominations' }
   ];

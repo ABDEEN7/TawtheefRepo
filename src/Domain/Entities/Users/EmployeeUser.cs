@@ -1,11 +1,13 @@
 ﻿using FluentResults;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.ValueObjects.User;
 
 namespace Tawtheef.Domain.Entities.Users;
 
 public class EmployeeUser : User
 {
+    public ICollection<ProfileAssignment> ProfileAssignments { get; set; } = [];
     
     public static Result<User> Register(string email,string displayName)
     {
