@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, computed, inject, signal } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { TranslateService } from '@ngx-translate/core';
-import {finalize} from 'rxjs/operators';
+import {finalize, switchMap} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
 import {Skill} from '../../models/skill.model';
 import {CandidateType} from '../../../../../core/enums/lookups.enum';
@@ -11,6 +11,7 @@ import {UploadedFileRef} from '../../models/profile-state.model';
 import {NavigationService} from '../../../../../core/services/navigation.service';
 import {Router} from '@angular/router';
 import {routes} from '../../../../../routes/routes';
+import {AuthService} from '../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-step-review',
@@ -25,6 +26,7 @@ export class StepReviewComponent {
   private i18n = inject(TranslateService);
   private profile = inject(ProfileService);
   private fileUtils = inject(FileUtilsService);
+  private auth = inject(AuthService);
 
   private stepValidity = createStepValiditySignal(this.ds.state);
 
@@ -86,7 +88,10 @@ export class StepReviewComponent {
     this.errorText.set(null);
     this.profile
       .finalizeProfile()
-      .pipe(finalize(() => this.submitting.set(false)))
+      .pipe(
+        switchMap(() => this.auth.refreshToken()),
+        finalize(() => this.submitting.set(false))
+      )
       .subscribe({
         next: () => {
           this.submitted.set(true);
