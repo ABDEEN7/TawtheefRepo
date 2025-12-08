@@ -40,7 +40,6 @@ export class StepPersonalComponent implements OnInit {
   }
 
   savingPersonal = false;
-  verifyingMoi = false;
   verifyingSponsor = false;
   private sponsorCard: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
@@ -48,44 +47,6 @@ export class StepPersonalComponent implements OnInit {
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);
-  }
-
-  verifyMoiProfile() {
-    const state = this.ds.state();
-    if (!state.qid || !state.qidExpiry) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: this.translate.instant('wizard.personal.verify.title'),
-        detail: this.translate.instant('wizard.personal.verify.missing'),
-        life: 4000,
-      });
-      return;
-    }
-
-    this.verifyingMoi = true;
-    this.profileService
-      .checkProfile(state.qid, state.qidExpiry)
-      .pipe(finalize(() => this.verifyingMoi = false))
-      .subscribe({
-        next: res => {
-          this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
-          this.messageService.add({
-            severity: 'success',
-            summary: this.translate.instant('wizard.personal.verify.title'),
-            detail: this.translate.instant('wizard.personal.verify.success'),
-            life: 3000,
-          });
-        },
-        error: err => {
-          const detail = err?.error?.message || err?.error || this.translate.instant('wizard.personal.verify.error');
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.personal.verify.title'),
-            detail,
-            life: 5000,
-          });
-        }
-      });
   }
 
   verifySponsorProfile() {

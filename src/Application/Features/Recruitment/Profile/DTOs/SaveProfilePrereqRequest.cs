@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Http;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.DTOs;
@@ -7,6 +8,7 @@ public sealed class SaveProfilePrereqRequest
     public Guid CandidateTypeId { get; set; }
     public Guid TargetEntityId { get; set; }
     public Guid? OfficeId { get; set; }
+    public DateOnly? QIDExpiry { get; set; }
 
     public string? CvFileName { get; set; }
     public string? IdFileName { get; set; }
