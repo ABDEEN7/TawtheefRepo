@@ -10,11 +10,6 @@ public class ApplicationUserConfiguration<T> : IEntityTypeConfiguration<T> where
     {
         builder.HasIndex(u => u.Email).IsUnique();
 
-        builder.Property(u => u.Status)
-            .HasMaxLength(50)
-            .HasConversion<string>()
-            .HasDefaultValue(UserStatus.InCreation);
-
         builder.HasOne(u => u.UserType)
             .WithMany()
             .HasForeignKey(u => u.UserTypeId)

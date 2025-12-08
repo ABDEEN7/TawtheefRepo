@@ -98,6 +98,8 @@ public class UserProfile : EventEntity
     public ICollection<ProfileSkill>? Skills { get; set; } = [];
     public ICollection<ProfileLanguage>? Languages { get; set; } = [];
     public ICollection<ProfileAdditionalAttachment>? AdditionalAttachments { get; set; } = [];
+    
+    public UserProfileStatus Status { get; set; } = UserProfileStatus.InCreation;
 
     public bool IsCompleted()
     {
@@ -183,6 +185,6 @@ public class UserProfile : EventEntity
         if (Qualifications is null || Qualifications.Count == 0)
             return false;
 
-        return true;
+        return Status != UserProfileStatus.InCreation;
     }
 }

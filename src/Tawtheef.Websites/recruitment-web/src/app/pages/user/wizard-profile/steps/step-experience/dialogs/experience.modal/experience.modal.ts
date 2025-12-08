@@ -8,7 +8,6 @@ import {
   ValidationErrors
 } from '@angular/forms';
 import { Button } from 'primeng/button';
-import { FileUpload } from 'primeng/fileupload';
 import { InputText } from 'primeng/inputtext';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -21,7 +20,7 @@ import {Experience} from '../../../../models/experience.model';
 import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
 import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
 import {Degree} from '../../../../models/degree.model';
-import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel} from '../../../../../../../shared/models/dropdown-options.model';
 
 @Component({
   selector: 'app-experience',

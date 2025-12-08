@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
-using System.Linq;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
@@ -28,15 +27,9 @@ public sealed class ProfileCompletenessProfile : IRegister
         config.NewConfig<Experience, ExperienceDto>()
             .Map(dest => dest.Attachment, src => src.Certificate)
             .Map(dest => dest.QualificationId, src => src.QualificationId)
-            .Map(dest => dest.QualificationName,
-                src => src.Qualification == null
-                    ? null
-                    : string.Join(" - ", new[]
-                    {
-                        src.Qualification.Degree?.Name,
-                        src.Qualification.Major?.Name,
-                        src.Qualification.University?.Name
-                    }.Where(s => !string.IsNullOrWhiteSpace(s))))
+            .Map(dest => dest.DegreeName,src=> src.Qualification == null ? null : src.Qualification.Degree)
+            .Map(dest => dest.MajorName,src=> src.Qualification == null ? null : src.Qualification.Major)
+            .Map(dest => dest.UniversityName,src=> src.Qualification == null ? null : src.Qualification.University)
             .Map(dest => dest.IsCurrent, src => src.EndDate == null);
 
         config.NewConfig<TrainingCourse, TrainingCourseDto>()
@@ -57,7 +50,7 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest, src => src.profile)
             .Map(dest => dest.IsComplete,
                 src => src.profile.IsCompleted())
-            .Map(dest => dest.Status, src => src.user.Status)
+            .Map(dest => dest.Status, src => src.profile.Status)
             .Map(dest => dest.Avatar, src => src.user.Avatar ?? src.prefill.Avatar)
             .Map(dest => dest.FullNameAr,
                 src => string.IsNullOrWhiteSpace(src.user.FullNameAr)

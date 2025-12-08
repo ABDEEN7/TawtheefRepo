@@ -32,7 +32,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
     public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, string loginSource, CancellationToken ct)
     {
-        if (user.Status.BlocksLogin())
+        if (user.IsBlocked)
         {
             await loginAudit.LogAsync(
                 new LoginAttemptEntry(user.Id, user.UserTypeId, loginSource, false,

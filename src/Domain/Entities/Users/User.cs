@@ -17,7 +17,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public required string FullNameEn { get; set; }
     [Required, StringLength(100)]
     public required string FullNameAr { get; set; }
-    public UserStatus Status { get; set; } = UserStatus.InCreation;
+    public bool IsBlocked { get; set; }
     public DateTime? LastLoginDate { get; set; }
     
     [StringLength(2048)]

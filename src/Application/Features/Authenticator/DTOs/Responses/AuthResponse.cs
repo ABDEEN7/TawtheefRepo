@@ -1,4 +1,5 @@
-﻿using Tawtheef.Application.Common.Models;
+﻿using System.Text.Json.Serialization;
+using Tawtheef.Application.Common.Models;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.DTOs.Responses;
@@ -26,7 +27,7 @@ public sealed class ProfilePrefillDto
 public sealed class ProfileStatusDto
 {
     public bool IsComplete { get; init; }
-    public UserStatus Status { get; init; }
+    public UserProfileStatus Status { get; init; }
 
     // ===== Scalars من UserProfile =====
     public Guid? CandidateTypeId { get; init; }
@@ -123,7 +124,13 @@ public sealed class ExperienceDto
     public DateOnly? EndDate { get; init; }
     public bool IsCurrent { get; init; }
     public Guid? QualificationId { get; init; }
-    public string? QualificationName { get; init; }
+    [JsonIgnore]
+    public string? DegreeName { get; init; }
+    [JsonIgnore]
+    public string? MajorName { get; init; }
+    [JsonIgnore]
+    public string? UniversityName { get; init; }
+    public string? QualificationName => string.Join("-", new []{this.DegreeName, this.MajorName, this.UniversityName}.Where(s => !string.IsNullOrWhiteSpace(s)));
 
     public FileRefDto? Attachment { get; init; }
 }
