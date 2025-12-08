@@ -1,7 +1,8 @@
 ﻿import {inject, Injector} from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { map } from 'rxjs/operators';
+import { map, switchMap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 import {routes} from '../../routes/routes';
 
 export const profileCompleteGuard: CanActivateFn = () => {
@@ -12,9 +13,15 @@ export const profileCompleteGuard: CanActivateFn = () => {
   const jwtData = auth.decodeBootstrapFromJwt();
   if (jwtData.requiresProfileCompletion) {
     return auth.getAuthBootstrap$().pipe(
-      map(response => {
+      switchMap(response => {
+        if (response.isComplete) {
+          return auth.refreshToken().pipe(
+            map(() => true),
+            catchError(() => of(true)),
+          );
+        }
         router.navigate([routes.user.profileWizard], {state: {response}}).then(r => {});
-        return false;
+        return of(false);
       })
     )
   }
