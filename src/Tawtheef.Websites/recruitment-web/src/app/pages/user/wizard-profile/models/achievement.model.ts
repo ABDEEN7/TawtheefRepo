@@ -14,4 +14,5 @@ export interface Achievement {
   file?: File | null;
   attachment?: UploadedFileRef | null;
   attachmentId?: string | null;
+  relatedToSpecialization?: boolean | null;
 }

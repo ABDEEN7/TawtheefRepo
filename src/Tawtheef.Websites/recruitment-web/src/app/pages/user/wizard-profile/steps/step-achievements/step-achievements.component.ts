@@ -166,6 +166,7 @@ export class StepAchievementsComponent implements OnInit {
       description: a.description ?? '',
       attachmentId: a.attachmentId ?? null,
       fileName: a.file?.name ?? a.attachment?.resourceName ?? null,
+      relatedToSpecialization: a.relatedToSpecialization ?? null,
     })));
   }
 }

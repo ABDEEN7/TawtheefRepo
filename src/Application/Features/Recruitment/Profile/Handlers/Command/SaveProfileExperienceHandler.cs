@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Linq;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -56,6 +57,10 @@ public sealed class SaveProfileExperienceHandler(
         var lengthValidationResult = ValidateTextLengths(experiences, trainings);
         if (lengthValidationResult.IsFailed)
             return Result.Fail<Unit>(lengthValidationResult.Errors);
+
+        var qualificationValidation = ValidateQualifications(experiences, profile.Qualifications ?? []);
+        if (qualificationValidation.IsFailed)
+            return Result.Fail<Unit>(qualificationValidation.Errors);
         var experienceFiles = cmd.Request.ExperienceFiles;
         var trainingFiles   = cmd.Request.TrainingCourseFiles;
 
@@ -85,7 +90,8 @@ public sealed class SaveProfileExperienceHandler(
                 CountryId     = dto.CountryId,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id,
-                Description   = dto.Description
+                Description   = dto.Description,
+                QualificationId = dto.QualificationId
             };
 
             profile.Experiences.Add(entity);
@@ -217,6 +223,31 @@ public sealed class SaveProfileExperienceHandler(
                     training.Description.Length > ProfileLimits.TrainingDescriptionMaxLength)
                 {
                     return Result.Fail(ErrorsCodes.TrainingDescriptionTooLong);
+                }
+            }
+
+            return Result.Ok();
+        }
+
+        static Result ValidateQualifications(
+            IEnumerable<ExperienceUpsertDto> experiencesToValidate,
+            IEnumerable<Qualification> qualifications)
+        {
+            var qualificationLookup = qualifications.ToDictionary(q => q.Id);
+
+            foreach (var experience in experiencesToValidate)
+            {
+                if (experience.QualificationId is null)
+                    continue;
+
+                if (!qualificationLookup.TryGetValue(experience.QualificationId.Value, out var qualification))
+                {
+                    return Result.Fail(ErrorsCodes.InvalidExperienceQualification);
+                }
+
+                if (qualification.GraduationYear is int gradYear && experience.StartDate.Year < gradYear)
+                {
+                    return Result.Fail(ErrorsCodes.ExperienceBeforeGraduation);
                 }
             }
 
