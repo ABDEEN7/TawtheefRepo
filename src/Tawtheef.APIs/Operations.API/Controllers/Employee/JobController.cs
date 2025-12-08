@@ -1,9 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
-using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -94,7 +92,8 @@ public class JobController(IMediator mediator) : ControllerBase
     [HttpGet("lookups/nationalities")]
     public async Task<IActionResult> GetNationalities()
     {
-        var result = await mediator.Send(new GetCountriesQuery());
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetCountriesQuery() with {Language = language});
         return result.ToActionResult();
     }
     
