@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.ValueObjects.User;
@@ -24,5 +25,26 @@ public class EmployeeUser : User
         };
 
         return Result.Ok(user as User);
+    }
+
+    // changed code: domain behavior - attempt to create assignment and update profile
+    public Result<ProfileAssignment> CreateProfileAssignmentIfAllowed(UserProfile profile, int currentLoad, int assignedThisRound, int? perEmployeeLimit)
+    {
+        // Respect per-employee cap for this distribution run
+        if (perEmployeeLimit.HasValue && assignedThisRound >= perEmployeeLimit.Value)
+            return Result.Fail<ProfileAssignment>("PerEmployeeLimitReached");
+
+        // Ensure profile is assignable (caller may have already filtered, but guard here as domain rule)
+        if (!ProfileDistributionRules.IsAssignable(profile.Status))
+            return Result.Fail<ProfileAssignment>("ProfileNotAssignable");
+
+        // Apply domain changes
+        profile.Status = UserProfileStatus.UnderReview;
+        var assignment = ProfileAssignment.Assign(profile.Id, this.Id);
+
+        // keep aggregate consistency in memory
+        ProfileAssignments.Add(assignment);
+
+        return Result.Ok(assignment);
     }
 }

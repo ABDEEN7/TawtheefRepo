@@ -12,8 +12,7 @@ import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.
   styleUrl: './navbar.scss',
   imports: [
     RouterLink,
-    TranslatePipe,
-    I18nNamespaceDirective
+    TranslatePipe
   ]
 })
 export class Navbar implements OnInit{

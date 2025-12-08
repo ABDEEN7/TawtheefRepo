@@ -14,9 +14,11 @@
         class="nav-item"
         [class.active]="activeItem === item.key"
         (click)="navigateTo(item)"
-      >
+        [pTooltip]="isCollapsed ? (item.label | translate) : ''"
+        tooltipPosition="right"
+        [tooltipDisabled]="!isCollapsed">
         <img class="icons" [src]="item.icon">
-        <span class="label">{{ item.label | translate}}</span>
+        <span class="label">{{ item.label | translate }}</span>
       </button>
     }
 
@@ -25,12 +27,22 @@
   <div class="divider"></div>
 
   <div class="sidebar-bottom">
-    <button class="action-item" (click)="openSettings()"> 
+    <button
+      class="action-item"
+      (click)="openSettings()"
+      [pTooltip]="isCollapsed ? ('internal.sidebar.settings' | translate) : ''"
+      tooltipPosition="right"
+      [tooltipDisabled]="!isCollapsed">
       <img class="icons" src="assets/img/icons/settings-icon.svg">
       <span class="label">{{ 'internal.sidebar.settings' | translate }}</span>
     </button>
 
-    <button class="action-item" (click)="logout()">
+    <button
+      class="action-item"
+      (click)="logout()"
+      [pTooltip]="isCollapsed ? ('internal.sidebar.logout' | translate) : ''"
+      tooltipPosition="right"
+      [tooltipDisabled]="!isCollapsed">
       <img class="icons" src="assets/img/icons/logout-icon.svg">
       <span class="label">{{ 'internal.sidebar.logout' | translate }}</span>
     </button>

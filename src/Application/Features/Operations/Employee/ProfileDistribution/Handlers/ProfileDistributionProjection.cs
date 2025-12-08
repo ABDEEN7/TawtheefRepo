@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
+using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Operations.ProfileDistribution.Handlers;
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Handlers;
 
 internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager<User> userManager)
 {

@@ -1,10 +1,10 @@
 using System.Text.Json;
-using System.Linq;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;

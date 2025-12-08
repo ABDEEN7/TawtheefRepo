@@ -32,6 +32,8 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
+using Tawtheef.Application.Common.Interfaces.Validations;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
@@ -39,12 +41,14 @@ using Tawtheef.Infrastructure.Data.Interceptors;
 using Tawtheef.Infrastructure.Repositories;
 using Tawtheef.Infrastructure.Repositories.Base;
 using Tawtheef.Infrastructure.Services.Authorization;
+using Tawtheef.Infrastructure.Services.BackgroundJobs;
 using Tawtheef.Infrastructure.Services.Environment;
 using Tawtheef.Infrastructure.Services.HttpClients;
 using Tawtheef.Infrastructure.Services.Identity;
 using Tawtheef.Infrastructure.Services.Localization;
 using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.StorageServices;
+using Tawtheef.Infrastructure.Services.Validations;
 
 namespace Tawtheef.Infrastructure
 {
@@ -454,6 +458,11 @@ namespace Tawtheef.Infrastructure
                 services.AddSingleton<ILocalizationService, LocalizationService>();
                 
                 services.AddScoped<ISessionService, EfSessionService>();
+
+                services.AddScoped<IProfileStepValidationService, ProfileStepValidationService>();
+                services.AddScoped<IJobValidationService, JobValidationService>();
+                services.AddScoped<IProfileReviewService, ProfileReviewService>();
+                services.AddHostedService<JobAutoClosureService>();
             }
         }
 

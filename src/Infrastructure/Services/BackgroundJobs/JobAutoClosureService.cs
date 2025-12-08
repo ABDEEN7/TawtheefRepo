@@ -6,7 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Application.Features.Operations.Employee.Job.Services.Background
+namespace Tawtheef.Infrastructure.Services.BackgroundJobs
 {
     public class JobAutoClosureService(
         IServiceScopeFactory scopeFactory,

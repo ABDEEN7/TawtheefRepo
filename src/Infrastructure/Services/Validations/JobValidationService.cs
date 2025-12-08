@@ -1,17 +1,17 @@
 ﻿using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
-using Tawtheef.Application.Features.Operations.Employee.Job.Interfaces;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
-namespace Tawtheef.Application.Features.Operations.Employee.Job.Services;
+namespace Tawtheef.Infrastructure.Services.Validations;
 
 public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationService
 {

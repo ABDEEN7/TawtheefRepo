@@ -2,11 +2,11 @@ using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Queries;
 using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.Queries;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Operations.ProfileDistribution.Handlers.Queries;
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Handlers.Queries;
 
 public sealed class GetDistributionEmployeesHandler(IUnitOfWork uow, UserManager<User> userManager)
     : IRequestHandler<GetDistributionEmployeesQuery, Result<IReadOnlyList<DistributionEmployeeDto>>>
