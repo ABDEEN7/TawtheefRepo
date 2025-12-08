@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Services.Identity;
@@ -17,7 +18,8 @@ public class Program
         Console.WriteLine("=== Import Started ===");
 
         const string ConnectionString =
-            "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
+            //"Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
+            "Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
 
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -54,6 +56,8 @@ public class Program
         ImportCities(db, errors, cityIds, cityBackendNames, countryIds);
         ImportUniversities(db, errors, universityIds, universityBackendNames, cityIds);
         ImportMajors(db, errors);
+        ImportOffices(db, errors);
+        ImportSkillTypes(db, errors);
 
         try
         {
@@ -382,6 +386,93 @@ public class Program
 
                 remaining.Remove(r);
             }
+        }
+    }
+
+    // ================= Import Offices =================
+    static void ImportOffices(TawtheefDbContext db, List<ImportError> errors)
+    {
+        try
+        {
+            var jordanId = Guid.Parse("b7f89fce-4f81-464a-9e99-7fc7c8bd1d54");
+            var syriaId = Guid.Parse("21d0a391-7e7f-4a3e-bd27-9c26345c7e09");
+            var ukId = Guid.Parse("cba347b0-123e-4eb1-91be-ca3a2725bbeb");
+
+            var offices = new (Guid CountryId,string Code, string BackendName, string Ar, string En, int Order)[]
+            {
+                (jordanId, "JO-AMM", "AMMAN_OFFICE", "مكتب عمّان", "Amman Office", 1),
+                (jordanId, "JO-IRB", "IRBID_OFFICE", "مكتب إربد", "Irbid Office", 2),
+                (jordanId, "JO-ZAR", "ZARQA_OFFICE", "مكتب الزرقاء", "Zarqa Office", 3),
+                (syriaId, "SY-DAM", "DAMASCUS_OFFICE", "مكتب دمشق", "Damascus Office", 4),
+                (syriaId, "SY-ALA", "ALEPPO_OFFICE", "مكتب حلب", "Aleppo Office", 5),
+                (syriaId, "SY-HOM", "HOMS_OFFICE", "مكتب حمص", "Homs Office", 6),
+                (ukId, "UK-LON", "LONDON_OFFICE", "مكتب لندن", "London Office", 7),
+                (ukId, "UK-MAN", "MANCHESTER_OFFICE", "مكتب مانشستر", "Manchester Office", 8),
+                (ukId, "UK-BIR", "BIRMINGHAM_OFFICE", "مكتب برمنغهام", "Birmingham Office", 9),
+                (ukId, "UK-LIV", "LIVERPOOL_OFFICE", "مكتب ليفربول", "Liverpool Office", 10),
+            };
+
+            foreach (var o in offices)
+                if (!db.Office.Any(x => x.BackendName == o.BackendName))
+                    db.Office.Add(new Office
+                    {
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTimeOffset.UtcNow,
+                        IsDeleted = false,
+                        CountryId = o.CountryId,
+                        Code = o.Code,
+                        BackendName = o.BackendName,
+                        NameAr = o.Ar,
+                        NameEn = o.En,
+                        DisplayOrder = o.Order
+                    });
+        }
+        catch (Exception ex)
+        {
+            errors.Add(new ImportError("InsertOffices", null, ex.GetBaseException().Message));
+        }
+    }
+
+
+// ================= Import SkillTypes =================
+    static void ImportSkillTypes(TawtheefDbContext db, List<ImportError> errors)
+    {
+        try
+        {
+            var skills = new (string Backend, string Ar, string En, int Order)[]
+            {
+                ("TECHNICAL", "مهارات تقنية", "Technical Skills", 1), 
+                ("SOFT", "مهارات شخصية", "Soft Skills", 2),
+                ("LANGUAGE", "مهارات لغوية", "Language Skills", 3),
+                ("MANAGEMENT", "مهارات إدارية", "Management Skills", 4),
+                ("LEADERSHIP", "مهارات قيادية", "Leadership Skills", 5),
+                ("COMPUTER", "مهارات الحاسوب", "Computer Skills", 6),
+                ("COMMUNICATION", "مهارات التواصل", "Communication Skills", 7),
+                ("CREATIVE", "مهارات إبداعية", "Creative Skills", 8),
+                ("ANALYTICAL", "مهارات تحليلية", "Analytical Skills", 9),
+                ("OTHER", "مهارات أخرى", "Other Skills", 10)
+            };
+
+            foreach (var s in skills)
+            {
+                if (db.SkillType.Any(x => x.BackendName == s.Backend))
+                    continue;
+
+                db.SkillType.Add(new SkillType
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedDate = DateTimeOffset.UtcNow,
+                    IsDeleted = false,
+                    BackendName = s.Backend,
+                    NameAr = s.Ar,
+                    NameEn = s.En,
+                    DisplayOrder = s.Order
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add(new ImportError("InsertSkillTypes", null, ex.GetBaseException().Message));
         }
     }
 }

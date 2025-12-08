@@ -11,6 +11,10 @@ import {Achievement} from '../models/achievement.model';
 import {of} from 'rxjs';
 import {MoiPersonalInfo} from '../models/moi-personal-info.model';
 import {ProfileStatusDto} from '../../../../core/models/auth/auth-response.model';
+import {Language} from '../models/language.model';
+import {Skill} from '../models/skill.model';
+import {Attachment} from '../models/attachment.model';
+import {Degree} from '../models/degree.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -104,7 +108,7 @@ export class ProfileService {
   }
 
   // ========== Degrees ==========
-  saveEducationSection(degrees: any[]) {
+  saveEducationSection(degrees: Degree[]) {
     let fileCursor = 0;
     const degreeFiles: (File | null | undefined)[] = [];
 
@@ -116,18 +120,18 @@ export class ProfileService {
 
       return {
         id: d.id ?? null,
-        degreeId: d.degree.id,
-        gradCountryId: d.gradCountry.id,
-        universityId: d.university.id,
-        majorId: d.major.id,
-        subMajorId: d.subMajor.id,
+        degreeId: d.degree!.id,
+        gradCountryId: d.gradCountry!.id,
+        universityId: d.university!.id,
+        majorId: d.major!.id,
+        subMajorId: d.subMajor!.id,
         gradYear: d.gradYear,
-        studyTypeId: d.studySystem.id,
+        studyTypeId: d.studySystem!.id,
         gpa: d.gpa,
-        gradeId: d.grade.id,
+        gradeId: d.grade!.id,
         certificateId: d.attachmentId ?? null,
         fileIndex,
-        existingFileName: d.certificate?.resourceName ?? d.certificateName ?? d.fileName ?? null,
+        existingFileName: d.certificate?.resourceName ?? d.fileName ?? null,
       };
     });
 
@@ -244,7 +248,7 @@ export class ProfileService {
   }
 
   // ========== SKILLS & LANGUAGES ==========
-  saveSkillsSection(skills: any[]) {
+  saveSkillsSection(skills: Skill[]) {
     const dto = {
       submit: false,
       skills: (skills ?? []).map(s => ({
@@ -258,14 +262,14 @@ export class ProfileService {
   deleteSkill(skillId: GUID){
     return this.http.delete(this.endpoints.user.profile.deleteSkill(skillId));
   }
-  saveLanguagesSection(languages: any[]) {
+  saveLanguagesSection(languages: Language[]) {
     const dto = {
       submit: false,
       languages: (languages ?? []).map(l => ({
-        languageId: l.langId ?? l.languageId ?? l.id ?? l,
-        speakingLevelId: l.speakingLevelId ?? l.speakingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level,
-        writingLevelId: l.writingLevelId ?? l.writingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level,
-        readingLevelId: l.readingLevelId ?? l.readingLevel?.id ?? l.levelId ?? l.level?.id ?? l.level,
+        languageId: l.langId,
+        speakingLevelId: l.speakingLevelId ?? l.speakingLevel?.id,
+        writingLevelId: l.writingLevelId ?? l.writingLevel?.id,
+        readingLevelId: l.readingLevelId ?? l.readingLevel?.id,
       })),
     };
 
@@ -276,7 +280,7 @@ export class ProfileService {
   }
 
   // ========== ATTACHMENTS ==========
-  saveAttachmentsSection(attachments: any[]) {
+  saveAttachmentsSection(attachments: Attachment[]) {
     let fileCursor = 0;
     const files: (File | null | undefined)[] = [];
 

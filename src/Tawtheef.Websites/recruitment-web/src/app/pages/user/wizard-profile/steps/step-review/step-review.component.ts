@@ -8,6 +8,9 @@ import {CandidateType} from '../../../../../core/enums/lookups.enum';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {UploadedFileRef} from '../../models/profile-state.model';
+import {NavigationService} from '../../../../../core/services/navigation.service';
+import {Router} from '@angular/router';
+import {routes} from '../../../../../routes/routes';
 
 @Component({
   selector: 'app-step-review',
@@ -16,8 +19,8 @@ import {UploadedFileRef} from '../../models/profile-state.model';
   standalone: false
 })
 export class StepReviewComponent {
-  savingDraft = false;
   @Output() back = new EventEmitter<void>();
+  router = inject(Router);
   ds = inject(DataService);
   private i18n = inject(TranslateService);
   private profile = inject(ProfileService);
@@ -87,6 +90,7 @@ export class StepReviewComponent {
       .subscribe({
         next: () => {
           this.submitted.set(true);
+          this.router.navigate([routes.user.dashboard]);
         },
         error: (err) => {
           this.errorText.set(

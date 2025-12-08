@@ -411,12 +411,7 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   const hasAchievements = Array.isArray(s.achievements) && s.achievements.length > 0;
 
-  if (!hasAchievements) {
-    errors.push({
-      field: 'achievements',
-      i18nKey: 'wizard.profile.achievements.atLeastOne.required',
-    });
-  }
+  if (!hasAchievements) return { valid: true, errors: [] };
 
   s.achievements?.forEach((achievement, index) => {
     if (!achievement?.achievementType) {

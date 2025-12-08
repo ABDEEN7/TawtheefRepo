@@ -36,7 +36,7 @@ public sealed class SaveProfileLanguagesHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        var validationResult = validationService.ValidateSkillsAndLanguages(profile);
+        var validationResult = validationService.ValidateLanguages(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 

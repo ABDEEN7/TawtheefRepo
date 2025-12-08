@@ -1,7 +1,6 @@
 using FluentResults;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
@@ -15,7 +14,8 @@ public interface IProfileStepValidationService
     Result ValidateEducation(UserProfile profile);
     Result ValidateExperience(UserProfile profile);
     Result ValidateAchievements(UserProfile profile);
-    Result ValidateSkillsAndLanguages(UserProfile profile);
+    Result ValidateSkills(UserProfile profile);
+    Result ValidateLanguages(UserProfile profile);
     Result ValidateAttachments(UserProfile profile);
 }
 
@@ -29,8 +29,9 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         Education = 3,
         Experience = 4,
         Achievements = 5,
-        SkillsLanguages = 6,
-        Attachments = 7
+        Skills = 6,
+        Languages = 7,
+        Attachments = 8
     }
 
     private static readonly ProfileStep[] StepOrder =
@@ -41,7 +42,8 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         ProfileStep.Education,
         ProfileStep.Experience,
         ProfileStep.Achievements,
-        ProfileStep.SkillsLanguages,
+        ProfileStep.Skills,
+        ProfileStep.Languages,
         ProfileStep.Attachments
     ];
 
@@ -106,9 +108,14 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         return EnsurePreviousStepsCompleted(profile, ProfileStep.Achievements);
     }
 
-    public Result ValidateSkillsAndLanguages(UserProfile profile)
+    public Result ValidateSkills(UserProfile profile)
     {
-        return EnsurePreviousStepsCompleted(profile, ProfileStep.SkillsLanguages);
+        return EnsurePreviousStepsCompleted(profile, ProfileStep.Skills);
+    }
+
+    public Result ValidateLanguages(UserProfile profile)
+    {
+        return EnsurePreviousStepsCompleted(profile, ProfileStep.Languages);
     }
 
     public Result ValidateAttachments(UserProfile profile)
@@ -146,9 +153,10 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         ProfileStep.Contact => IsContactComplete(profile),
         ProfileStep.Education => profile.Qualifications is { Count: > 0 },
         ProfileStep.Experience => profile.Experiences is { Count: > 0 } || profile.TrainingCourses is { Count: > 0 },
-        ProfileStep.Achievements => profile.Achievements is { Count: > 0 },
-        ProfileStep.SkillsLanguages => profile.Skills is { Count: > 0 } && profile.Languages is { Count: > 0 },
-        ProfileStep.Attachments => profile.AdditionalAttachments is { Count: > 0 },
+        ProfileStep.Achievements => true,
+        ProfileStep.Skills => profile.Skills is { Count: > 0 },
+        ProfileStep.Languages => profile.Languages is { Count: > 0 },
+        ProfileStep.Attachments => true,
         _ => false
     };
 
