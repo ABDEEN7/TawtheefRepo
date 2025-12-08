@@ -1,8 +1,8 @@
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Operations.ProfileDistribution.Handlers;
+namespace Tawtheef.Domain.Configurations.Rules;
 
-internal static class ProfileDistributionRules
+public static class ProfileDistributionRules
 {
     public static readonly UserProfileStatus[] FinalStatuses =
         [UserProfileStatus.Approved, UserProfileStatus.Rejected, UserProfileStatus.Cancelled, UserProfileStatus.AdminCancelled];

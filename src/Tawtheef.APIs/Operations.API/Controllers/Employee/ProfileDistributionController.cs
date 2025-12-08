@@ -1,10 +1,7 @@
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.Commands;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.Queries;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Commands;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Queries;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
 

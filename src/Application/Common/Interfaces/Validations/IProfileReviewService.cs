@@ -1,6 +1,6 @@
 using Tawtheef.Domain.Entities.Recruitment;
 
-namespace Tawtheef.Application.Common.Services;
+namespace Tawtheef.Application.Common.Interfaces.Validations;
 
 public interface IProfileReviewService
 {

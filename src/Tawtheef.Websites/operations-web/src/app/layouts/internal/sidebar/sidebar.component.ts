@@ -3,12 +3,13 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {Tooltip} from 'primeng/tooltip';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe]
+  imports: [CommonModule, TranslatePipe, Tooltip]
 })
 export class SidebarComponent implements OnInit {
   private translationService = inject(TranslateService);

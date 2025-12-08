@@ -3,13 +3,14 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.Commands;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Commands;
 using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
+using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Operations.ProfileDistribution.Handlers.Commands;
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Handlers.Commands;
 
 public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User> userManager)
     : IRequestHandler<AutoAssignProfilesCommand, Result<DistributionResultDto>>
@@ -19,7 +20,7 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
-        var targetEmployeeIds = request.EmployeeIds.ToList() ?? [];
+        var targetEmployeeIds = request.EmployeeIds?.ToList() ?? new List<Guid>();
         var employees = await userManager.Users.OfType<EmployeeUser>()
             .Where(e => targetEmployeeIds.Contains(e.Id) && !e.IsDeleted && !e.IsBlocked)
             .ToListAsync(ct);
@@ -71,8 +72,11 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
             if (chosen is null)
                 break;
 
-            profile.Status = UserProfileStatus.UnderReview;
-            assignmentRepo.DbSet.Add(ProfileAssignment.Assign(profile.Id, chosen.Employee.Id));
+            var assignmentResult = chosen.Employee.CreateProfileAssignmentIfAllowed(profile, chosen.Load, chosen.AssignedThisRound, perEmployeeLimit);
+            if (assignmentResult.IsFailed)
+                continue;
+
+            assignmentRepo.DbSet.Add(assignmentResult.Value);
             newlyAssigned[chosen.Employee.Id]++;
         }
 

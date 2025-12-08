@@ -6,7 +6,8 @@
 
   "internal.sidebar.home": "الرئيسية",
   "internal.sidebar.distribution": "توزيع الملفات",
-  "internal.sidebar.approve": "اعتماد الملفات",
+  "internal.sidebar.approve-profile": "اعتماد الملفات",
+  "internal.sidebar.approve-job": "اعتماد الوظيفة",
   "internal.sidebar.job": "إنشاء وظيفة",
   "internal.sidebar.transfer": "الترشيحات",
   "internal.sidebar.settings": "الإعدادات",

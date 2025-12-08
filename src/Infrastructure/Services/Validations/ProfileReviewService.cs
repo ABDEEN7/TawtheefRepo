@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Domain.Entities.Recruitment;
 
-namespace Tawtheef.Application.Common.Services;
+namespace Tawtheef.Infrastructure.Services.Validations;
 
 public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
 {

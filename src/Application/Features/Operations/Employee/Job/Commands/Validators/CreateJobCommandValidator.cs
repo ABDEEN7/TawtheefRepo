@@ -1,5 +1,5 @@
 using FluentValidation;
-using Tawtheef.Application.Features.Operations.Employee.Job.Interfaces;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Commands.Validators;
