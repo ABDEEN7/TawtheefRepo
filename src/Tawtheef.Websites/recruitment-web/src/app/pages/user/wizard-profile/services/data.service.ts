@@ -191,6 +191,7 @@ export class DataService {
       next.naUnit = null;
       next.naFileName = null;
       next.naFile = null;
+      next.qidExpiry = null;
     } else {
       next.address = undefined;
     }

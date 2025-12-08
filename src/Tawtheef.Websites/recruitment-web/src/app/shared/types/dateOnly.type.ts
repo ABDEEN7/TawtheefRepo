@@ -2,7 +2,8 @@ export type DateOnly = string & { readonly __brand: "DateOnly" };
 export function toDateOnly(value: string): DateOnly {
   return value as DateOnly;
 }
-export function dateToDateOnly(date: Date): DateOnly {
+export function dateToDateOnly(date: Date | null): DateOnly | null {
+  if(!date) return null;
   const year = date.getFullYear();
   const month = date.getMonth();
   const day = date.getDate();

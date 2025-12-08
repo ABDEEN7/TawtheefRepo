@@ -49,7 +49,7 @@ public sealed class ProfileCompletenessProfile : IRegister
         config.NewConfig<(UserProfile profile, User user, ProfilePrefillDto prefill), ProfileStatusDto>()
             .Map(dest => dest, src => src.profile)
             .Map(dest => dest.IsComplete,
-                src => src.profile.IsCompleted())
+                src => src.profile.IsCompleted() && src.profile.Status != UserProfileStatus.InCreation)
             .Map(dest => dest.Status, src => src.profile.Status)
             .Map(dest => dest.Avatar, src => src.user.Avatar ?? src.prefill.Avatar)
             .Map(dest => dest.FullNameAr,

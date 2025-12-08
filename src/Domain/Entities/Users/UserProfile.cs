@@ -179,12 +179,9 @@ public class UserProfile : EventEntity
         if (Experiences is null || Experiences.Count == 0)
             return false;
 
-        if (Achievements is null || Achievements.Count == 0)
-            return false;
-
         if (Qualifications is null || Qualifications.Count == 0)
             return false;
 
-        return Status != UserProfileStatus.InCreation;
+        return true;
     }
 }

@@ -38,6 +38,11 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
                         .WithMessage(ErrorsCodes.OfficeRequired);
                 });
 
+                When(x => RequiresResidencyExpiry(x.Request), () =>
+                {
+                    RuleFor(x => x.Request.QIDExpiry).NotEmpty();
+                });
+
                 RuleFor(x => x.Request.CvFile)
                     .Must((cmd, file) => FileValidationHelpers.HasFile(file) ||
                                          FileValidationHelpers.HasExisting(cmd.Request.CvFileName))
@@ -75,6 +80,9 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
     private static bool RequiresOfficeSelection(SaveProfilePrereqRequest r)
         => r.CandidateTypeId == CandidateTypeIds.NonQatari || r.CandidateTypeId == CandidateTypeIds.GCC;
 
+    private static bool RequiresResidencyExpiry(SaveProfilePrereqRequest r)
+        => r.CandidateTypeId != CandidateTypeIds.NonQatari && r.CandidateTypeId != CandidateTypeIds.GCC;
+
     private static bool HasExistingMarriageFile(SaveProfilePrereqRequest r)
         => FileValidationHelpers.HasExisting(r.MarriageCertificateFileName) ||
            FileValidationHelpers.HasExisting(r.MarriageCertFileName);
@@ -98,7 +106,6 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                 RuleFor(x => x.Request.FullNameEn).NotEmpty();
                 RuleFor(x => x.Request.NationalNumber).NotEmpty();
                 RuleFor(x => x.Request.BirthDate).NotNull();
-                RuleFor(x => x.Request.QIDExpiry).NotNull();
 
                 RuleFor(x => x.Request.NationalityId).NotNull();
                 RuleFor(x => x.Request.GenderId).NotNull();

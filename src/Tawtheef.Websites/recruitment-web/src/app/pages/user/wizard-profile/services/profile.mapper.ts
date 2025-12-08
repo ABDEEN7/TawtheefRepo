@@ -19,6 +19,7 @@ export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestM
     candidateTypeId: state.candidateType!.id,
     targetEntityId: state.targetEntity!.id,
     officeId: state.office?.id ?? null,
+    qidExpiry: state.qidExpiry ?? null,
     cvFileName: state.cvName,
     idFileName: state.idName,
     birthCertificateFileName: state.birthCertificateName,

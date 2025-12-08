@@ -2,13 +2,15 @@ import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileLookupsService } from '../../services/profile-lookups.service';
 import { DataService } from '../../services/data.service';
-import { CandidateType } from '../../../../../core/enums/lookups.enum';
 import { ProfileService } from '../../services/profile.service';
 import {mapPrereqSection} from '../../services/profile.mapper';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
 import {FileSlot, createFileSlot, fileSlotSignature, fileToUpload, previewFileFromSlot, previewUrlFromSlot, setLocalFile, updateRemote} from '../../utils/file-slot';
+import {dateToDateOnly} from '../../../../../shared/types/dateOnly.type';
+import {normalizeMoiResponse} from '../../services/moi-response-normalizer';
+import {catchError, finalize, of, switchMap, tap} from 'rxjs';
 
 @Component({
   selector: 'app-step-first-info',
@@ -31,6 +33,7 @@ export class StepFirstInfoComponent implements OnInit {
   private birthCertificateFile: FileSlot = createFileSlot();
   private marriageCertificateFile: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
+  private hasCheckedProfile = false;
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
@@ -51,6 +54,12 @@ export class StepFirstInfoComponent implements OnInit {
 
   onCandidateTypeChange(option: any) {
     this.ds.up('candidateType', option);
+    this.hasCheckedProfile = false;
+  }
+
+  onQidExpirySelect(date: Date) {
+    this.ds.up('qidExpiry', dateToDateOnly(date));
+    this.hasCheckedProfile = false;
   }
 
   onFileSelected(kind: 'cv' | 'id' | 'birth' | 'marriage', event: Event) {
@@ -96,7 +105,9 @@ export class StepFirstInfoComponent implements OnInit {
     const state = this.ds.state();
     const payload = mapPrereqSection(state);
     const signature = this.buildSignature(payload);
-    if (signature && signature === this.lastSubmittedSignature) {
+    const shouldCheckProfile = this.shouldCheckProfile();
+
+    if (signature && signature === this.lastSubmittedSignature && (!shouldCheckProfile || this.hasCheckedProfile)) {
       this.next.emit();
       return;
     }
@@ -108,17 +119,49 @@ export class StepFirstInfoComponent implements OnInit {
         idFile: fileToUpload(this.idFile),
         birthCertificateFile: fileToUpload(this.birthCertificateFile),
         marriageCertificateFile: fileToUpload(this.marriageCertificateFile)
-      }).subscribe({
-      next: () => {
-        this.saving = false;
-        this.lastSubmittedSignature = signature;
-        this.next.emit();
-      },
-      error: err => {
-        console.error(err);
-        this.saving = false;
-      }
-    });
+      })
+      .pipe(
+        switchMap(() => {
+          this.lastSubmittedSignature = signature;
+          if (!shouldCheckProfile) return of(null);
+
+          const { qid, qidExpiry } = this.ds.state();
+          if (!qid || !qidExpiry) return of(false);
+
+          return this.profile.checkProfile(qid, qidExpiry).pipe(
+            tap(res => {
+              this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
+              this.hasCheckedProfile = true;
+              this.messageService.add({
+                severity: 'success',
+                summary: this.translate.instant('wizard.personal.verify.title'),
+                detail: this.translate.instant('wizard.personal.verify.success'),
+                life: 3000,
+              });
+            }),
+            catchError(err => {
+              const detail = err?.error?.message || err?.error || this.translate.instant('wizard.personal.verify.error');
+              this.messageService.add({
+                severity: 'error',
+                summary: this.translate.instant('wizard.personal.verify.title'),
+                detail,
+                life: 5000,
+              });
+              return of(false);
+            })
+          );
+        }),
+        finalize(() => this.saving = false)
+      )
+      .subscribe({
+        next: (checkProfileResult) => {
+          const canProceed = !shouldCheckProfile || checkProfileResult !== false;
+          if (canProceed) {
+            this.next.emit();
+          }
+        },
+        error: err => console.error(err),
+      });
   }
 
   canPreview(kind: 'cv' | 'id' | 'birth' | 'marriage'): boolean {
@@ -153,6 +196,11 @@ export class StepFirstInfoComponent implements OnInit {
     }
   }
 
+  private shouldCheckProfile(): boolean {
+    const { qid, qidExpiry } = this.ds.state();
+    return this.ds.isResidentQatar && !!qid && !!qidExpiry;
+  }
+
   private getSlot(kind: 'cv' | 'id' | 'birth' | 'marriage'): FileSlot {
     switch (kind) {
       case 'cv':
@@ -165,4 +213,6 @@ export class StepFirstInfoComponent implements OnInit {
         return this.marriageCertificateFile;
     }
   }
+
+  protected readonly dateToDateOnly = dateToDateOnly;
 }

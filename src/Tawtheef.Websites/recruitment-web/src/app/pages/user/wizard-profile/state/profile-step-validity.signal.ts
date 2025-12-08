@@ -110,6 +110,10 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'basic', 'office');
   }
 
+  if (isResident && !isFilledField(s.qidExpiry)) {
+    addRequiredError(errors, 'basic', 'qidExpiry');
+  }
+
   if (!isFilledField(s.cvName)) {
     addRequiredError(errors, 'basic', 'cvName');
   }
@@ -150,10 +154,6 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 
   if (!isFilledField(s.qid)) {
     addRequiredError(errors, 'personal', 'qid');
-  }
-
-  if (isResident && !isFilledField(s.qidExpiry)) {
-    addRequiredError(errors, 'personal', 'qidExpiry');
   }
 
   if (!isFilledField(s.dob)) {
@@ -411,12 +411,7 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   const hasAchievements = Array.isArray(s.achievements) && s.achievements.length > 0;
 
-  if (!hasAchievements) {
-    errors.push({
-      field: 'achievements',
-      i18nKey: 'wizard.profile.achievements.atLeastOne.required',
-    });
-  }
+  if (!hasAchievements) return { valid: true, errors: [] };
 
   s.achievements?.forEach((achievement, index) => {
     if (!achievement?.achievementType) {
@@ -507,12 +502,7 @@ function validateAttachmentsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   const hasAttachments = Array.isArray(s.attachments) && s.attachments.length > 0;
 
-  if (!hasAttachments) {
-    errors.push({
-      field: 'attachments',
-      i18nKey: 'wizard.profile.attachments.atLeastOne.required',
-    });
-  }
+  if (!hasAttachments) return { valid: true, errors: [] };
 
   s.attachments?.forEach((attachment, index) => {
     if (!isFilledField(attachment?.fileName ?? attachment?.name)) {

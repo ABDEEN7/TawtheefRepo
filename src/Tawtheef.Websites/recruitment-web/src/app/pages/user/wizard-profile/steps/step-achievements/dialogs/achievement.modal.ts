@@ -136,7 +136,7 @@ export class AchievementModal implements OnInit {
       title: v.title,
       issuingAuthority: v.issuingAuthority,
       country: v.country,
-      issueDate: dateToDateOnly(v.issueDate),
+      issueDate: dateToDateOnly(v.issueDate)!,
       description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null,

@@ -1,6 +1,9 @@
 ﻿{
-  "wizard.errorTitle": "Something went wrong",
+  "wizard.warningTitle": "Warning",
   "wizard.validationErrorTitle": "Validation error",
+  "wizard.errorTitle": "An error occurred",
+  "wizard.achievements.deleteError": "An error occurred while deleting an achievement.",
+  "wizard.language.deleteError": "An error occurred while deleting a language",
   "wizard.title": "Tawtheef - Candidate Profile",
   "wizard.placeholders.select": "Select",
   "wizard.accountFieldNote": "This field came from your account and cannot be changed.",
@@ -297,6 +300,7 @@
   "wizard.profile.basic.candidateType.required": "Please select candidate type",
   "wizard.profile.basic.targetEntity.required": "Please select target entity",
   "wizard.profile.basic.office.required": "Please select an accredited office",
+  "wizard.profile.basic.qidExpiry.required": "Please enter QID expiry date",
   "wizard.profile.basic.cv.required": "Please attach your CV",
   "wizard.profile.basic.id.required": "Please attach your ID card",
   "wizard.profile.basic.marriageCertificate.required": "Please attach marriage certificate",

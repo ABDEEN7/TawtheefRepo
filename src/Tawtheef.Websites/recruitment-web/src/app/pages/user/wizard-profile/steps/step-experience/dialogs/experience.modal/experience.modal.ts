@@ -146,6 +146,13 @@ export class ExperienceModal implements OnInit {
 
     const v = this.form.getRawValue();
     const qualificationOption = this.degreeOptions.find(d => d.id === v.qualificationId) ?? null;
+    if(qualificationOption){
+      if(v.from.getFullYear() < qualificationOption.additionalData.year){
+        this.form.setErrors({ invalidQualificationDate: true });
+        this.form.markAllAsTouched();
+        return;
+      }
+    }
 
     const payload = {
       employerName: v.org,
@@ -194,6 +201,9 @@ export class ExperienceModal implements OnInit {
         backendName: d.degree?.backendName ?? '',
         name: `${d.degree?.name ?? ''} - ${d.major?.name ?? ''} (${d.gradYear ?? ''})`,
         description: d.university?.name ?? '',
+        additionalData: {
+          year: d.gradYear
+        }
       }));
   }
 
