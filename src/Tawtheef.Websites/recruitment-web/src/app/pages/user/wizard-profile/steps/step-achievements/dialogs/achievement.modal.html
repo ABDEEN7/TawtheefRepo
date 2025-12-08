@@ -58,6 +58,28 @@
     </div>
   </div>
 
+  <div class="row g-3" *ngIf="shouldShowSpecializationQuestion">
+    <div class="col-md-6">
+      <label class="form-label required">{{ 'wizard.achievements.relatedToSpecialization.question' | translate }}</label>
+      <p-select size="small"
+                formControlName="relatedToSpecialization"
+                [options]="[
+                  {label: ('common.yes' | translate), value: true},
+                  {label: ('common.no' | translate), value: false}
+                ]"
+                optionLabel="label"
+                optionValue="value"
+                [placeholder]="'wizard.achievements.relatedToSpecialization.placeholder' | translate"
+                [ngClass]="{'p-invalid': f['relatedToSpecialization'].invalid && (f['relatedToSpecialization'].dirty || f['relatedToSpecialization'].touched)}"
+                fluid>
+      </p-select>
+      <small *ngIf="f['relatedToSpecialization'].invalid && (f['relatedToSpecialization'].dirty || f['relatedToSpecialization'].touched)"
+             class="text-danger mt-1 d-block">
+        {{ 'validation.required' | translate }}
+      </small>
+    </div>
+  </div>
+
   <div class="row g-3">
     <div class="col-12">
       <label class="form-label">{{ 'wizard.achievements.description' | translate }}</label>

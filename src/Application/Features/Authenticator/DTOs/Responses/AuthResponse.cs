@@ -122,6 +122,8 @@ public sealed class ExperienceDto
     public DateOnly? StartDate { get; init; }
     public DateOnly? EndDate { get; init; }
     public bool IsCurrent { get; init; }
+    public Guid? QualificationId { get; init; }
+    public string? QualificationName { get; init; }
 
     public FileRefDto? Attachment { get; init; }
 }
@@ -151,6 +153,7 @@ public sealed class AchievementDto
     public Guid? CountryId { get; init; }
     public DateOnly? IssueDate { get; init; }
     public string? Description { get; init; }
+    public bool? RelatedToSpecialization { get; init; }
     public FileRefDto? Attachment { get; init; }
 }
 

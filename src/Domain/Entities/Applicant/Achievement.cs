@@ -24,6 +24,8 @@ public class Achievement : EventEntity
     public DateOnly IssueDate { get; set; }
     public string? Description { get; set; }
 
+    public bool? RelatedToSpecialization { get; set; }
+
     public Guid AttachmentId { get; set; }
     public Resource? Attachment { get; set; }
 }

@@ -17,6 +17,7 @@ public sealed class AchievementUpsertDto
     public Guid CountryId { get; set; }
     public DateOnly? IssueDate { get; set; }
     public string? Description { get; set; }
+    public bool? RelatedToSpecialization { get; set; }
     public Guid? AttachmentId { get; set; }
     public int? CertificateFileIndex { get; set; }
 }

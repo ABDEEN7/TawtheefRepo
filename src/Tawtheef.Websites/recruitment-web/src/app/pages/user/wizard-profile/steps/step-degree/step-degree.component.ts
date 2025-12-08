@@ -8,6 +8,7 @@ import { ProfileService } from '../../services/profile.service';
 import { MessageService } from 'primeng/api';
 import {Degree} from '../../models/degree.model';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import { finalize, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-step-degrees',
@@ -56,6 +57,15 @@ export class StepDegreeComponent implements OnInit {
 
   del(i: number) {
     const degree = this.ds.state().degrees[i];
+    if (degree?.id && this.ds.state().experiences?.some(exp => exp.qualificationId === degree.id)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translate.instant('wizard.warningTitle'),
+        detail: this.translate.instant('wizard.degrees.deleteLinkedError'),
+        life: 5000,
+      });
+      return;
+    }
     if(degree.id){
       this.profile.deleteEduction(degree.id).subscribe({
         next: () => {
@@ -125,15 +135,19 @@ export class StepDegreeComponent implements OnInit {
     this.savingDegrees = true;
     this.profile
       .saveEducationSection(degrees)
+      .pipe(
+        switchMap(() => this.ds.refreshDegreesFromBackend()),
+        finalize(() => {
+          this.savingDegrees = false;
+        })
+      )
       .subscribe({
         next: () => {
-          this.savingDegrees = false;
           this.lastSubmittedSignature = signature;
           this.next.emit();
         },
         error: err => {
           console.error(err);
-          this.savingDegrees = false;
           this.messageService.add({
             severity: 'error',
             summary: this.translate.instant('wizard.errorTitle'),

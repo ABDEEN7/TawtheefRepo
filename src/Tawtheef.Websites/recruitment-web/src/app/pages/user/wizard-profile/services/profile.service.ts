@@ -10,6 +10,7 @@ import {Experience, TrainingCourse} from '../models/experience.model';
 import {Achievement} from '../models/achievement.model';
 import {of} from 'rxjs';
 import {MoiPersonalInfo} from '../models/moi-personal-info.model';
+import {ProfileStatusDto} from '../../../../core/models/auth/auth-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -98,6 +99,10 @@ export class ProfileService {
     return this.http.post(this.endpoints.user.profile.saveContact, formData);
   }
 
+  getProfileStatus() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.bootstrap);
+  }
+
   // ========== Degrees ==========
   saveEducationSection(degrees: any[]) {
     let fileCursor = 0;
@@ -154,6 +159,7 @@ export class ProfileService {
         certificateId: e.attachmentId ?? null,
         certificateFileIndex: fileIndex,
         description: e.description,
+        qualificationId: e.qualificationId ?? null,
       };
     });
     const trainingCourseFiles: (File | null | undefined)[] = [];
@@ -215,6 +221,7 @@ export class ProfileService {
         description: a.description,
         attachmentId: a.attachmentId ?? null,
         certificateFileIndex: fileIndex,
+        relatedToSpecialization: a.relatedToSpecialization ?? null,
       };
     });
 

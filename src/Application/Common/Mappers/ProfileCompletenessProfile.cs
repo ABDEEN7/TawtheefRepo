@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
+using System.Linq;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
@@ -26,6 +27,16 @@ public sealed class ProfileCompletenessProfile : IRegister
 
         config.NewConfig<Experience, ExperienceDto>()
             .Map(dest => dest.Attachment, src => src.Certificate)
+            .Map(dest => dest.QualificationId, src => src.QualificationId)
+            .Map(dest => dest.QualificationName,
+                src => src.Qualification == null
+                    ? null
+                    : string.Join(" - ", new[]
+                    {
+                        src.Qualification.Degree?.Name,
+                        src.Qualification.Major?.Name,
+                        src.Qualification.University?.Name
+                    }.Where(s => !string.IsNullOrWhiteSpace(s))))
             .Map(dest => dest.IsCurrent, src => src.EndDate == null);
 
         config.NewConfig<TrainingCourse, TrainingCourseDto>()
@@ -33,6 +44,7 @@ public sealed class ProfileCompletenessProfile : IRegister
 
         config.NewConfig<Achievement, AchievementDto>()
             .Map(dest => dest.Attachment, src => src.Attachment)
+            .Map(dest => dest.RelatedToSpecialization, src => src.RelatedToSpecialization)
             .Map(dest => dest.AchievementType, src => src.AchievementType);
 
         config.NewConfig<ProfileSkill, SkillDto>()
