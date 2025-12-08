@@ -1,0 +1,51 @@
+{
+  "common": {
+    "refresh": "Refresh",
+    "loading": "Loading"
+  },
+  "list": {
+    "eyebrow": "Approval queue",
+    "title": "Profiles",
+    "subtitle": "Pick a profile to review and approve",
+    "searchPlaceholder": "Search by name, entity or type",
+    "empty": "No requests available",
+    "anonymous": "Candidate",
+    "typeUnknown": "Unknown type",
+    "entityUnknown": "Entity not set",
+    "pending": "Pending"
+  },
+  "detail": {
+    "eyebrow": "Profile details",
+    "placeholder": "Select a profile to view",
+    "empty": "Select a profile to view",
+    "candidateType": "Candidate type",
+    "submissionVersion": "Submission version",
+    "submittedAt": "Submitted at",
+    "missing": "Unavailable",
+    "withAttachments": "Text and attachments",
+    "textOnly": "Text only",
+    "attachment": "Attachment",
+    "text": "Text entry",
+    "previousNote": "Previous notes:",
+    "viewFile": "View file",
+    "approve": "Approve",
+    "requestChanges": "Request changes",
+    "reject": "Reject",
+    "noItems": "No items in this section"
+  },
+  "status": {
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "changes": "Changes required",
+    "pending": "Pending review"
+  },
+  "sections": {
+    "personal": "Personal info",
+    "contact": "Contact",
+    "education": "Education",
+    "experience": "Experience & courses",
+    "skills": "Skills & languages",
+    "attachments": "Attachments",
+    "generic": "Section"
+  }
+}

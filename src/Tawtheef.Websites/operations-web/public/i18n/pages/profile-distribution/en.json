@@ -1,0 +1,70 @@
+{
+  "eyebrow": "Distribution",
+  "title": "Profile distribution",
+  "subtitle": "Assign files manually or automatically while keeping workloads balanced.",
+  "selectedCount": "selected files",
+  "availableEmployees": "available employees",
+  "actions": {
+    "refresh": "Refresh"
+  },
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Search by name, major or entity",
+    "status": "File status",
+    "statusAll": "All eligible statuses",
+    "statusSubmitted": "Submitted",
+    "statusUnderReview": "Under review",
+    "statusNeedsChanges": "Needs changes",
+    "selectAll": "Select all",
+    "clearSelection": "Clear selection"
+  },
+  "table": {
+    "title": "Assignable files",
+    "subtitle": "Final states are excluded automatically",
+    "candidate": "Candidate",
+    "specialization": "Specialization",
+    "entity": "Entity",
+    "status": "Status",
+    "assignee": "Assignee",
+    "noValue": "N/A",
+    "unassigned": "Unassigned",
+    "empty": "No files match the filters"
+  },
+  "employees": {
+    "title": "Employees & workload",
+    "subtitle": "Pick who can receive automatic assignments",
+    "total": "Total",
+    "completed": "Completed",
+    "inReview": "In review"
+  },
+  "auto": {
+    "title": "Automatic distribution",
+    "subtitle": "Balances based on current load",
+    "limit": "Files per employee (optional)",
+    "assign": "Distribute automatically",
+    "reassign": "Redistribute automatically"
+  },
+  "manual": {
+    "title": "Manual distribution",
+    "subtitle": "Directly assign to a specific employee",
+    "employee": "Select employee",
+    "selectPlaceholder": "Choose employee",
+    "assign": "Assign to employee",
+    "reassign": "Redistribute manually"
+  },
+  "status": {
+    "submitted": "Submitted",
+    "underReview": "Under review",
+    "needsChanges": "Needs changes",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "cancelled": "Cancelled"
+  },
+  "availability": {
+    "available": "Available",
+    "leave": "On leave",
+    "suspended": "Suspended",
+    "inactive": "Inactive"
+  },
+  "loading": "Loading"
+}

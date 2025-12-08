@@ -1,0 +1,51 @@
+{
+  "common": {
+    "refresh": "تحديث",
+    "loading": "جارٍ التحميل"
+  },
+  "list": {
+    "eyebrow": "طلبات الاعتماد",
+    "title": "قائمة الملفات",
+    "subtitle": "اختر ملفًا لمراجعته واعتماد البيانات",
+    "searchPlaceholder": "ابحث بالاسم أو الجهة أو نوع المرشح",
+    "empty": "لا توجد طلبات متاحة",
+    "anonymous": "مرشح",
+    "typeUnknown": "نوع غير محدد",
+    "entityUnknown": "جهة غير محددة",
+    "pending": "بانتظار المراجعة"
+  },
+  "detail": {
+    "eyebrow": "تفاصيل الملف",
+    "placeholder": "اختر ملفًا لعرض تفاصيله",
+    "empty": "اختر ملفًا لعرض تفاصيله",
+    "candidateType": "نوع المرشح",
+    "submissionVersion": "إصدار الطلب",
+    "submittedAt": "تاريخ الإرسال",
+    "missing": "غير متوفر",
+    "withAttachments": "بيانات نصية ومرفقات",
+    "textOnly": "بيانات نصية",
+    "attachment": "مرفق",
+    "text": "بيان نصي",
+    "previousNote": "ملاحظات سابقة:",
+    "viewFile": "عرض الملف",
+    "approve": "اعتماد",
+    "requestChanges": "طلب تعديل",
+    "reject": "رفض",
+    "noItems": "لا توجد عناصر في هذا القسم"
+  },
+  "status": {
+    "approved": "تم الاعتماد",
+    "rejected": "مرفوض",
+    "changes": "مطلوب تعديل",
+    "pending": "بانتظار المراجعة"
+  },
+  "sections": {
+    "personal": "البيانات الشخصية",
+    "contact": "بيانات التواصل",
+    "education": "المؤهلات العلمية",
+    "experience": "الخبرات والدورات",
+    "skills": "المهارات واللغات",
+    "attachments": "المرفقات",
+    "generic": "قسم"
+  }
+}
