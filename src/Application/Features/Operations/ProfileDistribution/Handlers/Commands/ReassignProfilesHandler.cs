@@ -1,5 +1,6 @@
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.ProfileDistribution.Commands;
@@ -10,14 +11,13 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.ProfileDistribution.Handlers.Commands;
 
-public sealed class ReassignProfilesHandler(IUnitOfWork uow)
+public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> userManager)
     : IRequestHandler<ReassignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ReassignProfilesCommand request, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
-        var employeeRepo = uow.GetEntityRepository<EmployeeUser>();
 
         var profiles = await profileRepo.DbSet
             .Where(p => request.ProfileIds.Contains(p.Id))
@@ -47,7 +47,7 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow)
         var mode = request.Mode?.Trim().ToLowerInvariant();
         if (mode == "manual")
         {
-            var employee = await employeeRepo.DbSet
+            var employee = await userManager.Users.OfType<EmployeeUser>()
                 .FirstOrDefaultAsync(e => e.Id == request.EmployeeId && !e.IsDeleted && !e.IsBlocked, ct);
 
             if (employee is null)
@@ -60,7 +60,7 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow)
             }
 
             await uow.SaveChangesAsync(ct);
-            var projection = new ProfileDistributionProjection(uow);
+            var projection = new ProfileDistributionProjection(uow,userManager);
             var manualResult = await projection.BuildResultAsync(profiles.Count, ct);
             return Result.Ok(manualResult);
         }
@@ -72,7 +72,7 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow)
                 request.ProfileIds,
                 request.PerEmployeeCount);
 
-            var handler = new AutoAssignProfilesHandler(uow);
+            var handler = new AutoAssignProfilesHandler(uow, userManager);
             return await handler.Handle(autoRequest, ct);
         }
 

@@ -1,5 +1,6 @@
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.ProfileDistribution.Commands;
@@ -10,17 +11,16 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.ProfileDistribution.Handlers.Commands;
 
-public sealed class AutoAssignProfilesHandler(IUnitOfWork uow)
+public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User> userManager)
     : IRequestHandler<AutoAssignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(AutoAssignProfilesCommand request, CancellationToken ct)
     {
-        var employeeRepo = uow.GetEntityRepository<EmployeeUser>();
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
-        var targetEmployeeIds = request.EmployeeIds?.ToList() ?? [];
-        var employees = await employeeRepo.DbSet
+        var targetEmployeeIds = request.EmployeeIds.ToList() ?? [];
+        var employees = await userManager.Users.OfType<EmployeeUser>()
             .Where(e => targetEmployeeIds.Contains(e.Id) && !e.IsDeleted && !e.IsBlocked)
             .ToListAsync(ct);
 
@@ -64,7 +64,7 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow)
                     AssignedThisRound = newlyAssigned[e.Id]
                 })
                 .OrderBy(e => e.Load)
-                .ThenBy(e => e.Employee.FullNameAr ?? e.Employee.FullNameEn)
+                .ThenBy(e => e.Employee.CreatedDate)
                 .ToList();
 
             var chosen = orderedEmployees.FirstOrDefault(e => perEmployeeLimit is null || e.AssignedThisRound < perEmployeeLimit);
@@ -79,7 +79,7 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow)
         var assignedCount = newlyAssigned.Values.Sum();
         await uow.SaveChangesAsync(ct);
 
-        var projection = new ProfileDistributionProjection(uow);
+        var projection = new ProfileDistributionProjection(uow,userManager);
         var result = await projection.BuildResultAsync(assignedCount, ct);
 
         return Result.Ok(result);

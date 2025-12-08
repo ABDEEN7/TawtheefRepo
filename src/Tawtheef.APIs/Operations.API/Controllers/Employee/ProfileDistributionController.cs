@@ -12,7 +12,7 @@ namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/profile-distributions")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileDistributionController(IMediator mediator) : ControllerBase
 {
     [HttpGet("files")]

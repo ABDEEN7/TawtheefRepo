@@ -1,51 +1,42 @@
 {
-  "common": {
-    "refresh": "Refresh",
-    "loading": "Loading"
-  },
-  "list": {
-    "eyebrow": "Approval queue",
-    "title": "Profiles",
-    "subtitle": "Pick a profile to review and approve",
-    "searchPlaceholder": "Search by name, entity or type",
-    "empty": "No requests available",
-    "anonymous": "Candidate",
-    "typeUnknown": "Unknown type",
-    "entityUnknown": "Entity not set",
-    "pending": "Pending"
-  },
-  "detail": {
-    "eyebrow": "Profile details",
-    "placeholder": "Select a profile to view",
-    "empty": "Select a profile to view",
-    "candidateType": "Candidate type",
-    "submissionVersion": "Submission version",
-    "submittedAt": "Submitted at",
-    "missing": "Unavailable",
-    "withAttachments": "Text and attachments",
-    "textOnly": "Text only",
-    "attachment": "Attachment",
-    "text": "Text entry",
-    "previousNote": "Previous notes:",
-    "viewFile": "View file",
-    "approve": "Approve",
-    "requestChanges": "Request changes",
-    "reject": "Reject",
-    "noItems": "No items in this section"
-  },
-  "status": {
-    "approved": "Approved",
-    "rejected": "Rejected",
-    "changes": "Changes required",
-    "pending": "Pending review"
-  },
-  "sections": {
-    "personal": "Personal info",
-    "contact": "Contact",
-    "education": "Education",
-    "experience": "Experience & courses",
-    "skills": "Skills & languages",
-    "attachments": "Attachments",
-    "generic": "Section"
-  }
+  "profileApproval.list.eyebrow": "Approval queue",
+  "profileApproval.list.title": "Profiles",
+  "profileApproval.list.subtitle": "Pick a profile to review and approve",
+  "profileApproval.list.searchPlaceholder": "Search by name, entity or type",
+  "profileApproval.list.empty": "No requests available",
+  "profileApproval.list.anonymous": "Candidate",
+  "profileApproval.list.typeUnknown": "Unknown type",
+  "profileApproval.list.entityUnknown": "Entity not set",
+  "profileApproval.list.pending": "Pending",
+
+  "profileApproval.detail.eyebrow": "Profile details",
+  "profileApproval.detail.placeholder": "Select a profile to view",
+  "profileApproval.detail.empty": "Select a profile to view",
+  "profileApproval.detail.candidateType": "Candidate type",
+  "profileApproval.detail.submissionVersion": "Submission version",
+  "profileApproval.detail.submittedAt": "Submitted at",
+  "profileApproval.detail.missing": "Unavailable",
+  "profileApproval.detail.withAttachments": "Text and attachments",
+  "profileApproval.detail.textOnly": "Text only",
+  "profileApproval.detail.attachment": "Attachment",
+  "profileApproval.detail.text": "Text entry",
+  "profileApproval.detail.previousNote": "Previous notes:",
+  "profileApproval.detail.viewFile": "View file",
+  "profileApproval.detail.approve": "Approve",
+  "profileApproval.detail.requestChanges": "Request changes",
+  "profileApproval.detail.reject": "Reject",
+  "profileApproval.detail.noItems": "No items in this section",
+
+  "profileApproval.status.approved": "Approved",
+  "profileApproval.status.rejected": "Rejected",
+  "profileApproval.status.changes": "Changes required",
+  "profileApproval.status.pending": "Pending review",
+
+  "profileApproval.sections.personal": "Personal info",
+  "profileApproval.sections.contact": "Contact",
+  "profileApproval.sections.education": "Education",
+  "profileApproval.sections.experience": "Experience & courses",
+  "profileApproval.sections.skills": "Skills & languages",
+  "profileApproval.sections.attachments": "Attachments",
+  "profileApproval.sections.generic": "Section"
 }

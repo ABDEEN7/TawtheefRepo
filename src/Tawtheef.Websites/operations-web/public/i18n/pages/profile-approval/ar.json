@@ -1,51 +1,42 @@
 {
-  "common": {
-    "refresh": "تحديث",
-    "loading": "جارٍ التحميل"
-  },
-  "list": {
-    "eyebrow": "طلبات الاعتماد",
-    "title": "قائمة الملفات",
-    "subtitle": "اختر ملفًا لمراجعته واعتماد البيانات",
-    "searchPlaceholder": "ابحث بالاسم أو الجهة أو نوع المرشح",
-    "empty": "لا توجد طلبات متاحة",
-    "anonymous": "مرشح",
-    "typeUnknown": "نوع غير محدد",
-    "entityUnknown": "جهة غير محددة",
-    "pending": "بانتظار المراجعة"
-  },
-  "detail": {
-    "eyebrow": "تفاصيل الملف",
-    "placeholder": "اختر ملفًا لعرض تفاصيله",
-    "empty": "اختر ملفًا لعرض تفاصيله",
-    "candidateType": "نوع المرشح",
-    "submissionVersion": "إصدار الطلب",
-    "submittedAt": "تاريخ الإرسال",
-    "missing": "غير متوفر",
-    "withAttachments": "بيانات نصية ومرفقات",
-    "textOnly": "بيانات نصية",
-    "attachment": "مرفق",
-    "text": "بيان نصي",
-    "previousNote": "ملاحظات سابقة:",
-    "viewFile": "عرض الملف",
-    "approve": "اعتماد",
-    "requestChanges": "طلب تعديل",
-    "reject": "رفض",
-    "noItems": "لا توجد عناصر في هذا القسم"
-  },
-  "status": {
-    "approved": "تم الاعتماد",
-    "rejected": "مرفوض",
-    "changes": "مطلوب تعديل",
-    "pending": "بانتظار المراجعة"
-  },
-  "sections": {
-    "personal": "البيانات الشخصية",
-    "contact": "بيانات التواصل",
-    "education": "المؤهلات العلمية",
-    "experience": "الخبرات والدورات",
-    "skills": "المهارات واللغات",
-    "attachments": "المرفقات",
-    "generic": "قسم"
-  }
+  "profileApproval.list.eyebrow": "طلبات الاعتماد",
+  "profileApproval.list.title": "قائمة الملفات",
+  "profileApproval.list.subtitle": "اختر ملفًا لمراجعته واعتماد البيانات",
+  "profileApproval.list.searchPlaceholder": "ابحث بالاسم أو الجهة أو نوع المرشح",
+  "profileApproval.list.empty": "لا توجد طلبات متاحة",
+  "profileApproval.list.anonymous": "مرشح",
+  "profileApproval.list.typeUnknown": "نوع غير محدد",
+  "profileApproval.list.entityUnknown": "جهة غير محددة",
+  "profileApproval.list.pending": "بانتظار المراجعة",
+
+  "profileApproval.detail.eyebrow": "تفاصيل الملف",
+  "profileApproval.detail.placeholder": "اختر ملفًا لعرض تفاصيله",
+  "profileApproval.detail.empty": "اختر ملفًا لعرض تفاصيله",
+  "profileApproval.detail.candidateType": "نوع المرشح",
+  "profileApproval.detail.submissionVersion": "إصدار الطلب",
+  "profileApproval.detail.submittedAt": "تاريخ الإرسال",
+  "profileApproval.detail.missing": "غير متوفر",
+  "profileApproval.detail.withAttachments": "بيانات نصية ومرفقات",
+  "profileApproval.detail.textOnly": "بيانات نصية",
+  "profileApproval.detail.attachment": "مرفق",
+  "profileApproval.detail.text": "بيان نصي",
+  "profileApproval.detail.previousNote": "ملاحظات سابقة:",
+  "profileApproval.detail.viewFile": "عرض الملف",
+  "profileApproval.detail.approve": "اعتماد",
+  "profileApproval.detail.requestChanges": "طلب تعديل",
+  "profileApproval.detail.reject": "رفض",
+  "profileApproval.detail.noItems": "لا توجد عناصر في هذا القسم",
+
+  "profileApproval.status.approved": "تم الاعتماد",
+  "profileApproval.status.rejected": "مرفوض",
+  "profileApproval.status.changes": "مطلوب تعديل",
+  "profileApproval.status.pending": "بانتظار المراجعة",
+
+  "profileApproval.sections.personal": "البيانات الشخصية",
+  "profileApproval.sections.contact": "بيانات التواصل",
+  "profileApproval.sections.education": "المؤهلات العلمية",
+  "profileApproval.sections.experience": "الخبرات والدورات",
+  "profileApproval.sections.skills": "المهارات واللغات",
+  "profileApproval.sections.attachments": "المرفقات",
+  "profileApproval.sections.generic": "قسم"
 }

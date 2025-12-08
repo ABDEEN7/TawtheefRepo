@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { finalize, Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
-import { ProfileApprovalService } from './profile-approval.service';
+import { ProfileApprovalService } from './services/profile-approval.service';
 import {
   ProfileApprovalDetail,
   ProfileApprovalItem,
@@ -12,12 +12,13 @@ import {
   ProfileApprovalSection,
   ReviewStatus,
   ReviewTargetType,
-} from './profile-approval.models';
+} from './models/profile-approval.models';
+import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-profile-approval-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslateModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, I18nNamespaceDirective],
   templateUrl: './profile-approval.page.html',
   styleUrl: './profile-approval.page.scss',
 })
@@ -143,14 +144,14 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   statusLabel(status?: ReviewStatus): string {
     switch (status) {
       case ReviewStatus.Approved:
-        return 'status.approved';
+        return 'profileApproval.status.approved';
       case ReviewStatus.Rejected:
-        return 'status.rejected';
+        return 'profileApproval.status.rejected';
       case ReviewStatus.ChangesRequested:
-        return 'status.changes';
+        return 'profileApproval.status.changes';
       case ReviewStatus.Pending:
       default:
-        return 'status.pending';
+        return 'profileApproval.status.pending';
     }
   }
 
@@ -172,19 +173,19 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   sectionName(section: number): string {
     switch (section) {
       case 1:
-        return 'sections.personal';
+        return 'profileApproval.sections.personal';
       case 2:
-        return 'sections.contact';
+        return 'profileApproval.sections.contact';
       case 3:
-        return 'sections.education';
+        return 'profileApproval.sections.education';
       case 4:
-        return 'sections.experience';
+        return 'profileApproval.sections.experience';
       case 5:
-        return 'sections.skills';
+        return 'profileApproval.sections.skills';
       case 6:
-        return 'sections.attachments';
+        return 'profileApproval.sections.attachments';
       default:
-        return 'sections.generic';
+        return 'profileApproval.sections.generic';
     }
   }
 

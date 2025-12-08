@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
@@ -7,7 +8,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.ProfileDistribution.Handlers;
 
-internal sealed class ProfileDistributionProjection(IUnitOfWork uow)
+internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager<User> userManager)
 {
     public async Task<IReadOnlyList<DistributionProfileDto>> LoadProfilesAsync(
         UserProfileStatus? status,
@@ -80,10 +81,9 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow)
 
     public async Task<IReadOnlyList<DistributionEmployeeDto>> LoadEmployeesAsync(CancellationToken ct)
     {
-        var employeeRepo = uow.GetEntityRepository<EmployeeUser>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
-        var employees = await employeeRepo.DbSet
+        var employees = await userManager.Users.OfType<EmployeeUser>()
             .Where(e => !e.IsDeleted)
             .ToListAsync(ct);
 

@@ -14,5 +14,7 @@
   "validation.invalid_format": "Invalid format",
 
   "common.ar": "العربية",
-  "common.en": "English"
+  "common.en": "English",
+  "common.refresh": "Refresh",
+  "common.loading": "Loading"
 }

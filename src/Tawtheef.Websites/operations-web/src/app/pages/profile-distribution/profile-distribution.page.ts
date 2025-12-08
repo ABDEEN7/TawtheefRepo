@@ -3,7 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
-import { ProfileDistributionService } from './profile-distribution.service';
+import { ProfileDistributionService } from './services/profile-distribution.service';
 import {
   AutoAssignRequest,
   DistributionEmployee,
@@ -13,12 +13,13 @@ import {
   ManualAssignRequest,
   ProfileFileStatus,
   ReassignRequest,
-} from './profile-distribution.models';
+} from './models/profile-distribution.models';
+import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-profile-distribution-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, I18nNamespaceDirective],
   templateUrl: './profile-distribution.page.html',
   styleUrl: './profile-distribution.page.scss',
 })
@@ -59,10 +60,10 @@ export class ProfileDistributionPage implements OnInit {
   );
 
   readonly statusOptions: { value: ProfileFileStatus | 'all'; label: string }[] = [
-    { value: 'all', label: 'filters.statusAll' },
-    { value: ProfileFileStatus.Submitted, label: 'filters.statusSubmitted' },
-    { value: ProfileFileStatus.UnderReview, label: 'filters.statusUnderReview' },
-    { value: ProfileFileStatus.NeedsChanges, label: 'filters.statusNeedsChanges' },
+    { value: 'all', label: 'distribution.filters.statusAll' },
+    { value: ProfileFileStatus.Submitted, label: 'distribution.filters.statusSubmitted' },
+    { value: ProfileFileStatus.UnderReview, label: 'distribution.filters.statusUnderReview' },
+    { value: ProfileFileStatus.NeedsChanges, label: 'distribution.filters.statusNeedsChanges' },
   ];
 
   protected readonly ProfileFileStatus = ProfileFileStatus;
@@ -186,30 +187,30 @@ export class ProfileDistributionPage implements OnInit {
   statusLabel(status: ProfileFileStatus): string {
     switch (status) {
       case ProfileFileStatus.Submitted:
-        return 'status.submitted';
+        return 'distribution.status.submitted';
       case ProfileFileStatus.UnderReview:
-        return 'status.underReview';
+        return 'distribution.status.underReview';
       case ProfileFileStatus.NeedsChanges:
-        return 'status.needsChanges';
+        return 'distribution.status.needsChanges';
       case ProfileFileStatus.Approved:
-        return 'status.approved';
+        return 'distribution.status.approved';
       case ProfileFileStatus.Rejected:
-        return 'status.rejected';
+        return 'distribution.status.rejected';
       case ProfileFileStatus.Cancelled:
-        return 'status.cancelled';
+        return 'distribution.status.cancelled';
     }
   }
 
   availabilityLabel(value: EmployeeAvailability): string {
     switch (value) {
       case EmployeeAvailability.Available:
-        return 'availability.available';
+        return 'distribution.availability.available';
       case EmployeeAvailability.OnLeave:
-        return 'availability.leave';
+        return 'distribution.availability.leave';
       case EmployeeAvailability.Suspended:
-        return 'availability.suspended';
+        return 'distribution.availability.suspended';
       default:
-        return 'availability.inactive';
+        return 'distribution.availability.inactive';
     }
   }
 
@@ -226,4 +227,6 @@ export class ProfileDistributionPage implements OnInit {
     this.error.set(typeof message === 'string' ? message : fallback);
     this.successMessage.set(null);
   }
+
+  protected readonly Number = Number;
 }

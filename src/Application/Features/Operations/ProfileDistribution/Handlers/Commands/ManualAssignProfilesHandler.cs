@@ -1,5 +1,6 @@
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.ProfileDistribution.Commands;
@@ -10,16 +11,15 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.ProfileDistribution.Handlers.Commands;
 
-public sealed class ManualAssignProfilesHandler(IUnitOfWork uow)
+public sealed class ManualAssignProfilesHandler(IUnitOfWork uow, UserManager<User> userManager)
     : IRequestHandler<ManualAssignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ManualAssignProfilesCommand request, CancellationToken ct)
     {
-        var employeeRepo = uow.GetEntityRepository<EmployeeUser>();
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
-        var employee = await employeeRepo.DbSet
+        var employee = await userManager.Users.OfType<EmployeeUser>()
             .FirstOrDefaultAsync(e => e.Id == request.EmployeeId && !e.IsDeleted && !e.IsBlocked, ct);
 
         if (employee is null)
@@ -53,7 +53,7 @@ public sealed class ManualAssignProfilesHandler(IUnitOfWork uow)
 
         await uow.SaveChangesAsync(ct);
 
-        var projection = new ProfileDistributionProjection(uow);
+        var projection = new ProfileDistributionProjection(uow,userManager);
         var result = await projection.BuildResultAsync(profiles.Count, ct);
 
         return Result.Ok(result);

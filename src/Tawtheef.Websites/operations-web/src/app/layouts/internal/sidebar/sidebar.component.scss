@@ -14,7 +14,7 @@
 
   &.collapsed {
     width: 82px;
-    
+
     .label {
       opacity: 0;
       width: 0;
@@ -59,7 +59,6 @@
     width: 100%;
     padding: 0 16px;
     flex: 1;
-
     .nav-item {
       width: 100%;
       height: 44px;
@@ -75,6 +74,20 @@
       position: relative;
       gap: 12px;
 
+      // HOVER (non-active)
+      &:hover:not(.active) {
+        background: #89153D;
+        color: #ffffff;
+        transform: translateY(-2px);
+      }
+
+      // ✅ ACTIVE STATE (button itself)
+      &.active {
+        background: #89153D;
+        color: #ffffff;
+        transform: translateY(-2px);
+      }
+
       i {
         font-size: 18px;
         min-width: 20px;
@@ -86,43 +99,33 @@
         white-space: nowrap;
       }
 
-      &:hover:not(.active) {
-        background: #89153D;
-        color: #ffffff;
-        transform: translateY(-2px);
-      }
-
-      &.active  .icons{
-        background: #89153D;
-        color: #fff;
-        box-shadow: 0 4px 12px rgba(139, 21, 56, 0.3);
-        
-        // Active indicator dot for collapsed state
-        &::after {
-          content: '';
-          position: absolute;
-          width: 6px;
-          height: 6px;
-          background: #FFFFFF;
-          border-radius: 50%;
-          right: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-      }
-
       .icons {
-    transition: filter 0.3s ease;
-  }
+        transition: filter 0.3s ease;
+        display: block;
+      }
 
-  &:hover:not(.active) .icons {
-    filter: brightness(0) invert(1);
-  }
+      // Icon color on hover
+      &:hover:not(.active) .icons {
+        filter: brightness(0) invert(1);
+      }
 
-  &.active .icons {
-    filter: brightness(0) invert(1);
-  }
-      
+      // Icon color when active
+      &.active .icons {
+        filter: brightness(0) invert(1);
+      }
+
+      // ✅ Active indicator dot – apply to button, not image
+      &.active::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: #FFFFFF;
+        border-radius: 50%;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
   }
 
@@ -177,7 +180,7 @@
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;
-    
+
     &.collapsed {
       width: 70px;
     }
@@ -187,7 +190,7 @@
 @media (max-width: 480px) {
   .sidebar {
     width: 180px;
-    
+
     &.collapsed {
       width: 60px;
     }
