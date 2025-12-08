@@ -110,6 +110,10 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'basic', 'office');
   }
 
+  if (isResident && !isFilledField(s.qidExpiry)) {
+    addRequiredError(errors, 'basic', 'qidExpiry');
+  }
+
   if (!isFilledField(s.cvName)) {
     addRequiredError(errors, 'basic', 'cvName');
   }
@@ -150,10 +154,6 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 
   if (!isFilledField(s.qid)) {
     addRequiredError(errors, 'personal', 'qid');
-  }
-
-  if (isResident && !isFilledField(s.qidExpiry)) {
-    addRequiredError(errors, 'personal', 'qidExpiry');
   }
 
   if (!isFilledField(s.dob)) {

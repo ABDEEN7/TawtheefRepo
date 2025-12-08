@@ -47,7 +47,11 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
 
     public Result ValidatePrerequisites(UserProfile profile, SaveProfilePrereqRequest request)
     {
-        return EnsureCandidateTypeIntegrity(profile.CandidateTypeId, request.CandidateTypeId);
+        var candidateTypeIntegrity = EnsureCandidateTypeIntegrity(profile.CandidateTypeId, request.CandidateTypeId);
+        if (candidateTypeIntegrity.IsFailed)
+            return candidateTypeIntegrity;
+
+        return Result.Ok();
     }
 
     public Result ValidatePersonal(UserProfile profile, SaveProfilePersonalRequest request)
@@ -154,6 +158,10 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
             return false;
 
         if (profile.ResumeAttachmentId is null || profile.NationalCardId is null)
+            return false;
+
+        var requiresResidencyExpiry = RequiresNationalAddress(profile.CandidateTypeId);
+        if (requiresResidencyExpiry && profile.QIDExpiry is null)
             return false;
 
         if (RequiresBirthCertificate(profile.CandidateTypeId) && profile.BirthdayCertificateId is null)

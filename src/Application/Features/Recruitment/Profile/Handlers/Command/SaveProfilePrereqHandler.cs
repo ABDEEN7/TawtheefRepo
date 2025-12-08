@@ -53,6 +53,7 @@ public sealed class SaveProfilePrereqHandler(
             && profile.CandidateTypeId != CandidateTypeIds.GCC;
 
         profile.OfficeId = needsOffice ? r.OfficeId : null;
+        profile.QIDExpiry = requiresNationalAddress ? r.QIDExpiry ?? profile.QIDExpiry : null;
 
         // CV
         var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, "cv");

@@ -300,6 +300,7 @@
   "wizard.profile.basic.candidateType.required": "Please select candidate type",
   "wizard.profile.basic.targetEntity.required": "Please select target entity",
   "wizard.profile.basic.office.required": "Please select an accredited office",
+  "wizard.profile.basic.qidExpiry.required": "Please enter QID expiry date",
   "wizard.profile.basic.cv.required": "Please attach your CV",
   "wizard.profile.basic.id.required": "Please attach your ID card",
   "wizard.profile.basic.marriageCertificate.required": "Please attach marriage certificate",

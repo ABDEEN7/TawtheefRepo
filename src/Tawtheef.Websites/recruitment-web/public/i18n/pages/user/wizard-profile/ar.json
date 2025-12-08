@@ -287,6 +287,7 @@
   "wizard.profile.basic.candidateType.required": "يرجى اختيار نوع المتقدم",
   "wizard.profile.basic.targetEntity.required": "يرجى اختيار الجهة المستهدفة",
   "wizard.profile.basic.office.required": "يرجى اختيار المكتب المعتمد",
+  "wizard.profile.basic.qidExpiry.required": "يرجى إدخال تاريخ انتهاء الهوية",
   "wizard.profile.basic.cv.required": "يرجى إرفاق السيرة الذاتية",
   "wizard.profile.basic.id.required": "يرجى إرفاق بطاقة الهوية",
   "wizard.profile.basic.marriageCertificate.required": "يرجى إرفاق عقد الزواج",
