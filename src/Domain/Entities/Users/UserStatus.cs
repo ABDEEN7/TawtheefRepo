@@ -1,6 +1,6 @@
 namespace Tawtheef.Domain.Entities.Users;
 
-public enum UserStatus
+public enum UserProfileStatus
 {
     InCreation = 0, // قيد الانشاء
     Submitted = 1, // تم تقديم الطلب
@@ -8,18 +8,6 @@ public enum UserStatus
     RequiresUpdate = 3, // مطلوب التعديل
     Approved = 4, // معتمد
     Rejected = 5, // مرفوض
-    Blocked = 6, // محظولا
-    Cancelled = 7, // ملغي
-    AdminCancelled = 8 // ملغي اداريا
-}
-
-public static class UserStatusExtensions
-{
-    public static bool BlocksLogin(this UserStatus status)
-    {
-        return status is UserStatus.Blocked
-            or UserStatus.Cancelled
-            or UserStatus.AdminCancelled
-            or UserStatus.Rejected;
-    }
+    Cancelled = 6, // ملغي
+    AdminCancelled = 7 // ملغي اداريا
 }

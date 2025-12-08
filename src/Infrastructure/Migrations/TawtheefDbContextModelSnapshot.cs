@@ -198,6 +198,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("RelatedToSpecialization")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -278,6 +281,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("QualificationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
@@ -301,6 +307,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DeletedById");
+
+                    b.HasIndex("QualificationId");
 
                     b.HasIndex("UpdatedById");
 
@@ -5673,6 +5681,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -5717,13 +5728,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("InCreation");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -5855,6 +5859,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<Guid?>("SponsorProfileId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("InCreation");
 
                     b.Property<Guid>("TargetEntityId")
                         .HasColumnType("uniqueidentifier");
@@ -6009,6 +6020,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             EmailConfirmed = true,
                             FullNameAr = "Admin",
                             FullNameEn = "Admin",
+                            IsBlocked = false,
                             IsDeleted = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@TAWTHEEF.COM",
@@ -6018,7 +6030,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEIgyaMwrHltJioEPUc/0/KfGb2iA529lr04a/6+LmeVbtJZ1fV3px6oeRlalT1GI/Q==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
-                            Status = "InCreation",
                             TwoFactorEnabled = false,
                             UserName = "admin@tawtheef.com",
                             UserTypeId = new Guid("c3d4e5f6-a7b8-6a95-0c3d-7e8f9a0b1c2d")
@@ -6042,6 +6053,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             EmailConfirmed = true,
                             FullNameAr = "QA. A",
                             FullNameEn = "QA. A",
+                            IsBlocked = false,
                             IsDeleted = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "QA.A@TAWTHEEF.COM",
@@ -6051,7 +6063,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEN8QCL2z2kO862Y8bQpTxN7RPyssbCDnnWOBERadOw0vaVF5WAL3D/axQfbD1BgXKA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "18cc15bc-1783-40d9-a3b5-d26dd57c3f6c",
-                            Status = "InCreation",
                             TwoFactorEnabled = false,
                             UserName = "qa.a@tawtheef.com",
                             UserTypeId = new Guid("b2c3d4e5-f6a7-5984-9b2c-6d7e8f9a0b1c")
@@ -6075,6 +6086,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             EmailConfirmed = true,
                             FullNameAr = "QA. E",
                             FullNameEn = "QA. E",
+                            IsBlocked = false,
                             IsDeleted = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "QA.E@TAWTHEEF.COM",
@@ -6084,7 +6096,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEGcM+djZ3c2Q/N1kjZpDwcwjH2sfsRHkNS5H4lObrCaoiN238MHwgDFbLXiNsm5J4A==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "55669db7-ef3a-493f-89a6-a1d608403f83",
-                            Status = "InCreation",
                             TwoFactorEnabled = false,
                             UserName = "qa.e@tawtheef.com",
                             UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
@@ -6222,6 +6233,10 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Tawtheef.Domain.Entities.Applicant.Qualification", "Qualification")
+                        .WithMany()
+                        .HasForeignKey("QualificationId");
+
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
@@ -6240,6 +6255,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("DeletedBy");
+
+                    b.Navigation("Qualification");
 
                     b.Navigation("UpdatedBy");
 

@@ -15,6 +15,8 @@ export interface Experience {
   attachmentId?: string | null;
   attachment?: UploadedFileRef | null;
   current?: boolean;
+  qualificationId?: GUID | null;
+  qualificationName?: string | null;
 }
 export interface TrainingCourse {
   id?: GUID;

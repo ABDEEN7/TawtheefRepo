@@ -94,6 +94,9 @@ public class ErrorsCodes
     public const string InvalidGradYear = "INVALID_GRAD_YEAR";
     public const string InvalidDegreeStudyTypeId = "INVALID_DEGREE_STUDY_TYPE_ID";
     public const string InvalidDegreeSubMajorId = "INVALID_DEGREE_SUB_MAJOR_ID";
+    public const string DegreeLinkedToExperience = "DEGREE_LINKED_TO_EXPERIENCE";
+    public const string InvalidExperienceQualification = "INVALID_EXPERIENCE_QUALIFICATION";
+    public const string ExperienceBeforeGraduation = "EXPERIENCE_BEFORE_GRADUATION";
     #endregion
 
     #region External Authentication Errors

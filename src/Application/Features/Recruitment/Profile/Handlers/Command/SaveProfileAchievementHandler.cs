@@ -79,6 +79,7 @@ public sealed class SaveProfileAchievementHandler(
                 CountryId = dto.CountryId,
                 IssueDate = dto.IssueDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
                 Description = dto.Description,
+                RelatedToSpecialization = dto.RelatedToSpecialization,
                 AttachmentId = certResult.Value ?? dto.AttachmentId ?? Guid.Empty,
                 UserProfileId = profile.Id
             };

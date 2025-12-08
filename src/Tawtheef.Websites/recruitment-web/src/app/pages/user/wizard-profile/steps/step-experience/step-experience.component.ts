@@ -52,6 +52,7 @@ export class StepExperienceComponent implements OnInit {
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       closable: true,
+      data: { degrees: this.ds.state().degrees },
     })?.onClose.subscribe(result => {
       if (result) {
         this.ds.addExp(result);
@@ -203,6 +204,7 @@ export class StepExperienceComponent implements OnInit {
       description: e.description ?? '',
       attachmentId: e.attachmentId ?? null,
       fileName: e.file?.name ?? e.attachment?.resourceName ?? null,
+      qualificationId: e.qualificationId ?? null,
     }));
 
     const courseSignature = (courses ?? []).map(c => ({
@@ -218,5 +220,50 @@ export class StepExperienceComponent implements OnInit {
     }));
 
     return JSON.stringify({ experienceSignature, courseSignature });
+  }
+
+  get calculatedExperienceYears(): number {
+    const experiences = this.ds.state().experiences ?? [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const ranges = experiences
+      .map(exp => {
+        if (!exp.from) return null;
+        const start = new Date(exp.from);
+        const end = exp.current ? today : exp.to ? new Date(exp.to) : today;
+        if (isNaN(start.getTime()) || isNaN(end.getTime()) || start.getTime() > end.getTime()) {
+          return null;
+        }
+        start.setHours(0, 0, 0, 0);
+        end.setHours(0, 0, 0, 0);
+        return { start, end };
+      })
+      .filter((r): r is { start: Date; end: Date } => !!r)
+      .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+    if (!ranges.length) return 0;
+
+    let mergedStart = ranges[0].start;
+    let mergedEnd = ranges[0].end;
+    let totalMs = 0;
+
+    for (let i = 1; i < ranges.length; i++) {
+      const current = ranges[i];
+      if (current.start.getTime() <= mergedEnd.getTime()) {
+        if (current.end.getTime() > mergedEnd.getTime()) {
+          mergedEnd = current.end;
+        }
+      } else {
+        totalMs += mergedEnd.getTime() - mergedStart.getTime();
+        mergedStart = current.start;
+        mergedEnd = current.end;
+      }
+    }
+
+    totalMs += mergedEnd.getTime() - mergedStart.getTime();
+
+    const years = totalMs / (1000 * 60 * 60 * 24 * 365.25);
+    return Math.round(years * 10) / 10;
   }
 }
