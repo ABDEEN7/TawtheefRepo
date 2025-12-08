@@ -1,5 +1,13 @@
 ﻿{
+  "wizard.warningTitle": "تنبيه",
   "wizard.validationErrorTitle": "خطأ في التحقق من صحة البيانات",
+  "wizard.errorTitle": "حدث خطأ",
+  "wizard.degrees.deleteError": "حدث خطأ أثناء حذف المؤهل.",
+  "wizard.achievements.deleteError": "حدث خطأ أثناء حذف الإنجاز.",
+  "wizard.experience.deleteError": "حدث خطأ أثناء حذف الخبرة.",
+  "wizard.skill.deleteError": "حدث خطأ أثناء حذف المهارة",
+  "wizard.language.deleteError": "حدث خطأ أثناء حذف اللغة",
+  "wizard.course.deleteError": "حدث خطأ أثناء حذف الدورة",
   "wizard.title": "نظام التوظيف – الملف الشخصي",
   "wizard.placeholders.select": "اختر...",
   "wizard.accountFieldNote": "هذا الحقل مستمد من حسابك ولا يمكن تغييره.",

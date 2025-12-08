@@ -70,10 +70,8 @@
               {{ 'wizard.experience.relatedDegree.label' | translate }}
             </label>
             <p-select size="small" [filter]="true" [filterBy]="'name'"
-                      inputId="qualificationId"
-                      formControlName="qualificationId"
-                      [options]="degreeOptions"
-                      optionLabel="name"
+                      inputId="qualificationId" formControlName="qualificationId"
+                      [options]="degreeOptions" optionLabel="name" optionValue="id"
                       [placeholder]="'wizard.experience.relatedDegree.placeholder' | translate"
                       [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
                       [ngClass]="{'p-invalid': form.hasError('qualificationRequired') && (f['qualificationId'].dirty || f['qualificationId'].touched)}">
@@ -115,6 +113,10 @@
               <small *ngIf="form.hasError('futureDate') && (f['from'].dirty || f['from'].touched)"
                      class="text-danger mt-1 d-block">
                 {{ 'validation.noFuture' | translate }}
+              </small>
+              <small *ngIf="form.hasError('invalidQualificationDate') && (f['qualificationId'].dirty || f['qualificationId'].touched)"
+                     class="text-danger mt-1 d-block">
+                {{ 'wizard.profile.experience.beforeLinkedGraduation' | translate }}
               </small>
             </div>
             <!-- To -->

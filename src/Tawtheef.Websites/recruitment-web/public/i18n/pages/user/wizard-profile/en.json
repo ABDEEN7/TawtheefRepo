@@ -1,6 +1,9 @@
 ﻿{
-  "wizard.errorTitle": "Something went wrong",
+  "wizard.warningTitle": "Warning",
   "wizard.validationErrorTitle": "Validation error",
+  "wizard.errorTitle": "An error occurred",
+  "wizard.achievements.deleteError": "An error occurred while deleting an achievement.",
+  "wizard.language.deleteError": "An error occurred while deleting a language",
   "wizard.title": "Tawtheef - Candidate Profile",
   "wizard.placeholders.select": "Select",
   "wizard.accountFieldNote": "This field came from your account and cannot be changed.",

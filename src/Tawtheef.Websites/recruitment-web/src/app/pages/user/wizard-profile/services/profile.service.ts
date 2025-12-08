@@ -209,7 +209,7 @@ export class ProfileService {
 
   saveAchievementsSection(achievements: Achievement[]) {
     const files: (File | null | undefined)[] = [];
-    const payload = (achievements ?? []).map(a => {
+    const payload = (achievements ?? []).filter(e=> !e.id).map(a => {
       const fileIndex = a.file ? files.push(a.file) - 1 : null;
       return {
         id: a.id ?? null,

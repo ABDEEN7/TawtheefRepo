@@ -507,12 +507,7 @@ function validateAttachmentsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   const hasAttachments = Array.isArray(s.attachments) && s.attachments.length > 0;
 
-  if (!hasAttachments) {
-    errors.push({
-      field: 'attachments',
-      i18nKey: 'wizard.profile.attachments.atLeastOne.required',
-    });
-  }
+  if (!hasAttachments) return { valid: true, errors: [] };
 
   s.attachments?.forEach((attachment, index) => {
     if (!isFilledField(attachment?.fileName ?? attachment?.name)) {
