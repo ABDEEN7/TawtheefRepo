@@ -9,4 +9,5 @@ public class HodhodSmsSettings
     public int DefaultOtpMinutes { get; init; } = 5;
     public bool ConfirmDelivery { get; init; } = true;
     public int Priority { get; init; } = 0;
+    public required int TimeoutSeconds { get; init; } = 10;
 }

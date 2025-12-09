@@ -4,5 +4,5 @@ namespace Tawtheef.Application.Common.Interfaces.Services;
 
 public interface IRecaptchaService
 {
-    Task<RecaptchaResponse> Verify(string recaptchaToken);
+    Task<RecaptchaResponse> VerifyAsync(string recaptchaToken, CancellationToken ct = default);
 }
