@@ -1,5 +1,13 @@
 .roles-container {
   border-radius: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5f7 100%);
+  border: 1px solid #f3e5ec;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 12px 24px rgba(123, 0, 55, 0.08);
+    transform: translateY(-2px);
+  }
 }
 
 .custom-table {
@@ -7,17 +15,46 @@
     background: #7b0037;
     color: white;
     font-weight: 500;
-    text-align: center;
+    text-align: left;
+    border: none;
+    padding: 14px 16px;
   }
 
   td {
     vertical-align: middle;
+    padding: 14px 16px;
+    border-color: #f2d9e5;
   }
+
+  tbody tr {
+    transition: background 0.15s ease-in-out;
+
+    &:hover {
+      background: #fff7fb;
+    }
+  }
+}
+
+.no-data {
+  background: #fff7fb;
+  border-radius: 12px;
+  padding: 12px 14px;
 }
 
 .btn-pill {
   border-radius: 50px;
   padding: 6px 20px;
+}
+
+.btn-maroon {
+  background-color: #7b0037;
+  border-color: #7b0037;
+  color: #fff;
+
+  &:hover {
+    background-color: #64002d;
+    border-color: #64002d;
+  }
 }
 
 .modal-overlay {
@@ -34,7 +71,8 @@
   width: 450px;
   background: #fff;
   border-radius: 20px;
-  padding: 25px;
+  padding: 25px 28px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
 
 .perm-list {
@@ -49,4 +87,32 @@
     gap: 8px;
     margin-bottom: 8px;
   }
+}
+
+.search-bar .form-control {
+  box-shadow: none;
+}
+
+.page-title {
+  font-weight: 700;
+  color: #4b0022;
+}
+
+.modal-title {
+  font-weight: 700;
+  color: #4b0022;
+}
+
+:host ::ng-deep .p-confirm-dialog .p-dialog-header {
+  background: #7b0037;
+  color: #fff;
+  font-weight: 600;
+}
+
+:host ::ng-deep .p-confirm-dialog .p-dialog-content {
+  padding-top: 20px;
+}
+
+:host ::ng-deep .p-confirm-dialog .p-confirm-dialog-message {
+  color: #4a4a4a;
 }
