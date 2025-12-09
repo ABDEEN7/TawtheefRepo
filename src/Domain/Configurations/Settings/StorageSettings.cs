@@ -8,8 +8,3 @@ public sealed class StorageSettings
     public required string PublicBaseUrl { get; init; }
     public string? AzureConnectionString { get; init; }
 }
-
-public sealed class ConnectionStringSettings
-{
-    public const string SectionName = "ConnectionStrings";
-}

@@ -4,11 +4,8 @@ import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.mode
 import {GUID} from '../../../shared/types/guid.type';
 
 export interface AuthResponse {
-  //requiresProfileCompletion: boolean;
   user: UserInfoModel;
   token: TokenModel;
-  //missingFields: string[];
-  //prefill: PrefillData;
 }
 
 export interface AuthBootstrap {
