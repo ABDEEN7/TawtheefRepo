@@ -1,4 +1,5 @@
 using FluentResults;
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ using Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
-public sealed class ListRolesQueryHandler(RoleManager<IdentityRole<Guid>> roleManager)
+public sealed class ListRolesQueryHandler(RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper)
     : IRequestHandler<ListRolesQuery, IResult<PaginatedResult<RoleDto>>>
 {
     public async Task<IResult<PaginatedResult<RoleDto>>> Handle(ListRolesQuery request, CancellationToken cancellationToken)
@@ -19,7 +20,7 @@ public sealed class ListRolesQueryHandler(RoleManager<IdentityRole<Guid>> roleMa
         foreach (var role in roles)
         {
             var claims = await roleManager.GetClaimsAsync(role);
-            mapped.Add(RoleMapping.ToDto(role, claims));
+            mapped.Add(mapper.Map<RoleDto>(new RoleWithClaims(role, claims)));
         }
 
         var pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;

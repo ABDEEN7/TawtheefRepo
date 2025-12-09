@@ -1,4 +1,5 @@
 using FluentResults;
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Commands;
 
-public sealed class UpdateRoleCommandHandler(RoleManager<IdentityRole<Guid>> roleManager)
+public sealed class UpdateRoleCommandHandler(RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper)
     : IRequestHandler<UpdateRoleCommand, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
@@ -50,6 +51,6 @@ public sealed class UpdateRoleCommandHandler(RoleManager<IdentityRole<Guid>> rol
             return Result.Fail<RoleDto>(permissionResult.Errors);
 
         var updatedClaims = await roleManager.GetClaimsAsync(role);
-        return Result.Ok(RoleMapping.ToDto(role, updatedClaims));
+        return Result.Ok(mapper.Map<RoleDto>(new RoleWithClaims(role, updatedClaims)));
     }
 }
