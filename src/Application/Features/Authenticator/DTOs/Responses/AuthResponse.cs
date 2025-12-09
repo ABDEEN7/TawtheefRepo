@@ -130,7 +130,7 @@ public sealed class ExperienceDto
     public string? MajorName { get; init; }
     [JsonIgnore]
     public string? UniversityName { get; init; }
-    public string? QualificationName => string.Join("-", new []{this.DegreeName, this.MajorName, this.UniversityName}.Where(s => !string.IsNullOrWhiteSpace(s)));
+    public string QualificationName => string.Join("-", new []{this.DegreeName, this.MajorName, this.UniversityName}.Where(s => !string.IsNullOrWhiteSpace(s)));
 
     public FileRefDto? Attachment { get; init; }
 }

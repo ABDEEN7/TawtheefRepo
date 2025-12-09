@@ -37,7 +37,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     [HttpPost("assign/auto")]
     public async Task<IActionResult> AssignAutomatically([FromBody] AutoAssignRequest request, CancellationToken ct)
     {
-        var command = new AutoAssignProfilesCommand(request.EmployeeIds ?? [], request.ProfileIds, request.PerEmployeeCount);
+        var command = new AutoAssignProfilesCommand(request.EmployeeIds, request.ProfileIds, request.PerEmployeeCount);
         var result = await mediator.Send(command, ct);
         return result.ToActionResult();
     }
@@ -48,7 +48,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
         var command = new ReassignProfilesCommand(
             request.Mode,
             request.EmployeeId,
-            request.EmployeeIds ?? [],
+            request.EmployeeIds,
             request.ProfileIds,
             request.PerEmployeeCount);
 

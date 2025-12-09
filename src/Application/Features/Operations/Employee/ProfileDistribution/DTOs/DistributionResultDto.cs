@@ -1,4 +1,4 @@
-namespace Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.DTOs;
 
 public sealed class DistributionResultDto
 {

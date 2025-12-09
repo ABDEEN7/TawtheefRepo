@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Http;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.DTOs;

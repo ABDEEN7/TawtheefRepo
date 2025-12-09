@@ -1,7 +1,7 @@
 using FluentResults;
 using MediatR;
-using Tawtheef.Application.Features.Operations.ProfileApprovals.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 
-namespace Tawtheef.Application.Features.Operations.ProfileApprovals.Queries;
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
 
 public record GetProfileApprovalDetailQuery(Guid UserProfileId) : IRequest<Result<ProfileApprovalDetailDto>>;

@@ -108,7 +108,7 @@ public static class JobBusinessRules
         return !string.IsNullOrWhiteSpace(text);
     }
 
-    public static bool IsDuplicateItem<T>(IEnumerable<T> items, T newItem, Func<T, string> selector)
+    public static bool IsDuplicateItem<T>(IEnumerable<T> items, T newItem, Func<T, string?> selector)
     {
         var newItemText = selector(newItem)?.Trim();
         if (string.IsNullOrEmpty(newItemText))

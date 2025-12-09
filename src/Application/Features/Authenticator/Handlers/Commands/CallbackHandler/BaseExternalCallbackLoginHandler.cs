@@ -6,12 +6,12 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.Callback
 
 public abstract class BaseExternalCallbackLoginHandler(ILoginAuditService loginAudit)
 {
-    protected abstract string _provider { get; }
-    protected abstract Guid _defaultUserType { get; }
+    protected abstract string Provider { get; }
+    protected abstract Guid DefaultUserType { get; }
     protected async Task<IResult<AuthResponse>> LogFailureAsync(string reason, 
         Guid? userId = null, Guid? userTypeId = null, CancellationToken ct = default)
     {
-        await loginAudit.LogAsync(new LoginAttemptEntry(userId, userTypeId ?? _defaultUserType, _provider, false, reason), ct);
+        await loginAudit.LogAsync(new LoginAttemptEntry(userId, userTypeId ?? DefaultUserType, Provider, false, reason), ct);
         return Result.Fail<AuthResponse>(reason);
     }
 
@@ -19,7 +19,7 @@ public abstract class BaseExternalCallbackLoginHandler(ILoginAuditService loginA
         Guid? userId = null, Guid? userTypeId = null, CancellationToken ct = default)
     {
         var reason = string.Join(", ", errors.Select(e => e.Message));
-        await loginAudit.LogAsync(new LoginAttemptEntry(userId, userTypeId ?? _defaultUserType, _provider, false, reason), ct);
+        await loginAudit.LogAsync(new LoginAttemptEntry(userId, userTypeId ?? DefaultUserType, Provider, false, reason), ct);
         return Result.Fail<AuthResponse>(errors);
     }
 }

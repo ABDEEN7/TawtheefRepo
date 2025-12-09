@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Commands;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -20,7 +20,7 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
-        var targetEmployeeIds = request.EmployeeIds?.ToList() ?? new List<Guid>();
+        var targetEmployeeIds = request.EmployeeIds.ToList();
         var employees = await userManager.Users.OfType<EmployeeUser>()
             .Where(e => targetEmployeeIds.Contains(e.Id) && !e.IsDeleted && !e.IsBlocked)
             .ToListAsync(ct);

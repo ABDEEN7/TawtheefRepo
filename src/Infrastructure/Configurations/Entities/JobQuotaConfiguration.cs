@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities;

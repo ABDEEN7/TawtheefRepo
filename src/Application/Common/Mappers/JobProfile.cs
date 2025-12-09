@@ -1,5 +1,4 @@
 using Mapster;
-using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -12,14 +11,14 @@ public class JobProfile : IRegister
     public void Register(TypeAdapterConfig config)
     {
         TypeAdapterConfig<DateTimeOffset?, DateTime?>.NewConfig()
-        .MapWith(src => src.HasValue ? src.Value.UtcDateTime : (DateTime?)null);
+        .MapWith(src => src.HasValue ? src.Value.UtcDateTime : null);
         TypeAdapterConfig<DateTimeOffset, DateTime>.NewConfig()
         .MapWith(src => src.UtcDateTime);
 
         config.NewConfig<CreateJobDto, Job>()
             .Map(dest => dest.Id, _ => Guid.NewGuid())
             .Map(dest => dest.JobStatusId, _ => JobStatusIds.Draft)
-            .Ignore(dest => dest.JobDegrees!)
+            .Ignore(dest => dest.JobDegrees)
             .Ignore(dest => dest.JobConditions)
             .Ignore(dest => dest.JobSkills)
             .Ignore(dest => dest.JobResponsibilities)

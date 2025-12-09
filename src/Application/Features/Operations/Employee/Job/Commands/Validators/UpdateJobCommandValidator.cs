@@ -7,23 +7,17 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Commands.Validat
 
 public class UpdateJobCommandValidator : AbstractValidator<UpdateJobCommand>
 {
-    private readonly IJobRepository _jobRepository;
-    private readonly IJobValidationService _validationService;
-
-
     public UpdateJobCommandValidator(IJobRepository jobRepository, IJobValidationService validationService)
     {
-        _jobRepository = jobRepository;
-        _validationService = validationService;
         RuleFor(x => x.Job)
                     .NotNull()
                     .WithMessage(JobValidationMessages.JOB_REQUIRED);
 
         RuleFor(x => x)
-            .CustomAsync(async (command, context, cancellationToken) =>
+            .CustomAsync(async (command, context, _) =>
             {
-                var job = await _jobRepository.GetByIdWithDetailsAsync(command.JobId);
-                var validationResult = await _validationService.ValidateForUpdate(command.Job, job.Value);
+                var job = await jobRepository.GetByIdWithDetailsAsync(command.JobId);
+                var validationResult = await validationService.ValidateForUpdate(command.Job, job.Value);
 
                 if (!validationResult.IsValid)
                 {

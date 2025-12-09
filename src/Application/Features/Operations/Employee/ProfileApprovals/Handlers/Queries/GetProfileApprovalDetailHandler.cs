@@ -3,15 +3,15 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Features.Operations.ProfileApprovals.DTOs;
-using Tawtheef.Application.Features.Operations.ProfileApprovals.Queries;
+using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Operations.ProfileApprovals.Handlers.Queries;
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Handlers.Queries;
 
 public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver media)
     : IRequestHandler<GetProfileApprovalDetailQuery, Result<ProfileApprovalDetailDto>>

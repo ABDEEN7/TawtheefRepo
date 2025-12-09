@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Commands;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -45,7 +45,7 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
 
         await uow.SaveChangesAsync(ct);
 
-        var mode = request.Mode?.Trim().ToLowerInvariant();
+        var mode = request.Mode.Trim().ToLowerInvariant();
         if (mode == "manual")
         {
             var employee = await userManager.Users.OfType<EmployeeUser>()

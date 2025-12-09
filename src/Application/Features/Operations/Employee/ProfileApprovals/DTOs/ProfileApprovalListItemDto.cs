@@ -1,6 +1,6 @@
 using Tawtheef.Domain.Entities.Recruitment;
 
-namespace Tawtheef.Application.Features.Operations.ProfileApprovals.DTOs;
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 
 public record ProfileApprovalListItemDto
 {

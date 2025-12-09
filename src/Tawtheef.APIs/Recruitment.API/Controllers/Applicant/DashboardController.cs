@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
-using Tawtheef.Application.Features.Recruitment.Dashboard.DTOs;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;

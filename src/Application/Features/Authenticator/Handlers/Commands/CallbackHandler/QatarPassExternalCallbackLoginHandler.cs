@@ -26,8 +26,8 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     ILoginAuditService loginAudit
 ) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<QatarPassExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
-    protected override string _provider => ConstantQatarPass.Provider;
-    protected override Guid _defaultUserType => UserTypeIds.Applicant;
+    protected override string Provider => ConstantQatarPass.Provider;
+    protected override Guid DefaultUserType => UserTypeIds.Applicant;
 
     public async Task<IResult<AuthResponse>> Handle(QatarPassExternalCallbackLoginCommand request, CancellationToken ct)
     {
