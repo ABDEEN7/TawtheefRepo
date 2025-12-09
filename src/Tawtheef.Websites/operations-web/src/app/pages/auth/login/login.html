@@ -18,9 +18,15 @@
 
       <button type="button"
               class="btn-login btn-azure"
-              (click)="startAzure()">
+              (click)="startLogin('azure')">
         <img class="icon" src="assets/icons/azure.svg" alt="">
         <span>{{ 'auth.azure.cta' | translate }}</span>
+      </button>
+      <button type="button"
+              class="btn-login btn-google"
+              (click)="startLogin('google')">
+        <i class="fa-brands fa-google"></i>
+        <span>{{ 'auth.login.google_cta' | translate }}</span>
       </button>
 
       <div class="footer small">

@@ -81,6 +81,40 @@ export class ExternalLoginService implements OnDestroy {
       .subscribe();
   }
 
+  public loginUsingGoogle(): void {
+    const url = this.endpoints.auth.externalLogin('google');
+    this.openPopupWithState(url);
+  }
+
+  private openPopupWithState(baseUrl: string): void {
+    this.closePopup();
+
+    const state = Math.random().toString(36).slice(2);
+    localStorage.setItem('oauth_state', state);
+    const url = baseUrl.includes('?') ? `${baseUrl}&state=${state}` : `${baseUrl}?state=${state}`;
+
+    const { left, top } = this.centeredPosition();
+    this.popup = window.open(
+      url,
+      '_external_login',
+      `width=${this.popupWidth},height=${this.popupHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+
+    if (this.safeIsPopupClosed()) {
+      this.toast('warn', 'Popup Blocked', 'Please allow popups for this site to continue with external login');
+      return;
+    }
+
+    // Fallback: detect manual close via polling
+    interval(350)
+      .pipe(
+        takeUntil(this.destroy$),
+        map(() => this.safeIsPopupClosed()),
+        filter(Boolean),
+        tap(() => this.closePopup())
+      )
+      .subscribe();
+  }
   /** Handles all incoming messages */
   private handleMessage(msg: ExternalMessage) {
     switch (msg.type) {
@@ -136,6 +170,21 @@ export class ExternalLoginService implements OnDestroy {
     this.messageService.add({ severity: 'success', summary, detail });
   }
 
+  /** Utilities */
+  private centeredPosition() {
+    // robust centering across multi-monitor setups
+    const dualLeft = (window.screenLeft ?? window.screenX ?? 0);
+    const dualTop = (window.screenTop ?? window.screenY ?? 0);
+    const width = window.innerWidth || document.documentElement.clientWidth || screen.width;
+    const height = window.innerHeight || document.documentElement.clientHeight || screen.height;
+    const left = Math.max(0, dualLeft + (width - this.popupWidth) / 2);
+    const top = Math.max(0, dualTop + (height - this.popupHeight) / 2);
+    return { left, top };
+  }
+
+  private toast(severity: 'success' | 'info' | 'warn' | 'error', summary: string, detail: string) {
+    this.messageService.add({ severity, summary, detail });
+  }
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();

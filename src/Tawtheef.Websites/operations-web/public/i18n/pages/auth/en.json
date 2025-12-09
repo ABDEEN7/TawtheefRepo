@@ -1,7 +1,8 @@
 ﻿{
   "auth.azure.title": "Sign in - Azure",
   "auth.azure.hint": "Please use your organization account via Azure to sign in.",
-  "auth.azure.cta": "Sign in with Azure",
+  "auth.azure.cta": "Sign in with Azure (Employee)",
+  "auth.login.google_cta": "Sign in with Google (Office)",
 
   "auth.login.ministry_name": "Ministry of Education and Higher Education",
   "auth.login.footer_owner": "Ministry of Education and Higher Education – IT Department"
