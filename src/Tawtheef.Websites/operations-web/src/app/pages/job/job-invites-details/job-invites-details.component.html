@@ -12,7 +12,7 @@
         @if (job(); as currentJob) {
         <span [class]="getTypeClass(currentJob.workType.backendName)">
           {{ 'job_invites_details.entities.' + currentJob.workLocation.backendName | translate }} —
-          {{ currentJob.status.name}}
+          {{ currentJob.jobStatus.name}}
         </span>
         }
         <span class="badge rounded-pill text-bg-light border">

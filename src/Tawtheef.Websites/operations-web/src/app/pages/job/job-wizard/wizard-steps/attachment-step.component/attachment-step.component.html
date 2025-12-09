@@ -19,7 +19,7 @@
         </button>
       </div>
 
-      <!-- New Attachment Card -->
+      <!-- قسم الإضافة الجديدة -->
       <div class="rounded-card p-4 mb-4 bg-light-custom">
         <h5 class="fw-bold mb-3 brand-text">
           {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ADD_NEW' | translate }}
@@ -32,7 +32,7 @@
               {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_AR' | translate }}
             </label>
             <input
-              [(ngModel)]="form.controls['titleAr']"
+              [(ngModel)]="newAttachment.titleAr"
               [ngModelOptions]="{ standalone: true }"
               type="text"
               class="form-control custom-input"
@@ -45,7 +45,7 @@
               {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_EN' | translate }}
             </label>
             <input
-              [(ngModel)]="form.controls['titleEn']"
+              [(ngModel)]="newAttachment.titleEn"
               [ngModelOptions]="{ standalone: true }"
               type="text"
               class="form-control custom-input"
@@ -62,7 +62,7 @@
             <input
               class="form-check-input switch-lg"
               type="checkbox"
-              [(ngModel)]="form.controls['isMandatory']"
+              [(ngModel)]="newAttachment.isMandatory"
               [ngModelOptions]="{ standalone: true }">
           </div>
         </div>
@@ -111,14 +111,29 @@
                       <span class="text-danger">*</span>
                       {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_AR' | translate }}
                     </label>
-                    <input type="text" formControlName="titleAr" class="form-control custom-input" dir="rtl">
+                    <input 
+                      type="text" 
+                      formControlName="titleAr" 
+                      class="form-control custom-input" 
+                      dir="rtl"
+                      [class.is-invalid]="!isFieldValid(i, 'titleAr')">
+                    
+                    @if (!isFieldValid(i, 'titleAr')) {
+                      <div class="invalid-feedback d-block">
+                        {{ 'JOB_WIZARD.VALIDATION.REQUIRED_FIELD' | translate }}
+                      </div>
+                    }
                   </div>
 
                   <div class="col-md-6">
                     <label class="field-label">
                       {{ 'JOB_WIZARD.STEPS.ATTACHMENTS.ATTACHMENT_NAME_EN' | translate }}
                     </label>
-                    <input type="text" formControlName="titleEn" class="form-control custom-input" dir="ltr">
+                    <input 
+                      type="text" 
+                      formControlName="titleEn" 
+                      class="form-control custom-input" 
+                      dir="ltr">
                   </div>
 
                   <div class="col-12">

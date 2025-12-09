@@ -422,7 +422,7 @@ export class JobService {
         
         this.currentJob.set(job);
         this.currentJobId = jobId;
-        this.jobStatus.set(jobResponse.status.backendName);
+        this.jobStatus.set(jobResponse.jobStatus.backendName);
       })
     );
   }
