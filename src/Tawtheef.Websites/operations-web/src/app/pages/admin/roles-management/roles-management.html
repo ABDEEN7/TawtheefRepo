@@ -1,9 +1,9 @@
 <div class="roles-container card shadow-sm p-4" i18nNamespace="pages/admin/roles-management">
 
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="page-title">{{ 'ROLES_TITLE' | translate }}</h3>
+    <h3 class="page-title">{{ 'ROLES.TITLE' | translate }}</h3>
     <button class="btn btn-maroon btn-pill shadow-sm" (click)="this.openAdd()">
-      {{ 'ROLES_ADD_ROLE' | translate }}
+      {{ 'ROLES.ADD_ROLE' | translate }}
     </button>
   </div>
 
@@ -12,10 +12,10 @@
     <table class="table custom-table">
       <thead>
       <tr>
-        <th>{{ 'ROLES_NAME_AR' | translate }}</th>
-        <th>{{ 'ROLES_NAME_EN' | translate }}</th>
-        <th>{{ 'ROLES_PERMISSIONS' | translate }}</th>
-        <th class="text-end">{{ 'ROLES_ACTIONS' | translate }}</th>
+        <th>{{ 'ROLES.NAME_AR' | translate }}</th>
+        <th>{{ 'ROLES.NAME_EN' | translate }}</th>
+        <th>{{ 'ROLES.PERMISSIONS' | translate }}</th>
+        <th class="text-end">{{ 'ROLES.ACTIONS' | translate }}</th>
       </tr>
       </thead>
 
@@ -43,12 +43,12 @@
               <td class="text-end text-nowrap">
                 <button class="btn btn-outline-secondary btn-sm me-2"
                         (click)="this.openEdit(role)">
-                  {{ 'ROLES_EDIT' | translate }}
+                  {{ 'ROLES.EDIT' | translate }}
                 </button>
 
                 <button class="btn btn-outline-danger btn-sm"
                         (click)="this.confirmDelete(role)">
-                  {{ 'ROLES_DELETE' | translate }}
+                  {{ 'ROLES.DELETE' | translate }}
                 </button>
               </td>
             </tr>
@@ -73,21 +73,21 @@
   <div class="modal-overlay">
     <div class="modal-card">
       <h4 class="modal-title">
-        {{ this.isEditing() ? ('ROLES_EDIT_ROLE' | translate) : ('ROLES_ADD_ROLE' | translate) }}
+        {{ this.isEditing() ? ('ROLES.EDIT_ROLE' | translate) : ('ROLES.ADD_ROLE' | translate) }}
       </h4>
 
       <div class="form-group mb-3">
-        <label>{{ 'ROLES_NAME_AR' | translate }}</label>
+        <label>{{ 'ROLES.NAME_AR' | translate }}</label>
         <input class="form-control" [(ngModel)]="this.formModel().nameAr" />
       </div>
 
       <div class="form-group mb-3">
-        <label>{{ 'ROLES_NAME_EN' | translate }}</label>
+        <label>{{ 'ROLES.NAME_EN' | translate }}</label>
         <input class="form-control" [(ngModel)]="this.formModel().nameEn" />
       </div>
 
       <div class="permissions-box mb-3">
-        <label class="fw-bold mb-2">{{ 'ROLES_PERMISSIONS_LIST' | translate }}</label>
+        <label class="fw-bold mb-2">{{ 'ROLES.PERMISSIONS_LIST' | translate }}</label>
 
         <div class="search-bar input-group mb-3">
           <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
@@ -117,11 +117,11 @@
 
       <div class="d-flex justify-content-end mt-4">
         <button class="btn btn-secondary me-2" (click)="this.isModalOpen.set(false)">
-          {{ 'ROLES_CANCEL' | translate }}
+          {{ 'ROLES.CANCEL' | translate }}
         </button>
 
         <button class="btn btn-primary" (click)="this.save()">
-          {{ 'ROLES_SAVE' | translate }}
+          {{ 'ROLES.SAVE' | translate }}
         </button>
       </div>
     </div>
