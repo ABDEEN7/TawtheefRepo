@@ -7,17 +7,17 @@ using Tawtheef.Domain.Constants;
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Commands;
 
 public sealed class DeleteRoleCommandHandler(RoleManager<IdentityRole<Guid>> roleManager)
-    : IRequestHandler<DeleteRoleCommand, Result>
+    : IRequestHandler<DeleteRoleCommand, IResult<Unit>>
 {
-    public async Task<Result> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<Unit>> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
     {
         var role = await roleManager.FindByIdAsync(request.Id.ToString());
         if (role is null)
-            return Result.Fail(ErrorsCodes.RoleNotFound);
+            return Result.Fail<Unit>(ErrorsCodes.RoleNotFound);
 
         var deleteResult = await roleManager.DeleteAsync(role);
         return deleteResult.Succeeded
-            ? Result.Ok()
+            ? Result.Ok<Unit>(Unit.Value)
             : RoleClaimSync.FailureFromIdentity(deleteResult);
     }
 }

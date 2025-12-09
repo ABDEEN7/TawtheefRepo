@@ -7,15 +7,16 @@ import { Select } from 'primeng/select';
 import {RoleDto} from './models/permission.model';
 import {PermissionDto} from './models/role.model';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-roles-management',
   standalone: true,
   templateUrl: './roles-management.html',
   styleUrls: ['./roles-management.scss'],
-  imports: [CommonModule, FormsModule, TranslatePipe, Select, PaginationComponent]
+  imports: [CommonModule, FormsModule, TranslatePipe, PaginationComponent, I18nNamespaceDirective]
 })
-export class RolesManagementComponent implements OnInit {
+export class RolesManagement implements OnInit {
   private rolesService = inject(RolesService);
   private translate = inject(TranslateService);
 

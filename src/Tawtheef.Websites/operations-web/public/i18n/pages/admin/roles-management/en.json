@@ -1,23 +1,23 @@
 {
-  "ROLES_TITLE": "Roles Management",
-  "ROLES_ADD_ROLE": "Add Role",
-  "ROLES_EDIT_ROLE": "Edit Role",
+  "ROLES.TITLE": "Roles Management",
+  "ROLES.ADD_ROLE": "Add Role",
+  "ROLES.EDIT_ROLE": "Edit Role",
 
-  "ROLES_NAME_AR": "Name (Arabic)",
-  "ROLES_NAME_EN": "Name (English)",
+  "ROLES.NAME_AR": "Name (Arabic)",
+  "ROLES.NAME_EN": "Name (English)",
 
-  "ROLES_PERMISSIONS": "Permissions",
-  "ROLES_PERMISSIONS_LIST": "Permissions List",
+  "ROLES.PERMISSIONS": "Permissions",
+  "ROLES.PERMISSIONS_LIST": "Permissions List",
 
-  "ROLES_ACTIONS": "Actions",
-  "ROLES_EDIT": "Edit",
-  "ROLES_DELETE": "Delete",
-  "ROLES_SAVE": "Save",
-  "ROLES_CANCEL": "Cancel",
+  "ROLES.ACTIONS": "Actions",
+  "ROLES.EDIT": "Edit",
+  "ROLES.DELETE": "Delete",
+  "ROLES.SAVE": "Save",
+  "ROLES.CANCEL": "Cancel",
 
-  "ROLES_DELETE_CONFIRM": "Are you sure you want to delete this role?",
-  "ROLES_SAVE_SUCCESS": "Role saved successfully",
-  "ROLES_DELETE_SUCCESS": "Role deleted successfully",
-  "ROLES_SAVE_FAILED": "Failed to save role. Please try again.",
-  "ROLES_DELETE_FAILED": "Failed to delete role. Please try again."
+  "ROLES.DELETE_CONFIRM": "Are you sure you want to delete this role?",
+  "ROLES.SAVE_SUCCESS": "Role saved successfully",
+  "ROLES.DELETE_SUCCESS": "Role deleted successfully",
+  "ROLES.SAVE_FAILED": "Failed to save role. Please try again.",
+  "ROLES.DELETE_FAILED": "Failed to delete role. Please try again."
 }
