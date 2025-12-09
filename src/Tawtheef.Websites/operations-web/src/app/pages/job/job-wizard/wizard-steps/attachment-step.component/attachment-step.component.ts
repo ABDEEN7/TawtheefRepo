@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
+import { FormBuilder, FormArray, Validators, FormGroup, AbstractControl } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
@@ -16,6 +16,12 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   protected jobService = inject(JobService);
   
   jobData!: Job;
+  
+  newAttachment = {
+    titleAr: '',
+    titleEn: '',
+    isMandatory: false
+  };
   
   readonly form: FormGroup = this.fb.group({
     attachments: this.fb.array([])
@@ -63,17 +69,32 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   }
 
   addAttachment(): void {
-    const attachmentGroup = this.fb.group({
-      titleAr: ['', [Validators.required, Validators.maxLength(200)]],
-      titleEn: ['', [Validators.maxLength(200)]],
-      isMandatory: [false]
-    });
+    if (this.newAttachment.titleAr.trim()) {
+      const attachmentGroup = this.fb.group({
+        titleAr: [this.newAttachment.titleAr, [Validators.required, Validators.maxLength(200)]],
+        titleEn: [this.newAttachment.titleEn, [Validators.maxLength(200)]],
+        isMandatory: [this.newAttachment.isMandatory]
+      });
+      
+      this.attachmentsArray.push(attachmentGroup);
+      
+      this.resetNewAttachment();
+    } else {
+      const attachmentGroup = this.fb.group({
+        titleAr: ['', [Validators.required, Validators.maxLength(200)]],
+        titleEn: ['', [Validators.maxLength(200)]],
+        isMandatory: [false]
+      });
+      
+      this.attachmentsArray.push(attachmentGroup);
+    }
     
-    this.attachmentsArray.push(attachmentGroup);
+    this.updateJobData();
   }
 
   removeAttachment(index: number): void {
     this.attachmentsArray.removeAt(index);
+    this.updateJobData();
   }
 
   isValid(): boolean {
@@ -81,7 +102,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
       return true;
     }
     
-    return this.form.valid;
+    return this.form.valid && this.attachmentsArray.valid;
   }
 
   private addAttachmentToForm(attachment: any): void {
@@ -113,5 +134,19 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     const group = this.getAttachmentGroup(index);
     const titleAr = group.get('titleAr')?.value?.trim();
     return !!titleAr;
+  }
+
+  private resetNewAttachment(): void {
+    this.newAttachment = {
+      titleAr: '',
+      titleEn: '',
+      isMandatory: false
+    };
+  }
+
+  isFieldValid(groupIndex: number, fieldName: string): boolean {
+    const group = this.getAttachmentGroup(groupIndex);
+    const field = group.get(fieldName);
+    return field ? field.valid && (field.dirty || field.touched) : false;
   }
 }

@@ -32,7 +32,6 @@ public class JobProfile : IRegister
             .Ignore(dest => dest.QualificationDescriptionEn!);
 
         TypeAdapterConfig<Job, JobResponseDto>.NewConfig()
-            .Map(dest => dest.Status, src => src.JobStatus)
             .Map(dest => dest.Quota, src => src.JobQuota)
             .Map(dest => dest.Degrees, src => src.JobDegrees)
             .Map(dest => dest.Conditions, src => src.JobConditions)
