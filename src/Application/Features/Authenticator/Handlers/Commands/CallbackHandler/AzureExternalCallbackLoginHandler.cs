@@ -19,8 +19,8 @@ public sealed class AzureExternalCallbackLoginHandler(
     ILoginAuditService loginAudit
 ) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
-    protected override string _provider => "Azure";
-    protected override Guid _defaultUserType => UserTypeIds.Employee;
+    protected override string Provider => "Azure";
+    protected override Guid DefaultUserType => UserTypeIds.Employee;
     public async Task<IResult<AuthResponse>> Handle(AzureExternalCallbackLoginCommand request, CancellationToken ct)
     {
         if (!string.IsNullOrWhiteSpace(request.Error))
@@ -56,12 +56,12 @@ public sealed class AzureExternalCallbackLoginHandler(
                         $"{principal.FindFirst(ClaimTypes.GivenName)?.Value} {principal.FindFirst(ClaimTypes.Surname)?.Value}".Trim();
 
         // If already linked, sign-in directly
-        var linkedUser = await userManager.FindByLoginAsync(_provider, providerKey);
+        var linkedUser = await userManager.FindByLoginAsync(Provider, providerKey);
         if (linkedUser is not null)
         {
-            await UpsertProviderClaimsAsync(userManager, linkedUser, _provider, principal);
+            await UpsertProviderClaimsAsync(userManager, linkedUser, Provider, principal);
             await signInManager.SignInAsync(linkedUser, isPersistent: false);
-            return await tokenService.IssueTokensAsync(linkedUser, _provider, ct);
+            return await tokenService.IssueTokensAsync(linkedUser, Provider, ct);
         }
 
         // Not linked: attach to existing by email, or create new
@@ -72,21 +72,21 @@ public sealed class AzureExternalCallbackLoginHandler(
         if (existingUser is not null)
         {
             // Guard against duplicate link to another account
-            var duplicate = await userManager.FindByLoginAsync(_provider, providerKey);
+            var duplicate = await userManager.FindByLoginAsync(Provider, providerKey);
             if (duplicate is not null && duplicate.Id != existingUser.Id)
                 return await LogFailureAsync(ErrorsCodes.ExternalLoginAlreadyLinked, existingUser.Id, existingUser.UserTypeId, ct: ct);
 
             var addLoginRes = await userManager.AddLoginAsync(existingUser,
-                new UserLoginInfo(_provider, providerKey, "Azure AD"));
+                new UserLoginInfo(Provider, providerKey, "Azure AD"));
             if (!addLoginRes.Succeeded)
                 return await LogFailureAsync(string.Join(", ", addLoginRes.Errors.Select(e => e.Description)),
                     existingUser.Id, existingUser.UserTypeId, ct: ct);
 
-            await UpsertProviderClaimsAsync(userManager, existingUser, _provider, principal);
+            await UpsertProviderClaimsAsync(userManager, existingUser, Provider, principal);
             await signInManager.SignInAsync(existingUser, isPersistent: false);
 
 
-            return await tokenService.IssueTokensAsync(existingUser, _provider, ct);
+            return await tokenService.IssueTokensAsync(existingUser, Provider, ct);
         }
 
         // Create user from claims
@@ -115,12 +115,12 @@ public sealed class AzureExternalCallbackLoginHandler(
             return await LogFailureAsync(string.Join(", ", createRes.Errors.Select(e => e.Description)), newUser.Id, newUser.UserTypeId, ct: ct);
 
         var addLogin = await userManager.AddLoginAsync(newUser,
-            new UserLoginInfo(_provider, providerKey, "Azure AD"));
+            new UserLoginInfo(Provider, providerKey, "Azure AD"));
         if (!addLogin.Succeeded)
             return await LogFailureAsync(string.Join(", ", addLogin.Errors.Select(e => e.Description)), newUser.Id, newUser.UserTypeId, ct: ct);
 
-        await UpsertProviderClaimsAsync(userManager, newUser, _provider, principal);
-        return await tokenService.IssueTokensAsync(newUser, _provider, ct);
+        await UpsertProviderClaimsAsync(userManager, newUser, Provider, principal);
+        return await tokenService.IssueTokensAsync(newUser, Provider, ct);
     }
     private static string? GetProviderKey(ClaimsPrincipal p)
     {

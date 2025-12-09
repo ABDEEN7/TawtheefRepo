@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
@@ -56,6 +57,10 @@ public sealed class SaveProfileExperienceHandler(
         var lengthValidationResult = ValidateTextLengths(experiences, trainings);
         if (lengthValidationResult.IsFailed)
             return Result.Fail<Unit>(lengthValidationResult.Errors);
+
+        var qualificationValidation = ValidateQualifications(experiences, profile.Qualifications ?? []);
+        if (qualificationValidation.IsFailed)
+            return Result.Fail<Unit>(qualificationValidation.Errors);
         var experienceFiles = cmd.Request.ExperienceFiles;
         var trainingFiles   = cmd.Request.TrainingCourseFiles;
 
@@ -85,7 +90,8 @@ public sealed class SaveProfileExperienceHandler(
                 CountryId     = dto.CountryId,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id,
-                Description   = dto.Description
+                Description   = dto.Description,
+                QualificationId = dto.QualificationId
             };
 
             profile.Experiences.Add(entity);
@@ -217,6 +223,31 @@ public sealed class SaveProfileExperienceHandler(
                     training.Description.Length > ProfileLimits.TrainingDescriptionMaxLength)
                 {
                     return Result.Fail(ErrorsCodes.TrainingDescriptionTooLong);
+                }
+            }
+
+            return Result.Ok();
+        }
+
+        static Result ValidateQualifications(
+            IEnumerable<ExperienceUpsertDto> experiencesToValidate,
+            IEnumerable<Qualification> qualifications)
+        {
+            var qualificationLookup = qualifications.ToDictionary(q => q.Id);
+
+            foreach (var experience in experiencesToValidate)
+            {
+                if (experience.QualificationId is null)
+                    continue;
+
+                if (!qualificationLookup.TryGetValue(experience.QualificationId.Value, out var qualification))
+                {
+                    return Result.Fail(ErrorsCodes.InvalidExperienceQualification);
+                }
+
+                if (qualification.GraduationYear is not null && experience.StartDate.Year < qualification.GraduationYear)
+                {
+                    return Result.Fail(ErrorsCodes.ExperienceBeforeGraduation);
                 }
             }
 

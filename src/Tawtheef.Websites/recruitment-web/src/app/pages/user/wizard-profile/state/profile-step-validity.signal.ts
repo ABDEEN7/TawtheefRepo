@@ -6,6 +6,7 @@ import {
 } from '../models/profile-validation.model';
 import {ProfileState} from '../models/profile-state.model';
 import {CandidateType, SponsorType} from '../../../../core/enums/lookups.enum';
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 
 function parseDate(value?: string | null): Date | null {
   if (!value) return null;
@@ -18,6 +19,11 @@ function startOfToday(): Date {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   return now;
+}
+
+function isCertificateType(type?: dropdownOptionsModel | null): boolean {
+  const backendName = type?.backendName?.toLowerCase() ?? '';
+  return backendName.includes('certificate');
 }
 
 export function isFilledField(value: unknown): boolean {
@@ -104,6 +110,10 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'basic', 'office');
   }
 
+  if (isResident && !isFilledField(s.qidExpiry)) {
+    addRequiredError(errors, 'basic', 'qidExpiry');
+  }
+
   if (!isFilledField(s.cvName)) {
     addRequiredError(errors, 'basic', 'cvName');
   }
@@ -144,10 +154,6 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 
   if (!isFilledField(s.qid)) {
     addRequiredError(errors, 'personal', 'qid');
-  }
-
-  if (isResident && !isFilledField(s.qidExpiry)) {
-    addRequiredError(errors, 'personal', 'qidExpiry');
   }
 
   if (!isFilledField(s.dob)) {
@@ -314,14 +320,12 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
   const hasExperiences = Array.isArray(s.experiences) && s.experiences.length > 0;
   const hasCourses = Array.isArray(s.courses) && s.courses.length > 0;
   const today = startOfToday();
-  const earliestGradYear = s.degrees
-    ?.map(d => d.gradYear)
-    .filter((y): y is number => Number.isFinite(y))
-    .reduce<number | null>((min, current) => {
-      if (min === null) return current;
-      return current < min ? current : min;
-    }, null);
-  const earliestGraduationDate = earliestGradYear ? new Date(earliestGradYear, 0, 1) : null;
+  const graduationDates = new Map<string, Date>();
+  s.degrees?.forEach(d => {
+    if (d.id && Number.isFinite(d.gradYear)) {
+      graduationDates.set(d.id, new Date(d.gradYear, 0, 1));
+    }
+  });
 
   if (!hasExperiences) {
     errors.push({
@@ -370,11 +374,14 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       });
     }
 
-    if (earliestGraduationDate && startDate && startDate.getTime() < earliestGraduationDate.getTime()) {
-      errors.push({
-        field: `experiences[${index}].from`,
-        i18nKey: 'wizard.profile.experience.beforeGraduation',
-      });
+    if (experience.qualificationId && startDate) {
+      const gradDate = graduationDates.get(experience.qualificationId as string);
+      if (gradDate && startDate.getTime() <= gradDate.getTime()) {
+        errors.push({
+          field: `experiences[${index}].from`,
+          i18nKey: 'wizard.profile.experience.beforeLinkedGraduation',
+        });
+      }
     }
   });
 
@@ -397,29 +404,6 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
     }
   });
 
-  const ranges = s.experiences
-    ?.map((exp, index) => {
-      const start = parseDate(exp.from);
-      const end = exp.current ? today : parseDate(exp.to) ?? today;
-      return start ? { start, end, index } : null;
-    })
-    .filter((r): r is { start: Date; end: Date; index: number } => !!r)
-    .sort((a, b) => a.start.getTime() - b.start.getTime());
-
-  if (ranges && ranges.length > 1) {
-    for (let i = 1; i < ranges.length; i++) {
-      const prev = ranges[i - 1];
-      const curr = ranges[i];
-      if (curr.start.getTime() <= prev.end.getTime()) {
-        errors.push({
-          field: 'experiences',
-          i18nKey: 'wizard.profile.experience.overlap',
-        });
-        break;
-      }
-    }
-  }
-
   return { valid: errors.length === 0, errors };
 }
 
@@ -427,12 +411,7 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   const hasAchievements = Array.isArray(s.achievements) && s.achievements.length > 0;
 
-  if (!hasAchievements) {
-    errors.push({
-      field: 'achievements',
-      i18nKey: 'wizard.profile.achievements.atLeastOne.required',
-    });
-  }
+  if (!hasAchievements) return { valid: true, errors: [] };
 
   s.achievements?.forEach((achievement, index) => {
     if (!achievement?.achievementType) {
@@ -442,6 +421,13 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
       errors.push({
         field: `achievements[${index}].attachment`,
         i18nKey: 'wizard.profile.achievements.attachment.required',
+      });
+    }
+
+    if (isCertificateType(achievement.achievementType) && (achievement.relatedToSpecialization === null || achievement.relatedToSpecialization === undefined)) {
+      errors.push({
+        field: `achievements[${index}].relatedToSpecialization`,
+        i18nKey: 'wizard.profile.achievements.specialization.required',
       });
     }
   });
@@ -516,12 +502,7 @@ function validateAttachmentsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   const hasAttachments = Array.isArray(s.attachments) && s.attachments.length > 0;
 
-  if (!hasAttachments) {
-    errors.push({
-      field: 'attachments',
-      i18nKey: 'wizard.profile.attachments.atLeastOne.required',
-    });
-  }
+  if (!hasAttachments) return { valid: true, errors: [] };
 
   s.attachments?.forEach((attachment, index) => {
     if (!isFilledField(attachment?.fileName ?? attachment?.name)) {

@@ -22,7 +22,8 @@ import {
 } from '../state/profile-step-validity.signal';
 import {SponsorType} from '../../../../core/enums/lookups.enum';
 import {NationalityMapperService} from './nationality-mapper.service';
-import {take} from 'rxjs';
+import {take, tap} from 'rxjs';
+import {mapProfileStatusToState} from './profile.mapper';
 
 
 
@@ -190,6 +191,7 @@ export class DataService {
       next.naUnit = null;
       next.naFileName = null;
       next.naFile = null;
+      next.qidExpiry = null;
     } else {
       next.address = undefined;
     }
@@ -243,6 +245,23 @@ export class DataService {
         next: res => this.applyMoiPersonalInfo(normalizeMoiResponse(res)),
         error: err => console.error(err),
       });
+  }
+
+  refreshDegreesFromBackend() {
+    return this.profileService
+      .getProfileStatus()
+      .pipe(
+        take(1),
+        tap(dto => {
+          const mapped = mapProfileStatusToState(
+            this.phoneMapperService,
+            this.lookups,
+            dto,
+            this.userService.getPrefill()
+          );
+          this.state.update(s => ({ ...s, degrees: mapped.degrees }));
+        })
+      );
   }
 
   applySponsorPersonalInfo(info: MoiPersonalInfo) {

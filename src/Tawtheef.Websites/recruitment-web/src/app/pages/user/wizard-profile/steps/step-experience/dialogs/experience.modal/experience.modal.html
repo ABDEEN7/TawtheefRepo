@@ -58,6 +58,31 @@
           </div>
         </div>
         <div class="row g-2 g-md-3 align-items-start">
+          <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+            <input type="checkbox" id="hasQualification" class="form-check-input"
+                   formControlName="hasQualification" (change)="onQualificationToggle()">
+            <label for="hasQualification" class="form-check-label">
+              {{ 'wizard.experience.relatedDegree.question' | translate }}
+            </label>
+          </div>
+          <div class="col-12 col-md-6" *ngIf="f['hasQualification'].value">
+            <label class="form-label fw-semibold mb-2 required" for="qualificationId">
+              {{ 'wizard.experience.relatedDegree.label' | translate }}
+            </label>
+            <p-select size="small" [filter]="true" [filterBy]="'name'"
+                      inputId="qualificationId" formControlName="qualificationId"
+                      [options]="degreeOptions" optionLabel="name" optionValue="id"
+                      [placeholder]="'wizard.experience.relatedDegree.placeholder' | translate"
+                      [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+                      [ngClass]="{'p-invalid': form.hasError('qualificationRequired') && (f['qualificationId'].dirty || f['qualificationId'].touched)}">
+            </p-select>
+            <small *ngIf="form.hasError('qualificationRequired') && (f['qualificationId'].dirty || f['qualificationId'].touched)"
+                   class="text-danger mt-1 d-block">
+              {{ 'validation.required' | translate }}
+            </small>
+          </div>
+        </div>
+        <div class="row g-2 g-md-3 align-items-start">
           <div class="col-12 d-flex align-items-center gap-2">
             <input type="checkbox"
                    id="current"
@@ -88,6 +113,10 @@
               <small *ngIf="form.hasError('futureDate') && (f['from'].dirty || f['from'].touched)"
                      class="text-danger mt-1 d-block">
                 {{ 'validation.noFuture' | translate }}
+              </small>
+              <small *ngIf="form.hasError('invalidQualificationDate') && (f['qualificationId'].dirty || f['qualificationId'].touched)"
+                     class="text-danger mt-1 d-block">
+                {{ 'wizard.profile.experience.beforeLinkedGraduation' | translate }}
               </small>
             </div>
             <!-- To -->

@@ -1,7 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import {LanguageService} from '../../../core/services/language.service';
-import {EndpointsService} from '../../../core/http/endpoints.service';
-import {AuthService} from '../../../core/auth/auth.service';
 import {ExternalLoginService} from '../../../core/auth/external-login';
 import {TranslatePipe} from '@ngx-translate/core';
 import {Subscription} from 'rxjs';
@@ -13,7 +11,8 @@ import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.
   styleUrls: ['./login.scss'],
   imports: [
     TranslatePipe,
-    I18nNamespaceDirective
+    I18nNamespaceDirective,
+    TranslatePipe
   ]
 })
 export class Login implements OnInit, OnDestroy {
@@ -38,7 +37,14 @@ export class Login implements OnInit, OnDestroy {
     this.currentLang = this.lang.get();
   }
 
-  startAzure(): void {
-    this.auth.loginUsingAzure();
+  startLogin(kind: 'azure' | 'google'): void {
+    switch (kind) {
+      case 'azure':
+        this.auth.loginUsingAzure();
+        break;
+      case 'google':
+        this.auth.loginUsingGoogle();
+        break;
+    }
   }
 }

@@ -17,7 +17,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     public required string FullNameEn { get; set; }
     [Required, StringLength(100)]
     public required string FullNameAr { get; set; }
-    public UserStatus Status { get; set; } = UserStatus.InCreation;
+    public bool IsBlocked { get; set; }
     public DateTime? LastLoginDate { get; set; }
     
     [StringLength(2048)]
@@ -54,6 +54,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         OtpAttempts = 0;
         OtpSends++;
     }
+
     public static Result<User> Register(string email, string displayName, Guid userTypeId)
     {
         var name = FullName.TryParse(displayName);
@@ -66,9 +67,18 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
         if (userResult.IsFailed) return userResult;
         
         var user = userResult.Value;
+
+        // Ensure aggregate identity and creation timestamp are set (in case specific Register didn't)
+        if (user.Id == Guid.Empty)
+            user.Id = Guid.NewGuid();
+
+        if (user.CreatedDate == default)
+            user.CreatedDate = DateTimeOffset.UtcNow;
+
         user.UserTypeId = userTypeId;
         
-        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.FullNameEn, userTypeId, DateTime.Now));
+        // raise domain event with UTC timestamp
+        user.AddDomainEvent(new UserRegisteredEvent(user.Id, email, user.FullNameEn, userTypeId, DateTime.UtcNow));
 
         return Result.Ok(user);
     }

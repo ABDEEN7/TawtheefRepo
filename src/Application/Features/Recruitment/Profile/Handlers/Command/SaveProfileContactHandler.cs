@@ -3,10 +3,12 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -64,13 +66,13 @@ public sealed class SaveProfileContactHandler(
             {
                 await reviewService.TouchAttachmentAsync(
                     profile.Id,
-                    Domain.Entities.Recruitment.ProfileSection.Contact,
+                    ProfileSection.Contact,
                     "National Address Certificate",
                     profile.ResidenceAddressCertificateId.Value,
                     ct);
             }
         }
-        await reviewService.TouchSectionAsync(profile.Id, Domain.Entities.Recruitment.ProfileSection.Contact, ct);
+        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         

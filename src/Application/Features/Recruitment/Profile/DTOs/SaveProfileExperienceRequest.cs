@@ -22,6 +22,7 @@ public sealed class ExperienceUpsertDto
     public DateOnly? EndDate { get; set; }
     public Guid CountryId { get; set; }
     public string? Description { get; set; }
+    public Guid? QualificationId { get; set; }
 
     public Guid? CertificateId { get; set; }
     public int? CertificateFileIndex { get; set; }

@@ -131,6 +131,7 @@ export interface ExperienceDto {
   endDate?: string | null;
   description?: string | null;
   isCurrent: boolean;
+  qualificationId?: string | null;
   attachment?: FileRefDto | null;
 }
 export interface QualificationDto {

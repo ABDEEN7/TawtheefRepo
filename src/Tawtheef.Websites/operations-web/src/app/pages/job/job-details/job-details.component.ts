@@ -7,6 +7,7 @@ import { ConfirmApplyModalComponent } from '../modals/confirm-apply-modal/confir
 import { GUID } from '../../../shared/types/guid.type';
 import { JobLookupService } from '../services/job-lookup.service';
 import { JobResponse } from '../models/job-response-model';
+import { JobStatus } from '../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-job-details',
@@ -15,11 +16,22 @@ import { JobResponse } from '../models/job-response-model';
   standalone: false,
 })
 export class JobDetailsComponent implements OnInit {
-  job: JobResponse | undefined;
+  job!: JobResponse;
   id!: GUID;
-
-  activeTab: string = 'desc';
+  jobStatus = JobStatus;
+  
+  activeTab: string = 'overview';
   hasApplied: boolean = false;
+  isFavorite: boolean = false;
+  
+  private tabsContent: { id: string, title: string, icon: string}[] = [
+    { id: 'overview', title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
+    { id: 'skills', title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
+    { id: 'conditions', title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-graduation-cap' },
+    { id: 'benefits', title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
+    { id: 'responsebilites', title: 'JOB_DETAILS.RESPONSEBILITES', icon: 'fa-info-circle' },
+    { id: 'requiredAttachments', title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-info-circle' }
+  ];
 
   private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
@@ -32,7 +44,6 @@ export class JobDetailsComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as GUID;
     this.loadJobById();
-    this.lookupsService.loadAll();
   }
 
   private loadJobById(): void {
@@ -42,7 +53,7 @@ export class JobDetailsComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.notificationService.error("job_details.failed_to_load");
+        this.notificationService.error("JOB_DETAILS.FALID_TO_LOAD");
         this.router.navigate(['/jobs']);
       },
     });
@@ -50,6 +61,10 @@ export class JobDetailsComponent implements OnInit {
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+  }
+
+  getTabContent(): { id: string, title: string, icon: string} {
+    return this.tabsContent.find(tab => tab.id === this.activeTab) || this.tabsContent[0];
   }
 
   openConfirmModal(): void {
@@ -63,7 +78,7 @@ export class JobDetailsComponent implements OnInit {
     ref?.onClose.subscribe((confirmed: boolean) => {
       if (confirmed) {
         this.confirmApply();
-        this.notificationService.success('job_details.apply_success');
+        this.notificationService.success('JOB_DETAILS.APPLY_SUCCESS');
       }
     });
   }
@@ -72,26 +87,43 @@ export class JobDetailsComponent implements OnInit {
     this.hasApplied = true;
   }
 
+  toggleFavorite(): void {
+    this.isFavorite = !this.isFavorite;
+  }
+
+  getStatusClass(): string {
+    if (!this.job?.jobStatus?.backendName) return this.jobStatus.Closed;
+    
+    switch(this.job.jobStatus.backendName) {
+      case JobStatus.Approved:
+        return this.isJobOpen() ? this.jobStatus.Approved : this.jobStatus.Closed;
+      case JobStatus.PendingApproval:
+        return this.jobStatus.PendingApproval;
+      case JobStatus.Draft:
+        return this.jobStatus.Draft;
+      default:
+        return this.jobStatus.Closed;
+    }
+  }
+
   getResponsibilities(): string[] {
     if (!this.job?.responsibilities?.length) return [];
     return this.job.responsibilities.map(r => r.textAr);
   }
 
-  getJobConditions(): string[] {
-    if (!this.job?.conditions?.length) return [];
-    return this.job.conditions.map(c => c.textAr);
-  }
+  getJobConditions(): { textAr: string; textEn: string }[] {
+  if (!this.job?.conditions?.length) return [];
+  return this.job.conditions.map(c => ({
+    textAr: c.textAr,
+    textEn: c.textEn
+  }));
+}
 
   getJobSkills(): string[] {
     if (!this.job?.skills?.length) return [];
     return this.job.skills
       .filter(skill => skill.showToApplicants)
-      .map(skill => {
-        const skillName =
-          this.lookupsService.skills().find(s => s.id === skill.skillId)?.name ||
-          'job_details.unknown_skill';
-        return skillName;
-      });
+      .map(skill => skill.skill.name); 
   }
 
   getJobBenefits(): string[] {
@@ -103,20 +135,12 @@ export class JobDetailsComponent implements OnInit {
   }
 
   getDegreeRequirements(): string {
-    if (!this.job?.degrees?.length) return 'job_details.not_specified';
+    if (!this.job?.degrees?.length) return '';
 
-    const degreeNames = this.job.degrees
-      .map(degree =>
-        this.lookupsService.degrees().find(d => d.id === degree.degreeId)?.name || ''
-      )
-      .filter(name => name);
+    const degreeNames = this.job.degrees.map(degree => degree.degree.name)
+      
 
-    return degreeNames.join(', ') || 'job_details.not_specified';
-  }
-
-  formatDate(date: Date | string | undefined): string {
-    if (!date) return 'job_details.not_specified';
-    return new Date(date).toLocaleDateString('ar-SA');
+    return degreeNames.join(',') || '';
   }
 
   isJobOpen(): boolean {
@@ -124,10 +148,5 @@ export class JobDetailsComponent implements OnInit {
     const closingDate = new Date(this.job.closingDate);
     const today = new Date();
     return closingDate >= today;
-  }
-
-  getVacancyStatus(): string {
-    if (!this.job?.numberOfVacancies) return 'job_details.not_specified';
-    return `${this.job.numberOfVacancies} ${this.job.numberOfVacancies > 1 ? 'job_details.vacancy_plural' : 'job_details.vacancy_single'}`;
   }
 }

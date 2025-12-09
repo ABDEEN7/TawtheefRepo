@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
+namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 public class GetJobsQueryDto
 {

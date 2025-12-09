@@ -19,6 +19,7 @@ export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestM
     candidateTypeId: state.candidateType!.id,
     targetEntityId: state.targetEntity!.id,
     officeId: state.office?.id ?? null,
+    qidExpiry: state.qidExpiry ?? null,
     cvFileName: state.cvName,
     idFileName: state.idName,
     birthCertificateFileName: state.birthCertificateName,
@@ -84,6 +85,15 @@ export function mapProfileStatusToState(
   dto: ProfileStatusDto,
   prefill?: PrefillData | null
 ): ProfileState {
+  const qualificationNames = new Map<string, string>();
+  (dto.qualifications ?? []).forEach(q => {
+    if (!q.id) return;
+    const degreeName = mapIdToDropdown(lookups, 'degree', q.degreeId)?.name ?? '';
+    const majorName = q.major?.name ?? '';
+    const gradYear = q.graduationYear ? ` (${q.graduationYear})` : '';
+    qualificationNames.set(q.id, `${degreeName}${majorName ? ' - ' + majorName : ''}${gradYear}`.trim());
+  });
+
   return {
     // ----------- Prereq -----------
     candidateType: mapIdToDropdown(lookups, 'candidateType', dto.candidateTypeId) as dropdownOptionsModel,
@@ -181,6 +191,8 @@ export function mapProfileStatusToState(
       fileName: e.attachment?.fileName,
       attachmentId: e.attachment?.resourceId,
       attachment: mapFile(e.attachment),
+      qualificationId: e.qualificationId ?? null,
+      qualificationName: e.qualificationId ? (e as any).qualificationName ?? qualificationNames.get(e.qualificationId) ?? null : null,
     } as Experience)),
 
     courses: (dto.trainingCourses ?? []).map(t => ({
@@ -207,6 +219,7 @@ export function mapProfileStatusToState(
       attachmentId: a.attachment?.resourceId,
       fileName: a.attachment?.fileName,
       attachment: mapFile(a.attachment),
+      relatedToSpecialization: (a as any).relatedToSpecialization ?? null,
     } as Achievement)),
 
     skills: (dto.skills ?? []).map(s => ({

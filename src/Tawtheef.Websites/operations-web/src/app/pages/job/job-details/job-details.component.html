@@ -1,335 +1,265 @@
-<section i18nNamespace="pages/job-details">
-  <header class="hero py-4">
-    <div class="container">
-      <div class="job-card p-3 p-md-4 hover-card">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-          <div class="d-flex align-items-center gap-3">
-            <img
-              ngSrc="https://cdn-icons-png.flaticon.com/512/1157/1157000.png"
-              alt="logo"
-              width="56"
-              height="56"
-            />
-            <div>
-              <h4 class="mb-0 fw-800 text-brand">{{ job?.titleAr || 'غير محدد' }}</h4>
-              <div class="small-muted">
-                <i class="fa-solid fa-location-dot"></i> {{ job?.workLocation?.name || 'غير محدد' }}
-                {{ '-' }} <i class="fa-regular fa-clock"></i>
-                {{ 'job_details.deadline' | translate }}:
-                {{ formatDate(job?.closingDate) }}
-              </div>
-            </div>
-          </div>
-          <div class="d-flex align-items-center gap-3">
-            <div class="d-flex flex-column flex-md-row gap-2">
-              <!-- Apply Button -->
-              <button
-                id="applyBtn"
-                class="btn btn-success btn-lg rounded-pill"
-                (click)="openConfirmModal()"
-                [disabled]="hasApplied || !isJobOpen()"
-                [title]="!isJobOpen() ? 'انتهت فترة التقديم' : ''"
-              >
-                <i
-                  class="fa-solid"
-                  [class.fa-paper-plane]="!hasApplied"
-                  [class.fa-check]="hasApplied"
-                ></i>
-                {{
-                  hasApplied
-                    ? ('job_details.buttons.submitted' | translate)
-                    : ('job_details.buttons.apply' | translate)
-                }}
-              </button>
-            </div>
+<div class="main-container" i18nNamespace="pages/job-details">
+  <div class="header-section">
+    <div class="job-details-title-group">
+      <div class="title-wrapper">
+        <h1 class="job-title text-xlarge">{{ job.titleAr }}</h1>
+
+        <div class="info-bar">
+          <div class="info-item">
+            <span>{{ 'JOB_DETAILS.JOB_REVIEW_NOT' | translate }}</span>
           </div>
         </div>
       </div>
     </div>
-  </header>
 
-  <!-- Main Content -->
-  <main class="py-4">
-    <div class="container">
-      <div class="row g-4">
-        <!-- Content Tabs -->
-        <div class="col-lg-8">
-          <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                [class.active]="activeTab === 'desc'"
-                (click)="setActiveTab('desc')"
-              >{{ 'job_details.description' | translate }}</a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                [class.active]="activeTab === 'skills'"
-                (click)="setActiveTab('skills')"
-              >{{ 'job_details.skills' | translate }}</a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                [class.active]="activeTab === 'req'"
-                (click)="setActiveTab('req')"
-              >{{ 'job_details.requirements' | translate }}</a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                [class.active]="activeTab === 'benefits'"
-                (click)="setActiveTab('benefits')"
-              >{{ 'job_details.benefits' | translate }}</a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                [class.active]="activeTab === 'about'"
-                (click)="setActiveTab('about')"
-              >{{ 'job_details.about_org' | translate }}</a
-              >
-            </li>
-          </ul>
+    <div class="status-favorite-wrapper">
+      <div class="favorite-icon-container" (click)="toggleFavorite()">
+        <i
+          class="heart-icon"
+          [class.active]="isFavorite"
+          [ngClass]="isFavorite ? 'fa fa-heart' : 'fa fa-heart-o'"
+        ></i>
+      </div>
 
-          <div class="tab-content p-3">
-            <!-- Description Tab -->
-            @if (activeTab === 'desc') {
-              <div class="tab-pane fade show active">
-                <!-- Job Overview -->
-                <div class="mb-4">
-                  <h6 class="section-title mb-2">{{ 'job_details.overview' | translate }}</h6>
-                  <div [innerHTML]="job?.overViewAr" class="job-content"></div>
+      <div class="status-tag" [ngClass]="getStatusClass()">
+        <span>{{ job.jobStatus.name }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-card">
+  <div class="tabs-card-switch card-base">
+    <button
+      class="tab-button pill-button text-medium flex-center"
+      [class.active]="activeTab === 'overview'"
+      (click)="setActiveTab('overview')"
+    >
+      <i class="fa fa-file-alt"></i>
+      <span>{{ 'JOB_DETAILS.OVERVIEW' | translate }}</span>
+    </button>
+
+    <button
+      class="tab-button pill-button text-medium flex-center"
+      [class.active]="activeTab === 'responsibilities'"
+      (click)="setActiveTab('responsibilities')"
+    >
+      <i class="fa fa-tasks"></i>
+      <span>{{ 'JOB_DETAILS.RESPONSIBILITIES' | translate }}</span>
+    </button>
+
+    <button
+      class="tab-button pill-button text-medium flex-center"
+      [class.active]="activeTab === 'conditions'"
+      (click)="setActiveTab('conditions')"
+    >
+      <i class="fa fa-graduation-cap"></i>
+      <span>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</span>
+    </button>
+
+    <button
+      class="tab-button pill-button text-medium flex-center"
+      [class.active]="activeTab === 'skills'"
+      (click)="setActiveTab('skills')"
+    >
+      <i class="fa fa-tools"></i>
+      <span>{{ 'JOB_DETAILS.SKILLS' | translate }}</span>
+    </button>
+
+    <button
+      class="tab-button pill-button text-medium flex-center"
+      [class.active]="activeTab === 'benefits'"
+      (click)="setActiveTab('benefits')"
+    >
+      <i class="fa fa-gift"></i>
+      <span>{{ 'JOB_DETAILS.BENEFITS' | translate }}</span>
+    </button>
+
+    <button
+      class="tab-button pill-button text-medium flex-center"
+      [class.active]="activeTab === 'requiredAttachments'"
+      (click)="setActiveTab('requiredAttachments')"
+    >
+      <i class="fa fa-paperclip"></i>
+      <span>{{ 'JOB_DETAILS.REQUIRED_ATTACHMENTS' | translate }}</span>
+    </button>
+  </div>
+</div>
+
+<div class="content-area-main">
+  <div class="tab-content-wrapper flex-column">
+    <div class="tab-content-card card-base flex-column">
+      <div class="content-section flex-column">
+        <h2 class="text-large flex-center">
+          <i class="fa {{ getTabContent().icon }}"></i>
+          {{ getTabContent().title | translate }}
+        </h2>
+
+        <div class="article-summary text-regular">
+          @if (activeTab === 'overview') {
+            @if (job.overViewAr || job.overViewEn) {
+              <div class="dual-text-container">
+                <div class="text-area">
+                  <h6>{{ 'JOB_DETAILS.OVERVIEWAR' | translate }}</h6>
+                  <div [innerHTML]="job.overViewAr"></div>
                 </div>
 
-                <!-- Responsibilities -->
-                <div class="mb-4">
-                  <h6 class="section-title mb-2">
-                    {{ 'job_details.responsibilities' | translate }}
-                  </h6>
-                  @if (getResponsibilities().length > 0) {
-                    <ul class="list-check">
-                      @for (responsibility of getResponsibilities(); track $index) {
-                        <li><i class="fa-solid fa-check"></i> {{ responsibility }}</li>
-                      }
-                    </ul>
-                  } @else {
-                    <p class="text-muted">لم يتم إضافة مسؤوليات لهذه الوظيفة</p>
-                  }
+                <div class="text-area">
+                  <h6>{{ 'JOB_DETAILS.OVERVIEWEN' | translate }}</h6>
+                  <div [innerHTML]="job.overViewEn"></div>
+                </div>
+              </div>
+            }
+          }
+
+          @if (activeTab === 'responsibilities') {
+            @if (getResponsibilities().length > 0) {
+              <ul>
+                @for (responsibility of getResponsibilities(); track $index) {
+                  <li>{{ responsibility }}</li>
+                }
+              </ul>
+            }
+          }
+
+          @if (activeTab === 'conditions') {
+            @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
+              <h3>{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h3>
+              <div class="dual-text-container">
+                <div class="text-area">
+                  <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                  <div [innerHTML]="job.qualificationDescriptionAr"></div>
+                </div>
+
+                <div class="text-area">
+                  <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                  <div [innerHTML]="job.qualificationDescriptionEn"></div>
                 </div>
               </div>
             }
 
-            <!-- Skills Tab -->
-            @if (activeTab === 'skills') {
-              <div class="tab-pane fade show active">
-                <h6 class="section-title mb-2">{{ 'job_details.skills' | translate }}</h6>
-                @if (getJobSkills().length > 0) {
-                  <ul class="list-check skills-list-fix">
-                    @for (skill of getJobSkills(); track $index) {
-                      <li><i class="fa-solid fa-check"></i> {{ skill }}</li>
+            @if (getJobConditions().length > 0) {
+              <div class="basic-requirements">
+                <h3>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</h3>
+
+                @for (condition of getJobConditions(); track $index) {
+                  <div class="condition-row">
+                    <div class="text-area">
+                      <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                      <div [innerHTML]="condition.textAr"></div>
+                    </div>
+
+                    <div class="text-area">
+                      <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                      <div [innerHTML]="condition.textEn"></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <h3>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
+            <p>{{ getDegreeRequirements() }}</p>
+          }
+
+          @if (activeTab === 'skills') {
+            @if (getJobSkills().length > 0) {
+              <ul>
+                @for (skill of getJobSkills(); track $index) {
+                  <li>{{ skill }}</li>
+                }
+              </ul>
+            }
+          }
+
+          @if (activeTab === 'benefits') {
+            @if (job.benefitsAr || job.benefitsEn) {
+              <div class="dual-text-container">
+                <div class="text-area">
+                  <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                  <div [innerHTML]="job.benefitsAr"></div>
+                </div>
+
+                <div class="text-area">
+                  <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                  <div [innerHTML]="job.benefitsEn"></div>
+                </div>
+              </div>
+            }
+          }
+
+          @if (activeTab === 'requiredAttachments') {
+            @if (job.requiredAttachments && job.requiredAttachments.length) {
+              <ul>
+                @for (attachment of job.requiredAttachments; track $index) {
+                  <li>
+                    <div class="attachmentAr">
+                      <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                      <div [innerHTML]="attachment.titleAr"></div>
+                    </div>
+
+                    <div class="attachmentEn">
+                      <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                      <div [innerHTML]="attachment.titleEn"></div>
+                    </div>
+
+                    @if (attachment.isMandatory) {
+                      <span class="badge mandatory">{{ 'JOB_DETAILS.MANDATORY' | translate }}</span>
                     }
-                  </ul>
-                } @else {
-                  <div class="alert alert-info">
-                    <i class="fa fa-info-circle me-2"></i>
-                    لم يتم إضافة مهارات معروضة للمتقدمين لهذه الوظيفة
-                  </div>
+                  </li>
                 }
-              </div>
+              </ul>
             }
-
-            <!-- Requirements Tab -->
-            @if (activeTab === 'req') {
-              <div class="tab-pane fade show active">
-                <!-- Qualifications -->
-                <div class="mb-4">
-                  <h6 class="section-title mb-2">{{ 'job_details.qualifications' | translate }}</h6>
-                  @if (job?.qualificationDescriptionAr) {
-                    <div [innerHTML]="job?.qualificationDescriptionAr" class="job-content"></div>
-                  }
-                  
-                  <div class="mt-3">
-                    <strong>الدرجات العلمية المطلوبة:</strong>
-                    <p>{{ getDegreeRequirements() }}</p>
-                  </div>
-                </div>
-
-                <!-- Conditions -->
-                <div class="mb-4">
-                  <h6 class="section-title mb-2">{{ 'job_details.conditions' | translate }}</h6>
-                  @if (getJobConditions().length > 0) {
-                    <ul class="list-check">
-                      @for (condition of getJobConditions(); track $index) {
-                        <li><i class="fa-solid fa-check"></i> {{ condition }}</li>
-                      }
-                    </ul>
-                  } @else {
-                    <p class="text-muted">لم يتم إضافة شروط لهذه الوظيفة</p>
-                  }
-                </div>
-
-                <!-- Basic Requirements -->
-                <div class="mt-4">
-                  <h6 class="section-title mb-2">{{ 'job_details.basic_requirements' | translate }}</h6>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <p><strong>سنوات الخبرة:</strong> {{ job?.yearsOfExperience || 0 }} سنوات</p>
-                    </div>
-                    <div class="col-md-6">
-                      <p><strong>الفئة العمرية:</strong> {{ job?.minimumAge || 18 }} - {{ job?.maximumAge || 60 }} سنة</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
-
-            <!-- Benefits Tab -->
-            @if (activeTab === 'benefits') {
-              <div class="tab-pane fade show active">
-                <h6 class="section-title mb-2">{{ 'job_details.benefits' | translate }}</h6>
-                @if (getJobBenefits().length > 0) {
-                  <ul class="list-check">
-                    @for (benefit of getJobBenefits(); track $index) {
-                      <li><i class="fa-solid fa-check"></i> {{ benefit }}</li>
-                    }
-                  </ul>
-                } @else if (job?.benefitsAr) {
-                  <div [innerHTML]="job?.benefitsAr" class="job-content"></div>
-                } @else {
-                  <p class="text-muted">لم يتم إضافة مزايا لهذه الوظيفة</p>
-                }
-              </div>
-            }
-
-            <!-- About Tab -->
-            @if (activeTab === 'about') {
-              <div class="tab-pane fade show active">
-                <h6 class="section-title mb-2">{{ 'job_details.about_org' | translate }}</h6>
-                <div class="mb-4">
-                  <h6>بيانات الجهة:</h6>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <p><strong>القطاع:</strong> {{ job?.sector?.name || 'غير محدد' }}</p>
-                      <p><strong>الإدارة:</strong> {{ job?.management?.name || 'غير محدد' }}</p>
-                    </div>
-                    <div class="col-md-6">
-                      <p><strong>القسم:</strong> {{ job?.department?.name || 'غير محدد' }}</p>
-                      <p><strong>نوع الوظيفة:</strong> {{ job?.jobCategory?.name || 'غير محدد' }}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Attachments Required -->
-                @if (job?.requiredAttachments && job?.requiredAttachments?.length) {
-                  <div class="mt-4">
-                    <h6 class="section-title mb-2">{{ 'job_details.required_documents' | translate }}</h6>
-                    <ul class="list-check">
-                      @for (attachment of job?.requiredAttachments; track $index) {
-                        <li>
-                          <i class="fa-solid fa-paperclip"></i>
-                          {{ attachment.titleAr }}
-                          @if (attachment.isMandatory) {
-                            <span class="badge bg-danger ms-2">إلزامي</span>
-                          }
-                        </li>
-                      }
-                    </ul>
-                  </div>
-                }
-              </div>
-            }
-          </div>
-        </div>
-
-        <!-- Meta / Apply Sidebar -->
-        <div class="col-lg-4">
-          <div class="sticky-cta">
-            <div class="job-card p-3 p-md-4 mb-3">
-              <h6 class="section-title mb-3">{{ 'job_details.basics' | translate }}</h6>
-              <div class="d-flex flex-column gap-3">
-                <!-- Job Status -->
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="small-muted">{{ 'job_details.status' | translate }}</span>
-                  <span class="badge" [ngClass]="{
-                    'bg-success': job?.status?.backendName === 'published',
-                    'bg-warning': job?.status?.backendName === 'pending_approval',
-                    'bg-secondary': job?.status?.backendName === 'draft',
-                    'bg-danger': !isJobOpen()
-                  }">
-                    {{ job?.status?.name || 'غير محدد' }}
-                    @if (!isJobOpen()) { (منتهية) }
-                  </span>
-                </div>
-
-                <!-- Work Type -->
-                <div class="d-flex justify-content-between">
-                  <span class="small-muted">{{ 'job_details.type_of_work' | translate }}</span>
-                  <span class="badge-outline">{{ job?.workType?.name || 'غير محدد' }}</span>
-                </div>
-
-                <!-- Job Category -->
-                <div class="d-flex justify-content-between">
-                  <span class="small-muted">{{ 'job_details.job_category' | translate }}</span>
-                  <span class="badge-outline">{{ job?.jobCategory?.name || 'غير محدد' }}</span>
-                </div>
-
-                <!-- Department -->
-                <div class="d-flex justify-content-between">
-                  <span class="small-muted">{{ 'job_details.department' | translate }}</span>
-                  <span class="badge-outline">{{ job?.department?.name || 'غير محدد' }}</span>
-                </div>
-
-                <!-- Vacancies -->
-                <div class="d-flex justify-content-between">
-                  <span class="small-muted">{{ 'job_details.vacancies' | translate }}</span>
-                  <span class="badge-outline">{{ getVacancyStatus() }}</span>
-                </div>
-
-                <!-- Location -->
-                <div class="d-flex justify-content-between">
-                  <span class="small-muted">{{ 'job_details.location' | translate }}</span>
-                  <span class="badge-outline">{{ job?.workLocation?.name || 'غير محدد' }}</span>
-                </div>
-
-                <!-- Deadline -->
-                <div class="d-flex justify-content-between">
-                  <span class="small-muted">{{ 'job_details.deadline' | translate }}</span>
-                  <span class="badge-outline">{{ formatDate(job?.closingDate) }}</span>
-                </div>
-
-                <!-- Created Date -->
-                <div class="d-flex justify-content-between">
-                  <span class="small-muted">{{ 'job_details.posted_date' | translate }}</span>
-                  <span class="badge-outline">{{ formatDate(job?.createdDate) }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quick Info -->
-            <div class="job-card p-3 p-md-4">
-              <h6 class="section-title mb-3">{{ 'job_details.quick_info' | translate }}</h6>
-              <div class="small-muted mb-3">
-                {{ 'job_details.apply_info' | translate }}
-              </div>
-              
-              <!-- Contact/Additional Info -->
-              <div class="mt-3">
-                <p><i class="fa-solid fa-circle-info me-2"></i> للمزيد من المعلومات:</p>
-                <ul class="list-unstyled small">
-                  <li><i class="fa-solid fa-phone me-2"></i> هاتف: 1234 5678</li>
-                  <li><i class="fa-solid fa-envelope me-2"></i> بريد: info@example.com</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          }
         </div>
       </div>
     </div>
-  </main>
-</section>
+  </div>
+
+  <div class="job-info-card card-base flex-column">
+    <h2 class="text-large flex-center">
+      <i class="fa fa-info-circle"></i>
+      {{ 'JOB_DETAILS.JOB_INFO' | translate }}
+    </h2>
+
+    <div class="info-list-container flex-column">
+      <div class="info-list-item flex-between">
+        <span class="label text-regular">{{ 'JOB_DETAILS.JOB_CATEGORY' | translate }}</span>
+        <span class="value text-medium">{{
+          job.jobCategory.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate)
+        }}</span>
+      </div>
+
+      <div class="info-list-item flex-between">
+        <span class="label text-regular">{{ 'JOB_DETAILS.CLOSING_DATE' | translate }}</span>
+        <span class="value text-medium">{{ job.closingDate | date : 'dd/MM/yyyy' }}</span>
+      </div>
+
+      <div class="info-list-item flex-between">
+        <span class="label text-regular">{{ 'JOB_DETAILS.DEPARTMENT' | translate }}</span>
+        <span class="value text-medium">{{ job.workLocation.name | translate }}</span>
+      </div>
+
+      <div class="info-list-item flex-between">
+        <span class="label text-regular">{{ 'JOB_DETAILS.WORK_LOCATION' | translate }}</span>
+        <span class="value text-medium">{{ 'Qatar' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button
+  class="apply-button-large flex-center"
+  (click)="openConfirmModal()"
+  [disabled]="hasApplied || !isJobOpen()"
+  [title]="!isJobOpen() ? ('JOB_DETAILS.APPLICATION_CLOSED' | translate) : ''"
+>
+  <i class="fa" [class.fa-paper-plane]="!hasApplied" [class.fa-check]="hasApplied"></i>
+  <span class="text-large">
+    {{
+      hasApplied
+        ? ('JOB_DETAILS.APPLICATION_SUBMITTED' | translate)
+        : ('JOB_DETAILS.APPLY_JOB' | translate)
+    }}
+  </span>
+</button>

@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
@@ -79,6 +80,7 @@ public sealed class SaveProfileAchievementHandler(
                 CountryId = dto.CountryId,
                 IssueDate = dto.IssueDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
                 Description = dto.Description,
+                RelatedToSpecialization = dto.RelatedToSpecialization,
                 AttachmentId = certResult.Value ?? dto.AttachmentId ?? Guid.Empty,
                 UserProfileId = profile.Id
             };

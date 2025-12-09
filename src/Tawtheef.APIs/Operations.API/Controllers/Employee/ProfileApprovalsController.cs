@@ -1,10 +1,8 @@
 using System.Security.Claims;
 using FluentResults;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Features.Operations.ProfileApprovals.Queries;
+using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -14,7 +12,7 @@ namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/profile-approvals")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileApprovalsController(IMediator mediator) : ControllerBase
 {
     private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch

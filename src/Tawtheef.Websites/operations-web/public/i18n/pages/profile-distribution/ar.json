@@ -1,0 +1,63 @@
+{
+  "distribution.eyebrow": "عمليات التوزيع",
+  "distribution.title": "توزيع الملفات الشخصية",
+  "distribution.subtitle": "إسناد الملفات يدويًا أو آليًا مع الحفاظ على التوازن بين الموظفين.",
+  "distribution.selectedCount": "ملفات محددة",
+  "distribution.availableEmployees": "موظفين متاحين",
+
+  "distribution.actions.refresh": "تحديث البيانات",
+
+  "distribution.filters.search": "بحث",
+  "distribution.filters.searchPlaceholder": "ابحث بالاسم أو التخصص أو الجهة",
+  "distribution.filters.status": "حالة الملف",
+  "distribution.filters.statusAll": "كل الحالات المسموحة",
+  "distribution.filters.statusSubmitted": "تم التقديم",
+  "distribution.filters.statusUnderReview": "قيد المراجعة",
+  "distribution.filters.statusNeedsChanges": "مطلوب تعديل",
+  "distribution.filters.selectAll": "تحديد الكل",
+  "distribution.filters.clearSelection": "مسح التحديد",
+
+  "distribution.table.title": "قائمة الملفات",
+  "distribution.table.subtitle": "يتم استبعاد الحالات النهائية تلقائيًا",
+  "distribution.table.candidate": "المرشح",
+  "distribution.table.specialization": "التخصص",
+  "distribution.table.entity": "الجهة",
+  "distribution.table.status": "الحالة",
+  "distribution.table.assignee": "الموظف المكلف",
+  "distribution.table.noValue": "غير محدد",
+  "distribution.table.unassigned": "غير معيّن",
+  "distribution.table.empty": "لا توجد ملفات مطابقة للبحث",
+
+  "distribution.employees.title": "الموظفون وعبء العمل",
+  "distribution.employees.subtitle": "اختر الموظفين المتاحين للتوزيع الآلي",
+  "distribution.employees.total": "الإجمالي",
+  "distribution.employees.completed": "مكتمل",
+  "distribution.employees.inReview": "قيد المراجعة",
+
+  "distribution.auto.title": "توزيع آلي",
+  "distribution.auto.subtitle": "يتم التوزيع بالتساوي حسب الحمل الحالي",
+  "distribution.auto.limit": "عدد الملفات لكل موظف (اختياري)",
+  "distribution.auto.assign": "توزيع آلي",
+  "distribution.auto.reassign": "إعادة التوزيع آليًا",
+
+  "distribution.manual.title": "توزيع يدوي",
+  "distribution.manual.subtitle": "إسناد مباشر للموظف المحدد",
+  "distribution.manual.employee": "اختيار الموظف",
+  "distribution.manual.selectPlaceholder": "اختر الموظف",
+  "distribution.manual.assign": "تعيين للموظف",
+  "distribution.manual.reassign": "إعادة توزيع يدوي",
+
+  "distribution.status.submitted": "تم التقديم",
+  "distribution.status.underReview": "قيد المراجعة",
+  "distribution.status.needsChanges": "مطلوب تعديل",
+  "distribution.status.approved": "معتمد",
+  "distribution.status.rejected": "مرفوض",
+  "distribution.status.cancelled": "ملغى",
+
+  "distribution.availability.available": "متاح",
+  "distribution.availability.leave": "في إجازة",
+  "distribution.availability.suspended": "موقوف",
+  "distribution.availability.inactive": "غير نشط",
+
+  "distribution.loading": "جارٍ التحميل"
+}

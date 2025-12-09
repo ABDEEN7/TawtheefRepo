@@ -26,6 +26,10 @@ public sealed class ProfileCompletenessProfile : IRegister
 
         config.NewConfig<Experience, ExperienceDto>()
             .Map(dest => dest.Attachment, src => src.Certificate)
+            .Map(dest => dest.QualificationId, src => src.QualificationId)
+            .Map(dest => dest.DegreeName,src=> src.Qualification == null ? null : src.Qualification.Degree)
+            .Map(dest => dest.MajorName,src=> src.Qualification == null ? null : src.Qualification.Major)
+            .Map(dest => dest.UniversityName,src=> src.Qualification == null ? null : src.Qualification.University)
             .Map(dest => dest.IsCurrent, src => src.EndDate == null);
 
         config.NewConfig<TrainingCourse, TrainingCourseDto>()
@@ -33,6 +37,7 @@ public sealed class ProfileCompletenessProfile : IRegister
 
         config.NewConfig<Achievement, AchievementDto>()
             .Map(dest => dest.Attachment, src => src.Attachment)
+            .Map(dest => dest.RelatedToSpecialization, src => src.RelatedToSpecialization)
             .Map(dest => dest.AchievementType, src => src.AchievementType);
 
         config.NewConfig<ProfileSkill, SkillDto>()
@@ -44,8 +49,8 @@ public sealed class ProfileCompletenessProfile : IRegister
         config.NewConfig<(UserProfile profile, User user, ProfilePrefillDto prefill), ProfileStatusDto>()
             .Map(dest => dest, src => src.profile)
             .Map(dest => dest.IsComplete,
-                src => src.profile.IsCompleted())
-            .Map(dest => dest.Status, src => src.user.Status)
+                src => src.profile.IsCompleted() && src.profile.Status != UserProfileStatus.InCreation)
+            .Map(dest => dest.Status, src => src.profile.Status)
             .Map(dest => dest.Avatar, src => src.user.Avatar ?? src.prefill.Avatar)
             .Map(dest => dest.FullNameAr,
                 src => string.IsNullOrWhiteSpace(src.user.FullNameAr)

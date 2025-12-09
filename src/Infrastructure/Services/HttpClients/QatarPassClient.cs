@@ -10,12 +10,11 @@ namespace Tawtheef.Infrastructure.Services.HttpClients;
 public class QatarPassClient : IQatarPassClient
 {
     private readonly HttpClient _http;
-    private readonly QatarPassAuthSettings _opt;
+
     public QatarPassClient(HttpClient http, IOptions<QatarPassAuthSettings> opt)
     {
         _http = http;
-        _opt  = opt.Value;
-        _http.BaseAddress ??= new Uri(_opt.BaseUrl);
+        _http.BaseAddress ??= new Uri(opt.Value.BaseUrl);
         _http.Timeout = TimeSpan.FromSeconds(10);
     }
     public async Task<IResult<QatarPassEnvelope>> GetDataAsync(string code, CancellationToken ct)

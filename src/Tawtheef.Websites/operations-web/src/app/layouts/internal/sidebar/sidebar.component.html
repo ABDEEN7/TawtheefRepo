@@ -1,0 +1,51 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+
+  <div class="sidebar-top">
+    <button class="back-btn" (click)="toggle()" >
+      <i class="fa" [ngClass]="isCollapsed ? 'fa-angle-left' : 'fa-angle-right'"></i>
+    </button>
+  </div>
+
+  <div class="divider"></div>
+
+  <nav class="sidebar-nav">
+    @for (item of menuItems; track item.key) {
+      <button
+        class="nav-item"
+        [class.active]="activeItem === item.key"
+        (click)="navigateTo(item)"
+        [pTooltip]="isCollapsed ? (item.label | translate) : ''"
+        tooltipPosition="right"
+        [tooltipDisabled]="!isCollapsed">
+        <img class="icons" [src]="item.icon">
+        <span class="label">{{ item.label | translate }}</span>
+      </button>
+    }
+
+  </nav>
+
+  <div class="divider"></div>
+
+  <div class="sidebar-bottom">
+    <button
+      class="action-item"
+      (click)="openSettings()"
+      [pTooltip]="isCollapsed ? ('internal.sidebar.settings' | translate) : ''"
+      tooltipPosition="right"
+      [tooltipDisabled]="!isCollapsed">
+      <img class="icons" src="assets/img/icons/settings-icon.svg">
+      <span class="label">{{ 'internal.sidebar.settings' | translate }}</span>
+    </button>
+
+    <button
+      class="action-item"
+      (click)="logout()"
+      [pTooltip]="isCollapsed ? ('internal.sidebar.logout' | translate) : ''"
+      tooltipPosition="right"
+      [tooltipDisabled]="!isCollapsed">
+      <img class="icons" src="assets/img/icons/logout-icon.svg">
+      <span class="label">{{ 'internal.sidebar.logout' | translate }}</span>
+    </button>
+  </div>
+
+</aside>

@@ -11,7 +11,7 @@ public class SingleSessionMiddleware(RequestDelegate next)
     public async Task InvokeAsync(HttpContext ctx, UserManager<User> userManager)
     {
         var principal = ctx.User;
-        if (principal?.Identity?.IsAuthenticated == true)
+        if (principal.Identity?.IsAuthenticated == true)
         {
             var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             var sid = principal.FindFirst(JwtRegisteredClaimNames.Sid)?.Value;

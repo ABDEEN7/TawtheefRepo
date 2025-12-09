@@ -1,150 +1,143 @@
-<div class="approval-page" dir="rtl">
-  <div class="row g-4">
-    <div class="col-lg-4">
-      <div class="card h-100 shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <div>
-            <h5 class="mb-0">طلبات الاعتماد</h5>
-            <small class="text-muted">اختر أحد الملفات لمراجعته</small>
-          </div>
-          <button class="btn btn-outline-secondary btn-sm" type="button" (click)="loadList()" [disabled]="loadingList()">
-            تحديث
+<section class="approval-shell" i18nNamespace="pages/profile-approval">
+  <div class="grid">
+    <aside class="panel list-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">{{ 'profileApproval.list.eyebrow' | translate }}</p>
+          <h3 class="panel-title">{{ 'profileApproval.list.title' | translate }}</h3>
+          <p class="panel-sub">{{ 'profileApproval.list.subtitle' | translate }}</p>
+        </div>
+        <button class="btn ghost" type="button" (click)="loadList()" [disabled]="loadingList()">
+          <i class="fa fa-rotate"></i>
+          {{ 'common.refresh' | translate }}
+        </button>
+      </div>
+      <div class="search">
+        <i class="fa fa-search"></i>
+        <input
+          type="search"
+          class="form-control"
+          [placeholder]="'profileApproval.list.searchPlaceholder' | translate"
+          [ngModel]="listFilter()"
+          (ngModelChange)="listFilter.set($event)"
+        />
+      </div>
+      <div class="list-body" *ngIf="!loadingList(); else loadingListTpl">
+        <div class="empty" *ngIf="filteredList().length === 0">{{ 'profileApproval.list.empty' | translate }}</div>
+        <ul class="request-list">
+          <li
+            *ngFor="let item of filteredList()"
+            [class.active]="item.userProfileId === selectedProfileId()"
+            (click)="selectProfile(item.userProfileId)"
+          >
+            <div class="row-line">
+              <div>
+                <div class="name">{{ item.fullName || ('profileApproval.list.anonymous' | translate) }}</div>
+                <div class="muted small">{{ item.candidateType || ('profileApproval.list.typeUnknown' | translate) }}</div>
+              </div>
+              <span class="pill warning" *ngIf="item.pendingCount > 0">{{ item.pendingCount }} {{ 'profileApproval.list.pending' | translate }}</span>
+            </div>
+            <div class="row-line">
+              <div class="muted small">{{ item.targetEntity || ('profileApproval.list.entityUnknown' | translate) }}</div>
+              <div class="pill soft">{{ statusLabel(item.overallStatus) | translate }}</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <ng-template #loadingListTpl>
+        <div class="empty">{{ 'common.loading' | translate }}</div>
+      </ng-template>
+    </aside>
+
+    <main class="panel detail-panel">
+      <header class="detail-head">
+        <div>
+          <p class="eyebrow">{{ 'profileApproval.detail.eyebrow' | translate }}</p>
+          <h3 class="panel-title">{{ detail()?.fullName || ('profileApproval.detail.placeholder' | translate) }}</h3>
+          <div class="muted">{{ detail()?.targetEntity }}</div>
+        </div>
+        <div class="actions" *ngIf="detail()">
+          <span class="pill soft">{{ statusLabel(detailStatus()) | translate }}</span>
+          <button class="btn ghost" type="button" (click)="loadDetail(selectedProfileId()!)" [disabled]="loadingDetail()">
+            {{ 'common.refresh' | translate }}
           </button>
         </div>
-        <div class="card-body p-0 list-scroll">
-          <div *ngIf="loadingList()" class="p-3 text-center text-muted">...جاري التحميل</div>
-          <div *ngIf="!loadingList() && list().length === 0" class="p-3 text-center text-muted">
-            لا توجد طلبات معلقة حالياً
-          </div>
-          <ul class="list-group list-group-flush">
-            <li
-              class="list-group-item list-group-item-action"
-              *ngFor="let item of list()"
-              [class.active]="item.userProfileId === selectedProfileId()"
-              (click)="selectProfile(item.userProfileId)"
-            >
-              <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <div class="fw-semibold">{{ item.fullName || 'مرشح' }}</div>
-                  <div class="small text-muted">{{ item.candidateType || 'نوع المرشح غير محدد' }}</div>
-                  <div class="small text-muted">{{ item.targetEntity || 'جهة التوظيف' }}</div>
-                </div>
-                <div class="text-end">
-                  <span class="badge bg-primary">{{ item.pendingCount }} قيد المراجعة</span>
-                  <div class="small text-muted">{{ item.submittedAtUtc | date: 'short' }}</div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+      </header>
 
-    <div class="col-lg-8">
-      <div class="card shadow-sm h-100">
-        <div class="card-header">
-          <div class="d-flex justify-content-between align-items-center">
+      <div *ngIf="error()" class="alert alert-danger">{{ error() }}</div>
+      <div *ngIf="!detail() && !loadingDetail()" class="empty">{{ 'profileApproval.detail.empty' | translate }}</div>
+
+      <div *ngIf="detail() as info" class="detail-body">
+        <div class="info-grid">
+          <div>
+            <div class="label">{{ 'profileApproval.detail.candidateType' | translate }}</div>
+            <div class="value">{{ info.candidateType || ('profileApproval.detail.missing' | translate) }}</div>
+          </div>
+          <div>
+            <div class="label">{{ 'profileApproval.detail.submissionVersion' | translate }}</div>
+            <div class="value">{{ info.submissionVersion || '-' }}</div>
+          </div>
+          <div>
+            <div class="label">{{ 'profileApproval.detail.submittedAt' | translate }}</div>
+            <div class="value">{{ info.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button
+            class="tab"
+            *ngFor="let section of info.sections"
+            [class.active]="activeSection() === section.section"
+            (click)="activeSection.set(section.section)"
+          >
+            {{ sectionName(section.section) | translate }}
+          </button>
+        </div>
+
+        <div class="section-card" *ngFor="let section of info.sections" [hidden]="activeSection() !== section.section">
+          <div class="section-head">
             <div>
-              <h5 class="mb-0">تفاصيل المراجعة</h5>
-              <small class="text-muted" *ngIf="detail()">{{ detail()?.fullName }}</small>
+              <div class="section-title">{{ sectionName(section.section) | translate }}</div>
+              <div class="muted small">{{ section.hasAttachments ? ('profileApproval.detail.withAttachments' | translate) : ('profileApproval.detail.textOnly' | translate) }}</div>
             </div>
-            <div *ngIf="loadingDetail()" class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            <div class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
+              {{ statusLabel(section.sectionReview?.status) | translate }}
+            </div>
           </div>
-        </div>
-        <div class="card-body">
-          <div *ngIf="error()" class="alert alert-danger">{{ error() }}</div>
-          <div *ngIf="!detail() && !loadingDetail()" class="text-muted">اختر ملفاً لعرض تفاصيله.</div>
 
-          <ng-container *ngIf="detail() as info">
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <div class="text-muted small">نوع المرشح</div>
-                <div class="fw-semibold">{{ info.candidateType || 'غير محدد' }}</div>
-              </div>
-              <div class="col-md-6">
-                <div class="text-muted small">الجهة المستهدفة</div>
-                <div class="fw-semibold">{{ info.targetEntity || 'غير محددة' }}</div>
-              </div>
-              <div class="col-md-6 mt-3">
-                <div class="text-muted small">إصدار الطلب</div>
-                <div class="fw-semibold">{{ info.submissionVersion || '-' }}</div>
-              </div>
-              <div class="col-md-6 mt-3">
-                <div class="text-muted small">تاريخ الإرسال</div>
-                <div class="fw-semibold">{{ info.submittedAtUtc | date: 'medium' }}</div>
-              </div>
-            </div>
-
-            <div class="section" *ngFor="let section of info.sections">
-              <div class="section-header">
+          <div class="items" *ngIf="section.items.length; else noItems">
+            <div class="item" *ngFor="let item of section.items">
+              <div class="item-main">
                 <div>
-                  <div class="fw-semibold">{{ sectionName(section.section) }}</div>
-                  <div class="text-muted small">{{ section.hasAttachments ? 'بيانات نصية ومرفقات' : 'بيانات نصية فقط' }}</div>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge" [ngClass]="statusClass(section.sectionReview?.status)">
-                    {{ statusLabel(section.sectionReview?.status) }}
-                  </span>
-                  <button
-                    class="btn btn-sm btn-success"
-                    type="button"
-                    (click)="section.sectionReview && approve(section.sectionReview)"
-                    [disabled]="!section.sectionReview || section.sectionReview.status === ReviewStatus.Approved"
-                  >
-                    اعتماد البيانات النصية
-                  </button>
-                  <button
-                    class="btn btn-sm btn-outline-danger"
-                    type="button"
-                    (click)="section.sectionReview && reject(section.sectionReview)"
-                    [disabled]="!section.sectionReview"
-                  >
-                    رفض القسم
-                  </button>
-                </div>
-              </div>
-
-              <div class="section-body" *ngIf="section.items.length > 0; else noItems">
-                <div class="item" *ngFor="let item of section.items">
-                  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                    <div>
-                      <div class="fw-semibold">{{ item.title }}</div>
-                      <div class="small text-muted">
-                        {{ item.targetType === ReviewTargetType.Attachment ? 'مرفق' : 'بيان نصي' }}
-                        <ng-container *ngIf="item.entityName">- {{ item.entityName }}</ng-container>
-                      </div>
-                      <div class="small text-muted" *ngIf="item.note">ملاحظات سابقة: {{ item.note }}</div>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                      <span class="badge" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) }}</span>
-                      <a *ngIf="item.resourceUrl" class="btn btn-link btn-sm" [href]="item.resourceUrl" target="_blank">
-                        عرض الملف
-                      </a>
-                      <button
-                        class="btn btn-sm btn-success"
-                        type="button"
-                        [disabled]="!canApproveAttachment(section, item) || item.status === ReviewStatus.Approved"
-                        (click)="approve(item)"
-                      >
-                        اعتماد
-                      </button>
-                      <button class="btn btn-sm btn-outline-danger" type="button" (click)="reject(item)">
-                        رفض
-                      </button>
-                      <button class="btn btn-sm btn-outline-secondary" type="button" (click)="requestChanges(item)">
-                        طلب تعديل
-                      </button>
-                    </div>
+                  <div class="item-title">{{ item.title }}</div>
+                  <div class="muted small">
+                    {{ item.targetType === ReviewTargetType.Attachment ? ('profileApproval.detail.attachment' | translate) : ('profileApproval.detail.text' | translate) }}
+                    <ng-container *ngIf="item.entityName">- {{ item.entityName }}</ng-container>
                   </div>
+                  <div class="muted small" *ngIf="item.note">{{ 'profileApproval.detail.previousNote' | translate }} {{ item.note }}</div>
+                </div>
+                <div class="item-actions">
+                  <span class="pill" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) | translate }}</span>
+                  <a *ngIf="item.resourceUrl" class="btn ghost" [href]="item.resourceUrl" target="_blank">{{ 'profileApproval.detail.viewFile' | translate }}</a>
+                  <button
+                    class="btn primary"
+                    type="button"
+                    [disabled]="!canApproveAttachment(section, item) || item.status === ReviewStatus.Approved"
+                    (click)="approve(item)"
+                  >
+                    {{ 'profileApproval.detail.approve' | translate }}
+                  </button>
+                  <button class="btn outline" type="button" (click)="requestChanges(item)">{{ 'profileApproval.detail.requestChanges' | translate }}</button>
+                  <button class="btn danger" type="button" (click)="reject(item)">{{ 'profileApproval.detail.reject' | translate }}</button>
                 </div>
               </div>
-              <ng-template #noItems>
-                <div class="text-muted small">لا توجد عناصر تفصيلية في هذا القسم.</div>
-              </ng-template>
             </div>
-          </ng-container>
+          </div>
+          <ng-template #noItems>
+            <div class="empty">{{ 'profileApproval.detail.noItems' | translate }}</div>
+          </ng-template>
         </div>
       </div>
-    </div>
+    </main>
   </div>
-</div>
+</section>

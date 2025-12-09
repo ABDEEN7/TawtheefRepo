@@ -20,6 +20,13 @@ public sealed class DeleteProfileEducationHandler(IUnitOfWork uow) :
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.DegreeNotFound);
 
+        var experiencesRepo = uow.GetEntityRepository<Experience>();
+        var isLinkedToExperience = await experiencesRepo.DbSet
+            .AnyAsync(x => x.QualificationId == target.Id, ct);
+
+        if (isLinkedToExperience)
+            return Result.Fail<Unit>(ErrorsCodes.DegreeLinkedToExperience);
+
         await repo.DeleteAsync(target);
         await uow.SaveChangesAsync(ct);
 

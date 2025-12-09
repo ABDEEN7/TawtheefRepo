@@ -8,7 +8,6 @@ import {
   ValidationErrors
 } from '@angular/forms';
 import { Button } from 'primeng/button';
-import { FileUpload } from 'primeng/fileupload';
 import { InputText } from 'primeng/inputtext';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -20,6 +19,8 @@ import {ProfileLookupsService} from '../../../../services/profile-lookups.servic
 import {Experience} from '../../../../models/experience.model';
 import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
 import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
+import {Degree} from '../../../../models/degree.model';
+import {dropdownOptionsModel} from '../../../../../../../shared/models/dropdown-options.model';
 
 @Component({
   selector: 'app-experience',
@@ -63,12 +64,15 @@ export class ExperienceModal implements OnInit {
       description: ['', [Validators.maxLength(this.limits.descriptionMaxLength)]],
       fileName: [''],
       file: [null, Validators.required], // ✅ required
+      hasQualification: [false],
+      qualificationId: [null],
     },
     {
       validators: [
         toRequiredIfNotCurrent('current', 'to'),
         dateRangeValidator('from', 'to'),
         noFutureValidator('from', 'to'),
+        qualificationRequiredValidator('hasQualification', 'qualificationId'),
       ],
     }
   );
@@ -78,13 +82,21 @@ export class ExperienceModal implements OnInit {
       this.form.patchValue(this.config.data.initialValue);
       const init = this.config.data.initialValue as any;
       this.initialAttachmentUrl = init?.attachment?.url ?? init?.attachmentUrl ?? null;
+      if (init?.qualificationId) {
+        this.form.patchValue({ hasQualification: true });
+      }
     }
     this.syncToDisabled();
+    this.syncQualification();
   }
 
   onCurrentToggle() {
     this.syncToDisabled();
     this.touchDates();
+  }
+
+  onQualificationToggle() {
+    this.syncQualification();
   }
 
   private syncToDisabled() {
@@ -133,6 +145,14 @@ export class ExperienceModal implements OnInit {
     }
 
     const v = this.form.getRawValue();
+    const qualificationOption = this.degreeOptions.find(d => d.id === v.qualificationId) ?? null;
+    if(qualificationOption){
+      if(v.from.getFullYear() < qualificationOption.additionalData.year){
+        this.form.setErrors({ invalidQualificationDate: true });
+        this.form.markAllAsTouched();
+        return;
+      }
+    }
 
     const payload = {
       employerName: v.org,
@@ -144,6 +164,8 @@ export class ExperienceModal implements OnInit {
       description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null,
+      qualificationId: v.hasQualification ? v.qualificationId : null,
+      qualificationName: qualificationOption?.name ?? null,
     } as Experience;
 
     this.ref.close(payload);
@@ -168,6 +190,28 @@ export class ExperienceModal implements OnInit {
     if (this.initialAttachmentUrl) {
       this.fileUtils.previewUrl(this.initialAttachmentUrl, this.form.get('fileName')?.value ?? '', false);
     }
+  }
+
+  get degreeOptions(): dropdownOptionsModel[] {
+    const degrees = (this.config.data?.degrees as Degree[] | undefined) ?? [];
+    return degrees
+      .filter(d => !!d.id)
+      .map(d => ({
+        id: d.id!,
+        backendName: d.degree?.backendName ?? '',
+        name: `${d.degree?.name ?? ''} - ${d.major?.name ?? ''} (${d.gradYear ?? ''})`,
+        description: d.university?.name ?? '',
+        additionalData: {
+          year: d.gradYear
+        }
+      }));
+  }
+
+  private syncQualification() {
+    if (!this.f['hasQualification'].value) {
+      this.f['qualificationId'].setValue(null, { emitEvent: false });
+    }
+    this.form.updateValueAndValidity({ emitEvent: false });
   }
 }
 
@@ -203,5 +247,13 @@ export function noFutureValidator(...keys: string[]) {
     });
 
     return future ? { futureDate: true } : null;
+  };
+}
+
+export function qualificationRequiredValidator(flagKey: string, qualificationKey: string) {
+  return (group: AbstractControl): ValidationErrors | null => {
+    const flagged = !!group.get(flagKey)?.value;
+    const qualification = group.get(qualificationKey)?.value;
+    return flagged && !qualification ? { qualificationRequired: true } : null;
   };
 }

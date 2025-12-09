@@ -2,8 +2,8 @@
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
-using Tawtheef.Application.Features.Operations.Employee.Job.Interfaces;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;

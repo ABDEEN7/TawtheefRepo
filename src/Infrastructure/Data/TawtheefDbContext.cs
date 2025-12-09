@@ -81,6 +81,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<LoginAttempt> LoginAttempt { get; set; }
     public DbSet<ContactVerification> ContactVerification { get; set; }
     public DbSet<UserSession> UserSession { get; set; }
+    public DbSet<ProfileSubmission> ProfileSubmission { get; set; }
     
     // Applicant Tables
     public DbSet<Experience> Experience { get; set; }
@@ -93,6 +94,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicant { get; set; }
 
     public DbSet<ReviewItem> ReviewItem { get; set; }
+    public DbSet<ProfileAssignment> ProfileAssignment { get; set; }
     
     // Recruitment Tables
     public DbSet<Job> Jobs { get; set; }
@@ -105,8 +107,8 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<JobResponsibility> JobResponsibilities { get; set; }
     public DbSet<JobRequiredAttachment> JobRequiredAttachments { get; set; }
 
-// Notification Tables
-public DbSet<EmailQueue> EmailQueues { get; set; }
+    // Notification Tables
+    public DbSet<EmailQueue> EmailQueues { get; set; }
     public DbSet<EmailTemplate> EmailTemplates { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     

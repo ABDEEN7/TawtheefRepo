@@ -2,7 +2,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Services;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
@@ -36,7 +36,7 @@ public sealed class SaveProfileLanguagesHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        var validationResult = validationService.ValidateSkillsAndLanguages(profile);
+        var validationResult = validationService.ValidateLanguages(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 

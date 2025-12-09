@@ -43,7 +43,7 @@ export interface JobResponse {
   major: dropdownOptionsModel;
   subMajor?: dropdownOptionsModel;
   workType: dropdownOptionsModel;
-  status: dropdownOptionsModel;
+  jobStatus: dropdownOptionsModel;
   
   quota?: JobQuotaResponse;
   degrees: JobDegreeResponse[];

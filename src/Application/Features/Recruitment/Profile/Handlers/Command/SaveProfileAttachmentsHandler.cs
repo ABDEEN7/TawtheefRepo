@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
@@ -55,7 +56,7 @@ public sealed class SaveProfileAttachmentsHandler(
             return Result.Fail<Unit>(attachmentsResult.Errors);
 
         var attachments = attachmentsResult.Value;
-        var files = cmd.Request.AttachmentFiles ?? [];
+        var files = cmd.Request.AttachmentFiles;
 
         if (profile.AdditionalAttachments is not null && profile.AdditionalAttachments.Count > 0)
         {
@@ -126,7 +127,7 @@ public sealed class SaveProfileAttachmentsHandler(
 
         async Task<Result<UploadAttachmentRequest?>> UploadIfNeededAsync(
             int? fileIndex,
-            IReadOnlyList<IFormFile> files,
+            IReadOnlyList<IFormFile> resources,
             string invalidIndexError,
             string invalidFileError,
             CancellationToken cancellationToken)
@@ -134,10 +135,10 @@ public sealed class SaveProfileAttachmentsHandler(
             if (fileIndex is null)
                 return Result.Ok<UploadAttachmentRequest?>(null);
 
-            if (fileIndex < 0 || fileIndex >= files.Count)
+            if (fileIndex < 0 || fileIndex >= resources.Count)
                 return Result.Fail<UploadAttachmentRequest?>(invalidIndexError);
 
-            var file = files[fileIndex.Value];
+            var file = resources[fileIndex.Value];
             if (file is not { Length: > 0 })
                 return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
 

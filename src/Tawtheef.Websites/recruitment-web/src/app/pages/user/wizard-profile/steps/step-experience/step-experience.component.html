@@ -1,6 +1,11 @@
   <div class="card border border-1 shadow-none rounded-4 p-4 mb-3">
-    <div class="d-flex justify-content-between align-items-center">
-      <h6 class="fw-bold mb-0" style="color:#7b1e3a">{{ 'wizard.experience.title' | translate }}</h6>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div>
+        <h6 class="fw-bold mb-0" style="color:#7b1e3a">{{ 'wizard.experience.title' | translate }}</h6>
+        <div class="text-muted small">
+          {{ 'wizard.experience.totalYears' | translate:{ years: calculatedExperienceYears } }}
+        </div>
+      </div>
       <div class="d-flex gap-2">
         <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addExperience()">
           <i class="fa-solid fa-plus"></i> {{ 'wizard.experience.add' | translate }}
@@ -15,6 +20,7 @@
         <th>{{'wizard.experience.table.org' | translate}}</th>
         <th>{{'wizard.experience.table.title' | translate}}</th>
         <th>{{'wizard.experience.table.country' | translate}}</th>
+        <th>{{'wizard.experience.table.relatedDegree' | translate}}</th>
         <th>{{'wizard.experience.table.period' | translate}}</th>
         <th>{{'wizard.experience.table.tasks' |translate}}</th>
         <th>{{'wizard.experience.table.file' | translate}}</th>
@@ -26,6 +32,7 @@
         <td>{{ r.employerName }}</td>
         <td>{{ r.jobTitle }}</td>
         <td>{{ r.country!.name }}</td>
+        <td>{{ r.qualificationName || '—' }}</td>
         <td>
           {{ r.from ? (r.from | date:'MM/yyyy') : '—' }}
           -
@@ -51,7 +58,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <tr><td colspan="7" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+      <tr><td colspan="8" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
     </ng-template>
   </p-table>
 </div>

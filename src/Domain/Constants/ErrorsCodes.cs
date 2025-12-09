@@ -94,6 +94,9 @@ public class ErrorsCodes
     public const string InvalidGradYear = "INVALID_GRAD_YEAR";
     public const string InvalidDegreeStudyTypeId = "INVALID_DEGREE_STUDY_TYPE_ID";
     public const string InvalidDegreeSubMajorId = "INVALID_DEGREE_SUB_MAJOR_ID";
+    public const string DegreeLinkedToExperience = "DEGREE_LINKED_TO_EXPERIENCE";
+    public const string InvalidExperienceQualification = "INVALID_EXPERIENCE_QUALIFICATION";
+    public const string ExperienceBeforeGraduation = "EXPERIENCE_BEFORE_GRADUATION";
     #endregion
 
     #region External Authentication Errors
@@ -179,6 +182,18 @@ public class ErrorsCodes
     public const string SponsorNotAllowed = "SPONSOR_NOT_ALLOWED";
     public const string NationalAddressNotAllowed = "NATIONAL_ADDRESS_NOT_ALLOWED";
 
+    #endregion
+
+    #region Profile Distribution
+    public const string DistributionEmployeeNotActive = "DISTRIBUTION_EMPLOYEE_NOT_ACTIVE";
+    public const string DistributionProfilesNotFound = "DISTRIBUTION_PROFILES_NOT_FOUND";
+    public const string DistributionFinalStatusNotAllowed = "DISTRIBUTION_FINAL_STATUS_NOT_ALLOWED";
+    public const string DistributionStatusNotAssignable = "DISTRIBUTION_STATUS_NOT_ASSIGNABLE";
+    public const string DistributionNoEligibleEmployees = "DISTRIBUTION_NO_ELIGIBLE_EMPLOYEES";
+    public const string DistributionNoAssignableProfiles = "DISTRIBUTION_NO_ASSIGNABLE_PROFILES";
+    public const string DistributionModeRequired = "DISTRIBUTION_MODE_REQUIRED";
+    public const string DistributionPerEmployeeLimitReached = "DISTRIBUTION_PER_EMPLOYEE_LIMIT_REACHED";
+    public const string ProfileNotAssignable = "PROFILE_NOT_ASSIGNABLE";
     #endregion
 }
 

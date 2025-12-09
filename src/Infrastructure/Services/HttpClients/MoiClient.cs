@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
-using System.Text;
 using FluentResults;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;

@@ -69,6 +69,14 @@ export class EndpointsService {
     reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`)
   };
 
+  distribution = {
+    files: this.getFullUrl('/profile-distributions/files'),
+    employees: this.getFullUrl('/profile-distributions/employees'),
+    assignManual: this.getFullUrl('/profile-distributions/assign/manual'),
+    assignAuto: this.getFullUrl('/profile-distributions/assign/auto'),
+    reassign: this.getFullUrl('/profile-distributions/reassign')
+  };
+
   JobInvitationSummary = {
     invitationsSummary: this.getFullUrl(`/jobInvitationSummary/get-invitations-summary`),
     lookups: {

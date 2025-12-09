@@ -7,7 +7,7 @@ using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
+namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
 public sealed class GetGendersWithAllQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
     : IRequestHandler<GetGendersWithAllQuery, IResult<List<DropdownOptions>>>

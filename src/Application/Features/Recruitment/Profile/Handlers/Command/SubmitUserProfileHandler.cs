@@ -20,10 +20,9 @@ public sealed class SubmitUserProfileHandler(
     public async Task<IResult<Unit>> Handle(SubmitUserProfileCommand cmd, CancellationToken ct)
     {
         var profileRepo  = uow.GetEntityRepository<UserProfile>();
-        var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
-
         var profile = await profileRepo.DbSet
             .Include(p => p.User)
+            .Include(p => p.SponsorProfile)
             .Include(p => p.ResidenceAddress)
             .Include(p => p.Qualifications)
             .Include(p => p.Experiences)
@@ -39,6 +38,7 @@ public sealed class SubmitUserProfileHandler(
         if(!profile.IsCompleted())
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotCompleted);
 
+        var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
         var lastVersion = await submissionRepo.DbSet
             .Where(s => s.UserProfileId == profile.Id)
             .OrderByDescending(s => s.Version)
@@ -48,15 +48,15 @@ public sealed class SubmitUserProfileHandler(
         var snapshot = new
         {
             Profile = profile,
-            Qualifications   = profile.Qualifications,
-            Experiences      = profile.Experiences,
-            TrainingCourses  = profile.TrainingCourses,
-            Achievements     = profile.Achievements,
-            Skills           = profile.Skills,
-            Languages        = profile.Languages,
+            profile.Qualifications,
+            profile.Experiences,
+            profile.TrainingCourses,
+            profile.Achievements,
+            profile.Skills,
+            profile.Languages,
             Attachments      = profile.AdditionalAttachments,
-            ResidenceAddress = profile.ResidenceAddress,
-            SponsorProfile   = profile.SponsorProfile
+            profile.ResidenceAddress,
+            profile.SponsorProfile
         };
 
         var json = JsonSerializer.Serialize(snapshot,
@@ -73,7 +73,7 @@ public sealed class SubmitUserProfileHandler(
         await submissionRepo.AddAsync(submission);
         if (profile.User is not null)
         {
-            profile.User.Status = UserStatus.Submitted;
+            profile.Status = UserProfileStatus.Submitted;
         }
 
         await uow.SaveChangesAsync(ct);

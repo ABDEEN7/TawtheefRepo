@@ -4,6 +4,7 @@ import {Router, RouterLink} from '@angular/router';
 import {routes} from '../../../routes/routes';
 import {AuthService} from '../../../core/auth/auth.service';
 import {TranslatePipe} from '@ngx-translate/core';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-nav',

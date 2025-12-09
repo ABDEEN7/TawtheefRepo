@@ -1,4 +1,3 @@
-using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 

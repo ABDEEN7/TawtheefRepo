@@ -20,6 +20,9 @@ public class Experience : EventEntity
     public DateOnly? EndDate { get; set; }
     public string? Description { get; set; }
 
+    public Guid? QualificationId { get; set; }
+    public Qualification? Qualification { get; set; }
+
     public Guid CertificateId { get; set; }
     public Resource? Certificate { get; set; }
 }

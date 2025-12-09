@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Constants;
 
-namespace Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
+namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 public class JobQuotaRequestDto
 {

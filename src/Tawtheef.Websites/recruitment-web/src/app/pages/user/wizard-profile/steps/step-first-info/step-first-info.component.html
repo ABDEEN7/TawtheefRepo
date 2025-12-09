@@ -23,6 +23,14 @@
                 (ngModelChange)="ds.up('office',$event)" fluid></p-select>
     </div>
 
+    <div class="col-md-6" *ngIf="ds.isResidentQatar">
+      <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
+      <p-date-picker name="qidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
+                     [ngModel]="ds.state().qidExpiry" (onSelect)="onQidExpirySelect($event)"
+                     size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
+      </p-date-picker>
+    </div>
+
     <div class="col-12"><hr></div>
     <!-- CV -->
     <div class="col-md-6">

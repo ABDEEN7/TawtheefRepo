@@ -1,5 +1,5 @@
 import {Component, OnInit, inject} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Select} from 'primeng/select';
@@ -12,6 +12,7 @@ import {Achievement} from '../../../models/achievement.model';
 import {ProfileLookupsService} from '../../../services/profile-lookups.service';
 import {dateToDateOnly} from '../../../../../../shared/types/dateOnly.type';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
+import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
 
 export const ACHIEVEMENT_DIALOG_LIMITS = {
   descriptionMaxLength: 500,
@@ -58,6 +59,7 @@ export class AchievementModal implements OnInit {
     description: ['', [Validators.maxLength(this.limits.descriptionMaxLength)]],
     fileName: [''],
     file: [null],
+    relatedToSpecialization: [null],
   });
 
   ngOnInit(): void {
@@ -71,6 +73,7 @@ export class AchievementModal implements OnInit {
         issueDate: initial.issueDate ? new Date(initial.issueDate) : null,
         description: initial.description,
         fileName: initial.fileName || initial.attachment?.resourceName,
+        relatedToSpecialization: initial.relatedToSpecialization ?? null,
       });
       this.initialAttachmentUrl = initial.attachment?.url ?? null;
 
@@ -83,6 +86,8 @@ export class AchievementModal implements OnInit {
       this.form.get('file')?.addValidators(Validators.required);
     }
     this.form.updateValueAndValidity({ emitEvent: false });
+    this.form.get('achievementType')?.valueChanges.subscribe(() => this.syncSpecializationRequirement());
+    this.syncSpecializationRequirement();
   }
 
   onUpload(evt: any) {
@@ -131,13 +136,14 @@ export class AchievementModal implements OnInit {
       title: v.title,
       issuingAuthority: v.issuingAuthority,
       country: v.country,
-      issueDate: dateToDateOnly(v.issueDate),
+      issueDate: dateToDateOnly(v.issueDate)!,
       description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null,
       attachment: this.config.data?.initialValue?.attachment,
       attachmentId: this.config.data?.initialValue?.attachmentId,
       id: this.config.data?.initialValue?.id,
+      relatedToSpecialization: this.shouldShowSpecializationQuestion ? !!v.relatedToSpecialization : null,
     };
 
     this.ref.close(payload);
@@ -149,5 +155,29 @@ export class AchievementModal implements OnInit {
 
   get f() {
     return this.form.controls;
+  }
+
+  get shouldShowSpecializationQuestion(): boolean {
+    const type = this.form.get('achievementType')?.value as dropdownOptionsModel | null;
+    const backend = type?.backendName?.toLowerCase() ?? '';
+    return backend.includes('certificate');
+  }
+
+  private syncSpecializationRequirement() {
+    const ctrl = this.form.get('relatedToSpecialization');
+    if (!ctrl) return;
+
+    if (this.shouldShowSpecializationQuestion) {
+      ctrl.setValidators([control => this.booleanRequired(control)]);
+    } else {
+      ctrl.clearValidators();
+      ctrl.setValue(null, { emitEvent: false });
+    }
+    ctrl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private booleanRequired(control: AbstractControl): ValidationErrors | null {
+    const v = control.value;
+    return v === true || v === false ? null : { required: true };
   }
 }
