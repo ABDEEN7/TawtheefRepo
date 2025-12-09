@@ -1,4 +1,5 @@
 using FluentResults;
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
-public sealed class GetRoleDetailsQueryHandler(RoleManager<IdentityRole<Guid>> roleManager)
+public sealed class GetRoleDetailsQueryHandler(RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper)
     : IRequestHandler<GetRoleDetailsQuery, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(GetRoleDetailsQuery request, CancellationToken cancellationToken)
@@ -19,6 +20,6 @@ public sealed class GetRoleDetailsQueryHandler(RoleManager<IdentityRole<Guid>> r
             return Result.Fail<RoleDto>(ErrorsCodes.RoleNotFound);
 
         var claims = await roleManager.GetClaimsAsync(role);
-        return Result.Ok(RoleMapping.ToDto(role, claims));
+        return Result.Ok(mapper.Map<RoleDto>(new RoleWithClaims(role, claims)));
     }
 }
