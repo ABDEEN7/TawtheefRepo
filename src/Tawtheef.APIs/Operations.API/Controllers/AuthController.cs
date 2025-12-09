@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Constants;
-using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations.Settings;
@@ -59,7 +58,6 @@ namespace Operations.API.Controllers
             [FromQuery] AzureExternalCallbackLoginCommand command,
             [FromServices] IHttpContextAccessor http,
             [FromServices] SignInManager<User> signInManager,
-            [FromServices] IExternalTokenReader tokenReader,
             [FromServices] IOptions<AppConfigSettings> appConfig)
         {
             var result = await mediator.Send(command);

@@ -2,6 +2,7 @@
 
 public sealed class EmailDispatcherSettings
 {
+    public const string SectionName = "EmailDispatcher";
     // parallel consumers
     public int Workers { get; init; } = 3;
     public int MaxConsecutiveFailuresBeforeBackoff { get; init; } = 5;

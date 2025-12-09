@@ -2,6 +2,7 @@
 
 public sealed class AppConfigSettings
 {
+    public const string SectionName = "AppConfig";
     public required string FrontendUrl { get; init; }
     public required string BackendUrl { get; init; }
     public required string BlobSignKey { get; init; }

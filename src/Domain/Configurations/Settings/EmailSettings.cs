@@ -2,6 +2,7 @@
 
 public sealed class EmailSettings
 {
+    public const string SectionName = "EmailSettings";
     public required string SmtpHost { get; init; }
     public int SmtpPort { get; init; } = 587;
     public required string EmailUser { get; init; }

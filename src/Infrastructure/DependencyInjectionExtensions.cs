@@ -26,7 +26,6 @@ using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Constants;
-using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -41,7 +40,6 @@ using Tawtheef.Infrastructure.Repositories;
 using Tawtheef.Infrastructure.Repositories.Base;
 using Tawtheef.Infrastructure.Services.Authorization;
 using Tawtheef.Infrastructure.Services.BackgroundJobs;
-using Tawtheef.Infrastructure.Services.Environment;
 using Tawtheef.Infrastructure.Services.HttpClients;
 using Tawtheef.Infrastructure.Services.Identity;
 using Tawtheef.Infrastructure.Services.Localization;
@@ -83,6 +81,7 @@ namespace Tawtheef.Infrastructure
             // App-specific services
             services.AddNotificationServices();
             services.AddServices(configuration);
+            services.AddBackgroundServices(configuration);
 
             // Data & Repositories
             services.AddDbContext(configuration, env);
@@ -98,12 +97,11 @@ namespace Tawtheef.Infrastructure
 
         private static void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtSettings>(configuration.GetSection("Authentication:Jwt"));
-            services.Configure<AppConfigSettings>(configuration.GetSection("AppConfig"));
-            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-            services.Configure<RecaptchaSettings>(configuration.GetSection("RecaptchaSettings"));
-            services.Configure<StorageSettings>(configuration.GetSection("Storage"));
-            services.Configure<EmailDispatcherSettings>(configuration.GetSection("EmailDispatcher"));
+            services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+            services.Configure<AppConfigSettings>(configuration.GetSection(AppConfigSettings.SectionName));
+            services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
+            services.Configure<StorageSettings>(configuration.GetSection(StorageSettings.SectionName));
+            services.Configure<EmailDispatcherSettings>(configuration.GetSection(EmailDispatcherSettings.SectionName));
         }
 
         #endregion
@@ -117,11 +115,12 @@ namespace Tawtheef.Infrastructure
             IHostEnvironment env)
         {
             // Connection string kept for potential conditional logic later
-            var cs = configuration.GetConnectionString("DefaultConnection");
             services.AddScoped<AuditableEntityInterceptor>();
 
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
             {
+                var cs = configuration.GetConnectionString(ConnectionStringSettings.SectionName);
+
                 // register interceptors or other options as needed
                 options.UseSqlServer(cs, sql => {
                         sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
@@ -138,15 +137,7 @@ namespace Tawtheef.Infrastructure
                 }
             });
 
-            services.AddIdentity<User, IdentityRole<Guid>>(options =>
-            {
-                // password policy
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
-            })
+            services.AddIdentity<User, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<TawtheefDbContext>()
             .AddDefaultTokenProviders();
         }
@@ -184,26 +175,57 @@ namespace Tawtheef.Infrastructure
             ConfigureRateLimitingPolicies(services);
             ConfigureAuthorizationPolicies(services);
         }
+
         private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
-            services.AddHttpClient<IQatarPassClient, QatarPassClient>();
-            services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
-            services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>();
-            services.Configure<MoiSettings>(configuration.GetSection(MoiSettings.SectionName));
-            services.AddHttpClient<IMoiClient, MoiClient>().ConfigurePrimaryHttpMessageHandler(sp => {
-                var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
-                var handler = new HttpClientHandler
-                {
-                    Credentials = new NetworkCredential(opt.Username, opt.Password),
-                    UseCookies = true,
-                    CookieContainer = new CookieContainer(),
-                    PreAuthenticate = false,
-                    UseDefaultCredentials = false
-                };
-
-                return handler;
+            // ===== reCAPTCHA =====
+            services.Configure<RecaptchaSettings>(configuration.GetSection(RecaptchaSettings.SectionName));
+            services.AddHttpClient<IRecaptchaService, RecaptchaService>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<RecaptchaSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
             });
+
+            // ===== Qatar Pass =====
+            services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
+            services.AddHttpClient<IQatarPassClient, QatarPassClient>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<QatarPassAuthSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+            });
+
+            // ===== Hodhod SMS =====
+            services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
+            services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<HodhodSmsSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+            });
+
+            // ===== MOI Client =====
+            services.Configure<MoiSettings>(configuration.GetSection(MoiSettings.SectionName));
+            services.AddHttpClient<IMoiClient, MoiClient>((sp, client) =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+                    client.BaseAddress = new Uri(opt.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                })
+                .ConfigurePrimaryHttpMessageHandler(sp =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+
+                    return new HttpClientHandler
+                    {
+                        Credentials = new NetworkCredential(opt.Username, opt.Password),
+                        UseCookies = true,
+                        CookieContainer = new CookieContainer(),
+                        PreAuthenticate = false,
+                        UseDefaultCredentials = false
+                    };
+                });
         }
 
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
@@ -224,10 +246,10 @@ namespace Tawtheef.Infrastructure
                 };
             });
 
-            var jwtSection = configuration.GetSection("Authentication:Jwt");
-            var issuer = jwtSection["Issuer"]!;
-            var audience = jwtSection["Audience"]!;
-            var signingKeyRaw = jwtSection["SigningKey"]!;
+            var jwtSection = configuration.GetSection(JwtSettings.SectionName);
+            var issuer = jwtSection[nameof(JwtSettings.Issuer)]!;
+            var audience = jwtSection[nameof(JwtSettings.Audience)]!;
+            var signingKeyRaw = jwtSection[nameof(JwtSettings.SigningKey)]!;
             
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyRaw));
 
@@ -289,9 +311,9 @@ namespace Tawtheef.Infrastructure
                     };
                 });
 
-            var google = configuration.GetSection("Authentication:Google");
-            var googleClientId = google["ClientId"];
-            var googleClientSecret = google["ClientSecret"];
+            var google = configuration.GetSection(GoogleAuthenticationSettings.SectionName);
+            var googleClientId = google[nameof(GoogleAuthenticationSettings.ClientId)];
+            var googleClientSecret = google[nameof(GoogleAuthenticationSettings.ClientSecret)];
             var googleEnabled = !string.IsNullOrWhiteSpace(googleClientId) &&
                                 !string.IsNullOrWhiteSpace(googleClientSecret);
 
@@ -308,10 +330,10 @@ namespace Tawtheef.Infrastructure
                 });
             }
 
-            var azure = configuration.GetSection("Authentication:Azure");
-            var azureClientId = azure["ClientId"];
-            var azureTenantId = azure["TenantId"];
-            var azureInstance = azure["Instance"];
+            var azure = configuration.GetSection(AzureAuthenticationSettings.SectionName);
+            var azureClientId = azure[nameof(AzureAuthenticationSettings.ClientId)];
+            var azureTenantId = azure[nameof(AzureAuthenticationSettings.TenantId)];
+            var azureInstance = azure[nameof(AzureAuthenticationSettings.Instance)];
 
             var azureEnabled =
                 !string.IsNullOrWhiteSpace(azureClientId) &&
@@ -321,7 +343,7 @@ namespace Tawtheef.Infrastructure
             if (azureEnabled)
             {
                 services.AddAuthentication()
-                    .AddMicrosoftIdentityWebApp(configuration, "Authentication:Azure",
+                    .AddMicrosoftIdentityWebApp(configuration, AzureAuthenticationSettings.SectionName,
                         openIdConnectScheme: AuthSchemes.AzureOidc);
 
                 services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o => {
@@ -407,11 +429,9 @@ namespace Tawtheef.Infrastructure
                 services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
                 services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
                 services.AddScoped<IEmailService, EmailService>();
-                services.AddHostedService<EmailDispatcher>();
             
                 services.AddScoped<ISmsSender, HodhodSmsSender>();
                 services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
-                services.AddHostedService<NotificationDispatcher>();
             }
 
             /// <summary>
@@ -419,8 +439,8 @@ namespace Tawtheef.Infrastructure
             /// </summary>
             private void AddServices(IConfiguration configuration)
             {
-                var connectionString = configuration[$"Storage:{nameof(StorageSettings.AzureConnectionString)}"] ?? string.Empty;
-                var containerName = configuration[$"Storage:{nameof(StorageSettings.RootPath)}"] ?? string.Empty;
+                var connectionString = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.AzureConnectionString)}"] ?? string.Empty;
+                var containerName = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.RootPath)}"] ?? string.Empty;
                 if (!string.IsNullOrEmpty(connectionString))
                 {
                     services.AddSingleton(_ => new BlobServiceClient(connectionString));
@@ -438,33 +458,33 @@ namespace Tawtheef.Infrastructure
                 }
 
                 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                
                 services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
-                services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
-
                 services.AddScoped<ILoginAuditService, LoginAuditService>();
                 services.AddScoped<ITokenService, TokenService>();
+                services.AddScoped<ISessionService, EfSessionService>();
+                
                 services.AddScoped<IVerificationService, VerificationService>();
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-                services.AddScoped<IExternalTokenReader, CookieExternalTokenReader>();
-                services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
-
-                services.AddHttpClient<IRecaptchaService, RecaptchaService>();
-
-                services.AddSingleton<IEnvironmentNameProvider, EnvironmentNameProvider>();
-            
-                services.AddSingleton<ILocalizationService, LocalizationService>();
                 
-                services.AddScoped<ISessionService, EfSessionService>();
+                services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
+                services.AddSingleton<ILocalizationService, LocalizationService>();
 
                 services.AddScoped<IProfileStepValidationService, ProfileStepValidationService>();
                 services.AddScoped<IJobValidationService, JobValidationService>();
                 services.AddScoped<IProfileReviewService, ProfileReviewService>();
-                services.AddHostedService<JobAutoClosureService>();
+                services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
             }
         }
-
+        
+        public static void AddBackgroundServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHostedService<EmailDispatcher>();
+            services.AddHostedService<NotificationDispatcher>();
+            services.AddHostedService<JobAutoClosureService>();
+        }
+        
         #endregion
         
         private static void ConfigureAuthorizationPolicies(IServiceCollection services)

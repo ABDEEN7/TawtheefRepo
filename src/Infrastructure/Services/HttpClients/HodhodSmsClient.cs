@@ -1,34 +1,53 @@
-using System.Web;
 using FluentResults;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 
-public sealed class HodhodSmsClient : ISmsGatewayClient
+
+public sealed class HodhodSmsClient(HttpClient http, IOptions<HodhodSmsSettings> opt) : ISmsGatewayClient
 {
-    private readonly HttpClient _http;
-    private readonly HodhodSmsSettings _opt;
+    private readonly HodhodSmsSettings _opt = opt.Value;
 
-    public HodhodSmsClient(HttpClient http, IOptions<HodhodSmsSettings> opt)
+    public async Task<IResult<string>> SmsPushAsync(
+        string mobile,
+        string message,
+        CancellationToken ct = default)
     {
-        _http = http;
-        _opt  = opt.Value;
-        _http.BaseAddress ??= new Uri(_opt.BaseUrl);
-        _http.Timeout = TimeSpan.FromSeconds(10);
-    }
+        if (string.IsNullOrWhiteSpace(mobile))
+            return Result.Fail<string>("SmsPush: Mobile number is required.");
 
-    public async Task<IResult<string>> SmsPushAsync(string mobile, string message, CancellationToken ct)
-    {
-        var url = $"SMSPush?ApplicationID={Url(_opt.ApplicationId)}&Password={Url(_opt.Password)}" +
-                  $"&MobileNumber={Url(mobile)}&MessageText={Url(message)}" +
-                  $"&ConfirmDelivery={_opt.ConfirmDelivery}&Priority={_opt.Priority}";
-        var resp = await _http.GetAsync(url, ct);
-        if (!resp.IsSuccessStatusCode) return Result.Fail<string>($"SMSPush failed: {(int)resp.StatusCode}");
+        if (string.IsNullOrWhiteSpace(message))
+            return Result.Fail<string>("SmsPush: Message text is required.");
+
+        var query = new Dictionary<string, string?>
+        {
+            ["ApplicationID"]   = _opt.ApplicationId,
+            ["Password"]        = _opt.Password,
+            ["MobileNumber"]    = mobile,
+            ["MessageText"]     = message,
+            ["ConfirmDelivery"] = _opt.ConfirmDelivery.ToString(),
+            ["Priority"]        = _opt.Priority.ToString()
+        };
+
+        var url = QueryHelpers.AddQueryString("SMSPush", query);
+
+        HttpResponseMessage resp;
+        try
+        {
+            resp = await http.GetAsync(url, ct);
+        }
+        catch (Exception ex) when (ex is TaskCanceledException || ex is HttpRequestException)
+        {
+            return Result.Fail<string>($"SMSPush failed: HTTP error - {ex.Message}");
+        }
+
+        if (!resp.IsSuccessStatusCode)
+            return Result.Fail<string>($"SMSPush failed: {(int)resp.StatusCode}");
+
         var payload = await resp.Content.ReadAsStringAsync(ct);
-        return Result.Ok(payload); // gateway-specific success body ignored
+        return Result.Ok(payload);
     }
-
-    private static string Url(string v) => HttpUtility.UrlEncode(v);
 }
