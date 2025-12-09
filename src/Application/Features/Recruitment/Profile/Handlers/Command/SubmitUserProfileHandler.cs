@@ -48,15 +48,15 @@ public sealed class SubmitUserProfileHandler(
         var snapshot = new
         {
             Profile = profile,
-            Qualifications   = profile.Qualifications,
-            Experiences      = profile.Experiences,
-            TrainingCourses  = profile.TrainingCourses,
-            Achievements     = profile.Achievements,
-            Skills           = profile.Skills,
-            Languages        = profile.Languages,
+            profile.Qualifications,
+            profile.Experiences,
+            profile.TrainingCourses,
+            profile.Achievements,
+            profile.Skills,
+            profile.Languages,
             Attachments      = profile.AdditionalAttachments,
-            ResidenceAddress = profile.ResidenceAddress,
-            SponsorProfile   = profile.SponsorProfile
+            profile.ResidenceAddress,
+            profile.SponsorProfile
         };
 
         var json = JsonSerializer.Serialize(snapshot,

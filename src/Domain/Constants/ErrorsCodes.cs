@@ -192,6 +192,8 @@ public class ErrorsCodes
     public const string DistributionNoEligibleEmployees = "DISTRIBUTION_NO_ELIGIBLE_EMPLOYEES";
     public const string DistributionNoAssignableProfiles = "DISTRIBUTION_NO_ASSIGNABLE_PROFILES";
     public const string DistributionModeRequired = "DISTRIBUTION_MODE_REQUIRED";
+    public const string DistributionPerEmployeeLimitReached = "DISTRIBUTION_PER_EMPLOYEE_LIMIT_REACHED";
+    public const string ProfileNotAssignable = "PROFILE_NOT_ASSIGNABLE";
     #endregion
 }
 

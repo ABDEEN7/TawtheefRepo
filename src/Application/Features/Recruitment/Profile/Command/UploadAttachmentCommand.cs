@@ -1,4 +1,3 @@
-using System;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;

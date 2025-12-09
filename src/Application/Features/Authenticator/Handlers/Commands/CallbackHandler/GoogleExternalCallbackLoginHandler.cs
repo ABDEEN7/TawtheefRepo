@@ -18,8 +18,8 @@ public class GoogleExternalCallbackLoginHandler(
     ILoginAuditService loginAudit
 ) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
-    protected override string _provider => "Google";
-    protected override Guid _defaultUserType => UserTypeIds.Applicant;
+    protected override string Provider => "Google";
+    protected override Guid DefaultUserType => UserTypeIds.Applicant;
     public async Task<IResult<AuthResponse>> Handle(GoogleExternalCallbackLoginCommand request, CancellationToken cancellationToken)
     {
         if (request.RemoteError != null)
@@ -43,7 +43,7 @@ public class GoogleExternalCallbackLoginHandler(
             await signInManager.UpdateExternalAuthenticationTokensAsync(info);
             await UpsertProviderClaimsAsync(userManager, linkedUser, info);
 
-            return await tokenService.IssueTokensAsync(linkedUser, _provider, cancellationToken);
+            return await tokenService.IssueTokensAsync(linkedUser, Provider, cancellationToken);
         }
 
         // Not linked yet: use email to attach or create a new user
@@ -69,7 +69,7 @@ public class GoogleExternalCallbackLoginHandler(
 
             await signInManager.SignInAsync(existingUser, isPersistent: false);
             
-            return await tokenService.IssueTokensAsync(existingUser, _provider, cancellationToken);
+            return await tokenService.IssueTokensAsync(existingUser, Provider, cancellationToken);
         }
 
         // Create new user from claims (names can be missing for Google/AzureAD on later logins)
@@ -114,7 +114,7 @@ public class GoogleExternalCallbackLoginHandler(
         await signInManager.UpdateExternalAuthenticationTokensAsync(info);
         await UpsertProviderClaimsAsync(userManager, newUser, info);
 
-        return await tokenService.IssueTokensAsync(newUser, _provider, cancellationToken);
+        return await tokenService.IssueTokensAsync(newUser, Provider, cancellationToken);
     }
 
     private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, ExternalLoginInfo info)

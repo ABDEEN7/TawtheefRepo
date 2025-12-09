@@ -1,5 +1,4 @@
-﻿using System;
-using FluentResults;
+﻿using FluentResults;
 using MediatR;
 using Tawtheef.Application.Common.Models;
 

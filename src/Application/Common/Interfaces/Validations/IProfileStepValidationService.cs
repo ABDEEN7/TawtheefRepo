@@ -2,7 +2,7 @@ using FluentResults;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Common.Services;
+namespace Tawtheef.Application.Common.Interfaces.Validations;
 
 public interface IProfileStepValidationService
 {

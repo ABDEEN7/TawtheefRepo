@@ -1,7 +1,6 @@
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Recruitment.Dashboard.DTOs;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Application.Common.Mappers.ApplicantProfiles;

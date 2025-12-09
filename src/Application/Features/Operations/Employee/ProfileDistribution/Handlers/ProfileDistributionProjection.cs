@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -117,7 +117,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
                 return new DistributionEmployeeDto
                 {
                     EmployeeId = emp.Id,
-                    Name = emp.FullNameAr ?? emp.FullNameEn,
+                    Name = emp.FullNameAr,
                     TotalAssigned = load?.Total ?? 0,
                     Completed = load?.Completed ?? 0,
                     InReview = load?.InReview ?? 0,

@@ -2,8 +2,8 @@ using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Queries;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Handlers.Queries;

@@ -1,5 +1,4 @@
 using FluentResults;
-using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;

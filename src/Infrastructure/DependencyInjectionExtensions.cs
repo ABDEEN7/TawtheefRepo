@@ -33,7 +33,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Common.Interfaces.Validations;
-using Tawtheef.Application.Common.Services;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;

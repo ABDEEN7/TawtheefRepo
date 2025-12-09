@@ -32,7 +32,7 @@ public sealed class AzureIdTokenValidator(IConfiguration config) : IExternalIdTo
             var parameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                IssuerValidator = (issuer, securityToken, validationParameters) =>
+                IssuerValidator = (issuer, securityToken, _) =>
                 {
                     if (securityToken is JwtSecurityToken jwt)
                     {

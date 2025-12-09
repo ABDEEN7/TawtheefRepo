@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
@@ -182,10 +181,10 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         if (newStatusId == JobStatusIds.PendingApproval && job.JobStatusId == JobStatusIds.Draft)
         {
             var allTabsCompleted = JobBusinessRules.AreAllTabsCompleted(
-                job.JobDegrees?.Any() == true,
-                job.JobConditions?.Any() == true,
-                job.JobResponsibilities?.Any() == true,
-                job.JobRequiredAttachments?.Any() == true,
+                job.JobDegrees.Any(),
+                job.JobConditions.Any(),
+                job.JobResponsibilities.Any(),
+                job.JobRequiredAttachments.Any(),
                 !string.IsNullOrWhiteSpace(job.OverViewAr) && !string.IsNullOrWhiteSpace(job.OverViewEn),
                 !string.IsNullOrWhiteSpace(job.BenefitsAr) && !string.IsNullOrWhiteSpace(job.BenefitsEn)
             );

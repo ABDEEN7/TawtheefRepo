@@ -1,5 +1,5 @@
 using FluentResults;
-using Tawtheef.Application.Common.Services;
+using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;

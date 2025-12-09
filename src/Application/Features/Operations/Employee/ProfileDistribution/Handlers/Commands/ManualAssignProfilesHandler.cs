@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Commands;
-using Tawtheef.Application.Features.Operations.ProfileDistribution.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;

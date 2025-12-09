@@ -1,5 +1,4 @@
 using Tawtheef.Application.Common.Models;
-using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary.DTOs;
 

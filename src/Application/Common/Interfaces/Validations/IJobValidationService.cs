@@ -1,5 +1,4 @@
 ﻿using FluentValidation.Results;
-using Tawtheef.Application.Features.Operations.Employee.Job.Dtos;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Entities.Recruitment;
 

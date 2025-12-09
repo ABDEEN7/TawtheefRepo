@@ -245,7 +245,7 @@ public sealed class SaveProfileExperienceHandler(
                     return Result.Fail(ErrorsCodes.InvalidExperienceQualification);
                 }
 
-                if (qualification.GraduationYear is int gradYear && experience.StartDate.Year < gradYear)
+                if (qualification.GraduationYear is not null && experience.StartDate.Year < qualification.GraduationYear)
                 {
                     return Result.Fail(ErrorsCodes.ExperienceBeforeGraduation);
                 }

@@ -1,10 +1,8 @@
 using System.Security.Claims;
 using FluentResults;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Features.Operations.ProfileApprovals.Queries;
+using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
