@@ -16,6 +16,7 @@
   "USERS.MANAGE_ROLES": "إدارة أدوار المستخدم",
   "USERS.MANAGE_ROLES_TITLE": "إدارة أدوار المستخدم",
   "USERS.SELECT_ROLES": "اختر الأدوار",
+  "USERS.SELECT_ROLES_PLACEHOLDER": "اختر دورًا أو أكثر",
   "USERS.CANCEL": "إلغاء",
   "USERS.SAVE": "حفظ",
   "USERS.NEVER": "لم يتم",

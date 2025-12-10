@@ -1,11 +1,11 @@
 .users-container {
   border-radius: 20px;
-  background: linear-gradient(135deg, #ffffff 0%, #f7fbff 100%);
-  border: 1px solid #e3efff;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5f7 100%);
+  border: 1px solid #f3e5ec;
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    box-shadow: 0 12px 24px rgba(0, 68, 123, 0.08);
+    box-shadow: 0 12px 24px rgba(123, 0, 55, 0.08);
     transform: translateY(-2px);
   }
 }
@@ -13,12 +13,12 @@
 .filters {
   border-radius: 14px;
   background: #ffffff;
-  border: 1px solid #e3efff;
+  border: 1px solid #f3e5ec;
 }
 
 .custom-table {
   th {
-    background: #00447b;
+    background: #7b0037;
     color: white;
     font-weight: 500;
     text-align: left;
@@ -29,39 +29,68 @@
   td {
     vertical-align: middle;
     padding: 14px 16px;
-    border-color: #e3efff;
+    border-color: #f2d9e5;
   }
 
   tbody tr {
     transition: background 0.15s ease-in-out;
 
     &:hover {
-      background: #f5f9ff;
+      background: #fff7fb;
     }
   }
 }
 
 .no-data {
-  background: #f5f9ff;
+  background: #fff7fb;
   border-radius: 12px;
   padding: 12px 14px;
 }
 
 .page-title {
   font-weight: 700;
-  color: #00345c;
+  color: #4b0022;
 }
 
-:host ::ng-deep .p-dialog .p-dialog-header {
-  background: #00447b;
+.btn-maroon {
+  background-color: #7b0037;
+  border-color: #7b0037;
+  color: #fff;
+
+  &:hover {
+    background-color: #64002d;
+    border-color: #64002d;
+  }
+}
+
+.dialog-user-info {
+  padding: 16px;
+  background: #fff7fb;
+  border: 1px solid #f2d9e5;
+  border-radius: 12px;
+}
+
+.role-multiselect {
+  width: 100%;
+}
+
+:host ::ng-deep .manage-roles-dialog .p-dialog-header {
+  background: #7b0037;
   color: #fff;
   font-weight: 600;
+  padding: 16px 20px;
 }
 
-:host ::ng-deep .p-dialog .p-dialog-content {
-  padding-top: 20px;
+:host ::ng-deep .manage-roles-dialog .p-dialog-content {
+  padding: 20px 24px 10px;
+  overflow: visible;
 }
 
-:host ::ng-deep .p-dialog .p-dialog-footer {
-  padding-top: 0;
+:host ::ng-deep .manage-roles-dialog .p-dialog-footer {
+  padding: 0 24px 20px;
+  border-top: 1px solid #f2d9e5;
+}
+
+:host ::ng-deep .p-multiselect .p-multiselect-label {
+  padding: 0.55rem 0.75rem;
 }

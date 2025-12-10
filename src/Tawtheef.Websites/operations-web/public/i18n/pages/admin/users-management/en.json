@@ -16,6 +16,7 @@
   "USERS.MANAGE_ROLES": "Manage user roles",
   "USERS.MANAGE_ROLES_TITLE": "Manage user roles",
   "USERS.SELECT_ROLES": "Select roles",
+  "USERS.SELECT_ROLES_PLACEHOLDER": "Choose one or more roles",
   "USERS.CANCEL": "Cancel",
   "USERS.SAVE": "Save",
   "USERS.NEVER": "Never",
