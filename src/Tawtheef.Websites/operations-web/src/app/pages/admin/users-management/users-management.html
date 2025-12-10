@@ -107,9 +107,10 @@
   [style]="{width: '900px'}"
   [closable]="true"
   (visibleChange)="isRolesDialogOpen.set($event)"
-  [header]="'USERS.MANAGE_ROLES_TITLE' | translate">
+  [header]="'USERS.MANAGE_ROLES_TITLE' | translate"
+  styleClass="manage-roles-dialog">
   <ng-template pTemplate="content">
-    <div class="mb-3">
+    <div class="dialog-user-info mb-4">
       <div class="fw-bold">{{ selectedUser()?.name }}</div>
       <div class="text-muted small">{{ selectedUser()?.email }}</div>
     </div>
@@ -117,12 +118,15 @@
     <div class="mb-3">
       <label class="form-label">{{ 'USERS.SELECT_ROLES' | translate }}</label>
       <p-multiSelect
+        class="role-multiselect"
         [options]="roleOptions()"
         optionLabel="nameEn"
         optionValue="id"
         display="chip"
         [ngModel]="selectedRoleIds()"
-        (ngModelChange)="selectedRoleIds.set($event)">
+        (ngModelChange)="selectedRoleIds.set($event)"
+        [placeholder]="'USERS.SELECT_ROLES_PLACEHOLDER' | translate"
+        [appendTo]="'body'">
         <ng-template let-role pTemplate="item">
           <div class="d-flex align-items-center justify-content-between w-100">
             <span>{{ role.nameEn }}</span>
@@ -136,7 +140,7 @@
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-end gap-2">
       <button class="btn btn-secondary" (click)="isRolesDialogOpen.set(false)">{{ 'USERS.CANCEL' | translate }}</button>
-      <button class="btn btn-primary" (click)="saveRoles()">{{ 'USERS.SAVE' | translate }}</button>
+      <button class="btn btn-maroon" (click)="saveRoles()">{{ 'USERS.SAVE' | translate }}</button>
     </div>
   </ng-template>
 </p-dialog>
