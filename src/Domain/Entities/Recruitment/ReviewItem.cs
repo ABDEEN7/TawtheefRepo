@@ -7,8 +7,31 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
-public enum ProfileSection { Personal=1, Contact=2, Qualifications=3, Experience=4, SkillsLanguages=5, Attachments=6 }
-public enum ReviewStatus { Draft=0, Pending=1, Approved=2, Rejected=3, ChangesRequested=4 }
+public enum ProfileSection
+{
+    Personal = 1,
+    BasicInformation = Personal,
+    Contact = 2,
+    Qualifications = 3,
+    Experience = 4,
+    Experiences = Experience,
+    SkillsLanguages = 5,
+    SkillsAndLanguages = SkillsLanguages,
+    Attachments = 6,
+    TrainingCourses = 7,
+    ProfessionalCertificatesAndAwards = 8,
+    ProfilePhoto = 9
+}
+
+public enum ReviewStatus
+{
+    NotReviewed = 0,
+    Pending = 1,
+    Approved = 2,
+    Rejected = 3,
+    NeedsCorrection = 4,
+    ChangesRequested = NeedsCorrection
+}
 public enum ReviewTargetType { Section=1, Field=2, Row=3, Attachment=4 }
 
 [Table(nameof(ReviewItem), Schema = Schemas.Hr)]
@@ -170,10 +193,10 @@ public class ReviewItem : EventEntity
         ReviewedById = reviewerId;
         ReviewedAtUtc = DateTime.UtcNow;
         ReviewerNote = message;
-        Status = ReviewStatus.ChangesRequested;
+        Status = ReviewStatus.NeedsCorrection;
     }
 
-    public bool NeedsReview() => IsOutdated || Status is ReviewStatus.Pending or ReviewStatus.ChangesRequested;
+    public bool NeedsReview() => IsOutdated || Status is ReviewStatus.Pending or ReviewStatus.NeedsCorrection;
 
     // 🔐 Utility for Hash Calculation
     private static string ComputeHash(object? value)
