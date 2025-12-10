@@ -3,8 +3,9 @@ import {HttpService} from '../../../../core/http/http.service';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
-import {UserDto, UserFilters} from '../models/user.model';
-import {UserRolesResponse} from '../models/user-roles.model';
+import {UserDto} from '../models/user.dto';
+import {UserFilters} from '../models/user-filters.dto';
+import {UserRolesResponse} from '../models/user-roles-response.dto';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 

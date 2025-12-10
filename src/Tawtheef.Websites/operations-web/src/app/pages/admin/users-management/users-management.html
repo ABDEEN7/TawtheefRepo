@@ -8,28 +8,42 @@
       <div class="col-md-4">
         <label class="form-label">{{ 'USERS.SEARCH_NAME' | translate }}</label>
         <input type="text"
-               class="form-control"
-               [ngModel]="filters().name"
-               (ngModelChange)="filters.update(f => ({...f, name: $event})); onSearchChange()"
+               class="form-control form-control-sm"
+               [(ngModel)]="nameFilter"
+               (input)="this.onSearchChange()"
                [placeholder]="'USERS.SEARCH_NAME_PLACEHOLDER' | translate"/>
       </div>
       <div class="col-md-4">
         <label class="form-label">{{ 'USERS.SEARCH_EMAIL' | translate }}</label>
         <input type="text"
-               class="form-control"
-               [ngModel]="filters().email"
-               (ngModelChange)="filters.update(f => ({...f, email: $event})); onSearchChange()"
+               class="form-control form-control-sm"
+               [(ngModel)]="emailFilter"
+               (input)="this.onSearchChange()"
                [placeholder]="'USERS.SEARCH_EMAIL_PLACEHOLDER' | translate"/>
       </div>
       <div class="col-md-4">
         <label class="form-label">{{ 'USERS.FILTER_BLOCKED' | translate }}</label>
-        <select class="form-select"
-                [ngModel]="filters().isBlocked"
-                (ngModelChange)="filters.update(f => ({...f, isBlocked: $event === '' ? null : $event})); onSearchChange()">
-          <option [ngValue]="''">{{ 'USERS.BLOCKED_ANY' | translate }}</option>
-          <option [ngValue]="false">{{ 'USERS.BLOCKED_NO' | translate }}</option>
-          <option [ngValue]="true">{{ 'USERS.BLOCKED_YES' | translate }}</option>
-        </select>
+        <p-select
+          [options]="blockedStatusOptions"
+          [showClear]="true"
+          [placeholder]="'USERS.BLOCKED_ANY' | translate"
+          name="blockedStatuses"
+          (onChange)="onBlockedFilterChange($event.value)"
+          (onClear)="onBlockedFilterChange(null)"
+          [filter]="true"
+          [ngModel]="filters().isBlocked"
+          optionLabel="name"
+          optionValue="id"
+          size="small"
+          class="form-select form-select-sm"
+        >
+          <ng-template pTemplate="selectedItem" let-option>
+            {{ option.name | translate }}
+          </ng-template>
+          <ng-template pTemplate="item" let-option>
+            {{ option.name | translate }}
+          </ng-template>
+        </p-select>
       </div>
     </div>
   </div>

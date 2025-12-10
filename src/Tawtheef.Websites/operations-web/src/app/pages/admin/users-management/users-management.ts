@@ -3,12 +3,15 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
 import {UsersService} from './services/users.service';
-import {UserDto, UserFilters} from './models/user.model';
-import {RoleSummaryDto, UserRolesResponse} from './models/user-roles.model';
+import {UserDto} from './models/user.dto';
+import {UserFilters} from './models/user-filters.dto';
+import {RoleSummaryDto} from './models/role-summary.dto';
+import {UserRolesResponse} from './models/user-roles-response.dto';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
 import {DialogModule} from 'primeng/dialog';
 import {MultiSelectModule} from 'primeng/multiselect';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
+import {Select} from 'primeng/select';
 
 @Component({
   selector: 'app-users-management',
@@ -22,7 +25,8 @@ import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.
     PaginationComponent,
     DialogModule,
     MultiSelectModule,
-    I18nNamespaceDirective
+    I18nNamespaceDirective,
+    Select
   ]
 })
 export class UsersManagement implements OnInit {
@@ -39,12 +43,19 @@ export class UsersManagement implements OnInit {
     isBlocked: null
   });
 
+  nameFilter = '';
+  emailFilter = '';
+
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
 
   isRolesDialogOpen = signal(false);
   selectedUser = signal<UserDto | null>(null);
   roleOptions = signal<RoleSummaryDto[]>([]);
   selectedRoleIds = signal<string[]>([]);
+  blockedStatusOptions = [
+    { id: false, name: 'USERS.BLOCKED_NO' },
+    { id: true, name: 'USERS.BLOCKED_YES' }
+  ];
 
   ngOnInit(): void {
     this.loadUsers();
@@ -55,7 +66,12 @@ export class UsersManagement implements OnInit {
   }
 
   onSearchChange() {
-    this.filters.update(f => ({...f, pageNumber: 1}));
+    this.filters.update(f => ({
+      ...f,
+      pageNumber: 1,
+      name: this.nameFilter,
+      email: this.emailFilter
+    }));
     this.loadUsers();
   }
 
@@ -90,5 +106,10 @@ export class UsersManagement implements OnInit {
         user.isBlocked = desiredState;
         this.usersService.getUsers(this.filters());
       });
+  }
+
+  onBlockedFilterChange(value: boolean | null) {
+    this.filters.update(f => ({...f, isBlocked: value ?? null}));
+    this.onSearchChange();
   }
 }
