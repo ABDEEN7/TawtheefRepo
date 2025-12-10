@@ -1,0 +1,131 @@
+<div class="roles-container card shadow-sm p-4" i18nNamespace="pages/admin/roles-management">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="page-title">{{ 'ROLES.TITLE' | translate }}</h3>
+    <button class="btn btn-maroon btn-pill shadow-sm" (click)="this.openAdd()">
+      {{ 'ROLES.ADD_ROLE' | translate }}
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-responsive">
+    <table class="table custom-table">
+      <thead>
+      <tr>
+        <th>{{ 'ROLES.NAME_AR' | translate }}</th>
+        <th>{{ 'ROLES.NAME_EN' | translate }}</th>
+        <th>{{ 'ROLES.PERMISSIONS' | translate }}</th>
+        <th class="text-end">{{ 'ROLES.ACTIONS' | translate }}</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @if (this.pagedRoles().length === 0) {
+          <tr>
+            <td colspan="4" class="text-muted no-data text-start">
+              {{ 'NO_RECORDS' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (role of this.pagedRoles(); track role.id; let i = $index) {
+            <tr>
+              <td>{{ role.nameAr }}</td>
+              <td>{{ role.nameEn }}</td>
+              <td>
+                @for (perm of role.permissions; track perm) {
+                  <span
+                    class="badge bg-secondary-subtle text-secondary me-1">
+                    {{ perm }}
+                  </span>
+                }
+              </td>
+
+              <td class="text-end text-nowrap">
+                <button class="btn btn-outline-secondary btn-sm me-2"
+                        (click)="this.openEdit(role)">
+                  {{ 'ROLES.EDIT' | translate }}
+                </button>
+
+                <button class="btn btn-outline-danger btn-sm"
+                        (click)="this.confirmDelete(role)">
+                  {{ 'ROLES.DELETE' | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- Pagination -->
+<app-pagination
+  [currentPage]="currentPage()"
+  [totalItems]="totalItems()"
+  [itemsPerPage]="itemsPerPage()"
+  (pageChanged)="onPageChange($event)"
+>
+</app-pagination>
+
+
+<!-- Modal -->
+@if (this.isModalOpen()) {
+  <div class="modal-overlay">
+    <div class="modal-card">
+      <h4 class="modal-title">
+        {{ this.isEditing() ? ('ROLES.EDIT_ROLE' | translate) : ('ROLES.ADD_ROLE' | translate) }}
+      </h4>
+
+      <div class="form-group mb-3">
+        <label>{{ 'ROLES.NAME_AR' | translate }}</label>
+        <input class="form-control" [(ngModel)]="this.formModel().nameAr" />
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'ROLES.NAME_EN' | translate }}</label>
+        <input class="form-control" [(ngModel)]="this.formModel().nameEn" />
+      </div>
+
+      <div class="permissions-box mb-3">
+        <label class="fw-bold mb-2">{{ 'ROLES.PERMISSIONS_LIST' | translate }}</label>
+
+        <div class="search-bar input-group mb-3">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+          <input
+            type="text"
+            class="form-control border-start-0"
+            [placeholder]="'SEARCH' | translate"
+            [ngModel]="this.permissionSearch()"
+            (ngModelChange)="this.permissionSearch.set($event)" />
+        </div>
+
+        <div class="perm-list">
+          @if (this.filteredPermissions().length === 0) {
+            <div class="text-muted small">{{ 'NO_RECORDS' | translate }}</div>
+          } @else {
+            @for (perm of this.filteredPermissions(); track perm.id) {
+              <label class="perm-item">
+                <input type="checkbox"
+                       [checked]="this.formModel().permissions.includes(perm.id)"
+                       (change)="this.togglePermission(perm.id)" />
+                <span>{{ perm.name }}</span>
+              </label>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end mt-4">
+        <button class="btn btn-secondary me-2" (click)="this.isModalOpen.set(false)">
+          {{ 'ROLES.CANCEL' | translate }}
+        </button>
+
+        <button class="btn btn-primary" (click)="this.save()">
+          {{ 'ROLES.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<p-confirmDialog></p-confirmDialog>

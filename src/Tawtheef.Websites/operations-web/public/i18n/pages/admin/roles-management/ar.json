@@ -1,0 +1,23 @@
+{
+  "ROLES.TITLE": "إدارة الأدوار",
+  "ROLES.ADD_ROLE": "إضافة دور",
+  "ROLES.EDIT_ROLE": "تعديل الدور",
+
+  "ROLES.NAME_AR": "الاسم بالعربية",
+  "ROLES.NAME_EN": "الاسم بالإنجليزية",
+
+  "ROLES.PERMISSIONS": "الصلاحيات",
+  "ROLES.PERMISSIONS_LIST": "قائمة الصلاحيات",
+
+  "ROLES.ACTIONS": "الإجراءات",
+  "ROLES.EDIT": "تعديل",
+  "ROLES.DELETE": "حذف",
+  "ROLES.SAVE": "حفظ",
+  "ROLES.CANCEL": "إلغاء",
+
+  "ROLES.DELETE_CONFIRM": "هل أنت متأكد من حذف هذا الدور؟",
+  "ROLES.SAVE_SUCCESS": "تم حفظ الدور بنجاح",
+  "ROLES.DELETE_SUCCESS": "تم حذف الدور بنجاح",
+  "ROLES.SAVE_FAILED": "فشل حفظ الدور. يرجى المحاولة مرة أخرى.",
+  "ROLES.DELETE_FAILED": "فشل حذف الدور. يرجى المحاولة مرة أخرى."
+}
