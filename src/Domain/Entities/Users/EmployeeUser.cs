@@ -32,11 +32,11 @@ public class EmployeeUser : User
     public Result<ProfileAssignment> CreateProfileAssignmentIfAllowed(UserProfile profile, int currentLoad, int assignedThisRound, int? perEmployeeLimit)
     {
         // Respect per-employee cap for this distribution run
-        if (perEmployeeLimit.HasValue && assignedThisRound >= perEmployeeLimit.Value)
+        if (assignedThisRound >= perEmployeeLimit)
             return Result.Fail<ProfileAssignment>(ErrorsCodes.DistributionPerEmployeeLimitReached);
 
         // Ensure profile is assignable (caller may have already filtered, but guard here as domain rule)
-        if (!ProfileDistributionRules.IsAssignable(profile.Status))
+        if (!ProfileDistributionRules.AssignableStatuses.Contains(profile.Status))
             return Result.Fail<ProfileAssignment>(ErrorsCodes.ProfileNotAssignable);
 
         // Apply domain changes

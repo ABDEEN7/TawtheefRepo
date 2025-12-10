@@ -12,7 +12,7 @@ namespace Operations.API.Controllers.Employee;
 //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileDistributionController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("files")]
+    [HttpGet("profiles")]
     public async Task<IActionResult> GetFiles([FromQuery] UserProfileStatus? status, CancellationToken ct)
     {
         var result = await mediator.Send(new GetDistributionProfilesQuery(status), ct);

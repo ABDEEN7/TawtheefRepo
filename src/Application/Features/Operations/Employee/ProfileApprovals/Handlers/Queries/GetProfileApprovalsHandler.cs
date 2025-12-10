@@ -51,7 +51,7 @@ public class GetProfileApprovalsHandler(IUnitOfWork uow)
                             : g.Any(r => r.Status == ReviewStatus.ChangesRequested)
                                 ? ReviewStatus.ChangesRequested
                                 : ReviewStatus.Approved,
-                LastUpdatedAtUtc = g.Max(r => (DateTime?)((r.UpdatedDate ?? r.CreatedDate).UtcDateTime))
+                LastUpdatedAtUtc = g.Max(r => r.UpdatedDate ?? r.CreatedDate)
             })
             .ToListAsync(ct);
 
@@ -74,7 +74,7 @@ public class GetProfileApprovalsHandler(IUnitOfWork uow)
                     SubmittedAtUtc = submission.SubmittedAtUtc,
                     PendingCount = pending,
                     OverallStatus = overallStatus,
-                    LastUpdatedAtUtc = lastUpdatedAtUtc
+                    LastUpdatedAtUtc = lastUpdatedAtUtc.DateTime
                 };
             })
             .OrderByDescending(p => p.LastUpdatedAtUtc ?? p.SubmittedAtUtc)

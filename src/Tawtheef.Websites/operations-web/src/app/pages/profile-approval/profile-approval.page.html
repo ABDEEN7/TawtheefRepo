@@ -35,12 +35,12 @@
                 <div class="name">{{ item.fullName || ('profileApproval.list.anonymous' | translate) }}</div>
                 <div class="muted small">{{ item.candidateType || ('profileApproval.list.typeUnknown' | translate) }}</div>
               </div>
-              <span class="pill warning" *ngIf="item.pendingCount > 0">{{ item.pendingCount }} {{ 'profileApproval.list.pending' | translate }}</span>
             </div>
             <div class="row-line">
               <div class="muted small">{{ item.targetEntity || ('profileApproval.list.entityUnknown' | translate) }}</div>
               <div class="pill soft">{{ statusLabel(item.overallStatus) | translate }}</div>
             </div>
+            <span class="pill warning" *ngIf="item.pendingCount > 0">{{ item.pendingCount }} {{ 'profileApproval.list.pending' | translate }}</span>
           </li>
         </ul>
       </div>

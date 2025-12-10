@@ -27,10 +27,10 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
         if (profiles.Count == 0)
             return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionProfilesNotFound);
 
-        if (profiles.Any(p => ProfileDistributionRules.IsFinal(p.Status)))
+        if (profiles.Any(p => ProfileDistributionRules.FinalStatuses.Contains(p.Status)))
             return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionFinalStatusNotAllowed);
 
-        if (profiles.Any(p => !ProfileDistributionRules.IsAssignable(p.Status)))
+        if (profiles.Any(p => !ProfileDistributionRules.AssignableStatuses.Contains(p.Status)))
             return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionStatusNotAssignable);
 
         var activeAssignments = await assignmentRepo.DbSet

@@ -23,7 +23,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
-            .Where(p => !ProfileDistributionRules.FinalStatuses.Contains(p.Status));
+            .Where(p => !ProfileDistributionRules.StartStatuses.Contains(p.Status) && !ProfileDistributionRules.FinalStatuses.Contains(p.Status));
 
         if (status is not null)
             profilesQuery = profilesQuery.Where(p => p.Status == status);

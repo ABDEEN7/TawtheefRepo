@@ -11,10 +11,10 @@ import {
   DistributionResult,
   EmployeeAvailability,
   ManualAssignRequest,
-  ProfileFileStatus,
   ReassignRequest,
 } from './models/profile-distribution.models';
 import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
+import {ProfileStatusNumber} from '../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -32,7 +32,7 @@ export class ProfileDistributionPage implements OnInit {
   error = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
-  statusFilter = signal<ProfileFileStatus | 'all'>('all');
+  statusFilter = signal<ProfileStatusNumber | 'all'>('all');
   search = signal('');
   selectedIds = signal<Set<string>>(new Set());
 
@@ -59,14 +59,14 @@ export class ProfileDistributionPage implements OnInit {
     this.employees().filter(e => e.isActive && e.availability === EmployeeAvailability.Available)
   );
 
-  readonly statusOptions: { value: ProfileFileStatus | 'all'; label: string }[] = [
+  readonly statusOptions: { value: ProfileStatusNumber | 'all'; label: string }[] = [
     { value: 'all', label: 'distribution.filters.statusAll' },
-    { value: ProfileFileStatus.Submitted, label: 'distribution.filters.statusSubmitted' },
-    { value: ProfileFileStatus.UnderReview, label: 'distribution.filters.statusUnderReview' },
-    { value: ProfileFileStatus.NeedsChanges, label: 'distribution.filters.statusNeedsChanges' },
+    { value: ProfileStatusNumber.Submitted, label: 'distribution.filters.statusSubmitted' },
+    { value: ProfileStatusNumber.UnderReview, label: 'distribution.filters.statusUnderReview' },
+    { value: ProfileStatusNumber.RequiresUpdate, label: 'distribution.filters.statusNeedsChanges' },
   ];
 
-  protected readonly ProfileFileStatus = ProfileFileStatus;
+  protected readonly ProfileFileStatus = ProfileStatusNumber;
   protected readonly EmployeeAvailability = EmployeeAvailability;
 
   ngOnInit(): void {
@@ -126,11 +126,19 @@ export class ProfileDistributionPage implements OnInit {
 
   assignAuto(): void {
     const employeeIds = Array.from(this.autoEmployeeIds());
-    if (employeeIds.length === 0) return;
+    if (employeeIds.length === 0) {
+      this.error.set('يرجى اختيار موظفين للتوزيع الآلي');
+      return;
+    }
+    const profileIds= Array.from(this.selectedIds());
+    if(profileIds.length===0){
+      this.error.set('يرجى اختيار ملفات للتوزيع الآلي');
+      return;
+    }
 
     const payload: AutoAssignRequest = {
       employeeIds,
-      profileIds: Array.from(this.selectedIds()),
+      profileIds,
       perEmployeeCount: this.autoLimit(),
     };
 
@@ -171,33 +179,35 @@ export class ProfileDistributionPage implements OnInit {
     this.autoEmployeeIds.set(set);
   }
 
-  statusClass(status: ProfileFileStatus): string {
+  statusClass(status: ProfileStatusNumber): string {
     switch (status) {
-      case ProfileFileStatus.Submitted:
+      case ProfileStatusNumber.Submitted:
         return 'pill neutral';
-      case ProfileFileStatus.UnderReview:
+      case ProfileStatusNumber.UnderReview:
         return 'pill info';
-      case ProfileFileStatus.NeedsChanges:
+      case ProfileStatusNumber.Cancelled:
         return 'pill warning';
       default:
         return 'pill soft';
     }
   }
 
-  statusLabel(status: ProfileFileStatus): string {
+  statusLabel(status: ProfileStatusNumber): string {
     switch (status) {
-      case ProfileFileStatus.Submitted:
+      case ProfileStatusNumber.Submitted:
         return 'distribution.status.submitted';
-      case ProfileFileStatus.UnderReview:
+      case ProfileStatusNumber.UnderReview:
         return 'distribution.status.underReview';
-      case ProfileFileStatus.NeedsChanges:
+      case ProfileStatusNumber.RequiresUpdate:
         return 'distribution.status.needsChanges';
-      case ProfileFileStatus.Approved:
+      case ProfileStatusNumber.Approved:
         return 'distribution.status.approved';
-      case ProfileFileStatus.Rejected:
+      case ProfileStatusNumber.Rejected:
         return 'distribution.status.rejected';
-      case ProfileFileStatus.Cancelled:
+      case ProfileStatusNumber.Cancelled:
         return 'distribution.status.cancelled';
+      default:
+        return '------';
     }
   }
 

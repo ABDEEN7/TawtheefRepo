@@ -7,7 +7,7 @@
   "profileApproval.list.anonymous": "مرشح",
   "profileApproval.list.typeUnknown": "نوع غير محدد",
   "profileApproval.list.entityUnknown": "جهة غير محددة",
-  "profileApproval.list.pending": "بانتظار المراجعة",
+  "profileApproval.list.pending": "حقل/حقول بانتظار المراجعة",
 
   "profileApproval.detail.eyebrow": "تفاصيل الملف",
   "profileApproval.detail.placeholder": "اختر ملفًا لعرض تفاصيله",

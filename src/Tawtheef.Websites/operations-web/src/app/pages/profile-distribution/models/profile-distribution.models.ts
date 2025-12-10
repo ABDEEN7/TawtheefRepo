@@ -1,11 +1,4 @@
-export enum ProfileFileStatus {
-  Submitted = 1,
-  UnderReview = 2,
-  NeedsChanges = 3,
-  Approved = 4,
-  Rejected = 5,
-  Cancelled = 6,
-}
+import {ProfileStatus, ProfileStatusNumber} from '../../../core/enums/lookups.enum';
 
 export enum EmployeeAvailability {
   Available = 1,
@@ -19,7 +12,7 @@ export interface DistributionFile {
   candidateName: string;
   specialization: string;
   targetEntity: string;
-  status: ProfileFileStatus;
+  status: ProfileStatusNumber;
   assignedEmployeeId?: string;
   assignedEmployeeName?: string;
   submittedAtUtc: string;
