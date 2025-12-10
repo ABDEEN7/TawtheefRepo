@@ -14,6 +14,7 @@ import {
   ReviewTargetType,
 } from './models/profile-approval.models';
 import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
+import {FileUtilsService} from '../../core/utils/file-utils';
 
 @Component({
   selector: 'app-profile-approval-page',
@@ -23,6 +24,7 @@ import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.dir
   styleUrl: './profile-approval.page.scss',
 })
 export class ProfileApprovalPage implements OnInit, OnDestroy {
+  private fileUtils = inject(FileUtilsService);
   private api = inject(ProfileApprovalService);
   private route = inject(ActivatedRoute);
 
@@ -153,6 +155,10 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
       default:
         return 'profileApproval.status.pending';
     }
+  }
+
+  previewFile(resourceUrl: string): void {
+    this.fileUtils.previewUrl(resourceUrl, '', false);
   }
 
   detailStatus(): ReviewStatus {

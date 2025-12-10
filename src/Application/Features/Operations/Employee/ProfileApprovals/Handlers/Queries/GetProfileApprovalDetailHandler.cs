@@ -19,9 +19,6 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
     public async Task<Result<ProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
-        var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
-        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
-        var resourceRepo = uow.GetEntityRepository<Resource>();
 
         var profile = await profileRepo.DbSet
             .Include(p => p.User)
@@ -32,11 +29,13 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
         if (profile is null)
             return Result.Fail<ProfileApprovalDetailDto>(ErrorsCodes.UserProfileNotFound);
 
+        var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
         var submission = await submissionRepo.DbSet
             .Where(s => s.UserProfileId == profile.Id)
             .OrderByDescending(s => s.Version)
             .FirstOrDefaultAsync(ct);
 
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var reviewItems = await reviewRepo.DbSet
             .Where(r => r.UserProfileId == profile.Id)
             .OrderByDescending(r => r.Version)
@@ -53,6 +52,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
             .Distinct()
             .ToList();
 
+        var resourceRepo = uow.GetEntityRepository<Resource>();
         var resources = await resourceRepo.DbSet
             .Where(r => resourceIds.Contains(r.Id))
             .ToDictionaryAsync(r => r.Id, ct);

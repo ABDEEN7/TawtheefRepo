@@ -1,6 +1,6 @@
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import {HttpResponse} from '@angular/common/http';
 import {HttpService} from "../http/http.service";
 
 @Injectable({ providedIn: 'root' })
@@ -22,10 +22,10 @@ export class FileUtilsService {
   async downloadUrl(fileUrl: string, fileName = ''): Promise<void> {
     if (!this.isBrowser) return;
 
-    const res = await this.http.get(fileUrl, {
+    const res = await this.http.get(fileUrl, undefined, {
       responseType: 'blob',
       observe: 'response',
-      // withCredentials: true, // <- enable if your auth is cookie-based
+      withCredentials: true,
     }).toPromise() as HttpResponse<Blob>;
 
     const blob = res.body!;
@@ -95,7 +95,7 @@ export class FileUtilsService {
     }
 
     // Auth-required path: fetch as blob so interceptors add JWT, then open as object URL
-    const blob = await this.http.get<any>(fileUrl, { responseType: 'blob', observe: 'body' }).toPromise();
+    const blob = await this.http.get<Blob>(fileUrl, undefined,{ responseType: 'blob', observe: 'body' }).toPromise();
     const url = URL.createObjectURL(blob!);
     window.open(url, '_blank');
     setTimeout(() => URL.revokeObjectURL(url), 30_000);
@@ -105,7 +105,7 @@ export class FileUtilsService {
    * Converts a URL to a File object (uses HttpClient so interceptors/JWT apply).
    */
   async urlToFile(url: string, fileName: string, mimeType: string): Promise<File> {
-    const blob = await this.http.get<any>(url, { responseType: 'blob' }).toPromise();
+    const blob = await this.http.get<Blob>(url, undefined, { responseType: 'blob' }).toPromise();
     return new File([blob!], fileName, { type: mimeType });
   }
 

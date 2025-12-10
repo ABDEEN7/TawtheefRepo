@@ -16,8 +16,6 @@ public class GetProfileApprovalsHandler(IUnitOfWork uow)
     public async Task<Result<IReadOnlyList<ProfileApprovalListItemDto>>> Handle(GetProfileApprovalsQuery request, CancellationToken ct)
     {
         var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
-        var profileRepo = uow.GetEntityRepository<UserProfile>();
-        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
         var latestSubmissions = await submissionRepo.DbSet
             .GroupBy(s => s.UserProfileId)
@@ -29,6 +27,7 @@ public class GetProfileApprovalsHandler(IUnitOfWork uow)
 
         var profileIds = latestSubmissions.Select(s => s.UserProfileId).ToList();
 
+        var profileRepo = uow.GetEntityRepository<UserProfile>();
         var profiles = await profileRepo.DbSet
             .Include(p => p.User)
             .Include(p => p.CandidateType)
@@ -36,6 +35,7 @@ public class GetProfileApprovalsHandler(IUnitOfWork uow)
             .Where(p => profileIds.Contains(p.Id))
             .ToListAsync(ct);
 
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var reviewSummaries = await reviewRepo.DbSet
             .Where(r => profileIds.Contains(r.UserProfileId))
             .GroupBy(r => r.UserProfileId)

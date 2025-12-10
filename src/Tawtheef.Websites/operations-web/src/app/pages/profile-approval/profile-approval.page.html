@@ -118,13 +118,12 @@
                 </div>
                 <div class="item-actions">
                   <span class="pill" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) | translate }}</span>
-                  <a *ngIf="item.resourceUrl" class="btn ghost" [href]="item.resourceUrl" target="_blank">{{ 'profileApproval.detail.viewFile' | translate }}</a>
-                  <button
-                    class="btn primary"
-                    type="button"
+                  <button *ngIf="item.resourceUrl" class="btn ghost" (click)="previewFile(item.resourceUrl)">
+                    {{ 'profileApproval.detail.viewFile' | translate }}
+                  </button>
+                  <button class="btn primary" type="button"
                     [disabled]="!canApproveAttachment(section, item) || item.status === ReviewStatus.Approved"
-                    (click)="approve(item)"
-                  >
+                    (click)="approve(item)">
                     {{ 'profileApproval.detail.approve' | translate }}
                   </button>
                   <button class="btn outline" type="button" (click)="requestChanges(item)">{{ 'profileApproval.detail.requestChanges' | translate }}</button>
