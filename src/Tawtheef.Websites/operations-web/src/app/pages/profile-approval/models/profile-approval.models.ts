@@ -1,8 +1,9 @@
 export enum ReviewStatus {
-  Draft = 0,
+  NotReviewed = 0,
   Pending = 1,
   Approved = 2,
   Rejected = 3,
+  NeedsCorrection = 4,
   ChangesRequested = 4,
 }
 
@@ -11,6 +12,12 @@ export enum ReviewTargetType {
   Field = 2,
   Row = 3,
   Attachment = 4,
+}
+
+export interface FileRefDto {
+  resourceId: string;
+  fileName: string;
+  url: string;
 }
 
 export interface ProfileApprovalItem {
@@ -35,6 +42,37 @@ export interface ProfileApprovalSection {
   hasAttachments: boolean;
 }
 
+export interface BasicInformationSnapshot {
+  fullNameAr?: string;
+  fullNameEn?: string;
+  nationalNumber?: string;
+  birthDate?: string;
+  nationality?: string;
+  gender?: string;
+  religion?: string;
+  maritalStatus?: string;
+  childrenCount?: number;
+  candidateType?: string;
+  targetEntity?: string;
+  resumeAttachment?: FileRefDto | null;
+  nationalCard?: FileRefDto | null;
+  residenceAddressCertificate?: FileRefDto | null;
+  birthdayCertificate?: FileRefDto | null;
+  marriageCertificate?: FileRefDto | null;
+}
+
+export interface ProfileApprovalData {
+  basicInformation: BasicInformationSnapshot;
+  qualifications: any[];
+  experiences: any[];
+  trainingCourses: any[];
+  professionalCertificatesAndAwards: any[];
+  skillsAndLanguages: any[];
+  languages: any[];
+  attachments: any[];
+  profilePhoto?: FileRefDto | null;
+}
+
 export interface ProfileApprovalDetail {
   userProfileId: string;
   userId: string;
@@ -43,6 +81,7 @@ export interface ProfileApprovalDetail {
   targetEntity?: string;
   submissionVersion?: number;
   submittedAtUtc?: string;
+  profile?: ProfileApprovalData;
   sections: ProfileApprovalSection[];
 }
 
@@ -52,8 +91,30 @@ export interface ProfileApprovalListItem {
   fullName: string;
   candidateType?: string;
   targetEntity?: string;
+  specialization?: string;
   submittedAtUtc: string;
+  profileStatus?: number;
   pendingCount: number;
   overallStatus: ReviewStatus;
   lastUpdatedAtUtc?: string;
+  allowedOperations?: string[];
+}
+
+export interface ProfileApprovalListFilter {
+  search?: string;
+  specialization?: string;
+  status?: ReviewStatus | '';
+  targetEntity?: string;
+  candidateType?: string;
+  sort?: 'name' | 'status' | 'entity' | 'date';
+  sortDirection?: 'asc' | 'desc';
+}
+
+export type FinalApprovalAction = 'approve' | 'correction' | 'reject' | 'block' | 'exception';
+
+export interface FinalApprovalRequest {
+  action: FinalApprovalAction;
+  notes?: string;
+  summary?: string;
+  attachment?: File | null;
 }

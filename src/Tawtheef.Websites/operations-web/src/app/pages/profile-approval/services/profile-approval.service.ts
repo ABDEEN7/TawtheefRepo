@@ -4,6 +4,7 @@ import { HttpService } from '../../../core/http/http.service';
 import { EndpointsService } from '../../../core/http/endpoints.service';
 import {
   ProfileApprovalDetail,
+  ProfileApprovalListFilter,
   ProfileApprovalListItem,
   ReviewStatus,
 } from '../models/profile-approval.models';
@@ -13,8 +14,8 @@ export class ProfileApprovalService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
-  getProfiles(): Observable<ProfileApprovalListItem[]> {
-    return this.http.get<ProfileApprovalListItem[]>(this.endpoints.approvals.list);
+  getProfiles(filters?: ProfileApprovalListFilter): Observable<ProfileApprovalListItem[]> {
+    return this.http.get<ProfileApprovalListItem[]>(this.endpoints.approvals.list, filters);
   }
 
   getProfile(profileId: string): Observable<ProfileApprovalDetail> {
@@ -27,6 +28,12 @@ export class ProfileApprovalService {
         status,
         note,
       },
+    });
+  }
+
+  finalizeProfile(profileId: string, body: FormData): Observable<void> {
+    return this.http.request<void>('POST', this.endpoints.approvals.finalize(profileId), {
+      body,
     });
   }
 }
