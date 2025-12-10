@@ -1,4 +1,4 @@
-import {Component, OnInit, computed, inject, signal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -40,7 +40,7 @@ export class UsersManagement implements OnInit {
     pageSize: 10,
     name: '',
     email: '',
-    isBlocked: null
+    isBlocked: undefined
   });
 
   nameFilter = '';
