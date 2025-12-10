@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Users.Commands;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Commands;
@@ -11,9 +12,9 @@ namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Commands
 public sealed class UpdateUserRolesCommandHandler(
     UserManager<User> userManager,
     RoleManager<IdentityRole<Guid>> roleManager)
-    : IRequestHandler<UpdateUserRolesCommand, IResult>
+    : IRequestHandler<UpdateUserRolesCommand, IResult<Unit>>
 {
-    public async Task<IResult> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<Unit>> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.Users
             .FirstOrDefaultAsync(
@@ -21,14 +22,14 @@ public sealed class UpdateUserRolesCommandHandler(
                 cancellationToken);
 
         if (user is null)
-            return Result.Fail(ErrorsCodes.UserNotFound);
+            return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
 
         var roles = await roleManager.Roles
             .Where(r => request.RoleIds.Contains(r.Id))
             .ToListAsync(cancellationToken);
 
         if (roles.Count != request.RoleIds.Count)
-            return Result.Fail(ErrorsCodes.RoleNotFound);
+            return Result.Fail<Unit>(ErrorsCodes.RoleNotFound);
 
         var currentRoles = await userManager.GetRolesAsync(user);
         var desiredRoles = roles
@@ -54,9 +55,9 @@ public sealed class UpdateUserRolesCommandHandler(
                 return FailureFromIdentity(addResult);
         }
 
-        return Result.Ok();
+        return Result.Ok(Unit.Value);
     }
 
-    private static Result FailureFromIdentity(IdentityResult res)
-        => Result.Fail(string.Join(", ", res.Errors.Select(e => e.Description)));
+    private static Result<Unit> FailureFromIdentity(IdentityResult res)
+        => Result.Fail<Unit>(string.Join(", ", res.Errors.Select(e => e.Description)));
 }

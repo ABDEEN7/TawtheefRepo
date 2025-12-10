@@ -1,6 +1,6 @@
 namespace Tawtheef.Application.Features.Operations.Admin.Users.DTOs;
 
-public sealed class UserListItemDto
+public sealed record UserListItemDto
 {
     public Guid Id { get; init; }
     public required string Name { get; init; }

@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Admin.Users.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Users.Queries;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Queries;

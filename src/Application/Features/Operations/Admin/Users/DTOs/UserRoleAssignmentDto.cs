@@ -1,6 +1,6 @@
 namespace Tawtheef.Application.Features.Operations.Admin.Users.DTOs;
 
-public sealed class UserRoleAssignmentDto
+public sealed record UserRoleAssignmentDto
 {
     public Guid UserId { get; init; }
     public required string Name { get; init; }
