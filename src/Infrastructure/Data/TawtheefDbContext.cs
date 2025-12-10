@@ -95,6 +95,8 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
 
     public DbSet<ReviewItem> ReviewItem { get; set; }
     public DbSet<ProfileAssignment> ProfileAssignment { get; set; }
+    public DbSet<ProfileReviewDecision> ProfileReviewDecision { get; set; }
+    public DbSet<AuditTrailEntry> AuditTrailEntry { get; set; }
     
     // Recruitment Tables
     public DbSet<Job> Jobs { get; set; }

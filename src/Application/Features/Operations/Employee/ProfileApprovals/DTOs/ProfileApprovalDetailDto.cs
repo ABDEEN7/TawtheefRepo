@@ -9,5 +9,6 @@ public record ProfileApprovalDetailDto
     public string? TargetEntity { get; init; }
     public int? SubmissionVersion { get; init; }
     public DateTime? SubmittedAtUtc { get; init; }
+    public ProfileApprovalDataDto? Profile { get; init; }
     public IReadOnlyList<ProfileApprovalSectionDto> Sections { get; init; } = Array.Empty<ProfileApprovalSectionDto>();
 }

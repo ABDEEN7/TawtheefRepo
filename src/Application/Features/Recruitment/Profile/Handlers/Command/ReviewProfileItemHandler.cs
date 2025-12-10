@@ -21,19 +21,19 @@ public sealed class ReviewProfileItemHandler(IUnitOfWork uow)
         if (item is null)
             return Result.Fail<Unit>(ErrorsCodes.ReviewItemNotFound);
 
-        if (cmd.Status == ReviewStatus.Approved && item.TargetType == ReviewTargetType.Attachment)
-        {
-            var sectionItem = await repo.DbSet
-                .Where(r => r.UserProfileId == item.UserProfileId
-                            && r.Section == item.Section
-                            && r.TargetType == ReviewTargetType.Section)
-                .OrderByDescending(r => r.Version)
-                .FirstOrDefaultAsync(ct);
+        if (cmd.Status == ReviewStatus.NeedsCorrection && string.IsNullOrWhiteSpace(cmd.Note))
+            return Result.Fail<Unit>(ErrorsCodes.NotesRequiredForCorrection);
 
-            if (sectionItem is null || sectionItem.Status != ReviewStatus.Approved)
-            {
-                return Result.Fail<Unit>(ErrorsCodes.SectionMustBeApprovedFirst);
-            }
+        if (cmd.Status == ReviewStatus.Approved && item.TargetType == ReviewTargetType.Section)
+        {
+            var hasUnapprovedAttachments = await repo.DbSet
+                .AnyAsync(r => r.UserProfileId == item.UserProfileId
+                               && r.Section == item.Section
+                               && r.TargetType == ReviewTargetType.Attachment
+                               && r.Status != ReviewStatus.Approved, ct);
+
+            if (hasUnapprovedAttachments)
+                return Result.Fail<Unit>(ErrorsCodes.SectionHasUnapprovedAttachments);
         }
 
         switch (cmd.Status)
@@ -45,8 +45,19 @@ public sealed class ReviewProfileItemHandler(IUnitOfWork uow)
             case ReviewStatus.Rejected:
                 item.Reject(cmd.ReviewerId, cmd.Note ?? string.Empty);
                 break;
-            case ReviewStatus.ChangesRequested:
+            case ReviewStatus.NeedsCorrection:
                 item.RequestChanges(cmd.ReviewerId, cmd.Note ?? string.Empty);
+                if (item.TargetType == ReviewTargetType.Attachment)
+                {
+                    var sectionItem = await repo.DbSet
+                        .Where(r => r.UserProfileId == item.UserProfileId
+                                    && r.Section == item.Section
+                                    && r.TargetType == ReviewTargetType.Section)
+                        .OrderByDescending(r => r.Version)
+                        .FirstOrDefaultAsync(ct);
+
+                    sectionItem?.RequestChanges(cmd.ReviewerId, cmd.Note ?? string.Empty);
+                }
                 break;
             default:
                 item.Status = ReviewStatus.Pending;
