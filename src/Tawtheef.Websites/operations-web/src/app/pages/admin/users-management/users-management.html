@@ -1,0 +1,128 @@
+<div class="users-container card shadow-sm p-4" i18nNamespace="pages/admin/users-management">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="page-title mb-0">{{ 'USERS.TITLE' | translate }}</h3>
+  </div>
+
+  <div class="filters card p-3 mb-3">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">{{ 'USERS.SEARCH_NAME' | translate }}</label>
+        <input type="text"
+               class="form-control"
+               [ngModel]="filters().name"
+               (ngModelChange)="filters.update(f => ({...f, name: $event})); onSearchChange()"
+               [placeholder]="'USERS.SEARCH_NAME_PLACEHOLDER' | translate"/>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">{{ 'USERS.SEARCH_EMAIL' | translate }}</label>
+        <input type="text"
+               class="form-control"
+               [ngModel]="filters().email"
+               (ngModelChange)="filters.update(f => ({...f, email: $event})); onSearchChange()"
+               [placeholder]="'USERS.SEARCH_EMAIL_PLACEHOLDER' | translate"/>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">{{ 'USERS.FILTER_BLOCKED' | translate }}</label>
+        <select class="form-select"
+                [ngModel]="filters().isBlocked"
+                (ngModelChange)="filters.update(f => ({...f, isBlocked: $event === '' ? null : $event})); onSearchChange()">
+          <option [ngValue]="''">{{ 'USERS.BLOCKED_ANY' | translate }}</option>
+          <option [ngValue]="false">{{ 'USERS.BLOCKED_NO' | translate }}</option>
+          <option [ngValue]="true">{{ 'USERS.BLOCKED_YES' | translate }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table custom-table">
+      <thead>
+      <tr>
+        <th>{{ 'USERS.NAME' | translate }}</th>
+        <th>{{ 'USERS.EMAIL' | translate }}</th>
+        <th>{{ 'USERS.LAST_LOGIN' | translate }}</th>
+        <th>{{ 'USERS.IS_BLOCKED' | translate }}</th>
+        <th class="text-end">{{ 'USERS.ACTIONS' | translate }}</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @if (this.users().length === 0) {
+          <tr>
+            <td colspan="5" class="text-muted no-data text-start">
+              {{ 'NO_RECORDS' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (user of this.users(); track user.id) {
+            <tr>
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.lastLoginDate ? (user.lastLoginDate | date:'short') : ('USERS.NEVER' | translate) }}</td>
+              <td>
+                <span class="badge" [class.bg-danger-subtle]="user.isBlocked" [class.text-danger]="user.isBlocked" [class.bg-success-subtle]="!user.isBlocked" [class.text-success]="!user.isBlocked">
+                  {{ user.isBlocked ? ('USERS.BLOCKED' | translate) : ('USERS.ACTIVE' | translate) }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-outline-danger btn-sm me-2" (click)="toggleBlock(user)">
+                  {{ user.isBlocked ? ('USERS.UNBLOCK_USER' | translate) : ('USERS.BLOCK_USER' | translate) }}
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" (click)="openManageRoles(user)">
+                  {{ 'USERS.MANAGE_ROLES' | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<app-pagination
+  [currentPage]="filters().pageNumber"
+  [totalItems]="totalItems()"
+  [itemsPerPage]="filters().pageSize"
+  (pageChanged)="onPageChange($event)"
+></app-pagination>
+
+<p-dialog
+  [visible]="isRolesDialogOpen()"
+  [modal]="true"
+  [style]="{width: '500px'}"
+  [closable]="true"
+  (visibleChange)="isRolesDialogOpen.set($event)"
+  [header]="'USERS.MANAGE_ROLES_TITLE' | translate">
+  <ng-template pTemplate="content">
+    <div class="mb-3">
+      <div class="fw-bold">{{ selectedUser()?.name }}</div>
+      <div class="text-muted small">{{ selectedUser()?.email }}</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ 'USERS.SELECT_ROLES' | translate }}</label>
+      <p-multiSelect
+        [options]="roleOptions()"
+        optionLabel="nameEn"
+        optionValue="id"
+        display="chip"
+        [ngModel]="selectedRoleIds()"
+        (ngModelChange)="selectedRoleIds.set($event)">
+        <ng-template let-role pTemplate="item">
+          <div class="d-flex align-items-center justify-content-between w-100">
+            <span>{{ role.nameEn }}</span>
+            <small class="text-muted">{{ role.nameAr }}</small>
+          </div>
+        </ng-template>
+      </p-multiSelect>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="d-flex justify-content-end gap-2">
+      <button class="btn btn-secondary" (click)="isRolesDialogOpen.set(false)">{{ 'USERS.CANCEL' | translate }}</button>
+      <button class="btn btn-primary" (click)="saveRoles()">{{ 'USERS.SAVE' | translate }}</button>
+    </div>
+  </ng-template>
+</p-dialog>
