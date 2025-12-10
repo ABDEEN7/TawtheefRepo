@@ -320,7 +320,7 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
     }
   }
 
-  setFinalAction(action: 'approve' | 'correction' | 'reject' | 'block' | 'exception'): void {
+  setFinalAction(action: FinalApprovalAction): void {
     this.activeFinalAction.set(action);
     this.finalActionNote.set('');
     this.finalAttachment = null;
@@ -330,22 +330,32 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
     const action = this.activeFinalAction();
     if (!action) return;
 
-    if (action === 'approve' && !this.canApproveProfile()) {
+    if (action === 'ApproveProfile' && !this.canApproveProfile()) {
       this.messages.add({ severity: 'error', summary: this.translate.instant('profileApproval.validation.cannotApproveProfile') });
       return;
     }
 
-    if (action === 'correction' && !this.finalActionNote().trim()) {
+    if (action === 'NeedsCorrection' && !this.finalActionNote().trim()) {
       this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.noteRequired') });
       return;
     }
 
-    if (action === 'reject' && (!this.finalActionNote().trim() || !this.finalAttachment)) {
+    if (action === 'NeedsCorrection' && this.collectNeedsCorrectionTargets().length === 0) {
+      this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.correctionTargetsRequired') });
+      return;
+    }
+
+    if (action === 'RejectProfile' && (!this.finalActionNote().trim() || !this.finalAttachment)) {
       this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.rejectRequirements') });
       return;
     }
 
-    if (action === 'exception' && !this.finalAttachment) {
+    if (action === 'BlockProfile' && !this.finalActionNote().trim()) {
+      this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.noteRequired') });
+      return;
+    }
+
+    if (action === 'ExceptionalApproval' && !this.finalAttachment) {
       this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.exceptionRequirements') });
       return;
     }
@@ -356,11 +366,23 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   executeFinalAction(): void {
     if (!this.detail() || !this.activeFinalAction()) return;
 
+    const correctionTargets = this.collectNeedsCorrectionTargets();
     const form = new FormData();
     form.append('action', this.activeFinalAction()!);
     if (this.finalActionNote()) form.append('notes', this.finalActionNote());
     if (this.finalSummary()) form.append('summary', this.finalSummary());
-    if (this.finalAttachment) form.append('attachment', this.finalAttachment);
+
+    if (this.activeFinalAction() === 'NeedsCorrection') {
+      correctionTargets.forEach(id => form.append('needsCorrectionItems', id));
+    }
+
+    if (this.activeFinalAction() === 'RejectProfile' && this.finalAttachment) {
+      form.append('rejectionDocument', this.finalAttachment);
+    }
+
+    if (this.activeFinalAction() === 'ExceptionalApproval' && this.finalAttachment) {
+      form.append('exceptionalFile', this.finalAttachment);
+    }
 
     this.loadingFinalAction.set(true);
     this.api
@@ -383,6 +405,23 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
         error: () =>
           this.messages.add({ severity: 'error', summary: this.translate.instant('profileApproval.errors.finalize') }),
       });
+  }
+
+  private collectNeedsCorrectionTargets(): string[] {
+    const detail = this.detail();
+    if (!detail) return [];
+
+    const targets = new Set<string>();
+    detail.sections.forEach(section => {
+      if (section.sectionReview && section.sectionReview.status === ReviewStatus.ChangesRequested)
+        targets.add(section.sectionReview.reviewItemId);
+
+      section.items
+        .filter(item => item.status === ReviewStatus.ChangesRequested)
+        .forEach(item => targets.add(item.reviewItemId));
+    });
+
+    return Array.from(targets);
   }
 
   canApproveProfile(): boolean {

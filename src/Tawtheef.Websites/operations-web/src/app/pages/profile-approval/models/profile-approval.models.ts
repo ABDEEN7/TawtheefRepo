@@ -110,11 +110,18 @@ export interface ProfileApprovalListFilter {
   sortDirection?: 'asc' | 'desc';
 }
 
-export type FinalApprovalAction = 'approve' | 'correction' | 'reject' | 'block' | 'exception';
+export type FinalApprovalAction =
+  | 'ApproveProfile'
+  | 'NeedsCorrection'
+  | 'RejectProfile'
+  | 'BlockProfile'
+  | 'ExceptionalApproval';
 
 export interface FinalApprovalRequest {
   action: FinalApprovalAction;
   notes?: string;
   summary?: string;
-  attachment?: File | null;
+  rejectionDocument?: File | null;
+  exceptionalFile?: File | null;
+  needsCorrectionItems?: string[];
 }

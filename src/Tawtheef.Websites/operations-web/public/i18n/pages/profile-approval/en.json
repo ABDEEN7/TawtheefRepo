@@ -77,11 +77,11 @@
   "profileApproval.final.actionNote": "Final action notes",
   "profileApproval.final.actionNotePlaceholder": "Add notes for the final decision...",
   "profileApproval.final.noNotes": "No notes were added",
-  "profileApproval.final.actions.approve": "Approve profile",
-  "profileApproval.final.actions.correction": "Needs correction",
-  "profileApproval.final.actions.reject": "Reject profile",
-  "profileApproval.final.actions.block": "Block profile",
-  "profileApproval.final.actions.exception": "Exceptional approval",
+  "profileApproval.final.actions.ApproveProfile": "Approve profile",
+  "profileApproval.final.actions.NeedsCorrection": "Needs correction",
+  "profileApproval.final.actions.RejectProfile": "Reject profile",
+  "profileApproval.final.actions.BlockProfile": "Block profile",
+  "profileApproval.final.actions.ExceptionalApproval": "Exceptional approval",
   "profileApproval.final.supportingFile": "Attach supporting document (if required)",
   "profileApproval.final.rejectHint": "Rejection requires attaching the rejection document.",
   "profileApproval.final.exceptionHint": "Exceptional approval requires attaching the internal exception document.",
@@ -99,5 +99,6 @@
   "profileApproval.validation.noteRequired": "Notes are required for this decision.",
   "profileApproval.validation.cannotApproveProfile": "Approve all tabs and attachments before approving the profile.",
   "profileApproval.validation.rejectRequirements": "Rejection requires notes and a rejection document.",
-  "profileApproval.validation.exceptionRequirements": "Exceptional approval requires attaching an internal exception file."
+  "profileApproval.validation.exceptionRequirements": "Exceptional approval requires attaching an internal exception file.",
+  "profileApproval.validation.correctionTargetsRequired": "Select at least one tab or attachment marked for correction."
 }

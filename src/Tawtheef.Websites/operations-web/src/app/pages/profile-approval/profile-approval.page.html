@@ -307,7 +307,7 @@
                   (ngModelChange)="finalActionNote.set($event)"
                 ></textarea>
 
-                <label class="radio-row" *ngFor="let option of ['approve','correction','reject','block','exception']">
+                <label class="radio-row" *ngFor="let option of ['ApproveProfile','NeedsCorrection','RejectProfile','BlockProfile','ExceptionalApproval']">
                   <p-radioButton
                     name="finalAction"
                     [value]="option"
@@ -317,16 +317,16 @@
                   <span>{{ ('profileApproval.final.actions.' + option) | translate }}</span>
                 </label>
 
-                <div class="upload" *ngIf="activeFinalAction() === 'reject' || activeFinalAction() === 'exception'">
+                <div class="upload" *ngIf="activeFinalAction() === 'RejectProfile' || activeFinalAction() === 'ExceptionalApproval'">
                   <label class="label">{{ 'profileApproval.final.supportingFile' | translate }}</label>
                   <input type="file" (change)="finalAttachment = $any($event.target).files?.item(0) ?? null" />
                 </div>
 
-                <div class="upload" *ngIf="activeFinalAction() === 'reject'">
+                <div class="upload" *ngIf="activeFinalAction() === 'RejectProfile'">
                   <small class="muted">{{ 'profileApproval.final.rejectHint' | translate }}</small>
                 </div>
 
-                <div class="upload" *ngIf="activeFinalAction() === 'exception'">
+                <div class="upload" *ngIf="activeFinalAction() === 'ExceptionalApproval'">
                   <small class="muted">{{ 'profileApproval.final.exceptionHint' | translate }}</small>
                 </div>
 
