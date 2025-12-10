@@ -6,11 +6,3 @@ export interface UserDto {
   isBlocked: boolean;
   roles: string[];
 }
-
-export interface UserFilters {
-  pageNumber: number;
-  pageSize: number;
-  name?: string;
-  email?: string;
-  isBlocked?: boolean | null;
-}

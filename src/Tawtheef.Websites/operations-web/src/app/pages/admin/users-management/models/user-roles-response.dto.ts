@@ -1,8 +1,4 @@
-export interface RoleSummaryDto {
-  id: string;
-  nameAr: string;
-  nameEn: string;
-}
+import {RoleSummaryDto} from './role-summary.dto';
 
 export interface UserRolesResponse {
   userId: string;
