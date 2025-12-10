@@ -5,6 +5,7 @@ import { UserLayout } from './layouts/internal/user-layout/user-layout';
 import {ProfileApprovalPage} from './pages/profile-approval/profile-approval.page';
 import {ProfileDistributionPage} from './pages/profile-distribution/profile-distribution.page';
 import {RolesManagement} from './pages/admin/roles-management/roles-management';
+import {UsersManagement} from './pages/admin/users-management/users-management';
 
 export const routes: Routes = [
   {
@@ -38,6 +39,7 @@ export const routes: Routes = [
       { path: 'profile-distribution', component: ProfileDistributionPage },
       { path: 'job-invitation-summary', component: JobInvitationSummary },
       { path: 'roles-management', component: RolesManagement },
+      { path: 'users-management', component: UsersManagement },
     ],
   },
   // Fallback

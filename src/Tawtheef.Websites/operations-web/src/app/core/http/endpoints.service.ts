@@ -95,4 +95,10 @@ export class EndpointsService {
 
     listPermissions: this.getFullUrl('/roles/list-permissions')
   };
+
+  users = {
+    listUsers: this.getFullUrl('/users/list-users'),
+    userRoles: (id: string) => this.getFullUrl(`/users/${id}/roles`),
+    blockStatus: (id: string) => this.getFullUrl(`/users/${id}/block-status`)
+  };
 }

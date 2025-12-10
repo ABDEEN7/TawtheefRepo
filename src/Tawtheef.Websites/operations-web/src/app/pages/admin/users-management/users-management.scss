@@ -1,0 +1,67 @@
+.users-container {
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7fbff 100%);
+  border: 1px solid #e3efff;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 12px 24px rgba(0, 68, 123, 0.08);
+    transform: translateY(-2px);
+  }
+}
+
+.filters {
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e3efff;
+}
+
+.custom-table {
+  th {
+    background: #00447b;
+    color: white;
+    font-weight: 500;
+    text-align: left;
+    border: none;
+    padding: 14px 16px;
+  }
+
+  td {
+    vertical-align: middle;
+    padding: 14px 16px;
+    border-color: #e3efff;
+  }
+
+  tbody tr {
+    transition: background 0.15s ease-in-out;
+
+    &:hover {
+      background: #f5f9ff;
+    }
+  }
+}
+
+.no-data {
+  background: #f5f9ff;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.page-title {
+  font-weight: 700;
+  color: #00345c;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #00447b;
+  color: #fff;
+  font-weight: 600;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+  padding-top: 20px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  padding-top: 0;
+}
