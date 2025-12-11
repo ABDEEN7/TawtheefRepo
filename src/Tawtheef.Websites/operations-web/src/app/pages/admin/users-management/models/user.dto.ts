@@ -4,5 +4,4 @@ export interface UserDto {
   email: string;
   lastLoginDate?: string | null;
   isBlocked: boolean;
-  roles: string[];
 }

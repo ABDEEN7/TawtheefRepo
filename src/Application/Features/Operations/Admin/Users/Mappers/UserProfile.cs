@@ -13,12 +13,14 @@ public sealed class UserProfile : IRegister
     {
         config.NewConfig<User, UserListItemDto>()
             .Map(dest => dest.Name, src => string.IsNullOrWhiteSpace(src.FullNameAr) ? src.FullNameEn : src.FullNameAr)
-            .Map(dest => dest.Email, src => src.Email ?? string.Empty)
-            .Map(dest => dest.Roles, _ => Array.Empty<string>());
+            .Map(dest => dest.Email, src => src.Email ?? string.Empty);
 
         config.NewConfig<User, UserRoleAssignmentDto>()
+            .Map(dest => dest.UserId, src => src.Id)
             .Map(dest => dest.Name, src => string.IsNullOrWhiteSpace(src.FullNameAr) ? src.FullNameEn : src.FullNameAr)
             .Map(dest => dest.Email, src => src.Email ?? string.Empty)
+            .Map(dest => dest.IsBlocked, src => src.IsBlocked)
+            .Map(dest => dest.LastLoginDate, src => src.LastLoginDate)
             .Map(dest => dest.Roles, _ => new List<RoleSummaryDto>())
             .Map(dest => dest.AssignedRoleIds, _ => Array.Empty<string>());
 
