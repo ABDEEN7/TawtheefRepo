@@ -9,6 +9,7 @@ import {PaginationComponent} from '../../../shared/components/pagination/paginat
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 import {Select} from 'primeng/select';
 import {DialogHelperService} from '../../../core/services/dialog-helper.service';
+import {RoleSummaryDto} from './models/role-summary.dto';
 
 @Component({
   selector: 'app-users-management',
@@ -41,6 +42,7 @@ export class UsersManagement implements OnInit {
 
   nameFilter = '';
   emailFilter = '';
+  roleLookups = signal<RoleSummaryDto[]>([]);
 
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
   blockedStatusOptions = [
@@ -50,10 +52,15 @@ export class UsersManagement implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadRoleLookups();
   }
 
   loadUsers() {
     this.usersService.getUsers(this.filters());
+  }
+
+  loadRoleLookups() {
+    this.usersService.getRoleLookups().subscribe(roles => this.roleLookups.set(roles));
   }
 
   onSearchChange() {
@@ -72,7 +79,7 @@ export class UsersManagement implements OnInit {
   }
 
   openManageRoles(user: UserDto) {
-    const ref = this.dialogHelper.openManageRolesDialog(user);
+    const ref = this.dialogHelper.openManageRolesDialog(user, this.roleLookups());
 
     ref?.onClose.subscribe((updated: boolean) => {
       if (updated) {

@@ -6,8 +6,9 @@ import {PaginationMetadata} from '../../../../core/models/pagination-metadata.mo
 import {UserDto} from '../models/user.dto';
 import {UserFilters} from '../models/user-filters.dto';
 import {UserRolesResponse} from '../models/user-roles-response.dto';
-import {tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
+import {RoleSummaryDto} from '../models/role-summary.dto';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
@@ -33,6 +34,14 @@ export class UsersService {
 
   getUserRoles(userId: string): Observable<UserRolesResponse> {
     return this.http.get<UserRolesResponse>(this.endpoints.users.userRoles(userId));
+  }
+
+  getUserAssignedRoleIds(userId: string): Observable<string[]> {
+    return this.http.get<string[]>(this.endpoints.users.userRoleIds(userId));
+  }
+
+  getRoleLookups(): Observable<RoleSummaryDto[]> {
+    return this.http.get<RoleSummaryDto[]>(this.endpoints.roles.lookups).pipe(map(roles => roles || []));
   }
 
   updateUserRoles(userId: string, roleIds: string[]): Observable<void> {

@@ -8,7 +8,6 @@ import {UserDto} from '../../models/user.dto';
 import {RoleSummaryDto} from '../../models/role-summary.dto';
 import {UsersService} from '../../services/users.service';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
-import {UserRolesResponse} from '../../models/user-roles-response.dto';
 import {finalize} from 'rxjs/operators';
 
 @Component({
@@ -30,7 +29,7 @@ export class ManageRolesDialogComponent implements OnInit {
   private config = inject(DynamicDialogConfig);
 
   user: UserDto | undefined = this.config.data?.user as UserDto | undefined;
-  roleOptions = signal<RoleSummaryDto[]>([]);
+  roleOptions = signal<RoleSummaryDto[]>(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
   selectedRoleIds = signal<string[]>([]);
   isLoading = signal(false);
 
@@ -40,20 +39,12 @@ export class ManageRolesDialogComponent implements OnInit {
       return;
     }
 
+    this.roleOptions.set(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
     this.isLoading.set(true);
-    this.usersService.getUserRoles(this.user.id)
+    this.usersService.getUserAssignedRoleIds(this.user.id)
       .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe((res: UserRolesResponse) => {
-        this.user = {
-          id: res.userId,
-          name: res.name,
-          email: res.email,
-          isBlocked: res.isBlocked,
-          lastLoginDate: res.lastLoginDate
-        };
-
-        this.roleOptions.set(res.roles || []);
-        this.selectedRoleIds.set(res.assignedRoleIds?.map(id => id.toString()) || []);
+      .subscribe((assignedRoles: string[]) => {
+        this.selectedRoleIds.set(assignedRoles.map(id => id.toString()));
       });
   }
 

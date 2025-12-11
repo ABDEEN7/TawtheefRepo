@@ -88,6 +88,7 @@ export class EndpointsService {
 
   roles = {
     listRoles: this.getFullUrl('/roles/list-roles'),
+    lookups: this.getFullUrl('/roles/lookups'),
     roleDetails: (id: string) => this.getFullUrl(`/roles/role-details/${id}`),
     createRole: this.getFullUrl('/roles/create-role'),
     updateRole: (id: string) => this.getFullUrl(`/roles/update-role/${id}`),
@@ -99,6 +100,7 @@ export class EndpointsService {
   users = {
     listUsers: this.getFullUrl('/users/list-users'),
     userRoles: (id: string) => this.getFullUrl(`/users/${id}/roles`),
+    userRoleIds: (id: string) => this.getFullUrl(`/users/${id}/role-ids`),
     blockStatus: (id: string) => this.getFullUrl(`/users/${id}/block-status`)
   };
 }
