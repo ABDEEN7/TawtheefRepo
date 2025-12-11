@@ -5,7 +5,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.DeleteOperation;
 
 public sealed class DeleteProfileAchievementHandler(IUnitOfWork uow)
     : IRequestHandler<DeleteProfileAchievementCommand, IResult<Unit>>

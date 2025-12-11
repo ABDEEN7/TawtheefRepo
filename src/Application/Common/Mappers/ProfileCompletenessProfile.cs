@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
-using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
 
@@ -10,10 +9,6 @@ public sealed class ProfileCompletenessProfile : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<Resource, FileRefDto>()
-            .Map(dest => dest.ResourceId, src => src.Id)
-            .Map(dest => dest.FileName, src => src.Name);
-
         config.NewConfig<ProfileAdditionalAttachment, AdditionalAttachmentDto>()
             .Map(dest => dest.Title, src => src.FileName)
             .Map(dest => dest.File, src => src.Attachment);

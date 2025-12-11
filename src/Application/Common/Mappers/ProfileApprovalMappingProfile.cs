@@ -47,6 +47,7 @@ public sealed class ProfileApprovalMappingProfile : IRegister
 
         config.NewConfig<UserProfile, ProfileApprovalDataDto>()
             .Map(dest => dest.BasicInformation, src => src)
+            .Map(dest => dest.ProfilePhoto, src=> src.User!.Avatar)
             .Map(dest => dest.Qualifications, src => src.Qualifications)
             .Map(dest => dest.Experiences, src => src.Experiences)
             .Map(dest => dest.TrainingCourses, src => src.TrainingCourses)

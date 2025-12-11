@@ -12,7 +12,7 @@ public record ProfileApprovalDataDto
     public IReadOnlyList<SkillDto> SkillsAndLanguages { get; init; } = [];
     public IReadOnlyList<LanguageDto> Languages { get; init; } = [];
     public IReadOnlyList<AdditionalAttachmentDto> Attachments { get; set; } = [];
-    public FileRefDto? ProfilePhoto { get; set; }
+    public string? ProfilePhoto { get; set; }
 }
 
 public record BasicInformationSnapshot

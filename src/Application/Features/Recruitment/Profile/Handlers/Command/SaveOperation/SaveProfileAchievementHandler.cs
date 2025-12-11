@@ -13,7 +13,7 @@ using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
 public sealed class SaveProfileAchievementHandler(
     IUnitOfWork uow,

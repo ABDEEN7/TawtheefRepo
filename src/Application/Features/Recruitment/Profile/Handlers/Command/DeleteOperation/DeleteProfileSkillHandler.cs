@@ -6,19 +6,19 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.DeleteOperation;
 
-public sealed class DeleteProfileExperienceHandler(IUnitOfWork uow) :
-    IRequestHandler<DeleteProfileExperienceCommand, IResult<Unit>>
+public sealed class DeleteProfileSkillHandler(IUnitOfWork uow) :
+    IRequestHandler<DeleteProfileSkillCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(DeleteProfileExperienceCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(DeleteProfileSkillCommand cmd, CancellationToken ct)
     {
         var repo = uow.GetEntityRepository<Experience>();
         var target = await repo.DbSet
-            .FirstOrDefaultAsync(x => x.Id == cmd.ExperienceId, ct);
+            .FirstOrDefaultAsync(x => x.Id == cmd.SkillId, ct);
 
         if (target is null)
-            return Result.Fail<Unit>(ErrorsCodes.ExperienceNotFound);
+            return Result.Fail<Unit>(ErrorsCodes.SkillNotFound);
 
         await repo.DeleteAsync(target);
         await uow.SaveChangesAsync(ct);

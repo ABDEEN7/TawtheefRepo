@@ -14,7 +14,7 @@ using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
 public sealed class SaveProfileEducationHandler(
     IUnitOfWork uow,

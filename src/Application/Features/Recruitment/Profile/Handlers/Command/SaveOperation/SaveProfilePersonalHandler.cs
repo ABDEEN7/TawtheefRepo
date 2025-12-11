@@ -11,7 +11,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
 public sealed class SaveProfilePersonalHandler(
     IUnitOfWork uow,

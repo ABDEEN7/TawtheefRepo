@@ -17,7 +17,7 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err: unknown) => {
       const httpErr = err as HttpErrorResponse;
 
-      const is401 = httpErr instanceof HttpErrorResponse && httpErr.status === 401;
+      const is401 = httpErr.status === 401;
       const isAuthCall = /\/auth\/(login|refresh|external)/i.test(req.url);
       const skipRefresh = req.headers.get(HDR.SkipRefresh) === 'true';
       const alreadyRetried = req.headers.get(HDR.Retried) === '1';
@@ -33,7 +33,7 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
           first(),
           switchMap((ok) => ok
             ? next(attachLatestToken(markRetried(req), tokenSvc))
-            : failAndLocalLogout(authSvc, err))
+            : throwError(() => err))
         );
       }
 
@@ -64,8 +64,4 @@ function markRetried(req: any) {
 function attachLatestToken(req: any, tokenSvc: TokenService) {
   const t = tokenSvc.getToken();
   return t ? req.clone({ setHeaders: { Authorization: `Bearer ${t}` } }) : req;
-}
-function failAndLocalLogout(authSvc: any, err: unknown) {
-  authSvc.logout(false); // local clear only
-  return throwError(() => err);
 }

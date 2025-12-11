@@ -192,15 +192,6 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
                                      .Where(a => a.Attachment != null)
                                      .Select(mapper.Map<AdditionalAttachmentDto>)
                                      .ToList() ?? [];
-
-            result.ProfilePhoto = string.IsNullOrWhiteSpace(profileEntity.User?.Avatar)
-                ? null
-                : new FileRefDto
-                {
-                    ResourceId = Guid.Empty,
-                    FileName = "profile-photo",
-                    Url = media.ResolveAbsolute(profileEntity.User!.Avatar!)
-                };
             return result;
         }
     }

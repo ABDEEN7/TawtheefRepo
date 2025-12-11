@@ -33,6 +33,8 @@
     email: 'wizard.profile.contact.email.required',
     emailVerified: 'wizard.profile.contact.emailVerified.required',
     address: 'wizard.profile.contact.address.required',
+    interviewPlace: 'wizard.profile.contact.interviewPlace.required',
+    inter: 'wizard.profile.contact.address.required',
     naZone: 'wizard.profile.contact.naZone.required',
     naStreet: 'wizard.profile.contact.naStreet.required',
     naBuilding: 'wizard.profile.contact.naBuilding.required',

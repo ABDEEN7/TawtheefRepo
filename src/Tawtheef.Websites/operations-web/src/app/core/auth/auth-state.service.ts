@@ -30,10 +30,11 @@ export class AuthStateService {
   }
 
   /** quick sync check (no redirects). safe for guards. */
-  isAuthenticated(): boolean {
+  isAuthenticated(ignoreExpired = false): boolean {
     const token = this.tokenService.getToken();
     const data = localStorage.getItem('user_data');
-    if (!token || this.tokenService.isTokenExpired(token) || !data) {
+    if (!token || !data ||
+      (!ignoreExpired && this.tokenService.isTokenExpired(token))) {
       this.isAuthenticatedSubject.next(false);
       return false;
     }
