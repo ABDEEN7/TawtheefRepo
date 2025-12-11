@@ -109,7 +109,7 @@ public sealed class QualificationDto
     public Guid? GradeId { get; init; }
     public int? GraduationYear { get; init; }
     public decimal? Gpa { get; init; }
-    public FileRefDto? Attachment { get; init; }
+    public FileRefDto? Attachment { get; set; }
 }
 
 // ====== Experiences ======
@@ -130,9 +130,8 @@ public sealed class ExperienceDto
     public string? MajorName { get; init; }
     [JsonIgnore]
     public string? UniversityName { get; init; }
-    public string QualificationName => string.Join("-", new []{this.DegreeName, this.MajorName, this.UniversityName}.Where(s => !string.IsNullOrWhiteSpace(s)));
 
-    public FileRefDto? Attachment { get; init; }
+    public FileRefDto? Attachment { get; set; }
 }
 
 // ====== Training Courses ======
@@ -146,7 +145,7 @@ public sealed class TrainingCourseDto
     public DateOnly? EndDate { get; init; }
     public string? Description { get; init; }
 
-    public FileRefDto? Attachment { get; init; }
+    public FileRefDto? Attachment { get; set; }
 }
 
 // ====== Achievements ======
@@ -161,7 +160,7 @@ public sealed class AchievementDto
     public DateOnly? IssueDate { get; init; }
     public string? Description { get; init; }
     public bool? RelatedToSpecialization { get; init; }
-    public FileRefDto? Attachment { get; init; }
+    public FileRefDto? Attachment { get; set; }
 }
 
 // ====== Skills ======
@@ -190,5 +189,5 @@ public sealed class AdditionalAttachmentDto
 {
     public Guid Id { get; init; }
     public string? Title { get; init; }
-    public FileRefDto File { get; init; } = new();
+    public FileRefDto? File { get; set; } = new();
 }

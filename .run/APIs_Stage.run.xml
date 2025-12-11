@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="APIs:Stage" type="CompoundRunConfigurationType">
+    <toRun name="Operaions API:Stage" type="LaunchSettings" />
+    <toRun name="Recruitment API:Stage" type="LaunchSettings" />
+    <method v="2" />
+  </configuration>
+</component>

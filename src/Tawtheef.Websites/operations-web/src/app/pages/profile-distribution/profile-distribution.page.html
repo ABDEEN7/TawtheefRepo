@@ -83,26 +83,26 @@
             </tr>
           </thead>
           <tbody>
-            @for (file of filteredFiles(); track file.profileId) {
+            @for (profile of filteredFiles(); track profile.profileId) {
               <tr>
                 <td>
                   <input
                     type="checkbox"
                     class="form-check-input"
-                    [checked]="selectedIds().has(file.profileId)"
-                    (change)="toggleSelection(file.profileId)"
+                    [checked]="selectedIds().has(profile.profileId)"
+                    (change)="toggleSelection(profile.profileId)"
                   />
                 </td>
                 <td>
-                  <div class="fw-semibold">{{ file.candidateName }}</div>
-                  <div class="small text-muted">{{ file.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
+                  <div class="fw-semibold">{{ profile.candidateName }}</div>
+                  <div class="small text-muted">{{ profile.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
                 </td>
-                <td>{{ file.specialization || ('table.noValue' | translate) }}</td>
-                <td>{{ file.targetEntity || ('table.noValue' | translate) }}</td>
+                <td>{{ profile.specialization || ('distribution.table.noValue' | translate) }}</td>
+                <td>{{ profile.targetEntity || ('distribution.table.noValue' | translate) }}</td>
                 <td>
-                  <span [class]="statusClass(file.status)">{{ statusLabel(file.status) | translate }}</span>
+                  <span [class]="statusClass(profile.status)">{{ statusLabel(profile.status) | translate }}</span>
                 </td>
-                <td>{{ file.assignedEmployeeName || ('table.unassigned' | translate) }}</td>
+                <td>{{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}</td>
               </tr>
             }
           </tbody>

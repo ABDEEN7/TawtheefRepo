@@ -102,7 +102,16 @@ export enum ProfileStatus {
   Cancelled = "Cancelled",
   AdminCancelled = "AdminCancelled",
 }
-
+export enum ProfileStatusNumber {
+  InCreation = 0,
+  Submitted = 1,
+  UnderReview = 2,
+  RequiresUpdate = 3,
+  Approved = 4,
+  Rejected = 5,
+  Cancelled = 6,
+  AdminCancelled = 7,
+}
 /* ---------------------------------------------
    Language
 ---------------------------------------------- */

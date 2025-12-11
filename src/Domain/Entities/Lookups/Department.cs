@@ -23,5 +23,5 @@ public static class DepartmentIds
 public class Department : LookupBase
 {
     public Guid ManagementId { get; set; }
-    public Managment? Management { get; set; }
+    public Management? Management { get; set; }
 }

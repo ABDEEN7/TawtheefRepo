@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="APIs:Production" type="CompoundRunConfigurationType">
+    <toRun name="Operaions API:Production" type="LaunchSettings" />
+    <toRun name="Recruitment API:Production" type="LaunchSettings" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -299,7 +299,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
 
     private async Task<bool> IsManagementUnderSector(Guid managementId, Guid sectorId)
     {
-        var managementRepo = unitOfWork.GetEntityRepository<Managment>();
+        var managementRepo = unitOfWork.GetEntityRepository<Management>();
         var management = await managementRepo.DbSet
             .AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == managementId && m.SectorId == sectorId);

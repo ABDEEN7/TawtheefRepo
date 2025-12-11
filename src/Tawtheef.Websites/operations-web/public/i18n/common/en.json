@@ -16,5 +16,7 @@
   "common.ar": "العربية",
   "common.en": "English",
   "common.refresh": "Refresh",
-  "common.loading": "Loading"
+  "common.loading": "Loading",
+  "common.save": "Save",
+  "common.cancel": "Cancel"
 }
