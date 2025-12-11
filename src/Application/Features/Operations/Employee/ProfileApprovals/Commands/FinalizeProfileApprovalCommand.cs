@@ -1,3 +1,5 @@
+using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Domain.Entities.Recruitment;
 
@@ -13,4 +15,4 @@ public sealed record FinalizeProfileApprovalCommand(
     IFormFile? RejectionDocument,
     IFormFile? ExceptionalFile,
     bool HasManagerOverride
-);
+) : IRequest<IResult<Unit>>;

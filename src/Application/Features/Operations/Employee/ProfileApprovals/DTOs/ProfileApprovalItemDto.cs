@@ -10,7 +10,7 @@ public record ProfileApprovalItemDto
     public string Title { get; init; } = string.Empty;
     public string? Note { get; init; }
     public Guid? ResourceId { get; init; }
-    public string? ResourceUrl { get; init; }
+    public string? ResourceUrl { get; set; }
     public Guid? EntityId { get; init; }
     public string? EntityName { get; init; }
     public int Version { get; init; }

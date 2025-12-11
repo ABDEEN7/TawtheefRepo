@@ -18,13 +18,14 @@ import {
 import { I18nNamespaceDirective } from '../../shared/directives/i18n-namespace.directive';
 import { FileUtilsService } from '../../core/utils/file-utils';
 import { DialogModule } from 'primeng/dialog';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { DropdownModule } from 'primeng/dropdown';
-import { RadioButtonModule } from 'primeng/radiobutton';
+import {RadioButton} from 'primeng/radiobutton';
 import { MessageService, SortEvent } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
+import {Select} from 'primeng/select';
+import {DialogService} from 'primeng/dynamicdialog';
+import {ItemDialogResult, ItemReviewDialogComponent} from './dialogs/item-review-dialog/item-review-dialog';
+import {SectionDialogResult, SectionReviewDialogComponent} from './dialogs/section-review-dialog/section-review-dialog';
+import {FinalActionConfirmDialogComponent} from './dialogs/final-action-confirm-dialog/final-action-confirm-dialog';
 
 @Component({
   selector: 'app-profile-approval-page',
@@ -35,17 +36,13 @@ import { TableModule } from 'primeng/table';
     RouterModule,
     TranslateModule,
     I18nNamespaceDirective,
-    DialogModule,
-    InputTextareaModule,
-    DropdownModule,
-    RadioButtonModule,
-    ToastModule,
-    InputTextModule,
     TableModule,
+    RadioButton,
+    Select,
   ],
   templateUrl: './profile-approval.page.html',
   styleUrl: './profile-approval.page.scss',
-  providers: [MessageService],
+  providers: [MessageService, DialogService],
 })
 export class ProfileApprovalPage implements OnInit, OnDestroy {
   private fileUtils = inject(FileUtilsService);
@@ -53,6 +50,7 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private messages = inject(MessageService);
   private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
 
   private subscriptions: Subscription[] = [];
 
@@ -77,14 +75,6 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   finalSummary = signal('');
   finalActionNote = signal('');
   finalAttachment: File | null = null;
-
-  itemDialogVisible = signal(false);
-  sectionDialogVisible = signal(false);
-  confirmationVisible = signal(false);
-  dialogNote = signal('');
-  dialogAction = signal<'approve' | 'reject' | 'changes' | 'section-approve' | 'section-changes' | null>(null);
-  dialogItem = signal<ProfileApprovalItem | null>(null);
-  dialogSection = signal<ProfileApprovalSection | null>(null);
 
   protected readonly ReviewStatus = ReviewStatus;
   protected readonly ReviewTargetType = ReviewTargetType;
@@ -176,63 +166,43 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
     this.filters.set({ ...this.filters(), sort: mapped, sortDirection: event.order === 1 ? 'asc' : 'desc' });
     this.loadList();
   }
-
   openItemDialog(item: ProfileApprovalItem, action: 'approve' | 'reject' | 'changes'): void {
-    this.dialogItem.set(item);
-    this.dialogSection.set(null);
-    this.dialogAction.set(action);
-    this.dialogNote.set('');
-    this.itemDialogVisible.set(true);
+    this.dialogService.open(ItemReviewDialogComponent, {
+      header: this.translate.instant('profileApproval.dialog.title'),
+      width: '420px',
+      data: { item, action },
+    })?.onClose.subscribe((result?: ItemDialogResult) => {
+      if (!result) return;
+
+      if (result.action === 'approve') {
+        this.updateItem(item.reviewItemId, ReviewStatus.Approved);
+      } else if (result.action === 'reject') {
+        this.updateItem(item.reviewItemId, ReviewStatus.Rejected, result.note);
+      } else {
+        this.updateItem(item.reviewItemId, ReviewStatus.ChangesRequested, result.note);
+      }
+    });
   }
 
   openSectionDialog(section: ProfileApprovalSection, action: 'section-approve' | 'section-changes'): void {
-    this.dialogSection.set(section);
-    this.dialogItem.set(null);
-    this.dialogAction.set(action);
-    this.dialogNote.set(section.sectionReview?.note ?? '');
-    this.sectionDialogVisible.set(true);
-  }
+    this.dialogService.open(SectionReviewDialogComponent, {
+      header: this.translate.instant('profileApproval.section.dialogTitle'),
+      width: '480px',
+      data: {
+        section,
+        action,
+        sectionLabelKey: this.sectionName(section.section),
+        initialNote: section.sectionReview?.note ?? '',
+      },
+    })?.onClose.subscribe((result?: SectionDialogResult) => {
+      if (!result || !section.sectionReview) return;
 
-  submitDialog(): void {
-    const action = this.dialogAction();
-    if (!action) return;
-
-    if (action === 'approve') {
-      this.updateItem(this.dialogItem()!.reviewItemId, ReviewStatus.Approved);
-      return;
-    }
-
-    if (action === 'reject') {
-      if (!this.dialogNote().trim()) {
-        this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.noteRequired') });
-        return;
+      if (result.action === 'section-approve') {
+        this.updateItem(section.sectionReview.reviewItemId, ReviewStatus.Approved, result.note);
+      } else {
+        this.updateItem(section.sectionReview.reviewItemId, ReviewStatus.ChangesRequested, result.note);
       }
-      this.updateItem(this.dialogItem()!.reviewItemId, ReviewStatus.Rejected, this.dialogNote());
-      return;
-    }
-
-    if (action === 'changes') {
-      if (!this.dialogNote().trim()) {
-        this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.noteRequired') });
-        return;
-      }
-      this.updateItem(this.dialogItem()!.reviewItemId, ReviewStatus.ChangesRequested, this.dialogNote());
-      return;
-    }
-
-    if (action === 'section-approve' && this.dialogSection()?.sectionReview) {
-      this.updateItem(this.dialogSection()!.sectionReview!.reviewItemId, ReviewStatus.Approved, this.dialogNote());
-      return;
-    }
-
-    if (action === 'section-changes' && this.dialogSection()?.sectionReview) {
-      if (!this.dialogNote().trim()) {
-        this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.noteRequired') });
-        return;
-      }
-      this.updateItem(this.dialogSection()!.sectionReview!.reviewItemId, ReviewStatus.ChangesRequested, this.dialogNote());
-      return;
-    }
+    });
   }
 
   canApproveAttachment(section: ProfileApprovalSection, item: ProfileApprovalItem): boolean {
@@ -274,7 +244,7 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   }
 
   previewFile(resourceUrl: string): void {
-    this.fileUtils.previewUrl(resourceUrl, '', false);
+    this.fileUtils.previewUrl(resourceUrl, '', false).then(r => {});
   }
 
   detailStatus(): ReviewStatus {
@@ -320,47 +290,27 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
     }
   }
 
-  setFinalAction(action: FinalApprovalAction): void {
-    this.activeFinalAction.set(action);
+  setFinalAction(action: string): void {
+    this.activeFinalAction.set(action as FinalApprovalAction);
     this.finalActionNote.set('');
     this.finalAttachment = null;
   }
 
   confirmFinalAction(): void {
-    const action = this.activeFinalAction();
-    if (!action) return;
-
-    if (action === 'ApproveProfile' && !this.canApproveProfile()) {
-      this.messages.add({ severity: 'error', summary: this.translate.instant('profileApproval.validation.cannotApproveProfile') });
-      return;
-    }
-
-    if (action === 'NeedsCorrection' && !this.finalActionNote().trim()) {
-      this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.noteRequired') });
-      return;
-    }
-
-    if (action === 'NeedsCorrection' && this.collectNeedsCorrectionTargets().length === 0) {
-      this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.correctionTargetsRequired') });
-      return;
-    }
-
-    if (action === 'RejectProfile' && (!this.finalActionNote().trim() || !this.finalAttachment)) {
-      this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.rejectRequirements') });
-      return;
-    }
-
-    if (action === 'BlockProfile' && !this.finalActionNote().trim()) {
-      this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.noteRequired') });
-      return;
-    }
-
-    if (action === 'ExceptionalApproval' && !this.finalAttachment) {
-      this.messages.add({ severity: 'warn', summary: this.translate.instant('profileApproval.validation.exceptionRequirements') });
-      return;
-    }
-
-    this.confirmationVisible.set(true);
+    const action = this.activeFinalAction()!;
+    this.dialogService.open(FinalActionConfirmDialogComponent, {
+      header: this.translate.instant('profileApproval.final.confirmTitle'),
+      width: '480px',
+      data: {
+        message: this.translate.instant('profileApproval.final.confirmMessage', {
+          action: this.translate.instant('profileApproval.final.actions.' + action),
+        }),
+      },
+    })?.onClose.subscribe((confirmed?: boolean) => {
+      if (confirmed) {
+        this.executeFinalAction();
+      }
+    });
   }
 
   executeFinalAction(): void {
@@ -390,7 +340,6 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
       .pipe(finalize(() => this.loadingFinalAction.set(false)))
       .subscribe({
         next: () => {
-          this.confirmationVisible.set(false);
           this.messages.add({
             severity: 'success',
             summary: this.translate.instant('profileApproval.final.actionExecuted'),

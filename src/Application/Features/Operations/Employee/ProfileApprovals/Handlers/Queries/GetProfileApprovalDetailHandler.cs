@@ -1,4 +1,5 @@
 using FluentResults;
+using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +15,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Handlers.Queries;
 
-public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver media)
+public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
     : IRequestHandler<GetProfileApprovalDetailQuery, Result<ProfileApprovalDetailDto>>
 {
     public async Task<Result<ProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request, CancellationToken ct)
@@ -23,6 +24,12 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
 
         var profile = await profileRepo.DbSet
             .Include(p => p.User)
+            .Include(p => p.SponsorProfile!.SponsorCard)
+            .Include(p => p.SponsorProfile!.SponsorType)
+            .Include(p => p.Office)
+            .Include(p => p.BirthdayCertificate)
+            .Include(p => p.MarriageCertificate)
+            .Include(p => p.ResidenceAddress)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
             .Include(p => p.Nationality)
@@ -31,11 +38,13 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
             .Include(p => p.MaritalStatus)
             .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
             .Include(p => p.Qualifications)!.ThenInclude(q => q.University)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Certificate)
             .Include(p => p.Experiences)!.ThenInclude(e => e.Certificate)
             .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Certificate)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.AchievementType)
             .Include(p => p.Achievements)!.ThenInclude(a => a.Attachment)
             .Include(p => p.Skills)!.ThenInclude(s => s.Skill)
-            .Include(p => p.Languages)!.ThenInclude(l => l.Language)
+            .Include(p => p.Languages)!.ThenInclude(l => l.Language!)
             .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment)
             .FirstOrDefaultAsync(p => p.Id == request.UserProfileId, ct);
 
@@ -57,12 +66,15 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
             .OrderByDescending(s => s.Version)
             .FirstOrDefaultAsync(ct);
 
-        if (profile.Status is not UserProfileStatus.Approved and not UserProfileStatus.Rejected and not UserProfileStatus.AdminCancelled)
+        if (profile.Status is not UserProfileStatus.Approved
+            and not UserProfileStatus.Rejected
+            and not UserProfileStatus.AdminCancelled)
         {
             profile.Status = UserProfileStatus.UnderReview;
             await uow.SaveChangesAsync(ct);
         }
 
+        // ===== Reviews =====
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var reviewItems = await reviewRepo.DbSet
             .Where(r => r.UserProfileId == profile.Id)
@@ -85,26 +97,49 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
             .Where(r => resourceIds.Contains(r.Id))
             .ToDictionaryAsync(r => r.Id, ct);
 
-        var sections = latestItems
-            .GroupBy(r => r.Section)
+        // Map ReviewItem -> DTOs using mapper
+        var reviewItemDtos = latestItems
+            .Select(item =>
+            {
+                var dto = mapper.Map<ProfileApprovalItemDto>(item);
+
+                if (item.ResourceId.HasValue &&
+                    resources.TryGetValue(item.ResourceId.Value, out var resource))
+                {
+                    dto.ResourceUrl = media.ResolveAbsolute(resource.Url);
+                }
+
+                return (Item: item, Dto: dto);
+            })
+            .ToList();
+
+        var sections = reviewItemDtos
+            .GroupBy(x => x.Item.Section)
             .Select(group =>
             {
-                var sectionReview = group.FirstOrDefault(i => i.TargetType == ReviewTargetType.Section);
+                var sectionReview = group
+                    .Where(x => x.Item.TargetType == ReviewTargetType.Section)
+                    .Select(x => x.Dto)
+                    .FirstOrDefault();
+
                 var entries = group
-                    .Where(i => i.TargetType != ReviewTargetType.Section)
-                    .Select(MapItem)
+                    .Where(x => x.Item.TargetType != ReviewTargetType.Section)
+                    .Select(x => x.Dto)
                     .ToList();
 
                 return new ProfileApprovalSectionDto
                 {
                     Section = group.Key,
-                    SectionReview = sectionReview is null ? null : MapItem(sectionReview),
+                    SectionReview = sectionReview,
                     Items = entries,
                     HasAttachments = entries.Any(e => e.TargetType == ReviewTargetType.Attachment)
                 };
             })
             .OrderBy(s => (int)s.Section)
             .ToList();
+
+        // ===== Profile data (snapshot) =====
+        var profileData = MapProfile(profile);
 
         var dto = new ProfileApprovalDetailDto
         {
@@ -115,7 +150,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
             TargetEntity = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn,
             SubmissionVersion = submission?.Version,
             SubmittedAtUtc = submission?.SubmittedAtUtc,
-            Profile = MapProfile(),
+            Profile = profileData,
             Sections = sections
         };
 
@@ -131,150 +166,42 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMediaUrlResolver 
 
         return Result.Ok(dto);
 
-        ProfileApprovalItemDto MapItem(ReviewItem item)
+        // ===== Local helpers using mapper =====
+
+        ProfileApprovalDataDto MapProfile(UserProfile profileEntity)
         {
-            var title = item.TargetType switch
-            {
-                ReviewTargetType.Section => "Textual data",
-                ReviewTargetType.Attachment => item.AttachmentTitle ?? "Attachment",
-                ReviewTargetType.Row => item.EntityName ?? "Row",
-                ReviewTargetType.Field => item.FieldPath ?? "Field",
-                _ => "Review item"
-            };
+            var result = mapper.Map<ProfileApprovalDataDto>(profileEntity);
+            result.Qualifications = profileEntity.Qualifications?
+                                        .OrderBy(q => q.GraduationYear)
+                                        .Select(mapper.Map<QualificationDto>)
+                                        .ToList() ?? [];
 
-            string? resourceUrl = null;
-            if (item.ResourceId.HasValue && resources.TryGetValue(item.ResourceId.Value, out var resource))
-            {
-                resourceUrl = media.ResolveAbsolute(resource.Url);
-            }
+            result.Experiences = profileEntity.Experiences?
+                                     .Select(mapper.Map<ExperienceDto>)
+                                     .ToList() ?? [];
 
-            return new ProfileApprovalItemDto
-            {
-                ReviewItemId = item.Id,
-                TargetType = item.TargetType,
-                Status = item.Status,
-                Title = title,
-                Note = item.ReviewerNote,
-                ResourceId = item.ResourceId,
-                ResourceUrl = resourceUrl,
-                EntityId = item.EntityId,
-                EntityName = item.EntityName,
-                Version = item.Version,
-                ApprovedAtVersion = item.ApprovedAtVersion,
-                ReviewedAtUtc = item.ReviewedAtUtc
-            };
-        }
+            result.TrainingCourses = profileEntity.TrainingCourses?
+                                         .Select(mapper.Map<TrainingCourseDto>)
+                                         .ToList() ?? [];
 
-        ProfileApprovalDataDto MapProfile()
-        {
-            FileRefDto? MapFile(Resource? resource)
-            {
-                if (resource is null) return null;
-                return new FileRefDto
+            result.ProfessionalCertificatesAndAwards = profileEntity.Achievements?
+                                                           .Select(mapper.Map<AchievementDto>)
+                                                           .ToList() ?? [];
+
+            result.Attachments = profileEntity.AdditionalAttachments?
+                                     .Where(a => a.Attachment != null)
+                                     .Select(mapper.Map<AdditionalAttachmentDto>)
+                                     .ToList() ?? [];
+
+            result.ProfilePhoto = string.IsNullOrWhiteSpace(profileEntity.User?.Avatar)
+                ? null
+                : new FileRefDto
                 {
-                    ResourceId = resource.Id,
-                    FileName = resource.Name,
-                    Url = media.ResolveAbsolute(resource.Url)
+                    ResourceId = Guid.Empty,
+                    FileName = "profile-photo",
+                    Url = media.ResolveAbsolute(profileEntity.User!.Avatar!)
                 };
-            }
-
-            return new ProfileApprovalDataDto
-            {
-                BasicInformation = new BasicInformationSnapshot
-                {
-                    FullNameAr = profile.User?.FullNameAr,
-                    FullNameEn = profile.User?.FullNameEn,
-                    NationalNumber = profile.NationalNumber,
-                    BirthDate = profile.BirthDate,
-                    Nationality = profile.Nationality?.NameAr ?? profile.Nationality?.NameEn,
-                    Gender = profile.Gender?.NameAr ?? profile.Gender?.NameEn,
-                    Religion = profile.Religion?.NameAr ?? profile.Religion?.NameEn,
-                    MaritalStatus = profile.MaritalStatus?.NameAr ?? profile.MaritalStatus?.NameEn,
-                    ChildrenCount = profile.ChildrenCount,
-                    CandidateType = profile.CandidateType?.NameAr ?? profile.CandidateType?.NameEn,
-                    TargetEntity = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn,
-                    ResumeAttachment = MapFile(profile.ResumeAttachment),
-                    NationalCard = MapFile(profile.NationalCard),
-                    ResidenceAddressCertificate = MapFile(profile.ResidenceAddressCertificate),
-                    BirthdayCertificate = MapFile(profile.BirthdayCertificate),
-                    MarriageCertificate = MapFile(profile.MarriageCertificate)
-                },
-                Qualifications = profile.Qualifications?.Select(q => new QualificationDto
-                {
-                    Id = q.Id,
-                    DegreeId = q.DegreeId,
-                    GradCountryId = q.CountryId,
-                    MajorId = q.MajorId,
-                    SubMajorId = q.SubMajorId,
-                    UniversityId = q.UniversityId,
-                    StudyTypeId = q.StudyTypeId,
-                    GradeId = q.RatingId,
-                    GraduationYear = q.GraduationYear,
-                    Gpa = q.GPA,
-                    Attachment = MapFile(q.Certificate)
-                }).ToList() ?? [],
-                Experiences = profile.Experiences?.Select(e => new ExperienceDto
-                {
-                    Id = e.Id,
-                    Description = e.Description,
-                    EmployerName = e.EmployerName,
-                    JobTitle = e.JobTitle,
-                    CountryId = e.CountryId,
-                    StartDate = e.StartDate,
-                    EndDate = e.EndDate,
-                    IsCurrent = e.EndDate == null,
-                    QualificationId = e.QualificationId,
-                    Attachment = MapFile(e.Certificate)
-                }).ToList() ?? [],
-                TrainingCourses = profile.TrainingCourses?.Select(t => new TrainingCourseDto
-                {
-                    Id = t.Id,
-                    Title = t.Title,
-                    Provider = t.Provider,
-                    CountryId = t.CountryId,
-                    StartDate = t.StartDate,
-                    EndDate = t.EndDate,
-                    Description = t.Description,
-                    Attachment = MapFile(t.Certificate)
-                }).ToList() ?? [],
-                ProfessionalCertificatesAndAwards = profile.Achievements?.Select(a => new AchievementDto
-                {
-                    Id = a.Id,
-                    AchievementTypeId = a.AchievementTypeId,
-                    Title = a.Title,
-                    IssuingAuthority = a.IssuingAuthority,
-                    CountryId = a.CountryId,
-                    IssuedDate = a.IssuedDate,
-                    RelatedToSpecialization = a.RelatedToSpecialization,
-                    Attachment = MapFile(a.Attachment)
-                }).ToList() ?? [],
-                SkillsAndLanguages = profile.Skills?.Select(s => new SkillDto
-                {
-                    Id = s.Id,
-                    SkillId = s.SkillId,
-                    Skill = s.Skill
-                }).ToList() ?? [],
-                Languages = profile.Languages?.Select(l => new LanguageDto
-                {
-                    Id = l.Id,
-                    LanguageId = l.LanguageId,
-                    Language = l.Language
-                }).ToList() ?? [],
-                Attachments = profile.AdditionalAttachments?.Where(a => a.Attachment != null).Select(a => new AdditionalAttachmentDto
-                {
-                    Id = a.Id,
-                    FileName = a.FileName,
-                    File = MapFile(a.Attachment)
-                }).ToList() ?? [],
-                ProfilePhoto = string.IsNullOrWhiteSpace(profile.User?.Avatar)
-                    ? null
-                    : new FileRefDto
-                    {
-                        ResourceId = Guid.Empty,
-                        FileName = "profile-photo",
-                        Url = media.ResolveAbsolute(profile.User!.Avatar!)
-                    }
-            };
+            return result;
         }
     }
 }

@@ -60,20 +60,19 @@
         </label>
         <label class="filter-field">
           <span>{{ 'profileApproval.list.filter.status' | translate }}</span>
-          <p-dropdown
+          <p-select
             [options]="statusOptions"
             [optionValue]="'value'"
             [ngModel]="filters().status"
             [showClear]="true"
-            (onChange)="updateFilter('status', $event.value ?? '')"
-          >
+            (onChange)="updateFilter('status', $event.value ?? '')">
             <ng-template pTemplate="selectedItem" let-item>
               <span *ngIf="item">{{ item.label | translate }}</span>
             </ng-template>
             <ng-template pTemplate="item" let-item>
               {{ item.label | translate }}
             </ng-template>
-          </p-dropdown>
+          </p-select>
         </label>
         <div class="filter-actions">
           <button class="btn primary" type="submit" [disabled]="loadingList()">{{ 'profileApproval.list.filter.apply' | translate }}</button>
@@ -308,12 +307,12 @@
                 ></textarea>
 
                 <label class="radio-row" *ngFor="let option of ['ApproveProfile','NeedsCorrection','RejectProfile','BlockProfile','ExceptionalApproval']">
-                  <p-radioButton
+                  <p-radio-button
                     name="finalAction"
                     [value]="option"
                     [ngModel]="activeFinalAction()"
-                    (onClick)="setFinalAction(option as any)"
-                  ></p-radioButton>
+                    (onClick)="setFinalAction(option)"
+                  ></p-radio-button>
                   <span>{{ ('profileApproval.final.actions.' + option) | translate }}</span>
                 </label>
 
@@ -340,85 +339,6 @@
           </div>
         </div>
       </div>
-
-      <p-dialog
-        [(visible)]="itemDialogVisible()"
-        [modal]="true"
-        [style]="{ width: '420px' }"
-        [header]="'profileApproval.dialog.title' | translate"
-        (onHide)="dialogAction.set(null)"
-      >
-        <div class="dialog-body">
-          <div class="muted small" *ngIf="dialogItem()">{{ dialogItem()?.title }}</div>
-          <textarea
-            *ngIf="dialogAction() !== 'approve'"
-            pInputTextarea
-            rows="4"
-            class="form-control"
-            [placeholder]="'profileApproval.dialog.notePlaceholder' | translate"
-            [ngModel]="dialogNote()"
-            (ngModelChange)="dialogNote.set($event)"
-          ></textarea>
-        </div>
-        <ng-template pTemplate="footer">
-          <button class="btn ghost" type="button" (click)="itemDialogVisible.set(false)">{{ 'common.cancel' | translate }}</button>
-          <button class="btn primary" type="button" (click)="submitDialog(); itemDialogVisible.set(false)">
-            {{ 'common.save' | translate }}
-          </button>
-        </ng-template>
-      </p-dialog>
-
-      <p-dialog
-        [(visible)]="sectionDialogVisible()"
-        [modal]="true"
-        [style]="{ width: '480px' }"
-        [header]="'profileApproval.section.dialogTitle' | translate"
-        (onHide)="dialogAction.set(null)"
-      >
-        <div class="dialog-body">
-          <div class="muted small">{{ sectionName(dialogSection()?.section || 0) | translate }}</div>
-          <textarea
-            pInputTextarea
-            rows="5"
-            class="form-control"
-            [placeholder]="'profileApproval.section.notePlaceholder' | translate"
-            [ngModel]="dialogNote()"
-            (ngModelChange)="dialogNote.set($event)"
-          ></textarea>
-          <div
-            class="alert alert-warning"
-            *ngIf="dialogAction() === 'section-approve' && dialogSection() && !sectionCanBeApproved(dialogSection()!)"
-          >
-            {{ 'profileApproval.section.blocked' | translate }}
-          </div>
-        </div>
-        <ng-template pTemplate="footer">
-          <button class="btn ghost" type="button" (click)="sectionDialogVisible.set(false)">{{ 'common.cancel' | translate }}</button>
-          <button
-            class="btn primary"
-            type="button"
-            [disabled]="dialogAction() === 'section-approve' && dialogSection() && !sectionCanBeApproved(dialogSection()!)"
-            (click)="submitDialog(); sectionDialogVisible.set(false)"
-          >
-            {{ 'common.save' | translate }}
-          </button>
-        </ng-template>
-      </p-dialog>
-
-      <p-dialog
-        [(visible)]="confirmationVisible()"
-        [modal]="true"
-        [style]="{ width: '480px' }"
-        [header]="'profileApproval.final.confirmTitle' | translate"
-      >
-        <p>{{ 'profileApproval.final.confirmMessage' | translate:{ action: ('profileApproval.final.actions.' + activeFinalAction()) | translate } }}</p>
-        <ng-template pTemplate="footer">
-          <button class="btn ghost" type="button" (click)="confirmationVisible.set(false)">{{ 'common.cancel' | translate }}</button>
-          <button class="btn primary" type="button" [disabled]="loadingFinalAction()" (click)="executeFinalAction()">{{ 'common.confirm' | translate }}</button>
-        </ng-template>
-      </p-dialog>
-
-      <p-toast></p-toast>
     </main>
   </div>
 </section>

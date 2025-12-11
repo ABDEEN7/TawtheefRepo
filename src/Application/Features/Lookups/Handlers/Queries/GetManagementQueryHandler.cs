@@ -7,4 +7,4 @@ namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetManagementQueryHandler(
     IUnitOfWork unitOfWork, IMapper mapper)
-    : BaseLookupQueryHandler<Managment, GetManagemntsQuery>(unitOfWork, mapper);
+    : BaseLookupQueryHandler<Management, GetManagemntsQuery>(unitOfWork, mapper);

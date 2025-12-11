@@ -5,14 +5,14 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTO
 public record ProfileApprovalDataDto
 {
     public BasicInformationSnapshot BasicInformation { get; init; } = new();
-    public IReadOnlyList<QualificationDto> Qualifications { get; init; } = Array.Empty<QualificationDto>();
-    public IReadOnlyList<ExperienceDto> Experiences { get; init; } = Array.Empty<ExperienceDto>();
-    public IReadOnlyList<TrainingCourseDto> TrainingCourses { get; init; } = Array.Empty<TrainingCourseDto>();
-    public IReadOnlyList<AchievementDto> ProfessionalCertificatesAndAwards { get; init; } = Array.Empty<AchievementDto>();
-    public IReadOnlyList<SkillDto> SkillsAndLanguages { get; init; } = Array.Empty<SkillDto>();
-    public IReadOnlyList<LanguageDto> Languages { get; init; } = Array.Empty<LanguageDto>();
-    public IReadOnlyList<AdditionalAttachmentDto> Attachments { get; init; } = Array.Empty<AdditionalAttachmentDto>();
-    public FileRefDto? ProfilePhoto { get; init; }
+    public IReadOnlyList<QualificationDto> Qualifications { get; set; } = [];
+    public IReadOnlyList<ExperienceDto> Experiences { get; set; } = [];
+    public IReadOnlyList<TrainingCourseDto> TrainingCourses { get; set; } = [];
+    public IReadOnlyList<AchievementDto> ProfessionalCertificatesAndAwards { get; set; } = [];
+    public IReadOnlyList<SkillDto> SkillsAndLanguages { get; init; } = [];
+    public IReadOnlyList<LanguageDto> Languages { get; init; } = [];
+    public IReadOnlyList<AdditionalAttachmentDto> Attachments { get; set; } = [];
+    public FileRefDto? ProfilePhoto { get; set; }
 }
 
 public record BasicInformationSnapshot
@@ -28,9 +28,9 @@ public record BasicInformationSnapshot
     public int ChildrenCount { get; init; }
     public string? CandidateType { get; init; }
     public string? TargetEntity { get; init; }
-    public FileRefDto? ResumeAttachment { get; init; }
-    public FileRefDto? NationalCard { get; init; }
-    public FileRefDto? ResidenceAddressCertificate { get; init; }
-    public FileRefDto? BirthdayCertificate { get; init; }
-    public FileRefDto? MarriageCertificate { get; init; }
+    public FileRefDto? ResumeAttachment { get; set; }
+    public FileRefDto? NationalCard { get; set; }
+    public FileRefDto? ResidenceAddressCertificate { get; set; }
+    public FileRefDto? BirthdayCertificate { get; set; }
+    public FileRefDto? MarriageCertificate { get; set; }
 }

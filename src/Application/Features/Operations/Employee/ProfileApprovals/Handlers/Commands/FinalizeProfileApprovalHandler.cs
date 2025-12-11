@@ -1,6 +1,6 @@
-using System.IO;
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -68,7 +68,7 @@ public sealed class FinalizeProfileApprovalHandler(
             case FinalApprovalAction.NeedsCorrection:
                 if (string.IsNullOrWhiteSpace(cmd.Notes))
                     return Result.Fail<Unit>(ErrorsCodes.NotesRequiredForCorrection);
-                if (cmd.NeedsCorrectionItems is null || cmd.NeedsCorrectionItems.Count == 0)
+                if (cmd.NeedsCorrectionItems.Count == 0)
                     return Result.Fail<Unit>(ErrorsCodes.NeedsCorrectionTargetsRequired);
 
                 var targets = reviewItems.Where(r => cmd.NeedsCorrectionItems.Contains(r.Id)).ToList();
