@@ -17,7 +17,6 @@ import {
 } from './models/profile-approval.models';
 import { I18nNamespaceDirective } from '../../shared/directives/i18n-namespace.directive';
 import { FileUtilsService } from '../../core/utils/file-utils';
-import { DialogModule } from 'primeng/dialog';
 import {RadioButton} from 'primeng/radiobutton';
 import { MessageService, SortEvent } from 'primeng/api';
 import { TableModule } from 'primeng/table';
