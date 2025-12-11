@@ -15,7 +15,7 @@ import {
 import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {DialogService, DynamicDialogModule} from 'primeng/dynamicdialog';
+import {DialogService} from 'primeng/dynamicdialog';
 import {MultiTranslateHttpLoader} from 'ngx-translate-multi-http-loader';
 import {LanguageService} from './core/services/language.service';
 import {authInterceptor} from './core/interceptors/auth.interceptor';
@@ -36,7 +36,7 @@ export function rootLoaderFactory(_httpBackend: HttpBackend) {
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
-    importProvidersFrom(NgbModule, DynamicDialogModule),
+    importProvidersFrom(NgbModule),
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync(),

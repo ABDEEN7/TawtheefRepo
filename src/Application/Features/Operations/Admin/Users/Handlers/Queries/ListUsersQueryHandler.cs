@@ -19,9 +19,6 @@ public sealed class ListUsersQueryHandler(UserManager<User> userManager, IMapper
         ListUsersQuery request,
         CancellationToken cancellationToken)
     {
-        // ---------------------------------------------
-        // Base query
-        // ---------------------------------------------
         var queryable = userManager.Users
             .AsNoTracking()
             .Where(u => u.UserTypeId == UserTypeIds.Employee && !u.IsDeleted)
@@ -38,7 +35,8 @@ public sealed class ListUsersQueryHandler(UserManager<User> userManager, IMapper
             .OrderBy(u => u.FullNameEn)
             .ThenBy(u => u.Email)
             .ToPaginatedListAsync<User, UserListItemDto>(mapper, request, cancellationToken);
-        
+
+
         var userIds = result.Items.Select(u => u.Id).ToList();
 
         var rolesLookup = await userManager.Users
@@ -57,7 +55,6 @@ public sealed class ListUsersQueryHandler(UserManager<User> userManager, IMapper
             roleDict[item.Id] = (await item.Roles).ToArray();
         }
 
-        // Attach roles to DTOs
         foreach (var dto in result.Items)
         {
             if (roleDict.TryGetValue(dto.Id, out var roles))
