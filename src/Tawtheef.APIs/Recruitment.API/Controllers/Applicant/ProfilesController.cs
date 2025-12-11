@@ -186,6 +186,12 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query);
         return result.ToActionResult();
     }
+    [HttpGet("lookups/skill-levels")]
+    public async Task<IActionResult> Search()
+    {
+        var result = await mediator.Send(new GetSkillLevelsQuery());
+        return result.ToActionResult();
+    }
     [HttpGet("lookups/candidate-types")]
     public async Task<IActionResult> GetCandidateTypes([FromQuery] string provider)
     {

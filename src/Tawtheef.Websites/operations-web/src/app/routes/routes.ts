@@ -8,6 +8,10 @@ export let routes = {
   home: '/index',
   terms: '/terms',
   privacy: '/privacy',
+  admin: {...adminRoutes},
+  employee: {...employeeRoutes},
+  auth:{...authRoutes},
+  ...errorRoutes,
   dashboard(role: string) {
     switch (role.toLowerCase()) {
       case 'admin':
@@ -28,8 +32,4 @@ export let routes = {
         return this.employee.settings;
     }
   },
-  admin: {...adminRoutes},
-  employee: {...employeeRoutes},
-  auth:{...authRoutes},
-  ...errorRoutes,
 };

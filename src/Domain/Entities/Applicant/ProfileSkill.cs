@@ -12,7 +12,7 @@ public class ProfileSkill : EventEntity
     public SkillType? Skill { get; set; }
 
     public Guid LevelId { get; set; }
-    public RatingGrade? Level { get; set; }
+    public SkillLevel? Level { get; set; }
 
     public Guid UserProfileId { get; set; }
     public UserProfile? UserProfile { get; set; }
