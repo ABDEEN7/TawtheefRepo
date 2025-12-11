@@ -54,7 +54,7 @@ export class AuthStateService {
    * use inside canMatch/canActivateChild
    */
   ensureAuth(returnUrl?: string): true | UrlTree {
-    if (this.isAuthenticated()) return true;
+    if (this.isAuthenticated(true)) return true;
     return this.router.createUrlTree(
       [this.routes.auth.login], // e.g. '/auth/login'
       returnUrl ? { queryParams: { returnUrl } } : undefined

@@ -22,5 +22,5 @@ export const loggedOutOnlyGuard: CanMatchFn = () => {
   const router = inject(Router);
   const rawRole = tokenService.getRoleFromToken(tokenService.getToken() || '');
   const role = (rawRole || '').toString().toLowerCase();
-  return auth.isAuthenticated() ? router.createUrlTree([routes.dashboard(role)]) : true;
+  return auth.isAuthenticated(true) ? router.createUrlTree([routes.dashboard(role)]) : true;
 };

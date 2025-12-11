@@ -51,6 +51,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<LanguageLevel> LanguageLevel { get; set; }
     public DbSet<MaritalStatus> MaritalStatus { get; set; }
     public DbSet<RatingGrade> RatingGrade { get; set; }
+    public DbSet<SkillLevel> SkillLevel { get; set; }
     public DbSet<AchievementType> AchievementType { get; set; }
     public DbSet<Religion> Religion { get; set; }
     public DbSet<Management> Management { get; set; }

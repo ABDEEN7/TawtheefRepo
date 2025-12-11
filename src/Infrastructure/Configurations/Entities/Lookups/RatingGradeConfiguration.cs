@@ -11,35 +11,43 @@ public class RatingGradeConfiguration : LookupBaseConfiguration<RatingGrade>
         builder.HasData(
             new RatingGrade
             {
-                Id = RatingGradeIds.Expert,
-                BackendName = nameof(RatingGradeIds.Expert),
-                NameEn = "Expert",
-                NameAr = "خبير",
+                Id = RatingGradeIds.AboveExcellent,
+                BackendName = nameof(RatingGradeIds.AboveExcellent),
+                NameEn = "Above Excellent",
+                NameAr = "امتياز",
                 DisplayOrder = 1
             },
             new RatingGrade
             {
-                Id = RatingGradeIds.Advanced,
-                BackendName = nameof(RatingGradeIds.Advanced),
-                NameEn = "Advanced",
-                NameAr = "متقدم",
+                Id = RatingGradeIds.Excellent,
+                BackendName = nameof(RatingGradeIds.Excellent),
+                NameEn = "Excellent",
+                NameAr = "ممتاز",
                 DisplayOrder = 2
             },
             new RatingGrade
             {
-                Id = RatingGradeIds.Intermediate,
-                BackendName = nameof(RatingGradeIds.Intermediate),
-                NameEn = "Intermediate",
-                NameAr = "متوسط",
+                Id = RatingGradeIds.VeryGood,
+                BackendName = nameof(RatingGradeIds.VeryGood),
+                NameEn = "Very Good",
+                NameAr = "جيد جدا",
                 DisplayOrder = 3
             },
             new RatingGrade
             {
-                Id = RatingGradeIds.Basic,
-                BackendName = nameof(RatingGradeIds.Basic),
-                NameEn = "Basic",
-                NameAr = "أساسي",
+                Id = RatingGradeIds.Good,
+                BackendName = nameof(RatingGradeIds.Good),
+                NameEn = "Good",
+                NameAr = "جيد",
                 DisplayOrder = 4
+            },
+            new RatingGrade
+            {
+                Id = RatingGradeIds.Acceptable,
+                BackendName = nameof(RatingGradeIds.Acceptable),
+                NameEn = "Acceptable",
+                NameAr = "مقبول",
+                DisplayOrder = 5
             }
         );
     }
