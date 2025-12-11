@@ -5,13 +5,10 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {UsersService} from './services/users.service';
 import {UserDto} from './models/user.dto';
 import {UserFilters} from './models/user-filters.dto';
-import {RoleSummaryDto} from './models/role-summary.dto';
-import {UserRolesResponse} from './models/user-roles-response.dto';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
-import {DialogModule} from 'primeng/dialog';
-import {MultiSelectModule} from 'primeng/multiselect';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 import {Select} from 'primeng/select';
+import {DialogHelperService} from '../../../core/services/dialog-helper.service';
 
 @Component({
   selector: 'app-users-management',
@@ -23,14 +20,13 @@ import {Select} from 'primeng/select';
     FormsModule,
     TranslatePipe,
     PaginationComponent,
-    DialogModule,
-    MultiSelectModule,
     I18nNamespaceDirective,
     Select
   ]
 })
 export class UsersManagement implements OnInit {
   private usersService = inject(UsersService);
+  private dialogHelper = inject(DialogHelperService);
 
   users = this.usersService.users;
   paginationMetadata = this.usersService.paginationMetadata;
@@ -47,11 +43,6 @@ export class UsersManagement implements OnInit {
   emailFilter = '';
 
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
-
-  isRolesDialogOpen = signal(false);
-  selectedUser = signal<UserDto | null>(null);
-  roleOptions = signal<RoleSummaryDto[]>([]);
-  selectedRoleIds = signal<string[]>([]);
   blockedStatusOptions = [
     { id: false, name: 'USERS.BLOCKED_NO' },
     { id: true, name: 'USERS.BLOCKED_YES' }
@@ -81,22 +72,13 @@ export class UsersManagement implements OnInit {
   }
 
   openManageRoles(user: UserDto) {
-    this.selectedUser.set(user);
-    this.usersService.getUserRoles(user.id).subscribe((res: UserRolesResponse) => {
-      this.roleOptions.set(res.roles || []);
-      this.selectedRoleIds.set(res.assignedRoleIds || []);
-      this.isRolesDialogOpen.set(true);
+    const ref = this.dialogHelper.openManageRolesDialog(user);
+
+    ref?.onClose.subscribe((updated: boolean) => {
+      if (updated) {
+        this.loadUsers();
+      }
     });
-  }
-
-  saveRoles() {
-    const userId = this.selectedUser()?.id;
-    if (!userId) return;
-
-    this.usersService.updateUserRoles(userId, this.selectedRoleIds())
-      .subscribe(() => {
-        this.isRolesDialogOpen.set(false);
-      });
   }
 
   toggleBlock(user: UserDto) {
