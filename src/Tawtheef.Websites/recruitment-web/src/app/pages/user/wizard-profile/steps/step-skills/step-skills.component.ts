@@ -1,16 +1,33 @@
-import { Component, EventEmitter, Output, inject, OnDestroy, OnInit } from '@angular/core';
-import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent} from 'primeng/autocomplete';
-import {Subject, Subscription, of} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, switchMap, tap, catchError, map} from 'rxjs/operators';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  OnDestroy,
+  OnInit,
+  inject,
+} from '@angular/core';
+import {
+  AutoCompleteCompleteEvent,
+  AutoCompleteSelectEvent,
+} from 'primeng/autocomplete';
+import { Subject, Subscription, of } from 'rxjs';
+import {
+  debounceTime,
+  filter,
+  switchMap,
+  tap,
+  catchError,
+  map,
+  finalize,
+} from 'rxjs/operators';
 import { DataService } from '../../services/data.service';
-import {SkillDto} from '../../models/skill-dto.model';
-import {ProfileLookupsService} from '../../services/profile-lookups.service';
-import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
-import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
-import {MessageService} from 'primeng/api';
-import {TranslateService} from '@ngx-translate/core';
-import {ProfileService} from '../../services/profile.service';
-import {Skill} from '../../models/skill.model';
+import { ProfileLookupsService } from '../../services/profile-lookups.service';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
+import { createStepValiditySignal } from '../../state/profile-step-validity.signal';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
+import { ProfileService } from '../../services/profile.service';
+import { Skill } from '../../models/skill.model';
 
 @Component({
   selector: 'app-step-skills',
@@ -22,35 +39,44 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
-  ds = inject(DataService);
-  lookups = inject(ProfileLookupsService);
-  messageService = inject(MessageService);
-  translate = inject(TranslateService);
-  profile = inject(ProfileService);
+  // DI
+  protected readonly ds = inject(DataService);
+  protected readonly lookups = inject(ProfileLookupsService);
+  private readonly messageService = inject(MessageService);
+  private readonly translate = inject(TranslateService);
+  private readonly profile = inject(ProfileService);
 
   saving = false;
   private lastSubmittedSignature: string | null = null;
 
-  get step(){
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
+  // نعمل signal مرة واحدة، مش في كل getter
+  private readonly stepValidity = createStepValiditySignal(this.ds.state);
+  get step() {
+    const validity = this.stepValidity();
     return validity['skills'];
   }
+
   // UI state
   skillOptions: dropdownOptionsModel[] = [];
   loadingSkills = false;
   lastQuery = '';
 
-  selectedSkill?: dropdownOptionsModel;
-  selectedLevel?: dropdownOptionsModel;
+  // الموديل المربوط على p-auto-complete (لعرض النص فقط)
+  skillSearchModel: dropdownOptionsModel | null = null;
+
+  // القيمة المختارة فعليًا والتي سنضيفها للـ ds
+  selectedSkill: dropdownOptionsModel | null = null;
+  selectedLevel: dropdownOptionsModel | null = null;
 
   // search stream
-  private search$ = new Subject<string>();
+  private readonly search$ = new Subject<string>();
   private sub?: Subscription;
 
   ngOnInit(): void {
     const state = this.ds.state();
     const signature = this.buildSignature(state.skills);
+    // لو حابب تمنع أول save إذا ما في تغيير، خزن signature هنا
+    // this.lastSubmittedSignature = signature;
     this.lastSubmittedSignature = null;
 
     this.sub = this.search$
@@ -65,22 +91,21 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         }),
         filter(q => q.length >= 3),
         debounceTime(300),
-        distinctUntilChanged(),
-        tap(() => {
+        switchMap(q => {
           this.loadingSkills = true;
           this.skillOptions = [];
-        }),
-        switchMap(q =>
-          this.lookups.searchSkills(q).pipe(
-            tap(() => (this.loadingSkills = false)),
+
+          return this.lookups.searchSkills(q).pipe(
             catchError(err => {
               console.error(err);
-              this.loadingSkills = false;
               this.skillOptions = [];
               return of([]);
+            }),
+            finalize(() => {
+              this.loadingSkills = false;
             })
-          )
-        )
+          );
+        })
       )
       .subscribe(res => {
         this.skillOptions = res;
@@ -90,18 +115,22 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   // PrimeNG completeMethod hook
   onSkillSearch(e: AutoCompleteCompleteEvent): void {
     const q = (e?.query ?? '').trim();
+
     if (q.length < 3) {
       this.skillOptions = [];
       this.loadingSkills = false;
       return;
     }
+
     this.search$.next(q);
   }
-  onSkillSelect(e: AutoCompleteSelectEvent){
-    this.selectedSkill = e.value;
-    e.value = null;
+
+  // عند اختيار skill من القائمة
+  onSkillSelect(e: AutoCompleteSelectEvent): void {
+    this.selectedSkill = e.value as dropdownOptionsModel;
   }
-  addSkill(){
+
+  addSkill(): void {
     if (this.selectedSkill && this.selectedLevel) {
       const skill: Skill = {
         skillId: this.selectedSkill.id?.toString() ?? this.selectedSkill.name,
@@ -109,14 +138,20 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         levelId: this.selectedLevel.id,
         level: this.selectedLevel,
       };
+
       this.ds.addSkill(skill);
-      this.selectedSkill = undefined;
-      this.selectedLevel = undefined;
+      this.selectedSkill = null;
+      this.selectedLevel = null;
+      this.skillSearchModel = null;
+      this.skillOptions = [];
+      this.lastQuery = '';
     }
   }
-  removeSkill(index: number){
-    var skill = this.ds.state().skills[index];
-    if(skill.id){
+
+  removeSkill(index: number): void {
+    const skill = this.ds.state().skills[index];
+
+    if (skill.id) {
       this.profile.deleteSkill(skill.id).subscribe({
         next: () => {
           this.ds.delSkill(index);
@@ -136,16 +171,19 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onNext() {
+  onNext(): void {
     if (!this.step.valid) {
       this.messageService.add({
         severity: 'error',
         summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
+        detail: this.step.errors
+          .map(e => `* ${this.translate.instant(e.i18nKey)}`)
+          .join('\n'),
         life: 5000,
       });
       return;
     }
+
     const state = this.ds.state();
     const skills = state.skills || [];
     const signature = this.buildSignature(skills);
@@ -175,9 +213,10 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private buildSignature(skills: Skill[]): string {
+  private buildSignature(skills: Skill[] | null | undefined): string {
+    const safe = skills ?? [];
     return JSON.stringify(
-      (skills ?? []).map(s => ({
+      safe.map(s => ({
         id: s.id ?? null,
         skillId: s.skillId ?? s.id ?? null,
         levelId: s.levelId ?? s.level?.id ?? null,

@@ -76,7 +76,7 @@ public class Job : EventEntity
     public string? QualificationDescriptionEn { get; set; } 
 
     public virtual Sector? Sector { get; set; }
-    public virtual Managment? Management { get; set; }
+    public virtual Management? Management { get; set; }
     public virtual Department? Department { get; set; }
     public virtual JobCategory? JobCategory { get; set; }
     public virtual TargetEntity? WorkLocation { get; set; }

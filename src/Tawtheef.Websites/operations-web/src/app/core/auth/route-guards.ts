@@ -2,6 +2,7 @@
 import { Router, CanActivateChildFn, CanMatchFn } from '@angular/router';
 import { AuthStateService } from './auth-state.service';
 import {routes} from '../../routes/routes';
+import {TokenService} from './token.service';
 
 export const authGuard: CanActivateChildFn = (_route, state) => {
   const auth = inject(AuthStateService);
@@ -17,7 +18,9 @@ export const authMatchGuard: CanMatchFn = (_route, segments) => {
 /** optional: prevent going to /auth/* if already logged in */
 export const loggedOutOnlyGuard: CanMatchFn = () => {
   const auth = inject(AuthStateService);
+  const tokenService = inject(TokenService);
   const router = inject(Router);
-  const role = 'employee'; //TODO: should be read from token
-  return auth.isAuthenticated() ? router.createUrlTree([routes.dashboard(role)]) : true;
+  const rawRole = tokenService.getRoleFromToken(tokenService.getToken() || '');
+  const role = (rawRole || '').toString().toLowerCase();
+  return auth.isAuthenticated(true) ? router.createUrlTree([routes.dashboard(role)]) : true;
 };

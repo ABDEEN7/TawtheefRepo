@@ -31,7 +31,7 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
         var perEmployeeLimit = request.PerEmployeeCount > 0 ? request.PerEmployeeCount : null;
 
         var profileQuery = profileRepo.DbSet
-            .Where(p => ProfileDistributionRules.IsAssignable(p.Status));
+            .Where(p=> ProfileDistributionRules.AssignableStatuses.Contains(p.Status));
 
         if (request.ProfileIds?.Any() == true)
             profileQuery = profileQuery.Where(p => request.ProfileIds.Contains(p.Id));

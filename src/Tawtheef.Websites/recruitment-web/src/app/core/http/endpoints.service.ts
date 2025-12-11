@@ -76,6 +76,7 @@ export class EndpointsService {
       studyTypes: this.getFullUrl(`/profiles/lookups/study-types`),
       achievementTypes: this.getFullUrl(`/profiles/lookups/achievement-types`),
       ratingGrades: this.getFullUrl(`/profiles/lookups/rating-grades`),
+      skillLevels: this.getFullUrl(`/profiles/lookups/skill-levels`),
       languages: this.getFullUrl(`/profiles/lookups/languages`),
       languageLevels: this.getFullUrl(`/profiles/lookups/language-levels`),
       sponsorTypes: this.getFullUrl(`/profiles/lookups/sponsor-types`),

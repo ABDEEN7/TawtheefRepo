@@ -32,8 +32,7 @@ export class NavigationService {
   }
 
   redirectBasedOnRole(userType: string): void {
-    const role = 'admin';
-    this.router.navigate([routes.dashboard(role)], { replaceUrl: true });
+    this.router.navigate([routes.dashboard(userType)], { replaceUrl: true });
   }
   private getReturnUrl(): string | null {
     const tree = this.router.parseUrl(this.router.url);

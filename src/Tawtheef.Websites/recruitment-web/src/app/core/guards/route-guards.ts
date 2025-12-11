@@ -17,5 +17,5 @@ export const authMatchGuard: CanMatchFn = (_route, segments) => {
 export const loggedOutOnlyGuard: CanMatchFn = () => {
   const auth = inject(AuthStateService);
   const router = inject(Router);
-  return auth.isAuthenticated() ? router.createUrlTree([routes.user.dashboard]) : true;
+  return auth.isAuthenticated(true) ? router.createUrlTree([routes.user.dashboard]) : true;
 };

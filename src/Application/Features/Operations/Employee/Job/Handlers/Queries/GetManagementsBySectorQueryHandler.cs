@@ -7,7 +7,6 @@ using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Domain.Entities.Lookups;
 
-
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
 
@@ -17,7 +16,7 @@ public sealed class GetManagementsBySectorQueryHandler(IUnitOfWork unitOfWork, I
 
     public async Task<IResult<List<DropdownOptions>>> Handle(GetManagementsBySectorQuery request, CancellationToken cancellationToken)
     {
-        var dbSet = unitOfWork.GetEntityRepository<Managment>().DbSet;
+        var dbSet = unitOfWork.GetEntityRepository<Management>().DbSet;
 
         var entities = await dbSet
             .AsNoTracking()

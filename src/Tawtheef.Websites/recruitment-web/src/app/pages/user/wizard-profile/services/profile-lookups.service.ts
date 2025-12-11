@@ -29,6 +29,7 @@ export class ProfileLookupsService {
   degrees          = signal<dropdownOptionsModel[]>([]);
   studyTypes       = signal<dropdownOptionsModel[]>([]);
   ratingGrades     = signal<dropdownOptionsModel[]>([]);
+  skillLevels     = signal<dropdownOptionsModel[]>([]);
   achievementTypes = signal<dropdownOptionsModel[]>([]);
   languages        = signal<dropdownOptionsModel[]>([]);
   languageLevels   = signal<dropdownOptionsModel[]>([]);
@@ -58,6 +59,7 @@ export class ProfileLookupsService {
       degrees: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.degrees),
       studyTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.studyTypes),
       ratingGrades: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.ratingGrades),
+      skillLevels: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.skillLevels),
       achievementTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.achievementTypes),
       languages: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languages),
       languageLevels: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languageLevels),
@@ -78,6 +80,7 @@ export class ProfileLookupsService {
         this.degrees.set(res.degrees);
         this.studyTypes.set(res.studyTypes);
         this.ratingGrades.set(res.ratingGrades);
+        this.skillLevels.set(res.skillLevels);
         this.achievementTypes.set(res.achievementTypes);
         this.languages.set(res.languages);
         this.languageLevels.set(res.languageLevels);

@@ -11,6 +11,7 @@ import {FileSlot, createFileSlot, fileSlotSignature, fileToUpload, previewFileFr
 import {dateToDateOnly} from '../../../../../shared/types/dateOnly.type';
 import {normalizeMoiResponse} from '../../services/moi-response-normalizer';
 import {catchError, finalize, of, switchMap, tap} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-step-first-info',
@@ -107,55 +108,86 @@ export class StepFirstInfoComponent implements OnInit {
     const signature = this.buildSignature(payload);
     const shouldCheckProfile = this.shouldCheckProfile();
 
-    if (signature && signature === this.lastSubmittedSignature && (!shouldCheckProfile || this.hasCheckedProfile)) {
+    // Check is needed only if feature is enabled AND not already done
+    const needsCheckNow = shouldCheckProfile && !this.hasCheckedProfile;
+
+    // If nothing changed and we don't need to re-check → just go next
+    if (signature && signature === this.lastSubmittedSignature && !needsCheckNow) {
       this.next.emit();
       return;
     }
 
+    const { qid, qidExpiry } = state;
+
+    // If we must check profile and data for the check is missing → block and show error
+    if (needsCheckNow && (!qid || !qidExpiry)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.personal.verify.title'),
+        detail: this.translate.instant('wizard.personal.verify.missingData'), // add this key
+        life: 5000,
+      });
+      return;
+    }
+
     this.saving = true;
-    this.profile
-      .savePrereq(payload, {
-        cvFile: fileToUpload(this.cvFile),
-        idFile: fileToUpload(this.idFile),
-        birthCertificateFile: fileToUpload(this.birthCertificateFile),
-        marriageCertificateFile: fileToUpload(this.marriageCertificateFile)
-      })
-      .pipe(
-        switchMap(() => {
-          this.lastSubmittedSignature = signature;
-          if (!shouldCheckProfile) return of(null);
 
-          const { qid, qidExpiry } = this.ds.state();
-          if (!qid || !qidExpiry) return of(false);
-
-          return this.profile.checkProfile(qid, qidExpiry).pipe(
-            tap(res => {
-              this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
-              this.hasCheckedProfile = true;
-              this.messageService.add({
-                severity: 'success',
-                summary: this.translate.instant('wizard.personal.verify.title'),
-                detail: this.translate.instant('wizard.personal.verify.success'),
-                life: 3000,
-              });
-            }),
-            catchError(err => {
-              const detail = err?.error?.message || err?.error || this.translate.instant('wizard.personal.verify.error');
-              this.messageService.add({
-                severity: 'error',
-                summary: this.translate.instant('wizard.personal.verify.title'),
-                detail,
-                life: 5000,
-              });
-              return of(false);
-            })
-          );
+    const check$ = needsCheckNow
+      ? this.profile.checkProfile(qid!, qidExpiry!).pipe(
+        tap(res => {
+          this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
+          this.hasCheckedProfile = true;
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail: this.translate.instant('wizard.personal.verify.success'),
+            life: 3000,
+          });
         }),
-        finalize(() => this.saving = false)
+        map(() => true as const),
+        catchError(err => {
+          const detail =
+            err?.error?.message ||
+            err?.error ||
+            this.translate.instant('wizard.personal.verify.error');
+
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail,
+            life: 5000,
+          });
+
+          // Block submission if check failed
+          return of(false as const);
+        })
+      )
+      : of(true as const);
+
+    check$
+      .pipe(
+        switchMap(canProceed => {
+          if (!canProceed) {
+            // Check failed → do not save or go next
+            return of(false as const);
+          }
+
+          // Check passed (or not required) → now save
+          this.lastSubmittedSignature = signature;
+
+          return this.profile
+            .savePrereq(payload, {
+              cvFile: fileToUpload(this.cvFile),
+              idFile: fileToUpload(this.idFile),
+              birthCertificateFile: fileToUpload(this.birthCertificateFile),
+              marriageCertificateFile: fileToUpload(this.marriageCertificateFile),
+            })
+            .pipe(map(() => true as const));
+        }),
+        finalize(() => (this.saving = false))
       )
       .subscribe({
-        next: (checkProfileResult) => {
-          const canProceed = !shouldCheckProfile || checkProfileResult !== false;
+        next: canProceed => {
           if (canProceed) {
             this.next.emit();
           }
