@@ -215,6 +215,9 @@ function validateContactStep(s: ProfileState): StepValidationResult {
   if (!isFilledField(s.country)) {
     addRequiredError(errors, 'contact', 'country');
   }
+  if (!isFilledField(s.interviewPlace)) {
+    addRequiredError(errors, 'contact', 'interviewPlace');
+  }
 
   // Phone object (PhoneNumber | null): نتحقق من null فقط
   if (!s.phone) {

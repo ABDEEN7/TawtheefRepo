@@ -2,8 +2,8 @@ using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Utils;
 
 namespace Tawtheef.Infrastructure.Services.Validations;
 
@@ -50,12 +50,8 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (previousSteps.IsFailed)
             return previousSteps;
 
-        var allowsSponsor = AllowsSponsor(profile.CandidateTypeId);
-        var requiresSponsor = RequiresSponsor(profile.CandidateTypeId);
+        var requiresSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId);
         var hasSponsorInput = HasSponsorPayload(request) || profile.SponsorProfileId is not null;
-
-        if (!allowsSponsor && hasSponsorInput)
-            return Result.Fail(ErrorsCodes.SponsorNotAllowed);
 
         if (requiresSponsor && !hasSponsorInput)
             return Result.Fail(ErrorsCodes.SponsorCardRequired);
@@ -69,7 +65,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (previousSteps.IsFailed)
             return previousSteps;
 
-        var requiresNationalAddress = RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
         var hasNationalAddress = request.NationalAddress is not null || profile.ResidenceAddress is not null;
 
         if (!requiresNationalAddress && (request.NationalAddress is not null || profile.ResidenceAddress is not null))
@@ -156,17 +152,17 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (profile.ResumeAttachmentId is null || profile.NationalCardId is null)
             return false;
 
-        var requiresResidencyExpiry = RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresResidencyExpiry = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
         if (requiresResidencyExpiry && profile.QIDExpiry is null)
             return false;
 
-        if (RequiresBirthCertificate(profile.CandidateTypeId) && profile.BirthdayCertificateId is null)
+        if (ProfileValidatorUtils.RequiresBirthCertificate(profile.CandidateTypeId) && profile.BirthdayCertificateId is null)
             return false;
 
-        if (RequiresMarriageCertificate(profile.CandidateTypeId) && profile.MarriageCertificateId is null)
+        if (ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId) && profile.MarriageCertificateId is null)
             return false;
 
-        if (RequiresOffice(profile.CandidateTypeId) && profile.OfficeId is null)
+        if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId) && profile.OfficeId is null)
             return false;
 
         return true;
@@ -174,22 +170,26 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
 
     private static bool IsPersonalComplete(UserProfile profile)
     {
-        if (string.IsNullOrWhiteSpace(profile.NationalNumber) || profile.BirthDate is null || profile.QIDExpiry is null)
+        if (string.IsNullOrWhiteSpace(profile.NationalNumber) || profile.BirthDate is null)
             return false;
 
-        if (profile.NationalityId is null || profile.GenderId is null || profile.ReligionId is null || profile.MaritalStatusId is null)
+        if (ProfileValidatorUtils.IsResidentQatar(profile.CandidateTypeId))
+        {
+            if(profile.QIDExpiry is null)
+                return false;
+
+            if (!ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId) && profile.SponsorProfileId is not null)
+                return false;
+        }
+
+        if (profile.NationalityId is null || profile.GenderId is null ||
+            profile.ReligionId is null || profile.MaritalStatusId is null)
             return false;
 
         if (profile.ChildrenCount < 0)
             return false;
 
         if (profile.HasDisability && string.IsNullOrWhiteSpace(profile.DisabilityDetails))
-            return false;
-
-        if (RequiresSponsor(profile.CandidateTypeId) && profile.SponsorProfileId is null)
-            return false;
-
-        if (!AllowsSponsor(profile.CandidateTypeId) && profile.SponsorProfileId is not null)
             return false;
 
         return true;
@@ -200,7 +200,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (profile.ResidenceCountryId is null || profile.InterviewLocationId is null)
             return false;
 
-        var requiresNationalAddress = RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
         if (requiresNationalAddress)
         {
             if (profile.ResidenceAddress is null || profile.ResidenceAddressCertificateId is null)
@@ -214,13 +214,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
 
         return !string.IsNullOrWhiteSpace(profile.Address);
     }
-
-    private static bool AllowsSponsor(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.ResidentQatar;
-    private static bool RequiresSponsor(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.ResidentQatar;
-    private static bool RequiresNationalAddress(Guid candidateTypeId) => candidateTypeId != CandidateTypeIds.NonQatari && candidateTypeId != CandidateTypeIds.GCC;
-    private static bool RequiresOffice(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.NonQatari || candidateTypeId == CandidateTypeIds.GCC;
-    private static bool RequiresBirthCertificate(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.SonOfQatariMother;
-    private static bool RequiresMarriageCertificate(Guid candidateTypeId) => candidateTypeId == CandidateTypeIds.WifeOfQatari;
+    
     private static bool HasSponsorPayload(SaveProfilePersonalRequest request) =>
         !string.IsNullOrWhiteSpace(request.SponsorEmployerName) ||
         !string.IsNullOrWhiteSpace(request.SponsorEmployerNumber) ||

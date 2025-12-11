@@ -13,16 +13,6 @@
   "internal.nav.userSettings": "Settings",
   "internal.nav.logout": "Logout",
 
-  "internal.sidebar.home": "Home",
-  "internal.sidebar.distribution": "Facility Distribution",
-  "internal.sidebar.approve-profile": "Approve Profiles",
-  "internal.sidebar.approve-job": "Approve Facilities",
-  "internal.sidebar.job": "Create Job",
-  "internal.sidebar.transfer": "Nominations",
-  "internal.sidebar.settings": "Settings",
-  "internal.sidebar.logout": "Logout",
-  "internal.sidebar.confirm": "Are you sure you want to logout?",
-
   "internal.footer.terms": "Terms and Conditions",
   "internal.footer.privacy": "Privacy Policy",
   "internal.footer.rights": "All rights reserved © 2025",
@@ -34,6 +24,20 @@
   "public.nav.success": "Success Stories",
   "public.nav.faq": "FAQ",
   "public.nav.login": "Login",
+
+
+  "internal.sidebar.home": "Home",
+  "internal.sidebar.distribution": "Facility Distribution",
+  "internal.sidebar.approve-profile": "Approve Profiles",
+  "internal.sidebar.approve-job": "Approve Facilities",
+  "internal.sidebar.job": "Create Job",
+  "internal.sidebar.transfer": "Nominations",
+
+  "admin.sidebar.home": "Dashboard",
+  "admin.sidebar.roles": "Role Management",
+
+  "common.sidebar.settings": "Settings",
+  "common.sidebar.logout": "Logout",
 
   "public.footer.rights": "All rights reserved © 2025",
   "public.footer.ministry": "Ministry of Education and Higher Education — State of Qatar"

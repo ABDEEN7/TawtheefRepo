@@ -5,6 +5,7 @@ using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Utils;
 
 namespace Tawtheef.Domain.Entities.Users;
 
@@ -109,12 +110,23 @@ public class UserProfile : EventEntity
             return false;
         if (TargetEntityId == Guid.Empty)
             return false;
+        if (ProfileValidatorUtils.RequiresOffice(CandidateTypeId) && OfficeId is null)
+            return false;
+
+        if (ProfileValidatorUtils.RequiresBirthCertificate(CandidateTypeId) && BirthdayCertificateId is null) return false;
+        if (ProfileValidatorUtils.RequiresMarriageCertificate(CandidateTypeId)  && MarriageCertificateId is null) return false;
+        
+        if (ResumeAttachmentId is null)
+            return false;
+        if (NationalCardId is null)
+            return false;
+        
         // Required personal info
         if (string.IsNullOrWhiteSpace(NationalNumber))
             return false;
-        if (BirthDate is null)
-            return false;
         if (NationalityId is null || NationalityId == Guid.Empty)
+            return false;
+        if (BirthDate is null)
             return false;
         if (GenderId is null || GenderId == Guid.Empty)
             return false;
@@ -122,25 +134,11 @@ public class UserProfile : EventEntity
             return false;
         if (MaritalStatusId is null || MaritalStatusId == Guid.Empty)
             return false;
-        if (ResidenceCountryId is null || ResidenceCountryId == Guid.Empty)
-            return false;
-        if (InterviewLocationId is null || InterviewLocationId == Guid.Empty)
-            return false;
-
-        // Required attachments
-        if (ResumeAttachmentId is null)
-            return false;
-        if (NationalCardId is null)
-            return false;
-        if (ResidenceAddressCertificateId is null)
-            return false;
-        // Children count is required (zero is allowed)
         if (ChildrenCount < 0)
             return false;
-
-        // Sponsor profile required only for certain candidate types?
-        // Uncomment if needed:
-        if (CandidateTypeId == CandidateTypeIds.ResidentQatar)
+        if(HasDisability && string.IsNullOrWhiteSpace(DisabilityDetails))
+            return false;
+        if (ProfileValidatorUtils.RequiresSponsor(CandidateTypeId))
         {
             if (SponsorProfileId is null) return false;
             if (SponsorProfile is null ||
@@ -151,24 +149,26 @@ public class UserProfile : EventEntity
                 return false;
             }
         }
+        
+        // Required contact info
+        if (ResidenceCountryId is null || ResidenceCountryId == Guid.Empty)
+            return false;
+        if (InterviewLocationId is null || InterviewLocationId == Guid.Empty)
+            return false;
 
-        if (CandidateTypeId == CandidateTypeIds.SonOfQatariMother && BirthdayCertificateId is null) return false;
-        if (CandidateTypeId == CandidateTypeIds.WifeOfQatari && MarriageCertificateId is null) return false;
-
-        if (CandidateTypeId != CandidateTypeIds.NonQatari && CandidateTypeId != CandidateTypeIds.GCC)
+        if (ProfileValidatorUtils.RequiresNationalAddress(CandidateTypeId))
         {
             if (ResidenceAddress is null) return false;
             if (ResidenceAddress.ZoneNo <= 0) return false;
             if (ResidenceAddress.StreetNo <= 0) return false;
             if (ResidenceAddress.BuildingNo <= 0) return false;
             if (ResidenceAddress.UnitNo < 0) return false;
+            if (ResidenceAddressCertificateId is null)
+                return false;
         }
         else
         {
-            if (string.IsNullOrWhiteSpace(Address))
-                return false;
-
-            if (OfficeId is null || OfficeId == Guid.Empty)
+            if (Address is null) 
                 return false;
         }
 
@@ -179,6 +179,9 @@ public class UserProfile : EventEntity
             return false;
 
         if (Experiences is null || Experiences.Count == 0)
+            return false;
+        
+        if (TrainingCourses is null || TrainingCourses.Count == 0)
             return false;
 
         if (Qualifications is null || Qualifications.Count == 0)

@@ -229,15 +229,25 @@ label.form-label { font-weight: 700; }
 
 .progress-circle {
   --val: 0;
-  width: 64px; height: 64px; border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
   background: conic-gradient($brand calc(var(--val)*1%), #e7eaf1 0);
-  display: grid; place-items: center; font-weight: 800; color: $brand;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: $brand;
   span { font-size: .9rem; }
 }
 
 /* Select2 bootstrap-5 tweaks */
 .select2-container--bootstrap-5 .select2-selection {
-  min-height: calc(2.8rem + 2px); border-radius: 12px; border: 1px solid $border; display: flex; align-items: center; padding-inline: .5rem;
+  min-height: calc(2.8rem + 2px);
+  border-radius: 12px;
+  border: 1px solid $border;
+  display: flex;
+  align-items: center;
+  padding-inline: .5rem;
 }
 .select2-results__option--selected { background: $brand !important; color: #fff !important; }
 .select2-results { z-index: 999999 !important; }
@@ -258,6 +268,7 @@ label.form-label { font-weight: 700; }
 ::ng-deep .locked-field {
   background-color: #f5f5f5 !important;
   cursor: not-allowed;
+  border-radius: 20px;
 }
 ::ng-deep .btn-brand {
   @include brand-gradient;

@@ -1,11 +1,7 @@
 import {Routes} from '@angular/router';
-import {loggedOutOnlyGuard} from './core/auth/route-guards';
-import {JobInvitationSummary} from './pages/job-invitation-summary/job-invitation-summary';
-import { UserLayout } from './layouts/internal/user-layout/user-layout';
-import {ProfileApprovalPage} from './pages/profile-approval/profile-approval.page';
-import {ProfileDistributionPage} from './pages/profile-distribution/profile-distribution.page';
-import {RolesManagement} from './pages/admin/roles-management/roles-management';
-
+import {authGuard, loggedOutOnlyGuard} from './core/auth/route-guards';
+import {Layout as AdminLayout} from './layouts/admin/layout/layout';
+import {Layout as EmployeeLayout} from './layouts/employee/layout/layout';
 export const routes: Routes = [
   {
     path: '',
@@ -26,19 +22,18 @@ export const routes: Routes = [
     ],
   },
   {
-    path: '',
-    component: UserLayout,
-    // canActivateChild: [authGuard],
-    children: [
-      {
-        path: 'jobs',
-        loadChildren: () => import('./pages/job/jobs.module').then(m => m.JobsModule),
-      },
-      { path: 'approval-profile', component: ProfileApprovalPage },
-      { path: 'profile-distribution', component: ProfileDistributionPage },
-      { path: 'job-invitation-summary', component: JobInvitationSummary },
-      { path: 'roles-management', component: RolesManagement },
-    ],
+    path: 'admin',
+    component: AdminLayout,
+    loadChildren: () => import('./pages/admin/admin.module').then((m) => m.AdminModule),
+    canActivate: [authGuard],
+    // data: { roles: ['admin'] }
+  },
+  {
+    path: 'employee',
+    component: EmployeeLayout,
+    loadChildren: () => import('./pages/employee/employee.module').then((m) => m.EmployeeModule),
+    canActivate: [authGuard],
+    data: { roles: ['employee'] }
   },
   // Fallback
   {path: '**', redirectTo: 'error/404'},
