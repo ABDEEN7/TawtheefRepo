@@ -8,6 +8,8 @@ import {UserDto} from '../../models/user.dto';
 import {RoleSummaryDto} from '../../models/role-summary.dto';
 import {UsersService} from '../../services/users.service';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
+import {UserRolesResponse} from '../../models/user-roles-response.dto';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-manage-roles-dialog',
@@ -30,6 +32,7 @@ export class ManageRolesDialogComponent implements OnInit {
   user: UserDto | undefined = this.config.data?.user as UserDto | undefined;
   roleOptions = signal<RoleSummaryDto[]>([]);
   selectedRoleIds = signal<string[]>([]);
+  isLoading = signal(false);
 
   ngOnInit(): void {
     if (!this.user) {
@@ -37,10 +40,21 @@ export class ManageRolesDialogComponent implements OnInit {
       return;
     }
 
-    this.usersService.getUserRoles(this.user.id).subscribe(res => {
-      this.roleOptions.set(res.roles || []);
-      this.selectedRoleIds.set(res.assignedRoleIds || []);
-    });
+    this.isLoading.set(true);
+    this.usersService.getUserRoles(this.user.id)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe((res: UserRolesResponse) => {
+        this.user = {
+          id: res.userId,
+          name: res.name,
+          email: res.email,
+          isBlocked: res.isBlocked,
+          lastLoginDate: res.lastLoginDate
+        };
+
+        this.roleOptions.set(res.roles || []);
+        this.selectedRoleIds.set(res.assignedRoleIds?.map(id => id.toString()) || []);
+      });
   }
 
   onRolesChange(roleIds: string[]) {

@@ -7,5 +7,4 @@ public sealed record UserListItemDto
     public required string Email { get; init; }
     public DateTime? LastLoginDate { get; init; }
     public bool IsBlocked { get; init; }
-    public IReadOnlyCollection<string> Roles { get; set; } = Array.Empty<string>();
 }
