@@ -27,6 +27,13 @@ public class UsersController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("{id:guid}/role-ids")]
+    public async Task<IActionResult> GetUserRoleIds(Guid id)
+    {
+        var result = await mediator.Send(new GetUserAssignedRoleIdsQuery(id));
+        return result.ToActionResult();
+    }
+
     [HttpPut("{id:guid}/roles")]
     public async Task<IActionResult> UpdateUserRoles(Guid id, [FromBody] UpdateUserRolesCommand command)
     {
