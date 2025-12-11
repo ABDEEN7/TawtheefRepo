@@ -1,4 +1,4 @@
-import {ProfileStatus, ProfileStatusNumber} from '../../../core/enums/lookups.enum';
+import {ProfileStatusNumber} from '../../../../core/enums/lookups.enum';
 
 export enum EmployeeAvailability {
   Available = 1,

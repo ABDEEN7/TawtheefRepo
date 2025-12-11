@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from '../../../core/http/http.service';
-import { EndpointsService } from '../../../core/http/endpoints.service';
 import {
   ProfileApprovalDetail,
   ProfileApprovalListFilter,
   ProfileApprovalListItem,
   ReviewStatus,
 } from '../models/profile-approval.models';
+import {HttpService} from '../../../../core/http/http.service';
+import {EndpointsService} from '../../../../core/http/endpoints.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileApprovalService {

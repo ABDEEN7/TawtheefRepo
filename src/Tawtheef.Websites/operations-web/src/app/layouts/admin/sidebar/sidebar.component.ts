@@ -4,6 +4,8 @@ import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Tooltip} from 'primeng/tooltip';
+import {routes} from '../../../routes/routes';
+import {AuthService} from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,19 +14,15 @@ import {Tooltip} from 'primeng/tooltip';
   imports: [CommonModule, TranslatePipe, Tooltip]
 })
 export class SidebarComponent implements OnInit {
-  private translationService = inject(TranslateService);
+  private authService = inject(AuthService);
   @Output() toggleSidebar = new EventEmitter<void>();
 
   isCollapsed = true;
   activeItem = '';
 
   menuItems = [
-    { key: 'home', label: 'internal.sidebar.home', icon: 'assets/img/icons/home.svg', route: '/dashboard' },
-    { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'assets/img/icons/files.svg', route: '/profile-distribution' },
-    { key: 'approve-job', label: 'internal.sidebar.approve-job', icon: 'assets/img/icons/approve.svg', route: '/approval-job' },
-    { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: '/approval-profile' },
-    { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: '/jobs/create' },
-    { key: 'transfer', label: 'internal.sidebar.transfer', icon: 'assets/img/icons/transfer.svg', route: '/nominations' }
+    { key: 'home', label: 'admin.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.dashboard('admin') },
+    { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/home.svg', route: routes.admin.roleManagement },
   ];
 
   constructor(private router: Router) {}
@@ -54,13 +52,10 @@ export class SidebarComponent implements OnInit {
 
   openSettings() {
     this.activeItem = '';
-    this.router.navigate(['/settings']);
+    this.router.navigate([routes.settings('admin')]);
   }
 
   logout() {
-    if (confirm(this.translationService.instant('internal.sidebar.logout.confirm'))) {
-      localStorage.clear();
-      this.router.navigate(['/auth/login']);
-    }
+    this.authService.logout();
   }
 }

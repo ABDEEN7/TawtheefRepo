@@ -15,8 +15,6 @@ import {
   ReviewStatus,
   ReviewTargetType,
 } from './models/profile-approval.models';
-import { I18nNamespaceDirective } from '../../shared/directives/i18n-namespace.directive';
-import { FileUtilsService } from '../../core/utils/file-utils';
 import {RadioButton} from 'primeng/radiobutton';
 import { MessageService, SortEvent } from 'primeng/api';
 import { TableModule } from 'primeng/table';
@@ -25,6 +23,8 @@ import {DialogService} from 'primeng/dynamicdialog';
 import {ItemDialogResult, ItemReviewDialogComponent} from './dialogs/item-review-dialog/item-review-dialog';
 import {SectionDialogResult, SectionReviewDialogComponent} from './dialogs/section-review-dialog/section-review-dialog';
 import {FinalActionConfirmDialogComponent} from './dialogs/final-action-confirm-dialog/final-action-confirm-dialog';
+import {FileUtilsService} from '../../../core/utils/file-utils';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-profile-approval-page',

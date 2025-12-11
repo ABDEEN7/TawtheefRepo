@@ -1,7 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from '../../../core/http/http.service';
-import { EndpointsService } from '../../../core/http/endpoints.service';
 import {
   AutoAssignRequest,
   DistributionEmployee,
@@ -10,6 +8,8 @@ import {
   ManualAssignRequest,
   ReassignRequest,
 } from '../models/profile-distribution.models';
+import {HttpService} from '../../../../core/http/http.service';
+import {EndpointsService} from '../../../../core/http/endpoints.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileDistributionService {

@@ -13,8 +13,8 @@ import {
   ManualAssignRequest,
   ReassignRequest,
 } from './models/profile-distribution.models';
-import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
-import {ProfileStatusNumber} from '../../core/enums/lookups.enum';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
+import {ProfileStatusNumber} from '../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-profile-distribution-page',
