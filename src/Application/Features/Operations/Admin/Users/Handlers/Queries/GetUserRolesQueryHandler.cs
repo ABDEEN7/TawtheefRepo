@@ -22,12 +22,7 @@ public sealed class GetUserRolesQueryHandler(
         GetUserRolesQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.Users.AsNoTracking()
-            .FirstOrDefaultAsync(
-                u => u.Id == request.UserId &&
-                     u.UserTypeId == UserTypeIds.Employee &&
-                     !u.IsDeleted,
-                cancellationToken);
+        var user = await userManager.FindByIdAsync(request.UserId.ToString());
 
         if (user is null)
             return Result.Fail<UserRoleAssignmentDto>(ErrorsCodes.UserNotFound);
