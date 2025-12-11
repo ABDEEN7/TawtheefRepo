@@ -41,6 +41,12 @@ public class ErrorsCodes
         $"EXTERNAL_LOGIN_LINK_FAILED: {error}";
     #endregion
 
+    #region Role Management Errors
+    public const string RoleNotFound = "ROLE_NOT_FOUND";
+    public const string RoleNameExists = "ROLE_NAME_EXISTS";
+    public const string InvalidPermission = "INVALID_PERMISSION";
+    #endregion
+
     #region Registration Errors
     public const string EmailIsAlreadyTaken = "EMAIL_IS_ALREADY_TAKEN";
     #endregion

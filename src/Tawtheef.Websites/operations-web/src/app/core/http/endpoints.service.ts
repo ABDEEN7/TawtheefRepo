@@ -86,4 +86,14 @@ export class EndpointsService {
       departments: this.getFullUrl(`/jobInvitationSummary/lookups/departments`)
     }
   };
+
+  roles = {
+    listRoles: this.getFullUrl('/roles/list-roles'),
+    roleDetails: (id: string) => this.getFullUrl(`/roles/role-details/${id}`),
+    createRole: this.getFullUrl('/roles/create-role'),
+    updateRole: (id: string) => this.getFullUrl(`/roles/update-role/${id}`),
+    deleteRole: (id: string) => this.getFullUrl(`/roles/delete-role/${id}`),
+
+    listPermissions: this.getFullUrl('/roles/list-permissions')
+  };
 }
