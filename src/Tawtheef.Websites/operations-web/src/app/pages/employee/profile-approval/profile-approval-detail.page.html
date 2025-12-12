@@ -9,7 +9,7 @@
       <div class="actions" *ngIf="detail()">
         <button class="btn ghost" type="button" (click)="backToList()">{{ 'common.back' | translate }}</button>
         <span class="pill soft">{{ statusLabel(detailStatus()) | translate }}</span>
-        <button class="btn ghost" type="button" (click)="loadDetail(selectedProfileId()!)" [disabled]="loadingDetail()">
+        <button class="btn ghost" type="button" (click)="refreshActiveTab()" [disabled]="isTabLoading(activeContentTab())">
           {{ 'common.refresh' | translate }}
         </button>
       </div>
@@ -19,425 +19,461 @@
     <div *ngIf="!detail() && !loadingDetail()" class="empty">{{ 'profileApproval.detail.empty' | translate }}</div>
 
     <div *ngIf="detail() as info" class="detail-body">
-      <div class="info-grid">
-        <div>
-          <div class="label">{{ 'profileApproval.detail.candidateType' | translate }}</div>
-          <div class="value">{{ info.candidateType || ('profileApproval.detail.missing' | translate) }}</div>
-        </div>
-        <div>
-          <div class="label">{{ 'profileApproval.detail.submissionVersion' | translate }}</div>
-          <div class="value">{{ info.submissionVersion || '-' }}</div>
-        </div>
-        <div>
-          <div class="label">{{ 'profileApproval.detail.submittedAt' | translate }}</div>
-          <div class="value">{{ info.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
-        </div>
-      </div>
-
-      <ng-container *ngIf="info.profile as profile">
-        <div class="section-card">
-          <div class="section-head">
-            <div>
-              <div class="section-title">{{ 'profileApproval.detail.snapshot.title' | translate }}</div>
-              <div class="muted small">{{ 'profileApproval.detail.snapshot.subtitle' | translate }}</div>
-            </div>
-          </div>
-
-          <div class="snapshot-grid">
-            <div class="snapshot-block">
-              <h5 class="snapshot-title">{{ 'profileApproval.sections.basicInfo' | translate }}</h5>
-              <div class="snapshot-grid mini">
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.fullNameAr' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.fullNameAr || '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.fullNameEn' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.fullNameEn || '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.nationalNumber' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.nationalNumber || '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.nationality' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.nationality || '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.birthDate' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.birthDate || '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.gender' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.gender || '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.religion' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.religion || '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.maritalStatus' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.maritalStatus || '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.childrenCount' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.childrenCount ?? '-' }}</div>
-                </div>
-                <div>
-                  <div class="label">{{ 'profileApproval.detail.snapshot.targetEntity' | translate }}</div>
-                  <div class="value">{{ profile.basicInformation.targetEntity || info.targetEntity || '-' }}</div>
-                </div>
-              </div>
-
-              <div class="snapshot-files" *ngIf="profile.basicInformation.resumeAttachment || profile.basicInformation.nationalCard || profile.basicInformation.birthdayCertificate || profile.basicInformation.marriageCertificate || profile.basicInformation.residenceAddressCertificate">
-                <div class="muted small snapshot-title">{{ 'profileApproval.detail.snapshot.files' | translate }}</div>
-                <div class="snapshot-file" *ngIf="profile.basicInformation.resumeAttachment">
-                  <span>{{ profile.basicInformation.resumeAttachment.fileName }}</span>
-                  <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.resumeAttachment.url)">
-                    {{ 'profileApproval.detail.viewFile' | translate }}
-                  </button>
-                </div>
-                <div class="snapshot-file" *ngIf="profile.basicInformation.nationalCard">
-                  <span>{{ profile.basicInformation.nationalCard.fileName }}</span>
-                  <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.nationalCard.url)">
-                    {{ 'profileApproval.detail.viewFile' | translate }}
-                  </button>
-                </div>
-                <div class="snapshot-file" *ngIf="profile.basicInformation.residenceAddressCertificate">
-                  <span>{{ profile.basicInformation.residenceAddressCertificate.fileName }}</span>
-                  <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.residenceAddressCertificate.url)">
-                    {{ 'profileApproval.detail.viewFile' | translate }}
-                  </button>
-                </div>
-                <div class="snapshot-file" *ngIf="profile.basicInformation.birthdayCertificate">
-                  <span>{{ profile.basicInformation.birthdayCertificate.fileName }}</span>
-                  <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.birthdayCertificate.url)">
-                    {{ 'profileApproval.detail.viewFile' | translate }}
-                  </button>
-                </div>
-                <div class="snapshot-file" *ngIf="profile.basicInformation.marriageCertificate">
-                  <span>{{ profile.basicInformation.marriageCertificate.fileName }}</span>
-                  <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.marriageCertificate.url)">
-                    {{ 'profileApproval.detail.viewFile' | translate }}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="snapshot-block">
-              <h5 class="snapshot-title">{{ 'profileApproval.sections.qualifications' | translate }}</h5>
-              <ng-container *ngIf="profile.qualifications?.length; else noQualifications">
-                <ul class="snapshot-list">
-                  <li *ngFor="let qual of profile.qualifications">
-                    <div class="item-title">{{ qual.major?.name || qual.majorId }}</div>
-                    <div class="muted small">
-                      {{ qual.university?.name || '-' }} · {{ qual.graduationYear || '-' }} · {{ qual.gpa || '-' }}
-                    </div>
-                    <button *ngIf="qual.attachment?.url" class="btn ghost" type="button" (click)="previewFile(qual.attachment.url)">
-                      {{ 'profileApproval.detail.viewFile' | translate }}
-                    </button>
-                  </li>
-                </ul>
-              </ng-container>
-              <ng-template #noQualifications>
-                <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
-              </ng-template>
-            </div>
-
-            <div class="snapshot-block">
-              <h5 class="snapshot-title">{{ 'profileApproval.sections.experiences' | translate }}</h5>
-              <ng-container *ngIf="profile.experiences?.length; else noExperiences">
-                <ul class="snapshot-list">
-                  <li *ngFor="let exp of profile.experiences">
-                    <div class="item-title">{{ exp.jobTitle || '-' }} - {{ exp.employerName || '-' }}</div>
-                    <div class="muted small">
-                      {{ exp.startDate || '-' }} → {{ exp.isCurrent ? ('profileApproval.detail.snapshot.present' | translate) : (exp.endDate || '-') }}
-                    </div>
-                    <div class="muted small" *ngIf="exp.description">{{ exp.description }}</div>
-                    <button *ngIf="exp.attachment?.url" class="btn ghost" type="button" (click)="previewFile(exp.attachment.url)">
-                      {{ 'profileApproval.detail.viewFile' | translate }}
-                    </button>
-                  </li>
-                </ul>
-              </ng-container>
-              <ng-template #noExperiences>
-                <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
-              </ng-template>
-            </div>
-
-            <div class="snapshot-block">
-              <h5 class="snapshot-title">{{ 'profileApproval.sections.training' | translate }}</h5>
-              <ng-container *ngIf="profile.trainingCourses?.length; else noTraining">
-                <ul class="snapshot-list">
-                  <li *ngFor="let course of profile.trainingCourses">
-                    <div class="item-title">{{ course.title }}</div>
-                    <div class="muted small">{{ course.provider || '-' }} · {{ course.startDate || '-' }} → {{ course.endDate || '-' }}</div>
-                    <div class="muted small" *ngIf="course.description">{{ course.description }}</div>
-                    <button *ngIf="course.attachment?.url" class="btn ghost" type="button" (click)="previewFile(course.attachment.url)">
-                      {{ 'profileApproval.detail.viewFile' | translate }}
-                    </button>
-                  </li>
-                </ul>
-              </ng-container>
-              <ng-template #noTraining>
-                <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
-              </ng-template>
-            </div>
-
-            <div class="snapshot-block">
-              <h5 class="snapshot-title">{{ 'profileApproval.sections.skillsLanguages' | translate }}</h5>
-              <ng-container *ngIf="profile.skillsAndLanguages?.length; else noSkills">
-                <ul class="snapshot-list">
-                  <li *ngFor="let skill of profile.skillsAndLanguages">
-                    <div class="item-title">{{ skill.skill?.name || skill.skillId }}</div>
-                    <div class="muted small" *ngIf="skill.levelId">{{ 'profileApproval.detail.snapshot.level' | translate }}: {{ skill.levelId }}</div>
-                  </li>
-                </ul>
-              </ng-container>
-              <ng-template #noSkills>
-                <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
-              </ng-template>
-
-              <h5 class="snapshot-title">{{ 'profileApproval.detail.snapshot.languages' | translate }}</h5>
-              <ng-container *ngIf="profile.languages?.length; else noLanguages">
-                <ul class="snapshot-list">
-                  <li *ngFor="let language of profile.languages">
-                    <div class="item-title">{{ language.language?.name || language.languageId }}</div>
-                    <div class="muted small">
-                      {{ 'profileApproval.detail.snapshot.speaking' | translate }}: {{ language.speakingLevelId || '-' }} ·
-                      {{ 'profileApproval.detail.snapshot.writing' | translate }}: {{ language.writingLevelId || '-' }} ·
-                      {{ 'profileApproval.detail.snapshot.reading' | translate }}: {{ language.readingLevelId || '-' }}
-                    </div>
-                    <div class="muted small" *ngIf="language.isNative">{{ 'profileApproval.detail.snapshot.native' | translate }}</div>
-                  </li>
-                </ul>
-              </ng-container>
-              <ng-template #noLanguages>
-                <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
-              </ng-template>
-            </div>
-
-            <div class="snapshot-block">
-              <h5 class="snapshot-title">{{ 'profileApproval.sections.attachments' | translate }}</h5>
-              <ng-container *ngIf="profile.attachments?.length; else noAttachments">
-                <ul class="snapshot-list">
-                  <li *ngFor="let att of profile.attachments">
-                    <div class="item-title">{{ att.title || att.file?.fileName }}</div>
-                    <button *ngIf="att.file?.url" class="btn ghost" type="button" (click)="previewFile(att.file.url)">
-                      {{ 'profileApproval.detail.viewFile' | translate }}
-                    </button>
-                  </li>
-                </ul>
-              </ng-container>
-              <ng-template #noAttachments>
-                <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
-              </ng-template>
-
-              <div class="photo" *ngIf="profile.profilePhoto">
-                <h5 class="snapshot-title">{{ 'profileApproval.sections.profilePhoto' | translate }}</h5>
-                <img [src]="profile.profilePhoto" alt="Profile photo" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-
-      <div class="alert alert-info" role="status">
-        {{ (info.isPartialReview ? 'profileApproval.detail.partialNotice' : 'profileApproval.detail.locked') | translate }}
-      </div>
-
-      <div class="tabs">
+      <div class="content-tabs tabs">
         <button
           class="tab"
-          *ngFor="let section of info.sections"
-          [class.active]="activeSection() === section.section"
-          (click)="activeSection.set(section.section)"
+          *ngFor="let tab of visibleTabs()"
+          [class.active]="activeContentTab() === tab.key"
+          (click)="loadTabData(tab.key)"
         >
-          {{ sectionName(section.section) | translate }}
-          <span class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
-            {{ statusLabel(section.sectionReview?.status) | translate }}
-          </span>
-        </button>
-        <button
-          class="tab"
-          *ngIf="!info.isPartialReview"
-          [class.active]="activeSection() === 999"
-          (click)="activeSection.set(999)"
-        >
-          {{ 'profileApproval.final.tabTitle' | translate }}
+          {{ tab.label | translate }}
+          <span class="muted small" *ngIf="isTabLoading(tab.key)">•••</span>
         </button>
       </div>
 
-      <div class="section-card" *ngFor="let section of info.sections" [hidden]="activeSection() !== section.section">
-        <div class="section-head">
-          <div>
-            <div class="section-title">{{ sectionName(section.section) | translate }}</div>
-            <div class="muted small">
-              {{ section.hasAttachments ? ('profileApproval.detail.withAttachments' | translate) : ('profileApproval.detail.textOnly' | translate) }}
-            </div>
-          </div>
-          <div class="section-actions">
-            <div class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
-              {{ statusLabel(section.sectionReview?.status) | translate }}
-            </div>
-            <div class="muted small" *ngIf="sectionHasUnresolvedItems(section)">
-              {{ 'profileApproval.section.pendingWarning' | translate }}
-            </div>
-            <button
-              class="btn primary"
-              type="button"
-              [disabled]="!section.sectionReview || !sectionCanBeApproved(section)"
-              (click)="openSectionDialog(section, 'section-approve')"
-            >
-              {{ 'profileApproval.section.approve' | translate }}
-            </button>
-            <button
-              class="btn outline"
-              type="button"
-              [disabled]="!section.sectionReview"
-              (click)="openSectionDialog(section, 'section-changes')"
-            >
-              {{ 'profileApproval.section.needsCorrection' | translate }}
-            </button>
-          </div>
-        </div>
-
-        <div class="items" *ngIf="section.items.length; else noItems">
-          <div class="item" *ngFor="let item of section.items">
-            <div class="item-main">
+      <ng-container [ngSwitch]="activeContentTab()">
+        <ng-container *ngSwitchCase="'profile'">
+          <ng-container *ngIf="tabReady('profile'); else tabLoader">
+            <div class="info-grid">
               <div>
-                <div class="item-title">{{ item.title }}</div>
-                <div class="muted small">
-                  {{ item.targetType === ReviewTargetType.Attachment ? ('profileApproval.detail.attachment' | translate) : ('profileApproval.detail.text' | translate) }}
-                  <ng-container *ngIf="item.entityName">- {{ item.entityName }}</ng-container>
-                </div>
-                <div class="muted small" *ngIf="item.oldValue || item.newValue">
-                  <div *ngIf="item.oldValue">{{ 'profileApproval.detail.oldValue' | translate }}: {{ item.oldValue }}</div>
-                  <div *ngIf="item.newValue">{{ 'profileApproval.detail.newValue' | translate }}: {{ item.newValue }}</div>
-                </div>
-                <div class="muted small" *ngIf="item.note">{{ 'profileApproval.detail.previousNote' | translate }} {{ item.note }}</div>
+                <div class="label">{{ 'profileApproval.detail.candidateType' | translate }}</div>
+                <div class="value">{{ info.candidateType || ('profileApproval.detail.missing' | translate) }}</div>
               </div>
-              <div class="item-actions">
-                <span class="pill" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) | translate }}</span>
-                <button *ngIf="item.resourceUrl" class="btn ghost" (click)="previewFile(item.resourceUrl)">
-                  {{ 'profileApproval.detail.viewFile' | translate }}
-                </button>
-                <button
-                  class="btn primary"
-                  type="button"
-                  [disabled]="!canApproveAttachment(section, item) || item.status === ReviewStatus.Approved"
-                  (click)="openItemDialog(item, 'approve')"
-                >
-                  {{ 'profileApproval.detail.approve' | translate }}
-                </button>
-                <button class="btn outline" type="button" (click)="openItemDialog(item, 'changes')">
-                  {{ 'profileApproval.detail.requestChanges' | translate }}
-                </button>
-                <button class="btn danger" type="button" (click)="openItemDialog(item, 'reject')">
-                  {{ 'profileApproval.detail.reject' | translate }}
-                </button>
+              <div>
+                <div class="label">{{ 'profileApproval.detail.submissionVersion' | translate }}</div>
+                <div class="value">{{ info.submissionVersion || '-' }}</div>
+              </div>
+              <div>
+                <div class="label">{{ 'profileApproval.detail.submittedAt' | translate }}</div>
+                <div class="value">{{ info.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
               </div>
             </div>
-          </div>
-        </div>
-        <ng-template #noItems>
-          <div class="empty">{{ 'profileApproval.detail.noItems' | translate }}</div>
-        </ng-template>
-      </div>
 
-      <div class="section-card" *ngIf="!info.isPartialReview && activeSection() === 999">
-        <div class="section-head">
-          <div>
-            <div class="section-title">{{ 'profileApproval.final.tabTitle' | translate }}</div>
-            <div class="muted small">{{ 'profileApproval.final.subtitle' | translate }}</div>
-          </div>
-        </div>
+            <ng-container *ngIf="info.profile as profile">
+              <div class="section-card">
+                <div class="section-head">
+                  <div>
+                    <div class="section-title">{{ 'profileApproval.detail.snapshot.title' | translate }}</div>
+                    <div class="muted small">{{ 'profileApproval.detail.snapshot.subtitle' | translate }}</div>
+                  </div>
+                </div>
 
-        <div class="final-grid">
-          <div class="final-block">
-            <h5>{{ 'profileApproval.final.tabStatus' | translate }}</h5>
-            <ul class="status-list">
-              <li *ngFor="let section of info.sections">
-                <span>{{ sectionName(section.section) | translate }}</span>
+                <div class="snapshot-grid">
+                  <div class="snapshot-block">
+                    <h5 class="snapshot-title">{{ 'profileApproval.sections.basicInfo' | translate }}</h5>
+                    <div class="snapshot-grid mini">
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.fullNameAr' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.fullNameAr || '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.fullNameEn' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.fullNameEn || '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.nationalNumber' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.nationalNumber || '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.nationality' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.nationality || '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.birthDate' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.birthDate || '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.gender' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.gender || '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.religion' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.religion || '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.maritalStatus' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.maritalStatus || '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.childrenCount' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.childrenCount ?? '-' }}</div>
+                      </div>
+                      <div>
+                        <div class="label">{{ 'profileApproval.detail.snapshot.targetEntity' | translate }}</div>
+                        <div class="value">{{ profile.basicInformation.targetEntity || info.targetEntity || '-' }}</div>
+                      </div>
+                    </div>
+
+                    <div
+                      class="snapshot-files"
+                      *ngIf="profile.basicInformation.resumeAttachment || profile.basicInformation.nationalCard || profile.basicInformation.birthdayCertificate || profile.basicInformation.marriageCertificate || profile.basicInformation.residenceAddressCertificate"
+                    >
+                      <div class="muted small snapshot-title">{{ 'profileApproval.detail.snapshot.files' | translate }}</div>
+                      <div class="snapshot-file" *ngIf="profile.basicInformation.resumeAttachment">
+                        <span>{{ profile.basicInformation.resumeAttachment.fileName }}</span>
+                        <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.resumeAttachment.url)">
+                          {{ 'profileApproval.detail.viewFile' | translate }}
+                        </button>
+                      </div>
+                      <div class="snapshot-file" *ngIf="profile.basicInformation.nationalCard">
+                        <span>{{ profile.basicInformation.nationalCard.fileName }}</span>
+                        <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.nationalCard.url)">
+                          {{ 'profileApproval.detail.viewFile' | translate }}
+                        </button>
+                      </div>
+                      <div class="snapshot-file" *ngIf="profile.basicInformation.residenceAddressCertificate">
+                        <span>{{ profile.basicInformation.residenceAddressCertificate.fileName }}</span>
+                        <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.residenceAddressCertificate.url)">
+                          {{ 'profileApproval.detail.viewFile' | translate }}
+                        </button>
+                      </div>
+                      <div class="snapshot-file" *ngIf="profile.basicInformation.birthdayCertificate">
+                        <span>{{ profile.basicInformation.birthdayCertificate.fileName }}</span>
+                        <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.birthdayCertificate.url)">
+                          {{ 'profileApproval.detail.viewFile' | translate }}
+                        </button>
+                      </div>
+                      <div class="snapshot-file" *ngIf="profile.basicInformation.marriageCertificate">
+                        <span>{{ profile.basicInformation.marriageCertificate.fileName }}</span>
+                        <button class="btn ghost" type="button" (click)="previewFile(profile.basicInformation.marriageCertificate.url)">
+                          {{ 'profileApproval.detail.viewFile' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="snapshot-block">
+                    <h5 class="snapshot-title">{{ 'profileApproval.sections.qualifications' | translate }}</h5>
+                    <ng-container *ngIf="profile.qualifications?.length; else noQualifications">
+                      <ul class="snapshot-list">
+                        <li *ngFor="let qual of profile.qualifications">
+                          <div class="item-title">{{ qual.major?.name || qual.majorId }}</div>
+                          <div class="muted small">
+                            {{ qual.university?.name || '-' }} · {{ qual.graduationYear || '-' }} · {{ qual.gpa || '-' }}
+                          </div>
+                          <button *ngIf="qual.attachment?.url" class="btn ghost" type="button" (click)="previewFile(qual.attachment.url)">
+                            {{ 'profileApproval.detail.viewFile' | translate }}
+                          </button>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noQualifications>
+                      <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+                    </ng-template>
+                  </div>
+
+                  <div class="snapshot-block">
+                    <h5 class="snapshot-title">{{ 'profileApproval.sections.experiences' | translate }}</h5>
+                    <ng-container *ngIf="profile.experiences?.length; else noExperiences">
+                      <ul class="snapshot-list">
+                        <li *ngFor="let exp of profile.experiences">
+                          <div class="item-title">{{ exp.jobTitle || '-' }} - {{ exp.employerName || '-' }}</div>
+                          <div class="muted small">
+                            {{ exp.startDate || '-' }} → {{ exp.isCurrent ? ('profileApproval.detail.snapshot.present' | translate) : (exp.endDate || '-') }}
+                          </div>
+                          <div class="muted small" *ngIf="exp.description">{{ exp.description }}</div>
+                          <button *ngIf="exp.attachment?.url" class="btn ghost" type="button" (click)="previewFile(exp.attachment.url)">
+                            {{ 'profileApproval.detail.viewFile' | translate }}
+                          </button>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noExperiences>
+                      <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+                    </ng-template>
+                  </div>
+
+                  <div class="snapshot-block">
+                    <h5 class="snapshot-title">{{ 'profileApproval.sections.training' | translate }}</h5>
+                    <ng-container *ngIf="profile.trainingCourses?.length; else noTraining">
+                      <ul class="snapshot-list">
+                        <li *ngFor="let course of profile.trainingCourses">
+                          <div class="item-title">{{ course.title }}</div>
+                          <div class="muted small">{{ course.provider || '-' }} · {{ course.startDate || '-' }} → {{ course.endDate || '-' }}</div>
+                          <div class="muted small" *ngIf="course.description">{{ course.description }}</div>
+                          <button *ngIf="course.attachment?.url" class="btn ghost" type="button" (click)="previewFile(course.attachment.url)">
+                            {{ 'profileApproval.detail.viewFile' | translate }}
+                          </button>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noTraining>
+                      <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+                    </ng-template>
+                  </div>
+
+                  <div class="snapshot-block">
+                    <h5 class="snapshot-title">{{ 'profileApproval.sections.skillsLanguages' | translate }}</h5>
+                    <ng-container *ngIf="profile.skillsAndLanguages?.length; else noSkills">
+                      <ul class="snapshot-list">
+                        <li *ngFor="let skill of profile.skillsAndLanguages">
+                          <div class="item-title">{{ skill.skill?.name || skill.skillId }}</div>
+                          <div class="muted small" *ngIf="skill.levelId">{{ 'profileApproval.detail.snapshot.level' | translate }}: {{ skill.levelId }}</div>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noSkills>
+                      <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+                    </ng-template>
+
+                    <h5 class="snapshot-title">{{ 'profileApproval.detail.snapshot.languages' | translate }}</h5>
+                    <ng-container *ngIf="profile.languages?.length; else noLanguages">
+                      <ul class="snapshot-list">
+                        <li *ngFor="let language of profile.languages">
+                          <div class="item-title">{{ language.language?.name || language.languageId }}</div>
+                          <div class="muted small">
+                            {{ 'profileApproval.detail.snapshot.speaking' | translate }}: {{ language.speakingLevelId || '-' }} ·
+                            {{ 'profileApproval.detail.snapshot.writing' | translate }}: {{ language.writingLevelId || '-' }} ·
+                            {{ 'profileApproval.detail.snapshot.reading' | translate }}: {{ language.readingLevelId || '-' }}
+                          </div>
+                          <div class="muted small" *ngIf="language.isNative">{{ 'profileApproval.detail.snapshot.native' | translate }}</div>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noLanguages>
+                      <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+                    </ng-template>
+                  </div>
+
+                  <div class="snapshot-block">
+                    <h5 class="snapshot-title">{{ 'profileApproval.sections.attachments' | translate }}</h5>
+                    <ng-container *ngIf="profile.attachments?.length; else noAttachments">
+                      <ul class="snapshot-list">
+                        <li *ngFor="let att of profile.attachments">
+                          <div class="item-title">{{ att.title || att.file?.fileName }}</div>
+                          <button *ngIf="att.file?.url" class="btn ghost" type="button" (click)="previewFile(att.file.url)">
+                            {{ 'profileApproval.detail.viewFile' | translate }}
+                          </button>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noAttachments>
+                      <div class="empty">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+                    </ng-template>
+
+                    <div class="photo" *ngIf="profile.profilePhoto">
+                      <h5 class="snapshot-title">{{ 'profileApproval.sections.profilePhoto' | translate }}</h5>
+                      <img [src]="profile.profilePhoto" alt="Profile photo" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <div class="alert alert-info" role="status">
+              {{ (info.isPartialReview ? 'profileApproval.detail.partialNotice' : 'profileApproval.detail.locked') | translate }}
+            </div>
+          </ng-container>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'review'">
+          <ng-container *ngIf="tabReady('review'); else tabLoader">
+            <div class="alert alert-info" role="status">
+              {{ (info.isPartialReview ? 'profileApproval.detail.partialNotice' : 'profileApproval.detail.locked') | translate }}
+            </div>
+
+            <div class="tabs">
+              <button
+                class="tab"
+                *ngFor="let section of info.sections"
+                [class.active]="activeSection() === section.section"
+                (click)="activeSection.set(section.section)"
+              >
+                {{ sectionName(section.section) | translate }}
                 <span class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
                   {{ statusLabel(section.sectionReview?.status) | translate }}
                 </span>
-              </li>
-            </ul>
-          </div>
-          <div class="final-block">
-            <h5>{{ 'profileApproval.final.notesHeader' | translate }}</h5>
-            <ul class="note-list">
-              <li *ngFor="let section of info.sections">
-                <div class="note-title">{{ sectionName(section.section) | translate }}</div>
-                <div class="muted small" *ngIf="section.sectionReview?.note; else noNote">{{ section.sectionReview?.note }}</div>
-                <ng-template #noNote>
-                  <div class="muted small">{{ 'profileApproval.final.noNotes' | translate }}</div>
-                </ng-template>
-              </li>
-            </ul>
-          </div>
-          <div class="final-block">
-            <h5>{{ 'profileApproval.final.summaryHeader' | translate }}</h5>
-            <textarea
-              class="form-control"
-              rows="4"
-              [placeholder]="'profileApproval.final.summaryPlaceholder' | translate"
-              [ngModel]="finalSummary()"
-              (ngModelChange)="finalSummary.set($event)"
-            ></textarea>
+              </button>
+            </div>
 
-            <div class="final-actions">
-              <label class="label">{{ 'profileApproval.final.actionNote' | translate }}</label>
-              <textarea
-                class="form-control"
-                rows="3"
-                [placeholder]="'profileApproval.final.actionNotePlaceholder' | translate"
-                [ngModel]="finalActionNote()"
-                (ngModelChange)="finalActionNote.set($event)"
-              ></textarea>
-
-              <label class="radio-row" *ngFor="let option of ['ApproveProfile','NeedsCorrection','RejectProfile','BlockProfile','ExceptionalApproval']">
-                <p-radio-button
-                  name="finalAction"
-                  [value]="option"
-                  [ngModel]="activeFinalAction()"
-                  (onClick)="setFinalAction(option)"
-                ></p-radio-button>
-                <span>{{ ('profileApproval.final.actions.' + option) | translate }}</span>
-              </label>
-
-              <div class="upload" *ngIf="activeFinalAction() === 'RejectProfile' || activeFinalAction() === 'ExceptionalApproval'">
-                <label class="label">{{ 'profileApproval.final.supportingFile' | translate }}</label>
-                <input type="file" (change)="finalAttachment = $any($event.target).files?.item(0) ?? null" />
+            <div class="section-card" *ngFor="let section of info.sections" [hidden]="activeSection() !== section.section">
+              <div class="section-head">
+                <div>
+                  <div class="section-title">{{ sectionName(section.section) | translate }}</div>
+                  <div class="muted small">
+                    {{ section.hasAttachments ? ('profileApproval.detail.withAttachments' | translate) : ('profileApproval.detail.textOnly' | translate) }}
+                  </div>
+                </div>
+                <div class="section-actions">
+                  <div class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
+                    {{ statusLabel(section.sectionReview?.status) | translate }}
+                  </div>
+                  <div class="muted small" *ngIf="sectionHasUnresolvedItems(section)">
+                    {{ 'profileApproval.section.pendingWarning' | translate }}
+                  </div>
+                  <button
+                    class="btn primary"
+                    type="button"
+                    [disabled]="!section.sectionReview || !sectionCanBeApproved(section)"
+                    (click)="openSectionDialog(section, 'section-approve')"
+                  >
+                    {{ 'profileApproval.section.approve' | translate }}
+                  </button>
+                  <button
+                    class="btn outline"
+                    type="button"
+                    [disabled]="!section.sectionReview"
+                    (click)="openSectionDialog(section, 'section-changes')"
+                  >
+                    {{ 'profileApproval.section.needsCorrection' | translate }}
+                  </button>
+                </div>
               </div>
 
-              <div class="upload" *ngIf="activeFinalAction() === 'RejectProfile'">
-                <small class="muted">{{ 'profileApproval.final.rejectHint' | translate }}</small>
+              <div class="items" *ngIf="section.items.length; else noItems">
+                <div class="item" *ngFor="let item of section.items">
+                  <div class="item-main">
+                    <div>
+                      <div class="item-title">{{ item.title }}</div>
+                      <div class="muted small">
+                        {{ item.targetType === ReviewTargetType.Attachment ? ('profileApproval.detail.attachment' | translate) : ('profileApproval.detail.text' | translate) }}
+                        <ng-container *ngIf="item.entityName">- {{ item.entityName }}</ng-container>
+                      </div>
+                      <div class="muted small" *ngIf="item.oldValue || item.newValue">
+                        <div *ngIf="item.oldValue">{{ 'profileApproval.detail.oldValue' | translate }}: {{ item.oldValue }}</div>
+                        <div *ngIf="item.newValue">{{ 'profileApproval.detail.newValue' | translate }}: {{ item.newValue }}</div>
+                      </div>
+                      <div class="muted small" *ngIf="item.note">{{ 'profileApproval.detail.previousNote' | translate }} {{ item.note }}</div>
+                    </div>
+                    <div class="item-actions">
+                      <span class="pill" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) | translate }}</span>
+                      <button *ngIf="item.resourceUrl" class="btn ghost" (click)="previewFile(item.resourceUrl)">
+                        {{ 'profileApproval.detail.viewFile' | translate }}
+                      </button>
+                      <button
+                        class="btn primary"
+                        type="button"
+                        [disabled]="!canApproveAttachment(section, item) || item.status === ReviewStatus.Approved"
+                        (click)="openItemDialog(item, 'approve')"
+                      >
+                        {{ 'profileApproval.detail.approve' | translate }}
+                      </button>
+                      <button class="btn outline" type="button" (click)="openItemDialog(item, 'changes')">
+                        {{ 'profileApproval.detail.requestChanges' | translate }}
+                      </button>
+                      <button class="btn danger" type="button" (click)="openItemDialog(item, 'reject')">
+                        {{ 'profileApproval.detail.reject' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noItems>
+                <div class="empty">{{ 'profileApproval.detail.noItems' | translate }}</div>
+              </ng-template>
+            </div>
+          </ng-container>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'final'">
+          <ng-container *ngIf="tabReady('final'); else tabLoader">
+            <div class="alert alert-info" role="status">
+              {{ (info.isPartialReview ? 'profileApproval.detail.partialNotice' : 'profileApproval.detail.locked') | translate }}
+            </div>
+
+            <div class="section-card">
+              <div class="section-head">
+                <div>
+                  <div class="section-title">{{ 'profileApproval.final.tabTitle' | translate }}</div>
+                  <div class="muted small">{{ 'profileApproval.final.subtitle' | translate }}</div>
+                </div>
               </div>
 
-              <div class="upload" *ngIf="activeFinalAction() === 'ExceptionalApproval'">
-                <small class="muted">{{ 'profileApproval.final.exceptionHint' | translate }}</small>
-              </div>
+              <div class="final-grid">
+                <div class="final-block">
+                  <h5>{{ 'profileApproval.final.tabStatus' | translate }}</h5>
+                  <ul class="status-list">
+                    <li *ngFor="let section of info.sections">
+                      <span>{{ sectionName(section.section) | translate }}</span>
+                      <span class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
+                        {{ statusLabel(section.sectionReview?.status) | translate }}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="final-block">
+                  <h5>{{ 'profileApproval.final.notesHeader' | translate }}</h5>
+                  <ul class="note-list">
+                    <li *ngFor="let section of info.sections">
+                      <div class="note-title">{{ sectionName(section.section) | translate }}</div>
+                      <div class="muted small" *ngIf="section.sectionReview?.note; else noNote">{{ section.sectionReview?.note }}</div>
+                      <ng-template #noNote>
+                        <div class="muted small">{{ 'profileApproval.final.noNotes' | translate }}</div>
+                      </ng-template>
+                    </li>
+                  </ul>
+                </div>
+                <div class="final-block">
+                  <h5>{{ 'profileApproval.final.summaryHeader' | translate }}</h5>
+                  <textarea
+                    class="form-control"
+                    rows="4"
+                    [placeholder]="'profileApproval.final.summaryPlaceholder' | translate"
+                    [ngModel]="finalSummary()"
+                    (ngModelChange)="finalSummary.set($event)"
+                  ></textarea>
 
-              <div class="actions">
-                <button
-                  class="btn primary"
-                  type="button"
-                  [disabled]="
-                    !activeFinalAction() ||
-                    loadingFinalAction() ||
-                    (activeFinalAction() === 'ApproveProfile' && !canApproveProfile())
-                  "
-                  (click)="confirmFinalAction()"
-                >
-                  {{ 'profileApproval.final.confirmAction' | translate }}
-                </button>
+                  <div class="final-actions">
+                    <label class="label">{{ 'profileApproval.final.actionNote' | translate }}</label>
+                    <textarea
+                      class="form-control"
+                      rows="3"
+                      [placeholder]="'profileApproval.final.actionNotePlaceholder' | translate"
+                      [ngModel]="finalActionNote()"
+                      (ngModelChange)="finalActionNote.set($event)"
+                    ></textarea>
+
+                    <label class="radio-row" *ngFor="let option of ['ApproveProfile','NeedsCorrection','RejectProfile','BlockProfile','ExceptionalApproval']">
+                      <p-radio-button
+                        name="finalAction"
+                        [value]="option"
+                        [ngModel]="activeFinalAction()"
+                        (onClick)="setFinalAction(option)"
+                      ></p-radio-button>
+                      <span>{{ ('profileApproval.final.actions.' + option) | translate }}</span>
+                    </label>
+
+                    <div class="upload" *ngIf="activeFinalAction() === 'RejectProfile' || activeFinalAction() === 'ExceptionalApproval'">
+                      <label class="label">{{ 'profileApproval.final.supportingFile' | translate }}</label>
+                      <input type="file" (change)="finalAttachment = $any($event.target).files?.item(0) ?? null" />
+                    </div>
+
+                    <div class="upload" *ngIf="activeFinalAction() === 'RejectProfile'">
+                      <small class="muted">{{ 'profileApproval.final.rejectHint' | translate }}</small>
+                    </div>
+
+                    <div class="upload" *ngIf="activeFinalAction() === 'ExceptionalApproval'">
+                      <small class="muted">{{ 'profileApproval.final.exceptionHint' | translate }}</small>
+                    </div>
+
+                    <div class="actions">
+                      <button
+                        class="btn primary"
+                        type="button"
+                        [disabled]="
+                          !activeFinalAction() ||
+                          loadingFinalAction() ||
+                          (activeFinalAction() === 'ApproveProfile' && !canApproveProfile())
+                        "
+                        (click)="confirmFinalAction()"
+                      >
+                        {{ 'profileApproval.final.confirmAction' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
     </div>
+
+    <ng-template #tabLoader>
+      <div class="tab-loader">
+        <p-progressSpinner strokeWidth="4"></p-progressSpinner>
+        <div class="muted small">{{ 'profileApproval.tabs.loading' | translate }}</div>
+      </div>
+    </ng-template>
   </main>
 </section>

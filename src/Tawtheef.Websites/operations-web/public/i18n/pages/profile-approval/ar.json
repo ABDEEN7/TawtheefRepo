@@ -68,6 +68,11 @@
   "profileApproval.detail.snapshot.reading": "القراءة",
   "profileApproval.detail.snapshot.native": "لغة أم",
 
+  "profileApproval.tabs.profileData": "البيانات الشخصية",
+  "profileApproval.tabs.reviewSections": "مراجعة التبويبات",
+  "profileApproval.tabs.finalDecision": "القرار النهائي",
+  "profileApproval.tabs.loading": "جاري تحميل التبويب...",
+
   "profileApproval.status.approved": "تم الاعتماد",
   "profileApproval.status.rejected": "مرفوض",
   "profileApproval.status.changes": "مطلوب تعديل",

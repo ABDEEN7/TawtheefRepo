@@ -14,6 +14,7 @@ import {
   ReviewTargetType,
 } from './models/profile-approval.models';
 import { RadioButton } from 'primeng/radiobutton';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ItemDialogResult, ItemReviewDialogComponent } from './dialogs/item-review-dialog/item-review-dialog';
@@ -23,10 +24,14 @@ import { FileUtilsService } from '../../../core/utils/file-utils';
 import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
 import { routes } from '../../../routes/routes';
 
+type ContentTab = 'profile' | 'review' | 'final';
+
+type TabState = Record<ContentTab, { loading: boolean; loaded: boolean }>;
+
 @Component({
   selector: 'app-profile-approval-detail-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, I18nNamespaceDirective, RadioButton],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, I18nNamespaceDirective, RadioButton, ProgressSpinnerModule],
   templateUrl: './profile-approval-detail.page.html',
   styleUrl: './profile-approval.page.scss',
   providers: [DialogService, MessageService],
@@ -49,6 +54,8 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   detail = signal<ProfileApprovalDetail | null>(null);
   error = signal<string | null>(null);
   partialMode = signal(false);
+  activeContentTab = signal<ContentTab>('profile');
+  tabState = signal<TabState>(this.createTabState());
   activeSection = signal<number | null>(null);
   activeFinalAction = signal<FinalApprovalAction | null>(null);
   finalSummary = signal('');
@@ -73,7 +80,11 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       const loadKey = `${profileId}-${partial}`;
       if (loadKey !== this.lastLoadedKey) {
         this.lastLoadedKey = loadKey;
-        this.loadDetail(profileId);
+        this.resetTabState();
+        this.loadTabData(this.activeContentTab());
+      } else if (!this.detail()) {
+        this.resetTabState();
+        this.loadTabData(this.activeContentTab());
       }
     });
 
@@ -91,20 +102,42 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     this.router.navigate([routes.employee.approvalProfile]);
   }
 
-  loadDetail(profileId: string): void {
+  refreshActiveTab(): void {
+    this.reloadCurrentProfile();
+  }
+
+  loadTabData(tab: ContentTab, forceReload = false): void {
+    const profileId = this.selectedProfileId();
+    this.activeContentTab.set(tab);
+
+    if (!profileId) return;
+
+    if (!forceReload && this.tabState()[tab].loaded && this.detail()) {
+      return;
+    }
+
     this.loadingDetail.set(true);
     this.error.set(null);
+    this.setTabState(tab, { loading: true, loaded: false });
+    const requestOptions = this.tabRequestOptions(tab);
     const loader = this.partialMode()
-      ? this.api.getProfileChanges(profileId)
-      : this.api.getProfile(profileId);
+      ? this.api.getProfileChanges(profileId, requestOptions)
+      : this.api.getProfile(profileId, requestOptions);
 
     loader
-      .pipe(finalize(() => this.loadingDetail.set(false)))
+      .pipe(
+        finalize(() => {
+          this.loadingDetail.set(false);
+          this.setTabState(tab, { loading: false });
+        })
+      )
       .subscribe({
         next: detail => {
-          this.detail.set(detail);
-          const firstSection = detail.sections[0]?.section ?? null;
-          this.activeSection.set(firstSection);
+          const merged = this.mergeDetail(this.detail(), detail);
+          this.detail.set(merged);
+          const firstSection = merged.sections[0]?.section ?? null;
+          if (firstSection !== null) this.activeSection.set(firstSection);
+          this.setTabState(tab, { loaded: true });
         },
         error: () => this.error.set(this.translate.instant('profileApproval.errors.loadDetail')),
       });
@@ -311,7 +344,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
           this.activeFinalAction.set(null);
           this.finalActionNote.set('');
           this.finalAttachment = null;
-          this.loadDetail(this.detail()!.userProfileId);
+          this.reloadCurrentProfile('final');
         },
         error: () => this.error.set(this.translate.instant('profileApproval.errors.finalize')),
       });
@@ -353,12 +386,75 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       .pipe(finalize(() => this.loadingDetail.set(false)))
       .subscribe({
         next: () => {
-          this.loadDetail(this.selectedProfileId()!);
+          this.reloadCurrentProfile('review');
         },
         error: err => {
           const message = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.errors.reviewItem');
           this.error.set(message);
         },
       });
+  }
+
+  isTabLoading(tab: ContentTab): boolean {
+    return this.tabState()[tab].loading || this.loadingDetail();
+  }
+
+  tabReady(tab: ContentTab): boolean {
+    return this.tabState()[tab].loaded && !!this.detail();
+  }
+
+  visibleTabs(): { key: ContentTab; label: string }[] {
+    return [
+      { key: 'profile', label: 'profileApproval.tabs.profileData' },
+      { key: 'review', label: 'profileApproval.tabs.reviewSections' },
+      ...(this.partialMode() ? [] : [{ key: 'final', label: 'profileApproval.tabs.finalDecision' }]),
+    ];
+  }
+
+  private resetTabState(): void {
+    this.tabState.set(this.createTabState());
+    this.activeContentTab.set('profile');
+    this.detail.set(null);
+    this.activeSection.set(null);
+  }
+
+  private reloadCurrentProfile(tab: ContentTab = this.activeContentTab()): void {
+    this.activeContentTab.set(tab);
+    this.loadTabData(tab, true);
+  }
+
+  private tabRequestOptions(tab: ContentTab): { includeProfile: boolean; includeSections: boolean } {
+    if (tab === 'profile') {
+      return { includeProfile: true, includeSections: false };
+    }
+
+    return { includeProfile: false, includeSections: true };
+  }
+
+  private mergeDetail(
+    current: ProfileApprovalDetail | null,
+    incoming: ProfileApprovalDetail
+  ): ProfileApprovalDetail {
+    if (!current) return incoming;
+
+    return {
+      ...current,
+      ...incoming,
+      profile: incoming.profile ?? current.profile,
+      sections: incoming.sections?.length ? incoming.sections : current.sections ?? [],
+    };
+  }
+
+  private createTabState(): TabState {
+    return {
+      profile: { loading: false, loaded: false },
+      review: { loading: false, loaded: false },
+      final: { loading: false, loaded: false },
+    };
+  }
+
+  private setTabState(tab: ContentTab, changes: Partial<TabState[ContentTab]>): void {
+    const current = this.tabState();
+    this.tabState.set({ ...current, [tab]: { ...current[tab], ...changes } });
   }
 }
