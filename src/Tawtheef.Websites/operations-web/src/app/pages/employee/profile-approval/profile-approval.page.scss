@@ -219,6 +219,10 @@
   gap: 12px;
 }
 
+.content-tabs {
+  margin-bottom: 4px;
+}
+
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -252,6 +256,14 @@
   background: #b6205e;
   border-color: #b6205e;
   color: #fff;
+}
+
+.tab-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 10px;
 }
 
 .section-card {
