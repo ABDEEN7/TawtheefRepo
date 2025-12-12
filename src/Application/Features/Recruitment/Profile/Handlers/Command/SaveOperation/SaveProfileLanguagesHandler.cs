@@ -36,6 +36,11 @@ public sealed class SaveProfileLanguagesHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+        var trackChanges = profile.Status == UserProfileStatus.Approved;
+
         var validationResult = validationService.ValidateLanguages(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -58,7 +63,10 @@ public sealed class SaveProfileLanguagesHandler(
             }).ToList();
 
         await langRepo.AddRangeAsync(languages);
-        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.SkillsLanguages, ct);
+        if (trackChanges)
+        {
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.SkillsLanguages, ct);
+        }
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

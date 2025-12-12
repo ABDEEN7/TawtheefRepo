@@ -33,10 +33,13 @@
   "profileApproval.detail.submittedAt": "Submitted at",
   "profileApproval.detail.missing": "Unavailable",
   "profileApproval.detail.locked": "Profile is locked for officer review; candidate editing is disabled until a final decision is made.",
+  "profileApproval.detail.partialNotice": "Partial changes only. Approved data remains active for matching until these updates are approved.",
   "profileApproval.detail.withAttachments": "Text and attachments",
   "profileApproval.detail.textOnly": "Text only",
   "profileApproval.detail.attachment": "Attachment",
   "profileApproval.detail.text": "Text entry",
+  "profileApproval.detail.oldValue": "Old value",
+  "profileApproval.detail.newValue": "New value",
   "profileApproval.detail.previousNote": "Previous notes:",
   "profileApproval.detail.viewFile": "View file",
   "profileApproval.detail.approve": "Approve",
@@ -64,6 +67,7 @@
   "profileApproval.section.dialogTitle": "Tab decision",
   "profileApproval.section.notePlaceholder": "Add notes for this tab",
   "profileApproval.section.blocked": "Approve all attachments inside this tab before marking it as approved.",
+  "profileApproval.section.pendingWarning": "Resolve all pending items before approving this section",
 
   "profileApproval.dialog.title": "Review decision",
   "profileApproval.dialog.notePlaceholder": "Add reviewer notes",
@@ -100,5 +104,7 @@
   "profileApproval.validation.cannotApproveProfile": "Approve all tabs and attachments before approving the profile.",
   "profileApproval.validation.rejectRequirements": "Rejection requires notes and a rejection document.",
   "profileApproval.validation.exceptionRequirements": "Exceptional approval requires attaching an internal exception file.",
-  "profileApproval.validation.correctionTargetsRequired": "Select at least one tab or attachment marked for correction."
+  "profileApproval.validation.correctionTargetsRequired": "Select at least one tab or attachment marked for correction.",
+  "profileApproval.validation.pendingSectionsSummary": "Pending items must be reviewed",
+  "profileApproval.validation.pendingSectionsDetail": "Approve or request changes for all sections before approving the full profile."
 }

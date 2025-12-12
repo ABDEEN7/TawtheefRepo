@@ -30,6 +30,8 @@ export interface ProfileApprovalItem {
   resourceUrl?: string;
   entityId?: string;
   entityName?: string;
+  oldValue?: string;
+  newValue?: string;
   version: number;
   approvedAtVersion?: number;
   reviewedAtUtc?: string;
@@ -83,6 +85,7 @@ export interface ProfileApprovalDetail {
   submittedAtUtc?: string;
   profile?: ProfileApprovalData;
   sections: ProfileApprovalSection[];
+  isPartialReview?: boolean;
 }
 
 export interface ProfileApprovalListItem {

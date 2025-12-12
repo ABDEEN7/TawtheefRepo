@@ -1,0 +1,102 @@
+.profile-overview {
+  display: grid;
+  gap: 1.5rem;
+
+  .page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .pill {
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: #eef2ff;
+
+    &.warning {
+      background: #fff8e1;
+    }
+  }
+
+  .alert {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: #fff4e5;
+    color: #7a4b00;
+
+    &.soft {
+      background: #f3f6ff;
+      color: #2f3b66;
+    }
+  }
+
+  .card {
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    background: #fff;
+  }
+
+  .change-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .change {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .change-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.5rem;
+    background: #eef2ff;
+    border-radius: 0.35rem;
+    font-size: 0.85rem;
+  }
+
+  .title {
+    font-weight: 600;
+  }
+
+  .values {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+    .label {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .value {
+      background: #f9fafb;
+      padding: 0.5rem;
+      border-radius: 0.35rem;
+    }
+
+    .highlight {
+      border: 1px solid #d1fae5;
+      background: #ecfdf3;
+    }
+  }
+
+  .empty,
+  .loading,
+  .error {
+    text-align: center;
+    color: #6b7280;
+  }
+
+  .error {
+    color: #b91c1c;
+  }
+}

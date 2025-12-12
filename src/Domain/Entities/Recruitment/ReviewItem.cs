@@ -38,6 +38,12 @@ public enum ReviewTargetType { Section=1, Field=2, Row=3, Attachment=4 }
 public class ReviewItem : EventEntity
 {
     /// <summary>
+    /// The pending or approved change that this review item is validating
+    /// </summary>
+    public Guid? ProfileChangeId { get; set; }
+    public ProfileChange? ProfileChange { get; set; }
+
+    /// <summary>
     /// The user profile being reviewed
     /// </summary>
     public Guid UserProfileId { get; set; }

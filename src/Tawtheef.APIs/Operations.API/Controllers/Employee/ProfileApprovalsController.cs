@@ -53,6 +53,15 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("{userProfileId:guid}/changes")]
+    public async Task<IActionResult> GetPartialChanges(Guid userProfileId, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetProfilePartialChangesQuery(userProfileId, UserId.Value), ct);
+        return result.ToActionResult();
+    }
+
     [HttpPatch("review-items/{reviewItemId:guid}")]
     public async Task<IActionResult> UpdateReviewItem(Guid reviewItemId, [FromBody] UpdateReviewItemStatusRequest request, CancellationToken ct)
     {

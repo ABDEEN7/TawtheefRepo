@@ -34,11 +34,31 @@ public sealed class SaveProfilePersonalHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+        var trackChanges = profile.Status == UserProfileStatus.Approved;
+
         var validationResult = validationService.ValidatePersonal(profile, cmd.Request);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
+
+        var oldFullNameAr = user.FullNameAr;
+        var oldFullNameEn = user.FullNameEn;
+        var oldNationalNumber = profile.NationalNumber;
+        var oldBirthDate = profile.BirthDate;
+        var oldQidExpiry = profile.QIDExpiry;
+        var oldNationalityId = profile.NationalityId;
+        var oldGenderId = profile.GenderId;
+        var oldReligionId = profile.ReligionId;
+        var oldMaritalStatusId = profile.MaritalStatusId;
+        var oldChildrenCount = profile.ChildrenCount;
+        var oldHasDisability = profile.HasDisability;
+        var oldDisabilityDetails = profile.DisabilityDetails;
+
+        var oldSnapshot = BuildPersonalSnapshot(user, profile);
 
         user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
         user.FullNameEn = r.FullNameEn ?? user.FullNameEn;
@@ -84,7 +104,7 @@ public sealed class SaveProfilePersonalHandler(
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
 
-            if (idResult.Value.HasValue)
+            if (trackChanges && idResult.Value.HasValue)
             {
                 await reviewService.TouchAttachmentAsync(
                     profile.Id,
@@ -95,7 +115,24 @@ public sealed class SaveProfilePersonalHandler(
             }
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, ct);
+        var newSnapshot = BuildPersonalSnapshot(user, profile);
+
+        if (trackChanges)
+        {
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(User.FullNameAr), ct, oldFullNameAr, user.FullNameAr);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(User.FullNameEn), ct, oldFullNameEn, user.FullNameEn);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.NationalNumber), ct, oldNationalNumber, profile.NationalNumber);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.BirthDate), ct, oldBirthDate, profile.BirthDate);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.QIDExpiry), ct, oldQidExpiry, profile.QIDExpiry);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.NationalityId), ct, oldNationalityId, profile.NationalityId);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.GenderId), ct, oldGenderId, profile.GenderId);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.ReligionId), ct, oldReligionId, profile.ReligionId);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.MaritalStatusId), ct, oldMaritalStatusId, profile.MaritalStatusId);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.ChildrenCount), ct, oldChildrenCount, profile.ChildrenCount);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.HasDisability), ct, oldHasDisability, profile.HasDisability);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.DisabilityDetails), ct, oldDisabilityDetails, profile.DisabilityDetails);
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, ct, oldSnapshot, newSnapshot);
+        }
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         
@@ -114,5 +151,21 @@ public sealed class SaveProfilePersonalHandler(
 
             return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
         }
+
+        static object BuildPersonalSnapshot(User userEntity, UserProfile profileEntity) => new
+        {
+            userEntity.FullNameAr,
+            userEntity.FullNameEn,
+            profileEntity.NationalNumber,
+            profileEntity.BirthDate,
+            profileEntity.QIDExpiry,
+            profileEntity.NationalityId,
+            profileEntity.GenderId,
+            profileEntity.ReligionId,
+            profileEntity.MaritalStatusId,
+            profileEntity.ChildrenCount,
+            profileEntity.HasDisability,
+            profileEntity.DisabilityDetails
+        };
     }
 }

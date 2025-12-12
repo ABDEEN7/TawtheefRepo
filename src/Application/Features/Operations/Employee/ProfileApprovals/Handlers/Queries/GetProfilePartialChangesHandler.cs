@@ -15,10 +15,13 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Handlers.Queries;
 
-public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
-    : IRequestHandler<GetProfileApprovalDetailQuery, Result<ProfileApprovalDetailDto>>
+public class GetProfilePartialChangesHandler(
+    IUnitOfWork uow,
+    IMapper mapper,
+    IMediaUrlResolver media)
+    : IRequestHandler<GetProfilePartialChangesQuery, Result<ProfileApprovalDetailDto>>
 {
-    public async Task<Result<ProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request, CancellationToken ct)
+    public async Task<Result<ProfileApprovalDetailDto>> Handle(GetProfilePartialChangesQuery request, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
 
@@ -52,32 +55,16 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
             return Result.Fail<ProfileApprovalDetailDto>(ErrorsCodes.UserProfileNotFound);
 
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
-        var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
-
         var isAssigned = await assignmentRepo.DbSet
             .AnyAsync(a => a.UserProfileId == profile.Id && a.EmployeeId == request.OfficerId && a.IsActive, ct);
 
         if (!isAssigned)
             return Result.Fail<ProfileApprovalDetailDto>(ErrorsCodes.UnauthorizedAction);
 
-        var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
-        var submission = await submissionRepo.DbSet
-            .Where(s => s.UserProfileId == profile.Id)
-            .OrderByDescending(s => s.Version)
-            .FirstOrDefaultAsync(ct);
-
-        if (profile.Status is not UserProfileStatus.Approved
-            and not UserProfileStatus.Rejected
-            and not UserProfileStatus.AdminCancelled)
-        {
-            profile.Status = UserProfileStatus.UnderReview;
-            await uow.SaveChangesAsync(ct);
-        }
-
-        // ===== Reviews =====
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var reviewItems = await reviewRepo.DbSet
-            .Where(r => r.UserProfileId == profile.Id)
+            .Where(r => r.UserProfileId == profile.Id
+                        && r.Status != ReviewStatus.Approved)
             .Include(r => r.ProfileChange)
             .OrderByDescending(r => r.Version)
             .ToListAsync(ct);
@@ -98,14 +85,12 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
             .Where(r => resourceIds.Contains(r.Id))
             .ToDictionaryAsync(r => r.Id, ct);
 
-        // Map ReviewItem -> DTOs using mapper
         var reviewItemDtos = latestItems
             .Select(item =>
             {
                 var dto = mapper.Map<ProfileApprovalItemDto>(item);
 
-                if (item.ResourceId.HasValue &&
-                    resources.TryGetValue(item.ResourceId.Value, out var resource))
+                if (item.ResourceId.HasValue && resources.TryGetValue(item.ResourceId.Value, out var resource))
                 {
                     dto.ResourceUrl = media.ResolveAbsolute(resource.Url);
                 }
@@ -136,11 +121,11 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
                     HasAttachments = entries.Any(e => e.TargetType == ReviewTargetType.Attachment)
                 };
             })
+            .Where(section => section.SectionReview is not null || section.Items.Any())
             .OrderBy(s => (int)s.Section)
             .ToList();
 
-        // ===== Profile data (snapshot) =====
-        var profileData = MapProfile(profile);
+        var profileData = mapper.Map<ProfileApprovalDataDto>(profile);
 
         var dto = new ProfileApprovalDetailDto
         {
@@ -149,52 +134,22 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
             FullName = profile.User?.FullNameEn ?? profile.User?.FullNameAr ?? string.Empty,
             CandidateType = profile.CandidateType?.NameAr ?? profile.CandidateType?.NameEn,
             TargetEntity = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn,
-            SubmissionVersion = submission?.Version,
-            SubmittedAtUtc = submission?.SubmittedAtUtc,
             Profile = profileData,
             Sections = sections,
-            IsPartialReview = false
+            IsPartialReview = true
         };
 
+        var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
         await auditRepo.AddAsync(new AuditTrailEntry
         {
             UserProfileId = profile.Id,
             UserId = request.OfficerId,
-            ActionType = "OpenProfile",
-            Notes = "Profile opened for review",
+            ActionType = "OpenProfilePartialReview",
+            Notes = "Profile opened for partial change review",
             Section = nameof(ProfileSection.BasicInformation)
         });
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(dto);
-
-        // ===== Local helpers using mapper =====
-
-        ProfileApprovalDataDto MapProfile(UserProfile profileEntity)
-        {
-            var result = mapper.Map<ProfileApprovalDataDto>(profileEntity);
-            result.Qualifications = profileEntity.Qualifications?
-                                        .OrderBy(q => q.GraduationYear)
-                                        .Select(mapper.Map<QualificationDto>)
-                                        .ToList() ?? [];
-
-            result.Experiences = profileEntity.Experiences?
-                                     .Select(mapper.Map<ExperienceDto>)
-                                     .ToList() ?? [];
-
-            result.TrainingCourses = profileEntity.TrainingCourses?
-                                         .Select(mapper.Map<TrainingCourseDto>)
-                                         .ToList() ?? [];
-
-            result.ProfessionalCertificatesAndAwards = profileEntity.Achievements?
-                                                           .Select(mapper.Map<AchievementDto>)
-                                                           .ToList() ?? [];
-
-            result.Attachments = profileEntity.AdditionalAttachments?
-                                     .Where(a => a.Attachment != null)
-                                     .Select(mapper.Map<AdditionalAttachmentDto>)
-                                     .ToList() ?? [];
-            return result;
-        }
     }
 }

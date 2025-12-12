@@ -60,6 +60,7 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   selectedProfileId = signal<string | null>(null);
   detail = signal<ProfileApprovalDetail | null>(null);
   error = signal<string | null>(null);
+  partialMode = signal(false);
   filters = signal<ProfileApprovalListFilter>({
     search: '',
     status: '',
@@ -92,9 +93,22 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadList();
+    const initialParams = this.route.snapshot.queryParamMap;
+    this.partialMode.set(this.parsePartialFlag(initialParams.get('changes')));
+    const initialProfileId = initialParams.get('profileId');
+
+    if (!this.partialMode()) {
+      this.loadList();
+    }
+
+    if (initialProfileId) {
+      this.selectProfile(initialProfileId);
+    }
+
     const sub = this.route.queryParamMap.subscribe(params => {
       const profileId = params.get('profileId');
+      this.partialMode.set(this.parsePartialFlag(params.get('changes')));
+
       if (profileId) {
         this.selectProfile(profileId);
       }
@@ -131,8 +145,11 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   loadDetail(profileId: string): void {
     this.loadingDetail.set(true);
     this.error.set(null);
-    this.api
-      .getProfile(profileId)
+    const loader = this.partialMode()
+      ? this.api.getProfileChanges(profileId)
+      : this.api.getProfile(profileId);
+
+    loader
       .pipe(finalize(() => this.loadingDetail.set(false)))
       .subscribe({
         next: detail => {
@@ -210,9 +227,19 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   }
 
   sectionCanBeApproved(section: ProfileApprovalSection): boolean {
-    const attachments = section.items.filter(i => i.targetType === ReviewTargetType.Attachment);
-    const allAttachmentsApproved = attachments.every(i => i.status === ReviewStatus.Approved);
-    return allAttachmentsApproved;
+    if (!section.sectionReview) return false;
+
+    if (section.items.length === 0) return true;
+
+    const unresolvedItems = section.items.some(
+      item => item.status === ReviewStatus.Pending || item.status === ReviewStatus.ChangesRequested || item.status === ReviewStatus.Rejected
+    );
+
+    const hasUnapprovedAttachments = section.items
+      .filter(i => i.targetType === ReviewTargetType.Attachment)
+      .some(i => i.status !== ReviewStatus.Approved);
+
+    return !unresolvedItems && !hasUnapprovedAttachments;
   }
 
   statusClass(status?: ReviewStatus): string {
@@ -266,6 +293,10 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
     return pendingItem || (section.sectionReview?.status === ReviewStatus.ChangesRequested || section.sectionReview?.status === ReviewStatus.Rejected || section.sectionReview?.status === ReviewStatus.Pending);
   }
 
+  sectionHasUnresolvedItems(section: ProfileApprovalSection): boolean {
+    return section.items.some(i => i.status !== ReviewStatus.Approved);
+  }
+
   sectionName(section: number): string {
     switch (section) {
       case 1:
@@ -297,6 +328,16 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
 
   confirmFinalAction(): void {
     const action = this.activeFinalAction()!;
+
+    if (action === 'ApproveProfile' && !this.canApproveProfile()) {
+      this.messages.add({
+        severity: 'warn',
+        summary: this.translate.instant('profileApproval.validation.pendingSectionsSummary'),
+        detail: this.translate.instant('profileApproval.validation.pendingSectionsDetail'),
+      });
+      return;
+    }
+
     this.dialogService.open(FinalActionConfirmDialogComponent, {
       header: this.translate.instant('profileApproval.final.confirmTitle'),
       width: '480px',
@@ -370,6 +411,11 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
     });
 
     return Array.from(targets);
+  }
+
+  private parsePartialFlag(value: string | null): boolean {
+    if (!value) return false;
+    return value === '1' || value.toLowerCase() === 'true';
   }
 
   canApproveProfile(): boolean {

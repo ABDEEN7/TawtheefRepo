@@ -33,10 +33,13 @@
   "profileApproval.detail.submittedAt": "تاريخ الإرسال",
   "profileApproval.detail.missing": "غير متوفر",
   "profileApproval.detail.locked": "الملف مقفل للمراجعة؛ لا يمكن للمرشح التعديل حتى صدور قرار نهائي.",
+  "profileApproval.detail.partialNotice": "أنت تراجع تعديلات جزئية فقط. البيانات المعتمدة الحالية تبقى فعالة للمطابقة حتى اعتماد هذه التحديثات.",
   "profileApproval.detail.withAttachments": "بيانات نصية ومرفقات",
   "profileApproval.detail.textOnly": "بيانات نصية",
   "profileApproval.detail.attachment": "مرفق",
   "profileApproval.detail.text": "بيان نصي",
+  "profileApproval.detail.oldValue": "القيمة القديمة",
+  "profileApproval.detail.newValue": "القيمة الجديدة",
   "profileApproval.detail.previousNote": "ملاحظات سابقة:",
   "profileApproval.detail.viewFile": "عرض الملف",
   "profileApproval.detail.approve": "اعتماد",
@@ -64,6 +67,7 @@
   "profileApproval.section.dialogTitle": "قرار القسم",
   "profileApproval.section.notePlaceholder": "أضف ملاحظات على هذا القسم",
   "profileApproval.section.blocked": "يجب اعتماد جميع المرفقات داخل القسم قبل اعتباره معتمدًا.",
+  "profileApproval.section.pendingWarning": "يجب إنهاء مراجعة العناصر داخل القسم قبل اعتماده",
 
   "profileApproval.dialog.title": "قرار المراجعة",
   "profileApproval.dialog.notePlaceholder": "أضف ملاحظات المراجع",
@@ -100,5 +104,7 @@
   "profileApproval.validation.cannotApproveProfile": "يجب اعتماد جميع الأقسام والمرفقات قبل اعتماد الملف.",
   "profileApproval.validation.rejectRequirements": "الرفض يتطلب ملاحظات وإرفاق ملف الرفض.",
   "profileApproval.validation.exceptionRequirements": "الاعتماد الاستثنائي يتطلب إرفاق ملف الاستثناء الداخلي.",
-  "profileApproval.validation.correctionTargetsRequired": "اختر على الأقل تبويباً أو مرفقاً تم وضعه للتصحيح."
+  "profileApproval.validation.correctionTargetsRequired": "اختر على الأقل تبويباً أو مرفقاً تم وضعه للتصحيح.",
+  "profileApproval.validation.pendingSectionsSummary": "يوجد عناصر بانتظار المراجعة",
+  "profileApproval.validation.pendingSectionsDetail": "اعتمد أو اطلب تعديل جميع الأقسام قبل اعتماد الملف بالكامل."
 }

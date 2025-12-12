@@ -40,6 +40,11 @@ public sealed class SaveProfileExperienceHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+        var trackChanges = profile.Status == UserProfileStatus.Approved;
+
         var validationResult = validationService.ValidateExperience(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -131,15 +136,18 @@ public sealed class SaveProfileExperienceHandler(
             newTrainings.Add(entity);
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
-        foreach (var experience in newExperiences)
+        if (trackChanges)
         {
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Experience), experience.Id, ct);
-        }
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
+            foreach (var experience in newExperiences)
+            {
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Experience), experience.Id, ct);
+            }
 
-        foreach (var training in newTrainings)
-        {
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(TrainingCourse), training.Id, ct);
+            foreach (var training in newTrainings)
+            {
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(TrainingCourse), training.Id, ct);
+            }
         }
 
         await uow.SaveChangesAsync(ct);
