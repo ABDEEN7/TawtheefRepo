@@ -68,6 +68,11 @@
   "profileApproval.detail.snapshot.reading": "Reading",
   "profileApproval.detail.snapshot.native": "Native language",
 
+  "profileApproval.tabs.profileData": "Profile overview",
+  "profileApproval.tabs.reviewSections": "Review tabs",
+  "profileApproval.tabs.finalDecision": "Final decision",
+  "profileApproval.tabs.loading": "Loading section...",
+
   "profileApproval.status.approved": "Approved",
   "profileApproval.status.rejected": "Rejected",
   "profileApproval.status.changes": "Changes required",
