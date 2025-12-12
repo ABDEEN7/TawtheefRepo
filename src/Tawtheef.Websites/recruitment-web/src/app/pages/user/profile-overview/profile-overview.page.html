@@ -1,0 +1,51 @@
+<section class="profile-overview" i18nNamespace="pages/user/profile-overview">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">{{ 'profileOverview.eyebrow' | translate }}</p>
+      <h2>{{ 'profileOverview.title' | translate }}</h2>
+      <p class="muted">{{ 'profileOverview.subtitle' | translate }}</p>
+    </div>
+    <span class="pill" [class.warning]="hasPending()">{{ hasPending() ? ('profileOverview.badges.pending' | translate) : ('profileOverview.badges.clean' | translate) }}</span>
+  </header>
+
+  <div class="alert" *ngIf="hasPending()">{{ 'profileOverview.pendingWarning' | translate }}</div>
+  <div class="alert soft" *ngIf="!hasPending()">{{ 'profileOverview.activeSnapshot' | translate }}</div>
+
+  <div class="card" *ngIf="overview() as data; else loadingTpl">
+    <div class="card-head">
+      <h4>{{ 'profileOverview.pendingChanges' | translate }}</h4>
+      <p class="muted">{{ 'profileOverview.pendingHint' | translate }}</p>
+    </div>
+
+    <div *ngIf="data.sections.length; else noChanges" class="change-grid">
+      <article class="change" *ngFor="let section of data.sections">
+        <div class="change-head">
+          <div class="pill soft">{{ sectionName(section.section) | translate }}</div>
+          <div class="badge">{{ 'profileOverview.badges.review' | translate }}</div>
+        </div>
+        <div class="change-items" *ngFor="let item of section.pendingItems">
+          <div class="title">{{ item.title }}</div>
+          <div class="values">
+            <div>
+              <span class="label">{{ 'profileOverview.oldValue' | translate }}</span>
+              <div class="value">{{ item.oldValue || '-' }}</div>
+            </div>
+            <div>
+              <span class="label">{{ 'profileOverview.newValue' | translate }}</span>
+              <div class="value highlight">{{ item.newValue || '-' }}</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <ng-template #noChanges>
+    <div class="empty">{{ 'profileOverview.noPending' | translate }}</div>
+  </ng-template>
+
+  <ng-template #loadingTpl>
+    <div class="loading">{{ 'profileOverview.loading' | translate }}</div>
+    <div *ngIf="error()" class="error">{{ 'profileOverview.error' | translate }}</div>
+  </ng-template>
+</section>

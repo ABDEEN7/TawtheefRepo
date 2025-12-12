@@ -23,6 +23,8 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.ResourceId, src => src.ResourceId)
             .Map(dest => dest.EntityId, src => src.EntityId)
             .Map(dest => dest.EntityName, src => src.EntityName)
+            .Map(dest => dest.OldValue, src => src.ProfileChange != null ? src.ProfileChange.OldValue : null)
+            .Map(dest => dest.NewValue, src => src.ProfileChange != null ? src.ProfileChange.NewValue : null)
             .Map(dest => dest.Version, src => src.Version)
             .Map(dest => dest.ApprovedAtVersion, src => src.ApprovedAtVersion)
             .Map(dest => dest.ReviewedAtUtc, src => src.ReviewedAtUtc);

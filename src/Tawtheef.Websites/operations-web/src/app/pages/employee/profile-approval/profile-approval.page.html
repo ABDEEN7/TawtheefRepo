@@ -166,7 +166,7 @@
         </div>
 
         <div class="alert alert-info" role="status">
-          {{ 'profileApproval.detail.locked' | translate }}
+          {{ (info.isPartialReview ? 'profileApproval.detail.partialNotice' : 'profileApproval.detail.locked') | translate }}
         </div>
 
         <div class="tabs">
@@ -181,7 +181,12 @@
               {{ statusLabel(section.sectionReview?.status) | translate }}
             </span>
           </button>
-          <button class="tab" [class.active]="activeSection() === 999" (click)="activeSection.set(999)">
+          <button
+            class="tab"
+            *ngIf="!info.isPartialReview"
+            [class.active]="activeSection() === 999"
+            (click)="activeSection.set(999)"
+          >
             {{ 'profileApproval.final.tabTitle' | translate }}
           </button>
         </div>
@@ -197,6 +202,9 @@
             <div class="section-actions">
               <div class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
                 {{ statusLabel(section.sectionReview?.status) | translate }}
+              </div>
+              <div class="muted small" *ngIf="sectionHasUnresolvedItems(section)">
+                {{ 'profileApproval.section.pendingWarning' | translate }}
               </div>
               <button
                 class="btn primary"
@@ -225,6 +233,10 @@
                   <div class="muted small">
                     {{ item.targetType === ReviewTargetType.Attachment ? ('profileApproval.detail.attachment' | translate) : ('profileApproval.detail.text' | translate) }}
                     <ng-container *ngIf="item.entityName">- {{ item.entityName }}</ng-container>
+                  </div>
+                  <div class="muted small" *ngIf="item.oldValue || item.newValue">
+                    <div *ngIf="item.oldValue">{{ 'profileApproval.detail.oldValue' | translate }}: {{ item.oldValue }}</div>
+                    <div *ngIf="item.newValue">{{ 'profileApproval.detail.newValue' | translate }}: {{ item.newValue }}</div>
                   </div>
                   <div class="muted small" *ngIf="item.note">{{ 'profileApproval.detail.previousNote' | translate }} {{ item.note }}</div>
                 </div>
@@ -256,7 +268,7 @@
           </ng-template>
         </div>
 
-        <div class="section-card" *ngIf="activeSection() === 999">
+        <div class="section-card" *ngIf="!info.isPartialReview && activeSection() === 999">
           <div class="section-head">
             <div>
               <div class="section-title">{{ 'profileApproval.final.tabTitle' | translate }}</div>
@@ -330,7 +342,16 @@
                 </div>
 
                 <div class="actions">
-                  <button class="btn primary" type="button" [disabled]="!activeFinalAction() || loadingFinalAction()" (click)="confirmFinalAction()">
+                  <button
+                    class="btn primary"
+                    type="button"
+                    [disabled]="
+                      !activeFinalAction() ||
+                      loadingFinalAction() ||
+                      (activeFinalAction() === 'ApproveProfile' && !canApproveProfile())
+                    "
+                    (click)="confirmFinalAction()"
+                  >
                     {{ 'profileApproval.final.confirmAction' | translate }}
                   </button>
                 </div>

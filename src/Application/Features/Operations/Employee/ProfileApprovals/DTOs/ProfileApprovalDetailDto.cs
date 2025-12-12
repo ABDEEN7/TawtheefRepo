@@ -11,4 +11,5 @@ public record ProfileApprovalDetailDto
     public DateTime? SubmittedAtUtc { get; init; }
     public ProfileApprovalDataDto? Profile { get; init; }
     public IReadOnlyList<ProfileApprovalSectionDto> Sections { get; init; } = Array.Empty<ProfileApprovalSectionDto>();
+    public bool IsPartialReview { get; init; }
 }

@@ -13,6 +13,8 @@ public record ProfileApprovalItemDto
     public string? ResourceUrl { get; set; }
     public Guid? EntityId { get; init; }
     public string? EntityName { get; init; }
+    public string? OldValue { get; init; }
+    public string? NewValue { get; init; }
     public int Version { get; init; }
     public int? ApprovedAtVersion { get; init; }
     public DateTime? ReviewedAtUtc { get; init; }

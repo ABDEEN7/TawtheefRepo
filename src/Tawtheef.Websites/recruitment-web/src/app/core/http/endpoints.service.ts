@@ -82,7 +82,8 @@ export class EndpointsService {
       sponsorTypes: this.getFullUrl(`/profiles/lookups/sponsor-types`),
       offices: this.getFullUrl(`/profiles/lookups/offices`),
       skill: this.getFullUrl(`/profiles/lookups/skill-search`),
-    }
+    },
+    overview: this.getFullUrl(`/profiles/overview`)
   }
 
   dashboard = {

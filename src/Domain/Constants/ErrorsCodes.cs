@@ -91,6 +91,7 @@ public class ErrorsCodes
     public const string AchievementNotFound = "ACHIEVEMENT_NOT_FOUND";
     public const string SectionMustBeApprovedFirst = "SECTION_MUST_BE_APPROVED_FIRST";
     public const string SectionHasUnapprovedAttachments = "SECTION_HAS_UNAPPROVED_ATTACHMENTS";
+    public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
     public const string NotesRequiredForCorrection = "NOTES_REQUIRED_FOR_CORRECTION";
     public const string MandatoryFieldsIncomplete = "MANDATORY_FIELDS_INCOMPLETE";
     public const string UnapprovedItemsExist = "UNAPPROVED_ITEMS_EXIST";
