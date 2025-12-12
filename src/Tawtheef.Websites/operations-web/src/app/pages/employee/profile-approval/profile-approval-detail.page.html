@@ -1,0 +1,235 @@
+<section class="approval-shell" i18nNamespace="pages/profile-approval">
+  <main class="panel detail-panel">
+    <header class="detail-head">
+      <div>
+        <p class="eyebrow">{{ 'profileApproval.detail.eyebrow' | translate }}</p>
+        <h3 class="panel-title">{{ detail()?.fullName || ('profileApproval.detail.placeholder' | translate) }}</h3>
+        <div class="muted">{{ detail()?.targetEntity }}</div>
+      </div>
+      <div class="actions" *ngIf="detail()">
+        <button class="btn ghost" type="button" (click)="backToList()">{{ 'common.back' | translate }}</button>
+        <span class="pill soft">{{ statusLabel(detailStatus()) | translate }}</span>
+        <button class="btn ghost" type="button" (click)="loadDetail(selectedProfileId()!)" [disabled]="loadingDetail()">
+          {{ 'common.refresh' | translate }}
+        </button>
+      </div>
+    </header>
+
+    <div *ngIf="error()" class="alert alert-danger">{{ error() }}</div>
+    <div *ngIf="!detail() && !loadingDetail()" class="empty">{{ 'profileApproval.detail.empty' | translate }}</div>
+
+    <div *ngIf="detail() as info" class="detail-body">
+      <div class="info-grid">
+        <div>
+          <div class="label">{{ 'profileApproval.detail.candidateType' | translate }}</div>
+          <div class="value">{{ info.candidateType || ('profileApproval.detail.missing' | translate) }}</div>
+        </div>
+        <div>
+          <div class="label">{{ 'profileApproval.detail.submissionVersion' | translate }}</div>
+          <div class="value">{{ info.submissionVersion || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">{{ 'profileApproval.detail.submittedAt' | translate }}</div>
+          <div class="value">{{ info.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
+        </div>
+      </div>
+
+      <div class="alert alert-info" role="status">
+        {{ (info.isPartialReview ? 'profileApproval.detail.partialNotice' : 'profileApproval.detail.locked') | translate }}
+      </div>
+
+      <div class="tabs">
+        <button
+          class="tab"
+          *ngFor="let section of info.sections"
+          [class.active]="activeSection() === section.section"
+          (click)="activeSection.set(section.section)"
+        >
+          {{ sectionName(section.section) | translate }}
+          <span class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
+            {{ statusLabel(section.sectionReview?.status) | translate }}
+          </span>
+        </button>
+        <button
+          class="tab"
+          *ngIf="!info.isPartialReview"
+          [class.active]="activeSection() === 999"
+          (click)="activeSection.set(999)"
+        >
+          {{ 'profileApproval.final.tabTitle' | translate }}
+        </button>
+      </div>
+
+      <div class="section-card" *ngFor="let section of info.sections" [hidden]="activeSection() !== section.section">
+        <div class="section-head">
+          <div>
+            <div class="section-title">{{ sectionName(section.section) | translate }}</div>
+            <div class="muted small">
+              {{ section.hasAttachments ? ('profileApproval.detail.withAttachments' | translate) : ('profileApproval.detail.textOnly' | translate) }}
+            </div>
+          </div>
+          <div class="section-actions">
+            <div class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
+              {{ statusLabel(section.sectionReview?.status) | translate }}
+            </div>
+            <div class="muted small" *ngIf="sectionHasUnresolvedItems(section)">
+              {{ 'profileApproval.section.pendingWarning' | translate }}
+            </div>
+            <button
+              class="btn primary"
+              type="button"
+              [disabled]="!section.sectionReview || !sectionCanBeApproved(section)"
+              (click)="openSectionDialog(section, 'section-approve')"
+            >
+              {{ 'profileApproval.section.approve' | translate }}
+            </button>
+            <button
+              class="btn outline"
+              type="button"
+              [disabled]="!section.sectionReview"
+              (click)="openSectionDialog(section, 'section-changes')"
+            >
+              {{ 'profileApproval.section.needsCorrection' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="items" *ngIf="section.items.length; else noItems">
+          <div class="item" *ngFor="let item of section.items">
+            <div class="item-main">
+              <div>
+                <div class="item-title">{{ item.title }}</div>
+                <div class="muted small">
+                  {{ item.targetType === ReviewTargetType.Attachment ? ('profileApproval.detail.attachment' | translate) : ('profileApproval.detail.text' | translate) }}
+                  <ng-container *ngIf="item.entityName">- {{ item.entityName }}</ng-container>
+                </div>
+                <div class="muted small" *ngIf="item.oldValue || item.newValue">
+                  <div *ngIf="item.oldValue">{{ 'profileApproval.detail.oldValue' | translate }}: {{ item.oldValue }}</div>
+                  <div *ngIf="item.newValue">{{ 'profileApproval.detail.newValue' | translate }}: {{ item.newValue }}</div>
+                </div>
+                <div class="muted small" *ngIf="item.note">{{ 'profileApproval.detail.previousNote' | translate }} {{ item.note }}</div>
+              </div>
+              <div class="item-actions">
+                <span class="pill" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) | translate }}</span>
+                <button *ngIf="item.resourceUrl" class="btn ghost" (click)="previewFile(item.resourceUrl)">
+                  {{ 'profileApproval.detail.viewFile' | translate }}
+                </button>
+                <button
+                  class="btn primary"
+                  type="button"
+                  [disabled]="!canApproveAttachment(section, item) || item.status === ReviewStatus.Approved"
+                  (click)="openItemDialog(item, 'approve')"
+                >
+                  {{ 'profileApproval.detail.approve' | translate }}
+                </button>
+                <button class="btn outline" type="button" (click)="openItemDialog(item, 'changes')">
+                  {{ 'profileApproval.detail.requestChanges' | translate }}
+                </button>
+                <button class="btn danger" type="button" (click)="openItemDialog(item, 'reject')">
+                  {{ 'profileApproval.detail.reject' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noItems>
+          <div class="empty">{{ 'profileApproval.detail.noItems' | translate }}</div>
+        </ng-template>
+      </div>
+
+      <div class="section-card" *ngIf="!info.isPartialReview && activeSection() === 999">
+        <div class="section-head">
+          <div>
+            <div class="section-title">{{ 'profileApproval.final.tabTitle' | translate }}</div>
+            <div class="muted small">{{ 'profileApproval.final.subtitle' | translate }}</div>
+          </div>
+        </div>
+
+        <div class="final-grid">
+          <div class="final-block">
+            <h5>{{ 'profileApproval.final.tabStatus' | translate }}</h5>
+            <ul class="status-list">
+              <li *ngFor="let section of info.sections">
+                <span>{{ sectionName(section.section) | translate }}</span>
+                <span class="pill" [ngClass]="statusClass(section.sectionReview?.status)">
+                  {{ statusLabel(section.sectionReview?.status) | translate }}
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="final-block">
+            <h5>{{ 'profileApproval.final.notesHeader' | translate }}</h5>
+            <ul class="note-list">
+              <li *ngFor="let section of info.sections">
+                <div class="note-title">{{ sectionName(section.section) | translate }}</div>
+                <div class="muted small" *ngIf="section.sectionReview?.note; else noNote">{{ section.sectionReview?.note }}</div>
+                <ng-template #noNote>
+                  <div class="muted small">{{ 'profileApproval.final.noNotes' | translate }}</div>
+                </ng-template>
+              </li>
+            </ul>
+          </div>
+          <div class="final-block">
+            <h5>{{ 'profileApproval.final.summaryHeader' | translate }}</h5>
+            <textarea
+              class="form-control"
+              rows="4"
+              [placeholder]="'profileApproval.final.summaryPlaceholder' | translate"
+              [ngModel]="finalSummary()"
+              (ngModelChange)="finalSummary.set($event)"
+            ></textarea>
+
+            <div class="final-actions">
+              <label class="label">{{ 'profileApproval.final.actionNote' | translate }}</label>
+              <textarea
+                class="form-control"
+                rows="3"
+                [placeholder]="'profileApproval.final.actionNotePlaceholder' | translate"
+                [ngModel]="finalActionNote()"
+                (ngModelChange)="finalActionNote.set($event)"
+              ></textarea>
+
+              <label class="radio-row" *ngFor="let option of ['ApproveProfile','NeedsCorrection','RejectProfile','BlockProfile','ExceptionalApproval']">
+                <p-radio-button
+                  name="finalAction"
+                  [value]="option"
+                  [ngModel]="activeFinalAction()"
+                  (onClick)="setFinalAction(option)"
+                ></p-radio-button>
+                <span>{{ ('profileApproval.final.actions.' + option) | translate }}</span>
+              </label>
+
+              <div class="upload" *ngIf="activeFinalAction() === 'RejectProfile' || activeFinalAction() === 'ExceptionalApproval'">
+                <label class="label">{{ 'profileApproval.final.supportingFile' | translate }}</label>
+                <input type="file" (change)="finalAttachment = $any($event.target).files?.item(0) ?? null" />
+              </div>
+
+              <div class="upload" *ngIf="activeFinalAction() === 'RejectProfile'">
+                <small class="muted">{{ 'profileApproval.final.rejectHint' | translate }}</small>
+              </div>
+
+              <div class="upload" *ngIf="activeFinalAction() === 'ExceptionalApproval'">
+                <small class="muted">{{ 'profileApproval.final.exceptionHint' | translate }}</small>
+              </div>
+
+              <div class="actions">
+                <button
+                  class="btn primary"
+                  type="button"
+                  [disabled]="
+                    !activeFinalAction() ||
+                    loadingFinalAction() ||
+                    (activeFinalAction() === 'ApproveProfile' && !canApproveProfile())
+                  "
+                  (click)="confirmFinalAction()"
+                >
+                  {{ 'profileApproval.final.confirmAction' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>

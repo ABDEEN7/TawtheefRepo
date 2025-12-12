@@ -1,75 +1,54 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { finalize, Subscription } from 'rxjs';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { finalize, Subscription, combineLatest } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProfileApprovalService } from './services/profile-approval.service';
 import {
   FinalApprovalAction,
   ProfileApprovalDetail,
   ProfileApprovalItem,
-  ProfileApprovalListFilter,
-  ProfileApprovalListItem,
   ProfileApprovalSection,
   ReviewStatus,
   ReviewTargetType,
 } from './models/profile-approval.models';
-import {RadioButton} from 'primeng/radiobutton';
-import { MessageService, SortEvent } from 'primeng/api';
-import { TableModule } from 'primeng/table';
-import {Select} from 'primeng/select';
-import {DialogService} from 'primeng/dynamicdialog';
-import {ItemDialogResult, ItemReviewDialogComponent} from './dialogs/item-review-dialog/item-review-dialog';
-import {SectionDialogResult, SectionReviewDialogComponent} from './dialogs/section-review-dialog/section-review-dialog';
-import {FinalActionConfirmDialogComponent} from './dialogs/final-action-confirm-dialog/final-action-confirm-dialog';
-import {FileUtilsService} from '../../../core/utils/file-utils';
-import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
+import { RadioButton } from 'primeng/radiobutton';
+import { DialogService } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
+import { ItemDialogResult, ItemReviewDialogComponent } from './dialogs/item-review-dialog/item-review-dialog';
+import { SectionDialogResult, SectionReviewDialogComponent } from './dialogs/section-review-dialog/section-review-dialog';
+import { FinalActionConfirmDialogComponent } from './dialogs/final-action-confirm-dialog/final-action-confirm-dialog';
+import { FileUtilsService } from '../../../core/utils/file-utils';
+import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
+import { routes } from '../../../routes/routes';
 
 @Component({
-  selector: 'app-profile-approval-page',
+  selector: 'app-profile-approval-detail-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    TranslateModule,
-    I18nNamespaceDirective,
-    TableModule,
-    RadioButton,
-    Select,
-  ],
-  templateUrl: './profile-approval.page.html',
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, I18nNamespaceDirective, RadioButton],
+  templateUrl: './profile-approval-detail.page.html',
   styleUrl: './profile-approval.page.scss',
-  providers: [MessageService, DialogService],
+  providers: [DialogService, MessageService],
 })
-export class ProfileApprovalPage implements OnInit, OnDestroy {
+export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   private fileUtils = inject(FileUtilsService);
   private api = inject(ProfileApprovalService);
   private route = inject(ActivatedRoute);
-  private messages = inject(MessageService);
+  private router = inject(Router);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
+  private messages = inject(MessageService);
 
   private subscriptions: Subscription[] = [];
+  private lastLoadedKey: string | null = null;
 
-  list = signal<ProfileApprovalListItem[]>([]);
-  loadingList = signal(false);
   loadingDetail = signal(false);
   loadingFinalAction = signal(false);
   selectedProfileId = signal<string | null>(null);
   detail = signal<ProfileApprovalDetail | null>(null);
   error = signal<string | null>(null);
   partialMode = signal(false);
-  filters = signal<ProfileApprovalListFilter>({
-    search: '',
-    status: '',
-    candidateType: '',
-    targetEntity: '',
-    specialization: '',
-    sort: 'date',
-    sortDirection: 'desc',
-  });
   activeSection = signal<number | null>(null);
   activeFinalAction = signal<FinalApprovalAction | null>(null);
   finalSummary = signal('');
@@ -79,40 +58,25 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   protected readonly ReviewStatus = ReviewStatus;
   protected readonly ReviewTargetType = ReviewTargetType;
 
-  readonly hasSelection = computed(() => !!this.detail());
-
-  readonly statusOptions = [
-    { label: 'profileApproval.status.approved', value: ReviewStatus.Approved },
-    { label: 'profileApproval.status.changes', value: ReviewStatus.ChangesRequested },
-    { label: 'profileApproval.status.pending', value: ReviewStatus.Pending },
-    { label: 'profileApproval.status.rejected', value: ReviewStatus.Rejected },
-  ];
-
-  updateFilter(key: keyof ProfileApprovalListFilter, value: ProfileApprovalListFilter[keyof ProfileApprovalListFilter]): void {
-    this.filters.set({ ...this.filters(), [key]: value });
-  }
-
   ngOnInit(): void {
-    const initialParams = this.route.snapshot.queryParamMap;
-    this.partialMode.set(this.parsePartialFlag(initialParams.get('changes')));
-    const initialProfileId = initialParams.get('profileId');
-
-    if (!this.partialMode()) {
-      this.loadList();
-    }
-
-    if (initialProfileId) {
-      this.selectProfile(initialProfileId);
-    }
-
-    const sub = this.route.queryParamMap.subscribe(params => {
+    const sub = combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(([params, query]) => {
       const profileId = params.get('profileId');
-      this.partialMode.set(this.parsePartialFlag(params.get('changes')));
+      const partial = this.parsePartialFlag(query.get('changes'));
+      this.partialMode.set(partial);
 
-      if (profileId) {
-        this.selectProfile(profileId);
+      if (!profileId) {
+        this.backToList();
+        return;
+      }
+
+      this.selectedProfileId.set(profileId);
+      const loadKey = `${profileId}-${partial}`;
+      if (loadKey !== this.lastLoadedKey) {
+        this.lastLoadedKey = loadKey;
+        this.loadDetail(profileId);
       }
     });
+
     this.subscriptions.push(sub);
   }
 
@@ -120,26 +84,11 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  loadList(): void {
-    this.loadingList.set(true);
-    this.api
-      .getProfiles(this.filters())
-      .pipe(finalize(() => this.loadingList.set(false)))
-      .subscribe({
-        next: profiles => {
-          this.list.set(profiles);
-          if (!this.selectedProfileId() && profiles.length > 0) {
-            this.selectProfile(profiles[0].userProfileId);
-          }
-        },
-        error: () => this.error.set(this.translate.instant('profileApproval.errors.loadList')),
-      });
-  }
-
-  selectProfile(profileId: string): void {
-    if (!profileId) return;
-    this.selectedProfileId.set(profileId);
-    this.loadDetail(profileId);
+  backToList(): void {
+    this.partialMode.set(false);
+    this.selectedProfileId.set(null);
+    this.detail.set(null);
+    this.router.navigate([routes.employee.approvalProfile]);
   }
 
   loadDetail(profileId: string): void {
@@ -161,27 +110,6 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
       });
   }
 
-  applyFilters(): void {
-    this.loadList();
-  }
-
-  resetFilters(): void {
-    this.filters.set({ search: '', status: '', candidateType: '', targetEntity: '', specialization: '', sort: 'date', sortDirection: 'desc' });
-    this.loadList();
-  }
-
-  onSort(event: SortEvent): void {
-    if (!event.field) return;
-    const sortMap: Record<string, ProfileApprovalListFilter['sort']> = {
-      fullName: 'name',
-      overallStatus: 'status',
-      targetEntity: 'entity',
-      submittedAtUtc: 'date',
-    };
-    const mapped = sortMap[event.field] ?? 'date';
-    this.filters.set({ ...this.filters(), sort: mapped, sortDirection: event.order === 1 ? 'asc' : 'desc' });
-    this.loadList();
-  }
   openItemDialog(item: ProfileApprovalItem, action: 'approve' | 'reject' | 'changes'): void {
     this.dialogService.open(ItemReviewDialogComponent, {
       header: this.translate.instant('profileApproval.dialog.title'),
@@ -270,7 +198,7 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
   }
 
   previewFile(resourceUrl: string): void {
-    this.fileUtils.previewUrl(resourceUrl, '', false).then(r => {});
+    this.fileUtils.previewUrl(resourceUrl, '', false).then(() => {});
   }
 
   detailStatus(): ReviewStatus {
@@ -380,19 +308,12 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
       .pipe(finalize(() => this.loadingFinalAction.set(false)))
       .subscribe({
         next: () => {
-          this.messages.add({
-            severity: 'success',
-            summary: this.translate.instant('profileApproval.final.actionExecuted'),
-            detail: this.translate.instant('profileApproval.final.actionQueued'),
-          });
           this.activeFinalAction.set(null);
           this.finalActionNote.set('');
           this.finalAttachment = null;
           this.loadDetail(this.detail()!.userProfileId);
-          this.loadList();
         },
-        error: () =>
-          this.messages.add({ severity: 'error', summary: this.translate.instant('profileApproval.errors.finalize') }),
+        error: () => this.error.set(this.translate.instant('profileApproval.errors.finalize')),
       });
   }
 
@@ -433,7 +354,6 @@ export class ProfileApprovalPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.loadDetail(this.selectedProfileId()!);
-          this.loadList();
         },
         error: err => {
           const message = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.errors.reviewItem');
