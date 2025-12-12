@@ -1,9 +1,11 @@
 using FluentResults;
+using Mapster;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
@@ -172,6 +174,9 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
 
         ProfileApprovalDataDto MapProfile(UserProfile profileEntity)
         {
+            using var scope = new MapContextScope();
+            scope.Context.Parameters[ResourceMapper.MediaKey] = media;
+
             var result = mapper.Map<ProfileApprovalDataDto>(profileEntity);
             result.Qualifications = profileEntity.Qualifications?
                                         .OrderBy(q => q.GraduationYear)

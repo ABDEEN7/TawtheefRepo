@@ -76,7 +76,6 @@ public class ProfileChange : EventEntity
         {
             string s => s,
             DateOnly date => date.ToString("yyyy-MM-dd"),
-            DateOnly? date => date?.ToString("yyyy-MM-dd"),
             DateTime dt => dt.ToString("O"),
             DateTimeOffset dto => dto.ToString("O"),
             Enum e => e.ToString(),

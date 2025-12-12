@@ -24,8 +24,9 @@ export class UserService {
       lastName: user.lastName ?? this.tokenService.getClaim(accessToken, 'family_name'),
       profilePictureUrl: user.profilePictureUrl ?? this.tokenService.getClaim(accessToken, 'picture') ?? null,
       userType: this.tokenService.getRoleFromToken(accessToken),
-      authProvider: user.authProvider || this.tokenService.getClaim(accessToken, 'auth_provider') || 'local'
-    };
+      authProvider: user.authProvider || this.tokenService.getClaim(accessToken, 'auth_provider') || 'local',
+      notifications : 0
+    } as UserInfoModel;
     localStorage.setItem('user_data', JSON.stringify(minimalUser));
     if(user.prefill || user.prefill === null) localStorage.setItem('prefill', JSON.stringify(user.prefill));
     this.currentUserSubject.next(minimalUser);

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { I18nNamespaceDirective } from '../../shared/directives/i18n-namespace.directive';
 import { ProfileOverviewService } from './services/profile-overview.service';
 import { ProfileOverview } from './models/profile-overview.model';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-profile-overview',

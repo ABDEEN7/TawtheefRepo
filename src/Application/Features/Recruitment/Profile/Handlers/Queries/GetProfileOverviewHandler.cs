@@ -8,6 +8,7 @@ using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 

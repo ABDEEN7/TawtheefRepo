@@ -51,7 +51,7 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
                         && c.EntityName == entityName
                         && (entityId == null || c.EntityId == entityId)
                         && (resourceId == null || c.ResourceId == resourceId))
-            .OrderByDescending(c => c.CreatedAtUtc)
+            .OrderByDescending(c => c.CreatedDate)
             .FirstOrDefaultAsync(ct);
 
         if (change is null)
