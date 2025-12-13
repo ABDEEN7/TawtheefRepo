@@ -1,6 +1,4 @@
-using System.Security.Claims;
 using Mapster;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Users.DTOs;
 using Tawtheef.Domain.Entities.Users;
@@ -26,12 +24,7 @@ public sealed class UserProfile : IRegister
 
         config.NewConfig<RoleWithClaims, RoleSummaryDto>()
             .Map(dest => dest.Id, src => src.Role.Id)
-            .Map(dest => dest.NameAr, src => GetNameClaim(src.Claims, RoleClaimTypes.NameArabic, src.Role.Name))
-            .Map(dest => dest.NameEn, src => GetNameClaim(src.Claims, RoleClaimTypes.NameEnglish, src.Role.Name));
-    }
-
-    private static string GetNameClaim(IEnumerable<Claim> claims, string type, string? fallback)
-    {
-        return claims.FirstOrDefault(c => c.Type == type)?.Value ?? fallback ?? string.Empty;
+            .Map(dest => dest.NameAr, src => src.Role.NameAr ?? src.Role.Name ?? string.Empty)
+            .Map(dest => dest.NameEn, src => src.Role.NameEn ?? src.Role.Name ?? string.Empty);
     }
 }

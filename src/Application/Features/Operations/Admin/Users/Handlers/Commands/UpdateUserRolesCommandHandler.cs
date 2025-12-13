@@ -11,7 +11,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Commands
 
 public sealed class UpdateUserRolesCommandHandler(
     UserManager<User> userManager,
-    RoleManager<IdentityRole<Guid>> roleManager)
+    RoleManager<ApplicationRole> roleManager)
     : IRequestHandler<UpdateUserRolesCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
