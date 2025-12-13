@@ -41,7 +41,7 @@
           class="shadow-sm"
           size="xlarge"
           shape="circle"
-          [image]="info.profile?.profilePhoto?.url || 'assets/img/avatar.png'"
+          [image]="info.profile?.profilePhoto || 'assets/img/avatar.png'"
         ></p-avatar>
       </div>
     </div>
@@ -136,7 +136,7 @@
             <div class="approve-grid row gy-3">
               <div class="field col-12 col-lg-4">
                 <label class="lbl form-label">{{ 'profileApproval.detail.sectionApproval.statusLabel' | translate }} <span class="req">*</span></label>
-                <p-dropdown
+                <p-select
                   class="w-100"
                   [options]="reviewStatusOptions"
                   optionValue="value"
@@ -152,7 +152,7 @@
                   <ng-template let-opt pTemplate="item">
                     {{ opt.labelKey | translate }}
                   </ng-template>
-                </p-dropdown>
+                </p-select>
               </div>
 
               <div class="field col-12 col-lg-8">

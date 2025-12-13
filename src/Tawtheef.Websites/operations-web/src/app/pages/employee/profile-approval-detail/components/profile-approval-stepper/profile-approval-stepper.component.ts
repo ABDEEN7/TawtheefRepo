@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { ReviewStatus } from '../../profile-approval/models/profile-approval.models';
+import {ReviewStatus} from '../../../profile-approval/models/profile-approval.models';
 
 export type StepUiStatus = 'done' | 'bad' | 'progress' | 'idle';
 

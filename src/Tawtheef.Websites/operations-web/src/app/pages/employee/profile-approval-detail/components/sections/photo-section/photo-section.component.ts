@@ -11,5 +11,5 @@ import { FileRefDto } from '../../../../profile-approval/models/profile-approval
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class PhotoSectionComponent {
-  @Input() profilePhoto: FileRefDto | null = null;
+  @Input() profilePhoto: string | null = null;
 }

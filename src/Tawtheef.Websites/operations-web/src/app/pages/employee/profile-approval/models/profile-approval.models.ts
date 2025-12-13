@@ -72,7 +72,7 @@ export interface ProfileApprovalData {
   skillsAndLanguages: any[];
   languages: any[];
   attachments: any[];
-  profilePhoto?: FileRefDto | null;
+  profilePhoto?: string | null;
 }
 
 export interface ProfileApprovalDetail {

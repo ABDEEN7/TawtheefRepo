@@ -16,8 +16,6 @@ import {
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputTextareaModule } from 'primeng/inputtextarea';
 import { AvatarModule } from 'primeng/avatar';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
@@ -39,6 +37,8 @@ import { TrainingSectionComponent } from './components/sections/training-section
 import { SkillsLanguagesSectionComponent } from './components/sections/skills-languages-section/skills-languages-section.component';
 import { AttachmentsSectionComponent } from './components/sections/attachments-section/attachments-section.component';
 import { PhotoSectionComponent } from './components/sections/photo-section/photo-section.component';
+import {Select} from 'primeng/select';
+import {Textarea} from 'primeng/textarea';
 
 type ContentTab = 'profile' | 'review' | 'final';
 
@@ -56,8 +56,6 @@ type TabState = Record<ContentTab, { loading: boolean; loaded: boolean }>;
     ProgressSpinnerModule,
     CardModule,
     ButtonModule,
-    DropdownModule,
-    InputTextareaModule,
     AvatarModule,
     ProfileApprovalStepperComponent,
     BasicInfoSectionComponent,
@@ -67,6 +65,8 @@ type TabState = Record<ContentTab, { loading: boolean; loaded: boolean }>;
     SkillsLanguagesSectionComponent,
     AttachmentsSectionComponent,
     PhotoSectionComponent,
+    Select,
+    Textarea,
   ],
   templateUrl: './profile-approval-detail.page.html',
   styleUrl: './profile-approval-detail.page.scss',
@@ -90,7 +90,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   detail = signal<ProfileApprovalDetail | null>(null);
   error = signal<string | null>(null);
   partialMode = signal(false);
-  activeContentTab = signal<ContentTab>('profile');
+  activeContentTab = signal<ContentTab>('review');
   tabState = signal<TabState>(this.createTabState());
   activeSection = signal<number | null>(null);
   activeFinalAction = signal<FinalApprovalAction | null>(null);
