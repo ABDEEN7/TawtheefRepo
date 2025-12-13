@@ -1,0 +1,51 @@
+<div class="row g-3" *ngIf="certificates?.length; else emptyBlock">
+  <div class="col-12" *ngFor="let c of certificates">
+    <p-card class="shadow-sm h-100 section-panel">
+      <ng-template pTemplate="header">
+        <div class="card-head justify-content-between">
+          <div class="d-flex align-items-center gap-2">
+            <span class="icon-circle text-warning bg-light">
+              <i class="pi pi-certificate"></i>
+            </span>
+            <div>
+              <h5 class="mb-0">{{ c.title || c.name || '-' }}</h5>
+              <small class="text-muted">{{ c.issuerName || c.issuer || '-' }}</small>
+            </div>
+          </div>
+
+          <button
+            pButton
+            type="button"
+            class="p-button-text"
+            icon="pi pi-external-link"
+            (click)="preview(c.attachment?.url)"
+            [label]="'profileApproval.detail.viewFile' | translate"
+            [disabled]="!c.attachment?.url"
+          ></button>
+        </div>
+      </ng-template>
+
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.certificates.issueDate' | translate }}</div>
+          <div class="fw-semibold">{{ c.issueDate || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.certificates.expiryDate' | translate }}</div>
+          <div class="fw-semibold">{{ c.expiryDate || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.certificates.attachment' | translate }}</div>
+          <div class="fw-semibold d-flex align-items-center gap-2">
+            <p-tag *ngIf="c.attachment?.fileName" severity="info" [value]="c.attachment.fileName"></p-tag>
+            <span *ngIf="!c.attachment?.fileName">-</span>
+          </div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>
+
+<ng-template #emptyBlock>
+  <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+</ng-template>
