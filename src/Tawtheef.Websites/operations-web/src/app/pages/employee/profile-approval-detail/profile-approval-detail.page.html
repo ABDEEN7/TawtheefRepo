@@ -28,6 +28,28 @@
                   <i class="pi pi-sitemap"></i>
                   <span>{{ 'profileApproval.detail.recruiterCategory' | translate }}: {{ info.targetEntityCategory }}</span>
                 </span>
+                <span class="pill" *ngIf="info.profile?.basicInformation?.email">
+                  <i class="pi pi-envelope"></i>
+                  <span>{{ 'profileApproval.detail.snapshot.email' | translate }}: {{ info.profile?.basicInformation?.email }}</span>
+                </span>
+                <span class="pill" *ngIf="info.profile?.basicInformation?.phoneNumber">
+                  <i class="pi pi-phone"></i>
+                  <span>
+                    {{ 'profileApproval.detail.snapshot.phoneNumber' | translate }}:
+                    {{ info.profile?.basicInformation?.phoneNumber }}
+                  </span>
+                </span>
+                <span class="pill" *ngIf="info.profile?.basicInformation?.residenceCountry">
+                  <i class="pi pi-globe"></i>
+                  <span>
+                    {{ 'profileApproval.detail.snapshot.residenceCountry' | translate }}:
+                    {{ info.profile?.basicInformation?.residenceCountry }}
+                  </span>
+                </span>
+                <span class="pill" *ngIf="info.profile?.basicInformation?.address">
+                  <i class="pi pi-map-marker"></i>
+                  <span>{{ 'profileApproval.detail.snapshot.address' | translate }}: {{ info.profile?.basicInformation?.address }}</span>
+                </span>
                 <span class="pill" *ngIf="info.specialization">
                   <i class="pi pi-star"></i>
                   <span>{{ 'profileApproval.detail.specialization' | translate }}: {{ info.specialization }}</span>
@@ -56,6 +78,52 @@
       </div>
 
       <!-- STEPPER -->
+      <ng-container *ngIf="progressStats(info) as stats">
+        <div class="insight-grid mt-3">
+          <div class="insight-card soft-warning">
+            <div class="label">{{ 'profileApproval.detail.verification.pendingSections' | translate }}</div>
+            <div class="value">
+              <i class="pi pi-hourglass text-warning"></i>
+              <span>{{ stats.pendingSections }}</span>
+            </div>
+          </div>
+          <div class="insight-card soft-danger">
+            <div class="label">{{ 'profileApproval.detail.verification.flaggedSections' | translate }}</div>
+            <div class="value">
+              <i class="pi pi-flag-fill text-danger"></i>
+              <span>{{ stats.flaggedSections }}</span>
+            </div>
+          </div>
+          <div class="insight-card soft-success">
+            <div class="label">{{ 'profileApproval.detail.verification.approvedSections' | translate }}</div>
+            <div class="value">
+              <i class="pi pi-check-circle text-success"></i>
+              <span>{{ stats.approvedSections }}</span>
+            </div>
+          </div>
+          <div class="insight-card soft-info">
+            <div class="label">{{ 'profileApproval.detail.verification.pendingItems' | translate }}</div>
+            <div class="value">
+              <i class="pi pi-list-check text-info"></i>
+              <span>{{ stats.pendingItems }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-2">
+          <button
+            pButton
+            type="button"
+            class="p-button-rounded p-button-outlined"
+            icon="pi pi-compass"
+            iconPos="right"
+            [disabled]="!firstAttentionSection(info)"
+            (click)="jumpToAttention(info)"
+            [label]="'profileApproval.detail.verification.jumpToAttention' | translate"
+          ></button>
+        </div>
+      </ng-container>
+
       <app-profile-approval-stepper
         class="d-block mt-3"
         [sections]="stepperSections(info)"
@@ -141,6 +209,59 @@
                       <app-profile-approval-photo-section
                         [profilePhoto]="profile.profilePhoto || null"
                       ></app-profile-approval-photo-section>
+                    </ng-container>
+
+                    <!-- 10) Final review summary -->
+                    <ng-container *ngSwitchCase="10">
+                      <div class="final-review-block">
+                        <div class="d-flex align-items-start gap-2 mb-3">
+                          <i class="pi pi-clipboard"></i>
+                          <div>
+                            <h4 class="mb-1">{{ 'profileApproval.finalReview.title' | translate }}</h4>
+                            <p class="text-muted mb-0">{{ 'profileApproval.finalReview.subtitle' | translate }}</p>
+                          </div>
+                        </div>
+
+                        <div class="detail-grid mb-3">
+                          <div class="detail-tile">
+                            <div class="text-muted small">{{ 'profileApproval.finalReview.counts.approved' | translate }}</div>
+                            <div class="fw-semibold">{{ finalStatusSummary(info).approved }}</div>
+                          </div>
+                          <div class="detail-tile">
+                            <div class="text-muted small">{{ 'profileApproval.finalReview.counts.changes' | translate }}</div>
+                            <div class="fw-semibold">{{ finalStatusSummary(info).changes }}</div>
+                          </div>
+                          <div class="detail-tile">
+                            <div class="text-muted small">{{ 'profileApproval.finalReview.counts.rejected' | translate }}</div>
+                            <div class="fw-semibold">{{ finalStatusSummary(info).rejected }}</div>
+                          </div>
+                          <div class="detail-tile">
+                            <div class="text-muted small">{{ 'profileApproval.finalReview.counts.pending' | translate }}</div>
+                            <div class="fw-semibold">{{ finalStatusSummary(info).pending }}</div>
+                          </div>
+                        </div>
+
+                        <div class="review-list">
+                          <div class="d-flex justify-content-between align-items-center py-2 border-bottom" *ngFor="let s of orderedSections(info)">
+                            <div class="fw-semibold">{{ sectionName(s.section) | translate }}</div>
+                            <span class="fw-semibold" [ngClass]="sectionStatusClass(s.sectionReview?.status)">
+                              {{ sectionStatusLabel(s.sectionReview?.status) }}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="text-end mt-3">
+                          <button
+                            pButton
+                            type="button"
+                            class="p-button-success"
+                            icon="pi pi-send"
+                            iconPos="right"
+                            (click)="sendApprovalReport()"
+                            [label]="'profileApproval.finalReview.sendReport' | translate"
+                          ></button>
+                        </div>
+                      </div>
                     </ng-container>
 
                     <div *ngSwitchDefault class="text-center text-muted py-4">

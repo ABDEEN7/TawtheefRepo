@@ -16,6 +16,10 @@ export class BasicInfoSectionComponent {
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Output() viewFile = new EventEmitter<string>();
 
+  hasValue(value: unknown): boolean {
+    return value !== null && value !== undefined && `${value}`.toString().trim() !== '';
+  }
+
   hasBasicFiles(): boolean {
     const b = this.profile?.basicInformation;
     return !!(
@@ -23,7 +27,8 @@ export class BasicInfoSectionComponent {
       b?.nationalCard ||
       b?.birthdayCertificate ||
       b?.marriageCertificate ||
-      b?.residenceAddressCertificate
+      b?.residenceAddressCertificate ||
+      b?.sponsorCard
     );
   }
 
