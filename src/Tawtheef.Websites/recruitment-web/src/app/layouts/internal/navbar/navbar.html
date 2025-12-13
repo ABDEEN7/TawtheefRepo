@@ -66,7 +66,7 @@
       </button>
 
       <!-- User Menu -->
-      <div class="user-menu" *ngIf="isLoggedIn && isProfileCompleted">
+      <div class="user-menu" *ngIf="isLoggedIn">
         <button class="user-toggle" (click)="toggleUserMenu()">
           <img
             [src]="userAvatar"
