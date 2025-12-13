@@ -54,13 +54,13 @@ public class GetProfileOverviewHandler(
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var reviewItems = await reviewRepo.DbSet
-            .Where(r => r.UserProfileId == profile.Id
-                        && r.Status != ReviewStatus.Approved)
+            .Where(r => r.UserProfileId == profile.Id)
             .Include(r => r.ProfileChange)
             .OrderByDescending(r => r.Version)
             .ToListAsync(ct);
 
         var latestItems = reviewItems
+            .Where(r => r.Status != ReviewStatus.Approved)
             .GroupBy(r => new { r.TargetType, r.Section, r.FieldPath, r.EntityName, r.EntityId, r.ResourceId, r.ProfileChangeId })
             .Select(g => g.First())
             .ToList();
@@ -75,6 +75,34 @@ public class GetProfileOverviewHandler(
         var resources = await resourceRepo.DbSet
             .Where(r => resourceIds.Contains(r.Id))
             .ToDictionaryAsync(r => r.Id, ct);
+
+        var pendingItems = latestItems.Where(item => item.Status != ReviewStatus.Approved).ToList();
+
+        var progress = new ProfileRequestProgressDto
+        {
+            LatestVersion = reviewItems.Any() ? reviewItems.Max(r => r.Version) : 0,
+            PendingCount = pendingItems.Count(item => item.Status == ReviewStatus.Pending),
+            NeedsCorrectionCount = pendingItems.Count(item => item.Status == ReviewStatus.NeedsCorrection),
+            RejectedCount = pendingItems.Count(item => item.Status == ReviewStatus.Rejected),
+            ApprovedCount = reviewItems.Count(item => item.Status == ReviewStatus.Approved),
+            LastSubmittedAtUtc = reviewItems.Any()
+                ? reviewItems.Max(item => item.CreatedDate.ToUniversalTime())
+                : null,
+            LastDecisionAtUtc = reviewItems
+                .Where(item => item.ReviewedAtUtc.HasValue)
+                .OrderByDescending(item => item.ReviewedAtUtc)
+                .Select(item => (DateTimeOffset?)item.ReviewedAtUtc)
+                .FirstOrDefault(),
+            LatestReviewerNote = reviewItems
+                .OrderByDescending(item => item.ReviewedAtUtc ?? item.CreatedDate.ToUniversalTime())
+                .Select(item => item.ReviewerNote)
+                .FirstOrDefault(note => !string.IsNullOrWhiteSpace(note)),
+            LatestStatus = reviewItems
+                .OrderByDescending(item => item.ReviewedAtUtc ?? item.CreatedDate.ToUniversalTime())
+                .Select(item => (ReviewStatus?)item.Status)
+                .FirstOrDefault(),
+            RequiresUserAction = pendingItems.Any(item => item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected)
+        };
 
         var groupedSections = latestItems
             .GroupBy(item => item.Section)
@@ -111,6 +139,7 @@ public class GetProfileOverviewHandler(
             UserProfileId = profile.Id,
             Status = profile.Status,
             ApprovedProfile = approvedSnapshot,
+            RequestProgress = progress,
             Sections = groupedSections
         });
     }
