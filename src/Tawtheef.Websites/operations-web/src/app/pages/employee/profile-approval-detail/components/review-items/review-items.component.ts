@@ -22,14 +22,14 @@ export class ReviewItemsComponent {
 
   protected readonly ReviewStatus = ReviewStatus;
 
-  statusSeverity(status: ReviewStatus | undefined): 'success' | 'danger' | 'info' | 'warning' {
+  statusSeverity(status: ReviewStatus | undefined): 'success' | 'danger' | 'info' | 'warn' {
     switch (status) {
       case ReviewStatus.Approved:
         return 'success';
       case ReviewStatus.Rejected:
         return 'danger';
       case ReviewStatus.ChangesRequested:
-        return 'warning';
+        return 'warn';
       default:
         return 'info';
     }

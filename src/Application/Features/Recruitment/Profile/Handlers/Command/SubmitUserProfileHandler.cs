@@ -111,9 +111,8 @@ public sealed class SubmitUserProfileHandler(
                 nameof(Qualification),
                 qualification.Id,
                 qualification.CertificateId.Value,
-                qualification.Certificate?.FileName
-                    ?? qualification.Major?.Name
-                    ?? "Qualification file");
+                qualification.Certificate?.Name
+                    ?? qualification.Major!.BackendName);
         }
 
         foreach (var experience in profile.Experiences ?? [])
@@ -125,9 +124,8 @@ public sealed class SubmitUserProfileHandler(
                 nameof(Experience),
                 experience.Id,
                 experience.CertificateId,
-                experience.Certificate?.FileName
-                    ?? experience.JobTitle
-                    ?? "Experience certificate");
+                experience.Certificate?.Name
+                    ?? experience.JobTitle);
         }
 
         foreach (var training in profile.TrainingCourses ?? [])
@@ -139,9 +137,8 @@ public sealed class SubmitUserProfileHandler(
                 nameof(TrainingCourse),
                 training.Id,
                 training.CertificateId,
-                training.Certificate?.FileName
-                    ?? training.Title
-                    ?? "Training certificate");
+                training.Certificate?.Name
+                    ?? training.Title);
         }
 
         foreach (var achievement in profile.Achievements ?? [])
@@ -153,9 +150,8 @@ public sealed class SubmitUserProfileHandler(
                 nameof(Achievement),
                 achievement.Id,
                 achievement.AttachmentId,
-                achievement.Attachment?.FileName
-                    ?? achievement.Title
-                    ?? "Certificate");
+                achievement.Attachment?.Name
+                    ?? achievement.Title);
         }
 
         profile.Status = UserProfileStatus.Submitted;

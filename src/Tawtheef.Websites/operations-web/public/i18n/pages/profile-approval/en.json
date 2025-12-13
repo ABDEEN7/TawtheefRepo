@@ -131,7 +131,7 @@
   "profileApproval.sections.profilePhoto": "Profile photo",
   "profileApproval.sections.generic": "Section",
 
-  "profileOverview.sections.personal": "Basic info",
+  "profileOverview.sections.basicInfo": "Basic info",
   "profileOverview.sections.contactInfo": "Contact information",
   "profileOverview.sections.qualifications": "Qualifications",
   "profileOverview.sections.experiences": "Experiences",
