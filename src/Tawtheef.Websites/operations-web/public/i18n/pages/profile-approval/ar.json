@@ -68,6 +68,37 @@
   "profileApproval.detail.snapshot.reading": "القراءة",
   "profileApproval.detail.snapshot.native": "لغة أم",
 
+  "profileApproval.detail.qualifications.country": "بلد التخرج",
+  "profileApproval.detail.qualifications.university": "الجامعة",
+  "profileApproval.detail.qualifications.year": "سنة التخرج",
+  "profileApproval.detail.qualifications.attachment": "المرفق",
+
+  "profileApproval.detail.experiences.country": "الدولة",
+  "profileApproval.detail.experiences.period": "تاريخ الخبرة",
+  "profileApproval.detail.experiences.attachment": "المرفق",
+  "profileApproval.detail.experiences.tasks": "المهام",
+
+  "profileApproval.detail.training.country": "الدولة",
+  "profileApproval.detail.training.period": "تاريخ الدورة",
+  "profileApproval.detail.training.attachment": "المرفق",
+  "profileApproval.detail.training.description": "الوصف",
+
+  "profileApproval.detail.skills.title": "المهارات",
+  "profileApproval.detail.skills.level": "المستوى",
+  "profileApproval.detail.skills.languagesTitle": "اللغات",
+
+  "profileApproval.detail.attachments.fileName": "اسم الملف",
+  "profileApproval.detail.attachments.fileSize": "حجم الملف",
+  "profileApproval.detail.attachments.fileType": "نوع الملف",
+
+  "profileApproval.detail.sectionApproval.title": "اعتماد القسم للبيانات الشخصية",
+  "profileApproval.detail.sectionApproval.statusLabel": "الحالة",
+  "profileApproval.detail.sectionApproval.statusPlaceholder": "اختر الحالة",
+  "profileApproval.detail.sectionApproval.notesLabel": "ملاحظات",
+  "profileApproval.detail.sectionApproval.notesPlaceholder": "ملاحظات القسم (حقل اختياري)",
+  "profileApproval.detail.sectionApproval.prev": "السابق",
+  "profileApproval.detail.sectionApproval.next": "التالي",
+
   "profileApproval.tabs.profileData": "البيانات الشخصية",
   "profileApproval.tabs.reviewSections": "مراجعة التبويبات",
   "profileApproval.tabs.finalDecision": "القرار النهائي",

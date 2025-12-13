@@ -1,0 +1,40 @@
+<ng-container *ngIf="qualifications?.length; else emptyBlock">
+  <div class="entry" *ngFor="let q of qualifications">
+    <button class="entry-action" type="button" (click)="preview(q.attachment?.url)">
+      <i class="fa-regular fa-eye"></i>
+      <span>{{ 'profileApproval.detail.viewFile' | translate }}</span>
+    </button>
+
+    <div class="entry-body">
+      <div class="entry-head">
+        <h4 class="entry-title">{{ q.major?.name || q.majorId }}</h4>
+      </div>
+
+      <div class="entry-grid">
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.qualifications.country' | translate }}</div>
+          <div class="v">{{ q.country?.name || q.countryId || '-' }}</div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.qualifications.university' | translate }}</div>
+          <div class="v">{{ q.university?.name || '-' }}</div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.qualifications.year' | translate }}</div>
+          <div class="v">{{ q.graduationYear || '-' }}</div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.qualifications.attachment' | translate }}</div>
+          <div class="v">
+            <span class="chip" *ngIf="q.attachment?.fileName">{{ q.attachment.fileName }}</span>
+            <span *ngIf="!q.attachment?.fileName">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #emptyBlock>
+  <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+</ng-template>

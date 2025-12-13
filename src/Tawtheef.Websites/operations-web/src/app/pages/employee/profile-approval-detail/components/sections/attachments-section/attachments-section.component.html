@@ -1,0 +1,33 @@
+<ng-container *ngIf="attachments?.length; else emptyBlock">
+  <div class="entry compact" *ngFor="let a of attachments">
+    <button class="entry-action danger" type="button" (click)="preview(a.file?.url)">
+      <i class="fa-regular fa-eye"></i>
+      <span>{{ 'profileApproval.detail.viewFile' | translate }}</span>
+    </button>
+
+    <div class="entry-body">
+      <div class="entry-head">
+        <h4 class="entry-title">{{ a.title || a.file?.fileName || '-' }}</h4>
+      </div>
+
+      <div class="entry-grid">
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.attachments.fileName' | translate }}</div>
+          <div class="v">{{ a.file?.fileName || '-' }}</div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.attachments.fileSize' | translate }}</div>
+          <div class="v">{{ a.file?.sizeLabel || '-' }}</div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.attachments.fileType' | translate }}</div>
+          <div class="v">{{ a.file?.contentType || a.file?.type || a.file?.extension || '-' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #emptyBlock>
+  <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+</ng-template>
