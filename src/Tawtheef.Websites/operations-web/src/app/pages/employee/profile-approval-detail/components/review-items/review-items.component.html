@@ -1,0 +1,55 @@
+<div class="section-review-items" *ngIf="items?.length">
+  <div class="d-flex align-items-center gap-2 mb-2" *ngIf="titleKey">
+    <i class="pi pi-clipboard"></i>
+    <h5 class="mb-0">{{ titleKey | translate }}</h5>
+  </div>
+
+  <div class="review-item-grid">
+    <div class="review-card" *ngFor="let item of items">
+      <div class="d-flex justify-content-between align-items-start gap-2">
+        <div class="d-flex flex-column gap-1">
+          <div class="fw-semibold">{{ item.title || '-' }}</div>
+          <small class="text-muted" *ngIf="item.entityName">{{ item.entityName }}</small>
+        </div>
+
+        <p-tag [value]="statusLabel(item.status) | translate" [severity]="statusSeverity(item.status)"></p-tag>
+      </div>
+
+      <div class="mt-2" *ngIf="item.note">
+        <small class="text-muted d-block">{{ 'profileApproval.detail.previousNote' | translate }}</small>
+        <div class="fw-semibold">{{ item.note }}</div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <button
+          pButton
+          type="button"
+          class="p-button-text"
+          icon="pi pi-external-link"
+          *ngIf="item.resourceUrl"
+          [label]="'profileApproval.detail.viewFile' | translate"
+          (click)="preview(item)"
+        ></button>
+
+        <span class="text-muted" *ngIf="!item.resourceUrl">{{ 'profileApproval.detail.textOnly' | translate }}</span>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <button pButton type="button" class="p-button-sm" (click)="onReview(item, 'approve')">
+          {{ 'profileApproval.detail.approve' | translate }}
+        </button>
+        <button
+          pButton
+          type="button"
+          class="p-button-sm p-button-warning"
+          (click)="onReview(item, 'changes')"
+        >
+          {{ 'profileApproval.detail.requestChanges' | translate }}
+        </button>
+        <button pButton type="button" class="p-button-sm p-button-danger" (click)="onReview(item, 'reject')">
+          {{ 'profileApproval.detail.reject' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

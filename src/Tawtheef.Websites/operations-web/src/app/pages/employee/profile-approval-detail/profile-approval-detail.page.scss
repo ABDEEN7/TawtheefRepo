@@ -299,3 +299,21 @@
     padding: 10px;
   }
 }
+
+.section-review-items {
+  margin-top: 18px;
+
+  .review-item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+
+  .review-card {
+    border: 1px dashed #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+  }
+}

@@ -26,10 +26,13 @@ public sealed class SubmitUserProfileHandler(
             .Include(p => p.User)
             .Include(p => p.SponsorProfile)
             .Include(p => p.ResidenceAddress)
-            .Include(p => p.Qualifications)
-            .Include(p => p.Experiences)
-            .Include(p => p.TrainingCourses)
-            .Include(p => p.Achievements)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.University)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Certificate)
+            .Include(p => p.Experiences)!.ThenInclude(e => e.Certificate)
+            .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Certificate)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.AchievementType)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.Attachment)
             .Include(p => p.Skills)
             .Include(p => p.Languages)
             .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
@@ -74,7 +77,6 @@ public sealed class SubmitUserProfileHandler(
         };
 
         await submissionRepo.AddAsync(submission);
-        var now = DateTime.UtcNow;
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         foreach (var sec in ProfileApprovalFlow.Sections)
@@ -99,9 +101,93 @@ public sealed class SubmitUserProfileHandler(
 
             await reviewRepo.AddAsync(item);
         }
-        
+
+        foreach (var qualification in profile.Qualifications ?? [])
+        {
+            if (qualification.CertificateId is null) continue;
+
+            await AddAttachmentItem(
+                ProfileSection.Qualifications,
+                nameof(Qualification),
+                qualification.Id,
+                qualification.CertificateId.Value,
+                qualification.Certificate?.FileName
+                    ?? qualification.Major?.Name
+                    ?? "Qualification file");
+        }
+
+        foreach (var experience in profile.Experiences ?? [])
+        {
+            if (experience.CertificateId == Guid.Empty) continue;
+
+            await AddAttachmentItem(
+                ProfileSection.Experience,
+                nameof(Experience),
+                experience.Id,
+                experience.CertificateId,
+                experience.Certificate?.FileName
+                    ?? experience.JobTitle
+                    ?? "Experience certificate");
+        }
+
+        foreach (var training in profile.TrainingCourses ?? [])
+        {
+            if (training.CertificateId == Guid.Empty) continue;
+
+            await AddAttachmentItem(
+                ProfileSection.TrainingCourses,
+                nameof(TrainingCourse),
+                training.Id,
+                training.CertificateId,
+                training.Certificate?.FileName
+                    ?? training.Title
+                    ?? "Training certificate");
+        }
+
+        foreach (var achievement in profile.Achievements ?? [])
+        {
+            if (achievement.AttachmentId == Guid.Empty) continue;
+
+            await AddAttachmentItem(
+                ProfileSection.CertificatesAndAwards,
+                nameof(Achievement),
+                achievement.Id,
+                achievement.AttachmentId,
+                achievement.Attachment?.FileName
+                    ?? achievement.Title
+                    ?? "Certificate");
+        }
+
         profile.Status = UserProfileStatus.Submitted;
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
+
+        async Task AddAttachmentItem(
+            ProfileSection section,
+            string entityName,
+            Guid entityId,
+            Guid resourceId,
+            string attachmentTitle)
+        {
+            var item = ReviewItem.Create(
+                userProfileId: profile.Id,
+                section: section,
+                targetType: ReviewTargetType.Attachment,
+                fieldPath: null,
+                entityName: entityName,
+                entityId: entityId,
+                resourceId: resourceId,
+                currentValue: resourceId);
+
+            item.AttachmentTitle = attachmentTitle;
+            item.Version = newVersion;
+            item.Status = ReviewStatus.Pending;
+            item.IsOutdated = true;
+            item.ReviewedAtUtc = null;
+            item.ReviewedById = null;
+            item.ReviewerNote = null;
+
+            await reviewRepo.AddAsync(item);
+        }
     }
 }

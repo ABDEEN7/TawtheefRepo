@@ -39,6 +39,8 @@ import { AttachmentsSectionComponent } from './components/sections/attachments-s
 import { PhotoSectionComponent } from './components/sections/photo-section/photo-section.component';
 import {Select} from 'primeng/select';
 import {Textarea} from 'primeng/textarea';
+import { ReviewItemsComponent, ReviewAction } from './components/review-items/review-items.component';
+import { CertificatesSectionComponent } from './components/sections/certificates-section/certificates-section.component';
 
 @Component({
   selector: 'app-profile-approval-detail-page',
@@ -58,11 +60,13 @@ import {Textarea} from 'primeng/textarea';
     QualificationsSectionComponent,
     ExperiencesSectionComponent,
     TrainingSectionComponent,
+    CertificatesSectionComponent,
     SkillsLanguagesSectionComponent,
     AttachmentsSectionComponent,
     PhotoSectionComponent,
     Select,
     Textarea,
+    ReviewItemsComponent,
   ],
   templateUrl: './profile-approval-detail.page.html',
   styleUrl: './profile-approval-detail.page.scss',
@@ -182,6 +186,10 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     });
   }
 
+  handleItemReview(event: { item: ProfileApprovalItem; action: ReviewAction }): void {
+    this.openItemDialog(event.item, event.action);
+  }
+
   openSectionDialog(section: ProfileApprovalSection, action: 'section-approve' | 'section-changes'): void {
     this.dialogService.open(SectionReviewDialogComponent, {
       header: this.translate.instant('profileApproval.section.dialogTitle'),
@@ -253,6 +261,13 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     });
 
     return Array.from(targets);
+  }
+
+  sectionItems(section: number): ProfileApprovalItem[] {
+    const detail = this.detail();
+    if (!detail?.sections?.length) return [];
+
+    return detail.sections.find(s => s.section === section)?.items ?? [];
   }
 
   private parsePartialFlag(value: string | null): boolean {
@@ -353,7 +368,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       case 5: return 'fa-solid fa-language';
       case 6: return 'fa-regular fa-folder-open';
       case 7: return 'fa-regular fa-rectangle-list';
-      case 9: return 'fa-regular fa-image';
+      case 9: return 'fa-regular fa-paperclip';
       default: return 'fa-regular fa-circle';
     }
   }

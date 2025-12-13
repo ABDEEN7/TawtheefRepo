@@ -80,6 +80,8 @@ export interface ProfileApprovalDetail {
   fullName: string;
   candidateType?: string;
   targetEntity?: string;
+  targetEntityCategory?: string;
+  specialization?: string;
 
   submissionVersion?: number;
   submittedAtUtc?: string;

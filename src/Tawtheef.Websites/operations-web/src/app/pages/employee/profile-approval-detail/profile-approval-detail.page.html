@@ -16,9 +16,21 @@
               <p class="title mb-1 text-uppercase">{{ 'profileApproval.detail.eyebrow' | translate }}</p>
               <h2 class="name mb-1">{{ info.fullName || ('profileApproval.detail.placeholder' | translate) }}</h2>
               <div class="meta d-flex flex-wrap gap-2">
-                <span class="pill">
+                <span class="pill" *ngIf="info.targetEntity">
                   <i class="pi pi-building"></i>
-                  <span>{{ info.targetEntity || '-' }}</span>
+                  <span>{{ 'profileApproval.detail.snapshot.targetEntity' | translate }}: {{ info.targetEntity }}</span>
+                </span>
+                <span class="pill" *ngIf="info.candidateType">
+                  <i class="pi pi-user"></i>
+                  <span>{{ 'profileApproval.detail.candidateType' | translate }}: {{ info.candidateType }}</span>
+                </span>
+                <span class="pill" *ngIf="info.targetEntityCategory">
+                  <i class="pi pi-sitemap"></i>
+                  <span>{{ 'profileApproval.detail.recruiterCategory' | translate }}: {{ info.targetEntityCategory }}</span>
+                </span>
+                <span class="pill" *ngIf="info.specialization">
+                  <i class="pi pi-star"></i>
+                  <span>{{ 'profileApproval.detail.specialization' | translate }}: {{ info.specialization }}</span>
                 </span>
                 <span class="pill">
                   <i class="pi pi-calendar"></i>
@@ -98,37 +110,50 @@
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-experiences-section>
 
-                    <!-- 5) Skills & Languages -->
-                    <app-profile-approval-skills-languages-section
-                      *ngSwitchCase="5"
-                      [skillsAndLanguages]="profile.skillsAndLanguages"
-                      [languages]="profile.languages"
-                    ></app-profile-approval-skills-languages-section>
-
-                    <!-- 6) Attachments -->
-                    <app-profile-approval-attachments-section
-                      *ngSwitchCase="6"
-                      [attachments]="profile.attachments"
-                      (viewFile)="previewFile($event)"
-                    ></app-profile-approval-attachments-section>
-
-                    <!-- 7) Training -->
+                    <!-- 5) Training -->
                     <app-profile-approval-training-section
-                      *ngSwitchCase="7"
+                      *ngSwitchCase="5"
                       [trainingCourses]="profile.trainingCourses"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-training-section>
 
-                    <!-- 9) Photo -->
-                    <app-profile-approval-photo-section
-                      *ngSwitchCase="9"
-                      [profilePhoto]="profile.profilePhoto || null"
-                    ></app-profile-approval-photo-section>
+                    <!-- 6) Certificates -->
+                    <app-profile-approval-certificates-section
+                      *ngSwitchCase="6"
+                      [certificates]="profile.professionalCertificatesAndAwards"
+                      (viewFile)="previewFile($event)"
+                    ></app-profile-approval-certificates-section>
+
+                    <!-- 7) Skills & Languages -->
+                    <app-profile-approval-skills-languages-section
+                      *ngSwitchCase="7"
+                      [skillsAndLanguages]="profile.skillsAndLanguages"
+                      [languages]="profile.languages"
+                    ></app-profile-approval-skills-languages-section>
+
+                    <!-- 9) Attachments & Photo -->
+                    <ng-container *ngSwitchCase="9">
+                      <app-profile-approval-attachments-section
+                        [attachments]="profile.attachments"
+                        (viewFile)="previewFile($event)"
+                      ></app-profile-approval-attachments-section>
+
+                      <app-profile-approval-photo-section
+                        [profilePhoto]="profile.profilePhoto || null"
+                      ></app-profile-approval-photo-section>
+                    </ng-container>
 
                     <div *ngSwitchDefault class="text-center text-muted py-4">
                       {{ 'profileApproval.detail.snapshot.noEntries' | translate }}
                     </div>
                   </ng-container>
+
+                  <app-profile-review-items
+                    [items]="sectionItems(sec.section)"
+                    [titleKey]="'profileApproval.detail.reviewItems.title'"
+                    (review)="handleItemReview($event)"
+                    (viewFile)="previewFile($event)"
+                  ></app-profile-review-items>
                 </div>
               </div>
 
