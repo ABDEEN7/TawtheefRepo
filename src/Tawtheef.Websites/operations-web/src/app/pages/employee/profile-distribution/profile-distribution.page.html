@@ -51,7 +51,7 @@
       </div>
       <div class="col-lg-3 col-md-4">
         <label class="form-label">{{ 'distribution.filters.status' | translate }}</label>
-        <p-dropdown
+        <p-select
           class="w-100"
           [options]="statusOptions"
           optionValue="value"
@@ -64,7 +64,7 @@
           <ng-template let-item pTemplate="item">
             <span>{{ item.label | translate }}</span>
           </ng-template>
-        </p-dropdown>
+        </p-select>
       </div>
       <div class="col-lg-4 col-md-12 d-flex gap-2 justify-content-end flex-wrap">
         <button pButton class="p-button-text" type="button" (click)="selectAll()">
@@ -248,11 +248,11 @@
                 <div class="fw-semibold">{{ employee.name }}</div>
                 <div class="small text-muted">{{ availabilityLabel(employee.availability) | translate }}</div>
               </div>
-              <p-inputSwitch
+              <p-toggle-switch
                 [ngModel]="autoEmployeeIds().has(employee.employeeId)"
                 (onChange)="toggleEmployee(employee.employeeId)"
                 [disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available"
-              ></p-inputSwitch>
+              ></p-toggle-switch>
             </div>
             <div class="d-flex gap-2 flex-wrap mt-2">
               <span class="pill neutral small-pill">{{ 'distribution.employees.total' | translate }} {{ employee.totalAssigned }}</span>
@@ -293,7 +293,7 @@
         </div>
         <div class="mb-3">
           <label class="form-label">{{ 'distribution.manual.employee' | translate }}</label>
-          <p-dropdown
+          <p-select
             class="w-100"
             [options]="availableEmployees()"
             optionLabel="name"
@@ -303,7 +303,7 @@
             (onChange)="manualEmployeeId.set($event.value)"
             [showClear]="true"
             [placeholder]="'distribution.manual.selectPlaceholder' | translate"
-          ></p-dropdown>
+          ></p-select>
         </div>
         <div class="d-flex gap-2 flex-wrap">
           <button
@@ -379,7 +379,7 @@
     <div class="row g-3">
       <div class="col-12">
         <label class="form-label">{{ 'distribution.manual.employee' | translate }}</label>
-        <p-dropdown
+        <p-select
           class="w-100"
           [options]="availableEmployees()"
           optionLabel="name"
@@ -388,7 +388,7 @@
           [ngModel]="manualEmployeeId()"
           (onChange)="manualEmployeeId.set($event.value)"
           [placeholder]="'distribution.manual.selectPlaceholder' | translate"
-        ></p-dropdown>
+        ></p-select>
       </div>
       <div class="col-md-6">
         <label class="form-label">{{ 'distribution.dialog.manual.count' | translate }}</label>
@@ -467,11 +467,11 @@
               <div class="small text-muted">{{ availabilityLabel(employee.availability) | translate }}</div>
             </div>
           </div>
-          <p-inputSwitch
+          <p-toggle-switch
             [ngModel]="autoEmployeeIds().has(employee.employeeId)"
             (onChange)="toggleEmployee(employee.employeeId)"
             [disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available"
-          ></p-inputSwitch>
+          ></p-toggle-switch>
         </div>
         <div class="d-flex gap-2 flex-wrap mt-2">
           <span class="pill neutral small-pill">{{ 'distribution.employees.total' | translate }} {{ employee.totalAssigned }}</span>

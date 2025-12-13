@@ -4,13 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
-import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { ProfileDistributionService } from './services/profile-distribution.service';
@@ -25,6 +23,10 @@ import {
 } from './models/profile-distribution.models';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 import {ProfileStatusNumber} from '../../../core/enums/lookups.enum';
+import {Select} from 'primeng/select';
+import {Ripple} from 'primeng/ripple';
+import {Tooltip} from 'primeng/tooltip';
+import {ToggleSwitch} from 'primeng/toggleswitch';
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -34,16 +36,18 @@ import {ProfileStatusNumber} from '../../../core/enums/lookups.enum';
     FormsModule,
     TranslateModule,
     TableModule,
-    DropdownModule,
     InputTextModule,
     ButtonModule,
     TagModule,
     DialogModule,
     InputNumberModule,
-    InputSwitchModule,
     AvatarModule,
     BadgeModule,
     I18nNamespaceDirective,
+    Select,
+    Ripple,
+    Tooltip,
+    ToggleSwitch,
   ],
   templateUrl: './profile-distribution.page.html',
   styleUrl: './profile-distribution.page.scss',
@@ -254,12 +258,12 @@ export class ProfileDistributionPage implements OnInit {
     }
   }
 
-  statusSeverity(status: ProfileStatusNumber): 'info' | 'warning' | 'success' | 'danger' | 'secondary' {
+  statusSeverity(status: ProfileStatusNumber): 'info' | 'warn' | 'success' | 'danger' | 'secondary' {
     switch (status) {
       case ProfileStatusNumber.UnderReview:
         return 'info';
       case ProfileStatusNumber.RequiresUpdate:
-        return 'warning';
+        return 'warn';
       case ProfileStatusNumber.Approved:
         return 'success';
       case ProfileStatusNumber.Rejected:

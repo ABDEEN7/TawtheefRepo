@@ -134,6 +134,9 @@
   "profileOverview.sections.profilePhoto": "Profile photo",
   "profileOverview.sections.cv": "CV",
   "profileOverview.sections.generic": "Profile section",
+  "profileOverview.sections.contactInfo": "Contact information",
+  "profileOverview.sections.skills": "Skills",
+  "profileOverview.sections.Languages":"Languages",
 
   "profileApproval.section.approve": "Approve tab",
   "profileApproval.section.needsCorrection": "Return tab for correction",
@@ -179,5 +182,7 @@
   "profileApproval.validation.exceptionRequirements": "Exceptional approval requires attaching an internal exception file.",
   "profileApproval.validation.correctionTargetsRequired": "Select at least one tab or attachment marked for correction.",
   "profileApproval.validation.pendingSectionsSummary": "Pending items must be reviewed",
-  "profileApproval.validation.pendingSectionsDetail": "Approve or request changes for all sections before approving the full profile."
+  "profileApproval.validation.pendingSectionsDetail": "Approve or request changes for all sections before approving the full profile.",
+  "profileApproval.detail.partialReview": "Partial review",
+  "profileApproval.detail.initialReview": "Initial review"
 }

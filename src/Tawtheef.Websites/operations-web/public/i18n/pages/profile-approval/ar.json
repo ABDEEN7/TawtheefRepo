@@ -134,6 +134,11 @@
   "profileOverview.sections.profilePhoto": "الصورة الشخصية",
   "profileOverview.sections.cv": "السيرة الذاتية",
   "profileOverview.sections.generic": "تبويب الملف",
+  "profileOverview.sections.contactInfo": "معلومات الاتصال",
+  "profileOverview.sections.skills": "المهارات",
+  "profileOverview.sections.Languages":"اللغات",
+
+
 
   "profileApproval.section.approve": "اعتماد القسم",
   "profileApproval.section.needsCorrection": "إرجاع القسم للتصحيح",
@@ -179,5 +184,8 @@
   "profileApproval.validation.exceptionRequirements": "الاعتماد الاستثنائي يتطلب إرفاق ملف الاستثناء الداخلي.",
   "profileApproval.validation.correctionTargetsRequired": "اختر على الأقل تبويباً أو مرفقاً تم وضعه للتصحيح.",
   "profileApproval.validation.pendingSectionsSummary": "يوجد عناصر بانتظار المراجعة",
-  "profileApproval.validation.pendingSectionsDetail": "اعتمد أو اطلب تعديل جميع الأقسام قبل اعتماد الملف بالكامل."
+  "profileApproval.validation.pendingSectionsDetail": "اعتمد أو اطلب تعديل جميع الأقسام قبل اعتماد الملف بالكامل.",
+  "profileApproval.detail.partialReview": "مراجعة جزئية",
+  "profileApproval.detail.initialReview": "المراجعة الأولية"
+
 }
