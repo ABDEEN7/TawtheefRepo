@@ -13,7 +13,13 @@
           {{ 'common.back' | translate }}
         </button>
       </div>
+      <span class="badge bg-info" *ngIf="info.isInitialReview">
+        {{ 'profileApproval.detail.initialReview' | translate }}
+      </span>
 
+            <span class="badge bg-warning" *ngIf="info.isPartialReview">
+        {{ 'profileApproval.detail.partialReview' | translate }}
+      </span>
       <div class="col-12 col-md">
         <div class="head-title text-center text-md-start">
           <p class="title mb-1 text-uppercase">{{ 'profileApproval.detail.eyebrow' | translate }}</p>

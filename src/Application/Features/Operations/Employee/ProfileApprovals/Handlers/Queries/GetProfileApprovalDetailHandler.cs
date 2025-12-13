@@ -81,74 +81,80 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
         }
 
         // ===== Reviews =====
-        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
-        var reviewItems = await reviewRepo.DbSet
-            .AsNoTracking()
-            .Where(r => r.UserProfileId == profile.Id)
-            .Include(r => r.ProfileChange)
-            .OrderByDescending(r => r.Version)
-            .ToListAsync(ct);
+        // ===== Reviews =====
+var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+var reviewItems = await reviewRepo.DbSet
+    .AsNoTracking()
+    .Where(r => r.UserProfileId == profile.Id)
+    .Include(r => r.ProfileChange)
+    .OrderByDescending(r => r.Version)
+    .ToListAsync(ct);
 
-        var latestItems = reviewItems
-            .GroupBy(r => new { r.TargetType, r.Section, r.FieldPath, r.EntityName, r.EntityId, r.ResourceId, r.ProfileChangeId })
-            .Select(g => g.First())
+// Latest item per target (كما عندك)
+var latestItems = reviewItems
+    .GroupBy(r => new { r.TargetType, r.Section, r.FieldPath, r.EntityName, r.EntityId, r.ResourceId, r.ProfileChangeId })
+    .Select(g => g.First())
+    .ToList();
+
+// resources
+var resourceIds = latestItems
+    .Where(r => r.ResourceId.HasValue)
+    .Select(r => r.ResourceId!.Value)
+    .Distinct()
+    .ToList();
+
+var resourceRepo = uow.GetEntityRepository<Resource>();
+var resources = await resourceRepo.DbSet
+    .AsNoTracking()
+    .Where(r => resourceIds.Contains(r.Id))
+    .ToDictionaryAsync(r => r.Id, ct);
+
+// Map review items to DTO
+var reviewItemDtos = latestItems
+    .Select(item =>
+    {
+        var dto = mapper.Map<ProfileApprovalItemDto>(item);
+
+        if (item.ResourceId.HasValue &&
+            resources.TryGetValue(item.ResourceId.Value, out var resource))
+        {
+            dto.ResourceUrl = media.ResolveAbsolute(resource.Url);
+        }
+
+        return (Item: item, Dto: dto);
+    })
+    .ToList();
+
+// هنا الفرق: نبني الأقسام من Flow ثابت
+var sections = ProfileApprovalFlow.Sections
+    .Select(sec =>
+    {
+        var group = reviewItemDtos.Where(x => x.Item.Section == sec).ToList();
+
+        var sectionReview = group
+            .Where(x => x.Item.TargetType == ReviewTargetType.Section)
+            .Select(x => x.Dto)
+            .FirstOrDefault();
+
+        var entries = group
+            .Where(x => x.Item.TargetType != ReviewTargetType.Section)
+            .Select(x => x.Dto)
             .ToList();
 
-        var resourceIds = latestItems
-            .Where(r => r.ResourceId.HasValue)
-            .Select(r => r.ResourceId!.Value)
-            .Distinct()
-            .ToList();
-
-        var resourceRepo = uow.GetEntityRepository<Resource>();
-        var resources = await resourceRepo.DbSet
-            .AsNoTracking()
-            .Where(r => resourceIds.Contains(r.Id))
-            .ToDictionaryAsync(r => r.Id, ct);
-
-        // Map ReviewItem -> DTOs using mapper
-        var reviewItemDtos = latestItems
-            .Select(item =>
-            {
-                var dto = mapper.Map<ProfileApprovalItemDto>(item);
-
-                if (item.ResourceId.HasValue &&
-                    resources.TryGetValue(item.ResourceId.Value, out var resource))
-                {
-                    dto.ResourceUrl = media.ResolveAbsolute(resource.Url);
-                }
-
-                return (Item: item, Dto: dto);
-            })
-            .ToList();
-
-        var sections = reviewItemDtos
-            .GroupBy(x => x.Item.Section)
-            .Select(group =>
-            {
-                var sectionReview = group
-                    .Where(x => x.Item.TargetType == ReviewTargetType.Section)
-                    .Select(x => x.Dto)
-                    .FirstOrDefault();
-
-                var entries = group
-                    .Where(x => x.Item.TargetType != ReviewTargetType.Section)
-                    .Select(x => x.Dto)
-                    .ToList();
-
-                return new ProfileApprovalSectionDto
-                {
-                    Section = group.Key,
-                    SectionReview = sectionReview,
-                    Items = entries,
-                    HasAttachments = entries.Any(e => e.TargetType == ReviewTargetType.Attachment)
-                };
-            })
-            .OrderBy(s => (int)s.Section)
-            .ToList();
+        return new ProfileApprovalSectionDto
+        {
+            Section = sec,
+            SectionReview = sectionReview,
+            Items = entries,
+            HasAttachments = entries.Any(e => e.TargetType == ReviewTargetType.Attachment)
+        };
+    })
+    .OrderBy(s => (int)s.Section)
+    .ToList();
 
         // ===== Profile data (snapshot) =====
         var profileData = MapProfile(profile);
+        var hasApproved = latestItems.Any(x => x.Status == ReviewStatus.Approved && x.TargetType == ReviewTargetType.Section);
 
         var dto = new ProfileApprovalDetailDto
         {
@@ -160,7 +166,9 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
             SubmissionVersion = submission?.Version,
             SubmittedAtUtc = submission?.SubmittedAtUtc,
             Profile = profileData,
+            ApprovedProfile = null,
             Sections = sections,
+            IsInitialReview = !hasApproved,
             IsPartialReview = false
         };
 

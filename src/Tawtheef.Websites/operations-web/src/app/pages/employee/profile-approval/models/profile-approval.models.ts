@@ -74,18 +74,23 @@ export interface ProfileApprovalData {
   attachments: any[];
   profilePhoto?: string | null;
 }
-
 export interface ProfileApprovalDetail {
   userProfileId: string;
   userId: string;
   fullName: string;
   candidateType?: string;
   targetEntity?: string;
+
   submissionVersion?: number;
   submittedAtUtc?: string;
-  profile?: ProfileApprovalData;
+
+  profile: any;
+  approvedProfile?: any | null;
+
   sections: ProfileApprovalSection[];
-  isPartialReview?: boolean;
+
+  isInitialReview: boolean;
+  isPartialReview: boolean;
 }
 
 export interface ProfileApprovalListItem {

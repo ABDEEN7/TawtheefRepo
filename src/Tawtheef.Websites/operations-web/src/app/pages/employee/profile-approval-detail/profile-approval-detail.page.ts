@@ -79,6 +79,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
   private lastLoadedKey: string | null = null;
+  private readonly flowSections = [1, 2, 3, 4, 6, 7, 8, 9];
 
   loadingDetail = signal(false);
   loadingFinalAction = signal(false);
@@ -155,7 +156,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
         next: detail => {
           const merged = this.mergeDetail(this.detail(), detail);
           this.detail.set(merged);
-          const firstSection = merged.sections[0]?.section ?? null;
+          const firstSection = this.flowSections[0] ?? null;
           if (firstSection !== null) this.activeSection.set(firstSection);
         },
         error: () => this.error.set(this.translate.instant('profileApproval.errors.loadDetail')),
@@ -280,23 +281,25 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   sectionName(section: number): string {
     switch (section) {
       case 1:
-        return 'profileApproval.sections.basicInfo';
+        return 'profileOverview.sections.basicInfo';
       case 2:
-        return 'profileApproval.sections.qualifications';
+        return 'profileOverview.sections.contactInfo';
       case 3:
-        return 'profileApproval.sections.experiences';
+        return 'profileOverview.sections.qualifications';
       case 4:
-        return 'profileApproval.sections.training';
+        return 'profileOverview.sections.experiences';
       case 5:
-        return 'profileApproval.sections.certificates';
+        return 'profileOverview.sections.training';
       case 6:
-        return 'profileApproval.sections.skillsLanguages';
+        return 'profileOverview.sections.certificates';
       case 7:
-        return 'profileApproval.sections.attachments';
+        return 'profileOverview.sections.skills';
       case 8:
-        return 'profileApproval.sections.profilePhoto';
+        return 'profileOverview.sections.Languages';
+      case 9:
+        return 'profileOverview.sections.attachments';
       default:
-        return 'profileApproval.sections.generic';
+        return 'profileOverview.sections.generic';
     }
   }
 
@@ -414,19 +417,40 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       });
   }
 
-  private mergeDetail(
-    current: ProfileApprovalDetail | null,
-    incoming: ProfileApprovalDetail
-  ): ProfileApprovalDetail {
-    if (!current) return incoming;
+  private normalizeSections(incoming: ProfileApprovalDetail): ProfileApprovalDetail {
+    const map = new Map<number, ProfileApprovalSection>();
+    (incoming.sections ?? []).forEach(s => map.set(s.section, s));
+
+    const normalized: ProfileApprovalSection[] = this.flowSections.map(section => {
+      const existing = map.get(section);
+      if (existing) return existing;
+
+      // قسم غير موجود من الـ API -> أنشئ قالب فارغ
+      return {
+        section,
+        sectionReview: null,
+        items: [],
+        hasAttachments: false
+      } as any;
+    });
+
+    return { ...incoming, sections: normalized };
+  }
+
+  private mergeDetail(current: ProfileApprovalDetail | null, incoming: ProfileApprovalDetail): ProfileApprovalDetail {
+    const normalizedIncoming = this.normalizeSections(incoming);
+
+    if (!current) return normalizedIncoming;
 
     return {
       ...current,
-      ...incoming,
-      profile: incoming.profile ?? current.profile,
-      sections: incoming.sections?.length ? incoming.sections : current.sections ?? [],
+      ...normalizedIncoming,
+      profile: normalizedIncoming.profile ?? current.profile,
+      approvedProfile: normalizedIncoming.approvedProfile ?? current.approvedProfile,
+      sections: normalizedIncoming.sections?.length ? normalizedIncoming.sections : current.sections ?? [],
     };
   }
+
 
   stepperSections(info: ProfileApprovalDetail): ProfileApprovalStepperSection[] {
     const current = this.activeSection();

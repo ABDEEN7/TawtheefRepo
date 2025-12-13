@@ -4,9 +4,11 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
@@ -62,6 +64,7 @@ public sealed class SubmitUserProfileHandler(
         var json = JsonSerializer.Serialize(snapshot,
             new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles });
 
+        var newVersion = lastVersion + 1;
         var submission = new ProfileSubmission
         {
             UserProfileId = profile.Id,
@@ -71,11 +74,33 @@ public sealed class SubmitUserProfileHandler(
         };
 
         await submissionRepo.AddAsync(submission);
-        if (profile.User is not null)
-        {
-            profile.Status = UserProfileStatus.Submitted;
-        }
+        var now = DateTime.UtcNow;
 
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+        foreach (var sec in ProfileApprovalFlow.Sections)
+        {
+            var item = ReviewItem.Create(
+                userProfileId: profile.Id,
+                section: sec,
+                targetType: ReviewTargetType.Section,
+                fieldPath: null,
+                entityName: null,
+                entityId: null,
+                resourceId: null,
+                currentValue: null
+            );
+
+            item.Version = newVersion;
+            item.Status = ReviewStatus.Pending;
+            item.IsOutdated = true;
+            item.ReviewedAtUtc = null;
+            item.ReviewedById = null;
+            item.ReviewerNote = null;
+
+            await reviewRepo.AddAsync(item);
+        }
+        
+        profile.Status = UserProfileStatus.Submitted;
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }
