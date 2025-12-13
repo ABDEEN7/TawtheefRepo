@@ -3,13 +3,14 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
+using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
-public sealed class GetRoleDetailsQueryHandler(RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper)
+public sealed class GetRoleDetailsQueryHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
     : IRequestHandler<GetRoleDetailsQuery, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(GetRoleDetailsQuery request, CancellationToken cancellationToken)

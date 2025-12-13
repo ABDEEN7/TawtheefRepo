@@ -3,8 +3,12 @@
   "ROLES.ADD_ROLE": "إضافة دور",
   "ROLES.EDIT_ROLE": "تعديل الدور",
 
+  "ROLES.NAME": "الاسم",
   "ROLES.NAME_AR": "الاسم بالعربية",
   "ROLES.NAME_EN": "الاسم بالإنجليزية",
+  "ROLES.DESCRIPTION": "الوصف",
+  "ROLES.DESCRIPTION_AR": "الوصف بالعربية",
+  "ROLES.DESCRIPTION_EN": "الوصف بالإنجليزية",
 
   "ROLES.PERMISSIONS": "الصلاحيات",
   "ROLES.PERMISSIONS_LIST": "قائمة الصلاحيات",
@@ -19,5 +23,6 @@
   "ROLES.SAVE_SUCCESS": "تم حفظ الدور بنجاح",
   "ROLES.DELETE_SUCCESS": "تم حذف الدور بنجاح",
   "ROLES.SAVE_FAILED": "فشل حفظ الدور. يرجى المحاولة مرة أخرى.",
-  "ROLES.DELETE_FAILED": "فشل حذف الدور. يرجى المحاولة مرة أخرى."
+  "ROLES.DELETE_FAILED": "فشل حذف الدور. يرجى المحاولة مرة أخرى.",
+  "ROLES.LOAD_FAILED": "تعذر تحميل بيانات الأدوار. يرجى المحاولة مرة أخرى."
 }

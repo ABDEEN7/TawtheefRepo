@@ -22,12 +22,15 @@ export class SidebarComponent implements OnInit {
 
   menuItems = [
     { key: 'home', label: 'admin.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.dashboard('admin') },
-    { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/home.svg', route: routes.admin.roleManagement },
+    { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/shield.svg', route: routes.admin.roleManagement },
+    { key: 'users', label: 'admin.sidebar.users', icon: 'assets/img/icons/users.svg', route: routes.admin.usersManagement },
   ];
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
+    this.highlightActive(this.router.url);
+
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {

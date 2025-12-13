@@ -1,0 +1,128 @@
+<div
+  class="users-container card shadow-sm p-4"
+  i18nNamespace="pages/admin/users-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.table-rtl]="isRtl()">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="page-title mb-0">{{ 'USERS.TITLE' | translate }}</h3>
+  </div>
+
+  <div class="filters card p-3 mb-3">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">{{ 'USERS.SEARCH_NAME' | translate }}</label>
+        <input type="text"
+               class="form-control form-control-sm"
+               [(ngModel)]="nameFilter"
+               (input)="this.onSearchChange()"
+               [placeholder]="'USERS.SEARCH_NAME_PLACEHOLDER' | translate"/>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">{{ 'USERS.SEARCH_EMAIL' | translate }}</label>
+        <input type="text"
+               class="form-control form-control-sm"
+               [(ngModel)]="emailFilter"
+               (input)="this.onSearchChange()"
+               [placeholder]="'USERS.SEARCH_EMAIL_PLACEHOLDER' | translate"/>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">{{ 'USERS.FILTER_BLOCKED' | translate }}</label>
+        <p-select
+          [options]="blockedStatusOptions"
+          [showClear]="true"
+          [placeholder]="'USERS.BLOCKED_ANY' | translate"
+          name="blockedStatuses"
+          (onChange)="onBlockedFilterChange($event.value)"
+          (onClear)="onBlockedFilterChange(null)"
+          [filter]="true"
+          [ngModel]="filters().isBlocked"
+          optionLabel="name"
+          optionValue="id"
+          size="small"
+          class="form-select form-select-sm"
+        >
+          <ng-template #selectedItem let-option>
+            {{ option.name | translate }}
+          </ng-template>
+          <ng-template #item let-option>
+            {{ option.name | translate }}
+          </ng-template>
+        </p-select>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive table-wrapper">
+    <table class="table custom-table align-middle mb-0">
+      <thead>
+      <tr>
+        <th>{{ 'USERS.NAME' | translate }}</th>
+        <th>{{ 'USERS.EMAIL' | translate }}</th>
+        <th>{{ 'USERS.LAST_LOGIN' | translate }}</th>
+        <th>{{ 'USERS.IS_BLOCKED' | translate }}</th>
+        <th>{{ 'USERS.ROLES' | translate }}</th>
+        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'USERS.ACTIONS' | translate }}</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @if (this.users().length === 0) {
+          <tr>
+            <td colspan="6" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+              {{ 'NO_RECORDS' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (user of this.users(); track user.id; let i = $index) {
+            <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.lastLoginDate ? (user.lastLoginDate | date:'short') : ('USERS.NEVER' | translate) }}</td>
+              <td>
+                <span class="badge" [class.bg-danger-subtle]="user.isBlocked" [class.text-danger]="user.isBlocked" [class.bg-success-subtle]="!user.isBlocked" [class.text-success]="!user.isBlocked">
+                  {{ user.isBlocked ? ('USERS.BLOCKED' | translate) : ('USERS.ACTIVE' | translate) }}
+                </span>
+              </td>
+              <td>
+                @if (userRoles(user).length > 0) {
+                  @for (role of userRoles(user); track role) {
+                    <span class="badge bg-secondary-subtle text-secondary me-1 mb-1 role-chip">{{ role }}</span>
+                  }
+                } @else {
+                  <span class="text-muted small">{{ 'NO_RECORDS' | translate }}</span>
+                }
+              </td>
+              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  (click)="toggleBlock(user)"
+                  [pTooltip]="user.isBlocked ? ('USERS.UNBLOCK_USER' | translate) : ('USERS.BLOCK_USER' | translate)"
+                  tooltipPosition="top"
+                  aria-label="{{ user.isBlocked ? ('USERS.UNBLOCK_USER' | translate) : ('USERS.BLOCK_USER' | translate) }}">
+                  <i class="bi" [ngClass]="user.isBlocked ? 'bi-unlock' : 'bi-slash-circle'"></i>
+                </button>
+                <button
+                  type="button"
+                  class="icon-btn"
+                  (click)="openManageRoles(user)"
+                  [pTooltip]="'USERS.MANAGE_ROLES' | translate"
+                  tooltipPosition="top"
+                  aria-label="{{ 'USERS.MANAGE_ROLES' | translate }}">
+                  <i class="bi bi-shield-check"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<app-pagination
+  [currentPage]="filters().pageNumber"
+  [totalItems]="totalItems()"
+  [itemsPerPage]="filters().pageSize"
+  (pageChanged)="onPageChange($event)"
+></app-pagination>

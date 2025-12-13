@@ -15,6 +15,7 @@ import {
 import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {DialogService} from 'primeng/dynamicdialog';
 import {MultiTranslateHttpLoader} from 'ngx-translate-multi-http-loader';
 import {LanguageService} from './core/services/language.service';
 import {authInterceptor} from './core/interceptors/auth.interceptor';
@@ -61,5 +62,6 @@ export const appConfig: ApplicationConfig = {
         errorInterceptor,
       ])
     ),
+    DialogService
   ]
 };

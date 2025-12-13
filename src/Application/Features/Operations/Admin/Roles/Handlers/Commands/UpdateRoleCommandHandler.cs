@@ -7,10 +7,11 @@ using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Commands;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Commands;
 
-public sealed class UpdateRoleCommandHandler(RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper)
+public sealed class UpdateRoleCommandHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
     : IRequestHandler<UpdateRoleCommand, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
@@ -27,16 +28,16 @@ public sealed class UpdateRoleCommandHandler(RoleManager<IdentityRole<Guid>> rol
 
         role.Name = request.NameEn;
         role.NormalizedName = normalized;
+        role.NameAr = request.NameAr;
+        role.NameEn = request.NameEn;
+        role.DescriptionAr = request.DescriptionAr;
+        role.DescriptionEn = request.DescriptionEn;
 
         var updateResult = await roleManager.UpdateAsync(role);
         if (!updateResult.Succeeded)
             return RoleClaimSync.FailureFromIdentity<RoleDto>(updateResult);
 
         var claims = await roleManager.GetClaimsAsync(role);
-
-        var namesResult = await RoleClaimSync.SetNameClaimsAsync(roleManager, role, request.NameAr, request.NameEn, claims);
-        if (namesResult.IsFailed)
-            return Result.Fail<RoleDto>(namesResult.Errors);
 
         var permissions = RolePermissionHelper.Validate(request.Permissions);
         if (permissions.IsFailed)

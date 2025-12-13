@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RolesService } from './services/roles.service';
-import { Select } from 'primeng/select';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import {RoleDto} from './models/permission.model';
 import {PermissionDto} from './models/role.model';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
+import {Lang, LanguageService} from '../../../core/services/language.service';
+import {NotificationService} from '../../../core/services/notification.service';
+import {Tooltip} from 'primeng/tooltip';
 
 @Component({
   selector: 'app-roles-management',
@@ -22,7 +24,8 @@ import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.
     TranslatePipe,
     PaginationComponent,
     ConfirmDialog,
-    I18nNamespaceDirective
+    I18nNamespaceDirective,
+    Tooltip
   ],
   providers: [ConfirmationService]
 })
@@ -30,6 +33,8 @@ export class RolesManagement implements OnInit {
   private rolesService = inject(RolesService);
   private translate = inject(TranslateService);
   private confirmationService = inject(ConfirmationService);
+  private language = inject(LanguageService);
+  private notification = inject(NotificationService);
 
   paginationMetadata = this.rolesService.paginationMetadata;
 
@@ -49,17 +54,22 @@ export class RolesManagement implements OnInit {
 
   isModalOpen = signal(false);
   isEditing = signal(false);
+  currentLang = signal<Lang>(this.language.get());
+  isRtl = computed(() => this.currentLang() === 'ar');
 
   formModel = signal<RoleDto>({
     id: '',
     nameAr: '',
     nameEn: '',
+    descriptionAr: '',
+    descriptionEn: '',
     permissions: []
   });
 
   ngOnInit(): void {
     this.loadRoles();
     this.loadPermissions();
+    this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
 
   pagedRoles = computed(() => {
@@ -67,11 +77,26 @@ export class RolesManagement implements OnInit {
   });
 
   loadRoles() {
-    this.rolesService.getRoles();
+    this.rolesService.getRoles({
+      pageNumber: this.currentPage(),
+      pageSize: this.itemsPerPage()
+    }).subscribe({
+      next: () => {
+        const metadata = this.paginationMetadata();
+        if (metadata) {
+          this.currentPage.set(metadata.pageNumber);
+          this.itemsPerPage.set(metadata.pageSize);
+        }
+      },
+      error: () => this.notification.error(this.translate.instant('ROLES.LOAD_FAILED'))
+    });
   }
 
   loadPermissions() {
-    this.rolesService.getPermissions().subscribe(res => this.permissions.set(res));
+    this.rolesService.getPermissions().subscribe({
+      next: res => this.permissions.set(res),
+      error: () => this.notification.error(this.translate.instant('ROLES.LOAD_FAILED'))
+    });
   }
 
   openAdd() {
@@ -80,6 +105,8 @@ export class RolesManagement implements OnInit {
       id: '',
       nameAr: '',
       nameEn: '',
+      descriptionAr: '',
+      descriptionEn: '',
       permissions: []
     });
     this.permissionSearch.set('');
@@ -107,17 +134,20 @@ export class RolesManagement implements OnInit {
   save() {
     const model = this.formModel();
 
-    if (this.isEditing()) {
-      this.rolesService.updateRole(model).subscribe(() => {
+    const request$ = this.isEditing()
+      ? this.rolesService.updateRole(model)
+      : this.rolesService.addRole(model);
+
+    request$.subscribe({
+      next: () => {
+        this.notification.success(this.translate.instant('ROLES.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadRoles();
-      });
-    } else {
-      this.rolesService.addRole(model).subscribe(() => {
-        this.isModalOpen.set(false);
-        this.loadRoles();
-      });
-    }
+      },
+      error: () => {
+        this.notification.error(this.translate.instant('ROLES.SAVE_FAILED'));
+      }
+    });
   }
 
   confirmDelete(role: RoleDto) {
@@ -131,8 +161,14 @@ export class RolesManagement implements OnInit {
       rejectButtonStyleClass: 'btn btn-outline-secondary',
       defaultFocus: 'reject',
       accept: () => {
-        this.rolesService.deleteRole(role.id).subscribe(() => {
-          this.loadRoles();
+        this.rolesService.deleteRole(role.id).subscribe({
+          next: () => {
+            this.notification.success(this.translate.instant('ROLES.DELETE_SUCCESS'));
+            this.loadRoles();
+          },
+          error: () => {
+            this.notification.error(this.translate.instant('ROLES.DELETE_FAILED'));
+          }
         });
       }
     });
@@ -141,5 +177,17 @@ export class RolesManagement implements OnInit {
   onPageChange(page: number) {
     this.currentPage.set(page);
     this.loadRoles();
+  }
+
+  localizedName(role: RoleDto) {
+    return this.currentLang() === 'ar'
+      ? role.nameAr || role.nameEn
+      : role.nameEn || role.nameAr;
+  }
+
+  localizedDescription(role: RoleDto) {
+    return this.currentLang() === 'ar'
+      ? role.descriptionAr || role.descriptionEn
+      : role.descriptionEn || role.descriptionAr;
   }
 }
