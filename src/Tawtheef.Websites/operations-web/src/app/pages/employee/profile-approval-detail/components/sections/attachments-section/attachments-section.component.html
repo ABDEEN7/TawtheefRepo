@@ -1,32 +1,41 @@
-<ng-container *ngIf="attachments?.length; else emptyBlock">
-  <div class="entry compact" *ngFor="let a of attachments">
-    <button class="entry-action danger" type="button" (click)="preview(a.file?.url)">
-      <i class="fa-regular fa-eye"></i>
-      <span>{{ 'profileApproval.detail.viewFile' | translate }}</span>
-    </button>
+<div class="row g-3" *ngIf="attachments?.length; else emptyBlock">
+  <div class="col-12" *ngFor="let a of attachments">
+    <p-card class="shadow-sm h-100">
+      <ng-template pTemplate="header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <i class="pi pi-paperclip text-danger"></i>
+            <h5 class="mb-0">{{ a.title || a.file?.fileName || '-' }}</h5>
+          </div>
+          <button
+            pButton
+            type="button"
+            class="p-button-danger p-button-text"
+            icon="pi pi-external-link"
+            (click)="preview(a.file?.url)"
+            [label]="'profileApproval.detail.viewFile' | translate"
+            [disabled]="!a.file?.url"
+          ></button>
+        </div>
+      </ng-template>
 
-    <div class="entry-body">
-      <div class="entry-head">
-        <h4 class="entry-title">{{ a.title || a.file?.fileName || '-' }}</h4>
-      </div>
-
-      <div class="entry-grid">
-        <div class="cell">
-          <div class="k">{{ 'profileApproval.detail.attachments.fileName' | translate }}</div>
-          <div class="v">{{ a.file?.fileName || '-' }}</div>
+      <div class="row row-cols-1 row-cols-md-3 g-3">
+        <div class="col">
+          <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileName' | translate }}</div>
+          <div class="fw-semibold">{{ a.file?.fileName || '-' }}</div>
         </div>
-        <div class="cell">
-          <div class="k">{{ 'profileApproval.detail.attachments.fileSize' | translate }}</div>
-          <div class="v">{{ a.file?.sizeLabel || '-' }}</div>
+        <div class="col">
+          <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileSize' | translate }}</div>
+          <div class="fw-semibold">{{ a.file?.sizeLabel || '-' }}</div>
         </div>
-        <div class="cell">
-          <div class="k">{{ 'profileApproval.detail.attachments.fileType' | translate }}</div>
-          <div class="v">{{ a.file?.contentType || a.file?.type || a.file?.extension || '-' }}</div>
+        <div class="col">
+          <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileType' | translate }}</div>
+          <div class="fw-semibold">{{ a.file?.contentType || a.file?.type || a.file?.extension || '-' }}</div>
         </div>
       </div>
-    </div>
+    </p-card>
   </div>
-</ng-container>
+</div>
 
 <ng-template #emptyBlock>
   <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>

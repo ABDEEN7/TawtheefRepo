@@ -1,39 +1,52 @@
-<ng-container *ngIf="qualifications?.length; else emptyBlock">
-  <div class="entry" *ngFor="let q of qualifications">
-    <button class="entry-action" type="button" (click)="preview(q.attachment?.url)">
-      <i class="fa-regular fa-eye"></i>
-      <span>{{ 'profileApproval.detail.viewFile' | translate }}</span>
-    </button>
+<div class="row g-3" *ngIf="qualifications?.length; else emptyBlock">
+  <div class="col-12" *ngFor="let q of qualifications">
+    <p-card class="shadow-sm h-100">
+      <ng-template pTemplate="header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <i class="pi pi-book text-primary"></i>
+            <div>
+              <h5 class="mb-0">{{ q.major?.name || q.majorId }}</h5>
+              <small class="text-muted">{{ q.university?.name || '-' }}</small>
+            </div>
+          </div>
 
-    <div class="entry-body">
-      <div class="entry-head">
-        <h4 class="entry-title">{{ q.major?.name || q.majorId }}</h4>
-      </div>
+          <button
+            pButton
+            type="button"
+            class="p-button-text"
+            icon="pi pi-external-link"
+            (click)="preview(q.attachment?.url)"
+            [label]="'profileApproval.detail.viewFile' | translate"
+            [disabled]="!q.attachment?.url"
+          ></button>
+        </div>
+      </ng-template>
 
-      <div class="entry-grid">
-        <div class="cell">
-          <div class="k">{{ 'profileApproval.detail.qualifications.country' | translate }}</div>
-          <div class="v">{{ q.country?.name || q.countryId || '-' }}</div>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+        <div class="col">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.country' | translate }}</div>
+          <div class="fw-semibold">{{ q.country?.name || q.countryId || '-' }}</div>
         </div>
-        <div class="cell">
-          <div class="k">{{ 'profileApproval.detail.qualifications.university' | translate }}</div>
-          <div class="v">{{ q.university?.name || '-' }}</div>
+        <div class="col">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.university' | translate }}</div>
+          <div class="fw-semibold">{{ q.university?.name || '-' }}</div>
         </div>
-        <div class="cell">
-          <div class="k">{{ 'profileApproval.detail.qualifications.year' | translate }}</div>
-          <div class="v">{{ q.graduationYear || '-' }}</div>
+        <div class="col">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.year' | translate }}</div>
+          <div class="fw-semibold">{{ q.graduationYear || '-' }}</div>
         </div>
-        <div class="cell">
-          <div class="k">{{ 'profileApproval.detail.qualifications.attachment' | translate }}</div>
-          <div class="v">
-            <span class="chip" *ngIf="q.attachment?.fileName">{{ q.attachment.fileName }}</span>
+        <div class="col">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.attachment' | translate }}</div>
+          <div class="fw-semibold d-flex align-items-center gap-2">
+            <p-tag *ngIf="q.attachment?.fileName" severity="info" [value]="q.attachment.fileName"></p-tag>
             <span *ngIf="!q.attachment?.fileName">-</span>
           </div>
         </div>
       </div>
-    </div>
+    </p-card>
   </div>
-</ng-container>
+</div>
 
 <ng-template #emptyBlock>
   <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>

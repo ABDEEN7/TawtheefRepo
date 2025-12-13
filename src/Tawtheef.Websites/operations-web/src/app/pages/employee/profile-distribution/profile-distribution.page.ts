@@ -3,6 +3,16 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import { TableModule } from 'primeng/table';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { DialogModule } from 'primeng/dialog';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { AvatarModule } from 'primeng/avatar';
+import { BadgeModule } from 'primeng/badge';
 import { ProfileDistributionService } from './services/profile-distribution.service';
 import {
   AutoAssignRequest,
@@ -19,7 +29,22 @@ import {ProfileStatusNumber} from '../../../core/enums/lookups.enum';
 @Component({
   selector: 'app-profile-distribution-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, I18nNamespaceDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    TableModule,
+    DropdownModule,
+    InputTextModule,
+    ButtonModule,
+    TagModule,
+    DialogModule,
+    InputNumberModule,
+    InputSwitchModule,
+    AvatarModule,
+    BadgeModule,
+    I18nNamespaceDirective,
+  ],
   templateUrl: './profile-distribution.page.html',
   styleUrl: './profile-distribution.page.scss',
 })
@@ -39,6 +64,13 @@ export class ProfileDistributionPage implements OnInit {
   manualEmployeeId = signal<string>('');
   autoEmployeeIds = signal<Set<string>>(new Set());
   autoLimit = signal<number | null>(null);
+  manualDialogVisible = signal(false);
+  autoDialogVisible = signal(false);
+  manualCount = signal<number | null>(null);
+
+  readonly selectedFiles = computed(() =>
+    this.files().filter(file => this.selectedIds().has(file.profileId))
+  );
 
   readonly filteredFiles = computed(() => {
     const searchTerm = this.search().trim().toLowerCase();
@@ -49,7 +81,7 @@ export class ProfileDistributionPage implements OnInit {
       const matchesSearch =
         !searchTerm ||
         file.candidateName.toLowerCase().includes(searchTerm) ||
-        file.specialization.toLowerCase().includes(searchTerm) ||
+        (file.specialization ?? '').toLowerCase().includes(searchTerm) ||
         (file.targetEntity ?? '').toLowerCase().includes(searchTerm);
       return matchesStatus && matchesSearch;
     });
@@ -97,6 +129,10 @@ export class ProfileDistributionPage implements OnInit {
     this.selectedIds.set(set);
   }
 
+  onSelectionChange(selection: DistributionFile[]): void {
+    this.selectedIds.set(new Set(selection.map(item => item.profileId)));
+  }
+
   selectAll(): void {
     this.selectedIds.set(new Set(this.filteredFiles().map(f => f.profileId)));
   }
@@ -105,13 +141,33 @@ export class ProfileDistributionPage implements OnInit {
     this.selectedIds.set(new Set());
   }
 
+  openManualDialog(profileId?: string): void {
+    if (profileId) {
+      this.selectedIds.set(new Set([profileId]));
+    }
+    if (this.selectedIds().size === 0) return;
+
+    this.manualCount.set(this.selectedIds().size);
+    this.manualDialogVisible.set(true);
+  }
+
+  openAutoDialog(): void {
+    if (this.selectedIds().size === 0) {
+      this.error.set('يرجى اختيار ملفات للتوزيع');
+      return;
+    }
+    this.autoDialogVisible.set(true);
+  }
+
   assignManual(): void {
     const employeeId = this.manualEmployeeId();
     if (!employeeId || this.selectedIds().size === 0) return;
 
+    const count = this.manualCount();
+    const selectedIds = Array.from(this.selectedIds());
     const payload: ManualAssignRequest = {
       employeeId,
-      profileIds: Array.from(this.selectedIds()),
+      profileIds: count ? selectedIds.slice(0, count) : selectedIds,
     };
 
     this.loading.set(true);
@@ -119,7 +175,10 @@ export class ProfileDistributionPage implements OnInit {
       .assignManually(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: result => this.handleResult(result.assignedCount, result),
+        next: result => {
+          this.manualDialogVisible.set(false);
+          this.handleResult(result.assignedCount, result);
+        },
         error: err => this.handleError(err, 'تعذر إسناد الملفات يدويًا'),
       });
   }
@@ -147,7 +206,10 @@ export class ProfileDistributionPage implements OnInit {
       .assignAutomatically(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: result => this.handleResult(result.assignedCount, result),
+        next: result => {
+          this.autoDialogVisible.set(false);
+          this.handleResult(result.assignedCount, result);
+        },
         error: err => this.handleError(err, 'تعذر التوزيع الآلي'),
       });
   }
@@ -189,6 +251,22 @@ export class ProfileDistributionPage implements OnInit {
         return 'pill warning';
       default:
         return 'pill soft';
+    }
+  }
+
+  statusSeverity(status: ProfileStatusNumber): 'info' | 'warning' | 'success' | 'danger' | 'secondary' {
+    switch (status) {
+      case ProfileStatusNumber.UnderReview:
+        return 'info';
+      case ProfileStatusNumber.RequiresUpdate:
+        return 'warning';
+      case ProfileStatusNumber.Approved:
+        return 'success';
+      case ProfileStatusNumber.Rejected:
+      case ProfileStatusNumber.Cancelled:
+        return 'danger';
+      default:
+        return 'secondary';
     }
   }
 
