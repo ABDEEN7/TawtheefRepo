@@ -45,6 +45,10 @@
             {{ e.isCurrent ? ('profileApproval.detail.snapshot.present' | translate) : (e.endDate || '-') }}
           </div>
         </div>
+        <div class="detail-tile" *ngIf="e.qualificationName || e.qualification?.name">
+          <div class="text-muted small">{{ 'profileApproval.detail.experiences.qualification' | translate }}</div>
+          <div class="fw-semibold">{{ e.qualification?.name || e.qualificationName }}</div>
+        </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.experiences.attachment' | translate }}</div>
           <div class="fw-semibold d-flex align-items-center gap-2">

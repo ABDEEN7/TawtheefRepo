@@ -12,8 +12,8 @@
 
       <div class="chip-stack" *ngIf="skillsAndLanguages?.length; else emptySkills">
         <div class="chip-row" *ngFor="let s of skillsAndLanguages">
-          <div class="chip-title">{{ s.skill?.name || '-' }}</div>
-          <p-tag severity="info" [value]="s.level?.name || s.levelId || '-' "></p-tag>
+          <div class="chip-title">{{ displayOption(s.skill, s.skillId) }}</div>
+          <p-tag severity="info" [value]="displayOption(s.level, s.levelId)"></p-tag>
         </div>
       </div>
     </p-card>
@@ -32,19 +32,19 @@
 
       <div class="chip-stack" *ngIf="languages?.length; else emptyLanguages">
         <div class="language-card" *ngFor="let l of languages">
-          <div class="language-title">{{ l.language?.name || '-' }}</div>
+          <div class="language-title">{{ displayOption(l.language, l.languageId) }}</div>
           <div class="language-levels">
             <span class="badge rounded-pill text-bg-light">
               {{ 'profileApproval.detail.snapshot.speaking' | translate }}:
-              <strong>{{ l.speakingLevel?.name || l.speakingLevelId || '-' }}</strong>
+              <strong>{{ displayOption(l.speakingLevel, l.speakingLevelId) }}</strong>
             </span>
             <span class="badge rounded-pill text-bg-light">
               {{ 'profileApproval.detail.snapshot.writing' | translate }}:
-              <strong>{{ l.writingLevel?.name || l.writingLevelId || '-' }}</strong>
+              <strong>{{ displayOption(l.writingLevel, l.writingLevelId) }}</strong>
             </span>
             <span class="badge rounded-pill text-bg-light">
               {{ 'profileApproval.detail.snapshot.reading' | translate }}:
-              <strong>{{ l.readingLevel?.name || l.readingLevelId || '-' }}</strong>
+              <strong>{{ displayOption(l.readingLevel, l.readingLevelId) }}</strong>
             </span>
           </div>
         </div>

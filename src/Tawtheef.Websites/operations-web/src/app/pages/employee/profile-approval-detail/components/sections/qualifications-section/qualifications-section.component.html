@@ -27,6 +27,10 @@
 
       <div class="detail-grid">
         <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.level' | translate }}</div>
+          <div class="fw-semibold">{{ q.degree?.name || q.level || '-' }}</div>
+        </div>
+        <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.country' | translate }}</div>
           <div class="fw-semibold">{{ q.country?.name || q.countryId || '-' }}</div>
         </div>
@@ -35,8 +39,28 @@
           <div class="fw-semibold">{{ q.university?.name || '-' }}</div>
         </div>
         <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.major' | translate }}</div>
+          <div class="fw-semibold">{{ q.major?.name || q.majorId || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.subMajor' | translate }}</div>
+          <div class="fw-semibold">{{ q.subMajor?.name || q.subMajorId || '-' }}</div>
+        </div>
+        <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.year' | translate }}</div>
           <div class="fw-semibold">{{ q.graduationYear || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.gpa' | translate }}</div>
+          <div class="fw-semibold">{{ q.gpa || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.grade' | translate }}</div>
+          <div class="fw-semibold">{{ q.grade?.name || q.gradeId || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.qualifications.studySystem' | translate }}</div>
+          <div class="fw-semibold">{{ q.studySystem?.name || q.studySystemId || '-' }}</div>
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.attachment' | translate }}</div>
