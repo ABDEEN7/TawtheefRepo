@@ -8,5 +8,5 @@ public sealed record UserListItemDto
     public DateTime? LastLoginDate { get; init; }
     public bool IsBlocked { get; init; }
     public IReadOnlyCollection<RoleSummaryDto> Roles { get; init; } = Array.Empty<RoleSummaryDto>();
-    public IReadOnlyCollection<string> RoleNames { get; init; } = Array.Empty<string>();
+    public List<string> RoleNames { get; set; } = new();
 }

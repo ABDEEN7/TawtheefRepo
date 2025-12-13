@@ -6,6 +6,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Admin.Users.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Users.Queries;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Queries;
@@ -66,7 +67,7 @@ public sealed class ListUsersQueryHandler(
                 LastLoginDate = user.LastLoginDate,
                 IsBlocked = user.IsBlocked,
                 Roles = assignedRoles,
-                RoleNames = assignedRoleNames
+                RoleNames = assignedRoleNames.ToList()
             });
         }
 
