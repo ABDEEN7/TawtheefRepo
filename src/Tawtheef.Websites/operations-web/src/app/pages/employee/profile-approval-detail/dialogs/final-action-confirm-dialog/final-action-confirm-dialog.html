@@ -1,0 +1,40 @@
+﻿<div class="confirm-dialog" dir="rtl">
+  <div class="dlg-head">
+    <h3>تأكيد اعتماد الملف الشخصي</h3>
+  </div>
+
+  <div class="dlg-body">
+    <div class="field">
+      <label>حالة الاعتماد <span class="req">*</span></label>
+      <select class="ctrl" [(ngModel)]="model.action">
+        <option [ngValue]="null">اختر حالة الاعتماد</option>
+        <option [ngValue]="'ExceptionalApproval'">اعتماد الملف استثناءً</option>
+        <option [ngValue]="'ApproveProfile'">اعتماد الملف</option>
+        <option [ngValue]="'NeedsCorrection'">إرجاع للتعديل</option>
+        <option [ngValue]="'RejectProfile'">رفض الملف</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>ملاحظة <span class="req">*</span></label>
+      <textarea class="ctrl" rows="3" [(ngModel)]="model.notes" placeholder="نص الاستثناء من الإدارة العليا"></textarea>
+    </div>
+
+    <div class="field">
+      <label>ملف الاستثناء <span class="req">*</span></label>
+      <div class="upload">
+        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+        <input type="file" (change)="onFileSelected($event)" />
+        <span class="hint">يرجى إرفاق الملف</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-actions">
+    <button class="btn ghost" type="button" (click)="onCancel()">إلغاء</button>
+    <button class="btn primary" type="button" (click)="onConfirm()">
+      <i class="fa-regular fa-floppy-disk"></i>
+      حفظ نهائي
+    </button>
+  </div>
+</div>

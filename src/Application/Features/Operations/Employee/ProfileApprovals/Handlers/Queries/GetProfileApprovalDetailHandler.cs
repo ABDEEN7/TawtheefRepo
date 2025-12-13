@@ -27,7 +27,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
         var profileQuery = profileRepo.DbSet
             .Include(p => p.User)
             .Include(p => p.CandidateType)
-            .Include(p => p.TargetEntity);
+            .Include(p => p.TargetEntity).AsQueryable();
 
         if (request.IncludeProfile)
         {

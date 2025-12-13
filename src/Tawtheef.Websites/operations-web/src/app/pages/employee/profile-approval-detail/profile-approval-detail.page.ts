@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { finalize, Subscription, combineLatest } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ProfileApprovalService } from './services/profile-approval.service';
+import { ProfileApprovalService } from '../profile-approval/services/profile-approval.service';
 import {
   FinalApprovalAction,
   ProfileApprovalDetail,
@@ -12,14 +12,14 @@ import {
   ProfileApprovalSection,
   ReviewStatus,
   ReviewTargetType,
-} from './models/profile-approval.models';
+} from '../profile-approval/models/profile-approval.models';
 import { RadioButton } from 'primeng/radiobutton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
-import { ItemDialogResult, ItemReviewDialogComponent } from './dialogs/item-review-dialog/item-review-dialog';
-import { SectionDialogResult, SectionReviewDialogComponent } from './dialogs/section-review-dialog/section-review-dialog';
-import { FinalActionConfirmDialogComponent } from './dialogs/final-action-confirm-dialog/final-action-confirm-dialog';
+import { ItemDialogResult, ItemReviewDialogComponent } from '../profile-approval/dialogs/item-review-dialog/item-review-dialog';
+import { SectionDialogResult, SectionReviewDialogComponent } from '../profile-approval/dialogs/section-review-dialog/section-review-dialog';
+import { FinalActionConfirmDialogComponent } from '../profile-approval/dialogs/final-action-confirm-dialog/final-action-confirm-dialog';
 import { FileUtilsService } from '../../../core/utils/file-utils';
 import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
 import { routes } from '../../../routes/routes';
@@ -28,12 +28,14 @@ type ContentTab = 'profile' | 'review' | 'final';
 
 type TabState = Record<ContentTab, { loading: boolean; loaded: boolean }>;
 
+type StepUiStatus = 'done' | 'bad' | 'progress' | 'idle';
+
 @Component({
   selector: 'app-profile-approval-detail-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, I18nNamespaceDirective, RadioButton, ProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, I18nNamespaceDirective, ProgressSpinnerModule],
   templateUrl: './profile-approval-detail.page.html',
-  styleUrl: './profile-approval.page.scss',
+  styleUrl: './profile-approval-detail.page.scss',
   providers: [DialogService, MessageService],
 })
 export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
@@ -407,7 +409,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     return [
       { key: 'profile', label: 'profileApproval.tabs.profileData' },
       { key: 'review', label: 'profileApproval.tabs.reviewSections' },
-      ...(this.partialMode() ? [] : [{ key: 'final', label: 'profileApproval.tabs.finalDecision' }]),
+      ...(this.partialMode() ? [] : [{ key: 'final' as ContentTab, label: 'profileApproval.tabs.finalDecision' }]),
     ];
   }
 
@@ -456,5 +458,64 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   private setTabState(tab: ContentTab, changes: Partial<TabState[ContentTab]>): void {
     const current = this.tabState();
     this.tabState.set({ ...current, [tab]: { ...current[tab], ...changes } });
+  }
+
+  stepperSections(info: ProfileApprovalDetail): Array<{ section: number; uiStatus: StepUiStatus; icon: string }> {
+    const current = this.activeSection();
+
+    return (info.sections ?? []).map(s => {
+      const st = s.sectionReview?.status;
+
+      let uiStatus: StepUiStatus = 'idle';
+      if (st === ReviewStatus.Approved) uiStatus = 'done';
+      else if (st === ReviewStatus.Rejected) uiStatus = 'bad';
+      else if (s.section === current) uiStatus = 'progress';
+      else uiStatus = 'idle';
+
+      return { section: s.section, uiStatus, icon: this.sectionIcon(s.section) };
+    });
+  }
+
+  sectionIcon(section: number): string {
+    switch (section) {
+      case 1: return 'fa-regular fa-id-card';
+      case 2: return 'fa-solid fa-graduation-cap';
+      case 3: return 'fa-solid fa-briefcase';
+      case 4: return 'fa-regular fa-rectangle-list';
+      case 6: return 'fa-solid fa-language';
+      case 7: return 'fa-regular fa-folder-open';
+      case 8: return 'fa-regular fa-image';
+      default: return 'fa-regular fa-circle';
+    }
+  }
+
+  hasBasicFiles(profile: any): boolean {
+    const b = profile?.basicInformation;
+    return !!(b?.resumeAttachment || b?.nationalCard || b?.birthdayCertificate || b?.marriageCertificate || b?.residenceAddressCertificate);
+  }
+
+  /** تخزين مبدئي محلي (UI) ثم إرسال مراجعة القسم عند الضغط التالي/السابق أو حسب رغبتك */
+  onSectionStatusChange(sec: ProfileApprovalSection, status: ReviewStatus | null) {
+    if (!sec.sectionReview) return;
+
+    // تحديث UI محلياً
+    sec.sectionReview.status = status ?? ReviewStatus.Pending;
+  }
+
+  onSectionNoteChange(sec: ProfileApprovalSection, note: string) {
+    if (!sec.sectionReview) return;
+    sec.sectionReview.note = note;
+  }
+
+  goPrev(info: ProfileApprovalDetail) {
+    const idx = info.sections.findIndex(s => s.section === this.activeSection());
+    if (idx <= 0) return;
+    this.activeSection.set(info.sections[idx - 1].section);
+  }
+
+  goNext(info: ProfileApprovalDetail) {
+    const idx = info.sections.findIndex(s => s.section === this.activeSection());
+    if (idx < 0 || idx >= info.sections.length - 1) return;
+    this.activeSection.set(info.sections[idx + 1].section);
   }
 }

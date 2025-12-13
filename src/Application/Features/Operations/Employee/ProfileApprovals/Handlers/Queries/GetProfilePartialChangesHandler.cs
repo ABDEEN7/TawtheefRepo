@@ -1,9 +1,11 @@
 using FluentResults;
+using Mapster;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
@@ -28,7 +30,7 @@ public class GetProfilePartialChangesHandler(
         var profileQuery = profileRepo.DbSet
             .Include(p => p.User)
             .Include(p => p.CandidateType)
-            .Include(p => p.TargetEntity);
+            .Include(p => p.TargetEntity).AsQueryable();
 
         if (request.IncludeProfile)
         {
@@ -136,6 +138,8 @@ public class GetProfilePartialChangesHandler(
                 .ToList();
         }
 
+        using var scope = new MapContextScope();
+        scope.Context.Parameters[ResourceMapper.MediaKey] = media;
         var profileData = request.IncludeProfile ? mapper.Map<ProfileApprovalDataDto>(profile) : null;
 
         var dto = new ProfileApprovalDetailDto

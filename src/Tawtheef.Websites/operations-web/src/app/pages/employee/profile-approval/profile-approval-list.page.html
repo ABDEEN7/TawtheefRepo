@@ -65,6 +65,7 @@
           [ngModel]="filters().status"
           [showClear]="true"
           (onChange)="updateFilter('status', $event.value ?? '')"
+          name="status"
         >
           <ng-template pTemplate="selectedItem" let-item>
             <span *ngIf="item">{{ item.label | translate }}</span>
@@ -124,7 +125,8 @@
               <div class="muted small">{{ row.candidateType || ('profileApproval.list.typeUnknown' | translate) }}</div>
             </td>
             <td>
-              <span class="pill" [ngClass]="statusClass(row.overallStatus)">{{ statusLabel(row.overallStatus) | translate }}</span>
+              <span class="pill"
+                    [ngClass]="statusClass(row.overallStatus)">{{ statusLabel(row.overallStatus) | translate }}</span>
               <span class="pill warning" *ngIf="row.pendingCount > 0">
                 {{ row.pendingCount }} {{ 'profileApproval.list.pending' | translate }}
               </span>

@@ -1,0 +1,403 @@
+<section class="approval-page" i18nNamespace="pages/profile-approval" dir="rtl">
+  <!-- HEADER -->
+  <header class="page-head" *ngIf="detail() as info">
+    <div class="head-top">
+      <button class="btn-pill" type="button" (click)="backToList()">
+        <i class="fa-solid fa-chevron-right"></i>
+        <span>{{ 'common.back' | translate }}</span>
+      </button>
+
+      <div class="head-title">
+        <h1 class="title">{{ 'profileApproval.detail.eyebrow' | translate }}</h1>
+        <h2 class="name">
+          {{ info.fullName || ('profileApproval.detail.placeholder' | translate) }}
+        </h2>
+
+        <div class="meta">
+          <span class="meta-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>{{ info.targetEntity || '-' }}</span>
+          </span>
+          <span class="meta-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>{{ info.submittedAtUtc | date: 'dd/MM/yyyy' }}</span>
+          </span>
+          <span class="meta-item">
+            <i class="fa-solid fa-hashtag"></i>
+            <span>{{ info.submissionVersion || '-' }}</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="head-avatar">
+        <img
+          class="avatar"
+          [src]="info.profile?.profilePhoto?.url || 'assets/img/avatar.png'"
+          alt="avatar"
+        />
+      </div>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <button
+        class="step"
+        *ngFor="let s of stepperSections(info)"
+        type="button"
+        [class.active]="activeSection() === s.section"
+        [class.done]="s.uiStatus === 'done'"
+        [class.bad]="s.uiStatus === 'bad'"
+        [class.progress]="s.uiStatus === 'progress'"
+        [class.idle]="s.uiStatus === 'idle'"
+        (click)="activeSection.set(s.section)"
+      >
+        <span class="node">
+          <ng-container [ngSwitch]="s.uiStatus">
+            <i *ngSwitchCase="'done'" class="fa-solid fa-check"></i>
+            <i *ngSwitchCase="'bad'" class="fa-solid fa-xmark"></i>
+            <i *ngSwitchCase="'progress'" class="fa-solid fa-rotate"></i>
+            <i *ngSwitchDefault class="fa-regular fa-circle"></i>
+          </ng-container>
+        </span>
+
+        <span class="label">
+          <i class="{{ s.icon }}"></i>
+          <span>{{ sectionName(s.section) | translate }}</span>
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <!-- LOADING / ERROR -->
+  <div class="state" *ngIf="loadingDetail()">
+    <p-progressSpinner strokeWidth="4"></p-progressSpinner>
+    <div class="hint">{{ 'profileApproval.tabs.loading' | translate }}</div>
+  </div>
+
+  <div class="state error" *ngIf="error() && !loadingDetail()">
+    {{ error() }}
+  </div>
+
+  <!-- BODY -->
+  <main class="page-body" *ngIf="detail() as info">
+    <ng-container *ngIf="info.profile as profile">
+      <!-- القسم النشط -->
+      <ng-container *ngFor="let sec of info.sections">
+        <section class="section-wrap" *ngIf="activeSection() === sec.section">
+          <div class="section-title">
+            <i class="{{ sectionIcon(sec.section) }}"></i>
+            <h3>{{ sectionName(sec.section) | translate }}</h3>
+          </div>
+
+          <!-- 1) Basic Info -->
+          <ng-container *ngIf="sec.section === 1">
+            <div class="card-grid">
+              <div class="kv-card">
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.nationalNumber' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.nationalNumber || '-' }}</div>
+                </div>
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.fullNameAr' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.fullNameAr || '-' }}</div>
+                </div>
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.fullNameEn' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.fullNameEn || '-' }}</div>
+                </div>
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.birthDate' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.birthDate || '-' }}</div>
+                </div>
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.gender' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.gender || '-' }}</div>
+                </div>
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.nationality' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.nationality || '-' }}</div>
+                </div>
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.religion' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.religion || '-' }}</div>
+                </div>
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.maritalStatus' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.maritalStatus || '-' }}</div>
+                </div>
+                <div class="kv">
+                  <div class="k">{{ 'profileApproval.detail.snapshot.childrenCount' | translate }}</div>
+                  <div class="v">{{ profile.basicInformation.childrenCount ?? '-' }}</div>
+                </div>
+              </div>
+
+              <div class="files-card" *ngIf="hasBasicFiles(profile)">
+                <div class="files-head">
+                  <h4>{{ 'profileApproval.detail.snapshot.files' | translate }}</h4>
+                </div>
+
+                <div class="file-row" *ngIf="profile.basicInformation.resumeAttachment">
+                  <span class="file-name">{{ profile.basicInformation.resumeAttachment.fileName }}</span>
+                  <button class="btn-link" type="button" (click)="previewFile(profile.basicInformation.resumeAttachment.url)">
+                    {{ 'profileApproval.detail.viewFile' | translate }}
+                  </button>
+                </div>
+
+                <div class="file-row" *ngIf="profile.basicInformation.nationalCard">
+                  <span class="file-name">{{ profile.basicInformation.nationalCard.fileName }}</span>
+                  <button class="btn-link" type="button" (click)="previewFile(profile.basicInformation.nationalCard.url)">
+                    {{ 'profileApproval.detail.viewFile' | translate }}
+                  </button>
+                </div>
+
+                <div class="file-row" *ngIf="profile.basicInformation.birthdayCertificate">
+                  <span class="file-name">{{ profile.basicInformation.birthdayCertificate.fileName }}</span>
+                  <button class="btn-link" type="button" (click)="previewFile(profile.basicInformation.birthdayCertificate.url)">
+                    {{ 'profileApproval.detail.viewFile' | translate }}
+                  </button>
+                </div>
+
+                <div class="file-row" *ngIf="profile.basicInformation.marriageCertificate">
+                  <span class="file-name">{{ profile.basicInformation.marriageCertificate.fileName }}</span>
+                  <button class="btn-link" type="button" (click)="previewFile(profile.basicInformation.marriageCertificate.url)">
+                    {{ 'profileApproval.detail.viewFile' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- 2) Qualifications -->
+          <ng-container *ngIf="sec.section === 2">
+            <ng-container *ngIf="profile.qualifications?.length; else emptyBlock">
+              <div class="entry" *ngFor="let q of profile.qualifications">
+                <button class="entry-action" type="button" (click)="q.attachment?.url && previewFile(q.attachment.url)">
+                  <i class="fa-regular fa-eye"></i>
+                  <span>عرض</span>
+                </button>
+
+                <div class="entry-body">
+                  <div class="entry-head">
+                    <h4 class="entry-title">{{ q.major?.name || q.majorId }}</h4>
+                  </div>
+
+                  <div class="entry-grid">
+                    <div class="cell">
+                      <div class="k">بلد التخرج</div>
+                      <div class="v">{{ q.country?.name || q.countryId || '-' }}</div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">الجامعة</div>
+                      <div class="v">{{ q.university?.name || '-' }}</div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">السنة</div>
+                      <div class="v">{{ q.graduationYear || '-' }}</div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">المرفق</div>
+                      <div class="v">
+                        <span class="chip" *ngIf="q.attachment?.fileName">{{ q.attachment.fileName }}</span>
+                        <span *ngIf="!q.attachment?.fileName">-</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <!-- 3) Experiences -->
+          <ng-container *ngIf="sec.section === 3">
+            <ng-container *ngIf="profile.experiences?.length; else emptyBlock">
+              <div class="entry" *ngFor="let e of profile.experiences">
+                <button class="entry-action" type="button" (click)="e.attachment?.url && previewFile(e.attachment.url)">
+                  <i class="fa-regular fa-eye"></i>
+                  <span>عرض</span>
+                </button>
+
+                <div class="entry-body">
+                  <div class="entry-head">
+                    <h4 class="entry-title">{{ e.jobTitle || '-' }}</h4>
+                    <div class="entry-sub">{{ e.employerName || '-' }}</div>
+                  </div>
+
+                  <div class="entry-grid">
+                    <div class="cell">
+                      <div class="k">الدولة</div>
+                      <div class="v">{{ e.country?.name || '-' }}</div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">تاريخ الخبرة</div>
+                      <div class="v">
+                        {{ e.startDate || '-' }} - {{ e.isCurrent ? 'حتى الآن' : (e.endDate || '-') }}
+                      </div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">المرفق</div>
+                      <div class="v">
+                        <span class="chip" *ngIf="e.attachment?.fileName">{{ e.attachment.fileName }}</span>
+                        <span *ngIf="!e.attachment?.fileName">-</span>
+                      </div>
+                    </div>
+                    <div class="cell wide" *ngIf="e.description">
+                      <div class="k">المهام</div>
+                      <div class="v">{{ e.description }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <!-- 4) Training -->
+          <ng-container *ngIf="sec.section === 4">
+            <ng-container *ngIf="profile.trainingCourses?.length; else emptyBlock">
+              <div class="entry" *ngFor="let t of profile.trainingCourses">
+                <button class="entry-action" type="button" (click)="t.attachment?.url && previewFile(t.attachment.url)">
+                  <i class="fa-regular fa-eye"></i>
+                  <span>عرض</span>
+                </button>
+
+                <div class="entry-body">
+                  <div class="entry-head">
+                    <h4 class="entry-title">{{ t.title || '-' }}</h4>
+                    <div class="entry-sub">{{ t.provider || '-' }}</div>
+                  </div>
+
+                  <div class="entry-grid">
+                    <div class="cell">
+                      <div class="k">الدولة</div>
+                      <div class="v">{{ t.country?.name || '-' }}</div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">تاريخ الدورة</div>
+                      <div class="v">{{ t.startDate || '-' }} - {{ t.endDate || '-' }}</div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">المرفق</div>
+                      <div class="v">
+                        <span class="chip" *ngIf="t.attachment?.fileName">{{ t.attachment.fileName }}</span>
+                        <span *ngIf="!t.attachment?.fileName">-</span>
+                      </div>
+                    </div>
+                    <div class="cell wide" *ngIf="t.description">
+                      <div class="k">المهام</div>
+                      <div class="v">{{ t.description }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <!-- 6) Skills & Languages -->
+          <ng-container *ngIf="sec.section === 6">
+            <div class="split">
+              <div class="box">
+                <h4 class="box-title">المهارات</h4>
+                <div class="pill-row" *ngFor="let s of profile.skillsAndLanguages">
+                  <span class="pill-name">{{ s.skill?.name || s.skillId }}</span>
+                  <span class="pill-level">{{ s.levelId || '-' }}</span>
+                </div>
+              </div>
+
+              <div class="box">
+                <h4 class="box-title">اللغات</h4>
+                <div class="pill-row" *ngFor="let l of profile.languages">
+                  <span class="pill-name">{{ l.language?.name || l.languageId }}</span>
+                  <span class="pill-level">
+                    تحدث: {{ l.speakingLevelId || '-' }} | كتابة: {{ l.writingLevelId || '-' }} | قراءة: {{ l.readingLevelId || '-' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- 7) Attachments -->
+          <ng-container *ngIf="sec.section === 7">
+            <ng-container *ngIf="profile.attachments?.length; else emptyBlock">
+              <div class="entry compact" *ngFor="let a of profile.attachments">
+                <button class="entry-action danger" type="button" (click)="a.file?.url && previewFile(a.file.url)">
+                  <i class="fa-regular fa-eye"></i>
+                  <span>اتخاذ إجراء</span>
+                </button>
+
+                <div class="entry-body">
+                  <div class="entry-head">
+                    <h4 class="entry-title">{{ a.title || a.file?.fileName || '-' }}</h4>
+                  </div>
+
+                  <div class="entry-grid">
+                    <div class="cell">
+                      <div class="k">اسم الملف</div>
+                      <div class="v">{{ a.file?.fileName || '-' }}</div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">حجم الملف</div>
+                      <div class="v">{{ a.file?.sizeLabel || '-' }}</div>
+                    </div>
+                    <div class="cell">
+                      <div class="k">نوع الملف</div>
+                      <div class="v">PDF</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <!-- 8) Photo -->
+          <ng-container *ngIf="sec.section === 8">
+            <div class="photo-card">
+              <img
+                [src]="profile.profilePhoto?.url || 'assets/img/avatar.png'"
+                alt="profile-photo"
+              />
+            </div>
+          </ng-container>
+
+          <ng-template #emptyBlock>
+            <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+          </ng-template>
+
+          <!-- اعتماد القسم -->
+          <div class="approve-card">
+            <div class="approve-head">
+              <i class="fa-regular fa-clipboard"></i>
+              <h4>اعتماد القسم للبيانات الشخصية</h4>
+            </div>
+
+            <div class="approve-grid">
+              <div class="field">
+                <label class="lbl">الحالة <span class="req">*</span></label>
+                <select class="ctrl" [ngModel]="sec.sectionReview?.status" (ngModelChange)="onSectionStatusChange(sec, $event)">
+                  <option [ngValue]="null">اختر الحالة</option>
+                  <option [ngValue]="ReviewStatus.Approved">معتمد</option>
+                  <option [ngValue]="ReviewStatus.ChangesRequested">يحتاج تعديل</option>
+                  <option [ngValue]="ReviewStatus.Rejected">غير مطابق</option>
+                </select>
+              </div>
+
+              <div class="field wide">
+                <label class="lbl">ملاحظات</label>
+                <textarea
+                  rows="2"
+                  class="ctrl"
+                  [ngModel]="sec.sectionReview?.note || ''"
+                  (ngModelChange)="onSectionNoteChange(sec, $event)"
+                  placeholder="ملاحظات القسم (حقل اختياري)"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="nav">
+              <button class="btn ghost" type="button" (click)="goPrev(info)">السابق</button>
+              <button class="btn primary" type="button" (click)="goNext(info)">التالي</button>
+            </div>
+          </div>
+        </section>
+      </ng-container>
+    </ng-container>
+  </main>
+</section>

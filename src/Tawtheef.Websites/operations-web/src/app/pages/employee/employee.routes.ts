@@ -1,6 +1,6 @@
 ﻿import {Routes} from '@angular/router';
 import {ProfileApprovalListPage} from './profile-approval/profile-approval-list.page';
-import {ProfileApprovalDetailPage} from './profile-approval/profile-approval-detail.page';
+import {ProfileApprovalDetailPage} from './profile-approval-detail/profile-approval-detail.page';
 import {ProfileDistributionPage} from './profile-distribution/profile-distribution.page';
 import {JobInvitationSummary} from '../job-invitation-summary/job-invitation-summary';
 import {Dashboard} from './dashboard/dashboard';
