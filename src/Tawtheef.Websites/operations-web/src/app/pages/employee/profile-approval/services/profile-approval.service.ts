@@ -18,18 +18,12 @@ export class ProfileApprovalService {
     return this.http.get<ProfileApprovalListItem[]>(this.endpoints.approvals.list, filters);
   }
 
-  getProfile(
-    profileId: string,
-    options?: { includeProfile?: boolean; includeSections?: boolean }
-  ): Observable<ProfileApprovalDetail> {
-    return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.detail(profileId), options);
+  getProfile(profileId: string): Observable<ProfileApprovalDetail> {
+    return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.detail(profileId));
   }
 
-  getProfileChanges(
-    profileId: string,
-    options?: { includeProfile?: boolean; includeSections?: boolean }
-  ): Observable<ProfileApprovalDetail> {
-    return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.changesDetail(profileId), options);
+  getProfileChanges(profileId: string): Observable<ProfileApprovalDetail> {
+    return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.changesDetail(profileId));
   }
 
   reviewItem(reviewItemId: string, status: ReviewStatus, note?: string): Observable<void> {

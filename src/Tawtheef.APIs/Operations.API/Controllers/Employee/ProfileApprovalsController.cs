@@ -52,14 +52,12 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     [HttpGet("{userProfileId:guid}")]
     public async Task<IActionResult> GetDetail(
         Guid userProfileId,
-        [FromQuery] bool includeProfile = true,
-        [FromQuery] bool includeSections = true,
         CancellationToken ct = default)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
         var result = await mediator.Send(
-            new GetProfileApprovalDetailQuery(userProfileId, UserId.Value, includeProfile, includeSections),
+            new GetProfileApprovalDetailQuery(userProfileId, UserId.Value),
             ct);
         return result.ToActionResult();
     }
@@ -67,14 +65,12 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     [HttpGet("{userProfileId:guid}/changes")]
     public async Task<IActionResult> GetPartialChanges(
         Guid userProfileId,
-        [FromQuery] bool includeProfile = true,
-        [FromQuery] bool includeSections = true,
         CancellationToken ct = default)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
         var result = await mediator.Send(
-            new GetProfilePartialChangesQuery(userProfileId, UserId.Value, includeProfile, includeSections),
+            new GetProfilePartialChangesQuery(userProfileId, UserId.Value),
             ct);
         return result.ToActionResult();
     }

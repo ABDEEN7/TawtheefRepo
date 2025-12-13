@@ -28,34 +28,31 @@ public class GetProfilePartialChangesHandler(
         var profileRepo = uow.GetEntityRepository<UserProfile>();
 
         var profileQuery = profileRepo.DbSet
+            .AsNoTracking()
+            .AsSplitQuery()
             .Include(p => p.User)
             .Include(p => p.CandidateType)
-            .Include(p => p.TargetEntity).AsQueryable();
-
-        if (request.IncludeProfile)
-        {
-            profileQuery = profileQuery
-                .Include(p => p.SponsorProfile!.SponsorCard)
-                .Include(p => p.SponsorProfile!.SponsorType)
-                .Include(p => p.Office)
-                .Include(p => p.BirthdayCertificate)
-                .Include(p => p.MarriageCertificate)
-                .Include(p => p.ResidenceAddress)
-                .Include(p => p.Nationality)
-                .Include(p => p.Gender)
-                .Include(p => p.Religion)
-                .Include(p => p.MaritalStatus)
-                .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
-                .Include(p => p.Qualifications)!.ThenInclude(q => q.University)
-                .Include(p => p.Qualifications)!.ThenInclude(q => q.Certificate)
-                .Include(p => p.Experiences)!.ThenInclude(e => e.Certificate)
-                .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Certificate)
-                .Include(p => p.Achievements)!.ThenInclude(a => a.AchievementType)
-                .Include(p => p.Achievements)!.ThenInclude(a => a.Attachment)
-                .Include(p => p.Skills)!.ThenInclude(s => s.Skill)
-                .Include(p => p.Languages)!.ThenInclude(l => l.Language!)
-                .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment);
-        }
+            .Include(p => p.TargetEntity)
+            .Include(p => p.SponsorProfile!.SponsorCard)
+            .Include(p => p.SponsorProfile!.SponsorType)
+            .Include(p => p.Office)
+            .Include(p => p.BirthdayCertificate)
+            .Include(p => p.MarriageCertificate)
+            .Include(p => p.ResidenceAddress)
+            .Include(p => p.Nationality)
+            .Include(p => p.Gender)
+            .Include(p => p.Religion)
+            .Include(p => p.MaritalStatus)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.University)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Certificate)
+            .Include(p => p.Experiences)!.ThenInclude(e => e.Certificate)
+            .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Certificate)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.AchievementType)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.Attachment)
+            .Include(p => p.Skills)!.ThenInclude(s => s.Skill)
+            .Include(p => p.Languages)!.ThenInclude(l => l.Language!)
+            .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment);
 
         var profile = await profileQuery.FirstOrDefaultAsync(p => p.Id == request.UserProfileId, ct);
 
@@ -64,83 +61,81 @@ public class GetProfilePartialChangesHandler(
 
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var isAssigned = await assignmentRepo.DbSet
+            .AsNoTracking()
             .AnyAsync(a => a.UserProfileId == profile.Id && a.EmployeeId == request.OfficerId && a.IsActive, ct);
 
         if (!isAssigned)
             return Result.Fail<ProfileApprovalDetailDto>(ErrorsCodes.UnauthorizedAction);
 
-        var sections = new List<ProfileApprovalSectionDto>();
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+        var reviewItems = await reviewRepo.DbSet
+            .AsNoTracking()
+            .Where(r => r.UserProfileId == profile.Id
+                        && r.Status != ReviewStatus.Approved)
+            .Include(r => r.ProfileChange)
+            .OrderByDescending(r => r.Version)
+            .ToListAsync(ct);
 
-        if (request.IncludeSections)
-        {
-            var reviewRepo = uow.GetEntityRepository<ReviewItem>();
-            var reviewItems = await reviewRepo.DbSet
-                .Where(r => r.UserProfileId == profile.Id
-                            && r.Status != ReviewStatus.Approved)
-                .Include(r => r.ProfileChange)
-                .OrderByDescending(r => r.Version)
-                .ToListAsync(ct);
+        var latestItems = reviewItems
+            .GroupBy(r => new { r.TargetType, r.Section, r.FieldPath, r.EntityName, r.EntityId, r.ResourceId, r.ProfileChangeId })
+            .Select(g => g.First())
+            .ToList();
 
-            var latestItems = reviewItems
-                .GroupBy(r => new { r.TargetType, r.Section, r.FieldPath, r.EntityName, r.EntityId, r.ResourceId, r.ProfileChangeId })
-                .Select(g => g.First())
-                .ToList();
+        var resourceIds = latestItems
+            .Where(r => r.ResourceId.HasValue)
+            .Select(r => r.ResourceId!.Value)
+            .Distinct()
+            .ToList();
 
-            var resourceIds = latestItems
-                .Where(r => r.ResourceId.HasValue)
-                .Select(r => r.ResourceId!.Value)
-                .Distinct()
-                .ToList();
+        var resourceRepo = uow.GetEntityRepository<Resource>();
+        var resources = await resourceRepo.DbSet
+            .AsNoTracking()
+            .Where(r => resourceIds.Contains(r.Id))
+            .ToDictionaryAsync(r => r.Id, ct);
 
-            var resourceRepo = uow.GetEntityRepository<Resource>();
-            var resources = await resourceRepo.DbSet
-                .Where(r => resourceIds.Contains(r.Id))
-                .ToDictionaryAsync(r => r.Id, ct);
+        var reviewItemDtos = latestItems
+            .Select(item =>
+            {
+                var dto = mapper.Map<ProfileApprovalItemDto>(item);
 
-            var reviewItemDtos = latestItems
-                .Select(item =>
+                if (item.ResourceId.HasValue && resources.TryGetValue(item.ResourceId.Value, out var resource))
                 {
-                    var dto = mapper.Map<ProfileApprovalItemDto>(item);
+                    dto.ResourceUrl = media.ResolveAbsolute(resource.Url);
+                }
 
-                    if (item.ResourceId.HasValue && resources.TryGetValue(item.ResourceId.Value, out var resource))
-                    {
-                        dto.ResourceUrl = media.ResolveAbsolute(resource.Url);
-                    }
+                return (Item: item, Dto: dto);
+            })
+            .ToList();
 
-                    return (Item: item, Dto: dto);
-                })
-                .ToList();
+        var sections = reviewItemDtos
+            .GroupBy(x => x.Item.Section)
+            .Select(group =>
+            {
+                var sectionReview = group
+                    .Where(x => x.Item.TargetType == ReviewTargetType.Section)
+                    .Select(x => x.Dto)
+                    .FirstOrDefault();
 
-            sections = reviewItemDtos
-                .GroupBy(x => x.Item.Section)
-                .Select(group =>
+                var entries = group
+                    .Where(x => x.Item.TargetType != ReviewTargetType.Section)
+                    .Select(x => x.Dto)
+                    .ToList();
+
+                return new ProfileApprovalSectionDto
                 {
-                    var sectionReview = group
-                        .Where(x => x.Item.TargetType == ReviewTargetType.Section)
-                        .Select(x => x.Dto)
-                        .FirstOrDefault();
-
-                    var entries = group
-                        .Where(x => x.Item.TargetType != ReviewTargetType.Section)
-                        .Select(x => x.Dto)
-                        .ToList();
-
-                    return new ProfileApprovalSectionDto
-                    {
-                        Section = group.Key,
-                        SectionReview = sectionReview,
-                        Items = entries,
-                        HasAttachments = entries.Any(e => e.TargetType == ReviewTargetType.Attachment)
-                    };
-                })
-                .Where(section => section.SectionReview is not null || section.Items.Any())
-                .OrderBy(s => (int)s.Section)
-                .ToList();
-        }
+                    Section = group.Key,
+                    SectionReview = sectionReview,
+                    Items = entries,
+                    HasAttachments = entries.Any(e => e.TargetType == ReviewTargetType.Attachment)
+                };
+            })
+            .Where(section => section.SectionReview is not null || section.Items.Any())
+            .OrderBy(s => (int)s.Section)
+            .ToList();
 
         using var scope = new MapContextScope();
         scope.Context.Parameters[ResourceMapper.MediaKey] = media;
-        var profileData = request.IncludeProfile ? mapper.Map<ProfileApprovalDataDto>(profile) : null;
+        var profileData = mapper.Map<ProfileApprovalDataDto>(profile);
 
         var dto = new ProfileApprovalDetailDto
         {
