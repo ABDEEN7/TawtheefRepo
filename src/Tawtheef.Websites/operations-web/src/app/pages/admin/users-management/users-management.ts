@@ -67,6 +67,16 @@ export class UsersManagement implements OnInit {
 
   loadUsers() {
     this.usersService.getUsers(this.filters()).subscribe({
+      next: () => {
+        const metadata = this.paginationMetadata();
+        if (metadata) {
+          this.filters.update(f => ({
+            ...f,
+            pageNumber: metadata.pageNumber,
+            pageSize: metadata.pageSize
+          }));
+        }
+      },
       error: () => this.notification.error(this.translate.instant('USERS.LOAD_FAILED'))
     });
   }

@@ -77,7 +77,17 @@ export class RolesManagement implements OnInit {
   });
 
   loadRoles() {
-    this.rolesService.getRoles().subscribe({
+    this.rolesService.getRoles({
+      pageNumber: this.currentPage(),
+      pageSize: this.itemsPerPage()
+    }).subscribe({
+      next: () => {
+        const metadata = this.paginationMetadata();
+        if (metadata) {
+          this.currentPage.set(metadata.pageNumber);
+          this.itemsPerPage.set(metadata.pageSize);
+        }
+      },
       error: () => this.notification.error(this.translate.instant('ROLES.LOAD_FAILED'))
     });
   }
