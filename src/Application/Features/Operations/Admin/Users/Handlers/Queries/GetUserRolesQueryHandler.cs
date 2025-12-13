@@ -14,7 +14,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Queries;
 
 public sealed class GetUserRolesQueryHandler(
     UserManager<User> userManager,
-    RoleManager<IdentityRole<Guid>> roleManager,
+    RoleManager<ApplicationRole> roleManager,
     IMapper mapper)
     : IRequestHandler<GetUserRolesQuery, IResult<UserRoleAssignmentDto>>
 {

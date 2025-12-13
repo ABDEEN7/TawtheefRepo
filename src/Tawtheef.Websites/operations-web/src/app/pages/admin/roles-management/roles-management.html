@@ -12,8 +12,8 @@
     <table class="table custom-table">
       <thead>
       <tr>
-        <th>{{ 'ROLES.NAME_AR' | translate }}</th>
-        <th>{{ 'ROLES.NAME_EN' | translate }}</th>
+        <th>{{ 'ROLES.NAME' | translate }}</th>
+        <th>{{ 'ROLES.DESCRIPTION' | translate }}</th>
         <th>{{ 'ROLES.PERMISSIONS' | translate }}</th>
         <th class="text-end">{{ 'ROLES.ACTIONS' | translate }}</th>
       </tr>
@@ -29,8 +29,8 @@
         } @else {
           @for (role of this.pagedRoles(); track role.id; let i = $index) {
             <tr>
-              <td>{{ role.nameAr }}</td>
-              <td>{{ role.nameEn }}</td>
+              <td>{{ this.localizedName(role) }}</td>
+              <td>{{ this.localizedDescription(role) }}</td>
               <td>
                 @for (perm of role.permissions; track perm) {
                   <span
@@ -84,6 +84,16 @@
       <div class="form-group mb-3">
         <label>{{ 'ROLES.NAME_EN' | translate }}</label>
         <input class="form-control" [(ngModel)]="this.formModel().nameEn" />
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'ROLES.DESCRIPTION_AR' | translate }}</label>
+        <textarea class="form-control" [(ngModel)]="this.formModel().descriptionAr"></textarea>
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'ROLES.DESCRIPTION_EN' | translate }}</label>
+        <textarea class="form-control" [(ngModel)]="this.formModel().descriptionEn"></textarea>
       </div>
 
       <div class="permissions-box mb-3">

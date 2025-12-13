@@ -10,7 +10,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Queries;
 
 public sealed class GetUserAssignedRoleIdsQueryHandler(
     UserManager<User> userManager,
-    RoleManager<IdentityRole<Guid>> roleManager)
+    RoleManager<ApplicationRole> roleManager)
     : IRequestHandler<GetUserAssignedRoleIdsQuery, IResult<IReadOnlyCollection<Guid>>>
 {
     public async Task<IResult<IReadOnlyCollection<Guid>>> Handle(

@@ -3,8 +3,12 @@
   "ROLES.ADD_ROLE": "إضافة دور",
   "ROLES.EDIT_ROLE": "تعديل الدور",
 
+  "ROLES.NAME": "الاسم",
   "ROLES.NAME_AR": "الاسم بالعربية",
   "ROLES.NAME_EN": "الاسم بالإنجليزية",
+  "ROLES.DESCRIPTION": "الوصف",
+  "ROLES.DESCRIPTION_AR": "الوصف بالعربية",
+  "ROLES.DESCRIPTION_EN": "الوصف بالإنجليزية",
 
   "ROLES.PERMISSIONS": "الصلاحيات",
   "ROLES.PERMISSIONS_LIST": "قائمة الصلاحيات",

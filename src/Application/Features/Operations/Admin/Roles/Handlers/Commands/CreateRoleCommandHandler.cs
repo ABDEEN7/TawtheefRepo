@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Commands;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Commands;
 
-public sealed class CreateRoleCommandHandler(RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper)
+public sealed class CreateRoleCommandHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
     : IRequestHandler<CreateRoleCommand, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
@@ -20,20 +21,20 @@ public sealed class CreateRoleCommandHandler(RoleManager<IdentityRole<Guid>> rol
         if (exists)
             return Result.Fail<RoleDto>(ErrorsCodes.RoleNameExists);
 
-        var role = new IdentityRole<Guid>
+        var role = new ApplicationRole
         {
             Id = Guid.NewGuid(),
             Name = request.NameEn,
-            NormalizedName = normalized
+            NormalizedName = normalized,
+            NameAr = request.NameAr,
+            NameEn = request.NameEn,
+            DescriptionAr = request.DescriptionAr,
+            DescriptionEn = request.DescriptionEn
         };
 
         var createResult = await roleManager.CreateAsync(role);
         if (!createResult.Succeeded)
             return RoleClaimSync.FailureFromIdentity<RoleDto>(createResult);
-
-        var namesResult = await RoleClaimSync.SetNameClaimsAsync(roleManager, role, request.NameAr, request.NameEn);
-        if (namesResult.IsFailed)
-            return Result.Fail<RoleDto>(namesResult.Errors);
 
         var permissions = RolePermissionHelper.Validate(request.Permissions);
         if (permissions.IsFailed)

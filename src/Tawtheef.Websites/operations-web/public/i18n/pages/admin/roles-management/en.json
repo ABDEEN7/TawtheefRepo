@@ -3,8 +3,12 @@
   "ROLES.ADD_ROLE": "Add Role",
   "ROLES.EDIT_ROLE": "Edit Role",
 
+  "ROLES.NAME": "Name",
   "ROLES.NAME_AR": "Name (Arabic)",
   "ROLES.NAME_EN": "Name (English)",
+  "ROLES.DESCRIPTION": "Description",
+  "ROLES.DESCRIPTION_AR": "Description (Arabic)",
+  "ROLES.DESCRIPTION_EN": "Description (English)",
 
   "ROLES.PERMISSIONS": "Permissions",
   "ROLES.PERMISSIONS_LIST": "Permissions List",

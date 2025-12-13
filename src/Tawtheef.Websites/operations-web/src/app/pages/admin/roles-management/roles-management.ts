@@ -10,6 +10,7 @@ import {RoleDto} from './models/permission.model';
 import {PermissionDto} from './models/role.model';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
+import {Lang, LanguageService} from '../../core/services/language.service';
 
 @Component({
   selector: 'app-roles-management',
@@ -30,6 +31,7 @@ export class RolesManagement implements OnInit {
   private rolesService = inject(RolesService);
   private translate = inject(TranslateService);
   private confirmationService = inject(ConfirmationService);
+  private language = inject(LanguageService);
 
   paginationMetadata = this.rolesService.paginationMetadata;
 
@@ -49,17 +51,21 @@ export class RolesManagement implements OnInit {
 
   isModalOpen = signal(false);
   isEditing = signal(false);
+  currentLang = signal<Lang>(this.language.get());
 
   formModel = signal<RoleDto>({
     id: '',
     nameAr: '',
     nameEn: '',
+    descriptionAr: '',
+    descriptionEn: '',
     permissions: []
   });
 
   ngOnInit(): void {
     this.loadRoles();
     this.loadPermissions();
+    this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
 
   pagedRoles = computed(() => {
@@ -80,6 +86,8 @@ export class RolesManagement implements OnInit {
       id: '',
       nameAr: '',
       nameEn: '',
+      descriptionAr: '',
+      descriptionEn: '',
       permissions: []
     });
     this.permissionSearch.set('');
@@ -141,5 +149,17 @@ export class RolesManagement implements OnInit {
   onPageChange(page: number) {
     this.currentPage.set(page);
     this.loadRoles();
+  }
+
+  localizedName(role: RoleDto) {
+    return this.currentLang() === 'ar'
+      ? role.nameAr || role.nameEn
+      : role.nameEn || role.nameAr;
+  }
+
+  localizedDescription(role: RoleDto) {
+    return this.currentLang() === 'ar'
+      ? role.descriptionAr || role.descriptionEn
+      : role.descriptionEn || role.descriptionAr;
   }
 }

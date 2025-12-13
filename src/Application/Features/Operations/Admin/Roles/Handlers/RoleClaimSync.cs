@@ -2,6 +2,7 @@ using System.Security.Claims;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Constants;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers;
 
@@ -14,8 +15,8 @@ internal static class RoleClaimSync
         => Result.Fail(string.Join(", ", res.Errors.Select(e => e.Description)));
 
     public static async Task<Result> SetNameClaimsAsync(
-        RoleManager<IdentityRole<Guid>> roleManager,
-        IdentityRole<Guid> role,
+        RoleManager<ApplicationRole> roleManager,
+        ApplicationRole role,
         string nameAr,
         string nameEn,
         IEnumerable<Claim>? existingClaims = null)
@@ -38,8 +39,8 @@ internal static class RoleClaimSync
     }
 
     public static async Task<Result> SyncPermissionsAsync(
-        RoleManager<IdentityRole<Guid>> roleManager,
-        IdentityRole<Guid> role,
+        RoleManager<ApplicationRole> roleManager,
+        ApplicationRole role,
         IEnumerable<string> existingPermissions,
         IEnumerable<string> desiredPermissions)
     {
