@@ -10,7 +10,7 @@ import {
   JobSummaryFilters
 } from '../../../job-invitation-summary/models/job-invitation-summary.model';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
-import {tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class RolesService {
@@ -26,13 +26,14 @@ export class RolesService {
   // =========================
   // GET ALL ROLES
   // =========================
-  getRoles(): void {
-    this.http.get<PaginatedResult<RoleDto>>(this.endpoints.roles.listRoles).pipe(
+  getRoles(): Observable<void> {
+    return this.http.get<PaginatedResult<RoleDto>>(this.endpoints.roles.listRoles).pipe(
       tap(response => {
         this._paginationMetadata.set(response.metadata);
         this._roles.set(response.items || []);
       }),
-    ).subscribe();
+      map(() => void 0)
+    );
   }
 
   // =========================

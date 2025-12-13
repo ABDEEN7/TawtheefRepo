@@ -12,6 +12,7 @@
   "USERS.EMAIL": "Email",
   "USERS.LAST_LOGIN": "Last login",
   "USERS.IS_BLOCKED": "Blocked",
+  "USERS.ROLES": "Roles",
   "USERS.ACTIONS": "Actions",
   "USERS.MANAGE_ROLES": "Manage user roles",
   "USERS.MANAGE_ROLES_TITLE": "Manage user roles",
@@ -23,5 +24,12 @@
   "USERS.BLOCKED": "Blocked",
   "USERS.ACTIVE": "Active",
   "USERS.BLOCK_USER": "Block user",
-  "USERS.UNBLOCK_USER": "Unblock user"
+  "USERS.UNBLOCK_USER": "Unblock user",
+  "USERS.LOAD_FAILED": "Could not load user data. Please try again.",
+  "USERS.BLOCK_SUCCESS": "User blocked successfully.",
+  "USERS.UNBLOCK_SUCCESS": "User unblocked successfully.",
+  "USERS.BLOCK_FAILED": "Failed to update block status.",
+  "USERS.UNBLOCK_FAILED": "Failed to update block status.",
+  "USERS.ROLES_UPDATE_SUCCESS": "User roles updated successfully.",
+  "USERS.ROLES_UPDATE_FAILED": "Updating user roles failed. Please try again."
 }

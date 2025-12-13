@@ -12,6 +12,7 @@
   "USERS.EMAIL": "البريد الإلكتروني",
   "USERS.LAST_LOGIN": "آخر تسجيل دخول",
   "USERS.IS_BLOCKED": "محظور",
+  "USERS.ROLES": "الأدوار",
   "USERS.ACTIONS": "الإجراءات",
   "USERS.MANAGE_ROLES": "إدارة أدوار المستخدم",
   "USERS.MANAGE_ROLES_TITLE": "إدارة أدوار المستخدم",
@@ -23,5 +24,12 @@
   "USERS.BLOCKED": "محظور",
   "USERS.ACTIVE": "نشط",
   "USERS.BLOCK_USER": "حظر المستخدم",
-  "USERS.UNBLOCK_USER": "إلغاء حظر المستخدم"
+  "USERS.UNBLOCK_USER": "إلغاء حظر المستخدم",
+  "USERS.LOAD_FAILED": "تعذر تحميل بيانات المستخدم. يرجى المحاولة مجددًا.",
+  "USERS.BLOCK_SUCCESS": "تم حظر المستخدم بنجاح.",
+  "USERS.UNBLOCK_SUCCESS": "تم إلغاء حظر المستخدم بنجاح.",
+  "USERS.BLOCK_FAILED": "فشل تحديث حالة الحظر.",
+  "USERS.UNBLOCK_FAILED": "فشل تحديث حالة الحظر.",
+  "USERS.ROLES_UPDATE_SUCCESS": "تم تحديث أدوار المستخدم بنجاح.",
+  "USERS.ROLES_UPDATE_FAILED": "فشل تحديث أدوار المستخدم. يرجى المحاولة مرة أخرى."
 }

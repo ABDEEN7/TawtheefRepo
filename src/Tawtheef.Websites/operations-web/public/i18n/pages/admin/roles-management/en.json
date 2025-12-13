@@ -23,5 +23,6 @@
   "ROLES.SAVE_SUCCESS": "Role saved successfully",
   "ROLES.DELETE_SUCCESS": "Role deleted successfully",
   "ROLES.SAVE_FAILED": "Failed to save role. Please try again.",
-  "ROLES.DELETE_FAILED": "Failed to delete role. Please try again."
+  "ROLES.DELETE_FAILED": "Failed to delete role. Please try again.",
+  "ROLES.LOAD_FAILED": "Could not load role data. Please try again."
 }

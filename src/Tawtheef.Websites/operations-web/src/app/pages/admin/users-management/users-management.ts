@@ -1,7 +1,7 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {UsersService} from './services/users.service';
 import {UserDto} from './models/user.dto';
 import {UserFilters} from './models/user-filters.dto';
@@ -10,6 +10,9 @@ import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.
 import {Select} from 'primeng/select';
 import {DialogHelperService} from '../../../core/services/dialog-helper.service';
 import {RoleSummaryDto} from './models/role-summary.dto';
+import {NotificationService} from '../../../core/services/notification.service';
+import {Tooltip} from 'primeng/tooltip';
+import {Lang, LanguageService} from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-users-management',
@@ -22,12 +25,16 @@ import {RoleSummaryDto} from './models/role-summary.dto';
     TranslatePipe,
     PaginationComponent,
     I18nNamespaceDirective,
-    Select
+    Select,
+    Tooltip
   ]
 })
 export class UsersManagement implements OnInit {
   private usersService = inject(UsersService);
   private dialogHelper = inject(DialogHelperService);
+  private notification = inject(NotificationService);
+  private translate = inject(TranslateService);
+  private language = inject(LanguageService);
 
   users = this.usersService.users;
   paginationMetadata = this.usersService.paginationMetadata;
@@ -43,6 +50,8 @@ export class UsersManagement implements OnInit {
   nameFilter = '';
   emailFilter = '';
   roleLookups = signal<RoleSummaryDto[]>([]);
+  currentLang = signal<Lang>(this.language.get());
+  isRtl = computed(() => this.currentLang() === 'ar');
 
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
   blockedStatusOptions = [
@@ -53,14 +62,20 @@ export class UsersManagement implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
     this.loadRoleLookups();
+    this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
 
   loadUsers() {
-    this.usersService.getUsers(this.filters());
+    this.usersService.getUsers(this.filters()).subscribe({
+      error: () => this.notification.error(this.translate.instant('USERS.LOAD_FAILED'))
+    });
   }
 
   loadRoleLookups() {
-    this.usersService.getRoleLookups().subscribe(roles => this.roleLookups.set(roles));
+    this.usersService.getRoleLookups().subscribe({
+      next: roles => this.roleLookups.set(roles),
+      error: () => this.notification.error(this.translate.instant('USERS.LOAD_FAILED'))
+    });
   }
 
   onSearchChange() {
@@ -91,14 +106,36 @@ export class UsersManagement implements OnInit {
   toggleBlock(user: UserDto) {
     const desiredState = !user.isBlocked;
     this.usersService.updateBlockStatus(user.id, desiredState)
-      .subscribe(() => {
-        user.isBlocked = desiredState;
-        this.usersService.getUsers(this.filters());
+      .subscribe({
+        next: () => {
+          user.isBlocked = desiredState;
+          this.notification.success(this.translate.instant(desiredState ? 'USERS.BLOCK_SUCCESS' : 'USERS.UNBLOCK_SUCCESS'));
+          this.loadUsers();
+        },
+        error: () => {
+          this.notification.error(this.translate.instant(desiredState ? 'USERS.BLOCK_FAILED' : 'USERS.UNBLOCK_FAILED'));
+        }
       });
   }
 
   onBlockedFilterChange(value: boolean | null) {
     this.filters.update(f => ({...f, isBlocked: value ?? null}));
     this.onSearchChange();
+  }
+
+  localizedRole(role: RoleSummaryDto) {
+    return this.currentLang() === 'ar'
+      ? role.nameAr || role.nameEn
+      : role.nameEn || role.nameAr;
+  }
+
+  userRoles(user: UserDto) {
+    const roles = user.roles ?? [];
+
+    if (roles.length) {
+      return roles.map(r => this.localizedRole(r));
+    }
+
+    return user.roleNames ?? [];
   }
 }

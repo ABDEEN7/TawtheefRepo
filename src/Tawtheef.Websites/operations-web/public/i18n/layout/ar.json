@@ -36,6 +36,7 @@
 
   "admin.sidebar.home": "الرئيسية",
   "admin.sidebar.roles": "إدارة الصلاحيات",
+  "admin.sidebar.users": "إدارة المستخدمين",
 
   "common.sidebar.settings": "الإعدادات",
   "common.sidebar.logout": "الخروج",
