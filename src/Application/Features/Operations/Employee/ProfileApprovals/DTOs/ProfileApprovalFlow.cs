@@ -7,13 +7,14 @@ public static class ProfileApprovalFlow
     // نفس ترتيب واجهة المحقق (Stepper)
     public static readonly ProfileSection[] Sections =
     [
-        ProfileSection.BasicInformation,
+        ProfileSection.Personal,
         ProfileSection.Contact,
         ProfileSection.Qualifications,
         ProfileSection.Experience,
         ProfileSection.TrainingCourses,
-        ProfileSection.SkillsLanguages,
-        ProfileSection.Attachments,
-        ProfileSection.ProfilePhoto
+        ProfileSection.CertificatesAndAwards,
+        ProfileSection.Skills,
+        ProfileSection.Languages,
+        ProfileSection.Attachments
     ];
 }

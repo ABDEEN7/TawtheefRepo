@@ -6,7 +6,6 @@
       [class.active]="activeSection === s.section"
       [class.done]="s.uiStatus === 'done'"
       [class.bad]="s.uiStatus === 'bad'"
-      [class.progress]="s.uiStatus === 'progress'"
       [class.idle]="s.uiStatus === 'idle'"
       (click)="selectSection(s.section)"
     >

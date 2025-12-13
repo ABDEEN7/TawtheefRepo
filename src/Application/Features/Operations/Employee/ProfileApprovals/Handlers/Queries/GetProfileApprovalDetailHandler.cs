@@ -182,7 +182,7 @@ var sections = ProfileApprovalFlow.Sections
             UserId = request.OfficerId,
             ActionType = "OpenProfile",
             Notes = "Profile opened for review",
-            Section = nameof(ProfileSection.BasicInformation)
+            Section = nameof(ProfileSection.Personal)
         });
         await uow.SaveChangesAsync(ct);
 

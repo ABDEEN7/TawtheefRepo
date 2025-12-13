@@ -64,7 +64,7 @@ public sealed class SaveProfileSkillsHandler(
         await skillRepo.AddRangeAsync(skills);
         if (trackChanges)
         {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.SkillsLanguages, ct);
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Languages, ct);
         }
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

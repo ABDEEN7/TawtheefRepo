@@ -124,19 +124,18 @@
   "profileApproval.sections.profilePhoto": "الصورة الشخصية",
   "profileApproval.sections.generic": "قسم",
 
-  "profileOverview.sections.basicInfo": "المعلومات الأساسية",
+  "profileOverview.sections.personal": "المعلومات الأساسية",
+  "profileOverview.sections.contactInfo": "معلومات الاتصال",
   "profileOverview.sections.qualifications": "المؤهلات",
   "profileOverview.sections.experiences": "الخبرات",
   "profileOverview.sections.training": "الدورات التدريبية",
   "profileOverview.sections.certificates": "الشهادات والجوائز",
-  "profileOverview.sections.skillsLanguages": "المهارات واللغات",
-  "profileOverview.sections.attachments": "المرفقات",
-  "profileOverview.sections.profilePhoto": "الصورة الشخصية",
-  "profileOverview.sections.cv": "السيرة الذاتية",
-  "profileOverview.sections.generic": "تبويب الملف",
-  "profileOverview.sections.contactInfo": "معلومات الاتصال",
   "profileOverview.sections.skills": "المهارات",
-  "profileOverview.sections.Languages":"اللغات",
+  "profileOverview.sections.languages": "اللغات",
+  "profileOverview.sections.attachments": "المرفقات",
+
+  "profileOverview.sections.profilePhoto": "الصورة الشخصية",
+  "profileOverview.sections.generic": "تبويب الملف",
 
 
 

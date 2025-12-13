@@ -203,80 +203,14 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     });
   }
 
-  canApproveAttachment(section: ProfileApprovalSection, item: ProfileApprovalItem): boolean {
-    if (item.targetType !== ReviewTargetType.Attachment) return true;
-    return section.sectionReview?.status !== ReviewStatus.Rejected;
-  }
-
-  sectionCanBeApproved(section: ProfileApprovalSection): boolean {
-    if (!section.sectionReview) return false;
-
-    if (section.items.length === 0) return true;
-
-    const unresolvedItems = section.items.some(
-      item => item.status === ReviewStatus.Pending || item.status === ReviewStatus.ChangesRequested || item.status === ReviewStatus.Rejected
-    );
-
-    const hasUnapprovedAttachments = section.items
-      .filter(i => i.targetType === ReviewTargetType.Attachment)
-      .some(i => i.status !== ReviewStatus.Approved);
-
-    return !unresolvedItems && !hasUnapprovedAttachments;
-  }
-
-  statusClass(status?: ReviewStatus): string {
-    switch (status) {
-      case ReviewStatus.Approved:
-        return 'pill soft';
-      case ReviewStatus.Rejected:
-        return 'pill danger';
-      case ReviewStatus.ChangesRequested:
-        return 'pill warning';
-      default:
-        return 'pill';
-    }
-  }
-
-  statusLabel(status?: ReviewStatus): string {
-    switch (status) {
-      case ReviewStatus.Approved:
-        return 'profileApproval.status.approved';
-      case ReviewStatus.Rejected:
-        return 'profileApproval.status.rejected';
-      case ReviewStatus.ChangesRequested:
-        return 'profileApproval.status.changes';
-      case ReviewStatus.Pending:
-      default:
-        return 'profileApproval.status.pending';
-    }
-  }
 
   previewFile(resourceUrl: string): void {
     this.fileUtils.previewUrl(resourceUrl, '', false).then(() => {});
   }
 
-  detailStatus(): ReviewStatus {
-    const info = this.detail();
-    if (!info) return ReviewStatus.Pending;
-
-    const statuses = info.sections
-      .map(s => s.sectionReview?.status)
-      .filter((s): s is ReviewStatus => s !== undefined && s !== null);
-
-    if (statuses.some(s => s === ReviewStatus.Rejected)) return ReviewStatus.Rejected;
-    if (statuses.some(s => s === ReviewStatus.ChangesRequested)) return ReviewStatus.ChangesRequested;
-    if (statuses.length && statuses.every(s => s === ReviewStatus.Approved)) return ReviewStatus.Approved;
-
-    return ReviewStatus.Pending;
-  }
-
   tabHasPending(section: ProfileApprovalSection): boolean {
     const pendingItem = section.items.some(i => i.status === ReviewStatus.Pending || i.status === ReviewStatus.ChangesRequested || i.status === ReviewStatus.Rejected);
     return pendingItem || (section.sectionReview?.status === ReviewStatus.ChangesRequested || section.sectionReview?.status === ReviewStatus.Rejected || section.sectionReview?.status === ReviewStatus.Pending);
-  }
-
-  sectionHasUnresolvedItems(section: ProfileApprovalSection): boolean {
-    return section.items.some(i => i.status !== ReviewStatus.Approved);
   }
 
   sectionName(section: number): string {
@@ -290,85 +224,18 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       case 4:
         return 'profileOverview.sections.experiences';
       case 5:
-        return 'profileOverview.sections.skills';
-      case 6:
-        return 'profileOverview.sections.attachments';
-      case 7:
         return 'profileOverview.sections.training';
+      case 6:
+        return 'profileOverview.sections.certificates';
+      case 7:
+        return 'profileOverview.sections.skills';
+      case 8:
+        return 'profileOverview.sections.languages';
       case 9:
-        return 'profileOverview.sections.profilePhoto';
+        return 'profileOverview.sections.attachments';
       default:
-        return 'profileOverview.sections.generic';
+        return ''
     }
-  }
-
-  setFinalAction(action: string): void {
-    this.activeFinalAction.set(action as FinalApprovalAction);
-    this.finalActionNote.set('');
-    this.finalAttachment = null;
-  }
-
-  confirmFinalAction(): void {
-    const action = this.activeFinalAction()!;
-
-    if (action === 'ApproveProfile' && !this.canApproveProfile()) {
-      this.messages.add({
-        severity: 'warn',
-        summary: this.translate.instant('profileApproval.validation.pendingSectionsSummary'),
-        detail: this.translate.instant('profileApproval.validation.pendingSectionsDetail'),
-      });
-      return;
-    }
-
-    this.dialogService.open(FinalActionConfirmDialogComponent, {
-      header: this.translate.instant('profileApproval.final.confirmTitle'),
-      width: '480px',
-      data: {
-        message: this.translate.instant('profileApproval.final.confirmMessage', {
-          action: this.translate.instant('profileApproval.final.actions.' + action),
-        }),
-      },
-    })?.onClose.subscribe((confirmed?: boolean) => {
-      if (confirmed) {
-        this.executeFinalAction();
-      }
-    });
-  }
-
-  executeFinalAction(): void {
-    if (!this.detail() || !this.activeFinalAction()) return;
-
-    const correctionTargets = this.collectNeedsCorrectionTargets();
-    const form = new FormData();
-    form.append('action', this.activeFinalAction()!);
-    if (this.finalActionNote()) form.append('notes', this.finalActionNote());
-    if (this.finalSummary()) form.append('summary', this.finalSummary());
-
-    if (this.activeFinalAction() === 'NeedsCorrection') {
-      correctionTargets.forEach(id => form.append('needsCorrectionItems', id));
-    }
-
-    if (this.activeFinalAction() === 'RejectProfile' && this.finalAttachment) {
-      form.append('rejectionDocument', this.finalAttachment);
-    }
-
-    if (this.activeFinalAction() === 'ExceptionalApproval' && this.finalAttachment) {
-      form.append('exceptionalFile', this.finalAttachment);
-    }
-
-    this.loadingFinalAction.set(true);
-    this.api
-      .finalizeProfile(this.detail()!.userProfileId, form)
-      .pipe(finalize(() => this.loadingFinalAction.set(false)))
-      .subscribe({
-        next: () => {
-          this.activeFinalAction.set(null);
-          this.finalActionNote.set('');
-          this.finalAttachment = null;
-          this.loadDetail();
-        },
-        error: () => this.error.set(this.translate.instant('profileApproval.errors.finalize')),
-      });
   }
 
   private collectNeedsCorrectionTargets(): string[] {
@@ -391,12 +258,6 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   private parsePartialFlag(value: string | null): boolean {
     if (!value) return false;
     return value === '1' || value.toLowerCase() === 'true';
-  }
-
-  canApproveProfile(): boolean {
-    const info = this.detail();
-    if (!info) return false;
-    return info.sections.length > 0 && info.sections.every(s => s.sectionReview?.status === ReviewStatus.Approved && !this.tabHasPending(s));
   }
 
   private updateItem(reviewItemId: string, status: ReviewStatus, note?: string): void {
