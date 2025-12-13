@@ -79,7 +79,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
   private lastLoadedKey: string | null = null;
-  private readonly flowSections = [1, 2, 3, 4, 6, 7, 8, 9];
+  private readonly flowSections = [1, 2, 3, 4, 5, 6, 7, 9];
 
   loadingDetail = signal(false);
   loadingFinalAction = signal(false);
@@ -290,15 +290,13 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       case 4:
         return 'profileOverview.sections.experiences';
       case 5:
-        return 'profileOverview.sections.training';
-      case 6:
-        return 'profileOverview.sections.certificates';
-      case 7:
         return 'profileOverview.sections.skills';
-      case 8:
-        return 'profileOverview.sections.Languages';
-      case 9:
+      case 6:
         return 'profileOverview.sections.attachments';
+      case 7:
+        return 'profileOverview.sections.training';
+      case 9:
+        return 'profileOverview.sections.profilePhoto';
       default:
         return 'profileOverview.sections.generic';
     }
@@ -488,12 +486,13 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   sectionIcon(section: number): string {
     switch (section) {
       case 1: return 'fa-regular fa-id-card';
-      case 2: return 'fa-solid fa-graduation-cap';
-      case 3: return 'fa-solid fa-briefcase';
-      case 4: return 'fa-regular fa-rectangle-list';
-      case 6: return 'fa-solid fa-language';
-      case 7: return 'fa-regular fa-folder-open';
-      case 8: return 'fa-regular fa-image';
+      case 2: return 'fa-regular fa-address-book';
+      case 3: return 'fa-solid fa-graduation-cap';
+      case 4: return 'fa-solid fa-briefcase';
+      case 5: return 'fa-solid fa-language';
+      case 6: return 'fa-regular fa-folder-open';
+      case 7: return 'fa-regular fa-rectangle-list';
+      case 9: return 'fa-regular fa-image';
       default: return 'fa-regular fa-circle';
     }
   }

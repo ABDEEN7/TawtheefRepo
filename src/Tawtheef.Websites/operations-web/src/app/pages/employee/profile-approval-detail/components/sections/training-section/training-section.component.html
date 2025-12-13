@@ -1,11 +1,21 @@
 <div class="row g-3" *ngIf="trainingCourses?.length; else emptyBlock">
   <div class="col-12" *ngFor="let t of trainingCourses">
-    <p-card class="shadow-sm h-100">
+    <p-card class="shadow-sm h-100 section-panel">
       <ng-template pTemplate="header">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <div>
-            <h5 class="mb-0">{{ t.title || '-' }}</h5>
-            <small class="text-muted">{{ t.provider || '-' }}</small>
+        <div class="card-head justify-content-between">
+          <div class="d-flex flex-column gap-1">
+            <div class="d-flex align-items-center gap-2">
+              <span class="icon-circle text-warning bg-light">
+                <i class="pi pi-book"></i>
+              </span>
+              <div>
+                <h5 class="mb-0">{{ t.title || '-' }}</h5>
+                <small class="text-muted">{{ t.provider || '-' }}</small>
+              </div>
+            </div>
+            <div class="meta-line">
+              <span class="badge rounded-pill text-bg-light">{{ t.startDate || '-' }} - {{ t.endDate || '-' }}</span>
+            </div>
           </div>
 
           <button
@@ -20,23 +30,23 @@
         </div>
       </ng-template>
 
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
-        <div class="col">
+      <div class="detail-grid">
+        <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.training.country' | translate }}</div>
           <div class="fw-semibold">{{ t.country?.name || '-' }}</div>
         </div>
-        <div class="col">
+        <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.training.period' | translate }}</div>
           <div class="fw-semibold">{{ t.startDate || '-' }} - {{ t.endDate || '-' }}</div>
         </div>
-        <div class="col">
+        <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.training.attachment' | translate }}</div>
           <div class="fw-semibold d-flex align-items-center gap-2">
             <p-tag *ngIf="t.attachment?.fileName" severity="info" [value]="t.attachment.fileName"></p-tag>
             <span *ngIf="!t.attachment?.fileName">-</span>
           </div>
         </div>
-        <div class="col" *ngIf="t.description">
+        <div class="detail-tile" *ngIf="t.description">
           <div class="text-muted small">{{ 'profileApproval.detail.training.description' | translate }}</div>
           <div class="fw-semibold">{{ t.description }}</div>
         </div>
