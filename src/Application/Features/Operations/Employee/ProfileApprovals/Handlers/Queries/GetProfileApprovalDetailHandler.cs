@@ -48,7 +48,11 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
             .Include(p => p.Achievements)!.ThenInclude(a => a.AchievementType)
             .Include(p => p.Achievements)!.ThenInclude(a => a.Attachment)
             .Include(p => p.Skills)!.ThenInclude(s => s.Skill)
+            .Include(p => p.Skills)!.ThenInclude(s => s.Level)
             .Include(p => p.Languages)!.ThenInclude(l => l.Language!)
+            .Include(p => p.Languages)!.ThenInclude(l => l.SpeakingLevel)
+            .Include(p => p.Languages)!.ThenInclude(l => l.WritingLevel)
+            .Include(p => p.Languages)!.ThenInclude(l => l.ReadingLevel)
             .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment);
 
         var profile = await profileQuery.FirstOrDefaultAsync(p => p.Id == request.UserProfileId, ct);

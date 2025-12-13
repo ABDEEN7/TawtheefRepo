@@ -36,10 +36,14 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.AchievementType, src => src.AchievementType);
 
         config.NewConfig<ProfileSkill, SkillDto>()
-            .Map(dest => dest.Skill, src => src.Skill);
+            .Map(dest => dest.Skill, src => src.Skill)
+            .Map(dest => dest.Level, src => src.Level);
 
         config.NewConfig<ProfileLanguage, LanguageDto>()
-            .Map(dest => dest.Language, src => src.Language);
+            .Map(dest => dest.Language, src => src.Language)
+            .Map(dest => dest.SpeakingLevel, src => src.SpeakingLevel)
+            .Map(dest => dest.WritingLevel, src => src.WritingLevel)
+            .Map(dest => dest.ReadingLevel, src => src.ReadingLevel);
 
         config.NewConfig<(UserProfile profile, User user, ProfilePrefillDto prefill), ProfileStatusDto>()
             .Map(dest => dest, src => src.profile)
