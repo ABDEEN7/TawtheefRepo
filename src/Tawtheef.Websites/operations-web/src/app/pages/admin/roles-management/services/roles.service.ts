@@ -5,12 +5,9 @@ import {RoleDto} from '../models/permission.model';
 import {PermissionDto} from '../models/role.model';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
-import {
-  JobInvitationSummary,
-  JobSummaryFilters
-} from '../../../job-invitation-summary/models/job-invitation-summary.model';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 import {map, tap} from 'rxjs/operators';
+import {PaginatedRequest} from '../../../../core/models/paginated-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class RolesService {
@@ -26,8 +23,8 @@ export class RolesService {
   // =========================
   // GET ALL ROLES
   // =========================
-  getRoles(): Observable<void> {
-    return this.http.get<PaginatedResult<RoleDto>>(this.endpoints.roles.listRoles).pipe(
+  getRoles(pagination?: PaginatedRequest): Observable<void> {
+    return this.http.get<PaginatedResult<RoleDto>>(this.endpoints.roles.listRoles, pagination).pipe(
       tap(response => {
         this._paginationMetadata.set(response.metadata);
         this._roles.set(response.items || []);
