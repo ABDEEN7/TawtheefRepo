@@ -83,7 +83,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
   private lastLoadedKey: string | null = null;
-  private readonly flowSections = [1, 2, 3, 4, 5, 6, 7, 9];
+  private readonly flowSections = [1, 2, 3, 4, 5, 6, 7, 9, 10];
 
   loadingDetail = signal(false);
   loadingFinalAction = signal(false);
@@ -241,6 +241,8 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
         return 'profileOverview.sections.languages';
       case 9:
         return 'profileOverview.sections.attachments';
+      case 10:
+        return 'profileOverview.sections.finalReview';
       default:
         return ''
     }
@@ -369,6 +371,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       case 6: return 'fa-regular fa-folder-open';
       case 7: return 'fa-regular fa-rectangle-list';
       case 9: return 'fa-regular fa-paperclip';
+      case 10: return 'fa-solid fa-clipboard-check';
       default: return 'fa-regular fa-circle';
     }
   }
@@ -396,5 +399,116 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     const idx = info.sections.findIndex(s => s.section === this.activeSection());
     if (idx < 0 || idx >= info.sections.length - 1) return;
     this.activeSection.set(info.sections[idx + 1].section);
+  }
+
+  sectionStatusLabel(status?: ReviewStatus | null): string {
+    switch (status) {
+      case ReviewStatus.Approved:
+        return this.translate.instant('profileApproval.status.approved');
+      case ReviewStatus.Rejected:
+        return this.translate.instant('profileApproval.status.rejected');
+      case ReviewStatus.ChangesRequested:
+      case ReviewStatus.NeedsCorrection:
+        return this.translate.instant('profileApproval.status.changes');
+      default:
+        return this.translate.instant('profileApproval.status.pending');
+    }
+  }
+
+  sectionStatusClass(status?: ReviewStatus | null): string {
+    switch (status) {
+      case ReviewStatus.Approved:
+        return 'text-success';
+      case ReviewStatus.Rejected:
+        return 'text-danger';
+      case ReviewStatus.ChangesRequested:
+      case ReviewStatus.NeedsCorrection:
+        return 'text-warning';
+      default:
+        return 'text-muted';
+    }
+  }
+
+  finalStatusSummary(info: ProfileApprovalDetail): Record<'approved' | 'rejected' | 'changes' | 'pending', number> {
+    const summary = { approved: 0, rejected: 0, changes: 0, pending: 0 };
+
+    info.sections.forEach(sec => {
+      const st = sec.sectionReview?.status;
+
+      if (st === ReviewStatus.Approved) summary.approved += 1;
+      else if (st === ReviewStatus.Rejected) summary.rejected += 1;
+      else if (st === ReviewStatus.ChangesRequested || st === ReviewStatus.NeedsCorrection) summary.changes += 1;
+      else summary.pending += 1;
+    });
+
+    return summary;
+  }
+
+  progressStats(info: ProfileApprovalDetail): {
+    pendingSections: number;
+    flaggedSections: number;
+    approvedSections: number;
+    pendingItems: number;
+  } {
+    const stats = { pendingSections: 0, flaggedSections: 0, approvedSections: 0, pendingItems: 0 };
+    const sections = info.sections ?? [];
+
+    sections.forEach(sec => {
+      const status = sec.sectionReview?.status ?? ReviewStatus.Pending;
+
+      if (status === ReviewStatus.Approved) stats.approvedSections += 1;
+      else if (status === ReviewStatus.Rejected || status === ReviewStatus.ChangesRequested || status === ReviewStatus.NeedsCorrection)
+        stats.flaggedSections += 1;
+      else stats.pendingSections += 1;
+
+      (sec.items ?? []).forEach(item => {
+        if (
+          item.status === ReviewStatus.Pending ||
+          item.status === ReviewStatus.NeedsCorrection ||
+          item.status === ReviewStatus.ChangesRequested
+        ) {
+          stats.pendingItems += 1;
+        }
+      });
+    });
+
+    return stats;
+  }
+
+  firstAttentionSection(info: ProfileApprovalDetail): number | null {
+    const sections = this.sortSections(info.sections);
+    const target = sections.find(sec => {
+      const hasPendingItem = (sec.items ?? []).some(
+        i =>
+          i.status === ReviewStatus.Pending ||
+          i.status === ReviewStatus.ChangesRequested ||
+          i.status === ReviewStatus.NeedsCorrection ||
+          i.status === ReviewStatus.Rejected
+      );
+      const status = sec.sectionReview?.status ?? ReviewStatus.Pending;
+      const needsAttention =
+        hasPendingItem ||
+        status === ReviewStatus.Pending ||
+        status === ReviewStatus.ChangesRequested ||
+        status === ReviewStatus.NeedsCorrection ||
+        status === ReviewStatus.Rejected;
+
+      return needsAttention;
+    });
+
+    return target?.section ?? null;
+  }
+
+  jumpToAttention(info: ProfileApprovalDetail): void {
+    const target = this.firstAttentionSection(info);
+    if (target !== null) this.activeSection.set(target);
+  }
+
+  sendApprovalReport(): void {
+    this.messages.add({
+      severity: 'success',
+      summary: this.translate.instant('profileApproval.finalReview.reportSentTitle'),
+      detail: this.translate.instant('profileApproval.finalReview.reportSentMessage'),
+    });
   }
 }

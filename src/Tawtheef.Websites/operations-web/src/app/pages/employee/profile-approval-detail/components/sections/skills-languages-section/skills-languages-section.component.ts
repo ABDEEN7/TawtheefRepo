@@ -14,4 +14,11 @@ import { TranslateModule } from '@ngx-translate/core';
 export class SkillsLanguagesSectionComponent {
   @Input() skillsAndLanguages: any[] | null = null;
   @Input() languages: any[] | null = null;
+
+  displayOption(option: any, fallback?: string | number | null): string {
+    if (!option && !fallback) return '-';
+
+    const display = option?.name || option?.backendName || option?.description || fallback;
+    return display || '-';
+  }
 }
