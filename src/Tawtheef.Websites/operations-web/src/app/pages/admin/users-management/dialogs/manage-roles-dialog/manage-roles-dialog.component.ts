@@ -9,7 +9,7 @@ import {RoleSummaryDto} from '../../models/role-summary.dto';
 import {UsersService} from '../../services/users.service';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {finalize} from 'rxjs/operators';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
+import {Lang, LanguageService} from '../../../../../core/services/language.service';
 
 @Component({
   selector: 'app-manage-roles-dialog',

@@ -10,7 +10,7 @@ import {RoleDto} from './models/permission.model';
 import {PermissionDto} from './models/role.model';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
-import {Lang, LanguageService} from '../../core/services/language.service';
+import {Lang, LanguageService} from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-roles-management',
