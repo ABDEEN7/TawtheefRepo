@@ -68,6 +68,37 @@
   "profileApproval.detail.snapshot.reading": "Reading",
   "profileApproval.detail.snapshot.native": "Native language",
 
+  "profileApproval.detail.qualifications.country": "Graduation country",
+  "profileApproval.detail.qualifications.university": "University",
+  "profileApproval.detail.qualifications.year": "Graduation year",
+  "profileApproval.detail.qualifications.attachment": "Attachment",
+
+  "profileApproval.detail.experiences.country": "Country",
+  "profileApproval.detail.experiences.period": "Experience period",
+  "profileApproval.detail.experiences.attachment": "Attachment",
+  "profileApproval.detail.experiences.tasks": "Responsibilities",
+
+  "profileApproval.detail.training.country": "Country",
+  "profileApproval.detail.training.period": "Course period",
+  "profileApproval.detail.training.attachment": "Attachment",
+  "profileApproval.detail.training.description": "Description",
+
+  "profileApproval.detail.skills.title": "Skills",
+  "profileApproval.detail.skills.level": "Level",
+  "profileApproval.detail.skills.languagesTitle": "Languages",
+
+  "profileApproval.detail.attachments.fileName": "File name",
+  "profileApproval.detail.attachments.fileSize": "File size",
+  "profileApproval.detail.attachments.fileType": "File type",
+
+  "profileApproval.detail.sectionApproval.title": "Section approval for profile data",
+  "profileApproval.detail.sectionApproval.statusLabel": "Status",
+  "profileApproval.detail.sectionApproval.statusPlaceholder": "Select status",
+  "profileApproval.detail.sectionApproval.notesLabel": "Notes",
+  "profileApproval.detail.sectionApproval.notesPlaceholder": "Section notes (optional)",
+  "profileApproval.detail.sectionApproval.prev": "Previous",
+  "profileApproval.detail.sectionApproval.next": "Next",
+
   "profileApproval.tabs.profileData": "Profile overview",
   "profileApproval.tabs.reviewSections": "Review tabs",
   "profileApproval.tabs.finalDecision": "Final decision",

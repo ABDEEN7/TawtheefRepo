@@ -1,0 +1,74 @@
+<div class="card-grid">
+  <div class="kv-card">
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.nationalNumber' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.nationalNumber || '-' }}</div>
+    </div>
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.fullNameAr' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.fullNameAr || '-' }}</div>
+    </div>
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.fullNameEn' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.fullNameEn || '-' }}</div>
+    </div>
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.birthDate' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.birthDate || '-' }}</div>
+    </div>
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.gender' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.gender || '-' }}</div>
+    </div>
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.nationality' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.nationality || '-' }}</div>
+    </div>
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.religion' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.religion || '-' }}</div>
+    </div>
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.maritalStatus' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.maritalStatus || '-' }}</div>
+    </div>
+    <div class="kv">
+      <div class="k">{{ 'profileApproval.detail.snapshot.childrenCount' | translate }}</div>
+      <div class="v">{{ profile.basicInformation.childrenCount ?? '-' }}</div>
+    </div>
+  </div>
+
+  <div class="files-card" *ngIf="hasBasicFiles()">
+    <div class="files-head">
+      <h4>{{ 'profileApproval.detail.snapshot.files' | translate }}</h4>
+    </div>
+
+    <div class="file-row" *ngIf="profile.basicInformation.resumeAttachment">
+      <span class="file-name">{{ profile.basicInformation.resumeAttachment.fileName }}</span>
+      <button class="btn-link" type="button" (click)="preview(profile.basicInformation.resumeAttachment.url)">
+        {{ 'profileApproval.detail.viewFile' | translate }}
+      </button>
+    </div>
+
+    <div class="file-row" *ngIf="profile.basicInformation.nationalCard">
+      <span class="file-name">{{ profile.basicInformation.nationalCard.fileName }}</span>
+      <button class="btn-link" type="button" (click)="preview(profile.basicInformation.nationalCard.url)">
+        {{ 'profileApproval.detail.viewFile' | translate }}
+      </button>
+    </div>
+
+    <div class="file-row" *ngIf="profile.basicInformation.birthdayCertificate">
+      <span class="file-name">{{ profile.basicInformation.birthdayCertificate.fileName }}</span>
+      <button class="btn-link" type="button" (click)="preview(profile.basicInformation.birthdayCertificate.url)">
+        {{ 'profileApproval.detail.viewFile' | translate }}
+      </button>
+    </div>
+
+    <div class="file-row" *ngIf="profile.basicInformation.marriageCertificate">
+      <span class="file-name">{{ profile.basicInformation.marriageCertificate.fileName }}</span>
+      <button class="btn-link" type="button" (click)="preview(profile.basicInformation.marriageCertificate.url)">
+        {{ 'profileApproval.detail.viewFile' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

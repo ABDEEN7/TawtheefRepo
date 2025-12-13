@@ -13,8 +13,12 @@ import {
   ReviewStatus,
   ReviewTargetType,
 } from '../profile-approval/models/profile-approval.models';
-import { RadioButton } from 'primeng/radiobutton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { AvatarModule } from 'primeng/avatar';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ItemDialogResult, ItemReviewDialogComponent } from '../profile-approval/dialogs/item-review-dialog/item-review-dialog';
@@ -23,17 +27,47 @@ import { FinalActionConfirmDialogComponent } from '../profile-approval/dialogs/f
 import { FileUtilsService } from '../../../core/utils/file-utils';
 import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
 import { routes } from '../../../routes/routes';
+import {
+  ProfileApprovalStepperComponent,
+  ProfileApprovalStepperSection,
+  StepUiStatus,
+} from './components/profile-approval-stepper/profile-approval-stepper.component';
+import { BasicInfoSectionComponent } from './components/sections/basic-info-section/basic-info-section.component';
+import { QualificationsSectionComponent } from './components/sections/qualifications-section/qualifications-section.component';
+import { ExperiencesSectionComponent } from './components/sections/experiences-section/experiences-section.component';
+import { TrainingSectionComponent } from './components/sections/training-section/training-section.component';
+import { SkillsLanguagesSectionComponent } from './components/sections/skills-languages-section/skills-languages-section.component';
+import { AttachmentsSectionComponent } from './components/sections/attachments-section/attachments-section.component';
+import { PhotoSectionComponent } from './components/sections/photo-section/photo-section.component';
 
 type ContentTab = 'profile' | 'review' | 'final';
 
 type TabState = Record<ContentTab, { loading: boolean; loaded: boolean }>;
 
-type StepUiStatus = 'done' | 'bad' | 'progress' | 'idle';
-
 @Component({
   selector: 'app-profile-approval-detail-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, I18nNamespaceDirective, ProgressSpinnerModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    TranslateModule,
+    I18nNamespaceDirective,
+    ProgressSpinnerModule,
+    CardModule,
+    ButtonModule,
+    DropdownModule,
+    InputTextareaModule,
+    AvatarModule,
+    ProfileApprovalStepperComponent,
+    BasicInfoSectionComponent,
+    QualificationsSectionComponent,
+    ExperiencesSectionComponent,
+    TrainingSectionComponent,
+    SkillsLanguagesSectionComponent,
+    AttachmentsSectionComponent,
+    PhotoSectionComponent,
+  ],
   templateUrl: './profile-approval-detail.page.html',
   styleUrl: './profile-approval-detail.page.scss',
   providers: [DialogService, MessageService],
@@ -63,6 +97,11 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   finalSummary = signal('');
   finalActionNote = signal('');
   finalAttachment: File | null = null;
+  reviewStatusOptions = [
+    { labelKey: 'profileApproval.status.approved', value: ReviewStatus.Approved },
+    { labelKey: 'profileApproval.status.changes', value: ReviewStatus.ChangesRequested },
+    { labelKey: 'profileApproval.status.rejected', value: ReviewStatus.Rejected },
+  ];
 
   protected readonly ReviewStatus = ReviewStatus;
   protected readonly ReviewTargetType = ReviewTargetType;
@@ -460,7 +499,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     this.tabState.set({ ...current, [tab]: { ...current[tab], ...changes } });
   }
 
-  stepperSections(info: ProfileApprovalDetail): Array<{ section: number; uiStatus: StepUiStatus; icon: string }> {
+  stepperSections(info: ProfileApprovalDetail): ProfileApprovalStepperSection[] {
     const current = this.activeSection();
 
     return (info.sections ?? []).map(s => {
@@ -472,7 +511,12 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       else if (s.section === current) uiStatus = 'progress';
       else uiStatus = 'idle';
 
-      return { section: s.section, uiStatus, icon: this.sectionIcon(s.section) };
+      return {
+        section: s.section,
+        uiStatus,
+        icon: this.sectionIcon(s.section),
+        labelKey: this.sectionName(s.section),
+      };
     });
   }
 
@@ -487,11 +531,6 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       case 8: return 'fa-regular fa-image';
       default: return 'fa-regular fa-circle';
     }
-  }
-
-  hasBasicFiles(profile: any): boolean {
-    const b = profile?.basicInformation;
-    return !!(b?.resumeAttachment || b?.nationalCard || b?.birthdayCertificate || b?.marriageCertificate || b?.residenceAddressCertificate);
   }
 
   /** تخزين مبدئي محلي (UI) ثم إرسال مراجعة القسم عند الضغط التالي/السابق أو حسب رغبتك */

@@ -1,0 +1,41 @@
+<ng-container *ngIf="trainingCourses?.length; else emptyBlock">
+  <div class="entry" *ngFor="let t of trainingCourses">
+    <button class="entry-action" type="button" (click)="preview(t.attachment?.url)">
+      <i class="fa-regular fa-eye"></i>
+      <span>{{ 'profileApproval.detail.viewFile' | translate }}</span>
+    </button>
+
+    <div class="entry-body">
+      <div class="entry-head">
+        <h4 class="entry-title">{{ t.title || '-' }}</h4>
+        <div class="entry-sub">{{ t.provider || '-' }}</div>
+      </div>
+
+      <div class="entry-grid">
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.training.country' | translate }}</div>
+          <div class="v">{{ t.country?.name || '-' }}</div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.training.period' | translate }}</div>
+          <div class="v">{{ t.startDate || '-' }} - {{ t.endDate || '-' }}</div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.training.attachment' | translate }}</div>
+          <div class="v">
+            <span class="chip" *ngIf="t.attachment?.fileName">{{ t.attachment.fileName }}</span>
+            <span *ngIf="!t.attachment?.fileName">-</span>
+          </div>
+        </div>
+        <div class="cell wide" *ngIf="t.description">
+          <div class="k">{{ 'profileApproval.detail.training.description' | translate }}</div>
+          <div class="v">{{ t.description }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #emptyBlock>
+  <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+</ng-template>

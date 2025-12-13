@@ -1,0 +1,21 @@
+<div class="split">
+  <div class="box">
+    <h4 class="box-title">{{ 'profileApproval.detail.skills.title' | translate }}</h4>
+    <div class="pill-row" *ngFor="let s of skillsAndLanguages">
+      <span class="pill-name">{{ s.skill?.name || s.skillId }}</span>
+      <span class="pill-level">{{ 'profileApproval.detail.skills.level' | translate }}: {{ s.levelId || '-' }}</span>
+    </div>
+  </div>
+
+  <div class="box">
+    <h4 class="box-title">{{ 'profileApproval.detail.skills.languagesTitle' | translate }}</h4>
+    <div class="pill-row" *ngFor="let l of languages">
+      <span class="pill-name">{{ l.language?.name || l.languageId }}</span>
+      <span class="pill-level">
+        {{ 'profileApproval.detail.snapshot.speaking' | translate }}: {{ l.speakingLevelId || '-' }} |
+        {{ 'profileApproval.detail.snapshot.writing' | translate }}: {{ l.writingLevelId || '-' }} |
+        {{ 'profileApproval.detail.snapshot.reading' | translate }}: {{ l.readingLevelId || '-' }}
+      </span>
+    </div>
+  </div>
+</div>

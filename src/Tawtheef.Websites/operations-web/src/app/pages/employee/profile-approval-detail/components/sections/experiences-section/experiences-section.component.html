@@ -1,0 +1,44 @@
+<ng-container *ngIf="experiences?.length; else emptyBlock">
+  <div class="entry" *ngFor="let e of experiences">
+    <button class="entry-action" type="button" (click)="preview(e.attachment?.url)">
+      <i class="fa-regular fa-eye"></i>
+      <span>{{ 'profileApproval.detail.viewFile' | translate }}</span>
+    </button>
+
+    <div class="entry-body">
+      <div class="entry-head">
+        <h4 class="entry-title">{{ e.jobTitle || '-' }}</h4>
+        <div class="entry-sub">{{ e.employerName || '-' }}</div>
+      </div>
+
+      <div class="entry-grid">
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.experiences.country' | translate }}</div>
+          <div class="v">{{ e.country?.name || '-' }}</div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.experiences.period' | translate }}</div>
+          <div class="v">
+            {{ e.startDate || '-' }} -
+            {{ e.isCurrent ? ('profileApproval.detail.snapshot.present' | translate) : (e.endDate || '-') }}
+          </div>
+        </div>
+        <div class="cell">
+          <div class="k">{{ 'profileApproval.detail.experiences.attachment' | translate }}</div>
+          <div class="v">
+            <span class="chip" *ngIf="e.attachment?.fileName">{{ e.attachment.fileName }}</span>
+            <span *ngIf="!e.attachment?.fileName">-</span>
+          </div>
+        </div>
+        <div class="cell wide" *ngIf="e.description">
+          <div class="k">{{ 'profileApproval.detail.experiences.tasks' | translate }}</div>
+          <div class="v">{{ e.description }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #emptyBlock>
+  <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+</ng-template>

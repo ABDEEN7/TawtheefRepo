@@ -1,0 +1,27 @@
+<div class="stepper">
+  <button
+    class="step"
+    *ngFor="let s of sections"
+    type="button"
+    [class.active]="activeSection === s.section"
+    [class.done]="s.uiStatus === 'done'"
+    [class.bad]="s.uiStatus === 'bad'"
+    [class.progress]="s.uiStatus === 'progress'"
+    [class.idle]="s.uiStatus === 'idle'"
+    (click)="selectSection(s.section)"
+  >
+    <span class="node">
+      <ng-container [ngSwitch]="s.uiStatus">
+        <i *ngSwitchCase="'done'" class="fa-solid fa-check"></i>
+        <i *ngSwitchCase="'bad'" class="fa-solid fa-xmark"></i>
+        <i *ngSwitchCase="'progress'" class="fa-solid fa-rotate"></i>
+        <i *ngSwitchDefault class="fa-regular fa-circle"></i>
+      </ng-container>
+    </span>
+
+    <span class="label">
+      <i class="{{ s.icon }}"></i>
+      <span>{{ s.labelKey | translate }}</span>
+    </span>
+  </button>
+</div>
