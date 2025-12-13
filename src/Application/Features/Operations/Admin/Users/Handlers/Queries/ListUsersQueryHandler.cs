@@ -1,5 +1,4 @@
 using FluentResults;
-using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,12 +6,13 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Admin.Users.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Users.Queries;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Queries;
 
-public sealed class ListUsersQueryHandler(UserManager<User> userManager, IMapper mapper)
+public sealed class ListUsersQueryHandler(
+    UserManager<User> userManager,
+    RoleManager<ApplicationRole> roleManager)
     : IRequestHandler<ListUsersQuery, IResult<PaginatedResult<UserListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<UserListItemDto>>> Handle(
@@ -30,11 +30,47 @@ public sealed class ListUsersQueryHandler(UserManager<User> userManager, IMapper
                      EF.Functions.Like(i.Email!, $"%{request.Email!.Trim()}%"))
             .WhereIf(request.IsBlocked.HasValue,
                 i => i.IsBlocked == request.IsBlocked!.Value);
-        
-        var result = await queryable
+
+        var totalCount = await queryable.CountAsync(cancellationToken);
+
+        var users = await queryable
             .OrderBy(u => u.FullNameEn)
             .ThenBy(u => u.Email)
-            .ToPaginatedListAsync<User, UserListItemDto>(mapper, request, cancellationToken);
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
+
+        var roleEntities = await roleManager.Roles
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        var items = new List<UserListItemDto>(users.Count);
+        foreach (var user in users)
+        {
+            var assignedRoleNames = await userManager.GetRolesAsync(user);
+            var assignedRoles = roleEntities
+                .Where(r => assignedRoleNames.Contains(r.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase))
+                .Select(r => new RoleSummaryDto
+                {
+                    Id = r.Id,
+                    NameAr = r.NameAr ?? r.Name ?? string.Empty,
+                    NameEn = r.NameEn ?? r.Name ?? string.Empty
+                })
+                .ToArray();
+
+            items.Add(new UserListItemDto
+            {
+                Id = user.Id,
+                Name = string.IsNullOrWhiteSpace(user.FullNameAr) ? user.FullNameEn : user.FullNameAr,
+                Email = user.Email ?? string.Empty,
+                LastLoginDate = user.LastLoginDate,
+                IsBlocked = user.IsBlocked,
+                Roles = assignedRoles,
+                RoleNames = assignedRoleNames
+            });
+        }
+
+        var result = new PaginatedResult<UserListItemDto>(items, totalCount, request.PageNumber, request.PageSize);
 
         return Result.Ok(result);
     }
