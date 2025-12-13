@@ -154,7 +154,8 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       )
       .subscribe({
         next: detail => {
-          const merged = this.mergeDetail(this.detail(), detail);
+          const ordered = { ...detail, sections: this.sortSections(detail.sections) };
+          const merged = this.mergeDetail(this.detail(), ordered);
           this.detail.set(merged);
           const firstSection = this.flowSections[0] ?? null;
           if (firstSection !== null) this.activeSection.set(firstSection);
@@ -455,7 +456,9 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   stepperSections(info: ProfileApprovalDetail): ProfileApprovalStepperSection[] {
     const current = this.activeSection();
 
-    return (info.sections ?? []).map(s => {
+    const sections = this.sortSections(info.sections);
+
+    return sections.map(s => {
       const st = s.sectionReview?.status;
 
       let uiStatus: StepUiStatus = 'idle';
@@ -471,6 +474,15 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
         labelKey: this.sectionName(s.section),
       };
     });
+  }
+
+  orderedSections(info: ProfileApprovalDetail): ProfileApprovalSection[] {
+    return this.sortSections(info.sections);
+  }
+
+  private sortSections(sections: ProfileApprovalSection[] | null | undefined): ProfileApprovalSection[] {
+    if (!sections?.length) return [];
+    return [...sections].sort((a, b) => a.section - b.section);
   }
 
   sectionIcon(section: number): string {

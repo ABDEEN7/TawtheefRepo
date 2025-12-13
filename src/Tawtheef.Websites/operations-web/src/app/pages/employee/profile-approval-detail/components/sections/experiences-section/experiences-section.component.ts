@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile-approval-experiences-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule],
   templateUrl: './experiences-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
