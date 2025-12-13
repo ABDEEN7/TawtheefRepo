@@ -21,15 +21,21 @@ export class UsersService {
   public users = this._users.asReadonly();
   public paginationMetadata = this._paginationMetadata.asReadonly();
 
-  getUsers(filters: UserFilters): void {
-    this.http.get<PaginatedResult<UserDto>>(this.endpoints.users.listUsers, filters)
+  getUsers(filters: UserFilters): Observable<void> {
+    return this.http.get<PaginatedResult<UserDto>>(this.endpoints.users.listUsers, filters)
       .pipe(
         tap(response => {
-          this._users.set(response.items || []);
+          const users = (response.items || []).map(user => ({
+            ...user,
+            roles: user.roles ?? [],
+            roleNames: user.roleNames ?? (user.roles ?? []).map(r => r.nameEn || r.nameAr)
+          }));
+
+          this._users.set(users);
           this._paginationMetadata.set(response.metadata);
-        })
-      )
-      .subscribe();
+        }),
+        map(() => void 0)
+      );
   }
 
   getUserRoles(userId: string): Observable<UserRolesResponse> {

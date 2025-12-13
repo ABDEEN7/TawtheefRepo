@@ -2,7 +2,7 @@ import {Component, OnInit, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MultiSelectModule} from 'primeng/multiselect';
 import {UserDto} from '../../models/user.dto';
 import {RoleSummaryDto} from '../../models/role-summary.dto';
@@ -10,6 +10,7 @@ import {UsersService} from '../../services/users.service';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {finalize} from 'rxjs/operators';
 import {Lang, LanguageService} from '../../../../../core/services/language.service';
+import {NotificationService} from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-manage-roles-dialog',
@@ -29,6 +30,8 @@ export class ManageRolesDialogComponent implements OnInit {
   private dialogRef = inject(DynamicDialogRef);
   private config = inject(DynamicDialogConfig);
   private language = inject(LanguageService);
+  private notification = inject(NotificationService);
+  private translate = inject(TranslateService);
 
   user: UserDto | undefined = this.config.data?.user as UserDto | undefined;
   roleOptions = signal<RoleSummaryDto[]>(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
@@ -47,8 +50,14 @@ export class ManageRolesDialogComponent implements OnInit {
     this.isLoading.set(true);
     this.usersService.getUserAssignedRoleIds(this.user.id)
       .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe((assignedRoles: string[]) => {
-        this.selectedRoleIds.set(assignedRoles.map(id => id.toString()));
+      .subscribe({
+        next: (assignedRoles: string[]) => {
+          this.selectedRoleIds.set(assignedRoles.map(id => id.toString()));
+        },
+        error: () => {
+          this.notification.error(this.translate.instant('USERS.LOAD_FAILED'));
+          this.dialogRef.close(false);
+        }
       });
   }
 
@@ -60,7 +69,13 @@ export class ManageRolesDialogComponent implements OnInit {
     if (!this.user) return;
 
     this.usersService.updateUserRoles(this.user.id, this.selectedRoleIds())
-      .subscribe(() => this.dialogRef.close(true));
+      .subscribe({
+        next: () => {
+          this.notification.success(this.translate.instant('USERS.ROLES_UPDATE_SUCCESS'));
+          this.dialogRef.close(true);
+        },
+        error: () => this.notification.error(this.translate.instant('USERS.ROLES_UPDATE_FAILED'))
+      });
   }
 
   cancel() {

@@ -16,7 +16,16 @@
   border: 1px solid #f3e5ec;
 }
 
+.table-wrapper {
+  border-radius: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
 .custom-table {
+  background: #fff;
+
   th {
     background: #7b0037;
     color: white;
@@ -30,6 +39,7 @@
     vertical-align: middle;
     padding: 14px 16px;
     border-color: #f2d9e5;
+    color: #3c3c3c;
   }
 
   tbody tr {
@@ -37,6 +47,18 @@
 
     &:hover {
       background: #fff7fb;
+    }
+  }
+}
+
+.custom-table tbody tr.row-odd {
+  background: #fff9fc;
+}
+
+.table-rtl {
+  .custom-table {
+    th, td {
+      text-align: right;
     }
   }
 }
@@ -50,4 +72,37 @@
 .page-title {
   font-weight: 700;
   color: #4b0022;
+}
+
+.role-chip {
+  border-radius: 999px;
+  padding: 6px 12px;
+}
+
+.action-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.table-rtl .action-cell {
+  justify-content: flex-start;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #e3d5dd;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: inherit;
+
+  &:hover {
+    background: #fff0f6;
+    border-color: #cfa3b8;
+  }
 }
