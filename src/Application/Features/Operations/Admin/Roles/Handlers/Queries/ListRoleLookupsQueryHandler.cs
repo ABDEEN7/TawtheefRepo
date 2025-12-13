@@ -1,15 +1,15 @@
 using System.Security.Claims;
 using FluentResults;
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
-using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
-public sealed class ListRoleLookupsQueryHandler(RoleManager<IdentityRole<Guid>> roleManager)
+public sealed class ListRoleLookupsQueryHandler(RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper)
     : IRequestHandler<ListRoleLookupsQuery, IResult<IReadOnlyCollection<RoleLookupDto>>>
 {
     public async Task<IResult<IReadOnlyCollection<RoleLookupDto>>> Handle(
@@ -18,20 +18,7 @@ public sealed class ListRoleLookupsQueryHandler(RoleManager<IdentityRole<Guid>> 
     {
         var roles = await roleManager.Roles.AsNoTracking().ToListAsync(cancellationToken);
 
-        var lookupDtos = new List<RoleLookupDto>(roles.Count);
-
-        foreach (var role in roles)
-        {
-            var claims = await roleManager.GetClaimsAsync(role);
-            lookupDtos.Add(new RoleLookupDto
-            {
-                Id = role.Id,
-                NameAr = GetNameClaim(claims, RoleClaimTypes.NameArabic, role.Name),
-                NameEn = GetNameClaim(claims, RoleClaimTypes.NameEnglish, role.Name)
-            });
-        }
-
-        return Result.Ok<IReadOnlyCollection<RoleLookupDto>>(lookupDtos);
+        return Result.Ok(mapper.Map<List<RoleLookupDto>>(roles));
     }
 
     private static string GetNameClaim(IEnumerable<Claim> claims, string type, string? fallback)

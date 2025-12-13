@@ -37,10 +37,10 @@
           size="small"
           class="form-select form-select-sm"
         >
-          <ng-template pTemplate="selectedItem" let-option>
+          <ng-template #selectedItem let-option>
             {{ option.name | translate }}
           </ng-template>
-          <ng-template pTemplate="item" let-option>
+          <ng-template #item let-option>
             {{ option.name | translate }}
           </ng-template>
         </p-select>

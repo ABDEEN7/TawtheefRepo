@@ -15,6 +15,10 @@ public sealed class RoleProfile : IRegister
             .Map(dest => dest.NameAr, src => GetNameClaim(src.Claims, RoleClaimTypes.NameArabic, src.Role.Name))
             .Map(dest => dest.NameEn, src => GetNameClaim(src.Claims, RoleClaimTypes.NameEnglish, src.Role.Name))
             .Map(dest => dest.Permissions, src => GetPermissions(src.Claims));
+        
+        config.NewConfig<IdentityRole<Guid>, RoleLookupDto>().Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.NameAr, src => src.Name)
+            .Map(dest => dest.NameEn, src => src.Name);
     }
 
     private static string GetNameClaim(IEnumerable<Claim> claims, string type, string? fallback)

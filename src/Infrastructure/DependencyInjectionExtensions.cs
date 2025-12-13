@@ -137,7 +137,7 @@ namespace Tawtheef.Infrastructure
                 }
             });
 
-            services.AddIdentity<User, IdentityRole<Guid>>()
+            services.AddIdentity<User, ApplicationRole>()
             .AddEntityFrameworkStores<TawtheefDbContext>()
             .AddDefaultTokenProviders();
         }

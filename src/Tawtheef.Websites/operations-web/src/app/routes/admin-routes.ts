@@ -9,4 +9,7 @@
   get roleManagement(){
     return this.admin + '/roles-management'
   },
+  get usersManagement(){
+    return this.admin + '/users-management'
+  },
 }

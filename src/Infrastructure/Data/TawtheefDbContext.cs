@@ -28,7 +28,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     ILogger logger)
     : IdentityDbContext<
         User,
-        IdentityRole<Guid>,
+        ApplicationRole,
         Guid,
         IdentityUserClaim<Guid>,
         IdentityUserRole<Guid>,
@@ -83,6 +83,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<ContactVerification> ContactVerification { get; set; }
     public DbSet<UserSession> UserSession { get; set; }
     public DbSet<ProfileSubmission> ProfileSubmission { get; set; }
+    public DbSet<ApplicationRole> RolesExtended { get; set; }
     
     // Applicant Tables
     public DbSet<Experience> Experience { get; set; }
@@ -126,6 +127,15 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
+        // --- ApplicationRole custom fields mapping ---
+        builder.Entity<ApplicationRole>(entity =>
+        {
+            entity.Property(r => r.NameAr).HasMaxLength(200);
+            entity.Property(r => r.NameEn).HasMaxLength(200);
+            entity.Property(r => r.DescriptionAr).HasMaxLength(400);
+            entity.Property(r => r.DescriptionEn).HasMaxLength(400);
+        });
 
         // Apply configurations
         builder.ApplyConfigurationsFromAssembly(typeof(TawtheefDbContext).Assembly);
