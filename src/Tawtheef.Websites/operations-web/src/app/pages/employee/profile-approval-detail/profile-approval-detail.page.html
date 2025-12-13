@@ -69,7 +69,7 @@
   <main class="page-body" *ngIf="detail() as info">
     <ng-container *ngIf="info.profile as profile">
       <!-- القسم النشط -->
-      <ng-container *ngFor="let sec of info.sections">
+      <ng-container *ngFor="let sec of orderedSections(info)">
         <section class="section-wrap" *ngIf="activeSection() === sec.section">
           <div class="section-title">
             <i class="{{ sectionIcon(sec.section) }}"></i>

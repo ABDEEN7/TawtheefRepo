@@ -1,3 +1,10 @@
-<div class="photo-card">
-  <img [src]="profilePhoto?.url || 'assets/img/avatar.png'" alt="profile-photo" />
-</div>
+<p-card class="shadow-sm photo-card text-center">
+  <ng-template pTemplate="header">
+    <div class="d-flex align-items-center gap-2 justify-content-center">
+      <i class="pi pi-image text-primary"></i>
+      <span class="fw-bold">{{ 'profileApproval.sections.profilePhoto' | translate }}</span>
+    </div>
+  </ng-template>
+
+  <img [src]="profilePhoto?.url || 'assets/img/avatar.png'" alt="profile-photo" class="img-fluid rounded" />
+</p-card>

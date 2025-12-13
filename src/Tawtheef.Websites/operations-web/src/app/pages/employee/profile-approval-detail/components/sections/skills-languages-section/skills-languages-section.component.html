@@ -1,21 +1,50 @@
-<div class="split">
-  <div class="box">
-    <h4 class="box-title">{{ 'profileApproval.detail.skills.title' | translate }}</h4>
-    <div class="pill-row" *ngFor="let s of skillsAndLanguages">
-      <span class="pill-name">{{ s.skill?.name || s.skillId }}</span>
-      <span class="pill-level">{{ 'profileApproval.detail.skills.level' | translate }}: {{ s.levelId || '-' }}</span>
-    </div>
+<div class="row g-3">
+  <div class="col-12 col-lg-6">
+    <p-card class="shadow-sm h-100">
+      <ng-template pTemplate="header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="pi pi-star text-primary"></i>
+          <span class="fw-bold">{{ 'profileApproval.detail.skills.title' | translate }}</span>
+        </div>
+      </ng-template>
+
+      <div class="d-flex flex-column gap-2">
+        <div class="d-flex justify-content-between align-items-center" *ngFor="let s of skillsAndLanguages">
+          <span class="fw-semibold text-dark">{{ s.skill?.name || s.skillId }}</span>
+          <p-tag severity="info" [value]="('profileApproval.detail.skills.level' | translate) + ' ' + (s.levelId || '-')"></p-tag>
+        </div>
+      </div>
+    </p-card>
   </div>
 
-  <div class="box">
-    <h4 class="box-title">{{ 'profileApproval.detail.skills.languagesTitle' | translate }}</h4>
-    <div class="pill-row" *ngFor="let l of languages">
-      <span class="pill-name">{{ l.language?.name || l.languageId }}</span>
-      <span class="pill-level">
-        {{ 'profileApproval.detail.snapshot.speaking' | translate }}: {{ l.speakingLevelId || '-' }} |
-        {{ 'profileApproval.detail.snapshot.writing' | translate }}: {{ l.writingLevelId || '-' }} |
-        {{ 'profileApproval.detail.snapshot.reading' | translate }}: {{ l.readingLevelId || '-' }}
-      </span>
-    </div>
+  <div class="col-12 col-lg-6">
+    <p-card class="shadow-sm h-100">
+      <ng-template pTemplate="header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="pi pi-language text-primary"></i>
+          <span class="fw-bold">{{ 'profileApproval.detail.skills.languagesTitle' | translate }}</span>
+        </div>
+      </ng-template>
+
+      <div class="d-flex flex-column gap-2">
+        <div class="border rounded p-2" *ngFor="let l of languages">
+          <div class="fw-semibold">{{ l.language?.name || l.languageId }}</div>
+          <div class="text-muted small d-flex flex-wrap gap-2">
+            <span>
+              {{ 'profileApproval.detail.snapshot.speaking' | translate }}:
+              <strong class="text-dark">{{ l.speakingLevelId || '-' }}</strong>
+            </span>
+            <span>
+              {{ 'profileApproval.detail.snapshot.writing' | translate }}:
+              <strong class="text-dark">{{ l.writingLevelId || '-' }}</strong>
+            </span>
+            <span>
+              {{ 'profileApproval.detail.snapshot.reading' | translate }}:
+              <strong class="text-dark">{{ l.readingLevelId || '-' }}</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+    </p-card>
   </div>
 </div>

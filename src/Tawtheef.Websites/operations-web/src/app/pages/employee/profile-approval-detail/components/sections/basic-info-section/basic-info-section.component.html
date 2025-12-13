@@ -1,74 +1,128 @@
-<div class="card-grid">
-  <div class="kv-card">
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.nationalNumber' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.nationalNumber || '-' }}</div>
-    </div>
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.fullNameAr' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.fullNameAr || '-' }}</div>
-    </div>
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.fullNameEn' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.fullNameEn || '-' }}</div>
-    </div>
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.birthDate' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.birthDate || '-' }}</div>
-    </div>
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.gender' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.gender || '-' }}</div>
-    </div>
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.nationality' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.nationality || '-' }}</div>
-    </div>
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.religion' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.religion || '-' }}</div>
-    </div>
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.maritalStatus' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.maritalStatus || '-' }}</div>
-    </div>
-    <div class="kv">
-      <div class="k">{{ 'profileApproval.detail.snapshot.childrenCount' | translate }}</div>
-      <div class="v">{{ profile.basicInformation.childrenCount ?? '-' }}</div>
-    </div>
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <p-card class="shadow-sm h-100 info-card">
+      <ng-template pTemplate="header">
+        <div class="d-flex align-items-center gap-2 text-primary">
+          <i class="pi pi-id-card"></i>
+          <span class="fw-bold">{{ 'profileApproval.detail.snapshot.title' | translate }}</span>
+        </div>
+        <small class="text-muted">{{ 'profileApproval.detail.snapshot.subtitle' | translate }}</small>
+      </ng-template>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+        <div class="col" *ngFor="let field of [
+          { label: 'profileApproval.detail.snapshot.nationalNumber', value: profile.basicInformation.nationalNumber },
+          { label: 'profileApproval.detail.snapshot.fullNameAr', value: profile.basicInformation.fullNameAr },
+          { label: 'profileApproval.detail.snapshot.fullNameEn', value: profile.basicInformation.fullNameEn },
+          { label: 'profileApproval.detail.snapshot.birthDate', value: profile.basicInformation.birthDate },
+          { label: 'profileApproval.detail.snapshot.gender', value: profile.basicInformation.gender },
+          { label: 'profileApproval.detail.snapshot.nationality', value: profile.basicInformation.nationality },
+          { label: 'profileApproval.detail.snapshot.religion', value: profile.basicInformation.religion },
+          { label: 'profileApproval.detail.snapshot.maritalStatus', value: profile.basicInformation.maritalStatus },
+          { label: 'profileApproval.detail.snapshot.childrenCount', value: profile.basicInformation.childrenCount ?? '-' }
+        ]">
+          <div class="text-muted small fw-semibold">{{ field.label | translate }}</div>
+          <div class="fw-bold text-dark">{{ field.value || '-' }}</div>
+        </div>
+      </div>
+    </p-card>
   </div>
 
-  <div class="files-card" *ngIf="hasBasicFiles()">
-    <div class="files-head">
-      <h4>{{ 'profileApproval.detail.snapshot.files' | translate }}</h4>
-    </div>
+  <div class="col-12 col-lg-4" *ngIf="hasBasicFiles()">
+    <p-card class="shadow-sm h-100">
+      <ng-template pTemplate="header">
+        <div class="d-flex align-items-center gap-2 text-primary">
+          <i class="pi pi-paperclip"></i>
+          <span class="fw-bold">{{ 'profileApproval.detail.snapshot.files' | translate }}</span>
+        </div>
+      </ng-template>
 
-    <div class="file-row" *ngIf="profile.basicInformation.resumeAttachment">
-      <span class="file-name">{{ profile.basicInformation.resumeAttachment.fileName }}</span>
-      <button class="btn-link" type="button" (click)="preview(profile.basicInformation.resumeAttachment.url)">
-        {{ 'profileApproval.detail.viewFile' | translate }}
-      </button>
-    </div>
+      <div class="list-group list-group-flush">
+        <button
+          type="button"
+          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+          *ngIf="profile.basicInformation.resumeAttachment"
+          pButton
+          pRipple
+          [label]="
+            ('profileApproval.detail.snapshot.resumeAttachment' | translate) +
+            ': ' +
+            (profile.basicInformation.resumeAttachment.fileName || '-')
+          "
+          (click)="preview(profile.basicInformation.resumeAttachment.url)"
+          icon="pi pi-external-link"
+          iconPos="right"
+          [style]="{'justify-content': 'space-between'}"
+        ></button>
 
-    <div class="file-row" *ngIf="profile.basicInformation.nationalCard">
-      <span class="file-name">{{ profile.basicInformation.nationalCard.fileName }}</span>
-      <button class="btn-link" type="button" (click)="preview(profile.basicInformation.nationalCard.url)">
-        {{ 'profileApproval.detail.viewFile' | translate }}
-      </button>
-    </div>
+        <button
+          type="button"
+          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+          *ngIf="profile.basicInformation.nationalCard"
+          pButton
+          pRipple
+          [label]="
+            ('profileApproval.detail.snapshot.nationalCard' | translate) +
+            ': ' +
+            (profile.basicInformation.nationalCard.fileName || '-')
+          "
+          (click)="preview(profile.basicInformation.nationalCard.url)"
+          icon="pi pi-external-link"
+          iconPos="right"
+          [style]="{'justify-content': 'space-between'}"
+        ></button>
 
-    <div class="file-row" *ngIf="profile.basicInformation.birthdayCertificate">
-      <span class="file-name">{{ profile.basicInformation.birthdayCertificate.fileName }}</span>
-      <button class="btn-link" type="button" (click)="preview(profile.basicInformation.birthdayCertificate.url)">
-        {{ 'profileApproval.detail.viewFile' | translate }}
-      </button>
-    </div>
+        <button
+          type="button"
+          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+          *ngIf="profile.basicInformation.birthdayCertificate"
+          pButton
+          pRipple
+          [label]="
+            ('profileApproval.detail.snapshot.birthdayCertificate' | translate) +
+            ': ' +
+            (profile.basicInformation.birthdayCertificate.fileName || '-')
+          "
+          (click)="preview(profile.basicInformation.birthdayCertificate.url)"
+          icon="pi pi-external-link"
+          iconPos="right"
+          [style]="{'justify-content': 'space-between'}"
+        ></button>
 
-    <div class="file-row" *ngIf="profile.basicInformation.marriageCertificate">
-      <span class="file-name">{{ profile.basicInformation.marriageCertificate.fileName }}</span>
-      <button class="btn-link" type="button" (click)="preview(profile.basicInformation.marriageCertificate.url)">
-        {{ 'profileApproval.detail.viewFile' | translate }}
-      </button>
-    </div>
+        <button
+          type="button"
+          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+          *ngIf="profile.basicInformation.marriageCertificate"
+          pButton
+          pRipple
+          [label]="
+            ('profileApproval.detail.snapshot.marriageCertificate' | translate) +
+            ': ' +
+            (profile.basicInformation.marriageCertificate.fileName || '-')
+          "
+          (click)="preview(profile.basicInformation.marriageCertificate.url)"
+          icon="pi pi-external-link"
+          iconPos="right"
+          [style]="{'justify-content': 'space-between'}"
+        ></button>
+
+        <button
+          type="button"
+          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+          *ngIf="profile.basicInformation.residenceAddressCertificate"
+          pButton
+          pRipple
+          [label]="
+            ('profileApproval.detail.snapshot.residenceAddressCertificate' | translate) +
+            ': ' +
+            (profile.basicInformation.residenceAddressCertificate.fileName || '-')
+          "
+          (click)="preview(profile.basicInformation.residenceAddressCertificate.url)"
+          icon="pi pi-external-link"
+          iconPos="right"
+          [style]="{'justify-content': 'space-between'}"
+        ></button>
+      </div>
+    </p-card>
   </div>
 </div>

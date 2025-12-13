@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProfileApprovalData } from '../../../../profile-approval/models/profile-approval.models';
 
 @Component({
   selector: 'app-profile-approval-basic-info-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, CardModule, ButtonModule],
   templateUrl: './basic-info-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })

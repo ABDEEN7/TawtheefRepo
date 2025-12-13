@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile-approval-attachments-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, CardModule, ButtonModule],
   templateUrl: './attachments-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
