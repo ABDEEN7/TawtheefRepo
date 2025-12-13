@@ -6,6 +6,4 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Que
 
 public record GetProfileApprovalDetailQuery(
     Guid UserProfileId,
-    Guid OfficerId,
-    bool IncludeProfile = true,
-    bool IncludeSections = true) : IRequest<Result<ProfileApprovalDetailDto>>;
+    Guid OfficerId) : IRequest<Result<ProfileApprovalDetailDto>>;
