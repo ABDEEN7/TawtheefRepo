@@ -15,9 +15,15 @@ public sealed class ProfileCompletenessProfile : IRegister
 
         config.NewConfig<Qualification, QualificationDto>()
             .Map(dest => dest.GradCountryId, src => src.CountryId)
+            .Map(dest => dest.GradCountry, src => src.Country)
             .Map(dest => dest.Gpa, src => src.GPA)
             .Map(dest => dest.GradeId, src => src.RatingId)
+            .Map(dest => dest.Grade, src => src.Rating)
             .Map(dest => dest.Attachment, src => src.Certificate);
+        
+        config.NewConfig<AchievementDto, Achievement>()
+            .Map(dest => dest.Country, src => src.Country)
+            .Map(dest => dest.AchievementType, src => src.AchievementType);
 
         config.NewConfig<Experience, ExperienceDto>()
             .Map(dest => dest.Attachment, src => src.Certificate)
@@ -75,7 +81,7 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.naStreet, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.StreetNo)
             .Map(dest => dest.naBuilding, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.BuildingNo)
             .Map(dest => dest.naUnit, src => src.profile.ResidenceAddress == null ? null : (int?)src.profile.ResidenceAddress.UnitNo)
-            .Map(dest => dest.ResidenceAddressCertificate, src => src.profile.SponsorProfile == null ? null : src.profile.ResidenceAddressCertificate)
+            .Map(dest => dest.ResidenceAddressCertificate, src => src.profile.ResidenceAddress == null ? null : src.profile.ResidenceAddress.Certificate)
             .Map(dest => dest.AdditionalAttachments,
                  src => 
                      src.profile.AdditionalAttachments == null ? null :

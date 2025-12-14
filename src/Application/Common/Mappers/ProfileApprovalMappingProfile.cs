@@ -30,22 +30,38 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.ReviewedAtUtc, src => src.ReviewedAtUtc);
 
         config.NewConfig<UserProfile, BasicInformationSnapshot>()
+            .Map(dest => dest.CandidateType, src => src.CandidateType)
+            .Map(dest => dest.TargetEntity, src => src.TargetEntity)
+            .Map(dest => dest.ResumeAttachment, src => src.ResumeAttachment)
+            .Map(dest => dest.NationalCard, src => src.NationalCard)
+            .Map(dest => dest.BirthdayCertificate, src => src.BirthdayCertificate)
+            .Map(dest => dest.MarriageCertificate, src => src.MarriageCertificate)
+            
             .Map(dest => dest.FullNameAr, src => src.User != null ? src.User.FullNameAr : null)
             .Map(dest => dest.FullNameEn, src => src.User != null ? src.User.FullNameEn : null)
             .Map(dest => dest.NationalNumber, src => src.NationalNumber)
+            .Map(dest => dest.QidExpiry, src => src.QIDExpiry)
             .Map(dest => dest.BirthDate, src => src.BirthDate)
             .Map(dest => dest.Nationality, src => src.Nationality)
             .Map(dest => dest.Gender, src => src.Gender)
             .Map(dest => dest.Religion, src => src.Religion)
             .Map(dest => dest.MaritalStatus, src => src.MaritalStatus)
             .Map(dest => dest.ChildrenCount, src => src.ChildrenCount)
-            .Map(dest => dest.CandidateType, src => src.CandidateType)
-            .Map(dest => dest.TargetEntity, src => src.TargetEntity)
-            .Map(dest => dest.ResumeAttachment, src => src.ResumeAttachment)
-            .Map(dest => dest.NationalCard, src => src.NationalCard)
-            .Map(dest => dest.ResidenceAddressCertificate, src => src.ResidenceAddressCertificate)
-            .Map(dest => dest.BirthdayCertificate, src => src.BirthdayCertificate)
-            .Map(dest => dest.MarriageCertificate, src => src.MarriageCertificate);
+            .Map(dest => dest.HasDisability, src => src.HasDisability)
+            .Map(dest => dest.DisabilityDetails, src => src.DisabilityDetails)
+            .Map(dest => dest.SponsorType, src => src.SponsorProfile != null ? src.SponsorProfile.SponsorType : null)
+            .Map(dest => dest.SponsorEmployerName, src => src.SponsorProfile != null ? src.SponsorProfile.SponsorName : null)
+            .Map(dest => dest.SponsorEmployerNumber, src => src.SponsorProfile != null ? src.SponsorProfile.SponsorNumber : null)
+            .Map(dest => dest.SponsorQidExpiry, src => src.SponsorProfile != null ? src.SponsorProfile.QIDExpiry : (DateOnly?)null)
+            .Map(dest => dest.SponsorCard, src => src.SponsorProfile != null ? src.SponsorProfile.SponsorCard : null)
+            .Map(dest => dest.ResidenceCountry, src => src.ResidenceCountry)
+            .Map(dest => dest.InterviewLocation, src => src.InterviewLocation)
+            
+            
+            .Map(dest => dest.PhoneNumber, src => src.User != null ? src.User.PhoneNumber : null)
+            .Map(dest => dest.Email, src => src.User != null ? src.User.Email : null)
+            .Map(dest => dest.Address, src => src.Address)
+            .Map(dest => dest.ResidenceAddress, src => src.ResidenceAddress);
 
         config.NewConfig<UserProfile, ProfileApprovalDataDto>()
             .Map(dest => dest.BasicInformation, src => src)
@@ -54,7 +70,7 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.Experiences, src => src.Experiences)
             .Map(dest => dest.TrainingCourses, src => src.TrainingCourses)
             .Map(dest => dest.ProfessionalCertificatesAndAwards, src => src.Achievements)
-            .Map(dest => dest.SkillsAndLanguages, src => src.Skills)
+            .Map(dest => dest.Skills, src => src.Skills)
             .Map(dest => dest.Languages, src => src.Languages)
             .Map(dest => dest.Attachments,
                  src => src.AdditionalAttachments == null

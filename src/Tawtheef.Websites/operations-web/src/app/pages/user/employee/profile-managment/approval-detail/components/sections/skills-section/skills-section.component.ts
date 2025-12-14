@@ -5,14 +5,14 @@ import { TagModule } from 'primeng/tag';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-profile-approval-skills-languages-section',
+  selector: 'app-profile-approval-skills-section',
   standalone: true,
   imports: [CommonModule, TranslateModule, CardModule, TagModule],
-  templateUrl: './skills-languages-section.component.html',
+  templateUrl: './skills-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
-export class SkillsLanguagesSectionComponent {
-  @Input() skillsAndLanguages: any[] | null = null;
+export class SkillsSectionComponent {
+  @Input() skills: any[] | null = null;
   @Input() languages: any[] | null = null;
 
   displayOption(option: any, fallback?: string | number | null): string {

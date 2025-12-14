@@ -113,19 +113,19 @@ public sealed class SaveProfilePrereqHandler(
 
         if (trackChanges)
         {
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.CandidateTypeId), ct, oldCandidateTypeId, profile.CandidateTypeId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.TargetEntityId), ct, oldTargetEntityId, profile.TargetEntityId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, nameof(UserProfile.QIDExpiry), ct, oldQidExpiry, profile.QIDExpiry);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.OfficeId), ct, oldOfficeId, profile.OfficeId);
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, ct, oldSnapshot, newSnapshot);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Prerequisites, nameof(UserProfile.CandidateTypeId), ct, oldCandidateTypeId, profile.CandidateTypeId);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Prerequisites, nameof(UserProfile.TargetEntityId), ct, oldTargetEntityId, profile.TargetEntityId);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.QIDExpiry), ct, oldQidExpiry, profile.QIDExpiry);
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Prerequisites, nameof(UserProfile.OfficeId), ct, oldOfficeId, profile.OfficeId);
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Prerequisites, ct, oldSnapshot, newSnapshot);
             if (profile.ResumeAttachmentId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Attachments, "Resume", profile.ResumeAttachmentId.Value, ct);
+                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Prerequisites, "Resume", profile.ResumeAttachmentId.Value, ct);
             if (profile.NationalCardId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Attachments, "NationalCard", profile.NationalCardId.Value, ct);
+                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Personal, "NationalCard", profile.NationalCardId.Value, ct);
             if (profile.BirthdayCertificateId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Attachments, "BirthCertificate", profile.BirthdayCertificateId.Value, ct);
+                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Prerequisites, "BirthCertificate", profile.BirthdayCertificateId.Value, ct);
             if (profile.MarriageCertificateId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Attachments, "MarriageCertificate", profile.MarriageCertificateId.Value, ct);
+                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Prerequisites, "MarriageCertificate", profile.MarriageCertificateId.Value, ct);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -143,7 +143,6 @@ public sealed class SaveProfilePrereqHandler(
             {
                 profile.ResidenceAddress = null;
                 profile.ResidenceAddressId = null;
-                profile.ResidenceAddressCertificateId = null;
             }
             else
             {
@@ -167,7 +166,7 @@ public sealed class SaveProfilePrereqHandler(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
             if (uploadResult.IsFailed)
-            return Result.Fail<Guid?>(uploadResult.Errors);
+                return Result.Fail<Guid?>(uploadResult.Errors);
 
             return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
         }

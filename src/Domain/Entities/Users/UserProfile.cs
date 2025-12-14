@@ -10,7 +10,6 @@ using Tawtheef.Domain.Utils;
 namespace Tawtheef.Domain.Entities.Users;
 
 [Table(nameof(UserProfile), Schema = Schemas.Applicant)]
-[Index(nameof(NationalNumber), IsUnique = true)]
 public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }
@@ -77,9 +76,6 @@ public class UserProfile : EventEntity
 
     public Guid? ResidenceAddressId { get; set; }
     public ResidenceAddress? ResidenceAddress { get; set; }
-
-    public Guid? ResidenceAddressCertificateId { get; set; }
-    public Resource? ResidenceAddressCertificate { get; set; }
 
     public bool HasDisability { get; set; }
     public string? DisabilityDetails { get; set; }
@@ -163,7 +159,7 @@ public class UserProfile : EventEntity
             if (ResidenceAddress.StreetNo <= 0) return false;
             if (ResidenceAddress.BuildingNo <= 0) return false;
             if (ResidenceAddress.UnitNo < 0) return false;
-            if (ResidenceAddressCertificateId is null)
+            if (ResidenceAddress.CertificateId != Guid.Empty)
                 return false;
         }
         else
@@ -172,19 +168,10 @@ public class UserProfile : EventEntity
                 return false;
         }
 
-        if (Languages is null || Languages.Count == 0)
-            return false;
-
-        if (Skills is null || Skills.Count == 0)
-            return false;
-
-        if (Experiences is null || Experiences.Count == 0)
-            return false;
-        
-        if (TrainingCourses is null || TrainingCourses.Count == 0)
-            return false;
-
         if (Qualifications is null || Qualifications.Count == 0)
+            return false;
+
+        if (Languages is null || Languages.Count == 0)
             return false;
 
         return true;

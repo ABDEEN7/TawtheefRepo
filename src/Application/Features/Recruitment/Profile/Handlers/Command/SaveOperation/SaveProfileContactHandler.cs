@@ -43,9 +43,9 @@ public sealed class SaveProfileContactHandler(
             profile.ResidenceAddress.ZoneNo,
             profile.ResidenceAddress.StreetNo,
             profile.ResidenceAddress.BuildingNo,
-            profile.ResidenceAddress.UnitNo
+            profile.ResidenceAddress.UnitNo,
+            profile.ResidenceAddress.CertificateId
         };
-        var oldCertificateId = profile.ResidenceAddressCertificateId;
 
         var oldSnapshot = BuildContactSnapshot(profile);
 
@@ -61,11 +61,15 @@ public sealed class SaveProfileContactHandler(
 
         if (r.NationalAddress is not null)
         {
+            var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress, profile.ResidenceAddress?.CertificateId);
+            if (idResult.IsFailed)
+                return Result.Fail<Unit>(idResult.Errors);
+            
             if (profile.ResidenceAddress is null)
             {
                 profile.ResidenceAddress =
                     ResidenceAddress.Create(r.NationalAddress.Building, r.NationalAddress.Street,
-                        r.NationalAddress.Zone, r.NationalAddress.Unit);
+                        r.NationalAddress.Zone, r.NationalAddress.Unit, idResult.Value!.Value);
             }
             else
             {
@@ -74,12 +78,8 @@ public sealed class SaveProfileContactHandler(
                 profile.ResidenceAddress.StreetNo = r.NationalAddress.Street;
                 profile.ResidenceAddress.BuildingNo = r.NationalAddress.Building;
                 profile.ResidenceAddress.UnitNo = r.NationalAddress.Unit;
+                profile.ResidenceAddress.CertificateId = idResult.Value!.Value;
             }
-
-            var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress, profile.ResidenceAddressCertificateId);
-            if (idResult.IsFailed)
-                return Result.Fail<Unit>(idResult.Errors);
-            profile.ResidenceAddressCertificateId = idResult.Value;
 
         }
         var newSnapshot = BuildContactSnapshot(profile);
@@ -89,23 +89,23 @@ public sealed class SaveProfileContactHandler(
             await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, nameof(UserProfile.ResidenceCountryId), ct, oldResidenceCountryId, profile.ResidenceCountryId);
             await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, nameof(UserProfile.InterviewLocationId), ct, oldInterviewLocationId, profile.InterviewLocationId);
             await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, nameof(UserProfile.Address), ct, oldAddress, profile.Address);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, "ResidenceAddress", ct, oldNationalAddress, profile.ResidenceAddress is null ? null : new
+            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, nameof(UserProfile.ResidenceAddress), ct, oldNationalAddress, profile.ResidenceAddress is null ? null : new
             {
                 profile.ResidenceAddress.ZoneNo,
                 profile.ResidenceAddress.StreetNo,
                 profile.ResidenceAddress.BuildingNo,
                 profile.ResidenceAddress.UnitNo
             });
-            if (oldCertificateId.HasValue || profile.ResidenceAddressCertificateId.HasValue)
+            if (oldNationalAddress?.CertificateId is not null || profile.ResidenceAddress?.CertificateId is not null)
             {
                 await reviewService.TouchAttachmentAsync(
                     profile.Id,
                     ProfileSection.Contact,
                     "National Address Certificate",
-                    profile.ResidenceAddressCertificateId ?? oldCertificateId!.Value,
+                    profile.ResidenceAddress?.CertificateId ?? oldNationalAddress!.CertificateId,
                     ct,
-                    oldCertificateId,
-                    profile.ResidenceAddressCertificateId);
+                    oldNationalAddress?.CertificateId,
+                    profile.ResidenceAddress?.CertificateId);
             }
             await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Contact, ct, oldSnapshot, newSnapshot);
         }
@@ -136,7 +136,7 @@ public sealed class SaveProfileContactHandler(
             profileEntity.ResidenceAddress?.StreetNo,
             profileEntity.ResidenceAddress?.BuildingNo,
             profileEntity.ResidenceAddress?.UnitNo,
-            profileEntity.ResidenceAddressCertificateId
+            ResidenceAddressCertificateId = profileEntity.ResidenceAddress?.CertificateId
         };
     }
 }

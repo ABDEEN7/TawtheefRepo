@@ -271,10 +271,6 @@ public sealed class SaveProfileSkillsCommandValidator : AbstractValidator<SavePr
                         skill.RuleFor(s => s.SkillId).NotEmpty();
                         skill.RuleFor(s => s.LevelId).NotEmpty();
                     });
-
-                RuleFor(x => x.Request)
-                    .Must(r => (r.Skills.Count) > 0)
-                    .WithMessage(ErrorsCodes.SkillOrLanguageRequired);
             });
     }
 }

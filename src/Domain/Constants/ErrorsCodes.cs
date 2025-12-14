@@ -178,6 +178,8 @@ public class ErrorsCodes
     public const string SponsorCardFileRequired = "SPONSOR_CARD_FILE_REQUIRED";
     public const string OfficeRequired = "OFFICE_REQUIRED";
     public const string AddressRequired = "ADDRESS_REQUIRED";
+    public const string InvalidNationalAddress = "INVALID_NATIONAL_ADDRESS";
+    public const string NationalAddressCertificateRequired = "NATIONAL_ADDRESS_CERTIFICATE_REQUIRED";
     public const string NationalAddressRequired = "NATIONAL_ADDRESS_REQUIRED";
     public const string NationalAddressDocumentRequired = "NATIONAL_ADDRESS_DOCUMENT_REQUIRED";
     public const string DegreeFileRequired = "DEGREE_FILE_REQUIRED";

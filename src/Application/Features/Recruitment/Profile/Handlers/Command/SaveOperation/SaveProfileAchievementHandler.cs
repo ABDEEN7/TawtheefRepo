@@ -96,11 +96,11 @@ public sealed class SaveProfileAchievementHandler(
 
         if (trackChanges)
         {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.CertificatesAndAwards, ct);
         }
         foreach (var achievement in newAchievements)
         {
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Achievement), achievement.Id, ct);
+            await reviewService.TouchRowAsync(profile.Id, ProfileSection.CertificatesAndAwards, nameof(Achievement), achievement.Id, ct);
         }
 
         await uow.SaveChangesAsync(ct);

@@ -7,13 +7,13 @@ import {ProfileApprovalData} from '../../../../approval-list/models/profile-appr
 import {Ripple} from 'primeng/ripple';
 
 @Component({
-  selector: 'app-profile-approval-basic-info-section',
+  selector: 'app-profile-approval-contact-info-section',
   standalone: true,
   imports: [CommonModule, TranslateModule, CardModule, ButtonModule, Ripple],
-  templateUrl: './basic-info-section.component.html',
+  templateUrl: './contact-info-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
-export class BasicInfoSectionComponent {
+export class ContactInfoSectionComponent {
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Output() viewFile = new EventEmitter<string>();
 
@@ -24,9 +24,7 @@ export class BasicInfoSectionComponent {
   hasBasicFiles(): boolean {
     const b = this.profile?.basicInformation;
     return !!(
-      b?.resumeAttachment ||
-      b?.nationalCard ||
-      b?.sponsorCard
+      b?.residenceAddress?.certificate
     );
   }
 

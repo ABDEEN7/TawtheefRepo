@@ -141,7 +141,6 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
 
   const needsSponsor = candidateTypeNeedsSponsor(candidateTypeFromState(s));
-  const isResident = candidateTypeIsResident(candidateTypeFromState(s));
   const isIndividualSponsor = s.sponsorType?.backendName === SponsorType.Individual;
 
   if (!isFilledField(s.fullNameAr)) {
@@ -219,12 +218,10 @@ function validateContactStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'contact', 'interviewPlace');
   }
 
-  // Phone object (PhoneNumber | null): نتحقق من null فقط
   if (!s.phone) {
     addRequiredError(errors, 'contact', 'phone');
   }
 
-  // توثيق الهاتف: يجب أن يكون true
   if (!s.phoneVerified) {
     addRequiredError(errors, 'contact', 'phoneVerified');
   }
@@ -233,7 +230,6 @@ function validateContactStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'contact', 'email');
   }
 
-  // توثيق البريد: يجب أن يكون true
   if (!s.emailVerified) {
     addRequiredError(errors, 'contact', 'emailVerified');
   }
@@ -320,8 +316,6 @@ function validateDegreesStep(s: ProfileState): StepValidationResult {
 function validateExperienceStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
 
-  const hasExperiences = Array.isArray(s.experiences) && s.experiences.length > 0;
-  const hasCourses = Array.isArray(s.courses) && s.courses.length > 0;
   const today = startOfToday();
   const graduationDates = new Map<string, Date>();
   s.degrees?.forEach(d => {
@@ -329,21 +323,6 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       graduationDates.set(d.id, new Date(d.gradYear, 0, 1));
     }
   });
-
-  if (!hasExperiences) {
-    errors.push({
-      field: 'experiences',
-      i18nKey: 'wizard.profile.experience.atLeastOne.required',
-    });
-  }
-
-  if (!hasCourses) {
-    errors.push({
-      field: 'courses',
-      i18nKey: 'wizard.profile.courses.atLeastOne.required',
-    });
-  }
-
   s.experiences?.forEach((experience, index) => {
 
     if ((!experience.file || !experience.fileName) && !experience.attachmentId) {
@@ -387,7 +366,6 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       }
     }
   });
-
   s.courses?.forEach((course, index) => {
     if ((!course.file || !course.fileName) && !course.attachmentId) {
       errors.push({
@@ -406,16 +384,11 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       });
     }
   });
-
   return { valid: errors.length === 0, errors };
 }
 
 function validateAchievementsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
-  const hasAchievements = Array.isArray(s.achievements) && s.achievements.length > 0;
-
-  if (!hasAchievements) return { valid: true, errors: [] };
-
   s.achievements?.forEach((achievement, index) => {
     if (!achievement?.achievementType) {
       errors.push({ field: `achievements[${index}].achievementType`, i18nKey: 'wizard.profile.achievements.type.required' });
@@ -434,43 +407,15 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
       });
     }
   });
-
   return { valid: errors.length === 0, errors };
 }
 
 function validateSkillsStep(s: ProfileState): StepValidationResult {
-  const hasSkills = Array.isArray(s.skills) && s.skills.length > 0;
-  if (!hasSkills) {
-    return {
-      valid: false,
-      errors: [
-        {
-          field: 'skills',
-          i18nKey: 'wizard.profile.skills.required',
-        },
-      ],
-    };
-  }
-
   return { valid: true, errors: [] };
 }
 
 function validateLanguagesStep(s: ProfileState): StepValidationResult {
-  const hasLanguages = Array.isArray(s.languages) && s.languages.length > 0;
   const errors: FieldError[] = [];
-
-  if (!hasLanguages) {
-    return {
-      valid: false,
-      errors: [
-        {
-          field: 'languages',
-          i18nKey: 'wizard.profile.languages.required',
-        },
-      ],
-    };
-  }
-
   s.languages?.forEach((lang, index) => {
     if (!isFilledField(lang?.speakingLevelId ?? lang?.speakingLevel?.id)) {
       errors.push({
@@ -493,20 +438,14 @@ function validateLanguagesStep(s: ProfileState): StepValidationResult {
       });
     }
   });
-
   if (errors.length) {
     return { valid: false, errors };
   }
-
   return { valid: true, errors: [] };
 }
 
 function validateAttachmentsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
-  const hasAttachments = Array.isArray(s.attachments) && s.attachments.length > 0;
-
-  if (!hasAttachments) return { valid: true, errors: [] };
-
   s.attachments?.forEach((attachment, index) => {
     if (!isFilledField(attachment?.fileName ?? attachment?.name)) {
       errors.push({
@@ -522,7 +461,6 @@ function validateAttachmentsStep(s: ProfileState): StepValidationResult {
       });
     }
   });
-
   return { valid: errors.length === 0, errors };
 }
 

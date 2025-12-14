@@ -73,6 +73,21 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
 
         if (requiresNationalAddress && !hasNationalAddress)
             return Result.Fail(ErrorsCodes.NationalAddressRequired);
+        
+        if (!requiresNationalAddress && string.IsNullOrWhiteSpace(request.Address))
+            return Result.Fail(ErrorsCodes.AddressRequired);
+
+        if (requiresNationalAddress)
+        {
+            if (request.NationalAddress is not null)
+            {
+                if (request.NationalAddress.Zone <= 0 || request.NationalAddress.Street <= 0 || request.NationalAddress.Building <= 0 || request.NationalAddress.Unit < 0)
+                    return Result.Fail(ErrorsCodes.InvalidNationalAddress);
+                if(string.IsNullOrEmpty(request.NationalAddress.NationalAddressFileName) && profile.ResidenceAddress!.CertificateId == Guid.Empty)
+                    return Result.Fail(ErrorsCodes.NationalAddressCertificateRequired);
+            }
+        }
+        
 
         return Result.Ok();
     }
@@ -136,9 +151,9 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         ProfileStep.Personal => IsPersonalComplete(profile),
         ProfileStep.Contact => IsContactComplete(profile),
         ProfileStep.Education => profile.Qualifications is { Count: > 0 },
-        ProfileStep.Experience => profile.Experiences is { Count: > 0 } || profile.TrainingCourses is { Count: > 0 },
+        ProfileStep.Experience => true,
         ProfileStep.Achievements => true,
-        ProfileStep.Skills => profile.Skills is { Count: > 0 },
+        ProfileStep.Skills => true,
         ProfileStep.Languages => profile.Languages is { Count: > 0 },
         ProfileStep.Attachments => true,
         _ => false
@@ -203,13 +218,14 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
         if (requiresNationalAddress)
         {
-            if (profile.ResidenceAddress is null || profile.ResidenceAddressCertificateId is null)
+            if (profile.ResidenceAddress is null)
                 return false;
 
             return profile.ResidenceAddress.ZoneNo > 0 &&
                    profile.ResidenceAddress.StreetNo > 0 &&
                    profile.ResidenceAddress.BuildingNo > 0 &&
-                   profile.ResidenceAddress.UnitNo >= 0;
+                   profile.ResidenceAddress.UnitNo >= 0 &&
+                   profile.ResidenceAddress.CertificateId != Guid.Empty;
         }
 
         return !string.IsNullOrWhiteSpace(profile.Address);

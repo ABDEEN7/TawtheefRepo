@@ -641,6 +641,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<int>("BuildingNo")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(93);
@@ -679,6 +682,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CertificateId");
 
                     b.HasIndex("CreatedById");
 
@@ -6006,24 +6011,24 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DescriptionAr")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("DescriptionEn")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NameAr")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("NameEn")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
@@ -6326,9 +6331,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid?>("ReligionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ResidenceAddressCertificateId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("ResidenceAddressId")
                         .HasColumnType("uniqueidentifier");
 
@@ -6382,17 +6384,11 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("NationalCardId");
 
-                    b.HasIndex("NationalNumber")
-                        .IsUnique()
-                        .HasFilter("[NationalNumber] IS NOT NULL");
-
                     b.HasIndex("NationalityId");
 
                     b.HasIndex("OfficeId");
 
                     b.HasIndex("ReligionId");
-
-                    b.HasIndex("ResidenceAddressCertificateId");
 
                     b.HasIndex("ResidenceAddressId");
 
@@ -6408,6 +6404,10 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId")
                         .IsUnique();
+
+                    b.HasIndex("NationalNumber", "NationalityId")
+                        .IsUnique()
+                        .HasFilter("[NationalNumber] IS NOT NULL AND [NationalityId] IS NOT NULL");
 
                     b.ToTable("UserProfile", "app");
                 });
@@ -7009,6 +7009,12 @@ namespace Tawtheef.Infrastructure.Migrations
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.ResidenceAddress", b =>
                 {
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "Certificate")
+                        .WithMany()
+                        .HasForeignKey("CertificateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
@@ -7023,6 +7029,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Certificate");
 
                     b.Navigation("CreatedBy");
 
@@ -8829,10 +8837,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ReligionId");
 
-                    b.HasOne("Tawtheef.Domain.Entities.Resource", "ResidenceAddressCertificate")
-                        .WithMany()
-                        .HasForeignKey("ResidenceAddressCertificateId");
-
                     b.HasOne("Tawtheef.Domain.Entities.Applicant.ResidenceAddress", "ResidenceAddress")
                         .WithMany()
                         .HasForeignKey("ResidenceAddressId");
@@ -8892,8 +8896,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("Religion");
 
                     b.Navigation("ResidenceAddress");
-
-                    b.Navigation("ResidenceAddressCertificate");
 
                     b.Navigation("ResidenceCountry");
 

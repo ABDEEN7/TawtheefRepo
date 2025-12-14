@@ -76,7 +76,7 @@
   "profileApproval.detail.snapshot.sponsorEmployerNumber": "رقم الكفيل",
   "profileApproval.detail.snapshot.sponsorQidExpiry": "تاريخ انتهاء هوية الكفيل",
   "profileApproval.detail.snapshot.targetEntity": "الجهة المستهدفة",
-  "profileApproval.detail.snapshot.targetEntityCategory": "فئة الجهة المستهدفة",
+  "profileApproval.detail.snapshot.office": "المكتب المعتمد",
   "profileApproval.detail.snapshot.cvSummary": "السيرة الذاتية",
   "profileApproval.detail.snapshot.missing": "غير متوفر",
   "profileApproval.detail.snapshot.sponsorCard": "بطاقة الكفيل",
@@ -118,7 +118,8 @@
   "profileApproval.detail.training.description": "الوصف",
 
   "profileApproval.detail.certificates.issueDate": "تاريخ الإصدار",
-  "profileApproval.detail.certificates.expiryDate": "تاريخ الانتهاء",
+  "profileApproval.detail.certificates.countryIssue": "بلد الإصدار",
+  "profileApproval.detail.certificates.description": "الوصف",
   "profileApproval.detail.certificates.attachment": "المرفق",
 
   "profileApproval.detail.skills.title": "المهارات",
@@ -163,6 +164,7 @@
   "profileApproval.sections.profilePhoto": "الصورة الشخصية",
   "profileApproval.sections.generic": "قسم",
 
+  "profileOverview.sections.prerequisites": "المعلومات الأولية",
   "profileOverview.sections.basicInfo": "المعلومات الأساسية",
   "profileOverview.sections.contactInfo": "معلومات الاتصال",
   "profileOverview.sections.qualifications": "المؤهلات",
@@ -235,6 +237,7 @@
   "profileApproval.validation.pendingSectionsSummary": "يوجد عناصر بانتظار المراجعة",
   "profileApproval.validation.pendingSectionsDetail": "اعتمد أو اطلب تعديل جميع الأقسام قبل اعتماد الملف بالكامل.",
   "profileApproval.detail.partialReview": "مراجعة جزئية",
-  "profileApproval.detail.initialReview": "المراجعة الأولية"
+  "profileApproval.detail.initialReview": "المراجعة الأولية",
+  "profileApproval.detail.snapshot.candidateType": "فئة المرشح"
 
 }

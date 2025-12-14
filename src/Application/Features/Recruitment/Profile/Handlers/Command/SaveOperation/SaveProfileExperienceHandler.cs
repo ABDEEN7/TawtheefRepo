@@ -146,7 +146,7 @@ public sealed class SaveProfileExperienceHandler(
 
             foreach (var training in newTrainings)
             {
-                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(TrainingCourse), training.Id, ct);
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.TrainingCourses, nameof(TrainingCourse), training.Id, ct);
             }
         }
 

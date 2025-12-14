@@ -32,10 +32,4 @@ export class ProfileApprovalStepperComponent {
   selectSection(section: number): void {
     this.sectionChange.emit(section);
   }
-
-  statusClass(status: ReviewStatus | null | undefined): StepUiStatus {
-    if (status === ReviewStatus.Approved) return 'done';
-    if (status === ReviewStatus.Rejected) return 'bad';
-    return 'idle';
-  }
 }

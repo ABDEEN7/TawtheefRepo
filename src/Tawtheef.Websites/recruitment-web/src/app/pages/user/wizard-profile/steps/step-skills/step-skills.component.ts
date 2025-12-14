@@ -39,7 +39,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
-  // DI
   protected readonly ds = inject(DataService);
   protected readonly lookups = inject(ProfileLookupsService);
   private readonly messageService = inject(MessageService);
@@ -49,22 +48,18 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   saving = false;
   private lastSubmittedSignature: string | null = null;
 
-  // نعمل signal مرة واحدة، مش في كل getter
   private readonly stepValidity = createStepValiditySignal(this.ds.state);
   get step() {
     const validity = this.stepValidity();
     return validity['skills'];
   }
 
-  // UI state
   skillOptions: dropdownOptionsModel[] = [];
   loadingSkills = false;
   lastQuery = '';
 
-  // الموديل المربوط على p-auto-complete (لعرض النص فقط)
   skillSearchModel: dropdownOptionsModel | null = null;
 
-  // القيمة المختارة فعليًا والتي سنضيفها للـ ds
   selectedSkill: dropdownOptionsModel | null = null;
   selectedLevel: dropdownOptionsModel | null = null;
 
@@ -74,9 +69,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const state = this.ds.state();
-    const signature = this.buildSignature(state.skills);
-    // لو حابب تمنع أول save إذا ما في تغيير، خزن signature هنا
-    // this.lastSubmittedSignature = signature;
     this.lastSubmittedSignature = null;
 
     this.sub = this.search$
@@ -112,7 +104,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       });
   }
 
-  // PrimeNG completeMethod hook
   onSkillSearch(e: AutoCompleteCompleteEvent): void {
     const q = (e?.query ?? '').trim();
 
@@ -125,7 +116,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     this.search$.next(q);
   }
 
-  // عند اختيار skill من القائمة
   onSkillSelect(e: AutoCompleteSelectEvent): void {
     this.selectedSkill = e.value as dropdownOptionsModel;
   }

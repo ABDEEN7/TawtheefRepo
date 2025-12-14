@@ -101,6 +101,15 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!languages.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.translate.instant('wizard.languages.validation.noRows'),
+        life: 5000,
+      });
+    }
+
     this.saving = true;
     this.profile.saveLanguagesSection(languages).subscribe({
       next: () => {

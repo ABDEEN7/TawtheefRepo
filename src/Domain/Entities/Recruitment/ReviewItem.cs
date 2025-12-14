@@ -9,15 +9,16 @@ namespace Tawtheef.Domain.Entities.Recruitment;
 
 public enum ProfileSection
 {
-    Personal = 1,
-    Contact = 2,
-    Qualifications = 3,
-    Experience = 4,
-    TrainingCourses = 5,
-    CertificatesAndAwards = 6,
-    Skills = 7,
-    Languages = 8,
-    Attachments = 9
+    Prerequisites = 1,
+    Personal = 2,
+    Contact = 3,
+    Qualifications = 4,
+    Experience = 5,
+    TrainingCourses = 6,
+    CertificatesAndAwards = 7,
+    Skills = 8,
+    Languages = 9,
+    Attachments = 10
 }
 
 public enum ReviewStatus

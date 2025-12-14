@@ -148,16 +148,6 @@ export class StepExperienceComponent implements OnInit {
       return;
     }
 
-    if (!experiences.length) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.experience.validation.noRows'),
-        life: 5000,
-      });
-      return;
-    }
-
     this.saving = true;
     this.profile.saveExperienceSection(experiences, courses).subscribe({
       next: () => {

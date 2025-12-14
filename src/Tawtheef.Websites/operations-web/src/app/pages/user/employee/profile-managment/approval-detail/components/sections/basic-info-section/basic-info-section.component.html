@@ -1,5 +1,5 @@
 <div class="row g-3">
-  <div class="col-12 col-lg-8">
+  <div class="col-12">
     <p-card class="shadow-sm h-100 section-panel">
       <ng-template pTemplate="header">
         <div class="card-head">
@@ -27,11 +27,6 @@
             { label: 'profileApproval.detail.snapshot.religion', value: profile.basicInformation.religion },
             { label: 'profileApproval.detail.snapshot.maritalStatus', value: profile.basicInformation.maritalStatus },
             { label: 'profileApproval.detail.snapshot.childrenCount', value: profile.basicInformation.childrenCount },
-            { label: 'profileApproval.detail.snapshot.email', value: profile.basicInformation.email },
-            { label: 'profileApproval.detail.snapshot.phoneNumber', value: profile.basicInformation.phoneNumber },
-            { label: 'profileApproval.detail.snapshot.residenceCountry', value: profile.basicInformation.residenceCountry },
-            { label: 'profileApproval.detail.snapshot.address', value: profile.basicInformation.address },
-            { label: 'profileApproval.detail.snapshot.interviewLocation', value: profile.basicInformation.interviewLocation },
             {
               label: 'profileApproval.detail.snapshot.disability',
               value:
@@ -46,10 +41,6 @@
             { label: 'profileApproval.detail.snapshot.sponsorEmployerName', value: profile.basicInformation.sponsorEmployerName },
             { label: 'profileApproval.detail.snapshot.sponsorEmployerNumber', value: profile.basicInformation.sponsorEmployerNumber },
             { label: 'profileApproval.detail.snapshot.sponsorQidExpiry', value: profile.basicInformation.sponsorQidExpiry },
-            { label: 'profileApproval.detail.snapshot.candidateType', value: profile.basicInformation.candidateType },
-            { label: 'profileApproval.detail.snapshot.targetEntity', value: profile.basicInformation.targetEntity },
-            { label: 'profileApproval.detail.snapshot.targetEntityCategory', value: profile.basicInformation.targetEntityCategory },
-            { label: 'profileApproval.detail.snapshot.cvSummary', value: profile.basicInformation.cvSummary }
           ]"
         >
           <div class="chip-label">{{ field.label | translate }}</div>
@@ -80,22 +71,6 @@
         <button
           type="button"
           class="file-chip"
-          *ngIf="profile.basicInformation.resumeAttachment"
-          pButton
-          pRipple
-          [label]="
-            ('profileApproval.detail.snapshot.resumeAttachment' | translate) +
-            ': ' +
-            (profile.basicInformation.resumeAttachment.fileName || '-')
-          "
-          (click)="preview(profile.basicInformation.resumeAttachment.url)"
-          icon="pi pi-external-link"
-          iconPos="right"
-        ></button>
-
-        <button
-          type="button"
-          class="file-chip"
           *ngIf="profile.basicInformation.nationalCard"
           pButton
           pRipple
@@ -105,38 +80,6 @@
             (profile.basicInformation.nationalCard.fileName || '-')
           "
           (click)="preview(profile.basicInformation.nationalCard.url)"
-          icon="pi pi-external-link"
-          iconPos="right"
-        ></button>
-
-        <button
-          type="button"
-          class="file-chip"
-          *ngIf="profile.basicInformation.birthdayCertificate"
-          pButton
-          pRipple
-          [label]="
-            ('profileApproval.detail.snapshot.birthdayCertificate' | translate) +
-            ': ' +
-            (profile.basicInformation.birthdayCertificate.fileName || '-')
-          "
-          (click)="preview(profile.basicInformation.birthdayCertificate.url)"
-          icon="pi pi-external-link"
-          iconPos="right"
-        ></button>
-
-        <button
-          type="button"
-          class="file-chip"
-          *ngIf="profile.basicInformation.marriageCertificate"
-          pButton
-          pRipple
-          [label]="
-            ('profileApproval.detail.snapshot.marriageCertificate' | translate) +
-            ': ' +
-            (profile.basicInformation.marriageCertificate.fileName || '-')
-          "
-          (click)="preview(profile.basicInformation.marriageCertificate.url)"
           icon="pi pi-external-link"
           iconPos="right"
         ></button>
@@ -156,22 +99,22 @@
           icon="pi pi-external-link"
           iconPos="right"
         ></button>
-
         <button
           type="button"
           class="file-chip"
-          *ngIf="profile.basicInformation.residenceAddressCertificate"
+          *ngIf="profile.basicInformation.resumeAttachment"
           pButton
           pRipple
           [label]="
-            ('profileApproval.detail.snapshot.residenceAddressCertificate' | translate) +
+            ('profileApproval.detail.snapshot.resumeAttachment' | translate) +
             ': ' +
-            (profile.basicInformation.residenceAddressCertificate.fileName || '-')
+            (profile.basicInformation.resumeAttachment.fileName || '-')
           "
-          (click)="preview(profile.basicInformation.residenceAddressCertificate.url)"
+          (click)="preview(profile.basicInformation.resumeAttachment.url)"
           icon="pi pi-external-link"
           iconPos="right"
         ></button>
+
       </div>
     </p-card>
   </div>

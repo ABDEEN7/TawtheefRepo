@@ -205,22 +205,24 @@ export class ProfileOverviewPage implements OnInit {
   sectionName(section: number): string {
     switch (section) {
       case 1:
-        return 'profileOverview.sections.basicInfo';
+        return 'profileOverview.sections.prerequisites';
       case 2:
-        return 'profileOverview.sections.contactInfo';
+        return 'profileOverview.sections.basicInfo';
       case 3:
-        return 'profileOverview.sections.qualifications';
+        return 'profileOverview.sections.contactInfo';
       case 4:
-        return 'profileOverview.sections.experiences';
+        return 'profileOverview.sections.qualifications';
       case 5:
-        return 'profileOverview.sections.training';
+        return 'profileOverview.sections.experiences';
       case 6:
-        return 'profileOverview.sections.certificates';
+        return 'profileOverview.sections.training';
       case 7:
-        return 'profileOverview.sections.skills';
+        return 'profileOverview.sections.certificates';
       case 8:
-        return 'profileOverview.sections.languages';
+        return 'profileOverview.sections.skills';
       case 9:
+        return 'profileOverview.sections.languages';
+      case 10:
         return 'profileOverview.sections.attachments';
       default:
         return 'profileOverview.sections.generic';

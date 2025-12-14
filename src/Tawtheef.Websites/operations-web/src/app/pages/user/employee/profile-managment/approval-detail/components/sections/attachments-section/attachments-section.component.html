@@ -7,7 +7,7 @@
             <span class="icon-circle text-danger bg-light">
               <i class="pi pi-paperclip"></i>
             </span>
-            <h5 class="mb-0">{{ a.title || a.file?.fileName || '-' }}</h5>
+            <h5 class="mb-0">{{ a.title || '-' }}</h5>
           </div>
           <button
             pButton
@@ -25,14 +25,6 @@
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileName' | translate }}</div>
           <div class="fw-semibold">{{ a.file?.fileName || '-' }}</div>
-        </div>
-        <div class="detail-tile">
-          <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileSize' | translate }}</div>
-          <div class="fw-semibold">{{ a.file?.sizeLabel || '-' }}</div>
-        </div>
-        <div class="detail-tile">
-          <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileType' | translate }}</div>
-          <div class="fw-semibold">{{ a.file?.contentType || a.file?.type || a.file?.extension || '-' }}</div>
         </div>
       </div>
     </p-card>
