@@ -1,7 +1,7 @@
-﻿import { HttpClient, HttpEvent, HttpParams, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { retryBackoff } from '../rxjs/retry-backoff';
+﻿import {HttpClient, HttpEvent, HttpParams, HttpRequest, HttpResponse} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {retryBackoff} from '../rxjs/retry-backoff';
 
 /**
  * Generic HttpService wrapper around HttpClient that:
@@ -17,7 +17,14 @@ export class HttpService {
   // ----------------------
   public get<T>(url: string, params?: any, options?: { observe?: 'body' } & any): Observable<T>;
   public get<T>(url: string, params?: any, options: any = {}): Observable<T | HttpEvent<T>> {
-    const request$ = this.http.get<T>(url, { params: params, ...options });
+    const finalParams = Object.keys(params || {}).reduce((acc: any, key: string) => {
+      const value = params[key];
+      if (value !== null && value !== undefined) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+    const request$ = this.http.get<T>(url, { params: finalParams, ...options });
     if (options.retry) return request$.pipe(retryBackoff(options.retryCount || 3, options.retryDelay || 500));
     return request$;
   }

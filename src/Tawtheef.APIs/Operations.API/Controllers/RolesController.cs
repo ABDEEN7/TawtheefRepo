@@ -20,6 +20,13 @@ public class RolesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("lookups")]
+    public async Task<IActionResult> ListRoleLookups()
+    {
+        var result = await mediator.Send(new ListRoleLookupsQuery());
+        return result.ToActionResult();
+    }
+
     [HttpGet("role-details/{id:guid}")]
     public async Task<IActionResult> GetRole(Guid id)
     {

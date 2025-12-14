@@ -1,0 +1,33 @@
+<div class="manage-roles-dialog-content" i18nNamespace="pages/admin/users-management">
+  <div class="dialog-user-info mb-4">
+    <div class="fw-bold">{{ user?.name }}</div>
+    <div class="text-muted small">{{ user?.email }}</div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">{{ 'USERS.SELECT_ROLES' | translate }}</label>
+    <p-multiSelect
+      class="role-multiselect"
+      [options]="roleOptions()"
+      [optionLabel]="currentLang() === 'ar' ? 'nameAr' : 'nameEn'"
+      optionValue="id"
+      display="chip"
+      [ngModel]="selectedRoleIds()"
+      (ngModelChange)="onRolesChange($event)"
+      [placeholder]="'USERS.SELECT_ROLES_PLACEHOLDER' | translate"
+      [appendTo]="'body'"
+      [disabled]="isLoading()">
+      <ng-template let-role pTemplate="item">
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <span>{{ currentLang() === 'ar' ? role.nameAr : role.nameEn }}</span>
+          <small class="text-muted">{{ currentLang() === 'ar' ? role.nameEn : role.nameAr }}</small>
+        </div>
+      </ng-template>
+    </p-multiSelect>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2">
+    <button class="btn btn-secondary" type="button" (click)="cancel()" [disabled]="isLoading()">{{ 'USERS.CANCEL' | translate }}</button>
+    <button class="btn btn-maroon" type="button" (click)="saveRoles()" [disabled]="isLoading()">{{ 'USERS.SAVE' | translate }}</button>
+  </div>
+</div>

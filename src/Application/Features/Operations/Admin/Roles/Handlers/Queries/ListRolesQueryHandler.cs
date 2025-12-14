@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
-public sealed class ListRolesQueryHandler(RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper)
+public sealed class ListRolesQueryHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
     : IRequestHandler<ListRolesQuery, IResult<PaginatedResult<RoleDto>>>
 {
     public async Task<IResult<PaginatedResult<RoleDto>>> Handle(ListRolesQuery request, CancellationToken cancellationToken)
