@@ -227,10 +227,11 @@
         </div>
         <div class="mb-3">
           <label class="form-label">{{ 'distribution.auto.limit' | translate }}</label>
+
+<!--          (onInput)="autoLimit.set($event.value)"-->
           <p-inputNumber
             inputId="autoLimit"
             [ngModel]="autoLimit()"
-            (onInput)="autoLimit.set($event.value)"
             mode="decimal"
             inputStyleClass="form-control"
             [placeholder]="'distribution.auto.limitPlaceholder' | translate"
@@ -392,9 +393,10 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">{{ 'distribution.dialog.manual.count' | translate }}</label>
+
+        <!--          (onInput)="manualCount.set($event.value)"-->
         <p-inputNumber
           [ngModel]="manualCount()"
-          (onInput)="manualCount.set($event.value)"
           mode="decimal"
           inputStyleClass="form-control"
           [min]="1"
@@ -440,9 +442,10 @@
     <div class="row g-3 mb-3">
       <div class="col-md-6">
         <label class="form-label">{{ 'distribution.dialog.auto.count' | translate }}</label>
+
+<!--        (onInput)="autoLimit.set($event.value)"-->
         <p-inputNumber
           [ngModel]="autoLimit()"
-          (onInput)="autoLimit.set($event.value)"
           mode="decimal"
           inputStyleClass="form-control"
           [placeholder]="'distribution.auto.limitPlaceholder' | translate"

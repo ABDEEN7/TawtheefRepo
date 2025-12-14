@@ -1,8 +1,8 @@
 export interface PaginationMetadata {
   totalCount: number;
   pageSize: number;
-  pageNumber: number;
+  currentPage: number;
   totalPages: number;
   hasPreviousPage: boolean;
-  hasNextPage: boolean;
+  hasNext: boolean;
 }

@@ -75,7 +75,7 @@ export class UsersManagement implements OnInit {
         if (metadata) {
           this.filters.update(f => ({
             ...f,
-            pageNumber: metadata.pageNumber,
+            pageNumber: metadata.currentPage,
             pageSize: metadata.pageSize
           }));
         }
