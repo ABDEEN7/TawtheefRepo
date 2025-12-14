@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Recruitment" type="CompoundRunConfigurationType">
-    <toRun name="Recruitment.API: development" type="LaunchSettings" />
-    <toRun name="recruitment-website: start" type="js.build_tools.npm" />
-    <method v="2" />
-  </configuration>
-</component>

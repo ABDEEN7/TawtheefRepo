@@ -4,7 +4,7 @@ export enum ReviewStatus {
   Approved = 2,
   Rejected = 3,
   NeedsCorrection = 4,
-  ChangesRequested = 4,
+  ChangesRequested = 5,
 }
 
 export enum ReviewTargetType {
