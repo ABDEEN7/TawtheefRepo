@@ -47,6 +47,11 @@ public sealed class SaveProfileAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+        var trackChanges = profile.Status == UserProfileStatus.Approved;
+
         var validationResult = validationService.ValidateAttachments(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -98,15 +103,18 @@ public sealed class SaveProfileAttachmentsHandler(
             reviewAttachments.Add(attachment);
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Attachments, ct);
-        foreach (var attachment in reviewAttachments)
+        if (trackChanges)
         {
-            await reviewService.TouchAttachmentAsync(
-                profile.Id,
-                ProfileSection.Attachments,
-                attachment.FileName,
-                attachment.AttachmentId,
-                ct);
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Attachments, ct);
+            foreach (var attachment in reviewAttachments)
+            {
+                await reviewService.TouchAttachmentAsync(
+                    profile.Id,
+                    ProfileSection.Attachments,
+                    attachment.FileName,
+                    attachment.AttachmentId,
+                    ct);
+            }
         }
 
         await uow.SaveChangesAsync(ct);

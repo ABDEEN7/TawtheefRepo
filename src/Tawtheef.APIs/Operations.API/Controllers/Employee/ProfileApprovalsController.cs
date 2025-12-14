@@ -1,20 +1,25 @@
 using System.Security.Claims;
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/profile-approvals")]
-//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+//[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.JobsManage)]
 public class ProfileApprovalsController(IMediator mediator) : ControllerBase
 {
     private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
@@ -45,11 +50,28 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{userProfileId:guid}")]
-    public async Task<IActionResult> GetDetail(Guid userProfileId, CancellationToken ct)
+    public async Task<IActionResult> GetDetail(
+        Guid userProfileId,
+        CancellationToken ct = default)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
-        var result = await mediator.Send(new GetProfileApprovalDetailQuery(userProfileId, UserId.Value), ct);
+        var result = await mediator.Send(
+            new GetProfileApprovalDetailQuery(userProfileId, UserId.Value),
+            ct);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("{userProfileId:guid}/changes")]
+    public async Task<IActionResult> GetPartialChanges(
+        Guid userProfileId,
+        CancellationToken ct = default)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(
+            new GetProfilePartialChangesQuery(userProfileId, UserId.Value),
+            ct);
         return result.ToActionResult();
     }
 

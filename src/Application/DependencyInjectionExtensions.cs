@@ -38,7 +38,7 @@ namespace Tawtheef.Application
             var config = TypeAdapterConfig.GlobalSettings;
             config.Scan(Assembly.GetExecutingAssembly());
             services.AddSingleton(config);
-            services.AddSingleton<IMapper>(sp => new ServiceMapper(sp, config));
+            services.AddScoped<IMapper>(sp => new ServiceMapper(sp, config));
         }
 
         private static void RegisterMediator(IServiceCollection services)

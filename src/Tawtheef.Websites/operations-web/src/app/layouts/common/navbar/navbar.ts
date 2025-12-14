@@ -57,4 +57,6 @@ export class Navbar implements OnInit{
   logout(): void {
     this.auth.logout();
   }
+
+  protected readonly routes = routes;
 }

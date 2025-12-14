@@ -18,5 +18,12 @@
   "common.refresh": "تحديث",
   "common.loading": "جارٍ التحميل",
   "common.save": "حفظ",
-  "common.cancel": "إلغاء"
+  "common.cancel": "إلغاء",
+  "common.back": "رجوع",
+  "common.submit": "إرسال",
+  "common.edit": "تعديل",
+  "common.delete": "حذف",
+  "common.confirm": "تأكيد",
+  "common.yes": "نعم",
+  "common.no": "لا"
 }

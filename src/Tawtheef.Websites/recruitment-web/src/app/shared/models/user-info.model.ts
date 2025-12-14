@@ -8,6 +8,7 @@ export interface UserInfoModel {
   userType: string;
   profilePictureUrl: string | null;
   authProvider: string;
+  notifications: number;
 
   missingFields?: string[];
   prefill?:  PrefillData | null;

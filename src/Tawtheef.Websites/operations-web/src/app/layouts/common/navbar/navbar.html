@@ -36,7 +36,7 @@
       }
 
       <!-- User Menu -->
-      @if (isLoggedIn && isProfileCompleted) {
+      @if (isLoggedIn) {
         <div class="user-menu">
           <button class="user-toggle" (click)="toggleUserMenu()">
             <img
@@ -49,12 +49,12 @@
           @if (showUserMenu) {
             <ul class="user-dropdown">
               <li>
-                <a routerLink="/profile">
+                <a [routerLink]="routes.dashboard('')">
                   {{ 'internal.nav.userProfile' | translate }}
                 </a>
               </li>
               <li>
-                <a routerLink="/settings">
+                <a [routerLink]="routes.settings('')">
                   {{ 'internal.nav.userSettings' | translate }}
                 </a>
               </li>

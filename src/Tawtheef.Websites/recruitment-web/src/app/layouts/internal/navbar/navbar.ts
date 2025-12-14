@@ -41,8 +41,10 @@ export class Navbar implements OnInit{
   }
 
   loadUserData(): void {
-    this.userName = 'أحمد محمد المحمود';
-    this.notificationCount = 3;
+    const user = this.auth.getCurrentUser();
+    this.userName = user!.firstName + ' ' + user!.lastName;
+    this.userAvatar = user?.profilePictureUrl || this.userAvatar;
+    this.notificationCount = user?.notifications || 0;
   }
 
   toggleLanguage(): void {
@@ -60,4 +62,6 @@ export class Navbar implements OnInit{
   logout(): void {
     this.auth.logout();
   }
+
+  protected readonly routes = routes;
 }

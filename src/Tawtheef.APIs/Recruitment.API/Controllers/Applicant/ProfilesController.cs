@@ -23,6 +23,15 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
         var id => Result.Ok(Guid.Parse(id))
     };
+
+    [HttpGet("overview")]
+    public async Task<IActionResult> GetOverview(CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetProfileOverviewQuery(UserId.Value), ct);
+        return result.ToActionResult();
+    }
     [HttpPost("prereq")]
     public async Task<IActionResult> SavePrereq([FromForm] SaveProfilePrereqRequest request, CancellationToken ct)
     {
