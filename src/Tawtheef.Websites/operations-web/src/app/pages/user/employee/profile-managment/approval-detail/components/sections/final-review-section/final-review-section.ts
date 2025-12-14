@@ -97,7 +97,8 @@ export class FinalReviewSection {
   }
   private sortSections(sections: ProfileApprovalSection[] | null | undefined): ProfileApprovalSection[] {
     if (!sections?.length) return [];
-    return [...sections].sort((a, b) => a.section - b.section);
+    sections = [...sections].sort((a, b) => a.section - b.section);
+    return sections.filter(sec => sec.sectionReview != null);
   }
   sendApprovalReport(): void {
     this.messages.add({

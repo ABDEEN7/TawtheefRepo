@@ -37,10 +37,6 @@ import {
   ItemDialogResult,
   ItemReviewDialogComponent
 } from '../approval-list/dialogs/item-review-dialog/item-review-dialog';
-import {
-  SectionDialogResult,
-  SectionReviewDialogComponent
-} from '../approval-list/dialogs/section-review-dialog/section-review-dialog';
 import {ContactInfoSectionComponent} from './components/sections/contact-info-section/contact-info-section.component';
 import {FirstInfoSectionComponent} from './components/sections/first-info-section/first-info-section.component';
 import {FinalReviewSection} from './components/sections/final-review-section/final-review-section';
@@ -258,7 +254,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       const existing = map.get(section);
       if (existing) return existing;
 
-      // قسم غير موجود من الـ API -> أنشئ قالب فارغ
+      // Create empty section placeholder
       return {
         section,
         sectionReview: null,
@@ -335,11 +331,8 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     }
   }
 
-  /** تخزين مبدئي محلي (UI) ثم إرسال مراجعة القسم عند الضغط التالي/السابق أو حسب رغبتك */
   onSectionStatusChange(sec: ProfileApprovalSection, status: ReviewStatus | null) {
     if (!sec.sectionReview) return;
-
-    // تحديث UI محلياً
     sec.sectionReview.status = status ?? ReviewStatus.Pending;
   }
 

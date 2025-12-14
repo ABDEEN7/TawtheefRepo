@@ -133,7 +133,6 @@
     <!-- BODY -->
     <main class="page-body" *ngIf="detail() as info">
       <ng-container *ngIf="info.profile as profile">
-        <!-- القسم النشط -->
         <ng-container *ngFor="let sec of orderedSections(info)">
           <section class="section-wrap" *ngIf="activeSection() === sec.section">
             <div class="section-title">
@@ -240,8 +239,7 @@
                         optionLabel="labelKey"
                         [ngModel]="sec.sectionReview?.status"
                         [placeholder]="'profileApproval.detail.sectionApproval.statusPlaceholder' | translate"
-                        (onChange)="onSectionStatusChange(sec, $event.value)"
-                      >
+                        (onChange)="onSectionStatusChange(sec, $event.value)">
                         <ng-template pTemplate="selectedItem" let-opt>
                           <span *ngIf="opt">{{ opt.labelKey | translate }}</span>
                           <span *ngIf="!opt">{{ 'profileApproval.detail.sectionApproval.statusPlaceholder' | translate }}</span>
@@ -260,8 +258,8 @@
                         class="w-100"
                         [ngModel]="sec.sectionReview?.note || ''"
                         (ngModelChange)="onSectionNoteChange(sec, $event)"
-                        [placeholder]="'profileApproval.detail.sectionApproval.notesPlaceholder' | translate"
-                      ></textarea>
+                        [placeholder]="'profileApproval.detail.sectionApproval.notesPlaceholder' | translate">
+                      </textarea>
                     </div>
                   </div>
 
