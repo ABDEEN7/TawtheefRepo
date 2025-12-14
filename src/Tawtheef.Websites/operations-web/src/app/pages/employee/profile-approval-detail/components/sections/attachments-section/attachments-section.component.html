@@ -1,0 +1,44 @@
+<div class="row g-3" *ngIf="attachments?.length; else emptyBlock">
+  <div class="col-12" *ngFor="let a of attachments">
+    <p-card class="shadow-sm h-100 section-panel">
+      <ng-template pTemplate="header">
+        <div class="card-head justify-content-between">
+          <div class="d-flex align-items-center gap-2">
+            <span class="icon-circle text-danger bg-light">
+              <i class="pi pi-paperclip"></i>
+            </span>
+            <h5 class="mb-0">{{ a.title || a.file?.fileName || '-' }}</h5>
+          </div>
+          <button
+            pButton
+            type="button"
+            class="p-button-text p-button-danger"
+            icon="pi pi-external-link"
+            (click)="preview(a.file?.url)"
+            [label]="'profileApproval.detail.viewFile' | translate"
+            [disabled]="!a.file?.url"
+          ></button>
+        </div>
+      </ng-template>
+
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileName' | translate }}</div>
+          <div class="fw-semibold">{{ a.file?.fileName || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileSize' | translate }}</div>
+          <div class="fw-semibold">{{ a.file?.sizeLabel || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileType' | translate }}</div>
+          <div class="fw-semibold">{{ a.file?.contentType || a.file?.type || a.file?.extension || '-' }}</div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>
+
+<ng-template #emptyBlock>
+  <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+</ng-template>

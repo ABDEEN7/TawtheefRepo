@@ -33,7 +33,7 @@ export class AuthService {
   }
 
    get isAuthenticated(): boolean {
-    return this.state.isAuthenticated();
+    return this.state.isAuthenticated(true);
    }
    get isProfileCompleted(): boolean {
     if(!this.token) return false;

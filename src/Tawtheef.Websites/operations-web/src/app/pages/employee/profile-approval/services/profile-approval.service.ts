@@ -22,6 +22,10 @@ export class ProfileApprovalService {
     return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.detail(profileId));
   }
 
+  getProfileChanges(profileId: string): Observable<ProfileApprovalDetail> {
+    return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.changesDetail(profileId));
+  }
+
   reviewItem(reviewItemId: string, status: ReviewStatus, note?: string): Observable<void> {
     return this.http.request<void>('PATCH', this.endpoints.approvals.reviewItem(reviewItemId), {
       body: {

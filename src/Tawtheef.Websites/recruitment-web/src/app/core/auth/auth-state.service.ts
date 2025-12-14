@@ -74,7 +74,7 @@ export class AuthStateService {
       this.tokenService.clearTokens();
       this.userService.clearCurrentUser();
       this.isAuthenticatedSubject.next(false);
-      this.router.navigate([this.routes.home]);
+      this.router.navigate([this.routes.auth.login]);
     };
 
     if (!callServer) {

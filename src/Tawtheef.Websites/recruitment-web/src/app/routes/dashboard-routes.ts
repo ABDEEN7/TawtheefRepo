@@ -7,5 +7,11 @@ export const userRoutes = {
   },
   get profileWizard(){
     return this.user + 'wizard-profile';
+  },
+  get settings(){
+    return this.user + 'settings';
+  },
+  get profileOverview(){
+    return this.user + 'profile-overview';
   }
 };

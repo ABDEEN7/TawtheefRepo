@@ -1,0 +1,70 @@
+<div class="row g-3" *ngIf="experiences?.length; else emptyBlock">
+  <div class="col-12" *ngFor="let e of experiences">
+    <p-card class="shadow-sm h-100 section-panel">
+      <ng-template pTemplate="header">
+        <div class="card-head justify-content-between">
+          <div class="d-flex flex-column gap-1">
+            <div class="d-flex align-items-center gap-2">
+              <span class="icon-circle text-info bg-light">
+                <i class="pi pi-briefcase"></i>
+              </span>
+              <div>
+                <h5 class="mb-0">{{ e.jobTitle || '-' }}</h5>
+                <small class="text-muted">{{ e.employerName || '-' }}</small>
+              </div>
+            </div>
+            <div class="meta-line">
+              <span class="badge rounded-pill text-bg-light">
+                {{ e.startDate || '-' }} -
+                {{ e.isCurrent ? ('profileApproval.detail.snapshot.present' | translate) : (e.endDate || '-') }}
+              </span>
+            </div>
+          </div>
+
+          <button
+            pButton
+            type="button"
+            class="p-button-text"
+            icon="pi pi-external-link"
+            (click)="preview(e.attachment?.url)"
+            [label]="'profileApproval.detail.viewFile' | translate"
+            [disabled]="!e.attachment?.url"
+          ></button>
+        </div>
+      </ng-template>
+
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.experiences.country' | translate }}</div>
+          <div class="fw-semibold">{{ e.country?.name || '-' }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.experiences.period' | translate }}</div>
+          <div class="fw-semibold">
+            {{ e.startDate || '-' }} -
+            {{ e.isCurrent ? ('profileApproval.detail.snapshot.present' | translate) : (e.endDate || '-') }}
+          </div>
+        </div>
+        <div class="detail-tile" *ngIf="e.qualificationName || e.qualification?.name">
+          <div class="text-muted small">{{ 'profileApproval.detail.experiences.qualification' | translate }}</div>
+          <div class="fw-semibold">{{ e.qualification?.name || e.qualificationName }}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.experiences.attachment' | translate }}</div>
+          <div class="fw-semibold d-flex align-items-center gap-2">
+            <p-tag *ngIf="e.attachment?.fileName" severity="info" [value]="e.attachment.fileName"></p-tag>
+            <span *ngIf="!e.attachment?.fileName">-</span>
+          </div>
+        </div>
+        <div class="detail-tile" *ngIf="e.description">
+          <div class="text-muted small">{{ 'profileApproval.detail.experiences.tasks' | translate }}</div>
+          <div class="fw-semibold">{{ e.description }}</div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>
+
+<ng-template #emptyBlock>
+  <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+</ng-template>

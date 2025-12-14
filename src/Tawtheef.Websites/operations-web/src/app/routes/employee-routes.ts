@@ -15,6 +15,9 @@
   get approvalProfile(){
     return this.employee + '/approval-profile';
   },
+  approvalProfileDetail(profileId: string){
+    return this.approvalProfile + '/' + profileId;
+  },
   get jobCreate(){
     return this.employee + '/jobs/create';
   },

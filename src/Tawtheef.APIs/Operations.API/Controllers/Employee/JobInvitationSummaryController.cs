@@ -1,13 +1,19 @@
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary.Queries;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+//[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.JobsManage)]
 public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
 {
     #region Lookups

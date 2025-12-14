@@ -41,6 +41,11 @@ public sealed class SaveProfileAchievementHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+        var trackChanges = profile.Status == UserProfileStatus.Approved;
+
         var validationResult = validationService.ValidateAchievements(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -89,7 +94,10 @@ public sealed class SaveProfileAchievementHandler(
             newAchievements.Add(entity);
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
+        if (trackChanges)
+        {
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
+        }
         foreach (var achievement in newAchievements)
         {
             await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Achievement), achievement.Id, ct);

@@ -8,6 +8,10 @@ export const userRoutes: Routes = [
     loadChildren: () => import('./wizard-profile/wizard-profile.module').then(m => m.WizardProfileModule),
   },
   {
+    path: 'profile-overview',
+    loadComponent: () => import('./profile-overview/profile-overview.page').then(m => m.ProfileOverviewPage)
+  },
+  {
     path: 'dashboard',
     canMatch: [profileCompleteGuard],
     loadComponent: () => Dashboard

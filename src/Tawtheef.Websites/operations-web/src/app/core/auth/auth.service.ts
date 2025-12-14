@@ -5,7 +5,6 @@ import {UserService} from "./user.service";
 import {Observable} from "rxjs";
 import {UserInfoModel} from "../../shared/models/user-info.model";
 import {HttpClient} from '@angular/common/http';
-import {EndpointsService} from '../http/endpoints.service';
 import {AuthResponse} from '../models/auth-response.model';
 
 @Injectable({providedIn: 'root'})
@@ -16,7 +15,6 @@ export class AuthService {
     protected state: AuthStateService,
     protected user: UserService,
     protected http: HttpClient,
-    protected endpointService: EndpointsService,
   ) {
     this.state.checkAuthState(false);
     this.state.isAuthenticated$.subscribe(isAuth => {
@@ -68,10 +66,6 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return this.state.checkAuthState(false);
-  }
-
-  deleteAccount(): void {
-    this.state.logout(false);
   }
 
   private getPermissionsFromToken(): Set<string> {

@@ -4,7 +4,7 @@ export enum ReviewStatus {
   Approved = 2,
   Rejected = 3,
   NeedsCorrection = 4,
-  ChangesRequested = 4,
+  ChangesRequested = 5,
 }
 
 export enum ReviewTargetType {
@@ -30,6 +30,8 @@ export interface ProfileApprovalItem {
   resourceUrl?: string;
   entityId?: string;
   entityName?: string;
+  oldValue?: string;
+  newValue?: string;
   version: number;
   approvedAtVersion?: number;
   reviewedAtUtc?: string;
@@ -46,14 +48,29 @@ export interface BasicInformationSnapshot {
   fullNameAr?: string;
   fullNameEn?: string;
   nationalNumber?: string;
+  qidExpiry?: string;
   birthDate?: string;
   nationality?: string;
   gender?: string;
   religion?: string;
   maritalStatus?: string;
   childrenCount?: number;
+  email?: string;
+  phoneNumber?: string;
+  residenceCountry?: string;
+  address?: string;
+  interviewLocation?: string;
+  hasDisability?: boolean;
+  disabilityDetails?: string;
+  sponsorType?: string;
+  sponsorEmployerName?: string;
+  sponsorEmployerNumber?: string;
+  sponsorQidExpiry?: string;
+  sponsorCard?: FileRefDto | null;
   candidateType?: string;
   targetEntity?: string;
+  targetEntityCategory?: string;
+  cvSummary?: string;
   resumeAttachment?: FileRefDto | null;
   nationalCard?: FileRefDto | null;
   residenceAddressCertificate?: FileRefDto | null;
@@ -70,19 +87,27 @@ export interface ProfileApprovalData {
   skillsAndLanguages: any[];
   languages: any[];
   attachments: any[];
-  profilePhoto?: FileRefDto | null;
+  profilePhoto?: string | null;
 }
-
 export interface ProfileApprovalDetail {
   userProfileId: string;
   userId: string;
   fullName: string;
   candidateType?: string;
   targetEntity?: string;
+  targetEntityCategory?: string;
+  specialization?: string;
+
   submissionVersion?: number;
   submittedAtUtc?: string;
-  profile?: ProfileApprovalData;
+
+  profile: any;
+  approvedProfile?: any | null;
+
   sections: ProfileApprovalSection[];
+
+  isInitialReview: boolean;
+  isPartialReview: boolean;
 }
 
 export interface ProfileApprovalListItem {

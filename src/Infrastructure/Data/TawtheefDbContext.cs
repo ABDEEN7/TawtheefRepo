@@ -95,6 +95,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Achievement> Achievement { get; set; }
     public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicant { get; set; }
 
+    public DbSet<ProfileChange> ProfileChange { get; set; }
     public DbSet<ReviewItem> ReviewItem { get; set; }
     public DbSet<ProfileAssignment> ProfileAssignment { get; set; }
     public DbSet<ProfileReviewDecision> ProfileReviewDecision { get; set; }

@@ -47,6 +47,11 @@ public sealed class SaveProfileEducationHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+        var trackChanges = profile.Status == UserProfileStatus.Approved;
+
         var validationResult = validationService.ValidateEducation(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -139,15 +144,18 @@ public sealed class SaveProfileEducationHandler(
             }
         }
 
-        await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Qualifications, ct);
-        foreach (var qualification in newQualifications.Concat(updatedQualifications))
+        if (trackChanges)
         {
-            await reviewService.TouchRowAsync(
-                profile.Id,
-                ProfileSection.Qualifications,
-                nameof(Qualification),
-                qualification.Id,
-                ct);
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Qualifications, ct);
+            foreach (var qualification in newQualifications.Concat(updatedQualifications))
+            {
+                await reviewService.TouchRowAsync(
+                    profile.Id,
+                    ProfileSection.Qualifications,
+                    nameof(Qualification),
+                    qualification.Id,
+                    ct);
+            }
         }
 
         await uow.SaveChangesAsync(ct);

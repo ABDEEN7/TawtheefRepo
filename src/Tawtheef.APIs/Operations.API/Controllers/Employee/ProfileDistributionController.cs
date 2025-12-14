@@ -1,15 +1,20 @@
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileDistribution.Queries;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/profile-distributions")]
-//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+//[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.JobsManage)]
 public class ProfileDistributionController(IMediator mediator) : ControllerBase
 {
     [HttpGet("profiles")]

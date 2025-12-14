@@ -1,0 +1,145 @@
+<section class="approval-shell" i18nNamespace="pages/profile-approval">
+  <div class="panel list-panel">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">{{ 'profileApproval.list.eyebrow' | translate }}</p>
+        <h3 class="panel-title">{{ 'profileApproval.list.title' | translate }}</h3>
+        <p class="panel-sub">{{ 'profileApproval.list.subtitle' | translate }}</p>
+      </div>
+      <button class="btn ghost" type="button" (click)="loadList()" [disabled]="loadingList()">
+        <i class="fa fa-rotate"></i>
+        {{ 'common.refresh' | translate }}
+      </button>
+    </div>
+
+    <form class="filter-grid" (ngSubmit)="applyFilters()">
+      <label class="filter-field">
+        <span>{{ 'profileApproval.list.searchPlaceholder' | translate }}</span>
+        <input
+          pInputText
+          type="search"
+          [placeholder]="'profileApproval.list.searchPlaceholder' | translate"
+          [ngModel]="filters().search"
+          (ngModelChange)="updateFilter('search', $event)"
+          name="search"
+        />
+      </label>
+      <label class="filter-field">
+        <span>{{ 'profileApproval.list.filter.specialization' | translate }}</span>
+        <input
+          pInputText
+          type="text"
+          [placeholder]="'profileApproval.list.filter.specializationPlaceholder' | translate"
+          [ngModel]="filters().specialization"
+          (ngModelChange)="updateFilter('specialization', $event)"
+          name="specialization"
+        />
+      </label>
+      <label class="filter-field">
+        <span>{{ 'profileApproval.list.filter.targetEntity' | translate }}</span>
+        <input
+          pInputText
+          type="text"
+          [placeholder]="'profileApproval.list.filter.targetEntityPlaceholder' | translate"
+          [ngModel]="filters().targetEntity"
+          (ngModelChange)="updateFilter('targetEntity', $event)"
+          name="targetEntity"
+        />
+      </label>
+      <label class="filter-field">
+        <span>{{ 'profileApproval.list.filter.candidateType' | translate }}</span>
+        <input
+          pInputText
+          type="text"
+          [placeholder]="'profileApproval.list.filter.candidateTypePlaceholder' | translate"
+          [ngModel]="filters().candidateType"
+          (ngModelChange)="updateFilter('candidateType', $event)"
+          name="candidateType"
+        />
+      </label>
+      <label class="filter-field">
+        <span>{{ 'profileApproval.list.filter.status' | translate }}</span>
+        <p-select
+          [options]="statusOptions"
+          [optionValue]="'value'"
+          [ngModel]="filters().status"
+          [showClear]="true"
+          (onChange)="updateFilter('status', $event.value ?? '')"
+          name="status"
+        >
+          <ng-template pTemplate="selectedItem" let-item>
+            <span *ngIf="item">{{ item.label | translate }}</span>
+          </ng-template>
+          <ng-template pTemplate="item" let-item>
+            {{ item.label | translate }}
+          </ng-template>
+        </p-select>
+      </label>
+      <div class="filter-actions">
+        <button class="btn primary" type="submit" [disabled]="loadingList()">
+          {{ 'profileApproval.list.filter.apply' | translate }}
+        </button>
+        <button class="btn ghost" type="button" (click)="resetFilters()">
+          {{ 'profileApproval.list.filter.reset' | translate }}
+        </button>
+      </div>
+    </form>
+
+    <div class="list-body" *ngIf="!loadingList(); else loadingListTpl">
+      <div class="empty" *ngIf="list().length === 0">{{ 'profileApproval.list.empty' | translate }}</div>
+
+      <p-table
+        *ngIf="list().length > 0"
+        [value]="list()"
+        [paginator]="false"
+        [customSort]="true"
+        sortMode="single"
+        (sortFunction)="onSort($event)"
+        dataKey="userProfileId"
+        styleClass="approval-table"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="fullName">
+              {{ 'profileApproval.list.columns.name' | translate }}
+              <p-sortIcon field="fullName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="overallStatus">
+              {{ 'profileApproval.list.columns.status' | translate }}
+              <p-sortIcon field="overallStatus"></p-sortIcon>
+            </th>
+            <th pSortableColumn="targetEntity">
+              {{ 'profileApproval.list.columns.targetEntity' | translate }}
+              <p-sortIcon field="targetEntity"></p-sortIcon>
+            </th>
+            <th pSortableColumn="submittedAtUtc">
+              {{ 'profileApproval.list.columns.submissionDate' | translate }}
+              <p-sortIcon field="submittedAtUtc"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr class="clickable-row" (click)="openProfile(row.userProfileId)">
+            <td>
+              <div class="name">{{ row.fullName || ('profileApproval.list.anonymous' | translate) }}</div>
+              <div class="muted small">{{ row.candidateType || ('profileApproval.list.typeUnknown' | translate) }}</div>
+            </td>
+            <td>
+              <span class="pill"
+                    [ngClass]="statusClass(row.overallStatus)">{{ statusLabel(row.overallStatus) | translate }}</span>
+              <span class="pill warning" *ngIf="row.pendingCount > 0">
+                {{ row.pendingCount }} {{ 'profileApproval.list.pending' | translate }}
+              </span>
+            </td>
+            <td>{{ row.targetEntity || ('profileApproval.list.entityUnknown' | translate) }}</td>
+            <td>{{ row.submittedAtUtc | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <ng-template #loadingListTpl>
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    </ng-template>
+  </div>
+</section>

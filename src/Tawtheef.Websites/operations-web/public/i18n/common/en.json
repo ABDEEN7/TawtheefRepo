@@ -18,5 +18,12 @@
   "common.refresh": "Refresh",
   "common.loading": "Loading",
   "common.save": "Save",
-  "common.cancel": "Cancel"
+  "common.cancel": "Cancel",
+  "common.back": "Back",
+  "common.submit": "Submit",
+  "common.edit": "Edit",
+  "common.delete": "Delete",
+  "common.confirm": "Confirm",
+  "common.yes": "Yes",
+  "common.no": "No"
 }
