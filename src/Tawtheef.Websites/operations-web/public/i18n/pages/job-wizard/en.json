@@ -292,5 +292,7 @@
   "JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_OPTIONAL": "Optional",
 
   "JOB_WIZARD.STEPS.REVIEW.BENEFITS_AR": "Benefits (Arabic)",
-  "JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN": "Benefits (English)"
+  "JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN": "Benefits (English)",
+  "JOB_WIZARD.STEPS.No_ENTERED_DATA_ERROR": "No data has been entered yet.",
+  "JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR":"Cannot add a duplicate responsibility."
 }

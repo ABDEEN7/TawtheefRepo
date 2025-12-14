@@ -16,6 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { JobLookupService } from './job-lookup.service';
 import { JobStatus } from '../../../core/enums/lookups.enum';
 import { HttpParams } from '@angular/common/http';
+import { JobTabReviewNote } from '../models/job-tab-review-note';
 
 @Injectable({
   providedIn: 'root'
@@ -66,8 +67,6 @@ export class JobService {
       responsibilities: [],
       skills: [],
       requiredAttachments: [],
-      
-      quota: undefined
     };
     
     this.currentJob.set(draft);
@@ -184,16 +183,6 @@ export class JobService {
     }
   }
 
-  updateCurrentJobQuota(quotaData: any): void {
-    const current = this.currentJob();
-    if (current) {
-      this.currentJob.set({
-        ...current,
-        quota: quotaData
-      });
-    }
-  }
-
   validateRequiredFields(job: Job): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
@@ -223,6 +212,14 @@ export class JobService {
       })
     );
   }
+
+submitTabReview(formData: FormData) {
+  return this.httpService.post(this.endpoints.job.jobApproval, formData);
+}
+
+updateTabReview(payload: any) {
+  return this.httpService.put(this.endpoints.job.jobApproval, payload);
+}
 
   submitJobForApproval(jobId: GUID): Observable<void> {
     const job = this.currentJob();
@@ -386,6 +383,7 @@ export class JobService {
           overviewEn: jobResponse.overViewEn || '',
           benefitsAr: jobResponse.benefitsAr || '',
           benefitsEn: jobResponse.benefitsEn || '',
+          jobStatus: jobResponse.jobStatus || undefined,
           qualificationsDescriptionAr: jobResponse.qualificationDescriptionAr || '',
           qualificationsDescriptionEn: jobResponse.qualificationDescriptionEn || '',
           degrees: jobResponse.degrees.map(d => ({ degreeId: d.degreeId })),
@@ -406,18 +404,7 @@ export class JobService {
             titleEn: a.titleEn, 
             isMandatory: a.isMandatory 
           })),
-          quota: jobResponse.quota ? {
-            qatariCitizens: jobResponse.quota.qatariCitizens,
-            qatarMother: jobResponse.quota.qatarMother,
-            nonQatariSpouse: jobResponse.quota.nonQatariSpouse,
-            gcc: jobResponse.quota.gcc,
-            quGrads: jobResponse.quota.quGrads,
-            residents: jobResponse.quota.residents,
-            residentsBreakdowns: jobResponse.quota.residentsBreakdowns?.map(b => ({
-              nationalityId: b.nationalityId,
-              percentage: b.percentage
-            }))
-          } : undefined
+          tabReviewNotes:jobResponse.tabReviewNotes || undefined
         };
         
         this.currentJob.set(job);

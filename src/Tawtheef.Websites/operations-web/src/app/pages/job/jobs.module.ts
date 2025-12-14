@@ -4,14 +4,12 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {JobDetailsComponent} from './job-details/job-details.component';
 import {StepperComponent} from './job-wizard/stepper/stepper.component';
-import { JobBasicModalComponent} from './modals/basics-step-modal/job-basic-modal.component';
+import {JobBasicModalComponent} from './modals/basics-step-modal/job-basic-modal.component';
 import {ConditionsStepComponent} from './job-wizard/wizard-steps/conditions-step.component/conditions-step.component';
-import {QuotasStepComponent} from './job-wizard/wizard-steps/quotas-step.component/quotas-step.component';
 import {ReviewStepComponent} from './job-wizard/wizard-steps/review-step.component/review-step.component';
 import {SkillsStepComponent} from './job-wizard/wizard-steps/skills-step.component/skills-step.component';
 import {ConfirmApplyModalComponent} from './modals/confirm-apply-modal/confirm-apply-modal.component';
 import {PointsConfigModalComponent} from './modals/points-config-modal/points-config-modal.component';
-import {ResidentsModalComponent} from './modals/residents-modal/residents-modal.component';
 import {JobService} from './services/job.service';
 import {ProgressBarComponent} from './job-wizard/progress-bar/progress-bar';
 import {JobListComponent} from './job-list/jobs-list.component';
@@ -34,6 +32,10 @@ import { ResponsibilitiesStepComponent } from './job-wizard/wizard-steps/respons
 import { AttachmentStepComponent } from './job-wizard/wizard-steps/attachment-step.component/attachment-step.component';
 import { BenefitsStepComponent } from './job-wizard/wizard-steps/benefits-step.component/benefits-step.component';
 import { Toast } from "primeng/toast";
+import { JobApprovalComponent } from './job-approval/job-approval.component';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { DialogHelperService } from '../../core/services/dialog-helper.service';
 
 @NgModule({
   declarations: [
@@ -49,10 +51,10 @@ import { Toast } from "primeng/toast";
     BenefitsStepComponent,
     ResponsibilitiesStepComponent,
     ConditionsStepComponent,
-    QuotasStepComponent,
     ReviewStepComponent,
     SkillsStepComponent,
-    JobBasicModalComponent
+    JobBasicModalComponent,
+    JobApprovalComponent
 
   ],
   imports: [
@@ -69,26 +71,28 @@ import { Toast } from "primeng/toast";
     AutoCompleteModule,
     DatePickerModule,
     PaginationComponent,
-    ResidentsModalComponent,
     ConfirmApplyModalComponent,
     PointsConfigModalComponent,
     NgOptimizedImage,
     MultiSelectModule,
     Scroller,
-    Toast
+    Toast,
+    ConfirmDialog
 ],
   exports: [
     JobDetailsComponent,
     JobListComponent,
     JobWizardComponent,
-
+    JobApprovalComponent,
     ConfirmApplyModalComponent,
-    PointsConfigModalComponent,
-    ResidentsModalComponent
+    PointsConfigModalComponent
   ],
   providers: [
     JobService,
-    DialogService
+    DialogService,
+    ConfirmationService,
+    DialogHelperService,
+    MessageService
   ]
 })
 export class JobsModule {

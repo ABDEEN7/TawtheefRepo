@@ -286,5 +286,8 @@
   "JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_OPTIONAL": "مستند اختياري",
 
   "JOB_WIZARD.STEPS.REVIEW.BENEFITS_AR": "المزايا والبدلات (عربي)",
-  "JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN": "المزايا والبدلات (إنجليزي)"
+  "JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN": "المزايا والبدلات (إنجليزي)",
+
+  "JOB_WIZARD.STEPS.No_ENTERED_DATA_ERROR": "لم يتم إدخال أي بيانات بعد.",
+  "JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR":" لا يمكن إضافة مسؤولية مكررة."
 }

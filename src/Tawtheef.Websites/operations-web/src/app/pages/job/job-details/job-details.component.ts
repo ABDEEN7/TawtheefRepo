@@ -8,6 +8,8 @@ import { GUID } from '../../../shared/types/guid.type';
 import { JobLookupService } from '../services/job-lookup.service';
 import { JobResponse } from '../models/job-response-model';
 import { JobStatus } from '../../../core/enums/lookups.enum';
+import { routes } from '../../../routes/routes';
+import { JobTabType } from '../enums/job-tab-type';
 
 @Component({
   selector: 'app-job-details',
@@ -20,9 +22,10 @@ export class JobDetailsComponent implements OnInit {
   id!: GUID;
   jobStatus = JobStatus;
   
-  activeTab: string = 'overview';
+  activeTab: string = JobTabType.Overview;
   hasApplied: boolean = false;
   isFavorite: boolean = false;
+  tabType = JobTabType;
   
   private tabsContent: { id: string, title: string, icon: string}[] = [
     { id: 'overview', title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
@@ -54,7 +57,7 @@ export class JobDetailsComponent implements OnInit {
       },
       error: () => {
         this.notificationService.error("JOB_DETAILS.FALID_TO_LOAD");
-        this.router.navigate(['/jobs']);
+        this.router.navigate([routes.employee.JobList]);
       },
     });
   }

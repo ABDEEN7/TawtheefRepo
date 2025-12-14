@@ -4,6 +4,8 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-conditions-step',
@@ -14,7 +16,8 @@ import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 export class ConditionsStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   protected readonly jobService = inject(JobService);
-  
+  private readonly messageService = inject(MessageService);
+  private readonly transaltionService = inject(TranslateService);
   jobData!: Job;
   
   readonly form = this.fb.group({
@@ -24,6 +27,7 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   newConditionAr = '';
   newConditionEn = '';
   private readonly destroy$ = new Subject<void>();
+  disabled: boolean = false;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -33,11 +37,6 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
     ).subscribe(() => {
       this.updateJobData();
     });
-    
-    const currentJob = this.jobService.getCurrentJob();
-    if (currentJob) {
-      this.setJobData(currentJob);
-    }
   }
 
   ngOnDestroy(): void {
@@ -53,7 +52,7 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
     return this.conditionsArray.at(index) as FormGroup;
   }
 
-  setJobData(job: Job): void {
+  setJobData(job: Job,disable:boolean=false): void {
     this.jobData = job;
     this.conditionsArray.clear();
     
@@ -62,16 +61,40 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
         this.addConditionToForm(condition.textAr, condition.textEn);
       });
     }
+
+    
+    this.disabled =disable
+
   }
 
   addCondition(): void {
-    const trimmedAr = this.newConditionAr.trim();
+  const textAr = this.newConditionAr.trim();
+  const textEn = this.newConditionEn.trim();
+
+    if (!textAr || !textEn) {
+    this.messageService.add({
+          severity: 'error',
+          summary: 'No Entered Data',
+          detail: this.transaltionService.instant('JOB_WIZARD.STEPS.No_ENTERED_DATA_ERROR'),
+        });
+    return; 
+  }
+
+  const isDuplicate = this.conditionsArray.controls.some(control => {
+    const group = control as FormGroup;
+    return group.get('textAr')?.value === textAr && group.get('textEn')?.value === textEn;
+  });
+  
+  if (isDuplicate) {
+    this.messageService.add({
+          severity: 'error',
+          summary: 'duplicate Entry',
+          detail: this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'),
+        });
+    return; 
+  }
     
-    if (!trimmedAr) {
-      return;
-    }
-    
-    this.addConditionToForm(trimmedAr, this.newConditionEn.trim());
+    this.addConditionToForm(textAr, textEn);
     this.newConditionAr = '';
     this.newConditionEn = '';
   }

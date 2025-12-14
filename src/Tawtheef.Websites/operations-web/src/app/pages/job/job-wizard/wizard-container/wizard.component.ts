@@ -30,6 +30,9 @@ import { BenefitsStepComponent } from '../wizard-steps/benefits-step.component/b
 import { AttachmentStepComponent } from '../wizard-steps/attachment-step.component/attachment-step.component';
 import { ReviewStepComponent } from '../wizard-steps/review-step.component/review-step.component';
 import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic-modal.component';
+import { Job } from '../../models/job.model';
+import { routes } from '../../../../routes/routes';
+import { JobTabStatus } from '../../enums/job-tab-status';
 
 @Component({
   selector: 'app-wizard',
@@ -52,6 +55,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private retryCount = 0;
   private maxRetries = 20;
+  disabledSteps: boolean[] = [];
   
   step = 1;
   isEditMode = false;
@@ -59,7 +63,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   isLoading = false;
   hasBasicData = false;
   stepsLoaded = false;
-  showContainer = false; // New flag to control container visibility
+  showContainer = false; 
 
   stepClasses: Type<WizardStepComponent>[] = [
     OverviewStepComponent,
@@ -143,7 +147,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
           
           this.loadJobForWizard();
         } else {
-          this.router.navigate(['/jobs']);
+          this.router.navigate([routes.employee.JobList]);
         }
       });
   }
@@ -167,18 +171,46 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
           this.hasBasicData = true;
           this.showContainer = true; 
           this.isLoading = false;
-          
+          this.mapReviewNotesToSteps(job);
           this.cdr.detectChanges();
           this.initializeSteps();
+          this.cdr.detectChanges();
         },
         error: (error) => {
           this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED');
           this.isLoading = false;
-          this.router.navigate(['/jobs']);
+          this.router.navigate([routes.employee.JobList]);
         }
       });
   }
 
+  private mapReviewNotesToSteps(job: Job | null): void {
+    if (!job?.tabReviewNotes || !job.jobStatus || job.jobStatus.backendName !== 'NeedUpdate') {
+      this.disabledSteps = Array(this.total).fill(false);
+      return;
+    }
+    const tabToStepIndex: { [key: string]: number } = {
+      'Overview': 0,
+      'Qualifications': 1,
+      'Responsibilities': 2,
+      'Conditions': 3,
+      'Skills': 4,
+      'Attachments': 5,
+      'Benefits': 6,
+      'Review': 7
+    };
+
+    this.disabledSteps = Array(this.total).fill(false);
+
+    job.tabReviewNotes.forEach(note => {
+      if (note.tabStatus === JobTabStatus.Approved) {
+        const stepIndex = tabToStepIndex[note.tab];
+        if (stepIndex !== undefined) {
+          this.disabledSteps[stepIndex] = true;
+        }
+      }
+    });
+  }
   private initializeSteps(): void {    
     if (!this.container) {
       this.retryCount++;
@@ -206,7 +238,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         const componentRef = this.container.createComponent(stepClass);
         
         if (componentRef.instance.setJobData && currentJob) {
-          componentRef.instance.setJobData(currentJob);
+          componentRef.instance.setJobData(currentJob,this.disabledSteps[index]);
         }
         
         const element = componentRef.location.nativeElement as HTMLElement;
@@ -339,7 +371,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         next: () => {
           this.isLoading = false;
           this.showSuccessMessage('JOB_WIZARD.SUCCESS.JOB_SUBMITTED');
-          this.router.navigate(['/jobs']);
+          this.router.navigate([routes.employee.JobList]);
         },
         error: (err) => {
           this.isLoading = false;
@@ -352,7 +384,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   cancelWizard(): void {
     const confirmMessage = this.translateService.instant('JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD');
     if (confirm(confirmMessage)) {
-      this.router.navigate(['/jobs']);
+      this.router.navigate([routes.employee.JobList]);
     }
   }
 

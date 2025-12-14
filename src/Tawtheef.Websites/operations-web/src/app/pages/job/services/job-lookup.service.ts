@@ -220,6 +220,31 @@ export class JobLookupService {
     });
   }
 
+  loadJobStatus()
+  {
+    this.http.get<dropdownOptionsModel[]>(
+      `${this.endpoints.job.lookups.jobStatus}`
+    ).subscribe({
+      next: (jobStatus) => this.jobStatus.set(jobStatus),
+      error: (err) => {
+        this.jobStatus.set([]);
+      }
+    });
+  }
+
+  loadJobCategories()
+  {
+    this.http.get<dropdownOptionsModel[]>(
+      `${this.endpoints.job.lookups.jobCategories}`
+    ).subscribe({
+      next: (cat) => this.jobCategories.set(cat),
+      error: (err) => {
+        this.jobCategories.set([]);
+      }
+    });
+  }
+  
+
   getJobCategoryLabel(id: GUID): string {
     return this.jobCategories().find(jobcat => jobcat.id === id)?.name || '';
   }

@@ -4,6 +4,8 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-attachment-step',
@@ -14,6 +16,8 @@ import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 export class AttachmentStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   protected jobService = inject(JobService);
+  private messageService = inject(MessageService);
+  private transaltionService = inject(TranslateService);
   
   jobData!: Job;
   
@@ -28,6 +32,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   });
   
   private readonly destroy$ = new Subject<void>();
+  disabled: boolean = false;
 
   ngOnInit(): void {
     const currentJob = this.jobService.getCurrentJob();
@@ -57,7 +62,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     return this.attachmentsArray.at(index) as FormGroup;
   }
 
-  setJobData(job: Job): void {
+  setJobData(job: Job,disable:boolean =false): void {
     this.jobData = job;
     this.attachmentsArray.clear();
     
@@ -66,29 +71,44 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
         this.addAttachmentToForm(attachment);
       });
     }
+
+    this.disabled =disable
   }
 
   addAttachment(): void {
-    if (this.newAttachment.titleAr.trim()) {
+    const textAr = this.newAttachment.titleAr.trim();
+    const textEn = this.newAttachment.titleEn.trim();
+
+    if (!textAr && !textEn) {
+       this.messageService.add({
+          severity: 'error',
+          summary: 'No data entered',
+          detail: this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'),
+        });
+      return;
+    }
+
+    const isDuplicate = this.attachmentsArray.controls.some((control: AbstractControl) => {
+      const group = control as FormGroup;
+      return group.get('titleAr')?.value === textAr && group.get('titleEn')?.value === textEn;
+    });
+    
+    if (isDuplicate) {
+       this.messageService.add({
+          severity: 'error',
+          summary: 'Duplicate Entry',
+          detail: this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'),
+        });
+      return;
+    }
+
       const attachmentGroup = this.fb.group({
         titleAr: [this.newAttachment.titleAr, [Validators.required, Validators.maxLength(200)]],
         titleEn: [this.newAttachment.titleEn, [Validators.maxLength(200)]],
-        isMandatory: [this.newAttachment.isMandatory]
-      });
+      });    
       
-      this.attachmentsArray.push(attachmentGroup);
-      
-      this.resetNewAttachment();
-    } else {
-      const attachmentGroup = this.fb.group({
-        titleAr: ['', [Validators.required, Validators.maxLength(200)]],
-        titleEn: ['', [Validators.maxLength(200)]],
-        isMandatory: [false]
-      });
-      
-      this.attachmentsArray.push(attachmentGroup);
-    }
-    
+    this.attachmentsArray.push(attachmentGroup);
+    this.resetNewAttachment();
     this.updateJobData();
   }
 

@@ -26,6 +26,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     qualificationsDescriptionAr: ['', Validators.required],
     qualificationsDescriptionEn: ['',Validators.required]
   });
+  disabled: boolean = false;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -34,18 +35,13 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     ).subscribe(_ => {
       this.updateJobData();
     });
-    
-    const currentJob = this.jobService.getCurrentJob();
-    if (currentJob) {
-      this.setJobData(currentJob);
-    }
   }
 
   isValid(): boolean {
     return this.form.valid && this.form.controls.degrees.value!.length > 0;
   }
 
-  setJobData(job: Job): void {
+  setJobData(job: Job,disable:boolean =false): void {
     this.jobData = job;
     
     const degrees = job.degrees?.map(degree => ({
@@ -57,6 +53,8 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       qualificationsDescriptionAr: job.qualificationsDescriptionAr || '',
       qualificationsDescriptionEn: job.qualificationsDescriptionEn || ''
     }, { emitEvent: false });
+
+        this.disabled =disable
   }
 
   toggleDegree(degreeId: string, event: Event): void {

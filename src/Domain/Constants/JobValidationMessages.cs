@@ -97,7 +97,6 @@ public static class JobValidationMessages
 
     public const string CONDITION_MAX_LENGTH = "condition_max_length";
     public const string RESPONSIBILITY_MAX_LENGTH = "responsibilty_Max_Length";
-    public const string QUOTA_PERCENTAGE_RANGE = "quota_percentage_range";
 
     public const string CANNOT_CANCEL_FINAL_STATE = "cannot_cancel_final_state";
 

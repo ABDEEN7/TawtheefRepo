@@ -73,7 +73,7 @@ public class Job : EventEntity
     public string? BenefitsAr { get; set; } 
     public string? BenefitsEn { get; set; } 
     public string? QualificationDescriptionAr { get; set; }
-    public string? QualificationDescriptionEn { get; set; } 
+    public string? QualificationDescriptionEn { get; set; }
 
     public virtual Sector? Sector { get; set; }
     public virtual Management? Management { get; set; }
@@ -92,6 +92,5 @@ public class Job : EventEntity
     public virtual List<JobResponsibility> JobResponsibilities { get; set; } = new List<JobResponsibility>();
     public virtual List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = new List<JobRequiredAttachment>();
     public virtual List<Invitation> Invitations { get; set; } = new List<Invitation>();
-
-    public virtual JobQuota? JobQuota { get; set; }
+    public virtual List<JobTabReviewNote> TabReviewNotes { get; set; } = new List<JobTabReviewNote>();
 }

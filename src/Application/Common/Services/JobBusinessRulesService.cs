@@ -66,7 +66,6 @@ public static class JobBusinessRules
             j.DepartmentId == departmentId &&
             j.SubMajorId == subMajorId &&
             j.JobStatusId == JobStatusIds.Approved &&
-            j.JobQuota != null &&
             !j.IsDeleted);
     }
 
@@ -149,12 +148,12 @@ public static class JobBusinessRules
 
     public static bool CanSendInvitations(Job job)
     {
-        return job.JobStatusId == JobStatusIds.ReadyForAnnouncement && job.JobQuota != null;
+        return job.JobStatusId == JobStatusIds.ReadyForAnnouncement;
     }
 
     public static bool CanPublishWithPoints(Job job)
     {
-        return job.JobQuota != null && job.JobStatusId == JobStatusIds.Approved;
+        return job.JobStatusId == JobStatusIds.Approved;
     }
 
     public static bool ShouldAutoClose(DateTime closingDate)
@@ -193,7 +192,7 @@ public static class JobBusinessRules
         var allowedTransitions = new Dictionary<Guid, List<Guid>>
         {
             [JobStatusIds.Draft] = [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
-            [JobStatusIds.PendingApproval] = [JobStatusIds.Approved, JobStatusIds.Rejected, JobStatusIds.Cancelled],
+            [JobStatusIds.PendingApproval] = [JobStatusIds.NeedUpdate,JobStatusIds.Approved, JobStatusIds.Rejected, JobStatusIds.Cancelled],
             [JobStatusIds.Approved] = [JobStatusIds.Published, JobStatusIds.Cancelled],
             [JobStatusIds.Published] = [JobStatusIds.Closed, JobStatusIds.Cancelled],
             [JobStatusIds.Rejected] = [JobStatusIds.Draft],

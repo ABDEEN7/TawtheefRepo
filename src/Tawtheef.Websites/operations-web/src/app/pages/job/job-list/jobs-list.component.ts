@@ -13,12 +13,13 @@ import { PaginatedResult } from '../../../core/models/paginated-result.model';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TranslateService } from '@ngx-translate/core';
 import { JobStatus } from '../../../core/enums/lookups.enum';
+import { routes } from '../../../routes/routes';
 
 @Component({
   selector: 'app-job-list',
   standalone : false,
   templateUrl: './jobs-list.component.html',
-  styleUrl: './jobs-list.component.scss',
+  styleUrls: ['./jobs-list.component.scss'],
 })
 export class JobListComponent implements OnInit {
   private jobService = inject(JobService);
@@ -43,7 +44,8 @@ export class JobListComponent implements OnInit {
 
   ngOnInit() {
     this.loadJobsWithFilters();
-    this.lookupsService.loadAll();
+    this.lookupsService.loadJobStatus();
+    this.lookupsService.jobCategories();
   }
 
   loadJobsWithFilters() {
@@ -92,16 +94,16 @@ export class JobListComponent implements OnInit {
     this.loadJobsWithFilters();
   }
 
-editJob(job: JobResponse) {
-  this.router.navigate(['/jobs/edit', job.id]).then();
-}
+  editJob(job: JobResponse) {
+  this.router.navigate([routes.employee.jobEdit, job.id]).then();
+  }
 
   viewJob(job: JobResponse) {
-    this.router.navigate([`/jobs/view`, job.id]).then();
+    this.router.navigate([routes.employee.jobView, job.id]).then();
   }
 
   createNewJob() {
-    this.router.navigate(['/jobs/create']).then();
+    this.router.navigate([routes.employee.jobCreate]).then();
   }
 
   openPointsModal(job: JobResponse) {
@@ -118,25 +120,7 @@ editJob(job: JobResponse) {
   }
 
   approveJob(job: JobResponse) {
-    const approvedStatus = this.lookupsService.jobStatus().find(s => 
-      s.backendName === this.jobStatus.Approved
-    );
-    
-    if (approvedStatus) {
-      this.jobService.approve(job.id, approvedStatus.id  as GUID).subscribe({
-        next: () => {
-          this.notificationService.success(
-            this.translateService.instant('JOB_LIST_MESSAGES_JOB_APPROVED')
-          );
-          this.loadJobsWithFilters();
-        },
-        error: (error) => {
-          this.notificationService.error(
-            this.translateService.instant('JOB_LIST_ERRORS_APPROVE_FAILED')
-          );
-        }
-      });
-    }
+    this.router.navigate([routes.employee.approvalJob, job.id]).then();
   }
 
   rejectJob(job: JobResponse) {
@@ -209,27 +193,27 @@ editJob(job: JobResponse) {
     }
   }
 
-  reopenJob(job: JobResponse) {
-    const draftStatus = this.lookupsService.jobStatus().find(s => 
-      s.backendName === this.jobStatus.Draft
-    );
+  // reopenJob(job: JobResponse) {
+  //   const draftStatus = this.lookupsService.jobStatus().find(s => 
+  //     s.backendName === this.jobStatus.Draft
+  //   );
     
-    if (draftStatus) {
-      this.jobService.changeStatus(job.id, draftStatus.id  as GUID).subscribe({
-        next: () => {
-          this.notificationService.success(
-            this.translateService.instant('JOB_LIST_MESSAGES_JOB_REOPENED')
-          );
-          this.loadJobsWithFilters();
-        },
-        error: (error) => {
-          this.notificationService.error(
-            this.translateService.instant('JOB_LIST_ERRORS_REOPEN_FAILED')
-          );
-        }
-      });
-    }
-  }
+  //   if (draftStatus) {
+  //     this.jobService.changeStatus(job.id, draftStatus.id  as GUID).subscribe({
+  //       next: () => {
+  //         this.notificationService.success(
+  //           this.translateService.instant('JOB_LIST_MESSAGES_JOB_REOPENED')
+  //         );
+  //         this.loadJobsWithFilters();
+  //       },
+  //       error: (error) => {
+  //         this.notificationService.error(
+  //           this.translateService.instant('JOB_LIST_ERRORS_REOPEN_FAILED')
+  //         );
+  //       }
+  //     });
+  //   }
+  // }
 
   cancelJob(job: JobResponse) {
     const cancelledStatus = this.lookupsService.jobStatus().find(s => 
@@ -273,25 +257,19 @@ editJob(job: JobResponse) {
     }
   }
 
+  
+
   getStatusBadgeClass(statusName: string): string {
-    switch(statusName?.toLowerCase()) {
-      case this.jobStatus.Draft:
-        return 'bg-secondary';
-      case this.jobStatus.PendingApproval:
-        return 'bg-warning text-dark';
-      case this.jobStatus.Approved:
-        return 'bg-success';
-      case this.jobStatus.Published:
-        return 'bg-info';
-      case this.jobStatus.Closed:
-        return 'bg-dark';
-      case this.jobStatus.Rejected:
-        return 'bg-danger';
-      case this.jobStatus.Cancelled:
-        return 'bg-secondary';
-      default:
-        return 'bg-light text-dark';
-    }
+    const STATUS_BADGE_MAP: Record<string, string> = {
+  [JobStatus.Draft]: 'bg-secondary',
+  [JobStatus.PendingApproval]: 'bg-warning text-dark',
+  [JobStatus.Approved]: 'bg-success',
+  [JobStatus.Published]: 'bg-info',
+  [JobStatus.Closed]: 'bg-dark',
+  [JobStatus.Rejected]: 'bg-danger',
+  [JobStatus.Cancelled]: 'bg-secondary'
+};
+   return STATUS_BADGE_MAP[statusName] || 'bg-light text-dark';
   }
 
   getJobCategoryBadgeClass(categoryName: string): string {
