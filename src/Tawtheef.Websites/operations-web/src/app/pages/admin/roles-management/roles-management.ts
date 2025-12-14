@@ -84,7 +84,7 @@ export class RolesManagement implements OnInit {
       next: () => {
         const metadata = this.paginationMetadata();
         if (metadata) {
-          this.currentPage.set(metadata.pageNumber);
+          this.currentPage.set(metadata.currentPage);
           this.itemsPerPage.set(metadata.pageSize);
         }
       },

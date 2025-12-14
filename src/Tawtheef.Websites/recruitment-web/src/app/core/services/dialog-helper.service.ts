@@ -1,14 +1,12 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {DialogService} from 'primeng/dynamicdialog';
 import {TranslateService} from "@ngx-translate/core";
 import {ConfirmationDialogComponent} from '../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
 
 @Injectable({ providedIn: 'root' })
 export class DialogHelperService {
-  constructor(
-    private dialogService: DialogService,
-    private translateService: TranslateService
-  ) {}
+  private dialogService = inject(DialogService);
+  private translateService = inject(TranslateService);
 
   openConfirmDialog(options: {
     type: 'delete' | 'submit' | 'warning';

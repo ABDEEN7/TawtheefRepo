@@ -13,6 +13,8 @@ import {RoleSummaryDto} from './models/role-summary.dto';
 import {NotificationService} from '../../../core/services/notification.service';
 import {Tooltip} from 'primeng/tooltip';
 import {Lang, LanguageService} from '../../../core/services/language.service';
+import {DialogService} from 'primeng/dynamicdialog';
+import {ManageRolesDialogComponent} from './dialogs/manage-roles-dialog/manage-roles-dialog.component';
 
 @Component({
   selector: 'app-users-management',
@@ -26,12 +28,13 @@ import {Lang, LanguageService} from '../../../core/services/language.service';
     PaginationComponent,
     I18nNamespaceDirective,
     Select,
-    Tooltip
-  ]
+    Tooltip,
+  ],
+  providers: [DialogService],
 })
 export class UsersManagement implements OnInit {
   private usersService = inject(UsersService);
-  private dialogHelper = inject(DialogHelperService);
+  private dialogService = inject(DialogService);
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
@@ -104,8 +107,12 @@ export class UsersManagement implements OnInit {
   }
 
   openManageRoles(user: UserDto) {
-    const ref = this.dialogHelper.openManageRolesDialog(user, this.roleLookups());
-
+    const ref = this.dialogService.open(ManageRolesDialogComponent, {
+      header: this.translate.instant('USERS.MANAGE_ROLES_TITLE'),
+      width: '900px',
+      styleClass: 'manage-roles-dialog',
+      data: { user, roleOptions: this.roleLookups()  }
+    });
     ref?.onClose.subscribe((updated: boolean) => {
       if (updated) {
         this.loadUsers();

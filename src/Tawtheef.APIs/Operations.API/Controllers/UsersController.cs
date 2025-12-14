@@ -14,7 +14,7 @@ namespace Operations.API.Controllers;
 public class UsersController(IMediator mediator) : ControllerBase
 {
     [HttpGet("list-users")]
-    public async Task<IActionResult> ListUsers([FromQuery] ListUsersQuery query)
+    public async Task<IActionResult> ListUsers([FromQuery] GetListUsersQuery query)
     {
         var result = await mediator.Send(query);
         return result.ToActionResult();
