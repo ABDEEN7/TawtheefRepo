@@ -14,7 +14,7 @@ namespace Operations.API.Controllers;
 public class RolesController(IMediator mediator) : ControllerBase
 {
     [HttpGet("list-roles")]
-    public async Task<IActionResult> ListRoles([FromQuery] ListRolesQuery query)
+    public async Task<IActionResult> ListRoles([FromQuery] GetListRolesQuery query)
     {
         var result = await mediator.Send(query);
         return result.ToActionResult();

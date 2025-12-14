@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {DialogService} from 'primeng/dynamicdialog';
 import {TranslateService} from "@ngx-translate/core";
 import {ConfirmationDialogComponent} from '../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
@@ -8,10 +8,8 @@ import {RoleSummaryDto} from '../../pages/admin/users-management/models/role-sum
 
 @Injectable({ providedIn: 'root' })
 export class DialogHelperService {
-  constructor(
-    private dialogService: DialogService,
-    private translateService: TranslateService
-  ) {}
+  private dialogService = inject(DialogService);
+  private translateService = inject(TranslateService);
 
   openConfirmDialog(options: {
     type: 'delete' | 'submit' | 'warning';
@@ -33,15 +31,6 @@ export class DialogHelperService {
         showInputField: options.showInputField || false,
         inputType: options.inputType || 'text'
       }
-    });
-  }
-
-  openManageRolesDialog(user: UserDto, roleOptions: RoleSummaryDto[]) {
-    return this.dialogService.open(ManageRolesDialogComponent, {
-      header: this.translateService.instant('USERS.MANAGE_ROLES_TITLE'),
-      width: '900px',
-      styleClass: 'manage-roles-dialog',
-      data: { user, roleOptions }
     });
   }
 }

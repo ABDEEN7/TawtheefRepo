@@ -11,9 +11,9 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
 public sealed class ListRolesQueryHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
-    : IRequestHandler<ListRolesQuery, IResult<PaginatedResult<RoleDto>>>
+    : IRequestHandler<GetListRolesQuery, IResult<PaginatedResult<RoleDto>>>
 {
-    public async Task<IResult<PaginatedResult<RoleDto>>> Handle(ListRolesQuery request, CancellationToken cancellationToken)
+    public async Task<IResult<PaginatedResult<RoleDto>>> Handle(GetListRolesQuery request, CancellationToken cancellationToken)
     {
         var roles = await roleManager.Roles.AsNoTracking().ToListAsync(cancellationToken);
 

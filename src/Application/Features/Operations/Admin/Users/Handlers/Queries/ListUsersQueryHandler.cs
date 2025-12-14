@@ -14,10 +14,10 @@ namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Queries;
 public sealed class ListUsersQueryHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager)
-    : IRequestHandler<ListUsersQuery, IResult<PaginatedResult<UserListItemDto>>>
+    : IRequestHandler<GetListUsersQuery, IResult<PaginatedResult<UserListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<UserListItemDto>>> Handle(
-        ListUsersQuery request,
+        GetListUsersQuery request,
         CancellationToken cancellationToken)
     {
         var queryable = userManager.Users
