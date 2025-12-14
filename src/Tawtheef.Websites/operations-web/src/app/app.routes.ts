@@ -24,14 +24,14 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayout,
-    loadChildren: () => import('./pages/admin/admin.module').then((m) => m.AdminModule),
+    loadChildren: () => import('./pages/user/admin/admin.module').then((m) => m.AdminModule),
     canActivate: [authGuard],
     // data: { roles: ['admin'] }
   },
   {
     path: 'employee',
     component: EmployeeLayout,
-    loadChildren: () => import('./pages/employee/employee.module').then((m) => m.EmployeeModule),
+    loadChildren: () => import('./pages/user/employee/employee.module').then((m) => m.EmployeeModule),
     canActivate: [authGuard],
     data: { roles: ['employee'] }
   },
