@@ -2,9 +2,6 @@ import {inject, Injectable} from '@angular/core';
 import {DialogService} from 'primeng/dynamicdialog';
 import {TranslateService} from "@ngx-translate/core";
 import {ConfirmationDialogComponent} from '../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
-import {ManageRolesDialogComponent} from '../../pages/admin/users-management/dialogs/manage-roles-dialog/manage-roles-dialog.component';
-import {UserDto} from '../../pages/admin/users-management/models/user.dto';
-import {RoleSummaryDto} from '../../pages/admin/users-management/models/role-summary.dto';
 
 @Injectable({ providedIn: 'root' })
 export class DialogHelperService {
