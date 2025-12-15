@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
-import { SpecializationRelationLevel } from '../../../approval-list/models/profile-approval.models';
+import {SpecializationRelationLevel} from '../../../../approval-list/models/profile-approval.models';
 
 @Component({
   selector: 'app-profile-approval-experiences-section',
@@ -17,8 +17,7 @@ import { SpecializationRelationLevel } from '../../../approval-list/models/profi
 export class ExperiencesSectionComponent {
   @Input() experiences: any[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
-
-  constructor(private translate: TranslateService) {}
+  private translate = inject(TranslateService);
 
   preview(url?: string | null): void {
     if (url) {

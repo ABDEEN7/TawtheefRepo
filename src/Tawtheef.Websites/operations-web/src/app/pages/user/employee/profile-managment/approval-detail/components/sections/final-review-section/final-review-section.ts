@@ -7,7 +7,7 @@ import {
   ProfileApprovalSection,
   ReviewStatus
 } from '../../../../approval-list/models/profile-approval.models';
-import {NotificationService} from '../../../../../../core/services/notification.service';
+import {NotificationService} from '../../../../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-profile-approval-final-review-section',

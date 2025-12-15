@@ -140,7 +140,7 @@
               <h3>{{ sectionName(sec.section) | translate }}</h3>
             </div>
             <div class="row g-3">
-              <div class="col-12 col-xl-8">
+              <div class="col-12">
                 <div class="section-card p-3 bg-white rounded-4 shadow-sm h-100">
                   <ng-container [ngSwitch]="sec.section">
                     <app-profile-approval-first-info-section
@@ -304,8 +304,7 @@
                   ></app-profile-review-items>
                 </div>
               </div>
-
-              <div class="col-12 col-xl-4">
+              <div class="col-12">
                 <p-card class="approve-card h-100">
                   <ng-template pTemplate="header">
                     <div class="approve-head d-inline-flex align-items-center gap-2">

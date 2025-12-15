@@ -37,7 +37,6 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     importProvidersFrom(NgbModule),
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
@@ -52,6 +51,7 @@ export const appConfig: ApplicationConfig = {
       const langSvc = inject(LanguageService);
       return langSvc.init();
     }),
+    provideHttpClient(withInterceptorsFromDi()),
     provideHttpClient(
       withInterceptors([
         loadingInterceptor,

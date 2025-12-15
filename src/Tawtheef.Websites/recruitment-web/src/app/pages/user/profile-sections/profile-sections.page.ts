@@ -20,6 +20,7 @@ import { UserService } from '../../../core/auth/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TranslateService } from '@ngx-translate/core';
 import { take, finalize, switchMap } from 'rxjs';
+import {ProfileStatusDto} from '../../../core/models/auth/auth-response.model';
 
 enum ReviewStatus {
   NotReviewed = 0,
@@ -202,7 +203,7 @@ export class ProfileSectionsPage implements OnInit {
       .subscribe({
         next: state => {
           this.ds.prefillFromBootstrap(
-            mapProfileStatusToState(this.phoneMapper, this.lookups, state, this.userService.getPrefill()),
+            mapProfileStatusToState(this.phoneMapper, this.lookups, state as ProfileStatusDto, this.userService.getPrefill()),
           );
           this.editingSection.set(section);
         },

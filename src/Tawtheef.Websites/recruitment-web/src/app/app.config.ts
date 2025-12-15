@@ -9,7 +9,7 @@ import { routes } from './app.routes';
 import {
   HttpBackend,
   provideHttpClient,
-  withInterceptors
+  withInterceptors, withInterceptorsFromDi
 } from '@angular/common/http';
 import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
@@ -50,6 +50,7 @@ export const appConfig: ApplicationConfig = {
       const langSvc = inject(LanguageService);
       return langSvc.init();
     }),
+    provideHttpClient(withInterceptorsFromDi()),
     provideHttpClient(
       withInterceptors([
         loadingInterceptor,
