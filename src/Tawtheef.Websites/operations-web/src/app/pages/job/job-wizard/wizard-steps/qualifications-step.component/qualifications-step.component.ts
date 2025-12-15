@@ -26,7 +26,6 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     qualificationsDescriptionAr: ['', Validators.required],
     qualificationsDescriptionEn: ['',Validators.required]
   });
-  disabled: boolean = false;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -38,6 +37,9 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
   }
 
   isValid(): boolean {
+      if (this.form.disabled) {
+    return true;
+  }
     return this.form.valid && this.form.controls.degrees.value!.length > 0;
   }
 
@@ -54,7 +56,9 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       qualificationsDescriptionEn: job.qualificationsDescriptionEn || ''
     }, { emitEvent: false });
 
-        this.disabled =disable
+    if (disable) {
+      this.form.disable();
+    }
   }
 
   toggleDegree(degreeId: string, event: Event): void {

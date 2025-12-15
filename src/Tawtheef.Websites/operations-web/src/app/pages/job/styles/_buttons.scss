@@ -1,0 +1,55 @@
+.actions-bar {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-end;
+
+  .job-btns,
+  .approve-btn {
+    display: flex;
+    gap: 12px;
+  }
+
+  .apply-button-large {
+    padding: 14px 32px;
+    height: 48px;
+    border-radius: 50px;
+    background: #89153D;
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+
+    i {
+      font-size: 16px;
+    }
+
+    &:hover:not(:disabled) {
+      background: #7a1237;
+      box-shadow: 0 4px 12px rgba(137, 21, 61, 0.3);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      background: #CCC;
+      color: #777;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+
+    .apply-button-large {
+      width: 100%;
+    }
+  }
+}

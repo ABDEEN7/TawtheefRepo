@@ -23,7 +23,6 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   readonly form = this.fb.group({
     jobSkills: this.fb.array([]),
   }) as FormGroup;
-  disabled: boolean = false;
 
   ngOnInit() {
     const currentJob = this.jobService.getCurrentJob();
@@ -74,8 +73,9 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
       });
     }
 
-    this.disabled =disable
-
+    if (disable) {
+      this.form.disable();
+    }
   }
 
   isValid() {
@@ -83,6 +83,9 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
       return true;
     }
 
+    if( this.form.disabled) {
+      return true;
+    }
     return this.form.valid;
   }
 

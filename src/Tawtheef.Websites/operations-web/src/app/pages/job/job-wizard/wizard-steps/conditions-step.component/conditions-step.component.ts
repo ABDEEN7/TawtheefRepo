@@ -27,7 +27,6 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   newConditionAr = '';
   newConditionEn = '';
   private readonly destroy$ = new Subject<void>();
-  disabled: boolean = false;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -62,8 +61,8 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
       });
     }
 
-    
-    this.disabled =disable
+    if (disable) {
+      this.form.disable();  }
 
   }
 
@@ -106,6 +105,9 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   }
 
   isValid(): boolean {
+    if(this.form.disabled){
+      return true;  
+    }
     return this.form.valid && this.conditionsArray.length > 0;
   }
 

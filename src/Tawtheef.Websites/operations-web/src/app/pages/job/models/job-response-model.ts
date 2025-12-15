@@ -4,9 +4,7 @@ import { JobConditionResponse } from "./job-condition-response.model";
 import { JobDegreeResponse } from "./job-degree-response.model";
 import { JobRequiredAttachmentResponse } from "./job-required-attachment-response.model";
 import { JobResponsibilityResponse } from "./job-responsibility-response.model";
-import { JobReviewAttachment } from "./job-review-attachment";
 import { JobSkillResponse } from "./job-skill-response.model";
-import { JobTabReviewNote } from "./job-tab-review-note";
 import { JobTabReviewNoteResponse } from "./job-tab-review-note-response";
 
 

@@ -21,7 +21,6 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
     benefitsAr: ['', [Validators.required, Validators.maxLength(2000)]],
     benefitsEn: ['', [Validators.maxLength(2000)]]
   });
-  disabled: boolean =false;
 
   ngOnInit(): void {
     const currentJob = this.jobService.getCurrentJob();
@@ -38,7 +37,7 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
   }
 
   isValid(): boolean {
-    return this.form.valid;
+      return this.form.disabled ? true : this.form.valid;
   }
 
   setJobData(job: Job,disable: boolean = false): void {
@@ -48,9 +47,9 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
       benefitsAr: job.benefitsAr || '',
       benefitsEn: job.benefitsEn || ''
     });
-
-    this.disabled =disable
-
+    if (disable) {
+      this.form.disable();
+    }
   }
 
   private updateJobData(): void {

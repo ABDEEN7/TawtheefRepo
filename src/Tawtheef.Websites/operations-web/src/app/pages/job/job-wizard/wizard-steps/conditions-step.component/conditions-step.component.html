@@ -13,7 +13,7 @@
           </div>
         </div>
 
-        <button class="btn btn-brand btn-add w-50" (click)="addCondition()" type="button">
+        <button class="btn btn-brand btn-add w-50" [disabled]="form.disabled" (click)="addCondition()" type="button">
           <i class="fa fa-plus me-2"></i>
           {{ 'JOB_WIZARD.STEPS.CONDITIONS.ADD_CONDITION' | translate }}
         </button>

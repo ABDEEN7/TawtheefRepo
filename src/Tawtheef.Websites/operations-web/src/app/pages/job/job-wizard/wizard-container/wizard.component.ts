@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { map, Subject, switchMap, takeUntil, throwError } from 'rxjs';
 import { JobService } from '../../services/job.service';
 import { WizardStepComponent } from '../wizard-steps/base/wizard-step.component';
 import { ConditionsStepComponent } from '../wizard-steps/conditions-step.component/conditions-step.component';
@@ -33,6 +33,8 @@ import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic
 import { Job } from '../../models/job.model';
 import { routes } from '../../../../routes/routes';
 import { JobTabStatus } from '../../enums/job-tab-status';
+import { JobTabType } from '../../enums/job-tab-type';
+import { JobTabReviewNoteResponse } from '../../models/job-tab-review-note-response';
 
 @Component({
   selector: 'app-wizard',
@@ -75,6 +77,16 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     BenefitsStepComponent,
     ReviewStepComponent 
   ];
+
+  private tabToStepIndex: Record<JobTabType, number> = {
+  [JobTabType.Overview]: 0,
+  [JobTabType.Qualifications]: 1,
+  [JobTabType.Responsibilities]: 2,
+  [JobTabType.Conditions]: 3,
+  [JobTabType.Skills]: 4,
+  [JobTabType.Attachments]: 5,
+  [JobTabType.Benefits]: 6
+};
 
   @ViewChild('stepsContainer', { read: ViewContainerRef, static: false })
   private container!: ViewContainerRef;
@@ -152,65 +164,71 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
-  private loadJobForWizard(): void {
-    this.isLoading = true;
-    this.showContainer = false;
-    this.stepsLoaded = false;
-    this.retryCount = 0;
-        
-    this.jobService.loadJobForEdit(this.jobId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          const job = this.jobService.getCurrentJob();
-          
-          if (job?.majorId) {
-            this.lookupsService.loadSkillsByMajor(job.majorId);
-          }
-          
-          this.hasBasicData = true;
-          this.showContainer = true; 
-          this.isLoading = false;
-          this.mapReviewNotesToSteps(job);
-          this.cdr.detectChanges();
-          this.initializeSteps();
-          this.cdr.detectChanges();
-        },
-        error: (error) => {
-          this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED');
-          this.isLoading = false;
-          this.router.navigate([routes.employee.JobList]);
+private loadJobForWizard(): void {
+  this.isLoading = true;
+  this.showContainer = false;
+  this.stepsLoaded = false;
+
+  this.jobService.loadJobForEdit(this.jobId)
+    .pipe(
+      takeUntil(this.destroy$),
+      switchMap(() => {
+        const job = this.jobService.getCurrentJob();
+        if (!job) {
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED'),
+          });
+          return  throwError(() => new Error(this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')));
         }
-      });
-  }
 
-  private mapReviewNotesToSteps(job: Job | null): void {
-    if (!job?.tabReviewNotes || !job.jobStatus || job.jobStatus.backendName !== 'NeedUpdate') {
-      this.disabledSteps = Array(this.total).fill(false);
-      return;
-    }
-    const tabToStepIndex: { [key: string]: number } = {
-      'Overview': 0,
-      'Qualifications': 1,
-      'Responsibilities': 2,
-      'Conditions': 3,
-      'Skills': 4,
-      'Attachments': 5,
-      'Benefits': 6,
-      'Review': 7
-    };
+        return this.jobService.getTabReviewNotes(this.jobId)
+          .pipe(
+            map((tabNotes: JobTabReviewNoteResponse[]) => ({ job, tabNotes }))
+          );
+      })
+    )
+    .subscribe({
+      next: ({ job, tabNotes }) => {
+        job.tabReviewNotes = tabNotes;
+        this.mapReviewNotesToSteps(job);
 
-    this.disabledSteps = Array(this.total).fill(false);
-
-    job.tabReviewNotes.forEach(note => {
-      if (note.tabStatus === JobTabStatus.Approved) {
-        const stepIndex = tabToStepIndex[note.tab];
-        if (stepIndex !== undefined) {
-          this.disabledSteps[stepIndex] = true;
+        if (job.majorId) {
+          this.lookupsService.loadSkillsByMajor(job.majorId);
         }
+
+        this.hasBasicData = true;
+        this.showContainer = true;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+        this.initializeSteps();
+      },
+      error: (err) => {
+        this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED');
+        this.isLoading = false;
+        this.router.navigate([routes.employee.JobList]);
       }
     });
+}
+
+  private mapReviewNotesToSteps(job: Job | null): void {
+  this.disabledSteps = Array(this.total).fill(false);
+
+  if (!job?.tabReviewNotes || job.jobStatus?.backendName !== 'NeedUpdate') {
+    return;
   }
+
+  job.tabReviewNotes.forEach(note => {
+    if (note.tabStatus === 'Approved') {
+      const stepIndex = this.tabToStepIndex[note.tab];
+
+      if (stepIndex !== undefined) {
+        this.disabledSteps[stepIndex] = true;
+      }
+    }
+  });
+}
+
   private initializeSteps(): void {    
     if (!this.container) {
       this.retryCount++;

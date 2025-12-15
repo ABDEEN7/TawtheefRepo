@@ -83,5 +83,9 @@
 
   "COMMON.CANCEL": "إلغاء",
   "COMMON.CONFIRM": "تأكيد",
-  "COMMON.ACTION_CANCELED": "تم إلغاء العملية"
+  "COMMON.ACTION_CANCELED": "تم إلغاء العملية",
+  "JOB_APPROVAL.TAB": "التبويب",
+  "JOB_APPROVAL.REVIEW_HISTORY": "تاريخ المراجعة",
+  "JOB_APPROVAL.RESOLVED": "تم الحل",
+  "JOB_APPROVAL.ATTACHMENTS": "المرفقات"
 }

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Infrastructure.Persistence.Configurations.Recruitment.JobDetails;
@@ -13,13 +12,13 @@ public class JobTabReviewNoteConfiguration : IEntityTypeConfiguration<JobTabRevi
 
         builder.Property(x => x.Tab)
             .IsRequired()
-            .HasConversion<string>()
-            .HasMaxLength(50);
+            .HasConversion<string>();
+
 
         builder.Property(x => x.TabStatus)
             .IsRequired()
-            .HasConversion<string>()
-            .HasMaxLength(50);
+            .HasConversion<string>();
+            
 
         builder.HasOne(x => x.Job)
             .WithMany(j => j.TabReviewNotes)

@@ -27,7 +27,6 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
   newResponsibilityAr = '';
   newResponsibilityEn = '';
   private readonly destroy$ = new Subject<void>();
-  disabled: boolean = false;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -62,8 +61,9 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
       });
     }
 
-        this.disabled =disable
-
+    if (disable) {
+      this.form.disable();
+    }
   }
 
 addResponsibility(): void {
@@ -104,6 +104,9 @@ addResponsibility(): void {
   }
 
   isValid(): boolean {
+    if(this.form.disabled){
+      return true;  
+    }
     return this.form.valid && this.responsibilitiesArray.length > 0;
   }
 

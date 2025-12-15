@@ -30,5 +30,8 @@
   "common.delete": "حذف",
   "common.confirm": "تأكيد",
   "common.yes": "نعم",
-  "common.no": "لا"
+  "common.no": "لا",
+
+  "COMMON.YES": "نعم",
+  "COMMON.NO": "لا"
 }

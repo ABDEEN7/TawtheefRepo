@@ -32,7 +32,6 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   });
   
   private readonly destroy$ = new Subject<void>();
-  disabled: boolean = false;
 
   ngOnInit(): void {
     const currentJob = this.jobService.getCurrentJob();
@@ -62,20 +61,30 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     return this.attachmentsArray.at(index) as FormGroup;
   }
 
-  setJobData(job: Job,disable:boolean =false): void {
-    this.jobData = job;
-    this.attachmentsArray.clear();
-    
-    if (job.requiredAttachments?.length) {
-      job.requiredAttachments.forEach(attachment => {
-        this.addAttachmentToForm(attachment);
-      });
-    }
-
-    this.disabled =disable
+ setJobData(job: Job, disable: boolean = false): void {
+  this.jobData = job;
+  this.attachmentsArray.clear();
+  
+  if (job.requiredAttachments?.length) {
+    job.requiredAttachments.forEach(attachment => {
+      this.addAttachmentToForm(attachment);
+    });
   }
+  
+  if (disable) {
+    // Disable AFTER adding all controls
+    this.form.disable({ emitEvent: false });
+    
+    this.newAttachment.titleAr = '';
+    this.newAttachment.titleEn = '';
+    this.newAttachment.isMandatory = false;
+  }
+}
 
   addAttachment(): void {
+    if (this.form.disabled) {
+    return;
+  }
     const textAr = this.newAttachment.titleAr.trim();
     const textEn = this.newAttachment.titleEn.trim();
 
@@ -122,18 +131,25 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
       return true;
     }
     
+    if(this.form.disabled){
+      return true;  
+    }
     return this.form.valid && this.attachmentsArray.valid;
   }
 
   private addAttachmentToForm(attachment: any): void {
-    const attachmentGroup = this.fb.group({
-      titleAr: [attachment.titleAr || '', [Validators.required, Validators.maxLength(200)]],
-      titleEn: [attachment.titleEn || '', [Validators.maxLength(200)]],
-      isMandatory: [attachment.isMandatory || false]
-    });
-    
-    this.attachmentsArray.push(attachmentGroup);
+  const attachmentGroup = this.fb.group({
+    titleAr: [attachment.titleAr || '', [Validators.required, Validators.maxLength(200)]],
+    titleEn: [attachment.titleEn || '', [Validators.maxLength(200)]],
+    isMandatory: [attachment.isMandatory || false]
+  });
+  
+  if (this.form.disabled) {
+    attachmentGroup.disable({ emitEvent: false });
   }
+  
+  this.attachmentsArray.push(attachmentGroup);
+}
 
   private updateJobData(): void {
     if (this.form.valid) {

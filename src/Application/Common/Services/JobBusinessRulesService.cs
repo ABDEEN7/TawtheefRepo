@@ -82,7 +82,7 @@ public static class JobBusinessRules
 
     public static bool CanEdit(Guid jobStatusId)
     {
-        return jobStatusId == JobStatusIds.Draft;
+        return jobStatusId == JobStatusIds.Draft || jobStatusId == JobStatusIds.NeedUpdate;
     }
 
     public static bool AreAllTabsCompleted(

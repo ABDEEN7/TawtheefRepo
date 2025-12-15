@@ -7,6 +7,7 @@ export interface JobTabReviewNoteResponse {
   id: GUID;
   tab: JobTabType; 
   note: string;
-  tabStatus: JobTabStatus; 
+  tabStatus: JobTabStatus;
+  isResolved: boolean;
   attachments?: JobReviewAttachmentResponse[]; 
 }

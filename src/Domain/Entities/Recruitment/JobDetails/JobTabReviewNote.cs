@@ -9,20 +9,23 @@ namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 [Index(nameof(JobId), nameof(Tab), IsUnique = true)]
 public class JobTabReviewNote : EventEntity
 {
-    [Required]
     public Guid JobId { get; set; }
 
-    [ForeignKey(nameof(JobId))]
     public virtual Job? Job { get; set; }
 
-    [Required]
+    [Column(TypeName = "nvarchar(50)")]
     public required TabType Tab { get; set; }
 
     [MaxLength(2000)]
     public string? Note { get; set; } 
 
-    [Required]
+    [Column(TypeName = "nvarchar(50)")]
     public required TabStatus TabStatus { get; set; }
+
+    [Required]
+    public bool IsResolved { get; set; } = false;
+    [Required]
+    public Guid ReviewCycleId { get; set; }
 
     public virtual ICollection<JobTabReviewAttachment> Attachments { get; set; } = new List<JobTabReviewAttachment>();
 

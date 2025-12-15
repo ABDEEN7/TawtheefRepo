@@ -29,57 +29,38 @@ public sealed class SaveJobReviewCommandHandler(
         CancellationToken ct)
     {
         var jobRepo = uow.GetEntityRepository<JobEntity>();
-        var attachRepo = uow.GetEntityRepository<JobTabReviewAttachment>();
 
         var job = await jobRepo.DbSet
-            .Include(x => x.TabReviewNotes)
-                .ThenInclude(x => x.Attachments)
             .FirstOrDefaultAsync(x => x.Id == cmd.JobId, ct);
 
         if (job is null)
             return Result.Fail<Unit>(ErrorsCodes.JobNotFound);
 
+        var reviewCycleId = Guid.NewGuid();
+
         IReadOnlyList<IFormFile> files =
-    cmd.Request.Files is { Count: > 0 }
-        ? cmd.Request.Files
-        : Array.Empty<IFormFile>();
+            cmd.Request.Files is { Count: > 0 }
+                ? cmd.Request.Files
+                : Array.Empty<IFormFile>();
 
         foreach (var tabDto in cmd.Request.Tabs)
         {
-            var note = job.TabReviewNotes
-                .FirstOrDefault(x => x.Tab == tabDto.Tab);
-
-            if (note is null)
+            var note = new JobTabReviewNote
             {
-                note = new JobTabReviewNote
-                {
-                    JobId = job.Id,
-                    Tab = tabDto.Tab,
-                    Note = tabDto.Note,
-                    TabStatus = tabDto.Status
-                };
-                job.TabReviewNotes.Add(note);
-            }
-            else
-            {
-                note.UpdateNote(tabDto.Note, tabDto.Status);
-            }
+                JobId = job.Id,
+                ReviewCycleId = reviewCycleId, 
+                Tab = tabDto.Tab,
+                Note = tabDto.Note,
+                TabStatus = tabDto.Status,
+                IsResolved = TabStatus.Approved == tabDto.Status, 
+                CreatedDate = DateTime.UtcNow
+            };
 
             var attachmentsResult = Deserialize(tabDto.AttachmentsJson);
             if (attachmentsResult.IsFailed)
                 return Result.Fail<Unit>(attachmentsResult.Errors);
 
-            var attachments = attachmentsResult.Value;
-
-            if (note.Attachments != null && note.Attachments.Count != 0)
-            {
-                attachRepo.DbSet.RemoveRange(note.Attachments);
-                note.Attachments.Clear();
-            }
-
-
-
-            foreach (var dto in attachments)
+            foreach (var dto in attachmentsResult.Value)
             {
                 var uploadResult = await UploadIfNeededAsync(
                     job.Id,
@@ -98,16 +79,17 @@ public sealed class SaveJobReviewCommandHandler(
                     string.IsNullOrWhiteSpace(fileName))
                     return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
 
-                if (note.Attachments == null)
-                    note.Attachments = new List<JobTabReviewAttachment>();
+                note.Attachments ??= new List<JobTabReviewAttachment>();
 
-                note.Attachments?.Add(new JobTabReviewAttachment
+                note.Attachments.Add(new JobTabReviewAttachment
                 {
                     FileName = fileName,
                     AttachmentId = attachmentId.Value,
                     JobTabReviewNote = note
                 });
             }
+
+            job.TabReviewNotes.Add(note);
         }
 
         await uow.SaveChangesAsync(ct);

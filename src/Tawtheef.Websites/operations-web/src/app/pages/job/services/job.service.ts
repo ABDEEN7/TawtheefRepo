@@ -17,6 +17,7 @@ import { JobLookupService } from './job-lookup.service';
 import { JobStatus } from '../../../core/enums/lookups.enum';
 import { HttpParams } from '@angular/common/http';
 import { JobTabReviewNote } from '../models/job-tab-review-note';
+import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 
 @Injectable({
   providedIn: 'root'
@@ -414,10 +415,7 @@ updateTabReview(payload: any) {
     );
   }
 
-  private formatParamValue(value: any): string {
-    if (value instanceof Date) {
-      return value.toISOString();
-    }
-    return value.toString();
+  getTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
+    return this.httpService.get<JobTabReviewNoteResponse[]>(`${this.endpoints.job.jobApproval}/${jobId}`);
   }
 }

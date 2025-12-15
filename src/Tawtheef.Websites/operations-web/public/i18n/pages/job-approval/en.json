@@ -48,5 +48,10 @@
   "JOB_APPROVAL.ATTACHMENTS.UPLOAD": "Upload File",
   "JOB_APPROVAL.ATTACHMENTS.EMPTY": "No attachments added yet",
   "JOB_APPROVAL_REVIEW_SUBMITTED_SUCCESSFULY": "Tab review submitted successfully",
-  "JOB_APPROVAL_REVIEW_SUBMITTED_NOT_SUCCESSFULY": "Failed to submit tab review"
+  "JOB_APPROVAL_REVIEW_SUBMITTED_NOT_SUCCESSFULY": "Failed to submit tab review",
+  "JOB_APPROVAL.TAB": "Tab",
+  "JOB_APPROVAL.REVIEW_HISTORY": "Review History",
+  "JOB_APPROVAL.RESOLVED": "Resolved",
+  "JOB_APPROVAL.ATTACHMENTS": "Attachments"
+
 }

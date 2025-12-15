@@ -21,7 +21,6 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
     overviewEn: ['', Validators.required],
   });
   jobData!: Job;
-  disabled:boolean =false;
 
   ngOnInit(): void {
     this.form.valueChanges.subscribe(() => {
@@ -33,8 +32,7 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
     this.jobData = data;
     this.loadData();
     if (disable) {
-    // this.form.get('overviewAr')?.disable();
-    this.form.get('overviewEn')?.disable();
+    this.form.disable();
   }
   }
 
@@ -56,6 +54,6 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
   }
 
   isValid(): boolean {
-    return this.form.valid;
+  return this.form.disabled ? true : this.form.valid;
   }
 }

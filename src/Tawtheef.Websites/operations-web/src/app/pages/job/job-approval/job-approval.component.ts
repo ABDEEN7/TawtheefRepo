@@ -13,6 +13,7 @@ import { JobTabStatus } from '../enums/job-tab-status';
 import { DialogHelperService } from '../../../core/services/dialog-helper.service';
 import { routes } from '../../../routes/routes';
 import { JobTabType } from '../enums/job-tab-type';
+import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 
 @Component({
   selector: 'app-job-approval.component',
@@ -42,6 +43,7 @@ export class JobApprovalComponent implements OnInit {
   currentTabForm!: FormGroup;
 
   tabNotes: JobTabReviewNote[] = [];
+  reviewHistory: JobTabReviewNoteResponse[] = [];
   activeTab: string = JobTabType.Overview;
   hasApplied: boolean = false;
   isFavorite: boolean = false;
@@ -89,8 +91,13 @@ export class JobApprovalComponent implements OnInit {
     this.jobService.getById(this.id).subscribe({
       next: (job) => {
         this.job = job;
-        this.mergeTabNotes(job.tabReviewNotes || []);
-        this.initializeCurrentTabForm();
+         this.initializeCurrentTabForm();
+        this.jobService.getTabReviewNotes(job.id).subscribe({
+          next: (tabNotes : JobTabReviewNoteResponse[]) => {
+            this.reviewHistory = tabNotes;
+            this.cdr.detectChanges();
+          },
+        });
         this.cdr.detectChanges();
       },
       error: () => {
