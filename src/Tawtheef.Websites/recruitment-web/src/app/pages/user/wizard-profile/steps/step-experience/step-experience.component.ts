@@ -4,13 +4,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ExperienceModal } from './dialogs/experience.modal/experience.modal';
 import { CourseModal } from './dialogs/course.modal/course.modal';
-import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
-import {MessageService} from 'primeng/api';
-import {ProfileService} from '../../services/profile.service';
-import {FileUtilsService} from '../../../../../core/utils/file-utils';
-import {Experience, TrainingCourse} from '../../models/experience.model';
-import {FileRefDto} from '../../../../../core/models/auth/auth-response.model';
-import {UploadedFileRef} from '../../models/profile-state.model';
+import { createStepValiditySignal } from '../../state/profile-step-validity.signal';
+import { ProfileService } from '../../services/profile.service';
+import { FileUtilsService } from '../../../../../core/utils/file-utils';
+import { Experience, TrainingCourse } from '../../models/experience.model';
+import { FileRefDto } from '../../../../../core/models/auth/auth-response.model';
+import { UploadedFileRef } from '../../models/profile-state.model';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-step-experience',
@@ -25,7 +25,7 @@ export class StepExperienceComponent implements OnInit {
   ds = inject(DataService);
   dialog = inject(DialogService);
   translate = inject(TranslateService);
-  messageService = inject(MessageService);
+  notify = inject(NotificationService);
   profile = inject(ProfileService);
   fileUtils = inject(FileUtilsService);
 
@@ -69,12 +69,9 @@ export class StepExperienceComponent implements OnInit {
         },
         error: err => {
           console.error(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.errorTitle'),
-            detail: this.translate.instant('wizard.experience.deleteError'),
-            life: 5000,
-          });
+          this.notify.error(
+            `${this.translate.instant('wizard.errorTitle')}: ${this.translate.instant('wizard.experience.deleteError')}`,
+          );
         },
       });
     } else {
@@ -111,12 +108,9 @@ export class StepExperienceComponent implements OnInit {
         },
         error: err => {
           console.error(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.errorTitle'),
-            detail: this.translate.instant('wizard.course.deleteError'),
-            life: 5000,
-          });
+          this.notify.error(
+            `${this.translate.instant('wizard.errorTitle')}: ${this.translate.instant('wizard.course.deleteError')}`,
+          );
         },
       });
     } else {
@@ -130,12 +124,11 @@ export class StepExperienceComponent implements OnInit {
 
   onNext() {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
-        life: 5000,
-      });
+      this.notify.error(
+        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step.errors
+          .map(e => `* ${this.translate.instant(e.i18nKey)}`)
+          .join('\n')}`,
+      );
       return;
     }
     const state = this.ds.state();
@@ -158,12 +151,9 @@ export class StepExperienceComponent implements OnInit {
       error: err => {
         console.error(err);
         this.saving = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translate.instant('wizard.errorTitle'),
-          detail: this.translate.instant('wizard.experience.saveError'),
-          life: 5000,
-        });
+        this.notify.error(
+          `${this.translate.instant('wizard.errorTitle')}: ${this.translate.instant('wizard.experience.saveError')}`,
+        );
       },
     });
   }

@@ -4,6 +4,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ProfileOverviewService } from './services/profile-overview.service';
 import { ProfileOverview, ProfileRequestProgress } from './models/profile-overview.model';
 import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
+import { Router } from '@angular/router';
+import { routes } from '../../../routes/routes';
 
 enum ReviewStatus {
   NotReviewed = 0,
@@ -34,6 +36,7 @@ enum ProfileStatus {
 })
 export class ProfileOverviewPage implements OnInit {
   private api = inject(ProfileOverviewService);
+  private router = inject(Router);
 
   overview = signal<ProfileOverview | null>(null);
   loading = signal(false);
@@ -60,6 +63,8 @@ export class ProfileOverviewPage implements OnInit {
   readonly overviewStatus = computed(() => this.profileStatusConfig(this.overview()?.status));
 
   readonly nextStep = computed(() => this.nextStepKey(this.overview()?.status, this.requestProgress()));
+
+  readonly latestRequestStatus = computed(() => this.requestStatusLabel(this.requestProgress()?.latestStatus));
 
   readonly summaryTone = computed<'success' | 'warning' | 'danger' | 'info'>(() => {
     const progress = this.requestProgress();
@@ -250,5 +255,14 @@ export class ProfileOverviewPage implements OnInit {
       default:
         return 'profileOverview.actionCenter.start';
     }
+  }
+
+  openEditWizard(startStep?: number): void {
+    this.router.navigate([routes.user.profileWizard], { state: { allowEdit: true, startStep } });
+  }
+
+  private requestStatusLabel(status?: number | null): string | null {
+    if (status === null || status === undefined) return null;
+    return this.profileStatusLabel(status);
   }
 }

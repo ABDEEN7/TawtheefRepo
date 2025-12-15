@@ -8,6 +8,9 @@ export const userRoutes = {
   get profileWizard(){
     return this.user + 'wizard-profile';
   },
+  get profileSections(){
+    return this.user + 'profile-sections';
+  },
   get settings(){
     return this.user + 'settings';
   },
