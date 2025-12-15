@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
-using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
 using Tawtheef.Domain.Constants;

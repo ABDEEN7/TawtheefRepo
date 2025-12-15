@@ -109,13 +109,19 @@
   "profileApproval.detail.experiences.country": "Country",
   "profileApproval.detail.experiences.period": "Experience period",
   "profileApproval.detail.experiences.qualification": "Related qualification",
+  "profileApproval.detail.experiences.relation": "Relation to specialization",
   "profileApproval.detail.experiences.attachment": "Attachment",
   "profileApproval.detail.experiences.tasks": "Responsibilities",
 
   "profileApproval.detail.training.country": "Country",
   "profileApproval.detail.training.period": "Course period",
+  "profileApproval.detail.training.relation": "Relation to specialization",
   "profileApproval.detail.training.attachment": "Attachment",
   "profileApproval.detail.training.description": "Description",
+
+  "profileApproval.detail.specializationRelation.Strong": "Strong related to specialization",
+  "profileApproval.detail.specializationRelation.Medium": "Medium related",
+  "profileApproval.detail.specializationRelation.Weak": "Weak related",
 
   "profileApproval.detail.certificates.issueDate": "Issue date",
   "profileApproval.detail.certificates.expiryDate": "Expiry date",

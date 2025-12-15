@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { finalize, Subscription, combineLatest } from 'rxjs';
@@ -42,6 +42,10 @@ import {FirstInfoSectionComponent} from './components/sections/first-info-sectio
 import {FinalReviewSection} from './components/sections/final-review-section/final-review-section';
 import {SkillsSectionComponent} from './components/sections/skills-section/skills-section.component';
 import {LanguagesSectionComponent} from './components/sections/languages-section/languages-section.component';
+import {FinalApprovalAction} from '../approval-list/models/profile-approval.models';
+import {LanguageService} from '../../../../../core/services/language.service';
+import {NotificationService} from '../../../../../core/services/notification.service';
+import {FinalizeProfileApprovalRequest} from '../approval-list/models/profile-approval-finalize.model';
 
 @Component({
   selector: 'app-profile-approval-detail-page',
@@ -83,25 +87,43 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  private messages = inject(MessageService);
+  private notifications = inject(NotificationService);
+  private language = inject(LanguageService);
 
   private subscriptions: Subscription[] = [];
   private lastLoadedKey: string | null = null;
   private readonly flowSections = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
   loadingDetail = signal(false);
+  submittingFinalAction = signal(false);
   selectedProfileId = signal<string | null>(null);
   detail = signal<ProfileApprovalDetail | null>(null);
   error = signal<string | null>(null);
   partialMode = signal(false);
   activeSection = signal<number | null>(null);
+  currentLang = signal(this.language.get());
+  isRtl = computed(() => this.currentLang() === 'ar');
+  finalAction = signal<FinalApprovalAction | null>(null);
+  finalSummary = signal('');
+  finalNotes = signal('');
+  finalAttachment = signal<File | null>(null);
   reviewStatusOptions = [
     { labelKey: 'profileApproval.status.approved', value: ReviewStatus.Approved },
     { labelKey: 'profileApproval.status.changes', value: ReviewStatus.ChangesRequested },
     { labelKey: 'profileApproval.status.rejected', value: ReviewStatus.Rejected },
   ];
+  finalActions = [
+    { label: 'profileApproval.final.actions.ApproveProfile', value: 'ApproveProfile' as FinalApprovalAction },
+    { label: 'profileApproval.final.actions.NeedsCorrection', value: 'NeedsCorrection' as FinalApprovalAction },
+    { label: 'profileApproval.final.actions.RejectProfile', value: 'RejectProfile' as FinalApprovalAction },
+    { label: 'profileApproval.final.actions.BlockProfile', value: 'BlockProfile' as FinalApprovalAction },
+    { label: 'profileApproval.final.actions.ExceptionalApproval', value: 'ExceptionalApproval' as FinalApprovalAction },
+  ];
 
   ngOnInit(): void {
+    const langSub = this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    this.subscriptions.push(langSub);
+
     const sub = combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(([params, query]) => {
       const profileId = params.get('profileId');
       const partial = this.parsePartialFlag(query.get('changes'));
@@ -246,6 +268,83 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       });
   }
 
+  onFinalActionFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.finalAttachment.set(input.files?.[0] ?? null);
+  }
+
+  submitFinalDecision(info: ProfileApprovalDetail): void {
+    const profileId = this.selectedProfileId();
+    if (!profileId) return;
+
+    const action = this.finalAction();
+    if (!action) {
+      this.notifications.error(this.translate.instant('profileApproval.validation.noteRequired'));
+      return;
+    }
+
+    const summary = this.finalSummary().trim();
+    const notes = this.finalNotes().trim();
+    const attachment = this.finalAttachment();
+    const stats = this.progressStats(info);
+    const correctionTargets = this.needsCorrectionTargets(info);
+
+    if (action === 'ApproveProfile' && (stats.pendingSections > 0 || stats.flaggedSections > 0 || stats.pendingItems > 0)) {
+      this.notifications.error(this.translate.instant('profileApproval.validation.cannotApproveProfile'));
+      return;
+    }
+
+    if ((action === 'RejectProfile' || action === 'ExceptionalApproval') && !attachment) {
+      this.notifications.error(
+        this.translate.instant(
+          action === 'RejectProfile'
+            ? 'profileApproval.validation.rejectRequirements'
+            : 'profileApproval.validation.exceptionRequirements'
+        )
+      );
+      return;
+    }
+
+    if (action === 'NeedsCorrection' && correctionTargets.length === 0) {
+      this.notifications.warn(this.translate.instant('profileApproval.validation.correctionTargetsRequired'));
+      return;
+    }
+
+    if (action !== 'ApproveProfile' && !notes) {
+      this.notifications.error(this.translate.instant('profileApproval.validation.noteRequired'));
+      return;
+    }
+
+    const request: FinalizeProfileApprovalRequest = {
+      action,
+      summary,
+      note: notes,
+      needsCorrectionItems: correctionTargets,
+    };
+
+    if (action === 'RejectProfile') {
+      request.rejectionDocument = attachment;
+    } else if (action === 'ExceptionalApproval') {
+      request.exceptionalFile = attachment;
+    }
+
+    this.submittingFinalAction.set(true);
+    this.api
+      .finalizeProfile(profileId, request)
+      .pipe(finalize(() => this.submittingFinalAction.set(false)))
+      .subscribe({
+        next: () => {
+          this.notifications.success(this.translate.instant('profileApproval.final.actionExecuted'));
+          this.finalAction.set(null);
+          this.finalNotes.set('');
+          this.finalSummary.set('');
+          this.finalAttachment.set(null);
+          this.loadDetail();
+        },
+        error: () => this.notifications.error(this.translate.instant('profileApproval.errors.finalize')),
+      });
+  }
+
   private normalizeSections(incoming: ProfileApprovalDetail): ProfileApprovalDetail {
     const map = new Map<number, ProfileApprovalSection>();
     (incoming.sections ?? []).forEach(s => map.set(s.section, s));
@@ -351,6 +450,33 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     const idx = info.sections.findIndex(s => s.section === this.activeSection());
     if (idx < 0 || idx >= info.sections.length - 1) return;
     this.activeSection.set(info.sections[idx + 1].section);
+  }
+
+  private needsCorrectionTargets(info: ProfileApprovalDetail): string[] {
+    const ids = new Set<string>();
+    const sections = this.sortSections(info.sections);
+
+    sections.forEach(sec => {
+      if (sec.sectionReview && this.isCorrectionStatus(sec.sectionReview.status)) {
+        ids.add(sec.sectionReview.reviewItemId);
+      }
+
+      (sec.items ?? []).forEach(item => {
+        if (this.isCorrectionStatus(item.status)) {
+          ids.add(item.reviewItemId);
+        }
+      });
+    });
+
+    return Array.from(ids);
+  }
+
+  private isCorrectionStatus(status?: ReviewStatus | null): boolean {
+    return (
+      status === ReviewStatus.ChangesRequested ||
+      status === ReviewStatus.NeedsCorrection ||
+      status === ReviewStatus.Rejected
+    );
   }
 
   progressStats(info: ProfileApprovalDetail): {

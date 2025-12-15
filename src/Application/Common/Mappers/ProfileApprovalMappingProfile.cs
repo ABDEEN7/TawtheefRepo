@@ -1,5 +1,9 @@
 using Mapster;
+using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
+using Tawtheef.Domain.Entities;
+using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -28,6 +32,71 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.Version, src => src.Version)
             .Map(dest => dest.ApprovedAtVersion, src => src.ApprovedAtVersion)
             .Map(dest => dest.ReviewedAtUtc, src => src.ReviewedAtUtc);
+
+        config.NewConfig<FinalizeProfileApprovalDto, FinalizeProfileApprovalCommand>();
+
+        config.NewConfig<Resource, FileRefDto>()
+            .Map(dest => dest.ResourceId, src => src.Id)
+            .Map(dest => dest.FileName, src => src.Name)
+            .Map(dest => dest.Url, src => ResolveResourceUrl(src.Url));
+
+        config.NewConfig<Resource?, FileRefDto?>()
+            .MapWith(src => src == null
+                ? null
+                : new FileRefDto
+                {
+                    ResourceId = src.Id,
+                    FileName = src.Name,
+                    Url = ResolveResourceUrl(src.Url)
+                });
+
+        config.NewConfig<ProfileAdditionalAttachment, AdditionalAttachmentDto>()
+            .Map(dest => dest.Title, src => src.FileName)
+            .Map(dest => dest.File, src => src.Attachment);
+
+        config.NewConfig<Qualification, QualificationDto>()
+            .Map(dest => dest.GradCountryId, src => src.CountryId)
+            .Map(dest => dest.GradCountry, src => src.Country)
+            .Map(dest => dest.Gpa, src => src.GPA)
+            .Map(dest => dest.GradeId, src => src.RatingId)
+            .Map(dest => dest.Grade, src => src.Rating)
+            .Map(dest => dest.Attachment, src => src.Certificate);
+
+        config.NewConfig<Experience, ExperienceDto>()
+            .Map(dest => dest.Attachment, src => src.Certificate)
+            .Map(dest => dest.QualificationId, src => src.QualificationId)
+            .Map(dest => dest.DegreeName, src => src.Qualification == null ? null : src.Qualification.Degree)
+            .Map(dest => dest.MajorName, src => src.Qualification == null ? null : src.Qualification.Major)
+            .Map(dest => dest.UniversityName, src => src.Qualification == null ? null : src.Qualification.University)
+            .Map(dest => dest.SpecializationRelation, src => src.SpecializationRelation)
+            .Map(dest => dest.IsCurrent, src => src.EndDate == null);
+
+        config.NewConfig<TrainingCourse, TrainingCourseDto>()
+            .Map(dest => dest.Attachment, src => src.Certificate)
+            .Map(dest => dest.SpecializationRelation, src => src.SpecializationRelation);
+
+        config.NewConfig<Achievement, AchievementDto>()
+            .Map(dest => dest.Attachment, src => src.Attachment)
+            .Map(dest => dest.RelatedToSpecialization, src => src.RelatedToSpecialization)
+            .Map(dest => dest.AchievementType, src => src.AchievementType);
+
+        config.NewConfig<ProfileSkill, SkillDto>()
+            .Map(dest => dest.Skill, src => src.Skill)
+            .Map(dest => dest.Level, src => src.Level);
+
+        config.NewConfig<ProfileLanguage, LanguageDto>()
+            .Map(dest => dest.Language, src => src.Language)
+            .Map(dest => dest.SpeakingLevel, src => src.SpeakingLevel)
+            .Map(dest => dest.WritingLevel, src => src.WritingLevel)
+            .Map(dest => dest.ReadingLevel, src => src.ReadingLevel);
+
+        config.NewConfig<ResidenceAddress, ResidenceAddressDto>()
+            .Map(dest => dest.ResidenceAddressCertificateId, src => src.CertificateId)
+            .Map(dest => dest.ResidenceAddressCertificate, src => src.Certificate)
+            .Map(dest => dest.ZoneNo, src => src.ZoneNo)
+            .Map(dest => dest.StreetNo, src => src.StreetNo)
+            .Map(dest => dest.BuildingNo, src => src.BuildingNo)
+            .Map(dest => dest.UnitNo, src => src.UnitNo);
 
         config.NewConfig<UserProfile, BasicInformationSnapshot>()
             .Map(dest => dest.CandidateType, src => src.CandidateType)
@@ -76,5 +145,16 @@ public sealed class ProfileApprovalMappingProfile : IRegister
                  src => src.AdditionalAttachments == null
                      ? null
                      : src.AdditionalAttachments.Where(a => a.Attachment != null));
+    }
+
+    private static string ResolveResourceUrl(string? url)
+    {
+        var ctx = MapContext.Current;
+        if (ctx?.Parameters is null) return url ?? string.Empty;
+
+        if (!ctx.Parameters.TryGetValue(ResourceMapper.MediaKey, out var obj) || obj is not IMediaUrlResolver media)
+            return url ?? string.Empty;
+
+        return media.ResolveAbsolute(url);
     }
 }

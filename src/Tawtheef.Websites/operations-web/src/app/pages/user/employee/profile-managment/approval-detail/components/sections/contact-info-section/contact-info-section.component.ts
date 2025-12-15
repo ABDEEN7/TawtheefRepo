@@ -17,6 +17,18 @@ export class ContactInfoSectionComponent {
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Output() viewFile = new EventEmitter<string>();
 
+  contactFields(): { label: string; value: unknown }[] {
+    const fields = [
+      { label: 'profileApproval.detail.snapshot.email', value: this.profile.basicInformation.email },
+      { label: 'profileApproval.detail.snapshot.phoneNumber', value: this.profile.basicInformation.phoneNumber },
+      { label: 'profileApproval.detail.snapshot.interviewLocation', value: this.profile.basicInformation.interviewLocation },
+      { label: 'profileApproval.detail.snapshot.residenceCountry', value: this.profile.basicInformation.residenceCountry },
+      { label: 'profileApproval.detail.snapshot.address', value: this.profile.basicInformation.address },
+    ];
+
+    return fields.filter(field => this.hasValue(field.value));
+  }
+
   hasValue(value: unknown): boolean {
     return value !== null && value !== undefined && `${value}`.toString().trim() !== '';
   }
