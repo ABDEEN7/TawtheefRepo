@@ -13,4 +13,5 @@ public class ApplicationRole : IdentityRole<Guid>
     public string? DescriptionAr { get; set; }
     [MaxLength(150)]
     public string? DescriptionEn { get; set; }
+    public bool IsSystemRole { get; set; } = false;
 }

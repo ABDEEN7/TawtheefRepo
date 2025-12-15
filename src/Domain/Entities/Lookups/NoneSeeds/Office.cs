@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -8,6 +9,7 @@ public class Office : LookupBase
 {
     public Guid CountryId { get; set; }
     public Country? Country { get; set; }
-    
+    public List<OfficeSupportedCountry> SupportedCountries { get; set; } = [];
+    public List<OfficeUser>? OfficeUsers { get; set; }
     public required string Code { get; set; }
 }
