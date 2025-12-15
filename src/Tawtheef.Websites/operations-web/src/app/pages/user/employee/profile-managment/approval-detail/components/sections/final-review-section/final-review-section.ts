@@ -7,7 +7,7 @@ import {
   ProfileApprovalSection,
   ReviewStatus
 } from '../../../../approval-list/models/profile-approval.models';
-import {MessageService} from 'primeng/api';
+import {NotificationService} from '../../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-profile-approval-final-review-section',
@@ -22,7 +22,7 @@ import {MessageService} from 'primeng/api';
 })
 export class FinalReviewSection {
   translate = inject(TranslateService);
-  messages = inject(MessageService);
+  messages = inject(NotificationService);
 
   @Input({ required: true })
   info!: ProfileApprovalDetail;
@@ -101,10 +101,8 @@ export class FinalReviewSection {
     return sections.filter(sec => sec.sectionReview != null);
   }
   sendApprovalReport(): void {
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('profileApproval.finalReview.reportSentTitle'),
-      detail: this.translate.instant('profileApproval.finalReview.reportSentMessage'),
-    });
+    this.messages.success(
+      `${this.translate.instant('profileApproval.finalReview.reportSentTitle')}: ${this.translate.instant('profileApproval.finalReview.reportSentMessage')}`
+    );
   }
 }

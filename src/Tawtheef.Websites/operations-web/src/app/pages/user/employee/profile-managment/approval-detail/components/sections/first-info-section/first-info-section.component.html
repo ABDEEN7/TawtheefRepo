@@ -13,25 +13,17 @@
         </div>
       </ng-template>
 
-      <div class="info-grid">
-        <div
-          class="info-chip"
-          *ngFor="let field of [
-            { label: 'profileApproval.detail.snapshot.candidateType', value: profile.basicInformation.candidateType },
-            { label: 'profileApproval.detail.snapshot.targetEntity', value: profile.basicInformation.targetEntity },
-            { label: 'profileApproval.detail.snapshot.office', value: profile.basicInformation.office },
-          ]"
-        >
+      <div class="info-grid" *ngIf="firstInfoFields().length > 0; else emptyFirstInfo">
+        <div class="info-chip" *ngFor="let field of firstInfoFields()">
           <div class="chip-label">{{ field.label | translate }}</div>
-          <div class="chip-value" [ngClass]="{ 'chip-missing': !hasValue(field.value) }">
-            <i
-              class="pi me-2"
-              [ngClass]="hasValue(field.value) ? 'pi-check-circle text-success' : 'pi-exclamation-triangle text-warning'"
-            ></i>
-            <span>{{ hasValue(field.value) ? field.value : ('profileApproval.detail.snapshot.missing' | translate) }}</span>
+          <div class="chip-value">
+            <span>{{ field.value }}</span>
           </div>
         </div>
       </div>
+      <ng-template #emptyFirstInfo>
+        <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+      </ng-template>
     </p-card>
   </div>
 

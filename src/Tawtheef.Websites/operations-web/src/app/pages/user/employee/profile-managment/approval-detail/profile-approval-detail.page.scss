@@ -190,6 +190,22 @@
   }
 }
 
+.final-action-card {
+  border: 1px dashed #e7d1d7;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff7fa;
+
+  .lbl {
+    font-weight: 700;
+    color: #374151;
+  }
+
+  .req {
+    color: #b42336;
+  }
+}
+
 :host ::ng-deep .section-panel {
   border: 1px solid #f1e7ea;
   border-radius: 16px;

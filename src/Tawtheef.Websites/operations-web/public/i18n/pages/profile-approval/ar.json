@@ -109,13 +109,19 @@
   "profileApproval.detail.experiences.country": "الدولة",
   "profileApproval.detail.experiences.period": "تاريخ الخبرة",
   "profileApproval.detail.experiences.qualification": "المؤهل المرتبط",
+  "profileApproval.detail.experiences.relation": "مدى ارتباط الخبرة بالتخصص",
   "profileApproval.detail.experiences.attachment": "المرفق",
   "profileApproval.detail.experiences.tasks": "المهام",
 
   "profileApproval.detail.training.country": "الدولة",
   "profileApproval.detail.training.period": "تاريخ الدورة",
+  "profileApproval.detail.training.relation": "مدى ارتباط الدورة بالتخصص",
   "profileApproval.detail.training.attachment": "المرفق",
   "profileApproval.detail.training.description": "الوصف",
+
+  "profileApproval.detail.specializationRelation.Strong": "مرتبط بقوة بالتخصص",
+  "profileApproval.detail.specializationRelation.Medium": "مرتبط بشكل متوسط",
+  "profileApproval.detail.specializationRelation.Weak": "مرتبط بشكل ضعيف",
 
   "profileApproval.detail.certificates.issueDate": "تاريخ الإصدار",
   "profileApproval.detail.certificates.countryIssue": "بلد الإصدار",

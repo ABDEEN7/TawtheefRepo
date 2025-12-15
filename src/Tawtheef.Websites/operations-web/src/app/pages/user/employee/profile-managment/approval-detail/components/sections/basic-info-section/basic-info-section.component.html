@@ -13,46 +13,17 @@
         </div>
       </ng-template>
 
-      <div class="info-grid">
-        <div
-          class="info-chip"
-          *ngFor="let field of [
-            { label: 'profileApproval.detail.snapshot.nationalNumber', value: profile.basicInformation.nationalNumber },
-            { label: 'profileApproval.detail.snapshot.idExpiry', value: profile.basicInformation.qidExpiry },
-            { label: 'profileApproval.detail.snapshot.fullNameAr', value: profile.basicInformation.fullNameAr },
-            { label: 'profileApproval.detail.snapshot.fullNameEn', value: profile.basicInformation.fullNameEn },
-            { label: 'profileApproval.detail.snapshot.birthDate', value: profile.basicInformation.birthDate },
-            { label: 'profileApproval.detail.snapshot.gender', value: profile.basicInformation.gender },
-            { label: 'profileApproval.detail.snapshot.nationality', value: profile.basicInformation.nationality },
-            { label: 'profileApproval.detail.snapshot.religion', value: profile.basicInformation.religion },
-            { label: 'profileApproval.detail.snapshot.maritalStatus', value: profile.basicInformation.maritalStatus },
-            { label: 'profileApproval.detail.snapshot.childrenCount', value: profile.basicInformation.childrenCount },
-            {
-              label: 'profileApproval.detail.snapshot.disability',
-              value:
-                profile.basicInformation.hasDisability === undefined
-                  ? null
-                  : profile.basicInformation.hasDisability
-                  ? ('profileApproval.detail.snapshot.disabilityYes' | translate)
-                  : ('profileApproval.detail.snapshot.disabilityNo' | translate),
-            },
-            { label: 'profileApproval.detail.snapshot.disabilityDetails', value: profile.basicInformation.disabilityDetails },
-            { label: 'profileApproval.detail.snapshot.sponsorType', value: profile.basicInformation.sponsorType },
-            { label: 'profileApproval.detail.snapshot.sponsorEmployerName', value: profile.basicInformation.sponsorEmployerName },
-            { label: 'profileApproval.detail.snapshot.sponsorEmployerNumber', value: profile.basicInformation.sponsorEmployerNumber },
-            { label: 'profileApproval.detail.snapshot.sponsorQidExpiry', value: profile.basicInformation.sponsorQidExpiry },
-          ]"
-        >
+      <div class="info-grid" *ngIf="basicFields().length > 0; else emptyFields">
+        <div class="info-chip" *ngFor="let field of basicFields()">
           <div class="chip-label">{{ field.label | translate }}</div>
-          <div class="chip-value" [ngClass]="{ 'chip-missing': !hasValue(field.value) }">
-            <i
-              class="pi me-2"
-              [ngClass]="hasValue(field.value) ? 'pi-check-circle text-success' : 'pi-exclamation-triangle text-warning'"
-            ></i>
-            <span>{{ hasValue(field.value) ? field.value : ('profileApproval.detail.snapshot.missing' | translate) }}</span>
+          <div class="chip-value">
+            <span>{{ field.value }}</span>
           </div>
         </div>
       </div>
+      <ng-template #emptyFields>
+        <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+      </ng-template>
     </p-card>
   </div>
 

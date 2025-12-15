@@ -17,6 +17,16 @@ export class FirstInfoSectionComponent {
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Output() viewFile = new EventEmitter<string>();
 
+  firstInfoFields(): { label: string; value: unknown }[] {
+    const fields = [
+      { label: 'profileApproval.detail.snapshot.candidateType', value: this.profile.basicInformation.candidateType },
+      { label: 'profileApproval.detail.snapshot.targetEntity', value: this.profile.basicInformation.targetEntity },
+      { label: 'profileApproval.detail.snapshot.office', value: this.profile.basicInformation.office },
+    ];
+
+    return fields.filter(field => this.hasValue(field.value));
+  }
+
   hasValue(value: unknown): boolean {
     return value !== null && value !== undefined && `${value}`.toString().trim() !== '';
   }

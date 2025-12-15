@@ -17,6 +17,12 @@ export enum ReviewTargetType {
   Attachment = 4,
 }
 
+export enum SpecializationRelationLevel {
+  Strong = 1,
+  Medium = 2,
+  Weak = 3,
+}
+
 export interface FileRefDto {
   resourceId: string;
   fileName: string;
@@ -221,6 +227,7 @@ export interface TrainingCourseDto {
   startDate?: string | null;
   endDate?: string | null;
   description?: string | null;
+  specializationRelation?: SpecializationRelationLevel | null;
   attachment?: FileRefDto | null;
 }
 export interface ExperienceDto {
@@ -235,6 +242,7 @@ export interface ExperienceDto {
   isCurrent: boolean;
   qualificationId?: string | null;
   qualification?: QualificationDto | null;
+  specializationRelation?: SpecializationRelationLevel | null;
   attachment?: FileRefDto | null;
 }
 export interface QualificationDto {

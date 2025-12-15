@@ -1,5 +1,3 @@
-using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
-
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 
 public record ProfileApprovalDataDto

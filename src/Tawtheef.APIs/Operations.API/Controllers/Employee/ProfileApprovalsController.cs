@@ -1,18 +1,20 @@
 using System.Security.Claims;
 using FluentResults;
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Commands;
+using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Services.Authorization;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
@@ -90,16 +92,20 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
-        var cmd = new FinalizeProfileApprovalCommand(
-            UserId.Value,
-            userProfileId,
-            request.Action,
-            request.Notes,
-            request.Summary,
-            request.NeedsCorrectionItems ?? Array.Empty<Guid>(),
-            request.RejectionDocument,
-            request.ExceptionalFile,
-            HasManagerOverride);
+        var dto = new FinalizeProfileApprovalDto
+        {
+            OfficerId = UserId.Value,
+            UserProfileId = userProfileId,
+            Action = request.Action,
+            Notes = request.Notes,
+            Summary = request.Summary,
+            NeedsCorrectionItems = request.NeedsCorrectionItems ?? Array.Empty<Guid>(),
+            RejectionDocument = request.RejectionDocument,
+            ExceptionalFile = request.ExceptionalFile,
+            HasManagerOverride = HasManagerOverride
+        };
+
+        var cmd = dto.Adapt<FinalizeProfileApprovalCommand>();
 
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();

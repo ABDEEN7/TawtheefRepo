@@ -50,6 +50,10 @@
           <div class="fw-semibold">{{ e.qualification?.name || e.qualificationName }}</div>
         </div>
         <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.experiences.relation' | translate }}</div>
+          <div class="fw-semibold">{{ relationLabel(e.specializationRelation) }}</div>
+        </div>
+        <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.experiences.attachment' | translate }}</div>
           <div class="fw-semibold d-flex align-items-center gap-2">
             <p-tag *ngIf="e.attachment?.fileName" severity="info" [value]="e.attachment.fileName"></p-tag>

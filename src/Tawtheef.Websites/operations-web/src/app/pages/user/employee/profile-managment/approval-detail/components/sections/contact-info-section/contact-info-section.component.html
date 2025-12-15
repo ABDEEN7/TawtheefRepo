@@ -13,27 +13,17 @@
         </div>
       </ng-template>
 
-      <div class="info-grid">
-        <div
-          class="info-chip"
-          *ngFor="let field of [
-            { label: 'profileApproval.detail.snapshot.email', value: profile.basicInformation.email },
-            { label: 'profileApproval.detail.snapshot.phoneNumber', value: profile.basicInformation.phoneNumber },
-            { label: 'profileApproval.detail.snapshot.interviewLocation', value: profile.basicInformation.interviewLocation },
-            { label: 'profileApproval.detail.snapshot.residenceCountry', value: profile.basicInformation.residenceCountry },
-            { label: 'profileApproval.detail.snapshot.address', value: profile.basicInformation.address },
-          ]"
-        >
+      <div class="info-grid" *ngIf="contactFields().length > 0; else emptyContact">
+        <div class="info-chip" *ngFor="let field of contactFields()">
           <div class="chip-label">{{ field.label | translate }}</div>
-          <div class="chip-value" [ngClass]="{ 'chip-missing': !hasValue(field.value) }">
-            <i
-              class="pi me-2"
-              [ngClass]="hasValue(field.value) ? 'pi-check-circle text-success' : 'pi-exclamation-triangle text-warning'"
-            ></i>
-            <span>{{ hasValue(field.value) ? field.value : ('profileApproval.detail.snapshot.missing' | translate) }}</span>
+          <div class="chip-value">
+            <span>{{ field.value }}</span>
           </div>
         </div>
       </div>
+      <ng-template #emptyContact>
+        <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+      </ng-template>
     </p-card>
   </div>
 
