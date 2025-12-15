@@ -48,6 +48,17 @@ import {TextareaModule} from 'primeng/textarea';
     StepAttachmentsComponent,
     StepReviewComponent
   ],
+  exports: [
+    StepFirstInfoComponent,
+    StepPersonalComponent,
+    StepContactComponent,
+    StepDegreeComponent,
+    StepExperienceComponent,
+    StepAchievementsComponent,
+    StepSkillsComponent,
+    StepLanguagesComponent,
+    StepAttachmentsComponent,
+  ],
   providers:[
     DialogService
   ],

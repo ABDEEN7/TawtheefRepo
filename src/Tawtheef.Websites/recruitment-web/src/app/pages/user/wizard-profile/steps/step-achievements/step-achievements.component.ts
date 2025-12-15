@@ -2,12 +2,12 @@ import {Component, EventEmitter, OnInit, Output, inject} from '@angular/core';
 import {DataService} from '../../services/data.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {TranslateService} from '@ngx-translate/core';
-import {MessageService} from 'primeng/api';
 import {ProfileService} from '../../services/profile.service';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
 import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
 import {Achievement} from '../../models/achievement.model';
 import {AchievementModal, ACHIEVEMENT_DIALOG_LIMITS} from './dialogs/achievement.modal';
+import {NotificationService} from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-step-achievements',
@@ -22,7 +22,7 @@ export class StepAchievementsComponent implements OnInit {
   ds = inject(DataService);
   dialog = inject(DialogService);
   translate = inject(TranslateService);
-  messageService = inject(MessageService);
+  notify = inject(NotificationService);
   profile = inject(ProfileService);
   fileUtils = inject(FileUtilsService);
 
@@ -79,12 +79,9 @@ export class StepAchievementsComponent implements OnInit {
         next: () => this.ds.delAchievement(index),
         error: err => {
           console.error(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.errorTitle'),
-            detail: this.translate.instant('wizard.achievements.deleteError'),
-            life: 5000,
-          });
+          this.notify.error(
+            `${this.translate.instant('wizard.errorTitle')}: ${this.translate.instant('wizard.achievements.deleteError')}`,
+          );
         },
       });
     } else {
@@ -108,12 +105,11 @@ export class StepAchievementsComponent implements OnInit {
 
   onNext() {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
-        life: 5000,
-      });
+      this.notify.error(
+        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step.errors
+          .map(e => `* ${this.translate.instant(e.i18nKey)}`)
+          .join('\n')}`,
+      );
       return;
     }
 
@@ -126,12 +122,9 @@ export class StepAchievementsComponent implements OnInit {
     }
 
     if (!achievements.length) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.achievements.validation.noRows'),
-        life: 5000,
-      });
+      this.notify.error(
+        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.translate.instant('wizard.achievements.validation.noRows')}`,
+      );
       return;
     }
 
@@ -145,12 +138,9 @@ export class StepAchievementsComponent implements OnInit {
       error: err => {
         console.error(err);
         this.saving = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translate.instant('wizard.errorTitle'),
-          detail: this.translate.instant('wizard.achievements.saveError'),
-          life: 5000,
-        });
+        this.notify.error(
+          `${this.translate.instant('wizard.errorTitle')}: ${this.translate.instant('wizard.achievements.saveError')}`,
+        );
       },
     });
   }

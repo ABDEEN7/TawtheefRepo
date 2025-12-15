@@ -11,6 +11,29 @@
   <div class="alert" *ngIf="hasPending()">{{ 'profileOverview.pendingWarning' | translate }}</div>
   <div class="alert soft" *ngIf="!hasPending()">{{ 'profileOverview.activeSnapshot' | translate }}</div>
 
+  <div class="action-bar card" *ngIf="requestProgress() as progress">
+    <div>
+      <h4>{{ 'profileOverview.actions.title' | translate }}</h4>
+      <p class="muted">{{ 'profileOverview.actions.subtitle' | translate }}</p>
+      <p class="hint">{{ 'profileOverview.actions.restriction' | translate }}</p>
+    </div>
+    <div class="actions">
+      <button class="btn btn-outline-primary" type="button" (click)="openEditWizard(10)">
+        {{ 'profileOverview.actions.viewProfile' | translate }}
+      </button>
+      <button class="btn btn-outline-secondary" type="button" (click)="openEditWizard(1)">
+        {{ 'profileOverview.actions.editProfile' | translate }}
+      </button>
+      <button
+        class="btn btn-brand"
+        type="button"
+        *ngIf="progress.requiresUserAction || hasPending()"
+        (click)="openEditWizard()">
+        {{ 'profileOverview.actions.respond' | translate }}
+      </button>
+    </div>
+  </div>
+
   <div class="status-grid" *ngIf="overviewStatus() as status">
     <article class="status-card">
       <div class="status-card__head">
@@ -151,6 +174,10 @@
           <p class="muted">{{ 'profileOverview.timeline.subtitle' | translate }}</p>
         </div>
         <ul class="timeline">
+          <li *ngIf="latestRequestStatus() as latestStatus">
+            <span>{{ 'profileOverview.requests.latestStatus' | translate }}</span>
+            <strong>{{ latestStatus | translate }}</strong>
+          </li>
           <li>
             <span>{{ 'profileOverview.timeline.latestVersion' | translate }}</span>
             <strong>#{{ progress.latestVersion || 1 }}</strong>

@@ -5,10 +5,10 @@ import { DegreeModal } from './dialogs/degree.modal/degree.modal';
 import { TranslateService } from '@ngx-translate/core';
 import { createStepValiditySignal } from '../../state/profile-step-validity.signal';
 import { ProfileService } from '../../services/profile.service';
-import { MessageService } from 'primeng/api';
-import {Degree} from '../../models/degree.model';
-import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import { Degree } from '../../models/degree.model';
+import { FileUtilsService } from '../../../../../core/utils/file-utils';
 import { finalize, switchMap } from 'rxjs/operators';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-step-degrees',
@@ -24,7 +24,7 @@ export class StepDegreeComponent implements OnInit {
   dialog = inject(DialogService);
   translate = inject(TranslateService);
   profile = inject(ProfileService);
-  messageService = inject(MessageService);
+  notify = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
 
   savingDegrees = false;
@@ -58,27 +58,21 @@ export class StepDegreeComponent implements OnInit {
   del(i: number) {
     const degree = this.ds.state().degrees[i];
     if (degree?.id && this.ds.state().experiences?.some(exp => exp.qualificationId === degree.id)) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: this.translate.instant('wizard.warningTitle'),
-        detail: this.translate.instant('wizard.degrees.deleteLinkedError'),
-        life: 5000,
-      });
+      this.notify.warn(
+        `${this.translate.instant('wizard.warningTitle')}: ${this.translate.instant('wizard.degrees.deleteLinkedError')}`,
+      );
       return;
     }
-    if(degree.id){
+    if(degree?.id){
       this.profile.deleteEduction(degree.id).subscribe({
         next: () => {
           this.ds.delDegree(i);
         },
         error: err => {
           console.error(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.errorTitle'),
-            detail: this.translate.instant('wizard.degrees.deleteError'),
-            life: 5000,
-          });
+          this.notify.error(
+            `${this.translate.instant('wizard.errorTitle')}: ${this.translate.instant('wizard.degrees.deleteError')}`,
+          );
         },
       });
     } else {
@@ -104,12 +98,11 @@ export class StepDegreeComponent implements OnInit {
   // ====== NEW: submit to API ======
   onNext() {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
-        life: 5000,
-      });
+      this.notify.error(
+        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step.errors
+          .map(e => `* ${this.translate.instant(e.i18nKey)}`)
+          .join('\n')}`,
+      );
       return;
     }
 
@@ -123,12 +116,9 @@ export class StepDegreeComponent implements OnInit {
     }
 
     if (!degrees.length) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.degrees.validation.noRows'),
-        life: 5000,
-      });
+      this.notify.error(
+        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.translate.instant('wizard.degrees.validation.noRows')}`,
+      );
       return;
     }
 
@@ -148,12 +138,9 @@ export class StepDegreeComponent implements OnInit {
         },
         error: err => {
           console.error(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.errorTitle'),
-            detail: this.translate.instant('wizard.degrees.saveError'),
-            life: 5000,
-          });
+          this.notify.error(
+            `${this.translate.instant('wizard.errorTitle')}: ${this.translate.instant('wizard.degrees.saveError')}`,
+          );
         },
       });
   }

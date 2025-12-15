@@ -150,7 +150,7 @@ export class ProfileService {
   // ========== EXPERIENCE ==========
   saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
     const experienceFiles: (File | null | undefined)[] = [];
-    const experiencesDto = (experiences ?? []).filter(e=> !e.id).map(e => {
+    const experiencesDto = (experiences ?? []).filter(e => !e.id).map(e => {
       const fileIndex = e.file ? experienceFiles.push(e.file) - 1 : null;
 
       return {
@@ -167,7 +167,7 @@ export class ProfileService {
       };
     });
     const trainingCourseFiles: (File | null | undefined)[] = [];
-    const coursesDto = (courses ?? []).filter(e=> !e.id).map(c => {
+    const coursesDto = (courses ?? []).filter(e => !e.id).map(c => {
       const fileIndex = c.file ? trainingCourseFiles.push(c.file) - 1 : null;
 
       return {
@@ -213,7 +213,7 @@ export class ProfileService {
 
   saveAchievementsSection(achievements: Achievement[]) {
     const files: (File | null | undefined)[] = [];
-    const payload = (achievements ?? []).filter(e=> !e.id).map(a => {
+    const payload = (achievements ?? []).filter(e => !e.id).map(a => {
       const fileIndex = a.file ? files.push(a.file) - 1 : null;
       return {
         id: a.id ?? null,

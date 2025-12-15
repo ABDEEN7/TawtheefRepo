@@ -75,6 +75,13 @@ export class DataService {
   }
 
   private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email','fullNameAr','fullNameEn','sponsorEmployerName','sponsorEmployerNumber'];
+  lockFields(keys: (keyof ProfileState)[]) {
+    this.locked.update(m => {
+      const copy = { ...m };
+      keys.forEach(k => copy[k] = true);
+      return copy;
+    });
+  }
   prefillFromBootstrap(userData: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...userData }));
     this.lockedPrefillData();
