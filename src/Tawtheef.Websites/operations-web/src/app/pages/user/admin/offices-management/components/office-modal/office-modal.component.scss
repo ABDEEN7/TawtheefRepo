@@ -1,0 +1,53 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  padding: 24px;
+  width: min(720px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.supported-list {
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.supported-list.is-invalid {
+  border-color: #dc3545;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.modal-form .form-control.is-invalid,
+.modal-form .form-select.is-invalid {
+  border-color: #dc3545;
+}
+
+.modal-form .invalid-feedback {
+  font-size: 0.85rem;
+}

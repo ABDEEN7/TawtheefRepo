@@ -1,0 +1,93 @@
+<div
+  class="modal-overlay"
+  i18nNamespace="pages/admin/offices-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div class="modal-card">
+    <h4 class="modal-title">
+      {{ isEditing ? ('OFFICES.EDIT_OFFICE' | translate) : ('OFFICES.ADD_OFFICE' | translate) }}
+    </h4>
+
+    <form (ngSubmit)="submit()" [formGroup]="form" class="modal-form">
+      <div class="form-group mb-3">
+        <label>{{ 'OFFICES.NAME_AR' | translate }}</label>
+        <input class="form-control" formControlName="nameAr" [class.is-invalid]="submitted && form.controls.nameAr.invalid" />
+        @if (submitted && form.controls.nameAr.invalid) {
+          <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+        }
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'OFFICES.NAME_EN' | translate }}</label>
+        <input class="form-control" formControlName="nameEn" [class.is-invalid]="submitted && form.controls.nameEn.invalid" />
+        @if (submitted && form.controls.nameEn.invalid) {
+          <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+        }
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'OFFICES.COUNTRY' | translate }}</label>
+        <select
+          class="form-select"
+          formControlName="countryId"
+          [disabled]="isEditing"
+          [class.is-invalid]="submitted && form.controls.countryId.invalid">
+          <option value="" disabled>{{ 'OFFICES.SELECT_COUNTRY' | translate }}</option>
+          @for (country of countries; track country.id) {
+            <option [value]="country.id">{{ localizedCountry(country.nameAr, country.nameEn) }}</option>
+          }
+        </select>
+        @if (submitted && form.controls.countryId.invalid) {
+          <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+        }
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'OFFICES.SUPPORTED_COUNTRIES' | translate }}</label>
+        <div
+          class="supported-list"
+          [class.is-invalid]="submitted && form.controls.supportedCountryIds.invalid"
+          role="group">
+          @if (!countries.length) {
+            <div class="text-muted small">{{ 'NO_RECORDS' | translate }}</div>
+          } @else {
+            @for (country of countries; track country.id) {
+              <label class="checkbox-item">
+                <input
+                  type="checkbox"
+                  [checked]="isSupportedSelected(country.id)"
+                  (change)="toggleSupportedCountry(country.id)" />
+                <span>{{ localizedCountry(country.nameAr, country.nameEn) }}</span>
+              </label>
+            }
+          }
+        </div>
+        @if (submitted && form.controls.supportedCountryIds.invalid) {
+          <div class="invalid-feedback d-block">{{ 'OFFICES.SUPPORTED_REQUIRED' | translate }}</div>
+        }
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'OFFICES.ADMIN_EMAIL' | translate }}</label>
+        <input
+          class="form-control"
+          formControlName="adminEmail"
+          [readonly]="isEditing"
+          [class.is-invalid]="submitted && form.controls.adminEmail.invalid" />
+        <small class="text-muted">{{ 'OFFICES.ADD_ADMIN_HINT' | translate }}</small>
+        @if (submitted && form.controls.adminEmail.invalid) {
+          <div class="invalid-feedback d-block">{{ emailError() }}</div>
+        }
+      </div>
+
+      <div class="d-flex justify-content-end mt-4 gap-2">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          {{ 'OFFICES.CANCEL' | translate }}
+        </button>
+
+        <button type="submit" class="btn btn-maroon shadow-sm">
+          {{ 'OFFICES.SAVE' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

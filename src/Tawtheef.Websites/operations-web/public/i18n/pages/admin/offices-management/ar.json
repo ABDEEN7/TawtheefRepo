@@ -1,0 +1,31 @@
+{
+  "OFFICES": {
+    "TITLE": "إدارة المكاتب",
+    "ADD_OFFICE": "إضافة مكتب",
+    "NAME": "اسم المكتب",
+    "NAME_AR": "اسم المكتب (عربي)",
+    "NAME_EN": "اسم المكتب (إنجليزي)",
+    "COUNTRY": "دولة المكتب",
+    "SUPPORTED_COUNTRIES": "الدول المدعومة",
+    "SELECT_COUNTRY": "اختر الدولة",
+    "ADMIN_EMAIL": "بريد مدير المكتب",
+    "ACTIONS": "الإجراءات",
+    "EDIT": "تعديل",
+    "DELETE": "حذف",
+    "CANCEL": "إلغاء",
+    "SAVE": "حفظ",
+    "SAVE_SUCCESS": "تم حفظ المكتب بنجاح",
+    "SAVE_FAILED": "فشل حفظ المكتب",
+    "LOAD_FAILED": "تعذر تحميل المكاتب",
+    "DELETE_CONFIRM": "هل أنت متأكد من حذف المكتب ومديره؟",
+    "DELETE_HEADER": "حذف المكتب",
+    "DELETE_SUCCESS": "تم حذف المكتب بنجاح",
+    "DELETE_FAILED": "تعذر حذف المكتب",
+    "EDIT_OFFICE": "تعديل المكتب",
+    "NO_SUPPORTED": "لا توجد دول مدعومة",
+    "ADD_ADMIN_HINT": "سيتم استخدام اسم \"Office Admin\" تلقائياً",
+    "FIELD_REQUIRED": "هذا الحقل مطلوب.",
+    "INVALID_EMAIL": "يرجى إدخال بريد إلكتروني صالح.",
+    "SUPPORTED_REQUIRED": "اختر دولة مدعومة واحدة على الأقل."
+  }
+}
