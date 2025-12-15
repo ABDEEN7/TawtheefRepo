@@ -209,5 +209,15 @@ public class ErrorsCodes
     public const string DistributionPerEmployeeLimitReached = "DISTRIBUTION_PER_EMPLOYEE_LIMIT_REACHED";
     public const string ProfileNotAssignable = "PROFILE_NOT_ASSIGNABLE";
     #endregion
+
+    #region Offices
+    public const string OfficeNotFound = "OFFICE_NOT_FOUND";
+    public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";
+    public const string OfficeSupportedCountryInvalid = "OFFICE_SUPPORTED_COUNTRY_INVALID";
+    public const string OfficeAdminEmailInvalid = "OFFICE_ADMIN_EMAIL_INVALID";
+    public const string OfficeAdminEmailExists = "OFFICE_ADMIN_EMAIL_EXISTS";
+    public const string OfficeAdminCreationFailed = "OFFICE_ADMIN_CREATION_FAILED";
+    public const string OfficeRoleAssignmentFailed = "OFFICE_ROLE_ASSIGNMENT_FAILED";
+    #endregion
 }
 

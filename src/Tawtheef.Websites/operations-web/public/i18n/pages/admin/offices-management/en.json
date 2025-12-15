@@ -1,0 +1,31 @@
+{
+  "OFFICES": {
+    "TITLE": "Offices Management",
+    "ADD_OFFICE": "Add Office",
+    "NAME": "Office Name",
+    "NAME_AR": "Office Name (Arabic)",
+    "NAME_EN": "Office Name (English)",
+    "COUNTRY": "Office Country",
+    "SUPPORTED_COUNTRIES": "Supported Countries",
+    "SELECT_COUNTRY": "Select a country",
+    "ADMIN_EMAIL": "Office Admin Email",
+    "ACTIONS": "Actions",
+    "EDIT": "Edit",
+    "DELETE": "Delete",
+    "CANCEL": "Cancel",
+    "SAVE": "Save",
+    "SAVE_SUCCESS": "Office saved successfully.",
+    "SAVE_FAILED": "Failed to save office.",
+    "LOAD_FAILED": "Failed to load offices.",
+    "DELETE_CONFIRM": "Are you sure you want to delete this office and its admin?",
+    "DELETE_HEADER": "Delete Office",
+    "DELETE_SUCCESS": "Office deleted successfully.",
+    "DELETE_FAILED": "Failed to delete office.",
+    "EDIT_OFFICE": "Edit Office",
+    "NO_SUPPORTED": "No supported countries",
+    "ADD_ADMIN_HINT": "Admin name will default to Office Admin",
+    "FIELD_REQUIRED": "This field is required.",
+    "INVALID_EMAIL": "Please enter a valid email address.",
+    "SUPPORTED_REQUIRED": "Select at least one supported country."
+  }
+}

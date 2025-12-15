@@ -105,4 +105,12 @@ export class EndpointsService {
     userRoleIds: (id: string) => this.getFullUrl(`/users/${id}/role-ids`),
     blockStatus: (id: string) => this.getFullUrl(`/users/${id}/block-status`)
   };
+
+  offices = {
+    listOffices: this.getFullUrl('/offices/list-offices'),
+    countries: this.getFullUrl('/offices/lookups/countries'),
+    createOffice: this.getFullUrl('/offices/create-office'),
+    updateOffice: (id: string) => this.getFullUrl(`/offices/update-office/${id}`),
+    deleteOffice: (id: string) => this.getFullUrl(`/offices/delete-office/${id}`)
+  };
 }
