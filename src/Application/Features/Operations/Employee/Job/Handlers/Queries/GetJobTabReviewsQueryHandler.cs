@@ -13,7 +13,7 @@ public class GetJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobTabRevi
 {
     public async Task<IResult<List<JobTabReviewNoteResponseDto>>> Handle(GetJobTabReviewsQuery request, CancellationToken cancellationToken)
     {
-        var result = await jobTabReviewRepository.GetByIdWithDetailsAsync(request.jobId);
+        var result = await jobTabReviewRepository.GetByIdWithDetailsAsync(request.JobId);
 
         if (result.IsFailed)
             return Result.Fail<List<JobTabReviewNoteResponseDto>>(result.Errors);

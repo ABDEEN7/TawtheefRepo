@@ -15,7 +15,7 @@ public class GetLatestJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobT
 {
     public async Task<IResult<List<JobTabReviewNoteResponseDto>>> Handle(GetLatestJobTabReviewsQuery request, CancellationToken cancellationToken)
     {
-        var result = await jobTabReviewRepository.GetLastReviewCycleAsync(request.jobId);
+        var result = await jobTabReviewRepository.GetLastReviewCycleAsync(request.JobId);
 
         if (result.IsFailed)
             return Result.Fail<List<JobTabReviewNoteResponseDto>>(result.Errors);
