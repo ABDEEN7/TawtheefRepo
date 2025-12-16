@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
 import { JobTabStatus } from '../../../enums/job-tab-status';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-attachment-step',
@@ -74,7 +75,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     });
   }
   
-  if (note?.tabStatus !== JobTabStatus.Returned) {
+  if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
     this.form.disable();
   }
 }

@@ -44,13 +44,13 @@ public static class JobBusinessRules
         int minAge, int maxAge, int systemMinAge, int systemMaxAge)
     {
         if (minAge < systemMinAge)
-            return (false, JobValidationMessages.MIN_AGE_SYSTEM_LIMIT);
+            return (false, JobMessages.MIN_AGE_SYSTEM_LIMIT);
 
         if (maxAge > systemMaxAge)
-            return (false, JobValidationMessages.MAX_AGE_SYSTEM_LIMIT);
+            return (false, JobMessages.MAX_AGE_SYSTEM_LIMIT);
 
         if (minAge >= maxAge)
-            return (false, JobValidationMessages.AGE_RANGE_INVALID);
+            return (false, JobMessages.AGE_RANGE_INVALID);
 
         return (true, string.Empty);
     }

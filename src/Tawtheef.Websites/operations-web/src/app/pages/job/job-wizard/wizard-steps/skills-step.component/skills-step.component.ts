@@ -8,6 +8,7 @@ import { JobLookupService } from '../../../services/job-lookup.service';
 import { GUID } from '../../../../../shared/types/guid.type';
 import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
 import { JobTabStatus } from '../../../enums/job-tab-status';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-skills-step',
@@ -77,7 +78,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
       });
     }
 
-    if (note?.tabStatus !== JobTabStatus.Returned) {
+    if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
       this.form.disable();
     }
   }

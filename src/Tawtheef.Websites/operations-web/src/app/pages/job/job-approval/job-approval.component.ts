@@ -14,6 +14,7 @@ import { routes } from '../../../routes/routes';
 import { JobTabType } from '../enums/job-tab-type';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 import { NotificationService } from '../../../core/services/notification.service';
+import { FileUtilsService } from '../../../core/utils/file-utils';
 
 @Component({
   selector: 'app-job-approval.component',
@@ -31,6 +32,8 @@ export class JobApprovalComponent implements OnInit {
   private lookupsService = inject(JobLookupService);
   private dialogHelperService = inject(DialogHelperService);
   private fb = inject(FormBuilder);
+  protected fileUtils = inject(FileUtilsService);
+  
 
   job!: JobResponse;
   id!: GUID;
@@ -384,5 +387,9 @@ export class JobApprovalComponent implements OnInit {
 
   isAllTabsApproved(): boolean {
     return this.tabNotes.every((t) => t.tabStatus === JobTabStatus.Approved);
+  }
+
+    preview(file: any): void {
+    this.fileUtils.previewUrl(file.url).then(() => {});
   }
 }

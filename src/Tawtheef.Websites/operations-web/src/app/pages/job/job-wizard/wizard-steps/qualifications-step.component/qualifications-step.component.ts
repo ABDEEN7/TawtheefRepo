@@ -9,6 +9,7 @@ import { WizardStepComponent } from "../base/wizard-step.component";
 import { JobDegree } from "../../../models/job-degree.model";
 import { JobTabReviewNoteResponse } from "../../../models/job-tab-review-note-response";
 import { JobTabStatus } from "../../../enums/job-tab-status";
+import { JobStatus } from "../../../../../core/enums/lookups.enum";
 
 @Component({
   selector: 'app-qualifications-step',
@@ -60,7 +61,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       qualificationsDescriptionEn: job.qualificationsDescriptionEn || ''
     }, { emitEvent: false });
 
-    if (note?.tabStatus !== JobTabStatus.Returned) {
+    if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
       this.form.disable();
     }
   }

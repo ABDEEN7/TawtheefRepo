@@ -70,7 +70,7 @@ public class JobRepository(IGenericRepository<Job> repository)
             .FirstOrDefaultAsync(j => j.Id == id);
 
         return job is null
-            ? Result.Fail<Job>(JobValidationMessages.JOB_NOT_FOUND)
+            ? Result.Fail<Job>(JobMessages.JOB_NOT_FOUND)
             : Result.Ok(job);
     }
 

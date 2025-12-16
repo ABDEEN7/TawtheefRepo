@@ -399,56 +399,76 @@
     }
 
     <div class="job-note-card" *ngIf="reviewHistory.length">
+      @if (reviewHistory.length) {
+      <div class="job-note-card">
+        <h3 class="content-title-header">
+          <i class="fa fa-history"></i>
+          {{ 'JOB_APPROVAL.REVIEW_HISTORY' | translate }}
+        </h3>
 
-  <h3 class="content-title-header">
-    <i class="fa fa-history"></i>
-    {{ 'JOB_APPROVAL.REVIEW_HISTORY' | translate }}
-  </h3>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>{{ 'JOB_APPROVAL.TAB' | translate }}</th>
+              <th>{{ 'JOB_APPROVAL.NOTE' | translate }}</th>
+              <th>{{ 'JOB_APPROVAL.STATUS' | translate }}</th>
+              <th>{{ 'JOB_APPROVAL.RESOLVED' | translate }}</th>
+              <th>{{ 'JOB_APPROVAL.ATTACHMENTS' | translate }}</th>
+            </tr>
+          </thead>
 
-  <table class="history-table">
-    <thead>
-      <tr>
-        <th>{{ 'JOB_APPROVAL.TAB' | translate }}</th>
-        <th>{{ 'JOB_APPROVAL.NOTE' | translate }}</th>
-        <th>{{ 'JOB_APPROVAL.STATUS' | translate }}</th>
-        <th>{{ 'JOB_APPROVAL.RESOLVED' | translate }}</th>
-        <th>{{ 'JOB_APPROVAL.ATTACHMENTS' | translate }}</th>
-      </tr>
-    </thead>
+          <tbody>
+            @for (h of reviewHistory; track $index) {
+            <tr>
+              <td>{{ h.tab | translate }}</td>
+              <td>{{ h.note || '—' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="h.tabStatus">
+                  {{ h.tabStatus }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="resolved-badge"
+                  [class.resolved]="h.isResolved"
+                  [class.unresolved]="!h.isResolved"
+                >
+                  {{ h.isResolved ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
+                </span>
+              </td>
+              <td>
+                @if (h.attachments?.length) {
+                <ul class="attachment-list">
+                  @for (att of h.attachments; track $index) {
+                  <li class="attachment-item">
+                    <div class="attachment-info">
+                      <i class="fa fa-paperclip attachment-icon"></i>
+                      <span class="attachment-name" title="{{ att.fileName }}">
+                        {{ att.fileName }}
+                      </span>
+                    </div>
 
-    <tbody>
-      <tr *ngFor="let h of reviewHistory">
-        <td>{{ h.tab | translate }}</td>
-        <td>{{ h.note || '—' }}</td>
-
-        <td>
-          <span class="status-badge" [ngClass]="h.tabStatus">
-            {{ h.tabStatus }}
-          </span>
-        </td>
-
-        <td>
-          <span
-            class="resolved-badge"
-            [class.resolved]="h.isResolved"
-            [class.unresolved]="!h.isResolved"
-          >
-            {{ h.isResolved ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
-          </span>
-        </td>
-
-        <td>
-          <ul *ngIf="h.attachments?.length">
-            <li *ngFor="let att of h.attachments">
-              {{ att.fileName }}
-            </li>
-          </ul>
-          <span *ngIf="!h.attachments?.length">—</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-</div>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary attachment-btn"
+                      (click)="preview(att)"
+                      title="Preview"
+                    >
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </li>
+                  }
+                </ul>
+                } @else {
+                <span>—</span>
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
   </div>
 </div>

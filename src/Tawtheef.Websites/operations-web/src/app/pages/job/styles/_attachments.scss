@@ -236,3 +236,41 @@
     }
   }
 }
+.attachment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.attachment-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.attachment-icon {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.attachment-name {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+}
+
+.attachment-btn {
+  padding: 2px 6px;
+  line-height: 1;
+}

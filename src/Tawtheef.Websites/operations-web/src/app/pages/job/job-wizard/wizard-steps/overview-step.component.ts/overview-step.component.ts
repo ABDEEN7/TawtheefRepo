@@ -6,6 +6,7 @@ import { JobLookupService } from '../../../services/job-lookup.service';
 import { JobService } from '../../../services/job.service';
 import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
 import { JobTabStatus } from '../../../enums/job-tab-status';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-overview-step',
@@ -35,7 +36,7 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
     this.jobData = job;
     this.note = note;
     this.loadData();
-    if (note?.tabStatus !== JobTabStatus.Returned) {
+    if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
     this.form.disable();
   }
   }

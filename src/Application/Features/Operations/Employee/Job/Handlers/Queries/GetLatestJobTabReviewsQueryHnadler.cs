@@ -23,7 +23,7 @@ public class GetLatestJobTabReviewsQueryHnadler(IJobTabReviewNoteRepository jobT
         var job = result.Value;
 
         if (job is null)
-            return Result.Fail<List<JobTabReviewNoteResponseDto>>(JobValidationMessages.JOB_NOT_FOUND);
+            return Result.Fail<List<JobTabReviewNoteResponseDto>>(JobMessages.JOB_NOT_FOUND);
 
         using var scope = new MapContextScope();
         scope.Context.Parameters[ResourceMapper.MediaKey] = media;
