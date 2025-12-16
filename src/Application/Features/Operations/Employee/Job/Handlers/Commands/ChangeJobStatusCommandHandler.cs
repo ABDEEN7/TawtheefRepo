@@ -12,7 +12,6 @@ public class ChangeJobStatusCommandHandler(
     IJobRepository jobRepository,
     IJobValidationService validationService,
     IMediator mediator,
-    //INotificationService notificationService,
     IUnitOfWork unitOfWork)
     : IRequestHandler<ChangeJobStatusCommand, IResult<Unit>>
 {
