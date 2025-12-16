@@ -10,7 +10,7 @@ using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
-public class GetLatestJobTabReviewsQueryHnadler(IJobTabReviewNoteRepository jobTabReviewRepository,IMediaUrlResolver media, IMapper mapper)
+public class GetLatestJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobTabReviewRepository,IMediaUrlResolver media, IMapper mapper)
     : IRequestHandler<GetLatestJobTabReviewsQuery, IResult<List<JobTabReviewNoteResponseDto>>>
 {
     public async Task<IResult<List<JobTabReviewNoteResponseDto>>> Handle(GetLatestJobTabReviewsQuery request, CancellationToken cancellationToken)
