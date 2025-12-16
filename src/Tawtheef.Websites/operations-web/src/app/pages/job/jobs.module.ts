@@ -34,7 +34,7 @@ import { BenefitsStepComponent } from './job-wizard/wizard-steps/benefits-step.c
 import { Toast } from "primeng/toast";
 import { JobApprovalComponent } from './job-approval/job-approval.component';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { DialogHelperService } from '../../core/services/dialog-helper.service';
 import { ReviewNoteComponent } from './job-wizard/review-note/review-note.component';
 
@@ -93,8 +93,7 @@ import { ReviewNoteComponent } from './job-wizard/review-note/review-note.compon
     JobService,
     DialogService,
     ConfirmationService,
-    DialogHelperService,
-    MessageService
+    DialogHelperService
   ]
 })
 export class JobsModule {

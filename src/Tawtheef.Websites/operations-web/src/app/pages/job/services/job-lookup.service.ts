@@ -71,8 +71,6 @@ export class JobLookupService {
         this.loadSubject.next(true);
       },
       error: (err) => {
-        const errorMessage = this.translationService.instant('lookups.load_failed');
-        this.notificationService.error(errorMessage);
         this.loading.set(false);
         this.loadSubject.error(err);
       }
@@ -158,9 +156,7 @@ export class JobLookupService {
       `${this.endpoints.job.lookups.subMajors}?majorId=${majorId}`
     ).subscribe({
       next: (subMajors) => this.subMajors.set(subMajors),
-      error: (err) => {
-        const errorMessage = this.translationService.instant('lookups.sub_majors_load_failed');
-        this.notificationService.error(errorMessage);
+      error: () => {
         this.subMajors.set([]);
       }
     });
@@ -176,9 +172,7 @@ export class JobLookupService {
       `${this.endpoints.job.lookups.skills}?majorId=${majorId}`
     ).subscribe({
       next: (skills) => this.skills.set(skills),
-      error: (err) => {
-        const errorMessage = this.translationService.instant('lookups.skills_load_failed');
-        this.notificationService.error(errorMessage);
+      error: () => {
         this.skills.set([]);
       }
     });
@@ -194,9 +188,7 @@ export class JobLookupService {
       `${this.endpoints.job.lookups.managements}?sectorId=${sectorId}`
     ).subscribe({
       next: (managements) => this.managements.set(managements),
-      error: (err) => {
-        const errorMessage = this.translationService.instant('lookups.managements_load_failed');
-        this.notificationService.error(errorMessage);
+      error: () => {
         this.managements.set([]);
       }
     });
@@ -212,9 +204,7 @@ export class JobLookupService {
       `${this.endpoints.job.lookups.departments}?managementId=${managementId}`
     ).subscribe({
       next: (departments) => this.departments.set(departments),
-      error: (err) => {
-        const errorMessage = this.translationService.instant('lookups.departments_load_failed');
-        this.notificationService.error(errorMessage);
+      error: () => {
         this.departments.set([]);
       }
     });

@@ -124,9 +124,6 @@ export class JobInvitesDetailsComponent implements OnInit {
     this.jobInvitesService.getJobDetails(jobId).subscribe({
       next: (job) => {
         this.job.set(job);
-      },
-      error: (error) => {
-        this.notificationService.error(error);
       }
     });
   }

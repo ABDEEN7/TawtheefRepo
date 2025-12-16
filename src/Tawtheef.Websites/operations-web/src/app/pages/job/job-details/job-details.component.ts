@@ -54,11 +54,7 @@ export class JobDetailsComponent implements OnInit {
       next: (job) => {
         this.job = job;
         this.cdr.detectChanges();
-      },
-      error: () => {
-        this.notificationService.error("JOB_DETAILS.FALID_TO_LOAD");
-        this.router.navigate([routes.employee.JobList]);
-      },
+      }
     });
   }
 

@@ -7,13 +7,13 @@ import { JobLookupService } from '../services/job-lookup.service';
 import { JobResponse } from '../models/job-response-model';
 import { JobStatus } from '../../../core/enums/lookups.enum';
 import { JobTabReviewNote } from '../models/job-tab-review-note';
-import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { JobTabStatus } from '../enums/job-tab-status';
 import { DialogHelperService } from '../../../core/services/dialog-helper.service';
 import { routes } from '../../../routes/routes';
 import { JobTabType } from '../enums/job-tab-type';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-job-approval.component',
@@ -27,7 +27,7 @@ export class JobApprovalComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private transaltionService = inject(TranslateService);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
   private lookupsService = inject(JobLookupService);
   private dialogHelperService = inject(DialogHelperService);
   private fb = inject(FormBuilder);
@@ -99,33 +99,6 @@ export class JobApprovalComponent implements OnInit {
           },
         });
         this.cdr.detectChanges();
-      },
-      error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Not Found',
-          detail: this.transaltionService.instant('JOB_APPROVAL.FALID_TO_LOAD'),
-        });
-        this.router.navigate([routes.employee.JobList]);
-      },
-    });
-  }
-
-  private mergeTabNotes(loadedNotes: any[]): void {
-    loadedNotes.forEach((loadedNote) => {
-      const existingNote = this.tabNotes.find((t) => t.tab === loadedNote.tab);
-      if (existingNote) {
-        existingNote.note = loadedNote.note || '';
-        existingNote.tabStatus = loadedNote.tabStatus || null;
-
-        this.tabAttachments[loadedNote.tab] =
-          loadedNote.attachments?.map((a: any) => ({
-            id: a.id,
-            file: undefined,
-            fileName: a.fileName,
-          })) || [];
-
-        existingNote.reviewAttachments = this.tabAttachments[loadedNote.tab];
       }
     });
   }
@@ -355,10 +328,7 @@ export class JobApprovalComponent implements OnInit {
       next: () => {
         this.handleSuccess();
         this.jobService.changeStatus(this.job.id, newStatusId).subscribe();
-      },
-      error: () => {
-        this.handleError();
-      },
+      }
     });
   }
 
@@ -403,19 +373,9 @@ export class JobApprovalComponent implements OnInit {
 
   private handleSuccess(): void {
     this.router.navigate([routes.employee.JobList]);
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Confirmed',
-      detail: this.transaltionService.instant('JOB_APPROVAL.APPROVED'),
-    });
-  }
-
-  private handleError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: this.transaltionService.instant('JOB_APPROVAL.JOB_NOT_APPROVED'),
-    });
+    this.notificationService.success(
+      this.transaltionService.instant('JOB_APPROVAL.SUBMIT_REVIEW_SUCCESS')
+    );
   }
 
   isReviewComplete(): boolean {

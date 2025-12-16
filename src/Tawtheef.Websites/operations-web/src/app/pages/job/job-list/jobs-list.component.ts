@@ -66,12 +66,6 @@ export class JobListComponent implements OnInit {
       next: (paginatedData) => {
         this.jobs = paginatedData;
         this.paginationMetadata = paginatedData.metadata;
-      },
-      error: (error) => {
-        this.notificationService.error(
-          this.translateService.instant('JOB_LIST_ERRORS_LOAD_JOBS_FAILED')
-        );
-        console.error('Failed to load jobs:', error);
       }
     });
   }
@@ -136,11 +130,6 @@ export class JobListComponent implements OnInit {
               this.translateService.instant('JOB_LIST_MESSAGES_JOB_REJECTED')
             );
             this.loadJobsWithFilters();
-          },
-          error: (error) => {
-            this.notificationService.error(
-              this.translateService.instant('JOB_LIST_ERRORS_REJECT_FAILED')
-            );
           }
         });
       }
@@ -159,11 +148,6 @@ export class JobListComponent implements OnInit {
             this.translateService.instant('JOB_LIST_MESSAGES_JOB_PUBLISHED')
           );
           this.loadJobsWithFilters();
-        },
-        error: (error) => {
-          this.notificationService.error(
-            this.translateService.instant('JOB_LIST_ERRORS_PUBLISH_FAILED')
-          );
         }
       });
     }
@@ -182,11 +166,6 @@ export class JobListComponent implements OnInit {
               this.translateService.instant('JOB_LIST_MESSAGES_JOB_CLOSED')
             );
             this.loadJobsWithFilters();
-          },
-          error: (error) => {
-            this.notificationService.error(
-              this.translateService.instant('JOB_LIST_ERRORS_CLOSE_FAILED')
-            );
           }
         });
       }
@@ -228,11 +207,6 @@ export class JobListComponent implements OnInit {
               this.translateService.instant('JOB_LIST_MESSAGES_JOB_CANCELLED')
             );
             this.loadJobsWithFilters();
-          },
-          error: (error) => {
-            this.notificationService.error(
-              this.translateService.instant('JOB_LIST_ERRORS_CANCEL_FAILED')
-            );
           }
         });
       }
@@ -247,11 +221,6 @@ export class JobListComponent implements OnInit {
             this.translateService.instant('JOB_LIST_MESSAGES_JOB_DELETED')
           );
           this.loadJobsWithFilters();
-        },
-        error: (error) => {
-          this.notificationService.error(
-            this.translateService.instant('JOB_LIST_ERRORS_DELETE_FAILED')
-          );
         }
       });
     }

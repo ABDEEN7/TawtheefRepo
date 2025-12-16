@@ -4,10 +4,10 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
-import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
 import { JobTabStatus } from '../../../enums/job-tab-status';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-conditions-step',
@@ -18,7 +18,7 @@ import { JobTabStatus } from '../../../enums/job-tab-status';
 export class ConditionsStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   protected readonly jobService = inject(JobService);
-  private readonly messageService = inject(MessageService);
+  private readonly notificationService = inject(NotificationService);
   private readonly transaltionService = inject(TranslateService);
   jobData!: Job;
   
@@ -75,11 +75,7 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   const textEn = this.newConditionEn.trim();
 
     if (!textAr || !textEn) {
-    this.messageService.add({
-          severity: 'error',
-          summary: 'No Entered Data',
-          detail: this.transaltionService.instant('JOB_WIZARD.STEPS.No_ENTERED_DATA_ERROR'),
-        });
+    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.NO_ENTERED_DATA_ERROR'));  
     return; 
   }
 
@@ -89,11 +85,7 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   });
   
   if (isDuplicate) {
-    this.messageService.add({
-          severity: 'error',
-          summary: 'duplicate Entry',
-          detail: this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'),
-        });
+    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'));
     return; 
   }
     

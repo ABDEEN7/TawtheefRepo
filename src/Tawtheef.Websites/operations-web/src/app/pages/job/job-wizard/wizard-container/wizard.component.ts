@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { map, Subject, switchMap, takeUntil, throwError } from 'rxjs';
 import { JobService } from '../../services/job.service';
@@ -33,6 +32,7 @@ import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic
 import { routes } from '../../../../routes/routes';
 import { JobTabType } from '../../enums/job-tab-type';
 import { JobTabReviewNoteResponse } from '../../models/job-tab-review-note-response';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-wizard',
@@ -40,14 +40,13 @@ import { JobTabReviewNoteResponse } from '../../models/job-tab-review-note-respo
   templateUrl: './wizard.component.html',
   styleUrls: ['./wizard.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  providers: [MessageService]
 })
 export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
   private translateService = inject(TranslateService);
   lookupsService = inject(JobLookupService);
@@ -172,10 +171,7 @@ private loadJobForWizard(): void {
       switchMap(() => {
         const job = this.jobService.getCurrentJob();
         if (!job) {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED'),
-          });
+          this.notificationService.error(this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED'));
           return  throwError(() => new Error(this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')));
         }
 
@@ -396,36 +392,21 @@ private loadJobForWizard(): void {
     const summary = this.translateService.instant(key);
     const detailText = detail ? this.translateService.instant(detail) : '';
     
-    this.messageService.add({
-      severity: 'success',
-      summary: summary,
-      detail: detailText,
-      life: 5000
-    });
+    this.notificationService.success(summary + (detailText ? ': ' + detailText : ''));
   }
 
   private showErrorMessage(key: string, detail?: string): void {
     const summary = this.translateService.instant(key);
     const detailText = detail ? this.translateService.instant(detail) : '';
     
-    this.messageService.add({
-      severity: 'error',
-      summary: summary,
-      detail: detailText,
-      life: 7000
-    });
+    this.notificationService.error(summary + (detailText ? ': ' + detailText : ''));
   }
 
   private showWarnMessage(key: string, detail?: string): void {
     const summary = this.translateService.instant(key);
     const detailText = detail ? this.translateService.instant(detail) : '';
     
-    this.messageService.add({
-      severity: 'warn',
-      summary: summary,
-      detail: detailText,
-      life: 5000
-    });
+    this.notificationService.warn(summary + (detailText ? ': ' + detailText : ''));
   }
 
   getHeaderTitle(): string {

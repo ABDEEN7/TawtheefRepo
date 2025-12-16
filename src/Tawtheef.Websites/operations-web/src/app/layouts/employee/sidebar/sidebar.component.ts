@@ -25,7 +25,7 @@ export class SidebarComponent implements OnInit {
     { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'assets/img/icons/files.svg', route: routes.employee.profileDistribution },
     { key: 'approve-job', label: 'internal.sidebar.approve-job', icon: 'assets/img/icons/approve.svg', route: routes.employee.JobList },
     { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalProfile },
-    { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: routes.employee.jobCreate },
+    { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: routes.employee.JobList },
     { key: 'transfer', label: 'internal.sidebar.transfer', icon: 'assets/img/icons/transfer.svg', route: routes.employee.nominations }
   ];
 

@@ -158,8 +158,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
         
         this.isLoading = false;
       },
-      error: (err) => {
-        this.notificationService.error(this.translationService.instant('JOB_BASIC_MODAL.ERROR.LOAD_FAILED'));
+      error: () => {
         this.isLoading = false;
         this.ref.close({ success: false });
       }

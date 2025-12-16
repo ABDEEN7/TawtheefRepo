@@ -4,10 +4,10 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
-import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
 import { JobTabStatus } from '../../../enums/job-tab-status';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-attachment-step',
@@ -18,12 +18,11 @@ import { JobTabStatus } from '../../../enums/job-tab-status';
 export class AttachmentStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   protected jobService = inject(JobService);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
   private transaltionService = inject(TranslateService);
   
   jobData!: Job;
-  note: JobTabReviewNoteResponse | null = null;
-
+  note: JobTabReviewNoteResponse | null = null
   newAttachment = {
     titleAr: '',
     titleEn: '',
@@ -88,11 +87,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     const textEn = this.newAttachment.titleEn.trim();
 
     if (!textAr && !textEn) {
-       this.messageService.add({
-          severity: 'error',
-          summary: 'No data entered',
-          detail: this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'),
-        });
+      this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.NO_DATA_ENTERED_ERROR'));
       return;
     }
 
@@ -102,11 +97,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     });
     
     if (isDuplicate) {
-       this.messageService.add({
-          severity: 'error',
-          summary: 'Duplicate Entry',
-          detail: this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'),
-        });
+      this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'));
       return;
     }
 
