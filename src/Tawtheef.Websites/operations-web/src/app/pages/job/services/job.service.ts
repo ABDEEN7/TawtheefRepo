@@ -18,6 +18,7 @@ import { JobStatus } from '../../../core/enums/lookups.enum';
 import { HttpParams } from '@angular/common/http';
 import { JobTabReviewNote } from '../models/job-tab-review-note';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
+import { JobTabStatus } from '../enums/job-tab-status';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,7 @@ export class JobService {
   private currentJob = signal<Job | null>(null);
   private currentJobId: GUID | null = null;
   private jobStatus = signal<string>('draft');
-
+  jobTabStatus = JobTabStatus;
   createNewDraft(): Job {
     const today = new Date();
     const defaultClosingDate = new Date();
@@ -417,5 +418,9 @@ updateTabReview(payload: any) {
 
   getTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
     return this.httpService.get<JobTabReviewNoteResponse[]>(`${this.endpoints.job.jobApproval}/${jobId}`);
+  }
+
+  getLatestTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
+  return this.httpService.get<JobTabReviewNoteResponse[]>(`${this.endpoints.job.jobApproval}/${jobId}/latest`);
   }
 }

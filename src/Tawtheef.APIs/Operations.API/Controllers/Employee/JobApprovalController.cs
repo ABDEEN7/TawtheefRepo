@@ -24,4 +24,10 @@ public class JobApprovalController(IMediator mediator) : ControllerBase
             return result.ToActionResult();
     }
 
+    [HttpGet("{jobId:guid}/latest")]
+    public async Task<IActionResult> GetLatestJobTabReviews(Guid jobId)
+    {
+        var result = await mediator.Send(new GetLatestJobTabReviewsQuery(jobId));
+        return result.ToActionResult();
+    }
 }

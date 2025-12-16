@@ -92,7 +92,7 @@ export class JobApprovalComponent implements OnInit {
       next: (job) => {
         this.job = job;
          this.initializeCurrentTabForm();
-        this.jobService.getTabReviewNotes(job.id).subscribe({
+        this.jobService.getLatestTabReviewNotes(job.id).subscribe({
           next: (tabNotes : JobTabReviewNoteResponse[]) => {
             this.reviewHistory = tabNotes;
             this.cdr.detectChanges();
@@ -173,7 +173,7 @@ export class JobApprovalComponent implements OnInit {
       return {
         id: originalId,
         file: file,
-        fileName: title,
+        fileName: file.name || title,
       };
     });
 
@@ -373,7 +373,7 @@ export class JobApprovalComponent implements OnInit {
       AttachmentsJson: JSON.stringify(
         this.tabAttachments[t.tab]?.map((a, idx) => ({
           id: a.id || null,
-          fileName: a.fileName,
+          fileName: a.fileName ,
           fileIndex: a.file instanceof File ? idx : null,
         })) || []
       ),

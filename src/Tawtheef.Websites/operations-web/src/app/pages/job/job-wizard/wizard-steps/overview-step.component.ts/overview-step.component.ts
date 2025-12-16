@@ -4,6 +4,8 @@ import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { JobLookupService } from '../../../services/job-lookup.service';
 import { JobService } from '../../../services/job.service';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
 
 @Component({
   selector: 'app-overview-step',
@@ -21,6 +23,7 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
     overviewEn: ['', Validators.required],
   });
   jobData!: Job;
+  note: JobTabReviewNoteResponse | null = null;
 
   ngOnInit(): void {
     this.form.valueChanges.subscribe(() => {
@@ -28,10 +31,11 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
     });
   }
 
-  setJobData(data: Job,disable:boolean = false): void {
-    this.jobData = data;
+ setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+    this.jobData = job;
+    this.note = note;
     this.loadData();
-    if (disable) {
+    if (note?.tabStatus !== JobTabStatus.Returned) {
     this.form.disable();
   }
   }

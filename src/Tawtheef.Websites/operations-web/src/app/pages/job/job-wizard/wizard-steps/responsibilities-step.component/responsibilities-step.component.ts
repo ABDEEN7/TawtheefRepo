@@ -6,6 +6,8 @@ import { Job } from '../../../models/job.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
 
 @Component({
   selector: 'app-responsibilities-step',
@@ -27,6 +29,7 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
   newResponsibilityAr = '';
   newResponsibilityEn = '';
   private readonly destroy$ = new Subject<void>();
+  note: JobTabReviewNoteResponse | null = null;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -51,8 +54,9 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
     return this.responsibilitiesArray.at(index) as FormGroup;
   }
 
-  setJobData(job: Job,disable:boolean =false): void {
+ setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
+    this.note = note;
     this.responsibilitiesArray.clear();
     
     if (job.responsibilities?.length) {
@@ -61,7 +65,7 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
       });
     }
 
-    if (disable) {
+    if (note?.tabStatus !== JobTabStatus.Returned) {
       this.form.disable();
     }
   }

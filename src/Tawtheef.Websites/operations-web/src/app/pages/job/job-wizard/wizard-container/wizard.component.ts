@@ -30,9 +30,7 @@ import { BenefitsStepComponent } from '../wizard-steps/benefits-step.component/b
 import { AttachmentStepComponent } from '../wizard-steps/attachment-step.component/attachment-step.component';
 import { ReviewStepComponent } from '../wizard-steps/review-step.component/review-step.component';
 import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic-modal.component';
-import { Job } from '../../models/job.model';
 import { routes } from '../../../../routes/routes';
-import { JobTabStatus } from '../../enums/job-tab-status';
 import { JobTabType } from '../../enums/job-tab-type';
 import { JobTabReviewNoteResponse } from '../../models/job-tab-review-note-response';
 
@@ -57,7 +55,6 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private retryCount = 0;
   private maxRetries = 20;
-  disabledSteps: boolean[] = [];
   
   step = 1;
   isEditMode = false;
@@ -182,7 +179,7 @@ private loadJobForWizard(): void {
           return  throwError(() => new Error(this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')));
         }
 
-        return this.jobService.getTabReviewNotes(this.jobId)
+        return this.jobService.getLatestTabReviewNotes(this.jobId)
           .pipe(
             map((tabNotes: JobTabReviewNoteResponse[]) => ({ job, tabNotes }))
           );
@@ -191,8 +188,6 @@ private loadJobForWizard(): void {
     .subscribe({
       next: ({ job, tabNotes }) => {
         job.tabReviewNotes = tabNotes;
-        this.mapReviewNotesToSteps(job);
-
         if (job.majorId) {
           this.lookupsService.loadSkillsByMajor(job.majorId);
         }
@@ -211,23 +206,6 @@ private loadJobForWizard(): void {
     });
 }
 
-  private mapReviewNotesToSteps(job: Job | null): void {
-  this.disabledSteps = Array(this.total).fill(false);
-
-  if (!job?.tabReviewNotes || job.jobStatus?.backendName !== 'NeedUpdate') {
-    return;
-  }
-
-  job.tabReviewNotes.forEach(note => {
-    if (note.tabStatus === 'Approved') {
-      const stepIndex = this.tabToStepIndex[note.tab];
-
-      if (stepIndex !== undefined) {
-        this.disabledSteps[stepIndex] = true;
-      }
-    }
-  });
-}
 
   private initializeSteps(): void {    
     if (!this.container) {
@@ -255,8 +233,11 @@ private loadJobForWizard(): void {
       this.stepRefs = this.stepClasses.map((stepClass, index) => {
         const componentRef = this.container.createComponent(stepClass);
         
+        const stepTab = this.getTabByStepIndex(index);
+        const stepNotes = stepTab ? currentJob?.tabReviewNotes?.find(note => note.tab === stepTab) ?? null : null;
+
         if (componentRef.instance.setJobData && currentJob) {
-          componentRef.instance.setJobData(currentJob,this.disabledSteps[index]);
+          componentRef.instance.setJobData(currentJob,stepNotes);
         }
         
         const element = componentRef.location.nativeElement as HTMLElement;
@@ -404,6 +385,11 @@ private loadJobForWizard(): void {
     if (confirm(confirmMessage)) {
       this.router.navigate([routes.employee.JobList]);
     }
+  }
+
+  private getTabByStepIndex(stepIndex: number): JobTabType | undefined {
+  return (Object.keys(this.tabToStepIndex) as JobTabType[])
+    .find(tab => this.tabToStepIndex[tab] === stepIndex);
   }
 
   private showSuccessMessage(key: string, detail?: string): void {

@@ -4,6 +4,8 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { debounceTime, filter } from 'rxjs';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
 
 @Component({
   selector: 'app-benefits-step',
@@ -16,7 +18,8 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
   protected jobService = inject(JobService);
   
   jobData!: Job;
-  
+  note: JobTabReviewNoteResponse | null = null;
+
   readonly form: FormGroup = this.fb.group({
     benefitsAr: ['', [Validators.required, Validators.maxLength(2000)]],
     benefitsEn: ['', [Validators.maxLength(2000)]]
@@ -40,14 +43,14 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
       return this.form.disabled ? true : this.form.valid;
   }
 
-  setJobData(job: Job,disable: boolean = false): void {
-    this.jobData = job;
-    
+ setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+  this.jobData = job;
+  this.note = note;
     this.form.patchValue({
       benefitsAr: job.benefitsAr || '',
       benefitsEn: job.benefitsEn || ''
     });
-    if (disable) {
+    if (note?.tabStatus !== JobTabStatus.Returned) {
       this.form.disable();
     }
   }

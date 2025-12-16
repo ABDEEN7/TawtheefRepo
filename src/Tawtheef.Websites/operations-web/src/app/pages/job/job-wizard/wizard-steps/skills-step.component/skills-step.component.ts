@@ -6,6 +6,8 @@ import { JobService } from '../../../services/job.service';
 import { JobSkill } from '../../../models/job-skill.model';
 import { JobLookupService } from '../../../services/job-lookup.service';
 import { GUID } from '../../../../../shared/types/guid.type';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
 
 @Component({
   selector: 'app-skills-step',
@@ -19,6 +21,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   protected lookupsService = inject(JobLookupService);
 
   jobData!: Job;
+  note: JobTabReviewNoteResponse | null = null;
 
   readonly form = this.fb.group({
     jobSkills: this.fb.array([]),
@@ -58,8 +61,9 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
     this.jobSkillsArray.removeAt(i);
   }
 
-  setJobData(job: Job, disable: boolean = false): void {
+ setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
+    this.note = note;
     this.jobSkillsArray.clear();
 
     if (job.skills?.length) {
@@ -73,7 +77,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
       });
     }
 
-    if (disable) {
+    if (note?.tabStatus !== JobTabStatus.Returned) {
       this.form.disable();
     }
   }

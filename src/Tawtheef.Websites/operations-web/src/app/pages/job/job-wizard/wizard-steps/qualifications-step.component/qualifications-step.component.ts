@@ -7,6 +7,8 @@ import { JobLookupService } from "../../../services/job-lookup.service";
 import { JobService } from "../../../services/job.service";
 import { WizardStepComponent } from "../base/wizard-step.component";
 import { JobDegree } from "../../../models/job-degree.model";
+import { JobTabReviewNoteResponse } from "../../../models/job-tab-review-note-response";
+import { JobTabStatus } from "../../../enums/job-tab-status";
 
 @Component({
   selector: 'app-qualifications-step',
@@ -26,6 +28,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     qualificationsDescriptionAr: ['', Validators.required],
     qualificationsDescriptionEn: ['',Validators.required]
   });
+  note: JobTabReviewNoteResponse | null = null;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -43,8 +46,9 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     return this.form.valid && this.form.controls.degrees.value!.length > 0;
   }
 
-  setJobData(job: Job,disable:boolean =false): void {
-    this.jobData = job;
+  setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+     this.jobData = job;
+     this.note = note;
     
     const degrees = job.degrees?.map(degree => ({
       degreeId: degree.degreeId
@@ -56,7 +60,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       qualificationsDescriptionEn: job.qualificationsDescriptionEn || ''
     }, { emitEvent: false });
 
-    if (disable) {
+    if (note?.tabStatus !== JobTabStatus.Returned) {
       this.form.disable();
     }
   }

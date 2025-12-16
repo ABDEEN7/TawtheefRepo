@@ -1,4 +1,6 @@
-﻿namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+﻿using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
+
+namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 public class JobTabReviewNoteResponseDto
 {
@@ -10,5 +12,5 @@ public class JobTabReviewNoteResponseDto
 
     public bool IsResolved { get; set; } = false;
 
-    public List<JobTabReviewAttachmentResponseDto>? Attachments { get; set; }
+    public List<FileRefDto> Attachments { get; set; } = [];
 }

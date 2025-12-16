@@ -1,5 +1,6 @@
 using Mapster;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
@@ -10,9 +11,9 @@ public class JobProfile : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        TypeAdapterConfig<DateTimeOffset?, DateTime?>.NewConfig()
+        config.NewConfig<DateTimeOffset?, DateTime?>()
         .MapWith(src => src.HasValue ? src.Value.UtcDateTime : null);
-        TypeAdapterConfig<DateTimeOffset, DateTime>.NewConfig()
+        config.NewConfig<DateTimeOffset, DateTime>()
         .MapWith(src => src.UtcDateTime);
 
         config.NewConfig<CreateJobDto, Job>()
@@ -30,7 +31,7 @@ public class JobProfile : IRegister
             .Ignore(dest => dest.QualificationDescriptionAr!)
             .Ignore(dest => dest.QualificationDescriptionEn!);
 
-        TypeAdapterConfig<Job, JobResponseDto>.NewConfig()
+        config.NewConfig<Job, JobResponseDto>()
             .Map(dest => dest.JobStatus, src => src.JobStatus)
             .Map(dest => dest.Degrees, src => src.JobDegrees)
             .Map(dest => dest.Conditions, src => src.JobConditions)
@@ -39,18 +40,13 @@ public class JobProfile : IRegister
             .Map(dest => dest.RequiredAttachments, src => src.JobRequiredAttachments)
             .Map(dest => dest.TabReviewNotes, src => src.TabReviewNotes);
 
-
-
-        TypeAdapterConfig<JobDegree, JobDegreeResponseDto>.NewConfig();
-        TypeAdapterConfig<JobCondition, JobConditionResponseDto>.NewConfig();
-        TypeAdapterConfig<JobSkill, JobSkillResponseDto>.NewConfig();
-        TypeAdapterConfig<JobResponsibility, JobResponsibilityResponseDto>.NewConfig();
-        TypeAdapterConfig<JobRequiredAttachment, JobRequiredAttachmentResponseDto>.NewConfig();
-        TypeAdapterConfig<JobTabReviewNote, JobTabReviewNoteResponseDto>.NewConfig()
-            .Map(dest => dest.Attachments, src => src.Attachments);
-
-        TypeAdapterConfig<JobTabReviewAttachment, JobTabReviewAttachmentResponseDto>.NewConfig()
-            .Map(dest => dest.Url, src => src.Attachment != null ? src.Attachment.Url : null);
+        config.NewConfig<JobDegree, JobDegreeResponseDto>();
+        config.NewConfig<JobCondition, JobConditionResponseDto>();
+        config.NewConfig<JobSkill, JobSkillResponseDto>();
+        config.NewConfig<JobResponsibility, JobResponsibilityResponseDto>();
+        config.NewConfig<JobRequiredAttachment, JobRequiredAttachmentResponseDto>();
+        config.NewConfig<JobTabReviewNote, JobTabReviewNoteResponseDto>()
+            .Map(dest => dest.Attachments, src => src.Attachments.Where(a=>a.Attachment != null).Select(a=>a.Attachment!));
     }
 
 }

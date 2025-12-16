@@ -6,7 +6,7 @@ using Tawtheef.Domain.Common;
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 [Table(nameof(JobTabReviewNote), Schema = Schemas.Hr)]
-[Index(nameof(JobId), nameof(Tab), IsUnique = true)]
+[Index(nameof(JobId), nameof(Tab), nameof(ReviewCycleId), IsUnique = true)]
 public class JobTabReviewNote : EventEntity
 {
     public Guid JobId { get; set; }

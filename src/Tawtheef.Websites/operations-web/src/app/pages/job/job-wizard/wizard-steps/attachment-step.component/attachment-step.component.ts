@@ -6,6 +6,8 @@ import { Job } from '../../../models/job.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
 
 @Component({
   selector: 'app-attachment-step',
@@ -20,7 +22,8 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   private transaltionService = inject(TranslateService);
   
   jobData!: Job;
-  
+  note: JobTabReviewNoteResponse | null = null;
+
   newAttachment = {
     titleAr: '',
     titleEn: '',
@@ -61,8 +64,9 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     return this.attachmentsArray.at(index) as FormGroup;
   }
 
- setJobData(job: Job, disable: boolean = false): void {
+  setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
   this.jobData = job;
+  this.note = note;
   this.attachmentsArray.clear();
   
   if (job.requiredAttachments?.length) {
@@ -71,13 +75,8 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     });
   }
   
-  if (disable) {
-    // Disable AFTER adding all controls
-    this.form.disable({ emitEvent: false });
-    
-    this.newAttachment.titleAr = '';
-    this.newAttachment.titleEn = '';
-    this.newAttachment.isMandatory = false;
+  if (note?.tabStatus !== JobTabStatus.Returned) {
+    this.form.disable();
   }
 }
 

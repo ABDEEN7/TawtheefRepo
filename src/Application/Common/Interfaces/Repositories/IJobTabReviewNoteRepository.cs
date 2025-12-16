@@ -7,4 +7,5 @@ namespace Tawtheef.Application.Common.Interfaces.Repositories;
 public interface IJobTabReviewNoteRepository : IBaseRepository<JobTabReviewNote>
 {
     Task<IResult<List<JobTabReviewNote>>> GetByIdWithDetailsAsync(Guid jobId);
+    Task<IResult<List<JobTabReviewNote>>> GetLastReviewCycleAsync(Guid jobId);
 }

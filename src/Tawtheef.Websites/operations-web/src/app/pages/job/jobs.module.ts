@@ -36,6 +36,7 @@ import { JobApprovalComponent } from './job-approval/job-approval.component';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogHelperService } from '../../core/services/dialog-helper.service';
+import { ReviewNoteComponent } from './job-wizard/review-note/review-note.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { DialogHelperService } from '../../core/services/dialog-helper.service';
     PaginationComponent,
     ConfirmApplyModalComponent,
     PointsConfigModalComponent,
+    ReviewNoteComponent,
     NgOptimizedImage,
     MultiSelectModule,
     Scroller,
