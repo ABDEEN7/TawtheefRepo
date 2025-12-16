@@ -8,6 +8,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
+import { routes } from '../../../../routes/routes';
 
 @Component({
   selector: 'app-job-basic-modal',
@@ -157,8 +158,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
         
         this.isLoading = false;
       },
-      error: (err) => {
-        this.notificationService.error(this.translationService.instant('JOB_BASIC_MODAL.ERROR.LOAD_FAILED'));
+      error: () => {
         this.isLoading = false;
         this.ref.close({ success: false });
       }
@@ -222,7 +222,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           });
         } else {
           this.ref.close({ success: true, jobId });
-          this.router.navigate(['/jobs', jobId, 'wizard']);
+          this.router.navigate([routes.employee.JobList, jobId, 'wizard']);
         }
       },
       error: (err) => {

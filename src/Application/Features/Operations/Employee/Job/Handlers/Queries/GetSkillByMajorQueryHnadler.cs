@@ -17,7 +17,7 @@ public class GetSkillByMajorQueryHnadler(IUnitOfWork unitOfWork, IMapper mapper)
 
         var entities = await dbSet
             .AsNoTracking()
-            .Where(m => m.MajorId == request.majorId)
+            .Where(m => m.MajorId == request.MajorId)
             .OrderBy(x => x.DisplayOrder)
             .ToListAsync(cancellationToken);
 

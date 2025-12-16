@@ -31,4 +31,20 @@ public static class LocalPathBuilder
     // Cross-platform join, then normalize to forward slashes for blob keys/URLs
     private static string Key(params string[] parts)
         => Path.Join(parts).Replace('\\', '/');
+
+    public static string JobReview(
+    Guid jobId,
+    string tab,
+    Guid fileId,
+    string ext,
+    string hash,
+    bool isPublic)
+    => Key(
+        Scope(isPublic),
+        "jobs",
+        jobId.ToString(),
+        "reviews",
+        tab,
+        FileName(fileId, hash, ext)
+    );
 }

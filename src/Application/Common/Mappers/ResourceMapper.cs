@@ -13,6 +13,9 @@ public sealed class ResourceMapper : IRegister
     {
         config.NewConfig<Resource, string>()
             .Map(dest => dest, src => Resolve(src.Url));
+        
+        config.NewConfig<Resource?, string>()
+            .Map(dest => dest, src => src == null ? null : Resolve(src.Url));
 
         config.NewConfig<Resource, FileRefDto>()
             .Map(dest => dest.ResourceId, src => src.Id)

@@ -4,6 +4,11 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-responsibilities-step',
@@ -14,7 +19,8 @@ import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 export class ResponsibilitiesStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   protected readonly jobService = inject(JobService);
-  
+  private readonly notificationService = inject(NotificationService);
+  private readonly transaltionService = inject(TranslateService);
   jobData!: Job;
   
   readonly form = this.fb.group({
@@ -24,6 +30,7 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
   newResponsibilityAr = '';
   newResponsibilityEn = '';
   private readonly destroy$ = new Subject<void>();
+  note: JobTabReviewNoteResponse | null = null;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -33,11 +40,6 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
     ).subscribe(() => {
       this.updateJobData();
     });
-    
-    const currentJob = this.jobService.getCurrentJob();
-    if (currentJob) {
-      this.setJobData(currentJob);
-    }
   }
 
   ngOnDestroy(): void {
@@ -53,8 +55,9 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
     return this.responsibilitiesArray.at(index) as FormGroup;
   }
 
-  setJobData(job: Job): void {
+ setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
+    this.note = note;
     this.responsibilitiesArray.clear();
     
     if (job.responsibilities?.length) {
@@ -62,13 +65,34 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
         this.addResponsibilityToForm(responsibility.textAr, responsibility.textEn);
       });
     }
+
+    if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
+      this.form.disable();
+    }
   }
 
-  addResponsibility(): void {    
-    this.addResponsibilityToForm(this.newResponsibilityAr.trim(), this.newResponsibilityEn.trim());
-    this.newResponsibilityAr = '';
-    this.newResponsibilityEn = '';
+addResponsibility(): void {
+  const textAr = this.newResponsibilityAr.trim();
+  const textEn = this.newResponsibilityEn.trim();
+
+  if (!textAr || !textEn) {
+    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.NO_ENTERED_DATA_ERROR'));
+    return; 
   }
+
+  const isDuplicate = this.responsibilitiesArray.controls.some(control => {
+    const group = control as FormGroup;
+    return group.get('textAr')?.value === textAr && group.get('textEn')?.value === textEn;
+  });
+  
+  if (isDuplicate) {
+    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'));
+    return; 
+  }
+  this.addResponsibilityToForm(textAr, textEn);
+  this.newResponsibilityAr = '';
+  this.newResponsibilityEn = '';
+}
 
   removeResponsibility(index: number): void {
     if (this.responsibilitiesArray.length > 1) {
@@ -77,6 +101,9 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
   }
 
   isValid(): boolean {
+    if(this.form.disabled){
+      return true;  
+    }
     return this.form.valid && this.responsibilitiesArray.length > 0;
   }
 

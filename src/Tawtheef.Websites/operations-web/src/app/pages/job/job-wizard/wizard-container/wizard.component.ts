@@ -13,9 +13,8 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { map, Subject, switchMap, takeUntil, throwError } from 'rxjs';
 import { JobService } from '../../services/job.service';
 import { WizardStepComponent } from '../wizard-steps/base/wizard-step.component';
 import { ConditionsStepComponent } from '../wizard-steps/conditions-step.component/conditions-step.component';
@@ -30,6 +29,10 @@ import { BenefitsStepComponent } from '../wizard-steps/benefits-step.component/b
 import { AttachmentStepComponent } from '../wizard-steps/attachment-step.component/attachment-step.component';
 import { ReviewStepComponent } from '../wizard-steps/review-step.component/review-step.component';
 import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic-modal.component';
+import { routes } from '../../../../routes/routes';
+import { JobTabType } from '../../enums/job-tab-type';
+import { JobTabReviewNoteResponse } from '../../models/job-tab-review-note-response';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-wizard',
@@ -37,14 +40,13 @@ import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic
   templateUrl: './wizard.component.html',
   styleUrls: ['./wizard.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  providers: [MessageService]
 })
 export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
   private translateService = inject(TranslateService);
   lookupsService = inject(JobLookupService);
@@ -59,7 +61,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   isLoading = false;
   hasBasicData = false;
   stepsLoaded = false;
-  showContainer = false; // New flag to control container visibility
+  showContainer = false; 
 
   stepClasses: Type<WizardStepComponent>[] = [
     OverviewStepComponent,
@@ -71,6 +73,16 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     BenefitsStepComponent,
     ReviewStepComponent 
   ];
+
+  private tabToStepIndex: Record<JobTabType, number> = {
+  [JobTabType.Overview]: 0,
+  [JobTabType.Qualifications]: 1,
+  [JobTabType.Responsibilities]: 2,
+  [JobTabType.Conditions]: 3,
+  [JobTabType.Skills]: 4,
+  [JobTabType.Attachments]: 5,
+  [JobTabType.Benefits]: 6
+};
 
   @ViewChild('stepsContainer', { read: ViewContainerRef, static: false })
   private container!: ViewContainerRef;
@@ -143,41 +155,53 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
           
           this.loadJobForWizard();
         } else {
-          this.router.navigate(['/jobs']);
+          this.router.navigate([routes.employee.JobList]);
         }
       });
   }
 
-  private loadJobForWizard(): void {
-    this.isLoading = true;
-    this.showContainer = false;
-    this.stepsLoaded = false;
-    this.retryCount = 0;
-        
-    this.jobService.loadJobForEdit(this.jobId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          const job = this.jobService.getCurrentJob();
-          
-          if (job?.majorId) {
-            this.lookupsService.loadSkillsByMajor(job.majorId);
-          }
-          
-          this.hasBasicData = true;
-          this.showContainer = true; 
-          this.isLoading = false;
-          
-          this.cdr.detectChanges();
-          this.initializeSteps();
-        },
-        error: (error) => {
-          this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED');
-          this.isLoading = false;
-          this.router.navigate(['/jobs']);
+private loadJobForWizard(): void {
+  this.isLoading = true;
+  this.showContainer = false;
+  this.stepsLoaded = false;
+
+  this.jobService.loadJobForEdit(this.jobId)
+    .pipe(
+      takeUntil(this.destroy$),
+      switchMap(() => {
+        const job = this.jobService.getCurrentJob();
+        if (!job) {
+          this.notificationService.error(this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED'));
+          return  throwError(() => new Error(this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')));
         }
-      });
-  }
+
+        return this.jobService.getLatestTabReviewNotes(this.jobId)
+          .pipe(
+            map((tabNotes: JobTabReviewNoteResponse[]) => ({ job, tabNotes }))
+          );
+      })
+    )
+    .subscribe({
+      next: ({ job, tabNotes }) => {
+        job.tabReviewNotes = tabNotes;
+        if (job.majorId) {
+          this.lookupsService.loadSkillsByMajor(job.majorId);
+        }
+
+        this.hasBasicData = true;
+        this.showContainer = true;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+        this.initializeSteps();
+      },
+      error: (err) => {
+        this.showErrorMessage('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED');
+        this.isLoading = false;
+        this.router.navigate([routes.employee.JobList]);
+      }
+    });
+}
+
 
   private initializeSteps(): void {    
     if (!this.container) {
@@ -205,8 +229,11 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
       this.stepRefs = this.stepClasses.map((stepClass, index) => {
         const componentRef = this.container.createComponent(stepClass);
         
+        const stepTab = this.getTabByStepIndex(index);
+        const stepNotes = stepTab ? currentJob?.tabReviewNotes?.find(note => note.tab === stepTab) ?? null : null;
+
         if (componentRef.instance.setJobData && currentJob) {
-          componentRef.instance.setJobData(currentJob);
+          componentRef.instance.setJobData(currentJob,stepNotes);
         }
         
         const element = componentRef.location.nativeElement as HTMLElement;
@@ -339,7 +366,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         next: () => {
           this.isLoading = false;
           this.showSuccessMessage('JOB_WIZARD.SUCCESS.JOB_SUBMITTED');
-          this.router.navigate(['/jobs']);
+          this.router.navigate([routes.employee.JobList]);
         },
         error: (err) => {
           this.isLoading = false;
@@ -352,44 +379,34 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   cancelWizard(): void {
     const confirmMessage = this.translateService.instant('JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD');
     if (confirm(confirmMessage)) {
-      this.router.navigate(['/jobs']);
+      this.router.navigate([routes.employee.JobList]);
     }
+  }
+
+  private getTabByStepIndex(stepIndex: number): JobTabType | undefined {
+  return (Object.keys(this.tabToStepIndex) as JobTabType[])
+    .find(tab => this.tabToStepIndex[tab] === stepIndex);
   }
 
   private showSuccessMessage(key: string, detail?: string): void {
     const summary = this.translateService.instant(key);
     const detailText = detail ? this.translateService.instant(detail) : '';
     
-    this.messageService.add({
-      severity: 'success',
-      summary: summary,
-      detail: detailText,
-      life: 5000
-    });
+    this.notificationService.success(summary + (detailText ? ': ' + detailText : ''));
   }
 
   private showErrorMessage(key: string, detail?: string): void {
     const summary = this.translateService.instant(key);
     const detailText = detail ? this.translateService.instant(detail) : '';
     
-    this.messageService.add({
-      severity: 'error',
-      summary: summary,
-      detail: detailText,
-      life: 7000
-    });
+    this.notificationService.error(summary + (detailText ? ': ' + detailText : ''));
   }
 
   private showWarnMessage(key: string, detail?: string): void {
     const summary = this.translateService.instant(key);
     const detailText = detail ? this.translateService.instant(detail) : '';
     
-    this.messageService.add({
-      severity: 'warn',
-      summary: summary,
-      detail: detailText,
-      life: 5000
-    });
+    this.notificationService.warn(summary + (detailText ? ': ' + detailText : ''));
   }
 
   getHeaderTitle(): string {

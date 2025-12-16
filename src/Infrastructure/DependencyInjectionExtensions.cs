@@ -153,13 +153,13 @@ namespace Tawtheef.Infrastructure
                 .AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>))
                 .AddTransient<IUserRepository, UserRepository>()
                 .AddScoped<IJobRepository, JobRepository>()
+                .AddScoped<IJobReviewAttachmentRepository, JobReviewAttachmentRepository>()
+                .AddScoped<IJobTabReviewNoteRepository, JobTabReviewNoteRepository>()
                 .AddScoped<IJobConditionRepository, JobConditionRepository>()
                 .AddScoped<IJobDegreeRepository, JobDegreeRepository>()
-                .AddScoped<IJobQuotaRepository, JobQuotaRepository>()
                 .AddScoped<IJobSkillRepository, JobSkillRepository>()
                 .AddScoped<IJobResponsibilityRepository, JobResponsibilityRepository>()
-                .AddScoped<IJobRequiredAttachmentRepository, JobRequiredAttachmentRepository>()
-                .AddScoped<IResidentsBreakdownRepository, ResidentsBreakdownRepository>();
+                .AddScoped<IJobRequiredAttachmentRepository, JobRequiredAttachmentRepository>();
         }
 
         #endregion

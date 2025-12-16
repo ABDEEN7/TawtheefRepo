@@ -59,8 +59,7 @@ export class JobInvitesService {
       tap(inviteDetails => {
         this._invites.set(inviteDetails);
       }),
-      catchError(error => {
-        this.notificationService.error(error);
+      catchError(() => {
         this._invites.set([]);
         return of([]);
       })
@@ -90,8 +89,7 @@ export class JobInvitesService {
 
         return updatedInviteDetails;
       }),
-      catchError(error => {
-        this.notificationService.error(error);
+      catchError(() => {
         return of(null);
       })
     );

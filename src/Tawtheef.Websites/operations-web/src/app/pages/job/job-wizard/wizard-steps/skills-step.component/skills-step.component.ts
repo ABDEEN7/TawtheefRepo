@@ -6,6 +6,9 @@ import { JobService } from '../../../services/job.service';
 import { JobSkill } from '../../../models/job-skill.model';
 import { JobLookupService } from '../../../services/job-lookup.service';
 import { GUID } from '../../../../../shared/types/guid.type';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-skills-step',
@@ -17,23 +20,22 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   private fb = inject(FormBuilder);
   protected jobService = inject(JobService);
   protected lookupsService = inject(JobLookupService);
-  
+
   jobData!: Job;
-  
+  note: JobTabReviewNoteResponse | null = null;
+
   readonly form = this.fb.group({
-    jobSkills: this.fb.array([])
+    jobSkills: this.fb.array([]),
   }) as FormGroup;
 
   ngOnInit() {
     const currentJob = this.jobService.getCurrentJob();
     if (currentJob) {
-      this.setJobData(currentJob);
-      
       if (currentJob.majorId) {
         this.lookupsService.loadSkillsByMajor(currentJob.majorId);
       }
     }
-    
+
     this.form.valueChanges.subscribe(() => {
       this.updateJobData();
     });
@@ -50,9 +52,9 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   addSkill() {
     const skillGroup = this.fb.group({
       skillId: ['', [Validators.required]],
-      showToApplicants: [true]
+      showToApplicants: [true],
     });
-    
+
     this.jobSkillsArray.push(skillGroup);
   }
 
@@ -60,44 +62,52 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
     this.jobSkillsArray.removeAt(i);
   }
 
-  setJobData(job: Job): void {
+ setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
+    this.note = note;
     this.jobSkillsArray.clear();
-    
+
     if (job.skills?.length) {
       job.skills.forEach((skill: JobSkill) => {
         const skillGroup = this.fb.group({
           skillId: [skill.skillId, [Validators.required]],
-          showToApplicants: [skill.showToApplicants || false]
+          showToApplicants: [skill.showToApplicants || false],
         });
-        
+
         this.jobSkillsArray.push(skillGroup);
       });
     }
+
+    if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
+      this.form.disable();
+    }
   }
 
-  isValid() { 
+  isValid() {
     if (this.jobSkillsArray.length === 0) {
-      return true; 
+      return true;
     }
-    
+
+    if( this.form.disabled) {
+      return true;
+    }
     return this.form.valid;
   }
 
   private updateJobData(): void {
     const skills = this.jobSkillsArray.controls
-      .filter(control => {
+      .filter((control) => {
         const group = control as FormGroup;
-        return group.get('skillId')?.value; 
+        return group.get('skillId')?.value;
       })
-      .map(control => {
+      .map((control) => {
         const group = control as FormGroup;
         return {
-          skillId: group.get('skillId')?.value || '' as GUID,
-          showToApplicants: group.get('showToApplicants')?.value || false
+          skillId: group.get('skillId')?.value || ('' as GUID),
+          showToApplicants: group.get('showToApplicants')?.value || false,
         };
       });
-    
+
     this.jobService.updateCurrentJobSkills(skills);
   }
 
@@ -107,7 +117,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   }
 
   getSkillName(skillId: GUID): string {
-    const skill = this.lookupsService.skills().find(s => s.id === skillId);
+    const skill = this.lookupsService.skills().find((s) => s.id === skillId);
     return skill?.name || '';
   }
 }

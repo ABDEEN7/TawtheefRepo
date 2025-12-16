@@ -1,0 +1,67 @@
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .job-details-title-group {
+    flex: 1;
+    min-width: 300px;
+
+    .title-wrapper {
+      .job-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+        margin-bottom: 8px;
+      }
+    }
+
+    .info-item {
+      font-size: 13px;
+      color: #999;
+      font-weight: 500;
+    }
+  }
+}
+
+.status-favorite-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.reject-btn {
+  .reject-button {
+    padding: 10px 20px;
+    height: 40px;
+    border-radius: 50px;
+    background: #d9534f;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    transition: all 0.3s;
+    cursor: pointer;
+
+    i {
+      font-size: 14px;
+    }
+
+    &:hover {
+      background: #c9302c;
+      box-shadow: 0 4px 12px rgba(217, 83, 79, 0.3);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}

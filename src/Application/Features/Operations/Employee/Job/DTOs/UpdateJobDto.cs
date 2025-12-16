@@ -13,11 +13,9 @@ public class UpdateJobDto : CreateJobDto
     public string? BenefitsEn { get; set; }
     public string? QualificationsDescriptionAr { get; set; }
     public string? QualificationsDescriptionEn { get; set; }
-
     public List<JobDegreeRequestDto>? Degrees { get; set; }
     public List<JobConditionRequestDto>? Conditions { get; set; }
     public List<JobResponsibilityRequestDto>? Responsibilities { get; set; }
     public List<JobSkillRequestDto>? Skills { get; set; }
     public List<JobRequiredAttachmentRequestDto>? RequiredAttachments { get; set; }
-    public JobQuotaRequestDto? Quota { get; set; }
 }

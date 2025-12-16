@@ -22,6 +22,16 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
             },
             new JobStatus
             {
+                Id = JobStatusIds.NeedUpdate,
+                BackendName = nameof(JobStatusIds.NeedUpdate),
+                NameEn = "Need Update",
+                NameAr = "تحتاج للتعديل",
+                DescriptionEn = "Job needs to be updated.",
+                DescriptionAr = "الوظيفة تحتاج للتعديل",
+                DisplayOrder = 1
+            },
+            new JobStatus
+            {
                 Id = JobStatusIds.Active,
                 BackendName = nameof(JobStatusIds.Active),
                 NameEn = "Active",
@@ -56,9 +66,9 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
                 Id = JobStatusIds.PendingApproval,
                 BackendName = nameof(JobStatusIds.PendingApproval),
                 NameEn = "Pending Approval",
-                NameAr = "قيد الموافقة",
+                NameAr = "قيد الأعتماد",
                 DescriptionEn = "Job is waiting for approval.",
-                DescriptionAr = "الوظيفة قيد الموافقة.",
+                DescriptionAr = "الوظيفة قيد الأعتماد.",
                 DisplayOrder = 5
             },
             new JobStatus

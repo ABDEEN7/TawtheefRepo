@@ -98,12 +98,7 @@ export class PointsConfigModalComponent {
 
   async save() {
     if (this.isValid()) {
-      try {
-        //await this.jobService.saveJobPointsConfig(this.jobId, this.pointsConfig());
         this.ref.close(true);
-      } catch (error) {
-        this.notificationService.error(error as string);
-      }
     }
   }
 

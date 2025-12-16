@@ -2,10 +2,10 @@ import { dropdownOptionsModel } from "../../../shared/models/dropdown-options.mo
 import { GUID } from "../../../shared/types/guid.type";
 import { JobConditionResponse } from "./job-condition-response.model";
 import { JobDegreeResponse } from "./job-degree-response.model";
-import { JobQuotaResponse } from "./job-quota-response.model";
 import { JobRequiredAttachmentResponse } from "./job-required-attachment-response.model";
 import { JobResponsibilityResponse } from "./job-responsibility-response.model";
 import { JobSkillResponse } from "./job-skill-response.model";
+import { JobTabReviewNoteResponse } from "./job-tab-review-note-response";
 
 
 export interface JobResponse {
@@ -33,6 +33,8 @@ export interface JobResponse {
   benefitsEn?: string;
   qualificationDescriptionAr?: string;  
   qualificationDescriptionEn?: string; 
+  approveNote?: string;
+  rejectNote?:string;
   
   sector: dropdownOptionsModel;
   management: dropdownOptionsModel;
@@ -45,10 +47,10 @@ export interface JobResponse {
   workType: dropdownOptionsModel;
   jobStatus: dropdownOptionsModel;
   
-  quota?: JobQuotaResponse;
   degrees: JobDegreeResponse[];
   conditions: JobConditionResponse[];
   skills: JobSkillResponse[];
   responsibilities: JobResponsibilityResponse[];
   requiredAttachments: JobRequiredAttachmentResponse[];
+  tabReviewNotes?: JobTabReviewNoteResponse[];
 }

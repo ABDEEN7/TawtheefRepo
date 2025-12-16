@@ -4,6 +4,9 @@ import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { JobLookupService } from '../../../services/job-lookup.service';
 import { JobService } from '../../../services/job.service';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-overview-step',
@@ -21,6 +24,7 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
     overviewEn: ['', Validators.required],
   });
   jobData!: Job;
+  note: JobTabReviewNoteResponse | null = null;
 
   ngOnInit(): void {
     this.form.valueChanges.subscribe(() => {
@@ -28,9 +32,13 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
     });
   }
 
-  setJobData(data: Job): void {
-    this.jobData = data;
+ setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+    this.jobData = job;
+    this.note = note;
     this.loadData();
+    if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
+    this.form.disable();
+  }
   }
 
   private loadData(): void {
@@ -51,6 +59,6 @@ export class OverviewStepComponent extends WizardStepComponent implements OnInit
   }
 
   isValid(): boolean {
-    return this.form.valid;
+  return this.form.disabled ? true : this.form.valid;
   }
 }
