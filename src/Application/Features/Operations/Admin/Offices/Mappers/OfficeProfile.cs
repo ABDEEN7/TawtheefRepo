@@ -18,10 +18,10 @@ public sealed class OfficeProfile : IRegister
         config.NewConfig<Office, OfficeDto>()
             .Map(dest => dest.CountryNameAr, src => src.Country != null ? src.Country.NameAr : string.Empty)
             .Map(dest => dest.CountryNameEn, src => src.Country != null ? src.Country.NameEn : string.Empty)
-            .Map(dest => dest.AdminEmail,
-                src => src.OfficeUsers != null
-                    ? src.OfficeUsers.FirstOrDefault()?.Email ?? string.Empty
-                    : string.Empty)
+            // .Map(dest => dest.AdminEmail,
+            //     src => src.OfficeUsers != null
+            //         ? src.OfficeUsers.FirstOrDefault(u => u.UserType)?.Email ?? string.Empty
+            //         : string.Empty)
             .Map(dest => dest.SupportedCountries,
                 src => src.SupportedCountries
                     .Where(sc => !sc.IsDeleted)

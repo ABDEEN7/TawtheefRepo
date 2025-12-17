@@ -1,12 +1,14 @@
 using FluentResults;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Admin.Offices.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Queries;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Queries;
 
