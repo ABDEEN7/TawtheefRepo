@@ -4,17 +4,14 @@ using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
-using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Commands;
-using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
-using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
@@ -37,17 +34,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
-        var enriched = new GetProfileApprovalsQuery(
-            UserId.Value,
-            query.Search,
-            query.Specialization,
-            query.Status,
-            query.TargetEntity,
-            query.CandidateType,
-            query.Sort,
-            query.SortDirection);
-
-        var result = await mediator.Send(enriched, ct);
+        var result = await mediator.Send(query with {OfficerId = UserId.Value}, ct);
         return result.ToActionResult();
     }
 

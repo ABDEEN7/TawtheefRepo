@@ -26,13 +26,13 @@
       <tr>
         <td>{{ r.degree.name }}</td>
         <td>{{ r.gradCountry.name || '—' }}</td>
-        <td>{{ r.university.name || '—' }}</td>
-        <td>{{ r.major.name || '—' }}</td>
-        <td>{{ r.subMajor.name || '—' }}</td>
+        <td>{{ r.university?.name || '—' }}</td>
+        <td>{{ r.major?.name || '—' }}</td>
+        <td>{{ r.subMajor?.name || '—' }}</td>
         <td>{{ r.gradYear || '—' }}</td>
-        <td>{{ r.studySystem.name || '—' }}</td>
+        <td>{{ r.studySystem?.name || '—' }}</td>
         <td>{{ r.gpa || '—' }}</td>
-        <td>{{ r.grade.name || '—' }}</td>
+        <td>{{ r.grade?.name || '—' }}</td>
         <td>
           <ng-container *ngIf="r.certificate?.resourceName || r.file?.name; else noDegreeFile">
             <div class="d-flex align-items-center gap-2">

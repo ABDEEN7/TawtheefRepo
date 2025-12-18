@@ -34,7 +34,7 @@ export interface ProfileApprovalItem {
   targetType: ReviewTargetType;
   status: ReviewStatus;
   title: string;
-  note?: string;
+  note?: string | null;
   resourceId?: string;
   resourceUrl?: string;
   entityId?: string;

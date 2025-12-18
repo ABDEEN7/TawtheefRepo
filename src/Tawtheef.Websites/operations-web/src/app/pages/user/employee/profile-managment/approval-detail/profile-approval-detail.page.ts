@@ -16,7 +16,6 @@ import { TrainingSectionComponent } from './components/sections/training-section
 import { AttachmentsSectionComponent } from './components/sections/attachments-section/attachments-section.component';
 import {Select} from 'primeng/select';
 import {Textarea} from 'primeng/textarea';
-import { ReviewItemsComponent, ReviewAction } from './components/review-items/review-items.component';
 import { CertificatesSectionComponent } from './components/sections/certificates-section/certificates-section.component';
 import {
   ProfileApprovalDetail,
@@ -33,19 +32,14 @@ import {AvatarModule} from 'primeng/avatar';
 import {DialogService} from 'primeng/dynamicdialog';
 import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
-import {
-  ItemDialogResult,
-  ItemReviewDialogComponent
-} from '../approval-list/dialogs/item-review-dialog/item-review-dialog';
 import {ContactInfoSectionComponent} from './components/sections/contact-info-section/contact-info-section.component';
 import {FirstInfoSectionComponent} from './components/sections/first-info-section/first-info-section.component';
 import {FinalReviewSection} from './components/sections/final-review-section/final-review-section';
 import {SkillsSectionComponent} from './components/sections/skills-section/skills-section.component';
 import {LanguagesSectionComponent} from './components/sections/languages-section/languages-section.component';
-import {FinalApprovalAction} from '../approval-list/models/profile-approval.models';
 import {LanguageService} from '../../../../../core/services/language.service';
 import {NotificationService} from '../../../../../core/services/notification.service';
-import {FinalizeProfileApprovalRequest} from '../approval-list/models/profile-approval-finalize.model';
+import {FaDirArrowDirective} from '../../../../../shared/directives/dir-arrow.directive';
 
 @Component({
   selector: 'app-profile-approval-detail-page',
@@ -71,10 +65,10 @@ import {FinalizeProfileApprovalRequest} from '../approval-list/models/profile-ap
     AttachmentsSectionComponent,
     Select,
     Textarea,
-    ReviewItemsComponent,
     ContactInfoSectionComponent,
     FirstInfoSectionComponent,
     FinalReviewSection,
+    FaDirArrowDirective,
   ],
   templateUrl: './profile-approval-detail.page.html',
   styleUrl: './profile-approval-detail.page.scss',
@@ -86,7 +80,6 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private translate = inject(TranslateService);
-  private dialogService = inject(DialogService);
   private notifications = inject(NotificationService);
   private language = inject(LanguageService);
 
@@ -95,7 +88,6 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   private readonly flowSections = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
   loadingDetail = signal(false);
-  submittingFinalAction = signal(false);
   selectedProfileId = signal<string | null>(null);
   detail = signal<ProfileApprovalDetail | null>(null);
   error = signal<string | null>(null);
@@ -103,39 +95,26 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   activeSection = signal<number | null>(null);
   currentLang = signal(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
-  finalAction = signal<FinalApprovalAction | null>(null);
-  finalSummary = signal('');
-  finalNotes = signal('');
-  finalAttachment = signal<File | null>(null);
+  isChangesMode = computed(() => this.partialMode());
   reviewStatusOptions = [
     { labelKey: 'profileApproval.status.approved', value: ReviewStatus.Approved },
     { labelKey: 'profileApproval.status.changes', value: ReviewStatus.ChangesRequested },
+    { labelKey: 'profileApproval.status.needsCorrection', value: ReviewStatus.NeedsCorrection },
     { labelKey: 'profileApproval.status.rejected', value: ReviewStatus.Rejected },
   ];
-  finalActions = [
-    { label: 'profileApproval.final.actions.ApproveProfile', value: 'ApproveProfile' as FinalApprovalAction },
-    { label: 'profileApproval.final.actions.NeedsCorrection', value: 'NeedsCorrection' as FinalApprovalAction },
-    { label: 'profileApproval.final.actions.RejectProfile', value: 'RejectProfile' as FinalApprovalAction },
-    { label: 'profileApproval.final.actions.BlockProfile', value: 'BlockProfile' as FinalApprovalAction },
-    { label: 'profileApproval.final.actions.ExceptionalApproval', value: 'ExceptionalApproval' as FinalApprovalAction },
-  ];
-
   ngOnInit(): void {
     const langSub = this.language.current$.subscribe(lang => this.currentLang.set(lang));
     this.subscriptions.push(langSub);
 
     const sub = combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(([params, query]) => {
       const profileId = params.get('profileId');
-      const partial = this.parsePartialFlag(query.get('changes'));
-      this.partialMode.set(partial);
-
       if (!profileId) {
         this.backToList();
         return;
       }
 
       this.selectedProfileId.set(profileId);
-      const loadKey = `${profileId}-${partial}`;
+      const loadKey = `${profileId}`;
       if (loadKey !== this.lastLoadedKey) {
         this.lastLoadedKey = loadKey;
         this.loadDetail();
@@ -151,6 +130,17 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
+  toggleChangesMode(): void {
+    const profileId = this.selectedProfileId();
+    if (!profileId) return;
+
+    const next = !this.partialMode();
+    this.router.navigate(['./'], {
+      relativeTo: this.route,
+      queryParams: { changes: next ? 1 : null },
+      queryParamsHandling: 'merge',
+    });
+  }
   backToList(): void {
     this.partialMode.set(false);
     this.selectedProfileId.set(null);
@@ -176,6 +166,8 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       )
       .subscribe({
         next: detail => {
+          if(!detail.approvedProfile)
+            this.partialMode.set(false);
           const ordered = { ...detail, sections: this.sortSections(detail.sections) };
           const merged = this.mergeDetail(this.detail(), ordered);
           this.detail.set(merged);
@@ -186,27 +178,6 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       });
   }
 
-  openItemDialog(item: ProfileApprovalItem, action: 'approve' | 'reject' | 'changes'): void {
-    this.dialogService.open(ItemReviewDialogComponent, {
-      header: this.translate.instant('profileApproval.dialog.title'),
-      width: '420px',
-      data: { item, action },
-    })?.onClose.subscribe((result?: ItemDialogResult) => {
-      if (!result) return;
-
-      if (result.action === 'approve') {
-        this.updateItem(item.reviewItemId, ReviewStatus.Approved);
-      } else if (result.action === 'reject') {
-        this.updateItem(item.reviewItemId, ReviewStatus.Rejected, result.note);
-      } else {
-        this.updateItem(item.reviewItemId, ReviewStatus.ChangesRequested, result.note);
-      }
-    });
-  }
-
-  handleItemReview(event: { item: ProfileApprovalItem; action: ReviewAction }): void {
-    this.openItemDialog(event.item, event.action);
-  }
 
   previewFile(resourceUrl: string): void {
     this.fileUtils.previewUrl(resourceUrl, '', false).then(() => {});
@@ -251,99 +222,54 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     return value === '1' || value.toLowerCase() === 'true';
   }
 
-  private updateItem(reviewItemId: string, status: ReviewStatus, note?: string): void {
+  private patchReviewedItem(reviewItemId: string, status: ReviewStatus, note?: string): void {
+    const current = this.detail();
+    if (!current?.sections?.length) return;
+
+    const nextSections = current.sections.map(sec => {
+      const nextItems = (sec.items ?? []).map(it => {
+        if (it.reviewItemId !== reviewItemId) return it;
+
+        return {
+          ...it,
+          status,
+          note: note ?? it.note ?? null,
+        };
+      });
+
+      return { ...sec, items: nextItems };
+    });
+
+    // Update detail immutably so Angular change detection + signals pick it up reliably.
+    this.detail.set({
+      ...current,
+      sections: nextSections,
+    });
+  }
+
+  updateItem(event: {reviewItemId: string, status: ReviewStatus, note?: string}): void {
     if (!this.selectedProfileId()) return;
     this.loadingDetail.set(true);
     this.api
-      .reviewItem(reviewItemId, status, note)
-      .pipe(finalize(() => this.loadingDetail.set(false)))
+      .reviewItem(event.reviewItemId, event.status, event.note)
+      .pipe(
+        finalize(() => {
+          this.loadingDetail.set(false);
+        })
+      )
       .subscribe({
         next: () => {
-          this.loadDetail();
+          this.patchReviewedItem(event.reviewItemId, event.status, event.note);
+          this.notifications.success(this.translate.instant('profileApproval.detail.itemSaved'));
         },
         error: err => {
           const message = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.errors.reviewItem');
+          this.notifications.error(message);
           this.error.set(message);
         },
       });
   }
 
-  onFinalActionFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.finalAttachment.set(input.files?.[0] ?? null);
-  }
-
-  submitFinalDecision(info: ProfileApprovalDetail): void {
-    const profileId = this.selectedProfileId();
-    if (!profileId) return;
-
-    const action = this.finalAction();
-    if (!action) {
-      this.notifications.error(this.translate.instant('profileApproval.validation.noteRequired'));
-      return;
-    }
-
-    const summary = this.finalSummary().trim();
-    const notes = this.finalNotes().trim();
-    const attachment = this.finalAttachment();
-    const stats = this.progressStats(info);
-    const correctionTargets = this.needsCorrectionTargets(info);
-
-    if (action === 'ApproveProfile' && (stats.pendingSections > 0 || stats.flaggedSections > 0 || stats.pendingItems > 0)) {
-      this.notifications.error(this.translate.instant('profileApproval.validation.cannotApproveProfile'));
-      return;
-    }
-
-    if ((action === 'RejectProfile' || action === 'ExceptionalApproval') && !attachment) {
-      this.notifications.error(
-        this.translate.instant(
-          action === 'RejectProfile'
-            ? 'profileApproval.validation.rejectRequirements'
-            : 'profileApproval.validation.exceptionRequirements'
-        )
-      );
-      return;
-    }
-
-    if (action === 'NeedsCorrection' && correctionTargets.length === 0) {
-      this.notifications.warn(this.translate.instant('profileApproval.validation.correctionTargetsRequired'));
-      return;
-    }
-
-    if (action !== 'ApproveProfile' && !notes) {
-      this.notifications.error(this.translate.instant('profileApproval.validation.noteRequired'));
-      return;
-    }
-
-    const request: FinalizeProfileApprovalRequest = {
-      action,
-      summary,
-      note: notes,
-      needsCorrectionItems: correctionTargets,
-    };
-
-    if (action === 'RejectProfile') {
-      request.rejectionDocument = attachment;
-    } else if (action === 'ExceptionalApproval') {
-      request.exceptionalFile = attachment;
-    }
-
-    this.submittingFinalAction.set(true);
-    this.api
-      .finalizeProfile(profileId, request)
-      .pipe(finalize(() => this.submittingFinalAction.set(false)))
-      .subscribe({
-        next: () => {
-          this.notifications.success(this.translate.instant('profileApproval.final.actionExecuted'));
-          this.finalAction.set(null);
-          this.finalNotes.set('');
-          this.finalSummary.set('');
-          this.finalAttachment.set(null);
-          this.loadDetail();
-        },
-        error: () => this.notifications.error(this.translate.instant('profileApproval.errors.finalize')),
-      });
-  }
 
   private normalizeSections(incoming: ProfileApprovalDetail): ProfileApprovalDetail {
     const map = new Map<number, ProfileApprovalSection>();
@@ -415,7 +341,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
   sectionIcon(section: number): string {
     switch (section) {
-      case 1:  return 'pi pi-id-card';        // Basic identity
+      case 1:  return 'pi pi-verified';        // Basic identity
       case 2:  return 'pi pi-id-card';        // Identity (duplicate case)
       case 3:  return 'pi pi-address-book';   // Address / contact
       case 4:  return 'pi pi-graduation-cap'; // Education
@@ -425,8 +351,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       case 8:  return 'pi pi-star';           // Skills (best available semantic match)
       case 9:  return 'pi pi-language';       // Languages
       case 10: return 'pi pi-paperclip';      // Attachments
-      default:
-        return 'pi pi-clipboard';             // Review / approval
+      default: return 'pi pi-clipboard';             // Review / approval
     }
   }
 
@@ -450,33 +375,6 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     const idx = info.sections.findIndex(s => s.section === this.activeSection());
     if (idx < 0 || idx >= info.sections.length - 1) return;
     this.activeSection.set(info.sections[idx + 1].section);
-  }
-
-  private needsCorrectionTargets(info: ProfileApprovalDetail): string[] {
-    const ids = new Set<string>();
-    const sections = this.sortSections(info.sections);
-
-    sections.forEach(sec => {
-      if (sec.sectionReview && this.isCorrectionStatus(sec.sectionReview.status)) {
-        ids.add(sec.sectionReview.reviewItemId);
-      }
-
-      (sec.items ?? []).forEach(item => {
-        if (this.isCorrectionStatus(item.status)) {
-          ids.add(item.reviewItemId);
-        }
-      });
-    });
-
-    return Array.from(ids);
-  }
-
-  private isCorrectionStatus(status?: ReviewStatus | null): boolean {
-    return (
-      status === ReviewStatus.ChangesRequested ||
-      status === ReviewStatus.NeedsCorrection ||
-      status === ReviewStatus.Rejected
-    );
   }
 
   progressStats(info: ProfileApprovalDetail): {

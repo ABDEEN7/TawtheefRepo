@@ -105,9 +105,10 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'error',
         summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.languages.validation.noRows'),
+        detail: this.translate.instant('wizard.profile.languages.required'),
         life: 5000,
       });
+      return;
     }
 
     this.saving = true;
@@ -123,7 +124,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'error',
           summary: this.translate.instant('wizard.errorTitle'),
-          detail: this.translate.instant('wizard.skills.saveError'),
+          detail: this.translate.instant('wizard.languages.saveError'),
           life: 5000,
         });
       },

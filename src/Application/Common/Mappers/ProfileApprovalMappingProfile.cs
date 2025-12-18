@@ -1,7 +1,7 @@
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Commands;
-using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -54,6 +54,8 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.Title, src => src.FileName)
             .Map(dest => dest.File, src => src.Attachment);
 
+//-----------------
+
         config.NewConfig<Qualification, QualificationDto>()
             .Map(dest => dest.GradCountryId, src => src.CountryId)
             .Map(dest => dest.GradCountry, src => src.Country)
@@ -61,19 +63,17 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.GradeId, src => src.RatingId)
             .Map(dest => dest.Grade, src => src.Rating)
             .Map(dest => dest.Attachment, src => src.Certificate);
-
+        
         config.NewConfig<Experience, ExperienceDto>()
             .Map(dest => dest.Attachment, src => src.Certificate)
             .Map(dest => dest.QualificationId, src => src.QualificationId)
-            .Map(dest => dest.DegreeName, src => src.Qualification == null ? null : src.Qualification.Degree)
-            .Map(dest => dest.MajorName, src => src.Qualification == null ? null : src.Qualification.Major)
-            .Map(dest => dest.UniversityName, src => src.Qualification == null ? null : src.Qualification.University)
-            .Map(dest => dest.SpecializationRelation, src => src.SpecializationRelation)
+            .Map(dest => dest.DegreeName,src=> src.Qualification == null ? null : src.Qualification.Degree)
+            .Map(dest => dest.MajorName,src=> src.Qualification == null ? null : src.Qualification.Major)
+            .Map(dest => dest.UniversityName,src=> src.Qualification == null ? null : src.Qualification.University)
             .Map(dest => dest.IsCurrent, src => src.EndDate == null);
 
         config.NewConfig<TrainingCourse, TrainingCourseDto>()
-            .Map(dest => dest.Attachment, src => src.Certificate)
-            .Map(dest => dest.SpecializationRelation, src => src.SpecializationRelation);
+            .Map(dest => dest.Attachment, src => src.Certificate);
 
         config.NewConfig<Achievement, AchievementDto>()
             .Map(dest => dest.Attachment, src => src.Attachment)
@@ -89,7 +89,7 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.SpeakingLevel, src => src.SpeakingLevel)
             .Map(dest => dest.WritingLevel, src => src.WritingLevel)
             .Map(dest => dest.ReadingLevel, src => src.ReadingLevel);
-
+//-----------------
         config.NewConfig<ResidenceAddress, ResidenceAddressDto>()
             .Map(dest => dest.ResidenceAddressCertificateId, src => src.CertificateId)
             .Map(dest => dest.ResidenceAddressCertificate, src => src.Certificate)
@@ -135,7 +135,7 @@ public sealed class ProfileApprovalMappingProfile : IRegister
         config.NewConfig<UserProfile, ProfileApprovalDataDto>()
             .Map(dest => dest.BasicInformation, src => src)
             .Map(dest => dest.ProfilePhoto, src=> src.User!.Avatar)
-            .Map(dest => dest.Qualifications, src => src.Qualifications)
+            .Map(dest => dest.Qualifications, src => src.Qualifications == null ? null : src.Qualifications.OrderBy(q => q.GraduationYear))
             .Map(dest => dest.Experiences, src => src.Experiences)
             .Map(dest => dest.TrainingCourses, src => src.TrainingCourses)
             .Map(dest => dest.ProfessionalCertificatesAndAwards, src => src.Achievements)

@@ -1,268 +1,186 @@
-import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { ProfileOverviewService } from './services/profile-overview.service';
-import { ProfileOverview, ProfileRequestProgress } from './models/profile-overview.model';
-import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
-import { Router } from '@angular/router';
-import { routes } from '../../../routes/routes';
-
-enum ReviewStatus {
-  NotReviewed = 0,
-  Pending = 1,
-  Approved = 2,
-  Rejected = 3,
-  NeedsCorrection = 4,
-  ChangesRequested = 4,
-}
-
-enum ProfileStatus {
-  InCreation = 0,
-  Submitted = 1,
-  UnderReview = 2,
-  RequiresUpdate = 3,
-  Approved = 4,
-  Rejected = 5,
-  Cancelled = 6,
-  AdminCancelled = 7,
-}
+import {Component, computed, inject, signal} from "@angular/core";
+import {CommonModule} from '@angular/common';
+import {ProfileService} from '../wizard-profile/services/profile.service';
+import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.service';
+import {Router} from '@angular/router';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {
+  AchievementDto, AdditionalAttachmentDto,
+  ExperienceDto, FileRefDto, LanguageDto,
+  ProfileStatusDto,
+  QualificationDto, SkillDto,
+  TrainingCourseDto
+} from '../../../core/models/auth/auth-response.model';
+import {forkJoin} from 'rxjs';
+import {finalize} from 'rxjs/operators';
+import {FileUtilsService} from '../../../core/utils/file-utils';
+import {mapIdToDropdown} from '../wizard-profile/services/profile.mapper';
+import {PrimeTemplate} from 'primeng/api';
+import {ButtonDirective} from 'primeng/button';
+import {Tag} from 'primeng/tag';
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
+import {Skeleton} from 'primeng/skeleton';
+import {Accordion, AccordionHeader, AccordionPanel} from 'primeng/accordion';
+import {TableModule} from 'primeng/table';
+import {Chip} from 'primeng/chip';
 
 @Component({
-  selector: 'app-profile-overview',
   standalone: true,
-  imports: [CommonModule, TranslateModule, I18nNamespaceDirective],
+  selector: 'app-profile-view-page',
+  imports: [
+    CommonModule,
+    TranslatePipe,
+    PrimeTemplate,
+    ButtonDirective,
+    Tag,
+    I18nNamespaceDirective,
+    Skeleton,
+    Accordion,
+    TableModule,
+    Chip,
+    AccordionPanel,
+    AccordionHeader,
+  ],
   templateUrl: './profile-overview.page.html',
-  styleUrl: './profile-overview.page.scss',
+  styleUrls: ['./profile-overview.page.scss']
 })
-export class ProfileOverviewPage implements OnInit {
-  private api = inject(ProfileOverviewService);
+export class ProfileOverviewPage {
+  private fileUtils = inject(FileUtilsService);
+  private profileService = inject(ProfileService);
+  private lookups = inject(ProfileLookupsService);
   private router = inject(Router);
+  private i18n = inject(TranslateService);
 
-  overview = signal<ProfileOverview | null>(null);
-  loading = signal(false);
+  loading = signal<boolean>(true);
   error = signal<string | null>(null);
 
-  readonly hasPending = computed(() => this.overview()?.hasPendingChanges ?? false);
-  readonly pendingItems = computed(
-    () => this.overview()?.sections?.flatMap(section => section.pendingItems ?? []) ?? [],
-  );
+  profile = signal<ProfileStatusDto | null>(null);
 
-  readonly requestProgress = computed<ProfileRequestProgress | null>(() => this.overview()?.requestProgress ?? null);
+  vm = computed(() => {
+    const p = this.profile();
+    if (!p) return null;
 
-  readonly pendingCounts = computed(() => {
-    const items = this.pendingItems();
+    const missing = p.missing ?? [];
+    const missingCount = missing.length;
 
     return {
-      total: items.length,
-      pending: items.filter(item => item.status === ReviewStatus.Pending).length,
-      needsCorrection: items.filter(item => item.status === ReviewStatus.NeedsCorrection).length,
-      rejected: items.filter(item => item.status === ReviewStatus.Rejected).length,
+      header: {
+        avatar: p.avatar ?? null,
+        fullName: (p.fullNameEn || p.fullNameAr || '').trim(),
+        email: p.email ?? '',
+        phone: p.phone ?? '',
+        emailVerified: p.emailVerified,
+        phoneVerified: p.phoneVerified,
+        isComplete: p.isComplete,
+        isDraft: p.isDraft,
+        missingCount,
+        missing
+      },
+
+      prereq: {
+        candidateType: mapIdToDropdown(this.lookups, 'candidateType', p.candidateTypeId),
+        targetEntity: mapIdToDropdown(this.lookups,'targetEntity', p.targetEntityId),
+        office: mapIdToDropdown(this.lookups,'office', p.officeId),
+
+        resume: p.resumeAttachment ?? null,
+        nationalCard: p.nationalCard ?? null,
+        birthdayCertificate: p.birthdayCertificate ?? null,
+        marriageCertificate: p.marriageCertificate ?? null,
+        sponsorCard: p.sponsorCard ?? null,
+        residenceAddressCertificate: p.residenceAddressCertificate ?? null
+      },
+
+      personal: {
+        nationalNumber: p.nationalNumber ?? null,
+        qidExpiry: p.qidExpiry ?? null,
+        birthDate: p.birthDate ?? null,
+        nationality: mapIdToDropdown(this.lookups,'countries', p.nationalityId),
+        gender: mapIdToDropdown(this.lookups,'gender', p.genderId),
+        religion: mapIdToDropdown(this.lookups,'religion', p.religionId),
+        maritalStatus: mapIdToDropdown(this.lookups,'marital', p.maritalStatusId),
+        childrenCount: p.childrenCount ?? 0,
+        hasDisability: p.hasDisability,
+        disabilityDetails: p.disabilityDetails ?? null,
+
+        sponsorType: mapIdToDropdown(this.lookups,'sponsorType', p.sponsorTypeId),
+        sponsorEmployerName: p.sponsorEmployerName ?? null,
+        sponsorEmployerNumber: p.sponsorEmployerNumber ?? null,
+        sponsorQidExpiry: p.sponsorQidExpiry ?? null
+      },
+
+      contact: {
+        residenceCountry: mapIdToDropdown(this.lookups,'countries', p.residenceCountryId),
+        interviewLocation: mapIdToDropdown(this.lookups,'countries', p.interviewLocationId),
+        address: p.address ?? null,
+
+        naZone: p.naZone ?? null,
+        naStreet: p.naStreet ?? null,
+        naBuilding: p.naBuilding ?? null,
+        naUnit: p.naUnit ?? null
+      },
+
+      qualifications: (p.qualifications ?? []) as QualificationDto[],
+      experiences: (p.experiences ?? []) as ExperienceDto[],
+      trainingCourses: (p.trainingCourses ?? []) as TrainingCourseDto[],
+      achievements: (p.achievements ?? []) as AchievementDto[],
+      skills: (p.skills ?? []) as SkillDto[],
+      languages: (p.languages ?? []) as LanguageDto[],
+      attachments: (p.additionalAttachments ?? []) as AdditionalAttachmentDto[]
     };
   });
 
-  readonly overviewStatus = computed(() => this.profileStatusConfig(this.overview()?.status));
+  // Section “health” (complete/missing) based on missing keys convention.
+  // If your missing[] uses different keys, update the prefix map.
+  private missingPrefix = {
+    prerequisites: ['prereq.', 'prerequisites.'],
+    personal: ['personal.'],
+    contact: ['contact.'],
+    qualifications: ['qualifications.'],
+    experiences: ['experiences.', 'experience.'],
+    training: ['trainingCourses.', 'training.'],
+    achievements: ['achievements.', 'certificatesAndAwards.', 'certificates.'],
+    skills: ['skills.'],
+    languages: ['languages.'],
+    attachments: ['attachments.']
+  } as const;
 
-  readonly nextStep = computed(() => this.nextStepKey(this.overview()?.status, this.requestProgress()));
+  sectionMissingCount(section: keyof typeof this.missingPrefix): number {
+    const p = this.profile();
+    if (!p?.missing?.length) return 0;
+    const prefixes = this.missingPrefix[section];
+    return p.missing.filter(k => prefixes.some(pref => k.startsWith(pref))).length;
+  }
 
-  readonly latestRequestStatus = computed(() => this.requestStatusLabel(this.requestProgress()?.latestStatus));
-
-  readonly summaryTone = computed<'success' | 'warning' | 'danger' | 'info'>(() => {
-    const progress = this.requestProgress();
-
-    if (!progress) return 'info';
-
-    if (progress.requiresUserAction) return 'danger';
-    if (this.hasPending()) return 'warning';
-    return 'success';
-  });
-
-  ngOnInit(): void {
+  ngOnInit() {
     this.load();
   }
 
-  load(): void {
+  load() {
     this.loading.set(true);
     this.error.set(null);
-    this.api.getOverview().subscribe({
-      next: data => {
-        this.overview.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('profileOverview.error');
-        this.loading.set(false);
-      },
-    });
+
+    forkJoin({
+      lookups: this.lookups.loadAll(),
+      profile: this.profileService.getProfileStatus()
+    })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => this.profile.set(res.profile),
+        error: (err) => {
+          console.error(err);
+          this.error.set(this.i18n.instant('common.loadFailed'));
+        }
+      });
   }
 
-  profileStatusLabel(status?: number): string {
-    switch (status) {
-      case ProfileStatus.Submitted:
-        return 'profileOverview.profileStatus.submitted';
-      case ProfileStatus.UnderReview:
-        return 'profileOverview.profileStatus.underReview';
-      case ProfileStatus.RequiresUpdate:
-        return 'profileOverview.profileStatus.requiresUpdate';
-      case ProfileStatus.Approved:
-        return 'profileOverview.profileStatus.approved';
-      case ProfileStatus.Rejected:
-        return 'profileOverview.profileStatus.rejected';
-      case ProfileStatus.Cancelled:
-        return 'profileOverview.profileStatus.cancelled';
-      case ProfileStatus.AdminCancelled:
-        return 'profileOverview.profileStatus.adminCancelled';
-      default:
-        return 'profileOverview.profileStatus.inCreation';
-    }
+  // Navigation to edit pages (you will implement these routes)
+  editSection(section: string) {
+    this.router.navigate(['/profile/edit', section]);
   }
 
-  profileStatusTone(status?: number): 'success' | 'warning' | 'info' | 'danger' {
-    switch (status) {
-      case ProfileStatus.Approved:
-        return 'success';
-      case ProfileStatus.RequiresUpdate:
-      case ProfileStatus.Submitted:
-      case ProfileStatus.UnderReview:
-        return 'warning';
-      case ProfileStatus.Rejected:
-      case ProfileStatus.Cancelled:
-      case ProfileStatus.AdminCancelled:
-        return 'danger';
-      default:
-        return 'info';
-    }
-  }
-
-  profileStatusConfig(status?: number): { label: string; description: string; tone: string } {
-    return {
-      label: this.profileStatusLabel(status),
-      description: this.profileStatusDescription(status),
-      tone: this.profileStatusTone(status),
-    };
-  }
-
-  profileStatusDescription(status?: number): string {
-    switch (status) {
-      case ProfileStatus.Submitted:
-        return 'profileOverview.profileStatusDescriptions.submitted';
-      case ProfileStatus.UnderReview:
-        return 'profileOverview.profileStatusDescriptions.underReview';
-      case ProfileStatus.RequiresUpdate:
-        return 'profileOverview.profileStatusDescriptions.requiresUpdate';
-      case ProfileStatus.Approved:
-        return 'profileOverview.profileStatusDescriptions.approved';
-      case ProfileStatus.Rejected:
-        return 'profileOverview.profileStatusDescriptions.rejected';
-      case ProfileStatus.Cancelled:
-        return 'profileOverview.profileStatusDescriptions.cancelled';
-      case ProfileStatus.AdminCancelled:
-        return 'profileOverview.profileStatusDescriptions.adminCancelled';
-      default:
-        return 'profileOverview.profileStatusDescriptions.inCreation';
-    }
-  }
-
-  reviewStatusLabel(status?: number): string {
-    switch (status) {
-      case ReviewStatus.Pending:
-        return 'profileOverview.status.pending';
-      case ReviewStatus.Approved:
-        return 'profileOverview.status.approved';
-      case ReviewStatus.Rejected:
-        return 'profileOverview.status.rejected';
-      case ReviewStatus.NeedsCorrection:
-        return 'profileOverview.status.needsCorrection';
-      default:
-        return 'profileOverview.status.notReviewed';
-    }
-  }
-
-  reviewStatusTone(status?: number): 'success' | 'warning' | 'info' | 'danger' {
-    switch (status) {
-      case ReviewStatus.Approved:
-        return 'success';
-      case ReviewStatus.Pending:
-        return 'warning';
-      case ReviewStatus.Rejected:
-        return 'danger';
-      case ReviewStatus.NeedsCorrection:
-        return 'info';
-      default:
-        return 'info';
-    }
-  }
-
-  reviewStatusDescription(status?: number): string {
-    switch (status) {
-      case ReviewStatus.Pending:
-        return 'profileOverview.statusDescriptions.pending';
-      case ReviewStatus.Approved:
-        return 'profileOverview.statusDescriptions.approved';
-      case ReviewStatus.Rejected:
-        return 'profileOverview.statusDescriptions.rejected';
-      case ReviewStatus.NeedsCorrection:
-        return 'profileOverview.statusDescriptions.needsCorrection';
-      default:
-        return 'profileOverview.statusDescriptions.notReviewed';
-    }
-  }
-
-  sectionName(section: number): string {
-    switch (section) {
-      case 1:
-        return 'profileOverview.sections.prerequisites';
-      case 2:
-        return 'profileOverview.sections.basicInfo';
-      case 3:
-        return 'profileOverview.sections.contactInfo';
-      case 4:
-        return 'profileOverview.sections.qualifications';
-      case 5:
-        return 'profileOverview.sections.experiences';
-      case 6:
-        return 'profileOverview.sections.training';
-      case 7:
-        return 'profileOverview.sections.certificates';
-      case 8:
-        return 'profileOverview.sections.skills';
-      case 9:
-        return 'profileOverview.sections.languages';
-      case 10:
-        return 'profileOverview.sections.attachments';
-      default:
-        return 'profileOverview.sections.generic';
-    }
-  }
-
-  nextStepKey(status?: number, progress?: ProfileRequestProgress | null): string {
-    if (progress?.requiresUserAction) {
-      return 'profileOverview.actionCenter.respond';
-    }
-
-    switch (status) {
-      case ProfileStatus.Submitted:
-      case ProfileStatus.UnderReview:
-        return 'profileOverview.actionCenter.wait';
-      case ProfileStatus.RequiresUpdate:
-        return 'profileOverview.actionCenter.update';
-      case ProfileStatus.Approved:
-        return 'profileOverview.actionCenter.done';
-      case ProfileStatus.Rejected:
-        return 'profileOverview.actionCenter.rejected';
-      case ProfileStatus.Cancelled:
-      case ProfileStatus.AdminCancelled:
-        return 'profileOverview.actionCenter.cancelled';
-      default:
-        return 'profileOverview.actionCenter.start';
-    }
-  }
-
-  openEditWizard(startStep?: number): void {
-    this.router.navigate([routes.user.profileWizard], { state: { allowEdit: true, startStep } });
-  }
-
-  private requestStatusLabel(status?: number | null): string | null {
-    if (status === null || status === undefined) return null;
-    return this.profileStatusLabel(status);
+  // File actions
+  openFile(file: FileRefDto | null) {
+    if (!file?.url) return;
+    this.fileUtils.previewUrl(file?.url);
   }
 }

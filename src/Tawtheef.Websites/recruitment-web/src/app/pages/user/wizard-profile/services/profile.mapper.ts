@@ -268,7 +268,7 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
 }
 
 // Convert backend ID → dropdownOptionsModel
-function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
+export function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
 'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |
 'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'office' | 'achievementTypes',
   id?: string | null): dropdownOptionsModel | undefined {

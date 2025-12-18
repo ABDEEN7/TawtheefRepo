@@ -52,10 +52,6 @@ export class StepReviewComponent {
       CandidateType.WifeOfQatari
     ].includes(type);
   }
-  hasNationalAddress = computed(() => {
-    const s = this.ds.state();
-    return this.isResidentQatar && !!(s.naZone || s.naStreet || s.naBuilding || s.naUnit || s.naFileName);
-  });
 
   hasSponsor = computed(() => {
     const s = this.ds.state();

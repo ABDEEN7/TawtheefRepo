@@ -40,7 +40,7 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         object? newValue = null,
         string? fieldPath = null)
     {
-        var repo = uow.GetEntityRepository<ReviewItem>();
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var changeRepo = uow.GetEntityRepository<ProfileChange>();
 
         var change = await changeRepo.DbSet
@@ -65,7 +65,7 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
             change.AttachmentTitle = attachmentTitle ?? change.AttachmentTitle;
         }
 
-        var pending = await repo.DbSet
+        var pending = await reviewRepo.DbSet
             .Where(r => r.UserProfileId == userProfileId
                         && r.Section == section
                         && r.TargetType == targetType
@@ -80,7 +80,7 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         if (pending is not null)
             return pending;
 
-        var latestVersion = await repo.DbSet
+        var latestVersion = await reviewRepo.DbSet
             .Where(r => r.UserProfileId == userProfileId
                         && r.Section == section
                         && r.TargetType == targetType
@@ -99,7 +99,7 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         item.ProfileChangeId = change.Id;
         item.IsOutdated = true;
 
-        await repo.AddAsync(item);
+        await reviewRepo.AddAsync(item);
         return item;
     }
 }

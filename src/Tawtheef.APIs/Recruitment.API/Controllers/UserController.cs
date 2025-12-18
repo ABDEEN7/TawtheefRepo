@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.Queries;
+using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
@@ -31,6 +32,13 @@ public class UserController(IMediator mediator) : ControllerBase
         if(UserId.IsFailed)
             return Unauthorized(UserId.Errors);
         var result = await mediator.Send(new GetUserProfileQuery{ UserId = UserId.Value});
+        return result.ToActionResult();
+    }
+    [HttpGet("profile/detail")]
+    public async Task<IActionResult> GetProfileDetail(CancellationToken ct)
+    {
+        if (UserId.IsFailed) return Unauthorized(UserId.Errors);
+        var result = await mediator.Send(new GetMyProfileDetailQuery { UserId = UserId.Value }, ct);
         return result.ToActionResult();
     }
         

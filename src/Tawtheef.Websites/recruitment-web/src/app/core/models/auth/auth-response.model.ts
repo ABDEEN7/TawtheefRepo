@@ -108,6 +108,7 @@ export interface SkillDto {
   skillId: string;
   skill: dropdownOptionsModel;
   levelId: string;
+  level: dropdownOptionsModel;
 }
 export interface TrainingCourseDto {
   id: GUID;

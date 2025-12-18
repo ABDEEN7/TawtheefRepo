@@ -16,6 +16,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { finalize } from 'rxjs';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {routes} from '../../../../../routes/routes';
+import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-profile-approval-list-page',
@@ -27,7 +28,7 @@ import {routes} from '../../../../../routes/routes';
     Select, InputTextModule
   ],
   templateUrl: './profile-approval-list.page.html',
-  styleUrl: './profile-approval.page.scss',
+  styleUrl: './profile-approval-list.page.scss',
   providers: [MessageService],
 })
 export class ProfileApprovalListPage implements OnInit {
@@ -131,10 +132,17 @@ export class ProfileApprovalListPage implements OnInit {
     }
   }
 
-  openProfile(profileId: string): void {
-    if (!profileId) return;
-    this.router.navigate([routes.employee.approvalProfileDetail(profileId)], {
-      queryParams: { changes: '1' },
-    });
+  openProfile(row: ProfileApprovalListItem): void {
+    if (!row?.userProfileId) return;
+
+    const isFullMode =
+      row.profileStatus !== ProfileStatusNumber.Approved ||
+      row.overallStatus === ReviewStatus.Pending;
+
+    const url = isFullMode
+      ? routes.employee.approvalProfileReview(row.userProfileId)
+      : routes.employee.approvalProfileChanges(row.userProfileId);
+
+    this.router.navigate([url]);
   }
 }

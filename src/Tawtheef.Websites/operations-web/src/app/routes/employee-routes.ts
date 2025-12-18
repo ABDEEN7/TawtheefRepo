@@ -15,9 +15,15 @@
   get approvalProfile(){
     return this.employee + '/approval-profile';
   },
-  approvalProfileDetail(profileId: string){
-    return this.approvalProfile + '/' + profileId;
+  approvalProfileDetail(id: string){
+    return this.approvalProfile + `/${id}`;
   },
+  approvalProfileReview(id: string) {
+    return this.approvalProfile + `/${id}/review`;
+  },
+  approvalProfileChanges (id: string){
+    return this.approvalProfile + `/${id}/changes`;
+    },
   get jobCreate(){
     return this.employee + '/jobs/create';
   },

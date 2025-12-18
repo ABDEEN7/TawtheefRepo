@@ -242,5 +242,14 @@
   "profileApproval.validation.pendingSectionsDetail": "Approve or request changes for all sections before approving the entire profile.",
   "profileApproval.detail.partialReview": "Partial Review",
   "profileApproval.detail.initialReview": "Initial Review",
-  "profileApproval.detail.snapshot.candidateType": "Candidate Category"
+  "profileApproval.detail.snapshot.candidateType": "Candidate Category",
+  "profileApproval.detail.mode.partialTitle": "Partial review (changes only)",
+  "profileApproval.detail.mode.fullTitle": "Full review (complete profile)",
+  "profileApproval.detail.mode.partialHint": "You are viewing only updated items since the last approved version.",
+  "profileApproval.detail.mode.fullHint": "You are viewing the complete profile submission.",
+  "profileApproval.detail.mode.switchToFull": "View full profile",
+  "profileApproval.detail.mode.switchToChanges": "View changes only",
+  "profileApproval.detail.mode.version": "Submission version",
+  "profileApproval.detail.itemSaved": "Item review saved.",
+  "profileApproval.status.needsCorrection": "Needs correction"
 }

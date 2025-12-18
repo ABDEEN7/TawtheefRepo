@@ -416,6 +416,14 @@ function validateSkillsStep(s: ProfileState): StepValidationResult {
 
 function validateLanguagesStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
+  const hasLanguages = Array.isArray(s.languages) && s.languages.length > 0;
+
+  if (!hasLanguages) {
+    errors.push({
+      field: 'languages',
+      i18nKey: 'wizard.profile.languages.required',
+    });
+  }
   s.languages?.forEach((lang, index) => {
     if (!isFilledField(lang?.speakingLevelId ?? lang?.speakingLevel?.id)) {
       errors.push({

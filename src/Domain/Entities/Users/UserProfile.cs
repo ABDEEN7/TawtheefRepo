@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
@@ -159,7 +158,7 @@ public class UserProfile : EventEntity
             if (ResidenceAddress.StreetNo <= 0) return false;
             if (ResidenceAddress.BuildingNo <= 0) return false;
             if (ResidenceAddress.UnitNo < 0) return false;
-            if (ResidenceAddress.CertificateId != Guid.Empty)
+            if (ResidenceAddress.CertificateId == Guid.Empty)
                 return false;
         }
         else

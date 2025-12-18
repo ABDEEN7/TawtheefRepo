@@ -1,210 +1,609 @@
-<section class="profile-overview" i18nNamespace="pages/user/profile-overview">
-  <header class="page-head">
-    <div>
-      <p class="eyebrow">{{ 'profileOverview.eyebrow' | translate }}</p>
-      <h2>{{ 'profileOverview.title' | translate }}</h2>
-      <p class="muted">{{ 'profileOverview.subtitle' | translate }}</p>
-    </div>
-    <span class="pill" [ngClass]="summaryTone()">{{ hasPending() ? ('profileOverview.badges.pending' | translate) : ('profileOverview.badges.clean' | translate) }}</span>
-  </header>
+<section class="profile-view-shelL" *ngIf="vm()?.header" i18nNamespace="pages/user/profile-overview">
+  <!-- Header -->
+  <div class="card shadow-sm border-0 header-card">
+    <ng-container *ngIf="!loading(); else headerSkeleton">
+      <div class="d-flex flex-wrap gap-3 align-items-start justify-content-between">
+        <div class="d-flex gap-3 align-items-center">
+          <div class="avatar">
+            <img *ngIf="vm()?.header!.avatar; else avatarFallback" [src]="vm()?.header!.avatar!" alt="avatar" />
+            <ng-template #avatarFallback>
+              <div class="avatar-fallback">
+                <i class="pi pi-user"></i>
+              </div>
+            </ng-template>
+          </div>
 
-  <div class="alert" *ngIf="hasPending()">{{ 'profileOverview.pendingWarning' | translate }}</div>
-  <div class="alert soft" *ngIf="!hasPending()">{{ 'profileOverview.activeSnapshot' | translate }}</div>
+          <div>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <h2 class="mb-0">{{ vm()?.header!.fullName || ('profileView.header.noName' | translate) }}</h2>
 
-  <div class="action-bar card" *ngIf="requestProgress() as progress">
-    <div>
-      <h4>{{ 'profileOverview.actions.title' | translate }}</h4>
-      <p class="muted">{{ 'profileOverview.actions.subtitle' | translate }}</p>
-      <p class="hint">{{ 'profileOverview.actions.restriction' | translate }}</p>
-    </div>
-    <div class="actions">
-      <button class="btn btn-outline-primary" type="button" (click)="openEditWizard(10)">
-        {{ 'profileOverview.actions.viewProfile' | translate }}
-      </button>
-      <button class="btn btn-outline-secondary" type="button" (click)="openEditWizard(1)">
-        {{ 'profileOverview.actions.editProfile' | translate }}
-      </button>
-      <button
-        class="btn btn-brand"
-        type="button"
-        *ngIf="progress.requiresUserAction || hasPending()"
-        (click)="openEditWizard()">
-        {{ 'profileOverview.actions.respond' | translate }}
-      </button>
-    </div>
-  </div>
+              <p-tag
+                *ngIf="vm()?.header!.isComplete; else draftTag"
+                severity="success"
+                [value]="'profileView.header.complete' | translate">
+              </p-tag>
 
-  <div class="status-grid" *ngIf="overviewStatus() as status">
-    <article class="status-card">
-      <div class="status-card__head">
-        <div>
-          <p class="eyebrow">{{ 'profileOverview.statusCard.title' | translate }}</p>
-          <h3>{{ 'profileOverview.statusCard.heading' | translate }}</h3>
-        </div>
-        <span class="pill" [ngClass]="status.tone">{{ status.label | translate }}</span>
-      </div>
-      <p class="muted">{{ status.description | translate }}</p>
-    </article>
+              <ng-template #draftTag>
+                <p-tag
+                  severity="warn"
+                  [value]="vm()?.header!.isDraft ? ('profileView.header.draft' | translate) : ('profileView.header.incomplete' | translate)">
+                </p-tag>
+              </ng-template>
 
-    <article class="status-card soft" *ngIf="requestProgress() as progress">
-      <div class="status-card__head">
-        <div>
-          <p class="eyebrow">{{ 'profileOverview.requests.title' | translate }}</p>
-          <h3>{{ 'profileOverview.requests.heading' | translate }}</h3>
-        </div>
-        <span class="pill outline" [class.warning]="hasPending()" [class.success]="!hasPending()">
-          {{ hasPending() ? ('profileOverview.badges.pending' | translate) : ('profileOverview.badges.clean' | translate) }}
-        </span>
-      </div>
-      <p class="muted">{{ (hasPending() ? 'profileOverview.requests.pendingBody' : 'profileOverview.requests.cleanBody') | translate }}</p>
-
-      <ul class="request-stats">
-        <li>
-          <span>{{ 'profileOverview.requests.total' | translate }}</span>
-          <strong>{{ pendingCounts().total }}</strong>
-        </li>
-        <li>
-          <span>{{ 'profileOverview.requests.pendingCount' | translate }}</span>
-          <strong>{{ pendingCounts().pending }}</strong>
-        </li>
-        <li>
-          <span>{{ 'profileOverview.requests.needsCorrectionCount' | translate }}</span>
-          <strong>{{ pendingCounts().needsCorrection }}</strong>
-        </li>
-        <li>
-          <span>{{ 'profileOverview.requests.rejectedCount' | translate }}</span>
-          <strong>{{ pendingCounts().rejected }}</strong>
-        </li>
-      </ul>
-
-      <div class="request-meta">
-        <div>
-          <p class="muted">{{ 'profileOverview.requests.lastSubmitted' | translate }}</p>
-          <strong>{{ progress.lastSubmittedAtUtc ? (progress.lastSubmittedAtUtc | date: 'medium') : ('profileOverview.requests.notYet' | translate) }}</strong>
-        </div>
-        <div>
-          <p class="muted">{{ 'profileOverview.requests.lastDecision' | translate }}</p>
-          <strong>{{ progress.lastDecisionAtUtc ? (progress.lastDecisionAtUtc | date: 'medium') : ('profileOverview.requests.awaiting' | translate) }}</strong>
-        </div>
-      </div>
-    </article>
-
-    <article class="status-card action" *ngIf="requestProgress() as progress">
-      <div class="status-card__head">
-        <div>
-          <p class="eyebrow">{{ 'profileOverview.actionCenter.title' | translate }}</p>
-          <h3>{{ 'profileOverview.actionCenter.heading' | translate }}</h3>
-        </div>
-        <span class="pill" [ngClass]="summaryTone()">{{ nextStep() | translate }}</span>
-      </div>
-      <p class="muted">{{ 'profileOverview.actionCenter.body' | translate }}</p>
-      <ul class="steps">
-        <li [class.active]="progress.requiresUserAction">{{ 'profileOverview.actionCenter.stepRespond' | translate }}</li>
-        <li [class.active]="hasPending()">{{ 'profileOverview.actionCenter.stepTrack' | translate }}</li>
-        <li [class.active]="!hasPending()">{{ 'profileOverview.actionCenter.stepDone' | translate }}</li>
-      </ul>
-      <div class="review-note" *ngIf="progress.latestReviewerNote">
-        <span>{{ 'profileOverview.actionCenter.latestNote' | translate }}</span>
-        <p>{{ progress.latestReviewerNote }}</p>
-      </div>
-    </article>
-  </div>
-
-  <div class="layout">
-    <div class="primary">
-      <article class="card how-it-works">
-        <div class="card-head">
-          <h4>{{ 'profileOverview.howItWorks.title' | translate }}</h4>
-          <p class="muted">{{ 'profileOverview.howItWorks.subtitle' | translate }}</p>
-        </div>
-        <ol>
-          <li>{{ 'profileOverview.howItWorks.stepDraft' | translate }}</li>
-          <li>{{ 'profileOverview.howItWorks.stepSubmit' | translate }}</li>
-          <li>{{ 'profileOverview.howItWorks.stepReview' | translate }}</li>
-          <li>{{ 'profileOverview.howItWorks.stepRespond' | translate }}</li>
-        </ol>
-      </article>
-
-      <div class="card" *ngIf="overview() as data; else loadingTpl">
-        <div class="card-head">
-          <h4>{{ 'profileOverview.pendingChanges' | translate }}</h4>
-          <p class="muted">{{ 'profileOverview.pendingHint' | translate }}</p>
-        </div>
-
-        <div *ngIf="data.sections.length; else noChanges" class="change-grid">
-          <article class="change" *ngFor="let section of data.sections">
-            <div class="change-head">
-              <div class="pill soft">{{ sectionName(section.section) | translate }}</div>
-              <div class="badge">{{ 'profileOverview.badges.review' | translate }}</div>
+              <span class="pill soft" *ngIf="(vm()?.header!.missingCount ?? 0) > 0">
+                {{ 'profileView.header.missing' | translate }}: {{ vm()?.header!.missingCount }}
+              </span>
             </div>
-            <div class="change-items" *ngFor="let item of section.pendingItems">
-              <div class="change-title">
-                <div class="title">{{ item.title }}</div>
-                <span class="chip" [ngClass]="reviewStatusTone(item.status)">{{ reviewStatusLabel(item.status) | translate }}</span>
+
+            <div class="meta mt-1">
+              <div class="meta-row">
+                <i class="pi pi-envelope"></i>
+                <span class="text-muted">{{ vm()?.header!.email || '—' }}</span>
+                <p-tag
+                  class="ms-2"
+                  [severity]="vm()?.header!.emailVerified ? 'success' : 'danger'"
+                  [value]="vm()?.header!.emailVerified ? ('common.verified' | translate) : ('common.notVerified' | translate)">
+                </p-tag>
               </div>
-              <p class="review-note">{{ reviewStatusDescription(item.status) | translate }}</p>
-              <div class="note" *ngIf="item.note">
-                <span>{{ 'profileOverview.reviewerNote' | translate }}</span>
-                <p>{{ item.note }}</p>
+
+              <div class="meta-row">
+                <i class="pi pi-phone"></i>
+                <span class="text-muted">{{ vm()?.header!.phone || '—' }}</span>
+                <p-tag
+                  class="ms-2"
+                  [severity]="vm()?.header!.phoneVerified ? 'success' : 'danger'"
+                  [value]="vm()?.header!.phoneVerified ? ('common.verified' | translate) : ('common.notVerified' | translate)">
+                </p-tag>
               </div>
-              <div class="values">
-                <div>
-                  <span class="label">{{ 'profileOverview.oldValue' | translate }}</span>
-                  <div class="value">{{ item.oldValue || '-' }}</div>
-                </div>
-                <div>
-                  <span class="label">{{ 'profileOverview.newValue' | translate }}</span>
-                  <div class="value highlight">{{ item.newValue || '-' }}</div>
-                </div>
-              </div>
-              <p class="reviewed-at" *ngIf="item.reviewedAtUtc">
-                {{ 'profileOverview.reviewedAt' | translate }}
-                {{ item.reviewedAtUtc | date: 'medium' }}
-              </p>
             </div>
-          </article>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+          <button pButton type="button" class="p-button-outlined" (click)="load()"
+                  icon="pi pi-refresh" [label]="'common.refresh' | translate">
+          </button>
+
+          <button pButton type="button" (click)="editSection('overview')"
+                  icon="pi pi-pencil" [label]="'profileView.actions.editProfile' | translate">
+          </button>
         </div>
       </div>
-    </div>
 
-    <aside class="rail" *ngIf="requestProgress() as progress">
-      <div class="card">
-        <div class="card-head">
-          <h4>{{ 'profileOverview.timeline.title' | translate }}</h4>
-          <p class="muted">{{ 'profileOverview.timeline.subtitle' | translate }}</p>
+      <div class="missing-box mt-3" *ngIf="(vm()?.header!.missingCount ?? 0) > 0">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <i class="pi pi-exclamation-triangle"></i>
+          <strong>{{ 'profileView.header.missingListTitle' | translate }}</strong>
         </div>
-        <ul class="timeline">
-          <li *ngIf="latestRequestStatus() as latestStatus">
-            <span>{{ 'profileOverview.requests.latestStatus' | translate }}</span>
-            <strong>{{ latestStatus | translate }}</strong>
-          </li>
-          <li>
-            <span>{{ 'profileOverview.timeline.latestVersion' | translate }}</span>
-            <strong>#{{ progress.latestVersion || 1 }}</strong>
-          </li>
-          <li>
-            <span>{{ 'profileOverview.timeline.lastSubmitted' | translate }}</span>
-            <strong>{{ progress.lastSubmittedAtUtc ? (progress.lastSubmittedAtUtc | date: 'medium') : ('profileOverview.requests.notYet' | translate) }}</strong>
-          </li>
-          <li>
-            <span>{{ 'profileOverview.timeline.lastDecision' | translate }}</span>
-            <strong>{{ progress.lastDecisionAtUtc ? (progress.lastDecisionAtUtc | date: 'medium') : ('profileOverview.requests.awaiting' | translate) }}</strong>
-          </li>
+        <ul class="mb-0">
+          <li *ngFor="let m of (vm()?.header!.missing ?? [])">{{ m }}</li>
         </ul>
-        <div class="hint">
-          <p class="eyebrow">{{ 'profileOverview.timeline.tip' | translate }}</p>
-          <p class="muted">{{ 'profileOverview.timeline.tipBody' | translate }}</p>
+      </div>
+    </ng-container>
+
+    <ng-template #headerSkeleton>
+      <div class="d-flex gap-3 align-items-center">
+        <p-skeleton shape="circle" size="4rem"></p-skeleton>
+        <div class="flex-grow-1">
+          <p-skeleton width="18rem" height="1.6rem"></p-skeleton>
+          <p-skeleton class="mt-2" width="28rem"></p-skeleton>
+          <p-skeleton class="mt-2" width="22rem"></p-skeleton>
         </div>
       </div>
-    </aside>
+    </ng-template>
   </div>
 
-  <ng-template #noChanges>
-    <div class="empty">{{ 'profileOverview.noPending' | translate }}</div>
-  </ng-template>
+  <!-- Error -->
+  <div *ngIf="error()" class="alert alert-danger mt-3">
+    {{ error() }}
+  </div>
 
-  <ng-template #loadingTpl>
-    <div class="loading">{{ 'profileOverview.loading' | translate }}</div>
-    <div *ngIf="error()" class="error">{{ 'profileOverview.error' | translate }}</div>
-  </ng-template>
+  <!-- Sections -->
+  <div class="card shadow-sm border-0 mt-3">
+    <p-accordion [multiple]="true">
+
+      <!-- 1) Prerequisites -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-file"></i>
+              <span>{{ 'profileView.sections.prerequisites' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('prerequisites') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('prerequisites') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('prerequisites')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <div class="grid2">
+            <div class="kv">
+              <div class="k">{{ 'profileView.fields.candidateType' | translate }}</div>
+              <div class="v">{{ v.prereq.candidateType }}</div>
+            </div>
+            <div class="kv">
+              <div class="k">{{ 'profileView.fields.targetEntity' | translate }}</div>
+              <div class="v">{{ v.prereq.targetEntity }}</div>
+            </div>
+            <div class="kv">
+              <div class="k">{{ 'profileView.fields.office' | translate }}</div>
+              <div class="v">{{ v.prereq.office }}</div>
+            </div>
+          </div>
+
+          <div class="attach-grid mt-3">
+            <div class="attach-item" *ngFor="let item of [
+              { key: 'resume', title: ('profileView.files.resume' | translate), file: v.prereq.resume },
+              { key: 'nationalCard', title: ('profileView.files.nationalCard' | translate), file: v.prereq.nationalCard },
+              { key: 'birthdayCertificate', title: ('profileView.files.birthdayCertificate' | translate), file: v.prereq.birthdayCertificate },
+              { key: 'marriageCertificate', title: ('profileView.files.marriageCertificate' | translate), file: v.prereq.marriageCertificate },
+              { key: 'residenceAddressCertificate', title: ('profileView.files.residenceAddressCertificate' | translate), file: v.prereq.residenceAddressCertificate },
+              { key: 'sponsorCard', title: ('profileView.files.sponsorCard' | translate), file: v.prereq.sponsorCard }
+            ]">
+              <div class="attach-title">{{ item.title }}</div>
+              <div class="attach-body">
+                <span class="text-muted" *ngIf="!item.file">{{ 'common.none' | translate }}</span>
+                <ng-container *ngIf="item.file">
+                  <span class="me-2">{{ item.file.fileName }}</span>
+                  <button pButton type="button" class="p-button-sm p-button-text"
+                          icon="pi pi-external-link"
+                          (click)="openFile(item.file)">
+                  </button>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 2) Personal -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-id-card"></i>
+              <span>{{ 'profileView.sections.personal' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('personal') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('personal') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('personal')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <div class="grid2">
+            <div class="kv"><div class="k">{{ 'profileView.fields.nationalNumber' | translate }}</div><div class="v">{{ v.personal.nationalNumber || '—' }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.qidExpiry' | translate }}</div><div class="v">{{ v.personal.qidExpiry || '—' }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.birthDate' | translate }}</div><div class="v">{{ v.personal.birthDate || '—' }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.nationality' | translate }}</div><div class="v">{{ v.personal.nationality }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.gender' | translate }}</div><div class="v">{{ v.personal.gender }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.religion' | translate }}</div><div class="v">{{ v.personal.religion }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.maritalStatus' | translate }}</div><div class="v">{{ v.personal.maritalStatus }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.childrenCount' | translate }}</div><div class="v">{{ v.personal.childrenCount }}</div></div>
+
+            <div class="kv">
+              <div class="k">{{ 'profileView.fields.hasDisability' | translate }}</div>
+              <div class="v">
+                <p-tag [severity]="v.personal.hasDisability ? 'warn' : 'success'"
+                       [value]="v.personal.hasDisability ? ('common.yes' | translate) : ('common.no' | translate)">
+                </p-tag>
+              </div>
+            </div>
+
+            <div class="kv" *ngIf="v.personal.hasDisability">
+              <div class="k">{{ 'profileView.fields.disabilityDetails' | translate }}</div>
+              <div class="v">{{ v.personal.disabilityDetails || '—' }}</div>
+            </div>
+          </div>
+
+          <hr class="my-3" />
+
+          <div class="subhead">{{ 'profileView.sub.sponsor' | translate }}</div>
+          <div class="grid2 mt-2">
+            <div class="kv"><div class="k">{{ 'profileView.fields.sponsorType' | translate }}</div><div class="v">{{ v.personal.sponsorType }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.sponsorEmployerName' | translate }}</div><div class="v">{{ v.personal.sponsorEmployerName || '—' }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.sponsorEmployerNumber' | translate }}</div><div class="v">{{ v.personal.sponsorEmployerNumber || '—' }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.sponsorQidExpiry' | translate }}</div><div class="v">{{ v.personal.sponsorQidExpiry || '—' }}</div></div>
+          </div>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 3) Contact -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-map-marker"></i>
+              <span>{{ 'profileView.sections.contact' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('contact') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('contact') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('contact')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <div class="grid2">
+            <div class="kv"><div class="k">{{ 'profileView.fields.residenceCountry' | translate }}</div><div class="v">{{ v.contact.residenceCountry }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.interviewLocation' | translate }}</div><div class="v">{{ v.contact.interviewLocation }}</div></div>
+            <div class="kv grid-span-2"><div class="k">{{ 'profileView.fields.address' | translate }}</div><div class="v">{{ v.contact.address || '—' }}</div></div>
+          </div>
+
+          <hr class="my-3" />
+          <div class="subhead">{{ 'profileView.sub.nationalAddress' | translate }}</div>
+          <div class="grid2 mt-2">
+            <div class="kv"><div class="k">{{ 'profileView.fields.naZone' | translate }}</div><div class="v">{{ v.contact.naZone || '—' }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.naStreet' | translate }}</div><div class="v">{{ v.contact.naStreet || '—' }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.naBuilding' | translate }}</div><div class="v">{{ v.contact.naBuilding || '—' }}</div></div>
+            <div class="kv"><div class="k">{{ 'profileView.fields.naUnit' | translate }}</div><div class="v">{{ v.contact.naUnit || '—' }}</div></div>
+          </div>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 4) Qualifications -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-graduation-cap"></i>
+              <span>{{ 'profileView.sections.qualifications' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('qualifications') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('qualifications') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('qualifications')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <p-table [value]="v.qualifications" [rows]="10" [paginator]="v.qualifications.length > 10" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'profileView.table.degree' | translate }}</th>
+                <th>{{ 'profileView.table.major' | translate }}</th>
+                <th>{{ 'profileView.table.university' | translate }}</th>
+                <th>{{ 'profileView.table.country' | translate }}</th>
+                <th>{{ 'profileView.table.year' | translate }}</th>
+                <th>{{ 'profileView.table.gpa' | translate }}</th>
+                <th>{{ 'profileView.table.attachment' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td>{{ row.degree?.name }}</td>
+                <td>{{ row.major?.nameEn || row.major?.nameAr || row.majorId || '—' }}</td>
+                <td>{{ row.university?.nameEn || row.university?.nameAr || row.universityId || '—' }}</td>
+                <td>{{ row.gradCountry?.name }}</td>
+                <td>{{ row.graduationYear ?? '—' }}</td>
+                <td>{{ row.gpa ?? '—' }}</td>
+                <td>
+                  <span *ngIf="!row.attachment" class="text-muted">{{ 'common.none' | translate }}</span>
+                  <button *ngIf="row.attachment" pButton type="button" class="p-button-sm p-button-text"
+                          icon="pi pi-external-link" (click)="openFile(row.attachment)">
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 5) Experiences -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-briefcase"></i>
+              <span>{{ 'profileView.sections.experiences' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('experiences') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('experiences') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('experience')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <p-table [value]="v.experiences" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'profileView.table.employer' | translate }}</th>
+                <th>{{ 'profileView.table.jobTitle' | translate }}</th>
+                <th>{{ 'profileView.table.country' | translate }}</th>
+                <th>{{ 'profileView.table.period' | translate }}</th>
+                <th>{{ 'profileView.table.attachment' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+            <tr>
+                <td>{{ row.employerName || '—' }}</td>
+                <td>{{ row.jobTitle || '—' }}</td>
+                <td>{{ row.country?.name }}</td>
+                <td>
+                  {{ row.startDate || '—' }} —
+                  {{ row.isCurrent ? ('profileView.table.present' | translate) : (row.endDate || '—') }}
+                </td>
+                <td>
+                  <span *ngIf="!row.attachment" class="text-muted">{{ 'common.none' | translate }}</span>
+                  <button *ngIf="row.attachment" pButton type="button" class="p-button-sm p-button-text"
+                          icon="pi pi-external-link" (click)="openFile(row.attachment)">
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 6) Training -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-book"></i>
+              <span>{{ 'profileView.sections.trainingCourses' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('training') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('training') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('training')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <p-table [value]="v.trainingCourses" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'profileView.table.title' | translate }}</th>
+                <th>{{ 'profileView.table.provider' | translate }}</th>
+                <th>{{ 'profileView.table.country' | translate }}</th>
+                <th>{{ 'profileView.table.period' | translate }}</th>
+                <th>{{ 'profileView.table.attachment' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+            <tr>
+                <td>{{ row.title || '—' }}</td>
+                <td>{{ row.provider || '—' }}</td>
+                <td>{{ row.country?.name }}</td>
+                <td>{{ row.startDate || '—' }} — {{ row.endDate || '—' }}</td>
+                <td>
+                  <span *ngIf="!row.attachment" class="text-muted">{{ 'common.none' | translate }}</span>
+                  <button *ngIf="row.attachment" pButton type="button" class="p-button-sm p-button-text"
+                          icon="pi pi-external-link" (click)="openFile(row.attachment)">
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 7) Achievements -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-star"></i>
+              <span>{{ 'profileView.sections.certificatesAndAwards' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('achievements') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('achievements') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('achievements')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <p-table [value]="v.achievements" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'profileView.table.type' | translate }}</th>
+                <th>{{ 'profileView.table.title' | translate }}</th>
+                <th>{{ 'profileView.table.issuer' | translate }}</th>
+                <th>{{ 'profileView.table.issueDate' | translate }}</th>
+                <th>{{ 'profileView.table.attachment' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+            <tr>
+                <td>{{ row.achievementType?.name }}</td>
+                <td>{{ row.title || '—' }}</td>
+                <td>{{ row.issuingAuthority || '—' }}</td>
+                <td>{{ row.issueDate || '—' }}</td>
+                <td>
+                  <span *ngIf="!row.attachment" class="text-muted">{{ 'common.none' | translate }}</span>
+                  <button *ngIf="row.attachment" pButton type="button" class="p-button-sm p-button-text"
+                          icon="pi pi-external-link" (click)="openFile(row.attachment)">
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 8) Skills -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-bolt"></i>
+              <span>{{ 'profileView.sections.skills' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('skills') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('skills') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('skills')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <div class="chips">
+            <ng-container *ngIf="v.skills.length; else noSkills">
+              <p-chip *ngFor="let s of v.skills"
+                      [label]="s.skill?.name + ' · ' + s.level?.name">
+              </p-chip>
+            </ng-container>
+            <ng-template #noSkills>
+              <span class="text-muted">{{ 'profileView.empty.skills' | translate }}</span>
+            </ng-template>
+          </div>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 9) Languages -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-language"></i>
+              <span>{{ 'profileView.sections.languages' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('languages') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('languages') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('languages')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <p-table [value]="v.languages" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'profileView.table.language' | translate }}</th>
+                <th>{{ 'profileView.table.speaking' | translate }}</th>
+                <th>{{ 'profileView.table.writing' | translate }}</th>
+                <th>{{ 'profileView.table.reading' | translate }}</th>
+                <th>{{ 'profileView.table.native' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td>{{ row.language?.name }}</td>
+                <td>{{ row.speakingLevel?.name }}</td>
+                <td>{{ row.writingLevel?.name }}</td>
+                <td>{{ row.readingLevel?.name }}</td>
+                <td>
+                  <p-tag [severity]="row.isNative ? 'success' : 'secondary'"
+                         [value]="row.isNative ? ('common.yes' | translate) : ('common.no' | translate)">
+                  </p-tag>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </p-accordion-panel>
+
+      <!-- 10) Attachments -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <div class="acc-head">
+            <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-paperclip"></i>
+              <span>{{ 'profileView.sections.attachments' | translate }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <p-tag *ngIf="sectionMissingCount('attachments') === 0" severity="success" [value]="'common.complete' | translate"></p-tag>
+              <p-tag *ngIf="sectionMissingCount('attachments') > 0" severity="warn" [value]="'common.missing' | translate"></p-tag>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <ng-container *ngIf="vm() as v">
+          <div class="section-actions">
+            <button pButton type="button" class="p-button-outlined"
+                    icon="pi pi-pencil" (click)="editSection('attachments')"
+                    [label]="'common.edit' | translate">
+            </button>
+          </div>
+
+          <div class="attach-grid">
+            <div class="attach-item" *ngFor="let a of v.attachments">
+              <div class="attach-title">{{ a.title || ('profileView.files.attachment' | translate) }}</div>
+              <div class="attach-body">
+                <span class="me-2">{{ a.file?.fileName }}</span>
+                <button pButton type="button" class="p-button-sm p-button-text"
+                        icon="pi pi-external-link" (click)="openFile(a.file)">
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="!v.attachments.length" class="text-muted">
+              {{ 'profileView.empty.attachments' | translate }}
+            </div>
+          </div>
+        </ng-container>
+      </p-accordion-panel>
+
+
+    </p-accordion>
+  </div>
 </section>

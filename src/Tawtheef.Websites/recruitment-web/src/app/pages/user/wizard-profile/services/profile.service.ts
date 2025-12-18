@@ -1,56 +1,57 @@
 ﻿import { Injectable, inject } from '@angular/core';
-import {HttpParams} from '@angular/common/http';
-import {EndpointsService} from '../../../../core/http/endpoints.service';
-import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
-import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
-import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.model';
-import {GUID} from '../../../../shared/types/guid.type';
-import {HttpService} from '../../../../core/http/http.service';
-import {Experience, TrainingCourse} from '../models/experience.model';
-import {Achievement} from '../models/achievement.model';
-import {of} from 'rxjs';
-import {MoiPersonalInfo} from '../models/moi-personal-info.model';
-import {ProfileStatusDto} from '../../../../core/models/auth/auth-response.model';
-import {Language} from '../models/language.model';
-import {Skill} from '../models/skill.model';
-import {Attachment} from '../models/attachment.model';
-import {Degree} from '../models/degree.model';
+import { EndpointsService } from '../../../../core/http/endpoints.service';
+import { HttpService } from '../../../../core/http/http.service';
+import { of } from 'rxjs';
+
+import { SaveProfilePrereqRequestModel } from '../models/save-profile-prereq-request.model';
+import { SaveProfilePersonalRequestDto } from '../models/save-profile-personal-request.model';
+import { SaveProfileContactRequestDto } from '../models/save-user-contact-request.model';
+import { MoiPersonalInfo } from '../models/moi-personal-info.model';
+import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
+
+import { GUID } from '../../../../shared/types/guid.type';
+import { Degree } from '../models/degree.model';
+import { Experience, TrainingCourse } from '../models/experience.model';
+import { Achievement } from '../models/achievement.model';
+import { Skill } from '../models/skill.model';
+import { Language } from '../models/language.model';
+import { Attachment } from '../models/attachment.model';
+
+type FileLike = File | null | undefined;
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
-// ========== PREREQ ==========
+  // ========== PREREQ ==========
   savePrereq(
     dto: SaveProfilePrereqRequestModel,
     files: {
-      cvFile?: File | null;
-      idFile?: File | null;
-      birthCertificateFile?: File | null;
-      marriageCertificateFile?: File | null;
+      cvFile?: FileLike;
+      idFile?: FileLike;
+      birthCertificateFile?: FileLike;
+      marriageCertificateFile?: FileLike;
     }
   ) {
-    const formData = this.buildFormData(dto, {
-      cvFile: files.cvFile,
-      idFile: files.idFile,
-      birthCertificateFile: files.birthCertificateFile,
-      marriageCertificateFile: files.marriageCertificateFile
-    });
+    const fd = this.createFormData();
+    this.fdAppendJsonObject(fd, dto);
 
-    return this.http.post(this.endpoints.user.profile.savePrereq, formData);
+    this.fdAppendFile(fd, 'cvFile', files.cvFile);
+    this.fdAppendFile(fd, 'idFile', files.idFile);
+    this.fdAppendFile(fd, 'birthCertificateFile', files.birthCertificateFile);
+    this.fdAppendFile(fd, 'marriageCertificateFile', files.marriageCertificateFile);
+
+    return this.http.post(this.endpoints.user.profile.savePrereq, fd);
   }
 
   // ========== PERSONAL ==========
-  savePersonalSection(
-    dto: SaveProfilePersonalRequestDto,
-    files?: { sponsorCard?: File | null }
-  ) {
-    const formData = this.buildFormData(dto, {
-      sponsorCard: files?.sponsorCard ?? null
-    });
+  savePersonalSection(dto: SaveProfilePersonalRequestDto, files?: { sponsorCard?: FileLike }) {
+    const fd = this.createFormData();
+    this.fdAppendJsonObject(fd, dto);
+    this.fdAppendFile(fd, 'sponsorCard', files?.sponsorCard);
 
-    return this.http.post(this.endpoints.user.profile.savePersonal, formData);
+    return this.http.post(this.endpoints.user.profile.savePersonal, fd);
   }
 
   checkProfile(qid: string, expiryDate: string) {
@@ -58,120 +59,101 @@ export class ProfileService {
   }
 
   // ========== CONTACT ==========
-  saveContactSection(
-    dto: SaveProfileContactRequestDto,
-    files?: { nationalAddressFile?: File | null }
-  ) {
-    const formData = new FormData();
+  saveContactSection(dto: SaveProfileContactRequestDto, files?: { nationalAddressFile?: FileLike }) {
+    const fd = this.createFormData();
 
-    if (dto.submit !== null && dto.submit !== undefined) {
-      formData.append('submit', String(dto.submit));
-    }
-    if (dto.residenceCountryId) {
-      formData.append('residenceCountryId', dto.residenceCountryId);
-    }
-    if (dto.interviewLocationId) {
-      formData.append('interviewLocationId', dto.interviewLocationId);
-    }
-    if (dto.address) {
-      formData.append('address', dto.address);
-    }
+    // keep your exact binding keys for nested DTO
+    this.fdAppendScalar(fd, 'submit', dto.submit);
+    this.fdAppendScalar(fd, 'residenceCountryId', dto.residenceCountryId);
+    this.fdAppendScalar(fd, 'interviewLocationId', dto.interviewLocationId);
+    this.fdAppendScalar(fd, 'address', dto.address);
 
     if (dto.nationalAddress) {
       const na = dto.nationalAddress;
-      if (na.zone !== null && na.zone !== undefined) {
-        formData.append('nationalAddress.zone', String(na.zone));
-      }
-      if (na.street !== null && na.street !== undefined) {
-        formData.append('nationalAddress.street', String(na.street));
-      }
-      if (na.building !== null && na.building !== undefined) {
-        formData.append('nationalAddress.building', String(na.building));
-      }
-      if (na.unit !== null && na.unit !== undefined) {
-        formData.append('nationalAddress.unit', String(na.unit));
-      }
-      if (na.nationalAddressFileName) {
-        formData.append('nationalAddress.nationalAddressFileName', na.nationalAddressFileName);
-      }
+      this.fdAppendScalar(fd, 'nationalAddress.zone', na.zone);
+      this.fdAppendScalar(fd, 'nationalAddress.street', na.street);
+      this.fdAppendScalar(fd, 'nationalAddress.building', na.building);
+      this.fdAppendScalar(fd, 'nationalAddress.unit', na.unit);
+      this.fdAppendScalar(fd, 'nationalAddress.nationalAddressFileName', na.nationalAddressFileName);
     }
 
+    // keep your original field name
     if (files?.nationalAddressFile) {
-      formData.append('nationalAddress.nationalAddress', files.nationalAddressFile);
+      fd.append('nationalAddress.nationalAddress', files.nationalAddressFile);
     }
 
-    return this.http.post(this.endpoints.user.profile.saveContact, formData);
+    return this.http.post(this.endpoints.user.profile.saveContact, fd);
   }
 
   getProfileStatus() {
     return this.http.get<ProfileStatusDto>(this.endpoints.user.bootstrap);
   }
 
-  // ========== Degrees ==========
+  // ========== EDUCATION (Degrees) ==========
+  // Policy: no updates -> we still allow sending items with id if your backend uses it for delete/ignore,
   saveEducationSection(degrees: Degree[]) {
-    let fileCursor = 0;
-    const degreeFiles: (File | null | undefined)[] = [];
+    const files: File[] = [];
+    let cursor = 0;
 
-    const payload = (degrees ?? []).map(d => {
-      const fileIndex = d.file ? fileCursor++ : null;
-      if (d.file) {
-        degreeFiles.push(d.file);
-      }
+    const payload = (degrees ?? [])
+      .filter(d => !d.id)
+      .map(d => {
+        const fileIndex = d.file ? cursor++ : null;
+        if (d.file) files.push(d.file);
 
-      return {
-        id: d.id ?? null,
-        degreeId: d.degree!.id,
-        gradCountryId: d.gradCountry!.id,
-        universityId: d.university!.id,
-        majorId: d.major!.id,
-        subMajorId: d.subMajor!.id,
-        gradYear: d.gradYear,
-        studyTypeId: d.studySystem!.id,
-        gpa: d.gpa,
-        gradeId: d.grade!.id,
-        certificateId: d.attachmentId ?? null,
-        fileIndex,
-        existingFileName: d.certificate?.resourceName ?? d.fileName ?? null,
-      };
-    });
+        return {
+          id: d.id ?? null,
+          degreeId: d.degree!.id,
+          gradCountryId: d.gradCountry!.id,
+          universityId: d.university?.id,
+          majorId: d.major?.id,
+          subMajorId: d.subMajor?.id,
+          gradYear: d.gradYear,
+          studyTypeId: d.studySystem?.id,
+          gpa: d.gpa,
+          gradeId: d.grade?.id,
+          certificateId: d.attachmentId ?? null,
+          fileIndex,
+          existingFileName: d.certificate?.resourceName ?? d.fileName ?? null,
+        };
+      });
 
-    const formData = this.buildFormData({ degreesJson: payload });
-    degreeFiles.forEach(f => {
-      if (f) {
-        formData.append('DegreeFiles', f);
-      }
-    });
-    return this.http.post(this.endpoints.user.profile.saveEducation, formData);
+    const fd = this.createFormData();
+    this.fdAppendJsonObject(fd, { degreesJson: payload });
+
+    this.fdAppendFiles(fd, 'DegreeFiles', files);
+    return this.http.post(this.endpoints.user.profile.saveEducation, fd);
   }
-  deleteEduction(degreeId: GUID){
+
+  deleteEduction(degreeId: GUID) {
     return this.http.delete(this.endpoints.user.profile.deleteEducation(degreeId));
   }
 
-  // ========== EXPERIENCE ==========
+  // ========== EXPERIENCE + TRAINING COURSES ==========
+  // Policy: no updates -> ONLY new items (no id)
   saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
-    const experienceFiles: (File | null | undefined)[] = [];
-    const experiencesDto = (experiences ?? []).filter(e => !e.id).map(e => {
-      const fileIndex = e.file ? experienceFiles.push(e.file) - 1 : null;
+    const experienceFiles: File[] = [];
+    const trainingFiles: File[] = [];
 
-      return {
-        id: e.id ?? null,
+    const experiencesDto = (experiences ?? [])
+      .filter(e => !e.id)
+      .map(e => ({
+        id: null,
         employerName: e.employerName,
         jobTitle: e.jobTitle,
         startDate: e.from,
         endDate: e.current ? null : e.to,
         countryId: e.country?.id,
         certificateId: e.attachmentId ?? null,
-        certificateFileIndex: fileIndex,
+        certificateFileIndex: this.collectFileIndex(experienceFiles, e.file),
         description: e.description,
         qualificationId: e.qualificationId ?? null,
-      };
-    });
-    const trainingCourseFiles: (File | null | undefined)[] = [];
-    const coursesDto = (courses ?? []).filter(e => !e.id).map(c => {
-      const fileIndex = c.file ? trainingCourseFiles.push(c.file) - 1 : null;
+      }));
 
-      return {
-        id: c.id ?? null,
+    const coursesDto = (courses ?? [])
+      .filter(c => !c.id)
+      .map(c => ({
+        id: null,
         title: c.title,
         provider: c.provider,
         startDate: c.from,
@@ -179,44 +161,41 @@ export class ProfileService {
         countryId: c.country?.id,
         description: c.description,
         certificateId: c.attachmentId ?? null,
-        certificateFileIndex: fileIndex,
-      };
-    });
+        certificateFileIndex: this.collectFileIndex(trainingFiles, c.file),
+      }));
 
-    if(experiencesDto.length === 0 && coursesDto.length === 0)
-      return of(null);
+    if (experiencesDto.length === 0 && coursesDto.length === 0) return of(null);
 
-    const formData = this.buildFormData({
+    const fd = this.createFormData();
+    this.fdAppendJsonObject(fd, {
       submit: false,
       experiencesJson: experiencesDto,
-      trainingCoursesJson: coursesDto
-    });
-    experienceFiles.forEach(f => {
-      if (f) {
-        formData.append('ExperienceFiles', f);
-      }
-    });
-    trainingCourseFiles.forEach(f => {
-      if (f) {
-        formData.append('TrainingCourseFiles', f);
-      }
+      trainingCoursesJson: coursesDto,
     });
 
-    return this.http.post(this.endpoints.user.profile.saveExperience, formData);
+    this.fdAppendFiles(fd, 'ExperienceFiles', experienceFiles);
+    this.fdAppendFiles(fd, 'TrainingCourseFiles', trainingFiles);
+
+    return this.http.post(this.endpoints.user.profile.saveExperience, fd);
   }
-  deleteExperience(experienceId: GUID){
+
+  deleteExperience(experienceId: GUID) {
     return this.http.delete(this.endpoints.user.profile.deleteExperience(experienceId));
   }
-  deleteTrainingCourse(courseId: GUID){
+
+  deleteTrainingCourse(courseId: GUID) {
     return this.http.delete(this.endpoints.user.profile.deleteTrainingCourse(courseId));
   }
 
+  // ========== ACHIEVEMENTS ==========
+  // Policy: no updates -> ONLY new items (no id)
   saveAchievementsSection(achievements: Achievement[]) {
-    const files: (File | null | undefined)[] = [];
-    const payload = (achievements ?? []).filter(e => !e.id).map(a => {
-      const fileIndex = a.file ? files.push(a.file) - 1 : null;
-      return {
-        id: a.id ?? null,
+    const files: File[] = [];
+
+    const payload = (achievements ?? [])
+      .filter(a => !a.id)
+      .map(a => ({
+        id: null,
         achievementTypeId: a.achievementType?.id,
         title: a.title,
         issuingAuthority: a.issuingAuthority,
@@ -224,34 +203,27 @@ export class ProfileService {
         issueDate: a.issueDate,
         description: a.description,
         attachmentId: a.attachmentId ?? null,
-        certificateFileIndex: fileIndex,
+        certificateFileIndex: this.collectFileIndex(files, a.file),
         relatedToSpecialization: a.relatedToSpecialization ?? null,
-      };
-    });
+      }));
 
-    const formData = this.buildFormData({
-      submit: false,
-      achievementsJson: payload,
-    });
+    const fd = this.createFormData();
+    this.fdAppendJsonObject(fd, { submit: false, achievementsJson: payload });
+    this.fdAppendFiles(fd, 'AchievementFiles', files);
 
-    files.forEach(f => {
-      if (f) {
-        formData.append('AchievementFiles', f);
-      }
-    });
-
-    return this.http.post(this.endpoints.user.profile.saveAchievements, formData);
+    return this.http.post(this.endpoints.user.profile.saveAchievements, fd);
   }
 
-  deleteAchievement(id: GUID){
+  deleteAchievement(id: GUID) {
     return this.http.delete(this.endpoints.user.profile.deleteAchievement(id));
   }
 
-  // ========== SKILLS & LANGUAGES ==========
+  // ========== SKILLS ==========
   saveSkillsSection(skills: Skill[]) {
+    // Keeping your flexible mapping (Skill may be object or id); no updates rule not relevant here.
     const dto = {
       submit: false,
-      skills: (skills ?? []).map(s => ({
+      skills: (skills ?? []).map((s: any) => ({
         skillId: s.skillId ?? s.id ?? s,
         levelId: s.levelId ?? s.level?.id,
       })),
@@ -259,9 +231,12 @@ export class ProfileService {
 
     return this.http.post(this.endpoints.user.profile.saveSkills, dto);
   }
-  deleteSkill(skillId: GUID){
+
+  deleteSkill(skillId: GUID) {
     return this.http.delete(this.endpoints.user.profile.deleteSkill(skillId));
   }
+
+  // ========== LANGUAGES ==========
   saveLanguagesSection(languages: Language[]) {
     const dto = {
       submit: false,
@@ -275,14 +250,15 @@ export class ProfileService {
 
     return this.http.post(this.endpoints.user.profile.saveLanguages, dto);
   }
-  deleteLanguage(languageId: GUID){
+
+  deleteLanguage(languageId: GUID) {
     return this.http.delete(this.endpoints.user.profile.deleteLanguage(languageId));
   }
 
   // ========== ATTACHMENTS ==========
   saveAttachmentsSection(attachments: Attachment[]) {
-    let fileCursor = 0;
-    const files: (File | null | undefined)[] = [];
+    const files: File[] = [];
+    let cursor = 0;
 
     const payload = (attachments ?? []).map(a => {
       const item: any = {
@@ -292,24 +268,19 @@ export class ProfileService {
       };
 
       if (a?.file) {
-        item.fileIndex = fileCursor;
-        files[fileCursor] = a.file;
-        fileCursor += 1;
+        item.fileIndex = cursor++;
+        files.push(a.file);
       }
 
       return item;
     });
 
-    const formData = new FormData();
-    formData.append('Submit', 'false');
-    formData.append('AttachmentsJson', JSON.stringify(payload));
-    files.forEach(f => {
-      if (f) {
-        formData.append('AttachmentFiles', f);
-      }
-    });
+    const fd = this.createFormData();
+    this.fdAppendScalar(fd, 'submit', false);
+    this.fdAppendScalar(fd, 'attachmentsJson', JSON.stringify(payload));
+    this.fdAppendFiles(fd, 'AttachmentFiles', files);
 
-    return this.http.post(this.endpoints.user.profile.saveReferences, formData);
+    return this.http.post(this.endpoints.user.profile.saveReferences, fd);
   }
 
   // ========== FINAL SUBMISSION ==========
@@ -317,21 +288,45 @@ export class ProfileService {
     return this.http.post(this.endpoints.user.profile.submit, {});
   }
 
-  private buildFormData(dto: any, files?: Record<string, File | null | undefined>): FormData {
-    const formData = new FormData();
+  // ================= Helpers =================
+
+  private createFormData(): FormData {
+    return new FormData();
+  }
+
+  private fdAppendScalar(fd: FormData, key: string, value: any) {
+    if (value === null || value === undefined || value === '') return;
+    fd.append(key, String(value));
+  }
+
+  private fdAppendFile(fd: FormData, key: string, file: FileLike) {
+    if (!file) return;
+    fd.append(key, file);
+  }
+
+  private fdAppendFiles(fd: FormData, key: string, files: File[]) {
+    (files ?? []).forEach(f => fd.append(key, f));
+  }
+
+  // Appends keys exactly as provided; objects/arrays are JSON-stringified.
+  private fdAppendJsonObject(fd: FormData, dto: any) {
     Object.entries(dto ?? {}).forEach(([key, value]) => {
       if (value === null || value === undefined) return;
-      if (Array.isArray(value) || typeof value === 'object') {
-        formData.append(key, JSON.stringify(value));
-      } else {
-        formData.append(key, value as any);
+
+      const t = typeof value;
+      if (t === 'string' || t === 'number' || t === 'boolean') {
+        fd.append(key, String(value));
+        return;
       }
+
+      fd.append(key, JSON.stringify(value));
     });
-    Object.entries(files ?? {}).forEach(([key, file]) => {
-      if (file) {
-        formData.append(key, file);
-      }
-    });
-    return formData;
+  }
+
+  // Push file into bucket and return its index; returns null when no file
+  private collectFileIndex(bucket: File[], file: FileLike): number | null {
+    if (!file) return null;
+    bucket.push(file);
+    return bucket.length - 1;
   }
 }

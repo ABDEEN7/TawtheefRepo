@@ -1,0 +1,20 @@
+using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Users;
+
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
+
+public record ProfileApprovalListItemDto
+{
+    public Guid UserProfileId { get; init; }
+    public Guid UserId { get; init; }
+    public string FullName { get; init; } = string.Empty;
+    public string? CandidateType { get; init; }
+    public string? TargetEntity { get; init; }
+    public string? Specialization { get; init; }
+    public DateTime SubmittedAtUtc { get; init; }
+    public UserProfileStatus ProfileStatus { get; init; }
+    public int PendingCount { get; init; }
+    public ReviewStatus OverallStatus { get; init; }
+    public DateTime? LastUpdatedAtUtc { get; init; }
+    public IReadOnlyList<string> AllowedOperations { get; init; } = Array.Empty<string>();
+}

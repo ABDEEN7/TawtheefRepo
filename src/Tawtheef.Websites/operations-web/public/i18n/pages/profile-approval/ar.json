@@ -244,6 +244,15 @@
   "profileApproval.validation.pendingSectionsDetail": "اعتمد أو اطلب تعديل جميع الأقسام قبل اعتماد الملف بالكامل.",
   "profileApproval.detail.partialReview": "مراجعة جزئية",
   "profileApproval.detail.initialReview": "المراجعة الأولية",
-  "profileApproval.detail.snapshot.candidateType": "فئة المرشح"
+  "profileApproval.detail.snapshot.candidateType": "فئة المرشح",
+  "profileApproval.detail.mode.partialTitle": "مراجعة جزئية (التغييرات فقط)",
+  "profileApproval.detail.mode.fullTitle": "مراجعة كاملة (الملف بالكامل)",
+  "profileApproval.detail.mode.partialHint": "أنت تشاهد فقط العناصر التي تم تعديلها منذ آخر نسخة معتمدة.",
+  "profileApproval.detail.mode.fullHint": "أنت تشاهد كامل بيانات الملف الشخصي المرسلة.",
+  "profileApproval.detail.mode.switchToFull": "عرض الملف بالكامل",
+  "profileApproval.detail.mode.switchToChanges": "عرض التغييرات فقط",
+  "profileApproval.detail.mode.version": "رقم النسخة",
+  "profileApproval.detail.itemSaved": "تم حفظ قرار العنصر.",
+  "profileApproval.status.needsCorrection": "بحاجة لتصحيح"
 
 }

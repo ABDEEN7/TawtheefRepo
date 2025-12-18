@@ -119,7 +119,7 @@ public sealed class SaveProfilePrereqHandler(
             await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Prerequisites, nameof(UserProfile.OfficeId), ct, oldOfficeId, profile.OfficeId);
             await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Prerequisites, ct, oldSnapshot, newSnapshot);
             if (profile.ResumeAttachmentId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Prerequisites, "Resume", profile.ResumeAttachmentId.Value, ct);
+                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Personal, "Resume", profile.ResumeAttachmentId.Value, ct);
             if (profile.NationalCardId is not null)
                 await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Personal, "NationalCard", profile.NationalCardId.Value, ct);
             if (profile.BirthdayCertificateId is not null)

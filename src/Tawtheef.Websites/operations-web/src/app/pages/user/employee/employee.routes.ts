@@ -9,6 +9,8 @@ export const employeeRoutes: Routes = [
   { path: 'dashboard', component: Dashboard },
   { path: 'approval-profile', component: ProfileApprovalListPage },
   { path: 'approval-profile/:profileId', component: ProfileApprovalDetailPage },
+  { path: 'approval-profile/:profileId/review', component: ProfileApprovalDetailPage },
+  { path: 'approval-profile/:profileId/changes', component: ProfileApprovalDetailPage },
   { path: 'profile-distribution', component: ProfileDistributionPage },
   { path: 'job-invitation-summary', component: JobInvitationSummary },
   {

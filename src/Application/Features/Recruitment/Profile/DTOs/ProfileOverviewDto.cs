@@ -1,5 +1,4 @@
-using System.Linq;
-using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
