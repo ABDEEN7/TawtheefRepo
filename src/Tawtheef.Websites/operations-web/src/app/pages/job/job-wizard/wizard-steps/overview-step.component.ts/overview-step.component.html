@@ -1,7 +1,6 @@
-<form [formGroup]="form">
+<form [formGroup]="form" >
   <div class="card card-lite p-3 mb-3">
 
-    <!-- Step Header Row -->
     <div class="row-item">
       <div class="row-item-icon">
         <i class="fa fa-eye"></i>
@@ -11,7 +10,6 @@
       </div>
     </div>
 
-    <!-- Arabic Description -->
     <div class="custom-textarea-container">
       <label class="field-label">
         <span class="required-asterisk">*</span>
@@ -67,3 +65,6 @@
 
   </div>
 </form>
+@if (note?.tabStatus === jobService.jobTabStatus.Returned) {
+    <app-review-note [note]="note"></app-review-note>
+  }

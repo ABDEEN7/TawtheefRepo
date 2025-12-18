@@ -14,6 +14,8 @@ import {SidebarComponent} from '../sidebar/sidebar.component';
     I18nNamespaceDirective,
     SidebarComponent
 ],
+  standalone: true,
+  host: { 'data-test': 'user-layout-main' },
   templateUrl: './layout.html',
   styleUrl: './layout.scss',
 })

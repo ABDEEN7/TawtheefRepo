@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Recruitment;
-using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities;
 
@@ -62,11 +61,6 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
             .HasForeignKey(j => j.JobStatusId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(j => j.JobQuota)
-           .WithOne(q => q.Job)
-           .HasForeignKey<JobQuota>(q => q.JobId)
-           .OnDelete(DeleteBehavior.Restrict);
-
         builder.HasMany(j => j.JobDegrees)
             .WithOne(d => d.Job)
             .HasForeignKey(d => d.JobId)
@@ -96,6 +90,11 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
             .WithOne(i => i.Job)
             .HasForeignKey(i => i.JobId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(j => j.TabReviewNotes)
+               .WithOne(n => n.Job)
+               .HasForeignKey(n => n.JobId)
+               .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(j => new
         {

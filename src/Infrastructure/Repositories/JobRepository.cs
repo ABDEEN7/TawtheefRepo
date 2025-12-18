@@ -24,11 +24,6 @@ public class JobRepository(IGenericRepository<Job> repository)
         var baseQuery = _repository.DbSet
             .AsNoTracking()
             .Where(job => !job.IsDeleted)
-            .Include(j => j.JobQuota)
-                .ThenInclude(q => q!.ResidentsBreakdowns)
-                    .ThenInclude(rb => rb.Nationality)
-            .Include(j => j.JobDegrees)
-                .ThenInclude(d => d.Degree)
             .Include(j => j.Department)
             .Include(j => j.JobCategory)
             .Include(j => j.WorkType)
@@ -38,13 +33,7 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.SubMajor)
             .Include(j => j.Sector)
             .Include(j => j.Management)
-            .Include(j => j.WorkLocation)
-            .Include(j => j.JobConditions)
-            .Include(j => j.JobSkills)
-                .ThenInclude(s => s.Skill)
-            .Include(j => j.JobResponsibilities)
-            .Include(j => j.JobRequiredAttachments)
-            .Include(j => j.Invitations);
+            .Include(j => j.WorkLocation);
 
         var filteredQuery = baseQuery.ApplyJobFilter(filter);
 
@@ -60,9 +49,6 @@ public class JobRepository(IGenericRepository<Job> repository)
     {
         var job = await _repository.DbSet
             .Where(job=> !job.IsDeleted)
-            .Include(j => j.JobQuota)
-                .ThenInclude(q => q!.ResidentsBreakdowns)
-                    .ThenInclude(rb => rb.Nationality)
             .Include(j => j.JobDegrees)
                 .ThenInclude(d => d.Degree)
             .Include(j => j.Department)
@@ -81,11 +67,10 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.JobResponsibilities)
             .Include(j => j.JobRequiredAttachments)
             .Include(j => j.Invitations)
-
             .FirstOrDefaultAsync(j => j.Id == id);
 
         return job is null
-            ? Result.Fail<Job>(JobValidationMessages.JOB_NOT_FOUND)
+            ? Result.Fail<Job>(JobMessages.JOB_NOT_FOUND)
             : Result.Ok(job);
     }
 

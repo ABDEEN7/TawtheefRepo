@@ -4,6 +4,11 @@ import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
 import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
+import { JobTabStatus } from '../../../enums/job-tab-status';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-conditions-step',
@@ -14,7 +19,8 @@ import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 export class ConditionsStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   protected readonly jobService = inject(JobService);
-  
+  private readonly notificationService = inject(NotificationService);
+  private readonly transaltionService = inject(TranslateService);
   jobData!: Job;
   
   readonly form = this.fb.group({
@@ -24,6 +30,7 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   newConditionAr = '';
   newConditionEn = '';
   private readonly destroy$ = new Subject<void>();
+  note: JobTabReviewNoteResponse | null = null;
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -33,11 +40,6 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
     ).subscribe(() => {
       this.updateJobData();
     });
-    
-    const currentJob = this.jobService.getCurrentJob();
-    if (currentJob) {
-      this.setJobData(currentJob);
-    }
   }
 
   ngOnDestroy(): void {
@@ -53,8 +55,9 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
     return this.conditionsArray.at(index) as FormGroup;
   }
 
-  setJobData(job: Job): void {
+ setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
+    this.note = note;
     this.conditionsArray.clear();
     
     if (job.conditions?.length) {
@@ -62,16 +65,32 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
         this.addConditionToForm(condition.textAr, condition.textEn);
       });
     }
+
+    if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
+      this.form.disable();  }
+
   }
 
   addCondition(): void {
-    const trimmedAr = this.newConditionAr.trim();
+  const textAr = this.newConditionAr.trim();
+  const textEn = this.newConditionEn.trim();
+
+    if (!textAr || !textEn) {
+    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.NO_ENTERED_DATA_ERROR'));  
+    return; 
+  }
+
+  const isDuplicate = this.conditionsArray.controls.some(control => {
+    const group = control as FormGroup;
+    return group.get('textAr')?.value === textAr && group.get('textEn')?.value === textEn;
+  });
+  
+  if (isDuplicate) {
+    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'));
+    return; 
+  }
     
-    if (!trimmedAr) {
-      return;
-    }
-    
-    this.addConditionToForm(trimmedAr, this.newConditionEn.trim());
+    this.addConditionToForm(textAr, textEn);
     this.newConditionAr = '';
     this.newConditionEn = '';
   }
@@ -83,6 +102,9 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   }
 
   isValid(): boolean {
+    if(this.form.disabled){
+      return true;  
+    }
     return this.form.valid && this.conditionsArray.length > 0;
   }
 

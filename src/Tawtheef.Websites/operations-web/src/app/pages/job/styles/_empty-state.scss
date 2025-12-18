@@ -1,0 +1,50 @@
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  background: #FAFAFA;
+  border: 2px dashed #E6E6E6;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+
+  i {
+    font-size: 64px;
+    color: #DDD;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+    color: #999;
+  }
+
+  .btn-add-empty {
+    padding: 10px 24px;
+    height: 40px;
+    border-radius: 50px;
+    background: #89153D;
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    i {
+      font-size: 15px;
+    }
+
+    &:hover {
+      background: #7a1237;
+      box-shadow: 0 4px 12px rgba(137, 21, 61, 0.3);
+      transform: translateY(-1px);
+    }
+  }
+}

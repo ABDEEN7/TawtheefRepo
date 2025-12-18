@@ -10,6 +10,8 @@ import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directiv
 
 @Component({
   selector: 'app-sidebar',
+  standalone: true,
+  host: { 'data-test': 'sidebar-main' },
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective]

@@ -19,7 +19,6 @@ public class UpdateJobCommandHandler(
     IJobDegreeRepository jobDegreeRepository,
     IJobResponsibilityRepository jobResponsibilityRepository,
     IJobRequiredAttachmentRepository jobRequiredAttachmentRepository,
-    IResidentsBreakdownRepository residentBreakdownRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateJobCommand, IResult<Unit>>
 {
@@ -27,12 +26,12 @@ public class UpdateJobCommandHandler(
     {
         var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
         if (existingJobResult.IsFailed || existingJobResult.Value == null)
-            return Result.Fail<Unit>(JobValidationMessages.JOB_NOT_FOUND);
+            return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
 
         var existingJob = existingJobResult.Value;
 
         if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
-            return Result.Fail<Unit>(JobValidationMessages.CAN_ONLY_EDIT_IN_DRAFT);
+            return Result.Fail<Unit>(JobMessages.CAN_ONLY_EDIT_IN_DRAFT);
 
         if (request.Job.Skills?.Any() ?? false)
             await UpdateSkillsAsync(existingJob, request.Job.Skills);
@@ -49,9 +48,6 @@ public class UpdateJobCommandHandler(
         if (request.Job.RequiredAttachments?.Any() ?? false)
             await UpdateRequiredAttachmentsAsync(existingJob, request.Job.RequiredAttachments);
 
-        if (request.Job.Quota != null && existingJob.JobQuota != null)
-            await UpdateQuotaAsync(existingJob.JobQuota, request.Job.Quota);
-
         existingJob.OverViewAr = request.Job.OverviewAr;
         existingJob.OverViewEn = request.Job.OverviewEn;
         existingJob.BenefitsAr = request.Job.BenefitsAr;
@@ -62,7 +58,7 @@ public class UpdateJobCommandHandler(
 
         await jobRepository.Repository.UpdateAsync(existingJob);
         var updated = await unitOfWork.SaveChangesAsync(cancellationToken);
-        return updated > 0 ? Result.Ok(Unit.Value) : Result.Fail<Unit>(JobValidationMessages.UPDATE_FAILED);
+        return updated > 0 ? Result.Ok(Unit.Value) : Result.Fail<Unit>(JobMessages.UPDATE_FAILED);
     }
 
     private async Task UpdateSkillsAsync(JobEntity job, List<JobSkillRequestDto> newSkills)
@@ -236,58 +232,6 @@ public class UpdateJobCommandHandler(
 
         if (toAdd.Count != 0)
             await jobRequiredAttachmentRepository.Repository.AddRangeAsync(toAdd);
-    }
-
-
-    private async Task UpdateQuotaAsync(JobQuota quota, JobQuotaRequestDto dto)
-    {
-        quota.QatariCitizens = dto.QatariCitizens;
-        quota.QatarMother = dto.QatarMother;
-        quota.NonQatariSpouse = dto.NonQatariSpouse;
-        quota.Gcc = dto.Gcc;
-        quota.QuGrads = dto.QuGrads;
-        quota.Residents = dto.Residents;
-
-        var dtoIds = dto.ResidentsBreakdowns!.Select(d => d.NationalityId).ToHashSet();
-
-        var existing = quota.ResidentsBreakdowns.ToDictionary(rb => rb.NationalityId);
-
-        var toRemove = existing.Values
-            .Where(rb => !dtoIds.Contains(rb.NationalityId))
-            .ToList();
-
-        foreach (var rm in toRemove)
-            quota.ResidentsBreakdowns.Remove(rm);
-
-        if (toRemove.Count != 0)
-            await residentBreakdownRepository.Repository.DeleteRangeAsync(toRemove);
-
-        var toAdd = new List<ResidentBreakdown>();
-
-        foreach (var rbDto in dto.ResidentsBreakdowns!)
-        {
-            if (existing.TryGetValue(rbDto.NationalityId, out var record))
-            {
-                record.Percentage = rbDto.Percentage;
-                await residentBreakdownRepository.Repository.UpdateAsync(record);
-            }
-            else
-            {
-                var item = new ResidentBreakdown
-                {
-                    Id = Guid.NewGuid(),
-                    JobQuotaId = quota.Id,
-                    NationalityId = rbDto.NationalityId,
-                    Percentage = rbDto.Percentage
-                };
-
-                quota.ResidentsBreakdowns.Add(item);
-                toAdd.Add(item);
-            }
-        }
-
-        if (toAdd.Count != 0)
-            await residentBreakdownRepository.Repository.AddRangeAsync(toAdd);
     }
 
 }
