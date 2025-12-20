@@ -20,6 +20,13 @@ public class OfficesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("office-details/{id:guid}")]
+    public async Task<IActionResult> OfficeDetails(Guid id)
+    {
+        var result = await mediator.Send(new GetOfficeDetailsQuery(id));
+        return result.ToActionResult();
+    }
+
     [HttpGet("lookups/countries")]
     public async Task<IActionResult> ListCountries()
     {
@@ -45,6 +52,20 @@ public class OfficesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteOffice(Guid id)
     {
         var result = await mediator.Send(new DeleteOfficeCommand(id));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{officeId:guid}/users/{userId:guid}/block-status")]
+    public async Task<IActionResult> UpdateBlockStatus(Guid officeId, Guid userId, [FromBody] UpdateOfficeUserBlockStatusCommand command)
+    {
+        var result = await mediator.Send(command with { OfficeId = officeId, UserId = userId });
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{officeId:guid}/set-admin/{userId:guid}")]
+    public async Task<IActionResult> SetOfficeAdmin(Guid officeId, Guid userId)
+    {
+        var result = await mediator.Send(new SetOfficeAdminCommand(officeId, userId));
         return result.ToActionResult();
     }
 }

@@ -16,6 +16,8 @@ import {UpdateOfficeRequest} from './models/update-office-request.dto';
 import {CreateOfficeRequest} from './models/create-office-request.dto';
 import {CountryLookupDto} from './models/country-lookup.dto';
 import {OfficeModalComponent} from './components/office-modal/office-modal.component';
+import {OfficeDetailsDto} from './models/office-details.dto';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-offices-management',
@@ -56,7 +58,9 @@ export class OfficesManagement implements OnInit {
   isRtl = computed(() => this.currentLang() === 'ar');
 
   isModalOpen = signal(false);
-  editingOffice = signal<OfficeDto | null>(null);
+  editingOffice = signal<OfficeDetailsDto | null>(null);
+  modalMode = signal<'create' | 'edit' | 'view'>('create');
+  isModalLoading = signal(false);
 
   ngOnInit(): void {
     this.loadOffices();
@@ -98,13 +102,34 @@ export class OfficesManagement implements OnInit {
   }
 
   openAdd() {
+    this.modalMode.set('create');
     this.editingOffice.set(null);
+    this.isModalLoading.set(false);
     this.isModalOpen.set(true);
   }
 
+  openView(office: OfficeDto) {
+    this.modalMode.set('view');
+    this.fetchOfficeDetails(office.id);
+  }
+
   openEdit(office: OfficeDto) {
-    this.editingOffice.set(office);
-    this.isModalOpen.set(true);
+    this.modalMode.set('edit');
+    this.fetchOfficeDetails(office.id);
+  }
+
+  private fetchOfficeDetails(id: string) {
+    this.isModalLoading.set(true);
+    this.officesService
+      .getOfficeDetails(id)
+      .pipe(finalize(() => this.isModalLoading.set(false)))
+      .subscribe({
+        next: details => {
+          this.editingOffice.set(details);
+          this.isModalOpen.set(true);
+        },
+        error: () => this.notification.error(this.translate.instant('OFFICES.DETAILS_LOAD_FAILED'))
+      });
   }
 
   localizedOfficeName(office: OfficeDto) {
@@ -125,6 +150,54 @@ export class OfficesManagement implements OnInit {
     }
 
     return office.supportedCountries.map(sc => this.localizedCountry(sc.nameAr, sc.nameEn));
+  }
+
+  private refreshActiveOffice() {
+    const activeOffice = this.editingOffice();
+    if (!activeOffice) {
+      return;
+    }
+
+    this.fetchOfficeDetails(activeOffice.id);
+    this.loadOffices();
+  }
+
+  toggleUserBlockStatus(change: { userId: string; isBlocked: boolean }) {
+    const activeOffice = this.editingOffice();
+    if (!activeOffice) {
+      return;
+    }
+
+    this.isModalLoading.set(true);
+    this.officesService.updateOfficeUserBlockStatus(activeOffice.id, change.userId, change.isBlocked).subscribe({
+      next: () => {
+        this.notification.success(this.translate.instant('OFFICES.BLOCK_STATUS_UPDATED'));
+        this.refreshActiveOffice();
+      },
+      error: () => {
+        this.isModalLoading.set(false);
+        this.notification.error(this.translate.instant('OFFICES.BLOCK_STATUS_FAILED'));
+      }
+    });
+  }
+
+  moveOfficeAdmin(userId: string) {
+    const activeOffice = this.editingOffice();
+    if (!activeOffice) {
+      return;
+    }
+
+    this.isModalLoading.set(true);
+    this.officesService.setOfficeAdmin(activeOffice.id, userId).subscribe({
+      next: () => {
+        this.notification.success(this.translate.instant('OFFICES.ADMIN_CHANGED'));
+        this.refreshActiveOffice();
+      },
+      error: () => {
+        this.isModalLoading.set(false);
+        this.notification.error(this.translate.instant('OFFICES.ADMIN_CHANGE_FAILED'));
+      }
+    });
   }
 
   createOffice(payload: CreateOfficeRequest) {
@@ -151,6 +224,9 @@ export class OfficesManagement implements OnInit {
 
   closeModal() {
     this.isModalOpen.set(false);
+    this.modalMode.set('create');
+    this.editingOffice.set(null);
+    this.isModalLoading.set(false);
   }
 
   confirmDelete(office: OfficeDto) {

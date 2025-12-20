@@ -6,6 +6,7 @@ import {CountryLookupDto} from '../models/country-lookup.dto';
 import {OfficeFilters} from '../models/office-filters.dto';
 import {CreateOfficeRequest} from '../models/create-office-request.dto';
 import {UpdateOfficeRequest} from '../models/update-office-request.dto';
+import {OfficeDetailsDto} from '../models/office-details.dto';
 import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
 import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
 import {map, tap} from 'rxjs/operators';
@@ -21,6 +22,10 @@ export class OfficesService {
 
   public offices = this._offices.asReadonly();
   public paginationMetadata = this._paginationMetadata.asReadonly();
+
+  getOfficeDetails(id: string): Observable<OfficeDetailsDto> {
+    return this.http.get<OfficeDetailsDto>(this.endpoints.offices.officeDetails(id));
+  }
 
   getOffices(filters: OfficeFilters): Observable<void> {
     return this.http.get<PaginatedResult<OfficeDto>>(this.endpoints.offices.listOffices, filters)
@@ -48,5 +53,13 @@ export class OfficesService {
 
   deleteOffice(id: string): Observable<void> {
     return this.http.delete<void>(this.endpoints.offices.deleteOffice(id));
+  }
+
+  updateOfficeUserBlockStatus(officeId: string, userId: string, isBlocked: boolean): Observable<void> {
+    return this.http.put<void>(this.endpoints.offices.updateOfficeUserBlockStatus(officeId, userId), {isBlocked});
+  }
+
+  setOfficeAdmin(officeId: string, userId: string): Observable<void> {
+    return this.http.put<void>(this.endpoints.offices.setOfficeAdmin(officeId, userId), {});
   }
 }

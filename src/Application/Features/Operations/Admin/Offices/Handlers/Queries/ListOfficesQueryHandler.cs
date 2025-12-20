@@ -7,12 +7,13 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Admin.Offices.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Queries;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Queries;
 
-public sealed class ListOfficesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+public sealed class ListOfficesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, UserManager<User> userManager)
     : IRequestHandler<GetListOfficesQuery, IResult<PaginatedResult<OfficeDto>>>
 {
     public async Task<IResult<PaginatedResult<OfficeDto>>> Handle(
@@ -44,6 +45,22 @@ public sealed class ListOfficesQueryHandler(IUnitOfWork unitOfWork, IMapper mapp
             .ToListAsync(cancellationToken);
 
         var items = mapper.Map<List<OfficeDto>>(offices);
+
+        var officeUsersInRole = await userManager.GetUsersInRoleAsync(SystemRoles.OfficeAdmin);
+        var adminsLookup = officeUsersInRole
+            .OfType<OfficeUser>()
+            .Where(u => !u.IsDeleted)
+            .GroupBy(u => u.OfficeId)
+            .ToDictionary(g => g.Key, g => g.First().Email ?? string.Empty);
+
+        items = items
+            .Select(o => o with
+            {
+                AdminEmail = adminsLookup.TryGetValue(o.Id, out var email)
+                    ? email ?? string.Empty
+                    : string.Empty
+            })
+            .ToList();
 
         return Result.Ok(new PaginatedResult<OfficeDto>(items, totalCount, pageNumber, pageSize));
     }

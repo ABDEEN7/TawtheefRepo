@@ -4,13 +4,31 @@
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
   <div class="modal-card">
     <h4 class="modal-title">
-      {{ isEditing ? ('OFFICES.EDIT_OFFICE' | translate) : ('OFFICES.ADD_OFFICE' | translate) }}
+      {{
+        mode === 'edit'
+          ? ('OFFICES.EDIT_OFFICE' | translate)
+          : mode === 'view'
+            ? ('OFFICES.VIEW_OFFICE' | translate)
+            : ('OFFICES.ADD_OFFICE' | translate)
+      }}
     </h4>
 
     <form (ngSubmit)="submit()" [formGroup]="form" class="modal-form">
+      @if (loading) {
+        <div class="loading-overlay">
+          <div class="spinner-border text-maroon" role="status">
+            <span class="visually-hidden">{{ 'LOADING' | translate }}</span>
+          </div>
+        </div>
+      }
+
       <div class="form-group mb-3">
         <label>{{ 'OFFICES.NAME_AR' | translate }}</label>
-        <input class="form-control" formControlName="nameAr" [class.is-invalid]="submitted && form.controls.nameAr.invalid" />
+        <input
+          class="form-control"
+          formControlName="nameAr"
+          [class.is-invalid]="submitted && form.controls.nameAr.invalid"
+          [readonly]="isViewMode()" />
         @if (submitted && form.controls.nameAr.invalid) {
           <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
         }
@@ -18,7 +36,11 @@
 
       <div class="form-group mb-3">
         <label>{{ 'OFFICES.NAME_EN' | translate }}</label>
-        <input class="form-control" formControlName="nameEn" [class.is-invalid]="submitted && form.controls.nameEn.invalid" />
+        <input
+          class="form-control"
+          formControlName="nameEn"
+          [class.is-invalid]="submitted && form.controls.nameEn.invalid"
+          [readonly]="isViewMode()" />
         @if (submitted && form.controls.nameEn.invalid) {
           <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
         }
@@ -29,7 +51,7 @@
         <select
           class="form-select"
           formControlName="countryId"
-          [disabled]="isEditing"
+          [disabled]="isEditMode() || isViewMode()"
           [class.is-invalid]="submitted && form.controls.countryId.invalid">
           <option value="" disabled>{{ 'OFFICES.SELECT_COUNTRY' | translate }}</option>
           @for (country of countries; track country.id) {
@@ -55,7 +77,8 @@
                 <input
                   type="checkbox"
                   [checked]="isSupportedSelected(country.id)"
-                  (change)="toggleSupportedCountry(country.id)" />
+                  (change)="toggleSupportedCountry(country.id)"
+                  [disabled]="isViewMode()" />
                 <span>{{ localizedCountry(country.nameAr, country.nameEn) }}</span>
               </label>
             }
@@ -71,7 +94,7 @@
         <input
           class="form-control"
           formControlName="adminEmail"
-          [readonly]="isEditing"
+          [readonly]="isEditMode() || isViewMode()"
           [class.is-invalid]="submitted && form.controls.adminEmail.invalid" />
         <small class="text-muted">{{ 'OFFICES.ADD_ADMIN_HINT' | translate }}</small>
         @if (submitted && form.controls.adminEmail.invalid) {
@@ -79,14 +102,85 @@
         }
       </div>
 
+      @if (!isCreateMode()) {
+        <div class="office-users mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">{{ 'OFFICES.USERS_TITLE' | translate }}</h5>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle user-table">
+              <thead>
+              <tr>
+                <th>{{ 'OFFICES.USER_NAME' | translate }}</th>
+                <th>{{ 'OFFICES.USER_EMAIL' | translate }}</th>
+                <th>{{ 'OFFICES.USER_IS_BLOCKED' | translate }}</th>
+                <th>{{ 'OFFICES.USER_ROLE' | translate }}</th>
+                <th class="text-end">{{ 'OFFICES.USER_ACTIONS' | translate }}</th>
+              </tr>
+              </thead>
+              <tbody>
+              @if (!officeUsers.length) {
+                <tr>
+                  <td colspan="5" class="text-muted">{{ 'NO_RECORDS' | translate }}</td>
+                </tr>
+              } @else {
+                @for (user of officeUsers; track user.id; let row = $index) {
+                  <tr [ngClass]="{ 'row-even': row % 2 === 0, 'row-odd': row % 2 !== 0 }">
+                    <td>{{ localizedUserName(user) }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                      <span
+                        class="badge"
+                        [class.bg-success-subtle]="!user.isBlocked"
+                        [class.text-success]="!user.isBlocked"
+                        [class.bg-danger-subtle]="user.isBlocked"
+                        [class.text-danger]="user.isBlocked">
+                        {{ user.isBlocked ? ('OFFICES.BLOCKED' | translate) : ('OFFICES.ACTIVE' | translate) }}
+                      </span>
+                    </td>
+                    <td>
+                      {{ user.isAdmin ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.ROLE_USER' | translate) }}
+                    </td>
+                    <td class="text-end">
+                      <div class="d-flex gap-2 justify-content-end flex-wrap">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary btn-sm"
+                          (click)="toggleUserBlock(user)"
+                          [disabled]="loading"
+                          aria-label="{{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}">
+                          {{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}
+                        </button>
+
+                        <button
+                          type="button"
+                          class="btn btn-outline-primary btn-sm"
+                          (click)="promoteToAdmin(user)"
+                          [disabled]="user.isAdmin || loading"
+                          aria-label="{{ 'OFFICES.MAKE_ADMIN' | translate }}">
+                          {{ user.isAdmin ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.MAKE_ADMIN' | translate) }}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
       <div class="d-flex justify-content-end mt-4 gap-2">
         <button type="button" class="btn btn-secondary" (click)="close()">
           {{ 'OFFICES.CANCEL' | translate }}
         </button>
 
-        <button type="submit" class="btn btn-maroon shadow-sm">
-          {{ 'OFFICES.SAVE' | translate }}
-        </button>
+        @if (!isViewMode()) {
+          <button type="submit" class="btn btn-maroon shadow-sm" [disabled]="loading">
+            {{ 'OFFICES.SAVE' | translate }}
+          </button>
+        }
       </div>
     </form>
   </div>

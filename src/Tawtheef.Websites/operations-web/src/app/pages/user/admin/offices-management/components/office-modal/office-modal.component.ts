@@ -8,6 +8,7 @@ import {CountryLookupDto} from '../../models/country-lookup.dto';
 import {CreateOfficeRequest} from '../../models/create-office-request.dto';
 import {UpdateOfficeRequest} from '../../models/update-office-request.dto';
 import {OfficeDto} from '../../models/office.dto';
+import {OfficeUserDto} from '../../models/office-user.dto';
 
 @Component({
   selector: 'app-office-modal',
@@ -22,13 +23,17 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   private translate = inject(TranslateService);
 
   @Input() visible = false;
-  @Input() isEditing = false;
+  @Input() mode: 'create' | 'edit' | 'view' = 'create';
   @Input() countries: CountryLookupDto[] = [];
   @Input() office: OfficeDto | null = null;
+  @Input() officeUsers: OfficeUserDto[] = [];
+  @Input() loading = false;
 
   @Output() cancel = new EventEmitter<void>();
   @Output() create = new EventEmitter<CreateOfficeRequest>();
   @Output() update = new EventEmitter<{ id: string; payload: UpdateOfficeRequest }>();
+  @Output() toggleBlock = new EventEmitter<{ userId: string; isBlocked: boolean }>();
+  @Output() makeAdmin = new EventEmitter<string>();
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
@@ -52,19 +57,20 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['visible'] && this.visible) {
+    if (this.visible && (changes['visible'] || changes['office'] || changes['officeUsers'] || changes['mode'])) {
       this.patchForm();
     }
   }
 
   private patchForm() {
     this.submitted = false;
+    this.form.enable({emitEvent: false});
     this.form.reset({
       nameAr: '',
       nameEn: '',
       countryId: '',
       supportedCountryIds: [],
-      adminEmail: ''
+      adminEmail: this.resolveAdminEmail()
     });
 
     if (this.office) {
@@ -73,14 +79,39 @@ export class OfficeModalComponent implements OnInit, OnChanges {
         nameEn: this.office.nameEn,
         countryId: this.office.countryId,
         supportedCountryIds: this.office.supportedCountries?.map(sc => sc.countryId) || [],
-        adminEmail: this.office.adminEmail
+        adminEmail: this.resolveAdminEmail()
       });
-      this.form.controls.countryId.disable();
-      this.form.controls.adminEmail.disable();
-    } else {
-      this.form.controls.countryId.enable();
-      this.form.controls.adminEmail.enable();
     }
+
+    if (this.mode !== 'create') {
+      this.form.controls.countryId.disable({emitEvent: false});
+      this.form.controls.adminEmail.disable({emitEvent: false});
+    }
+
+    if (this.isViewMode()) {
+      this.form.disable({emitEvent: false});
+    }
+  }
+
+  isCreateMode() {
+    return this.mode === 'create';
+  }
+
+  isEditMode() {
+    return this.mode === 'edit';
+  }
+
+  isViewMode() {
+    return this.mode === 'view';
+  }
+
+  private resolveAdminEmail() {
+    const adminUser = this.officeUsers.find(u => u.isAdmin);
+    if (adminUser) {
+      return adminUser.email;
+    }
+
+    return this.office?.adminEmail || '';
   }
 
   isSupportedSelected(countryId: string) {
@@ -99,7 +130,29 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     return this.currentLang() === 'ar' ? nameAr || nameEn : nameEn || nameAr;
   }
 
+  localizedUserName(user: OfficeUserDto) {
+    return this.currentLang() === 'ar'
+      ? user.fullNameAr || user.fullNameEn
+      : user.fullNameEn || user.fullNameAr;
+  }
+
+  toggleUserBlock(user: OfficeUserDto) {
+    this.toggleBlock.emit({userId: user.id, isBlocked: !user.isBlocked});
+  }
+
+  promoteToAdmin(user: OfficeUserDto) {
+    if (user.isAdmin) {
+      return;
+    }
+
+    this.makeAdmin.emit(user.id);
+  }
+
   submit() {
+    if (this.isViewMode()) {
+      return;
+    }
+
     this.submitted = true;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -108,7 +161,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
 
     const {nameAr, nameEn, countryId, supportedCountryIds, adminEmail} = this.form.getRawValue();
 
-    if (this.isEditing && this.office) {
+    if (this.isEditMode() && this.office) {
       this.update.emit({
         id: this.office.id,
         payload: {

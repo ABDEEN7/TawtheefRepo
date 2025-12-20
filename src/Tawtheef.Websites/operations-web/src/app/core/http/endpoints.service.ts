@@ -108,9 +108,13 @@ export class EndpointsService {
 
   offices = {
     listOffices: this.getFullUrl('/offices/list-offices'),
+    officeDetails: (id: string) => this.getFullUrl(`/offices/office-details/${id}`),
     countries: this.getFullUrl('/offices/lookups/countries'),
     createOffice: this.getFullUrl('/offices/create-office'),
     updateOffice: (id: string) => this.getFullUrl(`/offices/update-office/${id}`),
-    deleteOffice: (id: string) => this.getFullUrl(`/offices/delete-office/${id}`)
+    deleteOffice: (id: string) => this.getFullUrl(`/offices/delete-office/${id}`),
+    updateOfficeUserBlockStatus: (officeId: string, userId: string) =>
+      this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
+    setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)
   };
 }
