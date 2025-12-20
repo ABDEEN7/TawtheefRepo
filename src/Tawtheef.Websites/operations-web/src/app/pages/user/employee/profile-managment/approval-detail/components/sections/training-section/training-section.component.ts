@@ -19,7 +19,7 @@ import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-re
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class TrainingSectionComponent {
-  @Input() trainingCourses: any[] | null = null;
+  @Input() trainingCourses?: any[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
 
   private translate = inject(TranslateService);

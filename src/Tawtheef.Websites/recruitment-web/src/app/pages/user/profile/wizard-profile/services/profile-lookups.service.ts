@@ -47,7 +47,7 @@ export class ProfileLookupsService {
 
     this.loading.set(true);
 
-    const provider = this.userService.getPrefill()?.provider ?? '';
+    const provider = this.userService.getCurrentUser()?.provider ?? '';
     return forkJoin({
       candidateTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.candidateTypes, { provider }),
       targetEntities: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.targetEntities),

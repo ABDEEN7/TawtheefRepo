@@ -12,8 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class LanguagesSectionComponent {
-  @Input() skillsAndLanguages: any[] | null = null;
-  @Input() languages: any[] | null = null;
+  @Input() languages?: any[] | null = null;
 
   displayOption(option: any, fallback?: string | number | null): string {
     if (!option && !fallback) return '-';
