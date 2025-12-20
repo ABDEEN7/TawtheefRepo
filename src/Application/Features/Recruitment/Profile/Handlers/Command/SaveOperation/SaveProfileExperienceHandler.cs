@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
@@ -18,7 +19,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileExperienceHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileExperienceCommand, IResult<Unit>>
 {
@@ -40,11 +40,9 @@ public sealed class SaveProfileExperienceHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
-
+        
         var validationResult = validationService.ValidateExperience(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -122,32 +120,18 @@ public sealed class SaveProfileExperienceHandler(
 
             var entity = new TrainingCourse
             {
-                Title     = dto.Title,
-                Provider  = dto.Provider,
-                StartDate     = dto.StartDate,
-                EndDate       = dto.EndDate,
-                CountryId     = dto.CountryId,
-                Description   = dto.Description,
+                Title = dto.Title,
+                Provider = dto.Provider,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                CountryId = dto.CountryId,
+                Description = dto.Description,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id
             };
 
             profile.TrainingCourses.Add(entity);
             newTrainings.Add(entity);
-        }
-
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
-            foreach (var experience in newExperiences)
-            {
-                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Experience), experience.Id, ct);
-            }
-
-            foreach (var training in newTrainings)
-            {
-                await reviewService.TouchRowAsync(profile.Id, ProfileSection.TrainingCourses, nameof(TrainingCourse), training.Id, ct);
-            }
         }
 
         await uow.SaveChangesAsync(ct);

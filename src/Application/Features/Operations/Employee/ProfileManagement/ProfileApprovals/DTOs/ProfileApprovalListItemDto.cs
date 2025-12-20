@@ -11,10 +11,10 @@ public record ProfileApprovalListItemDto
     public string? CandidateType { get; init; }
     public string? TargetEntity { get; init; }
     public string? Specialization { get; init; }
-    public DateTime SubmittedAtUtc { get; init; }
+    public DateTimeOffset SubmittedAtUtc { get; init; }
     public UserProfileStatus ProfileStatus { get; init; }
     public int PendingCount { get; init; }
     public ReviewStatus OverallStatus { get; init; }
-    public DateTime? LastUpdatedAtUtc { get; init; }
+    public DateTimeOffset? LastUpdatedAtUtc { get; init; }
     public IReadOnlyList<string> AllowedOperations { get; init; } = Array.Empty<string>();
 }

@@ -6,6 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -16,7 +17,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfilePrereqHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService)
     : IRequestHandler<SaveProfilePrereqCommand, IResult<Unit>>
 {
@@ -38,17 +38,8 @@ public sealed class SaveProfilePrereqHandler(
             await profileRepo.AddAsync(profile);
         }
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
-
-        var oldCandidateTypeId = profile.CandidateTypeId;
-        var oldTargetEntityId = profile.TargetEntityId;
-        var oldOfficeId = profile.OfficeId;
-        var oldQidExpiry = profile.QIDExpiry;
-
-        var oldSnapshot = BuildPrereqSnapshot(profile);
 
         var validationResult = validationService.ValidatePrerequisites(profile, cmd.Request);
         if (validationResult.IsFailed)
@@ -109,25 +100,6 @@ public sealed class SaveProfilePrereqHandler(
 
         CleanCandidateTypeDependents();
 
-        var newSnapshot = BuildPrereqSnapshot(profile);
-
-        if (trackChanges)
-        {
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Prerequisites, nameof(UserProfile.CandidateTypeId), ct, oldCandidateTypeId, profile.CandidateTypeId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Prerequisites, nameof(UserProfile.TargetEntityId), ct, oldTargetEntityId, profile.TargetEntityId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.QIDExpiry), ct, oldQidExpiry, profile.QIDExpiry);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Prerequisites, nameof(UserProfile.OfficeId), ct, oldOfficeId, profile.OfficeId);
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Prerequisites, ct, oldSnapshot, newSnapshot);
-            if (profile.ResumeAttachmentId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Personal, "Resume", profile.ResumeAttachmentId.Value, ct);
-            if (profile.NationalCardId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Personal, "NationalCard", profile.NationalCardId.Value, ct);
-            if (profile.BirthdayCertificateId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Prerequisites, "BirthCertificate", profile.BirthdayCertificateId.Value, ct);
-            if (profile.MarriageCertificateId is not null)
-                await reviewService.TouchAttachmentAsync(profile.Id, ProfileSection.Prerequisites, "MarriageCertificate", profile.MarriageCertificateId.Value, ct);
-        }
-
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
 
@@ -170,17 +142,5 @@ public sealed class SaveProfilePrereqHandler(
 
             return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
         }
-
-        static object BuildPrereqSnapshot(UserProfile profileEntity) => new
-        {
-            profileEntity.CandidateTypeId,
-            profileEntity.TargetEntityId,
-            profileEntity.OfficeId,
-            profileEntity.QIDExpiry,
-            profileEntity.ResumeAttachmentId,
-            profileEntity.NationalCardId,
-            profileEntity.BirthdayCertificateId,
-            profileEntity.MarriageCertificateId
-        };
     }
 }

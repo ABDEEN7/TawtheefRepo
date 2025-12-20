@@ -1,0 +1,758 @@
+<section class="profile-view-shell p-4" i18nNamespace="pages/user/profile-overview">
+
+  <!-- Header -->
+  <div class="card shadow-sm border-0 header-card p-4">
+    @if (loading()) {
+      <div class="d-flex gap-3 align-items-center">
+        <p-skeleton shape="circle" size="4rem"></p-skeleton>
+        <div class="flex-grow-1">
+          <p-skeleton width="18rem" height="1.6rem"></p-skeleton>
+          <p-skeleton class="mt-2" width="28rem"></p-skeleton>
+          <p-skeleton class="mt-2" width="22rem"></p-skeleton>
+        </div>
+      </div>
+    } @else {
+      @if (vm()?.header) {
+        <div class="d-flex flex-wrap gap-3 align-items-start justify-content-between">
+          <div class="d-flex gap-3 align-items-center">
+            <div class="avatar">
+              @if (vm()?.header!.avatar) {
+                <img [src]="vm()?.header!.avatar!" alt="avatar" class="rounded-circle img-fluid" />
+              } @else {
+                <div class="avatar-fallback d-flex justify-content-center align-items-center">
+                  <i class="pi pi-user"></i>
+                </div>
+              }
+            </div>
+
+            <div class="min-w-0">
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <h2 class="mb-0 h5 text-truncate">
+                  {{ vm()?.header!.fullName || ('profileView.header.noName' | translate) }}
+                </h2>
+
+                <!-- Profile Status -->
+                <p-tag [severity]="vm()!.status.severity"
+                       [value]="(vm()!.status.labelKey | translate)">
+                </p-tag>
+
+                @if (vm()!.review.totalNotes > 0) {
+                  <span class="badge-notes">
+                    {{ 'profileView.review.notesCount' | translate }}: {{ vm()!.review.totalNotes }}
+                  </span>
+                }
+              </div>
+
+              <div class="text-muted small mt-1">
+                {{ vm()!.status.hintKey | translate }}
+              </div>
+
+              <div class="meta mt-2">
+                <div class="meta-row">
+                  <i class="pi pi-envelope"></i>
+                  <span class="text-muted">{{ vm()?.header!.email || '—' }}</span>
+                  <p-tag class="ms-2"
+                         [severity]="vm()?.header!.emailVerified ? 'success' : 'danger'"
+                         [value]="vm()?.header!.emailVerified ? ('common.verified' | translate) : ('common.notVerified' | translate)">
+                  </p-tag>
+                </div>
+
+                <div class="meta-row">
+                  <i class="pi pi-phone"></i>
+                  <span class="text-muted">{{ vm()?.header!.phone || '—' }}</span>
+                  <p-tag class="ms-2"
+                         [severity]="vm()?.header!.phoneVerified ? 'success' : 'danger'"
+                         [value]="vm()?.header!.phoneVerified ? ('common.verified' | translate) : ('common.notVerified' | translate)">
+                  </p-tag>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 flex-wrap">
+            <button pButton type="button" class="p-button-outlined"
+                    (click)="reload()" icon="pi pi-refresh"
+                    [label]="'common.refresh' | translate">
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="alert alert-danger mt-3">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Reviewer Notes Panel -->
+  @if (vm()?.review && vm()!.review.totalNotes > 0) {
+    <div class="card shadow-sm border-0 mt-3 review-card">
+      <div class="card-body">
+        <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
+          <div class="d-flex align-items-center gap-2">
+            <i class="pi pi-comments"></i>
+            <div>
+              <div class="fw-semibold">{{ 'profileView.review.title' | translate }}</div>
+              <div class="text-muted small">{{ 'profileView.review.subtitle' | translate }}</div>
+            </div>
+          </div>
+          <div class="text-muted small">
+            {{ 'profileView.review.total' | translate }}: <strong>{{ vm()!.review.totalNotes }}</strong>
+          </div>
+        </div>
+
+        <div class="review-sections mt-3">
+          @for (sec of vm()!.review.sections; track sec.section) {
+            <div class="review-section">
+              <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                <div class="d-flex align-items-center gap-2">
+                  <p-tag severity="warn" [value]="sec.notesCount + ''"></p-tag>
+                  <span class="fw-semibold">{{ sec.labelKey | translate }}</span>
+                </div>
+
+                <button pButton type="button" class="p-button-sm p-button-outlined"
+                        icon="pi pi-pencil"
+                        (click)="editSectionByRoute(sec.editRoute)"
+                        [label]="'profileView.review.editSection' | translate">
+                </button>
+              </div>
+
+              <div class="notes mt-2">
+                @for (n of sec.notes; track n.reviewItemId) {
+                  <div class="note-item">
+                    <div class="d-flex align-items-start justify-content-between gap-2">
+                      <div class="min-w-0">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                          <p-tag [severity]="noteSeverity(n.status)"
+                                 [value]="(noteStatusLabelKey(n.status) | translate)">
+                          </p-tag>
+                          <div class="note-title text-truncate">{{ n.title }}</div>
+                        </div>
+
+                        @if (n.note) {
+                          <div class="note-body mt-1">{{ n.note }}</div>
+                        } @else {
+                          <div class="note-body mt-1 text-muted">{{ 'profileView.review.noNote' | translate }}</div>
+                        }
+                      </div>
+
+                      <button pButton type="button" class="p-button-sm p-button-text"
+                              icon="pi pi-arrow-down"
+                              (click)="scrollTo(sec.scrollId)">
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Utility Nav -->
+  <div class="utility-bar mt-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <i class="pi pi-list"></i>
+        <div class="small text-muted">
+          {{ 'profileView.sections.title' | translate }}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 flex-wrap">
+        <button pButton type="button" class="p-button-text"
+                icon="pi pi-angle-double-down"
+                (click)="scrollTo('sec-prerequisites')"
+                [label]="'profileView.sections.prerequisites' | translate">
+        </button>
+        <button pButton type="button" class="p-button-text"
+                icon="pi pi-angle-double-down"
+                (click)="scrollTo('sec-personal')"
+                [label]="'profileView.sections.personal' | translate">
+        </button>
+        <button pButton type="button" class="p-button-text"
+                icon="pi pi-angle-double-down"
+                (click)="scrollTo('sec-contact')"
+                [label]="'profileView.sections.contact' | translate">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main layout: left nav + right content -->
+  <div class="row g-3 mt-1">
+    <!-- Left: sticky nav -->
+    <div class="col-12 col-lg-4 col-xl-3">
+      <div class="card shadow-sm border-0 nav-card">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="fw-semibold">{{ 'profileView.header.missingListTitle' | translate }}</div>
+            <span class="text-muted small">{{ 'common.sections' | translate }}</span>
+          </div>
+
+          <div class="nav-list">
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-prerequisites')">
+              <span class="left">
+                <i class="pi pi-file"></i>
+                <span>{{ 'profileView.sections.prerequisites' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-personal')">
+              <span class="left">
+                <i class="pi pi-id-card"></i>
+                <span>{{ 'profileView.sections.personal' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-contact')">
+              <span class="left">
+                <i class="pi pi-map-marker"></i>
+                <span>{{ 'profileView.sections.contact' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-qualifications')">
+              <span class="left">
+                <i class="pi pi-graduation-cap"></i>
+                <span>{{ 'profileView.sections.qualifications' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-experiences')">
+              <span class="left">
+                <i class="pi pi-briefcase"></i>
+                <span>{{ 'profileView.sections.experiences' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-training')">
+              <span class="left">
+                <i class="pi pi-book"></i>
+                <span>{{ 'profileView.sections.trainingCourses' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-achievements')">
+              <span class="left">
+                <i class="pi pi-star"></i>
+                <span>{{ 'profileView.sections.certificatesAndAwards' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-skills')">
+              <span class="left">
+                <i class="pi pi-bolt"></i>
+                <span>{{ 'profileView.sections.skills' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-languages')">
+              <span class="left">
+                <i class="pi pi-language"></i>
+                <span>{{ 'profileView.sections.languages' | translate }}</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-item"
+                    (click)="scrollTo('sec-attachments')">
+              <span class="left">
+                <i class="pi pi-paperclip"></i>
+                <span>{{ 'profileView.sections.attachments' | translate }}</span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: section cards -->
+    <div class="col-12 col-lg-8 col-xl-9">
+
+      <!-- 1) Prerequisites -->
+      <div id="sec-prerequisites" class="card shadow-sm border-0 section-card">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left">
+              <div class="icon"><i class="pi pi-file"></i></div>
+              <div>
+                <div class="title">{{ 'profileView.sections.prerequisites' | translate }}</div>
+                <div class="subtitle text-muted">
+                  {{ 'profileView.sections.prerequisites' | translate }}
+                </div>
+              </div>
+            </div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.Prerequisites)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <div class="row g-3 mt-1">
+              <div class="col-md-4"><div class="kv"><div class="k">{{ 'profileView.fields.candidateType' | translate }}</div><div class="v">{{ vm()!.prereq.candidateType!.name }}</div></div></div>
+              <div class="col-md-4"><div class="kv"><div class="k">{{ 'profileView.fields.targetEntity' | translate }}</div><div class="v">{{ vm()!.prereq.targetEntity!.name }}</div></div></div>
+              <div class="col-md-4"><div class="kv"><div class="k">{{ 'profileView.fields.office' | translate }}</div><div class="v">{{ vm()!.prereq.office?.name }}</div></div></div>
+            </div>
+
+            <div class="attach-grid mt-3">
+              @for (item of [
+                { key: 'resume', title: ('profileView.files.resume' | translate), file: vm()!.prereq.resume },
+                { key: 'nationalCard', title: ('profileView.files.nationalCard' | translate), file: vm()!.prereq.nationalCard },
+                { key: 'birthdayCertificate', title: ('profileView.files.birthdayCertificate' | translate), file: vm()!.prereq.birthdayCertificate },
+                { key: 'marriageCertificate', title: ('profileView.files.marriageCertificate' | translate), file: vm()!.prereq.marriageCertificate },
+                { key: 'residenceAddressCertificate', title: ('profileView.files.residenceAddressCertificate' | translate), file: vm()!.prereq.residenceAddressCertificate },
+                { key: 'sponsorCard', title: ('profileView.files.sponsorCard' | translate), file: vm()!.prereq.sponsorCard }
+              ]; track item.key) {
+                <div class="attach-item">
+                  <div class="attach-title">{{ item.title }}</div>
+                  <div class="attach-body">
+                    @if (!item.file) {
+                      <span class="text-muted">{{ 'common.none' | translate }}</span>
+                    } @else {
+                      <span class="me-2 text-truncate d-inline-block" style="max-width: 240px;">
+                        {{ item.file.fileName }}
+                      </span>
+                      <button pButton type="button" class="p-button-sm p-button-text"
+                              icon="pi pi-external-link" (click)="openFile(item.file)">
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- 2) Personal -->
+      <div id="sec-personal" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left">
+              <div class="icon"><i class="pi pi-id-card"></i></div>
+              <div>
+                <div class="title">{{ 'profileView.sections.personal' | translate }}</div>
+                <div class="subtitle text-muted">{{ 'profileView.sections.personal' | translate }}</div>
+              </div>
+            </div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.Personal)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <div class="row g-3 mt-1">
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.nationalNumber' | translate }}</div><div class="v">{{ vm()!.personal.nationalNumber || '—' }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.qidExpiry' | translate }}</div><div class="v">{{ vm()!.personal.qidExpiry || '—' }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.birthDate' | translate }}</div><div class="v">{{ vm()!.personal.birthDate || '—' }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.nationality' | translate }}</div><div class="v">{{ vm()!.personal.nationality!.name }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.gender' | translate }}</div><div class="v">{{ vm()!.personal.gender!.name }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.religion' | translate }}</div><div class="v">{{ vm()!.personal.religion!.name }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.maritalStatus' | translate }}</div><div class="v">{{ vm()!.personal.maritalStatus!.name }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.childrenCount' | translate }}</div><div class="v">{{ vm()!.personal.childrenCount }}</div></div></div>
+
+              <div class="col-md-6 col-lg-4">
+                <div class="kv">
+                  <div class="k">{{ 'profileView.fields.hasDisability' | translate }}</div>
+                  <div class="v">
+                    <p-tag [severity]="vm()!.personal.hasDisability ? 'warn' : 'success'"
+                           [value]="vm()!.personal.hasDisability ? ('common.yes' | translate) : ('common.no' | translate)">
+                    </p-tag>
+                  </div>
+                </div>
+              </div>
+
+              @if (vm()!.personal.hasDisability) {
+                <div class="col-12">
+                  <div class="kv">
+                    <div class="k">{{ 'profileView.fields.disabilityDetails' | translate }}</div>
+                    <div class="v">{{ vm()!.personal.disabilityDetails || '—' }}</div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="divider my-3"></div>
+
+            <div class="subhead">{{ 'profileView.sub.sponsor' | translate }}</div>
+            <div class="row g-3 mt-1">
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.sponsorType' | translate }}</div><div class="v">{{ vm()!.personal.sponsorType?.name }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.sponsorEmployerName' | translate }}</div><div class="v">{{ vm()!.personal.sponsorEmployerName || '—' }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.sponsorEmployerNumber' | translate }}</div><div class="v">{{ vm()!.personal.sponsorEmployerNumber || '—' }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.sponsorQidExpiry' | translate }}</div><div class="v">{{ vm()!.personal.sponsorQidExpiry || '—' }}</div></div></div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- 3) Contact -->
+      <div id="sec-contact" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left">
+              <div class="icon"><i class="pi pi-map-marker"></i></div>
+              <div>
+                <div class="title">{{ 'profileView.sections.contact' | translate }}</div>
+                <div class="subtitle text-muted">{{ 'profileView.sections.contact' | translate }}</div>
+              </div>
+            </div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.Contact)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <div class="row g-3 mt-1">
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.residenceCountry' | translate }}</div><div class="v">{{ vm()!.contact.residenceCountry!.name }}</div></div></div>
+              <div class="col-md-6 col-lg-4"><div class="kv"><div class="k">{{ 'profileView.fields.interviewLocation' | translate }}</div><div class="v">{{ vm()!.contact.interviewLocation!.name }}</div></div></div>
+
+              <div class="col-12">
+                <div class="kv">
+                  <div class="k">{{ 'profileView.fields.address' | translate }}</div>
+                  <div class="v">{{ vm()!.contact.address || '—' }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider my-3"></div>
+
+            <div class="subhead">{{ 'profileView.sub.nationalAddress' | translate }}</div>
+            <div class="row g-3 mt-1">
+              <div class="col-md-6 col-lg-3"><div class="kv"><div class="k">{{ 'profileView.fields.naZone' | translate }}</div><div class="v">{{ vm()!.contact.naZone || '—' }}</div></div></div>
+              <div class="col-md-6 col-lg-3"><div class="kv"><div class="k">{{ 'profileView.fields.naStreet' | translate }}</div><div class="v">{{ vm()!.contact.naStreet || '—' }}</div></div></div>
+              <div class="col-md-6 col-lg-3"><div class="kv"><div class="k">{{ 'profileView.fields.naBuilding' | translate }}</div><div class="v">{{ vm()!.contact.naBuilding || '—' }}</div></div></div>
+              <div class="col-md-6 col-lg-3"><div class="kv"><div class="k">{{ 'profileView.fields.naUnit' | translate }}</div><div class="v">{{ vm()!.contact.naUnit || '—' }}</div></div></div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- The remaining sections: keep your existing internal content (tables/chips/attachments)
+           and wrap each one in the same "section-card" pattern with an id.
+           Below are compact wrappers you can copy-paste. -->
+
+      <div id="sec-qualifications" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left">
+              <div class="icon"><i class="pi pi-graduation-cap"></i></div>
+              <div><div class="title">{{ 'profileView.sections.qualifications' | translate }}</div></div>
+            </div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.Qualifications)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <p-table [value]="vm()!.qualifications" [rows]="10"
+                     [paginator]="vm()!.qualifications.length > 10"
+                     responsiveLayout="scroll"
+                     class="table table-hover mt-2">
+              <!-- keep your header/body templates as-is -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ 'profileView.table.degree' | translate }}</th>
+                  <th>{{ 'profileView.table.major' | translate }}</th>
+                  <th>{{ 'profileView.table.university' | translate }}</th>
+                  <th>{{ 'profileView.table.country' | translate }}</th>
+                  <th>{{ 'profileView.table.year' | translate }}</th>
+                  <th>{{ 'profileView.table.gpa' | translate }}</th>
+                  <th>{{ 'profileView.table.attachment' | translate }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ row.degree?.name }}</td>
+                  <td>{{ row.major?.name || row.majorId || '—' }}</td>
+                  <td>{{ row.university?.name || row.universityId || '—' }}</td>
+                  <td>{{ row.gradCountry?.name }}</td>
+                  <td>{{ row.graduationYear ?? '—' }}</td>
+                  <td>{{ row.gpa ?? '—' }}</td>
+                  <td>
+                    @if (!row.attachment) {
+                      <span class="text-muted">{{ 'common.none' | translate }}</span>
+                    } @else {
+                      <button pButton type="button" class="p-button-sm p-button-text"
+                              icon="pi pi-external-link" (click)="openFile(row.attachment)">
+                      </button>
+                    }
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </div>
+      </div>
+
+      <div id="sec-experiences" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left"><div class="icon"><i class="pi pi-briefcase"></i></div><div class="title">{{ 'profileView.sections.experiences' | translate }}</div></div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.Experience)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <p-table [value]="vm()!.experiences" responsiveLayout="scroll" class="table table-hover mt-2">
+              <!-- keep your templates -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ 'profileView.table.employer' | translate }}</th>
+                  <th>{{ 'profileView.table.jobTitle' | translate }}</th>
+                  <th>{{ 'profileView.table.country' | translate }}</th>
+                  <th>{{ 'profileView.table.period' | translate }}</th>
+                  <th>{{ 'profileView.table.attachment' | translate }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ row.employerName || '—' }}</td>
+                  <td>{{ row.jobTitle || '—' }}</td>
+                  <td>{{ row.country?.name }}</td>
+                  <td>{{ row.startDate || '—' }} — {{ row.isCurrent ? ('profileView.table.present' | translate) : (row.endDate || '—') }}</td>
+                  <td>
+                    @if (!row.attachment) {
+                      <span class="text-muted">{{ 'common.none' | translate }}</span>
+                    } @else {
+                      <button pButton type="button" class="p-button-sm p-button-text"
+                              icon="pi pi-external-link" (click)="openFile(row.attachment)">
+                      </button>
+                    }
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </div>
+      </div>
+
+      <div id="sec-training" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left"><div class="icon"><i class="pi pi-book"></i></div><div class="title">{{ 'profileView.sections.trainingCourses' | translate }}</div></div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.TrainingCourses)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <p-table [value]="vm()!.trainingCourses" responsiveLayout="scroll" class="table table-hover mt-2">
+              <!-- keep your templates -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ 'profileView.table.title' | translate }}</th>
+                  <th>{{ 'profileView.table.provider' | translate }}</th>
+                  <th>{{ 'profileView.table.country' | translate }}</th>
+                  <th>{{ 'profileView.table.period' | translate }}</th>
+                  <th>{{ 'profileView.table.attachment' | translate }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ row.title || '—' }}</td>
+                  <td>{{ row.provider || '—' }}</td>
+                  <td>{{ row.country?.name }}</td>
+                  <td>{{ row.startDate || '—' }} — {{ row.endDate || '—' }}</td>
+                  <td>
+                    @if (!row.attachment) {
+                      <span class="text-muted">{{ 'common.none' | translate }}</span>
+                    } @else {
+                      <button pButton type="button" class="p-button-sm p-button-text"
+                              icon="pi pi-external-link" (click)="openFile(row.attachment)">
+                      </button>
+                    }
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </div>
+      </div>
+
+      <div id="sec-achievements" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left"><div class="icon"><i class="pi pi-star"></i></div><div class="title">{{ 'profileView.sections.certificatesAndAwards' | translate }}</div></div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.CertificatesAndAwards)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <p-table [value]="vm()!.achievements" responsiveLayout="scroll" class="table table-hover mt-2">
+              <!-- keep your templates -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ 'profileView.table.type' | translate }}</th>
+                  <th>{{ 'profileView.table.title' | translate }}</th>
+                  <th>{{ 'profileView.table.issuer' | translate }}</th>
+                  <th>{{ 'profileView.table.issueDate' | translate }}</th>
+                  <th>{{ 'profileView.table.attachment' | translate }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ row.achievementType?.name }}</td>
+                  <td>{{ row.title || '—' }}</td>
+                  <td>{{ row.issuingAuthority || '—' }}</td>
+                  <td>{{ row.issueDate || '—' }}</td>
+                  <td>
+                    @if (!row.attachment) {
+                      <span class="text-muted">{{ 'common.none' | translate }}</span>
+                    } @else {
+                      <button pButton type="button" class="p-button-sm p-button-text"
+                              icon="pi pi-external-link" (click)="openFile(row.attachment)">
+                      </button>
+                    }
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </div>
+      </div>
+
+      <div id="sec-skills" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left"><div class="icon"><i class="pi pi-bolt"></i></div><div class="title">{{ 'profileView.sections.skills' | translate }}</div></div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.Skills)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <div class="chips d-flex flex-wrap gap-2 mt-2">
+              @if (vm()!.skills.length) {
+                @for (s of vm()!.skills; track s.skill.id) {
+                  <p-chip [label]="s.skill.name + ' · ' + s.level.name"></p-chip>
+                }
+              } @else {
+                <span class="text-muted">{{ 'profileView.empty.skills' | translate }}</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div id="sec-languages" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left"><div class="icon"><i class="pi pi-language"></i></div><div class="title">{{ 'profileView.sections.languages' | translate }}</div></div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.Languages)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <p-table [value]="vm()!.languages" responsiveLayout="scroll" class="table table-hover mt-2">
+              <!-- keep your templates -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ 'profileView.table.language' | translate }}</th>
+                  <th>{{ 'profileView.table.speaking' | translate }}</th>
+                  <th>{{ 'profileView.table.writing' | translate }}</th>
+                  <th>{{ 'profileView.table.reading' | translate }}</th>
+                  <th>{{ 'profileView.table.native' | translate }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ row.language?.name }}</td>
+                  <td>{{ row.speakingLevel?.name }}</td>
+                  <td>{{ row.writingLevel?.name }}</td>
+                  <td>{{ row.readingLevel?.name }}</td>
+                  <td>
+                    <p-tag [severity]="row.isNative ? 'success' : 'secondary'"
+                           [value]="row.isNative ? ('common.yes' | translate) : ('common.no' | translate)">
+                    </p-tag>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </div>
+      </div>
+
+      <div id="sec-attachments" class="card shadow-sm border-0 section-card mt-3">
+        <div class="card-body">
+          <div class="section-head">
+            <div class="left"><div class="icon"><i class="pi pi-paperclip"></i></div><div class="title">{{ 'profileView.sections.attachments' | translate }}</div></div>
+            <div class="right">
+              <button pButton type="button" class="p-button-outlined"
+                      icon="pi pi-pencil" (click)="editSection(ProfileSectionEnum.Attachments)"
+                      [label]="'common.edit' | translate">
+              </button>
+            </div>
+          </div>
+
+          @if (vm()) {
+            <div class="attach-grid mt-2">
+              @for (a of vm()!.attachments; track a.file?.url) {
+                <div class="attach-item">
+                  <div class="attach-title">{{ a.title || ('profileView.files.attachment' | translate) }}</div>
+                  <div class="attach-body">
+                    <span class="me-2 text-truncate d-inline-block" style="max-width: 260px;">
+                      {{ a.file.fileName }}
+                    </span>
+                    <button pButton type="button" class="p-button-sm p-button-text"
+                            icon="pi pi-external-link" (click)="openFile(a.file)">
+                    </button>
+                  </div>
+                </div>
+              }
+              @if (!vm()!.attachments.length) {
+                <div class="text-muted">
+                  {{ 'profileView.empty.attachments' | translate }}
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -14,19 +14,13 @@ import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-re
 @Component({
   selector: 'app-profile-approval-experiences-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule, ItemInlineReviewComponent],
+  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule],
   templateUrl: './experiences-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class ExperiencesSectionComponent {
   @Input() experiences: any[] | null = null;
-  @Input() reviewItems: ProfileApprovalItem[] = [];
   @Output() viewFile = new EventEmitter<string>();
-  @Output() review = new EventEmitter<{
-    reviewItemId: string;
-    status: ReviewStatus;
-    note?: string;
-  }>();
   private translate = inject(TranslateService);
 
   preview(url?: string | null): void {
@@ -42,8 +36,5 @@ export class ExperiencesSectionComponent {
 
     const key = SpecializationRelationLevel[level];
     return this.translate.instant(`profileApproval.detail.specializationRelation.${key}`);
-  }
-  getItemReview(id: string) {
-    return this.reviewItems?.find(r => r.entityId === id);
   }
 }

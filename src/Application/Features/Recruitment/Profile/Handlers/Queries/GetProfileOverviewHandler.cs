@@ -56,7 +56,6 @@ public class GetProfileOverviewHandler(
         var reviewItems = await reviewRepo.DbSet
             .Where(r => r.UserProfileId == profile.Id)
             .Include(r => r.ProfileChange)
-            .OrderByDescending(r => r.Version)
             .ToListAsync(ct);
 
         var latestItems = reviewItems
@@ -80,7 +79,6 @@ public class GetProfileOverviewHandler(
 
         var progress = new ProfileRequestProgressDto
         {
-            LatestVersion = reviewItems.Any() ? reviewItems.Max(r => r.Version) : 0,
             PendingCount = pendingItems.Count(item => item.Status == ReviewStatus.Pending),
             NeedsCorrectionCount = pendingItems.Count(item => item.Status == ReviewStatus.NeedsCorrection),
             RejectedCount = pendingItems.Count(item => item.Status == ReviewStatus.Rejected),

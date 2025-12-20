@@ -251,5 +251,10 @@
   "profileApproval.detail.mode.switchToChanges": "View changes only",
   "profileApproval.detail.mode.version": "Submission version",
   "profileApproval.detail.itemSaved": "Item review saved.",
-  "profileApproval.status.needsCorrection": "Needs correction"
+  "profileApproval.status.needsCorrection": "Needs correction",
+  "profileApproval.detail.sectionApproval.savedAs": "Decision saved",
+  "profileApproval.detail.sectionApproval.save": "Save decision",
+  "profileApproval.detail.sectionApproval.saving": "Saving...",
+  "profileApproval.detail.sectionApproval.noteRequired": "Please provide a note explaining the required correction",
+  "profileApproval.detail.sectionApproval.statusRequiredHint": "Please select a decision for this section before continuing"
 }

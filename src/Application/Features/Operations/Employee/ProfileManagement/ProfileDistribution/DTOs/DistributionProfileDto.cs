@@ -11,5 +11,5 @@ public sealed class DistributionProfileDto
     public UserProfileStatus Status { get; init; }
     public Guid? AssignedEmployeeId { get; init; }
     public string? AssignedEmployeeName { get; init; }
-    public DateTime SubmittedAtUtc { get; init; }
+    public DateTimeOffset SubmittedAtUtc { get; init; }
 }

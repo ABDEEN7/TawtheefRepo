@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
@@ -18,7 +19,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileAchievementHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAchievementCommand, IResult<Unit>>
 {
@@ -41,11 +41,9 @@ public sealed class SaveProfileAchievementHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
-
+        
         var validationResult = validationService.ValidateAchievements(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -92,15 +90,6 @@ public sealed class SaveProfileAchievementHandler(
 
             profile.Achievements.Add(entity);
             newAchievements.Add(entity);
-        }
-
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.CertificatesAndAwards, ct);
-        }
-        foreach (var achievement in newAchievements)
-        {
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.CertificatesAndAwards, nameof(Achievement), achievement.Id, ct);
         }
 
         await uow.SaveChangesAsync(ct);

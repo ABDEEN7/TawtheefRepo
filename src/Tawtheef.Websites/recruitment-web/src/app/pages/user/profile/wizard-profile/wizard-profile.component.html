@@ -1,0 +1,72 @@
+﻿<section i18nNamespace="pages/user/wizard-profile">
+  <div class="container container-narrow py-3">
+    <div class="wizard p-3 rounded-4 border">
+      <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar-wrapper">
+              <img #userPictureRef
+                [src]="ds.state().avatarUrl || avatarPreviewUrl || 'https://placehold.co/76x76?text=Avatar'"
+                (error)="userPictureRef.src ='https://placehold.co/76x76?text=Avatar'"
+                class="candidate-avatar-pulse"
+                alt="{{ 'wizard.personal.avatar.alt' | translate }}"
+                (click)="openAvatarDialog()"/>
+              <div class="edit-badge" (click)="openAvatarDialog()">
+                <i class="fa fa-camera"></i>
+              </div>
+            </div>
+            <div>
+              <div class="fw-bold">
+                {{ ds.state().fullNameEn || ('wizard.personal.nameAr' | translate) }}
+              </div>
+              <div class="small text-muted">
+                {{ 'wizard.personal.avatar.hint' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-check form-switch">
+          <label class="form-check-label fw-bold">{{ 'wizard.availability' | translate }}</label>
+          <p-toggleswitch [ngModel]="ds.state().available"  (ngModelChange)="ds.up('available',$event)">
+            <ng-template #handle let-checked="checked">
+              <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
+            </ng-template>
+          </p-toggleswitch>
+        </div>
+      </div>
+
+      <ul class="nav nav-pills flex-wrap stepper mb-3 border border-1" aria-label="Profile steps">
+        <li class="nav-item" *ngFor="let label of stepLabels; let i = index">
+          <a class="nav-link"
+             [class.active]="step===i+1"
+             [class.disabled]="!canGoTo(i+1)"
+             [attr.aria-disabled]="!canGoTo(i+1)"
+             href
+             (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
+            <span class="step-index" [ngClass]="{'is-complete': isStepValid(i+1), 'is-active': step===i+1}">
+              <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-circle'"></i>
+            </span>
+            <span class="step-label">{{ label | translate }}</span>
+          </a>
+        </li>
+      </ul>
+      <div *ngIf="loading" class="wizard-loading" role="status" aria-live="polite">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">{{ 'wizard.loading' | translate }}</p>
+      </div>
+
+      <div *ngIf="!loading">
+        <app-step-prereq  *ngIf="step===1" (next)="next()"></app-step-prereq>
+        <app-step-personal    *ngIf="step===2" (back)="prev()" (next)="next()"></app-step-personal>
+        <app-step-contact     *ngIf="step===3" (back)="prev()" (next)="next()"></app-step-contact>
+        <app-step-degrees     *ngIf="step===4" (back)="prev()" (next)="next()"></app-step-degrees>
+        <app-step-experience  *ngIf="step===5" (back)="prev()" (next)="next()"></app-step-experience>
+        <app-step-achievements *ngIf="step===6" (back)="prev()" (next)="next()"></app-step-achievements>
+        <app-step-skills      *ngIf="step===7" (back)="prev()" (next)="next()"></app-step-skills>
+        <app-step-languages   *ngIf="step===8" (back)="prev()" (next)="next()"></app-step-languages>
+        <app-step-attachments *ngIf="step===9" (back)="prev()" (next)="next()"></app-step-attachments>
+        <app-step-review      *ngIf="step===10" (back)="prev()"></app-step-review>
+      </div>
+    </div>
+  </div>
+</section>

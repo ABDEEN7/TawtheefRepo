@@ -30,7 +30,7 @@ public enum ReviewStatus
     NeedsCorrection = 4,
     ChangesRequested = NeedsCorrection
 }
-public enum ReviewTargetType { Section=1, Field=2, Row=3, Attachment=4 }
+public enum ReviewTargetType { Section = 1, Field=2, Row=3, Attachment=4 }
 
 [Table(nameof(ReviewItem), Schema = Schemas.Hr)]
 public class ReviewItem : EventEntity
@@ -39,18 +39,13 @@ public class ReviewItem : EventEntity
     /// The pending or approved change that this review item is validating
     /// </summary>
     public Guid? ProfileChangeId { get; set; }
-    public ProfileChange? ProfileChange { get; set; }
+    public ProfileChangeRequest? ProfileChange { get; set; }
 
     /// <summary>
     /// The user profile being reviewed
     /// </summary>
     public Guid UserProfileId { get; set; }
     public UserProfile? UserProfile { get; set; }
-
-    /// <summary>
-    /// Submission version at the time the review was sent
-    /// </summary>
-    public int Version { get; set; }
     
     /// <summary>
     /// Type of target being reviewed (Section, Field, Row, or Attachment)
@@ -99,7 +94,7 @@ public class ReviewItem : EventEntity
     /// <summary>
     /// Timestamp when the review was completed
     /// </summary>
-    public DateTime? ReviewedAtUtc { get; set; }
+    public DateTimeOffset? ReviewedAtUtc { get; set; }
     
     /// <summary>
     /// Notes or comments from the reviewer
@@ -121,11 +116,6 @@ public class ReviewItem : EventEntity
     /// Indicates whether the data has been modified since approval
     /// </summary>
     public bool IsOutdated { get; set; }
-
-    /// <summary>
-    /// Submission version at the time of approval
-    /// </summary>
-    public int? ApprovedAtVersion { get; set; }
     
     
     public static ReviewItem Create(Guid userProfileId, ProfileSection section,
@@ -140,8 +130,7 @@ public class ReviewItem : EventEntity
             FieldPath = fieldPath,
             EntityName = entityName,
             EntityId = entityId,
-            ResourceId = resourceId,
-            Version = 1
+            ResourceId = resourceId
         };
 
         item.UpdateHash(currentValue);

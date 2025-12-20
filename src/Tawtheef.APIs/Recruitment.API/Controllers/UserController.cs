@@ -41,6 +41,16 @@ public class UserController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetMyProfileDetailQuery { UserId = UserId.Value }, ct);
         return result.ToActionResult();
     }
+
+    [HttpGet("profile/review-summary")]
+    public async Task<IActionResult> GetMyProfileReviewSummary(CancellationToken ct)
+    {
+        if (UserId.IsFailed)
+            return Unauthorized(UserId.Errors);
+
+        var result = await mediator.Send(new GetMyProfileReviewSummaryQuery(UserId.Value), ct);
+        return result.ToActionResult();
+    }
         
     [HttpGet("/api/me/bootstrap")]
     public async Task<IActionResult> Bootstrap(

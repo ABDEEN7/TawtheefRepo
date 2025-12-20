@@ -253,6 +253,11 @@
   "profileApproval.detail.mode.switchToChanges": "عرض التغييرات فقط",
   "profileApproval.detail.mode.version": "رقم النسخة",
   "profileApproval.detail.itemSaved": "تم حفظ قرار العنصر.",
-  "profileApproval.status.needsCorrection": "بحاجة لتصحيح"
+  "profileApproval.status.needsCorrection": "بحاجة لتصحيح",
+  "profileApproval.detail.sectionApproval.savedAs": "تم حفظ القرار",
+  "profileApproval.detail.sectionApproval.save": "حفظ القرار",
+  "profileApproval.detail.sectionApproval.saving": "جارٍ الحفظ...",
+  "profileApproval.detail.sectionApproval.noteRequired": "يرجى كتابة ملاحظة توضح سبب طلب التعديل",
+  "profileApproval.detail.sectionApproval.statusRequiredHint": "يرجى اختيار حالة هذا التبويب قبل المتابعة"
 
 }

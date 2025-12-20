@@ -1,40 +1,106 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
-using System.Text.Json;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
-public enum ProfileChangeStatus
+public enum ProfileChangeRequestStatus
 {
     Pending = 1,
-    Approved = 2,
-    Rejected = 3,
-    NeedsCorrection = 4
+    UnderReview = 2,
+    Approved = 3,
+    Rejected = 4,
+    Canceled = 5
 }
 
-[Table(nameof(ProfileChange), Schema = Schemas.Hr)]
-public class ProfileChange : EventEntity
+public enum ProfileChangeAction
+{
+    UpdateField = 1,
+    ReplaceAttachment = 2,
+    AddListItem = 3
+}
+
+[Table(nameof(ProfileChangeRequest), Schema = Schemas.Hr)]
+public class ProfileChangeRequest : EventEntity
 {
     public Guid UserProfileId { get; set; }
     public UserProfile? UserProfile { get; set; }
 
     public ProfileSection Section { get; set; }
-    public ReviewTargetType TargetType { get; set; }
 
+    public ProfileChangeAction Action { get; set; }
+
+    /// <summary>
+    /// Unique identity of target inside one profile.
+    /// Examples:
+    /// Field|Contact|ResidenceCountryId
+    /// Attachment|Personal|NationalCard
+    /// Add|Qualifications|{RequestId}
+    /// </summary>
+    [MaxLength(256)]
+    public string TargetKey { get; set; } = default!;
+
+    /// <summary>
+    /// For Field/Attachment targets (optional but helpful for reporting/UI).
+    /// Example: "ResidenceCountryId" or "NationalCardId"
+    /// </summary>
+    [MaxLength(256)]
     public string? FieldPath { get; set; }
-    public string? EntityName { get; set; }
-    public Guid? EntityId { get; set; }
-    public Guid? ResourceId { get; set; }
-    public string? AttachmentTitle { get; set; }
 
+    /// <summary>
+    /// For list adds (Qualification/Experience/...).
+    /// Example: "Qualification"
+    /// </summary>
+    [MaxLength(128)]
+    public string? EntityName { get; set; }
+
+    /// <summary>
+    /// Old/New values for fields (store as string/JSON).
+    /// OldValue can be optional because you can compute from approved profile.
+    /// But storing it helps audit and stable review.
+    /// </summary>
     public string? OldValue { get; set; }
     public string? NewValue { get; set; }
 
-    public ProfileChangeStatus Status { get; set; } = ProfileChangeStatus.Pending;
+    /// <summary>
+    /// Attachments: store ids explicitly.
+    /// </summary>
+    public Guid? OldResourceId { get; set; }
+    public Guid? NewResourceId { get; set; }
+    [MaxLength(256)]
+    public string? AttachmentTitle { get; set; }
 
-    public static ProfileChange Create(
+    public ProfileChangeRequestStatus Status { get; set; } = ProfileChangeRequestStatus.Pending;
+
+    /// <summary>
+    /// User who created the request.
+    /// </summary>
+    public Guid RequestedById { get; set; }
+    public DateTime RequestedAtUtc { get; set; } = DateTime.UtcNow;
+
+    /// <summary>
+    /// Reviewer decisions.
+    /// Reject reason is required when status = Rejected.
+    /// </summary>
+    public Guid? ReviewedById { get; set; }
+    public DateTime? ReviewedAtUtc { get; set; }
+    [MaxLength(2000)]
+    public string? ReviewerNote { get; set; }
+
+    /// <summary>
+    /// Cancel by user while Pending/UnderReview only.
+    /// </summary>
+    public Guid? CanceledById { get; set; }
+    public DateTime? CanceledAtUtc { get; set; }
+
+    /// <summary>
+    /// Concurrency token to avoid races.
+    /// </summary>
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = default!;
+    
+    public static ProfileChangeRequest Create(
         Guid userProfileId,
         ProfileSection section,
         ReviewTargetType targetType,
@@ -46,43 +112,43 @@ public class ProfileChange : EventEntity
         object? oldValue,
         object? newValue)
     {
-        return new ProfileChange
+        var action = targetType switch
+        {
+            ReviewTargetType.Row => ProfileChangeAction.UpdateField,
+            ReviewTargetType.Attachment => ProfileChangeAction.ReplaceAttachment,
+            // ReviewTargetType.ListAdd => ProfileChangeAction.AddListItem,
+            _ => throw new ArgumentOutOfRangeException(nameof(targetType), "Invalid target type for profile change request")
+        };
+
+        var targetKey = targetType switch
+        {
+            ReviewTargetType.Row => $"Field|{section}|{fieldPath}",
+            ReviewTargetType.Attachment => $"Attachment|{section}|{fieldPath}",
+            // ReviewTargetType.ListAdd => $"Add|{entityName}|{Guid.NewGuid()}",
+            _ => throw new ArgumentOutOfRangeException(nameof(targetType), "Invalid target type for profile change request")
+        };
+
+        var request = new ProfileChangeRequest
         {
             UserProfileId = userProfileId,
             Section = section,
-            TargetType = targetType,
+            Action = action,
+            TargetKey = targetKey,
             FieldPath = fieldPath,
             EntityName = entityName,
-            EntityId = entityId,
-            ResourceId = resourceId,
-            AttachmentTitle = attachmentTitle,
-            OldValue = SerializeValue(oldValue),
-            NewValue = SerializeValue(newValue)
+            OldValue = oldValue != null ? System.Text.Json.JsonSerializer.Serialize(oldValue) : null,
+            NewValue = newValue != null ? System.Text.Json.JsonSerializer.Serialize(newValue) : null,
+            OldResourceId = targetType == ReviewTargetType.Attachment ? resourceId : null,
+            NewResourceId = targetType == ReviewTargetType.Attachment ? resourceId : null,
+            AttachmentTitle = attachmentTitle
         };
+
+        return request;
     }
 
     public void UpdateValues(object? oldValue, object? newValue)
     {
-        OldValue = SerializeValue(oldValue);
-        NewValue = SerializeValue(newValue);
-        Status = ProfileChangeStatus.Pending;
-    }
-
-    private static string? SerializeValue(object? value)
-    {
-        if (value is null) return null;
-
-        return value switch
-        {
-            string s => s,
-            DateOnly date => date.ToString("yyyy-MM-dd"),
-            DateTime dt => dt.ToString("O"),
-            DateTimeOffset dto => dto.ToString("O"),
-            Enum e => e.ToString(),
-            bool b => b ? "true" : "false",
-            IFormattable f => f.ToString(null, System.Globalization.CultureInfo.InvariantCulture),
-            _ => JsonSerializer.Serialize(value, new JsonSerializerOptions { WriteIndented = false })
-        };
+        OldValue = oldValue != null ? System.Text.Json.JsonSerializer.Serialize(oldValue) : null;
+        NewValue = newValue != null ? System.Text.Json.JsonSerializer.Serialize(newValue) : null;
     }
 }
-

@@ -2,6 +2,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Domain.Constants;
@@ -11,126 +12,170 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
-public class GetProfileApprovalsHandler(IUnitOfWork uow)
+public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
     : IRequestHandler<GetProfileApprovalsQuery, Result<IReadOnlyList<ProfileApprovalListItemDto>>>
 {
-    public async Task<Result<IReadOnlyList<ProfileApprovalListItemDto>>> Handle(GetProfileApprovalsQuery request, CancellationToken ct)
+    public async Task<Result<IReadOnlyList<ProfileApprovalListItemDto>>> Handle(
+        GetProfileApprovalsQuery request,
+        CancellationToken ct)
     {
         if (request.OfficerId == Guid.Empty)
             return Result.Fail<IReadOnlyList<ProfileApprovalListItemDto>>(ErrorsCodes.InvalidUserIdentifier);
 
+        // 1) Get assigned profiles (active assignments only)
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
-        var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
 
         var assignedProfileIds = await assignmentRepo.DbSet
+            .AsNoTracking()
             .Where(a => a.IsActive && a.EmployeeId == request.OfficerId)
             .Select(a => a.UserProfileId)
+            .Distinct()
             .ToListAsync(ct);
 
         if (assignedProfileIds.Count == 0)
             return Result.Ok<IReadOnlyList<ProfileApprovalListItemDto>>([]);
 
-        var latestSubmissions = await submissionRepo.DbSet
-            .Where(s => assignedProfileIds.Contains(s.UserProfileId))
-            .GroupBy(s => s.UserProfileId)
-            .Select(g => g.OrderByDescending(s => s.Version).First())
-            .ToListAsync(ct);
-
-        if (latestSubmissions.Count == 0)
-            return Result.Ok<IReadOnlyList<ProfileApprovalListItemDto>>([]);
-
-        var profileIds = latestSubmissions.Select(s => s.UserProfileId).ToList();
-
+        // 2) Load profiles that are relevant for FULL REVIEW (phase 1)
+        // Only Submitted / UnderReview should appear in reviewer work queue.
+        // If you want to allow viewing approved profiles in the same list, add Approved below.
         var profileRepo = uow.GetEntityRepository<UserProfile>();
+
         var profiles = await profileRepo.DbSet
+            .AsNoTracking()
+            .AsSplitQuery()
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
             .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
-            .Where(p => profileIds.Contains(p.Id))
+            .Where(p => assignedProfileIds.Contains(p.Id))
+            .Where(p => p.Status == UserProfileStatus.Submitted || p.Status == UserProfileStatus.UnderReview)
             .ToListAsync(ct);
 
+        if (profiles.Count == 0)
+            return Result.Ok<IReadOnlyList<ProfileApprovalListItemDto>>([]);
+
+        var profileIds = profiles.Select(p => p.Id).ToList();
+
+        // 3) Review summary MUST be Section-only for phase 1.
+        // We also ignore ProfileChangeId (phase 2) so list stays strictly for Full Review.
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+
         var reviewSummaries = await reviewRepo.DbSet
+            .AsNoTracking()
             .Where(r => profileIds.Contains(r.UserProfileId))
+            .Where(r => r.TargetType == ReviewTargetType.Section)
+            .Where(r => r.ProfileChangeId == null) // phase 1 only
             .GroupBy(r => r.UserProfileId)
             .Select(g => new
             {
-                g.Key,
-                Pending = g.Count(r => (r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NeedsCorrection) || r.IsOutdated),
+                UserProfileId = g.Key,
+
+                PendingSections = g.Count(r =>
+                    r.Status == ReviewStatus.Pending ||
+                    r.Status == ReviewStatus.NotReviewed),
+
+                FlaggedSections = g.Count(r => r.Status == ReviewStatus.NeedsCorrection),
+
+                ApprovedSections = g.Count(r => r.Status == ReviewStatus.Approved),
+
                 OverallStatus =
-                    g.Any(r => r.Status == ReviewStatus.Rejected)
-                        ? ReviewStatus.Rejected
-                        : g.Any(r => r.Status == ReviewStatus.Pending || r.IsOutdated)
+                    g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
+                        ? ReviewStatus.NeedsCorrection
+                        : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed)
                             ? ReviewStatus.Pending
-                            : g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
-                                ? ReviewStatus.NeedsCorrection
-                                : ReviewStatus.Approved,
+                            : ReviewStatus.Approved,
+
                 LastUpdatedAtUtc = g.Max(r => r.UpdatedDate ?? r.CreatedDate)
             })
             .ToListAsync(ct);
 
-        var list = latestSubmissions
-            .Select(submission =>
+        // For quick lookup
+        var summaryMap = reviewSummaries.ToDictionary(x => x.UserProfileId, x => x);
+
+        // 4) Build list DTOs
+        var list = profiles
+            .Select(profile =>
             {
-                var profile = profiles.FirstOrDefault(p => p.Id == submission.UserProfileId);
-                var summary = reviewSummaries.FirstOrDefault(c => c.Key == submission.UserProfileId);
-                var pending = summary?.Pending ?? 0;
+                summaryMap.TryGetValue(profile.Id, out var summary);
+
+                var pendingSections = summary?.PendingSections
+                                      ?? ProfileApprovalFlow.Sections.Length; // if no review items found, treat as all pending
+
                 var overallStatus = summary?.OverallStatus ?? ReviewStatus.Pending;
-                var lastUpdatedAtUtc = summary?.LastUpdatedAtUtc ?? submission.SubmittedAtUtc;
-                var profileStatus = profile?.Status ?? UserProfileStatus.Submitted;
+
+                // TODO: Replace CreatedDate with real SubmittedAtUtc when you add it to UserProfile.
+                var submittedAtUtc = profile.CreatedDate;
+
+                var lastUpdated =
+                    summary?.LastUpdatedAtUtc
+                    ?? profile.UpdatedDate
+                    ?? profile.CreatedDate;
 
                 return new ProfileApprovalListItemDto
                 {
-                    UserProfileId = submission.UserProfileId,
-                    UserId = profile?.UserId ?? Guid.Empty,
-                    FullName = profile?.User?.FullNameEn ?? profile?.User?.FullNameAr ?? "",
-                    CandidateType = profile?.CandidateType?.NameAr ?? profile?.CandidateType?.NameEn,
-                    TargetEntity = profile?.TargetEntity?.NameAr ?? profile?.TargetEntity?.NameEn,
-                    Specialization = profile?.Qualifications?.FirstOrDefault()?.Major?.NameAr ?? profile?.Qualifications?.FirstOrDefault()?.Major?.NameEn,
-                    SubmittedAtUtc = submission.SubmittedAtUtc,
-                    ProfileStatus = profileStatus,
-                    PendingCount = pending,
+                    UserProfileId = profile.Id,
+                    UserId = profile.UserId,
+                    FullName = profile.User?.FullNameEn ?? profile.User?.FullNameAr ?? string.Empty,
+
+                    CandidateType = profile.CandidateType?.NameEn ?? profile.CandidateType?.NameAr,
+                    TargetEntity = profile.TargetEntity?.NameEn ?? profile.TargetEntity?.NameAr,
+
+                    Specialization = profile.Qualifications?.FirstOrDefault()?.Major?.NameEn
+                                     ?? profile.Qualifications?.FirstOrDefault()?.Major?.NameAr,
+
+                    SubmittedAtUtc = submittedAtUtc,
+                    ProfileStatus = profile.Status,
+
+                    // In phase 1, we want pending count to represent pending sections only
+                    PendingCount = pendingSections,
+
                     OverallStatus = overallStatus,
-                    LastUpdatedAtUtc = lastUpdatedAtUtc.DateTime,
-                    AllowedOperations = ResolveAllowedOperations(profileStatus)
+                    LastUpdatedAtUtc = lastUpdated,
+
+                    AllowedOperations = ResolveAllowedOperations(profile.Status)
                 };
             })
             .ToList();
 
-        var filtered = list.AsQueryable();
+        // 5) Filters (search + dropdown filters)
+        var filtered = list
+            .WhereIf(!string.IsNullOrWhiteSpace(request.Search), p =>
+                p.FullName.Contains(request.Search!, StringComparison.OrdinalIgnoreCase) ||
+                (!string.IsNullOrWhiteSpace(p.TargetEntity) &&
+                 p.TargetEntity.Contains(request.Search!, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrWhiteSpace(p.CandidateType) &&
+                 p.CandidateType.Contains(request.Search!, StringComparison.OrdinalIgnoreCase)))
+            .WhereIf(!string.IsNullOrWhiteSpace(request.CandidateType), p =>
+                !string.IsNullOrWhiteSpace(p.CandidateType) &&
+                p.CandidateType.Contains(request.CandidateType!, StringComparison.OrdinalIgnoreCase))
+            .WhereIf(!string.IsNullOrWhiteSpace(request.TargetEntity), p =>
+                !string.IsNullOrWhiteSpace(p.TargetEntity) &&
+                p.TargetEntity.Contains(request.TargetEntity!, StringComparison.OrdinalIgnoreCase))
+            .WhereIf(!string.IsNullOrWhiteSpace(request.Specialization), p =>
+                !string.IsNullOrWhiteSpace(p.Specialization) &&
+                p.Specialization.Contains(request.Specialization!, StringComparison.OrdinalIgnoreCase))
+            .WhereIf(request.Status is not null, p => p.OverallStatus == request.Status)
+            .AsQueryable();
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-            filtered = filtered.Where(p =>
-                p.FullName.Contains(request.Search, StringComparison.OrdinalIgnoreCase) ||
-                (!string.IsNullOrWhiteSpace(p.TargetEntity) && p.TargetEntity.Contains(request.Search, StringComparison.OrdinalIgnoreCase)) ||
-                (!string.IsNullOrWhiteSpace(p.CandidateType) && p.CandidateType.Contains(request.Search, StringComparison.OrdinalIgnoreCase)));
-
-        if (!string.IsNullOrWhiteSpace(request.CandidateType))
-            filtered = filtered.Where(p => !string.IsNullOrWhiteSpace(p.CandidateType) && p.CandidateType.Contains(request.CandidateType, StringComparison.OrdinalIgnoreCase));
-
-        if (!string.IsNullOrWhiteSpace(request.TargetEntity))
-            filtered = filtered.Where(p => !string.IsNullOrWhiteSpace(p.TargetEntity) && p.TargetEntity.Contains(request.TargetEntity, StringComparison.OrdinalIgnoreCase));
-
-        if (!string.IsNullOrWhiteSpace(request.Specialization))
-            filtered = filtered.Where(p => !string.IsNullOrWhiteSpace(p.Specialization) && p.Specialization.Contains(request.Specialization, StringComparison.OrdinalIgnoreCase));
-
-        if (request.Status is not null)
-            filtered = filtered.Where(p => p.OverallStatus == request.Status);
-
-        var sortDirection = string.Equals(request.SortDirection, "asc", StringComparison.OrdinalIgnoreCase) ? "asc" : "desc";
+        // 6) Sorting
+        var sortDirection = string.Equals(request.SortDirection, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "asc"
+            : "desc";
 
         filtered = request.Sort?.ToLowerInvariant() switch
         {
             "name" => sortDirection == "asc"
                 ? filtered.OrderBy(p => p.FullName)
                 : filtered.OrderByDescending(p => p.FullName),
+
             "status" => sortDirection == "asc"
                 ? filtered.OrderBy(p => p.OverallStatus)
                 : filtered.OrderByDescending(p => p.OverallStatus),
+
             "entity" => sortDirection == "asc"
                 ? filtered.OrderBy(p => p.TargetEntity)
                 : filtered.OrderByDescending(p => p.TargetEntity),
+
             _ => sortDirection == "asc"
                 ? filtered.OrderBy(p => p.LastUpdatedAtUtc ?? p.SubmittedAtUtc)
                 : filtered.OrderByDescending(p => p.LastUpdatedAtUtc ?? p.SubmittedAtUtc)
@@ -141,9 +186,12 @@ public class GetProfileApprovalsHandler(IUnitOfWork uow)
 
     private static IReadOnlyList<string> ResolveAllowedOperations(UserProfileStatus status)
     {
+        // Phase 1:
+        // - Submitted/UnderReview => reviewer can view + decide sections + finalize
+        // - Approved => view only (optional if you include Approved in list)
         var ops = new List<string> { "view" };
 
-        if (status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview or UserProfileStatus.RequiresUpdate)
+        if (status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
         {
             ops.Add("review");
             ops.Add("finalize");

@@ -8,7 +8,7 @@ public static class ProfileDistributionRules
         [UserProfileStatus.InCreation];
     
     public static readonly UserProfileStatus[] FinalStatuses =
-        [UserProfileStatus.Approved, UserProfileStatus.Rejected, UserProfileStatus.Cancelled, UserProfileStatus.AdminCancelled];
+        [UserProfileStatus.Approved];
 
     public static readonly UserProfileStatus[] AssignableStatuses =
         [UserProfileStatus.Submitted, UserProfileStatus.UnderReview, UserProfileStatus.RequiresUpdate];

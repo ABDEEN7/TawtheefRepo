@@ -1,0 +1,11 @@
+@use "../../../../../../styles/variables" as *;
+
+table.table {
+  thead th { font-weight: 700; }
+  tbody td { vertical-align: middle; }
+}
+
+#expModal {
+  .modal-header { @include brand-gradient; color: #fff; }
+  #expFileInfo { color: $muted; }
+}

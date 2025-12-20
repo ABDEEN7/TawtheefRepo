@@ -69,14 +69,6 @@
           </div>
         </div>
       </div>
-      <ng-container *ngIf="getItemReview(q.id) as itemReview">
-      <app-item-inline-review
-        [reviewItemId]="itemReview.reviewItemId"
-        [status]="itemReview.status"
-        [note]="itemReview.note"
-        (review)="review.emit($event)"
-      />
-      </ng-container>
     </p-card>
   </div>
 </div>

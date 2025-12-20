@@ -17,7 +17,6 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
-        var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
 
         var profilesQuery = profileRepo.DbSet
             .Include(p => p.User)
@@ -32,19 +31,6 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
         if (profiles.Count == 0) return [];
 
         var profileIds = profiles.Select(p => p.Id).ToList();
-
-        var submissions = await submissionRepo.DbSet
-            .Where(s => profileIds.Contains(s.UserProfileId))
-            .GroupBy(s => s.UserProfileId)
-            .Select(g => new
-            {
-                ProfileId = g.Key,
-                SubmittedAtUtc = g.OrderByDescending(s => s.Version).Select(s => s.SubmittedAtUtc).FirstOrDefault()
-            })
-            .ToListAsync(ct);
-
-        var submissionLookup = submissions.ToDictionary(s => s.ProfileId, s => s.SubmittedAtUtc);
-
         var assignments = await assignmentRepo.DbSet
             .Where(a => a.IsActive && profileIds.Contains(a.UserProfileId))
             .Include(a => a.Employee)
@@ -56,10 +42,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
             .Select(profile =>
             {
                 assignmentLookup.TryGetValue(profile.Id, out var assignment);
-                var submittedAt = submissionLookup.TryGetValue(profile.Id, out var submitted)
-                    ? submitted
-                    : profile.CreatedDate.UtcDateTime;
-
+                var submittedAt = profile.CreatedDate;
                 var candidateName = profile.User?.FullNameAr ?? profile.User?.FullNameEn ?? string.Empty;
                 var specialization = profile.CandidateType?.NameAr ?? profile.CandidateType?.NameEn ?? string.Empty;
                 var target = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn ?? string.Empty;

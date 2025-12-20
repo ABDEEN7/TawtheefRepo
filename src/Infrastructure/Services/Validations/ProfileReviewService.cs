@@ -41,22 +41,20 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         string? fieldPath = null)
     {
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
-        var changeRepo = uow.GetEntityRepository<ProfileChange>();
+        var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
 
         var change = await changeRepo.DbSet
             .Where(c => c.UserProfileId == userProfileId
                         && c.Section == section
-                        && c.TargetType == targetType
                         && c.FieldPath == fieldPath
-                        && c.EntityName == entityName
-                        && (entityId == null || c.EntityId == entityId)
-                        && (resourceId == null || c.ResourceId == resourceId))
+                        && c.EntityName == entityName)
             .OrderByDescending(c => c.CreatedDate)
             .FirstOrDefaultAsync(ct);
 
         if (change is null)
         {
-            change = ProfileChange.Create(userProfileId, section, targetType, fieldPath, entityName, entityId, resourceId, attachmentTitle, oldValue, newValue);
+            change = ProfileChangeRequest.Create(userProfileId, section, targetType, fieldPath, 
+                entityName, entityId, resourceId, attachmentTitle, oldValue, newValue);
             await changeRepo.AddAsync(change);
         }
         else
@@ -74,26 +72,13 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
                         && (entityId == null || r.EntityId == entityId)
                         && (resourceId == null || r.ResourceId == resourceId)
                         && r.Status == ReviewStatus.Pending)
-            .OrderByDescending(r => r.Version)
             .FirstOrDefaultAsync(ct);
 
         if (pending is not null)
             return pending;
 
-        var latestVersion = await reviewRepo.DbSet
-            .Where(r => r.UserProfileId == userProfileId
-                        && r.Section == section
-                        && r.TargetType == targetType
-                        && r.ProfileChangeId == change.Id
-                        && r.FieldPath == fieldPath
-                        && (entityId == null || r.EntityId == entityId)
-                        && (resourceId == null || r.ResourceId == resourceId))
-            .Select(r => (int?)r.Version)
-            .OrderByDescending(v => v)
-            .FirstOrDefaultAsync(ct) ?? 0;
 
         var item = ReviewItem.Create(userProfileId, section, targetType, entityName: entityName, entityId: entityId, resourceId: resourceId);
-        item.Version = latestVersion + 1;
         item.AttachmentTitle = attachmentTitle;
         item.FieldPath = fieldPath;
         item.ProfileChangeId = change.Id;

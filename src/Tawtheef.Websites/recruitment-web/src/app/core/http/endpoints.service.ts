@@ -28,6 +28,7 @@ export class EndpointsService {
   user= {
     bootstrap: this.getFullUrl(`/me/bootstrap`),
     profile: {
+      reviewSummary: this.getFullUrl('/user/profile/review-summary'),
       savePrereq: this.getFullUrl(`/profiles/prereq`),
       savePersonal: this.getFullUrl(`/profiles/personal`),
       saveContact: this.getFullUrl(`/profiles/contact`),

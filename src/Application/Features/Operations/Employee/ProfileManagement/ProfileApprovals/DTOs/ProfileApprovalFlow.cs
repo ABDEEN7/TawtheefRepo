@@ -4,7 +4,6 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Pr
 
 public static class ProfileApprovalFlow
 {
-    // نفس ترتيب واجهة المحقق (Stepper)
     public static readonly ProfileSection[] Sections =
     [
         ProfileSection.Prerequisites,

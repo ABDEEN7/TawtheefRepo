@@ -1,4 +1,13 @@
 ﻿{
+  "common.sections": "الأقسام",
+  "common.refresh": "تحديث",
+  "common.edit": "تعديل",
+  "common.complete": "مكتمل",
+  "common.missing": "مفقود",
+  "common.verified": "موثق",
+  "common.notVerified": "غير موثق",
+  "common.none": "لا شيء",
+  "common.loadFailed": "فشل تحميل البيانات",
   "validation.required": "هذا الحقل مطلوب",
   "validation.range": "القيمة يجب أن تكون بين {{min}} و {{max}}",
   "validation.yearRange": "سنة التخرج يجب أن تكون بين {{min}} و {{max}}",

@@ -29,11 +29,7 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.EntityName, src => src.EntityName)
             .Map(dest => dest.OldValue, src => src.ProfileChange != null ? src.ProfileChange.OldValue : null)
             .Map(dest => dest.NewValue, src => src.ProfileChange != null ? src.ProfileChange.NewValue : null)
-            .Map(dest => dest.Version, src => src.Version)
-            .Map(dest => dest.ApprovedAtVersion, src => src.ApprovedAtVersion)
             .Map(dest => dest.ReviewedAtUtc, src => src.ReviewedAtUtc);
-
-        config.NewConfig<FinalizeProfileApprovalDto, FinalizeProfileApprovalCommand>();
 
         config.NewConfig<Resource, FileRefDto>()
             .Map(dest => dest.ResourceId, src => src.Id)

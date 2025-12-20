@@ -348,5 +348,5 @@
   "wizard.profile.experience.attachment.required": "Please attach experience certificate",
   "wizard.profile.achievements.attachment.required": "Please attach achievement certificate",
   "wizard.profile.degrees.certificate.required": "Please attach degree certificate",
-  "wizard.languages.saveError": "Failed to save languages. Please try again.",
+  "wizard.languages.saveError": "Failed to save languages. Please try again."
 }

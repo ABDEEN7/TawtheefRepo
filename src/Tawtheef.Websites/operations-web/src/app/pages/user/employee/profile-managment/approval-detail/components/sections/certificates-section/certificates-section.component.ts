@@ -10,26 +10,17 @@ import {ProfileApprovalItem, ReviewStatus} from '../../../../approval-list/model
 @Component({
   selector: 'app-profile-approval-certificates-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule, ItemInlineReviewComponent],
+  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule],
   templateUrl: './certificates-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class CertificatesSectionComponent {
   @Input() certificates: any[] | null = null;
-  @Input() reviewItems: ProfileApprovalItem[] = [];
   @Output() viewFile = new EventEmitter<string>();
-  @Output() review = new EventEmitter<{
-    reviewItemId: string;
-    status: ReviewStatus;
-    note?: string;
-  }>();
 
   preview(url?: string | null): void {
     if (url) {
       this.viewFile.emit(url);
     }
-  }
-  getItemReview(id: string) {
-    return this.reviewItems?.find(r => r.entityId === id);
   }
 }

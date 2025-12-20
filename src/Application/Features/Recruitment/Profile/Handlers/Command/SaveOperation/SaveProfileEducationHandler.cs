@@ -7,7 +7,9 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile.Validators;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
@@ -19,7 +21,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileEducationHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService)
     : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
 {
@@ -47,10 +48,8 @@ public sealed class SaveProfileEducationHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
 
         var validationResult = validationService.ValidateEducation(profile);
         if (validationResult.IsFailed)
@@ -144,22 +143,7 @@ public sealed class SaveProfileEducationHandler(
             }
         }
 
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Qualifications, ct);
-            foreach (var qualification in newQualifications.Concat(updatedQualifications))
-            {
-                await reviewService.TouchRowAsync(
-                    profile.Id,
-                    ProfileSection.Qualifications,
-                    nameof(Qualification),
-                    qualification.Id,
-                    ct);
-            }
-        }
-
         await uow.SaveChangesAsync(ct);
-
         return Result.Ok(Unit.Value);
     }
 

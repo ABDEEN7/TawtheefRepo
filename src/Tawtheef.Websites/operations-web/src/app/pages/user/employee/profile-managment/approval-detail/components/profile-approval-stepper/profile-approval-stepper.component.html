@@ -1,26 +1,33 @@
-<ul class="stepper nav nav-pills flex-wrap" aria-label="Profile sections">
-  <li class="nav-item" *ngFor="let s of sections">
+<div class="stepper-wrap" role="navigation" aria-label="Profile approval stepper">
+  <div class="stepper">
     <button
       type="button"
-      class="nav-link"
-      [class.active]="activeSection === s.section"
-      [class.done]="s.uiStatus === 'done'"
-      [class.bad]="s.uiStatus === 'bad'"
-      [class.idle]="s.uiStatus === 'idle'"
-      (click)="selectSection(s.section)"
+      *ngFor="let s of sections; let i = index; trackBy: trackBySection"
+      [ngClass]="stepClass(s, i)"
+      (click)="onStepClick(s, i)"
+      [attr.aria-current]="isStepActive(s) ? 'step' : null"
+      [attr.aria-disabled]="isStepDisabled(s, i)"
+      [disabled]="isStepDisabled(s, i)"
+      pTooltip="{{ tooltipText(s) }}"
+      tooltipPosition="top"
     >
-      <span class="step-index" [ngClass]="{ 'is-active': activeSection === s.section, 'is-complete': s.uiStatus === 'done' }">
-        <ng-container [ngSwitch]="s.uiStatus">
-          <i *ngSwitchCase="'done'" class="fa-solid fa-check"></i>
-          <i *ngSwitchCase="'bad'" class="fa-solid fa-xmark"></i>
-          <i *ngSwitchCase="'progress'" class="fa-solid fa-rotate"></i>
-          <i *ngSwitchDefault class="fa-regular fa-circle"></i>
-        </ng-container>
+      <span class="chip">
+        <span class="badge" *ngIf="showIndex">{{ i + 1 }}</span>
+
+        <i class="pi" [ngClass]="s.icon || 'pi pi-circle'" aria-hidden="true"></i>
+
+        <span class="dot" *ngIf="!showIndex"></span>
       </span>
-      <span class="step-label">
-        <i class="{{ s.icon }}"></i>
-        <span>{{ s.labelKey | translate }}</span>
+
+      <span class="label">
+        {{ s.labelKey | translate }}
+      </span>
+
+      <span class="state-icon" aria-hidden="true">
+        <i class="pi pi-check-circle" *ngIf="s.uiStatus === 'done'"></i>
+        <i class="pi pi-flag-fill" *ngIf="s.uiStatus === 'bad'"></i>
+        <i class="pi pi-angle-right" *ngIf="s.uiStatus === 'progress'"></i>
       </span>
     </button>
-  </li>
-</ul>
+  </div>
+</div>

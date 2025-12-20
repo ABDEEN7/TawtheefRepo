@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperations;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
@@ -23,15 +25,44 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
         var id => Result.Ok(Guid.Parse(id))
     };
-
-    [HttpGet("overview")]
-    public async Task<IActionResult> GetOverview(CancellationToken ct)
+    
+    [HttpGet("summary")]
+    public async Task<IActionResult> GetSummary(CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
-        var result = await mediator.Send(new GetProfileOverviewQuery(UserId.Value), ct);
+        var result = await mediator.Send(new GetMyUserProfileSummaryQuery(UserId.Value), ct);
         return result.ToActionResult();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetProfile(CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetMyUserProfileQuery(UserId.Value), ct);
+        return result.ToActionResult();
+    }
+
+    /// <summary>
+    /// Returns corrections ONLY when profile is InCreation (after reviewer Finalize with corrections).
+    /// Otherwise returns empty list.
+    /// </summary>
+    [HttpGet("corrections")]
+    public async Task<IActionResult> GetCorrections(CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetMyProfileCorrectionsQuery(UserId.Value), ct);
+        return result.ToActionResult();
+    }
+
+    #region Profile update operations
+
+    #endregion
+    
+    #region Profile creation operations
+    
     [HttpPost("prereq")]
     public async Task<IActionResult> SavePrereq([FromForm] SaveProfilePrereqRequest request, CancellationToken ct)
     {
@@ -136,7 +167,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("languages")]
-    public async Task<IActionResult> SaveSkills([FromBody] SaveProfileLanguagesRequest request, CancellationToken ct)
+    public async Task<IActionResult> SaveLanguages([FromBody] SaveProfileLanguagesRequest request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new SaveProfileLanguagesCommand(UserId.Value, request);
@@ -188,6 +219,9 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     
+
+    #endregion
+   
     #region Lookups
     [HttpGet("lookups/skill-search")]
     public async Task<IActionResult> Search([FromQuery] SearchSkillsQuery query)

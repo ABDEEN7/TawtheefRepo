@@ -1,5 +1,6 @@
 import {GUID} from '../../../../../../shared/types/guid.type';
 import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import {ProfileStatus, ProfileStatusNumber} from '../../../../../../core/enums/lookups.enum';
 
 export enum ReviewStatus {
   NotReviewed = 0,
@@ -117,9 +118,7 @@ export interface ProfileApprovalDetail {
   approvedProfile?: ProfileApprovalDataDto | null;
 
   sections: ProfileApprovalSection[];
-
-  isInitialReview: boolean;
-  isPartialReview: boolean;
+  profileStatus: ProfileStatusNumber
 }
 export interface ProfileApprovalDataDto {
   basicInformation: BasicInformationSnapshot;

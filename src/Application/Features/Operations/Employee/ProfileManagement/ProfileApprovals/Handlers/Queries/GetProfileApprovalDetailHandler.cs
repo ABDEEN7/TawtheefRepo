@@ -17,9 +17,9 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
 public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
-    : IRequestHandler<GetProfileApprovalDetailQuery, Result<ProfileApprovalDetailDto>>
+    : IRequestHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
 {
-    public async Task<Result<ProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request,
+    public async Task<Result<GetProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request,
         CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
@@ -74,7 +74,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
         var profile = await profileQuery.FirstOrDefaultAsync(p => p.Id == request.UserProfileId, ct);
 
         if (profile is null)
-            return Result.Fail<ProfileApprovalDetailDto>(ErrorsCodes.UserProfileNotFound);
+            return Result.Fail<GetProfileApprovalDetailDto>(ErrorsCodes.UserProfileNotFound);
 
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
@@ -84,118 +84,44 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
             .AnyAsync(a => a.UserProfileId == profile.Id && a.EmployeeId == request.OfficerId && a.IsActive, ct);
 
         if (!isAssigned)
-            return Result.Fail<ProfileApprovalDetailDto>(ErrorsCodes.UnauthorizedAction);
-
-        var submissionRepo = uow.GetEntityRepository<ProfileSubmission>();
-        var submission = await submissionRepo.DbSet
-            .Where(s => s.UserProfileId == profile.Id)
-            .OrderByDescending(s => s.Version)
-            .FirstOrDefaultAsync(ct);
-
-        if (profile.Status is not UserProfileStatus.Approved
-            and not UserProfileStatus.Rejected
-            and not UserProfileStatus.AdminCancelled)
-        {
-            profile.Status = UserProfileStatus.UnderReview;
-            await uow.SaveChangesAsync(ct);
-        }
+            return Result.Fail<GetProfileApprovalDetailDto>(ErrorsCodes.UnauthorizedAction);
 
         // ===== Reviews =====
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
-        var reviewItems = await reviewRepo.DbSet
+
+        var sectionItems = await reviewRepo.DbSet
             .AsNoTracking()
-            .Where(r => r.UserProfileId == profile.Id)
-            .Include(r => r.ProfileChange)
-            .OrderByDescending(r => r.Version)
+            .Where(r => r.UserProfileId == profile.Id &&
+                        r.TargetType == ReviewTargetType.Section)
             .ToListAsync(ct);
 
-        var latestItems = reviewItems
-            .GroupBy(r => new
-            {
-                r.TargetType,
-                r.Section,
-                r.FieldPath,
-                r.EntityName,
-                r.EntityId,
-                r.ResourceId,
-                r.ProfileChangeId
-            })
-            .Select(g => g.First())
-            .ToList();
-
-        var resourceIds = latestItems
-            .Where(r => r.ResourceId.HasValue)
-            .Select(r => r.ResourceId!.Value)
-            .Distinct()
-            .ToList();
-
-        var resourceRepo = uow.GetEntityRepository<Resource>();
-        var resources = await resourceRepo.DbSet
-            .AsNoTracking()
-            .Where(r => resourceIds.Contains(r.Id))
-            .ToDictionaryAsync(r => r.Id, ct);
-
-// Map review items to DTO
-        var reviewItemDtos = latestItems
-            .Select(item =>
-            {
-                var dto = mapper.Map<ProfileApprovalItemDto>(item);
-
-                if (item.ResourceId.HasValue &&
-                    resources.TryGetValue(item.ResourceId.Value, out var resource))
-                {
-                    dto.ResourceUrl = media.ResolveAbsolute(resource.Url);
-                }
-
-                return (Item: item, Dto: dto);
-            })
-            .ToList();
-
         var sections = ProfileApprovalFlow.Sections
+            .OrderBy(s => (int)s)
             .Select(sec =>
             {
-                var group = reviewItemDtos.Where(x => x.Item.Section == sec).ToList();
+                var item = sectionItems.FirstOrDefault(x => x.Section == sec);
 
-                var sectionReview = group
-                    .Where(x => x.Item.TargetType == ReviewTargetType.Section)
-                    .Select(x => x.Dto)
-                    .FirstOrDefault();
-
-                var entries = group
-                    .Where(x => x.Item.TargetType != ReviewTargetType.Section)
-                    .Select(x => x.Dto)
-                    .ToList();
-
-                return new ProfileApprovalSectionDto
+                return new SectionReviewDto
                 {
                     Section = sec,
-                    SectionReview = sectionReview,
-                    Items = entries,
-                    HasAttachments = entries.Any(e => e.TargetType == ReviewTargetType.Attachment)
+                    Status = item?.Status ?? ReviewStatus.Pending,
+                    Note = item?.ReviewerNote,
+                    ReviewedAtUtc = item?.ReviewedAtUtc ?? default
                 };
             })
-            .OrderBy(s => (int)s.Section)
             .ToList();
 
         // ===== Profile data (snapshot) =====
         var profileData = MapProfile(profile);
-        var hasApproved =
-            latestItems.Any(x => x.Status == ReviewStatus.Approved && x.TargetType == ReviewTargetType.Section);
-
-        var dto = new ProfileApprovalDetailDto
+        var dto = new GetProfileApprovalDetailDto
         {
             UserProfileId = profile.Id,
             UserId = profile.UserId,
             FullName = profile.User?.FullNameEn ?? profile.User?.FullNameAr ?? string.Empty,
             CandidateType = profile.CandidateType?.NameAr ?? profile.CandidateType?.NameEn,
             TargetEntity = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn,
-            SubmissionVersion = submission?.Version,
-            SubmittedAtUtc = submission?.SubmittedAtUtc,
             Profile = profileData,
-            ApprovedProfile = null,
-            Sections = sections,
-            IsInitialReview = !hasApproved,
-            IsPartialReview = false
+            Sections = sections
         };
 
         await auditRepo.AddAsync(new AuditTrailEntry

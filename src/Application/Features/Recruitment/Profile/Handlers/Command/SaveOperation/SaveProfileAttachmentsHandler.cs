@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
@@ -19,7 +20,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
@@ -47,11 +47,9 @@ public sealed class SaveProfileAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
-
+        
         var validationResult = validationService.ValidateAttachments(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -101,20 +99,6 @@ public sealed class SaveProfileAttachmentsHandler(
 
             profile.AdditionalAttachments.Add(attachment);
             reviewAttachments.Add(attachment);
-        }
-
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Attachments, ct);
-            foreach (var attachment in reviewAttachments)
-            {
-                await reviewService.TouchAttachmentAsync(
-                    profile.Id,
-                    ProfileSection.Attachments,
-                    attachment.FileName,
-                    attachment.AttachmentId,
-                    ct);
-            }
         }
 
         await uow.SaveChangesAsync(ct);

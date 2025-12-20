@@ -26,6 +26,7 @@ public class ErrorsCodes
     #endregion
 
     #region Login Errors
+    public const string ProfileNotFound = "PROFILE_NOT_FOUND";
     public const string InvalidCredentials = "INVALID_CREDENTIALS_PROVICED";
     public const string UserNotFound = "USER_NOT_FOUND";
     public const string SessionExpired = "SESSION_EXPIRED";
@@ -77,6 +78,7 @@ public class ErrorsCodes
     #region Update Profile Errors
     public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
+    public const string ProfileNotUnderReview = "PROFILE_NOT_UNDER_REVIEW";
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";
     public const string InvalidPassword = "INVALID_PASSWORD";
@@ -91,6 +93,7 @@ public class ErrorsCodes
     public const string AchievementNotFound = "ACHIEVEMENT_NOT_FOUND";
     public const string SectionMustBeApprovedFirst = "SECTION_MUST_BE_APPROVED_FIRST";
     public const string SectionHasUnapprovedAttachments = "SECTION_HAS_UNAPPROVED_ATTACHMENTS";
+    public const string NotSubmitted = "NOT_SUBMITTED";
     public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
     public const string NotesRequiredForCorrection = "NOTES_REQUIRED_FOR_CORRECTION";
     public const string MandatoryFieldsIncomplete = "MANDATORY_FIELDS_INCOMPLETE";
@@ -150,6 +153,7 @@ public class ErrorsCodes
     #endregion
 
     #region User Profile
+    public const string ProfileAlreadyApproved = "PROFILE_ALREADY_APPROVED";
     public const string InvalidDegreesJson = "INVALID_DEGREES_JSON";
     public const string InvalidDegreesCount = "INVALID_DEGREES_COUNT";
     public const string InvalidExperiencesJson = "INVALID_EXPERIENCES_JSON";
