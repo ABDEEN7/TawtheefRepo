@@ -143,6 +143,10 @@
   "profileApproval.detail.sectionApproval.notesPlaceholder": "ملاحظات القسم (حقل اختياري)",
   "profileApproval.detail.sectionApproval.prev": "السابق",
   "profileApproval.detail.sectionApproval.next": "التالي",
+  "profileApproval.detail.stepper.tooltip.approved": "تم حفظ القرار كمعتمد",
+  "profileApproval.detail.stepper.tooltip.needsCorrection": "تم طلب تصحيح لهذا القسم",
+  "profileApproval.detail.stepper.tooltip.current": "القسم الجاري مراجعته الآن",
+  "profileApproval.detail.stepper.tooltip.pending": "لم يتم حفظ قرار بعد",
 
   "profileApproval.detail.verification.pendingSections": "تبويبات بانتظار المراجعة",
   "profileApproval.detail.verification.flaggedSections": "تبويبات تحتاج اهتمام",

@@ -8,7 +8,7 @@
       [attr.aria-current]="isStepActive(s) ? 'step' : null"
       [attr.aria-disabled]="isStepDisabled(s, i)"
       [disabled]="isStepDisabled(s, i)"
-      pTooltip="{{ tooltipText(s) }}"
+      [pTooltip]="tooltipText(s) | translate"
       tooltipPosition="top"
     >
       <span class="chip">

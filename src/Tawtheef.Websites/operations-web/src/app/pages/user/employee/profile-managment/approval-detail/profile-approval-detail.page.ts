@@ -18,7 +18,7 @@ import {Select} from 'primeng/select';
 import {Textarea} from 'primeng/textarea';
 import { CertificatesSectionComponent } from './components/sections/certificates-section/certificates-section.component';
 import {
-  ProfileApprovalDetail, ProfileApprovalSection, ReviewStatus
+  ProfileApprovalDetail, ProfileApprovalSection, ReviewStatus, SectionReviewSummary
 } from '../approval-list/models/profile-approval.models';
 import {routes} from '../../../../../routes/routes';
 import {ProfileApprovalService} from '../approval-list/services/profile-approval.service';
@@ -105,6 +105,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   canStartReviewUi = computed(() => {
     const info = this.detail();
     if (!info) return false;
+    if (info.profileStatus == null) return true;
     return info.profileStatus === ProfileStatusNumber.Submitted; // Submitted
   });
 
@@ -137,8 +138,9 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       const sectionId = sec.section;
       if (this.draftDirty[sectionId]) continue;
 
-      this.draftStatus[sectionId] = sec.sectionReview?.status ?? ReviewStatus.Pending;
-      this.draftNote[sectionId] = sec.sectionReview?.note ?? '';
+      const review = this.sectionReviewFor(sec);
+      this.draftStatus[sectionId] = review.status ?? ReviewStatus.Pending;
+      this.draftNote[sectionId] = review.note ?? '';
     }
     this.draftInitialized.set(true);
   }
@@ -226,19 +228,30 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     const map = new Map<number, ProfileApprovalSection>();
     (incoming.sections ?? []).forEach(s => map.set(s.section, s));
 
-    const normalized: ProfileApprovalSection[] = this.flowSections.map(section => {
-      const existing = map.get(section);
-      if (existing) return existing;
+    const normalized: ProfileApprovalSection[] = this.flowSections.map(sectionId => {
+      const existing = map.get(sectionId);
+      const normalizedReview = this.sectionReviewFor(existing);
+      const review = existing?.sectionReview ?? normalizedReview;
+      const status = (review as SectionReviewSummary | null)?.status ?? normalizedReview.status;
+      const note = (review as SectionReviewSummary | null)?.note ?? normalizedReview.note;
+      const reviewedAtUtc = (review as SectionReviewSummary | null)?.reviewedAtUtc ?? normalizedReview.reviewedAtUtc;
 
       return {
-        section,
-        sectionReview: null,
-        items: [],
-        hasAttachments: false
-      } as any;
+        section: sectionId,
+        sectionReview: review,
+        status,
+        note,
+        reviewedAtUtc: reviewedAtUtc ?? undefined,
+        items: existing?.items ?? [],
+        hasAttachments: existing?.hasAttachments ?? false,
+      };
     });
 
-    return { ...incoming, sections: normalized };
+    return {
+      ...incoming,
+      profile: this.normalizeProfileData(incoming.profile),
+      sections: normalized
+    };
   }
 
   private mergeDetail(current: ProfileApprovalDetail | null, incoming: ProfileApprovalDetail): ProfileApprovalDetail {
@@ -248,8 +261,8 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     return {
       ...current,
       ...normalizedIncoming,
-      profile: normalizedIncoming.profile ?? current.profile,
-      sections: normalizedIncoming.sections?.length ? normalizedIncoming.sections : (current.sections ?? []),
+      profile: this.normalizeProfileData(normalizedIncoming.profile ?? current.profile),
+      sections: normalizedIncoming.sections?.length ? normalizedIncoming.sections : current.sections ?? [],
     };
   }
 
@@ -258,7 +271,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     const sections = this.sortSections(info.sections);
 
     return sections.map(s => {
-      const st = s.sectionReview?.status;
+      const st = this.sectionReviewFor(s).status;
 
       let uiStatus: StepUiStatus = 'idle';
       if (st === ReviewStatus.Approved) uiStatus = 'done';
@@ -321,7 +334,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     const sections = info.sections ?? [];
 
     sections.forEach(sec => {
-      const status = sec.sectionReview?.status ?? ReviewStatus.Pending;
+      const status = this.sectionReviewFor(sec).status ?? ReviewStatus.Pending;
 
       if (status === ReviewStatus.Approved) stats.approvedSections += 1;
       else if (status === ReviewStatus.NeedsCorrection) stats.flaggedSections += 1;
@@ -336,9 +349,10 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     if (!info) return false;
 
     return (info.sections ?? []).every(s => {
-      const st = s.sectionReview?.status ?? ReviewStatus.Pending;
+      const review = this.sectionReviewFor(s);
+      const st = review.status ?? ReviewStatus.Pending;
       if (st === ReviewStatus.Approved) return true;
-      if (st === ReviewStatus.NeedsCorrection) return !!(s.sectionReview?.note ?? '').trim();
+      if (st === ReviewStatus.NeedsCorrection) return !!(review.note ?? '').trim();
       return false;
     });
   }
@@ -415,5 +429,30 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
           this.notifications.error(msg);
         }
       });
+  }
+
+  private sectionReviewFor(section?: ProfileApprovalSection | null): SectionReviewSummary {
+    const rawReview = section?.sectionReview as SectionReviewSummary | null | undefined;
+    const status = rawReview?.status ?? section?.status ?? ReviewStatus.Pending;
+    const note = rawReview?.note ?? section?.note ?? null;
+    const reviewedAtUtc =
+      rawReview?.reviewedAtUtc ?? section?.reviewedAtUtc ?? null;
+
+    return { status, note, reviewedAtUtc };
+  }
+
+  private normalizeProfileData(profile: ProfileApprovalDetail['profile']): ProfileApprovalDetail['profile'] {
+    if (!profile) return profile;
+
+    return {
+      ...profile,
+      qualifications: profile.qualifications ?? [],
+      experiences: profile.experiences ?? [],
+      trainingCourses: profile.trainingCourses ?? [],
+      professionalCertificatesAndAwards: profile.professionalCertificatesAndAwards ?? [],
+      skills: profile.skills ?? [],
+      languages: profile.languages ?? [],
+      attachments: profile.attachments ?? [],
+    };
   }
 }

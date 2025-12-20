@@ -143,6 +143,10 @@
   "profileApproval.detail.sectionApproval.notesPlaceholder": "Section Notes (Optional Field)",
   "profileApproval.detail.sectionApproval.prev": "Previous",
   "profileApproval.detail.sectionApproval.next": "Next",
+  "profileApproval.detail.stepper.tooltip.approved": "Decision saved as Approved",
+  "profileApproval.detail.stepper.tooltip.needsCorrection": "Changes requested for this section",
+  "profileApproval.detail.stepper.tooltip.current": "Currently reviewing this section",
+  "profileApproval.detail.stepper.tooltip.pending": "Decision not saved yet",
 
   "profileApproval.detail.verification.pendingSections": "Tabs Pending Review",
   "profileApproval.detail.verification.flaggedSections": "Tabs Needing Attention",
