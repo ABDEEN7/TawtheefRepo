@@ -218,6 +218,8 @@ public class ErrorsCodes
     public const string OfficeAdminEmailExists = "OFFICE_ADMIN_EMAIL_EXISTS";
     public const string OfficeAdminCreationFailed = "OFFICE_ADMIN_CREATION_FAILED";
     public const string OfficeRoleAssignmentFailed = "OFFICE_ROLE_ASSIGNMENT_FAILED";
+    public const string OfficeUserNotFound = "OFFICE_USER_NOT_FOUND";
+    public const string OfficeAdminRoleNotFound = "OFFICE_ADMIN_ROLE_NOT_FOUND";
+    public const string OfficeUserRoleNotFound = "OFFICE_USER_ROLE_NOT_FOUND";
     #endregion
 }
-

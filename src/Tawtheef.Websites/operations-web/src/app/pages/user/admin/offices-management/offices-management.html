@@ -57,6 +57,17 @@
                 <button
                   type="button"
                   class="icon-btn"
+                  (click)="openView(office)"
+                  [pTooltip]="'OFFICES.VIEW' | translate"
+                  tooltipPosition="top"
+                  [tooltipDisabled]="false"
+                  aria-label="{{ 'OFFICES.VIEW' | translate }}">
+                  <i class="bi bi-eye"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="icon-btn"
                   (click)="openEdit(office)"
                   [pTooltip]="'OFFICES.EDIT' | translate"
                   tooltipPosition="top"
@@ -93,12 +104,16 @@
 @if (isModalOpen()) {
   <app-office-modal
     [visible]="isModalOpen()"
-    [isEditing]="!!editingOffice()"
+    [mode]="modalMode()"
     [office]="editingOffice()"
+    [officeUsers]="editingOffice()?.users || []"
+    [loading]="isModalLoading()"
     [countries]="countries()"
     (cancel)="closeModal()"
     (create)="createOffice($event)"
-    (update)="updateOffice($event)"></app-office-modal>
+    (update)="updateOffice($event)"
+    (toggleBlock)="toggleUserBlockStatus($event)"
+    (makeAdmin)="moveOfficeAdmin($event)"></app-office-modal>
 }
 
 <p-confirmDialog></p-confirmDialog>
