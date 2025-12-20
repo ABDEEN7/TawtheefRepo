@@ -34,10 +34,10 @@ public class JobResponseDto
     public DropdownOptions? SubMajor { get; set; } = default!;
     public DropdownOptions? WorkType { get; set; } = default!;
     public DropdownOptions? JobStatus { get; set; } = default!;
-    public JobQuotaResponseDto? Quota { get; set; } = default!;
     public List<JobDegreeResponseDto>? Degrees { get; set; }
     public List<JobConditionResponseDto>? Conditions { get; set; }
     public List<JobSkillResponseDto>? Skills { get; set; }
     public List<JobResponsibilityResponseDto>? Responsibilities { get; set; }
     public List<JobRequiredAttachmentResponseDto>? RequiredAttachments { get; set; }
+    public List<JobTabReviewNoteResponseDto>? TabReviewNotes { get; set; }
 }

@@ -9,6 +9,8 @@ import {AuthService} from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
+  standalone: true,
+  host: { 'data-test': 'sidebar-main' },
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   imports: [CommonModule, TranslatePipe, Tooltip]

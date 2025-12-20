@@ -35,6 +35,12 @@
   "JOB_DETAILS.JOB_CATEGORY": "Job Category",
   "JOB_DETAILS.JOB_REVIEW_NOT": "Please review the job details before completing the application process",
   "JOB_DETAILS.ARABIC": "Arabic",
-  "JOB_DETAILS.ENGLISH": "English"
-  
+  "JOB_DETAILS.ENGLISH": "English",
+  "JOB_DETAILS.JOB_DETAILS": "Job details",
+  "JOB_DETAILS.CONDITIONS_RESPONSIBILITIES": "Conditions and responsibilities",
+  "JOB_DETAILS.REVIEW": "Review",
+  "JOB_DETAILS.OVERVIEWAR": "Overview in Arabic",
+  "JOB_DETAILS.OVERVIEWEN": "Overview in English",
+  "JOB_DETAILS.QUALIFICATIONS": "Qualifications",
+  "JOB_DETAILS.APPLY": "Apply for the job"
 }

@@ -10,7 +10,7 @@
     return this.employee + '/profile-distribution';
   },
   get approvalJob(){
-    return this.employee + '/approval-job';
+    return this.employee + '/jobs/approval-job';
   },
   get approvalProfile(){
     return this.employee + '/approval-profile';
@@ -20,6 +20,15 @@
   },
   get jobCreate(){
     return this.employee + '/jobs/create';
+  },
+  get JobList(){
+    return this.employee + '/jobs';
+  },
+  get jobView(){
+    return this.employee + '/jobs/view';
+  },
+  get jobEdit(){
+    return this.employee + '/jobs/edit';
   },
   get nominations(){
     return this.employee + '/nominations';

@@ -1,0 +1,48 @@
+﻿using FluentResults;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Entities.Recruitment.JobDetails;
+using Tawtheef.Infrastructure.Repositories.Base;
+
+namespace Tawtheef.Infrastructure.Repositories;
+
+public class JobTabReviewNoteRepository(IGenericRepository<JobTabReviewNote> repository)
+    : BaseRepository<JobTabReviewNote>(repository), IJobTabReviewNoteRepository
+{
+    private readonly IGenericRepository<JobTabReviewNote> _repository = repository;
+    public async Task<IResult<List<JobTabReviewNote>>> GetByIdWithDetailsAsync(Guid jobId)
+    {
+        var result = await _repository.DbSet
+            .AsNoTracking()
+            .Where(t => t.JobId == jobId)
+            .Include(t => t.Attachments)
+            .ThenInclude(a => a.Attachment)
+            .OrderByDescending(t => t.CreatedDate)
+            .ToListAsync();
+
+        return Result.Ok(result);
+    }
+
+    public async Task<IResult<List<JobTabReviewNote>>> GetLastReviewCycleAsync(Guid jobId)
+    {
+        var lastCycleId = await _repository.DbSet
+            .Where(x => x.JobId == jobId)
+            .GroupBy(x => x.ReviewCycleId)
+            .OrderByDescending(g => g.Max(x => x.CreatedDate))
+            .Select(g => g.Key)
+            .FirstOrDefaultAsync();
+
+        if (lastCycleId == Guid.Empty)
+            return Result.Ok(new List<JobTabReviewNote>());
+
+        var result = await _repository.DbSet
+            .AsNoTracking()
+            .Where(x => x.JobId == jobId && x.ReviewCycleId == lastCycleId)
+            .Include(x => x.Attachments)
+                .ThenInclude(a => a.Attachment)
+            .ToListAsync();
+
+        return Result.Ok(result);
+    }
+}

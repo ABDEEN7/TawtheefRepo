@@ -210,6 +210,15 @@ public class ErrorsCodes
     public const string ProfileNotAssignable = "PROFILE_NOT_ASSIGNABLE";
     #endregion
 
+    #region Job Management
+    public const string JobNotFound = "JOB_NOT_FOUND";
+    public const string JobAlreadyPublished = "JOB_ALREADY_PUBLISHED";
+    public const string JobAlreadyCancelled = "JOB_ALREADY_CANCELLED";
+    public const string JobCannotBeCancelled = "JOB_CANNOT_BE_CANCELLED";
+    public const string JobClosingDateInvalid = "JOB_CLOSING_DATE_INVALID";
+    public const string NoteRequired = "NOTE_REQUIRED";
+    #endregion
+
     #region Offices
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
     public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";

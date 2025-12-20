@@ -10,7 +10,7 @@
             {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
           </div>
         </div>
-        <button class="btn btn-brand btn-add w-50" (click)="addResponsibility()" type="button">
+        <button class="btn btn-brand btn-add w-50" [disabled]="this.form.disabled" (click)="addResponsibility()" type="button">
           <i class="fa fa-plus me-2"></i>
           {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_RESPONSIBILITY' | translate }}
         </button>
@@ -177,4 +177,7 @@
       }
     </div>
   </form>
+  @if (note?.tabStatus === jobService.jobTabStatus.Returned) {
+    <app-review-note [note]="note"></app-review-note>
+  }
 </div>
