@@ -40,22 +40,6 @@
 
 .supported-list {
   max-height: 180px;
-  overflow-y: auto;
-  padding: 10px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  background: #fafafa;
-}
-
-.supported-list.is-invalid {
-  border-color: #dc3545;
-}
-
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
 }
 
 .modal-form .form-control.is-invalid,
@@ -82,4 +66,35 @@
 .user-table td,
 .user-table th {
   vertical-align: middle;
+}
+
+.btn-maroon {
+  background-color: #7b0037;
+  border-color: #7b0037;
+  color: #fff;
+  padding-inline: 20px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #64002d;
+    border-color: #64002d;
+  }
+}
+
+:host ::ng-deep .p-select {
+  width: 100%;
+
+  .p-select-label {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .p-select-panel {
+    max-height: 260px;
+  }
+
+  &.p-invalid .p-select-label {
+    border-color: #dc3545;
+  }
 }

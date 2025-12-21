@@ -9,13 +9,14 @@ import {CreateOfficeRequest} from '../../models/create-office-request.dto';
 import {UpdateOfficeRequest} from '../../models/update-office-request.dto';
 import {OfficeDto} from '../../models/office.dto';
 import {OfficeUserDto} from '../../models/office-user.dto';
+import {Select} from 'primeng/select';
 
 @Component({
   selector: 'app-office-modal',
   standalone: true,
   templateUrl: './office-modal.component.html',
   styleUrls: ['./office-modal.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective]
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, Select]
 })
 export class OfficeModalComponent implements OnInit, OnChanges {
   private fb = inject(FormBuilder);
@@ -85,7 +86,6 @@ export class OfficeModalComponent implements OnInit, OnChanges {
 
     if (this.mode !== 'create') {
       this.form.controls.countryId.disable({emitEvent: false});
-      this.form.controls.adminEmail.disable({emitEvent: false});
     }
 
     if (this.isViewMode()) {
@@ -112,18 +112,6 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     }
 
     return this.office?.adminEmail || '';
-  }
-
-  isSupportedSelected(countryId: string) {
-    return this.form.controls.supportedCountryIds.value.includes(countryId);
-  }
-
-  toggleSupportedCountry(countryId: string) {
-    const current = this.form.controls.supportedCountryIds.value;
-    const exists = current.includes(countryId);
-    const updated = exists ? current.filter(id => id !== countryId) : [...current, countryId];
-    this.form.controls.supportedCountryIds.setValue(updated);
-    this.form.controls.supportedCountryIds.markAsDirty();
   }
 
   localizedCountry(nameAr: string, nameEn: string) {
