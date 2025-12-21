@@ -38,27 +38,28 @@ function generateRequestId(): string {
     Math.random().toString(36).substring(2, 15);
 }
 function handleResponse(event: HttpEvent<any>, request: HttpRequest<any>): void {
-  if (event instanceof HttpResponse && event.body?.data !== undefined) {
+  if (event instanceof HttpResponse) {
+    const body: any = event.body;
+    const hasData = body?.data !== undefined || body?.Data !== undefined;
+    const payload = body?.data ?? body?.Data;
+    const isFailure = body?.success === false || body?.Success === false;
+
     if (!environment.production) {
       console.log(`API Success: ${request.method} ${request.url}`);
     }
 
-    // Modify the response body to return just the data property if it exists
-    const response = event as HttpResponse<any>;
-    if (response.body && typeof response.body === 'object') {
-      if (response.body.success === false) {
+    if (body && typeof body === 'object') {
+      if (isFailure) {
         throw new HttpErrorResponse({
-          error: response.body.error || response.body,
-          headers: response.headers,
+          error: body.error || body.Error || body,
+          headers: event.headers,
           status: 400,
           statusText: 'Bad Request',
-          url: response.url || undefined
+          url: event.url || undefined
         });
-      } else if (response.body.data !== undefined) {
-        // If there's a data property, return just that
-        (event as any).body = response.body.data;
+      } else if (hasData) {
+        (event as any).body = payload;
       }
-      // else keep the original body
     }
   }
 }
