@@ -1,7 +1,7 @@
 ﻿import {Component, inject, OnInit} from '@angular/core';
 import {ProfileDataService} from './services/profile-data.service';
 import {TranslateService} from '@ngx-translate/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {take} from 'rxjs';
 import {finalize} from 'rxjs/operators';
 import {ProfileLookupsService} from './services/profile-lookups.service';
@@ -23,6 +23,7 @@ import {AvatarModal} from '../components/profile-steps/step-personal/dialogs/ava
 })
 export class WizardProfileComponent implements OnInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private auth = inject(AuthService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
@@ -38,6 +39,7 @@ export class WizardProfileComponent implements OnInit {
   total = 10;
 
   loading = true;
+  private forcedStep: number | null = null;
 
   stepLabels: string[] = [
     'wizard.steps.firstInfo',
@@ -100,6 +102,14 @@ export class WizardProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.forcedStep = this.parseStep(this.route.snapshot.queryParamMap.get('step'));
+    this.route.queryParamMap.subscribe(params => {
+      const stepParam = this.parseStep(params.get('step'));
+      if (stepParam) {
+        this.forcedStep = stepParam;
+        this.applyForcedStep();
+      }
+    });
     this.lookups.loadAll().subscribe(() => {
       const nav = this.router.currentNavigation();
       const state = nav?.extras.state as ProfileStatusDto | null;
@@ -108,6 +118,7 @@ export class WizardProfileComponent implements OnInit {
         this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state, this.userService.getPrefill()));
         this.loading = false;
         this.moveToFirstInvalidStep();
+        this.applyForcedStep();
         return;
       }
       this.auth.getAuthBootstrap$()
@@ -123,6 +134,7 @@ export class WizardProfileComponent implements OnInit {
           this.avatarPreviewUrl = b.avatar ?? null;
           this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto, this.userService.getPrefill()));
           this.moveToFirstInvalidStep();
+          this.applyForcedStep();
         });
     })
   }
@@ -186,5 +198,20 @@ export class WizardProfileComponent implements OnInit {
         this.avatarPreviewUrl = croppedImage;
       }
     });
+  }
+
+  private parseStep(value: string | null): number | null {
+    if (!value) return null;
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return null;
+    if (parsed < 1 || parsed > this.total) return null;
+    return parsed;
+  }
+
+  private applyForcedStep() {
+    if (!this.forcedStep) return;
+    if (this.canGoTo(this.forcedStep)) {
+      this.step = this.forcedStep;
+    }
   }
 }

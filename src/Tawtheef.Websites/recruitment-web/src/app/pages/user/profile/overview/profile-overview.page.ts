@@ -16,6 +16,8 @@ import { mapIdToDropdown } from '../wizard-profile/services/profile.mapper';
 import {ProfileOverviewService} from './services/profile-overview.service';
 import {
   MyProfileReviewSummaryDto,
+  ProfileChangeRequestDto,
+  ProfileChangeRequestStatusEnum,
   ProfileSectionEnum, ReviewStatusEnum, UserProfileStatusEnum
 } from './models/profile-overview.model';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
@@ -26,6 +28,20 @@ import {
   ProfileStatusDto, QualificationDto,
   TrainingCourseDto, SkillDto
 } from '../../../../core/models/auth/auth-response.model';
+
+const REVIEW_STEP = 10;
+const SECTION_STEP_MAP: Record<ProfileSectionEnum, number> = {
+  [ProfileSectionEnum.Prerequisites]: 1,
+  [ProfileSectionEnum.Personal]: 2,
+  [ProfileSectionEnum.Contact]: 3,
+  [ProfileSectionEnum.Qualifications]: 4,
+  [ProfileSectionEnum.Experience]: 5,
+  [ProfileSectionEnum.TrainingCourses]: 5,
+  [ProfileSectionEnum.CertificatesAndAwards]: 6,
+  [ProfileSectionEnum.Skills]: 7,
+  [ProfileSectionEnum.Languages]: 8,
+  [ProfileSectionEnum.Attachments]: 9
+};
 
 @Component({
   selector: 'app-profile-view-page',
@@ -52,12 +68,25 @@ export class ProfileOverviewPage {
   private readonly router = inject(Router);
   private readonly i18n = inject(TranslateService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
+  protected readonly sectionNav = [
+    { id: 'sec-prerequisites', icon: 'pi pi-file', labelKey: 'profileView.sections.prerequisites', section: ProfileSectionEnum.Prerequisites, step: SECTION_STEP_MAP[ProfileSectionEnum.Prerequisites] },
+    { id: 'sec-personal', icon: 'pi pi-id-card', labelKey: 'profileView.sections.personal', section: ProfileSectionEnum.Personal, step: SECTION_STEP_MAP[ProfileSectionEnum.Personal] },
+    { id: 'sec-contact', icon: 'pi pi-map-marker', labelKey: 'profileView.sections.contact', section: ProfileSectionEnum.Contact, step: SECTION_STEP_MAP[ProfileSectionEnum.Contact] },
+    { id: 'sec-qualifications', icon: 'pi pi-graduation-cap', labelKey: 'profileView.sections.qualifications', section: ProfileSectionEnum.Qualifications, step: SECTION_STEP_MAP[ProfileSectionEnum.Qualifications] },
+    { id: 'sec-experiences', icon: 'pi pi-briefcase', labelKey: 'profileView.sections.experiences', section: ProfileSectionEnum.Experience, step: SECTION_STEP_MAP[ProfileSectionEnum.Experience] },
+    { id: 'sec-training', icon: 'pi pi-book', labelKey: 'profileView.sections.trainingCourses', section: ProfileSectionEnum.TrainingCourses, step: SECTION_STEP_MAP[ProfileSectionEnum.TrainingCourses] },
+    { id: 'sec-achievements', icon: 'pi pi-star', labelKey: 'profileView.sections.certificatesAndAwards', section: ProfileSectionEnum.CertificatesAndAwards, step: SECTION_STEP_MAP[ProfileSectionEnum.CertificatesAndAwards] },
+    { id: 'sec-skills', icon: 'pi pi-bolt', labelKey: 'profileView.sections.skills', section: ProfileSectionEnum.Skills, step: SECTION_STEP_MAP[ProfileSectionEnum.Skills] },
+    { id: 'sec-languages', icon: 'pi pi-language', labelKey: 'profileView.sections.languages', section: ProfileSectionEnum.Languages, step: SECTION_STEP_MAP[ProfileSectionEnum.Languages] },
+    { id: 'sec-attachments', icon: 'pi pi-paperclip', labelKey: 'profileView.sections.attachments', section: ProfileSectionEnum.Attachments, step: SECTION_STEP_MAP[ProfileSectionEnum.Attachments] }
+  ];
 
   data = rxResource({
     stream: () => forkJoin({
       lookups: this.lookups.loadAll(),
       profile: this.profileService.getProfileStatus(),
       review: this.profileOverviewService.getMyProfileReviewSummary(),
+      changes: this.profileOverviewService.getMyChangeRequests()
     })
   });
 
@@ -67,9 +96,19 @@ export class ProfileOverviewPage {
   vm = computed(() => {
     const p = this.data.value()?.profile as ProfileStatusDto | undefined;
     const review = this.data.value()?.review as MyProfileReviewSummaryDto | undefined;
+    const changeRequests = (this.data.value()?.changes as ProfileChangeRequestDto[] | undefined) ?? [];
     if (!p || !review) return null;
 
     const statusUi = this.mapStatus(review.profileStatus);
+    const reviewSections = (review.sections ?? []).map(s => ({
+      ...s,
+      labelKey: this.sectionLabelKey(s.section),
+      scrollId: 'sec-' + this.sectionSlug(s.section)
+    }));
+    const sectionIndex = reviewSections.reduce((acc, section) => {
+      acc[section.section] = section.notesCount ?? 0;
+      return acc;
+    }, {} as Record<number, number>);
 
     return {
       header: {
@@ -88,12 +127,8 @@ export class ProfileOverviewPage {
       },
       review: {
         totalNotes: review.totalNotes ?? 0,
-        sections: (review.sections ?? []).map(s => ({
-          ...s,
-          labelKey: this.sectionLabelKey(s.section),
-          editRoute: this.sectionEditRoute(s.section),
-          scrollId: 'sec-' + this.sectionSlug(s.section)
-        }))
+        sections: reviewSections,
+        sectionIndex
       },
 
       prereq: {
@@ -144,6 +179,13 @@ export class ProfileOverviewPage {
       skills: (p.skills ?? []) as SkillDto[],
       languages: (p.languages ?? []) as LanguageDto[],
       attachments: (p.additionalAttachments ?? []) as AdditionalAttachmentDto[]
+      ,
+      changeRequests: changeRequests.map(req => ({
+        ...req,
+        sectionLabelKey: this.sectionLabelKey(req.section),
+        statusLabelKey: this.changeStatusLabelKey(req.status),
+        statusSeverity: this.changeStatusSeverity(req.status)
+      }))
     };
   });
 
@@ -163,12 +205,17 @@ export class ProfileOverviewPage {
     window.scrollTo({ top: y, behavior: 'smooth' });
   }
 
-  editSectionByRoute(route: string) {
-    this.router.navigate([route]);
+  editSection(section: ProfileSectionEnum) {
+    const step = SECTION_STEP_MAP[section] ?? 1;
+    this.navigateToWizard(step);
   }
 
-  editSection(section: ProfileSectionEnum) {
-    this.router.navigate([this.sectionEditRoute(section)]);
+  openWizard() {
+    this.navigateToWizard();
+  }
+
+  openReviewStep() {
+    this.navigateToWizard(REVIEW_STEP);
   }
 
   // ================== UI Mapping ==================
@@ -227,9 +274,18 @@ export class ProfileOverviewPage {
     }
   }
 
-  private sectionEditRoute(section: number): string {
-    return `user/profile/edit/${this.sectionSlug(section)}`;
+  private navigateToWizard(step?: number) {
+    const profile = this.data.value()?.profile ?? null;
+    const queryParams = step ? { step } : undefined;
+    this.router.navigate(
+      ['/user/wizard-profile'],
+      {
+        queryParams,
+        state: profile ?? undefined
+      }
+    );
   }
+
   noteSeverity(status: number): 'warn' | 'danger' | 'secondary' {
     if (status === ReviewStatusEnum.NeedsCorrection) return 'warn';
     if (status === ReviewStatusEnum.Rejected) return 'danger';
@@ -240,6 +296,37 @@ export class ProfileOverviewPage {
     if (status === ReviewStatusEnum.NeedsCorrection) return 'profileView.reviewStatus.needsCorrection';
     if (status === ReviewStatusEnum.Rejected) return 'profileView.reviewStatus.rejected';
     return 'profileView.reviewStatus.other';
+  }
+
+  changeStatusLabelKey(status: number): string {
+    switch (status) {
+      case ProfileChangeRequestStatusEnum.Pending:
+        return 'profileView.changeRequests.status.pending';
+      case ProfileChangeRequestStatusEnum.UnderReview:
+        return 'profileView.changeRequests.status.underReview';
+      case ProfileChangeRequestStatusEnum.Approved:
+        return 'profileView.changeRequests.status.approved';
+      case ProfileChangeRequestStatusEnum.Rejected:
+        return 'profileView.changeRequests.status.rejected';
+      case ProfileChangeRequestStatusEnum.Canceled:
+        return 'profileView.changeRequests.status.canceled';
+      default:
+        return 'profileView.changeRequests.status.pending';
+    }
+  }
+
+  changeStatusSeverity(status: number): 'success' | 'warn' | 'danger' | 'secondary' {
+    switch (status) {
+      case ProfileChangeRequestStatusEnum.Approved:
+        return 'success';
+      case ProfileChangeRequestStatusEnum.Pending:
+      case ProfileChangeRequestStatusEnum.UnderReview:
+        return 'warn';
+      case ProfileChangeRequestStatusEnum.Rejected:
+        return 'danger';
+      default:
+        return 'secondary';
+    }
   }
 
 }

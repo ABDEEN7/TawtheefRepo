@@ -44,6 +44,15 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("change-requests")]
+    public async Task<IActionResult> GetChangeRequests(CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetMyProfileChangeRequestsQuery(UserId.Value), ct);
+        return result.ToActionResult();
+    }
+
     /// <summary>
     /// Returns corrections ONLY when profile is InCreation (after reviewer Finalize with corrections).
     /// Otherwise returns empty list.

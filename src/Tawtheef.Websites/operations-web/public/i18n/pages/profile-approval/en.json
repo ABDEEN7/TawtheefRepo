@@ -24,7 +24,6 @@
   "profileApproval.list.filter.status": "Status",
   "profileApproval.list.filter.apply": "Apply Filter",
   "profileApproval.list.filter.reset": "Reset",
-
   "profileApproval.detail.eyebrow": "Profile Details",
   "profileApproval.detail.placeholder": "Select a profile to view its details",
   "profileApproval.detail.empty": "Select a profile to view its details",
@@ -94,7 +93,6 @@
   "profileApproval.detail.snapshot.writing": "Writing",
   "profileApproval.detail.snapshot.reading": "Reading",
   "profileApproval.detail.snapshot.native": "Native Language",
-
   "profileApproval.detail.qualifications.level": "Qualification Degree",
   "profileApproval.detail.qualifications.country": "Country of Graduation",
   "profileApproval.detail.qualifications.university": "University",
@@ -105,37 +103,30 @@
   "profileApproval.detail.qualifications.grade": "Grade",
   "profileApproval.detail.qualifications.studySystem": "Study System",
   "profileApproval.detail.qualifications.attachment": "Attachment",
-
   "profileApproval.detail.experiences.country": "Country",
   "profileApproval.detail.experiences.period": "Experience Period",
   "profileApproval.detail.experiences.qualification": "Related Qualification",
   "profileApproval.detail.experiences.relation": "Relevance to Specialization",
   "profileApproval.detail.experiences.attachment": "Attachment",
   "profileApproval.detail.experiences.tasks": "Tasks",
-
   "profileApproval.detail.training.country": "Country",
   "profileApproval.detail.training.period": "Course Date",
   "profileApproval.detail.training.relation": "Relevance to Specialization",
   "profileApproval.detail.training.attachment": "Attachment",
   "profileApproval.detail.training.description": "Description",
-
   "profileApproval.detail.specializationRelation.Strong": "Strongly Related to Specialization",
   "profileApproval.detail.specializationRelation.Medium": "Moderately Related",
   "profileApproval.detail.specializationRelation.Weak": "Weakly Related",
-
   "profileApproval.detail.certificates.issueDate": "Issue Date",
   "profileApproval.detail.certificates.countryIssue": "Country of Issue",
   "profileApproval.detail.certificates.description": "Description",
   "profileApproval.detail.certificates.attachment": "Attachment",
-
   "profileApproval.detail.skills.title": "Skills",
   "profileApproval.detail.skills.level": "Level",
   "profileApproval.detail.skills.languagesTitle": "Languages",
-
   "profileApproval.detail.attachments.fileName": "File Name",
   "profileApproval.detail.attachments.fileSize": "File Size",
   "profileApproval.detail.attachments.fileType": "File Type",
-
   "profileApproval.detail.sectionApproval.title": "Section Approval for Personal Data",
   "profileApproval.detail.sectionApproval.statusLabel": "Status",
   "profileApproval.detail.sectionApproval.statusPlaceholder": "Select Status",
@@ -147,23 +138,19 @@
   "profileApproval.detail.stepper.tooltip.needsCorrection": "Changes requested for this section",
   "profileApproval.detail.stepper.tooltip.current": "Currently reviewing this section",
   "profileApproval.detail.stepper.tooltip.pending": "Decision not saved yet",
-
   "profileApproval.detail.verification.pendingSections": "Tabs Pending Review",
   "profileApproval.detail.verification.flaggedSections": "Tabs Needing Attention",
   "profileApproval.detail.verification.approvedSections": "Approved Tabs",
   "profileApproval.detail.verification.pendingItems": "Unreviewed Items",
   "profileApproval.detail.verification.jumpToAttention": "Jump to Next Tab for Review",
-
   "profileApproval.tabs.profileData": "Personal Data",
   "profileApproval.tabs.reviewSections": "Review Sections",
   "profileApproval.tabs.finalDecision": "Final Decision",
   "profileApproval.tabs.loading": "Loading tab...",
-
   "profileApproval.status.approved": "Approved",
   "profileApproval.status.rejected": "Rejected",
   "profileApproval.status.changes": "Correction Required",
   "profileApproval.status.pending": "Pending Review",
-
   "profileApproval.sections.basicInfo": "Basic Information",
   "profileApproval.sections.qualifications": "Qualifications",
   "profileApproval.sections.experiences": "Experiences",
@@ -173,7 +160,6 @@
   "profileApproval.sections.attachments": "Attachments",
   "profileApproval.sections.profilePhoto": "Profile Photo",
   "profileApproval.sections.generic": "Section",
-
   "profileOverview.sections.prerequisites": "Prerequisites",
   "profileOverview.sections.basicInfo": "Basic Information",
   "profileOverview.sections.contactInfo": "Contact Information",
@@ -185,20 +171,16 @@
   "profileOverview.sections.languages": "Languages",
   "profileOverview.sections.attachments": "Attachments",
   "profileOverview.sections.finalReview": "Final Review",
-
   "profileOverview.sections.profilePhoto": "Profile Photo",
   "profileOverview.sections.generic": "Profile Tab",
-
   "profileApproval.section.approve": "Approve Section",
   "profileApproval.section.needsCorrection": "Return Section for Correction",
   "profileApproval.section.dialogTitle": "Section Decision",
   "profileApproval.section.notePlaceholder": "Add notes on this section",
   "profileApproval.section.blocked": "All attachments within the section must be approved before the section can be considered approved.",
   "profileApproval.section.pendingWarning": "You must finish reviewing the items within the section before approving it",
-
   "profileApproval.dialog.title": "Review Decision",
   "profileApproval.dialog.notePlaceholder": "Add reviewer notes",
-
   "profileApproval.final.tabTitle": "Final Review",
   "profileApproval.final.subtitle": "Review notes and statuses, then select the final decision",
   "profileApproval.final.tabStatus": "Section Status Summary",
@@ -221,7 +203,6 @@
   "profileApproval.final.confirmMessage": "You are about to execute: {{ action }}. The profile status will be updated, modification permissions will be adjusted, and the candidate and department head will be notified. Please confirm to proceed.",
   "profileApproval.final.actionExecuted": "Decision Sent",
   "profileApproval.final.actionQueued": "The selected decision will be applied and the dashboard will be updated.",
-
   "profileApproval.finalReview.title": "Final Review Result",
   "profileApproval.finalReview.subtitle": "A complete summary of the profile review result",
   "profileApproval.finalReview.counts.approved": "Approved Items",
@@ -231,12 +212,10 @@
   "profileApproval.finalReview.sendReport": "Send Approval Report",
   "profileApproval.finalReview.reportSentTitle": "Request Sent",
   "profileApproval.finalReview.reportSentMessage": "The approval report request has been sent and will be processed.",
-
   "profileApproval.errors.loadList": "Failed to load files assigned for review.",
   "profileApproval.errors.loadDetail": "Failed to load profile details.",
   "profileApproval.errors.finalize": "Failed to send final decision.",
   "profileApproval.errors.reviewItem": "Failed to update review status.",
-
   "profileApproval.validation.noteRequired": "Notes must be added for this decision.",
   "profileApproval.validation.cannotApproveProfile": "All sections and attachments must be approved before approving the profile.",
   "profileApproval.validation.rejectRequirements": "Rejection requires notes and attaching the rejection file.",
@@ -260,5 +239,30 @@
   "profileApproval.detail.sectionApproval.save": "Save decision",
   "profileApproval.detail.sectionApproval.saving": "Saving...",
   "profileApproval.detail.sectionApproval.noteRequired": "Please provide a note explaining the required correction",
-  "profileApproval.detail.sectionApproval.statusRequiredHint": "Please select a decision for this section before continuing"
+  "profileApproval.detail.sectionApproval.statusRequiredHint": "Please select a decision for this section before continuing",
+  "profileApproval.detail.reviewState": "Review state",
+  "profileApproval.detail.startReview": "Start review",
+  "profileApproval.detail.startReviewOk": "Review started.",
+  "profileApproval.detail.startReviewFail": "Failed to start review.",
+  "profileApproval.detail.finalize": "Finalize",
+  "profileApproval.detail.finalizeOk": "Profile finalized.",
+  "profileApproval.detail.finalizeFail": "Failed to finalize profile.",
+  "profileApproval.detail.finalizeBlocked": "Complete all section decisions before finalizing.",
+  "profileApproval.detail.finalizeHint": "Finalize becomes available once all sections are reviewed.",
+  "profileApproval.detail.sectionSaved": "Section decision saved.",
+  "profileApproval.detail.sectionSaveFailed": "Failed to save section decision.",
+  "profileApproval.detail.sectionApproval.unsaved": "Unsaved changes",
+  "profileApproval.detail.unsavedChangesWarning": "You have unsaved changes in the current section.",
+  "profileApproval.errors.notesRequired": "Notes are required for this decision.",
+  "profileApproval.detail.actions.title": "Review actions",
+  "profileApproval.detail.progress.title": "Review progress",
+  "profileApproval.detail.progress.reviewed": "{{ count }} of {{ total }} reviewed",
+  "profileApproval.detail.progress.pending": "{{ count }} pending",
+  "profileApproval.status.submitted": "Submitted",
+  "profileApproval.status.underReview": "Under review",
+  "profileApproval.status.requiresUpdate": "Requires update",
+  "profileApproval.status.cancelled": "Cancelled",
+  "profileApproval.status.adminCancelled": "Cancelled by admin",
+  "profileApproval.status.inCreation": "In creation",
+  "profileApproval.status.unknown": "Unknown status"
 }

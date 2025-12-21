@@ -24,7 +24,6 @@
   "profileApproval.list.filter.status": "الحالة",
   "profileApproval.list.filter.apply": "تطبيق التصفية",
   "profileApproval.list.filter.reset": "إعادة الضبط",
-
   "profileApproval.detail.eyebrow": "تفاصيل الملف",
   "profileApproval.detail.placeholder": "اختر ملفًا لعرض تفاصيله",
   "profileApproval.detail.empty": "اختر ملفًا لعرض تفاصيله",
@@ -94,7 +93,6 @@
   "profileApproval.detail.snapshot.writing": "الكتابة",
   "profileApproval.detail.snapshot.reading": "القراءة",
   "profileApproval.detail.snapshot.native": "لغة أم",
-
   "profileApproval.detail.qualifications.level": "درجة المؤهل",
   "profileApproval.detail.qualifications.country": "بلد التخرج",
   "profileApproval.detail.qualifications.university": "الجامعة",
@@ -105,37 +103,30 @@
   "profileApproval.detail.qualifications.grade": "التقدير",
   "profileApproval.detail.qualifications.studySystem": "نظام الدراسة",
   "profileApproval.detail.qualifications.attachment": "المرفق",
-
   "profileApproval.detail.experiences.country": "الدولة",
   "profileApproval.detail.experiences.period": "تاريخ الخبرة",
   "profileApproval.detail.experiences.qualification": "المؤهل المرتبط",
   "profileApproval.detail.experiences.relation": "مدى ارتباط الخبرة بالتخصص",
   "profileApproval.detail.experiences.attachment": "المرفق",
   "profileApproval.detail.experiences.tasks": "المهام",
-
   "profileApproval.detail.training.country": "الدولة",
   "profileApproval.detail.training.period": "تاريخ الدورة",
   "profileApproval.detail.training.relation": "مدى ارتباط الدورة بالتخصص",
   "profileApproval.detail.training.attachment": "المرفق",
   "profileApproval.detail.training.description": "الوصف",
-
   "profileApproval.detail.specializationRelation.Strong": "مرتبط بقوة بالتخصص",
   "profileApproval.detail.specializationRelation.Medium": "مرتبط بشكل متوسط",
   "profileApproval.detail.specializationRelation.Weak": "مرتبط بشكل ضعيف",
-
   "profileApproval.detail.certificates.issueDate": "تاريخ الإصدار",
   "profileApproval.detail.certificates.countryIssue": "بلد الإصدار",
   "profileApproval.detail.certificates.description": "الوصف",
   "profileApproval.detail.certificates.attachment": "المرفق",
-
   "profileApproval.detail.skills.title": "المهارات",
   "profileApproval.detail.skills.level": "المستوى",
   "profileApproval.detail.skills.languagesTitle": "اللغات",
-
   "profileApproval.detail.attachments.fileName": "اسم الملف",
   "profileApproval.detail.attachments.fileSize": "حجم الملف",
   "profileApproval.detail.attachments.fileType": "نوع الملف",
-
   "profileApproval.detail.sectionApproval.title": "اعتماد القسم للبيانات الشخصية",
   "profileApproval.detail.sectionApproval.statusLabel": "الحالة",
   "profileApproval.detail.sectionApproval.statusPlaceholder": "اختر الحالة",
@@ -147,23 +138,19 @@
   "profileApproval.detail.stepper.tooltip.needsCorrection": "تم طلب تصحيح لهذا القسم",
   "profileApproval.detail.stepper.tooltip.current": "القسم الجاري مراجعته الآن",
   "profileApproval.detail.stepper.tooltip.pending": "لم يتم حفظ قرار بعد",
-
   "profileApproval.detail.verification.pendingSections": "تبويبات بانتظار المراجعة",
   "profileApproval.detail.verification.flaggedSections": "تبويبات تحتاج اهتمام",
   "profileApproval.detail.verification.approvedSections": "تبويبات معتمدة",
   "profileApproval.detail.verification.pendingItems": "عناصر لم تتم مراجعتها",
   "profileApproval.detail.verification.jumpToAttention": "انتقال للتبويب التالي للمراجعة",
-
   "profileApproval.tabs.profileData": "البيانات الشخصية",
   "profileApproval.tabs.reviewSections": "مراجعة التبويبات",
   "profileApproval.tabs.finalDecision": "القرار النهائي",
   "profileApproval.tabs.loading": "جاري تحميل التبويب...",
-
   "profileApproval.status.approved": "تم الاعتماد",
   "profileApproval.status.rejected": "مرفوض",
   "profileApproval.status.changes": "مطلوب تعديل",
   "profileApproval.status.pending": "بانتظار المراجعة",
-
   "profileApproval.sections.basicInfo": "المعلومات الأساسية",
   "profileApproval.sections.qualifications": "المؤهلات",
   "profileApproval.sections.experiences": "الخبرات",
@@ -173,7 +160,6 @@
   "profileApproval.sections.attachments": "المرفقات",
   "profileApproval.sections.profilePhoto": "الصورة الشخصية",
   "profileApproval.sections.generic": "قسم",
-
   "profileOverview.sections.prerequisites": "المعلومات الأولية",
   "profileOverview.sections.basicInfo": "المعلومات الأساسية",
   "profileOverview.sections.contactInfo": "معلومات الاتصال",
@@ -185,22 +171,16 @@
   "profileOverview.sections.languages": "اللغات",
   "profileOverview.sections.attachments": "المرفقات",
   "profileOverview.sections.finalReview": "المراجعة النهائية",
-
   "profileOverview.sections.profilePhoto": "الصورة الشخصية",
   "profileOverview.sections.generic": "تبويب الملف",
-
-
-
   "profileApproval.section.approve": "اعتماد القسم",
   "profileApproval.section.needsCorrection": "إرجاع القسم للتصحيح",
   "profileApproval.section.dialogTitle": "قرار القسم",
   "profileApproval.section.notePlaceholder": "أضف ملاحظات على هذا القسم",
   "profileApproval.section.blocked": "يجب اعتماد جميع المرفقات داخل القسم قبل اعتباره معتمدًا.",
   "profileApproval.section.pendingWarning": "يجب إنهاء مراجعة العناصر داخل القسم قبل اعتماده",
-
   "profileApproval.dialog.title": "قرار المراجعة",
   "profileApproval.dialog.notePlaceholder": "أضف ملاحظات المراجع",
-
   "profileApproval.final.tabTitle": "المراجعة النهائية",
   "profileApproval.final.subtitle": "راجع الملاحظات والحالات ثم اختر القرار النهائي",
   "profileApproval.final.tabStatus": "ملخص حالة الأقسام",
@@ -223,7 +203,6 @@
   "profileApproval.final.confirmMessage": "أنت على وشك تنفيذ: {{ action }}. سيتم تحديث حالة الملف، ضبط صلاحيات التعديل، وإشعار المرشح ورئيس القسم. يرجى التأكيد للمتابعة.",
   "profileApproval.final.actionExecuted": "تم إرسال القرار",
   "profileApproval.final.actionQueued": "سيتم تطبيق القرار المختار وتحديث لوحة التحكم.",
-
   "profileApproval.finalReview.title": "نتيجة المراجعة النهائية",
   "profileApproval.finalReview.subtitle": "ملخص كامل لنتيجة مراجعة الملف الشخصي",
   "profileApproval.finalReview.counts.approved": "علامات تم اعتمادها",
@@ -233,12 +212,10 @@
   "profileApproval.finalReview.sendReport": "إرسال تقرير الاعتماد",
   "profileApproval.finalReview.reportSentTitle": "تم إرسال الطلب",
   "profileApproval.finalReview.reportSentMessage": "تم إرسال طلب تقرير الاعتماد وسيتم معالجته.",
-
   "profileApproval.errors.loadList": "فشل تحميل الملفات المخصصة للمراجعة.",
   "profileApproval.errors.loadDetail": "تعذر تحميل تفاصيل الملف.",
   "profileApproval.errors.finalize": "تعذر إرسال القرار النهائي.",
   "profileApproval.errors.reviewItem": "تعذر تحديث حالة المراجعة.",
-
   "profileApproval.validation.noteRequired": "يجب إضافة الملاحظات لهذا القرار.",
   "profileApproval.validation.cannotApproveProfile": "يجب اعتماد جميع الأقسام والمرفقات قبل اعتماد الملف.",
   "profileApproval.validation.rejectRequirements": "الرفض يتطلب ملاحظات وإرفاق ملف الرفض.",
@@ -262,6 +239,30 @@
   "profileApproval.detail.sectionApproval.save": "حفظ القرار",
   "profileApproval.detail.sectionApproval.saving": "جارٍ الحفظ...",
   "profileApproval.detail.sectionApproval.noteRequired": "يرجى كتابة ملاحظة توضح سبب طلب التعديل",
-  "profileApproval.detail.sectionApproval.statusRequiredHint": "يرجى اختيار حالة هذا التبويب قبل المتابعة"
-
+  "profileApproval.detail.sectionApproval.statusRequiredHint": "يرجى اختيار حالة هذا التبويب قبل المتابعة",
+  "profileApproval.detail.reviewState": "حالة المراجعة",
+  "profileApproval.detail.startReview": "بدء المراجعة",
+  "profileApproval.detail.startReviewOk": "تم بدء المراجعة.",
+  "profileApproval.detail.startReviewFail": "تعذر بدء المراجعة.",
+  "profileApproval.detail.finalize": "اعتماد نهائي",
+  "profileApproval.detail.finalizeOk": "تم اعتماد الملف.",
+  "profileApproval.detail.finalizeFail": "تعذر اعتماد الملف.",
+  "profileApproval.detail.finalizeBlocked": "يرجى إكمال قرارات جميع الأقسام قبل الاعتماد.",
+  "profileApproval.detail.finalizeHint": "سيتاح الاعتماد بعد مراجعة جميع الأقسام.",
+  "profileApproval.detail.sectionSaved": "تم حفظ قرار القسم.",
+  "profileApproval.detail.sectionSaveFailed": "تعذر حفظ قرار القسم.",
+  "profileApproval.detail.sectionApproval.unsaved": "تغييرات غير محفوظة",
+  "profileApproval.detail.unsavedChangesWarning": "لديك تغييرات غير محفوظة في القسم الحالي.",
+  "profileApproval.errors.notesRequired": "الملاحظات مطلوبة لهذا القرار.",
+  "profileApproval.detail.actions.title": "إجراءات المراجعة",
+  "profileApproval.detail.progress.title": "تقدم المراجعة",
+  "profileApproval.detail.progress.reviewed": "تمت مراجعة {{ count }} من {{ total }}",
+  "profileApproval.detail.progress.pending": "{{ count }} قيد المراجعة",
+  "profileApproval.status.submitted": "تم التقديم",
+  "profileApproval.status.underReview": "قيد المراجعة",
+  "profileApproval.status.requiresUpdate": "يتطلب تحديث",
+  "profileApproval.status.cancelled": "ملغى",
+  "profileApproval.status.adminCancelled": "ملغى من الإدارة",
+  "profileApproval.status.inCreation": "قيد الإنشاء",
+  "profileApproval.status.unknown": "حالة غير معروفة"
 }

@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -17,7 +18,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileContactHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileStepValidationService validationService
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileContactCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileContactCommand cmd, CancellationToken ct)
@@ -30,14 +32,27 @@ public sealed class SaveProfileContactHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
         var validationResult = validationService.ValidateContact(profile, cmd.Request);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
+
+        if (profile.Status is not UserProfileStatus.InCreation)
+        {
+            var currentSnapshot = ContactSectionSnapshot.From(profile);
+            var naUpload = await UploadIfNeededAsync(r.NationalAddress?.NationalAddress, profile.ResidenceAddress?.CertificateId);
+            if (naUpload.IsFailed)
+                return Result.Fail<Unit>(naUpload.Errors);
+
+            var nextSnapshot = currentSnapshot.ApplyRequest(r, naUpload.Value);
+            if (nextSnapshot != currentSnapshot)
+            {
+                await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Contact, cmd.UserId, ct, currentSnapshot, nextSnapshot);
+                await uow.SaveChangesAsync(ct);
+            }
+            return Result.Ok(Unit.Value);
+        }
 
         profile.ResidenceCountryId = r.ResidenceCountryId;
         profile.InterviewLocationId = r.InterviewLocationId;
@@ -97,5 +112,53 @@ public sealed class SaveProfileContactHandler(
             profileEntity.ResidenceAddress?.UnitNo,
             ResidenceAddressCertificateId = profileEntity.ResidenceAddress?.CertificateId
         };
+    }
+}
+
+file sealed record ContactSectionSnapshot
+{
+    public Guid? ResidenceCountryId { get; init; }
+    public Guid? InterviewLocationId { get; init; }
+    public string? Address { get; init; }
+    public string? Zone { get; init; }
+    public string? Street { get; init; }
+    public string? Building { get; init; }
+    public string? Unit { get; init; }
+    public Guid? NationalAddressCertificateId { get; init; }
+
+    public static ContactSectionSnapshot From(UserProfile profile) => new()
+    {
+        ResidenceCountryId = profile.ResidenceCountryId,
+        InterviewLocationId = profile.InterviewLocationId,
+        Address = profile.Address,
+        Zone = profile.ResidenceAddress?.ZoneNo,
+        Street = profile.ResidenceAddress?.StreetNo,
+        Building = profile.ResidenceAddress?.BuildingNo,
+        Unit = profile.ResidenceAddress?.UnitNo,
+        NationalAddressCertificateId = profile.ResidenceAddress?.CertificateId
+    };
+
+    public ContactSectionSnapshot ApplyRequest(SaveProfileContactRequest request, Guid? certificateResourceId)
+    {
+        var snapshot = this with
+        {
+            ResidenceCountryId = request.ResidenceCountryId ?? ResidenceCountryId,
+            InterviewLocationId = request.InterviewLocationId ?? InterviewLocationId,
+            Address = request.Address ?? Address
+        };
+
+        if (request.NationalAddress is not null)
+        {
+            snapshot = snapshot with
+            {
+                Zone = request.NationalAddress.Zone ?? Zone,
+                Street = request.NationalAddress.Street ?? Street,
+                Building = request.NationalAddress.Building ?? Building,
+                Unit = request.NationalAddress.Unit ?? Unit,
+                NationalAddressCertificateId = certificateResourceId ?? NationalAddressCertificateId
+            };
+        }
+
+        return snapshot;
     }
 }

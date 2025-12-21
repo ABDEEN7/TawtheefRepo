@@ -21,7 +21,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileEducationHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileStepValidationService validationService)
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService)
     : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
 {
     // JSON options مرة واحدة بدل ما نعيد إنشائها
@@ -47,9 +48,6 @@ public sealed class SaveProfileEducationHandler(
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
-
-        if (profile.Status is not UserProfileStatus.InCreation)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateEducation(profile);
         if (validationResult.IsFailed)
@@ -84,6 +82,26 @@ public sealed class SaveProfileEducationHandler(
             .Include(q => q.Certificate)
             .Where(q => q.UserProfileId == profile.Id)
             .ToListAsync(ct);
+
+        if (profile.Status is not UserProfileStatus.InCreation)
+        {
+            if (degrees.Any(d => d.Id.HasValue))
+                return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+            foreach (var dto in degrees)
+            {
+                var file = ResolveFile(dto, files);
+                var attachmentIdResult = await UploadIfNeededAsync(cmd, file, ct);
+                if (attachmentIdResult.IsFailed)
+                    return Result.Fail<Unit>(attachmentIdResult.Errors);
+
+                var pending = PendingQualificationSnapshot.From(dto, attachmentIdResult.Value);
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Qualifications, "Qualification", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            }
+
+            await uow.SaveChangesAsync(ct);
+            return Result.Ok(Unit.Value);
+        }
 
         foreach (var dto in degrees)
         {
@@ -257,4 +275,32 @@ public sealed class SaveProfileEducationHandler(
 
         return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
+}
+
+file sealed record PendingQualificationSnapshot
+{
+    public Guid? DegreeId { get; init; }
+    public Guid? GradCountryId { get; init; }
+    public Guid? UniversityId { get; init; }
+    public Guid? MajorId { get; init; }
+    public Guid? SubMajorId { get; init; }
+    public Guid? StudyTypeId { get; init; }
+    public Guid? GradeId { get; init; }
+    public int? GradYear { get; init; }
+    public decimal? Gpa { get; init; }
+    public Guid? AttachmentResourceId { get; init; }
+
+    public static PendingQualificationSnapshot From(SaveProfileEducationDegreeDto dto, Guid? attachmentResourceId) => new()
+    {
+        DegreeId = dto.DegreeId,
+        GradCountryId = dto.GradCountryId,
+        UniversityId = dto.UniversityId,
+        MajorId = dto.MajorId,
+        SubMajorId = dto.SubMajorId,
+        StudyTypeId = dto.StudyTypeId,
+        GradeId = dto.GradeId,
+        GradYear = dto.GradYear,
+        Gpa = dto.Gpa,
+        AttachmentResourceId = attachmentResourceId
+    };
 }

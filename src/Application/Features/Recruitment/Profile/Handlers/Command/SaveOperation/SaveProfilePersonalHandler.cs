@@ -18,7 +18,8 @@ public sealed class SaveProfilePersonalHandler(
     IUnitOfWork uow,
     IMediator mediator,
     UserManager<User> userManager,
-    IProfileStepValidationService validationService
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService
     ) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePersonalCommand cmd, CancellationToken ct)
@@ -42,6 +43,24 @@ public sealed class SaveProfilePersonalHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
+
+        if (profile.Status is not UserProfileStatus.InCreation)
+        {
+            var currentSnapshot = PersonalSectionSnapshot.From(user, profile);
+            var sponsorCardUpload = await UploadIfNeededAsync(r.SponsorCard, null);
+            if (sponsorCardUpload.IsFailed)
+                return Result.Fail<Unit>(sponsorCardUpload.Errors);
+
+            var nextSnapshot = currentSnapshot.ApplyRequest(r, sponsorCardUpload.Value);
+
+            if (nextSnapshot == currentSnapshot)
+                return Result.Ok(Unit.Value);
+
+            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, cmd.UserId, ct, currentSnapshot, nextSnapshot);
+            await uow.SaveChangesAsync(ct);
+            return Result.Ok(Unit.Value);
+        }
+
         user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
         user.FullNameEn = r.FullNameEn ?? user.FullNameEn;
         profile.NationalNumber = r.NationalNumber ?? profile.NationalNumber;
@@ -58,7 +77,6 @@ public sealed class SaveProfilePersonalHandler(
         profile.DisabilityDetails = r.HasDisability
             ? r.DisabilityDetails
             : null;
-
 
         if (!string.IsNullOrWhiteSpace(r.SponsorEmployerName) && !string.IsNullOrWhiteSpace(r.SponsorEmployerNumber))
         {
@@ -105,5 +123,85 @@ public sealed class SaveProfilePersonalHandler(
 
             return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
         }
+    }
+}
+
+file sealed record PersonalSectionSnapshot
+{
+    public string? FullNameAr { get; init; }
+    public string? FullNameEn { get; init; }
+    public string? NationalNumber { get; init; }
+    public DateOnly? QidExpiry { get; init; }
+    public DateOnly? BirthDate { get; init; }
+    public Guid? NationalityId { get; init; }
+    public Guid? GenderId { get; init; }
+    public Guid? ReligionId { get; init; }
+    public Guid? MaritalStatusId { get; init; }
+    public int? ChildrenCount { get; init; }
+    public bool HasDisability { get; init; }
+    public string? DisabilityDetails { get; init; }
+    public Guid? SponsorTypeId { get; init; }
+    public string? SponsorEmployerName { get; init; }
+    public string? SponsorEmployerNumber { get; init; }
+    public DateOnly? SponsorQidExpiry { get; init; }
+    public Guid? SponsorCardResourceId { get; init; }
+
+    public static PersonalSectionSnapshot From(User user, UserProfile profile)
+    {
+        return new PersonalSectionSnapshot
+        {
+            FullNameAr = user.FullNameAr,
+            FullNameEn = user.FullNameEn,
+            NationalNumber = profile.NationalNumber,
+            QidExpiry = profile.QIDExpiry,
+            BirthDate = profile.BirthDate,
+            NationalityId = profile.NationalityId,
+            GenderId = profile.GenderId,
+            ReligionId = profile.ReligionId,
+            MaritalStatusId = profile.MaritalStatusId,
+            ChildrenCount = profile.ChildrenCount,
+            HasDisability = profile.HasDisability,
+            DisabilityDetails = profile.DisabilityDetails,
+            SponsorTypeId = profile.SponsorProfile?.SponsorTypeId,
+            SponsorEmployerName = profile.SponsorProfile?.SponsorName,
+            SponsorEmployerNumber = profile.SponsorProfile?.SponsorNumber,
+            SponsorQidExpiry = profile.SponsorProfile?.QIDExpiry,
+            SponsorCardResourceId = profile.SponsorProfile?.SponsorCardId
+        };
+    }
+
+    public PersonalSectionSnapshot ApplyRequest(SaveProfilePersonalRequest request, Guid? sponsorCardResourceId)
+    {
+        var snapshot = this with
+        {
+            FullNameAr = request.FullNameAr ?? FullNameAr,
+            FullNameEn = request.FullNameEn ?? FullNameEn,
+            NationalNumber = request.NationalNumber ?? NationalNumber,
+            QidExpiry = request.QIDExpiry ?? QidExpiry,
+            BirthDate = request.BirthDate ?? BirthDate,
+            NationalityId = request.NationalityId ?? NationalityId,
+            GenderId = request.GenderId ?? GenderId,
+            ReligionId = request.ReligionId ?? ReligionId,
+            MaritalStatusId = request.MaritalStatusId ?? MaritalStatusId,
+            ChildrenCount = request.ChildrenCount ?? ChildrenCount,
+            HasDisability = request.HasDisability,
+            DisabilityDetails = request.HasDisability ? request.DisabilityDetails : null
+        };
+
+        if (!string.IsNullOrWhiteSpace(request.SponsorEmployerName) &&
+            !string.IsNullOrWhiteSpace(request.SponsorEmployerNumber) &&
+            request.SponsorTypeId.HasValue)
+        {
+            snapshot = snapshot with
+            {
+                SponsorTypeId = request.SponsorTypeId,
+                SponsorEmployerName = request.SponsorEmployerName,
+                SponsorEmployerNumber = request.SponsorEmployerNumber,
+                SponsorQidExpiry = request.QIDExpiry ?? SponsorQidExpiry,
+                SponsorCardResourceId = sponsorCardResourceId ?? SponsorCardResourceId
+            };
+        }
+
+        return snapshot;
     }
 }

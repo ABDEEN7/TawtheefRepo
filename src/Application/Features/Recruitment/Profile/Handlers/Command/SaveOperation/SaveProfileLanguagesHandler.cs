@@ -15,7 +15,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 
 public sealed class SaveProfileLanguagesHandler(
     IUnitOfWork uow,
-    IProfileStepValidationService validationService
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileLanguagesCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileLanguagesCommand cmd, CancellationToken ct)
@@ -36,15 +37,22 @@ public sealed class SaveProfileLanguagesHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-        
         var validationResult = validationService.ValidateLanguages(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
         if(cmd.Request.Languages.Count == 0)
             return Result.Ok(Unit.Value);
+
+        if (profile.Status is not UserProfileStatus.InCreation)
+        {
+            foreach (var language in cmd.Request.Languages)
+            {
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Languages, "Language", Guid.NewGuid(), cmd.UserId, ct, null, language);
+            }
+            await uow.SaveChangesAsync(ct);
+            return Result.Ok(Unit.Value);
+        }
         
         if (profile.Languages is not null && profile.Languages.Count > 0)
         {

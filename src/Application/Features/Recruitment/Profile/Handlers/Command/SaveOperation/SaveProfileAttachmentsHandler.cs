@@ -20,7 +20,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileStepValidationService validationService
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -47,9 +48,6 @@ public sealed class SaveProfileAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-        
         var validationResult = validationService.ValidateAttachments(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -60,6 +58,39 @@ public sealed class SaveProfileAttachmentsHandler(
 
         var attachments = attachmentsResult.Value;
         var files = cmd.Request.AttachmentFiles;
+        if (profile.Status is not UserProfileStatus.InCreation)
+        {
+            foreach (var dto in attachments)
+            {
+                var uploadResult = await UploadIfNeededAsync(
+                    dto.FileIndex,
+                    files,
+                    ErrorsCodes.InvalidAttachmentFileIndex,
+                    ErrorsCodes.InvalidAttachmentFile,
+                    ct);
+
+                if (uploadResult.IsFailed)
+                    return Result.Fail<Unit>(uploadResult.Errors);
+
+                var resource = uploadResult.Value;
+                if (resource is null && dto.AttachmentId is null)
+                    return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
+
+                if (dto.Id.HasValue)
+                    return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+                var pending = new PendingAttachmentSnapshot
+                {
+                    AttachmentResourceId = resource?.ResourceId ?? dto.AttachmentId,
+                    FileName = resource?.ResourceName ?? dto.FileName
+                };
+
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Attachments, "Attachment", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            }
+
+            await uow.SaveChangesAsync(ct);
+            return Result.Ok(Unit.Value);
+        }
 
         if (profile.AdditionalAttachments is not null && profile.AdditionalAttachments.Count > 0)
         {
@@ -67,8 +98,6 @@ public sealed class SaveProfileAttachmentsHandler(
         }
 
         profile.AdditionalAttachments = [];
-
-        var reviewAttachments = new List<ProfileAdditionalAttachment>();
 
         foreach (var dto in attachments)
         {
@@ -98,7 +127,6 @@ public sealed class SaveProfileAttachmentsHandler(
             };
 
             profile.AdditionalAttachments.Add(attachment);
-            reviewAttachments.Add(attachment);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -144,4 +172,10 @@ public sealed class SaveProfileAttachmentsHandler(
             return Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
         }
     }
+}
+
+file sealed record PendingAttachmentSnapshot
+{
+    public Guid? AttachmentResourceId { get; init; }
+    public string? FileName { get; init; }
 }

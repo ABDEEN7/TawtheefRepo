@@ -24,11 +24,11 @@ import {routes} from '../../../../../routes/routes';
 import {ProfileApprovalService} from '../approval-list/services/profile-approval.service';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {ProgressBarModule} from 'primeng/progressbar';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {AvatarModule} from 'primeng/avatar';
 import {DialogService} from 'primeng/dynamicdialog';
-import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
 import {ContactInfoSectionComponent} from './components/sections/contact-info-section/contact-info-section.component';
 import {FirstInfoSectionComponent} from './components/sections/first-info-section/first-info-section.component';
@@ -49,6 +49,7 @@ import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
     TranslateModule,
     I18nNamespaceDirective,
     ProgressSpinnerModule,
+    ProgressBarModule,
     CardModule,
     ButtonModule,
     AvatarModule,
@@ -69,7 +70,7 @@ import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
   ],
   templateUrl: './profile-approval-detail.page.html',
   styleUrl: './profile-approval-detail.page.scss',
-  providers: [DialogService, MessageService],
+  providers: [DialogService],
 })
 
 export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
@@ -91,6 +92,9 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   draftStatus: Record<number, ReviewStatus> = {};
   draftNote: Record<number, string> = {};
 
+  finalizeSummary = '';
+  finalizeNote = '';
+
   loadingDetail = signal(false);
   savingSection = signal<number | null>(null);
 
@@ -101,12 +105,11 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   activeSection = signal<number | null>(null);
   currentLang = signal(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
-  profileStatus = computed(() => this.detail()?.profileStatus ?? null); // إذا موجود بالـ DTO
   canStartReviewUi = computed(() => {
     const info = this.detail();
     if (!info) return false;
     if (info.profileStatus == null) return true;
-    return info.profileStatus === ProfileStatusNumber.Submitted; // Submitted
+    return info.profileStatus === ProfileStatusNumber.Submitted;
   });
 
   canFinalizeUi = computed(() => this.canFinalize());
@@ -313,6 +316,72 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     }
   }
 
+  profileStatusLabelKey(status?: ProfileStatusNumber | null): string {
+    switch (status) {
+      case ProfileStatusNumber.InCreation:
+        return 'profileApproval.status.inCreation';
+      case ProfileStatusNumber.Submitted:
+        return 'profileApproval.status.submitted';
+      case ProfileStatusNumber.UnderReview:
+        return 'profileApproval.status.underReview';
+      case ProfileStatusNumber.RequiresUpdate:
+        return 'profileApproval.status.requiresUpdate';
+      case ProfileStatusNumber.Approved:
+        return 'profileApproval.status.approved';
+      case ProfileStatusNumber.Rejected:
+        return 'profileApproval.status.rejected';
+      case ProfileStatusNumber.Cancelled:
+        return 'profileApproval.status.cancelled';
+      case ProfileStatusNumber.AdminCancelled:
+        return 'profileApproval.status.adminCancelled';
+      default:
+        return 'profileApproval.status.unknown';
+    }
+  }
+
+  profileStatusClass(status?: ProfileStatusNumber | null): string {
+    switch (status) {
+      case ProfileStatusNumber.Approved:
+        return 'status-success';
+      case ProfileStatusNumber.Rejected:
+      case ProfileStatusNumber.RequiresUpdate:
+        return 'status-danger';
+      case ProfileStatusNumber.UnderReview:
+        return 'status-info';
+      case ProfileStatusNumber.Submitted:
+        return 'status-warning';
+      case ProfileStatusNumber.Cancelled:
+      case ProfileStatusNumber.AdminCancelled:
+        return 'status-muted';
+      case ProfileStatusNumber.InCreation:
+        return 'status-draft';
+      default:
+        return 'status-unknown';
+    }
+  }
+
+  profileStatusIcon(status?: ProfileStatusNumber | null): string {
+    switch (status) {
+      case ProfileStatusNumber.Approved:
+        return 'pi-check-circle';
+      case ProfileStatusNumber.Rejected:
+        return 'pi-times-circle';
+      case ProfileStatusNumber.RequiresUpdate:
+        return 'pi-flag-fill';
+      case ProfileStatusNumber.UnderReview:
+        return 'pi-search';
+      case ProfileStatusNumber.Submitted:
+        return 'pi-send';
+      case ProfileStatusNumber.Cancelled:
+      case ProfileStatusNumber.AdminCancelled:
+        return 'pi-ban';
+      case ProfileStatusNumber.InCreation:
+        return 'pi-pencil';
+      default:
+        return 'pi-question-circle';
+    }
+  }
+
   noteRequired(section: number): boolean {
     return this.draftStatus[section] === ReviewStatus.NeedsCorrection
       && (this.draftNote[section] ?? '').trim().length === 0;
@@ -342,6 +411,25 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     });
 
     return stats;
+  }
+
+  sectionProgress(info: ProfileApprovalDetail): {
+    total: number;
+    reviewed: number;
+    pending: number;
+    percent: number;
+  } {
+    const stats = this.progressStats(info);
+    const total = stats.pendingSections + stats.flaggedSections + stats.approvedSections;
+    const reviewed = total - stats.pendingSections;
+    const percent = total ? Math.round((reviewed / total) * 100) : 0;
+
+    return {
+      total,
+      reviewed,
+      pending: stats.pendingSections,
+      percent,
+    };
   }
 
   canFinalize(): boolean {
@@ -380,7 +468,6 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     const st = this.draftStatus[section];
     const note = (this.draftNote[section] ?? '').trim();
 
-    // في Full Review: فقط Approved أو NeedsCorrection
     if (st !== ReviewStatus.Approved && st !== ReviewStatus.NeedsCorrection) return;
 
     if (st === ReviewStatus.NeedsCorrection && note.length === 0) {
@@ -406,6 +493,8 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   }
 
   finalize(): void {
+    const summary = this.finalizeSummary.trim() || null;
+    const note = this.finalizeNote.trim() || null;
     const info = this.detail();
     const id = this.selectedProfileId();
     if (!info || !id) return;
@@ -417,12 +506,14 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
     this.loadingDetail.set(true);
 
-    this.api.finalizeProfile(id, { summary: null, note: null, exceptionalFile: null })
+    this.api.finalizeProfile(id, { summary, note, exceptionalFile: null })
       .pipe(finalize(() => this.loadingDetail.set(false)))
       .subscribe({
         next: () => {
           this.notifications.success(this.translate.instant('profileApproval.detail.finalizeOk'));
           this.loadDetail();
+          this.finalizeSummary = '';
+          this.finalizeNote = '';
         },
         error: (err) => {
           const msg = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.detail.finalizeFail');
