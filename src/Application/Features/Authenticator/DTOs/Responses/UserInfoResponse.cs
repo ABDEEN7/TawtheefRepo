@@ -5,5 +5,6 @@ public record UserInfoResponse(
     string FullName,
     string Email,
     string? ProfilePictureUrl,
+    string? Provider = null,
     ProfilePrefillDto? Prefill = null
 );

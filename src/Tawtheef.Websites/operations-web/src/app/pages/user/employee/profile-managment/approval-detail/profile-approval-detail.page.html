@@ -1,5 +1,5 @@
 <section class="approval-page" i18nNamespace="pages/profile-approval" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
-  <div class="">
+  <div class="container container-narrow">
     <div class="wizard-card" *ngIf="detail() as info">
       <div class="wizard-head d-flex flex-wrap justify-content-between gap-3 align-items-start">
         <div class="d-flex flex-wrap gap-3 align-items-center">
@@ -51,35 +51,54 @@
           </div>
         </div>
       </div>
-      <div class="action-bar mt-3" *ngIf="detail() as info">
-        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
-          <div class="d-flex align-items-center gap-2">
-      <span class="pill">
-        <i class="pi pi-info-circle"></i>
-        <span>{{ 'profileApproval.detail.reviewState' | translate }}:</span>
-        <strong class="ms-1">{{ info.profileStatus }}</strong>
-      </span>
-
-            <span class="pill" *ngIf="!canFinalizeUi()">
-        <i class="pi pi-exclamation-triangle"></i>
-        <span>{{ 'profileApproval.detail.finalizeHint' | translate }}</span>
-      </span>
+      <div class="summary-panel mt-3">
+        <div class="summary-card status-card">
+          <div class="summary-label">{{ 'profileApproval.detail.reviewState' | translate }}</div>
+          <div class="status-pill" [ngClass]="profileStatusClass(info.profileStatus)">
+            <i class="pi" [ngClass]="profileStatusIcon(info.profileStatus)"></i>
+            <span>{{ profileStatusLabelKey(info.profileStatus) | translate }}</span>
           </div>
+          <div class="summary-meta">
+            <span *ngIf="info.submissionVersion != null">
+              {{ 'profileApproval.detail.submissionVersion' | translate }}: {{ info.submissionVersion }}
+            </span>
+            <span *ngIf="info.specialization">
+              {{ 'profileApproval.detail.specialization' | translate }}: {{ info.specialization }}
+            </span>
+            <span *ngIf="info.submittedAtUtc">
+              {{ 'profileApproval.detail.submittedAt' | translate }}:
+              {{ info.submittedAtUtc | date: 'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
 
-          <div class="d-flex gap-2">
+        <div class="summary-card progress-card" *ngIf="sectionProgress(info) as progress">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="summary-label">{{ 'profileApproval.detail.progress.title' | translate }}</div>
+            <div class="progress-badge">{{ progress.percent }}%</div>
+          </div>
+          <p-progressBar [value]="progress.percent" [showValue]="false"></p-progressBar>
+          <div class="progress-meta d-flex flex-wrap gap-2 mt-2">
+            <span class="mini-chip">
+              <i class="pi pi-check-circle"></i>
+              {{ 'profileApproval.detail.progress.reviewed' | translate: { count: progress.reviewed, total: progress.total } }}
+            </span>
+            <span class="mini-chip">
+              <i class="pi pi-hourglass"></i>
+              {{ 'profileApproval.detail.progress.pending' | translate: { count: progress.pending } }}
+            </span>
+          </div>
+        </div>
+
+        <div class="summary-card action-card">
+          <div class="summary-label">{{ 'profileApproval.detail.actions.title' | translate }}</div>
+          <div class="d-flex flex-wrap gap-2">
             <button pButton type="button"
                     class="p-button-outlined"
                     (click)="startReview()"
                     [disabled]="loadingDetail() || !canStartReviewUi()">
               <i pButtonIcon class="pi pi-play"></i>
               <span pButtonLabel>{{ 'profileApproval.detail.startReview' | translate }}</span>
-            </button>
-
-            <button pButton type="button"
-                    (click)="finalize()"
-                    [disabled]="loadingDetail() || !canFinalizeUi()">
-              <i pButtonIcon class="pi pi-check"></i>
-              <span pButtonLabel>{{ 'profileApproval.detail.finalize' | translate }}</span>
             </button>
           </div>
         </div>
@@ -117,6 +136,53 @@
         [activeSection]="activeSection()"
         (sectionChange)="onStepperChange($event)"
       ></app-profile-approval-stepper>
+
+      <div class="finalize-card mt-3">
+        <div class="finalize-head">
+          <span class="icon-circle">
+            <i class="pi pi-clipboard"></i>
+          </span>
+          <div>
+            <div class="finalize-title">{{ 'profileApproval.final.tabTitle' | translate }}</div>
+            <div class="finalize-subtitle">{{ 'profileApproval.final.subtitle' | translate }}</div>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-2">
+          <div class="col-12 col-lg-6">
+            <label class="lbl form-label">{{ 'profileApproval.final.summaryHeader' | translate }}</label>
+            <textarea
+              pInputTextarea
+              rows="4"
+              class="w-100"
+              [(ngModel)]="finalizeSummary"
+              [placeholder]="'profileApproval.final.summaryPlaceholder' | translate">
+            </textarea>
+          </div>
+          <div class="col-12 col-lg-6">
+            <label class="lbl form-label">{{ 'profileApproval.final.actionNote' | translate }}</label>
+            <textarea
+              pInputTextarea
+              rows="4"
+              class="w-100"
+              [(ngModel)]="finalizeNote"
+              [placeholder]="'profileApproval.final.actionNotePlaceholder' | translate">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+          <div class="text-muted small" *ngIf="!canFinalizeUi()">
+            {{ 'profileApproval.detail.finalizeHint' | translate }}
+          </div>
+          <button pButton type="button"
+                  (click)="finalize()"
+                  [disabled]="loadingDetail() || !canFinalizeUi()">
+            <i pButtonIcon class="pi pi-check"></i>
+            <span pButtonLabel>{{ 'profileApproval.detail.finalize' | translate }}</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="state" *ngIf="loadingDetail()">

@@ -46,6 +46,7 @@ export class EndpointsService {
       saveReferences: this.getFullUrl(`/profiles/references`),
       submit: this.getFullUrl(`/profiles/submit`),
       checkProfile: this.getFullUrl(`/profiles/check-profile`),
+      changeRequests: this.getFullUrl(`/profiles/change-requests`),
     },
     verify:{
       phone:{

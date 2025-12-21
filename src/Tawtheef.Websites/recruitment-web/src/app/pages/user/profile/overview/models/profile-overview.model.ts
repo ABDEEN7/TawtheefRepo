@@ -38,6 +38,20 @@ export enum ReviewTargetTypeEnum {
   Attachment = 4
 }
 
+export enum ProfileChangeActionEnum {
+  UpdateField = 1,
+  ReplaceAttachment = 2,
+  AddListItem = 3
+}
+
+export enum ProfileChangeRequestStatusEnum {
+  Pending = 1,
+  UnderReview = 2,
+  Approved = 3,
+  Rejected = 4,
+  Canceled = 5
+}
+
 export type UserProfileStatusCode = number;  // API returns enum as number
 export type ProfileSectionCode = number;     // API returns enum as number
 export type ReviewTargetTypeCode = number;   // API returns enum as number
@@ -106,4 +120,19 @@ export interface ProfileOverview {
   hasPendingChanges: boolean;
   requestProgress: ProfileRequestProgress;
   sections: ProfileOverviewSection[];
+}
+
+export interface ProfileChangeRequestDto {
+  id: GUID;
+  section: ProfileSectionCode;
+  action: ProfileChangeActionEnum;
+  status: ProfileChangeRequestStatusEnum;
+  targetKey: string;
+  fieldPath?: string | null;
+  entityName?: string | null;
+  oldValue?: string | null;
+  newValue?: string | null;
+  requestedAtUtc: string;
+  reviewedAtUtc?: string | null;
+  reviewerNote?: string | null;
 }

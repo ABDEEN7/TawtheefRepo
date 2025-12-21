@@ -19,7 +19,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileAchievementHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileStepValidationService validationService
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileAchievementCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -41,9 +42,6 @@ public sealed class SaveProfileAchievementHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-        
         var validationResult = validationService.ValidateAchievements(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -57,6 +55,45 @@ public sealed class SaveProfileAchievementHandler(
             return Result.Fail<Unit>(lengthValidation.Errors);
 
         var achievementFiles = cmd.Request.AchievementFiles;
+
+        if (profile.Status is not UserProfileStatus.InCreation)
+        {
+            if (achievementsResult.Value.Any(a => a.Id.HasValue))
+                return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+            foreach (var dto in achievementsResult.Value)
+            {
+                var certResult = await UploadIfNeededAsync(
+                    dto.CertificateFileIndex,
+                    achievementFiles,
+                    ErrorsCodes.InvalidAchievementFileIndex,
+                    ErrorsCodes.InvalidAchievementFile,
+                    ErrorsCodes.AchievementFileTooLarge,
+                    ProfileLimits.MaxAchievementFileSizeBytes,
+                    "achievement",
+                    ct);
+
+                if (certResult.IsFailed)
+                    return Result.Fail<Unit>(certResult.Errors);
+
+                var pending = new PendingAchievementSnapshot
+                {
+                    AchievementTypeId = dto.AchievementTypeId,
+                    Title = dto.Title,
+                    IssuingAuthority = dto.IssuingAuthority,
+                    CountryId = dto.CountryId,
+                    IssueDate = dto.IssueDate,
+                    Description = dto.Description,
+                    RelatedToSpecialization = dto.RelatedToSpecialization,
+                    AttachmentResourceId = certResult.Value ?? dto.AttachmentId
+                };
+
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.CertificatesAndAwards, "Achievement", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            }
+
+            await uow.SaveChangesAsync(ct);
+            return Result.Ok(Unit.Value);
+        }
 
         profile.Achievements ??= [];
         var newAchievements = new List<Achievement>();
@@ -154,4 +191,16 @@ public sealed class SaveProfileAchievementHandler(
             return Result.Ok();
         }
     }
+}
+
+file sealed record PendingAchievementSnapshot
+{
+    public Guid AchievementTypeId { get; init; }
+    public string? Title { get; init; }
+    public string? IssuingAuthority { get; init; }
+    public Guid? CountryId { get; init; }
+    public DateOnly? IssueDate { get; init; }
+    public string? Description { get; init; }
+    public bool? RelatedToSpecialization { get; init; }
+    public Guid? AttachmentResourceId { get; init; }
 }

@@ -1,4 +1,4 @@
-@use "../../../../../../styles/variables" as *;
+@use "../../../../../../../styles/base/variables" as *;
 
 .plate {
   background: $plate; color: #fff; border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; gap: 16px;

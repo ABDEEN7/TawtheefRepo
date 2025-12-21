@@ -334,7 +334,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
-        <tr><td>{{ r.skill.name }}</td><td>{{ r.level.name }}</td></tr>
+        <tr><td>{{ r.skill.name }}</td><td>{{ r.level?.name }}</td></tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>

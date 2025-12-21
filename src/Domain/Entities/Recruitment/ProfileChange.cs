@@ -100,10 +100,36 @@ public class ProfileChangeRequest : EventEntity
     [Timestamp]
     public byte[] RowVersion { get; set; } = default!;
     
+    public static string BuildTargetKey(
+        ProfileSection section,
+        ReviewTargetType targetType,
+        string? fieldPath,
+        string? entityName,
+        Guid? entityId,
+        Guid? resourceId)
+    {
+        return targetType switch
+        {
+            ReviewTargetType.Section => $"Section|{section}",
+            ReviewTargetType.Field => fieldPath is null
+                ? throw new ArgumentNullException(nameof(fieldPath))
+                : $"Field|{section}|{fieldPath}",
+            ReviewTargetType.Row => entityId is null
+                ? throw new ArgumentNullException(nameof(entityId))
+                : $"Row|{section}|{entityName ?? "Entity"}|{entityId}",
+            ReviewTargetType.Attachment => (fieldPath ?? entityName) is null
+                ? throw new ArgumentNullException(nameof(fieldPath))
+                : $"Attachment|{section}|{fieldPath ?? entityName}|{resourceId?.ToString() ?? Guid.NewGuid().ToString()}",
+            _ => throw new ArgumentOutOfRangeException(nameof(targetType), "Unsupported target type for change request")
+        };
+    }
+
     public static ProfileChangeRequest Create(
         Guid userProfileId,
         ProfileSection section,
         ReviewTargetType targetType,
+        Guid requestedById,
+        string targetKey,
         string? fieldPath,
         string? entityName,
         Guid? entityId,
@@ -114,17 +140,10 @@ public class ProfileChangeRequest : EventEntity
     {
         var action = targetType switch
         {
+            ReviewTargetType.Section => ProfileChangeAction.UpdateField,
+            ReviewTargetType.Field => ProfileChangeAction.UpdateField,
             ReviewTargetType.Row => ProfileChangeAction.UpdateField,
             ReviewTargetType.Attachment => ProfileChangeAction.ReplaceAttachment,
-            // ReviewTargetType.ListAdd => ProfileChangeAction.AddListItem,
-            _ => throw new ArgumentOutOfRangeException(nameof(targetType), "Invalid target type for profile change request")
-        };
-
-        var targetKey = targetType switch
-        {
-            ReviewTargetType.Row => $"Field|{section}|{fieldPath}",
-            ReviewTargetType.Attachment => $"Attachment|{section}|{fieldPath}",
-            // ReviewTargetType.ListAdd => $"Add|{entityName}|{Guid.NewGuid()}",
             _ => throw new ArgumentOutOfRangeException(nameof(targetType), "Invalid target type for profile change request")
         };
 
@@ -140,7 +159,9 @@ public class ProfileChangeRequest : EventEntity
             NewValue = newValue != null ? System.Text.Json.JsonSerializer.Serialize(newValue) : null,
             OldResourceId = targetType == ReviewTargetType.Attachment ? resourceId : null,
             NewResourceId = targetType == ReviewTargetType.Attachment ? resourceId : null,
-            AttachmentTitle = attachmentTitle
+            AttachmentTitle = attachmentTitle,
+            RequestedById = requestedById,
+            RequestedAtUtc = DateTime.UtcNow
         };
 
         return request;
@@ -150,5 +171,6 @@ public class ProfileChangeRequest : EventEntity
     {
         OldValue = oldValue != null ? System.Text.Json.JsonSerializer.Serialize(oldValue) : null;
         NewValue = newValue != null ? System.Text.Json.JsonSerializer.Serialize(newValue) : null;
+        RequestedAtUtc = DateTime.UtcNow;
     }
 }

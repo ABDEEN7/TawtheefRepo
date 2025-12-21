@@ -202,5 +202,16 @@
 
   "profileView.reviewStatus.needsCorrection": "بحاجة لتصحيح",
   "profileView.reviewStatus.rejected": "مرفوض",
-  "profileView.reviewStatus.other": "ملاحظة"
+  "profileView.reviewStatus.other": "ملاحظة",
+  "profileView.fields.email": "البريد الإلكتروني",
+  "profileView.fields.phone": "رقم الهاتف",
+  "profileView.changeRequests.title": "طلبات التعديل المعلقة",
+  "profileView.changeRequests.subtitle": "تظل التعديلات المقترحة معزولة حتى يوافق عليها المراجع.",
+  "profileView.changeRequests.count": "الطلبات",
+  "profileView.changeRequests.empty": "لا توجد طلبات تعديل حالياً.",
+  "profileView.changeRequests.status.pending": "قيد الانتظار",
+  "profileView.changeRequests.status.underReview": "قيد المراجعة",
+  "profileView.changeRequests.status.approved": "معتمد",
+  "profileView.changeRequests.status.rejected": "مرفوض",
+  "profileView.changeRequests.status.canceled": "ملغي"
 }

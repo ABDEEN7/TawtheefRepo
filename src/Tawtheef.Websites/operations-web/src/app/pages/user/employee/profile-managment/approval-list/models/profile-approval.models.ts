@@ -1,6 +1,6 @@
-import {GUID} from '../../../../../../shared/types/guid.type';
-import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
-import {ProfileStatus, ProfileStatusNumber} from '../../../../../../core/enums/lookups.enum';
+import { GUID } from '../../../../../../shared/types/guid.type';
+import { dropdownOptionsModel } from '../../../../../../shared/models/dropdown-options.model';
+import { ProfileStatusNumber } from '../../../../../../core/enums/lookups.enum';
 
 export enum ReviewStatus {
   NotReviewed = 0,
@@ -30,6 +30,12 @@ export interface FileRefDto {
   url: string;
 }
 
+export interface SectionReviewSummary {
+  status: ReviewStatus;
+  note?: string | null;
+  reviewedAtUtc?: string | null;
+}
+
 export interface ProfileApprovalItem {
   reviewItemId: string;
   targetType: ReviewTargetType;
@@ -49,9 +55,12 @@ export interface ProfileApprovalItem {
 
 export interface ProfileApprovalSection {
   section: number;
-  sectionReview?: ProfileApprovalItem | null;
-  items: ProfileApprovalItem[];
-  hasAttachments: boolean;
+  sectionReview?: SectionReviewSummary | ProfileApprovalItem | null;
+  status?: ReviewStatus;
+  note?: string | null;
+  reviewedAtUtc?: string | null;
+  items?: ProfileApprovalItem[];
+  hasAttachments?: boolean;
 }
 
 export interface BasicInformationSnapshot {
@@ -62,7 +71,6 @@ export interface BasicInformationSnapshot {
   nationalCard?: FileRefDto | null;
   birthdayCertificate?: FileRefDto | null;
   marriageCertificate?: FileRefDto | null;
-
   fullNameAr?: string;
   fullNameEn?: string;
   nationalNumber?: string;
@@ -75,15 +83,12 @@ export interface BasicInformationSnapshot {
   childrenCount?: number;
   hasDisability?: boolean;
   disabilityDetails?: string;
-
   sponsorType?: string;
   sponsorEmployerName?: string;
   sponsorEmployerNumber?: string;
   sponsorQidExpiry?: string;
   sponsorCard?: FileRefDto | null;
-
   residenceCountry?: string;
-
   phoneNumber?: string;
   email?: string;
   address?: string;
@@ -91,17 +96,20 @@ export interface BasicInformationSnapshot {
   interviewLocation?: string;
 }
 
-export interface ProfileApprovalData {
+export interface ProfileApprovalDataDto {
   basicInformation: BasicInformationSnapshot;
-  qualifications: any[];
-  experiences: any[];
-  trainingCourses: any[];
-  professionalCertificatesAndAwards: any[];
-  skills: any[];
-  languages: any[];
-  attachments: any[];
+  qualifications?: QualificationDto[];
+  experiences?: ExperienceDto[];
+  trainingCourses?: TrainingCourseDto[];
+  professionalCertificatesAndAwards?: AchievementDto[];
+  skills?: SkillDto[];
+  languages?: LanguageDto[];
+  attachments?: AdditionalAttachmentDto[];
   profilePhoto?: string | null;
 }
+
+export type ProfileApprovalData = ProfileApprovalDataDto;
+
 export interface ProfileApprovalDetail {
   userProfileId: string;
   userId: string;
@@ -110,58 +118,23 @@ export interface ProfileApprovalDetail {
   targetEntity?: string;
   targetEntityCategory?: string;
   specialization?: string;
-
   submissionVersion?: number;
   submittedAtUtc?: string;
-
+  profileStatus?: ProfileStatusNumber | null;
   profile: ProfileApprovalDataDto;
   approvedProfile?: ProfileApprovalDataDto | null;
-
-  sections: ProfileApprovalSection[];
-  profileStatus: ProfileStatusNumber
+  sections?: ProfileApprovalSection[];
 }
-export interface ProfileApprovalDataDto {
-  basicInformation: BasicInformationSnapshot;
-  qualifications: QualificationDto[];
-  experiences: ExperienceDto[];
-  trainingCourses: TrainingCourseDto[];
-  professionalCertificatesAndAwards: AchievementDto[];
-  skills: SkillDto[];
-  languages: LanguageDto[];
-  attachments: AdditionalAttachmentDto[];
-  profilePhoto?: string;
-}
-export interface BasicInformationSnapshot {
-  fullNameAr?: string;
-  fullNameEn?: string;
-  nationalNumber?: string;
 
-  /** ISO date string: yyyy-MM-dd */
-  birthDate?: string;
-
-  nationality?: string;
-  gender?: string;
-  religion?: string;
-  maritalStatus?: string;
-  childrenCount?: number;
-
-  candidateType?: string;
-  targetEntity?: string;
-
-  resumeAttachment?: FileRefDto | null;
-  nationalCard?: FileRefDto | null;
-  residenceAddress?: ResidenceAddressDto | null;
-  birthdayCertificate?: FileRefDto | null;
-  marriageCertificate?: FileRefDto | null;
-}
 export interface ResidenceAddressDto {
-  naZone: number,
-  naStreet: number,
-  naBuilding: number,
-  naUnit: number,
+  naZone: number;
+  naStreet: number;
+  naBuilding: number;
+  naUnit: number;
   certificateId?: string | null;
   certificate?: FileRefDto | null;
 }
+
 export interface ProfileApprovalListItem {
   userProfileId: string;
   userId: string;
@@ -199,6 +172,7 @@ export interface AdditionalAttachmentDto {
   title?: string | null;
   file: FileRefDto;
 }
+
 export interface LanguageDto {
   id: GUID;
   languageId: string;
@@ -210,6 +184,7 @@ export interface LanguageDto {
   readingLevel: dropdownOptionsModel;
   isNative: boolean;
 }
+
 export interface SkillDto {
   id: GUID;
   skillId: string;
@@ -217,6 +192,7 @@ export interface SkillDto {
   levelId: string;
   level: dropdownOptionsModel;
 }
+
 export interface TrainingCourseDto {
   id: GUID;
   title?: string | null;
@@ -229,6 +205,7 @@ export interface TrainingCourseDto {
   specializationRelation?: SpecializationRelationLevel | null;
   attachment?: FileRefDto | null;
 }
+
 export interface ExperienceDto {
   id: GUID;
   employerName?: string | null;
@@ -244,6 +221,7 @@ export interface ExperienceDto {
   specializationRelation?: SpecializationRelationLevel | null;
   attachment?: FileRefDto | null;
 }
+
 export interface QualificationDto {
   id: GUID;
   degreeId?: string | null;
@@ -264,7 +242,8 @@ export interface QualificationDto {
   grade?: dropdownOptionsModel | null;
   attachment?: FileRefDto | null;
 }
-export interface AchievementDto{
+
+export interface AchievementDto {
   id: GUID;
   achievementTypeId: string;
   achievementType?: dropdownOptionsModel | null;

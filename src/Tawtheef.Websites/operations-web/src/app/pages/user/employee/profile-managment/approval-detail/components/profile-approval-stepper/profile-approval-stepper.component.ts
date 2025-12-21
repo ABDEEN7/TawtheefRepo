@@ -90,16 +90,16 @@ export class ProfileApprovalStepperComponent {
   }
 
   /**
-   * Tooltip text (English shown as requested). You can localize later if needed.
+   * Tooltip text key. Falls back to localized defaults per UI state.
    */
   tooltipText(s: ProfileApprovalStepperSection): string {
     if (s.tooltip) return s.tooltip;
 
     switch (s.uiStatus) {
-      case 'done': return 'Saved as Approved';
-      case 'bad': return 'Saved as Needs correction';
-      case 'progress': return 'Current section';
-      default: return 'Not decided';
+      case 'done': return 'profileApproval.detail.stepper.tooltip.approved';
+      case 'bad': return 'profileApproval.detail.stepper.tooltip.needsCorrection';
+      case 'progress': return 'profileApproval.detail.stepper.tooltip.current';
+      default: return 'profileApproval.detail.stepper.tooltip.pending';
     }
   }
 

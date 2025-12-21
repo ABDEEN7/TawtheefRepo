@@ -15,7 +15,7 @@ import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-re
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class QualificationsSectionComponent {
-  @Input() qualifications: any[] | null = null;
+  @Input() qualifications?: any[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
 
   preview(url?: string | null): void {

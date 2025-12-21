@@ -19,7 +19,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileExperienceHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileStepValidationService validationService
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileExperienceCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -40,9 +41,6 @@ public sealed class SaveProfileExperienceHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-        
         var validationResult = validationService.ValidateExperience(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -66,6 +64,53 @@ public sealed class SaveProfileExperienceHandler(
             return Result.Fail<Unit>(qualificationValidation.Errors);
         var experienceFiles = cmd.Request.ExperienceFiles;
         var trainingFiles   = cmd.Request.TrainingCourseFiles;
+
+        if (profile.Status is not UserProfileStatus.InCreation)
+        {
+            if (experiences.Any(e => e.Id.HasValue) || trainings.Any(t => t.Id.HasValue))
+                return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+            foreach (var dto in experiences)
+            {
+                var certResult = await UploadIfNeededAsync(
+                    dto.CertificateFileIndex,
+                    experienceFiles,
+                    ErrorsCodes.InvalidExperienceFileIndex,
+                    ErrorsCodes.InvalidExperienceFile,
+                    ErrorsCodes.ExperienceFileTooLarge,
+                    ProfileLimits.MaxExperienceFileSizeBytes,
+                    "experience",
+                    ct);
+
+                if (certResult.IsFailed)
+                    return Result.Fail<Unit>(certResult.Errors);
+
+                var pending = PendingExperienceSnapshot.From(dto, certResult.Value ?? dto.CertificateId);
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, "Experience", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            }
+
+            foreach (var dto in trainings)
+            {
+                var certResult = await UploadIfNeededAsync(
+                    dto.CertificateFileIndex,
+                    trainingFiles,
+                    ErrorsCodes.InvalidTrainingCourseFileIndex,
+                    ErrorsCodes.InvalidTrainingCourseFile,
+                    ErrorsCodes.TrainingCourseFileTooLarge,
+                    ProfileLimits.MaxTrainingFileSizeBytes,
+                    "training",
+                    ct);
+
+                if (certResult.IsFailed)
+                    return Result.Fail<Unit>(certResult.Errors);
+
+                var pending = PendingTrainingSnapshot.From(dto, certResult.Value ?? dto.CertificateId);
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.TrainingCourses, "TrainingCourse", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            }
+
+            await uow.SaveChangesAsync(ct);
+            return Result.Ok(Unit.Value);
+        }
 
         profile.Experiences ??= [];
         var newExperiences = new List<Experience>();
@@ -246,4 +291,50 @@ public sealed class SaveProfileExperienceHandler(
             return Result.Ok();
         }
     }
+}
+
+file sealed record PendingExperienceSnapshot
+{
+    public string? EmployerName { get; init; }
+    public string? JobTitle { get; init; }
+    public DateOnly StartDate { get; init; }
+    public DateOnly? EndDate { get; init; }
+    public Guid CountryId { get; init; }
+    public string? Description { get; init; }
+    public Guid? QualificationId { get; init; }
+    public Guid? CertificateResourceId { get; init; }
+
+    public static PendingExperienceSnapshot From(ExperienceUpsertDto dto, Guid? resourceId) => new()
+    {
+        EmployerName = dto.EmployerName,
+        JobTitle = dto.JobTitle,
+        StartDate = dto.StartDate,
+        EndDate = dto.EndDate,
+        CountryId = dto.CountryId,
+        Description = dto.Description,
+        QualificationId = dto.QualificationId,
+        CertificateResourceId = resourceId
+    };
+}
+
+file sealed record PendingTrainingSnapshot
+{
+    public string? Title { get; init; }
+    public string? Provider { get; init; }
+    public DateOnly StartDate { get; init; }
+    public DateOnly? EndDate { get; init; }
+    public Guid CountryId { get; init; }
+    public string? Description { get; init; }
+    public Guid? CertificateResourceId { get; init; }
+
+    public static PendingTrainingSnapshot From(TrainingCourseUpsertDto dto, Guid? resourceId) => new()
+    {
+        Title = dto.Title,
+        Provider = dto.Provider,
+        StartDate = dto.StartDate,
+        EndDate = dto.EndDate,
+        CountryId = dto.CountryId,
+        Description = dto.Description,
+        CertificateResourceId = resourceId
+    };
 }

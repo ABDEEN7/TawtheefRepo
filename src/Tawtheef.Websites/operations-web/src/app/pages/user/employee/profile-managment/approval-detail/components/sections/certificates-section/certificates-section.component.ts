@@ -15,7 +15,7 @@ import {ProfileApprovalItem, ReviewStatus} from '../../../../approval-list/model
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class CertificatesSectionComponent {
-  @Input() certificates: any[] | null = null;
+  @Input() certificates?: any[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
 
   preview(url?: string | null): void {

@@ -15,7 +15,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 
 public sealed class SaveProfileSkillsHandler(
     IUnitOfWork uow,
-    IProfileStepValidationService validationService
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService
 ) : IRequestHandler<SaveProfileSkillsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileSkillsCommand cmd, CancellationToken ct)
@@ -35,15 +36,22 @@ public sealed class SaveProfileSkillsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-        
         var validationResult = validationService.ValidateSkills(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
         if(cmd.Request.Skills.Count == 0)
             return Result.Ok(Unit.Value);
+
+        if (profile.Status is not UserProfileStatus.InCreation)
+        {
+            foreach (var skill in cmd.Request.Skills)
+            {
+                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Skills, "Skill", Guid.NewGuid(), cmd.UserId, ct, null, skill);
+            }
+            await uow.SaveChangesAsync(ct);
+            return Result.Ok(Unit.Value);
+        }
         
         // Skills
         if (profile.Skills is not null && profile.Skills.Count > 0)

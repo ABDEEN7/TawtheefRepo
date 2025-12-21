@@ -67,10 +67,11 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             SessionId: sid,
             IpAddress: device?.Ip,
             AttemptedAt: time.GetUtcNow()), ct);
-
+        var logins = await userManager.GetLoginsAsync(user);
+        var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "");
         return Result.Ok(new AuthResponse(
             !data.IsComplete,
-            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, prefill),
+            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, providerName,prefill),
             new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
         ));
     }

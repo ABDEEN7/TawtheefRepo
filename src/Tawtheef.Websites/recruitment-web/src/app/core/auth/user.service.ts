@@ -25,6 +25,7 @@ export class UserService {
       profilePictureUrl: user.profilePictureUrl ?? this.tokenService.getClaim(accessToken, 'picture') ?? null,
       userType: this.tokenService.getRoleFromToken(accessToken),
       authProvider: user.authProvider || this.tokenService.getClaim(accessToken, 'auth_provider') || 'local',
+      provider: user.provider || this.tokenService.getClaim(accessToken, 'provider') || 'local',
       notifications : 0
     } as UserInfoModel;
     localStorage.setItem('user_data', JSON.stringify(minimalUser));

@@ -1,0 +1,52 @@
+using FluentResults;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Users;
+
+namespace Tawtheef.Application.Features.Recruitment.Profile.Queries;
+
+public sealed record GetMyProfileChangeRequestsQuery(Guid UserId) : IRequest<Result<IReadOnlyList<ProfileChangeRequestDto>>>;
+
+public sealed class GetMyProfileChangeRequestsHandler(
+    IUnitOfWork uow) : IRequestHandler<GetMyProfileChangeRequestsQuery, Result<IReadOnlyList<ProfileChangeRequestDto>>>
+{
+    public async Task<Result<IReadOnlyList<ProfileChangeRequestDto>>> Handle(GetMyProfileChangeRequestsQuery request, CancellationToken ct)
+    {
+        var profileRepo = uow.GetEntityRepository<UserProfile>();
+
+        var profile = await profileRepo.DbSet
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.UserId == request.UserId, ct);
+
+        if (profile is null)
+            return Result.Fail<IReadOnlyList<ProfileChangeRequestDto>>(ErrorsCodes.UserProfileNotFound);
+
+        var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
+        var items = await changeRepo.DbSet
+            .AsNoTracking()
+            .Where(c => c.UserProfileId == profile.Id)
+            .OrderByDescending(c => c.RequestedAtUtc)
+            .Select(c => new ProfileChangeRequestDto
+            {
+                Id = c.Id,
+                Section = c.Section,
+                Action = c.Action,
+                Status = c.Status,
+                TargetKey = c.TargetKey,
+                FieldPath = c.FieldPath,
+                EntityName = c.EntityName,
+                OldValue = c.OldValue,
+                NewValue = c.NewValue,
+                RequestedAtUtc = c.RequestedAtUtc,
+                ReviewedAtUtc = c.ReviewedAtUtc,
+                ReviewerNote = c.ReviewerNote
+            })
+            .ToListAsync(ct);
+
+        return Result.Ok<IReadOnlyList<ProfileChangeRequestDto>>(items);
+    }
+}
