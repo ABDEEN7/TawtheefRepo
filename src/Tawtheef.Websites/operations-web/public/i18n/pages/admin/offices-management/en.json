@@ -17,6 +17,8 @@
     "SAVE_SUCCESS": "Office saved successfully.",
     "SAVE_FAILED": "Failed to save office.",
     "LOAD_FAILED": "Failed to load offices.",
+    "SEARCH_BY_NAME": "Search by name",
+    "SEARCH_PLACEHOLDER": "Enter office name",
     "DELETE_CONFIRM": "Are you sure you want to delete this office and its admin?",
     "DELETE_HEADER": "Delete Office",
     "DELETE_SUCCESS": "Office deleted successfully.",
