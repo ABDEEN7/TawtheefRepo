@@ -10,24 +10,12 @@ public sealed class ApplicationRoleConfiguration
 {
     public void Configure(EntityTypeBuilder<ApplicationRole> builder)
     {
-        builder.Property(r => r.NameAr).HasMaxLength(50);
-        builder.Property(r => r.NameEn).HasMaxLength(50);
-        builder.Property(r => r.DescriptionAr).HasMaxLength(150);
-        builder.Property(r => r.DescriptionEn).HasMaxLength(150);
-
-        builder.Property(r => r.IsSystemRole)
-            .HasDefaultValue(false)
-            .IsRequired();
-
-        // -----------------------
-        // Seed System Roles
-        // -----------------------
         builder.HasData(
             new ApplicationRole
             {
-                Id = Guid.Parse("1361d691-53c5-4a84-aea1-64ff134cf082"),
+                Id = ApplicationRoleIds.SystemAdmin,
                 Name = "SystemAdmin",
-                NormalizedName = "SYSTEMADMIN",
+                NormalizedName = nameof(ApplicationRoleIds.SystemAdmin),
                 NameAr = "مدير النظام",
                 NameEn = "System Admin",
                 DescriptionAr = "مدير النظام الكامل",
@@ -36,9 +24,9 @@ public sealed class ApplicationRoleConfiguration
             },
             new ApplicationRole
             {
-                Id = Guid.Parse("5f12e420-f666-4af4-a8fa-4e4aa755fdcd"),
+                Id = ApplicationRoleIds.HRAdmin,
                 Name = "HRAdmin",
-                NormalizedName = "HRADMIN",
+                NormalizedName = nameof(ApplicationRoleIds.HRAdmin),
                 NameAr = "مدير الموارد البشرية",
                 NameEn = "HR Admin",
                 DescriptionAr = "مدير شؤون الموظفين",
@@ -47,13 +35,24 @@ public sealed class ApplicationRoleConfiguration
             },
             new ApplicationRole
             {
-                Id = Guid.Parse("98e20970-b6bc-4da9-a947-f75e9adae3ca"),
+                Id = ApplicationRoleIds.OfficeAdmin,
                 Name = "OfficeAdmin",
-                NormalizedName = "OFFICEADMIN",
+                NormalizedName = nameof(ApplicationRoleIds.OfficeAdmin),
                 NameAr = "مدير المكتب",
                 NameEn = "Office Admin",
                 DescriptionAr = "مدير المكتب والصلاحيات المرتبطة",
                 DescriptionEn = "Office administrator",
+                IsSystemRole = true
+            },
+            new ApplicationRole
+            {
+                Id = ApplicationRoleIds.OfficeUser,
+                Name = "OfficeUser",
+                NormalizedName = nameof(ApplicationRoleIds.OfficeUser),
+                NameAr = "موظف المكتب",
+                NameEn = "Office User",
+                DescriptionAr = "موظف المكتب العادي",
+                DescriptionEn = "Office user",
                 IsSystemRole = true
             }
         );
