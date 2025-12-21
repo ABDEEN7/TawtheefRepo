@@ -17,6 +17,8 @@
     "SAVE_SUCCESS": "تم حفظ المكتب بنجاح",
     "SAVE_FAILED": "فشل حفظ المكتب",
     "LOAD_FAILED": "تعذر تحميل المكاتب",
+    "SEARCH_BY_NAME": "البحث بالاسم",
+    "SEARCH_PLACEHOLDER": "أدخل اسم المكتب",
     "DELETE_CONFIRM": "هل أنت متأكد من حذف المكتب ومديره؟",
     "DELETE_HEADER": "حذف المكتب",
     "DELETE_SUCCESS": "تم حذف المكتب بنجاح",
