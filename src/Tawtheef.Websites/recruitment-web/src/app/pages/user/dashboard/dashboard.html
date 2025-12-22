@@ -1,118 +1,164 @@
 
 
-<header class="py-3 header-hero" i18nNamespace="pages/user/dashboard">
-  <div class="container d-flex align-items-center justify-content-between">
-    <div>
-      <h4 class="mb-1 text-brand fw-bold">{{ 'candidate_dashboard.subtitle' | translate }}</h4>
-      <div class="text-muted small">{{ 'candidate_dashboard.description' | translate }}</div>
-    </div>
-    <div class="d-flex align-items-center gap-3">
-      <span class="badge rounded-pill text-bg-light border">
-        {{ 'candidate_dashboard.total_records' | translate }}: {{ totalItems() }}
-      </span>
-    </div>
-  </div>
-</header>
+<div class="card card-table mb-4" i18nNamespace="pages/user/dashboard">
+     <div class="card-body">
+         <div class="container-fluid">
+             <div class="row">
+                  <div class="col-md-9">
+                      <h4 class="mb-1 text-brand fw-bold">{{ 'candidate_dashboard.subtitle' | translate }}</h4>
+                      <p class="m-0">{{ 'candidate_dashboard.description' | translate }}</p>
+                  </div>
+                  <div class="col-md-3">
+                       <div class="d-flex justify-content-end align-items-center gap-3"><span class="btn btn-outline-primary btn-sm rounded-pill border">{{ 'candidate_dashboard.total_records' | translate }}: {{ totalItems() }}</span></div>
+                  </div>
+             </div>
+             <div class="row mt-4">
+                  <div class="col-12">
+                      <div class="card card-table">
+                           <div class="card-body">
+                             <!-- KPIs -->
+                             <div class="row">
+                               <div class="col-md-3">
+                                 <div class="shadow-sm card card-table bg-info-light border-0">
+                                      <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                          <div class="d-flex flex-column">
+                                              <div class="h2 fw-bold">{{ getNewInvitationCount() }}</div>
+                                              <p class="m-0">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</p>
+                                          </div>
+                                          <div><i class="hgi hgi-stroke hgi-star text-blue h2"></i></div>
+                                      </div>
+
+                                 </div>
+
+                               </div>
+                               <div class="col-md-3">
+                                 <div class="shadow-sm card card-table bg-success-light border-0">
+                                      <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                          <div class="d-flex flex-column">
+                                              <div class="h2 fw-bold text-dark">{{ getUnderReviewCount() }}</div>
+                                              <p class="m-0">{{ 'candidate_dashboard.kpi_under_review' | translate }}</p>
+                                          </div>
+                                          <div><i class="hgi hgi-stroke hgi-checkmark-circle-02 text-success h2"></i></div>
+                                      </div>
+                                 </div>
+                               </div>
+                               <div class="col-md-3">
+                                 <div class="shadow-sm card card-table bg-alert-light border-0">
+                                      <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                          <div class="d-flex flex-column">
+                                              <div class="h2 fw-bold">{{ getWithdrawnCount() }}</div>
+                                              <p class="m-0">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</p>
+
+                                          </div>
+                                          <div><i class="hgi hgi-stroke hgi-comment-01 text-warning h2"></i></div>
+                                      </div>
+
+                                 </div>
+                               </div>
+                               <div class="col-md-3">
+                                 <div class="shadow-sm card card-table bg-warning-light border-0">
+                                      <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                          <div class="d-flex  flex-column">
+                                                <div class="h2 fw-bold">{{ getAppliedCount() }}</div>
+                                                <p class="m-0">{{ 'candidate_dashboard.kpi_applied' | translate }}</p>
+                                          </div>
+                                          <div><i class="hgi hgi-stroke hgi-cancel-circle text-danger h2"></i></div>
+                                      </div>
+                                 </div>
+                               </div>
+                             </div>
+
+                           </div>
+                      </div>
+                  </div>
+             </div>
+             <div class="row mt-4">
+                 <div class="col-12">
+                      <div class="card card-table">
+                           <div class="card-body">
+                             <div class="row g-2">
+                               <div class="col-md-3">
+                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
+                                 <p-select
+                                   [options]="candidateService.invitationStatuses()"
+                                   [showClear]="true"
+                                   [placeholder]="'candidate_dashboard.filter_all' | translate"
+                                   name="invitationStatuses"
+                                   (onChange)="this.onFilterChange()"
+                                   [filter]="true"
+                                   [(ngModel)]="selectedInvitationStatus"
+                                   filterBy="name"
+                                   optionLabel="name"
+                                   optionValue="id"
+                                   size="small"
+                                   class="form-select"
+                                 ></p-select>
+                               </div>
+                               <div class="col-md-3">
+                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
+                                 <p-select
+                                   [options]="candidateService.jobCategories()"
+                                   [showClear]="true"
+                                   [placeholder]="'candidate_dashboard.filter_all' | translate"
+                                   name="jobCategories"
+                                   (onChange)="this.onFilterChange()"
+                                   [filter]="true"
+                                   [(ngModel)]="selectedCategory"
+                                   filterBy="name"
+                                   optionLabel="name"
+                                   optionValue="backendName"
+                                   size="small"
+                                   class="form-select"
+                                 ></p-select>
+                               </div>
+                               <div class="col-md-3">
+                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
+                                 <p-select
+                                   [options]="candidateService.departments()"
+                                   [showClear]="true"
+                                   [placeholder]="'candidate_dashboard.filter_all' | translate"
+                                   name="departments"
+                                   (onChange)="this.onFilterChange()"
+                                   [filter]="true"
+                                   [(ngModel)]="selectedDepartment"
+                                   filterBy="name"
+                                   optionLabel="name"
+                                   optionValue="id"
+                                   size="small"
+                                   class="form-select"
+                                 ></p-select>
+                               </div>
+                               <div class="col-md-3">
+                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>
+                                 <input
+                                   [(ngModel)]="jobTitle"
+                                   (input)="this.onFilterChange()"
+                                   class="form-control"
+                                   [placeholder]="'candidate_dashboard.placeholder_search' | translate">
+                               </div>
+                               <div class="text-end pt-2">
+                                 <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm btn-pill">
+                                   <i class="fa fa-rotate-left"></i> {{ 'candidate_dashboard.clear_filters' | translate }}
+                                 </button>
+                               </div>
+                             </div>
+                           </div>
+                      </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+</div>
 
 <main class="py-4">
   <div class="container">
     <!-- KPIs -->
-    <div class="row g-3 mb-3">
-      <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center kpi">
-          <div class="small text-muted">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</div>
-          <div class="h4 fw-bold text-primary">{{ getNewInvitationCount() }}</div>
-<!--          TODO-->
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center kpi">
-          <div class="small text-muted">{{ 'candidate_dashboard.kpi_under_review' | translate }}</div>
-          <div class="h4 fw-bold text-warning">{{ getUnderReviewCount() }}</div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center kpi">
-          <div class="small text-muted">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</div>
-          <div class="h4 fw-bold text-danger">{{ getWithdrawnCount() }}</div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center kpi">
-          <div class="small text-muted">{{ 'candidate_dashboard.kpi_applied' | translate }}</div>
-          <div class="h4 fw-bold text-success">{{ getAppliedCount() }}</div>
-        </div>
-      </div>
-    </div>
+
 
     <!-- Filters -->
     <div class="card border-0 shadow-sm p-3 mb-3">
-      <div class="row g-2">
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
-          <p-select
-            [options]="candidateService.invitationStatuses()"
-            [showClear]="true"
-            [placeholder]="'candidate_dashboard.filter_all' | translate"
-            name="invitationStatuses"
-            (onChange)="this.onFilterChange()"
-            [filter]="true"
-            [(ngModel)]="selectedInvitationStatus"
-            filterBy="name"
-            optionLabel="name"
-            optionValue="id"
-            size="small"
-            class="form-select form-select-sm"
-          ></p-select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
-          <p-select
-            [options]="candidateService.jobCategories()"
-            [showClear]="true"
-            [placeholder]="'candidate_dashboard.filter_all' | translate"
-            name="jobCategories"
-            (onChange)="this.onFilterChange()"
-            [filter]="true"
-            [(ngModel)]="selectedCategory"
-            filterBy="name"
-            optionLabel="name"
-            optionValue="backendName"
-            size="small"
-            class="form-select form-select-sm"
-          ></p-select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
-          <p-select
-            [options]="candidateService.departments()"
-            [showClear]="true"
-            [placeholder]="'candidate_dashboard.filter_all' | translate"
-            name="departments"
-            (onChange)="this.onFilterChange()"
-            [filter]="true"
-            [(ngModel)]="selectedDepartment"
-            filterBy="name"
-            optionLabel="name"
-            optionValue="id"
-            size="small"
-            class="form-select form-select-sm"
-          ></p-select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>
-          <input
-            [(ngModel)]="jobTitle"
-            (input)="this.onFilterChange()"
-            class="form-control form-control-sm"
-            [placeholder]="'candidate_dashboard.placeholder_search' | translate">
-        </div>
-      </div>
-      <div class="text-end pt-2">
-        <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm btn-pill">
-          <i class="fa fa-rotate-left"></i> {{ 'candidate_dashboard.clear_filters' | translate }}
-        </button>
-      </div>
+
+
     </div>
 
     <!-- Table -->
