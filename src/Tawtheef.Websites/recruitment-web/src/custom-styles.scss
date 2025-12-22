@@ -6,6 +6,9 @@
 /*--------------------------------------------------------------
 # Vendor Imports
 --------------------------------------------------------------*/
+@use "assets/vendor/hugeicons/css/hgi-stroke-rounded.css";
+@use "assets/vendor/select2/css/select2.min.css";
+@use "assets/vendor/flatpickr/css/flatpickr.min.css";
 @use "assets/styles/custom-checkbox";
 @use "assets/styles/cairo";
 
@@ -18,6 +21,8 @@ $font-default: "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto,
 $font-primary: "Cairo", sans-serif;
 
 $color-primary: #8a1538;
+$bs-primary-rgb:#8a1538;
+$bs-heading-color:#8a1538;
 $color-primary-hover: rgba(138, 21, 56, 0.6);
 $color-blue: rgba(13, 67, 97, 1);
 $color-white: #fff;
@@ -30,6 +35,7 @@ $grey-400: #767171;
 $grey-border: rgba(203, 203, 203, 1);
 
 $bs-light: rgba(153, 153, 153, 1);
+$border-radius: 2rem;
 
 /*--------------------------------------------------------------
 # Global
@@ -379,15 +385,19 @@ header.topbar {
 /*--------------------------------------------------------------
 # Rounded Tabs
 --------------------------------------------------------------*/
-.nav-tabs.rounded-tab {
+.stepper{
   gap: 10px;
   border: 0;
 
   .nav-link {
-    border-radius: 2rem;
+    border-radius:$border-radius;
     border: 1px solid $grey-border;
     padding: 0.35rem 1rem;
     font-weight: 600;
+    font-size: 0.875rem;
+    gap: 5px;
+    display: flex;
+    align-items: center;
 
     &.active {
       background-color: $color-primary;
@@ -395,3 +405,163 @@ header.topbar {
     }
   }
 }
+
+/*--------------------------------------------------------------
+# DataTable Section
+--------------------------------------------------------------*/
+
+$table-radius: 0.6rem;
+$table-light-bg: rgba(246, 246, 243, 1);
+$table-white-bg: rgba(255, 255, 255, 1);
+$text-muted: rgba(102, 103, 102, 1);
+$badge-bg-select: rgba(241, 230, 229, 1);
+
+/* Table row backgrounds */
+.table-bordered {
+  &.table-striped {
+    > tbody > tr.even td {
+      background-color: $table-light-bg;
+    }
+  }
+
+  > tbody {
+    > tr {
+      &:nth-of-type(2n + 1) > * {
+        background-color: $table-white-bg;
+      }
+
+      > td {
+        background-color: $table-light-bg;
+      }
+    }
+  }
+
+  th,
+  td {
+    &:last-child {
+      border-left-width: 1px;
+    }
+  }
+
+  tr:last-child {
+    td {
+      &:first-child {
+        border-bottom-left-radius: $table-radius;
+      }
+
+      &:last-child {
+        border-bottom-right-radius: $table-radius;
+      }
+    }
+  }
+
+  td {
+    p {
+      display: flex;
+      line-height: 1.2;
+      margin: 0;
+      color: $text-muted;
+      gap: 3px;
+
+      i {
+        font-size: 1.3rem;
+      }
+    }
+
+    .badge {
+      min-width: 50px;
+      font-weight: 500;
+      color: white !important;
+      border-radius: 4px;
+    }
+
+    .form-select {
+      background-color: $badge-bg-select;
+    }
+  }
+}
+
+/* Table header */
+.table {
+  > thead {
+    &.table-light {
+      tr {
+        th {
+          background-color: $color-primary;
+          color: white;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+/* Square bullet list */
+.square-bullet {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+
+  div {
+    color: $text-muted;
+
+    &:after {
+      content: '';
+      width: 7px;
+      height: 7px;
+      position: relative;
+      background-color: $text-muted;
+      display: inline-block;
+      margin: 0 8px;
+    }
+
+    &:last-child:after {
+      display: none;
+    }
+  }
+}
+
+/* DataTables adjustments */
+.dataTables_wrapper {
+  .dataTables_paginate {
+    margin: 0;
+  }
+}
+
+/* Rounded table wrapper */
+.table-card {
+  border-radius: $table-radius;
+  background: #fff;
+  border: 0;
+
+  .table-responsive {
+    border-radius: 0 0 $table-radius $table-radius;
+  }
+
+  thead {
+    th {
+      &:first-child {
+        border-top-right-radius: $table-radius;
+      }
+
+      &:last-child {
+        border-top-left-radius: $table-radius;
+      }
+    }
+  }
+}
+
+/* Info text */
+#dtInfo {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  div.dataTables_wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+}
+

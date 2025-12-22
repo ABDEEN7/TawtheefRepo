@@ -1,8 +1,8 @@
-<div class="card border border-1 shadow-none rounded-4 p-4 mb-3 step-languages">
+<div class="step-languages">
   <div class="row g-4">
     <div class="col-12">
       <div class="section-head">
-        <h6 class="fw-bold mb-1 text-brand">{{ 'wizard.skills.languages' | translate }}</h6>
+        <h5 class="text-primary">{{ 'wizard.skills.languages' | translate }}</h5>
         <small class="text-muted d-block">{{ 'wizard.skills.languagesHint' | translate }}</small>
       </div>
 
@@ -87,7 +87,7 @@
   </div>
 </div>
 
-<div class="text-end">
+<div class="d-flex justify-content-between mt-4 text-end">
   <button class="btn btn-outline-secondary rounded-pill" (click)="back.emit()">
     <i class="fa-solid me-1" faDirArrow="start"></i>
     {{ 'wizard.buttons.prev' | translate }}
