@@ -1,0 +1,50 @@
+<section i18nNamespace="pages/job-points">
+  <div class="header-section">
+    <div class="job-details-title-group">
+      <div class="title-wrapper">
+        <h1 class="job-title">
+          {{ 'JOB_POINTS.MAIN_POINTS_SETTINGS' | translate }}
+          -
+          {{ job?.titleAr }}/{{ job?.titleEn }}
+        </h1>
+      </div>
+    </div>
+  </div>
+
+  <p-tabs [(value)]="activeTab" class="tabs-shell">
+    <p-tablist>
+      <p-tab value="0">
+        <i class="pi pi-list mr-2"></i>
+        {{ 'JOB_POINTS.CONFIG.TABS.MAIN' | translate }}
+      </p-tab>
+
+      <p-tab value="1" [disabled]="!canAccessDetails()">
+        <i class="pi pi-table mr-2"></i>
+        {{ 'JOB_POINTS.CONFIG.TABS.DETAILS' | translate }}
+      </p-tab>
+    </p-tablist>
+
+    <p-tabpanels>
+      <!-- ================= Main Points ================= -->
+      <p-tabpanel value="0">
+        <app-job-points-main-elements
+          [form]="mainFormGroup"
+          [keys]="mainKeys"
+        />
+      </p-tabpanel>
+
+      <!-- ================= Details ================= -->
+      <p-tabpanel value="1">
+        @if (canAccessDetails()) {
+          <app-job-points-tab
+            [mainForm]="mainFormGroup"
+            [form]="detailsFormGroup"
+            [job]="job"
+            (ready)="onDetailsReady()"
+            (save)="save()"
+          />
+        }
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</section>

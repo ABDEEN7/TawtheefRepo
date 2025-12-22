@@ -1,0 +1,134 @@
+
+
+.page-container {
+  padding: 2rem 2.5rem;
+}
+
+.header {
+  margin-bottom: 1.25rem;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.outer-card {
+  background: #fff;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  padding: 1.5rem 1.75rem;
+}
+
+
+.element-header {
+  gap: 0.75rem;
+}
+
+.element-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.points-control {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #e6dde1;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #ffffff;
+  height: 36px;
+}
+
+:host ::ng-deep .points-input.p-inputnumber {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .points-input .p-inputnumber-input {
+  border: 0;
+  background: transparent;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 0;
+  height: 24px;
+}
+
+:host ::ng-deep .points-input .p-inputnumber-input:focus {
+  box-shadow: none;
+}
+
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+
+  .total-label {
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .total-pill {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-weight: 900;
+    color: var(--brand);
+    min-width: 160px;
+    text-align: center;
+  }
+}
+
+.points-chip {
+  display: flex;
+  align-items: center;
+  padding: 0 0.9rem;
+  background: #fde7ee;
+  color: #a0153e;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.bottom-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.ghost-link {
+  border: 0;
+  background: transparent;
+  color: var(--brand);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+
+.primary-pill {
+  background: var(--brand);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.summary-section {
+  margin-top: 1.75rem;
+}
+
+

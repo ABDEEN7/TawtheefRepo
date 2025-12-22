@@ -1,6 +1,5 @@
 using Mapster;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
-using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;

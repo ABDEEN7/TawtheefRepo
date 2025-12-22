@@ -32,5 +32,8 @@
   },
   get nominations(){
     return this.employee + '/nominations';
+  },
+   get jobPoints(){
+    return this.employee + '/jobs/job-points';
   }
 }

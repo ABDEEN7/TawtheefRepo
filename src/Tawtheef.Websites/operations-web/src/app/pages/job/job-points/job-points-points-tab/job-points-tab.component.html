@@ -1,0 +1,231 @@
+<div class="details-page-container">
+  <form [formGroup]="form">
+    <div class="details-grid">
+
+      <!-- ================= Applicant Category ================= -->
+      <section class="details-card" [formGroup]="applicantCategoryFormGroup">
+        <h3 class="section-title">
+          {{ 'JOB_POINTS.MAIN_ELEMENTS.APPLICANT_CATEGORY_POINTS' | translate }}
+        </h3>
+
+        @for (item of applicantCategoryItems; track item.key) {
+          <div class="row gx-0">
+            <div class="points-control points-control--details">
+              <span class="points-chip">{{ item.label | translate }}</span>
+
+              <p-inputNumber
+                [formControlName]="item.key"
+                [min]="0"
+                [showButtons]="true"
+                class="points-input"
+              />
+            </div>
+          </div>
+        }
+
+        <div
+          class="section-footer"
+          [ngClass]="{
+            'valid-total': applicantCategorySum() === (mainForm.get('applicantCategory')?.value ?? 0),
+            'invalid-total': applicantCategorySum() !== (mainForm.get('applicantCategory')?.value ?? 0)
+          }"
+        >
+          {{ applicantCategorySum() }}/{{ mainForm.get('applicantCategory')?.value ?? 0 }}
+        </div>
+      </section>
+
+      <!-- ================= Education ================= -->
+      <section class="details-card" [formGroup]="educationFormGroup">
+        <h3 class="section-title">
+          {{ 'JOB_POINTS.MAIN_ELEMENTS.EDUCATION' | translate }}
+        </h3>
+
+        @for (item of educationItems; track item.key) {
+          <div class="row gx-0">
+            <div class="points-control points-control--details">
+              <span class="points-chip">{{ item.label | translate }}</span>
+
+              <p-inputNumber
+                [formControlName]="item.key"
+                [min]="0"
+                [showButtons]="true"
+                class="points-input"
+              />
+            </div>
+          </div>
+        }
+
+        <div
+          class="section-footer"
+          [ngClass]="{
+            'valid-total': educationSum() === (mainForm.get('education')?.value ?? 0),
+            'invalid-total': educationSum() !== (mainForm.get('education')?.value ?? 0)
+          }"
+        >
+          {{ educationSum() }}/{{ mainForm.get('education')?.value ?? 0 }}
+        </div>
+      </section>
+
+      <!-- ================= Training ================= -->
+      <section class="details-card" [formGroup]="trainingFormGroup">
+        <h3 class="section-title">
+          {{ 'JOB_POINTS.MAIN_ELEMENTS.TRAINING' | translate }}
+        </h3>
+
+        @for (item of trainingItems; track item.key) {
+          <div class="row gx-0">
+            <div class="points-control points-control--details">
+              <span class="points-chip">{{ item.label | translate }}</span>
+
+              <p-inputNumber
+                [formControlName]="item.key"
+                [min]="0"
+                [showButtons]="true"
+                class="points-input"
+              />
+            </div>
+          </div>
+        }
+
+        <div
+          class="section-footer"
+          [ngClass]="{
+            'valid-total': trainingSum() === (mainForm.get('training')?.value ?? 0),
+            'invalid-total': trainingSum() !== (mainForm.get('training')?.value ?? 0)
+          }"
+        >
+          {{ trainingSum() }}/{{ mainForm.get('training')?.value ?? 0 }}
+        </div>
+      </section>
+
+      <!-- ================= Experience ================= -->
+      <section class="details-card" [formGroup]="experienceFormGroup">
+        <h3 class="section-title">
+          {{ 'JOB_POINTS.MAIN_ELEMENTS.EXPERIENCE' | translate }}
+        </h3>
+
+        @for (item of experienceItems; track item.key) {
+          <div class="row gx-0">
+            <div class="points-control points-control--details">
+              <span class="points-chip">{{ item.label | translate }}</span>
+
+              <p-inputNumber
+                [formControlName]="item.key"
+                [min]="0"
+                [showButtons]="true"
+                class="points-input"
+              />
+            </div>
+          </div>
+        }
+
+        <div class="row gx-0">
+          <div class="points-control points-control--details">
+            <span class="points-chip">
+              {{ 'JOB_POINTS.MAIN_ELEMENTS.ESTIMATED_TOTAL_EX' | translate }}
+            </span>
+
+            <input
+              type="text"
+              [value]="experienceTotal"
+              readonly
+              class="form-control readonly-input"
+            />
+          </div>
+        </div>
+
+        <div
+          class="section-footer"
+          [ngClass]="{
+            'valid-total': experienceTotal === (mainForm.get('experience')?.value ?? 0),
+            'invalid-total': experienceTotal !== (mainForm.get('experience')?.value ?? 0)
+          }"
+        >
+          {{ experienceTotal }}/{{ mainForm.get('experience')?.value ?? 0 }}
+        </div>
+      </section>
+
+      <!-- ================= Skills ================= -->
+      <section class="details-card" [formGroup]="skillsFormGroup">
+        <h3 class="section-title">
+          {{ 'JOB_POINTS.MAIN_ELEMENTS.SKILLS' | translate }}
+        </h3>
+
+        @for (item of skillsItems; track item.key) {
+          <div class="row gx-0">
+            <div class="points-control points-control--details">
+              <span class="points-chip">{{ item.label | translate }}</span>
+
+              <p-inputNumber
+                [formControlName]="item.key"
+                [min]="0"
+                [showButtons]="true"
+                class="points-input"
+              />
+            </div>
+          </div>
+        }
+
+        <div
+          class="section-footer"
+          [ngClass]="{
+            'valid-total': skillsSum() === (mainForm.get('skills')?.value ?? 0),
+            'invalid-total': skillsSum() !== (mainForm.get('skills')?.value ?? 0)
+          }"
+        >
+          {{ skillsSum() }}/{{ mainForm.get('skills')?.value ?? 0 }}
+        </div>
+      </section>
+
+      <!-- ================= Languages ================= -->
+      <section class="details-card" [formGroup]="languagesFormGroup">
+        <h3 class="section-title">
+          {{ 'JOB_POINTS.MAIN_ELEMENTS.LANGUAGES' | translate }}
+        </h3>
+
+        @for (item of languagesItems; track item.key) {
+          <div class="row gx-0">
+            <div class="points-control points-control--details">
+              <span class="points-chip">{{ item.label | translate }}</span>
+
+              <p-inputNumber
+                [formControlName]="item.key"
+                [min]="0"
+                [showButtons]="true"
+                class="points-input"
+              />
+            </div>
+          </div>
+        }
+
+        <div
+          class="section-footer"
+          [ngClass]="{
+            'valid-total': languagesSum() === (mainForm.get('languages')?.value ?? 0),
+            'invalid-total': languagesSum() !== (mainForm.get('languages')?.value ?? 0)
+          }"
+        >
+          {{ languagesSum() }}/{{ mainForm.get('languages')?.value ?? 0 }}
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ================= Bottom Navigation ================= -->
+    <div class="bottom-nav">
+      <button type="button" class="ghost-link">
+        <i class="fa fa-arrow-right"></i>
+        {{ 'JOB_POINTS.MAIN_ELEMENTS.PREVIOUS' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="primary-pill"
+        [disabled]="!areAllCategoriesValid()"
+        (click)="saveDetails()"
+      >
+        {{ 'JOB_POINTS.POINTS_TAB.SAVE_POINTS' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

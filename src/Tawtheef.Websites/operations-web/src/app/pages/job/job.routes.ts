@@ -4,6 +4,7 @@ import {JobListComponent} from './job-list/jobs-list.component';
 import {JobDetailsComponent} from './job-details/job-details.component';
 import { JobInvitesDetailsComponent } from './job-invites-details/job-invites-details.component';
 import { JobApprovalComponent } from './job-approval/job-approval.component';
+import { JobPointsConfigPageComponent } from './job-points/job-points-config-page/job-points-config-page.component';
 
 export const jobRoutes: Routes = [
   { path: '', component: JobListComponent },
@@ -11,5 +12,6 @@ export const jobRoutes: Routes = [
   { path: 'edit/:id', component: JobWizardComponent },
   { path: 'view/:id', component: JobDetailsComponent },
   { path: 'approval-job/:id', component: JobApprovalComponent },
+  { path: 'job-points/:id', component: JobPointsConfigPageComponent },
   { path: 'invites/:id', component: JobInvitesDetailsComponent },
 ];

@@ -188,7 +188,7 @@
                           <i class="fa fa-eye"></i>
                         </button>
                       }
-                        
+                        @if(job.jobStatus.backendName !== jobStatus.Approved){
                         <div class="dropdown d-inline-block">
                           <button
                             class="btn btn-sm btn-outline-secondary dropdown-toggle"
@@ -240,6 +240,7 @@
                           }
                           </ul>
                         </div>
+                      }
                       </div>
                     </td>
                   </tr>
