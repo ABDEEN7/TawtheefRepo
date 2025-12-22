@@ -1,7 +1,7 @@
 @use "styles/base/tokens";
 @use "styles/base/flags";
 
-@import "custom-styles";
+@use "custom-styles";
 
 $primary: #000;
 .form-check-input:checked {
