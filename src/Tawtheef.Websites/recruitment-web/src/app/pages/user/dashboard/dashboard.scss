@@ -92,10 +92,7 @@
   height: 3rem;
 }
 
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+
 
 // RTL specific styles
 :host-context([dir="rtl"]) {
