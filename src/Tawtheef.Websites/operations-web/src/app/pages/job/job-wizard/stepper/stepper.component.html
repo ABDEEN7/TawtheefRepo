@@ -1,8 +1,7 @@
 <div class="stepper-container">
   <div class="stepper">
-    @for (step of steps; track step.id; let i = $index) {
-    <div class="step-wrapper">
-      <div class="step-label-container">
+    <ng-container *ngFor="let step of steps; let i = index">
+      <div class="step-wrapper">
         <div
           class="step-label"
           [class.active]="current === step.id"
@@ -12,29 +11,26 @@
           <i [class]="step.icon"></i>
           <span>{{ step.label | translate }}</span>
         </div>
-      </div>
 
-      <div class="step-progress">
-        <div
-          class="step-circle"
-          [class.active]="current === step.id"
-          [class.completed]="current > step.id"
-          (click)="stepChange.emit(step.id)"
-        >
-          @if (current > step.id) {
-          <div class="checkmark">
-            <div class="checkmark-line"></div>
+        <div class="step-progress">
+          <div
+            class="step-circle"
+            [class.active]="current === step.id"
+            [class.completed]="current > step.id"
+            (click)="stepChange.emit(step.id)"
+          >
+            <div *ngIf="current === step.id" class="inner-circle"></div>
+
+            <div *ngIf="current > step.id" class="checkmark">&#10003;</div>
           </div>
-          } @else if (current === step.id) {
-          <div class="inner-circle"></div>
-          }
-        </div>
 
-        @if (i < steps.length - 1) {
-        <div class="connector-line" [class.completed]="current > step.id"></div>
-        }
+          <div
+            *ngIf="i < steps.length - 1"
+            class="connector-line"
+            [class.completed]="current > step.id"
+          ></div>
+        </div>
       </div>
-    </div>
-    }
+    </ng-container>
   </div>
 </div>
