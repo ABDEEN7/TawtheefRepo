@@ -38,12 +38,9 @@ public sealed class SaveProfileEducationHandler(
 
     public async Task<IResult<Unit>> Handle(SaveProfileEducationCommand cmd, CancellationToken ct)
     {
-        var profileRepo   = uow.GetEntityRepository<UserProfile>();
         var educationRepo = uow.GetEntityRepository<Qualification>();
 
-        var profile = await profileRepo.DbSet.Include(p=>p.ResidenceAddress)
-            .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
-
+        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
