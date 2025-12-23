@@ -1,6 +1,6 @@
-<div class="card border border-1 shadow-none rounded-4 p-4 mb-3 attachments-card">
+<div class="attachments-card">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h6 class="fw-bold m-0" style="color:#7b1e3a">{{ 'wizard.attachments.title' | translate }}</h6>
+    <h5 class=" text-primary">{{ 'wizard.attachments.title' | translate }}</h5>
 
     <button type="button" class="btn btn-primary rounded-pill px-3" (click)="addRow()">
       <i class="fa-solid fa-plus ms-1"></i> {{ 'wizard.attachments.add' | translate }}
@@ -94,7 +94,7 @@
   </div>
 </div>
 
-<div class="text-end">
+<div class="d-flex justify-content-between mt-4 text-end">
   <button class="btn btn-outline-secondary" (click)="onBack()">
     <i class="fa-solid me-1" faDirArrow="start"></i>
     {{ 'wizard.buttons.prev' | translate }}

@@ -1,10 +1,10 @@
-<div class="card border border-1 shadow-none rounded-4 p-4 mb-3 step-skills">
+<div class="step-skills">
   <div class="row g-4">
     <div class="col-12">
       <div class="section-head">
-        <h6 class="fw-bold mb-1 text-brand">
+        <h5 class="text-primary">
           {{ 'wizard.skills.skills' | translate }}
-        </h6>
+        </h5>
         <small class="text-muted d-block">
           {{ 'wizard.skills.hint' | translate }}
         </small>
@@ -107,7 +107,7 @@
   </div>
 </div>
 
-<div class="text-end">
+<div class="d-flex justify-content-between mt-4 text-end">
   <button
     class="btn btn-outline-secondary rounded-pill"
     (click)="back.emit()"

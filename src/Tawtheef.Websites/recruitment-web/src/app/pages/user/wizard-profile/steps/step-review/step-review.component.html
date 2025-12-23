@@ -1,7 +1,7 @@
-<div class="card border border-1 shadow-none rounded-4 p-4 mb-3">
-  <h6 class="fw-bold mb-3" style="color:#7b1e3a">
+<div class="">
+  <h5 class="text-primary">
     <i class="fa-solid fa-clipboard-check me-1"></i> {{ 'wizard.review.title' | translate }}
-  </h6>
+  </h5>
 
   <!-- Success banner -->
   <div *ngIf="submitted()" class="alert alert-success d-flex align-items-center gap-2">
@@ -401,7 +401,7 @@
   </div>
 </div>
 
-<div class="text-end">
+<div class="d-flex justify-content-between mt-4 text-end">
   <button class="btn btn-outline-secondary" (click)="back.emit()">
     <i class="fa-solid me-1" faDirArrow="start"></i> {{ 'wizard.buttons.prev' | translate }}
   </button>
