@@ -53,17 +53,17 @@
           [options]="countries"
           optionValue="id"
           [filter]="true"
-          filterBy="nameAr,nameEn"
+          filterBy="name"
           [showClear]="false"
           [placeholder]="'OFFICES.SELECT_COUNTRY' | translate"
           [disabled]="isEditMode() || isViewMode()"
           class="w-100 form-select form-select-sm"
           [ngClass]="{'p-invalid': submitted && form.controls.countryId.invalid}">
           <ng-template #selectedItem let-country>
-            {{ localizedCountry(country.nameAr, country.nameEn) }}
+            {{ country.name }}
           </ng-template>
           <ng-template #item let-country>
-            {{ localizedCountry(country.nameAr, country.nameEn) }}
+            {{ country.name }}
           </ng-template>
         </p-select>
         @if (submitted && form.controls.countryId.invalid) {
@@ -73,24 +73,21 @@
 
       <div class="form-group mb-3">
         <label>{{ 'OFFICES.SUPPORTED_COUNTRIES' | translate }}</label>
-        <p-select
+        <p-multiSelect
           formControlName="supportedCountryIds"
           [options]="countries"
           optionValue="id"
-          [multiple]="true"
+          optionLabel="name"
           display="chip"
           [filter]="true"
-          filterBy="nameAr,nameEn"
+          filterBy="name"
           [placeholder]="'OFFICES.SUPPORTED_COUNTRIES' | translate"
           class="w-100 form-select form-select-sm"
           [ngClass]="{'p-invalid': submitted && form.controls.supportedCountryIds.invalid}">
-          <ng-template #selectedItem let-country>
-            {{ localizedCountry(country.nameAr, country.nameEn) }}
-          </ng-template>
           <ng-template #item let-country>
-            {{ localizedCountry(country.nameAr, country.nameEn) }}
+            {{ country.name }}
           </ng-template>
-        </p-select>
+        </p-multiSelect>
         @if (submitted && form.controls.supportedCountryIds.invalid) {
           <div class="invalid-feedback d-block">{{ 'OFFICES.SUPPORTED_REQUIRED' | translate }}</div>
         }
@@ -154,7 +151,7 @@
                           type="button"
                           class="btn btn-outline-secondary btn-sm"
                           (click)="toggleUserBlock(user)"
-                          [disabled]="loading"
+                          [disabled]="loading || isViewMode()"
                           aria-label="{{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}">
                           {{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}
                         </button>

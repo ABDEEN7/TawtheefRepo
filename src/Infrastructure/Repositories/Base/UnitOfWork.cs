@@ -122,7 +122,7 @@ public class UnitOfWork(TawtheefDbContext dbContext, IMediator mediator) : IUnit
             {
                 var result = await operation(cancellationToken);
 
-                if (result is IResult resultObj && resultObj.IsFailed)
+                if (result is Result { IsFailed: true })
                 {
                     await transaction.RollbackAsync(cancellationToken);
                     return result;

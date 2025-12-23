@@ -1,22 +1,34 @@
 import {CommonModule} from '@angular/common';
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, computed, inject, signal} from '@angular/core';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  signal,
+  SimpleChanges
+} from '@angular/core';
 import {AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Lang, LanguageService} from '../../../../../../core/services/language.service';
 import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
-import {CountryLookupDto} from '../../models/country-lookup.dto';
 import {CreateOfficeRequest} from '../../models/create-office-request.dto';
 import {UpdateOfficeRequest} from '../../models/update-office-request.dto';
 import {OfficeDto} from '../../models/office.dto';
 import {OfficeUserDto} from '../../models/office-user.dto';
 import {Select} from 'primeng/select';
+import {MultiSelectModule} from 'primeng/multiselect'
+import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
 
 @Component({
   selector: 'app-office-modal',
   standalone: true,
   templateUrl: './office-modal.component.html',
   styleUrls: ['./office-modal.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, Select]
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, Select, MultiSelectModule]
 })
 export class OfficeModalComponent implements OnInit, OnChanges {
   private fb = inject(FormBuilder);
@@ -25,7 +37,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
 
   @Input() visible = false;
   @Input() mode: 'create' | 'edit' | 'view' = 'create';
-  @Input() countries: CountryLookupDto[] = [];
+  @Input() countries: dropdownOptionsModel[] = [];
   @Input() office: OfficeDto | null = null;
   @Input() officeUsers: OfficeUserDto[] = [];
   @Input() loading = false;
@@ -155,6 +167,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
         payload: {
           nameAr,
           nameEn,
+          adminEmail,
           supportedCountryIds
         }
       });

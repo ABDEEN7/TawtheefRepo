@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Commands;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Queries;
 using Tawtheef.Infrastructure.Extensions;
@@ -30,7 +31,8 @@ public class OfficesController(IMediator mediator) : ControllerBase
     [HttpGet("lookups/countries")]
     public async Task<IActionResult> ListCountries()
     {
-        var result = await mediator.Send(new GetOfficeCountriesQuery());
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetCountriesQuery() with { Language = language });
         return result.ToActionResult();
     }
 

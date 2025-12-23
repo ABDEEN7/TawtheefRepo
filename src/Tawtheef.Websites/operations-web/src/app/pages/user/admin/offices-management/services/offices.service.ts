@@ -2,7 +2,6 @@ import {inject, Injectable, signal} from '@angular/core';
 import {HttpService} from '../../../../../core/http/http.service';
 import {EndpointsService} from '../../../../../core/http/endpoints.service';
 import {OfficeDto} from '../models/office.dto';
-import {CountryLookupDto} from '../models/country-lookup.dto';
 import {OfficeFilters} from '../models/office-filters.dto';
 import {CreateOfficeRequest} from '../models/create-office-request.dto';
 import {UpdateOfficeRequest} from '../models/update-office-request.dto';
@@ -11,6 +10,7 @@ import {PaginationMetadata} from '../../../../../core/models/pagination-metadata
 import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
 import {map, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
+import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 
 @Injectable({ providedIn: 'root' })
 export class OfficesService {
@@ -38,8 +38,8 @@ export class OfficesService {
       );
   }
 
-  getCountries(): Observable<CountryLookupDto[]> {
-    return this.http.get<CountryLookupDto[]>(this.endpoints.offices.countries)
+  getCountries(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.offices.countries)
       .pipe(map(res => res || []));
   }
 

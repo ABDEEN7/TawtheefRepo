@@ -8,4 +8,5 @@ public sealed record UpdateOfficeCommand(
     Guid Id,
     string NameAr,
     string NameEn,
+    string AdminEmail,
     IReadOnlyCollection<Guid> SupportedCountryIds) : IRequest<IResult<OfficeDto>>;

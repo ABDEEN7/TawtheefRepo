@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
-public class OfficeSupportedCountryConfiguration : LookupBaseConfiguration<OfficeSupportedCountry>
+public class OfficeSupportedCountryConfiguration : OfficeSupportedCountry
 {
-    public override void Configure(EntityTypeBuilder<OfficeSupportedCountry> builder)
+    public void Configure(EntityTypeBuilder<OfficeSupportedCountry> builder)
     {
         builder.HasKey(x => new { x.OfficeId, x.CountryId });
 

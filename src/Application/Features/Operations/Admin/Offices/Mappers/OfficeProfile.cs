@@ -25,7 +25,13 @@ public sealed class OfficeProfile : IRegister
             .Map(dest => dest.SupportedCountries,
                 src => src.SupportedCountries
                     .Where(sc => !sc.IsDeleted)
-                    .OrderBy(sc => sc.DisplayOrder));
+                    .OrderByDescending(sc => sc.CreatedDate)
+                    .Select(sc => new OfficeSupportedCountryDto
+                    {
+                        CountryId = sc.CountryId,
+                        NameAr = sc.Country.NameAr,
+                        NameEn = sc.Country.NameEn
+                    }));
 
         config.NewConfig<Office, OfficeDetailsDto>()
             .Map(dest => dest.CountryNameAr, src => src.Country != null ? src.Country.NameAr : string.Empty)
@@ -33,6 +39,6 @@ public sealed class OfficeProfile : IRegister
             .Map(dest => dest.SupportedCountries,
                 src => src.SupportedCountries
                     .Where(sc => !sc.IsDeleted)
-                    .OrderBy(sc => sc.DisplayOrder));
+                    .OrderByDescending(sc => sc.CreatedDate));
     }
 }

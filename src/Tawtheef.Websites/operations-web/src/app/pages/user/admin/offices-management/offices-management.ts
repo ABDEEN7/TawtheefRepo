@@ -14,10 +14,10 @@ import {OfficeDto} from './models/office.dto';
 import {OfficeFilters} from './models/office-filters.dto';
 import {UpdateOfficeRequest} from './models/update-office-request.dto';
 import {CreateOfficeRequest} from './models/create-office-request.dto';
-import {CountryLookupDto} from './models/country-lookup.dto';
 import {OfficeModalComponent} from './components/office-modal/office-modal.component';
 import {OfficeDetailsDto} from './models/office-details.dto';
 import {finalize} from 'rxjs/operators';
+import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 
 @Component({
   selector: 'app-offices-management',
@@ -53,7 +53,7 @@ export class OfficesManagement implements OnInit {
   });
 
   searchTerm = '';
-  countries = signal<CountryLookupDto[]>([]);
+  countries = signal<dropdownOptionsModel[]>([]);
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
 

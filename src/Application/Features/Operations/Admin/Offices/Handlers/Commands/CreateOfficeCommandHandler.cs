@@ -71,24 +71,15 @@ public sealed class CreateOfficeCommandHandler(
 
                 var office = new Office
                 {
-                    Id = Guid.NewGuid(),
                     BackendName = backendName,
                     NameAr = request.NameAr,
                     NameEn = request.NameEn,
                     CountryId = country.Id,
-                    Country = country,
                     Code = officeCode,
                     SupportedCountries = supportedCountries
                         .Select((c, index) => new OfficeSupportedCountry
                         {
-                            Id = Guid.NewGuid(),
-                            BackendName = $"{backendName}_SUP_{c.CodeAlpha}",
-                            NameAr = c.NameAr,
-                            NameEn = c.NameEn,
-                            DescriptionAr = c.DescriptionAr,
-                            DescriptionEn = c.DescriptionEn,
                             CountryId = c.Id,
-                            DisplayOrder = index + 1
                         })
                         .ToList()
                 };
@@ -103,7 +94,6 @@ public sealed class CreateOfficeCommandHandler(
 
                 var officeAdmin = new OfficeUser
                 {
-                    Id = Guid.NewGuid(),
                     Email = adminEmail,
                     NormalizedEmail = adminEmail.ToUpperInvariant(),
                     UserName = adminEmail,
