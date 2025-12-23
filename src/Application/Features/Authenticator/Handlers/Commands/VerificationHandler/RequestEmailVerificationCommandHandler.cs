@@ -23,10 +23,16 @@ public class RequestEmailVerificationCommandHandler(
         var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
         if (user is null)
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
+        
+        var emailAlreadyUsed = await userManager.Users
+            .AnyAsync(u => u.Email == request.Email && u.Id != request.UserId, cancellationToken);
+        if (emailAlreadyUsed)
+            return Result.Fail<Unit>(ErrorsCodes.EmailAlreadyInUse);
+        
+        
         var code = GenerateCode(6);
         var entity = new ContactVerification
         {
-            Id = Guid.NewGuid(),
             UserId = request.UserId!.Value,
             Type = ContactVerificationType.Email,
             Destination = request.Email,
@@ -39,7 +45,7 @@ public class RequestEmailVerificationCommandHandler(
 
         var subject = "Email verification";
         var body = $"Your verification code is: {code}";
-        await emailSender.SendAsync(request.Email, subject, body, cancellationToken);
+        _ = emailSender.SendAsync(request.Email, subject, body, cancellationToken);
 
         return Result.Ok(Unit.Value);
     }

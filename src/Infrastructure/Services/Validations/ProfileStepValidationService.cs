@@ -50,7 +50,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (previousSteps.IsFailed)
             return previousSteps;
 
-        var requiresSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId);
+        var requiresSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
         var hasSponsorInput = HasSponsorPayload(request) || profile.SponsorProfileId is not null;
 
         if (requiresSponsor && !hasSponsorInput)
@@ -65,7 +65,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (previousSteps.IsFailed)
             return previousSteps;
 
-        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
         var hasNationalAddress = request.NationalAddress is not null || profile.ResidenceAddress is not null;
 
         if (!requiresNationalAddress && (request.NationalAddress is not null || profile.ResidenceAddress is not null))
@@ -73,6 +73,21 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
 
         if (requiresNationalAddress && !hasNationalAddress)
             return Result.Fail(ErrorsCodes.NationalAddressRequired);
+        
+        if (!requiresNationalAddress && string.IsNullOrWhiteSpace(request.Address))
+            return Result.Fail(ErrorsCodes.AddressRequired);
+
+        if (requiresNationalAddress)
+        {
+            if (request.NationalAddress is not null)
+            {
+                if (request.NationalAddress.Zone <= 0 || request.NationalAddress.Street <= 0 || request.NationalAddress.Building <= 0 || request.NationalAddress.Unit < 0)
+                    return Result.Fail(ErrorsCodes.InvalidNationalAddress);
+                if(string.IsNullOrEmpty(request.NationalAddress.NationalAddressFileName) && profile.ResidenceAddress!.CertificateId == Guid.Empty)
+                    return Result.Fail(ErrorsCodes.NationalAddressCertificateRequired);
+            }
+        }
+        
 
         return Result.Ok();
     }
@@ -136,9 +151,9 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         ProfileStep.Personal => IsPersonalComplete(profile),
         ProfileStep.Contact => IsContactComplete(profile),
         ProfileStep.Education => profile.Qualifications is { Count: > 0 },
-        ProfileStep.Experience => profile.Experiences is { Count: > 0 } || profile.TrainingCourses is { Count: > 0 },
+        ProfileStep.Experience => true,
         ProfileStep.Achievements => true,
-        ProfileStep.Skills => profile.Skills is { Count: > 0 },
+        ProfileStep.Skills => true,
         ProfileStep.Languages => profile.Languages is { Count: > 0 },
         ProfileStep.Attachments => true,
         _ => false
@@ -152,7 +167,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (profile.ResumeAttachmentId is null || profile.NationalCardId is null)
             return false;
 
-        var requiresResidencyExpiry = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresResidencyExpiry = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
         if (requiresResidencyExpiry && profile.QIDExpiry is null)
             return false;
 
@@ -162,7 +177,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId) && profile.MarriageCertificateId is null)
             return false;
 
-        if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId) && profile.OfficeId is null)
+        if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && profile.OfficeId is null)
             return false;
 
         return true;
@@ -173,12 +188,12 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (string.IsNullOrWhiteSpace(profile.NationalNumber) || profile.BirthDate is null)
             return false;
 
-        if (ProfileValidatorUtils.IsResidentQatar(profile.CandidateTypeId))
+        if (ProfileValidatorUtils.IsResidentQatar(profile.CandidateTypeId, profile.Provider))
         {
             if(profile.QIDExpiry is null)
                 return false;
 
-            if (!ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId) && profile.SponsorProfileId is not null)
+            if (!ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider) && profile.SponsorProfileId is not null)
                 return false;
         }
 
@@ -200,16 +215,17 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (profile.ResidenceCountryId is null || profile.InterviewLocationId is null)
             return false;
 
-        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
         if (requiresNationalAddress)
         {
-            if (profile.ResidenceAddress is null || profile.ResidenceAddressCertificateId is null)
+            if (profile.ResidenceAddress is null)
                 return false;
 
             return profile.ResidenceAddress.ZoneNo > 0 &&
                    profile.ResidenceAddress.StreetNo > 0 &&
                    profile.ResidenceAddress.BuildingNo > 0 &&
-                   profile.ResidenceAddress.UnitNo >= 0;
+                   profile.ResidenceAddress.UnitNo >= 0 &&
+                   profile.ResidenceAddress.CertificateId != Guid.Empty;
         }
 
         return !string.IsNullOrWhiteSpace(profile.Address);

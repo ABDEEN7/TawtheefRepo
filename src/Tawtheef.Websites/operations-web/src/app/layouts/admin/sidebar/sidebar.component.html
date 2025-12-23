@@ -2,7 +2,8 @@
 
   <div class="sidebar-top">
     <button class="back-btn" (click)="toggle()" >
-      <i class="fa" [ngClass]="isCollapsed ? 'fa-angle-left' : 'fa-angle-right'"></i>
+      <i class="fa"
+         [faDirArrow]="isCollapsed ? 'end': 'start'"></i>
     </button>
   </div>
 

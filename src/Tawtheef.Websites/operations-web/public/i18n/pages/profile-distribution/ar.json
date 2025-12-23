@@ -90,5 +90,15 @@
   "distribution.availability.suspended": "موقوف",
   "distribution.availability.inactive": "غير نشط",
 
-  "distribution.loading": "جارٍ التحميل"
+  "distribution.loading": "جارٍ التحميل",
+
+  "distribution.errors.reassignFailed": "تعذر إعادة التوزيع",
+  "distribution.errors.assignFailed": "تعذر التوزيع",
+  "distribution.errors.noEmployees": "يرجى اختيار موظف واحد على الأقل للتوزيع",
+  "distribution.errors.noSelection": "يرجى تحديد ملف واحد على الأقل للتوزيع",
+  "distribution.errors.insufficientCapacity": "لا يوجد موظف لديه القدرة الكافية لتلقي التوزيع",
+  "distribution.errors.generic": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+  "distribution.errors.noProfilesSelected": "يرجى اختيار ملفات للتوزيع",
+  "distribution.errors.loadEmployeesFailed": "تعذر تحميل بيانات الموظفين",
+  "distribution.errors.loadFilesFailed": "تعذر تحميل الملفات القابلة للتوزيع"
 }

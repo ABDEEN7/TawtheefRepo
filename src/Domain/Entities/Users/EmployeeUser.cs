@@ -36,11 +36,14 @@ public class EmployeeUser : User
             return Result.Fail<ProfileAssignment>(ErrorsCodes.DistributionPerEmployeeLimitReached);
 
         // Ensure profile is assignable (caller may have already filtered, but guard here as domain rule)
-        if (!ProfileDistributionRules.AssignableStatuses.Contains(profile.Status))
+        if (!ProfileDistributionRules.AssignableStatuses.Contains(profile.Status) &&
+            profile.Status != UserProfileStatus.Approved)
             return Result.Fail<ProfileAssignment>(ErrorsCodes.ProfileNotAssignable);
 
         // Apply domain changes
-        profile.Status = UserProfileStatus.UnderReview;
+        if (profile.Status != UserProfileStatus.Approved)
+            profile.Status = UserProfileStatus.UnderReview;
+
         var assignment = ProfileAssignment.Assign(profile.Id, this.Id);
 
         // keep aggregate consistency in memory

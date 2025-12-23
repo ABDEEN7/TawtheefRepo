@@ -2,17 +2,14 @@ using System.Security.Claims;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
-using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Commands;
-using Tawtheef.Application.Features.Operations.Employee.ProfileApprovals.Queries;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
@@ -22,102 +19,118 @@ namespace Operations.API.Controllers.Employee;
 //[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.JobsManage)]
 public class ProfileApprovalsController(IMediator mediator) : ControllerBase
 {
-    private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
+    private Result<Guid> OfficerId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
     {
         null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
         var id => Result.Ok(Guid.Parse(id))
     };
 
-    private bool HasManagerOverride => User.IsInRole("DepartmentHead") || User.IsInRole("Manager");
-
     [HttpGet]
     public async Task<IActionResult> GetList([FromQuery] GetProfileApprovalsQuery query, CancellationToken ct)
     {
-        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
 
-        var enriched = new GetProfileApprovalsQuery(
-            UserId.Value,
-            query.Search,
-            query.Specialization,
-            query.Status,
-            query.TargetEntity,
-            query.CandidateType,
-            query.Sort,
-            query.SortDirection);
-
-        var result = await mediator.Send(enriched, ct);
+        var result = await mediator.Send(query with { OfficerId = OfficerId.Value }, ct);
         return result.ToActionResult();
     }
 
     [HttpGet("{userProfileId:guid}")]
-    public async Task<IActionResult> GetDetail(
-        Guid userProfileId,
-        CancellationToken ct = default)
+    public async Task<IActionResult> GetDetail(Guid userProfileId, CancellationToken ct = default)
     {
-        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
 
-        var result = await mediator.Send(
-            new GetProfileApprovalDetailQuery(userProfileId, UserId.Value),
-            ct);
+        var result = await mediator.Send(new GetProfileApprovalDetailQuery(userProfileId, OfficerId.Value), ct);
         return result.ToActionResult();
     }
 
     [HttpGet("{userProfileId:guid}/changes")]
-    public async Task<IActionResult> GetPartialChanges(
+    public async Task<IActionResult> GetChangesDetail(Guid userProfileId, CancellationToken ct = default)
+    {
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
+
+        var result = await mediator.Send(new GetProfilePartialChangesQuery(userProfileId, OfficerId.Value), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("{userProfileId:guid}/start-review")]
+    public async Task<IActionResult> StartReview(Guid userProfileId, CancellationToken ct)
+    {
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
+
+        var result = await mediator.Send(new StartUserProfileReviewCommand(OfficerId.Value, userProfileId), ct);
+        return result.ToActionResult();
+    }
+
+
+
+    /// <summary>
+    /// Sets decision per section during Full Review.
+    /// This does NOT expose notes to the user until Finalize is done.
+    /// </summary>
+    [HttpPut("{userProfileId:guid}/sections/{section}/decision")]
+    public async Task<IActionResult> DecideSection(
         Guid userProfileId,
-        CancellationToken ct = default)
+        ProfileSection section,
+        [FromBody] DecideProfileSectionRequest body,
+        CancellationToken ct)
     {
-        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
 
-        var result = await mediator.Send(
-            new GetProfilePartialChangesQuery(userProfileId, UserId.Value),
-            ct);
-        return result.ToActionResult();
-    }
+        // في مرحلة Full Review نسمح Approved أو NeedsCorrection فقط
+        if (body.Status == ReviewStatus.NeedsCorrection && string.IsNullOrWhiteSpace(body.Note))
+            return BadRequest(Result.Fail(ErrorsCodes.NotesRequiredForCorrection).Errors);
 
-    [HttpPatch("review-items/{reviewItemId:guid}")]
-    public async Task<IActionResult> UpdateReviewItem(Guid reviewItemId, [FromBody] UpdateReviewItemStatusRequest request, CancellationToken ct)
-    {
-        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new DecideProfileSectionCommand(
+            OfficerId: OfficerId.Value,
+            UserProfileId: userProfileId,
+            Section: section,
+            Status: body.Status,
+            Note: body.Note);
 
-        var cmd = new ReviewProfileItemCommand(UserId.Value, reviewItemId, request.Status, request.Note);
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
 
+    [HttpPut("review-items/{reviewItemId:guid}")]
+    public async Task<IActionResult> DecideReviewItem(
+        Guid reviewItemId,
+        [FromBody] DecideProfileReviewItemRequest body,
+        CancellationToken ct)
+    {
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
+
+        if (body.Status is ReviewStatus.Rejected or ReviewStatus.NeedsCorrection &&
+            string.IsNullOrWhiteSpace(body.Note))
+            return BadRequest(Result.Fail(ErrorsCodes.NotesRequiredForCorrection).Errors);
+
+        var cmd = new DecideProfileReviewItemCommand(
+            OfficerId: OfficerId.Value,
+            ReviewItemId: reviewItemId,
+            Status: body.Status,
+            Note: body.Note);
+
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    /// <summary>
+    /// Final decision gate:
+    /// - If all sections Approved => Profile Approved
+    /// - If any NeedsCorrection => Profile back to InCreation (then user sees notes)
+    /// - If any Pending => fail
+    /// </summary>
     [HttpPost("{userProfileId:guid}/finalize")]
-    public async Task<IActionResult> FinalizeProfile(Guid userProfileId, [FromForm] FinalizeProfileApprovalRequest request, CancellationToken ct)
+    public async Task<IActionResult> Finalize(Guid userProfileId, [FromForm] FinalizeUserProfileReviewRequest body, CancellationToken ct)
     {
-        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
 
-        var cmd = new FinalizeProfileApprovalCommand(
-            UserId.Value,
-            userProfileId,
-            request.Action,
-            request.Notes,
-            request.Summary,
-            request.NeedsCorrectionItems ?? Array.Empty<Guid>(),
-            request.RejectionDocument,
-            request.ExceptionalFile,
-            HasManagerOverride);
+        var cmd = new FinalizeUserProfileReviewCommand(
+            OfficerId: OfficerId.Value,
+            UserProfileId: userProfileId,
+            Notes: body.Notes,
+            Summary: body.Summary);
 
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
-}
-
-public sealed class UpdateReviewItemStatusRequest
-{
-    public ReviewStatus Status { get; set; }
-    public string? Note { get; set; }
-}
-
-public sealed class FinalizeProfileApprovalRequest
-{
-    public FinalApprovalAction Action { get; set; }
-    public string? Notes { get; set; }
-    public string? Summary { get; set; }
-    public IReadOnlyCollection<Guid>? NeedsCorrectionItems { get; set; }
-    public IFormFile? RejectionDocument { get; set; }
-    public IFormFile? ExceptionalFile { get; set; }
 }

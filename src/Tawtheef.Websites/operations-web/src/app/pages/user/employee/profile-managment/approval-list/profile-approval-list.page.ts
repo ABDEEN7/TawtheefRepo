@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { MessageService, SortEvent } from 'primeng/api';
+import { SortEvent } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProfileApprovalService } from './services/profile-approval.service';
@@ -16,6 +16,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { finalize } from 'rxjs';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {routes} from '../../../../../routes/routes';
+import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
+import {NotificationService} from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-profile-approval-list-page',
@@ -27,14 +29,13 @@ import {routes} from '../../../../../routes/routes';
     Select, InputTextModule
   ],
   templateUrl: './profile-approval-list.page.html',
-  styleUrl: './profile-approval.page.scss',
-  providers: [MessageService],
+  styleUrl: './profile-approval-list.page.scss',
 })
 export class ProfileApprovalListPage implements OnInit {
   private api = inject(ProfileApprovalService);
   private router = inject(Router);
   private translate = inject(TranslateService);
-  private messages = inject(MessageService);
+  private notifications = inject(NotificationService);
 
   list = signal<ProfileApprovalListItem[]>([]);
   loadingList = signal(false);
@@ -73,11 +74,7 @@ export class ProfileApprovalListPage implements OnInit {
           this.list.set(profiles);
         },
         error: () => {
-          this.messages.add({
-            severity: 'error',
-            summary: this.translate.instant('common.error'),
-            detail: this.translate.instant('profileApproval.errors.loadList'),
-          });
+          this.notifications.error(this.translate.instant('profileApproval.errors.loadList'));
         },
       });
   }
@@ -131,10 +128,13 @@ export class ProfileApprovalListPage implements OnInit {
     }
   }
 
-  openProfile(profileId: string): void {
-    if (!profileId) return;
-    this.router.navigate([routes.employee.approvalProfileDetail(profileId)], {
-      queryParams: { changes: '1' },
-    });
+  openProfile(row: ProfileApprovalListItem): void {
+    if (!row?.userProfileId) return;
+
+    const url = row.profileStatus === ProfileStatusNumber.Approved
+      ? routes.employee.approvalProfileChanges(row.userProfileId)
+      : routes.employee.approvalProfileReview(row.userProfileId);
+
+    this.router.navigate([url]);
   }
 }

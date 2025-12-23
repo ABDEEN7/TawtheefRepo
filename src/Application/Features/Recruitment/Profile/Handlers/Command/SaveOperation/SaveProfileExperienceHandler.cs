@@ -7,10 +7,10 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -18,7 +18,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileExperienceHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileExperienceCommand, IResult<Unit>>
 {
@@ -40,10 +39,8 @@ public sealed class SaveProfileExperienceHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
 
         var validationResult = validationService.ValidateExperience(profile);
         if (validationResult.IsFailed)
@@ -122,32 +119,18 @@ public sealed class SaveProfileExperienceHandler(
 
             var entity = new TrainingCourse
             {
-                Title     = dto.Title,
-                Provider  = dto.Provider,
-                StartDate     = dto.StartDate,
-                EndDate       = dto.EndDate,
-                CountryId     = dto.CountryId,
-                Description   = dto.Description,
+                Title = dto.Title,
+                Provider = dto.Provider,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                CountryId = dto.CountryId,
+                Description = dto.Description,
                 CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty,
                 UserProfileId = profile.Id
             };
 
             profile.TrainingCourses.Add(entity);
             newTrainings.Add(entity);
-        }
-
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
-            foreach (var experience in newExperiences)
-            {
-                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Experience), experience.Id, ct);
-            }
-
-            foreach (var training in newTrainings)
-            {
-                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(TrainingCourse), training.Id, ct);
-            }
         }
 
         await uow.SaveChangesAsync(ct);
@@ -262,4 +245,50 @@ public sealed class SaveProfileExperienceHandler(
             return Result.Ok();
         }
     }
+}
+
+file sealed record PendingExperienceSnapshot
+{
+    public string? EmployerName { get; init; }
+    public string? JobTitle { get; init; }
+    public DateOnly StartDate { get; init; }
+    public DateOnly? EndDate { get; init; }
+    public Guid CountryId { get; init; }
+    public string? Description { get; init; }
+    public Guid? QualificationId { get; init; }
+    public Guid? CertificateResourceId { get; init; }
+
+    public static PendingExperienceSnapshot From(ExperienceUpsertDto dto, Guid? resourceId) => new()
+    {
+        EmployerName = dto.EmployerName,
+        JobTitle = dto.JobTitle,
+        StartDate = dto.StartDate,
+        EndDate = dto.EndDate,
+        CountryId = dto.CountryId,
+        Description = dto.Description,
+        QualificationId = dto.QualificationId,
+        CertificateResourceId = resourceId
+    };
+}
+
+file sealed record PendingTrainingSnapshot
+{
+    public string? Title { get; init; }
+    public string? Provider { get; init; }
+    public DateOnly StartDate { get; init; }
+    public DateOnly? EndDate { get; init; }
+    public Guid CountryId { get; init; }
+    public string? Description { get; init; }
+    public Guid? CertificateResourceId { get; init; }
+
+    public static PendingTrainingSnapshot From(TrainingCourseUpsertDto dto, Guid? resourceId) => new()
+    {
+        Title = dto.Title,
+        Provider = dto.Provider,
+        StartDate = dto.StartDate,
+        EndDate = dto.EndDate,
+        CountryId = dto.CountryId,
+        Description = dto.Description,
+        CertificateResourceId = resourceId
+    };
 }

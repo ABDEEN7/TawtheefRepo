@@ -26,6 +26,11 @@ public class RequestPhoneVerificationCommandHandler(
         if (user is null)
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
         
+        var phoneAlreadyUsed = await userManager.Users
+            .AnyAsync(u => u.PhoneNumber == request.PhoneE164 && u.Id != request.UserId, cancellationToken);
+        if (phoneAlreadyUsed)
+            return Result.Fail<Unit>(ErrorsCodes.PhoneAlreadyInUse);
+        
         var oneMinuteAgo = now.GetUtcNow().AddMinutes(-1);
         var lastMinuteCount = await unitOfWork.GetEntityRepository<ContactVerification>().DbSet
             .Where(x => x.UserId == request.UserId
@@ -40,7 +45,6 @@ public class RequestPhoneVerificationCommandHandler(
 
         var entity = new ContactVerification
         {
-            Id = Guid.NewGuid(),
             UserId = request.UserId!.Value,
             Type = ContactVerificationType.Phone,
             Destination = request.PhoneE164,
@@ -52,7 +56,7 @@ public class RequestPhoneVerificationCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var message = $"Your verification code is: {code}";
-        await smsSender.SendAsync(request.PhoneE164, message, cancellationToken);
+        _ = smsSender.SendAsync(request.PhoneE164, message, cancellationToken);
 
         return Result.Ok(Unit.Value);
     }

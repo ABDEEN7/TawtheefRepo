@@ -35,6 +35,7 @@ export interface ProfileStatusDto {
   missing: string[];
   isDraft: boolean;
   avatar?: string | null;
+  provider: string;
   fullNameAr?: string | null;
   fullNameEn?: string | null;
   email?: string | null;
@@ -108,6 +109,7 @@ export interface SkillDto {
   skillId: string;
   skill: dropdownOptionsModel;
   levelId: string;
+  level: dropdownOptionsModel;
 }
 export interface TrainingCourseDto {
   id: GUID;

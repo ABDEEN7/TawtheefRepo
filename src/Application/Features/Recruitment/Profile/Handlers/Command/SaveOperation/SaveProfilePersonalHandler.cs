@@ -7,8 +7,9 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -17,7 +18,6 @@ public sealed class SaveProfilePersonalHandler(
     IUnitOfWork uow,
     IMediator mediator,
     UserManager<User> userManager,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
     ) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
 {
@@ -34,31 +34,14 @@ public sealed class SaveProfilePersonalHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
-
+        
         var validationResult = validationService.ValidatePersonal(profile, cmd.Request);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
-
-        var oldFullNameAr = user.FullNameAr;
-        var oldFullNameEn = user.FullNameEn;
-        var oldNationalNumber = profile.NationalNumber;
-        var oldBirthDate = profile.BirthDate;
-        var oldQidExpiry = profile.QIDExpiry;
-        var oldNationalityId = profile.NationalityId;
-        var oldGenderId = profile.GenderId;
-        var oldReligionId = profile.ReligionId;
-        var oldMaritalStatusId = profile.MaritalStatusId;
-        var oldChildrenCount = profile.ChildrenCount;
-        var oldHasDisability = profile.HasDisability;
-        var oldDisabilityDetails = profile.DisabilityDetails;
-
-        var oldSnapshot = BuildPersonalSnapshot(user, profile);
 
         user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
         user.FullNameEn = r.FullNameEn ?? user.FullNameEn;
@@ -76,7 +59,6 @@ public sealed class SaveProfilePersonalHandler(
         profile.DisabilityDetails = r.HasDisability
             ? r.DisabilityDetails
             : null;
-
 
         if (!string.IsNullOrWhiteSpace(r.SponsorEmployerName) && !string.IsNullOrWhiteSpace(r.SponsorEmployerNumber))
         {
@@ -103,36 +85,8 @@ public sealed class SaveProfilePersonalHandler(
                 profile.SponsorProfile.QIDExpiry = r.QIDExpiry!.Value;
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
-
-            if (trackChanges && idResult.Value.HasValue)
-            {
-                await reviewService.TouchAttachmentAsync(
-                    profile.Id,
-                    ProfileSection.Personal,
-                    "Sponsor Card",
-                    idResult.Value.Value,
-                    ct);
-            }
         }
 
-        var newSnapshot = BuildPersonalSnapshot(user, profile);
-
-        if (trackChanges)
-        {
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(User.FullNameAr), ct, oldFullNameAr, user.FullNameAr);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(User.FullNameEn), ct, oldFullNameEn, user.FullNameEn);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.NationalNumber), ct, oldNationalNumber, profile.NationalNumber);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.BirthDate), ct, oldBirthDate, profile.BirthDate);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.QIDExpiry), ct, oldQidExpiry, profile.QIDExpiry);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.NationalityId), ct, oldNationalityId, profile.NationalityId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.GenderId), ct, oldGenderId, profile.GenderId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.ReligionId), ct, oldReligionId, profile.ReligionId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.MaritalStatusId), ct, oldMaritalStatusId, profile.MaritalStatusId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.ChildrenCount), ct, oldChildrenCount, profile.ChildrenCount);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.HasDisability), ct, oldHasDisability, profile.HasDisability);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Personal, nameof(UserProfile.DisabilityDetails), ct, oldDisabilityDetails, profile.DisabilityDetails);
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, ct, oldSnapshot, newSnapshot);
-        }
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         
@@ -151,21 +105,85 @@ public sealed class SaveProfilePersonalHandler(
 
             return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
         }
+    }
+}
 
-        static object BuildPersonalSnapshot(User userEntity, UserProfile profileEntity) => new
+file sealed record PersonalSectionSnapshot
+{
+    public string? FullNameAr { get; init; }
+    public string? FullNameEn { get; init; }
+    public string? NationalNumber { get; init; }
+    public DateOnly? QidExpiry { get; init; }
+    public DateOnly? BirthDate { get; init; }
+    public Guid? NationalityId { get; init; }
+    public Guid? GenderId { get; init; }
+    public Guid? ReligionId { get; init; }
+    public Guid? MaritalStatusId { get; init; }
+    public int? ChildrenCount { get; init; }
+    public bool HasDisability { get; init; }
+    public string? DisabilityDetails { get; init; }
+    public Guid? SponsorTypeId { get; init; }
+    public string? SponsorEmployerName { get; init; }
+    public string? SponsorEmployerNumber { get; init; }
+    public DateOnly? SponsorQidExpiry { get; init; }
+    public Guid? SponsorCardResourceId { get; init; }
+
+    public static PersonalSectionSnapshot From(User user, UserProfile profile)
+    {
+        return new PersonalSectionSnapshot
         {
-            userEntity.FullNameAr,
-            userEntity.FullNameEn,
-            profileEntity.NationalNumber,
-            profileEntity.BirthDate,
-            profileEntity.QIDExpiry,
-            profileEntity.NationalityId,
-            profileEntity.GenderId,
-            profileEntity.ReligionId,
-            profileEntity.MaritalStatusId,
-            profileEntity.ChildrenCount,
-            profileEntity.HasDisability,
-            profileEntity.DisabilityDetails
+            FullNameAr = user.FullNameAr,
+            FullNameEn = user.FullNameEn,
+            NationalNumber = profile.NationalNumber,
+            QidExpiry = profile.QIDExpiry,
+            BirthDate = profile.BirthDate,
+            NationalityId = profile.NationalityId,
+            GenderId = profile.GenderId,
+            ReligionId = profile.ReligionId,
+            MaritalStatusId = profile.MaritalStatusId,
+            ChildrenCount = profile.ChildrenCount,
+            HasDisability = profile.HasDisability,
+            DisabilityDetails = profile.DisabilityDetails,
+            SponsorTypeId = profile.SponsorProfile?.SponsorTypeId,
+            SponsorEmployerName = profile.SponsorProfile?.SponsorName,
+            SponsorEmployerNumber = profile.SponsorProfile?.SponsorNumber,
+            SponsorQidExpiry = profile.SponsorProfile?.QIDExpiry,
+            SponsorCardResourceId = profile.SponsorProfile?.SponsorCardId
         };
+    }
+
+    public PersonalSectionSnapshot ApplyRequest(SaveProfilePersonalRequest request, Guid? sponsorCardResourceId)
+    {
+        var snapshot = this with
+        {
+            FullNameAr = request.FullNameAr ?? FullNameAr,
+            FullNameEn = request.FullNameEn ?? FullNameEn,
+            NationalNumber = request.NationalNumber ?? NationalNumber,
+            QidExpiry = request.QIDExpiry ?? QidExpiry,
+            BirthDate = request.BirthDate ?? BirthDate,
+            NationalityId = request.NationalityId ?? NationalityId,
+            GenderId = request.GenderId ?? GenderId,
+            ReligionId = request.ReligionId ?? ReligionId,
+            MaritalStatusId = request.MaritalStatusId ?? MaritalStatusId,
+            ChildrenCount = request.ChildrenCount ?? ChildrenCount,
+            HasDisability = request.HasDisability,
+            DisabilityDetails = request.HasDisability ? request.DisabilityDetails : null
+        };
+
+        if (!string.IsNullOrWhiteSpace(request.SponsorEmployerName) &&
+            !string.IsNullOrWhiteSpace(request.SponsorEmployerNumber) &&
+            request.SponsorTypeId.HasValue)
+        {
+            snapshot = snapshot with
+            {
+                SponsorTypeId = request.SponsorTypeId,
+                SponsorEmployerName = request.SponsorEmployerName,
+                SponsorEmployerNumber = request.SponsorEmployerNumber,
+                SponsorQidExpiry = request.QIDExpiry ?? SponsorQidExpiry,
+                SponsorCardResourceId = sponsorCardResourceId ?? SponsorCardResourceId
+            };
+        }
+
+        return snapshot;
     }
 }

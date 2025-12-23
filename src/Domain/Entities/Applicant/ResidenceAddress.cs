@@ -11,14 +11,18 @@ public class ResidenceAddress : EventEntity
     public int ZoneNo { get; set; }
     public int UnitNo { get; set; }
     
-    public static ResidenceAddress Create(int buildingNo, int streetNo, int zoneNo, int unitNo)
+    public Guid CertificateId { get; set; }
+    public Resource? Certificate { get; set; }
+    
+    public static ResidenceAddress Create(int buildingNo, int streetNo, int zoneNo, int unitNo, Guid certificateId)
     {
         return new ResidenceAddress
         {
             BuildingNo = buildingNo,
             StreetNo = streetNo,
             ZoneNo = zoneNo,
-            UnitNo = unitNo
+            UnitNo = unitNo,
+            CertificateId = certificateId
         };
     }
 }

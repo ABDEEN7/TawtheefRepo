@@ -8,8 +8,9 @@
               <i class="pi pi-certificate"></i>
             </span>
             <div>
-              <h5 class="mb-0">{{ c.title || c.name || '-' }}</h5>
-              <small class="text-muted">{{ c.issuerName || c.issuer || '-' }}</small>
+              <h5 class="mb-0">{{ c.title || '-' }}</h5>
+              <small class="text-muted">{{ c.issuingAuthority || '-' }}</small>\
+              <small class="text-muted">{{ c.achievementType.name || '-' }}</small>
             </div>
           </div>
 
@@ -27,12 +28,16 @@
 
       <div class="detail-grid">
         <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.certificates.countryIssue' | translate }}</div>
+          <div class="fw-semibold">{{ c.country.name || '-' }}</div>
+        </div>
+        <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.certificates.issueDate' | translate }}</div>
           <div class="fw-semibold">{{ c.issueDate || '-' }}</div>
         </div>
         <div class="detail-tile">
-          <div class="text-muted small">{{ 'profileApproval.detail.certificates.expiryDate' | translate }}</div>
-          <div class="fw-semibold">{{ c.expiryDate || '-' }}</div>
+          <div class="text-muted small">{{ 'profileApproval.detail.certificates.description' | translate }}</div>
+          <div class="fw-semibold">{{ c.description|| '-' }}</div>
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.certificates.attachment' | translate }}</div>

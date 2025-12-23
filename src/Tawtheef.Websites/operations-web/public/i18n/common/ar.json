@@ -19,9 +19,7 @@
   "common.loading": "جارٍ التحميل",
 
   "COMMON.CONFIRM" : "التأكيد",
-  "COMMON.CANCEL" : "إالغاء"
-
-  ,
+  "COMMON.CANCEL" : "إلغاء",
   "common.save": "حفظ",
   "common.cancel": "إلغاء",
   "common.back": "رجوع",
@@ -30,8 +28,5 @@
   "common.delete": "حذف",
   "common.confirm": "تأكيد",
   "common.yes": "نعم",
-  "common.no": "لا",
-
-  "COMMON.YES": "نعم",
-
+  "common.no": "لا"
 }

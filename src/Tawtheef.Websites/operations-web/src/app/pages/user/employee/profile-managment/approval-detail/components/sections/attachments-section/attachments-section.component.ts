@@ -12,7 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class AttachmentsSectionComponent {
-  @Input() attachments: any[] | null = null;
+  @Input() attachments?: any[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
 
   preview(url?: string | null): void {

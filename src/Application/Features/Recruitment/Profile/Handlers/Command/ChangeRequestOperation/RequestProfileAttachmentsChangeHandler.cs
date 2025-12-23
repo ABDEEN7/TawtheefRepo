@@ -1,0 +1,139 @@
+using System.Text.Json;
+using FluentResults;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Validations;
+using Tawtheef.Application.Common.Services;
+using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Users;
+
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.ChangeRequestOperation;
+
+public sealed class RequestProfileAttachmentsChangeHandler(
+    IUnitOfWork uow,
+    IMediator mediator,
+    IProfileStepValidationService validationService,
+    IProfileReviewService reviewService
+) : IRequestHandler<RequestProfileAttachmentsChangeCommand, IResult<Unit>>
+{
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    public async Task<IResult<Unit>> Handle(RequestProfileAttachmentsChangeCommand cmd, CancellationToken ct)
+    {
+        var profileRepo = uow.GetEntityRepository<UserProfile>();
+        var profile = await profileRepo.DbSet
+            .Include(p => p.ResidenceAddress)
+            .Include(p => p.Qualifications)
+            .Include(p => p.Experiences)
+            .Include(p => p.TrainingCourses)
+            .Include(p => p.Achievements)
+            .Include(p => p.Skills)
+            .Include(p => p.Languages)
+            .Include(p => p.AdditionalAttachments)
+            .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
+
+        if (profile is null)
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        if (profile.Status == UserProfileStatus.InCreation)
+            return Result.Fail<Unit>(ErrorsCodes.NotSubmitted);
+
+        var validationResult = validationService.ValidateAttachments(profile);
+        if (validationResult.IsFailed)
+            return Result.Fail<Unit>(validationResult.Errors);
+
+        var attachmentsResult = Deserialize(cmd.Request.AttachmentsJson);
+        if (attachmentsResult.IsFailed)
+            return Result.Fail<Unit>(attachmentsResult.Errors);
+
+        var attachments = attachmentsResult.Value;
+        var files = cmd.Request.AttachmentFiles;
+
+        foreach (var dto in attachments)
+        {
+            var uploadResult = await UploadIfNeededAsync(
+                dto.FileIndex,
+                files,
+                ErrorsCodes.InvalidAttachmentFileIndex,
+                ErrorsCodes.InvalidAttachmentFile,
+                ct);
+
+            if (uploadResult.IsFailed)
+                return Result.Fail<Unit>(uploadResult.Errors);
+
+            var resource = uploadResult.Value;
+            if (resource is null && dto.AttachmentId is null)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
+
+            if (dto.Id.HasValue)
+                return Result.Fail<Unit>(ErrorsCodes.CanNotModifiedApprovedDocument);
+
+            var pending = new PendingAttachmentSnapshot
+            {
+                AttachmentResourceId = resource?.ResourceId ?? dto.AttachmentId,
+                FileName = resource?.ResourceName ?? dto.FileName
+            };
+
+            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Attachments, "Attachment", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+        }
+
+        await uow.SaveChangesAsync(ct);
+        return Result.Ok(Unit.Value);
+
+        static Result<List<AdditionalAttachmentUpsertDto>> Deserialize(string json)
+        {
+            try
+            {
+                var data = JsonSerializer.Deserialize<List<AdditionalAttachmentUpsertDto>>(json, JsonOptions) ?? [];
+                return Result.Ok(data);
+            }
+            catch (JsonException)
+            {
+                return Result.Fail<List<AdditionalAttachmentUpsertDto>>(ErrorsCodes.InvalidAttachmentsJson);
+            }
+        }
+
+        async Task<Result<UploadAttachmentRequest?>> UploadIfNeededAsync(
+            int? fileIndex,
+            IReadOnlyList<IFormFile> resources,
+            string invalidIndexError,
+            string invalidFileError,
+            CancellationToken cancellationToken)
+        {
+            if (fileIndex is null)
+                return Result.Ok<UploadAttachmentRequest?>(null);
+
+            if (fileIndex < 0 || fileIndex >= resources.Count)
+                return Result.Fail<UploadAttachmentRequest?>(invalidIndexError);
+
+            var file = resources[fileIndex.Value];
+            if (file is not { Length: > 0 })
+                return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
+
+            var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "additional", file, false, cancellationToken);
+            var uploadResult = await mediator.Send(
+                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                cancellationToken);
+            if (uploadResult.IsFailed)
+                return Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors);
+
+            return Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
+        }
+    }
+}
+
+file sealed record PendingAttachmentSnapshot
+{
+    public Guid? AttachmentResourceId { get; init; }
+    public string? FileName { get; init; }
+}
+

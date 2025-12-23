@@ -4,6 +4,8 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TranslateModule } from '@ngx-translate/core';
+import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-review';
+import {ProfileApprovalItem, ReviewStatus} from '../../../../approval-list/models/profile-approval.models';
 
 @Component({
   selector: 'app-profile-approval-certificates-section',
@@ -13,7 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class CertificatesSectionComponent {
-  @Input() certificates: any[] | null = null;
+  @Input() certificates?: any[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
 
   preview(url?: string | null): void {

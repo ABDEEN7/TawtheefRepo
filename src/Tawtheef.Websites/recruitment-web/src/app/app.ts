@@ -11,7 +11,4 @@ import {Toast} from 'primeng/toast';
 })
 export class App {
   protected readonly title = signal('recruitment-web');
-
-  constructor() {
-  }
 }

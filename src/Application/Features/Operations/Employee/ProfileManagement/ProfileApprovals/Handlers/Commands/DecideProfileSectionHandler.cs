@@ -1,0 +1,51 @@
+﻿using FluentResults;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Users;
+
+namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
+
+public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider time)
+    : IRequestHandler<DecideProfileSectionCommand, IResult<Unit>>
+{
+    public async Task<IResult<Unit>> Handle(DecideProfileSectionCommand cmd, CancellationToken ct)
+    {
+        var profile = await uow.GetEntityRepository<UserProfile>().DbSet
+            .FirstOrDefaultAsync(p => p.Id == cmd.UserProfileId, ct);
+
+        if (profile is null)
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+        if (profile.Status != UserProfileStatus.UnderReview)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileNotUnderReview);
+
+        if (cmd.Status != ReviewStatus.Approved && cmd.Status != ReviewStatus.NeedsCorrection)
+            return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+        if (cmd.Status == ReviewStatus.NeedsCorrection && string.IsNullOrWhiteSpace(cmd.Note))
+            return Result.Fail<Unit>(ErrorsCodes.NotesRequiredForCorrection);
+
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+
+        var item = await reviewRepo.DbSet
+            .FirstOrDefaultAsync(x =>
+                x.UserProfileId == profile.Id &&
+                x.TargetType == ReviewTargetType.Section &&
+                x.Section == cmd.Section, ct);
+        if (item is null)
+            return Result.Fail<Unit>(ErrorsCodes.ReviewItemNotFound);
+        
+        item.Status = cmd.Status;
+        item.ReviewerNote = cmd.Note;
+        item.ReviewedById = cmd.OfficerId;
+        item.ReviewedAtUtc = time.GetUtcNow().UtcDateTime;
+        item.IsOutdated = false;
+
+        await uow.SaveChangesAsync(ct);
+        return Result.Ok(Unit.Value);
+    }
+}
