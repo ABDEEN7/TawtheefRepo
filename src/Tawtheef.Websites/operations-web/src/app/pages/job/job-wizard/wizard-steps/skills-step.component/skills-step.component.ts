@@ -62,7 +62,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
     this.jobSkillsArray.removeAt(i);
   }
 
- setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
     this.note = note;
     this.jobSkillsArray.clear();
