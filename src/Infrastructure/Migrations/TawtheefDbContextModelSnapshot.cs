@@ -6368,6 +6368,10 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid?>("OfficeId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateOnly?>("QIDExpiry")
                         .HasColumnType("date");
 
