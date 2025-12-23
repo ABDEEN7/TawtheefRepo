@@ -16,8 +16,8 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
     public async Task<IResult<Unit>> Handle(FinalizeUserProfileReviewCommand cmd, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
+        
         var profile = await profileRepo.DbSet.FirstOrDefaultAsync(p => p.Id == cmd.UserProfileId, ct);
-
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 

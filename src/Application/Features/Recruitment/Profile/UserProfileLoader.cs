@@ -7,12 +7,11 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile;
 
-internal static class UserProfileLoader
+public static class UserProfileLoader
 {
     public static async Task<IResult<UserProfile>> GetOrCreateAsync(IUnitOfWork uow, 
         UserManager<User> userManager,
-        Guid userId, CancellationToken ct)
-    {
+        Guid userId, CancellationToken ct) {
         var repo = uow.GetEntityRepository<UserProfile>();
 
         var profile = await repo.DbSet.FirstOrDefaultAsync(p => p.UserId == userId, ct);
@@ -20,6 +19,7 @@ internal static class UserProfileLoader
 
         var user = await userManager.Users.FirstOrDefaultAsync(p => p.Id == userId, ct);
         if (user is null) return Result.Fail<UserProfile>(ErrorsCodes.UserNotFound);
+        
         var logins = await userManager.GetLoginsAsync(user);
         var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "") ?? "Unknown";
         profile = new UserProfile
@@ -35,8 +35,7 @@ internal static class UserProfileLoader
         return Result.Ok(profile);
     }
 
-    public static async Task<UserProfile?> GetFullProfile(IUnitOfWork uow, Guid userId, CancellationToken ct)
-    {
+    public static async Task<UserProfile?> GetFullProfile(IUnitOfWork uow, Guid userId, CancellationToken ct) {
         var repo = uow.GetEntityRepository<UserProfile>();
         var profile = await repo.DbSet.AsNoTracking().AsSplitQuery()
             .Include(p => p.User)
