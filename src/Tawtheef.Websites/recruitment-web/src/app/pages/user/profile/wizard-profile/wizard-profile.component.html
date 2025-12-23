@@ -37,17 +37,17 @@
                   <div class="card card-table bg-light">
                     <div class="card-body">
                       <ul class="nav nav-pills flex-wrap stepper" aria-label="Profile steps">
-                        <li class="nav-item" *ngFor="let label of stepLabels; let i = index">
+                        <li class="nav-item" *ngFor="let item of stepLabels; let i = index">
                           <a class="nav-link"
                              [class.active]="step===i+1"
                              [class.disabled]="!canGoTo(i+1)"
                              [attr.aria-disabled]="!canGoTo(i+1)"
                              href
                              (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
-                            <span class="step-index" [ngClass]="{'is-complete': isStepComplete(i+1), 'is-active': step===i+1}">
-                              <i class="fa-solid" [ngClass]="isStepComplete(i+1) ? 'fa-check' : 'fa-circle'"></i>
+                            <span [ngClass]="{'is-active': step===i+1}">
+                              <i class="hgi hgi-stroke fw-normal fs-16" [ngClass]="item.icon"></i>
                             </span>
-                            <span class="step-label">{{ label | translate }}</span>
+                            <span class="step-label">{{ item.label | translate }}</span>
                           </a>
                         </li>
                       </ul>

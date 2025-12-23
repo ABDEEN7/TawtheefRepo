@@ -6,7 +6,7 @@
 /*--------------------------------------------------------------
 # Vendor Imports
 --------------------------------------------------------------*/
-
+@use "assets/styles/hugeicons/css/hgi-stroke-rounded.css";
 @use "assets/styles/custom-checkbox";
 @use "assets/styles/cairo";
 
@@ -180,7 +180,7 @@ p{
 
   .nav-link {
     padding: 1rem 0.5rem;
-    font-size: 1rem;
+    font-size:1rem;
     color: $color-black;
 
     &:hover {
@@ -396,6 +396,7 @@ header.topbar {
     gap: 5px;
     display: flex;
     align-items: center;
+    justify-content: center;
 
     &.active {
       background-color: $color-primary;
