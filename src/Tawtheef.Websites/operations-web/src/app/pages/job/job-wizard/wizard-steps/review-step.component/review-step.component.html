@@ -27,12 +27,12 @@
         <div class="card-body">
           <div class="mb-3">
             <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.OVERVIEW_AR' | translate }}:</h6>
-            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.overviewAr)"></div>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.overviewAr)"></div>
           </div>
           
-          @if (jobData.overviewEn) {
+          @if (jobService.getCurrentJob()?.overviewEn) {
             <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.OVERVIEW_EN' | translate }}:</h6>
-            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.overviewEn)"></div>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.overviewEn)"></div>
           }
         </div>
       </div>
@@ -62,17 +62,17 @@
             </div>
           </div>
           
-          @if (jobData.qualificationsDescriptionAr) {
+          @if (jobService.getCurrentJob()?.qualificationsDescriptionAr) {
             <div class="mb-3">
               <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate }}:</h6>
-              <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.qualificationsDescriptionAr)"></div>
+              <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.qualificationsDescriptionAr)"></div>
             </div>
           }
 
-          @if (jobData.qualificationsDescriptionEn) {
+          @if (jobService.getCurrentJob()?.qualificationsDescriptionEn) {
             <div class="mb-3">
               <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_EN' | translate }}:</h6>
-              <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.qualificationsDescriptionEn)"></div>
+              <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.qualificationsDescriptionEn)"></div>
             </div>
           }
         </div>
@@ -97,7 +97,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row">
-            @for (responsibility of jobData.responsibilities; track $index; let i = $index) {
+            @for (responsibility of jobService.getCurrentJob()?.responsibilities; track $index; let i = $index) {
               <div class="col-md-6 mb-3">
                 <div class="border rounded p-3">
                   <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY' | translate }} {{ i + 1 }}</h6>
@@ -137,7 +137,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row">
-            @for (condition of jobData.conditions; track $index; let i = $index) {
+            @for (condition of jobService.getCurrentJob()?.conditions; track $index; let i = $index) {
               <div class="col-md-6 mb-3">
                 <div class="border rounded p-3">
                   <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.CONDITION' | translate }} {{ i + 1 }}</h6>
@@ -177,7 +177,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row">
-            @for (skill of jobData.skills; track $index; let i = $index) {
+            @for (skill of jobService.getCurrentJob()?.skills; track $index; let i = $index) {
               <div class="col-md-6 mb-3">
                 <div class="border rounded p-3">
                   <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.SKILL' | translate }} {{ i + 1 }}</h6>
@@ -213,7 +213,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row">
-            @for (attachment of jobData.requiredAttachments; track $index; let i = $index) {
+            @for (attachment of jobService.getCurrentJob()?.requiredAttachments; track $index; let i = $index) {
               <div class="col-md-6 mb-3">
                 <div class="border rounded p-3">
                   <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.ATTACHMENT' | translate }} {{ i + 1 }}</h6>
@@ -253,12 +253,12 @@
         <div class="card-body">
           <div class="mb-3">
             <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.BENEFITS_AR' | translate }}:</h6>
-            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.benefitsAr)"></div>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.benefitsAr)"></div>
           </div>
           
-          @if (jobData.benefitsEn) {
+          @if (jobService.getCurrentJob()?.benefitsEn) {
             <h6 class="fw-bold text-muted mb-2">{{ 'JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN' | translate }}:</h6>
-            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobData.benefitsEn)"></div>
+            <div class="p-3 bg-light rounded" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.benefitsEn)"></div>
           }
         </div>
       </div>

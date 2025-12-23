@@ -75,7 +75,7 @@ public sealed class ProfileCompletenessService(
             .Include(p => p.Languages)!.ThenInclude(l => l.ReadingLevel)
             
             .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment)
-            .FirstOrDefaultAsync(p => p.UserId == userId, ct);
+            .FirstOrDefaultAsync(p => p.UserId == userId, ct) ?? new UserProfile();
 
         var prefill = await BuildPrefillAsync(user, ct);
         user.Email = (user.Email?.Contains(ConstantQatarPass.PlaceholderEmailDomain) ?? true) ? null : user.Email;

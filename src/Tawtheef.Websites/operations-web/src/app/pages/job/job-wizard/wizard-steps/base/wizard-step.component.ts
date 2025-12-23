@@ -5,5 +5,5 @@ import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-re
 export abstract class WizardStepComponent {
   abstract readonly form: FormGroup;
   abstract isValid(): boolean;
-  abstract setJobData(job: Job,notes?: JobTabReviewNoteResponse | null): void;
+  setJobData?(job: Job, notes?: JobTabReviewNoteResponse | null): void;
 }

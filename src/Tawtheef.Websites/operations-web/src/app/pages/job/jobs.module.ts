@@ -36,7 +36,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { DialogHelperService } from '../../core/services/dialog-helper.service';
 import { ReviewNoteComponent } from './job-wizard/review-note/review-note.component';
-import { InputNumber } from 'primeng/inputnumber';
+import { FaDirArrowDirective } from '../../shared/directives/dir-arrow.directive';import { InputNumber } from 'primeng/inputnumber';
 import { JobPointsConfigPageComponent } from './job-points/job-points-config-page/job-points-config-page.component';
 import { JobPointsMainElementsComponent } from './job-points/job-points-main-elements/job-points-main-elements.component';
 import { JobPointsTabComponent } from './job-points/job-points-points-tab/job-points-tab.component';
@@ -85,8 +85,9 @@ import { TabsModule } from 'primeng/tabs';
     Scroller,
     Toast,
     ConfirmDialog, 
+    FaDirArrowDirective, 
     TabsModule, 
-  ],
+    ],
   exports: [
     JobDetailsComponent,
     JobListComponent,
