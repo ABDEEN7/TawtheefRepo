@@ -37,8 +37,10 @@
       <Folder Include="Features\Lookups\Commands\" />
       <Folder Include="Features\Lookups\Handlers\Commands\" />
       <Folder Include="Features\Operations\Admin\" />
-      <Folder Include="Features\Operations\Employee\" />
       <Folder Include="Features\Operations\Employee\Job\Services\Background\" />
+      <Folder Include="Features\Operations\Employee\ProfileManagement\" />
+      <Folder Include="Features\Recruitment\Profile\Command\UpdateOperation\" />
+      <Folder Include="Features\Recruitment\Profile\Handlers\Command\UpdateOperation\" />
       <Folder Include="Features\Recruitment\Website\" />
     </ItemGroup>
 

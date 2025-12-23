@@ -1,0 +1,190 @@
+
+<div class="row">
+     <div class="col-12">
+         <div class="d-flex justify-content-between align-items-center">
+           <h5 class="text-primary">{{'wizard.prereq.titleStep' | translate}}</h5>
+         </div>
+     </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-6">
+      <label for="candidateType" class="form-label required">{{ 'wizard.prereq.candidateType' | translate }}</label>
+      <p-select [options]="lookups.candidateTypes()" [(ngModel)]="ds.state().candidateType"
+                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectCandidateType' | translate"
+                (ngModelChange)="onCandidateTypeChange($event)" fluid></p-select>
+    </div>
+    <div class="col-md-6">
+      <label for="targetEntity" class="form-label required">{{ 'wizard.prereq.targetEntity' | translate }}</label>
+      <p-select [options]="lookups.targetEntities()" [(ngModel)]="ds.state().targetEntity"
+                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectTargetEntity' | translate"
+                (ngModelChange)="ds.up('targetEntity',$event)" fluid></p-select>
+    </div>
+
+    <div class="col-md-6" *ngIf="ds.state().candidateType && !ds.isResidentQatar">
+      <label for="office" class="form-label required">{{ 'wizard.prereq.officeLabel' | translate }}</label>
+      <p-select [options]="lookups.offices()" [(ngModel)]="ds.state().office"
+                [filter]="false" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectOffice' | translate"
+                (ngModelChange)="ds.up('office',$event)" fluid></p-select>
+    </div>
+
+    <div class="col-md-6" *ngIf="ds.isResidentQatar">
+      <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
+      <p-date-picker name="qidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
+                     [ngModel]="ds.state().qidExpiry" (onSelect)="onQidExpirySelect($event)"
+                     size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
+      </p-date-picker>
+    </div>
+
+    <div class="col-12"><hr></div>
+    <!-- CV -->
+    <div class="col-md-6">
+      <label class="form-label required d-flex align-items-center">
+        <span class="d-flex align-items-center gap-2">
+          {{ 'wizard.prereq.cvLabel' | translate }}
+        </span>
+      </label>
+
+      <div class="upload-field"
+           (click)="cvInput.click()">
+
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().cvName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().cvName"
+               class="cursor-pointer"
+               (click)="previewFile('cv', $event)"/>
+        </div>
+
+        <div class="upload-field__text">
+          {{ ds.state().cvName || ('wizard.prereq.cvLabel' | translate) }}
+        </div>
+
+        <input #cvInput
+               type="file"
+               class="d-none"
+               accept=".jpg,.jpeg,.png,.pdf"
+               (change)="onFileSelected('cv', $event)" />
+      </div>
+    </div>
+    <!-- ID -->
+    <div class="col-md-6" *ngIf="ds.state().candidateType">
+      <label class="form-label required d-flex align-items-center">
+        <span class="d-flex align-items-center gap-2">
+          @if(!ds.isResidentQatar){
+            {{ `wizard.prereq.id.${ds.state().candidateType?.backendName}.label` | translate }}
+          } @else {
+            {{ 'wizard.prereq.idLabel' | translate }}
+          }
+        </span>
+      </label>
+
+      <div class="upload-field"
+           (click)="idInput.click()">
+
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().idName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().idName"
+               class="cursor-pointer"
+               (click)="previewFile('id', $event)"/>
+        </div>
+
+        <div class="upload-field__text">
+          {{ ds.state().idName || ('wizard.prereq.idLabel' | translate) }}
+        </div>
+
+        <input #idInput
+               type="file"
+               class="d-none"
+               accept=".jpg,.jpeg,.png,.pdf"
+               (change)="onFileSelected('id', $event)" />
+      </div>
+    </div>
+    <!-- Birth Certificate -->
+    <div class="col-md-6" *ngIf="ds.isNeedBirthCertificate">
+      <label class="form-label required d-flex align-items-center">
+        <span class="d-flex align-items-center gap-2">
+          {{ 'wizard.prereq.birthCertificate' | translate }}
+          <button *ngIf="canPreview('birth')"
+                  type="button"
+                  class="btn btn-link p-0 fz-2xs"
+                  (click)="previewFile('birth', $event)">
+          </button>
+        </span>
+        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
+      </label>
+
+      <div class="upload-field"
+           (click)="birthInput.click()">
+
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().birthCertificateName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().birthCertificateName"
+               class="cursor-pointer"
+               (click)="previewFile('birth', $event)"/>
+        </div>
+
+        <div class="upload-field__text">
+          {{ ds.state().birthCertificateName || ('wizard.prereq.birthCertificate' | translate) }}
+        </div>
+
+        <input #birthInput
+               type="file"
+               class="d-none"
+               accept=".jpg,.jpeg,.png,.pdf"
+               (change)="onFileSelected('birth', $event)" />
+      </div>
+    </div>
+
+    <!-- Marriage Certificate -->
+    <div class="col-md-6" *ngIf="ds.isNeedMarriageCertificate">
+      <label class="form-label required d-flex align-items-center">
+        <span class="d-flex align-items-center gap-2">
+          {{ 'wizard.prereq.marriageCertificate' | translate }}
+          <button *ngIf="canPreview('marriage')"
+                  type="button"
+                  class="btn btn-link p-0 fz-2xs"
+                  (click)="previewFile('marriage', $event)">
+          </button>
+        </span>
+        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
+      </label>
+
+      <div class="upload-field"
+           (click)="marriageInput.click()">
+
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().marriageCertificateName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().marriageCertificateName"
+               class="cursor-pointer"
+               (click)="previewFile('marriage', $event)"/>
+        </div>
+
+        <div class="upload-field__text">
+          {{ ds.state().marriageCertificateName || ('wizard.prereq.marriageCertificate' | translate) }}
+        </div>
+
+        <input #marriageInput
+               type="file"
+               class="d-none"
+               accept=".jpg,.jpeg,.png,.pdf"
+               (change)="onFileSelected('marriage', $event)" />
+      </div>
+    </div>
+  </div>
+  <div class="row text-end mt-4">
+     <div class="col-12">
+       <button class="btn btn-brand" type="button" (click)="onNext()" [disabled]="saving">
+          <span *ngIf="!saving">
+            {{ 'wizard.buttons.next' | translate }}
+            <i class="fa-solid ms-1" faDirArrow="end"></i>
+          </span>
+               <span *ngIf="saving">
+            <i class="fa-solid fa-spinner fa-spin me-1"></i>
+                 {{ 'wizard.buttons.saving' | translate }}
+          </span>
+       </button>
+     </div>
+
+</div>

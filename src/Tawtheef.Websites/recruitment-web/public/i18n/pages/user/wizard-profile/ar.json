@@ -338,5 +338,6 @@
   "wizard.profile.courses.attachment.required": "يرجى إرفاق شهادة الدورة",
   "wizard.profile.experience.attachment.required": "يرجى إرفاق شهادة الخبرة",
   "wizard.profile.achievements.attachment.required": "يرجى إرفاق شهادة الإنجاز",
-  "wizard.profile.degrees.certificate.required": "يرجى إرفاق شهادة المؤهل"
+  "wizard.profile.degrees.certificate.required": "يرجى إرفاق شهادة المؤهل",
+  "wizard.languages.saveError": "حدث خطأ أثناء حفظ اللغات."
 }

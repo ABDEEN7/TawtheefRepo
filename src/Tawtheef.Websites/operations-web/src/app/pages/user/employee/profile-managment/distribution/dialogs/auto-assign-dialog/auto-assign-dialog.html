@@ -1,0 +1,76 @@
+<p class="text-muted mb-3">{{ 'distribution.dialog.auto.subtitle' | translate }}</p>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-6">
+    <label class="form-label">{{ 'distribution.dialog.auto.count' | translate }}</label>
+    <p-input-number
+      [ngModel]="limit()"
+      (onInput)="limit.set($event.value)"
+      mode="decimal"
+      inputStyleClass="form-control"
+      [placeholder]="'distribution.auto.limitPlaceholder' | translate"
+      [min]="1"
+    ></p-input-number>
+  </div>
+
+  <div class="col-md-6">
+    <div class="selection-summary">
+      <div class="fw-semibold">{{ 'distribution.summary.selected' | translate }}</div>
+      <div class="display-6">{{ selectedCount() }}</div>
+      <div class="small text-muted">{{ 'distribution.dialog.auto.selectionHint' | translate }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="auto-grid">
+  <div class="auto-tile" *ngFor="let employee of employees()">
+    <div class="d-flex justify-content-between align-items-center gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <p-avatar
+          [label]="employee.name[0]"
+          shape="circle"
+          class="bg-primary text-white"
+        ></p-avatar>
+        <div>
+          <div class="fw-semibold">{{ employee.name }}</div>
+          <div class="small text-muted">
+            {{ availabilityLabel(employee.availability) | translate }}
+          </div>
+        </div>
+      </div>
+
+      <p-toggle-switch
+        [ngModel]="selectedEmployeeIds().has(employee.employeeId)"
+        (onChange)="toggleEmployee(employee.employeeId)"
+        [disabled]="!available(employee)"
+      ></p-toggle-switch>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap mt-2">
+      <span class="pill neutral small-pill">
+        {{ 'distribution.employees.total' | translate }} {{ employee.totalAssigned }}
+      </span>
+      <span class="pill success small-pill">
+        {{ 'distribution.employees.completed' | translate }} {{ employee.completed }}
+      </span>
+      <span class="pill info small-pill">
+        {{ 'distribution.employees.inReview' | translate }} {{ employee.inReview }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 flex-wrap mt-4">
+  <button pButton class="p-button-text" type="button" (click)="cancel()">
+    {{ 'distribution.actions.cancel' | translate }}
+  </button>
+
+  <button
+    pButton
+    type="button"
+    (click)="confirm()"
+    [disabled]="pickedCount() === 0 || selectedCount() === 0">
+    <span pButtonLabel>{{'distribution.auto.assign' | translate}}</span>
+    <i class="pi pi-play" pButtonIcon></i>
+  </button>
+</div>

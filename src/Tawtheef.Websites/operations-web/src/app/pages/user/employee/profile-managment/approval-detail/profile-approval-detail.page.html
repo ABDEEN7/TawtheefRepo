@@ -1,16 +1,16 @@
-<section class="approval-page" i18nNamespace="pages/profile-approval" dir="rtl">
+<section class="approval-page" i18nNamespace="pages/profile-approval" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
   <div class="container container-narrow">
-    <!-- HEADER -->
     <div class="wizard-card" *ngIf="detail() as info">
       <div class="wizard-head d-flex flex-wrap justify-content-between gap-3 align-items-start">
         <div class="d-flex flex-wrap gap-3 align-items-center">
-          <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-chevron-right" (click)="backToList()">
-            {{ 'common.back' | translate }}
+          <button pButton type="button" class="p-button-text p-button-sm d-inline" (click)="backToList()">
+            <i pButtonIcon [faDirArrow]="'start'"></i>
+            <span pButtonLabel>{{ 'common.back' | translate }}</span>
           </button>
 
           <div class="avatar-stack d-inline-flex align-items-center gap-3">
             <span class="avatar-ring">
-              <p-avatar size="xlarge" shape="circle" [image]="info.profile?.profilePhoto || 'assets/img/avatar.png'"></p-avatar>
+              <p-avatar size="xlarge" shape="circle" [image]="info.profile.profilePhoto || 'assets/img/avatar.png'"></p-avatar>
             </span>
             <div class="head-title">
               <p class="title mb-1 text-uppercase">{{ 'profileApproval.detail.eyebrow' | translate }}</p>
@@ -24,59 +24,85 @@
                   <i class="pi pi-user"></i>
                   <span>{{ 'profileApproval.detail.candidateType' | translate }}: {{ info.candidateType }}</span>
                 </span>
-                <span class="pill" *ngIf="info.targetEntityCategory">
-                  <i class="pi pi-sitemap"></i>
-                  <span>{{ 'profileApproval.detail.recruiterCategory' | translate }}: {{ info.targetEntityCategory }}</span>
-                </span>
                 <span class="pill" *ngIf="info.profile?.basicInformation?.email">
                   <i class="pi pi-envelope"></i>
-                  <span>{{ 'profileApproval.detail.snapshot.email' | translate }}: {{ info.profile?.basicInformation?.email }}</span>
+                  <span>{{ 'profileApproval.detail.snapshot.email' | translate }}: {{ info.profile.basicInformation.email }}</span>
                 </span>
                 <span class="pill" *ngIf="info.profile?.basicInformation?.phoneNumber">
                   <i class="pi pi-phone"></i>
                   <span>
                     {{ 'profileApproval.detail.snapshot.phoneNumber' | translate }}:
-                    {{ info.profile?.basicInformation?.phoneNumber }}
+                    {{ info.profile.basicInformation.phoneNumber }}
                   </span>
                 </span>
                 <span class="pill" *ngIf="info.profile?.basicInformation?.residenceCountry">
                   <i class="pi pi-globe"></i>
                   <span>
                     {{ 'profileApproval.detail.snapshot.residenceCountry' | translate }}:
-                    {{ info.profile?.basicInformation?.residenceCountry }}
+                    {{ info.profile.basicInformation.residenceCountry }}
                   </span>
-                </span>
-                <span class="pill" *ngIf="info.profile?.basicInformation?.address">
-                  <i class="pi pi-map-marker"></i>
-                  <span>{{ 'profileApproval.detail.snapshot.address' | translate }}: {{ info.profile?.basicInformation?.address }}</span>
-                </span>
-                <span class="pill" *ngIf="info.specialization">
-                  <i class="pi pi-star"></i>
-                  <span>{{ 'profileApproval.detail.specialization' | translate }}: {{ info.specialization }}</span>
                 </span>
                 <span class="pill">
                   <i class="pi pi-calendar"></i>
                   <span>{{ info.submittedAtUtc | date: 'dd/MM/yyyy' }}</span>
                 </span>
-                <span class="pill">
-                  <i class="pi pi-hashtag"></i>
-                  <span>{{ info.submissionVersion || '-' }}</span>
-                </span>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="summary-panel mt-3">
+        <div class="summary-card status-card">
+          <div class="summary-label">{{ 'profileApproval.detail.reviewState' | translate }}</div>
+          <div class="status-pill" [ngClass]="profileStatusClass(info.profileStatus)">
+            <i class="pi" [ngClass]="profileStatusIcon(info.profileStatus)"></i>
+            <span>{{ profileStatusLabelKey(info.profileStatus) | translate }}</span>
+          </div>
+          <div class="summary-meta">
+            <span *ngIf="info.submissionVersion != null">
+              {{ 'profileApproval.detail.submissionVersion' | translate }}: {{ info.submissionVersion }}
+            </span>
+            <span *ngIf="info.specialization">
+              {{ 'profileApproval.detail.specialization' | translate }}: {{ info.specialization }}
+            </span>
+            <span *ngIf="info.submittedAtUtc">
+              {{ 'profileApproval.detail.submittedAt' | translate }}:
+              {{ info.submittedAtUtc | date: 'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
 
-        <div class="d-flex gap-2 flex-wrap align-items-center justify-content-end">
-          <span class="badge bg-info" *ngIf="info.isInitialReview">
-            {{ 'profileApproval.detail.initialReview' | translate }}
-          </span>
-          <span class="badge bg-warning" *ngIf="info.isPartialReview">
-            {{ 'profileApproval.detail.partialReview' | translate }}
-          </span>
+        <div class="summary-card progress-card" *ngIf="sectionProgress(info) as progress">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="summary-label">{{ 'profileApproval.detail.progress.title' | translate }}</div>
+            <div class="progress-badge">{{ progress.percent }}%</div>
+          </div>
+          <p-progressBar [value]="progress.percent" [showValue]="false"></p-progressBar>
+          <div class="progress-meta d-flex flex-wrap gap-2 mt-2">
+            <span class="mini-chip">
+              <i class="pi pi-check-circle"></i>
+              {{ 'profileApproval.detail.progress.reviewed' | translate: { count: progress.reviewed, total: progress.total } }}
+            </span>
+            <span class="mini-chip">
+              <i class="pi pi-hourglass"></i>
+              {{ 'profileApproval.detail.progress.pending' | translate: { count: progress.pending } }}
+            </span>
+          </div>
+        </div>
+
+        <div class="summary-card action-card" *ngIf="!isChangesMode()">
+          <div class="summary-label">{{ 'profileApproval.detail.actions.title' | translate }}</div>
+          <div class="d-flex flex-wrap gap-2">
+            <button pButton type="button"
+                    class="p-button-outlined"
+                    (click)="startReview()"
+                    [disabled]="loadingDetail() || !canStartReviewUi()">
+              <i pButtonIcon class="pi pi-play"></i>
+              <span pButtonLabel>{{ 'profileApproval.detail.startReview' | translate }}</span>
+            </button>
+          </div>
         </div>
       </div>
-
       <!-- STEPPER -->
       <ng-container *ngIf="progressStats(info) as stats">
         <div class="insight-grid mt-3">
@@ -101,26 +127,6 @@
               <span>{{ stats.approvedSections }}</span>
             </div>
           </div>
-          <div class="insight-card soft-info">
-            <div class="label">{{ 'profileApproval.detail.verification.pendingItems' | translate }}</div>
-            <div class="value">
-              <i class="pi pi-list-check text-info"></i>
-              <span>{{ stats.pendingItems }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="d-flex justify-content-end mt-2">
-          <button
-            pButton
-            type="button"
-            class="p-button-rounded p-button-outlined"
-            icon="pi pi-compass"
-            iconPos="right"
-            [disabled]="!firstAttentionSection(info)"
-            (click)="jumpToAttention(info)"
-            [label]="'profileApproval.detail.verification.jumpToAttention' | translate"
-          ></button>
         </div>
       </ng-container>
 
@@ -128,11 +134,75 @@
         class="d-block mt-3"
         [sections]="stepperSections(info)"
         [activeSection]="activeSection()"
-        (sectionChange)="activeSection.set($event)"
+        (sectionChange)="onStepperChange($event)"
       ></app-profile-approval-stepper>
+
+      <div class="alert alert-info mt-3 d-flex flex-wrap align-items-center justify-content-between gap-2" *ngIf="isChangesMode()">
+        <div class="flex-grow-1">
+          {{ 'profileApproval.detail.partialNotice' | translate }}
+        </div>
+        <button pButton type="button"
+                class="p-button-sm p-button-outlined"
+                (click)="toggleChangesFocusMode()">
+          <i pButtonIcon class="pi" [ngClass]="changesFocusMode() ? 'pi-eye' : 'pi-filter'"></i>
+          <span pButtonLabel>
+            {{
+              (changesFocusMode()
+                ? 'profileApproval.detail.mode.switchToFull'
+                : 'profileApproval.detail.mode.switchToChanges') | translate
+            }}
+          </span>
+        </button>
+      </div>
+
+      <div class="finalize-card mt-3" *ngIf="!isChangesMode()">
+        <div class="finalize-head">
+          <span class="icon-circle">
+            <i class="pi pi-clipboard"></i>
+          </span>
+          <div>
+            <div class="finalize-title">{{ 'profileApproval.final.tabTitle' | translate }}</div>
+            <div class="finalize-subtitle">{{ 'profileApproval.final.subtitle' | translate }}</div>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-2">
+          <div class="col-12 col-lg-6">
+            <label class="lbl form-label">{{ 'profileApproval.final.summaryHeader' | translate }}</label>
+            <textarea
+              pInputTextarea
+              rows="4"
+              class="w-100"
+              [(ngModel)]="finalizeSummary"
+              [placeholder]="'profileApproval.final.summaryPlaceholder' | translate">
+            </textarea>
+          </div>
+          <div class="col-12 col-lg-6">
+            <label class="lbl form-label">{{ 'profileApproval.final.actionNote' | translate }}</label>
+            <textarea
+              pInputTextarea
+              rows="4"
+              class="w-100"
+              [(ngModel)]="finalizeNote"
+              [placeholder]="'profileApproval.final.actionNotePlaceholder' | translate">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+          <div class="text-muted small" *ngIf="!canFinalizeUi()">
+            {{ 'profileApproval.detail.finalizeHint' | translate }}
+          </div>
+          <button pButton type="button"
+                  (click)="finalize()"
+                  [disabled]="loadingDetail() || !canFinalizeUi()">
+            <i pButtonIcon class="pi pi-check"></i>
+            <span pButtonLabel>{{ 'profileApproval.detail.finalize' | translate }}</span>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- LOADING / ERROR -->
     <div class="state" *ngIf="loadingDetail()">
       <p-progressSpinner strokeWidth="4"></p-progressSpinner>
       <div class="hint">{{ 'profileApproval.tabs.loading' | translate }}</div>
@@ -142,148 +212,116 @@
       {{ error() }}
     </div>
 
-    <!-- BODY -->
     <main class="page-body" *ngIf="detail() as info">
-      <ng-container *ngIf="info.profile as profile">
-        <!-- القسم النشط -->
-        <ng-container *ngFor="let sec of orderedSections(info)">
+        <ng-container *ngIf="info.profile as profile">
+          <ng-container *ngFor="let sec of orderedSections(info)">
           <section class="section-wrap" *ngIf="activeSection() === sec.section">
             <div class="section-title">
               <i class="{{ sectionIcon(sec.section) }}"></i>
               <h3>{{ sectionName(sec.section) | translate }}</h3>
             </div>
-
             <div class="row g-3">
-              <div class="col-12 col-xl-8">
+              <div class="col-12" *ngIf="!isChangesMode() || !changesFocusMode()">
                 <div class="section-card p-3 bg-white rounded-4 shadow-sm h-100">
                   <ng-container [ngSwitch]="sec.section">
-                    <!-- 1) Basic Info -->
-                    <app-profile-approval-basic-info-section
+                    <app-profile-approval-first-info-section
                       *ngSwitchCase="1"
+                      [profile]="profile"
+                      (viewFile)="previewFile($event)"
+                    ></app-profile-approval-first-info-section>
+
+                    <app-profile-approval-basic-info-section
+                      *ngSwitchCase="2"
                       [profile]="profile"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-basic-info-section>
 
-                    <!-- 3) Qualifications -->
-                    <app-profile-approval-qualifications-section
+                    <app-profile-approval-contact-info-section
                       *ngSwitchCase="3"
+                      [profile]="profile"
+                      (viewFile)="previewFile($event)"
+                    ></app-profile-approval-contact-info-section>
+
+                    <app-profile-approval-qualifications-section
+                      *ngSwitchCase="4"
                       [qualifications]="profile.qualifications"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-qualifications-section>
 
-                    <!-- 4) Experiences -->
                     <app-profile-approval-experiences-section
-                      *ngSwitchCase="4"
+                      *ngSwitchCase="5"
                       [experiences]="profile.experiences"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-experiences-section>
 
-                    <!-- 5) Training -->
                     <app-profile-approval-training-section
-                      *ngSwitchCase="5"
+                      *ngSwitchCase="6"
                       [trainingCourses]="profile.trainingCourses"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-training-section>
 
-                    <!-- 6) Certificates -->
                     <app-profile-approval-certificates-section
-                      *ngSwitchCase="6"
+                      *ngSwitchCase="7"
                       [certificates]="profile.professionalCertificatesAndAwards"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-certificates-section>
 
-                    <!-- 7) Skills & Languages -->
-                    <app-profile-approval-skills-languages-section
-                      *ngSwitchCase="7"
-                      [skillsAndLanguages]="profile.skillsAndLanguages"
+                    <app-profile-approval-skills-section
+                      *ngSwitchCase="8"
+                      [skills]="profile.skills"
+                    ></app-profile-approval-skills-section>
+
+                    <app-profile-approval-languages-section
+                      *ngSwitchCase="9"
                       [languages]="profile.languages"
-                    ></app-profile-approval-skills-languages-section>
+                    ></app-profile-approval-languages-section>
 
-                    <!-- 9) Attachments & Photo -->
-                    <ng-container *ngSwitchCase="9">
-                      <app-profile-approval-attachments-section
-                        [attachments]="profile.attachments"
-                        (viewFile)="previewFile($event)"
-                      ></app-profile-approval-attachments-section>
-
-                      <app-profile-approval-photo-section
-                        [profilePhoto]="profile.profilePhoto || null"
-                      ></app-profile-approval-photo-section>
-                    </ng-container>
-
-                    <!-- 10) Final review summary -->
-                    <ng-container *ngSwitchCase="10">
-                      <div class="final-review-block">
-                        <div class="d-flex align-items-start gap-2 mb-3">
-                          <i class="pi pi-clipboard"></i>
-                          <div>
-                            <h4 class="mb-1">{{ 'profileApproval.finalReview.title' | translate }}</h4>
-                            <p class="text-muted mb-0">{{ 'profileApproval.finalReview.subtitle' | translate }}</p>
-                          </div>
-                        </div>
-
-                        <div class="detail-grid mb-3">
-                          <div class="detail-tile">
-                            <div class="text-muted small">{{ 'profileApproval.finalReview.counts.approved' | translate }}</div>
-                            <div class="fw-semibold">{{ finalStatusSummary(info).approved }}</div>
-                          </div>
-                          <div class="detail-tile">
-                            <div class="text-muted small">{{ 'profileApproval.finalReview.counts.changes' | translate }}</div>
-                            <div class="fw-semibold">{{ finalStatusSummary(info).changes }}</div>
-                          </div>
-                          <div class="detail-tile">
-                            <div class="text-muted small">{{ 'profileApproval.finalReview.counts.rejected' | translate }}</div>
-                            <div class="fw-semibold">{{ finalStatusSummary(info).rejected }}</div>
-                          </div>
-                          <div class="detail-tile">
-                            <div class="text-muted small">{{ 'profileApproval.finalReview.counts.pending' | translate }}</div>
-                            <div class="fw-semibold">{{ finalStatusSummary(info).pending }}</div>
-                          </div>
-                        </div>
-
-                        <div class="review-list">
-                          <div class="d-flex justify-content-between align-items-center py-2 border-bottom" *ngFor="let s of orderedSections(info)">
-                            <div class="fw-semibold">{{ sectionName(s.section) | translate }}</div>
-                            <span class="fw-semibold" [ngClass]="sectionStatusClass(s.sectionReview?.status)">
-                              {{ sectionStatusLabel(s.sectionReview?.status) }}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div class="text-end mt-3">
-                          <button
-                            pButton
-                            type="button"
-                            class="p-button-success"
-                            icon="pi pi-send"
-                            iconPos="right"
-                            (click)="sendApprovalReport()"
-                            [label]="'profileApproval.finalReview.sendReport' | translate"
-                          ></button>
-                        </div>
-                      </div>
-                    </ng-container>
+                    <app-profile-approval-attachments-section
+                      *ngSwitchCase="10"
+                      [attachments]="profile.attachments"
+                      (viewFile)="previewFile($event)"
+                    ></app-profile-approval-attachments-section>
 
                     <div *ngSwitchDefault class="text-center text-muted py-4">
                       {{ 'profileApproval.detail.snapshot.noEntries' | translate }}
                     </div>
                   </ng-container>
-
-                  <app-profile-review-items
-                    [items]="sectionItems(sec.section)"
-                    [titleKey]="'profileApproval.detail.reviewItems.title'"
-                    (review)="handleItemReview($event)"
-                    (viewFile)="previewFile($event)"
-                  ></app-profile-review-items>
                 </div>
               </div>
-
-              <div class="col-12 col-xl-4">
-                <p-card class="approve-card h-100">
+              <div class="col-12">
+                <p-card class="approve-card h-100 p-3" *ngIf="!isChangesMode(); else changesReviewTpl">
                   <ng-template pTemplate="header">
+                    <span class="ms-2 pill pill-warning" *ngIf="draftDirty[sec.section]">
+                      <i class="pi pi-pencil"></i>
+                      <span class="ms-1">{{ 'profileApproval.detail.sectionApproval.unsaved' | translate }}</span>
+                    </span>
                     <div class="approve-head d-inline-flex align-items-center gap-2">
                       <i class="pi pi-clipboard"></i>
                       <h4 class="mb-0">{{ 'profileApproval.detail.sectionApproval.title' | translate }}</h4>
+
+                      <!-- Saved indicator (from server) -->
+                      <ng-container *ngIf="sec.sectionReview?.status as savedStatus">
+                        <span class="ms-2 pill"
+                              [ngClass]="{
+                                'pill-success': savedStatus === ReviewStatus.Approved,
+                                'pill-danger': savedStatus === ReviewStatus.NeedsCorrection
+                              }">
+                          <i class="pi"
+                             [ngClass]="{
+                               'pi-check-circle': savedStatus === ReviewStatus.Approved,
+                               'pi-flag-fill': savedStatus === ReviewStatus.NeedsCorrection
+                             }"></i>
+                          <span class="ms-1">
+                            {{ 'profileApproval.detail.sectionApproval.savedAs' | translate }}:
+                            <ng-container *ngIf="savedStatus === ReviewStatus.Approved">
+                              {{ 'profileApproval.status.approved' | translate }}
+                            </ng-container>
+                            <ng-container *ngIf="savedStatus === ReviewStatus.NeedsCorrection">
+                              {{ 'profileApproval.status.needsCorrection' | translate }}
+                            </ng-container>
+                          </span>
+                        </span>
+                      </ng-container>
                     </div>
                   </ng-template>
 
@@ -295,10 +333,9 @@
                         [options]="reviewStatusOptions"
                         optionValue="value"
                         optionLabel="labelKey"
-                        [ngModel]="sec.sectionReview?.status"
+                        [ngModel]="draftStatus[sec.section]"
                         [placeholder]="'profileApproval.detail.sectionApproval.statusPlaceholder' | translate"
-                        (onChange)="onSectionStatusChange(sec, $event.value)"
-                      >
+                        (onChange)="onSectionStatusChange(sec.section, $event.value)">
                         <ng-template pTemplate="selectedItem" let-opt>
                           <span *ngIf="opt">{{ opt.labelKey | translate }}</span>
                           <span *ngIf="!opt">{{ 'profileApproval.detail.sectionApproval.statusPlaceholder' | translate }}</span>
@@ -307,30 +344,73 @@
                           {{ opt.labelKey | translate }}
                         </ng-template>
                       </p-select>
+                      <!-- Optional small hint if not chosen -->
+                      <div class="text-muted small mt-2" *ngIf="!draftStatus[sec.section] || draftStatus[sec.section] === ReviewStatus.Pending">
+                        {{ 'profileApproval.detail.sectionApproval.statusRequiredHint' | translate }}
+                      </div>
                     </div>
 
                     <div class="field col-12">
-                      <label class="lbl form-label">{{ 'profileApproval.detail.sectionApproval.notesLabel' | translate }}</label>
+                      <label class="lbl form-label">
+                        {{ 'profileApproval.detail.sectionApproval.notesLabel' | translate }}
+                        <span class="req" *ngIf="draftStatus[sec.section] === ReviewStatus.NeedsCorrection">*</span>
+                      </label>
+
                       <textarea
                         pInputTextarea
                         rows="3"
                         class="w-100"
-                        [ngModel]="sec.sectionReview?.note || ''"
-                        (ngModelChange)="onSectionNoteChange(sec, $event)"
-                        [placeholder]="'profileApproval.detail.sectionApproval.notesPlaceholder' | translate"
-                      ></textarea>
+                        [ngModel]="draftNote[sec.section] || ''"
+                        (ngModelChange)="onSectionNoteChange(sec.section, $event)"
+                        [placeholder]="'profileApproval.detail.sectionApproval.notesPlaceholder' | translate">
+                      </textarea>
+
+                      <!-- Note required validation -->
+                      <div class="text-danger small mt-2" *ngIf="noteRequired(sec.section)">
+                        {{ 'profileApproval.detail.sectionApproval.noteRequired' | translate }}
+                      </div>
                     </div>
                   </div>
 
-                  <div class="nav d-flex justify-content-between gap-2 mt-3">
-                    <button pButton type="button" class="p-button-text" icon="pi pi-angle-right" (click)="goPrev(info)">
-                      {{ 'profileApproval.detail.sectionApproval.prev' | translate }}
-                    </button>
-                    <button pButton type="button" class="p-button-primary" icon="pi pi-angle-left" iconPos="right" (click)="goNext(info)">
-                      {{ 'profileApproval.detail.sectionApproval.next' | translate }}
+                  <!-- Actions -->
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button pButton type="button"
+                            class="p-button-outlined"
+                            (click)="saveSectionDecision(sec.section)"
+                            [disabled]="isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section)">
+                      <ng-container *ngIf="!isSaving(sec.section); else savingTpl">
+                        <i pButtonIcon class="pi pi-save"></i>
+                        <span pButtonLabel>{{ 'profileApproval.detail.sectionApproval.save' | translate }}</span>
+                      </ng-container>
+
+                      <ng-template #savingTpl>
+                        <i pButtonIcon class="pi pi-spin pi-spinner"></i>
+                        <span pButtonLabel>{{ 'profileApproval.detail.sectionApproval.saving' | translate }}</span>
+                      </ng-template>
                     </button>
                   </div>
                 </p-card>
+
+                <ng-template #changesReviewTpl>
+                  <p-card class="approve-card h-100 p-3">
+                    <ng-template pTemplate="header">
+                      <div class="approve-head d-inline-flex align-items-center gap-2">
+                        <i class="pi pi-clipboard"></i>
+                        <h4 class="mb-0">{{ 'profileApproval.detail.reviewItems.title' | translate }}</h4>
+                      </div>
+                    </ng-template>
+
+                    <app-profile-review-items
+                      [items]="sec.items ?? []"
+                      (review)="onReviewItemAction($event)"
+                      (viewFile)="previewFile($event)"
+                    ></app-profile-review-items>
+
+                    <div class="text-muted text-center py-3" *ngIf="!sec.items?.length">
+                      {{ 'profileApproval.detail.noItems' | translate }}
+                    </div>
+                  </p-card>
+                </ng-template>
               </div>
             </div>
           </section>

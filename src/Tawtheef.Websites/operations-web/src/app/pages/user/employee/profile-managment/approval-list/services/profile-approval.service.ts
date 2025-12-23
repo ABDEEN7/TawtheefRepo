@@ -8,6 +8,7 @@ import {
 } from '../models/profile-approval.models';
 import {EndpointsService} from '../../../../../../core/http/endpoints.service';
 import {HttpService} from '../../../../../../core/http/http.service';
+import {FinalizeProfileApprovalRequest} from '../models/profile-approval-finalize.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileApprovalService {
@@ -26,18 +27,22 @@ export class ProfileApprovalService {
     return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.changesDetail(profileId));
   }
 
-  reviewItem(reviewItemId: string, status: ReviewStatus, note?: string): Observable<void> {
-    return this.http.request<void>('PATCH', this.endpoints.approvals.reviewItem(reviewItemId), {
-      body: {
-        status,
-        note,
-      },
-    });
+  decideReviewItem(reviewItemId: string, body: { status: ReviewStatus; note: string | null }) {
+    return this.http.put<void>(this.endpoints.approvals.reviewItem(reviewItemId), body);
   }
 
-  finalizeProfile(profileId: string, body: FormData): Observable<void> {
-    return this.http.request<void>('POST', this.endpoints.approvals.finalize(profileId), {
-      body,
-    });
+  finalizeProfile(profileId: string, request: FinalizeProfileApprovalRequest): Observable<void> {
+    const body = new FormData();
+    if (request.summary) body.append('Summary', request.summary);
+    if (request.note) body.append('Notes', request.note);
+    if (request.exceptionalFile) body.append('ExceptionalFile', request.exceptionalFile);
+
+    return this.http.post<void>(this.endpoints.approvals.finalize(profileId), { body });
+  }
+  decideSection(userProfileId: string, section: string, body: { status: ReviewStatus; note: string | null }) {
+    return this.http.put(this.endpoints.approvals.decision(userProfileId, section), body);
+  }
+  startReview(profileId: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.approvals.startReview(profileId), null);
   }
 }

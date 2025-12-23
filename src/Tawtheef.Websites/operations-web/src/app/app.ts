@@ -12,13 +12,4 @@ import {Toast} from 'primeng/toast';
 })
 export class App {
   protected readonly title = signal('recruitment-web');
-  private translate = inject(TranslateService);
-  private language = inject(LanguageService);
-
-  constructor() {
-    this.translate.addLangs(['ar', 'en']);
-    this.translate.setFallbackLang('ar');
-    this.translate.use('ar');
-    this.language.set(this.translate.getCurrentLang() as 'ar' | 'en');
-  }
 }

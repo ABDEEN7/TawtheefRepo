@@ -1,0 +1,23 @@
+.review-bar {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #ddd;
+
+  &.Approved {
+    border-color: #198754;
+  }
+
+  &.Rejected {
+    border-color: #dc3545;
+  }
+
+  &.ChangesRequested {
+    border-color: #ffc107;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+}

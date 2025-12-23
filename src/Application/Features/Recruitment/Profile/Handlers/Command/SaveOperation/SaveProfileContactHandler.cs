@@ -6,9 +6,10 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -16,7 +17,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileContactHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileContactCommand, IResult<Unit>>
 {
@@ -30,30 +30,14 @@ public sealed class SaveProfileContactHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
-
-        var oldResidenceCountryId = profile.ResidenceCountryId;
-        var oldInterviewLocationId = profile.InterviewLocationId;
-        var oldAddress = profile.Address;
-        var oldNationalAddress = profile.ResidenceAddress is null ? null : new
-        {
-            profile.ResidenceAddress.ZoneNo,
-            profile.ResidenceAddress.StreetNo,
-            profile.ResidenceAddress.BuildingNo,
-            profile.ResidenceAddress.UnitNo
-        };
-        var oldCertificateId = profile.ResidenceAddressCertificateId;
-
-        var oldSnapshot = BuildContactSnapshot(profile);
-
         var validationResult = validationService.ValidateContact(profile, cmd.Request);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
+
+        if (profile.Status is not UserProfileStatus.InCreation)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         profile.ResidenceCountryId = r.ResidenceCountryId;
         profile.InterviewLocationId = r.InterviewLocationId;
@@ -61,11 +45,15 @@ public sealed class SaveProfileContactHandler(
 
         if (r.NationalAddress is not null)
         {
+            var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress, profile.ResidenceAddress?.CertificateId);
+            if (idResult.IsFailed)
+                return Result.Fail<Unit>(idResult.Errors);
+            
             if (profile.ResidenceAddress is null)
             {
                 profile.ResidenceAddress =
                     ResidenceAddress.Create(r.NationalAddress.Building, r.NationalAddress.Street,
-                        r.NationalAddress.Zone, r.NationalAddress.Unit);
+                        r.NationalAddress.Zone, r.NationalAddress.Unit, idResult.Value!.Value);
             }
             else
             {
@@ -74,41 +62,12 @@ public sealed class SaveProfileContactHandler(
                 profile.ResidenceAddress.StreetNo = r.NationalAddress.Street;
                 profile.ResidenceAddress.BuildingNo = r.NationalAddress.Building;
                 profile.ResidenceAddress.UnitNo = r.NationalAddress.Unit;
+                profile.ResidenceAddress.CertificateId = idResult.Value!.Value;
             }
-
-            var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress, profile.ResidenceAddressCertificateId);
-            if (idResult.IsFailed)
-                return Result.Fail<Unit>(idResult.Errors);
-            profile.ResidenceAddressCertificateId = idResult.Value;
 
         }
         var newSnapshot = BuildContactSnapshot(profile);
 
-        if (trackChanges)
-        {
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, nameof(UserProfile.ResidenceCountryId), ct, oldResidenceCountryId, profile.ResidenceCountryId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, nameof(UserProfile.InterviewLocationId), ct, oldInterviewLocationId, profile.InterviewLocationId);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, nameof(UserProfile.Address), ct, oldAddress, profile.Address);
-            await reviewService.TouchFieldAsync(profile.Id, ProfileSection.Contact, "ResidenceAddress", ct, oldNationalAddress, profile.ResidenceAddress is null ? null : new
-            {
-                profile.ResidenceAddress.ZoneNo,
-                profile.ResidenceAddress.StreetNo,
-                profile.ResidenceAddress.BuildingNo,
-                profile.ResidenceAddress.UnitNo
-            });
-            if (oldCertificateId.HasValue || profile.ResidenceAddressCertificateId.HasValue)
-            {
-                await reviewService.TouchAttachmentAsync(
-                    profile.Id,
-                    ProfileSection.Contact,
-                    "National Address Certificate",
-                    profile.ResidenceAddressCertificateId ?? oldCertificateId!.Value,
-                    ct,
-                    oldCertificateId,
-                    profile.ResidenceAddressCertificateId);
-            }
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Contact, ct, oldSnapshot, newSnapshot);
-        }
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         
@@ -136,7 +95,55 @@ public sealed class SaveProfileContactHandler(
             profileEntity.ResidenceAddress?.StreetNo,
             profileEntity.ResidenceAddress?.BuildingNo,
             profileEntity.ResidenceAddress?.UnitNo,
-            profileEntity.ResidenceAddressCertificateId
+            ResidenceAddressCertificateId = profileEntity.ResidenceAddress?.CertificateId
         };
+    }
+}
+
+file sealed record ContactSectionSnapshot
+{
+    public Guid? ResidenceCountryId { get; init; }
+    public Guid? InterviewLocationId { get; init; }
+    public string? Address { get; init; }
+    public int? Zone { get; init; }
+    public int? Street { get; init; }
+    public int? Building { get; init; }
+    public int? Unit { get; init; }
+    public Guid? NationalAddressCertificateId { get; init; }
+
+    public static ContactSectionSnapshot From(UserProfile profile) => new()
+    {
+        ResidenceCountryId = profile.ResidenceCountryId,
+        InterviewLocationId = profile.InterviewLocationId,
+        Address = profile.Address,
+        Zone = profile.ResidenceAddress?.ZoneNo,
+        Street = profile.ResidenceAddress?.StreetNo,
+        Building = profile.ResidenceAddress?.BuildingNo,
+        Unit = profile.ResidenceAddress?.UnitNo,
+        NationalAddressCertificateId = profile.ResidenceAddress?.CertificateId
+    };
+
+    public ContactSectionSnapshot ApplyRequest(SaveProfileContactRequest request, Guid? certificateResourceId)
+    {
+        var snapshot = this with
+        {
+            ResidenceCountryId = request.ResidenceCountryId,
+            InterviewLocationId = request.InterviewLocationId,
+            Address = request.Address ?? Address
+        };
+
+        if (request.NationalAddress is not null)
+        {
+            snapshot = snapshot with
+            {
+                Zone = request.NationalAddress.Zone,
+                Street = request.NationalAddress.Street,
+                Building = request.NationalAddress.Building,
+                Unit = request.NationalAddress.Unit,
+                NationalAddressCertificateId = certificateResourceId ?? NationalAddressCertificateId
+            };
+        }
+
+        return snapshot;
     }
 }

@@ -4,21 +4,22 @@ import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {TranslatePipe} from '@ngx-translate/core';
-import {WizardProfileModule} from './wizard-profile/wizard-profile.module';
 import {userRoutes} from './user.routes';
 import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
-import {Dashboard} from './dashboard/dashboard';
+import {WizardProfileModule} from './profile/wizard-profile/wizard-profile.module';
+import {ProfileEditShellModule} from './profile/edit/profile-edit-shell.module';
 
 @NgModule({
   imports: [
     RouterModule.forChild(userRoutes),
+    I18nNamespaceDirective,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     NgbModalModule,
     TranslatePipe,
     WizardProfileModule,
-    I18nNamespaceDirective
+    ProfileEditShellModule,
   ]
 })
 export class UserModule {}

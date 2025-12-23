@@ -1,0 +1,27 @@
+@use "../../../../../../../styles/base/variables" as *;
+
+
+.tagify { margin-bottom: .5rem; }
+
+table.table {
+  thead th { font-weight: 700; }
+  tbody td { vertical-align: middle; }
+}
+.step-skills {
+  .text-brand { color: #7b1e3a; }
+  .section-head { margin-bottom: .5rem; }
+
+  .skill-chip {
+    background: rgba(0,0,0,.04);
+    border: 1px dashed rgba(0,0,0,.07);
+  }
+
+  .bg-soft {
+    background: rgba(123, 30, 58, .08);
+    color: #7b1e3a;
+    font-weight: 600;
+  }
+
+  .w-language { min-width: 180px; }
+  .w-level { min-width: 160px; }
+}

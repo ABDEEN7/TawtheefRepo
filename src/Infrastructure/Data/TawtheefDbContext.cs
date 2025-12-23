@@ -82,7 +82,6 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<LoginAttempt> LoginAttempt { get; set; }
     public DbSet<ContactVerification> ContactVerification { get; set; }
     public DbSet<UserSession> UserSession { get; set; }
-    public DbSet<ProfileSubmission> ProfileSubmission { get; set; }
     public DbSet<ApplicationRole> RolesExtended { get; set; }
     
     // Applicant Tables
@@ -95,7 +94,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Achievement> Achievement { get; set; }
     public DbSet<ProfileAdditionalAttachment> AdditionalAttachmentApplicant { get; set; }
 
-    public DbSet<ProfileChange> ProfileChange { get; set; }
+    public DbSet<ProfileChangeRequest> ProfileChangeRequests { get; set; }
     public DbSet<ReviewItem> ReviewItem { get; set; }
     public DbSet<ProfileAssignment> ProfileAssignment { get; set; }
     public DbSet<ProfileReviewDecision> ProfileReviewDecision { get; set; }

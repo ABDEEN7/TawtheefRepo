@@ -27,9 +27,9 @@ public class ProviderLoginConfiguration : LookupBaseConfiguration<ProviderLogin>
             },
             new ProviderLogin
             {
-                Id = ProviderLoginIds.Azure,
-                BackendName = nameof(ProviderLoginIds.Azure),
-                NameEn = "Azure",
+                Id = ProviderLoginIds.AzureAD,
+                BackendName = nameof(ProviderLoginIds.AzureAD),
+                NameEn = "AzureAD",
                 NameAr = "أزور",
                 DisplayOrder = 3
             }

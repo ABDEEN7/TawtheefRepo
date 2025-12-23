@@ -7,11 +7,12 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile.Validators;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -19,7 +20,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileEducationHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService)
     : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
 {
@@ -47,10 +47,8 @@ public sealed class SaveProfileEducationHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
 
         var validationResult = validationService.ValidateEducation(profile);
         if (validationResult.IsFailed)
@@ -144,22 +142,7 @@ public sealed class SaveProfileEducationHandler(
             }
         }
 
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Qualifications, ct);
-            foreach (var qualification in newQualifications.Concat(updatedQualifications))
-            {
-                await reviewService.TouchRowAsync(
-                    profile.Id,
-                    ProfileSection.Qualifications,
-                    nameof(Qualification),
-                    qualification.Id,
-                    ct);
-            }
-        }
-
         await uow.SaveChangesAsync(ct);
-
         return Result.Ok(Unit.Value);
     }
 
@@ -273,4 +256,32 @@ public sealed class SaveProfileEducationHandler(
 
         return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
+}
+
+file sealed record PendingQualificationSnapshot
+{
+    public Guid? DegreeId { get; init; }
+    public Guid? GradCountryId { get; init; }
+    public Guid? UniversityId { get; init; }
+    public Guid? MajorId { get; init; }
+    public Guid? SubMajorId { get; init; }
+    public Guid? StudyTypeId { get; init; }
+    public Guid? GradeId { get; init; }
+    public int? GradYear { get; init; }
+    public decimal? Gpa { get; init; }
+    public Guid? AttachmentResourceId { get; init; }
+
+    public static PendingQualificationSnapshot From(SaveProfileEducationDegreeDto dto, Guid? attachmentResourceId) => new()
+    {
+        DegreeId = dto.DegreeId,
+        GradCountryId = dto.GradCountryId,
+        UniversityId = dto.UniversityId,
+        MajorId = dto.MajorId,
+        SubMajorId = dto.SubMajorId,
+        StudyTypeId = dto.StudyTypeId,
+        GradeId = dto.GradeId,
+        GradYear = dto.GradYear,
+        Gpa = dto.Gpa,
+        AttachmentResourceId = attachmentResourceId
+    };
 }

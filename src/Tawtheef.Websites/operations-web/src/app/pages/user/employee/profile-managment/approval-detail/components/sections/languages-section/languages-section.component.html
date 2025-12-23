@@ -1,0 +1,38 @@
+<div class="row g-3">
+  <div class="col-12 col-lg-6">
+    <p-card class="shadow-sm h-100 section-panel">
+      <ng-template pTemplate="header">
+        <div class="card-head">
+          <span class="icon-circle text-primary bg-light">
+            <i class="pi pi-language"></i>
+          </span>
+          <span class="fw-bold">{{ 'profileApproval.detail.skills.languagesTitle' | translate }}</span>
+        </div>
+      </ng-template>
+
+      <div class="chip-stack" *ngIf="languages?.length; else emptyLanguages">
+        <div class="language-card" *ngFor="let l of languages">
+          <div class="language-title">{{ displayOption(l.language, l.languageId) }}</div>
+          <div class="language-levels">
+            <span class="badge rounded-pill text-bg-light">
+              {{ 'profileApproval.detail.snapshot.speaking' | translate }}:
+              <strong>{{ displayOption(l.speakingLevel, l.speakingLevelId) }}</strong>
+            </span>
+            <span class="badge rounded-pill text-bg-light">
+              {{ 'profileApproval.detail.snapshot.writing' | translate }}:
+              <strong>{{ displayOption(l.writingLevel, l.writingLevelId) }}</strong>
+            </span>
+            <span class="badge rounded-pill text-bg-light">
+              {{ 'profileApproval.detail.snapshot.reading' | translate }}:
+              <strong>{{ displayOption(l.readingLevel, l.readingLevelId) }}</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <ng-template #emptyLanguages>
+    <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+  </ng-template>
+</div>

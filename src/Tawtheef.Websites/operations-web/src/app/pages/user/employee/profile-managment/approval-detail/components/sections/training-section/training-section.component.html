@@ -40,6 +40,10 @@
           <div class="fw-semibold">{{ t.startDate || '-' }} - {{ t.endDate || '-' }}</div>
         </div>
         <div class="detail-tile">
+          <div class="text-muted small">{{ 'profileApproval.detail.training.relation' | translate }}</div>
+          <div class="fw-semibold">{{ relationLabel(t.specializationRelation) }}</div>
+        </div>
+        <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.training.attachment' | translate }}</div>
           <div class="fw-semibold d-flex align-items-center gap-2">
             <p-tag *ngIf="t.attachment?.fileName" severity="info" [value]="t.attachment.fileName"></p-tag>

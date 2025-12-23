@@ -125,61 +125,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OfficeSupportedCountry", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CountryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(98);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<Guid>("OfficeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("OfficeId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("OfficeSupportedCountry", "lkp");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Achievement", b =>
                 {
                     b.Property<Guid>("Id")
@@ -310,6 +255,9 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<Guid?>("QualificationId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("SpecializationRelation")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
@@ -533,64 +481,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("ProfileSkill", "pro");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.ProfileSubmission", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTimeOffset?>("DeletedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(98);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<string>("SnapshotJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SubmittedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTimeOffset?>("UpdatedDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnOrder(96);
-
-                    b.Property<Guid>("UserProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("ProfileSubmission", "pro");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Qualification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -696,6 +586,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<int>("BuildingNo")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(93);
@@ -734,6 +627,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CertificateId");
 
                     b.HasIndex("CreatedById");
 
@@ -785,6 +680,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<string>("Provider")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SpecializationRelation")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
@@ -1399,6 +1297,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             CandidateTypeId = new Guid("7b06bc91-88b3-46ec-b6cc-ef2338864d41"),
+                            ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
+                        },
+                        new
+                        {
+                            CandidateTypeId = new Guid("50f14c55-d5f0-4bba-930e-ab73b012e6cb"),
                             ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
                         },
                         new
@@ -3462,12 +3365,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("e0575116-ea2b-4917-965f-214048a4c78b"),
-                            BackendName = "Azure",
+                            BackendName = "AzureAD",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DisplayOrder = 3,
                             IsDeleted = false,
                             NameAr = "أزور",
-                            NameEn = "Azure"
+                            NameEn = "AzureAD"
                         });
                 });
 
@@ -4610,16 +4513,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "مسؤول النظام",
                             NameEn = "Administrator"
-                        },
-                        new
-                        {
-                            Id = new Guid("5d1970fe-8398-44c0-88ea-560521933912"),
-                            BackendName = "OfficeUser",
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DisplayOrder = 4,
-                            IsDeleted = false,
-                            NameAr = "موظف مكتب",
-                            NameEn = "OfficeUser"
                         });
                 });
 
@@ -5785,14 +5678,24 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("ProfileAssignment", "hr");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.ProfileChange", b =>
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.ProfileChangeRequest", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
                     b.Property<string>("AttachmentTitle")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("CanceledAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CanceledById")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uniqueidentifier")
@@ -5810,27 +5713,51 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnOrder(98);
 
-                    b.Property<Guid?>("EntityId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("EntityName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("FieldPath")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
+                    b.Property<Guid?>("NewResourceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("NewValue")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OldResourceId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("OldValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ResourceId")
+                    b.Property<DateTime>("RequestedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RequestedById")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ReviewedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ReviewedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReviewerNote")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("Section")
                         .HasColumnType("int");
@@ -5838,8 +5765,10 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("TargetType")
-                        .HasColumnType("int");
+                    b.Property<string>("TargetKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<Guid?>("UpdatedById")
                         .HasColumnType("uniqueidentifier")
@@ -5860,9 +5789,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.HasIndex("UserProfileId");
+                    b.HasIndex("UserProfileId", "TargetKey")
+                        .IsUnique()
+                        .HasFilter("[Status] IN (1,2)");
 
-                    b.ToTable("ProfileChange", "hr");
+                    b.HasIndex("UserProfileId", "Section", "Status");
+
+                    b.ToTable("ProfileChangeRequest", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.ProfileReviewDecision", b =>
@@ -5938,9 +5871,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("ApprovedAtVersion")
-                        .HasColumnType("int");
-
                     b.Property<string>("ApprovedHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -5988,8 +5918,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid?>("ResourceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("ReviewedAtUtc")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("ReviewedAtUtc")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("ReviewedById")
                         .HasColumnType("uniqueidentifier");
@@ -6016,9 +5946,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -6134,9 +6061,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<bool>("IsSystemRole")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -6161,56 +6085,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082"),
-                            ConcurrencyStamp = "bda2236c-3cf0-4803-9c42-f88593b23a18",
-                            DescriptionAr = "مدير النظام الكامل",
-                            DescriptionEn = "Full system administrator",
-                            IsSystemRole = true,
-                            Name = "SystemAdmin",
-                            NameAr = "مدير النظام",
-                            NameEn = "System Admin",
-                            NormalizedName = "SystemAdmin"
-                        },
-                        new
-                        {
-                            Id = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd"),
-                            ConcurrencyStamp = "eda92d98-8077-432e-911e-ac4c72cce0a5",
-                            DescriptionAr = "مدير شؤون الموظفين",
-                            DescriptionEn = "Human resources administrator",
-                            IsSystemRole = true,
-                            Name = "HRAdmin",
-                            NameAr = "مدير الموارد البشرية",
-                            NameEn = "HR Admin",
-                            NormalizedName = "HRAdmin"
-                        },
-                        new
-                        {
-                            Id = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca"),
-                            ConcurrencyStamp = "d11c2b48-8b06-4d7a-9080-952675794347",
-                            DescriptionAr = "مدير المكتب والصلاحيات المرتبطة",
-                            DescriptionEn = "Office administrator",
-                            IsSystemRole = true,
-                            Name = "OfficeAdmin",
-                            NameAr = "مدير المكتب",
-                            NameEn = "Office Admin",
-                            NormalizedName = "OfficeAdmin"
-                        },
-                        new
-                        {
-                            Id = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8"),
-                            ConcurrencyStamp = "9bc357a0-c1c0-4263-8f16-a3c9aa83f917",
-                            DescriptionAr = "موظف المكتب العادي",
-                            DescriptionEn = "Office user",
-                            IsSystemRole = true,
-                            Name = "OfficeUser",
-                            NameAr = "موظف المكتب",
-                            NameEn = "Office User",
-                            NormalizedName = "OfficeUser"
-                        });
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.SponsorProfile", b =>
@@ -6500,9 +6374,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid?>("ReligionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ResidenceAddressCertificateId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("ResidenceAddressId")
                         .HasColumnType("uniqueidentifier");
 
@@ -6556,17 +6427,11 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("NationalCardId");
 
-                    b.HasIndex("NationalNumber")
-                        .IsUnique()
-                        .HasFilter("[NationalNumber] IS NOT NULL");
-
                     b.HasIndex("NationalityId");
 
                     b.HasIndex("OfficeId");
 
                     b.HasIndex("ReligionId");
-
-                    b.HasIndex("ResidenceAddressCertificateId");
 
                     b.HasIndex("ResidenceAddressId");
 
@@ -6582,6 +6447,10 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId")
                         .IsUnique();
+
+                    b.HasIndex("NationalNumber", "NationalityId")
+                        .IsUnique()
+                        .HasFilter("[NationalNumber] IS NOT NULL AND [NationalityId] IS NOT NULL");
 
                     b.ToTable("UserProfile", "app");
                 });
@@ -6757,18 +6626,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.OfficeUser", b =>
-                {
-                    b.HasBaseType("Tawtheef.Domain.Entities.Users.User");
-
-                    b.Property<Guid>("OfficeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("OfficeId");
-
-                    b.HasDiscriminator().HasValue("OfficeUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.ApplicationRole", null)
@@ -6818,46 +6675,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("OfficeSupportedCountry", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Office", "Office")
-                        .WithMany("SupportedCountries")
-                        .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Country");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("Office");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Achievement", b =>
@@ -7122,30 +6939,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UserProfile");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.ProfileSubmission", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Qualification", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Resource", "Certificate")
@@ -7235,6 +7028,12 @@ namespace Tawtheef.Infrastructure.Migrations
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.ResidenceAddress", b =>
                 {
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "Certificate")
+                        .WithMany()
+                        .HasForeignKey("CertificateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
@@ -7249,6 +7048,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Certificate");
 
                     b.Navigation("CreatedBy");
 
@@ -8820,7 +8621,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UserProfile");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.ProfileChange", b =>
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.ProfileChangeRequest", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
                         .WithMany()
@@ -8902,7 +8703,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.ProfileChange", "ProfileChange")
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.ProfileChangeRequest", "ProfileChange")
                         .WithMany()
                         .HasForeignKey("ProfileChangeId");
 
@@ -9055,10 +8856,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ReligionId");
 
-                    b.HasOne("Tawtheef.Domain.Entities.Resource", "ResidenceAddressCertificate")
-                        .WithMany()
-                        .HasForeignKey("ResidenceAddressCertificateId");
-
                     b.HasOne("Tawtheef.Domain.Entities.Applicant.ResidenceAddress", "ResidenceAddress")
                         .WithMany()
                         .HasForeignKey("ResidenceAddressId");
@@ -9119,8 +8916,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("ResidenceAddress");
 
-                    b.Navigation("ResidenceAddressCertificate");
-
                     b.Navigation("ResidenceCountry");
 
                     b.Navigation("ResumeAttachment");
@@ -9166,17 +8961,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.OfficeUser", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Office", "Office")
-                        .WithMany("OfficeUsers")
-                        .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Office");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.CandidateType", b =>
                 {
                     b.Navigation("CandidateTypeProviderLogins");
@@ -9190,13 +8974,6 @@ namespace Tawtheef.Infrastructure.Migrations
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", b =>
                 {
                     b.Navigation("SubMajors");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Office", b =>
-                {
-                    b.Navigation("OfficeUsers");
-
-                    b.Navigation("SupportedCountries");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ProviderLogin", b =>

@@ -24,7 +24,6 @@
           ></button>
         </div>
       </ng-template>
-
       <div class="detail-grid">
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.level' | translate }}</div>
@@ -32,7 +31,7 @@
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.country' | translate }}</div>
-          <div class="fw-semibold">{{ q.country?.name || q.countryId || '-' }}</div>
+          <div class="fw-semibold">{{ q.gradCountry?.name || q.gradCountryId || '-' }}</div>
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.university' | translate }}</div>
@@ -60,7 +59,7 @@
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.studySystem' | translate }}</div>
-          <div class="fw-semibold">{{ q.studySystem?.name || q.studySystemId || '-' }}</div>
+          <div class="fw-semibold">{{ q.studyType?.name || q.studyTypeId || '-' }}</div>
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.attachment' | translate }}</div>

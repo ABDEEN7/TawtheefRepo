@@ -23,7 +23,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     [StringLength(2048)]
     public string? Avatar { get; set; }
     public Guid UserTypeId { get; set; }
-    public UserType? UserType { get; set; }
+    public UserType? UserType { get; init; }
     
     public Guid? CreatedById { get; set; }
     public DateTimeOffset CreatedDate { get; set; }

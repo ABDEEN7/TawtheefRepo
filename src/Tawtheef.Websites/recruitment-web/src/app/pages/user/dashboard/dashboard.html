@@ -1,231 +1,260 @@
 
 
-<header class="py-3 header-hero" i18nNamespace="pages/user/dashboard">
-  <div class="container d-flex align-items-center justify-content-between">
-    <div>
-      <h4 class="mb-1 text-brand fw-bold">{{ 'candidate_dashboard.subtitle' | translate }}</h4>
-      <div class="text-muted small">{{ 'candidate_dashboard.description' | translate }}</div>
-    </div>
-    <div class="d-flex align-items-center gap-3">
-      <span class="badge rounded-pill text-bg-light border">
-        {{ 'candidate_dashboard.total_records' | translate }}: {{ totalItems() }}
-      </span>
-    </div>
-  </div>
-</header>
+<div class="card card-table mb-4" i18nNamespace="pages/user/dashboard">
+     <div class="card-body">
+         <div class="container-fluid">
+             <div class="row">
+                  <div class="col-md-9">
+                      <h4 class="mb-1 text-brand fw-bold">{{ 'candidate_dashboard.subtitle' | translate }}</h4>
+                      <p class="m-0">{{ 'candidate_dashboard.description' | translate }}</p>
+                  </div>
+                  <div class="col-md-3">
+                       <div class="d-flex justify-content-end align-items-center gap-3"><span class="btn btn-outline-primary btn-sm rounded-pill border">{{ 'candidate_dashboard.total_records' | translate }}: {{ totalItems() }}</span></div>
+                  </div>
+             </div>
+             <div class="row mt-4">
+                  <div class="col-12">
+                      <div class="card card-table">
+                           <div class="card-body">
+                             <!-- KPIs -->
+                             <div class="row">
+                               <div class="col-md-3">
+                                 <div class="shadow-sm card card-table bg-info-light border-0">
+                                      <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                          <div class="d-flex flex-column">
+                                              <div class="h2 fw-bold">{{ getNewInvitationCount() }}</div>
+                                              <p class="m-0">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</p>
+                                          </div>
+                                          <div><i class="hgi hgi-stroke hgi-star text-blue h2"></i></div>
+                                      </div>
 
-<main class="py-4">
-  <div class="container">
-    <!-- KPIs -->
-    <div class="row g-3 mb-3">
-      <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center kpi">
-          <div class="small text-muted">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</div>
-          <div class="h4 fw-bold text-primary">{{ getNewInvitationCount() }}</div>
-<!--          TODO-->
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center kpi">
-          <div class="small text-muted">{{ 'candidate_dashboard.kpi_under_review' | translate }}</div>
-          <div class="h4 fw-bold text-warning">{{ getUnderReviewCount() }}</div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center kpi">
-          <div class="small text-muted">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</div>
-          <div class="h4 fw-bold text-danger">{{ getWithdrawnCount() }}</div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center kpi">
-          <div class="small text-muted">{{ 'candidate_dashboard.kpi_applied' | translate }}</div>
-          <div class="h4 fw-bold text-success">{{ getAppliedCount() }}</div>
-        </div>
-      </div>
-    </div>
+                                 </div>
 
-    <!-- Filters -->
-    <div class="card border-0 shadow-sm p-3 mb-3">
-      <div class="row g-2">
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
-          <p-select
-            [options]="candidateService.invitationStatuses()"
-            [showClear]="true"
-            [placeholder]="'candidate_dashboard.filter_all' | translate"
-            name="invitationStatuses"
-            (onChange)="this.onFilterChange()"
-            [filter]="true"
-            [(ngModel)]="selectedInvitationStatus"
-            filterBy="name"
-            optionLabel="name"
-            optionValue="id"
-            size="small"
-            class="form-select form-select-sm"
-          ></p-select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
-          <p-select
-            [options]="candidateService.jobCategories()"
-            [showClear]="true"
-            [placeholder]="'candidate_dashboard.filter_all' | translate"
-            name="jobCategories"
-            (onChange)="this.onFilterChange()"
-            [filter]="true"
-            [(ngModel)]="selectedCategory"
-            filterBy="name"
-            optionLabel="name"
-            optionValue="backendName"
-            size="small"
-            class="form-select form-select-sm"
-          ></p-select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
-          <p-select
-            [options]="candidateService.departments()"
-            [showClear]="true"
-            [placeholder]="'candidate_dashboard.filter_all' | translate"
-            name="departments"
-            (onChange)="this.onFilterChange()"
-            [filter]="true"
-            [(ngModel)]="selectedDepartment"
-            filterBy="name"
-            optionLabel="name"
-            optionValue="id"
-            size="small"
-            class="form-select form-select-sm"
-          ></p-select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>
-          <input
-            [(ngModel)]="jobTitle"
-            (input)="this.onFilterChange()"
-            class="form-control form-control-sm"
-            [placeholder]="'candidate_dashboard.placeholder_search' | translate">
-        </div>
-      </div>
-      <div class="text-end pt-2">
-        <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm btn-pill">
-          <i class="fa fa-rotate-left"></i> {{ 'candidate_dashboard.clear_filters' | translate }}
-        </button>
-      </div>
-    </div>
+                               </div>
+                               <div class="col-md-3">
+                                 <div class="shadow-sm card card-table bg-success-light border-0">
+                                      <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                          <div class="d-flex flex-column">
+                                              <div class="h2 fw-bold text-dark">{{ getUnderReviewCount() }}</div>
+                                              <p class="m-0">{{ 'candidate_dashboard.kpi_under_review' | translate }}</p>
+                                          </div>
+                                          <div><i class="hgi hgi-stroke hgi-checkmark-circle-02 text-success h2"></i></div>
+                                      </div>
+                                 </div>
+                               </div>
+                               <div class="col-md-3">
+                                 <div class="shadow-sm card card-table bg-alert-light border-0">
+                                      <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                          <div class="d-flex flex-column">
+                                              <div class="h2 fw-bold">{{ getWithdrawnCount() }}</div>
+                                              <p class="m-0">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</p>
 
-    <!-- Table -->
-    <div class="card border-0 shadow-sm">
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>{{ 'candidate_dashboard.column_job' | translate }}</th>
-            <th>{{ 'candidate_dashboard.column_entity' | translate }}</th>
-            <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
-            <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
-            <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
-            <th class="text-end">{{ 'candidate_dashboard.column_actions' | translate }}</th>
-          </tr>
-          </thead>
-          <tbody>
-            @if (this.candidateInvitations().length === 0) {
-              <tr>
-                <td colspan="7" class="text-center text-muted py-4">
-                  {{ 'candidate_dashboard.no_results' | translate }}
-                </td>
-              </tr>
-            } @else {
-              @for (record of this.candidateInvitations(); track record.invitationId; let i = $index) {
-                <tr>
-                  <td>{{ (this.currentPage() - 1) * this.itemsPerPage() + i + 1 }}</td>
-                  <td class="fw-bold">{{ record.jobTitle }}</td>
-                  <td>{{ record.departmentName }}</td>
-                  <td>
+                                          </div>
+                                          <div><i class="hgi hgi-stroke hgi-comment-01 text-warning h2"></i></div>
+                                      </div>
+
+                                 </div>
+                               </div>
+                               <div class="col-md-3">
+                                 <div class="shadow-sm card card-table bg-warning-light border-0">
+                                      <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                          <div class="d-flex  flex-column">
+                                                <div class="h2 fw-bold">{{ getAppliedCount() }}</div>
+                                                <p class="m-0">{{ 'candidate_dashboard.kpi_applied' | translate }}</p>
+                                          </div>
+                                          <div><i class="hgi hgi-stroke hgi-cancel-circle text-danger h2"></i></div>
+                                      </div>
+                                 </div>
+                               </div>
+                             </div>
+
+                           </div>
+                      </div>
+                  </div>
+             </div>
+             <div class="row mt-4">
+                 <div class="col-12">
+                      <div class="card card-table">
+                           <div class="card-body">
+                             <div class="row g-2">
+                               <div class="col-md-3">
+                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
+                                 <p-select
+                                   [options]="candidateService.invitationStatuses()"
+                                   [showClear]="true"
+                                   [placeholder]="'candidate_dashboard.filter_all' | translate"
+                                   name="invitationStatuses"
+                                   (onChange)="this.onFilterChange()"
+                                   [filter]="true"
+                                   [(ngModel)]="selectedInvitationStatus"
+                                   filterBy="name"
+                                   optionLabel="name"
+                                   optionValue="id"
+                                   size="small"
+                                   class="form-select"
+                                 ></p-select>
+                               </div>
+                               <div class="col-md-3">
+                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
+                                 <p-select
+                                   [options]="candidateService.jobCategories()"
+                                   [showClear]="true"
+                                   [placeholder]="'candidate_dashboard.filter_all' | translate"
+                                   name="jobCategories"
+                                   (onChange)="this.onFilterChange()"
+                                   [filter]="true"
+                                   [(ngModel)]="selectedCategory"
+                                   filterBy="name"
+                                   optionLabel="name"
+                                   optionValue="backendName"
+                                   size="small"
+                                   class="form-select"
+                                 ></p-select>
+                               </div>
+                               <div class="col-md-3">
+                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
+                                 <p-select
+                                   [options]="candidateService.departments()"
+                                   [showClear]="true"
+                                   [placeholder]="'candidate_dashboard.filter_all' | translate"
+                                   name="departments"
+                                   (onChange)="this.onFilterChange()"
+                                   [filter]="true"
+                                   [(ngModel)]="selectedDepartment"
+                                   filterBy="name"
+                                   optionLabel="name"
+                                   optionValue="id"
+                                   size="small"
+                                   class="form-select"
+                                 ></p-select>
+                               </div>
+                               <div class="col-md-3">
+                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>
+                                 <input
+                                   [(ngModel)]="jobTitle"
+                                   (input)="this.onFilterChange()"
+                                   class="form-control"
+                                   [placeholder]="'candidate_dashboard.placeholder_search' | translate">
+                               </div>
+                               <div class="text-end pt-2">
+                                 <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm btn-pill">
+                                   <i class="fa fa-rotate-left"></i> {{ 'candidate_dashboard.clear_filters' | translate }}
+                                 </button>
+                               </div>
+                             </div>
+                           </div>
+                      </div>
+                 </div>
+             </div>
+             <div class="row mt-4">
+                  <div class="col-12">
+                       <!-- Table -->
+                       <div class="table-card rounded overflow-hidden">
+                         <div class="table-responsive">
+                           <table class="table table-bordered table-hover align-middle w-100">
+                             <thead class="table-light">
+                             <tr>
+                               <th>#</th>
+                               <th>{{ 'candidate_dashboard.column_job' | translate }}</th>
+                               <th>{{ 'candidate_dashboard.column_entity' | translate }}</th>
+                               <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
+                               <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
+                               <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
+                               <th class="text-end">{{ 'candidate_dashboard.column_actions' | translate }}</th>
+                             </tr>
+                             </thead>
+                             <tbody>
+                               @if (this.candidateInvitations().length === 0) {
+                                 <tr>
+                                   <td colspan="7" class="text-center text-muted py-4">
+                                     {{ 'candidate_dashboard.no_results' | translate }}
+                                   </td>
+                                 </tr>
+                               } @else {
+                                 @for (record of this.candidateInvitations(); track record.invitationId; let i = $index) {
+                                   <tr>
+                                     <td>{{ (this.currentPage() - 1) * this.itemsPerPage() + i + 1 }}</td>
+                                     <td class="fw-bold">{{ record.jobTitle }}</td>
+                                     <td>{{ record.departmentName }}</td>
+                                     <td>
                     <span [class]="'badge-soft ' + record.jobCategory">
                       {{ record.jobCategory }}
                     </span>
-                  </td>
-                  <td>
+                                     </td>
+                                     <td>
                     <span [ngClass]="getStatusClasses(record.invitationStatus.backendName)">
                       {{ record.invitationStatus.name }}
                     </span>
-                  </td>
-                  <td>{{ record.createDate }}</td>
-                  <td class="text-end">
+                                     </td>
+                                     <td>{{ record.createDate }}</td>
+                                     <td class="text-end">
 
-                    @if (getActionButtons(record.invitationStatus); as actions) {
+                                       @if (getActionButtons(record.invitationStatus); as actions) {
 
-                      @if (actions.showApply) {
-                        <a [href]="'job-details.html?jobId=' + record.invitationId"
-                           class="btn btn-sm btn-primary btn-pill">
-                          <i class="fa fa-paper-plane"></i>
-                          {{ 'candidate_dashboard.action_apply_now' | translate }}
-                        </a>
-                      }
+                                         @if (actions.showApply) {
+                                           <a [href]="'job-details.html?jobId=' + record.invitationId"
+                                              class="btn btn-sm btn-primary btn-pill">
+                                             <i class="fa fa-paper-plane"></i>
+                                             {{ 'candidate_dashboard.action_apply_now' | translate }}
+                                           </a>
+                                         }
 
-                      @if (actions.showView) {
-                        <a [href]="'my-applications.html?jobId=' + record.invitationId"
-                           class="btn btn-sm btn-outline-secondary btn-pill">
-                          <i class="fa fa-eye"></i>
-                          {{ 'candidate_dashboard.action_view_request' | translate }}
-                        </a>
-                      }
+                                         @if (actions.showView) {
+                                           <a [href]="'my-applications.html?jobId=' + record.invitationId"
+                                              class="btn btn-sm btn-outline-secondary btn-pill">
+                                             <i class="fa fa-eye"></i>
+                                             {{ 'candidate_dashboard.action_view_request' | translate }}
+                                           </a>
+                                         }
 
-                      @if (actions.showTrack) {
-                        <a [href]="'my-applications.html?jobId=' + record.invitationId"
-                           class="btn btn-sm btn-outline-secondary btn-pill">
-                          <i class="fa fa-hourglass-half"></i>
-                          {{ 'candidate_dashboard.action_track_status' | translate }}
-                        </a>
-                      }
+                                         @if (actions.showTrack) {
+                                           <a [href]="'my-applications.html?jobId=' + record.invitationId"
+                                              class="btn btn-sm btn-outline-secondary btn-pill">
+                                             <i class="fa fa-hourglass-half"></i>
+                                             {{ 'candidate_dashboard.action_track_status' | translate }}
+                                           </a>
+                                         }
 
-                      @if (actions.showDetails) {
-                        <a [href]="'job-details.html?jobId=' + record.invitationId"
-                           class="btn btn-sm btn-outline-secondary btn-pill">
-                          <i class="fa fa-eye"></i>
-                          {{ 'candidate_dashboard.action_view_details' | translate }}
-                        </a>
-                      }
+                                         @if (actions.showDetails) {
+                                           <a [href]="'job-details.html?jobId=' + record.invitationId"
+                                              class="btn btn-sm btn-outline-secondary btn-pill">
+                                             <i class="fa fa-eye"></i>
+                                             {{ 'candidate_dashboard.action_view_details' | translate }}
+                                           </a>
+                                         }
 
-                      @if (actions.showWithdraw) {
-                        <button (click)="withdrawApplication(record.invitationId)"
-                                class="btn btn-sm btn-outline-danger btn-pill"
-                                [disabled]="isWithdrawing() === record.invitationId">
-                          <i class="fa"
-                             [class.fa-ban]="isWithdrawing() !== record.invitationId"
-                             [class.fa-spinner]="isWithdrawing() === record.invitationId"
-                             [class.fa-spin]="isWithdrawing() === record.invitationId"></i>
+                                         @if (actions.showWithdraw) {
+                                           <button (click)="withdrawApplication(record.invitationId)"
+                                                   class="btn btn-sm btn-outline-danger btn-pill"
+                                                   [disabled]="isWithdrawing() === record.invitationId">
+                                             <i class="fa"
+                                                [class.fa-ban]="isWithdrawing() !== record.invitationId"
+                                                [class.fa-spinner]="isWithdrawing() === record.invitationId"
+                                                [class.fa-spin]="isWithdrawing() === record.invitationId"></i>
 
-                          {{
-                            isWithdrawing() === record.invitationId
-                              ? 'جاري الإلغاء...'
-                              : ('candidate_dashboard.action_withdraw_request' | translate)
-                          }}
-                        </button>
-                      }
+                                             {{
+                                               isWithdrawing() === record.invitationId
+                                                 ? 'جاري الإلغاء...'
+                                                 : ('candidate_dashboard.action_withdraw_request' | translate)
+                                             }}
+                                           </button>
+                                         }
 
-                    }
+                                       }
 
-                  </td>
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
+                                     </td>
+                                   </tr>
+                                 }
+                               }
+                             </tbody>
+                           </table>
+                         </div>
+                       </div>
+                        <!-- Pagination -->
+                        <app-pagination [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"></app-pagination>
+                  </div>
+             </div>
+         </div>
+     </div>
+</div>
 
-    <!-- Pagination -->
-    <app-pagination
-      [currentPage]="currentPage()"
-      [totalItems]="totalItems()"
-      [itemsPerPage]="itemsPerPage()"
-      (pageChanged)="onPageChange($event)"
-    >
-    </app-pagination>
-
-  </div>
-</main>

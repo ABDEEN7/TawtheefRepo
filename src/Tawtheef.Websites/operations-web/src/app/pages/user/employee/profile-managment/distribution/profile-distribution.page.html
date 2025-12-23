@@ -24,11 +24,11 @@
           pButton
           type="button"
           class="p-button-outlined"
-          icon="pi pi-refresh"
-          [label]="'distribution.actions.refresh' | translate"
           (click)="loadData()"
-          [disabled]="loading()"
-        ></button>
+          [disabled]="loading()">
+          <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
+          <i class="pi pi-refresh" pButtonIcon></i>
+        </button>
       </div>
     </div>
   </div>
@@ -119,7 +119,6 @@
               </td>
               <td>
                 <div class="fw-semibold">{{ profile.candidateName }}</div>
-                <div class="small text-muted">{{ profile.profileId }}</div>
               </td>
               <td>
                 <span class="badge text-bg-light border">{{ profile.specialization || ('distribution.table.noValue' | translate) }}</span>
@@ -140,18 +139,17 @@
                   <p-avatar
                     icon="pi pi-user"
                     shape="circle"
-                    styleClass="bg-light text-muted"
+                    class="bg-light text-muted d-none d-xl-flex"
                     *ngIf="!profile.assignedEmployeeName"
                   ></p-avatar>
                   <p-avatar
                     [label]="profile.assignedEmployeeName ? profile.assignedEmployeeName[0] : ''"
                     shape="circle"
-                    styleClass="bg-primary text-white"
+                    class="bg-primary text-white"
                     *ngIf="profile.assignedEmployeeName"
                   ></p-avatar>
                   <div>
                     <div class="fw-semibold">{{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}</div>
-                    <div class="small text-muted">{{ 'distribution.table.fileId' | translate }} {{ profile.profileId }}</div>
                   </div>
                 </div>
               </td>
@@ -166,19 +164,18 @@
                     pRipple
                     type="button"
                     class="p-button-rounded p-button-text"
-                    icon="pi pi-user-plus"
                     [pTooltip]="'distribution.actions.assignTo' | translate"
-                    (click)="openManualDialog(profile.profileId)"
-                  ></button>
+                    (click)="openManualDialog(profile.profileId)">
+                    <i class="pi pi-user-plus" pButtonIcon></i>
+                  </button>
                   <button
                     pButton
                     pRipple
                     type="button"
                     class="p-button-rounded p-button-text"
-                    icon="pi pi-sync"
                     [pTooltip]="'distribution.actions.redistribute' | translate"
-                    (click)="redistribute('auto')"
-                  ></button>
+                    (click)="redistribute('auto')">
+                    <i class="pi pi-sync" pButtonIcon></i></button>
                 </div>
               </td>
             </tr>
@@ -241,8 +238,7 @@
           <div
             class="employee-tile"
             *ngFor="let employee of availableEmployees()"
-            [class.disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available"
-          >
+            [class.disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available">
             <div class="d-flex justify-content-between align-items-center gap-2">
               <div>
                 <div class="fw-semibold">{{ employee.name }}</div>
@@ -266,20 +262,20 @@
             pButton
             class="w-100"
             type="button"
-            icon="pi pi-play"
-            [label]="'distribution.auto.assign' | translate"
             (click)="openAutoDialog()"
-            [disabled]="loading()"
-          ></button>
+            [disabled]="loading()">
+            <span pButtonLabel>{{'distribution.auto.assign' | translate}}</span>
+            <i class="pi pi-play" pButtonIcon></i>
+          </button>
           <button
             pButton
             class="p-button-outlined w-100"
             type="button"
-            icon="pi pi-replay"
-            [label]="'distribution.auto.reassign' | translate"
             (click)="redistribute('auto')"
-            [disabled]="loading() || selectedIds().size === 0"
-          ></button>
+            [disabled]="loading() || selectedIds().size === 0">
+            <span pButtonLabel>{{'distribution.auto.reassign' | translate}}</span>
+            <i class="pi replay" pButtonIcon></i>
+          </button>
         </div>
       </div>
 
@@ -310,20 +306,19 @@
             pButton
             class="w-100"
             type="button"
-            icon="pi pi-user"
-            [label]="'distribution.manual.assign' | translate"
             (click)="openManualDialog()"
-            [disabled]="loading()"
-          ></button>
+            [disabled]="loading()">
+            <span pButtonLabel>{{'distribution.manual.assign' | translate}}</span>
+            <i class="pi user" pButtonIcon></i></button>
           <button
             pButton
             class="p-button-outlined w-100"
             type="button"
-            icon="pi pi-replay"
-            [label]="'distribution.manual.reassign' | translate"
             (click)="redistribute('manual')"
-            [disabled]="loading() || selectedIds().size === 0 || !manualEmployeeId()"
-          ></button>
+            [disabled]="loading() || selectedIds().size === 0 || !manualEmployeeId()">
+            <span pButtonLabel>{{'distribution.manual.reassign' | translate}}</span>
+            <i class="pi replay" pButtonIcon></i>
+          </button>
         </div>
       </div>
     </div>
@@ -340,160 +335,29 @@
           pButton
           class="p-button-outlined"
           type="button"
-          icon="pi pi-replay"
-          [label]="'distribution.actions.redistribute' | translate"
           (click)="redistribute('manual')"
-          [disabled]="loading() || selectedIds().size === 0"
-        ></button>
+          [disabled]="loading() || selectedIds().size === 0">
+          <span pButtonLabel>{{'distribution.actions.redistribute' | translate}}</span>
+          <i class="pi pi-replay" pButtonIcon></i>
+        </button>
         <button
           pButton
           class="p-button-secondary"
           type="button"
-          icon="pi pi-sync"
-          [label]="'distribution.actions.autoAssign' | translate"
           (click)="openAutoDialog()"
-          [disabled]="loading()"
-        ></button>
+          [disabled]="loading()">
+          <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
+          <i class="pi pi-sync" pButtonIcon></i>
+        </button>
         <button
           pButton
           type="button"
-          icon="pi pi-user-plus"
-          [label]="'distribution.actions.manualAssign' | translate"
           (click)="openManualDialog()"
-          [disabled]="loading()"
-        ></button>
+          [disabled]="loading()">
+          <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
+          <i class="pi pi-user-plus" pButtonIcon></i>
+        </button>
       </div>
     </div>
   </div>
-
-  <p-dialog
-    [visible]="manualDialogVisible()"
-    (visibleChange)="manualDialogVisible.set($event)"
-    [modal]="true"
-    [closable]="false"
-    [style]="{ width: '520px' }"
-    contentStyleClass="dialog-content"
-    [header]="'distribution.dialog.manual.title' | translate"
-  >
-    <p class="text-muted mb-3">{{ 'distribution.dialog.manual.subtitle' | translate }}</p>
-    <div class="row g-3">
-      <div class="col-12">
-        <label class="form-label">{{ 'distribution.manual.employee' | translate }}</label>
-        <p-select
-          class="w-100"
-          [options]="availableEmployees()"
-          optionLabel="name"
-          optionValue="employeeId"
-          [filter]="true"
-          [ngModel]="manualEmployeeId()"
-          (onChange)="manualEmployeeId.set($event.value)"
-          [placeholder]="'distribution.manual.selectPlaceholder' | translate"
-        ></p-select>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">{{ 'distribution.dialog.manual.count' | translate }}</label>
-        <p-input-number
-          [ngModel]="manualCount()"
-          (onInput)="manualCount.set($event.value)"
-          mode="decimal"
-          inputStyleClass="form-control"
-          [min]="1"
-          [max]="selectedIds().size || null"
-        ></p-input-number>
-        <div class="small text-muted mt-1">{{ 'distribution.dialog.manual.countHelper' | translate }}</div>
-      </div>
-      <div class="col-md-6">
-        <div class="selection-summary">
-          <div class="fw-semibold">{{ 'distribution.summary.selected' | translate }}</div>
-          <div class="display-6">{{ selectedIds().size }}</div>
-          <div class="small text-muted">{{ 'distribution.dialog.manual.selectionHint' | translate }}</div>
-        </div>
-      </div>
-    </div>
-    <ng-template pTemplate="footer">
-      <div class="d-flex justify-content-end gap-2 flex-wrap">
-        <button pButton class="p-button-text" type="button" (click)="manualDialogVisible.set(false)">
-          {{ 'distribution.actions.cancel' | translate }}
-        </button>
-        <button
-          pButton
-          type="button"
-          icon="pi pi-user-plus"
-          [label]="'distribution.manual.assign' | translate"
-          (click)="assignManual()"
-          [disabled]="loading() || !manualEmployeeId()"
-        ></button>
-      </div>
-    </ng-template>
-  </p-dialog>
-
-  <p-dialog
-    [visible]="autoDialogVisible()"
-    (visibleChange)="autoDialogVisible.set($event)"
-    [modal]="true"
-    [closable]="false"
-    [style]="{ width: '640px' }"
-    contentStyleClass="dialog-content"
-    [header]="'distribution.dialog.auto.title' | translate"
-  >
-    <p class="text-muted mb-3">{{ 'distribution.dialog.auto.subtitle' | translate }}</p>
-    <div class="row g-3 mb-3">
-      <div class="col-md-6">
-        <label class="form-label">{{ 'distribution.dialog.auto.count' | translate }}</label>
-        <p-input-number
-          [ngModel]="autoLimit()"
-          (onInput)="autoLimit.set($event.value)"
-          mode="decimal"
-          inputStyleClass="form-control"
-          [placeholder]="'distribution.auto.limitPlaceholder' | translate"
-          [min]="1"
-        ></p-input-number>
-      </div>
-      <div class="col-md-6">
-        <div class="selection-summary">
-          <div class="fw-semibold">{{ 'distribution.summary.selected' | translate }}</div>
-          <div class="display-6">{{ selectedIds().size }}</div>
-          <div class="small text-muted">{{ 'distribution.dialog.auto.selectionHint' | translate }}</div>
-        </div>
-      </div>
-    </div>
-    <div class="auto-grid">
-      <div class="auto-tile" *ngFor="let employee of employees()">
-        <div class="d-flex justify-content-between align-items-center gap-2">
-          <div class="d-flex align-items-center gap-2">
-            <p-avatar [label]="employee.name[0]" shape="circle" styleClass="bg-primary text-white"></p-avatar>
-            <div>
-              <div class="fw-semibold">{{ employee.name }}</div>
-              <div class="small text-muted">{{ availabilityLabel(employee.availability) | translate }}</div>
-            </div>
-          </div>
-          <p-toggle-switch
-            [ngModel]="autoEmployeeIds().has(employee.employeeId)"
-            (onChange)="toggleEmployee(employee.employeeId)"
-            [disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available"
-          ></p-toggle-switch>
-        </div>
-        <div class="d-flex gap-2 flex-wrap mt-2">
-          <span class="pill neutral small-pill">{{ 'distribution.employees.total' | translate }} {{ employee.totalAssigned }}</span>
-          <span class="pill success small-pill">{{ 'distribution.employees.completed' | translate }} {{ employee.completed }}</span>
-          <span class="pill info small-pill">{{ 'distribution.employees.inReview' | translate }} {{ employee.inReview }}</span>
-        </div>
-      </div>
-    </div>
-    <ng-template pTemplate="footer">
-      <div class="d-flex justify-content-end gap-2 flex-wrap">
-        <button pButton class="p-button-text" type="button" (click)="autoDialogVisible.set(false)">
-          {{ 'distribution.actions.cancel' | translate }}
-        </button>
-        <button
-          pButton
-          type="button"
-          icon="pi pi-play"
-          [label]="'distribution.auto.assign' | translate"
-          (click)="assignAuto()"
-          [disabled]="loading() || autoEmployeeIds().size === 0"
-        ></button>
-      </div>
-    </ng-template>
-  </p-dialog>
 </section>

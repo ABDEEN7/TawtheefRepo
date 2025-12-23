@@ -1,28 +1,85 @@
-﻿import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject, NgZone } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
-import { MessageService } from 'primeng/api';
-import { HDR } from '../utils/headers.flags';
+﻿import {HttpErrorResponse, HttpInterceptorFn} from '@angular/common/http';
+import {HDR} from '../utils/headers.flags';
+import {inject, NgZone} from '@angular/core';
+import {MessageService} from 'primeng/api';
+import {catchError} from 'rxjs/operators';
+import {throwError} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.headers.get(HDR.SkipError) === 'true') return next(req);
 
   const msg  = inject(MessageService);
   const zone = inject(NgZone);
+  const translate = inject(TranslateService);
+
   return next(req).pipe(
     catchError((err: unknown) => {
-      if (!(err instanceof HttpErrorResponse)) return throwError(() => err);
+      if (!(err instanceof HttpErrorResponse)) {
+        return throwError(() => err);
+      }
+
       const isInfraAuth = /\/auth\/(login|refresh|logout|external)/i.test(req.url);
       const external = req.url.includes('ipapi.co');
+
       if (isInfraAuth || external || req.headers.get(HDR.LogoutFlow) === 'true') {
         return throwError(() => err);
       }
 
-      if (err.status === 0) {
-        zone.run(() => msg.add({ severity: 'error', summary: 'Network error', detail: 'Please check your connection and try again.', life: 6000 }));
-        return throwError(() => err);
-      }
+      zone.run(() => {
+        if (err.status === 0) {
+          msg.add({
+            severity: 'error',
+            summary: 'Network error',
+            detail: 'Please check your connection and try again.',
+            life: 6000
+          });
+          return;
+        }
+
+        const apiError = err.error;
+        const html = buildErrorHtml(apiError);
+        msg.add({
+          severity: 'error',
+          summary: translate.instant('common.error'),
+          detail: html,
+          life: 8000,
+        });
+      });
+
       return throwError(() => err);
     })
   );
+
+  function buildErrorHtml(apiError: any): string {
+    if (!apiError) return 'Unexpected error occurred.';
+
+    const items: string[] = [];
+
+    if (Array.isArray(apiError.error)) {
+      for (const err of apiError.error) {
+        if (Array.isArray(err.reasons) && err.reasons.length > 0) {
+          err.reasons.forEach((r: string) =>
+            items.push(`• ${tryLocalizedMessage(r)}`)
+          );
+        }
+        else if (err.message) {
+          items.push(`• ${tryLocalizedMessage(err.message)}`);
+        }
+      }
+    }
+
+    if (items.length === 0 && apiError.message) {
+      return tryLocalizedMessage(`${apiError.message}`);
+    }
+
+    return `${items.join('\n')}`;
+  }
+
+  function tryLocalizedMessage(key: string): string {
+    if(translate.instant(key) !== key) {
+      return translate.instant(key);
+    }
+    return key;
+  }
 };

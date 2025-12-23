@@ -1,5 +1,5 @@
 <div class="row g-3">
-  <div class="col-12 col-lg-8">
+  <div class="col-12">
     <p-card class="shadow-sm h-100 section-panel">
       <ng-template pTemplate="header">
         <div class="card-head">
@@ -13,55 +13,17 @@
         </div>
       </ng-template>
 
-      <div class="info-grid">
-        <div
-          class="info-chip"
-          *ngFor="let field of [
-            { label: 'profileApproval.detail.snapshot.nationalNumber', value: profile.basicInformation.nationalNumber },
-            { label: 'profileApproval.detail.snapshot.idExpiry', value: profile.basicInformation.qidExpiry },
-            { label: 'profileApproval.detail.snapshot.fullNameAr', value: profile.basicInformation.fullNameAr },
-            { label: 'profileApproval.detail.snapshot.fullNameEn', value: profile.basicInformation.fullNameEn },
-            { label: 'profileApproval.detail.snapshot.birthDate', value: profile.basicInformation.birthDate },
-            { label: 'profileApproval.detail.snapshot.gender', value: profile.basicInformation.gender },
-            { label: 'profileApproval.detail.snapshot.nationality', value: profile.basicInformation.nationality },
-            { label: 'profileApproval.detail.snapshot.religion', value: profile.basicInformation.religion },
-            { label: 'profileApproval.detail.snapshot.maritalStatus', value: profile.basicInformation.maritalStatus },
-            { label: 'profileApproval.detail.snapshot.childrenCount', value: profile.basicInformation.childrenCount },
-            { label: 'profileApproval.detail.snapshot.email', value: profile.basicInformation.email },
-            { label: 'profileApproval.detail.snapshot.phoneNumber', value: profile.basicInformation.phoneNumber },
-            { label: 'profileApproval.detail.snapshot.residenceCountry', value: profile.basicInformation.residenceCountry },
-            { label: 'profileApproval.detail.snapshot.address', value: profile.basicInformation.address },
-            { label: 'profileApproval.detail.snapshot.interviewLocation', value: profile.basicInformation.interviewLocation },
-            {
-              label: 'profileApproval.detail.snapshot.disability',
-              value:
-                profile.basicInformation.hasDisability === undefined
-                  ? null
-                  : profile.basicInformation.hasDisability
-                  ? ('profileApproval.detail.snapshot.disabilityYes' | translate)
-                  : ('profileApproval.detail.snapshot.disabilityNo' | translate),
-            },
-            { label: 'profileApproval.detail.snapshot.disabilityDetails', value: profile.basicInformation.disabilityDetails },
-            { label: 'profileApproval.detail.snapshot.sponsorType', value: profile.basicInformation.sponsorType },
-            { label: 'profileApproval.detail.snapshot.sponsorEmployerName', value: profile.basicInformation.sponsorEmployerName },
-            { label: 'profileApproval.detail.snapshot.sponsorEmployerNumber', value: profile.basicInformation.sponsorEmployerNumber },
-            { label: 'profileApproval.detail.snapshot.sponsorQidExpiry', value: profile.basicInformation.sponsorQidExpiry },
-            { label: 'profileApproval.detail.snapshot.candidateType', value: profile.basicInformation.candidateType },
-            { label: 'profileApproval.detail.snapshot.targetEntity', value: profile.basicInformation.targetEntity },
-            { label: 'profileApproval.detail.snapshot.targetEntityCategory', value: profile.basicInformation.targetEntityCategory },
-            { label: 'profileApproval.detail.snapshot.cvSummary', value: profile.basicInformation.cvSummary }
-          ]"
-        >
+      <div class="info-grid" *ngIf="basicFields().length > 0; else emptyFields">
+        <div class="info-chip" *ngFor="let field of basicFields()">
           <div class="chip-label">{{ field.label | translate }}</div>
-          <div class="chip-value" [ngClass]="{ 'chip-missing': !hasValue(field.value) }">
-            <i
-              class="pi me-2"
-              [ngClass]="hasValue(field.value) ? 'pi-check-circle text-success' : 'pi-exclamation-triangle text-warning'"
-            ></i>
-            <span>{{ hasValue(field.value) ? field.value : ('profileApproval.detail.snapshot.missing' | translate) }}</span>
+          <div class="chip-value">
+            <span>{{ field.value }}</span>
           </div>
         </div>
       </div>
+      <ng-template #emptyFields>
+        <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+      </ng-template>
     </p-card>
   </div>
 
@@ -77,22 +39,6 @@
       </ng-template>
 
       <div class="file-stack">
-        <button
-          type="button"
-          class="file-chip"
-          *ngIf="profile.basicInformation.resumeAttachment"
-          pButton
-          pRipple
-          [label]="
-            ('profileApproval.detail.snapshot.resumeAttachment' | translate) +
-            ': ' +
-            (profile.basicInformation.resumeAttachment.fileName || '-')
-          "
-          (click)="preview(profile.basicInformation.resumeAttachment.url)"
-          icon="pi pi-external-link"
-          iconPos="right"
-        ></button>
-
         <button
           type="button"
           class="file-chip"
@@ -112,38 +58,6 @@
         <button
           type="button"
           class="file-chip"
-          *ngIf="profile.basicInformation.birthdayCertificate"
-          pButton
-          pRipple
-          [label]="
-            ('profileApproval.detail.snapshot.birthdayCertificate' | translate) +
-            ': ' +
-            (profile.basicInformation.birthdayCertificate.fileName || '-')
-          "
-          (click)="preview(profile.basicInformation.birthdayCertificate.url)"
-          icon="pi pi-external-link"
-          iconPos="right"
-        ></button>
-
-        <button
-          type="button"
-          class="file-chip"
-          *ngIf="profile.basicInformation.marriageCertificate"
-          pButton
-          pRipple
-          [label]="
-            ('profileApproval.detail.snapshot.marriageCertificate' | translate) +
-            ': ' +
-            (profile.basicInformation.marriageCertificate.fileName || '-')
-          "
-          (click)="preview(profile.basicInformation.marriageCertificate.url)"
-          icon="pi pi-external-link"
-          iconPos="right"
-        ></button>
-
-        <button
-          type="button"
-          class="file-chip"
           *ngIf="profile.basicInformation.sponsorCard"
           pButton
           pRipple
@@ -156,22 +70,22 @@
           icon="pi pi-external-link"
           iconPos="right"
         ></button>
-
         <button
           type="button"
           class="file-chip"
-          *ngIf="profile.basicInformation.residenceAddressCertificate"
+          *ngIf="profile.basicInformation.resumeAttachment"
           pButton
           pRipple
           [label]="
-            ('profileApproval.detail.snapshot.residenceAddressCertificate' | translate) +
+            ('profileApproval.detail.snapshot.resumeAttachment' | translate) +
             ': ' +
-            (profile.basicInformation.residenceAddressCertificate.fileName || '-')
+            (profile.basicInformation.resumeAttachment.fileName || '-')
           "
-          (click)="preview(profile.basicInformation.residenceAddressCertificate.url)"
+          (click)="preview(profile.basicInformation.resumeAttachment.url)"
           icon="pi pi-external-link"
           iconPos="right"
         ></button>
+
       </div>
     </p-card>
   </div>

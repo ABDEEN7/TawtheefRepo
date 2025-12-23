@@ -1,0 +1,53 @@
+<p class="text-muted mb-3">{{ 'distribution.dialog.manual.subtitle' | translate }}</p>
+
+<div class="row g-3">
+  <div class="col-12">
+    <label class="form-label">{{ 'distribution.manual.employee' | translate }}</label>
+    <p-select
+      class="w-100"
+      [options]="availableEmployees()"
+      optionLabel="name"
+      optionValue="employeeId"
+      [filter]="true"
+      [ngModel]="employeeId()"
+      (onChange)="employeeId.set($event.value)"
+      [placeholder]="'distribution.manual.selectPlaceholder' | translate"
+    ></p-select>
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">{{ 'distribution.dialog.manual.count' | translate }}</label>
+    <p-input-number
+      [ngModel]="count()"
+      (onInput)="count.set($event.value)"
+      mode="decimal"
+      inputStyleClass="form-control"
+      [min]="1"
+      [max]="selectedCount() || null"
+    ></p-input-number>
+    <div class="small text-muted mt-1">{{ 'distribution.dialog.manual.countHelper' | translate }}</div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="selection-summary">
+      <div class="fw-semibold">{{ 'distribution.summary.selected' | translate }}</div>
+      <div class="display-6">{{ selectedCount() }}</div>
+      <div class="small text-muted">{{ 'distribution.dialog.manual.selectionHint' | translate }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 flex-wrap mt-4">
+  <button pButton class="p-button-text" type="button" (click)="cancel()">
+    {{ 'distribution.actions.cancel' | translate }}
+  </button>
+
+  <button
+    pButton
+    type="button"
+    icon="pi pi-user-plus"
+    [label]="'distribution.manual.assign' | translate"
+    (click)="confirm()"
+    [disabled]="!employeeId() || selectedCount() === 0"
+  ></button>
+</div>
