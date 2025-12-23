@@ -64,7 +64,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     return this.attachmentsArray.at(index) as FormGroup;
   }
 
-  setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+  override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
   this.jobData = job;
   this.note = note;
   this.attachmentsArray.clear();
@@ -80,37 +80,47 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   }
 }
 
-  addAttachment(): void {
-    if (this.form.disabled) {
+ addAttachment(): void {
+  if (this.form.disabled) {
     return;
   }
-    const textAr = this.newAttachment.titleAr.trim();
-    const textEn = this.newAttachment.titleEn.trim();
-
-    if (!textAr && !textEn) {
-      this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.NO_DATA_ENTERED_ERROR'));
-      return;
-    }
-
-    const isDuplicate = this.attachmentsArray.controls.some((control: AbstractControl) => {
-      const group = control as FormGroup;
-      return group.get('titleAr')?.value === textAr && group.get('titleEn')?.value === textEn;
-    });
-    
-    if (isDuplicate) {
-      this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'));
-      return;
-    }
-
-      const attachmentGroup = this.fb.group({
-        titleAr: [this.newAttachment.titleAr, [Validators.required, Validators.maxLength(200)]],
-        titleEn: [this.newAttachment.titleEn, [Validators.maxLength(200)]],
-      });    
-      
-    this.attachmentsArray.push(attachmentGroup);
-    this.resetNewAttachment();
-    this.updateJobData();
+  
+  // Trim values before using them
+  const titleAr = this.newAttachment.titleAr?.trim() || '';
+  const titleEn = this.newAttachment.titleEn?.trim() || '';
+  
+  if (!titleAr && !titleEn) {
+    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.NO_DATA_ENTERED_ERROR'));
+    return;
   }
+
+  const isDuplicate = this.attachmentsArray.controls.some((control: AbstractControl) => {
+    const group = control as FormGroup;
+    return group.get('titleAr')?.value === titleAr && group.get('titleEn')?.value === titleEn;
+  });
+  
+  if (isDuplicate) {
+    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'));
+    return;
+  }
+
+  const attachmentGroup = this.fb.group({
+    titleAr: [titleAr, [Validators.required, Validators.maxLength(200)]],
+    titleEn: [titleEn, [Validators.maxLength(200)]],
+    isMandatory: [this.newAttachment.isMandatory || false]
+  });
+  
+  // Mark as touched to trigger validation display
+  attachmentGroup.get('titleAr')?.markAsTouched();
+  attachmentGroup.get('titleEn')?.markAsTouched();
+  
+  this.attachmentsArray.push(attachmentGroup);
+  this.resetNewAttachment();
+  this.updateJobData();
+  
+  // Trigger change detection for the form
+  this.form.updateValueAndValidity();
+}
 
   removeAttachment(index: number): void {
     this.attachmentsArray.removeAt(index);

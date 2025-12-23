@@ -55,7 +55,7 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
     return this.conditionsArray.at(index) as FormGroup;
   }
 
- setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+ override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
     this.note = note;
     this.conditionsArray.clear();
