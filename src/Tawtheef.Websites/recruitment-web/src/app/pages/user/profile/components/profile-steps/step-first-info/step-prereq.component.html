@@ -178,9 +178,9 @@
        <button class="btn btn-primary" type="button" (click)="onNext()" [disabled]="saving">
           <span *ngIf="!saving" class=" d-flex align-items-center">
             <span>{{ 'wizard.buttons.next' | translate }}</span>
-            <i class="hgi hgi-stroke hgi-arrow-left-01 fs-18" faDirArrow="end"></i>
+            <i class="hgi fs-18" faDirArrow="end"></i>
           </span>
-           <span *ngIf="saving">
+           <span *ngIf="saving" class="d-flex align-items-center">
               <i class="fa-solid fa-spinner fa-spin "></i>
               <span>{{ 'wizard.buttons.saving' | translate }}</span>
            </span>
