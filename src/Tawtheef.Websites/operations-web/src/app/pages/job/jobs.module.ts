@@ -37,7 +37,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { DialogHelperService } from '../../core/services/dialog-helper.service';
 import { ReviewNoteComponent } from './job-wizard/review-note/review-note.component';
-
+import { FaDirArrowDirective } from '../../shared/directives/dir-arrow.directive';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -55,8 +55,7 @@ import { ReviewNoteComponent } from './job-wizard/review-note/review-note.compon
     ReviewStepComponent,
     SkillsStepComponent,
     JobBasicModalComponent,
-    JobApprovalComponent
-
+    JobApprovalComponent,    
   ],
   imports: [
     RouterModule.forChild(jobRoutes),
@@ -79,8 +78,9 @@ import { ReviewNoteComponent } from './job-wizard/review-note/review-note.compon
     MultiSelectModule,
     Scroller,
     Toast,
-    ConfirmDialog
-],
+    ConfirmDialog, 
+    FaDirArrowDirective
+  ],
   exports: [
     JobDetailsComponent,
     JobListComponent,

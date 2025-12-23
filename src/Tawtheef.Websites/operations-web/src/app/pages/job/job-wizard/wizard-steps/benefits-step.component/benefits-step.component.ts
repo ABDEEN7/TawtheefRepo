@@ -44,7 +44,7 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
       return this.form.disabled ? true : this.form.valid;
   }
 
- setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+ override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
   this.jobData = job;
   this.note = note;
     this.form.patchValue({
