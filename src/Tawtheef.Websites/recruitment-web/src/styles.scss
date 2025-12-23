@@ -2,6 +2,8 @@
 @use "styles/base/flags";
 @import "primeicons/primeicons.css";
 
+@use "custom-styles";
+
 $primary: #000;
 .form-check-input:checked {
   background-color: #a9445f !important;
