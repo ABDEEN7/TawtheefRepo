@@ -26,8 +26,11 @@ public class ErrorsCodes
     #endregion
 
     #region Login Errors
+    public const string ProfileNotFound = "PROFILE_NOT_FOUND";
     public const string InvalidCredentials = "INVALID_CREDENTIALS_PROVICED";
     public const string UserNotFound = "USER_NOT_FOUND";
+    public const string EmailAlreadyInUse = "EMAIL_ALREADY_IN_USE";
+    public const string PhoneAlreadyInUse = "PHONE_ALREADY_IN_USE";
     public const string SessionExpired = "SESSION_EXPIRED";
     public const string EmailNotVerified = "EMAIL_NOT_VERIFIED";
     public const string AccountStatusNotAllowedForLogin = "ACCOUNT_STATUS_NOT_ALLOWED_FOR_LOGIN";
@@ -77,6 +80,7 @@ public class ErrorsCodes
     #region Update Profile Errors
     public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
+    public const string ProfileNotUnderReview = "PROFILE_NOT_UNDER_REVIEW";
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";
     public const string InvalidPassword = "INVALID_PASSWORD";
@@ -91,6 +95,8 @@ public class ErrorsCodes
     public const string AchievementNotFound = "ACHIEVEMENT_NOT_FOUND";
     public const string SectionMustBeApprovedFirst = "SECTION_MUST_BE_APPROVED_FIRST";
     public const string SectionHasUnapprovedAttachments = "SECTION_HAS_UNAPPROVED_ATTACHMENTS";
+    public const string NotSubmitted = "NOT_SUBMITTED";
+    public const string CanNotModifiedApprovedDocument = "CAN_NOT_MODIFIED_APPROVED_DOCUMENT";
     public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
     public const string NotesRequiredForCorrection = "NOTES_REQUIRED_FOR_CORRECTION";
     public const string MandatoryFieldsIncomplete = "MANDATORY_FIELDS_INCOMPLETE";
@@ -150,6 +156,7 @@ public class ErrorsCodes
     #endregion
 
     #region User Profile
+    public const string ProfileAlreadyApproved = "PROFILE_ALREADY_APPROVED";
     public const string InvalidDegreesJson = "INVALID_DEGREES_JSON";
     public const string InvalidDegreesCount = "INVALID_DEGREES_COUNT";
     public const string InvalidExperiencesJson = "INVALID_EXPERIENCES_JSON";
@@ -178,6 +185,8 @@ public class ErrorsCodes
     public const string SponsorCardFileRequired = "SPONSOR_CARD_FILE_REQUIRED";
     public const string OfficeRequired = "OFFICE_REQUIRED";
     public const string AddressRequired = "ADDRESS_REQUIRED";
+    public const string InvalidNationalAddress = "INVALID_NATIONAL_ADDRESS";
+    public const string NationalAddressCertificateRequired = "NATIONAL_ADDRESS_CERTIFICATE_REQUIRED";
     public const string NationalAddressRequired = "NATIONAL_ADDRESS_REQUIRED";
     public const string NationalAddressDocumentRequired = "NATIONAL_ADDRESS_DOCUMENT_REQUIRED";
     public const string DegreeFileRequired = "DEGREE_FILE_REQUIRED";
@@ -217,6 +226,13 @@ public class ErrorsCodes
     public const string JobCannotBeCancelled = "JOB_CANNOT_BE_CANCELLED";
     public const string JobClosingDateInvalid = "JOB_CLOSING_DATE_INVALID";
     public const string NoteRequired = "NOTE_REQUIRED";
+    #endregion
+
+    #region MOI Service
+
+    public const string MOIDataNotFound = "MOI_DATA_NOT_FOUND";
+    public const string MOIFailedRequest = "MOI_FAILED_REQUEST";
+
     #endregion
 }
 

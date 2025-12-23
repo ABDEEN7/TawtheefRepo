@@ -1,6 +1,7 @@
 ﻿import { inject, Injectable } from '@angular/core';
 import { ApiConfigService } from '../services/api-config.service';
 import { CaseUtils } from '../utils/case-utils';
+import {ReviewStatus} from '../../pages/user/employee/profile-managment/approval-list/models/profile-approval.models';
 
 @Injectable({ providedIn: 'root' })
 export class EndpointsService {
@@ -70,7 +71,9 @@ export class EndpointsService {
     detail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}`),
     changesDetail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/changes`),
     reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`),
-    finalize: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/finalize`)
+    startReview: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/start-review`),
+    decision: (profileId: string, section: string) => this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/decision`),
+    finalize: (profileId:string) => this.getFullUrl(`/profile-approvals/${profileId}/finalize`),
   };
 
   distribution = {

@@ -26,37 +26,57 @@ public sealed class ProfileCompletenessService(
         
         var repo = uow.GetEntityRepository<UserProfile>();
         var profile = await repo.DbSet
-            .AsNoTracking()
-            // Attachments الأساسية
-            .Include(p => p.SponsorProfile).ThenInclude(s => s!.SponsorCard)
+            .AsNoTracking().AsSplitQuery()
+            .Include(p => p.CandidateType)
+            .Include(p => p.TargetEntity)
+            .Include(p => p.Office)
             .Include(p => p.ResumeAttachment)
             .Include(p => p.NationalCard)
-            .Include(p => p.ResidenceAddress)
-            .Include(p => p.ResidenceAddressCertificate)
             .Include(p => p.BirthdayCertificate)
             .Include(p => p.MarriageCertificate)
-            .Include(p => p.Office)
-            // Additional attachments
-            .Include(p => p.AdditionalAttachments!)
-                .ThenInclude(a => a.Attachment)
-            // Collections
-            .Include(p => p.Skills)!.ThenInclude(sp=> sp.Skill)
-            .Include(p => p.Languages)!.ThenInclude(sp=> sp.Language)
-            .Include(p => p.Qualifications)!
-                .ThenInclude(a => a.University)
-            .Include(p => p.Qualifications)!
-                .ThenInclude(a => a.Major)
-            .Include(p => p.Qualifications)!
-                .ThenInclude(a => a.SubMajor)
-            .Include(p => p.Qualifications)!
-                .ThenInclude(a => a.Certificate)
-            .Include(p => p.Experiences)!.ThenInclude(a => a.Certificate)
-            .Include(p => p.TrainingCourses)!.ThenInclude(a => a.Certificate)
-            .Include(p => p.Achievements)!.ThenInclude(a => a.Attachment)
+
+            .Include(p => p.Nationality)
+            .Include(p => p.Gender)
+            .Include(p => p.Religion)
+            .Include(p => p.MaritalStatus)
+            .Include(p => p.SponsorProfile).ThenInclude(s => s!.SponsorType)
+            .Include(p => p.SponsorProfile).ThenInclude(s => s!.SponsorCard)
+
+            .Include(p => p.ResidenceCountry)
+            .Include(p => p.InterviewLocation)
+            .Include(p => p.ResidenceAddress).ThenInclude(a => a!.Certificate)
+
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Degree)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Country)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.University)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.SubMajor)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Rating)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.StudyType)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Certificate)
+
+            .Include(p => p.Experiences)!.ThenInclude(e => e.Country)
+            .Include(p => p.Experiences)!.ThenInclude(e => e.Qualification)
+            .Include(p => p.Experiences)!.ThenInclude(e => e.Certificate)
+
+            .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Country)
+            .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Certificate)
+
             .Include(p => p.Achievements)!.ThenInclude(a => a.AchievementType)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.Country)
+            .Include(p => p.Achievements)!.ThenInclude(a => a.Attachment)
+
+            .Include(p => p.Skills)!.ThenInclude(s => s.Skill)
+            .Include(p => p.Skills)!.ThenInclude(s => s.Level)
+
+            .Include(p => p.Languages)!.ThenInclude(l => l.Language)
+            .Include(p => p.Languages)!.ThenInclude(l => l.SpeakingLevel)
+            .Include(p => p.Languages)!.ThenInclude(l => l.WritingLevel)
+            .Include(p => p.Languages)!.ThenInclude(l => l.ReadingLevel)
+            
+            .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment)
             .FirstOrDefaultAsync(p => p.UserId == userId, ct);
 
-        profile ??= new UserProfile();
         var prefill = await BuildPrefillAsync(user, ct);
         user.Email = (user.Email?.Contains(ConstantQatarPass.PlaceholderEmailDomain) ?? true) ? null : user.Email;
         user.FullNameAr = user.FullNameAr.Contains(ConstantQatarPass.DefaultDisplayName) ? string.Empty : user.FullNameAr;
@@ -64,7 +84,7 @@ public sealed class ProfileCompletenessService(
 
         using var scope = new MapContextScope();
         scope.Context.Parameters[ResourceMapper.MediaKey] = media;
-        return mapper.Map<ProfileStatusDto>((profile, user, prefill));
+        return mapper.Map<ProfileStatusDto>(new ProfileBootstrapSource(profile, user, prefill));
     }
 
     public async Task<ProfilePrefillDto> BuildPrefillAsync(User user, CancellationToken ct)

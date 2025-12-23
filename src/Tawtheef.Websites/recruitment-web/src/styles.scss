@@ -1,5 +1,8 @@
 @use "styles/base/tokens";
 @use "styles/base/flags";
+@use "custom-styles";
+
+@import "primeicons/primeicons.css";
 
 $primary: #000;
 .form-check-input:checked {

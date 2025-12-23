@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
@@ -10,12 +9,12 @@ using Tawtheef.Domain.Utils;
 namespace Tawtheef.Domain.Entities.Users;
 
 [Table(nameof(UserProfile), Schema = Schemas.Applicant)]
-[Index(nameof(NationalNumber), IsUnique = true)]
 public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }
     public ApplicantUser? User { get; set; }
     
+    public required string Provider { get; set; }
     public Guid CandidateTypeId { get; set; }
     public CandidateType? CandidateType { get; set; }
 
@@ -78,9 +77,6 @@ public class UserProfile : EventEntity
     public Guid? ResidenceAddressId { get; set; }
     public ResidenceAddress? ResidenceAddress { get; set; }
 
-    public Guid? ResidenceAddressCertificateId { get; set; }
-    public Resource? ResidenceAddressCertificate { get; set; }
-
     public bool HasDisability { get; set; }
     public string? DisabilityDetails { get; set; }
 
@@ -110,7 +106,7 @@ public class UserProfile : EventEntity
             return false;
         if (TargetEntityId == Guid.Empty)
             return false;
-        if (ProfileValidatorUtils.RequiresOffice(CandidateTypeId) && OfficeId is null)
+        if (ProfileValidatorUtils.RequiresOffice(CandidateTypeId, Provider) && OfficeId is null)
             return false;
 
         if (ProfileValidatorUtils.RequiresBirthCertificate(CandidateTypeId) && BirthdayCertificateId is null) return false;
@@ -138,7 +134,7 @@ public class UserProfile : EventEntity
             return false;
         if(HasDisability && string.IsNullOrWhiteSpace(DisabilityDetails))
             return false;
-        if (ProfileValidatorUtils.RequiresSponsor(CandidateTypeId))
+        if (ProfileValidatorUtils.RequiresSponsor(CandidateTypeId, Provider))
         {
             if (SponsorProfileId is null) return false;
             if (SponsorProfile is null ||
@@ -156,14 +152,14 @@ public class UserProfile : EventEntity
         if (InterviewLocationId is null || InterviewLocationId == Guid.Empty)
             return false;
 
-        if (ProfileValidatorUtils.RequiresNationalAddress(CandidateTypeId))
+        if (ProfileValidatorUtils.RequiresNationalAddress(CandidateTypeId, Provider))
         {
             if (ResidenceAddress is null) return false;
             if (ResidenceAddress.ZoneNo <= 0) return false;
             if (ResidenceAddress.StreetNo <= 0) return false;
             if (ResidenceAddress.BuildingNo <= 0) return false;
             if (ResidenceAddress.UnitNo < 0) return false;
-            if (ResidenceAddressCertificateId is null)
+            if (ResidenceAddress.CertificateId == Guid.Empty)
                 return false;
         }
         else
@@ -172,19 +168,10 @@ public class UserProfile : EventEntity
                 return false;
         }
 
-        if (Languages is null || Languages.Count == 0)
-            return false;
-
-        if (Skills is null || Skills.Count == 0)
-            return false;
-
-        if (Experiences is null || Experiences.Count == 0)
-            return false;
-        
-        if (TrainingCourses is null || TrainingCourses.Count == 0)
-            return false;
-
         if (Qualifications is null || Qualifications.Count == 0)
+            return false;
+
+        if (Languages is null || Languages.Count == 0)
             return false;
 
         return true;

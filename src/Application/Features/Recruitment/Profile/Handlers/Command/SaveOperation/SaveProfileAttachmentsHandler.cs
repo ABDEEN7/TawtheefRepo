@@ -7,10 +7,10 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -19,7 +19,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
@@ -47,10 +46,8 @@ public sealed class SaveProfileAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
 
         var validationResult = validationService.ValidateAttachments(profile);
         if (validationResult.IsFailed)
@@ -69,8 +66,6 @@ public sealed class SaveProfileAttachmentsHandler(
         }
 
         profile.AdditionalAttachments = [];
-
-        var reviewAttachments = new List<ProfileAdditionalAttachment>();
 
         foreach (var dto in attachments)
         {
@@ -100,21 +95,6 @@ public sealed class SaveProfileAttachmentsHandler(
             };
 
             profile.AdditionalAttachments.Add(attachment);
-            reviewAttachments.Add(attachment);
-        }
-
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Attachments, ct);
-            foreach (var attachment in reviewAttachments)
-            {
-                await reviewService.TouchAttachmentAsync(
-                    profile.Id,
-                    ProfileSection.Attachments,
-                    attachment.FileName,
-                    attachment.AttachmentId,
-                    ct);
-            }
         }
 
         await uow.SaveChangesAsync(ct);
@@ -160,4 +140,10 @@ public sealed class SaveProfileAttachmentsHandler(
             return Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
         }
     }
+}
+
+file sealed record PendingAttachmentSnapshot
+{
+    public Guid? AttachmentResourceId { get; init; }
+    public string? FileName { get; init; }
 }

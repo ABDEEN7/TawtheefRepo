@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -27,6 +27,10 @@ import {Tooltip} from 'primeng/tooltip';
 import {ToggleSwitch} from 'primeng/toggleswitch';
 import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
+import {DistributionDialogResult} from './models/profile-distribution.dialogs';
+import {ManualAssignDialog} from './dialogs/manual-assign-dialog/manual-assign-dialog';
+import {AutoAssignDialog} from './dialogs/auto-assign-dialog/auto-assign-dialog';
+import {DialogService} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -49,11 +53,14 @@ import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-name
     Tooltip,
     ToggleSwitch,
   ],
+  providers: [DialogService],
   templateUrl: './profile-distribution.page.html',
   styleUrl: './profile-distribution.page.scss',
 })
 export class ProfileDistributionPage implements OnInit {
   private api = inject(ProfileDistributionService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
 
   files = signal<DistributionFile[]>([]);
   employees = signal<DistributionEmployee[]>([]);
@@ -68,9 +75,6 @@ export class ProfileDistributionPage implements OnInit {
   manualEmployeeId = signal<string>('');
   autoEmployeeIds = signal<Set<string>>(new Set());
   autoLimit = signal<number | null>(null);
-  manualDialogVisible = signal(false);
-  autoDialogVisible = signal(false);
-  manualCount = signal<number | null>(null);
 
   readonly selectedFiles = computed(() =>
     this.files().filter(file => this.selectedIds().has(file.profileId))
@@ -102,7 +106,6 @@ export class ProfileDistributionPage implements OnInit {
     { value: ProfileStatusNumber.RequiresUpdate, label: 'distribution.filters.statusNeedsChanges' },
   ];
 
-  protected readonly ProfileFileStatus = ProfileStatusNumber;
   protected readonly EmployeeAvailability = EmployeeAvailability;
 
   ngOnInit(): void {
@@ -118,19 +121,13 @@ export class ProfileDistributionPage implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: files => this.files.set(files),
-        error: () => this.error.set('تعذر تحميل الملفات القابلة للتوزيع'),
+        error: () => this.error.set(this.translate.instant('distribution.errors.loadFilesFailed')),
       });
 
     this.api.getEmployees().subscribe({
       next: employees => this.employees.set(employees),
-      error: () => this.error.set('تعذر تحميل بيانات الموظفين'),
+      error: () => this.error.set(this.translate.instant('distribution.errors.loadEmployeesFailed')),
     });
-  }
-
-  toggleSelection(id: string): void {
-    const set = new Set(this.selectedIds());
-    set.has(id) ? set.delete(id) : set.add(id);
-    this.selectedIds.set(set);
   }
 
   onSelectionChange(selection: DistributionFile[]): void {
@@ -144,77 +141,66 @@ export class ProfileDistributionPage implements OnInit {
   clearSelection(): void {
     this.selectedIds.set(new Set());
   }
-
   openManualDialog(profileId?: string): void {
-    if (profileId) {
-      this.selectedIds.set(new Set([profileId]));
-    }
-    if (this.selectedIds().size === 0) return;
+    if (profileId) this.selectedIds.set(new Set([profileId]));
+    const ids = Array.from(this.selectedIds());
+    if (ids.length === 0) return;
 
-    this.manualCount.set(this.selectedIds().size);
-    this.manualDialogVisible.set(true);
+    this.dialogService.open(ManualAssignDialog, {
+      header: 'distribution.dialog.manual.title',
+      width: '520px',
+      modal: true,
+      dismissableMask: false,
+      data: {
+        employees: this.employees(),
+        selectedProfileIds: ids,
+        initialEmployeeId: this.manualEmployeeId() || null,
+      },
+    })?.onClose.subscribe((res: DistributionDialogResult) => {
+      if (!res || res.kind !== 'manual') return;
+      this.assignManual(res.payload);
+    });
   }
 
   openAutoDialog(): void {
-    if (this.selectedIds().size === 0) {
-      this.error.set('يرجى اختيار ملفات للتوزيع');
+    const ids = Array.from(this.selectedIds());
+    if (ids.length === 0) {
+      this.error.set(this.translate.instant('distribution.errors.noProfilesSelected'));
       return;
     }
-    this.autoDialogVisible.set(true);
+    this.dialogService.open(AutoAssignDialog, {
+      header: 'distribution.dialog.auto.title',
+      width: '640px',
+      modal: true,
+      dismissableMask: false,
+      data: {
+        employees: this.employees(),
+        selectedProfileIds: ids,
+        initialLimit: this.autoLimit(),
+        initialEmployeeIds: Array.from(this.autoEmployeeIds()),
+      },
+    })?.onClose.subscribe((res: DistributionDialogResult) => {
+      if (!res || res.kind !== 'auto') return;
+      this.assignAuto(res.payload);
+    });
   }
-
-  assignManual(): void {
-    const employeeId = this.manualEmployeeId();
-    if (!employeeId || this.selectedIds().size === 0) return;
-
-    const count = this.manualCount();
-    const selectedIds = Array.from(this.selectedIds());
-    const payload: ManualAssignRequest = {
-      employeeId,
-      profileIds: count ? selectedIds.slice(0, count) : selectedIds,
-    };
-
+  private assignManual(payload: ManualAssignRequest): void {
     this.loading.set(true);
-    this.api
-      .assignManually(payload)
+    this.api.assignManually(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: result => {
-          this.manualDialogVisible.set(false);
-          this.handleResult(result.assignedCount, result);
-        },
-        error: err => this.handleError(err, 'تعذر إسناد الملفات يدويًا'),
+        next: result => this.handleResult(result.assignedCount, result),
+        error: err => this.handleError(err, this.translate.instant('distribution.errors.assignFailed')),
       });
   }
 
-  assignAuto(): void {
-    const employeeIds = Array.from(this.autoEmployeeIds());
-    if (employeeIds.length === 0) {
-      this.error.set('يرجى اختيار موظفين للتوزيع الآلي');
-      return;
-    }
-    const profileIds= Array.from(this.selectedIds());
-    if(profileIds.length===0){
-      this.error.set('يرجى اختيار ملفات للتوزيع الآلي');
-      return;
-    }
-
-    const payload: AutoAssignRequest = {
-      employeeIds,
-      profileIds,
-      perEmployeeCount: this.autoLimit(),
-    };
-
+  private assignAuto(payload: AutoAssignRequest): void {
     this.loading.set(true);
-    this.api
-      .assignAutomatically(payload)
+    this.api.assignAutomatically(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: result => {
-          this.autoDialogVisible.set(false);
-          this.handleResult(result.assignedCount, result);
-        },
-        error: err => this.handleError(err, 'تعذر التوزيع الآلي'),
+        next: result => this.handleResult(result.assignedCount, result),
+        error: err => this.handleError(err, this.translate.instant('distribution.errors.assignFailed')),
       });
   }
 
@@ -230,32 +216,19 @@ export class ProfileDistributionPage implements OnInit {
     };
 
     this.loading.set(true);
-    this.api
-      .reassign(payload)
+    this.api.reassign(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: result => this.handleResult(result.assignedCount, result),
-        error: err => this.handleError(err, 'تعذر إعادة التوزيع'),
+        error: err => this.handleError(err, this.translate.instant('distribution.errors.reassignFailed')),
       });
   }
+
 
   toggleEmployee(employeeId: string): void {
     const set = new Set(this.autoEmployeeIds());
     set.has(employeeId) ? set.delete(employeeId) : set.add(employeeId);
     this.autoEmployeeIds.set(set);
-  }
-
-  statusClass(status: ProfileStatusNumber): string {
-    switch (status) {
-      case ProfileStatusNumber.Submitted:
-        return 'pill neutral';
-      case ProfileStatusNumber.UnderReview:
-        return 'pill info';
-      case ProfileStatusNumber.Cancelled:
-        return 'pill warning';
-      default:
-        return 'pill soft';
-    }
   }
 
   statusSeverity(status: ProfileStatusNumber): 'info' | 'warn' | 'success' | 'danger' | 'secondary' {

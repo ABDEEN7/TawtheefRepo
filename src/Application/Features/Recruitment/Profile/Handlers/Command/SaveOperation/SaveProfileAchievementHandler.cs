@@ -7,10 +7,10 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -18,7 +18,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileAchievementHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAchievementCommand, IResult<Unit>>
 {
@@ -41,10 +40,8 @@ public sealed class SaveProfileAchievementHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
 
         var validationResult = validationService.ValidateAchievements(profile);
         if (validationResult.IsFailed)
@@ -92,15 +89,6 @@ public sealed class SaveProfileAchievementHandler(
 
             profile.Achievements.Add(entity);
             newAchievements.Add(entity);
-        }
-
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Experience, ct);
-        }
-        foreach (var achievement in newAchievements)
-        {
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, nameof(Achievement), achievement.Id, ct);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -165,4 +153,16 @@ public sealed class SaveProfileAchievementHandler(
             return Result.Ok();
         }
     }
+}
+
+file sealed record PendingAchievementSnapshot
+{
+    public Guid AchievementTypeId { get; init; }
+    public string? Title { get; init; }
+    public string? IssuingAuthority { get; init; }
+    public Guid? CountryId { get; init; }
+    public DateOnly? IssueDate { get; init; }
+    public string? Description { get; init; }
+    public bool? RelatedToSpecialization { get; init; }
+    public Guid? AttachmentResourceId { get; init; }
 }

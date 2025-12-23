@@ -41,9 +41,15 @@ public class CandidateTypeProviderLoginConfiguration
             
             new CandidateTypeProviderLogin
             {
+                ProviderLoginId = ProviderLoginIds.QatarPass,
+                CandidateTypeId = CandidateTypeIds.GCC,
+            },
+            new CandidateTypeProviderLogin
+            {
                 ProviderLoginId = ProviderLoginIds.Google,
                 CandidateTypeId = CandidateTypeIds.GCC,
             },
+            
             new CandidateTypeProviderLogin
             {
                 ProviderLoginId = ProviderLoginIds.Google,

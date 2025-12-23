@@ -3,10 +3,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -14,7 +13,6 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 
 public sealed class SaveProfileSkillsHandler(
     IUnitOfWork uow,
-    IProfileReviewService reviewService,
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileSkillsCommand, IResult<Unit>>
 {
@@ -35,10 +33,8 @@ public sealed class SaveProfileSkillsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
+        if (profile.Status is not UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-        var trackChanges = profile.Status == UserProfileStatus.Approved;
 
         var validationResult = validationService.ValidateSkills(profile);
         if (validationResult.IsFailed)
@@ -62,10 +58,7 @@ public sealed class SaveProfileSkillsHandler(
             }).ToList();
 
         await skillRepo.AddRangeAsync(skills);
-        if (trackChanges)
-        {
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Languages, ct);
-        }
+        
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

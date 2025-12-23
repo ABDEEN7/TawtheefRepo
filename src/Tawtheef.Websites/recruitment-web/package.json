@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "doc": "npx compodoc -p tsconfig.json"
   },
   "prettier": {
     "printWidth": 100,
@@ -22,12 +23,13 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/compiler": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/forms": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
-    "@angular/router": "^20.0.0",
+    "@angular/common": "^20.3.15",
+    "@angular/compiler": "^20.3.15",
+    "@angular/core": "^20.3.15",
+    "@angular/forms": "^20.3.15",
+    "@angular/localize": "^20.3.15",
+    "@angular/platform-browser": "^20.3.15",
+    "@angular/router": "^20.3.15",
     "@auth0/angular-jwt": "^5.2.0",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@ng-bootstrap/ng-bootstrap": "19.0.1",
@@ -40,6 +42,7 @@
     "ngx-image-cropper": "^9.1.5",
     "ngx-intl-tel-input": "^17.0.0",
     "ngx-translate-multi-http-loader": "^20.0.0",
+    "primeicons": "^7.0.0",
     "primeng": "^20.0.0",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
@@ -48,7 +51,8 @@
   "devDependencies": {
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
-    "@angular/compiler-cli": "^20.0.0",
+    "@angular/compiler-cli": "^20.3.15",
+    "@compodoc/compodoc": "^1.1.32",
     "@types/aos": "^3.0.7",
     "@types/google-libphonenumber": "^7.4.30",
     "@types/jasmine": "~5.1.0",

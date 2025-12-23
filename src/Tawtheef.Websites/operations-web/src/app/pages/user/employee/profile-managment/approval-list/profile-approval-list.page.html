@@ -16,7 +16,7 @@
       <label class="filter-field">
         <span>{{ 'profileApproval.list.searchPlaceholder' | translate }}</span>
         <input
-          pInputText
+          pInputText pSize="small"
           type="search"
           [placeholder]="'profileApproval.list.searchPlaceholder' | translate"
           [ngModel]="filters().search"
@@ -27,7 +27,7 @@
       <label class="filter-field">
         <span>{{ 'profileApproval.list.filter.specialization' | translate }}</span>
         <input
-          pInputText
+          pInputText pSize="small"
           type="text"
           [placeholder]="'profileApproval.list.filter.specializationPlaceholder' | translate"
           [ngModel]="filters().specialization"
@@ -38,7 +38,7 @@
       <label class="filter-field">
         <span>{{ 'profileApproval.list.filter.targetEntity' | translate }}</span>
         <input
-          pInputText
+          pInputText pSize="small"
           type="text"
           [placeholder]="'profileApproval.list.filter.targetEntityPlaceholder' | translate"
           [ngModel]="filters().targetEntity"
@@ -49,7 +49,7 @@
       <label class="filter-field">
         <span>{{ 'profileApproval.list.filter.candidateType' | translate }}</span>
         <input
-          pInputText
+          pInputText pSize="small"
           type="text"
           [placeholder]="'profileApproval.list.filter.candidateTypePlaceholder' | translate"
           [ngModel]="filters().candidateType"
@@ -119,7 +119,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
-          <tr class="clickable-row" (click)="openProfile(row.userProfileId)">
+          <tr class="clickable-row" (click)="openProfile(row)">
             <td>
               <div class="name">{{ row.fullName || ('profileApproval.list.anonymous' | translate) }}</div>
               <div class="muted small">{{ row.candidateType || ('profileApproval.list.typeUnknown' | translate) }}</div>

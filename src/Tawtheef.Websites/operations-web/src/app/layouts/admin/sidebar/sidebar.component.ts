@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Tooltip} from 'primeng/tooltip';
 import {routes} from '../../../routes/routes';
 import {AuthService} from '../../../core/auth/auth.service';
+import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,7 +14,7 @@ import {AuthService} from '../../../core/auth/auth.service';
   host: { 'data-test': 'sidebar-main' },
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe, Tooltip]
+  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective]
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);

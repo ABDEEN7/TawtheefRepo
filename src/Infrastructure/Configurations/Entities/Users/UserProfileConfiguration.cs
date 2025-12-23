@@ -13,5 +13,7 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
             .WithMany()
             .HasForeignKey(u => u.ResidenceCountryId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasIndex(nameof(UserProfile.NationalNumber), nameof(UserProfile.NationalityId)).IsUnique();
     }
 }

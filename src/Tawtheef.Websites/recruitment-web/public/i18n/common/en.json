@@ -1,4 +1,13 @@
 ﻿{
+  "common.sections": "Sections",
+  "common.refresh": "Refresh",
+  "common.edit": "Edit",
+  "common.complete": "Complete",
+  "common.missing": "Missing",
+  "common.verified": "Verified",
+  "common.notVerified": "Not Verified",
+  "common.none": "None",
+  "common.loadFailed": "Failed to load data",
   "validation.required": "This field is required",
   "validation.range": "Value must be between {{min}} and {{max}}",
   "validation.yearRange": "Graduation year must be between {{min}} and {{max}}",

@@ -1,0 +1,327 @@
+
+<div class="">
+  <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                 <h5 class="text-primary">{{'wizard.personal.titleStep' | translate}}</h5>
+             </div>
+        </div>
+    </div>
+  <div class="row g-3">
+    <!-- fullName -->
+    <div class="col-md-4">
+      <label class="form-label required">{{ 'wizard.personal.nameAr' | translate }}</label>
+      <input
+        pInputText
+        class="form-control"
+        pSize="small"
+        name="fullName"
+        [ngModel]="ds.state().fullNameAr"
+        (ngModelChange)="updateField('fullNameAr', $event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+        [readonly]="ds.isLocked('fullNameAr')"
+        [ngClass]="{ 'locked-field': ds.isLocked('fullNameAr') }"
+      />
+    </div>
+
+    <!-- fullNameEn -->
+    <div class="col-md-4">
+      <label class="form-label required">{{ 'wizard.personal.nameEn' | translate }}</label>
+      <input
+        pInputText
+        class="form-control"
+        pSize="small"
+        name="fullNameEn"
+        [ngModel]="ds.state().fullNameEn"
+        (ngModelChange)="updateField('fullNameEn', $event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+        [readonly]="ds.isLocked('fullNameEn')"
+        [ngClass]="{ 'locked-field': ds.isLocked('fullNameEn') }"
+      />
+    </div>
+
+    <!-- QID -->
+    <div class="col-md-4">
+      <label class="form-label required">{{ 'wizard.personal.qid' | translate }}</label>
+      <input
+        pInputText
+        class="form-control"
+        pSize="small"
+        name="qid"
+        [ngModel]="ds.state().qid"
+        (ngModelChange)="updateField('qid', $event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+        [readonly]="ds.isLocked('qid')"
+        [ngClass]="{ 'locked-field': ds.isLocked('qid') }"
+      />
+      <small *ngIf="ds.isLocked('qid')" class="fz-2xs text-muted">
+        {{ 'wizard.accountFieldNote' | translate }}
+      </small>
+    </div>
+
+    <!-- Nationality -->
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label required">{{ 'wizard.personal.nationality' | translate }}</label>
+      <p-select
+        [options]="lookups.countries()"
+        name="nationality"
+        [ngModel]="ds.state().nationality"
+        (ngModelChange)="updateField('nationality', $event)"
+        [filter]="true"
+        filterBy="name"
+        optionLabel="name"
+        size="small"
+        [placeholder]="'wizard.placeholders.selectNationality' | translate"
+        class="w-full md:w-56"
+        [readonly]="ds.isLocked('nationality')"
+        [ngClass]="{ 'locked-field': ds.isLocked('nationality') }"
+      ></p-select>
+      <small *ngIf="ds.isLocked('nationality')" class="fz-2xs text-muted">
+        {{ 'wizard.accountFieldNote' | translate }}
+      </small>
+    </div>
+
+    <!-- DOB -->
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
+      <p-date-picker name="dob" placeholder="{{ 'wizard.personal.dob' | translate }}"
+        [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event)!)"
+        size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
+        [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
+      </p-date-picker>
+      <small *ngIf="ds.isLocked('dob')" class="fz-2xs text-muted">
+        {{ 'wizard.accountFieldNote' | translate }}
+      </small>
+    </div>
+
+    <!-- Gender -->
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label required">{{ 'wizard.personal.gender' | translate }}</label>
+      <p-select [options]="lookups.genders()" name="gender"
+        [ngModel]="ds.state().gender" (ngModelChange)="updateField('gender', $event)"
+        [filter]="false" optionLabel="name" size="small"
+        [placeholder]="'wizard.placeholders.selectGender' | translate"
+        class="w-full md:w-56" [readonly]="ds.isLocked('gender')"
+        [ngClass]="{ 'locked-field': ds.isLocked('gender') }"
+      ></p-select>
+      <small *ngIf="ds.isLocked('gender')" class="fz-2xs text-muted">
+        {{ 'wizard.accountFieldNote' | translate }}
+      </small>
+    </div>
+
+    <!-- Religion -->
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label required">{{ 'wizard.personal.religion' | translate }}</label>
+      <p-select
+        [options]="lookups.religions()"
+        name="religion"
+        [ngModel]="ds.state().religion"
+        (ngModelChange)="updateField('religion', $event)"
+        [filter]="true"
+        filterBy="name"
+        optionLabel="name"
+        size="small"
+        [placeholder]="'wizard.placeholders.selectReligion' | translate"
+        class="w-full md:w-56"
+      ></p-select>
+    </div>
+
+    <!-- Marital -->
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label required">{{ 'wizard.personal.marital' | translate }}</label>
+      <p-select
+        [options]="lookups.maritalStatuses()"
+        name="marital"
+        [ngModel]="ds.state().marital"
+        (ngModelChange)="updateField('marital', $event)"
+        [filter]="true"
+        filterBy="name"
+        optionLabel="name"
+        size="small"
+        [placeholder]="'wizard.placeholders.selectMaritalStatus' | translate"
+        class="w-full md:w-56"
+      ></p-select>
+    </div>
+
+    <!-- Children -->
+    <div class="col-md-4" *ngIf="showChildrenField">
+      <label class="form-label required">{{ 'wizard.personal.children' | translate }}</label>
+      <input
+        pInputText
+        type="number"
+        class="form-control"
+        pSize="small"
+        name="children"
+        [ngModel]="ds.state().children ?? null"
+        (ngModelChange)="updateChildren($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+      />
+    </div>
+    <!-- Has Disability -->
+    <div class="col-md-4 d-flex flex-column">
+      <label class="form-label required">
+        {{ 'wizard.personal.hasDisability' | translate }}
+      </label>
+
+      <div class="d-flex align-items-center gap-3 form-control">
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="hasDisability"
+            [value]="false"
+            [ngModel]="ds.state().hasDisability"
+            (ngModelChange)="updateDisability($event)"
+          />
+          <label class="form-check-label">
+            {{ 'common.no' | translate }}
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="hasDisability"
+            [value]="true"
+            [ngModel]="ds.state().hasDisability"
+            (ngModelChange)="updateDisability($event)"
+          />
+          <label class="form-check-label">
+            {{ 'common.yes' | translate }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disability Type -->
+    <div class="col-md-4 d-flex flex-column" *ngIf="showDisabilityType">
+      <label class="form-label required">
+        {{ 'wizard.personal.disabilityType' | translate }}
+      </label>
+      <input pInputText class="form-control"
+        pSize="small" name="disabilityDetails"
+        [ngModel]="ds.state().disabilityDetails"
+        (ngModelChange)="updateField('disabilityDetails', $event)"
+        placeholder="{{ 'wizard.placeholders.selectDisabilityType' | translate }}"/>
+    </div>
+
+    <ng-container *ngIf="ds.isNeedSponsor">
+      <!-- Sponsor Type -->
+      <div class="col-md-4 d-flex flex-column">
+        <label class="form-label required">
+          {{ 'wizard.personal.sponsorType' | translate }}
+        </label>
+        <p-select
+          [options]="lookups.sponsorTypes()"
+          name="sponsorType"
+          [ngModel]="ds.state().sponsorType"
+          (ngModelChange)="updateField('sponsorType', $event)"
+          [filter]="true"
+          filterBy="name"
+          optionLabel="name"
+          size="small"
+          [placeholder]="'wizard.placeholders.selectSponsorType' | translate"
+          class="w-full md:w-56"
+        ></p-select>
+      </div>
+
+      <ng-container *ngIf="ds.state().sponsorType">
+        <!-- Sponsor Employer Name -->
+        <div class="col-md-4">
+          <label class="form-label required">
+            {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.name`| lowercase | translate }}
+          </label>
+          <input
+            pInputText
+            class="form-control"
+            pSize="small"
+            name="sponsorEmployerName"
+            [ngModel]="ds.state().sponsorEmployerName"
+            (ngModelChange)="updateField('sponsorEmployerName', $event)"
+            placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+            [readonly]="ds.isLocked('sponsorEmployerName')"
+            [ngClass]="{ 'locked-field': ds.isLocked('sponsorEmployerName') }"
+          />
+        </div>
+        <!-- Sponsor Employer Number (Ministry of Labor) -->
+        <div class="col-md-4">
+          <label class="form-label required">
+            {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.qid`| lowercase | translate }}
+          </label>
+          <input
+            pInputText
+            type="text"
+            class="form-control"
+            pSize="small"
+            name="sponsorEmployerNumber"
+            [ngModel]="ds.state().sponsorEmployerNumber"
+            (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
+            placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+          />
+        </div>
+        <div class="col-md-4" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
+          <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
+          <p-date-picker name="sponsorQidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
+            [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
+            size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
+          </p-date-picker>
+        </div>
+        <div class="col-md-4 d-flex align-items-end" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
+          <button class="btn btn-outline-primary w-100" type="button" (click)="verifySponsorProfile()" [disabled]="verifyingSponsor">
+            <span *ngIf="!verifyingSponsor">
+              {{ 'wizard.personal.verify.button' | translate }}
+            </span>
+            <span *ngIf="verifyingSponsor">
+              <i class="fa-solid fa-spinner fa-spin me-1"></i>
+              {{ 'wizard.personal.verify.loading' | translate }}
+            </span>
+          </button>
+        </div>
+        <!-- Establishment Registration Card -->
+        <div class="col-md-6">
+          <label class="form-label required">
+            {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate }}
+          </label>
+          <div class="upload-field"
+               (click)="sponsorInput.click()">
+
+            <div class="upload-field__icon">
+              <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().sponsorCardName"/>
+              <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().sponsorCardName"
+                   class="cursor-pointer"
+                   (click)="previewSponsorCard($event)"/>
+            </div>
+
+            <div class="upload-field__text">
+              {{ ds.state().sponsorCardName || (`wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate) }}
+            </div>
+
+            <input #sponsorInput
+                   type="file"
+                   class="d-none"
+                   accept=".jpg,.jpeg,.png,.pdf"
+                   (change)="onSponsorCardSelected($event)" />
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between mt-4 text-end">
+  <button class="btn btn-outline-secondary rounded-pill me-2" (click)="back.emit()">
+    <i class="fa-solid me-1" faDirArrow="start"></i> {{ 'wizard.buttons.prev' | translate }}
+  </button>
+  <button class="btn btn-brand rounded-pill"
+          (click)="onNext()"
+          [disabled]="savingPersonal">
+    <span *ngIf="!savingPersonal">
+      {{ 'wizard.buttons.next' | translate }}
+      <i class="fa-solid ms-1" faDirArrow="end"></i>
+    </span>
+    <span *ngIf="savingPersonal">
+      <i class="fa-solid fa-spinner fa-spin me-1"></i>
+      {{ 'wizard.buttons.saving' | translate }}
+    </span>
+  </button>
+</div>

@@ -1,0 +1,75 @@
+<div class="row g-3">
+  <div class="col-12">
+    <p-card class="shadow-sm h-100 section-panel">
+      <ng-template pTemplate="header">
+        <div class="card-head">
+          <span class="icon-circle text-primary bg-light">
+            <i class="pi pi-id-card"></i>
+          </span>
+          <div class="d-flex flex-column">
+            <span class="fw-bold">{{ 'profileApproval.detail.snapshot.title' | translate }}</span>
+            <small class="text-muted">{{ 'profileApproval.detail.snapshot.subtitle' | translate }}</small>
+          </div>
+        </div>
+      </ng-template>
+
+      <div class="info-grid" *ngIf="firstInfoFields().length > 0; else emptyFirstInfo">
+        <div class="info-chip" *ngFor="let field of firstInfoFields()">
+          <div class="chip-label">{{ field.label | translate }}</div>
+          <div class="chip-value">
+            <span>{{ field.value }}</span>
+          </div>
+        </div>
+      </div>
+      <ng-template #emptyFirstInfo>
+        <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
+      </ng-template>
+    </p-card>
+  </div>
+
+  <div class="col-12 col-lg-4" *ngIf="hasBasicFiles()">
+    <p-card class="shadow-sm h-100 section-panel">
+      <ng-template pTemplate="header">
+        <div class="card-head">
+          <span class="icon-circle text-primary bg-light">
+            <i class="pi pi-paperclip"></i>
+          </span>
+          <span class="fw-bold">{{ 'profileApproval.detail.snapshot.files' | translate }}</span>
+        </div>
+      </ng-template>
+
+      <div class="file-stack">
+        <button
+          type="button"
+          class="file-chip"
+          *ngIf="profile.basicInformation.birthdayCertificate"
+          pButton
+          pRipple
+          [label]="
+            ('profileApproval.detail.snapshot.birthdayCertificate' | translate) +
+            ': ' +
+            (profile.basicInformation.birthdayCertificate.fileName || '-')
+          "
+          (click)="preview(profile.basicInformation.birthdayCertificate.url)"
+          icon="pi pi-external-link"
+          iconPos="right"
+        ></button>
+        <button
+          type="button"
+          class="file-chip"
+          *ngIf="profile.basicInformation.marriageCertificate"
+          pButton
+          pRipple
+          [label]="
+            ('profileApproval.detail.snapshot.marriageCertificate' | translate) +
+            ': ' +
+            (profile.basicInformation.marriageCertificate.fileName || '-')
+          "
+          (click)="preview(profile.basicInformation.marriageCertificate.url)"
+          icon="pi pi-external-link"
+          iconPos="right"
+        ></button>
+      </div>
+    </p-card>
+  </div>
+</div>

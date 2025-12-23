@@ -1,97 +1,98 @@
-<nav class="main-nav">
-  <div class="nav-container">
-    <!-- Logo -->
-    <div class="logo">
-      <img src="assets/img/logo-black.png"
-        [alt]="'internal.nav.logoAlt' | translate"
-      />
-    </div>
 
-    <!-- Navigation Links -->
-    <ul class="nav-links" *ngIf="isProfileCompleted">
-      <li>
-        <a [routerLink]="routes.user.dashboard" routerLinkActive="active">
-          {{ 'internal.nav.home' | translate }}
-        </a>
-      </li>
+<!-- Header -->
+<header class="topbar">
+  <div class="container-fluid">
+    <div class="row align-items-center">
+      <div class="col-lg-4 col-md-4 col-12 mb-0">
+        <div class="d-flex align-items-center gap-3">
+          <a href="#"><img src="assets/img/logo-black.png" [alt]="'internal.nav.logoAlt' | translate" class="img-fluid logo"></a>
+        </div>
+      </div>
 
-      <li>
-        <a [routerLink]="routes.user.profileOverview" routerLinkActive="active">
-          {{ 'internal.nav.personalProfile' | translate }}
-        </a>
-      </li>
+      <div class="col-lg-4 col-md-4 col-8 mb-0">
+        <nav id="navbar" class="navbar">
+          <ul class="nav-links px-3">
+            <li class="nav-item">
+              <a class="nav-link" [routerLink]="routes.user.dashboard" routerLinkActive="active">
+                {{ 'internal.nav.home' | translate }}
+              </a>
+            </li>
 
-<!--      <li class="dropdown">-->
-<!--        <a href="#" class="dropdown-toggle">-->
-<!--          {{ 'internal.nav.jobs' | translate }}-->
-<!--          <i class="icon-chevron-down"></i>-->
-<!--        </a>-->
-<!--        <ul class="dropdown-menu">-->
-<!--          <li>-->
-<!--            <a routerLink="/jobs/search">-->
-<!--              {{ 'internal.nav.jobsSearch' | translate }}-->
-<!--            </a>-->
-<!--          </li>-->
-<!--          <li>-->
-<!--            <a routerLink="/jobs/applications">-->
-<!--              {{ 'internal.nav.jobsApplications' | translate }}-->
-<!--            </a>-->
-<!--          </li>-->
-<!--        </ul>-->
-<!--      </li>-->
-    </ul>
+            <li class="nav-item">
+              <a class="nav-link" [routerLink]="routes.user.profileOverview" routerLinkActive="active">
+                {{ 'internal.nav.personalProfile' | translate }}
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
-    <!-- User Actions -->
-    <div class="nav-actions">
-      <!-- Language Switcher -->
-      <button class="language-toggle" (click)="toggleLanguage()">
-        <span>{{ `common.${language.getPrev()}` | translate }}</span>
-        <i class="fa fa-earth-asia"></i>
-      </button>
+      <div class="col-lg-4 col-md-4 col-4 mb-0">
+        <div class="d-flex align-items-center gap-3 justify-content-end">
+          <div class=" notification">
+            <button class="notification-btn btn position-relative" [class.has-notifications]="notificationCount > 0">
+              <i class="hgi hgi-stroke hgi-notification-01"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
+            </button>
 
-      <!-- Notifications -->
-      <button
-        class="notification-btn"
-        [class.has-notifications]="notificationCount > 0">
-        <i class="fa fa-bell"></i>
-        <span class="badge" *ngIf="notificationCount > 0">
-          {{ notificationCount }}
-        </span>
-      </button>
+<!--            <ul class="dropdown-menu dropdown-menu-end p-2">-->
+<!--              <li class="d-flex justify-content-between mb-3">-->
+<!--                <h5 class="dropdown-header">الإشعارات</h5>-->
+<!--                <a href="#">مشاهدة الكل</a>-->
+<!--              </li>-->
 
-      <!-- Login/Register Button -->
-      <button class="btn-login" *ngIf="!isLoggedIn" (click)="login()">
-        <i class="icon-user"></i>
-        {{ 'internal.nav.login' | translate }}
-      </button>
 
-      <!-- User Menu -->
-      <div class="user-menu" *ngIf="isLoggedIn">
-        <button class="user-toggle" (click)="toggleUserMenu()">
-          <img
-            [src]="userAvatar"
-            [alt]="'internal.nav.userAvatarAlt' | translate"
-          />
-          <span>{{ userName }}</span>
-        </button>
-        <ul class="user-dropdown" *ngIf="showUserMenu">
-          <li>
-            <a [routerLink]="routes.user.profileOverview">
-              {{ 'internal.nav.userProfile' | translate }}
-            </a>
-          </li>
-          <li>
-            <a [routerLink]="routes.user.settings">
-              {{ 'internal.nav.userSettings' | translate }}
-            </a>
-          </li>
-          <li>
-            <a (click)="logout()">
-              {{ 'internal.nav.logout' | translate }}
-            </a>
-          </li>
-        </ul>
+<!--              <li>-->
+<!--                <p class="mb-1"><span class="circle mx-1"></span> تذكير: موعد الزيارة القادمة في 10/10/2024</p>-->
+<!--                <div class="d-flex gap-2 date-time">-->
+<!--                  <div class="date d-flex"><i class="la la-calendar-check"></i>3-سبتمبر 2024</div>-->
+<!--                  <div class="time d-flex"><i class="la la-clock"></i>الساعة 05:31 م</div>-->
+<!--                </div>-->
+<!--              </li>-->
+<!--            </ul>-->
+
+          </div>
+
+
+          <!-- Language Switcher -->
+          <button class="language-toggle language" (click)="toggleLanguage()">
+            <span>{{ `common.${language.getPrev()}` | translate }}</span>
+            <i class="hgi hgi-stroke hgi-earth"></i>
+          </button>
+          <div class="profile">
+            <!-- Login/Register Button -->
+            <button class="btn-login btn btn-primary" *ngIf="!isLoggedIn" (click)="login()">
+              <i class="hgi hgi-stroke hgi-logout-02"></i>
+              <span class="text-white"> {{ 'internal.nav.login' | translate }}</span>
+            </button>
+
+            <!-- User Menu -->
+            <div class="user-menu" *ngIf="isLoggedIn">
+              <button class="btn btn-primary btn-sm user-toggle" (click)="toggleUserMenu()">
+                <img [src]="userAvatar"  [alt]="'internal.nav.userAvatarAlt' | translate" height="35" class="rounded-circle" />
+                <span class="mx-2">{{ userName }}</span>
+              </button>
+              <ul class="user-dropdown" *ngIf="showUserMenu">
+                <li>
+                  <a [routerLink]="routes.user.profileOverview">
+                    {{ 'internal.nav.userProfile' | translate }}
+                  </a>
+                </li>
+                <li>
+                  <a [routerLink]="routes.user.settings">
+                    {{ 'internal.nav.userSettings' | translate }}
+                  </a>
+                </li>
+                <li>
+                  <a (click)="logout()">
+                    {{ 'internal.nav.logout' | translate }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</nav>
+</header>
