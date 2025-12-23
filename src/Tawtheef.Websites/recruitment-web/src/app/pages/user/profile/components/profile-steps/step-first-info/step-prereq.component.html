@@ -1,5 +1,12 @@
-<div class="card border border-1 shadow-none rounded-4 p-4 mb-3">
-  <div class="row g-3">
+
+<div class="row">
+     <div class="col-12">
+         <div class="d-flex justify-content-between align-items-center">
+           <h5 class="text-primary">{{'wizard.prereq.titleStep' | translate}}</h5>
+         </div>
+     </div>
+</div>
+<div class="row g-3">
     <div class="col-md-6">
       <label for="candidateType" class="form-label required">{{ 'wizard.prereq.candidateType' | translate }}</label>
       <p-select [options]="lookups.candidateTypes()" [(ngModel)]="ds.state().candidateType"
@@ -166,19 +173,18 @@
       </div>
     </div>
   </div>
-</div>
-<div class="text-end">
-  <button class="btn btn-brand"
-          type="button"
-          (click)="onNext()"
-          [disabled]="saving">
-    <span *ngIf="!saving">
-      {{ 'wizard.buttons.next' | translate }}
-      <i class="fa-solid ms-1" faDirArrow="end"></i>
-    </span>
-    <span *ngIf="saving">
-      <i class="fa-solid fa-spinner fa-spin me-1"></i>
-      {{ 'wizard.buttons.saving' | translate }}
-    </span>
-  </button>
+  <div class="row text-end mt-4">
+     <div class="col-12">
+       <button class="btn btn-brand" type="button" (click)="onNext()" [disabled]="saving">
+          <span *ngIf="!saving">
+            {{ 'wizard.buttons.next' | translate }}
+            <i class="fa-solid ms-1" faDirArrow="end"></i>
+          </span>
+               <span *ngIf="saving">
+            <i class="fa-solid fa-spinner fa-spin me-1"></i>
+                 {{ 'wizard.buttons.saving' | translate }}
+          </span>
+       </button>
+     </div>
+
 </div>
