@@ -23,11 +23,17 @@ import {TextareaModule} from 'primeng/textarea';
 import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.directive';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {ProfileComponentsModule} from '../components/profile-components.module';
+import {ProfileService} from '../wizard-profile/services/profile.service';
+import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
+import {ProfileDataService} from '../wizard-profile/services/profile-data.service';
 @NgModule({
   declarations: [
   ],
   providers:[
-    DialogService
+    DialogService,
+    ProfileDataService,
+    ProfileService,
+    { provide: PROFILE_WRITE_MODE, useValue: 'change-request' },
   ],
   imports: [
     RouterModule.forChild(profileEditShellRoutes),

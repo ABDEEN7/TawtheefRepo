@@ -7,11 +7,10 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -20,8 +19,7 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileStepValidationService validationService,
-    IProfileReviewService reviewService
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -48,6 +46,9 @@ public sealed class SaveProfileAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        if (profile.Status is not UserProfileStatus.InCreation)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
         var validationResult = validationService.ValidateAttachments(profile);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -58,39 +59,6 @@ public sealed class SaveProfileAttachmentsHandler(
 
         var attachments = attachmentsResult.Value;
         var files = cmd.Request.AttachmentFiles;
-        if (profile.Status is not UserProfileStatus.InCreation)
-        {
-            foreach (var dto in attachments)
-            {
-                var uploadResult = await UploadIfNeededAsync(
-                    dto.FileIndex,
-                    files,
-                    ErrorsCodes.InvalidAttachmentFileIndex,
-                    ErrorsCodes.InvalidAttachmentFile,
-                    ct);
-
-                if (uploadResult.IsFailed)
-                    return Result.Fail<Unit>(uploadResult.Errors);
-
-                var resource = uploadResult.Value;
-                if (resource is null && dto.AttachmentId is null)
-                    return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
-
-                if (dto.Id.HasValue)
-                    return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
-                var pending = new PendingAttachmentSnapshot
-                {
-                    AttachmentResourceId = resource?.ResourceId ?? dto.AttachmentId,
-                    FileName = resource?.ResourceName ?? dto.FileName
-                };
-
-                await reviewService.TouchRowAsync(profile.Id, ProfileSection.Attachments, "Attachment", Guid.NewGuid(), cmd.UserId, ct, null, pending);
-            }
-
-            await uow.SaveChangesAsync(ct);
-            return Result.Ok(Unit.Value);
-        }
 
         if (profile.AdditionalAttachments is not null && profile.AdditionalAttachments.Count > 0)
         {

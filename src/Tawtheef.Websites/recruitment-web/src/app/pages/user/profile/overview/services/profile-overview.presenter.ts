@@ -69,7 +69,7 @@ export function createProfileOverviewCardsSignal(
     const needsSponsor = candidateTypeNeedsSponsor(type);
     const needsBirth = candidateTypeNeedsBirthCertificate(type);
     const needsMarriage = candidateTypeNeedsMarriageCertificate(type);
-    const isResident = candidateTypeIsResident(type);
+    const isResident = candidateTypeIsResident(type, s.provider);
 
     const cards: SectionCardVm[] = [
       {

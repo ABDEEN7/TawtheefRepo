@@ -1,15 +1,16 @@
 ﻿using FluentResults;
+using Mapster;
 using MapsterMapper;
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Queries;
 
 public sealed class GetMyUserProfileHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
     : IRequestHandler<GetMyUserProfileQuery, Result<UserProfileViewDto>>
@@ -21,7 +22,7 @@ public sealed class GetMyUserProfileHandler(IUnitOfWork uow, IMapper mapper, IMe
         if (profile is null)
             return Result.Fail<UserProfileViewDto>(ErrorsCodes.UserProfileNotFound);
 
-        using var scope = new Mapster.MapContextScope();
+        using var scope = new MapContextScope();
         scope.Context.Parameters[ResourceMapper.MediaKey] = media;
         var snapshot = mapper.Map<ProfileApprovalDataDto>(profile);
 

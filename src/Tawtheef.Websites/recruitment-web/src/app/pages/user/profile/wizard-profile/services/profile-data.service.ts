@@ -25,9 +25,7 @@ import {mapProfileStatusToState} from './profile.mapper';
 import {UserService} from '../../../../../core/auth/user.service';
 import {SponsorType} from '../../../../../core/enums/lookups.enum';
 
-
-
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ProfileDataService {
   nationalityMapperService = inject(NationalityMapperService);
   phoneMapperService = inject(PhoneMapperService);
@@ -35,6 +33,7 @@ export class ProfileDataService {
   lookups = inject(ProfileLookupsService);
   profileService = inject(ProfileService);
   state = signal<ProfileState>({
+    provider: 'Google',
     degrees: [], experiences: [], courses: [], achievements: [],
     skills: [], languages: [], attachments: [],
     available: true, hasDisability: false,
@@ -56,7 +55,7 @@ export class ProfileDataService {
     return candidateTypeNeedsMarriageCertificate(t);
   }
   get isResidentQatar(): boolean {
-    return candidateTypeIsResident(candidateTypeFromState(this.state()));
+    return candidateTypeIsResident(candidateTypeFromState(this.state()), this.state().provider);
   }
   get isIndividualSponsor(): boolean {
     return this.state().sponsorType?.backendName === SponsorType.Individual;
@@ -191,7 +190,7 @@ export class ProfileDataService {
       next.marriageCertificateFile = null;
     }
 
-    if (!candidateTypeIsResident(type)) {
+    if (!candidateTypeIsResident(type, state.provider)) {
       next.naZone = null;
       next.naStreet = null;
       next.naBuilding = null;
@@ -203,7 +202,7 @@ export class ProfileDataService {
       next.address = undefined;
     }
 
-    if (candidateTypeIsResident(type)) {
+    if (candidateTypeIsResident(type, state.provider)) {
       next.office = null;
     }
 

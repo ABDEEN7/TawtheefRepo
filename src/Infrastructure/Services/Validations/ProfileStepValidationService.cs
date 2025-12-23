@@ -50,7 +50,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (previousSteps.IsFailed)
             return previousSteps;
 
-        var requiresSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId);
+        var requiresSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
         var hasSponsorInput = HasSponsorPayload(request) || profile.SponsorProfileId is not null;
 
         if (requiresSponsor && !hasSponsorInput)
@@ -65,7 +65,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (previousSteps.IsFailed)
             return previousSteps;
 
-        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
         var hasNationalAddress = request.NationalAddress is not null || profile.ResidenceAddress is not null;
 
         if (!requiresNationalAddress && (request.NationalAddress is not null || profile.ResidenceAddress is not null))
@@ -167,7 +167,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (profile.ResumeAttachmentId is null || profile.NationalCardId is null)
             return false;
 
-        var requiresResidencyExpiry = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresResidencyExpiry = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
         if (requiresResidencyExpiry && profile.QIDExpiry is null)
             return false;
 
@@ -177,7 +177,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId) && profile.MarriageCertificateId is null)
             return false;
 
-        if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId) && profile.OfficeId is null)
+        if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && profile.OfficeId is null)
             return false;
 
         return true;
@@ -188,12 +188,12 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (string.IsNullOrWhiteSpace(profile.NationalNumber) || profile.BirthDate is null)
             return false;
 
-        if (ProfileValidatorUtils.IsResidentQatar(profile.CandidateTypeId))
+        if (ProfileValidatorUtils.IsResidentQatar(profile.CandidateTypeId, profile.Provider))
         {
             if(profile.QIDExpiry is null)
                 return false;
 
-            if (!ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId) && profile.SponsorProfileId is not null)
+            if (!ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider) && profile.SponsorProfileId is not null)
                 return false;
         }
 
@@ -215,7 +215,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (profile.ResidenceCountryId is null || profile.InterviewLocationId is null)
             return false;
 
-        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId);
+        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
         if (requiresNationalAddress)
         {
             if (profile.ResidenceAddress is null)

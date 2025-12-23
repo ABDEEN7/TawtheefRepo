@@ -19,6 +19,7 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
+        var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
 
         var targetEmployeeIds = request.EmployeeIds.ToList();
         var employees = await userManager.Users.OfType<EmployeeUser>()
@@ -31,7 +32,13 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
         var perEmployeeLimit = request.PerEmployeeCount > 0 ? request.PerEmployeeCount : null;
 
         var profileQuery = profileRepo.DbSet
-            .Where(p=> ProfileDistributionRules.AssignableStatuses.Contains(p.Status));
+            .Where(p =>
+                ProfileDistributionRules.AssignableStatuses.Contains(p.Status) ||
+                (p.Status == UserProfileStatus.Approved &&
+                 changeRepo.DbSet.Any(c =>
+                     c.UserProfileId == p.Id &&
+                     (c.Status == ProfileChangeRequestStatus.Pending ||
+                      c.Status == ProfileChangeRequestStatus.UnderReview))));
 
         if (request.ProfileIds?.Any() == true)
             profileQuery = profileQuery.Where(p => request.ProfileIds.Contains(p.Id));

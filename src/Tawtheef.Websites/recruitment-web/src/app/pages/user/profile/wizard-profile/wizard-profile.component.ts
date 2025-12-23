@@ -78,7 +78,18 @@ export class WizardProfileComponent implements OnInit {
     'languages',
     'attachments',
   ];
+  private touchedSteps = new Set<number>();
 
+  private markTouched(step: number) {
+    this.touchedSteps.add(step);
+  }
+  isStepTouched(step: number): boolean {
+    return this.touchedSteps.has(step);
+  }
+  // Complete = valid AND touched
+  isStepComplete(step: number): boolean {
+    return this.isStepTouched(step) && this.isStepValid(step);
+  }
   isCurrentStepValid(): boolean {
     const validity = this.ds.stepValidity();
     const key = this.stepKeyMap[this.step];
@@ -102,6 +113,7 @@ export class WizardProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const provider = this.userService.getCurrentUser()?.provider ?? 'Google';
     this.forcedStep = this.parseStep(this.route.snapshot.queryParamMap.get('step'));
     this.route.queryParamMap.subscribe(params => {
       const stepParam = this.parseStep(params.get('step'));
@@ -115,10 +127,12 @@ export class WizardProfileComponent implements OnInit {
       const state = nav?.extras.state as ProfileStatusDto | null;
       if (state) {
         this.avatarPreviewUrl = state.avatar ?? null;
+        state.provider = provider;
         this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state, this.userService.getPrefill()));
         this.loading = false;
         this.moveToFirstInvalidStep();
         this.applyForcedStep();
+        this.markTouched(this.step);
         return;
       }
       this.auth.getAuthBootstrap$()
@@ -132,9 +146,11 @@ export class WizardProfileComponent implements OnInit {
             return;
           }
           this.avatarPreviewUrl = b.avatar ?? null;
+          b.provider = provider;
           this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto, this.userService.getPrefill()));
           this.moveToFirstInvalidStep();
           this.applyForcedStep();
+          this.markTouched(this.step);
         });
     })
   }
@@ -144,6 +160,12 @@ export class WizardProfileComponent implements OnInit {
     const firstInvalidStep =
       Array.from({length: this.total}, (_, i) => i + 1)
       .find(i => !this.isStepValid(i));
+
+    //make all step until firstInvalidStep touched
+    for (let i = 1; i < firstInvalidStep!; i++) {
+      this.markTouched(i);
+    }
+
     if (firstInvalidStep) {
       this.step = firstInvalidStep;
     }else{
@@ -153,13 +175,13 @@ export class WizardProfileComponent implements OnInit {
   }
 
   canGoTo(targetStep: number): boolean {
-    // if (targetStep === 1) return true;
-    // const validity = this.ds.stepValidity();
-    // for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
-    //   if (!validity[this.orderedValidationSteps[i]]) {
-    //     return false;
-    //   }
-    // }
+    if (targetStep === 1) return true;
+    const validity = this.ds.stepValidity();
+    for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
+      if (!validity[this.orderedValidationSteps[i]]) {
+        return false;
+      }
+    }
 
     return true;
   }
@@ -167,21 +189,26 @@ export class WizardProfileComponent implements OnInit {
   go(step: number) {
     if (!this.canGoTo(step)) return;
     this.step = step;
+    this.markTouched(this.step);
   }
 
   next() {
+    this.markTouched(this.step);
     if (!this.isCurrentStepValid()) {
       return;
     }
 
     if (this.step < this.total) {
       this.step++;
+      this.markTouched(this.step);
     }
   }
 
   prev() {
+    this.markTouched(this.step);
     if (this.step > 1) {
       this.step--;
+      this.markTouched(this.step);
     }
   }
 

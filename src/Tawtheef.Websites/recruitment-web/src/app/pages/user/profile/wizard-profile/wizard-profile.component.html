@@ -43,8 +43,13 @@
              [attr.aria-disabled]="!canGoTo(i+1)"
              href
              (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
-            <span class="step-index" [ngClass]="{'is-complete': isStepValid(i+1), 'is-active': step===i+1}">
-              <i class="fa-solid" [ngClass]="isStepValid(i+1) ? 'fa-check' : 'fa-circle'"></i>
+            <span class="step-index"
+                  [ngClass]="{
+                    'is-complete': isStepComplete(i+1),
+                    'is-active': step===i+1
+                  }">
+              <i class="fa-solid"
+                 [ngClass]="isStepComplete(i+1) ? 'fa-check' : 'fa-circle'"></i>
             </span>
             <span class="step-label">{{ label | translate }}</span>
           </a>

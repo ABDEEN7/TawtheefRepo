@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperations;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
@@ -67,6 +68,87 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     #region Profile update operations
+
+    [HttpPost("change-requests/prereq")]
+    public async Task<IActionResult> RequestPrereqChange([FromForm] SaveProfilePrereqRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfilePrereqChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("change-requests/personal")]
+    public async Task<IActionResult> RequestPersonalChange([FromForm] SaveProfilePersonalRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfilePersonalChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("change-requests/contact")]
+    public async Task<IActionResult> RequestContactChange([FromForm] SaveProfileContactRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfileContactChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("change-requests/education")]
+    public async Task<IActionResult> RequestEducationChange([FromForm] SaveProfileEducationRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfileEducationChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("change-requests/experience")]
+    public async Task<IActionResult> RequestExperienceChange([FromForm] SaveProfileExperienceRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfileExperienceChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("change-requests/achievements")]
+    public async Task<IActionResult> RequestAchievementsChange([FromForm] SaveProfileAchievementRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfileAchievementChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("change-requests/skills")]
+    public async Task<IActionResult> RequestSkillsChange([FromBody] SaveProfileSkillsRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfileSkillsChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("change-requests/languages")]
+    public async Task<IActionResult> RequestLanguagesChange([FromBody] SaveProfileLanguagesRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfileLanguagesChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("change-requests/references")]
+    public async Task<IActionResult> RequestAttachmentsChange([FromForm] SaveProfileAttachmentsRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new RequestProfileAttachmentsChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
 
     #endregion
     

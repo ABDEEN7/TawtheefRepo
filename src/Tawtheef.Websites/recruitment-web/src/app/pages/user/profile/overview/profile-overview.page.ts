@@ -22,12 +22,24 @@ import {
 } from './models/profile-overview.model';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {FileUtilsService} from '../../../../core/utils/file-utils';
+import { routes } from '../../../../routes/routes';
 import {
   AchievementDto, AdditionalAttachmentDto,
   ExperienceDto, FileRefDto, LanguageDto,
   ProfileStatusDto, QualificationDto,
   TrainingCourseDto, SkillDto
 } from '../../../../core/models/auth/auth-response.model';
+
+type ProfileEditSection =
+  | 'prerequisites'
+  | 'personal'
+  | 'contact'
+  | 'qualifications'
+  | 'experience'
+  | 'achievements'
+  | 'skills'
+  | 'languages'
+  | 'attachments';
 
 const REVIEW_STEP = 10;
 const SECTION_STEP_MAP: Record<ProfileSectionEnum, number> = {
@@ -41,6 +53,19 @@ const SECTION_STEP_MAP: Record<ProfileSectionEnum, number> = {
   [ProfileSectionEnum.Skills]: 7,
   [ProfileSectionEnum.Languages]: 8,
   [ProfileSectionEnum.Attachments]: 9
+};
+
+const SECTION_EDIT_SEGMENT_MAP: Record<ProfileSectionEnum, ProfileEditSection> = {
+  [ProfileSectionEnum.Prerequisites]: 'prerequisites',
+  [ProfileSectionEnum.Personal]: 'personal',
+  [ProfileSectionEnum.Contact]: 'contact',
+  [ProfileSectionEnum.Qualifications]: 'qualifications',
+  [ProfileSectionEnum.Experience]: 'experience',
+  [ProfileSectionEnum.TrainingCourses]: 'experience',
+  [ProfileSectionEnum.CertificatesAndAwards]: 'achievements',
+  [ProfileSectionEnum.Skills]: 'skills',
+  [ProfileSectionEnum.Languages]: 'languages',
+  [ProfileSectionEnum.Attachments]: 'attachments'
 };
 
 @Component({
@@ -205,17 +230,44 @@ export class ProfileOverviewPage {
     window.scrollTo({ top: y, behavior: 'smooth' });
   }
 
+  private isProfileComplete(): boolean {
+    const profile = this.data.value()?.profile as ProfileStatusDto | undefined;
+    return !!profile?.isComplete;
+  }
+
   editSection(section: ProfileSectionEnum) {
-    const step = SECTION_STEP_MAP[section] ?? 1;
-    this.navigateToWizard(step);
+    if (!this.isProfileComplete()) {
+      const step = SECTION_STEP_MAP[section] ?? 1;
+      this.navigateToWizard(step);
+      return;
+    }
+
+    this.navigateToEditSection(section);
   }
 
   openWizard() {
-    this.navigateToWizard();
+    if (!this.isProfileComplete()) {
+      this.navigateToWizard();
+      return;
+    }
+
+    this.navigateToEditSection(ProfileSectionEnum.Prerequisites);
   }
 
   openReviewStep() {
-    this.navigateToWizard(REVIEW_STEP);
+    if (!this.isProfileComplete()) {
+      this.navigateToWizard(REVIEW_STEP);
+      return;
+    }
+
+    const review = this.data.value()?.review as MyProfileReviewSummaryDto | undefined;
+    const firstSectionWithNotes = (review?.sections ?? []).find(s => (s.notesCount ?? 0) > 0)?.section;
+    if (firstSectionWithNotes) {
+      this.navigateToEditSection(firstSectionWithNotes as ProfileSectionEnum);
+      return;
+    }
+
+    this.scrollTo('review-panel');
   }
 
   // ================== UI Mapping ==================
@@ -278,12 +330,17 @@ export class ProfileOverviewPage {
     const profile = this.data.value()?.profile ?? null;
     const queryParams = step ? { step } : undefined;
     this.router.navigate(
-      ['/user/wizard-profile'],
+      [routes.user.profileWizard],
       {
         queryParams,
         state: profile ?? undefined
       }
     );
+  }
+
+  private navigateToEditSection(section: ProfileSectionEnum) {
+    const segment = SECTION_EDIT_SEGMENT_MAP[section] ?? 'personal';
+    this.router.navigate([routes.user.profileEditSection(segment)]);
   }
 
   noteSeverity(status: number): 'warn' | 'danger' | 'secondary' {

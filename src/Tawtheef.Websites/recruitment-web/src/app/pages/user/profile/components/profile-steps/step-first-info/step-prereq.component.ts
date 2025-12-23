@@ -153,18 +153,7 @@ export class StepPrereqComponent implements OnInit {
         }),
         map(() => true as const),
         catchError(err => {
-          const detail =
-            err?.error?.message ||
-            err?.error ||
-            this.translate.instant('wizard.personal.verify.error');
-
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.personal.verify.title'),
-            detail,
-            life: 5000,
-          });
-
+          console.error(err);
           // Block submission if check failed
           return of(false as const);
         })

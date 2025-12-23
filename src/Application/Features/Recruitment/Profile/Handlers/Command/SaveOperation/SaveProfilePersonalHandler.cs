@@ -7,9 +7,9 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -18,8 +18,7 @@ public sealed class SaveProfilePersonalHandler(
     IUnitOfWork uow,
     IMediator mediator,
     UserManager<User> userManager,
-    IProfileStepValidationService validationService,
-    IProfileReviewService reviewService
+    IProfileStepValidationService validationService
     ) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePersonalCommand cmd, CancellationToken ct)
@@ -43,23 +42,6 @@ public sealed class SaveProfilePersonalHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
-
-        if (profile.Status is not UserProfileStatus.InCreation)
-        {
-            var currentSnapshot = PersonalSectionSnapshot.From(user, profile);
-            var sponsorCardUpload = await UploadIfNeededAsync(r.SponsorCard, null);
-            if (sponsorCardUpload.IsFailed)
-                return Result.Fail<Unit>(sponsorCardUpload.Errors);
-
-            var nextSnapshot = currentSnapshot.ApplyRequest(r, sponsorCardUpload.Value);
-
-            if (nextSnapshot == currentSnapshot)
-                return Result.Ok(Unit.Value);
-
-            await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Personal, cmd.UserId, ct, currentSnapshot, nextSnapshot);
-            await uow.SaveChangesAsync(ct);
-            return Result.Ok(Unit.Value);
-        }
 
         user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
         user.FullNameEn = r.FullNameEn ?? user.FullNameEn;

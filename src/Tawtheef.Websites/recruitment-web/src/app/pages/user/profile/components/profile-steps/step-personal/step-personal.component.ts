@@ -88,15 +88,7 @@ export class StepPersonalComponent implements OnInit {
             life: 3000,
           });
         },
-        error: (err: any) => {
-          const detail = err?.error?.message || err?.error || this.translate.instant('wizard.personal.verify.error');
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.personal.verify.title'),
-            detail,
-            life: 5000,
-          });
-        }
+        error: (err: any) => console.log(err)
       });
   }
 

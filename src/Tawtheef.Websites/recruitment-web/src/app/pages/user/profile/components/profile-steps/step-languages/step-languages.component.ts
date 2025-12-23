@@ -68,12 +68,6 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.errorTitle'),
-            detail: this.translate.instant('wizard.language.deleteError'),
-            life: 5000,
-          });
         },
       });
     } else {
@@ -121,12 +115,6 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         console.error(err);
         this.saving = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translate.instant('wizard.errorTitle'),
-          detail: this.translate.instant('wizard.languages.saveError'),
-          life: 5000,
-        });
       },
     });
   }

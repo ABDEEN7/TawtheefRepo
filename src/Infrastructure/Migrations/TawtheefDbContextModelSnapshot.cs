@@ -1302,6 +1302,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             CandidateTypeId = new Guid("50f14c55-d5f0-4bba-930e-ab73b012e6cb"),
+                            ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
+                        },
+                        new
+                        {
+                            CandidateTypeId = new Guid("50f14c55-d5f0-4bba-930e-ab73b012e6cb"),
                             ProviderLoginId = new Guid("0d1ab8a4-2b89-4dcc-aa6f-6ec92ccb887c")
                         },
                         new
@@ -3360,12 +3365,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("e0575116-ea2b-4917-965f-214048a4c78b"),
-                            BackendName = "Azure",
+                            BackendName = "AzureAD",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             DisplayOrder = 3,
                             IsDeleted = false,
                             NameAr = "أزور",
-                            NameEn = "Azure"
+                            NameEn = "AzureAD"
                         });
                 });
 
@@ -4062,11 +4067,11 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("2f1b6ce7-cbc3-2b5c-b264-a02c6a87be1d"),
                             BackendName = "Educational",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "ãåÇÑÇÊ ÊÚáíãíÉ Êã ÇáÍÕæá ÚáíåÇ ãä ÎáÇá ÇáÊÚáíã ÇáÑÓãí",
+                            DescriptionAr = "مهارات تعليمية تم الحصول عليها من خلال التعليم الرسمي",
                             DescriptionEn = "Educational skills acquired through formal education",
                             DisplayOrder = 1,
                             IsDeleted = false,
-                            NameAr = "ÊÚáíãí",
+                            NameAr = "تعليمي",
                             NameEn = "Educational"
                         },
                         new
@@ -4074,11 +4079,11 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("d14ac141-c057-16f5-ddd8-97d02f6a7c9b"),
                             BackendName = "Technical",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "ãåÇÑÇÊ ÊÞäíÉ Ãæ ÕáÈÉ ÊÊÚáÞ ÈÃÏæÇÊ Ãæ ÊÞäíÇÊ Ãæ ãäåÌíÇÊ ãÍÏÏÉ",
+                            DescriptionAr = "مهارات تقنية أو صلبة تتعلق بأدوات أو تقنيات أو منهجيات محددة",
                             DescriptionEn = "Technical or hard skills related to specific tools, technologies, or methodologies",
                             DisplayOrder = 2,
                             IsDeleted = false,
-                            NameAr = "ÊÞäí",
+                            NameAr = "تقني",
                             NameEn = "Technical"
                         },
                         new
@@ -4086,11 +4091,11 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("83b504d0-25c1-5ca0-6757-df299869f002"),
                             BackendName = "Professional",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "ãåÇÑÇÊ ãåäíÉ äÇÚãÉ æßÝÇÁÇÊ ãßÇä ÇáÚãá",
+                            DescriptionAr = "مهارات مهنية ناعمة وكفاءات مكان العمل",
                             DescriptionEn = "Professional soft skills and workplace competencies",
                             DisplayOrder = 3,
                             IsDeleted = false,
-                            NameAr = "ãåäí",
+                            NameAr = "مهني",
                             NameEn = "Professional"
                         },
                         new
@@ -4098,11 +4103,11 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("f91eb9e6-7a3f-76d6-1fe1-4443cecc5b9a"),
                             BackendName = "Other",
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DescriptionAr = "ÃäæÇÚ ÃÎÑì ãä ÇáãåÇÑÇÊ ÛíÑ ÇáãÕäÝÉ ÃÚáÇå",
+                            DescriptionAr = "أنواع أخرى من المهارات غير المصنفة أعلاه",
                             DescriptionEn = "Other types of skills not categorized above",
                             DisplayOrder = 4,
                             IsDeleted = false,
-                            NameAr = "ÃÎÑì",
+                            NameAr = "أخرى",
                             NameEn = "Other"
                         });
                 });

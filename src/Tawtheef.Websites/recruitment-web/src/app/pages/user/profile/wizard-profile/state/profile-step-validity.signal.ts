@@ -58,7 +58,7 @@ export function candidateTypeNeedsMarriageCertificate(type: CandidateType | unde
   return !!type && [CandidateType.WifeOfQatari].includes(type);
 }
 
-export function candidateTypeIsResident(type: CandidateType | undefined): boolean {
+export function candidateTypeIsResident(type: CandidateType | undefined, provider: 'Google' | 'QatarPass'): boolean {
   if (!type) return false;
 
   return [
@@ -66,7 +66,7 @@ export function candidateTypeIsResident(type: CandidateType | undefined): boolea
     CandidateType.Qatari,
     CandidateType.SonOfQatariMother,
     CandidateType.WifeOfQatari
-  ].includes(type);
+  ].includes(type) || (type == CandidateType.GCC && provider === 'QatarPass');
 }
 
 /** Small helper to push a "required" error using VALIDATION_KEYS */
@@ -96,7 +96,7 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
   const backendType = candidateTypeFromState(s);
   const needsMarriageCertificate = candidateTypeNeedsMarriageCertificate(backendType);
   const needsBirthCertificate = candidateTypeNeedsBirthCertificate(backendType);
-  const isResident = candidateTypeIsResident(backendType);
+  const isResident = candidateTypeIsResident(backendType, s.provider);
 
   if (!isFilledField(s.candidateType)) {
     addRequiredError(errors, 'basic', 'candidateType');
@@ -234,7 +234,7 @@ function validateContactStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'contact', 'emailVerified');
   }
 
-  const isResident = candidateTypeIsResident(candidateTypeFromState(s));
+  const isResident = candidateTypeIsResident(candidateTypeFromState(s), s.provider);
 
   if (!isResident) {
     if (!isFilledField(s.address)) {

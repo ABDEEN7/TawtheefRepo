@@ -23,6 +23,14 @@ export class ProfileApprovalService {
     return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.detail(profileId));
   }
 
+  getProfileChanges(profileId: string): Observable<ProfileApprovalDetail> {
+    return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.changesDetail(profileId));
+  }
+
+  decideReviewItem(reviewItemId: string, body: { status: ReviewStatus; note: string | null }) {
+    return this.http.put<void>(this.endpoints.approvals.reviewItem(reviewItemId), body);
+  }
+
   finalizeProfile(profileId: string, request: FinalizeProfileApprovalRequest): Observable<void> {
     const body = new FormData();
     if (request.summary) body.append('Summary', request.summary);

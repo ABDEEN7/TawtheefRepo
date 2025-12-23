@@ -96,14 +96,13 @@
     </div>
     <!-- Birth Certificate -->
     <div class="col-md-6" *ngIf="ds.isNeedBirthCertificate">
-      <label class="form-label required d-flex justify-content-between align-items-center">
+      <label class="form-label required d-flex align-items-center">
         <span class="d-flex align-items-center gap-2">
           {{ 'wizard.prereq.birthCertificate' | translate }}
           <button *ngIf="canPreview('birth')"
                   type="button"
                   class="btn btn-link p-0 fz-2xs"
                   (click)="previewFile('birth', $event)">
-            <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.view' | translate }}
           </button>
         </span>
         <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
@@ -133,14 +132,13 @@
 
     <!-- Marriage Certificate -->
     <div class="col-md-6" *ngIf="ds.isNeedMarriageCertificate">
-      <label class="form-label required d-flex justify-content-between align-items-center">
+      <label class="form-label required d-flex align-items-center">
         <span class="d-flex align-items-center gap-2">
           {{ 'wizard.prereq.marriageCertificate' | translate }}
           <button *ngIf="canPreview('marriage')"
                   type="button"
                   class="btn btn-link p-0 fz-2xs"
                   (click)="previewFile('marriage', $event)">
-            <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.view' | translate }}
           </button>
         </span>
         <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>

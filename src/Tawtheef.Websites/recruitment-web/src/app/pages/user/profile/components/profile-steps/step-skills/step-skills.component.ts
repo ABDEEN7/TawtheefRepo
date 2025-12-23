@@ -149,12 +149,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translate.instant('wizard.errorTitle'),
-            detail: this.translate.instant('wizard.skill.deleteError'),
-            life: 5000,
-          });
         },
       });
     } else {
@@ -194,12 +188,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         console.error(err);
         this.saving = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translate.instant('wizard.errorTitle'),
-          detail: this.translate.instant('wizard.skills.saveError'),
-          life: 5000,
-        });
       },
     });
   }

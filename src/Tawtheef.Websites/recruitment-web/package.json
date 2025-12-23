@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "doc": "npx compodoc -p tsconfig.json"
   },
   "prettier": {
     "printWidth": 100,
@@ -51,6 +52,7 @@
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.3.15",
+    "@compodoc/compodoc": "^1.1.32",
     "@types/aos": "^3.0.7",
     "@types/google-libphonenumber": "^7.4.30",
     "@types/jasmine": "~5.1.0",

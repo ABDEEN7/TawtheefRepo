@@ -47,6 +47,17 @@ export class EndpointsService {
       submit: this.getFullUrl(`/profiles/submit`),
       checkProfile: this.getFullUrl(`/profiles/check-profile`),
       changeRequests: this.getFullUrl(`/profiles/change-requests`),
+      requestChanges: {
+        prereq: this.getFullUrl(`/profiles/change-requests/prereq`),
+        personal: this.getFullUrl(`/profiles/change-requests/personal`),
+        contact: this.getFullUrl(`/profiles/change-requests/contact`),
+        education: this.getFullUrl(`/profiles/change-requests/education`),
+        experience: this.getFullUrl(`/profiles/change-requests/experience`),
+        achievements: this.getFullUrl(`/profiles/change-requests/achievements`),
+        skills: this.getFullUrl(`/profiles/change-requests/skills`),
+        languages: this.getFullUrl(`/profiles/change-requests/languages`),
+        references: this.getFullUrl(`/profiles/change-requests/references`),
+      },
     },
     verify:{
       phone:{

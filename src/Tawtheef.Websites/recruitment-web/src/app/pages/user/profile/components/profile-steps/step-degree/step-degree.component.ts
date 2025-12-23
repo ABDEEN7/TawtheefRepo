@@ -64,7 +64,7 @@ export class StepDegreeComponent implements OnInit {
       return;
     }
     if(degree?.id){
-      this.profile.deleteEduction(degree.id).subscribe({
+      this.profile.deleteEducation(degree.id).subscribe({
         next: () => {
           this.ds.delDegree(i);
         },

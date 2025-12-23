@@ -599,4 +599,18 @@
       color: #9ca3af;
     }
   }
+
+  .value-diff {
+    border: 1px dashed #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+
+    th,
+    td {
+      vertical-align: top;
+      word-break: break-word;
+    }
+  }
 }

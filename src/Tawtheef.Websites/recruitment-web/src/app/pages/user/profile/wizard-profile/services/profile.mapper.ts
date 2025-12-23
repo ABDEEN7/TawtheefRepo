@@ -95,6 +95,7 @@ export function mapProfileStatusToState(
   });
 
   return {
+    provider: dto.provider,
     // ----------- Prereq -----------
     candidateType: mapIdToDropdown(lookups, 'candidateType', dto.candidateTypeId) as dropdownOptionsModel,
     targetEntity: mapIdToDropdown(lookups, 'targetEntity', dto.targetEntityId) as dropdownOptionsModel,

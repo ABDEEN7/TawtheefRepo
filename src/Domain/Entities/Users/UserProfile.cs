@@ -14,6 +14,7 @@ public class UserProfile : EventEntity
     public Guid UserId { get; set; }
     public ApplicantUser? User { get; set; }
     
+    public required string Provider { get; set; }
     public Guid CandidateTypeId { get; set; }
     public CandidateType? CandidateType { get; set; }
 
@@ -105,7 +106,7 @@ public class UserProfile : EventEntity
             return false;
         if (TargetEntityId == Guid.Empty)
             return false;
-        if (ProfileValidatorUtils.RequiresOffice(CandidateTypeId) && OfficeId is null)
+        if (ProfileValidatorUtils.RequiresOffice(CandidateTypeId, Provider) && OfficeId is null)
             return false;
 
         if (ProfileValidatorUtils.RequiresBirthCertificate(CandidateTypeId) && BirthdayCertificateId is null) return false;
@@ -133,7 +134,7 @@ public class UserProfile : EventEntity
             return false;
         if(HasDisability && string.IsNullOrWhiteSpace(DisabilityDetails))
             return false;
-        if (ProfileValidatorUtils.RequiresSponsor(CandidateTypeId))
+        if (ProfileValidatorUtils.RequiresSponsor(CandidateTypeId, Provider))
         {
             if (SponsorProfileId is null) return false;
             if (SponsorProfile is null ||
@@ -151,7 +152,7 @@ public class UserProfile : EventEntity
         if (InterviewLocationId is null || InterviewLocationId == Guid.Empty)
             return false;
 
-        if (ProfileValidatorUtils.RequiresNationalAddress(CandidateTypeId))
+        if (ProfileValidatorUtils.RequiresNationalAddress(CandidateTypeId, Provider))
         {
             if (ResidenceAddress is null) return false;
             if (ResidenceAddress.ZoneNo <= 0) return false;

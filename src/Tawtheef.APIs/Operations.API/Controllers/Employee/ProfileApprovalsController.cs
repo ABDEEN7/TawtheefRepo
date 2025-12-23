@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using FluentResults;
-using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Extensions;
@@ -45,6 +43,15 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("{userProfileId:guid}/changes")]
+    public async Task<IActionResult> GetChangesDetail(Guid userProfileId, CancellationToken ct = default)
+    {
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
+
+        var result = await mediator.Send(new GetProfilePartialChangesQuery(userProfileId, OfficerId.Value), ct);
+        return result.ToActionResult();
+    }
+
     [HttpPost("{userProfileId:guid}/start-review")]
     public async Task<IActionResult> StartReview(Guid userProfileId, CancellationToken ct)
     {
@@ -77,6 +84,28 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
             OfficerId: OfficerId.Value,
             UserProfileId: userProfileId,
             Section: section,
+            Status: body.Status,
+            Note: body.Note);
+
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("review-items/{reviewItemId:guid}")]
+    public async Task<IActionResult> DecideReviewItem(
+        Guid reviewItemId,
+        [FromBody] DecideProfileReviewItemRequest body,
+        CancellationToken ct)
+    {
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
+
+        if (body.Status is ReviewStatus.Rejected or ReviewStatus.NeedsCorrection &&
+            string.IsNullOrWhiteSpace(body.Note))
+            return BadRequest(Result.Fail(ErrorsCodes.NotesRequiredForCorrection).Errors);
+
+        var cmd = new DecideProfileReviewItemCommand(
+            OfficerId: OfficerId.Value,
+            ReviewItemId: reviewItemId,
             Status: body.Status,
             Note: body.Note);
 

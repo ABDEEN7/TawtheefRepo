@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Validators;

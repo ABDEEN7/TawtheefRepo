@@ -14,6 +14,7 @@ export interface UploadedFileRef {
   file?: File | null;
 }
 export interface ProfileState {
+  provider: 'Google' | 'QatarPass'
   // prereq
   candidateType?: dropdownOptionsModel;
   targetEntity?: dropdownOptionsModel;

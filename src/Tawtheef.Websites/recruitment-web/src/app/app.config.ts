@@ -53,11 +53,11 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     provideHttpClient(
       withInterceptors([
-        loadingInterceptor,
-        customHttpInterceptor,
-        authInterceptor,
-        refreshInterceptor,
         errorInterceptor,
+        refreshInterceptor,
+        authInterceptor,
+        customHttpInterceptor,
+        loadingInterceptor,
       ])
     ),
   ]

@@ -34,6 +34,9 @@ import {TextareaModule} from 'primeng/textarea';
 import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.directive';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {ProfileComponentsModule} from '../components/profile-components.module';
+import {PROFILE_WRITE_MODE} from './services/profile-write-mode.token';
+import {ProfileService} from './services/profile.service';
+import {ProfileDataService} from './services/profile-data.service';
 
 @NgModule({
   declarations: [
@@ -41,7 +44,10 @@ import {ProfileComponentsModule} from '../components/profile-components.module';
     StepReviewComponent,
   ],
   providers:[
-    DialogService
+    DialogService,
+    ProfileDataService,
+    ProfileService,
+    { provide: PROFILE_WRITE_MODE, useValue: 'create' },
   ],
   imports: [
     RouterModule.forChild(wizardProfileRoutes),

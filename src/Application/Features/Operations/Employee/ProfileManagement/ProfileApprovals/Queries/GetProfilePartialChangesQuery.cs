@@ -6,4 +6,4 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Pr
 
 public sealed record GetProfilePartialChangesQuery(
     Guid UserProfileId,
-    Guid OfficerId) : IRequest<Result<GetProfileApprovalDetailDto>>;
+    Guid OfficerId) : IRequest<Result<GetProfilePartialChangesDetailDto>>;

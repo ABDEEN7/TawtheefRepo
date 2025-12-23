@@ -11,6 +11,7 @@ import {UserService} from '../../../../../core/auth/user.service';
 import {ProfileComponentsModule} from '../../components/profile-components.module';
 import {NgSwitch, NgSwitchCase} from '@angular/common';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
+import { routes } from '../../../../../routes/routes';
 
 type EditSection =
   | 'prerequisites' | 'personal' | 'contact' | 'qualifications'
@@ -73,6 +74,6 @@ export class ProfileEditShellPage {
   }
 
   backToOverview() {
-    this.router.navigate(['/user/profile-overview']);
+    this.router.navigate([routes.user.profileOverview]);
   }
 }

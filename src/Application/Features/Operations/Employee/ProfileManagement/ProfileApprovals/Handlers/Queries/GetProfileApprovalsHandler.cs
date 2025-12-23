@@ -6,7 +6,6 @@ using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -35,9 +34,9 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
         if (assignedProfileIds.Count == 0)
             return Result.Ok<IReadOnlyList<ProfileApprovalListItemDto>>([]);
 
-        // 2) Load profiles that are relevant for FULL REVIEW (phase 1)
-        // Only Submitted / UnderReview should appear in reviewer work queue.
-        // If you want to allow viewing approved profiles in the same list, add Approved below.
+        // 2) Load assigned profiles for:
+        // - Full review (phase 1): Submitted / UnderReview
+        // - Change requests (phase 2): Approved + pending change review items
         var profileRepo = uow.GetEntityRepository<UserProfile>();
 
         var profiles = await profileRepo.DbSet
@@ -48,7 +47,10 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
             .Include(p => p.TargetEntity)
             .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
             .Where(p => assignedProfileIds.Contains(p.Id))
-            .Where(p => p.Status == UserProfileStatus.Submitted || p.Status == UserProfileStatus.UnderReview)
+            .Where(p =>
+                p.Status == UserProfileStatus.Submitted ||
+                p.Status == UserProfileStatus.UnderReview ||
+                p.Status == UserProfileStatus.Approved)
             .ToListAsync(ct);
 
         if (profiles.Count == 0)
@@ -56,11 +58,10 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
 
         var profileIds = profiles.Select(p => p.Id).ToList();
 
-        // 3) Review summary MUST be Section-only for phase 1.
-        // We also ignore ProfileChangeId (phase 2) so list stays strictly for Full Review.
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
-        var reviewSummaries = await reviewRepo.DbSet
+        // 3-a) Full Review summary: Section-only, ProfileChangeId == null (phase 1)
+        var fullReviewSummaries = await reviewRepo.DbSet
             .AsNoTracking()
             .Where(r => profileIds.Contains(r.UserProfileId))
             .Where(r => r.TargetType == ReviewTargetType.Section)
@@ -89,21 +90,78 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
             })
             .ToListAsync(ct);
 
-        // For quick lookup
-        var summaryMap = reviewSummaries.ToDictionary(x => x.UserProfileId, x => x);
+        var fullSummaryMap = fullReviewSummaries.ToDictionary(x => x.UserProfileId, x => x);
 
-        // 4) Build list DTOs
+        // 3-b) Change Requests summary: ProfileChangeId != null (phase 2)
+        var changeSummaries = await reviewRepo.DbSet
+            .AsNoTracking()
+            .Where(r => profileIds.Contains(r.UserProfileId))
+            .Where(r => r.ProfileChangeId != null) // phase 2 only
+            .GroupBy(r => r.UserProfileId)
+            .Select(g => new
+            {
+                UserProfileId = g.Key,
+                Outstanding = g.Count(r => r.Status != ReviewStatus.Approved),
+                Pending = g.Count(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed),
+                Flagged = g.Count(r => r.Status == ReviewStatus.NeedsCorrection),
+                Rejected = g.Count(r => r.Status == ReviewStatus.Rejected),
+                OverallStatus =
+                    g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
+                        ? ReviewStatus.NeedsCorrection
+                        : g.Any(r => r.Status == ReviewStatus.Rejected)
+                            ? ReviewStatus.Rejected
+                            : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed)
+                                ? ReviewStatus.Pending
+                                : ReviewStatus.Approved,
+                LastUpdatedAtUtc = g.Max(r => r.UpdatedDate ?? r.CreatedDate)
+            })
+            .ToListAsync(ct);
+
+        var changeSummaryMap = changeSummaries.ToDictionary(x => x.UserProfileId, x => x);
+
+        // 4) Build list DTOs (phase 1 + phase 2)
         var list = profiles
             .Select(profile =>
             {
-                summaryMap.TryGetValue(profile.Id, out var summary);
+                // Phase 2: Approved profile with outstanding change requests
+                if (profile.Status == UserProfileStatus.Approved &&
+                    changeSummaryMap.TryGetValue(profile.Id, out var change) &&
+                    change.Outstanding > 0)
+                {
+                    return new ProfileApprovalListItemDto
+                    {
+                        UserProfileId = profile.Id,
+                        UserId = profile.UserId,
+                        FullName = profile.User?.FullNameEn ?? profile.User?.FullNameAr ?? string.Empty,
+
+                        CandidateType = profile.CandidateType?.NameEn ?? profile.CandidateType?.NameAr,
+                        TargetEntity = profile.TargetEntity?.NameEn ?? profile.TargetEntity?.NameAr,
+
+                        Specialization = profile.Qualifications?.FirstOrDefault()?.Major?.NameEn
+                                         ?? profile.Qualifications?.FirstOrDefault()?.Major?.NameAr,
+
+                        SubmittedAtUtc =  change.LastUpdatedAtUtc,
+                        ProfileStatus = profile.Status,
+
+                        PendingCount = change.Pending,
+                        OverallStatus = change.OverallStatus,
+                        LastUpdatedAtUtc = change.LastUpdatedAtUtc,
+
+                        AllowedOperations = ResolveAllowedOperations(profile.Status)
+                    };
+                }
+
+                // Phase 1: Full review queue (Submitted / UnderReview)
+                if (profile.Status is not (UserProfileStatus.Submitted or UserProfileStatus.UnderReview))
+                    return null;
+
+                fullSummaryMap.TryGetValue(profile.Id, out var summary);
 
                 var pendingSections = summary?.PendingSections
                                       ?? ProfileApprovalFlow.Sections.Length; // if no review items found, treat as all pending
 
                 var overallStatus = summary?.OverallStatus ?? ReviewStatus.Pending;
 
-                // TODO: Replace CreatedDate with real SubmittedAtUtc when you add it to UserProfile.
                 var submittedAtUtc = profile.CreatedDate;
 
                 var lastUpdated =
@@ -135,6 +193,8 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
                     AllowedOperations = ResolveAllowedOperations(profile.Status)
                 };
             })
+            .Where(x => x is not null)
+            .Select(x => x!)
             .ToList();
 
         // 5) Filters (search + dropdown filters)

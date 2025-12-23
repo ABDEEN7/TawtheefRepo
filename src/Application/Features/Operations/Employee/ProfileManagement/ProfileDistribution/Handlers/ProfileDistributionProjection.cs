@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Configurations.Rules;
-using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -17,12 +16,22 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
+        var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
 
         var profilesQuery = profileRepo.DbSet
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
-            .Where(p => !ProfileDistributionRules.StartStatuses.Contains(p.Status) && !ProfileDistributionRules.FinalStatuses.Contains(p.Status));
+            .Where(p =>
+                // phase 1: normal distribution statuses (exclude start/final)
+                (!ProfileDistributionRules.StartStatuses.Contains(p.Status) &&
+                 !ProfileDistributionRules.FinalStatuses.Contains(p.Status))
+                // phase 2: approved profiles with pending change requests should be distributable
+                || (p.Status == UserProfileStatus.Approved &&
+                    changeRepo.DbSet.Any(c =>
+                        c.UserProfileId == p.Id &&
+                        (c.Status == ProfileChangeRequestStatus.Pending ||
+                         c.Status == ProfileChangeRequestStatus.UnderReview))));
 
         if (status is not null)
             profilesQuery = profilesQuery.Where(p => p.Status == status);

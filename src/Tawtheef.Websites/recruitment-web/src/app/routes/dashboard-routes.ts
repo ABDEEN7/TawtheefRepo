@@ -16,5 +16,11 @@ export const userRoutes = {
   },
   get profileOverview(){
     return this.user + 'profile-overview';
-  }
+  },
+  get profileEdit(){
+    return this.user + 'profile/edit';
+  },
+  profileEditSection(section: string){
+    return this.profileEdit + '/' + section;
+  },
 };

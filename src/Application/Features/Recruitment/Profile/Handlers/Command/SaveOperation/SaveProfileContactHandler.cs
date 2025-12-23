@@ -6,11 +6,10 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperations;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -18,8 +17,7 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileContactHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    IProfileStepValidationService validationService,
-    IProfileReviewService reviewService
+    IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileContactCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileContactCommand cmd, CancellationToken ct)
@@ -39,20 +37,7 @@ public sealed class SaveProfileContactHandler(
         var r = cmd.Request;
 
         if (profile.Status is not UserProfileStatus.InCreation)
-        {
-            var currentSnapshot = ContactSectionSnapshot.From(profile);
-            var naUpload = await UploadIfNeededAsync(r.NationalAddress?.NationalAddress, profile.ResidenceAddress?.CertificateId);
-            if (naUpload.IsFailed)
-                return Result.Fail<Unit>(naUpload.Errors);
-
-            var nextSnapshot = currentSnapshot.ApplyRequest(r, naUpload.Value);
-            if (nextSnapshot != currentSnapshot)
-            {
-                await reviewService.TouchSectionAsync(profile.Id, ProfileSection.Contact, cmd.UserId, ct, currentSnapshot, nextSnapshot);
-                await uow.SaveChangesAsync(ct);
-            }
-            return Result.Ok(Unit.Value);
-        }
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         profile.ResidenceCountryId = r.ResidenceCountryId;
         profile.InterviewLocationId = r.InterviewLocationId;
@@ -120,10 +105,10 @@ file sealed record ContactSectionSnapshot
     public Guid? ResidenceCountryId { get; init; }
     public Guid? InterviewLocationId { get; init; }
     public string? Address { get; init; }
-    public string? Zone { get; init; }
-    public string? Street { get; init; }
-    public string? Building { get; init; }
-    public string? Unit { get; init; }
+    public int? Zone { get; init; }
+    public int? Street { get; init; }
+    public int? Building { get; init; }
+    public int? Unit { get; init; }
     public Guid? NationalAddressCertificateId { get; init; }
 
     public static ContactSectionSnapshot From(UserProfile profile) => new()
@@ -142,8 +127,8 @@ file sealed record ContactSectionSnapshot
     {
         var snapshot = this with
         {
-            ResidenceCountryId = request.ResidenceCountryId ?? ResidenceCountryId,
-            InterviewLocationId = request.InterviewLocationId ?? InterviewLocationId,
+            ResidenceCountryId = request.ResidenceCountryId,
+            InterviewLocationId = request.InterviewLocationId,
             Address = request.Address ?? Address
         };
 
@@ -151,10 +136,10 @@ file sealed record ContactSectionSnapshot
         {
             snapshot = snapshot with
             {
-                Zone = request.NationalAddress.Zone ?? Zone,
-                Street = request.NationalAddress.Street ?? Street,
-                Building = request.NationalAddress.Building ?? Building,
-                Unit = request.NationalAddress.Unit ?? Unit,
+                Zone = request.NationalAddress.Zone,
+                Street = request.NationalAddress.Street,
+                Building = request.NationalAddress.Building,
+                Unit = request.NationalAddress.Unit,
                 NationalAddressCertificateId = certificateResourceId ?? NationalAddressCertificateId
             };
         }
