@@ -51,7 +51,6 @@ export const appConfig: ApplicationConfig = {
       const langSvc = inject(LanguageService);
       return langSvc.init();
     }),
-    provideHttpClient(withInterceptorsFromDi()),
     provideHttpClient(
       withInterceptors([
         errorInterceptor,

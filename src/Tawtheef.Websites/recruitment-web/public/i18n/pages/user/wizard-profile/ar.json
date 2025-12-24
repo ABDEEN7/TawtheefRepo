@@ -349,5 +349,8 @@
   "wizard.skills.titleStep": "المهارات",
   "wizard.languages.titleStep": "اللغات",
   "wizard.attachments.titleStep": "المرفقات",
-  "wizard.review.titleStep": "المراجعة النهائية"
+  "wizard.review.titleStep": "المراجعة النهائية",
+  "wizard.profile.skills.duplicateMessage": "تمت إضافة هذه المهارة بالفعل.",
+  "wizard.profile.languages.duplicate": "تمت إضافة هذه اللغة بالفعل.",
+  "wizard.profile.degrees.duplicate": "تمت إضافة هذا المؤهل بالفعل."
 }

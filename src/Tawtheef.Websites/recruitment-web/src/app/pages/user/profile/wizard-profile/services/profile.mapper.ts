@@ -228,7 +228,7 @@ export function mapProfileStatusToState(
       skillId: s.skillId,
       skill: s.skill,
       levelId: s.levelId,
-      level: mapIdToDropdown(lookups, 'ratingGrade', s.levelId),
+      level: mapIdToDropdown(lookups, 'skillLevel', s.levelId),
     } as Skill)),
 
     languages: (dto.languages ?? []).map(l => ({
@@ -270,7 +270,7 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
 
 // Convert backend ID → dropdownOptionsModel
 export function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
-'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |
+'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |'skillLevel' |
 'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'office' | 'achievementTypes',
   id?: string | null): dropdownOptionsModel | undefined {
   if (!id) return undefined;
@@ -293,6 +293,8 @@ export function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidate
       return lookups.degrees().find(d => d.id === id);
     case 'ratingGrade':
       return lookups.ratingGrades().find(rg => rg.id === id);
+    case 'skillLevel':
+      return lookups.skillLevels().find(rg => rg.id === id);
     case 'achievementTypes':
       return lookups.achievementTypes().find(a => a.id === id);
     case 'language':

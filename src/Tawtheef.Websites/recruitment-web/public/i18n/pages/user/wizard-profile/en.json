@@ -349,5 +349,8 @@
   "wizard.skills.titleStep": "Skills",
   "wizard.languages.titleStep": "Languages",
   "wizard.attachments.titleStep": "Attachments",
-  "wizard.review.titleStep": "Final Review"
+  "wizard.review.titleStep": "Final Review",
+  "wizard.profile.skills.duplicateMessage": "This skill has already been added.",
+  "wizard.profile.languages.duplicate": "This language has already been added.",
+  "wizard.profile.degrees.duplicate": "This qualification has already been added."
 }

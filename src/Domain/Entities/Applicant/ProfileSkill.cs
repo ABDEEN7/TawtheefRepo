@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
@@ -6,6 +7,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Domain.Entities.Applicant;
 
 [Table(nameof(ProfileSkill), Schema = Schemas.Profile)]
+[Index(nameof(SkillId), nameof(UserProfileId), IsUnique = true)]
 public class ProfileSkill : EventEntity
 {
     public Guid SkillId { get; set; }

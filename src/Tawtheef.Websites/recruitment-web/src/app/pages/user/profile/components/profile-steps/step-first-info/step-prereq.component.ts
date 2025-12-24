@@ -167,10 +167,6 @@ export class StepPrereqComponent implements OnInit {
             // Check failed → do not save or go next
             return of(false as const);
           }
-
-          // Check passed (or not required) → now save
-          this.lastSubmittedSignature = signature;
-
           return this.profile
             .savePrereq(payload, {
               cvFile: fileToUpload(this.cvFile),
@@ -184,6 +180,7 @@ export class StepPrereqComponent implements OnInit {
       )
       .subscribe({
         next: (canProceed: any) => {
+          this.lastSubmittedSignature = signature;
           if (canProceed) {
             this.next.emit();
           }

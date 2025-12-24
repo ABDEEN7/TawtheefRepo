@@ -21,9 +21,7 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.Grade, src => src.Rating)
             .Map(dest => dest.Attachment, src => src.Certificate);
         
-        config.NewConfig<AchievementDto, Achievement>()
-            .Map(dest => dest.Country, src => src.Country)
-            .Map(dest => dest.AchievementType, src => src.AchievementType);
+        config.NewConfig<AchievementDto, Achievement>();
 
         config.NewConfig<Experience, ExperienceDto>()
             .Map(dest => dest.Attachment, src => src.Certificate)
@@ -36,20 +34,11 @@ public sealed class ProfileCompletenessProfile : IRegister
         config.NewConfig<TrainingCourse, TrainingCourseDto>()
             .Map(dest => dest.Attachment, src => src.Certificate);
 
-        config.NewConfig<Achievement, AchievementDto>()
-            .Map(dest => dest.Attachment, src => src.Attachment)
-            .Map(dest => dest.RelatedToSpecialization, src => src.RelatedToSpecialization)
-            .Map(dest => dest.AchievementType, src => src.AchievementType);
+        config.NewConfig<Achievement, AchievementDto>();
 
-        config.NewConfig<ProfileSkill, SkillDto>()
-            .Map(dest => dest.Skill, src => src.Skill)
-            .Map(dest => dest.Level, src => src.Level);
+        config.NewConfig<ProfileSkill, SkillDto>();
 
-        config.NewConfig<ProfileLanguage, LanguageDto>()
-            .Map(dest => dest.Language, src => src.Language)
-            .Map(dest => dest.SpeakingLevel, src => src.SpeakingLevel)
-            .Map(dest => dest.WritingLevel, src => src.WritingLevel)
-            .Map(dest => dest.ReadingLevel, src => src.ReadingLevel);
+        config.NewConfig<ProfileLanguage, LanguageDto>();
 
         config.NewConfig<ProfileBootstrapSource, ProfileStatusDto>()
             .Map(dest => dest, src => src.Profile)
@@ -59,12 +48,10 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.Avatar, src => src.User.Avatar ?? src.Prefill.Avatar)
             .Map(dest => dest.FullNameAr,
                 src => string.IsNullOrWhiteSpace(src.User.FullNameAr)
-                    ? src.Prefill.FullName
-                    : src.User.FullNameAr)
+                    ? src.Prefill.FullName : src.User.FullNameAr)
             .Map(dest => dest.FullNameEn,
                 src => string.IsNullOrWhiteSpace(src.User.FullNameEn)
-                    ? src.Prefill.FullName
-                    : src.User.FullNameEn)
+                    ? src.Prefill.FullName : src.User.FullNameEn)
             .Map(dest => dest.Email, src => src.User.Email ?? src.Prefill.Email)
             .Map(dest => dest.EmailVerified, src => src.User.EmailConfirmed)
             .Map(dest => dest.Phone, src => src.User.PhoneNumber ?? src.Prefill.Phone)
@@ -91,7 +78,6 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.TrainingCourses, src => src.Profile.TrainingCourses)
             .Map(dest => dest.Achievements, src => src.Profile.Achievements)
             .Map(dest => dest.Skills, src => src.Profile.Skills)
-            .Map(dest => dest.Languages, src => src.Profile.Languages)
-            ;
+            .Map(dest => dest.Languages, src => src.Profile.Languages);
     }
 }
