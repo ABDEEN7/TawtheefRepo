@@ -24,8 +24,9 @@ export class UserService {
       profilePictureUrl: user.profilePictureUrl,
       userType: this.tokenService.getRoleFromToken(accessToken),
       provider: user.provider || 'local',
-      notifications : 0
+      notifications : user.notifications || 0
     } as UserInfoModel;
+
     localStorage.setItem('user_data', JSON.stringify(minimalUser));
     if(user.prefill || user.prefill === null) localStorage.setItem('prefill', JSON.stringify(user.prefill));
     this.currentUserSubject.next(minimalUser);

@@ -40,7 +40,7 @@ export class Navbar implements OnInit{
     const user = this.auth.getCurrentUser();
     const nameParts = user?.fullName.split(' ');
     this.userName =  nameParts? nameParts[0] + ' ' + (nameParts.length > 1 ? nameParts[nameParts.length - 1] : '') : '';
-    this.userAvatar = user?.profilePictureUrl || this.userAvatar;
+    this.userAvatar = user?.profilePictureUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${this.userName}`;
     this.notificationCount = user?.notifications || 0;
   }
 
