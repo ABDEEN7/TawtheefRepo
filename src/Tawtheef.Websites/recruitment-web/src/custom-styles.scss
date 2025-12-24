@@ -118,6 +118,12 @@ p{
   }
 }
 
+  .p-button-primary:hover{
+      background: rgb(13, 67, 97) !important;
+      color:white !important;
+    }
+
+
 
 
 
@@ -534,8 +540,24 @@ $badge-bg-select: rgba(241, 230, 229, 1);
     }
   }
 }
+body.ltr .table-card {
+  thead {
+    th {
+      &:first-child {
+        border-top-left-radius: $table-radius;
+        border-top-right-radius:0;
+      }
 
-/* Info text */
+      &:last-child {
+        border-top-right-radius: $table-radius;
+        border-top-left-radius:0;
+      }
+    }
+  }
+}
+body.ltr
+
+  /* Info text */
 #dtInfo {
   font-size: 0.9rem;
   color: #495057;
@@ -568,7 +590,10 @@ $badge-bg-select: rgba(241, 230, 229, 1);
   font-weight: bold;
 }
 .p-select-fluid ,
-.p-inputtext{
+.p-inputtext,
+.p-select-label,
+.p-select,
+{
   padding-top: 0.25rem!important;
   padding-bottom: 0.25rem!important;
   box-shadow: none !important;
@@ -580,7 +605,8 @@ $badge-bg-select: rgba(241, 230, 229, 1);
   padding: 0.575rem 0.75rem !important;
 }
 .form-select.p-select,
-.p-select{
+.p-select,
+.p-inputtext{
   border-radius: 2rem !important;
   border-color: $grey-border !important;
   background-color:$grey-100 !important;

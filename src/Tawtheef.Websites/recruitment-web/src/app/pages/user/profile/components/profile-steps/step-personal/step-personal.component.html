@@ -67,7 +67,6 @@
         [filter]="true"
         filterBy="name"
         optionLabel="name"
-        size="small"
         [placeholder]="'wizard.placeholders.selectNationality' | translate"
         class="w-full md:w-56"
         [readonly]="ds.isLocked('nationality')"
@@ -83,7 +82,7 @@
       <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
       <p-date-picker name="dob" placeholder="{{ 'wizard.personal.dob' | translate }}"
         [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event)!)"
-        size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
+         [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
         [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
       </p-date-picker>
       <small *ngIf="ds.isLocked('dob')" class="fz-2xs text-muted">
@@ -96,7 +95,7 @@
       <label class="form-label required">{{ 'wizard.personal.gender' | translate }}</label>
       <p-select [options]="lookups.genders()" name="gender"
         [ngModel]="ds.state().gender" (ngModelChange)="updateField('gender', $event)"
-        [filter]="false" optionLabel="name" size="small"
+        [filter]="false" optionLabel="name"
         [placeholder]="'wizard.placeholders.selectGender' | translate"
         class="w-full md:w-56" [readonly]="ds.isLocked('gender')"
         [ngClass]="{ 'locked-field': ds.isLocked('gender') }"
@@ -117,7 +116,7 @@
         [filter]="true"
         filterBy="name"
         optionLabel="name"
-        size="small"
+        s
         [placeholder]="'wizard.placeholders.selectReligion' | translate"
         class="w-full md:w-56"
       ></p-select>
@@ -134,7 +133,7 @@
         [filter]="true"
         filterBy="name"
         optionLabel="name"
-        size="small"
+
         [placeholder]="'wizard.placeholders.selectMaritalStatus' | translate"
         class="w-full md:w-56"
       ></p-select>
@@ -214,7 +213,7 @@
           [filter]="true"
           filterBy="name"
           optionLabel="name"
-          size="small"
+
           [placeholder]="'wizard.placeholders.selectSponsorType' | translate"
           class="w-full md:w-56"
         ></p-select>
@@ -229,7 +228,7 @@
           <input
             pInputText
             class="form-control"
-            pSize="small"
+
             name="sponsorEmployerName"
             [ngModel]="ds.state().sponsorEmployerName"
             (ngModelChange)="updateField('sponsorEmployerName', $event)"
@@ -247,7 +246,7 @@
             pInputText
             type="text"
             class="form-control"
-            pSize="small"
+
             name="sponsorEmployerNumber"
             [ngModel]="ds.state().sponsorEmployerNumber"
             (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
@@ -258,7 +257,7 @@
           <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
           <p-date-picker name="sponsorQidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
             [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
-            size="small" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
+             [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
           </p-date-picker>
         </div>
         <div class="col-md-4 d-flex align-items-end" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
@@ -305,14 +304,14 @@
 
 <div class="d-flex justify-content-between mt-4 text-end">
   <button class="btn btn-outline-secondary me-2 d-flex align-items-center" (click)="back.emit()">
-    <i class="hgi fs-18" faDirArrow="start"></i> <span>{{ 'wizard.buttons.prev' | translate }}</span>
+    <i class="hgi fs-18 lh-1" faDirArrow="start"></i> <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
   <button class="btn btn-primary"
           (click)="onNext()"
           [disabled]="savingPersonal">
     <span *ngIf="!savingPersonal" class="d-flex align-items-center">
      <span> {{ 'wizard.buttons.next' | translate }}</span>
-      <i class="hgi fs-18 ms-1" faDirArrow="end"></i>
+      <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
     </span>
     <span *ngIf="savingPersonal">
       <i class="fa-solid fa-spinner fa-spin me-1"></i>

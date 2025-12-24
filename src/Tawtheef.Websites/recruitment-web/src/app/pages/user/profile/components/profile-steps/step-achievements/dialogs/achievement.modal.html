@@ -1,9 +1,9 @@
 <form [formGroup]="form" class="space-y-3">
-  <div class="row g-3">
-    <div class="col-md-6">
+  <div class="row ">
+    <div class="col-md-6 mb-3">
       <label class="form-label required">{{ 'wizard.achievements.type' | translate }}</label>
       <p-select
-                size="small"
+
                 inputId="achievementType"
                 [filter]="true"
                 formControlName="achievementType"
@@ -13,24 +13,24 @@
                 [placeholder]="'wizard.placeholders.select' | translate"
                 [ngClass]="{'is-invalid': f['achievementType'].touched && f['achievementType'].invalid}" fluid></p-select>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
       <label class="form-label required">{{ 'wizard.achievements.name' | translate }}</label>
-      <input pInputText type="text" class="form-control" pSize="small"
+      <input pInputText type="text" class="form-control"
              formControlName="title"
              [ngClass]="{'is-invalid': f['title'].touched && f['title'].invalid}"/>
     </div>
   </div>
 
-  <div class="row g-3">
-    <div class="col-md-6">
+  <div class="row">
+    <div class="col-md-6 mb-3">
       <label class="form-label required">{{ 'wizard.achievements.issuer' | translate }}</label>
-      <input pInputText type="text" class="form-control" pSize="small"
+      <input pInputText type="text" class="form-control"
              formControlName="issuingAuthority"
              [ngClass]="{'is-invalid': f['issuingAuthority'].touched && f['issuingAuthority'].invalid}"/>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
       <label class="form-label required">{{ 'wizard.achievements.country' | translate }}</label>
-      <p-select size="small"
+      <p-select
                 inputId="country"
                 formControlName="country"
                 [options]="lookups.countries()" optionLabel="name"
@@ -48,20 +48,20 @@
     </div>
   </div>
 
-  <div class="row g-3">
-    <div class="col-md-6">
+  <div class="row">
+    <div class="col-md-6 mb-3">
       <label class="form-label required">{{ 'wizard.achievements.issueDate' | translate }}</label>
-      <p-date-picker formControlName="issueDate" size="small"
+      <p-date-picker formControlName="issueDate"
                      [placeholder]="'wizard.achievements.issueDate' | translate"
                      [maxDate]="today"
                      [ngClass]="{'is-invalid': f['issueDate'].touched && f['issueDate'].invalid}" fluid></p-date-picker>
     </div>
   </div>
 
-  <div class="row g-3" *ngIf="shouldShowSpecializationQuestion">
-    <div class="col-md-6">
+  <div class="row" *ngIf="shouldShowSpecializationQuestion">
+    <div class="col-md-6 mb-3">
       <label class="form-label required">{{ 'wizard.achievements.relatedToSpecialization.question' | translate }}</label>
-      <p-select size="small"
+      <p-select
                 formControlName="relatedToSpecialization"
                 [options]="[
                   {label: ('common.yes' | translate), value: true},
@@ -80,8 +80,8 @@
     </div>
   </div>
 
-  <div class="row g-3">
-    <div class="col-12">
+  <div class="row">
+    <div class="col-12 mb-3">
       <label class="form-label">{{ 'wizard.achievements.description' | translate }}</label>
       <textarea pTextarea class="form-control" rows="4"
                 formControlName="description"
@@ -91,8 +91,8 @@
     </div>
   </div>
 
-  <div class="row g-3">
-    <div class="col-md-6 d-flex flex-column">
+  <div class="row">
+    <div class="col-md-6 mb-3">
       <label class="form-label required">
         {{ 'wizard.achievements.attachment' | translate }}
         <span class="text-muted fz-2xs">(PDF)</span>
