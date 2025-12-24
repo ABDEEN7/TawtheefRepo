@@ -8,15 +8,14 @@ import {
 } from '../../wizard-profile/state/profile-step-validity.signal';
 import {ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
 import {MaritalStatus} from '../../../../../core/enums/lookups.enum';
+import {ProfileState} from '../../wizard-profile/models/profile-state.model';
 
 export function createProfileOverviewVisibility(p: ProfileStatusDto) {
   return computed(() => {
-    // If you only have IDs in ProfileStatusDto, map to "state-like" shape or adapt the helpers.
-    // Example assumes p has candidateTypeId/provider etc. Adjust as needed.
     const s = {
-      candidateType: { id: p?.candidateTypeId },
+      candidateType: p?.candidateType,
       provider: p?.provider
-    } as any;
+    } as ProfileState;
 
     const type = candidateTypeFromState(s);
     const isResident = candidateTypeIsResident(type, s.provider);

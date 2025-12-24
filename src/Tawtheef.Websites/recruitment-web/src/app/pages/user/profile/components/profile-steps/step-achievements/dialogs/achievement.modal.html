@@ -87,7 +87,9 @@
                 formControlName="description"
                 [maxlength]="limits.descriptionMaxLength"
                 [ngClass]="{'is-invalid': f['description'].touched && f['description'].invalid}"></textarea>
-      <small class="text-muted">{{ (f['description'].value?.length || 0) }} / {{ limits.descriptionMaxLength }}</small>
+      <small class="char-counter">
+        {{ 'common.charactersRemaining' | translate :{count: limits.descriptionMaxLength - (f['description'].value?.length || 0)} }}
+      </small>
     </div>
   </div>
 

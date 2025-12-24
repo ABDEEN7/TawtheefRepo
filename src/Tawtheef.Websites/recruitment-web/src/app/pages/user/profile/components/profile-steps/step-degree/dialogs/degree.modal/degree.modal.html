@@ -9,7 +9,7 @@
             <label for="degree" class="form-label fw-semibold mb-2 required">
               {{ 'wizard.degrees.degree' | translate }}
             </label>
-            <p-select size="small"
+            <p-select
               inputId="degree"
               formControlName="degree"
               [options]="lookups.degrees()" optionLabel="name"
@@ -28,7 +28,7 @@
             <label for="gradCountry" class="form-label required fw-semibold mb-2">
               {{ 'wizard.degrees.gradCountry' | translate }}
             </label>
-            <p-select size="small"
+            <p-select
               inputId="gradCountry"
               formControlName="gradCountry"
               [options]="lookups.countries()" optionLabel="name"
@@ -111,7 +111,7 @@
             <label for="gradYear" class="form-label required fw-semibold mb-2">
               {{ 'wizard.degrees.gradYear' | translate }}
             </label>
-            <p-date-picker size="small"
+            <p-date-picker
               inputId="gradYear" [showIcon]="false"
               formControlName="gradYear" view="year" dateFormat="yy"
               [maxDate]="today"
@@ -134,7 +134,7 @@
             <label for="studySystem" class="form-label required fw-semibold mb-2">
               {{ 'wizard.degrees.studySystem' | translate }}
             </label>
-            <p-select size="small"
+            <p-select
               inputId="studySystem"
               formControlName="studySystem"
               [options]="lookups.studyTypes()" optionLabel="name"
@@ -154,7 +154,7 @@
             <label for="gpa" class="form-label required fw-semibold mb-2">
               {{ 'wizard.degrees.gpa' | translate }}
             </label>
-            <p-inputNumber size="small"
+            <p-inputNumber
               inputId="gpa"
               formControlName="gpa"
               [useGrouping]="false"
@@ -180,7 +180,7 @@
             <label for="grade" class="form-label required fw-semibold mb-2">
               {{ 'wizard.degrees.grade' | translate }}
             </label>
-            <p-select size="small"
+            <p-select
               inputId="grade"
               formControlName="grade"
               [options]="lookups.ratingGrades()" optionLabel="name"

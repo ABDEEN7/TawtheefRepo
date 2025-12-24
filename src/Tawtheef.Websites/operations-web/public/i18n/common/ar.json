@@ -28,5 +28,6 @@
   "common.delete": "حذف",
   "common.confirm": "تأكيد",
   "common.yes": "نعم",
-  "common.no": "لا"
+  "common.no": "لا",
+  "common.charactersRemaining": "{{count}} حرف متبقي"
 }

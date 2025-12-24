@@ -41,7 +41,7 @@
             <label for="country" class="form-label required fw-semibold mb-2">
               {{ 'wizard.experience.country' | translate }}
             </label>
-            <p-select size="small" [filter]="true" [filterBy]="'name'"
+            <p-select  [filter]="true" [filterBy]="'name'"
                       inputId="country"
                       formControlName="country"
                       [options]="lookups.countries()" optionLabel="name"
@@ -69,7 +69,7 @@
             <label class="form-label fw-semibold mb-2 required" for="qualificationId">
               {{ 'wizard.experience.relatedDegree.label' | translate }}
             </label>
-            <p-select size="small" [filter]="true" [filterBy]="'name'"
+            <p-select  [filter]="true" [filterBy]="'name'"
                       inputId="qualificationId" formControlName="qualificationId"
                       [options]="degreeOptions" optionLabel="name" optionValue="id"
                       [placeholder]="'wizard.experience.relatedDegree.placeholder' | translate"
@@ -135,8 +135,8 @@
                 [maxDate]="today"
                 (onSelect)="touchDates()"
                 [ngClass]="{
-        'p-invalid': (!f['current'].value && (form.hasError('toRequiredIfNotCurrent') || form.hasError('dateRange') || form.hasError('futureDate'))) && (f['to'].dirty || f['to'].touched)
-      }">
+                  'p-invalid': (!f['current'].value && (form.hasError('toRequiredIfNotCurrent') || form.hasError('dateRange') || form.hasError('futureDate'))) && (f['to'].dirty || f['to'].touched)
+                }">
               </p-date-picker>
 
               <!-- Only show when not current -->
@@ -164,12 +164,16 @@
           <label class="form-label fw-semibold mb-2 required">
             <i class="fa-solid fa-list-check me-1"></i> {{ 'wizard.experience.tasks' | translate }}
           </label>
-          <textarea rows="2" class="form-control"
+          <textarea class="form-control" pTextarea rows="4"
                     formControlName="description"
                     [attr.maxlength]="limits.descriptionMaxLength"
-                    [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}"></textarea>
+                    [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}">
+          </textarea>
           <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)" class="text-danger mt-1 d-block">
             {{ 'validation.maxLength' | translate:{max: limits.descriptionMaxLength} }}
+          </small>
+          <small class="char-counter">
+            {{ 'common.charactersRemaining' | translate :{count: limits.descriptionMaxLength - (f['description'].value?.length || 0)} }}
           </small>
         </div>
       </div>

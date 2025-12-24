@@ -5,7 +5,7 @@ import {profileCompleteGuard} from '../../core/guards/profile-complete.guard';
 export const userRoutes: Routes = [
   {
     path: 'dashboard',
-    // canMatch: [profileCompleteGuard],
+    canMatch: [profileCompleteGuard],
     loadComponent: () => Dashboard
   },
   {
