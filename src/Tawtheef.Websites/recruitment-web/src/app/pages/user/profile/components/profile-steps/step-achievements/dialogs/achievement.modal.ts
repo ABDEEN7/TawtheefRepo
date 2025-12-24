@@ -12,6 +12,7 @@ import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
 import {Achievement} from '../../../../wizard-profile/models/achievement.model';
 import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
 import {dropdownOptionsModel} from '../../../../../../../shared/models/dropdown-options.model';
+import {EXPERIENCE_DIALOG_LIMITS} from '../../step-experience/dialogs/dialog-config';
 
 export const ACHIEVEMENT_DIALOG_LIMITS = {
   descriptionMaxLength: 500,

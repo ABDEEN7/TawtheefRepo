@@ -54,6 +54,11 @@ export class StepPersonalComponent implements OnInit {
   private sponsorCard: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
   readonly today = new Date();
+  defaultBirthDate = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 25);
+    return d;
+  })();
   updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);
@@ -63,6 +68,15 @@ export class StepPersonalComponent implements OnInit {
     const state = this.ds.state();
 
     if (state.sponsorType?.backendName !== SponsorType.Individual) return;
+    if(state.sponsorEmployerNumber == state.qid){
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translate.instant('wizard.personal.verify.title'),
+        detail: this.translate.instant('wizard.personal.verify.selfSponsor'),
+        life: 4000,
+      });
+      return;
+    }
 
     if (!state.sponsorEmployerNumber || !state.sponsorQidExpiry) {
       this.messageService.add({
@@ -91,7 +105,6 @@ export class StepPersonalComponent implements OnInit {
         error: (err: any) => console.log(err)
       });
   }
-
   updateChildren(value: any) {
     const num = value === null || value === '' ? 0 : Number(value);
     this.updateField('children', isNaN(num) ? 0 : num);

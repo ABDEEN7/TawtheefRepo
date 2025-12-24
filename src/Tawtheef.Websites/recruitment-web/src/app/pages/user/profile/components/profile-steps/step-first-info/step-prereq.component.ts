@@ -42,6 +42,7 @@ export class StepPrereqComponent implements OnInit {
   private marriageCertificateFile: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
   private hasCheckedProfile = false;
+  today = new Date();
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();

@@ -129,7 +129,8 @@ app.UseCors(myCors);
 app.UseCookiePolicy(); 
 app.UseAuthentication();
 app.UseAuthorization();
-
+//enable rate limiter middleware
+app.UseRateLimiter();
 
 app.MapGet("/", () => Results.Json(new { status = "" }));
 app.MapControllers();

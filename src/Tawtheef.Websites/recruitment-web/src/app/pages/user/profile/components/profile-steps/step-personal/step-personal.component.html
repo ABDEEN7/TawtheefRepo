@@ -81,9 +81,10 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
       <p-date-picker name="dob" placeholder="{{ 'wizard.personal.dob' | translate }}"
-        [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event)!)"
-         [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
-        [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
+                     view="month" [defaultDate]="defaultBirthDate" [maxDate]="today"
+                     [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event)!)"
+                     [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
+                     [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
       </p-date-picker>
       <small *ngIf="ds.isLocked('dob')" class="fz-2xs text-muted">
         {{ 'wizard.accountFieldNote' | translate }}
@@ -142,15 +143,12 @@
     <!-- Children -->
     <div class="col-md-4" *ngIf="showChildrenField">
       <label class="form-label required">{{ 'wizard.personal.children' | translate }}</label>
-      <input
-        pInputText
-        type="number"
-        class="form-control"
-        name="children"
-        [ngModel]="ds.state().children ?? null"
+      <p-inputNumber name="children" [ngModel]="ds.state().children ?? null"
         (ngModelChange)="updateChildren($event)"
-        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-      />
+        [min]="0" [max]="20" [step]="1"
+        [useGrouping]="false" [showButtons]="true" [allowEmpty]="true"
+        inputId="children" fluid>
+      </p-inputNumber>
     </div>
     <!-- Has Disability -->
     <div class="col-md-4 d-flex flex-column">
@@ -256,8 +254,8 @@
         <div class="col-md-4" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
           <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
           <p-date-picker name="sponsorQidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
-            [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
-             [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
+                         [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
+                         [minDate]="today"  [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
           </p-date-picker>
         </div>
         <div class="col-md-4 d-flex align-items-end" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
