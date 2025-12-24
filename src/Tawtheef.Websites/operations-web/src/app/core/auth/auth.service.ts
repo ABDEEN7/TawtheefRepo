@@ -36,6 +36,14 @@ export class AuthService {
     return this.core.getToken;
   }
 
+  get currentUser$(): Observable<UserInfoModel | null> {
+    return this.user.currentUser$;
+  }
+
+  get getCurrentUserRole() {
+    return () => this.user.getCurrentUser()?.userType || '';
+  }
+
   externalLogin(data: AuthResponse) {
     return this.core.externalLogin(data);
   }
