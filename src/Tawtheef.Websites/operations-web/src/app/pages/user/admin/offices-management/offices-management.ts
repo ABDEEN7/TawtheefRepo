@@ -149,7 +149,7 @@ export class OfficesManagement implements OnInit {
       return [this.translate.instant('OFFICES.NO_SUPPORTED')];
     }
 
-    return office.supportedCountries.map(sc => this.localizedCountry(sc.nameAr, sc.nameEn));
+    return office.supportedCountries.map(sc => sc.name);
   }
 
   private refreshActiveOffice() {

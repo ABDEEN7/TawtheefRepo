@@ -1,5 +1,6 @@
 using System.Linq;
 using Mapster;
+using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Operations.Admin.Offices.DTOs;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
@@ -11,28 +12,15 @@ public sealed class OfficeProfile : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<OfficeSupportedCountry, OfficeSupportedCountryDto>();
-
         config.NewConfig<Office, OfficeDto>()
-            .Map(dest => dest.CountryNameAr, src => src.Country != null ? src.Country.NameAr : string.Empty)
-            .Map(dest => dest.CountryNameEn, src => src.Country != null ? src.Country.NameEn : string.Empty)
             .Map(dest => dest.AdminEmail, src => src.OfficeAdmin == null ? null : src.OfficeAdmin.Email ?? null)
-            .Map(dest => dest.SupportedCountries,src => src.SupportedCountries
-                .OrderByDescending(sc => sc.CreatedDate)
-                .Select(sc => new OfficeSupportedCountryDto
-                {
-                    CountryId = sc.CountryId,
-                    NameAr = sc.Country.NameAr,
-                    NameEn = sc.Country.NameEn
-                }));
+            .Map(dest => dest.SupportedCountries,src => src.SupportedCountries.Select(sc=>sc.Country)
+                .OrderByDescending(sc => sc.CreatedDate));
 
         config.NewConfig<Office, OfficeDetailsDto>()
-            .Map(dest => dest.CountryNameAr, src => src.Country != null ? src.Country.NameAr : string.Empty)
-            .Map(dest => dest.CountryNameEn, src => src.Country != null ? src.Country.NameEn : string.Empty)
             .Map(dest => dest.Users, src => src.OfficeUsers)
             .Map(dest => dest.AdminEmail, src => src.OfficeAdmin == null ? null : src.OfficeAdmin.Email ?? null)
-            .Map(dest => dest.SupportedCountries,
-                src => src.SupportedCountries
+            .Map(dest => dest.SupportedCountries,src => src.SupportedCountries.Select(sc=>sc.Country)
                     .OrderByDescending(sc => sc.CreatedDate));
         
         //Create config for OfficeUserDto mapping if needed

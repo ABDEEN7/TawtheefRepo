@@ -25,7 +25,7 @@ public sealed class ApplicationRoleConfiguration
             new ApplicationRole
             {
                 Id = SystemRoleIds.HRAdmin,
-                Name = "HRAdmin",
+                Name = nameof(SystemRoleIds.HRAdmin),
                 NormalizedName = nameof(SystemRoleIds.HRAdmin),
                 NameAr = "مدير الموارد البشرية",
                 NameEn = "HR Admin",
@@ -36,7 +36,7 @@ public sealed class ApplicationRoleConfiguration
             new ApplicationRole
             {
                 Id = SystemRoleIds.OfficeAdmin,
-                Name = "OfficeAdmin",
+                Name = nameof(SystemRoleIds.HRAdmin),
                 NormalizedName = nameof(SystemRoleIds.OfficeAdmin),
                 NameAr = "مدير المكتب",
                 NameEn = "Office Admin",
@@ -47,7 +47,7 @@ public sealed class ApplicationRoleConfiguration
             new ApplicationRole
             {
                 Id = SystemRoleIds.OfficeUser,
-                Name = "OfficeUser",
+                Name = nameof(SystemRoleIds.HRAdmin),
                 NormalizedName = nameof(SystemRoleIds.OfficeUser),
                 NameAr = "موظف المكتب",
                 NameEn = "Office User",

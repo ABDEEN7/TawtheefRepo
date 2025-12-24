@@ -17,11 +17,11 @@ import {Lang, LanguageService} from '../../../../../../core/services/language.se
 import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
 import {CreateOfficeRequest} from '../../models/create-office-request.dto';
 import {UpdateOfficeRequest} from '../../models/update-office-request.dto';
-import {OfficeDto} from '../../models/office.dto';
 import {OfficeUserDto} from '../../models/office-user.dto';
 import {Select} from 'primeng/select';
 import {MultiSelectModule} from 'primeng/multiselect'
 import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import {OfficeDetailsDto} from '../../models/office-details.dto';
 
 @Component({
   selector: 'app-office-modal',
@@ -38,7 +38,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   @Input() visible = false;
   @Input() mode: 'create' | 'edit' | 'view' = 'create';
   @Input() countries: dropdownOptionsModel[] = [];
-  @Input() office: OfficeDto | null = null;
+  @Input() office: OfficeDetailsDto | null = null;
   @Input() officeUsers: OfficeUserDto[] = [];
   @Input() loading = false;
 
@@ -91,7 +91,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
         nameAr: this.office.nameAr,
         nameEn: this.office.nameEn,
         countryId: this.office.countryId,
-        supportedCountryIds: this.office.supportedCountries?.map(sc => sc.countryId) || [],
+        supportedCountryIds: this.office.supportedCountries?.map(sc => sc.id) || [],
         adminEmail: this.resolveAdminEmail()
       });
     }

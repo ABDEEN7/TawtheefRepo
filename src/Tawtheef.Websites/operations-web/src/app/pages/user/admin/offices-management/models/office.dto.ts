@@ -1,16 +1,10 @@
-export interface OfficeSupportedCountryDto {
-  countryId: string;
-  nameAr: string;
-  nameEn: string;
-}
+import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 
 export interface OfficeDto {
   id: string;
   nameAr: string;
   nameEn: string;
-  countryId: string;
-  countryNameAr: string;
-  countryNameEn: string;
-  supportedCountries: OfficeSupportedCountryDto[];
+  country: dropdownOptionsModel;
+  supportedCountries: dropdownOptionsModel[];
   adminEmail: string;
 }

@@ -51,7 +51,7 @@
           @for (office of offices(); track office.id; let i = $index) {
             <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
               <td>{{ localizedOfficeName(office) }}</td>
-              <td>{{ localizedCountry(office.countryNameAr, office.countryNameEn) }}</td>
+              <td>{{ office.country.name }}</td>
               <td>
                 @for (country of supportedCountriesLabel(office); track country; let cIndex = $index) {
                   <span class="badge bg-secondary-subtle text-secondary me-1 mb-1">{{ country }}</span>
