@@ -6,7 +6,7 @@
 /*--------------------------------------------------------------
 # Vendor Imports
 --------------------------------------------------------------*/
-
+@use "assets/styles/hugeicons/css/hgi-stroke-rounded.css";
 @use "assets/styles/custom-checkbox";
 @use "assets/styles/cairo";
 
@@ -118,22 +118,7 @@ p{
   }
 }
 
-.form-control {
-  border-radius: 2rem;
-  border-color: $grey-border;
-  background-color: $grey-100;
-  padding: 0.575rem 0.75rem;
-}
-.form-select.p-select {
-  border-radius: 2rem;
-  border-color: $grey-border;
-  background-color: $grey-100;
-}
-.form-control:focus,
-.form-select:focus {
-  box-shadow: none;
-  border-color: $grey-border;
-}
+
 
 
 /*--------------------------------------------------------------
@@ -180,7 +165,7 @@ p{
 
   .nav-link {
     padding: 1rem 0.5rem;
-    font-size: 1rem;
+    font-size:1rem;
     color: $color-black;
 
     &:hover {
@@ -396,6 +381,7 @@ header.topbar {
     gap: 5px;
     display: flex;
     align-items: center;
+    justify-content: center;
 
     &.active {
       background-color: $color-primary;
@@ -562,4 +548,50 @@ $badge-bg-select: rgba(241, 230, 229, 1);
     width: 100%;
   }
 }
+.p-datatable-table .p-datatable-thead th{
+  background-color: #8a1538 !important;
+  color:white
+}
+.p-datatable-thead>*>* {
+  border: 1px solid #dee2e6;
+  border-width: 1px !important;
+  padding: .5rem .5rem !important;
+}
 
+
+
+/*--------------------------------------------------------------
+# Form Styles
+--------------------------------------------------------------*/
+
+.form-label{
+  font-weight: bold;
+}
+.p-select-fluid ,
+.p-inputtext{
+  padding-top: 0.25rem!important;
+  padding-bottom: 0.25rem!important;
+  box-shadow: none !important;
+}
+.form-control {
+  border-radius: 2rem !important;
+  border-color: $grey-border !important;
+  background-color: $grey-100 !important;
+  padding: 0.575rem 0.75rem !important;
+}
+.form-select.p-select,
+.p-select{
+  border-radius: 2rem !important;
+  border-color: $grey-border !important;
+  background-color:$grey-100 !important;
+  box-shadow: none !important;
+}
+.form-control:focus,
+.form-select:focus {
+  box-shadow: none;
+  border-color: $grey-border;
+}
+.upload-field {
+  min-height: 45px !important;
+  border: 1px solid $grey-border !important;
+}

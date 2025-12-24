@@ -1,75 +1,78 @@
 <div class="">
-  <div class="d-flex justify-content-between align-items-center">
-    <h5 class="text-primary mb-0" style="color:#7b1e3a">{{ 'wizard.achievements.title' | translate }}</h5>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addAchievement()">
-        <i class="fa-solid fa-plus"></i> {{ 'wizard.achievements.add' | translate }}
-      </button>
-    </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="text-primary">{{ 'wizard.achievements.title' | translate }}</h5>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addAchievement()">
+          <i class="fa-solid fa-plus"></i> {{ 'wizard.achievements.add' | translate }}
+        </button>
+      </div>
+  </div>
+  <div class="table-card rounded overflow-hidden">
+    <div class="table-responsive"> 
+     <p-table [value]="ds.state().achievements">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'wizard.achievements.table.type' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.name' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.issuer' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.country' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.issueDate' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.relatedToSpecialization' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.description' | translate }}</th>
+          <th>{{ 'wizard.achievements.table.file' | translate }}</th>
+          <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-r let-i="rowIndex">
+        <tr>
+          <td>{{ r.achievementType?.name }}</td>
+          <td>{{ r.title }}</td>
+          <td>{{ r.issuingAuthority }}</td>
+          <td>{{ r.country?.name || '—' }}</td>
+          <td>{{ r.issueDate ? (r.issueDate | date:'dd/MM/yyyy') : '—' }}</td>
+          <td>
+            <ng-container *ngIf="r.relatedToSpecialization !== null && r.relatedToSpecialization !== undefined; else notApplicable">
+              {{ r.relatedToSpecialization ? ('common.yes' | translate) : ('common.no' | translate) }}
+            </ng-container>
+            <ng-template #notApplicable>—</ng-template>
+          </td>
+          <td class="text-truncate" style="max-width:200px">{{ r.description || '—' }}</td>
+          <td>
+            <ng-container *ngIf="r.fileName || r.file?.name; else noAchievementFile">
+              <div class="d-flex align-items-center gap-2">
+                <span>{{ r.fileName || r.file?.name }}</span>
+                <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r, $event)">
+                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                </button>
+              </div>
+            </ng-container>
+            <ng-template #noAchievementFile>—</ng-template>
+          </td>
+          <td class="text-end d-flex gap-2 justify-content-end">
+            <button class="btn btn-sm btn-outline-primary" (click)="editAchievement(i)">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="removeAchievement(i)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="9" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
+      </ng-template>
+    </p-table></div>
   </div>
 
-  <p-table [value]="ds.state().achievements">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>{{ 'wizard.achievements.table.type' | translate }}</th>
-        <th>{{ 'wizard.achievements.table.name' | translate }}</th>
-        <th>{{ 'wizard.achievements.table.issuer' | translate }}</th>
-        <th>{{ 'wizard.achievements.table.country' | translate }}</th>
-        <th>{{ 'wizard.achievements.table.issueDate' | translate }}</th>
-        <th>{{ 'wizard.achievements.table.relatedToSpecialization' | translate }}</th>
-        <th>{{ 'wizard.achievements.table.description' | translate }}</th>
-        <th>{{ 'wizard.achievements.table.file' | translate }}</th>
-        <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-r let-i="rowIndex">
-      <tr>
-        <td>{{ r.achievementType?.name }}</td>
-        <td>{{ r.title }}</td>
-        <td>{{ r.issuingAuthority }}</td>
-        <td>{{ r.country?.name || '—' }}</td>
-        <td>{{ r.issueDate ? (r.issueDate | date:'dd/MM/yyyy') : '—' }}</td>
-        <td>
-          <ng-container *ngIf="r.relatedToSpecialization !== null && r.relatedToSpecialization !== undefined; else notApplicable">
-            {{ r.relatedToSpecialization ? ('common.yes' | translate) : ('common.no' | translate) }}
-          </ng-container>
-          <ng-template #notApplicable>—</ng-template>
-        </td>
-        <td class="text-truncate" style="max-width:200px">{{ r.description || '—' }}</td>
-        <td>
-          <ng-container *ngIf="r.fileName || r.file?.name; else noAchievementFile">
-            <div class="d-flex align-items-center gap-2">
-              <span>{{ r.fileName || r.file?.name }}</span>
-              <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r, $event)">
-                <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-              </button>
-            </div>
-          </ng-container>
-          <ng-template #noAchievementFile>—</ng-template>
-        </td>
-        <td class="text-end d-flex gap-2 justify-content-end">
-          <button class="btn btn-sm btn-outline-primary" (click)="editAchievement(i)">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-danger" (click)="removeAchievement(i)">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr><td colspan="9" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
-    </ng-template>
-  </p-table>
 </div>
 
 <div class="d-flex justify-content-between mt-4 text-end">
-  <button class="btn btn-outline-secondary" (click)="back.emit()">
-    <i class="fa-solid me-1" faDirArrow="start"></i>
-    {{ 'wizard.buttons.prev' | translate }}
+  <button class="btn btn-outline-secondary d-flex justify-content-between text-end" (click)="back.emit()">
+    <i class="hgi  fs-18" faDirArrow="start"></i>
+    <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
-  <button class="btn btn-brand ms-2" (click)="onNext()" [disabled]="saving">
-    {{ 'wizard.buttons.next' | translate }}
-    <i class="fa-solid ms-1" faDirArrow="end"></i>
+  <button class="btn btn-primary d-flex justify-content-between" (click)="onNext()" [disabled]="saving">
+    <span>{{ 'wizard.buttons.next' | translate }}</span>
+    <i class="hgi fs-18 ms-1" faDirArrow="end"></i>
   </button>
 </div>
