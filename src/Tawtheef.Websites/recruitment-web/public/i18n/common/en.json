@@ -39,5 +39,6 @@
   "common.remove": "Remove",
   "common.cancel": "Cancel",
   "common.close": "Close",
-  "common.save": "Save"
+  "common.save": "Save",
+  "common.charactersRemaining": "{{count}} characters remaining"
 }

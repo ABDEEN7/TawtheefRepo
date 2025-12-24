@@ -34,7 +34,7 @@ public static class UserProfileLoader
 
             .Include(p => p.ResidenceCountry)
             .Include(p => p.InterviewLocation)
-            .Include(p => p.ResidenceAddress)
+            .Include(p => p.ResidenceAddress).ThenInclude(r => r!.Certificate)
             
             .Include(p => p.Qualifications)!.ThenInclude(q => q.Degree)
             .Include(p => p.Qualifications)!.ThenInclude(q => q.Country)

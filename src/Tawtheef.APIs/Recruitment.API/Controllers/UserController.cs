@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Recruitment.API.Controllers;
@@ -68,6 +70,7 @@ public class UserController(IMediator mediator) : ControllerBase
 
     #region Verification Actions
     [HttpPost("verify/phone/request")]
+    [EnableRateLimiting(LimitsPolicyKeys.VerificationRequestPolicy)]
     public async Task<IActionResult> RequestPhoneVerification([FromBody] RequestPhoneVerificationCommand command)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -76,6 +79,7 @@ public class UserController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("verify/phone/confirm")]
+    [EnableRateLimiting(LimitsPolicyKeys.VerificationConfirmationPolicy)]
     public async Task<IActionResult> ConfirmPhoneVerification([FromBody] ConfirmPhoneVerificationCommand command)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -84,6 +88,7 @@ public class UserController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("verify/email/request")]
+    [EnableRateLimiting(LimitsPolicyKeys.VerificationRequestPolicy)]
     public async Task<IActionResult> RequestEmailVerification([FromBody] RequestEmailVerificationCommand command)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -92,6 +97,7 @@ public class UserController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("verify/email/confirm")]
+    [EnableRateLimiting(LimitsPolicyKeys.VerificationConfirmationPolicy)]
     public async Task<IActionResult> ConfirmEmailVerification([FromBody] ConfirmEmailVerificationCommand command)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);

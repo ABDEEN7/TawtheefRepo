@@ -25,5 +25,6 @@
   "common.delete": "Delete",
   "common.confirm": "Confirm",
   "common.yes": "Yes",
-  "common.no": "No"
+  "common.no": "No",
+  "common.charactersRemaining": "{{count}} characters remaining"
 }

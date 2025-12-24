@@ -21,6 +21,7 @@ import {dropdownOptionsModel} from '../../../../../../../../shared/models/dropdo
 import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
 import {Experience} from '../../../../../wizard-profile/models/experience.model';
 import {Degree} from '../../../../../wizard-profile/models/degree.model';
+import {Textarea} from 'primeng/textarea';
 
 @Component({
   selector: 'app-experience',
@@ -33,7 +34,8 @@ import {Degree} from '../../../../../wizard-profile/models/degree.model';
     Button,
     InputText,
     NgClass,
-    Select
+    Select,
+    Textarea
   ],
   templateUrl: './experience.modal.html',
   styleUrl: './experience.modal.scss',

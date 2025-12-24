@@ -23,10 +23,12 @@ export class Navbar implements OnInit{
   router = inject(Router);
   isLoggedIn: boolean = false;
   isProfileCompleted: boolean = false;
-  userName: string = '';
+  userName: string | null = null;
   userAvatar: string = 'assets/images/default-avatar.png';
   notificationCount: number = 0;
   showUserMenu: boolean = false;
+
+  protected readonly routes = routes;
 
   ngOnInit(): void {
     this.checkAuthStatus();
@@ -42,10 +44,35 @@ export class Navbar implements OnInit{
 
   loadUserData(): void {
     const user = this.auth.getCurrentUser();
-    const nameParts = user?.fullName.split(' ');
-    this.userName =  nameParts? nameParts[0] + ' ' + (nameParts.length > 1 ? nameParts[nameParts.length - 1] : '') : '';
-    this.userAvatar = user?.profilePictureUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${this.userName}`;
-    this.notificationCount = user?.notifications || 0;
+    if (!user) {
+      this.resetUserView();
+      return;
+    }
+
+    this.userName = this.buildDisplayName(user.fullName);
+    this.userAvatar = user.profilePictureUrl ?? this.buildAvatar(this.userName);
+    this.notificationCount = user.notifications ?? 0;
+  }
+
+  private buildDisplayName(fullName?: string): string | null {
+    if (!fullName) return null;
+
+    const parts = fullName.trim().split(/\s+/);
+    return parts.length === 1
+      ? parts[0]
+      : `${parts[0]} ${parts.at(-1)}`;
+  }
+
+  private buildAvatar(userName: string | null): string {
+    return userName
+      ? `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userName)}`
+      : 'https://placehold.co/30';
+  }
+
+  private resetUserView(): void {
+    this.userName = null;
+    this.userAvatar = 'https://placehold.co/30';
+    this.notificationCount = 0;
   }
 
   toggleLanguage(): void {
@@ -63,6 +90,4 @@ export class Navbar implements OnInit{
   logout(): void {
     this.auth.logout();
   }
-
-  protected readonly routes = routes;
 }
