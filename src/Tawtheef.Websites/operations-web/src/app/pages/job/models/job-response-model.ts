@@ -2,6 +2,7 @@ import { dropdownOptionsModel } from "../../../shared/models/dropdown-options.mo
 import { GUID } from "../../../shared/types/guid.type";
 import { JobConditionResponse } from "./job-condition-response.model";
 import { JobDegreeResponse } from "./job-degree-response.model";
+import { JobPointsResponse } from "./job-points-response";
 import { JobRequiredAttachmentResponse } from "./job-required-attachment-response.model";
 import { JobResponsibilityResponse } from "./job-responsibility-response.model";
 import { JobSkillResponse } from "./job-skill-response.model";
@@ -47,6 +48,7 @@ export interface JobResponse {
   workType: dropdownOptionsModel;
   jobStatus: dropdownOptionsModel;
   
+  jobPoints : JobPointsResponse;
   degrees: JobDegreeResponse[];
   conditions: JobConditionResponse[];
   skills: JobSkillResponse[];

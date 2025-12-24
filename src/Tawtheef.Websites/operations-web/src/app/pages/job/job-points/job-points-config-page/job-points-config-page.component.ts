@@ -94,13 +94,14 @@ export class JobPointsConfigPageComponent implements OnInit {
 
     this.jobService.getById(this.jobId).subscribe((job) => {
       this.job = job;
-
-      this.jobPointsService.getJobPoints(this.jobId).subscribe((response) => {
-        this.jobPoints = response;
-        this.mapper.mapResponseToForm(response, this.mainFormGroup, this.detailsFormGroup);
-        this.isEditMode = true;
-        this.cdr.detectChanges();
-      });
+      if (job.jobPoints.id) {
+        this.jobPointsService.getJobPoints(this.jobId).subscribe((response) => {
+          this.jobPoints = response;
+          this.mapper.mapResponseToForm(response, this.mainFormGroup, this.detailsFormGroup);
+          this.isEditMode = true;
+          this.cdr.detectChanges();
+        });
+      }
     });
   }
 
@@ -258,6 +259,6 @@ export class JobPointsConfigPageComponent implements OnInit {
   }
 
   goBack(): void {
-  this.activeTab = '0';
-}
+    this.activeTab = '0';
+  }
 }

@@ -67,7 +67,6 @@ public class Job : EventEntity
 
     [Required(ErrorMessage = JobMessages.JOB_STATUS_REQUIRED)]
     public Guid JobStatusId { get; set; }
-
     public string? OverViewAr { get; set; }
     public string? OverViewEn { get; set; } 
     public string? BenefitsAr { get; set; } 

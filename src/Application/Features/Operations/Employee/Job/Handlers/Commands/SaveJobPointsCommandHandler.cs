@@ -2,9 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
-using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
