@@ -20,7 +20,6 @@ export class Navbar implements OnInit{
   language = inject(LanguageService);
   router = inject(Router);
   isLoggedIn: boolean = false;
-  isProfileCompleted: boolean = false;
   userName: string = '';
   userAvatar: string = 'assets/images/default-avatar.png';
   notificationCount: number = 0;
@@ -38,8 +37,11 @@ export class Navbar implements OnInit{
   }
 
   loadUserData(): void {
-    this.userName = 'أحمد محمد المحمود';
-    this.notificationCount = 3;
+    const user = this.auth.getCurrentUser();
+    const nameParts = user?.fullName.split(' ');
+    this.userName =  nameParts? nameParts[0] + ' ' + (nameParts.length > 1 ? nameParts[nameParts.length - 1] : '') : '';
+    this.userAvatar = user?.profilePictureUrl || this.userAvatar;
+    this.notificationCount = user?.notifications || 0;
   }
 
   toggleLanguage(): void {

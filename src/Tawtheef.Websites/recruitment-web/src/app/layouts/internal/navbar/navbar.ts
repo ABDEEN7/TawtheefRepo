@@ -42,7 +42,8 @@ export class Navbar implements OnInit{
 
   loadUserData(): void {
     const user = this.auth.getCurrentUser();
-    this.userName = user?.fullName || '';
+    const nameParts = user?.fullName.split(' ');
+    this.userName =  nameParts? nameParts[0] + ' ' + (nameParts.length > 1 ? nameParts[nameParts.length - 1] : '') : '';
     this.userAvatar = user?.profilePictureUrl || this.userAvatar;
     this.notificationCount = user?.notifications || 0;
   }
