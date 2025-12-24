@@ -82,9 +82,9 @@
       <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
       <p-date-picker name="dob" placeholder="{{ 'wizard.personal.dob' | translate }}"
                      view="month" [defaultDate]="defaultBirthDate" [maxDate]="today"
-                    [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event)!)"
-                    [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
-                    [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
+                     [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event)!)"
+                     [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
+                     [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
       </p-date-picker>
       <small *ngIf="ds.isLocked('dob')" class="fz-2xs text-muted">
         {{ 'wizard.accountFieldNote' | translate }}
@@ -226,7 +226,7 @@
           <input
             pInputText
             class="form-control"
-            p
+
             name="sponsorEmployerName"
             [ngModel]="ds.state().sponsorEmployerName"
             (ngModelChange)="updateField('sponsorEmployerName', $event)"
@@ -244,7 +244,7 @@
             pInputText
             type="text"
             class="form-control"
-            p
+
             name="sponsorEmployerNumber"
             [ngModel]="ds.state().sponsorEmployerNumber"
             (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
@@ -254,8 +254,8 @@
         <div class="col-md-4" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
           <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
           <p-date-picker name="sponsorQidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
-            [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
-            [minDate]="today" [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
+                         [ngModel]="ds.state().sponsorQidExpiry" (onSelect)="updateField('sponsorQidExpiry', dateToDateOnly($event))"
+                         [minDate]="today"  [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
           </p-date-picker>
         </div>
         <div class="col-md-4 d-flex align-items-end" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
@@ -302,14 +302,14 @@
 
 <div class="d-flex justify-content-between mt-4 text-end">
   <button class="btn btn-outline-secondary me-2 d-flex align-items-center" (click)="back.emit()">
-    <i class="hgi fs-18" faDirArrow="start"></i> <span>{{ 'wizard.buttons.prev' | translate }}</span>
+    <i class="hgi fs-18 lh-1" faDirArrow="start"></i> <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
   <button class="btn btn-primary"
           (click)="onNext()"
           [disabled]="savingPersonal">
     <span *ngIf="!savingPersonal" class="d-flex align-items-center">
      <span> {{ 'wizard.buttons.next' | translate }}</span>
-      <i class="hgi fs-18 ms-1" faDirArrow="end"></i>
+      <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
     </span>
     <span *ngIf="savingPersonal">
       <i class="fa-solid fa-spinner fa-spin me-1"></i>

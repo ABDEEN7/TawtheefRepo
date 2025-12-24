@@ -2,10 +2,10 @@
   <div class="deg-panel border-0 shadow-none">
     <div class="py-3">
       <div class="d-flex flex-column gap-4">
-        <div class="row g-2 g-md-3 align-items-start">
+        <div class="row align-items-start">
           <!-- Provider -->
-          <div class="col-12 col-md-6 d-flex flex-column">
-            <label class="form-label fw-semibold mb-2 required">
+          <div class="col-12 col-md-6 mb-3">
+            <label class="form-label required">
               <i class="fa-solid fa-trophy me-1"></i> {{ 'wizard.courses.provider' | translate }}
             </label>
             <input pInputText class="form-control"
@@ -20,8 +20,8 @@
           </div>
 
           <!-- Title -->
-          <div class="col-12 col-md-6 d-flex flex-column">
-            <label class="form-label fw-semibold mb-2 required">
+          <div class="col-12 col-md-6 mb-3">
+            <label class="form-label  required">
               <i class="fa-solid fa-medal me-1"></i> {{ 'wizard.courses.table.courseName' | translate }}
             </label>
             <input pInputText class="form-control"
@@ -36,16 +36,16 @@
           </div>
         </div>
 
-        <div class="row g-2 g-md-3 align-items-start">
-          <div class="col-12 col-md-6 d-flex flex-column">
-            <label for="country" class="form-label required fw-semibold mb-2">
+        <div class="row align-items-start">
+          <div class="col-12 col-md-6 mb-3">
+            <label for="country" class="form-label required d-block">
               {{ 'wizard.courses.country' | translate }}
             </label>
             <p-select size="small" [filter]="true" [filterBy]="'name'"
                       inputId="country"
                       formControlName="country"
                       [options]="lookups.countries()" optionLabel="name"
-                      [placeholder]="'wizard.courses.choiceCountry' | translate"
+                      [placeholder]="'wizard.courses.choiceCountry' | translate" class="w-100"
                       [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
                       [ngClass]="{
                 'p-invalid': f['country'].invalid && (f['country'].dirty || f['country'].touched)
@@ -56,8 +56,8 @@
               {{ 'validation.required' | translate }}
             </small>
           </div>
-          <div class="col-12 col-md-6 d-flex flex-column">
-            <label class="form-label fw-semibold mb-2 required">
+          <div class="col-12 col-md-6 mb-3">
+            <label class="form-label  required">
               <i class="fa-solid fa-calendar-day me-1"></i>
               {{ 'wizard.courses.period' | translate }}
             </label>
@@ -86,9 +86,9 @@
         </div>
       </div>
 
-      <div class="row g-2 g-md-3 align-items-start mt-1">
-        <div class="col-12 d-flex flex-column">
-          <label class="form-label fw-semibold mb-2">
+      <div class="row  align-items-start ">
+        <div class="col-12  mb-3">
+          <label class="form-label">
             <i class="fa-solid fa-note-sticky me-1"></i> {{ 'wizard.courses.notes' | translate }}
           </label>
           <textarea class="form-control" pTextarea rows="4"
@@ -136,7 +136,7 @@
   </div>
 
   <!-- ===== FOOTER ===== -->
-  <div class="d-flex justify-content-end gap-2">
+  <div class="d-flex justify-content-end gap-2 mt-3">
     <p-button styleClass="p-button-text" icon="pi pi-times"
               type="button"
               (onClick)="onCancel()"
