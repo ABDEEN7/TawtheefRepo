@@ -39,6 +39,7 @@ public sealed class SaveJobPointsCommandHandler(
         jobPointsMain.Training = dto.Training;
         jobPointsMain.Skills = dto.Skills;
         jobPointsMain.Languages = dto.Languages;
+        jobPointsMain.Certificates = dto.Certificates;
         jobPointsMain.Total = dto.Total;
 
         foreach (var detailDto in dto.Details)

@@ -41,6 +41,7 @@ import { JobPointsConfigPageComponent } from './job-points/job-points-config-pag
 import { JobPointsMainElementsComponent } from './job-points/job-points-main-elements/job-points-main-elements.component';
 import { JobPointsTabComponent } from './job-points/job-points-points-tab/job-points-tab.component';
 import { TabsModule } from 'primeng/tabs';
+import { FilterByKeyPrefixPipe } from './pipes/filter-by-key-prefix.pipe';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -61,7 +62,8 @@ import { TabsModule } from 'primeng/tabs';
     JobApprovalComponent,
     JobPointsConfigPageComponent,
     JobPointsMainElementsComponent,
-    JobPointsTabComponent
+    JobPointsTabComponent,
+    FilterByKeyPrefixPipe
   ],
   imports: [
     RouterModule.forChild(jobRoutes),

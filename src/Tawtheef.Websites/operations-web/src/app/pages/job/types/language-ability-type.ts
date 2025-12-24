@@ -1,0 +1,1 @@
+export type LanguageAbilityType = 'speaking' | 'reading' | 'conversation';

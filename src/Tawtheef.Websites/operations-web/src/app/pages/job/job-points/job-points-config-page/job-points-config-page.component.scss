@@ -77,3 +77,19 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   color: #333;
 }
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.outer-card {
+  flex: 1;
+}
+
+.bottom-nav {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}

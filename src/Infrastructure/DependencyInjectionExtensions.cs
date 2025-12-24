@@ -154,6 +154,7 @@ namespace Tawtheef.Infrastructure
                 .AddTransient<IUserRepository, UserRepository>()
                 .AddScoped<IJobRepository, JobRepository>()
                 .AddScoped<IJobPointsRepository, JobPointsRepository>()
+                .AddScoped<IJobPointsConfigurationsRepository, JobPointsConfigurationsRepository>()
                 .AddScoped<IJobReviewAttachmentRepository, JobReviewAttachmentRepository>()
                 .AddScoped<IJobTabReviewNoteRepository, JobTabReviewNoteRepository>()
                 .AddScoped<IJobConditionRepository, JobConditionRepository>()

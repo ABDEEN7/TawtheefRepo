@@ -8,18 +8,20 @@ public class JobPointsMainRequestDto
     [Required]
     public Guid JobId { get; set; }
 
-    [Required, Range(0, 250)]
+    [Required]
     public int ApplicantCategory { get; set; }
-    [Required, Range(0, 200)]
+    [Required]
     public int Education { get; set; }
-    [Required, Range(0, 150)]
+    [Required]
     public int Experience { get; set; }
-    [Required, Range(0, 150)]
+    [Required]
     public int Training { get; set; }
-    [Required, Range(0, 150)]
+    [Required]
     public int Skills { get; set; }
-    [Required, Range(0, 150)]
+    [Required]
     public int Languages { get; set; }
+    [Required]
+    public int Certificates { get; set; }
     [Required, Range(0, 1000)]
     public int Total { get; set; }
 

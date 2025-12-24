@@ -6,6 +6,7 @@ import { HttpService } from '../../../core/http/http.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Observable } from 'rxjs';
 import { JobPointsResponse } from '../models/job-points-response';
+import { JobPointConfiguration } from '../models/job-points-config';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,6 @@ import { JobPointsResponse } from '../models/job-points-response';
 export class JobPointsConfigService {
   private httpService = inject(HttpService);
   private endpoints = inject(EndpointsService);
-  private notificationService = inject(NotificationService);
-  private translationService = inject(TranslateService);
 
   
   saveJobPoints(payload: any) : Observable<GUID> {
@@ -27,5 +26,11 @@ export class JobPointsConfigService {
   {
     return this.httpService.get<JobPointsResponse>(`${this.endpoints.job.jobPoints}/${jobId}`);
   }
+
+  getJobPointsConfiguration(jobId: GUID): Observable<JobPointConfiguration> {
+  return this.httpService.get<JobPointConfiguration>(
+    `${this.endpoints.job.jobPoints}/${jobId}/config`
+  );
+}
   
 }

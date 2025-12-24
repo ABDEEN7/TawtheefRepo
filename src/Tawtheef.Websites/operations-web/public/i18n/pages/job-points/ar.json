@@ -7,6 +7,7 @@
   "JOB_POINTS.MAIN_ELEMENTS.education": "المؤھل التعليمي",
   "JOB_POINTS.MAIN_ELEMENTS.experience": "الخبرة العلمية",
   "JOB_POINTS.MAIN_ELEMENTS.training": "الدورات التدريبية",
+  "JOB_POINTS.MAIN_ELEMENTS.certificates":"الشهادات والجوائز",
   "JOB_POINTS.MAIN_ELEMENTS.languages": "اللغات",
   "JOB_POINTS.MAIN_ELEMENTS.skills": "المھارات",
   "JOB_POINTS.MAIN_ELEMENTS.MAX": "الحد الأقصى",
@@ -40,5 +41,15 @@
   "JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD": "مستوى جيد جداً",
   "JOB_POINTS.LANGUAGE_LEVEL.GOOD": "مستوى جيد",
   "JOB_POINTS.EXPERIENCE.POINTS_PER_YEAR":"نقاط لكل سنة خبرة",
-  "JOB_POINTS.EXPERIENCE.MAX_YEARS":"الحد الأعلى للسنوات المحتسبة"
+  "JOB_POINTS.EXPERIENCE.MAX_YEARS":"الحد الأعلى للسنوات المحتسبة",
+  "JOB_POINTS.MAIN_ELEMENTS.CERTIFICATEANDPRIZE":"الشهادات والجوائز",
+  "JOB_POINTS.CERTIFICATES_LINKED":"نقاط لكل شهادة مرتبطة بالمؤهل",
+  "JOB_POINTS.CERTIFICATES_NOT_LINKED":"نقاط لكل شهادة غير مرتبطة بالمؤهل",
+  "JOB_POINTS.PRIZE_POINTS":"نقاط لكل جائزة",
+  "JOB_POINTS.LANGUAGE_LEVEL.NATIVE": "اللغة الأم",
+  "JOB_POINTS.LANGUAGE_ABILITY.SPEAKING": "التحدث",
+  "JOB_POINTS.LANGUAGE_ABILITY.READING": "القراءة",
+  "JOB_POINTS.LANGUAGE_ABILITY.CONVERSATION": "المحادثة",
+  "JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS":"النقاط الكلية للمهارة"
+
 }

@@ -1,18 +1,24 @@
-import { Component, Input, OnInit, EventEmitter, Output, inject } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, inject, output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { JobResponse } from '../../models/job-response-model';
-
-interface DetailItem {
-  key: string;
-  label: string;
-  id?: string;
-}
+import { DetailItem } from '../../models/detail-Item';
+import { JobPointsCalculationService } from '../../services/job-points-calculation.service';
+import {
+  APPLICANT_CATEGORY_ITEMS,
+  CERTIFICATES_ITEMS,
+  EDUCATION_ITEMS,
+  EXPERIENCE_ITEMS,
+  LANGUAGE_ITEMS,
+  SKILLS_ITEMS,
+  TRAINING_ITEMS,
+} from '../../constants/job-points-constants';
+import { LanguageAbilityType } from '../../types/language-ability-type';
 
 @Component({
   selector: 'app-job-points-tab',
   standalone: false,
   templateUrl: './job-points-tab.component.html',
-  styleUrls: ['./job-points-tab.component.scss']
+  styleUrls: ['./job-points-tab.component.scss'],
 })
 export class JobPointsTabComponent implements OnInit {
   @Input() mainForm!: FormGroup;
@@ -21,10 +27,11 @@ export class JobPointsTabComponent implements OnInit {
 
   @Output() save = new EventEmitter<void>();
   @Output() ready = new EventEmitter<void>();
+  @Output() goPrevious = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
+  private pointsCalculationService = inject(JobPointsCalculationService);
 
-  // FormGroups
   applicantCategoryFormGroup!: FormGroup;
   educationFormGroup!: FormGroup;
   experienceFormGroup!: FormGroup;
@@ -33,53 +40,41 @@ export class JobPointsTabComponent implements OnInit {
   languagesFormGroup!: FormGroup;
   certificatesFormGroup!: FormGroup;
 
-  // Items
-  applicantCategoryItems: DetailItem[] = [
-    { key: 'qatari', label: 'JOB_POINTS.APPLICANT_CATEGORY.QATARI' },
-    { key: 'qatarMother', label: 'JOB_POINTS.APPLICANT_CATEGORY.QATAR_MOTHER' },
-    { key: 'gcc', label: 'JOB_POINTS.APPLICANT_CATEGORY.GCC' },
-    { key: 'qatarGraduate', label: 'JOB_POINTS.APPLICANT_CATEGORY.QATAR_GRADUATE' },
-    { key: 'qatarGraduatePrev', label: 'JOB_POINTS.APPLICANT_CATEGORY.QATAR_GRADUATE_PREV' }
-  ];
+  applicantCategoryItems = APPLICANT_CATEGORY_ITEMS;
+  trainingItems = TRAINING_ITEMS;
+  experienceItems = EXPERIENCE_ITEMS;
+  educationItems = EDUCATION_ITEMS;
+  skillsItems = SKILLS_ITEMS;
+  languageItems = LANGUAGE_ITEMS;
+  certificatesItems = CERTIFICATES_ITEMS;
 
-  trainingItems: DetailItem[] = [
-    { key: 'highLinked', label: 'JOB_POINTS.TRAINING.HIGH_LINKED' },
-    { key: 'mediumLinked', label: 'JOB_POINTS.TRAINING.MEDIUM_LINKED' },
-    { key: 'lowLinked', label: 'JOB_POINTS.TRAINING.LOW_LINKED' }
-  ];
+  get speakingFormGroup(): FormGroup {
+    return this.languagesFormGroup.get('speaking') as FormGroup;
+  }
 
-  experienceItems: DetailItem[] = [
-    { key: 'pointsPerYear', label: 'JOB_POINTS.EXPERIENCE.POINTS_PER_YEAR' },
-    { key: 'maxYears', label: 'JOB_POINTS.EXPERIENCE.MAX_YEARS' }
-  ];
+  get readingFormGroup(): FormGroup {
+    return this.languagesFormGroup.get('reading') as FormGroup;
+  }
 
-  educationItems: DetailItem[] = [];
-  skillsItems: DetailItem[] = [];
-  languagesItems: DetailItem[] = [
-    { key: 'excellent', label: 'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' },
-    { key: 'veryGood', label: 'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' },
-    { key: 'good', label: 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' }
-  ];
-
-  certificatesItems: DetailItem[] = [
-    { key: 'certificates', label: 'JOB_POINTS.CERTIFICATES' }
-  ];
+  get conversationFormGroup(): FormGroup {
+    return this.languagesFormGroup.get('conversation') as FormGroup;
+  }
 
   ngOnInit(): void {
-    // Dynamic items from job
-    this.skillsItems = this.job?.skills.map(s => ({
-      key: s.skill.backendName,
-      label: s.skill.name,
-      id: s.skill.id
-    })) || [];
+    this.skillsItems =
+      this.job?.skills.map((s) => ({
+        key: s.skill.backendName,
+        label: s.skill.name,
+        id: s.skill.id,
+      })) || [];
 
-    this.educationItems = this.job?.degrees.map(d => ({
-      key: d.degree.backendName,
-      label: d.degree.name,
-      id: d.degree.id
-    })) || [];
+    this.educationItems =
+      this.job?.degrees.map((d) => ({
+        key: d.degree.backendName,
+        label: d.degree.name,
+        id: d.degree.id,
+      })) || [];
 
-    // Assign form groups
     this.applicantCategoryFormGroup = this.form.get('applicantCategory') as FormGroup;
     this.educationFormGroup = this.form.get('education') as FormGroup;
     this.experienceFormGroup = this.form.get('experience') as FormGroup;
@@ -95,51 +90,84 @@ export class JobPointsTabComponent implements OnInit {
   private initControls(): void {
     this.addControls(this.applicantCategoryFormGroup, this.applicantCategoryItems);
     this.addControls(this.educationFormGroup, this.educationItems);
-    this.addControls(this.experienceFormGroup, this.experienceItems);
+
+    this.experienceItems.forEach((item) => {
+      if (!this.experienceFormGroup.get(item.key)) {
+        this.experienceFormGroup.addControl(item.key, this.fb.control(0));
+      }
+    });
+
     this.addControls(this.trainingFormGroup, this.trainingItems);
     this.addControls(this.skillsFormGroup, this.skillsItems);
-    this.addControls(this.languagesFormGroup, this.languagesItems);
+    this.addControlsNested(this.languagesFormGroup, this.languageItems); 
     this.addControls(this.certificatesFormGroup, this.certificatesItems);
   }
 
   private addControls(group: FormGroup, items: DetailItem[]): void {
-    items.forEach(item => {
+    items.forEach((item) => {
       if (!group.get(item.key)) {
         group.addControl(item.key, this.fb.control(0));
       }
     });
   }
 
-  // ---------------------- Totals ----------------------
+  private addControlsNested(group: FormGroup, items: DetailItem[]): void {
+    items.forEach((item) => {
+      const path = item.key.split('.');
+
+      if (path.length === 1) {
+        if (!group.get(item.key)) {
+          group.addControl(item.key, this.fb.control(0));
+        }
+      } else if (path.length === 2) {
+        const [parentKey, childKey] = path;
+        let parentGroup = group.get(parentKey) as FormGroup;
+
+        if (!parentGroup) {
+          parentGroup = this.fb.group({});
+          group.addControl(parentKey, parentGroup);
+        }
+        if (!parentGroup.get(childKey)) {
+          parentGroup.addControl(childKey, this.fb.control(0));
+        }
+      }
+    });
+  }
+
   get experienceTotal(): number {
     const exp = this.experienceFormGroup?.getRawValue();
     return (exp?.pointsPerYear || 0) * (exp?.maxYears || 0);
   }
 
-  sumCategory(group: FormGroup | null): number {
-    if (!group) return 0;
-    return Object.keys(group.controls)
-      .filter(k => !['pointsPerYear', 'maxYears', 'total'].includes(k))
-      .reduce((sum, k) => sum + (group.get(k)?.value || 0), 0);
+  applicantCategorySum() {
+    return this.pointsCalculationService.sumCategory(this.applicantCategoryFormGroup);
   }
 
-  applicantCategorySum() { return this.sumCategory(this.applicantCategoryFormGroup); }
-  educationSum() { return this.sumCategory(this.educationFormGroup); }
-  trainingSum() { return this.sumCategory(this.trainingFormGroup); }
-  skillsSum() { return this.sumCategory(this.skillsFormGroup); }
-  languagesSum() { return this.sumCategory(this.languagesFormGroup); }
-  certificatesSum() { return this.sumCategory(this.certificatesFormGroup); }
+  educationSum() {
+    return this.pointsCalculationService.sumCategory(this.educationFormGroup);
+  }
 
-  // ---------------------- Validation ----------------------
+  trainingSum() {
+    return this.pointsCalculationService.sumCategory(this.trainingFormGroup);
+  }
+
+  skillsSum() {
+    return this.pointsCalculationService.sumCategory(this.skillsFormGroup);
+  }
+
+  languagesSum(): number {
+    return this.pointsCalculationService.sumLanguagesCategory(this.languagesFormGroup);
+  }
+
+  certificatesSum() {
+    return this.pointsCalculationService.sumCategory(this.certificatesFormGroup);
+  }
+
   areAllCategoriesValid(): boolean {
-    return (
-      this.applicantCategorySum() === (this.mainForm.get('applicantCategory')?.value || 0) &&
-      this.educationSum() === (this.mainForm.get('education')?.value || 0) &&
-      this.experienceTotal === (this.mainForm.get('experience')?.value || 0) &&
-      this.trainingSum() === (this.mainForm.get('training')?.value || 0) &&
-      this.skillsSum() === (this.mainForm.get('skills')?.value || 0) &&
-      this.languagesSum() === (this.mainForm.get('languages')?.value || 0) &&
-      this.certificatesSum() === (this.mainForm.get('certificates')?.value || 0)
+    return this.pointsCalculationService.areAllCategoriesValid(
+      this.mainForm,
+      this.form,
+      this.pointsCalculationService.sections
     );
   }
 
@@ -150,5 +178,19 @@ export class JobPointsTabComponent implements OnInit {
 
   maxValue(groupName: string): number {
     return this.mainForm.get(groupName)?.value || 0;
+  }
+
+  getAbilitySum(abilityName: LanguageAbilityType): number {
+    const abilityGroup = this.languagesFormGroup.get(abilityName) as FormGroup;
+    return this.pointsCalculationService.sumAbilityLevels(abilityGroup);
+  }
+
+  getAbilityMax(abilityName: LanguageAbilityType): number {
+    return this.languagesFormGroup.get(abilityName)?.get('max')?.value || 0;
+  }
+
+  isAbilityValid(abilityName: LanguageAbilityType): boolean {
+    const abilityGroup = this.languagesFormGroup.get(abilityName) as FormGroup;
+    return this.pointsCalculationService.isAbilityValid(abilityGroup);
   }
 }

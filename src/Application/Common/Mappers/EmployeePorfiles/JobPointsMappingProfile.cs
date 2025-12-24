@@ -17,5 +17,8 @@ public class JobPointsMappingProfile : IRegister
             .Map(dest => dest.Details, src => src.Details); 
 
         config.NewConfig<JobPointsDetail, JobPointsDetailResponseDto>();
+
+        config.NewConfig<JobPointConfigurationResponseDto, JobPointConfiguration>();
+        config.NewConfig<JobPointConfigurationRequestDto, JobPointConfiguration>();
     }
 }

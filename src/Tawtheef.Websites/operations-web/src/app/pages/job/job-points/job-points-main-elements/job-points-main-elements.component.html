@@ -46,9 +46,9 @@
     </div>
 
     <div class="bottom-nav">
-      <button type="button" class="primary-pill">
+      <button type="button" class="primary-pill" (click)="next.emit()">
+        <i class="fa fa-arrow-left" faDirArrow="end"></i>
         {{ 'JOB_POINTS.MAIN_ELEMENTS.NEXT' | translate }}
-        <i class="fa fa-arrow-left"></i>
       </button>
     </div>
   </div>

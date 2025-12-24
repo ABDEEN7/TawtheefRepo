@@ -30,6 +30,7 @@
         <app-job-points-main-elements
           [form]="mainFormGroup"
           [keys]="mainKeys"
+          (next)="goToDetails()"
         />
       </p-tabpanel>
 
@@ -40,8 +41,8 @@
             [mainForm]="mainFormGroup"
             [form]="detailsFormGroup"
             [job]="job"
-            (ready)="onDetailsReady()"
             (save)="save()"
+            (goPrevious)="goBack()"
           />
         }
       </p-tabpanel>

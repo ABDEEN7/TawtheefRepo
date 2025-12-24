@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Injectable, inject } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { JobPointRuleTypeEnum } from '../enums/job-point-rule-type';
 import { JobPointsResponse } from '../models/job-points-response';
+import { JobPointsDetailResponse } from '../models/job-points-detail-response';
 
 @Injectable({ providedIn: 'root' })
 export class JobPointsMapperService {
+  private fb = inject(FormBuilder);
 
   mapResponseToForm(
     response: JobPointsResponse,
@@ -21,45 +23,54 @@ export class JobPointsMapperService {
       education: response.education,
       experience: response.experience,
       training: response.training,
-      certificates: response.certificates,
       skills: response.skills,
       languages: response.languages,
-      total: response.total
+      certificates: response.certificates,
+      total: response.total,
     }, { emitEvent: false });
   }
 
-  private mapDetails(details: any[], form: FormGroup): void {
+  private mapDetails(details: JobPointsDetailResponse[], form: FormGroup): void {
     details.forEach(detail => {
       switch (detail.type) {
-
         case JobPointRuleTypeEnum.ApplicantCategory:
-          form.get('applicantCategory')?.get(detail.code)?.setValue(detail.points);
+          this.setFormValue(form, 'applicantCategory', detail.code, detail.points);
           break;
 
         case JobPointRuleTypeEnum.Education:
-          form.get('education')?.get(detail.code)?.setValue(detail.points);
+          this.setFormValue(form, 'education', detail.code, detail.points);
           break;
 
         case JobPointRuleTypeEnum.Training:
-          form.get('training')?.get(detail.code)?.setValue(detail.points);
+          this.setFormValue(form, 'training', detail.code, detail.points);
           break;
 
         case JobPointRuleTypeEnum.Language:
-          form.get('languages')?.get(detail.code)?.setValue(detail.points);
+          this.setFormValue(form, 'languages', detail.code, detail.points);
           break;
 
         case JobPointRuleTypeEnum.Skill:
-          form.get('skills')?.get(detail.code)?.setValue(detail.points);
+          this.setFormValue(form, 'skills', detail.code, detail.points);
           break;
 
         case JobPointRuleTypeEnum.Certificate:
-          form.get('certificates')?.get(detail.code)?.setValue(detail.points);
+          this.setFormValue(form, 'certificates', detail.code, detail.points);
           break;
 
         case JobPointRuleTypeEnum.Experience:
-          form.get('experience')?.get(detail.code)?.setValue(detail.points);
+          this.setFormValue(form,'experience',detail.code,detail.points)
           break;
       }
     });
+  }
+
+  private setFormValue(form: FormGroup, groupName: string, controlName: string, value: number): void {
+    const group = form.get(groupName) as FormGroup;
+    if (group) {
+      if (!group.get(controlName)) {
+        group.addControl(controlName, this.fb.control(0));
+      }
+      group.get(controlName)?.setValue(value);
+    }
   }
 }
