@@ -25,9 +25,9 @@ public sealed class UpdateOfficeCommandHandler(
         CancellationToken cancellationToken)
     {
         var officeRepo = unitOfWork.GetEntityRepository<Office>();
-        var countryRepo = unitOfWork.GetEntityRepository<Country>();
 
         var office = await officeRepo.DbSet
+            .Include(a => a.OfficeAdmin)
             .Include(o => o.SupportedCountries)
             .Include(o => o.Country)
             .Include(o => o.OfficeUsers)
@@ -35,31 +35,15 @@ public sealed class UpdateOfficeCommandHandler(
 
         if (office is null)
             return Result.Fail<OfficeDto>(ErrorsCodes.OfficeNotFound);
-
-        // -----------------------------
-        // Supported Countries Validation
-        // -----------------------------
+        
         var requestedIds = request.SupportedCountryIds
             .Distinct()
             .ToHashSet();
-
-        var supportedCountries = await countryRepo.DbSet
-            .AsNoTracking()
-            .Where(c => requestedIds.Contains(c.Id))
-            .ToListAsync(cancellationToken);
-
-        if (requestedIds.Count != supportedCountries.Count)
-            return Result.Fail<OfficeDto>(ErrorsCodes.OfficeSupportedCountryInvalid);
-
-        // -----------------------------
-        // Update Office Basic Info
-        // -----------------------------
+        
         office.NameAr = request.NameAr;
         office.NameEn = request.NameEn;
 
-        // -----------------------------
-        // Update / Create Office Admin
-        // -----------------------------
+        #region Update Office Admin
         if (!string.IsNullOrWhiteSpace(request.AdminEmail))
         {
             var adminEmail = request.AdminEmail.Trim();
@@ -78,92 +62,30 @@ public sealed class UpdateOfficeCommandHandler(
 
             if (officeUserIds.Any())
             {
-                var officeUsers = await userManager.Users
-                    .Where(u => officeUserIds.Contains(u.Id))
-                    .ToListAsync(cancellationToken);
+                var officeAdmins = await userManager
+                    .GetUsersInRoleAsync(nameof(SystemRoleIds.OfficeAdmin));
 
-                foreach (var user in officeUsers)
-                {
-                    if (await userManager.IsInRoleAsync(user, SystemRoles.OfficeAdmin))
-                    {
-                        officeAdmin = user;
-                        break;
-                    }
-                }
+                officeAdmin = officeAdmins
+                    .FirstOrDefault(u => officeUserIds.Contains(u.Id));
             }
-
-            // -----------------------------
-            // Create Office Admin if missing
-            // -----------------------------
+            
             if (officeAdmin is null)
-            {
-                if (emailExists)
-                    return Result.Fail<OfficeDto>(ErrorsCodes.OfficeAdminEmailExists);
+                return Result.Fail<OfficeDto>(ErrorsCodes.OfficeAdminNotFound);
 
-                var newOfficeAdmin = new OfficeUser
-                {
-                    Email = adminEmail,
-                    NormalizedEmail = adminEmail.ToUpperInvariant(),
-                    UserName = adminEmail,
-                    NormalizedUserName = adminEmail.ToUpperInvariant(),
-                    FullNameAr = "مدير المكتب",
-                    FullNameEn = "Office Admin",
-                    UserTypeId = UserTypeIds.OfficeUser,
-                    OfficeId = office.Id,
-                    Office = office,
-                    EmailConfirmed = true
-                };
+            officeAdmin.Email = adminEmail;
+            officeAdmin.UserName = adminEmail;
+            officeAdmin.NormalizedEmail = userManager.NormalizeEmail(adminEmail);
+            officeAdmin.NormalizedUserName = userManager.NormalizeName(adminEmail);
 
-                var createResult = await userManager.CreateAsync(newOfficeAdmin);
+            var updateResult = await userManager.UpdateAsync(officeAdmin);
 
-                if (!createResult.Succeeded)
-                {
-                    return Result.Fail<OfficeDto>(
-                        createResult.Errors.Select(e => e.Description).ToArray()
-                    );
-                }
-
-                var roleResult = await userManager.AddToRoleAsync(
-                    newOfficeAdmin,
-                    SystemRoles.OfficeAdmin);
-
-                if (!roleResult.Succeeded)
-                {
-                    return Result.Fail<OfficeDto>(
-                        roleResult.Errors.Select(e => e.Description).ToArray()
-                    );
-                }
-
-                office.OfficeUsers ??= [];
-                office.OfficeUsers.Add(newOfficeAdmin);
-            }
-            else
-            {
-                // -----------------------------
-                // Update Existing Admin Email
-                // -----------------------------
-                if (emailExists && officeAdmin.Email != adminEmail)
-                    return Result.Fail<OfficeDto>(ErrorsCodes.OfficeAdminEmailExists);
-
-                officeAdmin.Email = adminEmail;
-                officeAdmin.UserName = adminEmail;
-                officeAdmin.NormalizedEmail = userManager.NormalizeEmail(adminEmail);
-                officeAdmin.NormalizedUserName = userManager.NormalizeName(adminEmail);
-
-                var updateResult = await userManager.UpdateAsync(officeAdmin);
-
-                if (!updateResult.Succeeded)
-                {
-                    return Result.Fail<OfficeDto>(
-                        updateResult.Errors.Select(e => e.Description).ToArray()
-                    );
-                }
-            }
+            if (!updateResult.Succeeded)
+                return Result.Fail<OfficeDto>(updateResult.Errors.Select(e => e.Description).ToArray());
+            
         }
+        #endregion
 
-        // -----------------------------
-        // Sync Supported Countries
-        // -----------------------------
+        #region Sync Supported Countries
         var existingByCountry = office.SupportedCountries
             .ToDictionary(sc => sc.CountryId);
 
@@ -173,14 +95,15 @@ public sealed class UpdateOfficeCommandHandler(
 
         unitOfWork.RemoveRange(toRemove);
 
-        foreach (var country in supportedCountries)
+        foreach (var countryId in request.SupportedCountryIds)
         {
-            if (existingByCountry.ContainsKey(country.Id))
+            if (existingByCountry.ContainsKey(countryId))
                 continue;
 
-            office.SupportedCountries.Add(new OfficeSupportedCountry { CountryId = country.Id });
+            office.SupportedCountries.Add(new OfficeSupportedCountry { CountryId = countryId });
         }
-
+        #endregion
+        
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(mapper.Map<OfficeDto>(office));

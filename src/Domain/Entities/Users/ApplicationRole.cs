@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Tawtheef.Domain.Entities.Users;
 
-public static class ApplicationRoleIds
+public static class SystemRoleIds
 {
     public static Guid SystemAdmin = Guid.Parse("1361d691-53c5-4a84-aea1-64ff134cf082");
     public static Guid HRAdmin = Guid.Parse("5f12e420-f666-4af4-a8fa-4e4aa755fdcd");

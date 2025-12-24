@@ -9,11 +9,12 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Commands;
 
 public sealed class SetOfficeAdminCommandHandler(
-    UserManager<User> userManager,
-    RoleManager<ApplicationRole> roleManager)
+    UserManager<User> userManager)
     : IRequestHandler<SetOfficeAdminCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(SetOfficeAdminCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<Unit>> Handle(
+        SetOfficeAdminCommand request,
+        CancellationToken cancellationToken)
     {
         var targetUser = await userManager.Users
             .OfType<OfficeUser>()
@@ -26,39 +27,44 @@ public sealed class SetOfficeAdminCommandHandler(
         if (targetUser is null)
             return Result.Fail<Unit>(ErrorsCodes.OfficeUserNotFound);
 
-        var adminRole = await roleManager.FindByNameAsync(SystemRoles.OfficeAdmin);
-        if (adminRole is null)
-            return Result.Fail<Unit>(ErrorsCodes.OfficeAdminRoleNotFound);
-
-        var officeUserRole = await roleManager.FindByNameAsync(SystemRoles.OfficeUser);
-        if (officeUserRole is null)
-            return Result.Fail<Unit>(ErrorsCodes.OfficeUserRoleNotFound);
-
-        var currentAdmins = await userManager.GetUsersInRoleAsync(SystemRoles.OfficeAdmin);
-        var officeAdmins = currentAdmins
+        // Get current OfficeAdmins in this office
+        var currentAdmins = (await userManager
+                .GetUsersInRoleAsync(nameof(SystemRoleIds.OfficeAdmin)))
             .OfType<OfficeUser>()
             .Where(u => u.OfficeId == request.OfficeId && !u.IsDeleted)
             .ToList();
 
-        foreach (var admin in officeAdmins.Where(admin => admin.Id != targetUser.Id))
+        // 1️⃣ Demote old admins
+        foreach (var admin in currentAdmins.Where(a => a.Id != targetUser.Id))
         {
-            var removeResult = await userManager.RemoveFromRoleAsync(admin, SystemRoles.OfficeAdmin);
-            if (!removeResult.Succeeded)
-                return FailureFromIdentity(removeResult);
+            var removeAdmin = await userManager.RemoveFromRoleAsync(
+                admin,
+                nameof(SystemRoleIds.OfficeAdmin));
 
-            if (!await userManager.IsInRoleAsync(admin, SystemRoles.OfficeUser))
+            if (!removeAdmin.Succeeded)
+                return FailureFromIdentity(removeAdmin);
+
+            // ensure OfficeUser role
+            if (!await userManager.IsInRoleAsync(admin, nameof(SystemRoleIds.OfficeUser)))
             {
-                var addToUserRole = await userManager.AddToRoleAsync(admin, SystemRoles.OfficeUser);
-                if (!addToUserRole.Succeeded)
-                    return FailureFromIdentity(addToUserRole);
+                var addUser = await userManager.AddToRoleAsync(
+                    admin,
+                    nameof(SystemRoleIds.OfficeUser));
+
+                if (!addUser.Succeeded)
+                    return FailureFromIdentity(addUser);
             }
         }
 
-        if (!await userManager.IsInRoleAsync(targetUser, SystemRoles.OfficeAdmin))
+        // 2️⃣ Promote target user
+        if (!await userManager.IsInRoleAsync(targetUser, nameof(SystemRoleIds.OfficeAdmin)))
         {
-            var addResult = await userManager.AddToRoleAsync(targetUser, SystemRoles.OfficeAdmin);
-            if (!addResult.Succeeded)
-                return FailureFromIdentity(addResult);
+            var promote = await userManager.AddToRoleAsync(
+                targetUser,
+                nameof(SystemRoleIds.OfficeAdmin));
+
+            if (!promote.Succeeded)
+                return FailureFromIdentity(promote);
         }
 
         return Result.Ok(Unit.Value);

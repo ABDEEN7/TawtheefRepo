@@ -9,5 +9,5 @@ public sealed record OfficeDto
     public string CountryNameAr { get; init; } = string.Empty;
     public string CountryNameEn { get; init; } = string.Empty;
     public List<OfficeSupportedCountryDto> SupportedCountries { get; init; } = [];
-    public string AdminEmail { get; init; } = string.Empty;
+    public string AdminEmail { get; set; } = string.Empty;
 }

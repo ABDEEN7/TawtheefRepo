@@ -13,9 +13,9 @@ public sealed class ApplicationRoleConfiguration
         builder.HasData(
             new ApplicationRole
             {
-                Id = ApplicationRoleIds.SystemAdmin,
+                Id = SystemRoleIds.SystemAdmin,
                 Name = "SystemAdmin",
-                NormalizedName = nameof(ApplicationRoleIds.SystemAdmin),
+                NormalizedName = nameof(SystemRoleIds.SystemAdmin),
                 NameAr = "مدير النظام",
                 NameEn = "System Admin",
                 DescriptionAr = "مدير النظام الكامل",
@@ -24,9 +24,9 @@ public sealed class ApplicationRoleConfiguration
             },
             new ApplicationRole
             {
-                Id = ApplicationRoleIds.HRAdmin,
+                Id = SystemRoleIds.HRAdmin,
                 Name = "HRAdmin",
-                NormalizedName = nameof(ApplicationRoleIds.HRAdmin),
+                NormalizedName = nameof(SystemRoleIds.HRAdmin),
                 NameAr = "مدير الموارد البشرية",
                 NameEn = "HR Admin",
                 DescriptionAr = "مدير شؤون الموظفين",
@@ -35,9 +35,9 @@ public sealed class ApplicationRoleConfiguration
             },
             new ApplicationRole
             {
-                Id = ApplicationRoleIds.OfficeAdmin,
+                Id = SystemRoleIds.OfficeAdmin,
                 Name = "OfficeAdmin",
-                NormalizedName = nameof(ApplicationRoleIds.OfficeAdmin),
+                NormalizedName = nameof(SystemRoleIds.OfficeAdmin),
                 NameAr = "مدير المكتب",
                 NameEn = "Office Admin",
                 DescriptionAr = "مدير المكتب والصلاحيات المرتبطة",
@@ -46,9 +46,9 @@ public sealed class ApplicationRoleConfiguration
             },
             new ApplicationRole
             {
-                Id = ApplicationRoleIds.OfficeUser,
+                Id = SystemRoleIds.OfficeUser,
                 Name = "OfficeUser",
-                NormalizedName = nameof(ApplicationRoleIds.OfficeUser),
+                NormalizedName = nameof(SystemRoleIds.OfficeUser),
                 NameAr = "موظف المكتب",
                 NameEn = "Office User",
                 DescriptionAr = "موظف المكتب العادي",

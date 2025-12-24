@@ -160,7 +160,7 @@
                           type="button"
                           class="btn btn-outline-primary btn-sm"
                           (click)="promoteToAdmin(user)"
-                          [disabled]="user.isAdmin || loading"
+                          [disabled]="(user.email === office!.adminEmail) || loading"
                           aria-label="{{ 'OFFICES.MAKE_ADMIN' | translate }}">
                           {{ user.isAdmin ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.MAKE_ADMIN' | translate) }}
                         </button>

@@ -9,4 +9,4 @@ public sealed record CreateOfficeCommand(
     string NameEn,
     Guid CountryId,
     IReadOnlyCollection<Guid> SupportedCountryIds,
-    string AdminEmail) : IRequest<IResult<OfficeDto>>;
+    string AdminEmail) : IRequest<IResult<Guid>>;
