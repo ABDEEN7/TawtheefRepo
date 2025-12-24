@@ -22,7 +22,7 @@ public sealed class RequestProfileContactChangeHandler(
 {
     public async Task<IResult<Unit>> Handle(RequestProfileContactChangeCommand cmd, CancellationToken ct)
     {
-        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, ct);
+        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, ct: ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 

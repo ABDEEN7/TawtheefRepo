@@ -71,6 +71,7 @@ export function createProfileOverviewCardsSignal(
     const needsMarriage = candidateTypeNeedsMarriageCertificate(type);
     const isResident = candidateTypeIsResident(type, s.provider);
 
+
     const cards: SectionCardVm[] = [
       {
         id: 'prerequisites',

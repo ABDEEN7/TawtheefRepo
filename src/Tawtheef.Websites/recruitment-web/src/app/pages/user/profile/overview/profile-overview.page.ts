@@ -29,6 +29,7 @@ import {
   ProfileStatusDto, QualificationDto,
   TrainingCourseDto, SkillDto
 } from '../../../../core/models/auth/auth-response.model';
+import {createProfileOverviewVisibility} from './services/profile-overview.visibility';
 
 type ProfileEditSection =
   | 'prerequisites'
@@ -108,7 +109,6 @@ export class ProfileOverviewPage {
 
   data = rxResource({
     stream: () => forkJoin({
-      lookups: this.lookups.loadAll(),
       profile: this.profileService.getProfileStatus(),
       review: this.profileOverviewService.getMyProfileReviewSummary(),
       changes: this.profileOverviewService.getMyChangeRequests()
@@ -135,7 +135,11 @@ export class ProfileOverviewPage {
       return acc;
     }, {} as Record<number, number>);
 
+    const visibility = createProfileOverviewVisibility(p);
     return {
+      visibility:{
+        ...visibility(),
+      },
       header: {
         avatar: p.avatar ?? null,
         fullName: (p.fullNameEn || p.fullNameAr || '').trim(),
@@ -155,11 +159,10 @@ export class ProfileOverviewPage {
         sections: reviewSections,
         sectionIndex
       },
-
       prereq: {
-        candidateType: mapIdToDropdown(this.lookups, 'candidateType', p.candidateTypeId),
-        targetEntity: mapIdToDropdown(this.lookups, 'targetEntity', p.targetEntityId),
-        office: mapIdToDropdown(this.lookups, 'office', p.officeId),
+        candidateType: p.candidateType,
+        targetEntity: p.targetEntity,
+        office: p.office,
 
         resume: p.resumeAttachment ?? null,
         nationalCard: p.nationalCard ?? null,
@@ -168,43 +171,39 @@ export class ProfileOverviewPage {
         sponsorCard: p.sponsorCard ?? null,
         residenceAddressCertificate: p.residenceAddressCertificate ?? null
       },
-
       personal: {
         nationalNumber: p.nationalNumber ?? null,
         qidExpiry: p.qidExpiry ?? null,
         birthDate: p.birthDate ?? null,
-        nationality: mapIdToDropdown(this.lookups, 'countries', p.nationalityId),
-        gender: mapIdToDropdown(this.lookups, 'gender', p.genderId),
-        religion: mapIdToDropdown(this.lookups, 'religion', p.religionId),
-        maritalStatus: mapIdToDropdown(this.lookups, 'marital', p.maritalStatusId),
+        nationality: p.nationality,
+        gender: p.gender,
+        religion: p.religion,
+        maritalStatus: p.maritalStatus,
         childrenCount: p.childrenCount ?? 0,
         hasDisability: p.hasDisability,
         disabilityDetails: p.disabilityDetails ?? null,
 
-        sponsorType: mapIdToDropdown(this.lookups, 'sponsorType', p.sponsorTypeId),
+        sponsorType: p.sponsorType,
         sponsorEmployerName: p.sponsorEmployerName ?? null,
         sponsorEmployerNumber: p.sponsorEmployerNumber ?? null,
         sponsorQidExpiry: p.sponsorQidExpiry ?? null
       },
-
       contact: {
-        residenceCountry: mapIdToDropdown(this.lookups, 'countries', p.residenceCountryId),
-        interviewLocation: mapIdToDropdown(this.lookups, 'countries', p.interviewLocationId),
+        residenceCountry: p.residenceCountry,
+        interviewLocation: p.interviewLocation,
         address: p.address ?? null,
         naZone: p.naZone ?? null,
         naStreet: p.naStreet ?? null,
         naBuilding: p.naBuilding ?? null,
         naUnit: p.naUnit ?? null
       },
-
       qualifications: (p.qualifications ?? []) as QualificationDto[],
       experiences: (p.experiences ?? []) as ExperienceDto[],
       trainingCourses: (p.trainingCourses ?? []) as TrainingCourseDto[],
       achievements: (p.achievements ?? []) as AchievementDto[],
       skills: (p.skills ?? []) as SkillDto[],
       languages: (p.languages ?? []) as LanguageDto[],
-      attachments: (p.additionalAttachments ?? []) as AdditionalAttachmentDto[]
-      ,
+      attachments: (p.additionalAttachments ?? []) as AdditionalAttachmentDto[],
       changeRequests: changeRequests.map(req => ({
         ...req,
         sectionLabelKey: this.sectionLabelKey(req.section),
@@ -213,7 +212,35 @@ export class ProfileOverviewPage {
       }))
     };
   });
-
+  prereqFiles = computed(() => {
+    const v = this.vm();
+    if (!v) return [];
+    const vis = v.visibility;
+    return [
+      { key: 'resume', titleKey: 'profileView.files.resume', file: v.prereq.resume },
+      { key: 'nationalCard', titleKey: 'profileView.files.nationalCard', file: v.prereq.nationalCard },
+      ...(vis.needsBirth ? [{
+        key: 'birthdayCertificate',
+        titleKey: 'profileView.files.birthdayCertificate',
+        file: v.prereq.birthdayCertificate
+      }] : []),
+      ...(vis.needsMarriage ? [{
+        key: 'marriageCertificate',
+        titleKey: 'profileView.files.marriageCertificate',
+        file: v.prereq.marriageCertificate
+      }] : []),
+      ...(vis.isResident ? [{
+        key: 'residenceAddressCertificate',
+        titleKey: 'profileView.files.residenceAddressCertificate',
+        file: v.prereq.residenceAddressCertificate
+      }] : []),
+      ...(vis.needsSponsor ? [{
+        key: 'sponsorCard',
+        titleKey: 'profileView.files.sponsorCard',
+        file: v.prereq.sponsorCard
+      }] : []),
+    ];
+  });
   openFile(file: FileRefDto | null): void {
     if (!file?.url) return;
     this.fileUtils.previewUrl(file.url);

@@ -19,7 +19,7 @@ public sealed class SaveProfileLanguagesHandler(
     {
         var langRepo    = uow.GetEntityRepository<ProfileLanguage>();
 
-        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, ct);
+        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 

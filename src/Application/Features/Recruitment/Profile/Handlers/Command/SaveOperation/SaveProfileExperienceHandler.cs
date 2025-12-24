@@ -27,7 +27,7 @@ public sealed class SaveProfileExperienceHandler(
 
     public async Task<IResult<Unit>> Handle(SaveProfileExperienceCommand cmd, CancellationToken ct)
     {
-        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, ct);
+        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 

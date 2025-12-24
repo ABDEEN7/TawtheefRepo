@@ -47,7 +47,7 @@ public sealed class GetProfilePartialChangesHandler(
 
     public async Task<Result<GetProfilePartialChangesDetailDto>> Handle(GetProfilePartialChangesQuery request, CancellationToken ct)
     {
-        var profile = await UserProfileLoader.GetFullProfile(uow, request.UserProfileId, ct);
+        var profile = await UserProfileLoader.GetFullProfile(uow, request.UserProfileId, ct: ct);
         if (profile is null)
             return Result.Fail<GetProfilePartialChangesDetailDto>(ErrorsCodes.UserProfileNotFound);
 

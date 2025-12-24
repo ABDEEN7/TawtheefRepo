@@ -9,49 +9,35 @@ namespace Tawtheef.Application.Features.Recruitment.Profile;
 
 public static class UserProfileLoader
 {
-    public static async Task<IResult<UserProfile>> GetOrCreateAsync(IUnitOfWork uow, 
-        UserManager<User> userManager,
-        Guid userId, CancellationToken ct) {
+    public static async Task<IResult<UserProfile?>> GetSummaryAsync(IUnitOfWork uow, Guid userId, CancellationToken ct) {
         var repo = uow.GetEntityRepository<UserProfile>();
-
         var profile = await repo.DbSet.FirstOrDefaultAsync(p => p.UserId == userId, ct);
-        if (profile is not null) return Result.Ok(profile);
-
-        var user = await userManager.Users.FirstOrDefaultAsync(p => p.Id == userId, ct);
-        if (user is null) return Result.Fail<UserProfile>(ErrorsCodes.UserNotFound);
-        
-        var logins = await userManager.GetLoginsAsync(user);
-        var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "") ?? "Unknown";
-        profile = new UserProfile
-        {
-            UserId = userId,
-            Provider = providerName,
-            Status = UserProfileStatus.InCreation,
-        };
-
-        await repo.AddAsync(profile);
-        await uow.SaveChangesAsync(ct);
-
         return Result.Ok(profile);
     }
 
-    public static async Task<UserProfile?> GetFullProfile(IUnitOfWork uow, Guid userId, CancellationToken ct) {
+    public static async Task<UserProfile?> GetFullProfile(IUnitOfWork uow, Guid userId, bool tracking = false, CancellationToken ct = default) {
         var repo = uow.GetEntityRepository<UserProfile>();
-        var profile = await repo.DbSet.AsNoTracking().AsSplitQuery()
+        var query = repo.DbSet.AsSplitQuery()
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
-            .Include(p => p.SponsorProfile!.SponsorCard)
-            .Include(p => p.SponsorProfile!.SponsorType)
+            .Include(p => p.ResumeAttachment)
+            .Include(p => p.NationalCard)
             .Include(p => p.Office)
             .Include(p => p.BirthdayCertificate)
             .Include(p => p.MarriageCertificate)
-            .Include(p => p.ResidenceAddress)
+            
             .Include(p => p.Nationality)
             .Include(p => p.Gender)
             .Include(p => p.Religion)
             .Include(p => p.MaritalStatus)
+            .Include(p => p.SponsorProfile!.SponsorCard)
+            .Include(p => p.SponsorProfile!.SponsorType)
 
+            .Include(p => p.ResidenceCountry)
+            .Include(p => p.InterviewLocation)
+            .Include(p => p.ResidenceAddress)
+            
             .Include(p => p.Qualifications)!.ThenInclude(q => q.Degree)
             .Include(p => p.Qualifications)!.ThenInclude(q => q.Country)
             .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
@@ -80,8 +66,12 @@ public static class UserProfileLoader
             .Include(p => p.Languages)!.ThenInclude(l => l.WritingLevel)
             .Include(p => p.Languages)!.ThenInclude(l => l.ReadingLevel)
 
-            .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment)
-            .FirstOrDefaultAsync(p => p.UserId == userId, ct);
+            .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment).AsQueryable();
+        
+        if (!tracking)
+            query = query.AsTracking();
+        
+        var profile = await query.FirstOrDefaultAsync(p => p.UserId == userId, ct);
 
         return profile;
     }

@@ -1,9 +1,8 @@
 export interface UserInfoModel {
   userId: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  userType: string;
+  fullName: string;
   profilePictureUrl: string | null;
-  authProvider: string;
+  notifications: number;
+  provider: string;
 }

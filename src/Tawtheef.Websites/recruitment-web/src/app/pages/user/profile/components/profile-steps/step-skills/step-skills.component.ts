@@ -29,6 +29,7 @@ import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
 import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
 import {Skill} from '../../../wizard-profile/models/skill.model';
+import {NotificationService} from '../../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-step-skills',
@@ -42,6 +43,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
 
   protected readonly ds = inject(ProfileDataService);
   protected readonly lookups = inject(ProfileLookupsService);
+  private readonly notificationService = inject(NotificationService);
   private readonly messageService = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly profile = inject(ProfileService);
@@ -123,6 +125,10 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
 
   addSkill(): void {
     if (this.selectedSkill && this.selectedLevel) {
+      if(this.ds.state().skills.some(s=> s.skill?.backendName == this.selectedSkill?.backendName)){
+        this.notificationService.error(this.translate.instant('wizard.profile.skills.duplicateMessage'));
+        return;
+      }
       const skill: Skill = {
         skillId: this.selectedSkill.id?.toString() ?? this.selectedSkill.name,
         skill: this.selectedSkill,
@@ -158,14 +164,9 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
 
   onNext(): void {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors
+      this.notificationService.error(this.step.errors
           .map(e => `* ${this.translate.instant(e.i18nKey)}`)
-          .join('\n'),
-        life: 5000,
-      });
+          .join('\n'));
       return;
     }
 
