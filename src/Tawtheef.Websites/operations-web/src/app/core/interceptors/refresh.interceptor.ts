@@ -39,19 +39,24 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Start a single refresh
       refreshInFlight = true;
+
+      // 1) Refresh only (logout only if THIS fails)
       return from(authSvc.refreshToken()).pipe(
-        switchMap(() => {
-          refreshInFlight = false;
-          refreshDone$.next(true);
-          return next(attachLatestToken(markRetried(req), tokenSvc));
-        }),
         catchError((refreshErr) => {
           refreshInFlight = false;
           refreshDone$.next(false);
 
-          // IMPORTANT: local-only logout to avoid calling logout endpoint again
-          authSvc.logout(false); // clear client & navigate; no API call
+          authSvc.logout(false);
           return throwError(() => refreshErr);
+        }),
+
+        // 2) Retry original request (do NOT logout if this fails)
+        switchMap(() => {
+          refreshInFlight = false;
+          refreshDone$.next(true);
+
+          const retried = attachLatestToken(markRetried(req), tokenSvc);
+          return next(retried); // if 500 happens here, it will bubble up normally
         })
       );
     })
