@@ -2,7 +2,6 @@ using System.Text.Json;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
@@ -28,14 +27,7 @@ public sealed class SaveProfileExperienceHandler(
 
     public async Task<IResult<Unit>> Handle(SaveProfileExperienceCommand cmd, CancellationToken ct)
     {
-        var profileRepo = uow.GetEntityRepository<UserProfile>();
-        var profile = await profileRepo.DbSet
-            .Include(p => p.ResidenceAddress)
-            .Include(p => p.Qualifications)
-            .Include(p => p.Experiences)
-            .Include(p => p.TrainingCourses)
-            .FirstOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
-
+        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 

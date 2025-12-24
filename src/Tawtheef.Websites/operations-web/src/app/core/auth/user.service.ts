@@ -19,12 +19,12 @@ export class UserService {
     const minimalUser = {
       userId: user.userId,
       email: user.email,
-      firstName: user.firstName ?? this.tokenService.getClaim(accessToken, 'given_name'),
-      lastName: user.lastName ?? this.tokenService.getClaim(accessToken, 'family_name'),
-      profilePictureUrl: user.profilePictureUrl ?? this.tokenService.getClaim(accessToken, 'picture') ?? null,
+      fullName: user.fullName,
+      profilePictureUrl: user.profilePictureUrl ?? null,
       userType: this.tokenService.getRoleFromToken(accessToken),
-      authProvider: user.authProvider || this.tokenService.getClaim(accessToken, 'auth_provider') || 'local',
-    };
+      provider: user.provider || 'local',
+      notifications : user.notifications || 0
+    } as UserInfoModel;
 
     localStorage.setItem('user_data', JSON.stringify(minimalUser));
     this.currentUserSubject.next(minimalUser);
@@ -37,7 +37,7 @@ export class UserService {
 
   isPasswordlessUser(): boolean {
     const user = this.getCurrentUser();
-    if (!user?.authProvider) return false;
-    return ['google', 'facebook'].includes(user.authProvider);
+    if (!user?.provider) return false;
+    return ['google', 'facebook'].includes(user.provider);
   }
 }

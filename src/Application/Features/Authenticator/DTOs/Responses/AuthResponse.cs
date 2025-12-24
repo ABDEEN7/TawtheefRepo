@@ -31,8 +31,11 @@ public sealed class ProfileStatusDto
 
     // ===== Scalars من UserProfile =====
     public Guid? CandidateTypeId { get; init; }
+    public DropdownOptions? CandidateType { get; init; }
     public Guid? TargetEntityId { get; init; }
+    public DropdownOptions? TargetEntity { get; init; }
     public Guid? OfficeId { get; init; }
+    public DropdownOptions? Office { get; init; }
 
     public string? Avatar { get; init; }
     public string? FullNameAr { get; init; }
@@ -46,14 +49,21 @@ public sealed class ProfileStatusDto
     public DateOnly? QIDExpiry { get; init; }
     public DateOnly? BirthDate { get; init; }
     public Guid? NationalityId { get; init; }
+    public DropdownOptions? Nationality { get; init; }
     public Guid? GenderId { get; init; }
+    public DropdownOptions? Gender { get; init; }
+    
     public Guid? ReligionId { get; init; }
+    public DropdownOptions? Religion { get; init; }
     public Guid? MaritalStatusId { get; init; }
+    public DropdownOptions? MaritalStatus { get; init; }
 
     public int ChildrenCount { get; init; }
 
     public Guid? ResidenceCountryId { get; init; }
+    public DropdownOptions? ResidenceCountry { get; init; }
     public Guid? InterviewLocationId { get; init; }
+    public DropdownOptions? InterviewLocation { get; init; }
 
     public string? Address { get; init; }
     public int? naZone { get; init; }
@@ -132,6 +142,7 @@ public sealed class ExperienceDto
     public DateOnly? EndDate { get; init; }
     public bool IsCurrent { get; init; }
     public Guid? QualificationId { get; init; }
+    public DropdownOptions? Qualification { get; init; }
     [JsonIgnore]
     public string? DegreeName { get; init; }
     [JsonIgnore]
@@ -195,7 +206,6 @@ public sealed class LanguageDto
     public DropdownOptions? WritingLevel { get; init; }
     public Guid ReadingLevelId { get; init; }
     public DropdownOptions? ReadingLevel { get; init; }
-    public bool IsNative { get; init; }
 }
 
 // ====== Additional Attachments ======

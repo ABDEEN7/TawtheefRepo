@@ -12,6 +12,7 @@ public class ErrorsCodes
     public const string PhoneNumberRequired = "PHONE_NUMBER_REQUIRED";
     public const string ConcurrencyFailure = "CONCURRENCY_FAILURE";
     public const string LoginFailed = "LOGIN_FAILED";
+    public const string UploadFailed = "UPLOAD_FAILED";
     #endregion
 
     #region Validation Token Errors

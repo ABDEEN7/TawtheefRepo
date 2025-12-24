@@ -55,7 +55,7 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
     return this.responsibilitiesArray.at(index) as FormGroup;
   }
 
- setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+  override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
     this.note = note;
     this.responsibilitiesArray.clear();

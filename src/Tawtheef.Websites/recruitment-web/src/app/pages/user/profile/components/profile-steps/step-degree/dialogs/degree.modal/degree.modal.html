@@ -3,19 +3,19 @@
     <div class="deg-panel border-0 shadow-none">
       <div class="py-3">
         <!-- ROW 1: 3 fields -->
-        <div class="row g-2 align-items-start">
+        <div class="row align-items-start">
           <!-- degree -->
-          <div class="col-12 col-md-4 d-flex flex-column">
-            <label for="degree" class="form-label fw-semibold mb-2 required">
+          <div class="col-12 col-md-4 mb-3">
+            <label for="degree" class="form-label required">
               {{ 'wizard.degrees.degree' | translate }}
             </label>
-            <p-select size="small"
+            <p-select
               inputId="degree"
               formControlName="degree"
               [options]="lookups.degrees()" optionLabel="name"
               [filter]="true"
               [placeholder]="'wizard.degrees.choiceDegree' | translate"
-              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [appendTo]="'body'"
               [ngClass]="{'p-invalid': f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)}" fluid>
             </p-select>
             <small *ngIf="f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)"
@@ -24,17 +24,17 @@
             </small>
           </div>
           <!-- gradCountry -->
-          <div class="col-12 col-md-4 d-flex flex-column">
-            <label for="gradCountry" class="form-label required fw-semibold mb-2">
+          <div class="col-12 col-md-4 mb-3">
+            <label for="gradCountry" class="form-label required">
               {{ 'wizard.degrees.gradCountry' | translate }}
             </label>
-            <p-select size="small"
+            <p-select
               inputId="gradCountry"
               formControlName="gradCountry"
               [options]="lookups.countries()" optionLabel="name"
               [filter]="true"
               [placeholder]="'wizard.degrees.choiceGradCountry' | translate"
-              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [appendTo]="'body'"
               [ngClass]="{'p-invalid': f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)}" fluid>
             </p-select>
             <small *ngIf="f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)"
@@ -43,8 +43,8 @@
             </small>
           </div>
           <!-- university -->
-          <div class="col-12 col-md-4 d-flex flex-column" *ngIf="isQualification">
-            <label for="university" class="form-label required fw-semibold mb-2">
+          <div class="col-12 col-md-4 mb-3" *ngIf="isQualification">
+            <label for="university" class="form-label required">
               {{ 'wizard.degrees.university' | translate }}
             </label>
             <app-remote-select
@@ -64,10 +64,10 @@
           </div>
         </div>
         <!-- ROW 2: 2 fields -->
-        <div class="row g-2 align-items-start" *ngIf="isQualification">
+        <div class="row align-items-start" *ngIf="isQualification">
           <!-- main-major -->
-          <div class="col-12 col-md-6 d-flex flex-column">
-            <label for="major" class="form-label required fw-semibold mb-2">
+          <div class="col-12 col-md-6 mb-3">
+            <label for="major" class="form-label required">
               {{ 'wizard.degrees.main-major' | translate }}
             </label>
             <app-remote-select
@@ -84,8 +84,8 @@
             </small>
           </div>
           <!-- sub-major -->
-          <div class="col-12 col-md-6 d-flex flex-column">
-            <label for="major" class="form-label required fw-semibold mb-2">
+          <div class="col-12 col-md-6 mb-3">
+            <label for="major" class="form-label required">
               {{ 'wizard.degrees.major' | translate }}
             </label>
             <app-remote-select
@@ -105,13 +105,13 @@
           </div>
         </div>
         <!-- ROW 3: 3 fields -->
-        <div class="row g-2 align-items-start mt-1">
+        <div class="row align-items-start">
           <!-- gradYear -->
-          <div class="col-12 col-md-4 d-flex flex-column">
-            <label for="gradYear" class="form-label required fw-semibold mb-2">
+          <div class="col-12 col-md-4 mb-3">
+            <label for="gradYear" class="form-label required">
               {{ 'wizard.degrees.gradYear' | translate }}
             </label>
-            <p-date-picker size="small"
+            <p-date-picker
               inputId="gradYear" [showIcon]="false"
               formControlName="gradYear" view="year" dateFormat="yy"
               [maxDate]="today"
@@ -130,16 +130,16 @@
             </small>
           </div>
           <!-- studySystem -->
-          <div class="col-12 col-md-4 d-flex flex-column" *ngIf="isQualification">
-            <label for="studySystem" class="form-label required fw-semibold mb-2">
+          <div class="col-12 col-md-4 mb-3" *ngIf="isQualification">
+            <label for="studySystem" class="form-label required d-block">
               {{ 'wizard.degrees.studySystem' | translate }}
             </label>
-            <p-select size="small"
+            <p-select
               inputId="studySystem"
               formControlName="studySystem"
               [options]="lookups.studyTypes()" optionLabel="name"
               [placeholder]="'wizard.degrees.choiceStudySystem' | translate"
-              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [appendTo]="'body'" class="w-100"
               [ngClass]="{
                 'p-invalid': f['studySystem'].invalid && (f['studySystem'].dirty || f['studySystem'].touched)
               }">
@@ -150,17 +150,17 @@
             </small>
           </div>
           <!-- gpa -->
-          <div class="col-12 col-md-4 d-flex flex-column" *ngIf="isQualification">
-            <label for="gpa" class="form-label required fw-semibold mb-2">
+          <div class="col-12 col-md-4 mb-3" *ngIf="isQualification">
+            <label for="gpa" class="form-label required d-block">
               {{ 'wizard.degrees.gpa' | translate }}
             </label>
-            <p-inputNumber size="small"
+            <p-inputNumber
               inputId="gpa"
               formControlName="gpa"
               [useGrouping]="false"
               [min]="0" [max]="100"
               [maxlength]="5"
-              [showButtons]="false"
+              [showButtons]="false" class="w-100"
               [ngClass]="{'p-invalid': f['gpa'].invalid && (f['gpa'].dirty || f['gpa'].touched)}">
             </p-inputNumber>
             <small *ngIf="f['gpa']?.errors?.['required'] && (f['gpa'].dirty || f['gpa'].touched)"
@@ -174,31 +174,23 @@
           </div>
         </div>
         <!-- ROW 4: 2 fields -->
-        <div class="row g-2 align-items-start mt-1">
+        <div class="row align-items-start mt-1">
           <!-- grade -->
-          <div class="col-12 col-md-6 d-flex flex-column" *ngIf="isQualification">
-            <label for="grade" class="form-label required fw-semibold mb-2">
+          <div class="col-12 col-md-6  mb-3" *ngIf="isQualification">
+            <label for="grade" class="form-label required d-block">
               {{ 'wizard.degrees.grade' | translate }}
             </label>
-            <p-select size="small"
-              inputId="grade"
-              formControlName="grade"
-              [options]="lookups.ratingGrades()" optionLabel="name"
-              [placeholder]="'wizard.degrees.choiceGrade' | translate"
-              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
-              [ngClass]="{
-                'p-invalid': f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)
-              }">
+            <p-select inputId="grade" formControlName="grade" class="w-100" [options]="lookups.ratingGrades()" optionLabel="name" [placeholder]="'wizard.degrees.choiceGrade' | translate" [appendTo]="'body'"  [ngClass]="{'p-invalid': f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)}">
             </p-select>
             <small *ngIf="f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)"
-                   class="text-danger mt-1 d-block">
+                   class="text-danger mt-1">
               {{ 'validation.required' | translate }}
             </small>
           </div>
           <!-- Upload block -->
-          <div class="col-md-6 d-flex flex-column">
+          <div class="col-md-6 mb-3">
 
-            <label class="form-label required">
+            <label class="form-label required d-block">
               {{ 'wizard.degrees.degreeFile' | translate }}
               <span class="text-muted fz-2xs">(PDF)</span>
             </label>

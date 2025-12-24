@@ -13,8 +13,8 @@ public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }
     public ApplicantUser? User { get; set; }
-    
-    public required string Provider { get; set; }
+
+    public string Provider { get; set; } = default!;
     public Guid CandidateTypeId { get; set; }
     public CandidateType? CandidateType { get; set; }
 

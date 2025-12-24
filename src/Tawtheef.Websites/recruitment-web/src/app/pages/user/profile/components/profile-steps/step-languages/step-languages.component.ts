@@ -6,6 +6,7 @@ import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lo
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
 import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import {NotificationService} from '../../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-step-languages',
@@ -19,7 +20,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
 
   ds = inject(ProfileDataService);
   lookups = inject(ProfileLookupsService);
-  messageService = inject(MessageService);
+  messageService = inject(NotificationService);
   translate = inject(TranslateService);
   profile = inject(ProfileService);
 
@@ -45,6 +46,11 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
 
   addLang(): void {
     if (this.newLanguage && this.newSpeakingLevel && this.newWritingLevel && this.newReadingLevel) {
+      if(this.ds.state().languages.some(s=> s.lang?.backendName == this.newLanguage?.backendName)) {
+        this.messageService.error(this.translate.instant('wizard.profile.languages.duplicate'));
+        return;
+      }
+
       this.ds.addLang({
         langId: this.newLanguage.id,
         lang: this.newLanguage,
@@ -77,12 +83,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
 
   onNext() {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
-        life: 5000,
-      });
+      this.messageService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'));
       return;
     }
 
@@ -96,12 +97,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     }
 
     if (!languages.length) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.profile.languages.required'),
-        life: 5000,
-      });
+      this.messageService.error(this.translate.instant('wizard.profile.languages.required'));
       return;
     }
 

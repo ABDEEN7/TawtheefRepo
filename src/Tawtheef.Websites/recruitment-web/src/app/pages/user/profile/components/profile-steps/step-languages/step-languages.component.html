@@ -1,99 +1,101 @@
 <div class="step-languages">
   <div class="row g-4">
     <div class="col-12">
-      <div class="section-head">
+      <div class="section-head mb-4">
         <h5 class="text-primary">{{ 'wizard.skills.languages' | translate }}</h5>
-        <small class="text-muted d-block">{{ 'wizard.skills.languagesHint' | translate }}</small>
+        <p class="text-muted d-block">{{ 'wizard.skills.languagesHint' | translate }}</p>
       </div>
 
-      <div class="d-flex flex-wrap gap-2 mb-2 align-items-start">
-        <p-select
-          [options]="lookups.languages()"
-          optionLabel="name"
-          [(ngModel)]="newLanguage"
-          [placeholder]="'wizard.skills.selectLanguage' | translate"
-          [showClear]="true"
-          class="w-language"
-        ></p-select>
+      <div class="row align-items-start">
+           <div class="col mb-4"><p-select
+             [options]="lookups.languages()"
+             optionLabel="name"
+             [(ngModel)]="newLanguage"
+             [placeholder]="'wizard.skills.selectLanguage' | translate"
+             [showClear]="true"
+             class="w-language w-100"
+           ></p-select></div>
+          <div class="col  mb-3"> <p-select
+            [options]="lookups.languageLevels()"
+            optionLabel="name"
+            [(ngModel)]="newSpeakingLevel"
+            [placeholder]="'wizard.skills.selectSpeakingLevel' | translate"
+            [showClear]="true"
+            class="w-level  w-100"
+          ></p-select></div>
+          <div class="col mb-3"><p-select
+            [options]="lookups.languageLevels()"
+            optionLabel="name"
+            [(ngModel)]="newWritingLevel"
+            [placeholder]="'wizard.skills.selectWritingLevel' | translate"
+            [showClear]="true"
+            class="w-level  w-100"
+          ></p-select></div>
 
-        <p-select
-          [options]="lookups.languageLevels()"
-          optionLabel="name"
-          [(ngModel)]="newSpeakingLevel"
-          [placeholder]="'wizard.skills.selectSpeakingLevel' | translate"
-          [showClear]="true"
-          class="w-level"
-        ></p-select>
+          <div class="col mb-3"><p-select
+            [options]="lookups.languageLevels()"
+            optionLabel="name"
+            [(ngModel)]="newReadingLevel"
+            [placeholder]="'wizard.skills.selectReadingLevel' | translate"
+            [showClear]="true"
+            class="w-level  w-100"
+          ></p-select></div>
 
-        <p-select
-          [options]="lookups.languageLevels()"
-          optionLabel="name"
-          [(ngModel)]="newWritingLevel"
-          [placeholder]="'wizard.skills.selectWritingLevel' | translate"
-          [showClear]="true"
-          class="w-level"
-        ></p-select>
+          <div class="col mb-3"><button class="btn btn-primary d-flex" (click)="addLang()">
+            <i class="hgi hgi-stroke hgi-plus-sign me-1"></i> {{ 'wizard.buttons.add' | translate }}
+          </button></div>
+      </div>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table [value]="ds.state().languages" class="p-datatable-sm">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'wizard.skills.language' | translate }}</th>
+                <th>{{ 'wizard.skills.speaking' | translate }}</th>
+                <th>{{ 'wizard.skills.writing' | translate }}</th>
+                <th>{{ 'wizard.skills.reading' | translate }}</th>
+                <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+              </tr>
+            </ng-template>
 
-        <p-select
-          [options]="lookups.languageLevels()"
-          optionLabel="name"
-          [(ngModel)]="newReadingLevel"
-          [placeholder]="'wizard.skills.selectReadingLevel' | translate"
-          [showClear]="true"
-          class="w-level"
-        ></p-select>
+            <ng-template pTemplate="body" let-r let-i="rowIndex">
+              <tr>
+                <td>{{ r.lang.name }}</td>
+                <td><span class="badge rounded-pill bg-soft">{{ r.speakingLevel.name }}</span></td>
+                <td><span class="badge rounded-pill bg-soft">{{ r.writingLevel.name }}</span></td>
+                <td><span class="badge rounded-pill bg-soft">{{ r.readingLevel.name }}</span></td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-danger rounded-pill"
+                          (click)="removeLang(i)"
+                          pTooltip="{{ 'wizard.buttons.delete' | translate }}">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
 
-        <button class="btn btn-outline-primary rounded-pill" (click)="addLang()">
-          <i class="fa-solid fa-plus"></i> {{ 'wizard.buttons.add' | translate }}
-        </button>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="text-center text-muted">
+                  {{ 'wizard.table.noRows' | translate }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </div>
 
-      <p-table [value]="ds.state().languages" class="p-datatable-sm">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>{{ 'wizard.skills.language' | translate }}</th>
-            <th>{{ 'wizard.skills.speaking' | translate }}</th>
-            <th>{{ 'wizard.skills.writing' | translate }}</th>
-            <th>{{ 'wizard.skills.reading' | translate }}</th>
-            <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="body" let-r let-i="rowIndex">
-          <tr>
-            <td>{{ r.lang.name }}</td>
-            <td><span class="badge rounded-pill bg-soft">{{ r.speakingLevel.name }}</span></td>
-            <td><span class="badge rounded-pill bg-soft">{{ r.writingLevel.name }}</span></td>
-            <td><span class="badge rounded-pill bg-soft">{{ r.readingLevel.name }}</span></td>
-            <td class="text-end">
-              <button class="btn btn-sm btn-outline-danger rounded-pill"
-                      (click)="removeLang(i)"
-                      pTooltip="{{ 'wizard.buttons.delete' | translate }}">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="5" class="text-center text-muted">
-              {{ 'wizard.table.noRows' | translate }}
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
     </div>
   </div>
 </div>
 
 <div class="d-flex justify-content-between mt-4 text-end">
-  <button class="btn btn-outline-secondary rounded-pill" (click)="back.emit()">
-    <i class="fa-solid me-1" faDirArrow="start"></i>
-    {{ 'wizard.buttons.prev' | translate }}
+  <button class="btn btn-outline-secondary d-flex align-items-center" (click)="back.emit()">
+    <i class="hgi fs-18 lh-1" faDirArrow="start"></i>
+    <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
-  <button class="btn btn-brand rounded-pill ms-2" (click)="onNext()">
-    {{ 'wizard.buttons.next' | translate }}
-    <i class="fa-solid ms-1" faDirArrow="end"></i>
+  <button class="btn btn-primary  d-flex align-items-center" (click)="onNext()">
+    <span>{{ 'wizard.buttons.next' | translate }}</span>
+    <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
   </button>
 </div>

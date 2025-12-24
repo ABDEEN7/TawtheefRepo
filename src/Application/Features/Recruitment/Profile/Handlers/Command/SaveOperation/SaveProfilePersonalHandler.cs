@@ -26,11 +26,7 @@ public sealed class SaveProfilePersonalHandler(
         var user = await userManager.Users.FirstOrDefaultAsync(p => p.Id == cmd.UserId, ct);
         if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
         
-        var profileRepo = uow.GetEntityRepository<UserProfile>();
-        var profile = await profileRepo.DbSet
-            .Include(p => p.SponsorProfile)
-            .SingleOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
-
+        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 

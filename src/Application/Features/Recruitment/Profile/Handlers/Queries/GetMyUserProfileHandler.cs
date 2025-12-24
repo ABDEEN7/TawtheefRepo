@@ -17,7 +17,7 @@ public sealed class GetMyUserProfileHandler(IUnitOfWork uow, IMapper mapper, IMe
 {
     public async Task<Result<UserProfileViewDto>> Handle(GetMyUserProfileQuery request, CancellationToken ct)
     {
-        var profile = await UserProfileLoader.GetFullProfile(uow, request.UserId, ct);
+        var profile = await UserProfileLoader.GetFullProfile(uow, request.UserId, ct: ct);
 
         if (profile is null)
             return Result.Fail<UserProfileViewDto>(ErrorsCodes.UserProfileNotFound);

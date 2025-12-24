@@ -47,7 +47,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     return this.form.valid && this.form.controls.degrees.value!.length > 0;
   }
 
-  setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+  override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
      this.jobData = job;
      this.note = note;
     

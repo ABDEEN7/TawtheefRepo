@@ -11,160 +11,16 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.stepper-container {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 10px;
-  padding: 40px;
-  margin-bottom: 24px;
-}
+
 
 .progress-bar {
   background-color: #89153d;
 }
 
 
-.stepper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-}
 
-.step-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  flex: 1;
-  z-index: 1;
-}
 
-.step-label-container {
-  position: absolute;
-  top: -35px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
 
-.step-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  font-size: 12px;
-  color: #6c757d;
-  text-align: center;
-  width: 100px;
-
-  i {
-    font-size: 16px;
-    margin-bottom: 4px;
-  }
-
-  &.active {
-    color: #89153d;
-    font-weight: 600;
-
-    i {
-      color: #89153d;
-    }
-  }
-
-  &.completed {
-    color: #28a745;
-
-    i {
-      color: #28a745;
-    }
-  }
-
-  &:hover:not(.active) {
-    transform: translateY(-2px);
-    color: #495057;
-  }
-}
-
-.step-progress {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  position: relative;
-}
-
-.step-circle {
-  width: 24px;
-  height: 24px;
-  border: 2px solid #dee2e6;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  flex-shrink: 0;
-  z-index: 2;
-
-  &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 3px rgba(137, 21, 61, 0.1);
-  }
-
-  &.active {
-    border-color: #89153d;
-
-    .inner-circle {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: #89153d;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-  }
-
-  &.completed {
-    background: #28a745;
-    border-color: #28a745;
-
-    .checkmark {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-
-      .checkmark-line {
-        position: absolute;
-        width: 10px;
-        height: 8px;
-        left: 3px;
-        top: 4px;
-        background: white;
-        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-      }
-    }
-  }
-}
-
-.connector-line {
-  height: 2px;
-  flex: 1;
-  background: #dee2e6;
-  border-radius: 2px;
-  margin: 0 -1px;
-  transition: background 0.3s ease;
-
-  &.completed {
-    background: #28a745;
-  }
-}
 
 /* PrimeNG Toast Customization */
 :host ::ng-deep {
@@ -210,85 +66,11 @@
   }
 }
 
-/* Responsive Design */
-@media (max-width: 992px) {
-  .stepper-container {
-    padding: 15px;
-  }
 
-  .step-label {
-    width: 80px;
-    font-size: 11px;
 
-    i {
-      font-size: 14px;
-    }
-  }
 
-  .step-circle {
-    width: 20px;
-    height: 20px;
-  }
-}
 
-@media (max-width: 768px) {
-  .stepper-container {
-    padding: 12px;
-    overflow-x: auto;
-  }
 
-  .stepper {
-    min-width: 800px;
-  }
-
-  .step-label {
-    span {
-      display: none;
-    }
-
-    i {
-      font-size: 16px;
-    }
-  }
-  
-  :host ::ng-deep {
-    .p-toast {
-      &.p-toast-top-center {
-        top: 60px;
-        left: 10px;
-        right: 10px;
-      }
-    }
-  }
-}
-
-@media (max-width: 576px) {
-  .wizard {
-    padding: 16px;
-  }
-
-  .step-circle {
-    width: 18px;
-    height: 18px;
-
-    .inner-circle {
-      width: 8px;
-      height: 8px;
-    }
-
-    .checkmark {
-      width: 14px;
-      height: 14px;
-
-      .checkmark-line {
-        width: 8px;
-        height: 6px;
-        left: 3px;
-        top: 4px;
-      }
-    }
-  }
-}
 
 ::ng-deep .p-dialog.custom-bootstrap-dialog {
   .p-dialog-content {

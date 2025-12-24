@@ -1,11 +1,11 @@
 import {Component, signal} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
-import {TranslateModule} from '@ngx-translate/core';
 import {Toast} from 'primeng/toast';
+import {CoreModule} from './core/core.module';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TranslateModule, Toast],
+  imports: [RouterOutlet, Toast,CoreModule],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
