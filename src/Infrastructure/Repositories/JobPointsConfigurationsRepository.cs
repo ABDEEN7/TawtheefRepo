@@ -11,11 +11,10 @@ namespace Tawtheef.Infrastructure.Repositories;
 public class JobPointsConfigurationsRepository(IGenericRepository<JobPointConfiguration> repository)
     : BaseRepository<JobPointConfiguration>(repository), IJobPointsConfigurationsRepository
 {
-    private readonly IGenericRepository<JobPointConfiguration> _repository = repository;
 
     public async Task<IResult<JobPointConfiguration>> GetByJobIdAsync(Guid jobId)
     {
-        var jobPointsConfiguration = await _repository.DbSet
+        var jobPointsConfiguration = await Repository.DbSet
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.JobId == jobId);
 
