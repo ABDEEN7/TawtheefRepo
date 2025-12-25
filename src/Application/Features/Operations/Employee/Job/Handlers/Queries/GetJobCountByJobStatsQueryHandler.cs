@@ -13,8 +13,6 @@ public class GetJobCountByJobStatsQueryHandler(IUnitOfWork unitOfWork)
         GetJobCountByJobStatsQuery request,
         CancellationToken cancellationToken)
     {
-        if (request.JobStatusId == Guid.Empty)
-            return 0;
         var jobRepo = unitOfWork.GetEntityRepository<JobEntity>();
         var count =  await jobRepo.DbSet
                 .AsNoTracking()
