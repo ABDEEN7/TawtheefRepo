@@ -1,6 +1,5 @@
 using Mapster;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
-using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
@@ -22,6 +21,7 @@ public class JobProfile : IRegister
             .Ignore(dest => dest.JobDegrees)
             .Ignore(dest => dest.JobConditions)
             .Ignore(dest => dest.JobSkills)
+            .Ignore(dest => dest.JobPoints!)
             .Ignore(dest => dest.JobResponsibilities)
             .Ignore(dest => dest.JobRequiredAttachments)
             .Ignore(dest => dest.OverViewAr!)

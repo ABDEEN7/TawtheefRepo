@@ -9,7 +9,6 @@ import {ConditionsStepComponent} from './job-wizard/wizard-steps/conditions-step
 import {ReviewStepComponent} from './job-wizard/wizard-steps/review-step.component/review-step.component';
 import {SkillsStepComponent} from './job-wizard/wizard-steps/skills-step.component/skills-step.component';
 import {ConfirmApplyModalComponent} from './modals/confirm-apply-modal/confirm-apply-modal.component';
-import {PointsConfigModalComponent} from './modals/points-config-modal/points-config-modal.component';
 import {JobService} from './services/job.service';
 import {ProgressBarComponent} from './job-wizard/progress-bar/progress-bar';
 import {JobListComponent} from './job-list/jobs-list.component';
@@ -37,7 +36,12 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { DialogHelperService } from '../../core/services/dialog-helper.service';
 import { ReviewNoteComponent } from './job-wizard/review-note/review-note.component';
-import { FaDirArrowDirective } from '../../shared/directives/dir-arrow.directive';
+import { FaDirArrowDirective } from '../../shared/directives/dir-arrow.directive';import { InputNumber } from 'primeng/inputnumber';
+import { JobPointsConfigPageComponent } from './job-points/job-points-config-page/job-points-config-page.component';
+import { JobPointsMainElementsComponent } from './job-points/job-points-main-elements/job-points-main-elements.component';
+import { JobPointsTabComponent } from './job-points/job-points-points-tab/job-points-tab.component';
+import { TabsModule } from 'primeng/tabs';
+import { FilterByKeyPrefixPipe } from './pipes/filter-by-key-prefix.pipe';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -55,7 +59,11 @@ import { FaDirArrowDirective } from '../../shared/directives/dir-arrow.directive
     ReviewStepComponent,
     SkillsStepComponent,
     JobBasicModalComponent,
-    JobApprovalComponent,    
+    JobApprovalComponent,
+    JobPointsConfigPageComponent,
+    JobPointsMainElementsComponent,
+    JobPointsTabComponent,
+    FilterByKeyPrefixPipe
   ],
   imports: [
     RouterModule.forChild(jobRoutes),
@@ -72,22 +80,24 @@ import { FaDirArrowDirective } from '../../shared/directives/dir-arrow.directive
     DatePickerModule,
     PaginationComponent,
     ConfirmApplyModalComponent,
-    PointsConfigModalComponent,
     ReviewNoteComponent,
     NgOptimizedImage,
     MultiSelectModule,
+    InputNumber,
     Scroller,
     Toast,
     ConfirmDialog, 
-    FaDirArrowDirective
-  ],
+    FaDirArrowDirective, 
+    TabsModule, 
+    ],
   exports: [
     JobDetailsComponent,
     JobListComponent,
     JobWizardComponent,
     JobApprovalComponent,
     ConfirmApplyModalComponent,
-    PointsConfigModalComponent
+    JobPointsMainElementsComponent,
+    JobPointsTabComponent
   ],
   providers: [
     JobService,

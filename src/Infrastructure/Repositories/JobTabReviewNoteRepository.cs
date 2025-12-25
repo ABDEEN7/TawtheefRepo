@@ -10,10 +10,9 @@ namespace Tawtheef.Infrastructure.Repositories;
 public class JobTabReviewNoteRepository(IGenericRepository<JobTabReviewNote> repository)
     : BaseRepository<JobTabReviewNote>(repository), IJobTabReviewNoteRepository
 {
-    private readonly IGenericRepository<JobTabReviewNote> _repository = repository;
     public async Task<IResult<List<JobTabReviewNote>>> GetByIdWithDetailsAsync(Guid jobId)
     {
-        var result = await _repository.DbSet
+        var result = await Repository.DbSet
             .AsNoTracking()
             .Where(t => t.JobId == jobId)
             .Include(t => t.Attachments)
@@ -26,7 +25,7 @@ public class JobTabReviewNoteRepository(IGenericRepository<JobTabReviewNote> rep
 
     public async Task<IResult<List<JobTabReviewNote>>> GetLastReviewCycleAsync(Guid jobId)
     {
-        var lastCycleId = await _repository.DbSet
+        var lastCycleId = await Repository.DbSet
             .Where(x => x.JobId == jobId)
             .GroupBy(x => x.ReviewCycleId)
             .OrderByDescending(g => g.Max(x => x.CreatedDate))
@@ -36,7 +35,7 @@ public class JobTabReviewNoteRepository(IGenericRepository<JobTabReviewNote> rep
         if (lastCycleId == Guid.Empty)
             return Result.Ok(new List<JobTabReviewNote>());
 
-        var result = await _repository.DbSet
+        var result = await Repository.DbSet
             .AsNoTracking()
             .Where(x => x.JobId == jobId && x.ReviewCycleId == lastCycleId)
             .Include(x => x.Attachments)

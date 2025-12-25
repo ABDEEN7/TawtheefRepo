@@ -1,0 +1,95 @@
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .job-details-title-group {
+    flex: 1;
+    min-width: 300px;
+
+    .title-wrapper {
+      .job-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 8px;
+      }
+    }
+
+    .info-item {
+      font-size: 13px;
+      color: #999;
+      font-weight: 500;
+    }
+  }
+}
+
+.tabs-shell {
+  .p-tablist {
+    display: flex;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #a9445f; 
+    border-radius: 999px; 
+    padding: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .p-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 20px;
+    font-weight: 700;
+    color: #a9445f;
+    background: transparent;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+  }
+
+  .p-tab:not(.p-highlight):hover {
+    background: rgba(169, 68, 95, 0.1);
+    border-color: #a9445f;
+  }
+
+  .p-tab.p-highlight {
+    background-color: #a9445f !important; 
+    color: #fff !important;
+    border-color: #a9445f !important;
+    box-shadow: 0 4px 8px rgba(169, 68, 95, 0.4);
+  }
+
+  .p-tab:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(169, 68, 95, 0.3);
+  }
+}
+
+.p-tabpanels {
+  margin-top: 16px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.outer-card {
+  flex: 1;
+}
+
+.bottom-nav {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}

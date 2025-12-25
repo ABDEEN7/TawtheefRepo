@@ -67,7 +67,6 @@ public class Job : EventEntity
 
     [Required(ErrorMessage = JobMessages.JOB_STATUS_REQUIRED)]
     public Guid JobStatusId { get; set; }
-
     public string? OverViewAr { get; set; }
     public string? OverViewEn { get; set; } 
     public string? BenefitsAr { get; set; } 
@@ -85,7 +84,7 @@ public class Job : EventEntity
     public virtual Major? SubMajor { get; set; }
     public virtual WorkType? WorkType { get; set; }
     public virtual JobStatus? JobStatus { get; set; }
-
+    public virtual JobPointsMain? JobPoints { get; set; }
     public virtual List<JobDegree> JobDegrees { get; set; } = new List<JobDegree>();
     public virtual List<JobCondition> JobConditions { get; set; } = new List<JobCondition>();
     public virtual List<JobSkill> JobSkills { get; set; } = new List<JobSkill>();

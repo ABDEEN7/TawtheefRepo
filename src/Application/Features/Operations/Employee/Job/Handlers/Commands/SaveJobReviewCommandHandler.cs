@@ -34,7 +34,7 @@ public sealed class SaveJobReviewCommandHandler(
             .FirstOrDefaultAsync(x => x.Id == cmd.JobId, ct);
 
         if (job is null)
-            return Result.Fail<Unit>(ErrorsCodes.JobNotFound);
+            return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
 
         var reviewCycleId = Guid.NewGuid();
 

@@ -2,8 +2,8 @@
 import {HDR} from '../utils/headers.flags';
 import {inject, NgZone} from '@angular/core';
 import {MessageService} from 'primeng/api';
-import {catchError} from 'rxjs/operators';
-import {throwError} from 'rxjs';
+import {catchError, switchMap} from 'rxjs/operators';
+import {from, throwError} from 'rxjs';
 import {TranslateService} from '@ngx-translate/core';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -15,40 +15,41 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((err: unknown) => {
-      if (!(err instanceof HttpErrorResponse)) {
-        return throwError(() => err);
-      }
+      return from(readErrorBody(err)).pipe(
+        switchMap((serverBody) => {
+            if (!(err instanceof HttpErrorResponse)) {
+              return throwError(() => err);
+            }
+            const isInfraAuth = /\/auth\/(login|refresh|logout|external)/i.test(req.url);
+            const external = req.url.includes('ipapi.co');
 
-      const isInfraAuth = /\/auth\/(login|refresh|logout|external)/i.test(req.url);
-      const external = req.url.includes('ipapi.co');
+            if (isInfraAuth || external || req.headers.get(HDR.LogoutFlow) === 'true') {
+              return throwError(() => err);
+            }
 
-      if (isInfraAuth || external || req.headers.get(HDR.LogoutFlow) === 'true') {
-        return throwError(() => err);
-      }
+            zone.run(() => {
+              if (err.status === 0) {
+                msg.add({
+                  severity: 'error',
+                  summary: 'Network error',
+                  detail: 'Please check your connection and try again.',
+                  life: 6000
+                });
+                return;
+              }
 
-      zone.run(() => {
-        if (err.status === 0) {
-          msg.add({
-            severity: 'error',
-            summary: 'Network error',
-            detail: 'Please check your connection and try again.',
-            life: 6000
-          });
-          return;
-        }
+              const html = buildErrorHtml(serverBody);
+              msg.add({
+                severity: 'error',
+                summary: translate.instant('common.error'),
+                detail: html,
+                life: 8000,
+              });
+            });
 
-        const apiError = err.error;
-        const html = buildErrorHtml(apiError);
-
-        msg.add({
-          severity: 'error',
-          summary: translate.instant('common.error'),
-          detail: html,
-          life: 8000,
-        });
-      });
-
-      return throwError(() => err);
+            return throwError(() => err);
+          }
+        ));
     })
   );
 
@@ -82,5 +83,24 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       return translate.instant(key);
     }
     return key;
+  }
+
+  async function readErrorBody(err: unknown): Promise<any> {
+    const httpErr = err as HttpErrorResponse;
+    const e = httpErr?.error;
+
+    if (e instanceof Blob) {
+      const text = await e.text();      // Blob -> string
+      try { return JSON.parse(text); }  // string -> JSON (if valid)
+      catch { return text; }            // fallback: raw text
+    }
+
+    if (typeof e === 'string') {
+      try { return JSON.parse(e); } catch { return e; }
+    }
+
+    if (e && typeof e === 'object') return e;
+
+    return null;
   }
 };

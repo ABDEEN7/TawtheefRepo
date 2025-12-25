@@ -15,8 +15,6 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TranslateService } from '@ngx-translate/core';
 import { JobLookupService } from './job-lookup.service';
 import { JobStatus } from '../../../core/enums/lookups.enum';
-import { HttpParams } from '@angular/common/http';
-import { JobTabReviewNote } from '../models/job-tab-review-note';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 import { JobTabStatus } from '../enums/job-tab-status';
 
