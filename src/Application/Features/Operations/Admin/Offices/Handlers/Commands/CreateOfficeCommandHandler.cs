@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using FluentResults;
-using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,86 +16,116 @@ public sealed class CreateOfficeCommandHandler(
     UserManager<User> userManager)
     : IRequestHandler<CreateOfficeCommand, IResult<Guid>>
 {
-    public async Task<IResult<Guid>> Handle(CreateOfficeCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<Guid>> Handle(
+        CreateOfficeCommand request,
+        CancellationToken cancellationToken)
     {
-        try
+        return await unitOfWork.ExecuteInTransactionAsync<IResult<Guid>>(
+            ct => HandleInternal(request, ct),
+            cancellationToken);
+    }
+
+    private async Task<IResult<Guid>> HandleInternal(
+        CreateOfficeCommand request,
+        CancellationToken ct)
+    {
+        var emailValidation = await ValidateAdminEmailAsync(request.AdminEmail, ct);
+        if (emailValidation.IsFailed)
+            return Result.Fail<Guid>(emailValidation.Errors);
+
+        var adminEmail = emailValidation.Value;
+
+        var supportedCountries = CreateSupportedCountries(request.SupportedCountryIds);
+        if (supportedCountries.Count == 0)
+            return Result.Fail<Guid>(ErrorsCodes.OfficeSupportedCountriesRequired);
+
+        var adminResult = await CreateOfficeAdminAsync(adminEmail);
+        if (adminResult.IsFailed)
+            return Result.Fail<Guid>(adminResult.Errors);
+        var user = adminResult.Value;
+        var office = CreateOfficeEntity(request, user.Id, supportedCountries);
+
+        var officeRepo = unitOfWork.GetEntityRepository<Office>();
+        var addOfficeResult = await officeRepo.AddAsync(office);
+        if (addOfficeResult.IsFailed)
+            return Result.Fail<Guid>(addOfficeResult.Errors);
+        
+        var officeAdmin = await userManager.Users.OfType<OfficeUser>().FirstOrDefaultAsync(u => u.Id == office.OfficeAdminId, ct);
+        if (officeAdmin is not null)
         {
-            return await unitOfWork.ExecuteInTransactionAsync<IResult<Guid>>(async ct =>
-            {
-                var officeRepo = unitOfWork.GetEntityRepository<Office>();
-
-                // -----------------------------
-                // Validate Admin Email
-                // -----------------------------
-                var adminEmail = request.AdminEmail.Trim();
-
-                if (string.IsNullOrWhiteSpace(adminEmail) || 
-                    !new EmailAddressAttribute().IsValid(adminEmail))
-                    return Result.Fail<Guid>(ErrorsCodes.OfficeAdminEmailInvalid);
-
-                var existingAdmin = await userManager.Users
-                    .IgnoreQueryFilters()
-                    .FirstOrDefaultAsync(u => u.Email == adminEmail, ct);
-
-                if (existingAdmin is not null)
-                    return Result.Fail<Guid>(ErrorsCodes.OfficeAdminEmailExists);
-
-                // -----------------------------
-                // Prepare Office
-                // -----------------------------
-                var backendName = $"OFF-{Guid.NewGuid()}";
-                var officeCode = $"OFF-{Guid.NewGuid()}";
-
-                var office = new Office
-                {
-                    BackendName = backendName,
-                    NameAr = request.NameAr,
-                    NameEn = request.NameEn,
-                    CountryId = request.CountryId,
-                    Code = officeCode,
-                    SupportedCountries = request.SupportedCountryIds
-                        .Select(id => new OfficeSupportedCountry { CountryId = id })
-                        .ToList()
-                };
-
-                // -----------------------------
-                // Save Office FIRST (breaks cycle)
-                // -----------------------------
-                var addOfficeResult = await officeRepo.AddAsync(office);
-                if (addOfficeResult.IsFailed)
-                    return Result.Fail<Guid>(addOfficeResult.Errors);
-
-                await unitOfWork.SaveChangesAsync(ct);
-
-                // -----------------------------
-                // Create Office Admin AFTER office is saved
-                // -----------------------------
-                var officeAdminResult =
-                    OfficeUser.Register(adminEmail, office.Id, "مدير المكتب", "Office Admin");
-
-                if (officeAdminResult.IsFailed)
-                    return Result.Fail<Guid>(officeAdminResult.Errors);
-
-                var officeAdmin = officeAdminResult.Value;
-
-                var createUserResult = await userManager.CreateAsync(officeAdmin);
-                if (!createUserResult.Succeeded)
-                    return Result.Fail<Guid>(ErrorsCodes.OfficeAdminCreationFailed);
-
-                var roleResult = await userManager.AddToRoleAsync(officeAdmin, nameof(SystemRoleIds.OfficeAdmin));
-                if (!roleResult.Succeeded)
-                    return Result.Fail<Guid>(ErrorsCodes.OfficeRoleAssignmentFailed);
-                
-                office.OfficeAdminId = officeAdmin.Id;
-
-                await unitOfWork.SaveChangesAsync(ct);
-                
-                return Result.Ok(office.Id);
-            }, cancellationToken);
+            officeAdmin.OfficeId = office.Id;
+            await userManager.UpdateAsync(officeAdmin);
         }
-        catch (Exception ex)
+
+        await unitOfWork.SaveChangesAsync(ct);
+        return Result.Ok(office.Id);
+    }
+    
+    private async Task<Result<string>> ValidateAdminEmailAsync(
+        string? adminEmail, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(adminEmail))
+            return Result.Fail<string>(ErrorsCodes.OfficeAdminEmailInvalid);
+
+        var email = adminEmail.Trim();
+
+        var exists = await userManager.Users
+            .IgnoreQueryFilters()
+            .AnyAsync(u => u.Email == email, ct);
+
+        if (exists)
+            return Result.Fail<string>(ErrorsCodes.OfficeAdminEmailExists);
+
+        return Result.Ok(email);
+    }
+
+    private static List<OfficeSupportedCountry> CreateSupportedCountries(
+        IEnumerable<Guid> countryIds)
+    {
+        return countryIds
+            .Distinct()
+            .Select(id => new OfficeSupportedCountry { CountryId = id })
+            .ToList();
+    }
+
+    private async Task<Result<User>> CreateOfficeAdminAsync(string email)
+    {
+        var registerResult = OfficeUser.Register(email, "Office Admin");
+        if (registerResult.IsFailed)
+            return Result.Fail<User>(registerResult.Errors);
+
+        var user = registerResult.Value;
+
+        var createResult = await userManager.CreateAsync(user);
+        if (!createResult.Succeeded)
+            return Result.Fail<User>(ErrorsCodes.OfficeAdminCreationFailed);
+
+        var roleResult = await userManager.AddToRoleAsync(
+            user,
+            nameof(SystemRoleIds.OfficeAdmin));
+
+        if (!roleResult.Succeeded)
+            return Result.Fail<User>(ErrorsCodes.OfficeRoleAssignmentFailed);
+
+        return Result.Ok(user);
+    }
+
+    private static Office CreateOfficeEntity(
+        CreateOfficeCommand request, Guid adminId,
+        List<OfficeSupportedCountry> supportedCountries)
+    {
+        var code = $"OFF-{Guid.NewGuid():N}";
+
+        return new Office
         {
-            return Result.Fail<Guid>(ex.Message);
-        }
+            BackendName = code,
+            Code = code,
+            NameAr = request.NameAr,
+            NameEn = request.NameEn,
+            CountryId = request.CountryId,
+            OfficeAdminId = adminId,
+            SupportedCountries = supportedCountries
+        };
     }
 }
+

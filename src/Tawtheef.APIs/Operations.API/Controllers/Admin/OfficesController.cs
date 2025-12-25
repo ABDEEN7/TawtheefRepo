@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -5,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Commands;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Queries;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers;
@@ -14,6 +17,12 @@ namespace Operations.API.Controllers;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class OfficesController(IMediator mediator) : ControllerBase
 {
+    private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
+    {
+        null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
+        var id => Result.Ok(Guid.Parse(id))
+    };
+    
     [HttpGet("list-offices")]
     public async Task<IActionResult> ListOffices([FromQuery] GetListOfficesQuery query)
     {
@@ -53,12 +62,14 @@ public class OfficesController(IMediator mediator) : ControllerBase
     [HttpDelete("delete-office/{id:guid}")]
     public async Task<IActionResult> DeleteOffice(Guid id)
     {
-        var result = await mediator.Send(new DeleteOfficeCommand(id));
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        
+        var result = await mediator.Send(new DeleteOfficeCommand(UserId.Value, id));
         return result.ToActionResult();
     }
 
     [HttpPut("{officeId:guid}/users/{userId:guid}/block-status")]
-    public async Task<IActionResult> UpdateBlockStatus(Guid officeId, Guid userId, [FromBody] UpdateOfficeUserBlockStatusCommand command)
+    public async Task<IActionResult> UpdateBlockStatus(Guid officeId, Guid userId, [FromBody] BlockOfficeUserCommand command)
     {
         var result = await mediator.Send(command with { OfficeId = officeId, UserId = userId });
         return result.ToActionResult();
@@ -67,7 +78,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     [HttpPut("{officeId:guid}/set-admin/{userId:guid}")]
     public async Task<IActionResult> SetOfficeAdmin(Guid officeId, Guid userId)
     {
-        var result = await mediator.Send(new SetOfficeAdminCommand(officeId, userId));
+        var result = await mediator.Send(new ChangeOfficeAdminCommand(officeId, userId));
         return result.ToActionResult();
     }
 }

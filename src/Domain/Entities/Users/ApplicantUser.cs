@@ -22,6 +22,6 @@ public class ApplicantUser : User
             UserTypeId = UserTypeIds.Applicant
         };
 
-        return Result.Ok(user as User);
+        return Result.Ok<User>(user);
     }
 }

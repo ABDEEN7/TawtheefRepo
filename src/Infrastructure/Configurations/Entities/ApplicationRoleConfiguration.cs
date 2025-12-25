@@ -14,7 +14,7 @@ public sealed class ApplicationRoleConfiguration
             new ApplicationRole
             {
                 Id = SystemRoleIds.SystemAdmin,
-                Name = nameof(ApplicationRoleIds.SystemAdmin),
+                Name = nameof(SystemRoleIds.SystemAdmin),
                 NormalizedName = nameof(SystemRoleIds.SystemAdmin).ToUpper(),
                 NameAr = "مدير النظام",
                 NameEn = "System Admin",

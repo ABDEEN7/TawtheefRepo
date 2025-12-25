@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Offices.Commands;
 
-public sealed record UpdateOfficeUserBlockStatusCommand(Guid OfficeId, Guid UserId, bool IsBlocked)
+public sealed record BlockOfficeUserCommand(Guid OfficeId, Guid UserId, bool IsBlocked)
     : IRequest<IResult<Unit>>;

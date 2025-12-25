@@ -242,6 +242,7 @@ public class ErrorsCodes
     public const string OfficeSupportedCountryInvalid = "OFFICE_SUPPORTED_COUNTRY_INVALID";
     public const string OfficeAdminEmailInvalid = "OFFICE_ADMIN_EMAIL_INVALID";
     public const string OfficeAdminEmailExists = "OFFICE_ADMIN_EMAIL_EXISTS";
+    public const string OfficeSupportedCountriesRequired = "OFFICE_SUPPORTED_COUNTRIES_REQUIRED";
     public const string OfficeAdminCreationFailed = "OFFICE_ADMIN_CREATION_FAILED";
     public const string OfficeRoleAssignmentFailed = "OFFICE_ROLE_ASSIGNMENT_FAILED";
     public const string OfficeUserNotFound = "OFFICE_USER_NOT_FOUND";

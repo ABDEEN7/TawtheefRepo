@@ -59,13 +59,18 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
     {
         var name = FullName.TryParse(displayName);
         if (name.IsFailed) return Result.Fail<User>(name.Errors);
-
-        var userResult = userTypeId == UserTypeIds.Applicant
-            ? ApplicantUser.Register(email, displayName)
-            : EmployeeUser.Register(email, displayName);
+        
+        var userResult = Result.Fail<User>("User type not handled");
+        if (userTypeId == UserTypeIds.Applicant)
+            userResult = ApplicantUser.Register(email, displayName);
+        else if (userTypeId == UserTypeIds.Employee)
+            userResult = EmployeeUser.Register(email, displayName);
+        else if (userTypeId == UserTypeIds.OfficeUser)
+            userResult = OfficeUser.Register(email, displayName);
+        else
+            return Result.Fail<User>("Invalid user type");
 
         if (userResult.IsFailed) return userResult;
-        
         var user = userResult.Value;
 
         // Ensure aggregate identity and creation timestamp are set (in case specific Register didn't)
@@ -82,6 +87,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
 
         return Result.Ok(user);
     }
+    public void Block() => IsBlocked = true;
     
     //--------------------------------------------
     

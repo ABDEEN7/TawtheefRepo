@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using FluentResults;
 using MediatR;
 using Tawtheef.Application.Features.Operations.Admin.Offices.DTOs;
@@ -9,4 +10,4 @@ public sealed record CreateOfficeCommand(
     string NameEn,
     Guid CountryId,
     IReadOnlyCollection<Guid> SupportedCountryIds,
-    string AdminEmail) : IRequest<IResult<Guid>>;
+    [EmailAddress] string AdminEmail) : IRequest<IResult<Guid>>;

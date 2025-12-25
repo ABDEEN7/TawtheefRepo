@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Services.Identity;
 
@@ -419,6 +420,7 @@ public class Program
                         Id = Guid.NewGuid(),
                         CreatedDate = DateTimeOffset.UtcNow,
                         IsDeleted = false,
+                        OfficeAdminId = AdminUserIds.AdminUserId,
                         CountryId = o.CountryId,
                         Code = o.Code,
                         BackendName = o.BackendName,

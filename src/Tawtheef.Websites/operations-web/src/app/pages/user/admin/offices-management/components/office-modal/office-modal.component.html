@@ -98,7 +98,7 @@
         <input
           class="form-control"
           formControlName="adminEmail"
-          [readonly]="isEditMode() || isViewMode()"
+          [readonly]="isViewMode()"
           [class.is-invalid]="submitted && form.controls.adminEmail.invalid" />
         <small class="text-muted">{{ 'OFFICES.ADD_ADMIN_HINT' | translate }}</small>
         @if (submitted && form.controls.adminEmail.invalid) {

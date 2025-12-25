@@ -26,9 +26,4 @@
     </PackageReference>
     <PackageReference Include="reCAPTCHA.AspNetCore" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\Admin\" />
-    <Folder Include="Controllers\Applicant\" />
-  </ItemGroup>
 </Project>

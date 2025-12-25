@@ -105,10 +105,10 @@ export class EndpointsService {
   };
 
   users = {
-    listUsers: this.getFullUrl('/users/list-users'),
-    userRoles: (id: string) => this.getFullUrl(`/users/${id}/roles`),
-    userRoleIds: (id: string) => this.getFullUrl(`/users/${id}/role-ids`),
-    blockStatus: (id: string) => this.getFullUrl(`/users/${id}/block-status`)
+    listUsers: this.getFullUrl('/userManagement/list-users'),
+    userRoles: (id: string) => this.getFullUrl(`/userManagement/${id}/roles`),
+    userRoleIds: (id: string) => this.getFullUrl(`/userManagement/${id}/role-ids`),
+    blockStatus: (id: string) => this.getFullUrl(`/userManagement/${id}/block-status`)
   };
 
   offices = {
