@@ -129,11 +129,9 @@ export class AuthService {
     if (perms.size === 0) return false;
 
     if (requireAll) {
-      // AND logic
       return required.every(p => perms.has(p));
     }
 
-    // OR logic
     return required.some(p => perms.has(p));
   }
 

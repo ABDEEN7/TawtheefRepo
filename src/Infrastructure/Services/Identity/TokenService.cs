@@ -36,6 +36,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
     private const string PermClaimType = "perm";
     private const string ProfileCompleteClaimType = "profile.complete";
+    private const string UserTypeClaimType = "user_type";
     
     
     
@@ -93,7 +94,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(nameof(user.UserType), userType.BackendName)
+            new(UserTypeClaimType, userType.BackendName)
         };
         if (extraClaims is not null)
             claims.AddRange(extraClaims);
