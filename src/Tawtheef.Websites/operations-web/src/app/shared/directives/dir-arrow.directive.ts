@@ -25,7 +25,7 @@ export class FaDirArrowDirective implements OnInit, OnDestroy {
 
   private apply(isRtl: boolean) {
     const i = this.el.nativeElement;
-    this.r.addClass(i, 'hgi-solid');
+    this.r.addClass(i, 'hgi-stroke');
     this.r.removeClass(i, 'hgi-arrow-left-01');
     this.r.removeClass(i, 'hgi-arrow-right-01');
 

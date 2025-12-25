@@ -11,17 +11,16 @@
 }
 
 .main-content {
-  flex: 1;
-  padding: 2rem;
+
   background: #f8f9fa;
   min-height: calc(100vh - 160px); // Fallback height
   overflow-y: auto; // Allow scrolling if content is long
   transition: margin-right 0.3s ease;
-  
+
   .content-wrapper:has(.sidebar.collapsed) & {
     margin-right: 0px;
   }
-  
+
   .content-wrapper:has(.sidebar:not(.collapsed)) & {
     margin-right: 0px;
   }
@@ -30,7 +29,7 @@
 @media (max-width: 1024px) {
   .main-content {
     padding: 1.5rem;
-    
+
     .content-wrapper:has(.sidebar:not(.collapsed)) & {
       margin-right: 200px;
     }
@@ -40,11 +39,11 @@
 @media (max-width: 768px) {
   .main-content {
     padding: 1rem;
-    
+
     .content-wrapper:has(.sidebar.collapsed) & {
       margin-right: 70px;
     }
-    
+
     .content-wrapper:has(.sidebar:not(.collapsed)) & {
       margin-right: 180px;
     }
@@ -54,11 +53,11 @@
 @media (max-width: 480px) {
   .main-content {
     padding: 0.75rem;
-    
+
     .content-wrapper:has(.sidebar.collapsed) & {
       margin-right: 60px;
     }
-    
+
     .content-wrapper:has(.sidebar:not(.collapsed)) & {
       margin-right: 160px;
     }
