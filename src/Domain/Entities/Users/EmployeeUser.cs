@@ -25,7 +25,7 @@ public class EmployeeUser : User
             UserTypeId = UserTypeIds.Employee
         };
 
-        return Result.Ok(user as User);
+        return Result.Ok<User>(user);
     }
 
     // domain behavior - attempt to create assignment and update profile

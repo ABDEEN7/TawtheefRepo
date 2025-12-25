@@ -106,9 +106,21 @@ export class EndpointsService {
   };
 
   users = {
-    listUsers: this.getFullUrl('/users/list-users'),
-    userRoles: (id: string) => this.getFullUrl(`/users/${id}/roles`),
-    userRoleIds: (id: string) => this.getFullUrl(`/users/${id}/role-ids`),
-    blockStatus: (id: string) => this.getFullUrl(`/users/${id}/block-status`)
+    listUsers: this.getFullUrl('/userManagement/list-users'),
+    userRoles: (id: string) => this.getFullUrl(`/userManagement/${id}/roles`),
+    userRoleIds: (id: string) => this.getFullUrl(`/userManagement/${id}/role-ids`),
+    blockStatus: (id: string) => this.getFullUrl(`/userManagement/${id}/block-status`)
+  };
+
+  offices = {
+    listOffices: this.getFullUrl('/offices/list-offices'),
+    officeDetails: (id: string) => this.getFullUrl(`/offices/office-details/${id}`),
+    countries: this.getFullUrl('/offices/lookups/countries'),
+    createOffice: this.getFullUrl('/offices/create-office'),
+    updateOffice: (id: string) => this.getFullUrl(`/offices/update-office/${id}`),
+    deleteOffice: (id: string) => this.getFullUrl(`/offices/delete-office/${id}`),
+    updateOfficeUserBlockStatus: (officeId: string, userId: string) =>
+      this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
+    setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)
   };
 }

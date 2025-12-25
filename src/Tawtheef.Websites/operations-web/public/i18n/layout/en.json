@@ -36,6 +36,7 @@
   "admin.sidebar.home": "Dashboard",
   "admin.sidebar.roles": "Role Management",
   "admin.sidebar.users": "User Management",
+  "admin.sidebar.offices": "Offices Management",
 
   "common.sidebar.settings": "Settings",
   "common.sidebar.logout": "Logout",

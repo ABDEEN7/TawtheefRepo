@@ -43,5 +43,4 @@
       <Folder Include="Features\Recruitment\Profile\Handlers\Command\UpdateOperation\" />
       <Folder Include="Features\Recruitment\Website\" />
     </ItemGroup>
-
 </Project>

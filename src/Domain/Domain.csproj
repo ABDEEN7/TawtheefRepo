@@ -17,4 +17,8 @@
       <Folder Include="ValueObjects\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Constants\SystemRoles.cs" />
+    </ItemGroup>
+
 </Project>

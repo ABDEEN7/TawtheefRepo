@@ -11,7 +11,7 @@ namespace Operations.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class UsersController(IMediator mediator) : ControllerBase
+public class UserManagementController(IMediator mediator) : ControllerBase
 {
     [HttpGet("list-users")]
     public async Task<IActionResult> ListUsers([FromQuery] GetListUsersQuery query)
