@@ -39,7 +39,6 @@ export class JobDetailsComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   lookupsService = inject(JobLookupService);

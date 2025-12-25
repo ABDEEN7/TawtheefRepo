@@ -20,51 +20,55 @@
   <main class="py-4">
     <div class="container">
       <!-- Filters -->
-       <div class="row g-3 mb-4">
-  <div class="col-md-3 col-sm-6">
-    <div class="card h-100 border-0 shadow-sm" style="background-color: #FFF0F0;"> <div class="card-body d-flex align-items-center justify-content-between">
-        <div>
-          <h3 class="fw-bold text-danger mb-0">1</h3>
-          <span class="text-muted small">{{ 'STATS_CANCELLED' | translate }}</span>
+      <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+          <div class="card h-100 border-0 shadow-sm" style="background-color: #fff0f0">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h3 class="fw-bold text-danger mb-0">{{cancelledCount}}</h3>
+                <span class="text-muted small">{{ 'STATS_CANCELLED' | translate }}</span>
+              </div>
+              <i class="fa fa-times-circle text-danger fs-3 opacity-50"></i>
+            </div>
+          </div>
         </div>
-        <i class="fa fa-times-circle text-danger fs-3 opacity-50"></i>
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-md-3 col-sm-6">
-    <div class="card h-100 border-0 shadow-sm" style="background-color: #FFF8E1;"> <div class="card-body d-flex align-items-center justify-content-between">
-        <div>
-          <h3 class="fw-bold text-warning mb-0">3</h3>
-          <span class="text-muted small">{{ 'STATS_UNDER_REVIEW' | translate }}</span>
-        </div>
-        <i class="fa fa-hourglass-half text-warning fs-3 opacity-50"></i>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-3 col-sm-6">
-    <div class="card h-100 border-0 shadow-sm" style="background-color: #F0FDF4;"> <div class="card-body d-flex align-items-center justify-content-between">
-        <div>
-          <h3 class="fw-bold text-success mb-0">3</h3>
-          <span class="text-muted small">{{ 'STATS_ACCEPTED' | translate }}</span>
+        <div class="col-md-3 col-sm-6">
+          <div class="card h-100 border-0 shadow-sm" style="background-color: #fff8e1">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h3 class="fw-bold text-warning mb-0">{{pendingApprovalCount}}</h3>
+                <span class="text-muted small">{{ 'STATS_PENDING_APPROVAL' | translate }}</span>
+              </div>
+              <i class="fa fa-hourglass-half text-warning fs-3 opacity-50"></i>
+            </div>
+          </div>
         </div>
-        <i class="fa fa-check-circle text-success fs-3 opacity-50"></i>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-3 col-sm-6">
-    <div class="card h-100 border-0 shadow-sm" style="background-color: #EFF6FF;"> <div class="card-body d-flex align-items-center justify-content-between">
-        <div>
-          <h3 class="fw-bold text-primary mb-0">3</h3>
-          <span class="text-muted small">{{ 'STATS_NEW' | translate }}</span>
+        <div class="col-md-3 col-sm-6">
+          <div class="card h-100 border-0 shadow-sm" style="background-color: #f0fdf4">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h3 class="fw-bold text-success mb-0">{{approvedCount}}</h3>
+                <span class="text-muted small">{{ 'STATS_APPROVED' | translate }}</span>
+              </div>
+              <i class="fa fa-check-circle text-success fs-3 opacity-50"></i>
+            </div>
+          </div>
         </div>
-        <i class="fa fa-star text-primary fs-3 opacity-50"></i>
+
+        <div class="col-md-3 col-sm-6">
+          <div class="card h-100 border-0 shadow-sm" style="background-color: #eff6ff">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h3 class="fw-bold text-primary mb-0">{{draftCount}}</h3>
+                <span class="text-muted small">{{ 'STATS_DRAFT' | translate }}</span>
+              </div>
+              <i class="fa fa-star text-primary fs-3 opacity-50"></i>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
       <div class="card card-lite p-3 mb-3">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
           <div class="filter-title">{{ 'JOB_LIST_FILTERS_TITLE' | translate }}</div>
@@ -188,7 +192,7 @@
                           <i class="fa fa-eye"></i>
                         </button>
                       }
-                        
+                        @if(job.jobStatus.backendName !== jobStatus.Approved){
                         <div class="dropdown d-inline-block">
                           <button
                             class="btn btn-sm btn-outline-secondary dropdown-toggle"
@@ -240,6 +244,7 @@
                           }
                           </ul>
                         </div>
+                      }
                       </div>
                     </td>
                   </tr>
@@ -261,15 +266,15 @@
         </div>
 
         @if (paginationMetadata && paginationMetadata.totalCount > 0) {
-          <div class="p-3 border-top">
-            <app-pagination
-              [currentPage]="currentPage()"
-              [totalItems]="paginationMetadata.totalCount"
-              [itemsPerPage]="itemsPerPage"
-              (pageChanged)="onPageChange($event)"
-            >
-            </app-pagination>
-          </div>
+        <div class="p-3 border-top">
+          <app-pagination
+            [currentPage]="currentPage()"
+            [totalItems]="paginationMetadata.totalCount"
+            [itemsPerPage]="itemsPerPage"
+            (pageChanged)="onPageChange($event)"
+          >
+          </app-pagination>
+        </div>
         }
       </div>
     </div>

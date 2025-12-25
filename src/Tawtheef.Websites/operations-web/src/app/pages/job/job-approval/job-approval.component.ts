@@ -70,7 +70,7 @@ export class JobApprovalComponent implements OnInit {
     this.initializeTabNotes();
     this.id = this.route.snapshot.paramMap.get('id') as GUID;
     this.loadJobById();
-    this.lookupsService.loadJobStatus();
+    this.lookupsService.loadJobStatus().subscribe();
   }
 
   private initializeTabAttachments(): void {

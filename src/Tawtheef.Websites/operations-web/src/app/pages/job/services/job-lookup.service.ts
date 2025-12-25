@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { forkJoin, Observable, of, BehaviorSubject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { EndpointsService } from '../../../core/http/endpoints.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { GUID } from '../../../shared/types/guid.type';
@@ -210,17 +210,17 @@ export class JobLookupService {
     });
   }
 
-  loadJobStatus()
-  {
-    this.http.get<dropdownOptionsModel[]>(
-      `${this.endpoints.job.lookups.jobStatus}`
-    ).subscribe({
-      next: (jobStatus) => this.jobStatus.set(jobStatus),
-      error: (err) => {
-        this.jobStatus.set([]);
-      }
-    });
-  }
+ loadJobStatus(): Observable<dropdownOptionsModel[]> {
+  return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.job.lookups.jobStatus
+  ).pipe(
+    tap(jobStatus => this.jobStatus.set(jobStatus)),
+    catchError(() => {
+      this.jobStatus.set([]);
+      return of([]);
+    })
+  );
+}
 
   loadJobCategories()
   {

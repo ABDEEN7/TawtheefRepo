@@ -12,4 +12,7 @@
   get usersManagement(){
     return this.admin + '/users-management'
   },
+  get officesManagement(){
+    return this.admin + '/offices-management'
+  },
 }

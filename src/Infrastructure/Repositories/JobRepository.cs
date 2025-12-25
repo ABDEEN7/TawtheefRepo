@@ -15,13 +15,12 @@ namespace Tawtheef.Infrastructure.Repositories;
 public class JobRepository(IGenericRepository<Job> repository)
     : BaseRepository<Job>(repository), IJobRepository
 {
-    private readonly IGenericRepository<Job> _repository = repository;
 
     public async Task<IResult<PaginatedResult<Job>>> GetFilteredJobsAsync(
     JobQueryFilter filter,
     PaginatedRequest pagination)
     {
-        var baseQuery = _repository.DbSet
+        var baseQuery = Repository.DbSet
             .AsNoTracking()
             .Where(job => !job.IsDeleted)
             .Include(j => j.Department)
@@ -47,7 +46,7 @@ public class JobRepository(IGenericRepository<Job> repository)
 
     public async Task<IResult<Job>> GetByIdWithDetailsAsync(Guid id)
     {
-        var job = await _repository.DbSet
+        var job = await Repository.DbSet
             .Where(job=> !job.IsDeleted)
             .Include(j => j.JobDegrees)
                 .ThenInclude(d => d.Degree)
@@ -62,6 +61,7 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.Management)
             .Include(j => j.WorkLocation)
             .Include(j => j.JobConditions)
+            .Include(j => j.JobPoints)
             .Include(j => j.JobSkills)
                    .ThenInclude(s=>s.Skill)
             .Include(j => j.JobResponsibilities)
@@ -76,7 +76,7 @@ public class JobRepository(IGenericRepository<Job> repository)
 
     public async Task<IList<Job>> GetJobsToAutoCloseAsync(DateTime currentDate)
     {
-         var jobs = await _repository.DbSet
+         var jobs = await Repository.DbSet
         .AsNoTracking()
         .Where(j => j.ClosingDate <= currentDate && !j.IsDeleted)
         .ToListAsync();

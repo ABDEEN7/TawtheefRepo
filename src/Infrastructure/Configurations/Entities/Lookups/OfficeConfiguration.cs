@@ -20,6 +20,10 @@ public class OfficeConfiguration : LookupBaseConfiguration<Office>
             .WithMany()
             .HasForeignKey(o => o.CountryId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasMany(o => o.SupportedCountries)
+            .WithOne(sc => sc.Office)
+            .HasForeignKey(sc => sc.OfficeId);
 
         // builder.HasData(
         //     new Office
