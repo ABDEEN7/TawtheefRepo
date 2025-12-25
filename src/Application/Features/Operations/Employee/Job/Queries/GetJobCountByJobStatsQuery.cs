@@ -4,4 +4,4 @@
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
 
-public record GetJobCountByJobStatsQuery(Guid JobStatusId) : IRequest<int>;
+public record GetJobCountByJobStatsQuery(Guid JobStatusId) : IRequest<IResult<int>>;
