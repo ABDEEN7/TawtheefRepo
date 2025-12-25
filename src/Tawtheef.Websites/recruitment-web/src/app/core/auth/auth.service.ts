@@ -103,7 +103,7 @@ export class AuthService {
     const payload = this.decodeJwtPayload<Record<string, any>>(token) ?? {};
 
     const result = new Set<string>();
-    const permissionsArray = payload['permissions'];
+    const permissionsArray = payload['perm'];
     if (Array.isArray(permissionsArray)) {
       permissionsArray.forEach((p: any) => {
         if (typeof p === 'string') result.add(p);
@@ -118,7 +118,7 @@ export class AuthService {
     }
 
     // 3) multiple `permission` claims (if server serializes them like that)
-    const singlePermission = payload['permission'];
+    const singlePermission = payload['perm'];
     if (Array.isArray(singlePermission)) {
       singlePermission.forEach((p: any) => {
         if (typeof p === 'string') result.add(p);

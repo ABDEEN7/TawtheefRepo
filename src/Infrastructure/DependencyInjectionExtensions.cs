@@ -503,7 +503,7 @@ namespace Tawtheef.Infrastructure
         private static void ConfigureAuthorizationPolicies(IServiceCollection services)
         {
             services.AddSingleton<IAuthorizationHandler, ProfileCompletedHandler>();
-            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         }
     }

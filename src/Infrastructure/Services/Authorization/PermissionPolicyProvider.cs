@@ -6,13 +6,13 @@ namespace Tawtheef.Infrastructure.Services.Authorization;
 public class PermissionPolicyProvider(IOptions<AuthorizationOptions> options)
     : DefaultAuthorizationPolicyProvider(options)
 {
-    public const string POLICY_PREFIX = "Permission:";
+    public const string PolicyPrefix = "Permission:";
 
     public override Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
-        if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase))
+        if (policyName.StartsWith(PolicyPrefix, StringComparison.OrdinalIgnoreCase))
         {
-            var permission = policyName.Substring(POLICY_PREFIX.Length);
+            var permission = policyName[PolicyPrefix.Length..];
 
             var policy = new AuthorizationPolicyBuilder()
                 .AddRequirements(new PermissionRequirement(permission))
@@ -21,7 +21,6 @@ public class PermissionPolicyProvider(IOptions<AuthorizationOptions> options)
             return Task.FromResult<AuthorizationPolicy?>(policy);
         }
 
-        // باقي الـ Policies العادية
         return base.GetPolicyAsync(policyName);
     }
 }
