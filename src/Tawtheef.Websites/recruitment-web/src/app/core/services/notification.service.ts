@@ -1,23 +1,32 @@
-﻿import {Injectable} from '@angular/core';
+﻿import {ApplicationRef, inject, Injectable, NgZone} from '@angular/core';
 import {MessageService} from 'primeng/api';
 import {Subject} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
 
-export type Toast = { type: 'success'|'error'|'info'|'warning', message: string, id?: string };
 
+type Severity = 'success' | 'info' | 'warn' | 'error';
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  private subject = new Subject<Toast>();
-  public toast$ = this.subject.asObservable();
+  private messageService = inject(MessageService);
+  private translate = inject(TranslateService);
+  private zone = inject(NgZone, { optional: true });
+  private appRef = inject(ApplicationRef);
 
-  constructor(private messageService: MessageService) {}
 
-  success(message: string) { this.show('success', message); }
-  error(message: string) { this.show('error', message); }
-  info(message: string) { this.show('info', message); }
-  warn(message: string) { this.show('warning', message); }
+  success(detail: string, summary = this.translate.instant('common.success')){
+    this.show('success', summary, detail);
+  }
+  error(detail: string, summary = this.translate.instant('common.error')){
+    this.show('error', summary, detail);
+  }
+  info(detail: string, summary = this.translate.instant('common.info')){
+    this.show('info', summary, detail);
+  }
+  warn(detail: string, summary = this.translate.instant('common.warning')){
+    this.show('warn', summary, detail);
+  }
 
-  private show(type: Toast['type'], message: string) {
-    this.subject.next({ type, message });
-    this.messageService.add({ severity: type, detail: message });
+  private show(severity: Severity, summary: string, detail: string) {
+    this.messageService.add({severity, summary, detail});
   }
 }

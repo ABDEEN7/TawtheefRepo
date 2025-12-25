@@ -41,17 +41,17 @@ export class WizardProfileComponent implements OnInit {
   loading = true;
   private forcedStep: number | null = null;
 
-  stepLabels: string[] = [
-    'wizard.steps.firstInfo',
-    'wizard.steps.personal',
-    'wizard.steps.contact',
-    'wizard.steps.degrees',
-    'wizard.steps.experience',
-    'wizard.steps.achievements',
-    'wizard.steps.skills',
-    'wizard.steps.languages',
-    'wizard.steps.attachments',
-    'wizard.steps.review',
+  stepLabels: {label: string, icon: string}[] = [
+    { label: 'wizard.steps.firstInfo', icon: '' },
+    { label: 'wizard.steps.personal', icon: 'hgi-user' },
+    { label: 'wizard.steps.contact', icon: 'hgi-house-02' },
+    { label: 'wizard.steps.degrees', icon: 'hgi-school' },
+    { label: 'wizard.steps.experience', icon: 'hgi-briefcase-05' },
+    { label: 'wizard.steps.achievements', icon: '' },
+    { label: 'wizard.steps.skills', icon: 'hgi-ai-user' },
+    { label: 'wizard.steps.languages', icon: 'hgi-checkmark-circle-02' },
+    { label: 'wizard.steps.attachments', icon: 'hgi-file-upload' },
+    { label: 'wizard.steps.review', icon: '' },
   ];
 
   private stepKeyMap: Record<number,
@@ -175,13 +175,13 @@ export class WizardProfileComponent implements OnInit {
   }
 
   canGoTo(targetStep: number): boolean {
-    if (targetStep === 1) return true;
-    const validity = this.ds.stepValidity();
-    for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
-      if (!validity[this.orderedValidationSteps[i]]) {
-        return false;
-      }
-    }
+    // if (targetStep === 1) return true;
+    // const validity = this.ds.stepValidity();
+    // for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
+    //   if (!validity[this.orderedValidationSteps[i]]) {
+    //     return false;
+    //   }
+    // }
 
     return true;
   }

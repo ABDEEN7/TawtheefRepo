@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center">
-        <h5 class="text-primary">{{'wizard.contact.titleStep' | translate}}</h5>
+        <h5 class="text-primary mb-4">{{'wizard.contact.titleStep' | translate}}</h5>
       </div>
     </div>
   </div>
@@ -17,8 +17,7 @@
         [filter]="true"
         filterBy="name"
         optionLabel="name"
-        size="small"
-        [placeholder]="'wizard.placeholders.selectCountry' | translate"
+                [placeholder]="'wizard.placeholders.selectCountry' | translate"
         class="w-full md:w-56"
         [disabled]="ds.isLocked('country')"
         [ngClass]="{ 'locked-field': ds.isLocked('country') }"></p-select>
@@ -105,10 +104,10 @@
         [disabled]="ds.isLocked('email') || email.status === 'verified'"
         [ngClass]="{ 'locked-field': ds.isLocked('email') || email.status === 'verified' }"
         placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
-      <small *ngIf="ds.isLocked('email')" class="fz-2xs text-muted">
+      <small *ngIf="ds.isLocked('email')" class="text-muted m-2">
         {{'wizard.accountFieldNote' | translate}}
       </small>
-      <div *ngIf="email.touched && !email.valid" class="text-danger fz-2xs small mt-1">
+      <div *ngIf="email.touched && !email.valid" class="text-danger m-2">
         {{ 'validation.emailInvalid' | translate }}
       </div>
       <ng-container *ngIf="ds.state().email && !ds.state().emailVerified">
@@ -172,7 +171,7 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
       <p-select [options]="lookups.countries()" [(ngModel)]="ds.state().interviewPlace"
-                [filter]="true" [loading]="false" filterBy="name" optionLabel="name" size="small"
+                [filter]="true" [loading]="false" filterBy="name" optionLabel="name"
                 class="w-full md:w-56"
                 [placeholder]="'wizard.placeholders.selectInterviewPlace' | translate"
                 (ngModelChange)="ds.up('interviewPlace',$event)"></p-select>
@@ -238,15 +237,13 @@
 </div>
 
 <div class="d-flex justify-content-between mt-4 text-end">
-  <button class="btn btn-outline-secondary" (click)="back.emit()">
-    <i class="fa-solid me-1" faDirArrow="start"></i> {{ 'wizard.buttons.prev' | translate }}
+  <button class="btn btn-outline-secondary me-2 d-flex align-items-center" (click)="back.emit()">
+    <i class="hgi fs-18 lh-1" faDirArrow="start"></i><span> {{ 'wizard.buttons.prev' | translate }}</span>
   </button>
-  <button class="btn btn-brand ms-2"
-          (click)="onNext()"
-          [disabled]="savingContact">
-  <span *ngIf="!savingContact">
-    {{ 'wizard.buttons.next' | translate }}
-    <i class="fa-solid ms-1" faDirArrow="end"></i>
+  <button class="btn btn-primary" (click)="onNext()" [disabled]="savingContact">
+  <span *ngIf="!savingContact" class="d-flex align-items-center">
+   <span> {{ 'wizard.buttons.next' | translate }}</span>
+    <i class="hgi  fs-18 ms-1 lh-1" faDirArrow="end"></i>
   </span>
     <span *ngIf="savingContact">
     <i class="fa-solid fa-spinner fa-spin me-1"></i>

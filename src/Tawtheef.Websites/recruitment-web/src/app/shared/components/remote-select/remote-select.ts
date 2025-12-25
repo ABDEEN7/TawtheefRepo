@@ -34,7 +34,7 @@ export class RemoteSelectComponent
   @Input() optionLabel = 'name';
   @Input() optionValue?: string;
   @Input() placeholder = '';
-  @Input() size: "small" | "large" | undefined = 'small';
+  @Input() size: "small" | "large" | undefined = undefined;
   @Input() appendTo: any = 'body';
   @Input() panelStyle: any;
 

@@ -1,7 +1,6 @@
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
@@ -23,11 +22,7 @@ public sealed class RequestProfileContactChangeHandler(
 {
     public async Task<IResult<Unit>> Handle(RequestProfileContactChangeCommand cmd, CancellationToken ct)
     {
-        var profileRepo = uow.GetEntityRepository<UserProfile>();
-        var profile = await profileRepo.DbSet
-            .Include(p => p.ResidenceAddress)
-            .SingleOrDefaultAsync(p => p.UserId == cmd.UserId, ct);
-
+        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, ct: ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 

@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,9 +53,9 @@ namespace Tawtheef.Infrastructure
     /// </summary>
     public static class LimitsPolicyKeys
     {
-        public const string VerificationPolicy = "VerificationPolicy";
-        public const string ApplyDiscountCodePolicy = "ApplyDiscountCodePolicy";
-        public const string ContactUsEmailPolicy = "ContactUsEmailPolicy";
+        public const string VerificationRequestPolicy = "VerificationRequestPolicy";
+        public const string VerificationConfirmationPolicy = "VerificationConfirmationPolicy";
+        public const string MoiCheckProfilePolicy = "MoiCheckProfilePolicy";
     }
 
     /// <summary>
@@ -176,58 +175,6 @@ namespace Tawtheef.Infrastructure
             ConfigureAuthentication(services, configuration);
             ConfigureRateLimitingPolicies(services);
             ConfigureAuthorizationPolicies(services);
-        }
-
-        private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
-        {
-            // ===== reCAPTCHA =====
-            services.Configure<RecaptchaSettings>(configuration.GetSection(RecaptchaSettings.SectionName));
-            services.AddHttpClient<IRecaptchaService, RecaptchaService>((sp, client) =>
-            {
-                var opt = sp.GetRequiredService<IOptions<RecaptchaSettings>>().Value;
-                client.BaseAddress = new Uri(opt.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-            });
-
-            // ===== Qatar Pass =====
-            services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
-            services.AddHttpClient<IQatarPassClient, QatarPassClient>((sp, client) =>
-            {
-                var opt = sp.GetRequiredService<IOptions<QatarPassAuthSettings>>().Value;
-                client.BaseAddress = new Uri(opt.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-            });
-
-            // ===== Hodhod SMS =====
-            services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
-            services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>((sp, client) =>
-            {
-                var opt = sp.GetRequiredService<IOptions<HodhodSmsSettings>>().Value;
-                client.BaseAddress = new Uri(opt.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-            });
-
-            // ===== MOI Client =====
-            services.Configure<MoiSettings>(configuration.GetSection(MoiSettings.SectionName));
-            services.AddHttpClient<IMoiClient, MoiClient>((sp, client) =>
-                {
-                    var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
-                    client.BaseAddress = new Uri(opt.BaseUrl);
-                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-                })
-                .ConfigurePrimaryHttpMessageHandler(sp =>
-                {
-                    var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
-
-                    return new HttpClientHandler
-                    {
-                        Credentials = new NetworkCredential(opt.Username, opt.Password),
-                        UseCookies = true,
-                        CookieContainer = new CookieContainer(),
-                        PreAuthenticate = false,
-                        UseDefaultCredentials = false
-                    };
-                });
         }
 
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
@@ -366,51 +313,65 @@ namespace Tawtheef.Infrastructure
         {
             services.AddRateLimiter(options =>
             {
-                // Verification policy (per email)
-                options.AddPolicy(LimitsPolicyKeys.VerificationPolicy, context =>
-                {
-                    var email = context.Request.Query["email"].ToString();
-                    return RateLimitPartition.GetSlidingWindowLimiter(
-                        partitionKey: email,
-                        factory: _ => new SlidingWindowRateLimiterOptions
-                        {
-                            PermitLimit = 3,
-                            Window = TimeSpan.FromMinutes(10),
-                            SegmentsPerWindow = 2
-                        });
-                });
-
-                // Apply discount code policy (per user or anonymous)
-                options.AddPolicy(LimitsPolicyKeys.ApplyDiscountCodePolicy, context =>
-                {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.AddPolicy(LimitsPolicyKeys.VerificationRequestPolicy, context => {
+                    // Prefer authenticated user id (you are already reading ClaimTypes.NameIdentifier in JWT validation)
                     var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    if (string.IsNullOrEmpty(userId))
-                    {
-                        return RateLimitPartition.GetSlidingWindowLimiter(
-                            partitionKey: "anonymous",
-                            factory: _ => new SlidingWindowRateLimiterOptions
-                            {
-                                PermitLimit = 2,
-                                Window = TimeSpan.FromMinutes(15),
-                                SegmentsPerWindow = 3
-                            });
-                    }
 
-                    return RateLimitPartition.GetSlidingWindowLimiter(
-                        partitionKey: userId,
-                        factory: _ => new SlidingWindowRateLimiterOptions
+                    // If somehow unauthenticated, fallback to IP to avoid "all share same bucket"
+                    var key = !string.IsNullOrWhiteSpace(userId)
+                        ? $"user:{userId}"
+                        : $"ip:{context.Connection.RemoteIpAddress}";
+
+                    // Choose limiter type. Fixed window is simple and predictable.
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: key,
+                        factory: _ => new FixedWindowRateLimiterOptions
                         {
                             PermitLimit = 5,
-                            Window = TimeSpan.FromMinutes(15),
-                            SegmentsPerWindow = 3
+                            Window = TimeSpan.FromMinutes(10),
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 0
                         });
                 });
+                options.AddPolicy(LimitsPolicyKeys.VerificationConfirmationPolicy, context => {
+                    // Prefer authenticated user id (you are already reading ClaimTypes.NameIdentifier in JWT validation)
+                    var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                // Contact us (fixed window)
-                options.AddFixedWindowLimiter(LimitsPolicyKeys.ContactUsEmailPolicy, opt =>
-                {
-                    opt.Window = TimeSpan.FromMinutes(1);
-                    opt.PermitLimit = 5;
+                    // If somehow unauthenticated, fallback to IP to avoid "all share same bucket"
+                    var key = !string.IsNullOrWhiteSpace(userId)
+                        ? $"user:{userId}"
+                        : $"ip:{context.Connection.RemoteIpAddress}";
+
+                    // Choose limiter type. Fixed window is simple and predictable.
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: key,
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10, 
+                            Window = TimeSpan.FromMinutes(10), 
+                            QueueLimit = 0
+                        });
+                });
+                options.AddPolicy(LimitsPolicyKeys.MoiCheckProfilePolicy, context => {
+                    // Prefer authenticated user id (you are already reading ClaimTypes.NameIdentifier in JWT validation)
+                    var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                    // If somehow unauthenticated, fallback to IP to avoid "all share same bucket"
+                    var key = !string.IsNullOrWhiteSpace(userId)
+                        ? $"user:{userId}"
+                        : $"ip:{context.Connection.RemoteIpAddress}";
+
+                    // Choose limiter type. Fixed window is simple and predictable.
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: key,
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 6,
+                            Window = TimeSpan.FromMinutes(5),
+                            QueueLimit = 0,
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                        });
                 });
             });
         }
@@ -418,7 +379,57 @@ namespace Tawtheef.Infrastructure
         #endregion
 
         #region Notification Services & App Services
+        private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
+        {
+            // ===== reCAPTCHA =====
+            services.Configure<RecaptchaSettings>(configuration.GetSection(RecaptchaSettings.SectionName));
+            services.AddHttpClient<IRecaptchaService, RecaptchaService>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<RecaptchaSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+            });
 
+            // ===== Qatar Pass =====
+            services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
+            services.AddHttpClient<IQatarPassClient, QatarPassClient>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<QatarPassAuthSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+            });
+
+            // ===== Hodhod SMS =====
+            services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
+            services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<HodhodSmsSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+            });
+
+            // ===== MOI Client =====
+            services.Configure<MoiSettings>(configuration.GetSection(MoiSettings.SectionName));
+            services.AddHttpClient<IMoiClient, MoiClient>((sp, client) =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+                    client.BaseAddress = new Uri(opt.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                })
+                .ConfigurePrimaryHttpMessageHandler(sp =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+
+                    return new HttpClientHandler
+                    {
+                        Credentials = new NetworkCredential(opt.Username, opt.Password),
+                        UseCookies = true,
+                        CookieContainer = new CookieContainer(),
+                        PreAuthenticate = false,
+                        UseDefaultCredentials = false
+                    };
+                });
+        }
         extension(IServiceCollection services)
         {
             /// <summary>

@@ -1,4 +1,4 @@
-import {Component, Input, TemplateRef} from '@angular/core';
+import {Component, inject, Input, TemplateRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {routes} from '../../../routes/routes';
 import {LanguageService} from '../../../core/services/language.service';
@@ -13,7 +13,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 export class Navbar {
   routes = routes;
   @Input() menuTemplate: TemplateRef<any> | null | undefined;
-  constructor(public language: LanguageService) {}
+  public language = inject(LanguageService);
 
   switchLang(lang: 'ar' | 'en') {
     this.language.set(lang);

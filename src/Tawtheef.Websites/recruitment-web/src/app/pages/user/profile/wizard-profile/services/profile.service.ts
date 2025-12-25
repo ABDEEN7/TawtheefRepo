@@ -70,7 +70,7 @@ export class ProfileService {
   }
 
   checkProfile(qid: string, expiryDate: string) {
-    return this.http.get<MoiPersonalInfo>(this.endpoints.user.profile.checkProfile, { qid, expiryDate });
+    return this.http.post<MoiPersonalInfo>(this.endpoints.user.profile.checkProfile, { qid, expiryDate });
   }
 
   // ========== CONTACT ==========

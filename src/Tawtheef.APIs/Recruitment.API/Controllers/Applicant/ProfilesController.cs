@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
@@ -12,6 +13,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Recruitment.API.Controllers.Applicant;
@@ -300,9 +302,9 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     
-    // request check moe data for user
-    [HttpGet("check-profile")]
-    public async Task<IActionResult> CheckProfile([FromQuery] CheckProfileMOI query, CancellationToken ct)
+    [HttpPost("check-profile")]
+    [EnableRateLimiting(LimitsPolicyKeys.MoiCheckProfilePolicy)]
+    public async Task<IActionResult> CheckProfile([FromBody] CheckProfileMOI query, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new GetPersonalInformationByQidQuery(UserId.Value, query);

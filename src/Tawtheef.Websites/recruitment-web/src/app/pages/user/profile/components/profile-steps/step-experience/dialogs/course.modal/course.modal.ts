@@ -13,6 +13,7 @@ import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
 import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
 import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
 import {TrainingCourse} from '../../../../../wizard-profile/models/experience.model';
+import {Textarea} from 'primeng/textarea';
 
 @Component({
   selector: 'app-course',
@@ -26,6 +27,7 @@ import {TrainingCourse} from '../../../../../wizard-profile/models/experience.mo
     NgClass,
     NgIf,
     Select,
+    Textarea,
   ],
   templateUrl: './course.modal.html',
   styleUrl: './course.modal.scss',

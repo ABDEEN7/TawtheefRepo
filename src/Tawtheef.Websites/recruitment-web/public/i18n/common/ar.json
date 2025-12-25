@@ -49,5 +49,6 @@
   "common.remove": "إزالة",
   "common.cancel": "إلغاء",
   "common.close": "إغلاق",
-  "common.save": "حفظ"
+  "common.save": "حفظ",
+  "common.charactersRemaining": "{{count}} حرف متبقي"
 }

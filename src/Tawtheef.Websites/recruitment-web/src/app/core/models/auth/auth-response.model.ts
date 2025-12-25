@@ -43,22 +43,31 @@ export interface ProfileStatusDto {
   phone?: string | null;
   phoneVerified: boolean;
   // ===== Scalars =====
-  candidateTypeId?: string | null;
-  targetEntityId?: string | null;
-  officeId?: string | null;
+  candidateTypeId?: GUID | null;
+  candidateType?: dropdownOptionsModel | null;
+  targetEntityId?: GUID | null;
+  targetEntity?: dropdownOptionsModel | null;
+  officeId?: GUID | null;
+  office?: dropdownOptionsModel | null;
 
   nationalNumber?: string | null;
   qidExpiry?: string | null;
   birthDate?: string | null;
-  nationalityId?: string | null;
-  genderId?: string | null;
-  religionId?: string | null;
-  maritalStatusId?: string | null;
+  nationalityId?: GUID | null;
+  nationality?: dropdownOptionsModel | null;
+  genderId?: GUID | null;
+  gender?: dropdownOptionsModel | null;
+  religionId?: GUID | null;
+  religion?: dropdownOptionsModel | null;
+  maritalStatusId?: GUID | null;
+  maritalStatus?: dropdownOptionsModel | null;
 
   childrenCount: number;
 
-  residenceCountryId?: string | null;
-  interviewLocationId?: string | null;
+  residenceCountryId?: GUID | null;
+  residenceCountry?: dropdownOptionsModel | null;
+  interviewLocationId?: GUID | null;
+  interviewLocation?: dropdownOptionsModel | null;
 
   address?: string | null;
   naZone?: string | null;
@@ -69,7 +78,8 @@ export interface ProfileStatusDto {
   hasDisability: boolean;
   disabilityDetails?: string | null;
 
-  sponsorTypeId?: string | null;
+  sponsorTypeId?: GUID | null;
+  sponsorType?: dropdownOptionsModel | null;
   sponsorEmployerName?: string | null;
   sponsorEmployerNumber?: string | null;
   sponsorQidExpiry?: string | null;
@@ -98,17 +108,20 @@ export interface AdditionalAttachmentDto {
 }
 export interface LanguageDto {
   id: GUID;
-  languageId: string;
-  speakingLevelId: string;
-  writingLevelId: string;
-  readingLevelId: string;
-  isNative: boolean;
+  languageId: GUID;
+  language: dropdownOptionsModel;
+  speakingLevelId: GUID;
+  speakingLevel: dropdownOptionsModel;
+  writingLevelId: GUID;
+  writingLevel: dropdownOptionsModel;
+  readingLevelId: GUID;
+  readingLevel: dropdownOptionsModel;
 }
 export interface SkillDto {
   id: GUID;
-  skillId: string;
+  skillId: GUID;
   skill: dropdownOptionsModel;
-  levelId: string;
+  levelId: GUID;
   level: dropdownOptionsModel;
 }
 export interface TrainingCourseDto {
@@ -116,6 +129,7 @@ export interface TrainingCourseDto {
   title?: string | null;
   provider?: string | null;
   countryId: GUID;
+  country?: dropdownOptionsModel | null;
   startDate?: string | null;
   endDate?: string | null;
   description?: string | null;
@@ -126,27 +140,33 @@ export interface ExperienceDto {
   employerName?: string | null;
   jobTitle?: string | null;
   countryId: GUID;
+  country?: dropdownOptionsModel | null;
   startDate?: string | null;
   endDate?: string | null;
   description?: string | null;
   isCurrent: boolean;
-  qualificationId?: string | null;
+  qualificationId?: GUID | null;
+  qualification?: dropdownOptionsModel | null;
   attachment?: FileRefDto | null;
 }
 export interface QualificationDto {
   id: GUID;
-  degreeId?: string | null;
-  gradCountryId?: string | null;
-  universityId?: string | null;
+  degreeId?: GUID | null;
+  degree?: dropdownOptionsModel | null;
+  gradCountryId?: GUID | null;
+  gradCountry?: dropdownOptionsModel | null;
+  universityId?: GUID | null;
   university?: dropdownOptionsModel | null;
-  majorId?: string | null;
+  majorId?: GUID | null;
   major?: dropdownOptionsModel | null;
-  subMajorId?: string | null;
+  subMajorId?: GUID | null;
   subMajor?: dropdownOptionsModel | null;
   graduationYear?: number | null;
-  studyTypeId?: string | null;
+  studyTypeId?: GUID | null;
+  studyType?: dropdownOptionsModel | null;
   gpa?: number | null;
-  gradeId?: string | null;
+  gradeId?: GUID | null;
+  grade?: dropdownOptionsModel | null;
   attachment?: FileRefDto | null;
 }
 export interface FileRefDto {
@@ -160,6 +180,7 @@ export interface AchievementDto{
   title: string;
   issuingAuthority: string;
   countryId?: string | null;
+  country?: dropdownOptionsModel | null;
   issueDate: string;
   description: string;
   attachment?: FileRefDto | null;

@@ -42,6 +42,7 @@ export class StepPrereqComponent implements OnInit {
   private marriageCertificateFile: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
   private hasCheckedProfile = false;
+  today = new Date();
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
@@ -167,10 +168,6 @@ export class StepPrereqComponent implements OnInit {
             // Check failed → do not save or go next
             return of(false as const);
           }
-
-          // Check passed (or not required) → now save
-          this.lastSubmittedSignature = signature;
-
           return this.profile
             .savePrereq(payload, {
               cvFile: fileToUpload(this.cvFile),
@@ -184,6 +181,7 @@ export class StepPrereqComponent implements OnInit {
       )
       .subscribe({
         next: (canProceed: any) => {
+          this.lastSubmittedSignature = signature;
           if (canProceed) {
             this.next.emit();
           }
