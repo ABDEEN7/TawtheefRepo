@@ -35,7 +35,7 @@ export const routes: Routes = [
     path: '',
     component: EmployeeLayout,
     canActivate: [authGuard],
-    data: { roles: ['employee'] },
+    //data: { roles: ['employee'] },
     children:[
       { path: 'employee', loadChildren: () => import('./pages/user/employee/employee.module').then((m) => m.EmployeeModule),}
     ]

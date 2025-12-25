@@ -40,7 +40,7 @@ export const employeeRoutes: Routes = [
   {
     path: 'profile-distribution',
     canActivate: [permissionGuard],
-    data: { permissions: ['profile.distribution.view'] },
+    //data: { permissions: ['profile.distribution.view'] },
     component: ProfileDistributionPage
   },
   {
