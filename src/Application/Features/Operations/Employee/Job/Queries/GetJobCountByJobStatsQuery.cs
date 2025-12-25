@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Queries;

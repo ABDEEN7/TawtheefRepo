@@ -42,7 +42,7 @@ export class JobListComponent implements OnInit {
   filterType = signal<GUID | null>(null);
   filterStatus = signal<GUID | null>(null);
 
-  jobStatus = JobStatus;
+readonly jobStatus = JobStatus;
 
   ngOnInit(): void {
     this.loadJobsWithFilters();
