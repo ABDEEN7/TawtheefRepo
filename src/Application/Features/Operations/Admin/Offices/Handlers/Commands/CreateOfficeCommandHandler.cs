@@ -44,13 +44,11 @@ public sealed class CreateOfficeCommandHandler(
                 // -----------------------------
                 // Prepare Office
                 // -----------------------------
-                var officeId = Guid.NewGuid();
                 var backendName = $"OFF-{Guid.NewGuid()}";
                 var officeCode = $"OFF-{Guid.NewGuid()}";
 
                 var office = new Office
                 {
-                    Id = officeId,
                     BackendName = backendName,
                     NameAr = request.NameAr,
                     NameEn = request.NameEn,
