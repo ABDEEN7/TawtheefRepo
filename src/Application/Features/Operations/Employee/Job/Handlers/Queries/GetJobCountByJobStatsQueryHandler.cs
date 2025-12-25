@@ -18,7 +18,7 @@ public class GetJobCountByJobStatsQueryHandler(IUnitOfWork unitOfWork)
         var count =  await jobRepo.DbSet
                 .CountAsync( j => j.JobStatusId == request.JobStatusId, cancellationToken);
 
-        return count;
+        return Result.Ok(count);
 
     }
 }
