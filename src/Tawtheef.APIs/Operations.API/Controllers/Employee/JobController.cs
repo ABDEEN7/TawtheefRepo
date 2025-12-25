@@ -163,4 +163,16 @@ public class JobController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     #endregion
+
+    #region Job Quireies
+    [HttpGet("stats/count")]
+    public async Task<IActionResult> GetJobCountByJobStats(
+    [FromQuery] Guid jobStatusId)
+    {
+        var count = await mediator.Send(
+            new GetJobCountByJobStatsQuery(jobStatusId));
+
+        return Ok(count);
+    }
+    #endregion
 }
