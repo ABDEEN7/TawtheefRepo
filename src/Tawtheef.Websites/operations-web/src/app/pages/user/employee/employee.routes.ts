@@ -10,31 +10,31 @@ export const employeeRoutes: Routes = [
   {
     path: 'dashboard',
     canActivate: [permissionGuard],
-    data: { permissions: ['dashboard.view'] },
+    //data: { permissions: ['dashboard.view'] },
     component: Dashboard
   },
   {
     path: 'approval-profile',
     canActivate: [permissionGuard],
-    data: { permissions: ['profile.approval.view'] },
+    //data: { permissions: ['profile.approval.view'] },
     component: ProfileApprovalListPage
   },
   {
     path: 'approval-profile/:profileId',
     canActivate: [permissionGuard],
-    data: { permissions: ['profile.approval.details.view'] },
+    //data: { permissions: ['profile.approval.details.view'] },
     component: ProfileApprovalDetailPage
   },
   {
     path: 'approval-profile/:profileId/review',
     canActivate: [permissionGuard],
-    data: { permissions: ['profile.approval.details.review'] },
+    //data: { permissions: ['profile.approval.details.review'] },
     component: ProfileApprovalDetailPage
   },
   {
     path: 'approval-profile/:profileId/changes',
     canActivate: [permissionGuard],
-    data: { permissions: ['profile.approval.details.changes'] },
+    //data: { permissions: ['profile.approval.details.changes'] },
     component: ProfileApprovalDetailPage
   },
   {
@@ -46,13 +46,13 @@ export const employeeRoutes: Routes = [
   {
     path: 'job-invitation-summary',
     canActivate: [permissionGuard],
-    data: { permissions: ['job.invitation.view'] },
+    //data: { permissions: ['job.invitation.view'] },
     component: JobInvitationSummary
   },
   {
     path: 'jobs',
     canActivate: [permissionGuard],
-    data: { permissions: ['job.list.view'] },
+    //data: { permissions: ['job.list.view'] },
     loadChildren: () => import('../../job/jobs.module').then(m => m.JobsModule),
   },
 ];
