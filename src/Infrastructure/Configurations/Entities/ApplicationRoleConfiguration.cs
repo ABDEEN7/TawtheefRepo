@@ -14,8 +14,8 @@ public sealed class ApplicationRoleConfiguration
             new ApplicationRole
             {
                 Id = SystemRoleIds.SystemAdmin,
-                Name = "SystemAdmin",
-                NormalizedName = nameof(SystemRoleIds.SystemAdmin),
+                Name = nameof(ApplicationRoleIds.SystemAdmin),
+                NormalizedName = nameof(SystemRoleIds.SystemAdmin).ToUpper(),
                 NameAr = "مدير النظام",
                 NameEn = "System Admin",
                 DescriptionAr = "مدير النظام الكامل",
@@ -26,7 +26,7 @@ public sealed class ApplicationRoleConfiguration
             {
                 Id = SystemRoleIds.HRAdmin,
                 Name = nameof(SystemRoleIds.HRAdmin),
-                NormalizedName = nameof(SystemRoleIds.HRAdmin),
+                NormalizedName = nameof(SystemRoleIds.HRAdmin).ToUpper(),
                 NameAr = "مدير الموارد البشرية",
                 NameEn = "HR Admin",
                 DescriptionAr = "مدير شؤون الموظفين",
@@ -37,7 +37,7 @@ public sealed class ApplicationRoleConfiguration
             {
                 Id = SystemRoleIds.OfficeAdmin,
                 Name = nameof(SystemRoleIds.HRAdmin),
-                NormalizedName = nameof(SystemRoleIds.OfficeAdmin),
+                NormalizedName = nameof(SystemRoleIds.OfficeAdmin).ToUpper(),
                 NameAr = "مدير المكتب",
                 NameEn = "Office Admin",
                 DescriptionAr = "مدير المكتب والصلاحيات المرتبطة",
@@ -48,7 +48,7 @@ public sealed class ApplicationRoleConfiguration
             {
                 Id = SystemRoleIds.OfficeUser,
                 Name = nameof(SystemRoleIds.HRAdmin),
-                NormalizedName = nameof(SystemRoleIds.OfficeUser),
+                NormalizedName = nameof(SystemRoleIds.OfficeUser).ToUpper(),
                 NameAr = "موظف المكتب",
                 NameEn = "Office User",
                 DescriptionAr = "موظف المكتب العادي",

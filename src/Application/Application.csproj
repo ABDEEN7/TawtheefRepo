@@ -43,9 +43,4 @@
       <Folder Include="Features\Recruitment\Profile\Handlers\Command\UpdateOperation\" />
       <Folder Include="Features\Recruitment\Website\" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Features\Operations\Admin\Offices\DTOs\CountryLookupDto.cs" />
-    </ItemGroup>
-
 </Project>
