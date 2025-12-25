@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Users;
@@ -24,9 +23,9 @@ public sealed class ApplicationRoleConfiguration
             },
             new ApplicationRole
             {
-                Id = SystemRoleIds.HRAdmin,
-                Name = nameof(SystemRoleIds.HRAdmin),
-                NormalizedName = nameof(SystemRoleIds.HRAdmin).ToUpper(),
+                Id = SystemRoleIds.Employee,
+                Name = nameof(SystemRoleIds.Employee),
+                NormalizedName = nameof(SystemRoleIds.Employee).ToUpper(),
                 NameAr = "مدير الموارد البشرية",
                 NameEn = "HR Admin",
                 DescriptionAr = "مدير شؤون الموظفين",
@@ -36,7 +35,7 @@ public sealed class ApplicationRoleConfiguration
             new ApplicationRole
             {
                 Id = SystemRoleIds.OfficeAdmin,
-                Name = nameof(SystemRoleIds.HRAdmin),
+                Name = nameof(SystemRoleIds.Employee),
                 NormalizedName = nameof(SystemRoleIds.OfficeAdmin).ToUpper(),
                 NameAr = "مدير المكتب",
                 NameEn = "Office Admin",
@@ -47,7 +46,7 @@ public sealed class ApplicationRoleConfiguration
             new ApplicationRole
             {
                 Id = SystemRoleIds.OfficeUser,
-                Name = nameof(SystemRoleIds.HRAdmin),
+                Name = nameof(SystemRoleIds.Employee),
                 NormalizedName = nameof(SystemRoleIds.OfficeUser).ToUpper(),
                 NameAr = "موظف المكتب",
                 NameEn = "Office User",
