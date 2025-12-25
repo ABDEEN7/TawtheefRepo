@@ -105,4 +105,10 @@ public static class JobMessages
 
     public const string REVIEW_NOTE_FOUND = "review_note_found";
 
+
+    public const string JOB_POINTS_ALREADY_EXIST = "job_points_already_exist";
+    public const string JOB_POINTS_TOTAL_NOT_VALID = "job_points_total_not_valid";
+    public const string JOB_POINTS_NOT_FOUND = "job_points_not_found";
+
+
 }

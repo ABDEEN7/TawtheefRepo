@@ -105,6 +105,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Invitation> Invitations { get; set; }
     public DbSet<JobCondition> JobConditions { get; set; }
     public DbSet<JobDegree> JobDegrees { get; set; }
+    public DbSet<JobPointConfiguration> JobPointConfigurations { get; set; }
     public DbSet<JobSkill> JobSkills { get; set; }
     public DbSet<JobResponsibility> JobResponsibilities { get; set; }
     public DbSet<JobRequiredAttachment> JobRequiredAttachments { get; set; }

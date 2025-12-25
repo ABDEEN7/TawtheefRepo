@@ -24,6 +24,7 @@ public class JobResponseDto
     public int YearsOfExperience { get; set; }
     public int MinimumAge { get; set; }
     public int MaximumAge { get; set; }
+    public JobPointsMainResponseDto? JobPoints { get; set; }
     public DropdownOptions? Sector { get; set; } = default!;
     public DropdownOptions? Management { get; set; } = default!;
     public DropdownOptions? Department { get; set; } = default!;

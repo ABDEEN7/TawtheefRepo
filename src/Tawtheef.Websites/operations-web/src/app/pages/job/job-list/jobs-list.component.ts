@@ -1,8 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { JobService } from '../services/job.service';
-import { PointsConfigModalComponent } from '../modals/points-config-modal/points-config-modal.component';
 import { JobLookupService } from '../services/job-lookup.service';
 import { PaginatedRequest } from '../../../core/models/paginated-request.model';
 import { JobQueryFilter } from '../models/job-query-filter.model';
@@ -24,7 +22,6 @@ import { routes } from '../../../routes/routes';
 export class JobListComponent implements OnInit {
   private jobService = inject(JobService);
   private router = inject(Router);
-  private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private translateService = inject(TranslateService);
   
@@ -101,16 +98,7 @@ export class JobListComponent implements OnInit {
   }
 
   openPointsModal(job: JobResponse) {
-    const ref: DynamicDialogRef | null = this.dialogService.open(PointsConfigModalComponent, {
-      data: { jobId: job.id, jobTitle: job.titleAr },
-      width: '80%',
-    });
-
-    ref?.onClose.subscribe((saved: boolean) => {
-      if (saved) {
-        this.loadJobsWithFilters();
-      }
-    });
+    this.router.navigate([routes.employee.jobPoints,job.id]).then();
   }
 
   approveJob(job: JobResponse) {
