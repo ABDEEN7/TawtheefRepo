@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import {UserLayout} from './layouts/internal/user-layout/user-layout';
 import {PublicLayout} from './layouts/public/public-layout/public-layout';
-import {authGuard, authMatchGuard, loggedOutOnlyGuard} from './core/guards/route-guards';
+import {loggedOutOnlyGuard} from './core/guards/route-guard/logged-out-only-guard';
+import {authGuard} from './core/guards/route-guard/auth-guard';
 
 export const routes: Routes = [
   {
@@ -39,7 +40,6 @@ export const routes: Routes = [
     children: [
       {
         path: 'user',
-        canMatch: [authMatchGuard],
         loadChildren: () =>
           import('./pages/user/user.module').then(m => m.UserModule),
       }
