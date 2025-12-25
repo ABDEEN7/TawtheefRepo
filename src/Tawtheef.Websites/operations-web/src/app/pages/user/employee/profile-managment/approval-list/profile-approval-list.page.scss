@@ -1,7 +1,4 @@
-.approval-shell {
-  padding: 12px;
-  color: #1f1f1f;
-}
+
 
 .panel {
   background: #fff;
@@ -162,14 +159,14 @@
   flex-wrap: wrap;
 }
 
-.btn {
-  border: 1px solid #e6d8df;
-  border-radius: 12px;
-  padding: 8px 12px;
-  font-size: 13px;
-  background: #fff;
-  cursor: pointer;
-}
+//.btn {
+//  border: 1px solid #e6d8df;
+//  border-radius: 12px;
+//  padding: 8px 12px;
+//  font-size: 13px;
+//  background: #fff;
+//  cursor: pointer;
+//}
 
 .btn.ghost {
   background: #fff7fb;
@@ -177,11 +174,11 @@
   border-color: #f3c8d9;
 }
 
-.btn.primary {
-  background: #b6205e;
-  border-color: #b6205e;
-  color: #fff;
-}
+//.btn.primary {
+//  background: #b6205e;
+//  border-color: #b6205e;
+//  color: #fff;
+//}
 
 .btn.outline {
   background: #fff;
@@ -435,4 +432,7 @@
   max-width: 100%;
   border-radius: 12px;
   border: 1px solid #f1dbe5;
+}
+.user-dropdown{
+
 }
