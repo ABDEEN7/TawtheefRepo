@@ -50,6 +50,13 @@
   "JOB_POINTS.LANGUAGE_ABILITY.SPEAKING": "التحدث",
   "JOB_POINTS.LANGUAGE_ABILITY.READING": "القراءة",
   "JOB_POINTS.LANGUAGE_ABILITY.CONVERSATION": "المحادثة",
-  "JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS":"النقاط الكلية للمهارة"
+  "JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS":"النقاط الكلية للمهارة",
+  "JOB_POINTS.VALIDATION.TOTAL_MUST_EQUAL_MAX":"مجموع النقاط الرئيسية يجب ان يساوي إجمالي عدد النقاط",
+  "JOB_POINTS.APPROVE.READY_FOR_APPROVAL": "جاهز للإعتماد النهائي",
+  "JOB_POINTS.APPROVE.BUTTON": "إعتماد نقاط الوظيفة",
+  "JOB_POINTS.APPROVE.ALREADY_APPROVED": "تم إعتماد النقاط بالفعل",
+  "JOB_POINTS.APPROVE.CONFIRMATION_TITLE": "تأكيد إعتماد النقاط",
+  "JOB_POINTS.APPROVE.CONFIRMATION_DESCRIPTION": "هل أنت متأكد من رغبتك في إعتماد نقاط الوظيفة؟ لا يمكن التراجع عن هذا الإجراء بعد التنفيذ.",
+  "JOB_POINTS.APPROVE.SUCCESS" : "تم إعتماد النقاط بنجاح"
 
 }

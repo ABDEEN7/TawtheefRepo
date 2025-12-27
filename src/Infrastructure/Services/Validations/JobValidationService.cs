@@ -194,7 +194,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         }
 
         if (newStatusId == JobStatusIds.Published &&
-            job.JobStatusId != JobStatusIds.Approved)
+            job.JobStatusId != JobStatusIds.ReadyForAnnouncement)
         {
             failures.Add(new ValidationFailure(
                 "Status",

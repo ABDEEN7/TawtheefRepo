@@ -10,4 +10,5 @@ public class JobPointConfigurationRequestDto
     public int CertificatesMaxPoints { get; set; }
     public int SkillsMaxPoints { get; set; }
     public int LanguagesMaxPoints { get; set; }
+    public int MaxPoints { get; set; }
 }
