@@ -55,5 +55,9 @@
   "JOB_LIST_ERRORS_CANCEL_FAILED": "فشل إلغاء الوظيفة. يرجى المحاولة مرة أخرى.",
   "JOB_LIST_ERRORS_DELETE_FAILED": "فشل حذف الوظيفة. يرجى المحاولة مرة أخرى.",
   "JOB_LIST_STATISTICS" :"الإحصائيات",
-  "JOB_LIST_JOB_LIST":"قائمة الوظائف"
+  "JOB_LIST_JOB_LIST":"قائمة الوظائف",
+  "JOB_LIST_STATS_CANCELLED":"ملغاة",
+  "JOB_LIST_STATS_PENDING_APPROVAL":"قيد الأعتماد",
+  "JOB_LIST_STATS_APPROVED":"معتمدة",
+  "JOB_LIST_STATS_DRAFTED":"مسؤدة"
 }

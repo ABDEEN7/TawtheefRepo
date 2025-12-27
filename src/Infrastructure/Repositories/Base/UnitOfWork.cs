@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using MediatR;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -120,6 +121,13 @@ public class UnitOfWork(TawtheefDbContext dbContext, IMediator mediator) : IUnit
             try
             {
                 var result = await operation(cancellationToken);
+
+                if (result is Result { IsFailed: true })
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    return result;
+                }
+
                 await transaction.CommitAsync(cancellationToken);
                 return result;
             }

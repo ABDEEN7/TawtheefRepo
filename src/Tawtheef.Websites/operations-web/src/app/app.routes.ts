@@ -1,7 +1,8 @@
 import {Routes} from '@angular/router';
-import {authGuard, loggedOutOnlyGuard} from './core/auth/route-guards';
 import {Layout as AdminLayout} from './layouts/admin/layout/layout';
 import {Layout as EmployeeLayout} from './layouts/employee/layout/layout';
+import {loggedOutOnlyGuard} from './core/guards/route-guard/logged-out-only-guard';
+import {authGuard} from './core/guards/route-guard/auth-guard';
 export const routes: Routes = [
   {
     path: '',
@@ -22,18 +23,22 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'admin',
+    path: '',
     component: AdminLayout,
-    loadChildren: () => import('./pages/user/admin/admin.module').then((m) => m.AdminModule),
     canActivate: [authGuard],
-    // data: { roles: ['admin'] }
+    data: { roles: ['admin'] },
+    children:[
+      { path: 'admin', loadChildren: () => import('./pages/user/admin/admin.module').then((m) => m.AdminModule),}
+    ]
   },
   {
-    path: 'employee',
+    path: '',
     component: EmployeeLayout,
-    loadChildren: () => import('./pages/user/employee/employee.module').then((m) => m.EmployeeModule),
     canActivate: [authGuard],
-    data: { roles: ['employee'] }
+    //data: { roles: ['employee'] },
+    children:[
+      { path: 'employee', loadChildren: () => import('./pages/user/employee/employee.module').then((m) => m.EmployeeModule),}
+    ]
   },
   // Fallback
   {path: '**', redirectTo: 'error/404'},

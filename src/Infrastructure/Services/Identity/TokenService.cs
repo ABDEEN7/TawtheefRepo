@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Graph;
 using Microsoft.IdentityModel.Tokens;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
@@ -17,11 +19,13 @@ using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
+using User = Tawtheef.Domain.Entities.Users.User;
 
 namespace Tawtheef.Infrastructure.Services.Identity;
 
 public class TokenService(IOptions<JwtSettings> jwtSettings,
     UserManager<User> userManager,
+    RoleManager<ApplicationRole> roleManager,
     IProfileCompletenessService pcs,
     ISessionService sessions,
     IHttpContextAccessor httpContextAccessor,
@@ -30,6 +34,12 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
+    private const string PermClaimType = "perm";
+    private const string ProfileCompleteClaimType = "profile.complete";
+    private const string UserTypeClaimType = "user_type";
+    
+    
+    
     public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, string loginSource, CancellationToken ct)
     {
         if (user.IsBlocked)
@@ -54,19 +64,14 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         var data = await pcs.EvaluateAsync(user.Id, ct);
         var prefill = !data.IsComplete ? await pcs.BuildPrefillAsync(user, ct) : null;
         var accessToken =
-            GenerateAccessToken(user, userType, [
+            await GenerateAccessTokenAsync(user, userType, [
                 new Claim(JwtRegisteredClaimNames.Sid, sid),
-                new("profile.completed", data.IsComplete ? "true" : "false")
-            ]);
+                new(ProfileCompleteClaimType, data.IsComplete ? "true" : "false")
+            ], ct);
 
-        await loginAudit.LogAsync(new LoginAttemptEntry(
-            user.Id,
-            user.UserTypeId,
-            loginSource,
-            true,
-            SessionId: sid,
-            IpAddress: device?.Ip,
-            AttemptedAt: time.GetUtcNow()), ct);
+        await loginAudit.LogAsync(new LoginAttemptEntry(user.Id, user.UserTypeId,  loginSource,
+            true, SessionId: sid, IpAddress: device?.Ip, AttemptedAt: time.GetUtcNow()), ct);
+        
         var logins = await userManager.GetLoginsAsync(user);
         var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "");
         return Result.Ok(new AuthResponse(
@@ -76,22 +81,31 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         ));
     }
     
-    private (string Token, DateTime Expires) GenerateAccessToken(User user, UserType userType, IEnumerable<Claim>? extraClaims = null)
+    private async Task<(string Token, DateTime Expires)> GenerateAccessTokenAsync(User user, UserType userType,
+        IEnumerable<Claim>? extraClaims = null, CancellationToken ct = default)
     {
         var credentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
 
+        var roles = await userManager.GetRolesAsync(user);
+        var permissions = await GetUserPermissionsAsync(roles.AsReadOnly(), ct);
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new(nameof(user.UserType), userType.BackendName),
-            new(ClaimTypes.Role, userType.BackendName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(UserTypeClaimType, userType.BackendName)
         };
         if (extraClaims is not null)
             claims.AddRange(extraClaims);
-        
+        claims.AddRange(roles.Distinct(StringComparer.OrdinalIgnoreCase)
+            .Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(permissions.Distinct(StringComparer.OrdinalIgnoreCase)
+            .Select(perm => new Claim(PermClaimType, perm)));
+
+        // Remove duplicate claims
+        claims = claims.GroupBy(c => (c.Type, c.Value))
+            .Select(g => g.First()).ToList();
         var expires = time.GetLocalNow().DateTime.AddMinutes(
             jwtSettings.Value.ExpiryMinutes ?? 15);
 
@@ -144,6 +158,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         foreach (var token in refreshTokens)
             await RevokeRefreshToken(token, null, "Admin/explicit revoke-all");
     }
+    
     private static DeviceInfo? BuildDeviceInfo(HttpContext? ctx)
     {
         if (ctx is null) return null;
@@ -152,5 +167,36 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         var platform = ctx.Request.Headers.TryGetValue("X-Platform", out var p) ? p.ToString() : null;
         var version  = ctx.Request.Headers.TryGetValue("X-App-Version", out var v) ? v.ToString() : null;
         return new DeviceInfo(ip, ua.ToString(), platform, version);
+    }
+    
+    private async Task<IReadOnlyCollection<string>> GetUserPermissionsAsync(
+        IReadOnlyCollection<string> roleNames,
+        CancellationToken ct)
+    {
+        var roles = roleNames
+            .Where(r => !string.IsNullOrWhiteSpace(r))
+            .Select(r => r.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (roles.Count == 0)
+            return Array.Empty<string>();
+
+        // Fetch roles (no need for custom tables)
+        var roleEntities = await roleManager.Roles
+            .AsNoTracking()
+            .Where(r => r.Name != null && roles.Contains(r.Name))
+            .ToListAsync(ct);
+
+        var perms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var role in roleEntities)
+        {
+            var claims = await roleManager.GetClaimsAsync(role);
+            foreach (var c in claims.Where(x => x.Type == PermClaimType))
+                perms.Add(c.Value);
+        }
+
+        return perms.ToList();
     }
 }

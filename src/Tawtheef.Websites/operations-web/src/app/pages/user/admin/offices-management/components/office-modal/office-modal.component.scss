@@ -1,0 +1,100 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  padding: 24px;
+  width: min(1100px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.modal-form {
+  position: relative;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border-radius: 12px;
+}
+
+.supported-list {
+  max-height: 180px;
+}
+
+.modal-form .form-control.is-invalid,
+.modal-form .form-select.is-invalid {
+  border-color: #dc3545;
+}
+
+.modal-form .invalid-feedback {
+  font-size: 0.85rem;
+}
+
+.office-users h5 {
+  font-weight: 600;
+}
+
+.user-table .row-even {
+  background-color: #fafafa;
+}
+
+.user-table .row-odd {
+  background-color: #fff;
+}
+
+.user-table td,
+.user-table th {
+  vertical-align: middle;
+}
+
+.btn-maroon {
+  background-color: #7b0037;
+  border-color: #7b0037;
+  color: #fff;
+  padding-inline: 20px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #64002d;
+    border-color: #64002d;
+  }
+}
+
+:host ::ng-deep .p-select {
+  width: 100%;
+
+  .p-select-label {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .p-select-panel {
+    max-height: 260px;
+  }
+
+  &.p-invalid .p-select-label {
+    border-color: #dc3545;
+  }
+}

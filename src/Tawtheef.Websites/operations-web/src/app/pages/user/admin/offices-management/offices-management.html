@@ -1,0 +1,124 @@
+<div
+  class="offices-container card shadow-sm p-4"
+  i18nNamespace="pages/admin/offices-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.table-rtl]="isRtl()">
+
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="page-title mb-0">{{ 'OFFICES.TITLE' | translate }}</h3>
+    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
+      {{ 'OFFICES.ADD_OFFICE' | translate }}
+    </button>
+  </div>
+
+  <div class="filters card p-3 mb-3">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-5 col-lg-4">
+        <label class="form-label">{{ 'OFFICES.SEARCH_BY_NAME' | translate }}</label>
+        <div class="input-group search-bar">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+          <input
+            type="text"
+            class="form-control form-control-sm border-start-0"
+            [placeholder]="'OFFICES.SEARCH_PLACEHOLDER' | translate"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive table-wrapper">
+    <table class="table custom-table align-middle mb-0">
+      <thead>
+      <tr>
+        <th>{{ 'OFFICES.NAME' | translate }}</th>
+        <th>{{ 'OFFICES.COUNTRY' | translate }}</th>
+        <th>{{ 'OFFICES.SUPPORTED_COUNTRIES' | translate }}</th>
+        <th>{{ 'OFFICES.ADMIN_EMAIL' | translate }}</th>
+        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'OFFICES.ACTIONS' | translate }}</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @if (offices().length === 0) {
+          <tr>
+            <td colspan="5" class="text-muted no-data text-center">
+              {{ 'NO_RECORDS' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (office of offices(); track office.id; let i = $index) {
+            <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+              <td>{{ localizedOfficeName(office) }}</td>
+              <td>{{ office.country.name }}</td>
+              <td>
+                @for (country of supportedCountriesLabel(office); track country; let cIndex = $index) {
+                  <span class="badge bg-secondary-subtle text-secondary me-1 mb-1">{{ country }}</span>
+                }
+              </td>
+              <td>{{ office.adminEmail }}</td>
+              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  (click)="openView(office)"
+                  [pTooltip]="'OFFICES.VIEW' | translate"
+                  tooltipPosition="top"
+                  [tooltipDisabled]="false"
+                  aria-label="{{ 'OFFICES.VIEW' | translate }}">
+                  <i class="bi bi-eye"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="icon-btn"
+                  (click)="openEdit(office)"
+                  [pTooltip]="'OFFICES.EDIT' | translate"
+                  tooltipPosition="top"
+                  [tooltipDisabled]="false"
+                  aria-label="{{ 'OFFICES.EDIT' | translate }}">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="icon-btn text-danger"
+                  (click)="confirmDelete(office)"
+                  [pTooltip]="'OFFICES.DELETE' | translate"
+                  tooltipPosition="top"
+                  [tooltipDisabled]="false"
+                  aria-label="{{ 'OFFICES.DELETE' | translate }}">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<app-pagination
+  [currentPage]="filters().pageNumber"
+  [totalItems]="paginationMetadata()?.totalCount || 0"
+  [itemsPerPage]="filters().pageSize"
+  (pageChanged)="onPageChange($event)"></app-pagination>
+
+@if (isModalOpen()) {
+  <app-office-modal
+    [visible]="isModalOpen()"
+    [mode]="modalMode()"
+    [office]="editingOffice()"
+    [officeUsers]="editingOffice()?.users || []"
+    [loading]="isModalLoading()"
+    [countries]="countries()"
+    (cancel)="closeModal()"
+    (create)="createOffice($event)"
+    (update)="updateOffice($event)"
+    (toggleBlock)="toggleUserBlockStatus($event)"
+    (makeAdmin)="moveOfficeAdmin($event)"></app-office-modal>
+}
+
+<p-confirmDialog></p-confirmDialog>

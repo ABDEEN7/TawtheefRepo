@@ -235,5 +235,19 @@ public class ErrorsCodes
     public const string MOIFailedRequest = "MOI_FAILED_REQUEST";
 
     #endregion
-}
 
+    #region Offices
+    public const string OfficeNotFound = "OFFICE_NOT_FOUND";
+    public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";
+    public const string OfficeSupportedCountryInvalid = "OFFICE_SUPPORTED_COUNTRY_INVALID";
+    public const string OfficeAdminEmailInvalid = "OFFICE_ADMIN_EMAIL_INVALID";
+    public const string OfficeAdminEmailExists = "OFFICE_ADMIN_EMAIL_EXISTS";
+    public const string OfficeSupportedCountriesRequired = "OFFICE_SUPPORTED_COUNTRIES_REQUIRED";
+    public const string OfficeAdminCreationFailed = "OFFICE_ADMIN_CREATION_FAILED";
+    public const string OfficeRoleAssignmentFailed = "OFFICE_ROLE_ASSIGNMENT_FAILED";
+    public const string OfficeUserNotFound = "OFFICE_USER_NOT_FOUND";
+    public const string OfficeAdminNotFound = "OFFICE_ADMIN_NOT_FOUND";
+    public const string OfficeAdminRoleNotFound = "OFFICE_ADMIN_ROLE_NOT_FOUND";
+    public const string OfficeUserRoleNotFound = "OFFICE_USER_ROLE_NOT_FOUND";
+    #endregion
+}

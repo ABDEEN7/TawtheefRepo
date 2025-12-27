@@ -56,5 +56,10 @@
   "JOB_LIST_ERRORS_DELETE_FAILED": "Failed to delete the job. Please try again.",
   
   "JOB_LIST_STATISTICS": "Statistics",
-  "JOB_LIST_JOB_LIST": "Job List"
+  "JOB_LIST_JOB_LIST": "Job List",
+
+  "JOB_LIST_STATS_CANCELLED":"Cancelled",
+  "JOB_LIST_STATS_PENDING_APPROVAL":"Pending Approval",
+  "JOB_LIST_STATS_APPROVED":"Approved",
+  "JOB_LIST_STATS_DRAFTED":"Drafted"
 }

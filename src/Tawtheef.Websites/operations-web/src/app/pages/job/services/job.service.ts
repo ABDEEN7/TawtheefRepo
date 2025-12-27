@@ -20,7 +20,7 @@ import { JobTabStatus } from '../enums/job-tab-status';
 import { JobReviewResponse } from '../models/job-review-response';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JobService {
   private httpService = inject(HttpService);
@@ -28,7 +28,7 @@ export class JobService {
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslateService);
   private lookupService = inject(JobLookupService);
-  
+
   private currentJob = signal<Job | null>(null);
   private currentJobId: GUID | null = null;
   private jobStatus = signal<string>('draft');
@@ -37,7 +37,7 @@ export class JobService {
     const today = new Date();
     const defaultClosingDate = new Date();
     defaultClosingDate.setDate(today.getDate() + 30);
-    
+
     const draft: Job = {
       titleAr: '',
       titleEn: '',
@@ -55,21 +55,21 @@ export class JobService {
       closingDate: defaultClosingDate,
       minimumAge: 18,
       maximumAge: 60,
-      
+
       overviewAr: '',
       overviewEn: '',
       benefitsAr: '',
       benefitsEn: '',
       qualificationsDescriptionAr: '',
       qualificationsDescriptionEn: '',
-      
+
       degrees: [],
       conditions: [],
       responsibilities: [],
       skills: [],
       requiredAttachments: [],
     };
-    
+
     this.currentJob.set(draft);
     this.jobStatus.set('draft');
     return draft;
@@ -99,9 +99,9 @@ export class JobService {
   }): void {
     const current = this.currentJob();
     if (current) {
-      this.currentJob.set({ 
-        ...current, 
-        ...data 
+      this.currentJob.set({
+        ...current,
+        ...data,
       });
     }
   }
@@ -109,26 +109,26 @@ export class JobService {
   updateCurrentJobOverview(overviewAr: string, overviewEn: string = ''): void {
     const current = this.currentJob();
     if (current) {
-      this.currentJob.set({ 
-        ...current, 
+      this.currentJob.set({
+        ...current,
         overviewAr,
-        overviewEn 
+        overviewEn,
       });
     }
   }
 
   updateCurrentJobQualifications(
-    degrees: { degreeId: GUID }[], 
-    descriptionAr: string, 
+    degrees: { degreeId: GUID }[],
+    descriptionAr: string,
     descriptionEn: string = ''
   ): void {
     const current = this.currentJob();
     if (current) {
-      this.currentJob.set({ 
-        ...current, 
+      this.currentJob.set({
+        ...current,
         degrees,
         qualificationsDescriptionAr: descriptionAr,
-        qualificationsDescriptionEn: descriptionEn
+        qualificationsDescriptionEn: descriptionEn,
       });
     }
   }
@@ -136,9 +136,9 @@ export class JobService {
   updateCurrentJobResponsibilities(responsibilities: { textAr: string; textEn: string }[]): void {
     const current = this.currentJob();
     if (current) {
-      this.currentJob.set({ 
-        ...current, 
-        responsibilities 
+      this.currentJob.set({
+        ...current,
+        responsibilities,
       });
     }
   }
@@ -146,9 +146,9 @@ export class JobService {
   updateCurrentJobConditions(conditions: { textAr: string; textEn: string }[]): void {
     const current = this.currentJob();
     if (current) {
-      this.currentJob.set({ 
-        ...current, 
-        conditions 
+      this.currentJob.set({
+        ...current,
+        conditions,
       });
     }
   }
@@ -156,19 +156,21 @@ export class JobService {
   updateCurrentJobSkills(skills: { skillId: GUID; showToApplicants: boolean }[]): void {
     const current = this.currentJob();
     if (current) {
-      this.currentJob.set({ 
-        ...current, 
-        skills 
+      this.currentJob.set({
+        ...current,
+        skills,
       });
     }
   }
 
-  updateCurrentJobAttachments(attachments: { titleAr: string; titleEn: string; isMandatory: boolean }[]): void {
+  updateCurrentJobAttachments(
+    attachments: { titleAr: string; titleEn: string; isMandatory: boolean }[]
+  ): void {
     const current = this.currentJob();
     if (current) {
-      this.currentJob.set({ 
-        ...current, 
-        requiredAttachments: attachments 
+      this.currentJob.set({
+        ...current,
+        requiredAttachments: attachments,
       });
     }
   }
@@ -176,10 +178,10 @@ export class JobService {
   updateCurrentJobBenefits(benefitsAr: string, benefitsEn: string = ''): void {
     const current = this.currentJob();
     if (current) {
-      this.currentJob.set({ 
-        ...current, 
+      this.currentJob.set({
+        ...current,
         benefitsAr,
-        benefitsEn 
+        benefitsEn,
       });
     }
   }
@@ -196,10 +198,10 @@ export class JobService {
     if (!job.workLocationId) errors.push('VALIDATION.JOB.WORK_LOCATION_REQUIRED');
     if (!job.majorId) errors.push('VALIDATION.JOB.MAJOR_REQUIRED');
     if (!job.workTypeId) errors.push('VALIDATION.JOB.WORK_TYPE_REQUIRED');
-    
+
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -214,13 +216,13 @@ export class JobService {
     );
   }
 
-submitTabReview(formData: FormData) {
-  return this.httpService.post(this.endpoints.job.jobApproval, formData);
-}
+  submitTabReview(formData: FormData) {
+    return this.httpService.post(this.endpoints.job.jobApproval, formData);
+  }
 
-updateTabReview(payload: any) {
-  return this.httpService.put(this.endpoints.job.jobApproval, payload);
-}
+  updateTabReview(payload: any) {
+    return this.httpService.put(this.endpoints.job.jobApproval, payload);
+  }
 
   submitJobForApproval(jobId: GUID): Observable<void> {
     const job = this.currentJob();
@@ -240,7 +242,7 @@ updateTabReview(payload: any) {
     const validation = this.validateRequiredFields(job);
     if (!validation.isValid) {
       const errorMessage = validation.errors
-        .map(errorKey => this.translationService.instant(errorKey))
+        .map((errorKey) => this.translationService.instant(errorKey))
         .join('\n');
       this.notificationService.error(errorMessage);
       return of(void 0);
@@ -265,10 +267,10 @@ updateTabReview(payload: any) {
     return this.httpService.get<JobResponse>(`${this.endpoints.job.job}/${jobId}`);
   }
 
-  update(jobId: GUID,): Observable<void> {
+  update(jobId: GUID): Observable<void> {
     const updateCommand: UpdateJobCommand = {
       jobId: jobId,
-      job: this.currentJob() as UpdateJobRequest
+      job: this.currentJob() as UpdateJobRequest,
     };
     return this.httpService.put<void>(`${this.endpoints.job.job}`, updateCommand);
   }
@@ -278,11 +280,11 @@ updateTabReview(payload: any) {
   }
 
   changeStatus(jobId: GUID, statusId: GUID): Observable<void> {
-  return this.httpService.put<void>(
-    `${this.endpoints.job.job}/${jobId}/status?statusId=${statusId}`,
-    null
-  );
-}
+    return this.httpService.put<void>(
+      `${this.endpoints.job.job}/${jobId}/status?statusId=${statusId}`,
+      null
+    );
+  }
 
   submitForApproval(jobId: GUID, statusId: GUID): Observable<void> {
     return this.changeStatus(jobId, statusId);
@@ -342,8 +344,11 @@ updateTabReview(payload: any) {
     pagination: PaginatedRequest = { pageNumber: 1, pageSize: 10 },
     filter?: JobQueryFilter
   ): Observable<PaginatedResult<JobResponse>> {
-    const payload = {pagination,filter}
-    return this.httpService.post<PaginatedResult<JobResponse>>(this.endpoints.job.searchJob,payload);
+    const payload = { pagination, filter };
+    return this.httpService.post<PaginatedResult<JobResponse>>(
+      this.endpoints.job.searchJob,
+      payload
+    );
   }
 
   clearCurrentJob(): void {
@@ -387,27 +392,27 @@ updateTabReview(payload: any) {
           jobStatus: jobResponse.jobStatus || undefined,
           qualificationsDescriptionAr: jobResponse.qualificationDescriptionAr || '',
           qualificationsDescriptionEn: jobResponse.qualificationDescriptionEn || '',
-          degrees: jobResponse.degrees.map(d => ({ degreeId: d.degreeId })),
-          conditions: jobResponse.conditions.map(c => ({ 
-            textAr: c.textAr, 
-            textEn: c.textEn 
+          degrees: jobResponse.degrees.map((d) => ({ degreeId: d.degreeId })),
+          conditions: jobResponse.conditions.map((c) => ({
+            textAr: c.textAr,
+            textEn: c.textEn,
           })),
-          responsibilities: jobResponse.responsibilities.map(r => ({ 
-            textAr: r.textAr, 
-            textEn: r.textEn 
+          responsibilities: jobResponse.responsibilities.map((r) => ({
+            textAr: r.textAr,
+            textEn: r.textEn,
           })),
-          skills: jobResponse.skills.map(s => ({ 
-            skillId: s.skillId, 
-            showToApplicants: s.showToApplicants 
+          skills: jobResponse.skills.map((s) => ({
+            skillId: s.skillId,
+            showToApplicants: s.showToApplicants,
           })),
-          requiredAttachments: jobResponse.requiredAttachments.map(a => ({ 
-            titleAr: a.titleAr, 
-            titleEn: a.titleEn, 
-            isMandatory: a.isMandatory 
+          requiredAttachments: jobResponse.requiredAttachments.map((a) => ({
+            titleAr: a.titleAr,
+            titleEn: a.titleEn,
+            isMandatory: a.isMandatory,
           })),
-          tabReviewNotes:jobResponse.tabReviewNotes || undefined
+          tabReviewNotes: jobResponse.tabReviewNotes || undefined,
         };
-        
+
         this.currentJob.set(job);
         this.currentJobId = jobId;
         this.jobStatus.set(jobResponse.jobStatus.backendName);
@@ -418,4 +423,8 @@ updateTabReview(payload: any) {
   getLatestReview(jobId: GUID): Observable<JobReviewResponse> {
   return this.httpService.get<JobReviewResponse>(`${this.endpoints.job.jobApproval}/${jobId}/latest`);
   }
+  GetJobsCountByStatus(jobStatusId: string): Observable<number> {
+    const url = `${this.endpoints.job.CountByStatus}?jobStatusId=${encodeURIComponent(jobStatusId)}`;    
+    return this.httpService.get<number>(url);
+}
 }

@@ -12,10 +12,11 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TranslateService } from '@ngx-translate/core';
 import { JobStatus } from '../../../core/enums/lookups.enum';
 import { routes } from '../../../routes/routes';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-job-list',
-  standalone : false,
+  standalone: false,
   templateUrl: './jobs-list.component.html',
   styleUrls: ['./jobs-list.component.scss'],
 })
@@ -24,12 +25,16 @@ export class JobListComponent implements OnInit {
   private router = inject(Router);
   private notificationService = inject(NotificationService);
   private translateService = inject(TranslateService);
-  
-  lookupsService = inject(JobLookupService)
+
+  lookupsService = inject(JobLookupService);
 
   jobs: PaginatedResult<JobResponse> | undefined;
   paginationMetadata: PaginationMetadata | undefined;
-  
+
+  cancelledCount = 0;
+  pendingApprovalCount = 0;
+  approvedCount = 0;
+  draftCount = 0;
   currentPage = signal(1);
   itemsPerPage = 10;
 
@@ -37,12 +42,16 @@ export class JobListComponent implements OnInit {
   filterType = signal<GUID | null>(null);
   filterStatus = signal<GUID | null>(null);
 
-  jobStatus = JobStatus
+readonly jobStatus = JobStatus;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadJobsWithFilters();
-    this.lookupsService.loadJobStatus();
     this.lookupsService.loadJobCategories();
+
+    this.lookupsService
+      .loadJobStatus()
+      .pipe(take(1))
+      .subscribe(() => this.loadStats());
   }
 
   loadJobsWithFilters() {
@@ -50,20 +59,20 @@ export class JobListComponent implements OnInit {
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage,
       sortBy: 'createdDate',
-      sortDirection: 'desc'
+      sortDirection: 'desc',
     };
 
     const filter: JobQueryFilter = {
       searchTerm: this.searchQuery() || undefined,
       jobCategoryId: this.filterType() || undefined,
-      statusId: this.filterStatus() || undefined
+      statusId: this.filterStatus() || undefined,
     };
 
     this.jobService.getAll(pagination, filter).subscribe({
       next: (paginatedData) => {
         this.jobs = paginatedData;
         this.paginationMetadata = paginatedData.metadata;
-      }
+      },
     });
   }
 
@@ -86,7 +95,7 @@ export class JobListComponent implements OnInit {
   }
 
   editJob(job: JobResponse) {
-  this.router.navigate([routes.employee.jobEdit, job.id]).then();
+    this.router.navigate([routes.employee.jobEdit, job.id]).then();
   }
 
   viewJob(job: JobResponse) {
@@ -106,65 +115,65 @@ export class JobListComponent implements OnInit {
   }
 
   rejectJob(job: JobResponse) {
-    const rejectedStatus = this.lookupsService.jobStatus().find(s => 
-      s.backendName === this.jobStatus.Rejected
-    );
-    
+    const rejectedStatus = this.lookupsService
+      .jobStatus()
+      .find((s) => s.backendName === this.jobStatus.Rejected);
+
     if (rejectedStatus) {
       if (confirm(this.translateService.instant('JOB_LIST_CONFIRMATIONS_REJECT_JOB'))) {
-        this.jobService.reject(job.id, rejectedStatus.id  as GUID).subscribe({
+        this.jobService.reject(job.id, rejectedStatus.id as GUID).subscribe({
           next: () => {
             this.notificationService.success(
               this.translateService.instant('JOB_LIST_MESSAGES_JOB_REJECTED')
             );
             this.loadJobsWithFilters();
-          }
+          },
         });
       }
     }
   }
 
   publishJob(job: JobResponse) {
-    const publishedStatus = this.lookupsService.jobStatus().find(s => 
-      s.backendName === this.jobStatus.Published
-    );
-    
+    const publishedStatus = this.lookupsService
+      .jobStatus()
+      .find((s) => s.backendName === this.jobStatus.Published);
+
     if (publishedStatus) {
-      this.jobService.publish(job.id, publishedStatus.id  as GUID).subscribe({
+      this.jobService.publish(job.id, publishedStatus.id as GUID).subscribe({
         next: () => {
           this.notificationService.success(
             this.translateService.instant('JOB_LIST_MESSAGES_JOB_PUBLISHED')
           );
           this.loadJobsWithFilters();
-        }
+        },
       });
     }
   }
 
   closeJob(job: JobResponse) {
-    const closedStatus = this.lookupsService.jobStatus().find(s => 
-      s.backendName === this.jobStatus.Closed
-    );
-    
+    const closedStatus = this.lookupsService
+      .jobStatus()
+      .find((s) => s.backendName === this.jobStatus.Closed);
+
     if (closedStatus) {
       if (confirm(this.translateService.instant('JOB_LIST_CONFIRMATIONS_CLOSE_JOB'))) {
-        this.jobService.close(job.id, closedStatus.id  as GUID).subscribe({
+        this.jobService.close(job.id, closedStatus.id as GUID).subscribe({
           next: () => {
             this.notificationService.success(
               this.translateService.instant('JOB_LIST_MESSAGES_JOB_CLOSED')
             );
             this.loadJobsWithFilters();
-          }
+          },
         });
       }
     }
   }
 
   // reopenJob(job: JobResponse) {
-  //   const draftStatus = this.lookupsService.jobStatus().find(s => 
+  //   const draftStatus = this.lookupsService.jobStatus().find(s =>
   //     s.backendName === this.jobStatus.Draft
   //   );
-    
+
   //   if (draftStatus) {
   //     this.jobService.changeStatus(job.id, draftStatus.id  as GUID).subscribe({
   //       next: () => {
@@ -183,10 +192,10 @@ export class JobListComponent implements OnInit {
   // }
 
   cancelJob(job: JobResponse) {
-    const cancelledStatus = this.lookupsService.jobStatus().find(s => 
-      s.backendName === this.jobStatus.Cancelled
-    );
-    
+    const cancelledStatus = this.lookupsService
+      .jobStatus()
+      .find((s) => s.backendName === this.jobStatus.Cancelled);
+
     if (cancelledStatus) {
       if (confirm(this.translateService.instant('JOB_LIST_CONFIRMATIONS_CANCEL_JOB'))) {
         this.jobService.cancel(job.id, cancelledStatus.id as GUID).subscribe({
@@ -195,7 +204,7 @@ export class JobListComponent implements OnInit {
               this.translateService.instant('JOB_LIST_MESSAGES_JOB_CANCELLED')
             );
             this.loadJobsWithFilters();
-          }
+          },
         });
       }
     }
@@ -209,28 +218,26 @@ export class JobListComponent implements OnInit {
             this.translateService.instant('JOB_LIST_MESSAGES_JOB_DELETED')
           );
           this.loadJobsWithFilters();
-        }
+        },
       });
     }
   }
 
-  
-
   getStatusBadgeClass(statusName: string): string {
     const STATUS_BADGE_MAP: Record<string, string> = {
-  [JobStatus.Draft]: 'bg-secondary',
-  [JobStatus.PendingApproval]: 'bg-warning text-dark',
-  [JobStatus.Approved]: 'bg-success',
-  [JobStatus.Published]: 'bg-info',
-  [JobStatus.Closed]: 'bg-dark',
-  [JobStatus.Rejected]: 'bg-danger',
-  [JobStatus.Cancelled]: 'bg-secondary'
-};
-   return STATUS_BADGE_MAP[statusName] || 'bg-light text-dark';
+      [JobStatus.Draft]: 'bg-secondary',
+      [JobStatus.PendingApproval]: 'bg-warning text-dark',
+      [JobStatus.Approved]: 'bg-success',
+      [JobStatus.Published]: 'bg-info',
+      [JobStatus.Closed]: 'bg-dark',
+      [JobStatus.Rejected]: 'bg-danger',
+      [JobStatus.Cancelled]: 'bg-secondary',
+    };
+    return STATUS_BADGE_MAP[statusName] || 'bg-light text-dark';
   }
 
   getJobCategoryBadgeClass(categoryName: string): string {
-    switch(categoryName?.toLowerCase()) {
+    switch (categoryName?.toLowerCase()) {
       case 'academic':
         return 'bg-primary';
       case 'administrative':
@@ -240,5 +247,19 @@ export class JobListComponent implements OnInit {
       default:
         return 'bg-secondary';
     }
+  }
+
+  private loadStats(): void {
+    this.loadCount(JobStatus.Cancelled, (v) => (this.cancelledCount = v));
+    this.loadCount(JobStatus.PendingApproval, (v) => (this.pendingApprovalCount = v));
+    this.loadCount(JobStatus.Approved, (v) => (this.approvedCount = v));
+    this.loadCount(JobStatus.Draft, (v) => (this.draftCount = v));
+  }
+
+  private loadCount(status: JobStatus, setter: (v: number) => void): void {
+    const statusId = this.lookupsService.getStatusIdByEnum(status);
+    if (!statusId) return;
+
+    this.jobService.GetJobsCountByStatus(statusId).subscribe(setter);
   }
 }

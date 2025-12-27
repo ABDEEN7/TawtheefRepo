@@ -125,6 +125,61 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OfficeSupportedCountry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CountryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("OfficeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("OfficeId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("OfficeSupportedCountry", "lkp");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Achievement", b =>
                 {
                     b.Property<Guid>("Id")
@@ -406,8 +461,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("DeletedById");
 
-                    b.HasIndex("LanguageId");
-
                     b.HasIndex("ReadingLevelId");
 
                     b.HasIndex("SpeakingLevelId");
@@ -417,6 +470,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UserProfileId");
 
                     b.HasIndex("WritingLevelId");
+
+                    b.HasIndex("LanguageId", "UserProfileId")
+                        .IsUnique();
 
                     b.ToTable("ProfileLanguage", "pro");
                 });
@@ -472,11 +528,12 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("LevelId");
 
-                    b.HasIndex("SkillId");
-
                     b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserProfileId");
+
+                    b.HasIndex("SkillId", "UserProfileId")
+                        .IsUnique();
 
                     b.ToTable("ProfileSkill", "pro");
                 });
@@ -3051,6 +3108,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid>("OfficeAdminId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("UpdatedById")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(95);
@@ -3074,6 +3134,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("DeletedById");
 
                     b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("OfficeAdminId");
 
                     b.HasIndex("UpdatedById");
 
@@ -4513,6 +4575,16 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "مسؤول النظام",
                             NameEn = "Administrator"
+                        },
+                        new
+                        {
+                            Id = new Guid("5d1970fe-8398-44c0-88ea-560521933912"),
+                            BackendName = "OfficeUser",
+                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            DisplayOrder = 4,
+                            IsDeleted = false,
+                            NameAr = "موظف مكتب",
+                            NameEn = "OfficeUser"
                         });
                 });
 
@@ -5304,6 +5376,216 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("JobDegree", "hr");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointConfiguration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ApplicantCategoryMaxPoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CertificatesMaxPoints")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
+
+                    b.Property<int>("EducationMaxPoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExperienceMaxPoints")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("LanguagesMaxPoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillsMaxPoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrainingMaxPoints")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("JobPointConfiguration", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("JobPointsMainId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ReferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("JobPointsMainId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("JobPointsDetail", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsMain", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ApplicantCategory")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Certificates")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTimeOffset?>("DeletedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(98);
+
+                    b.Property<int>("Education")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Experience")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Languages")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Skills")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Total")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Training")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("JobId")
+                        .IsUnique();
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("JobPointsMain", "hr");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobRequiredAttachment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6061,6 +6343,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<bool>("IsSystemRole")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -6085,6 +6370,56 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082"),
+                            ConcurrencyStamp = "866e2ccb-ee08-43e7-a822-0563dedda52c",
+                            DescriptionAr = "مدير النظام الكامل",
+                            DescriptionEn = "Full system administrator",
+                            IsSystemRole = true,
+                            Name = "SystemAdmin",
+                            NameAr = "مدير النظام",
+                            NameEn = "System Admin",
+                            NormalizedName = "SYSTEMADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd"),
+                            ConcurrencyStamp = "158af8d9-5661-4f03-8da8-1ddbfc56720b",
+                            DescriptionAr = "مدير شؤون الموظفين",
+                            DescriptionEn = "Human resources administrator",
+                            IsSystemRole = true,
+                            Name = "HRAdmin",
+                            NameAr = "مدير الموارد البشرية",
+                            NameEn = "HR Admin",
+                            NormalizedName = "HRADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca"),
+                            ConcurrencyStamp = "859cf2e9-8352-4694-a843-a48e44da1bbd",
+                            DescriptionAr = "مدير المكتب والصلاحيات المرتبطة",
+                            DescriptionEn = "Office administrator",
+                            IsSystemRole = true,
+                            Name = "HRAdmin",
+                            NameAr = "مدير المكتب",
+                            NameEn = "Office Admin",
+                            NormalizedName = "OFFICEADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8"),
+                            ConcurrencyStamp = "ed6815e1-ff0b-4fca-8553-749f929295f8",
+                            DescriptionAr = "موظف المكتب العادي",
+                            DescriptionEn = "Office user",
+                            IsSystemRole = true,
+                            Name = "HRAdmin",
+                            NameAr = "موظف المكتب",
+                            NameEn = "Office User",
+                            NormalizedName = "OFFICEUSER"
+                        });
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.SponsorProfile", b =>
@@ -6630,6 +6965,18 @@ namespace Tawtheef.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.OfficeUser", b =>
+                {
+                    b.HasBaseType("Tawtheef.Domain.Entities.Users.User");
+
+                    b.Property<Guid?>("OfficeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("OfficeId");
+
+                    b.HasDiscriminator().HasValue("OfficeUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.ApplicationRole", null)
@@ -6679,6 +7026,46 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OfficeSupportedCountry", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Office", "Office")
+                        .WithMany("SupportedCountries")
+                        .HasForeignKey("OfficeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Country");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Office");
+
+                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Applicant.Achievement", b =>
@@ -7666,6 +8053,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Tawtheef.Domain.Entities.Users.OfficeUser", "OfficeAdmin")
+                        .WithMany()
+                        .HasForeignKey("OfficeAdminId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
@@ -7676,6 +8069,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("DeletedBy");
+
+                    b.Navigation("OfficeAdmin");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -8409,6 +8804,94 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointConfiguration", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsDetail", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsMain", "JobPointsMain")
+                        .WithMany("Details")
+                        .HasForeignKey("JobPointsMainId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("JobPointsMain");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsMain", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
+                        .WithOne("JobPoints")
+                        .HasForeignKey("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsMain", "JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("UpdatedBy");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobRequiredAttachment", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -8965,6 +9448,16 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.OfficeUser", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Office", "Office")
+                        .WithMany("OfficeUsers")
+                        .HasForeignKey("OfficeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Office");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.CandidateType", b =>
                 {
                     b.Navigation("CandidateTypeProviderLogins");
@@ -8978,6 +9471,13 @@ namespace Tawtheef.Infrastructure.Migrations
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", b =>
                 {
                     b.Navigation("SubMajors");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Office", b =>
+                {
+                    b.Navigation("OfficeUsers");
+
+                    b.Navigation("SupportedCountries");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ProviderLogin", b =>
@@ -8998,6 +9498,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("JobDegrees");
 
+                    b.Navigation("JobPoints");
+
                     b.Navigation("JobRequiredAttachments");
 
                     b.Navigation("JobResponsibilities");
@@ -9005,6 +9507,11 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("JobSkills");
 
                     b.Navigation("TabReviewNotes");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsMain", b =>
+                {
+                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobTabReviewNote", b =>
