@@ -94,7 +94,7 @@ export class JobPointsConfigPageComponent implements OnInit {
 
     this.jobService.getById(this.jobId).subscribe((job) => {
       this.job = job;
-      if (job.jobPoints.id) {
+      if (job?.jobPoints?.id) {
         this.jobPointsService.getJobPoints(this.jobId).subscribe((response) => {
           this.jobPoints = response;
           this.mapper.mapResponseToForm(response, this.mainFormGroup, this.detailsFormGroup);

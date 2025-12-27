@@ -218,23 +218,10 @@
         </div>
       </div>
     </div>
-
-
-    <div class="actions-bar">
-      <div class="job-btns">
-        <button
-          class="apply-button-large"
-          (click)="openConfirmModal()"
-        >
-          <i class="fa-regular fa-pen-to-square"></i>
-          <span>{{ 'JOB_DETAILS.APPLY' | translate }}</span>
-        </button>
-      </div>
-    </div>
     }  @else {
     <div style="text-align: center; padding: 60px 20px; color: #999">
       <i class="fa-solid fa-spinner fa-spin" style="font-size: 48px; margin-bottom: 20px"></i>
-      <p style="font-size: 16px; font-weight: 500">{{ 'COMMON.LOADING' | translate }}</p>
+      <p style="font-size: 16px; font-weight: 500">{{ 'common.loading' | translate }}</p>
     </div>
     }
   </div>

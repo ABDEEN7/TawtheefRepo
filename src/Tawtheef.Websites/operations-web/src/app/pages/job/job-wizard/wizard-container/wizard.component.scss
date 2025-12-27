@@ -297,7 +297,16 @@
   font-size: 0.9rem;
   color: #777;
 }
+.attachment-row {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+}
 
+.attachment-row:hover {
+  background-color: #f8f9fa;
+}
 .btn-add {
   background-color: #6c0027;
   color: #fff;

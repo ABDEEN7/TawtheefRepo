@@ -20,51 +20,55 @@
   <main class="py-4">
     <div class="container">
       <!-- Filters -->
-       <div class="row g-3 mb-4">
-  <div class="col-md-3 col-sm-6">
-    <div class="card h-100 border-0 shadow-sm" style="background-color: #FFF0F0;"> <div class="card-body d-flex align-items-center justify-content-between">
-        <div>
-          <h3 class="fw-bold text-danger mb-0">1</h3>
-          <span class="text-muted small">{{ 'STATS_CANCELLED' | translate }}</span>
+      <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+          <div class="card h-100 border-0 shadow-sm" style="background-color: #fff0f0">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h3 class="fw-bold text-danger mb-0">1</h3>
+                <span class="text-muted small">{{ 'STATS_CANCELLED' | translate }}</span>
+              </div>
+              <i class="fa fa-times-circle text-danger fs-3 opacity-50"></i>
+            </div>
+          </div>
         </div>
-        <i class="fa fa-times-circle text-danger fs-3 opacity-50"></i>
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-md-3 col-sm-6">
-    <div class="card h-100 border-0 shadow-sm" style="background-color: #FFF8E1;"> <div class="card-body d-flex align-items-center justify-content-between">
-        <div>
-          <h3 class="fw-bold text-warning mb-0">3</h3>
-          <span class="text-muted small">{{ 'STATS_UNDER_REVIEW' | translate }}</span>
-        </div>
-        <i class="fa fa-hourglass-half text-warning fs-3 opacity-50"></i>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-3 col-sm-6">
-    <div class="card h-100 border-0 shadow-sm" style="background-color: #F0FDF4;"> <div class="card-body d-flex align-items-center justify-content-between">
-        <div>
-          <h3 class="fw-bold text-success mb-0">3</h3>
-          <span class="text-muted small">{{ 'STATS_ACCEPTED' | translate }}</span>
+        <div class="col-md-3 col-sm-6">
+          <div class="card h-100 border-0 shadow-sm" style="background-color: #fff8e1">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h3 class="fw-bold text-warning mb-0">3</h3>
+                <span class="text-muted small">{{ 'STATS_UNDER_REVIEW' | translate }}</span>
+              </div>
+              <i class="fa fa-hourglass-half text-warning fs-3 opacity-50"></i>
+            </div>
+          </div>
         </div>
-        <i class="fa fa-check-circle text-success fs-3 opacity-50"></i>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-3 col-sm-6">
-    <div class="card h-100 border-0 shadow-sm" style="background-color: #EFF6FF;"> <div class="card-body d-flex align-items-center justify-content-between">
-        <div>
-          <h3 class="fw-bold text-primary mb-0">3</h3>
-          <span class="text-muted small">{{ 'STATS_NEW' | translate }}</span>
+        <div class="col-md-3 col-sm-6">
+          <div class="card h-100 border-0 shadow-sm" style="background-color: #f0fdf4">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h3 class="fw-bold text-success mb-0">3</h3>
+                <span class="text-muted small">{{ 'STATS_ACCEPTED' | translate }}</span>
+              </div>
+              <i class="fa fa-check-circle text-success fs-3 opacity-50"></i>
+            </div>
+          </div>
         </div>
-        <i class="fa fa-star text-primary fs-3 opacity-50"></i>
+
+        <div class="col-md-3 col-sm-6">
+          <div class="card h-100 border-0 shadow-sm" style="background-color: #eff6ff">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h3 class="fw-bold text-primary mb-0">3</h3>
+                <span class="text-muted small">{{ 'STATS_NEW' | translate }}</span>
+              </div>
+              <i class="fa fa-star text-primary fs-3 opacity-50"></i>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
       <div class="card card-lite p-3 mb-3">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
           <div class="filter-title">{{ 'JOB_LIST_FILTERS_TITLE' | translate }}</div>
@@ -129,148 +133,146 @@
               </tr>
             </thead>
             <tbody>
-              @if (jobs?.items && jobs?.items?.length ) {
-                @for (job of jobs?.items; track job.id; let i = $index) {
-                  <tr>
-                    <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
-                    <td class="fw-bold">{{ job.titleAr }}</td>
-                    <td class="fw-bold">{{ job.titleEn }}</td>
-                    <td>
-                      <span class="badge" [ngClass]="getJobCategoryBadgeClass(job.jobCategory.name)">
-                        {{ job.jobCategory.name }}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="badge bg-light text-dark">
-                        {{ job.numberOfVacancies }}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="badge" [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)">
-                        {{ job.jobStatus.name }}
-                      </span>
-                    </td>
-                    <td>
-                      <small class="text-muted">
-                        {{ job.closingDate | date: 'yyyy/MM/dd' }}
-                      </small>
-                    </td>
-                    <td class="text-end">
-                      <div class="btn-group" role="group">
-                        @if (job.jobStatus.backendName === jobStatus.Published || job.jobStatus.backendName === jobStatus.Approved) {
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-outline-secondary me-1"
-                            (click)="openPointsModal(job)"
-                            [title]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate"
-                          >
-                            <i class="fa fa-gear"></i>
-                          </button>
-                        }
-                        
-                        @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate) {
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-outline-brand me-1"
-                            (click)="editJob(job)"
-                            [title]="'JOB_LIST_BUTTONS_EDIT' | translate"
-                          >
-                            <i class="fa fa-pen-to-square"></i>
-                          </button>
-                        }
-                        @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !== jobStatus.PendingApproval && job.jobStatus.backendName !== jobStatus.NeedUpdate) {
-                        <button
-                          type="button"
-                          class="btn btn-sm btn-outline-gray me-1"
-                          (click)="viewJob(job)"
-                          [title]="'JOB_LIST_BUTTONS_VIEW' | translate"
-                        >
-                          <i class="fa fa-eye"></i>
-                        </button>
-                      }
-                        @if(job.jobStatus.backendName !== jobStatus.Approved){
-                        <div class="dropdown d-inline-block">
-                          <button
-                            class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            [title]="'JOB_LIST_BUTTONS_MORE_ACTIONS' | translate"
-                          >
-                            <i class="fa fa-ellipsis-h"></i>
-                          </button>
-                          <ul class="dropdown-menu dropdown-menu-end">
-                            @if (job.jobStatus.backendName === jobStatus.PendingApproval) {
-                              <li>
-                                <button class="dropdown-item" (click)="approveJob(job)">
-                                  <i class="fa fa-check me-2"></i>
-                                  {{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}
-                                </button>
-                              </li>
-                              <li>
-                                <button class="dropdown-item text-danger" (click)="rejectJob(job)">
-                                  <i class="fa fa-times me-2"></i>
-                                  {{ 'JOB_LIST_BUTTONS_REJECT' | translate }}
-                                </button>
-                              </li>
-                            }
-                            @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
-                              <li>
-                                <button class="dropdown-item" (click)="publishJob(job)">
-                                  <i class="fa fa-upload me-2"></i>
-                                  {{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}
-                                </button>
-                              </li>
-                            }
-                            @if (job.jobStatus.backendName === jobStatus.Published) {
-                              <li>
-                                <button class="dropdown-item" (click)="closeJob(job)">
-                                  <i class="fa fa-lock me-2"></i>
-                                  {{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}
-                                </button>
-                              </li>
-                            }
-                            <li><hr class="dropdown-divider"></li>
-                            @if(job.jobStatus.backendName !== jobStatus.Published && job.jobStatus.backendName !== jobStatus.Approved) {
-                            <li>
-                              <button class="dropdown-item text-danger" (click)="deleteJob(job)">
-                                <i class="fa fa-trash me-2"></i>
-                                {{ 'JOB_LIST_BUTTONS_DELETE' | translate }}
-                              </button>
-                            </li>
-                          }
-                          </ul>
-                        </div>
-                      }
-                      </div>
-                    </td>
-                  </tr>
-                }
-              } @else {
-                <tr>
-                  <td colspan="8" class="text-center py-5">
-                    <i class="fa fa-briefcase fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</p>
-                    <button class="btn btn-brand" (click)="createNewJob()">
-                      <i class="fa fa-plus me-2"></i>
-                      {{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}
+              @if (jobs?.items && jobs?.items?.length ) { @for (job of jobs?.items; track job.id;
+              let i = $index) {
+              <tr>
+                <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
+                <td class="fw-bold">{{ job.titleAr }}</td>
+                <td class="fw-bold">{{ job.titleEn }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getJobCategoryBadgeClass(job.jobCategory.name)">
+                    {{ job.jobCategory.name }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark">
+                    {{ job.numberOfVacancies }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)">
+                    {{ job.jobStatus.name }}
+                  </span>
+                </td>
+                <td>
+                  <small class="text-muted">
+                    {{ job.closingDate | date : 'yyyy/MM/dd' }}
+                  </small>
+                </td>
+                <td class="text-end">
+                  <div class="btn-group" role="group">
+                    @if (job.jobStatus.backendName === jobStatus.Published ||
+                    job.jobStatus.backendName === jobStatus.Approved) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary me-1"
+                      (click)="openPointsModal(job)"
+                      [title]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate"
+                    >
+                      <i class="fa fa-gear"></i>
                     </button>
-                  </td>
-                </tr>
+                    } @if (job.jobStatus.backendName === jobStatus.Draft ||
+                    job.jobStatus.backendName === jobStatus.NeedUpdate) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-brand me-1"
+                      (click)="editJob(job)"
+                      [title]="'JOB_LIST_BUTTONS_EDIT' | translate"
+                    >
+                      <i class="fa fa-pen-to-square"></i>
+                    </button>
+                    } @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName
+                    !== jobStatus.PendingApproval && job.jobStatus.backendName !==
+                    jobStatus.NeedUpdate) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-gray me-1"
+                      (click)="viewJob(job)"
+                      [title]="'JOB_LIST_BUTTONS_VIEW' | translate"
+                    >
+                      <i class="fa fa-eye"></i>
+                    </button>
+                    } @if(job.jobStatus.backendName !== jobStatus.Approved){
+                    <div class="dropdown d-inline-block">
+                      <button
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        [title]="'JOB_LIST_BUTTONS_MORE_ACTIONS' | translate"
+                      >
+                        <i class="fa fa-ellipsis-h"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        @if (job.jobStatus.backendName === jobStatus.PendingApproval) {
+                        <li>
+                          <button class="dropdown-item" (click)="approveJob(job)">
+                            <i class="fa fa-check me-2"></i>
+                            {{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}
+                          </button>
+                        </li>
+                        <li>
+                          <button class="dropdown-item text-danger" (click)="rejectJob(job)">
+                            <i class="fa fa-times me-2"></i>
+                            {{ 'JOB_LIST_BUTTONS_REJECT' | translate }}
+                          </button>
+                        </li>
+                        } @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
+                        <li>
+                          <button class="dropdown-item" (click)="publishJob(job)">
+                            <i class="fa fa-upload me-2"></i>
+                            {{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}
+                          </button>
+                        </li>
+                        } @if (job.jobStatus.backendName === jobStatus.Published) {
+                        <li>
+                          <button class="dropdown-item" (click)="closeJob(job)">
+                            <i class="fa fa-lock me-2"></i>
+                            {{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}
+                          </button>
+                        </li>
+                        }
+                        <li><hr class="dropdown-divider" /></li>
+                        @if(job.jobStatus.backendName !== jobStatus.Published &&
+                        job.jobStatus.backendName !== jobStatus.Approved) {
+                        <li>
+                          <button class="dropdown-item text-danger" (click)="deleteJob(job)">
+                            <i class="fa fa-trash me-2"></i>
+                            {{ 'JOB_LIST_BUTTONS_DELETE' | translate }}
+                          </button>
+                        </li>
+                        }
+                      </ul>
+                    </div>
+                    }
+                  </div>
+                </td>
+              </tr>
+              } } @else {
+              <tr>
+                <td colspan="8" class="text-center py-5">
+                  <i class="fa fa-briefcase fa-3x text-muted mb-3"></i>
+                  <p class="text-muted">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</p>
+                  <button class="btn btn-brand" (click)="createNewJob()">
+                    <i class="fa fa-plus me-2"></i>
+                    {{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}
+                  </button>
+                </td>
+              </tr>
               }
             </tbody>
           </table>
         </div>
 
         @if (paginationMetadata && paginationMetadata.totalCount > 0) {
-          <div class="p-3 border-top">
-            <app-pagination
-              [currentPage]="currentPage()"
-              [totalItems]="paginationMetadata.totalCount"
-              [itemsPerPage]="itemsPerPage"
-              (pageChanged)="onPageChange($event)"
-            >
-            </app-pagination>
-          </div>
+        <div class="p-3 border-top">
+          <app-pagination
+            [currentPage]="currentPage()"
+            [totalItems]="paginationMetadata.totalCount"
+            [itemsPerPage]="itemsPerPage"
+            (pageChanged)="onPageChange($event)"
+          >
+          </app-pagination>
+        </div>
         }
       </div>
     </div>

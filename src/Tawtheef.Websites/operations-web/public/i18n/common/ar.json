@@ -12,14 +12,12 @@
   "validation.minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل.",
   "validation.required_filed": "هذا الحقل مطلوب",
   "validation.invalid_format": "التنسيق غير صحيح",
-
+  "common.success":"تم بنجاح",
   "common.ar": "العربية",
   "common.en": "English",
   "common.refresh": "تحديث",
   "common.loading": "جارٍ التحميل",
-
-  "COMMON.CONFIRM" : "التأكيد",
-  "COMMON.CANCEL" : "إلغاء",
+  "common.error":"خطأ",
   "common.save": "حفظ",
   "common.cancel": "إلغاء",
   "common.back": "رجوع",

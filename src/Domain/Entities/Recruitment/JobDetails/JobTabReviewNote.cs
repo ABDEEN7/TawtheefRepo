@@ -26,17 +26,12 @@ public class JobTabReviewNote : EventEntity
     public bool IsResolved { get; set; } = false;
     [Required]
     public Guid ReviewCycleId { get; set; }
-
-    public virtual ICollection<JobTabReviewAttachment> Attachments { get; set; } = new List<JobTabReviewAttachment>();
-
     public void UpdateNote(string? note, TabStatus tabStatus)
     {
         Note = note;
         TabStatus = tabStatus;
     }
 }
-
-
 
 public enum TabType
 {

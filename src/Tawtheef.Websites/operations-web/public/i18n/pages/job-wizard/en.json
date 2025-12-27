@@ -61,7 +61,6 @@
   "JOB_BASIC_MODAL.SUCCESS.UPDATED": "Basic information updated successfully",
   "JOB_BASIC_MODAL.ERROR.UPDATE_FAILED": "Failed to update basic information",
 
-  "COMMON.LOADING": "Loading...",
 
   "VALIDATION.REQUIRED_FIELD": "This field is required",
 

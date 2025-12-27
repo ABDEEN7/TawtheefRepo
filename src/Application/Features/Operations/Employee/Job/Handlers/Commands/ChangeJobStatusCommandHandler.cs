@@ -37,9 +37,8 @@ public class ChangeJobStatusCommandHandler(
         var jobReviewsStatus = await mediator.Send(
             new UpdateJobTabReviewStatusCommand(job.Id),
             cancellationToken);
-        var saveResult = await unitOfWork.SaveChangesAsync(cancellationToken);
-        if (saveResult == 0)
-            return Result.Fail<Unit>("Failed to update job status");
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        
 
         //TODO :: SEND NOTIFICATION
         //await SendNotifications(job, request.NewStatusId);

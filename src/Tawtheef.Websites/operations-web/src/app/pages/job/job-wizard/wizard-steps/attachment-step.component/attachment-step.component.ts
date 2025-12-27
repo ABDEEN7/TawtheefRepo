@@ -21,19 +21,19 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   protected jobService = inject(JobService);
   private notificationService = inject(NotificationService);
   private transaltionService = inject(TranslateService);
-  
+
   jobData!: Job;
-  note: JobTabReviewNoteResponse | null = null
+  note: JobTabReviewNoteResponse | null = null;
   newAttachment = {
     titleAr: '',
     titleEn: '',
-    isMandatory: false
+    isMandatory: false,
   };
-  
+
   readonly form: FormGroup = this.fb.group({
-    attachments: this.fb.array([])
+    attachments: this.fb.array([]),
   });
-  
+
   private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
@@ -41,14 +41,16 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     if (currentJob) {
       this.setJobData(currentJob);
     }
-    
-    this.form.valueChanges.pipe(
-      debounceTime(300),
-      filter(() => this.form.valid),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      this.updateJobData();
-    });
+
+    this.form.valueChanges
+      .pipe(
+        debounceTime(300),
+        filter(() => this.form.valid),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.updateJobData();
+      });
   }
 
   ngOnDestroy(): void {
@@ -65,62 +67,66 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   }
 
   override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
-  this.jobData = job;
-  this.note = note;
-  this.attachmentsArray.clear();
-  
-  if (job.requiredAttachments?.length) {
-    job.requiredAttachments.forEach(attachment => {
-      this.addAttachmentToForm(attachment);
+    this.jobData = job;
+    this.note = note;
+    this.attachmentsArray.clear();
+
+    if (job.requiredAttachments?.length) {
+      job.requiredAttachments.forEach((attachment) => {
+        this.addAttachmentToForm(attachment);
+      });
+    }
+
+    if (
+      note?.tabStatus !== JobTabStatus.Returned &&
+      job.jobStatus?.backendName === JobStatus.NeedUpdate
+    ) {
+      this.form.disable();
+    }
+  }
+
+  addAttachment(): void {
+    if (this.form.disabled) {
+      return;
+    }
+
+    const titleAr = this.newAttachment.titleAr?.trim() || '';
+    const titleEn = this.newAttachment.titleEn?.trim() || '';
+
+    if (!titleAr && !titleEn) {
+      this.notificationService.error(
+        this.transaltionService.instant('JOB_WIZARD.STEPS.NO_DATA_ENTERED_ERROR')
+      );
+      return;
+    }
+
+    const isDuplicate = this.attachmentsArray.controls.some((control: AbstractControl) => {
+      const group = control as FormGroup;
+      return group.get('titleAr')?.value === titleAr && group.get('titleEn')?.value === titleEn;
     });
-  }
-  
-  if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
-    this.form.disable();
-  }
-}
 
- addAttachment(): void {
-  if (this.form.disabled) {
-    return;
-  }
-  
-  // Trim values before using them
-  const titleAr = this.newAttachment.titleAr?.trim() || '';
-  const titleEn = this.newAttachment.titleEn?.trim() || '';
-  
-  if (!titleAr && !titleEn) {
-    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.NO_DATA_ENTERED_ERROR'));
-    return;
-  }
+    if (isDuplicate) {
+      this.notificationService.error(
+        this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR')
+      );
+      return;
+    }
 
-  const isDuplicate = this.attachmentsArray.controls.some((control: AbstractControl) => {
-    const group = control as FormGroup;
-    return group.get('titleAr')?.value === titleAr && group.get('titleEn')?.value === titleEn;
-  });
-  
-  if (isDuplicate) {
-    this.notificationService.error(this.transaltionService.instant('JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR'));
-    return;
-  }
+    const attachmentGroup = this.fb.group({
+      titleAr: [titleAr, [Validators.required, Validators.maxLength(200)]],
+      titleEn: [titleEn, [Validators.maxLength(200)]],
+      isMandatory: [this.newAttachment.isMandatory || false],
+    });
 
-  const attachmentGroup = this.fb.group({
-    titleAr: [titleAr, [Validators.required, Validators.maxLength(200)]],
-    titleEn: [titleEn, [Validators.maxLength(200)]],
-    isMandatory: [this.newAttachment.isMandatory || false]
-  });
-  
-  // Mark as touched to trigger validation display
-  attachmentGroup.get('titleAr')?.markAsTouched();
-  attachmentGroup.get('titleEn')?.markAsTouched();
-  
-  this.attachmentsArray.push(attachmentGroup);
-  this.resetNewAttachment();
-  this.updateJobData();
-  
-  // Trigger change detection for the form
-  this.form.updateValueAndValidity();
-}
+    attachmentGroup.get('titleAr')?.markAsTouched();
+    attachmentGroup.get('titleEn')?.markAsTouched();
+
+    this.attachmentsArray.push(attachmentGroup);
+    this.resetNewAttachment();
+    this.updateJobData();
+
+    this.form.updateValueAndValidity();
+  }
 
   removeAttachment(index: number): void {
     this.attachmentsArray.removeAt(index);
@@ -131,38 +137,38 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     if (this.attachmentsArray.length === 0) {
       return true;
     }
-    
-    if(this.form.disabled){
-      return true;  
+
+    if (this.form.disabled) {
+      return true;
     }
     return this.form.valid && this.attachmentsArray.valid;
   }
 
   private addAttachmentToForm(attachment: any): void {
-  const attachmentGroup = this.fb.group({
-    titleAr: [attachment.titleAr || '', [Validators.required, Validators.maxLength(200)]],
-    titleEn: [attachment.titleEn || '', [Validators.maxLength(200)]],
-    isMandatory: [attachment.isMandatory || false]
-  });
-  
-  if (this.form.disabled) {
-    attachmentGroup.disable({ emitEvent: false });
+    const attachmentGroup = this.fb.group({
+      titleAr: [attachment.titleAr || '', [Validators.required, Validators.maxLength(200)]],
+      titleEn: [attachment.titleEn || '', [Validators.maxLength(200)]],
+      isMandatory: [attachment.isMandatory || false],
+    });
+
+    if (this.form.disabled) {
+      attachmentGroup.disable({ emitEvent: false });
+    }
+
+    this.attachmentsArray.push(attachmentGroup);
   }
-  
-  this.attachmentsArray.push(attachmentGroup);
-}
 
   private updateJobData(): void {
     if (this.form.valid) {
-      const attachments = this.attachmentsArray.controls.map(control => {
+      const attachments = this.attachmentsArray.controls.map((control) => {
         const group = control as FormGroup;
         return {
           titleAr: group.get('titleAr')?.value || '',
           titleEn: group.get('titleEn')?.value || '',
-          isMandatory: group.get('isMandatory')?.value || false
+          isMandatory: group.get('isMandatory')?.value || false,
         };
       });
-      
+
       this.jobService.updateCurrentJobAttachments(attachments);
     }
   }
@@ -177,13 +183,13 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     this.newAttachment = {
       titleAr: '',
       titleEn: '',
-      isMandatory: false
+      isMandatory: false,
     };
   }
 
   isFieldValid(groupIndex: number, fieldName: string): boolean {
     const group = this.getAttachmentGroup(groupIndex);
     const field = group.get(fieldName);
-    return field ? field.valid && (field.dirty || field.touched) : false;
+    return field ? !(field.invalid && field.touched) : true;
   }
 }

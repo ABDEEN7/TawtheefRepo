@@ -34,17 +34,16 @@ public static class LocalPathBuilder
 
     public static string JobReview(
     Guid jobId,
-    string tab,
     Guid fileId,
     string ext,
     string hash,
     bool isPublic)
     => Key(
         Scope(isPublic),
+        "operation",
         "jobs",
         jobId.ToString(),
         "reviews",
-        tab,
         FileName(fileId, hash, ext)
     );
 }

@@ -17,6 +17,7 @@ import { JobLookupService } from './job-lookup.service';
 import { JobStatus } from '../../../core/enums/lookups.enum';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 import { JobTabStatus } from '../enums/job-tab-status';
+import { JobReviewResponse } from '../models/job-review-response';
 
 @Injectable({
   providedIn: 'root'
@@ -413,12 +414,8 @@ updateTabReview(payload: any) {
       })
     );
   }
-
-  getTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
-    return this.httpService.get<JobTabReviewNoteResponse[]>(`${this.endpoints.job.jobApproval}/${jobId}`);
-  }
-
-  getLatestTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
-  return this.httpService.get<JobTabReviewNoteResponse[]>(`${this.endpoints.job.jobApproval}/${jobId}/latest`);
+  
+  getLatestReview(jobId: GUID): Observable<JobReviewResponse> {
+  return this.httpService.get<JobReviewResponse>(`${this.endpoints.job.jobApproval}/${jobId}/latest`);
   }
 }

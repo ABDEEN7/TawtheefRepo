@@ -33,7 +33,7 @@ public class JobPointsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPost("add")]
+    [HttpPost("configurations/add")]
     public async Task<IActionResult> AddJobPointsConfiguration([FromBody] AddJobPointsConfigurationCommand command)
     {
         var result = await mediator.Send(command);

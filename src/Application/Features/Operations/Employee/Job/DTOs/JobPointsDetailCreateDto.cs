@@ -9,7 +9,7 @@ public class JobPointsDetailCreateDto
     public JobPointRuleType Type { get; set; }
 
     [Required]
-    public string Code { get; set; } = default!;
+    public required string Code { get; set; }
 
     public string? Name { get; set; }
 

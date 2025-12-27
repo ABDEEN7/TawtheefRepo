@@ -1,4 +1,5 @@
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
@@ -6,16 +7,16 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 public class JobResponseDto
 {
     public Guid Id { get; set; }
-    public string? TitleAr { get; set; } = string.Empty;
-    public string? TitleEn { get; set; } = string.Empty;
+    public string? TitleAr { get; set; } 
+    public string? TitleEn { get; set; } 
     public int NumberOfVacancies { get; set; }
     public DateTime ClosingDate { get; set; }
-    public string? BenefitsAr { get; set; } = string.Empty;
-    public string? BenefitsEn { get; set; } = string.Empty;
-    public string? OverViewAr { get; set; } = string.Empty;
-    public string? OverViewEn { get; set; } = string.Empty;
-    public string? QualificationDescriptionAr { get; set; } = string.Empty;
-    public string? QualificationDescriptionEn { get; set; } = string.Empty;
+    public string? BenefitsAr { get; set; } 
+    public string? BenefitsEn { get; set; } 
+    public string? OverViewAr { get; set; } 
+    public string? OverViewEn { get; set; } 
+    public string? QualificationDescriptionAr { get; set; }
+    public string? QualificationDescriptionEn { get; set; } 
     public DateTimeOffset? PublishAt { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
     public DateTimeOffset? ModifiedDate { get; set; }
@@ -25,20 +26,21 @@ public class JobResponseDto
     public int MinimumAge { get; set; }
     public int MaximumAge { get; set; }
     public JobPointsMainResponseDto? JobPoints { get; set; }
-    public DropdownOptions? Sector { get; set; } = default!;
-    public DropdownOptions? Management { get; set; } = default!;
-    public DropdownOptions? Department { get; set; } = default!;
-    public DropdownOptions? JobCategory { get; set; } = default!;
-    public DropdownOptions? Gender { get; set; } = default!;
-    public DropdownOptions? WorkLocation { get; set; } = default!;
-    public DropdownOptions? Major { get; set; } = default!;
-    public DropdownOptions? SubMajor { get; set; } = default!;
-    public DropdownOptions? WorkType { get; set; } = default!;
-    public DropdownOptions? JobStatus { get; set; } = default!;
+    public DropdownOptions? Sector { get; set; }
+    public DropdownOptions? Management { get; set; } 
+    public DropdownOptions? Department { get; set; }
+    public DropdownOptions? JobCategory { get; set; } 
+    public DropdownOptions? Gender { get; set; }
+    public DropdownOptions? WorkLocation { get; set; } 
+    public DropdownOptions? Major { get; set; } 
+    public DropdownOptions? SubMajor { get; set; } 
+    public DropdownOptions? WorkType { get; set; } 
+    public DropdownOptions? JobStatus { get; set; }
     public List<JobDegreeResponseDto>? Degrees { get; set; }
     public List<JobConditionResponseDto>? Conditions { get; set; }
     public List<JobSkillResponseDto>? Skills { get; set; }
     public List<JobResponsibilityResponseDto>? Responsibilities { get; set; }
     public List<JobRequiredAttachmentResponseDto>? RequiredAttachments { get; set; }
     public List<JobTabReviewNoteResponseDto>? TabReviewNotes { get; set; }
+    public FileRefDto? ReviewAttachments { get; set; }
 }

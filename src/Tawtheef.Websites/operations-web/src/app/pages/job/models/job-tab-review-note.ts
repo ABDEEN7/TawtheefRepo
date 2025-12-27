@@ -7,5 +7,4 @@ export interface JobTabReviewNote {
   tab: JobTabType;
   note: string;
   tabStatus: JobTabStatus | null;
-  reviewAttachments?: { id?: string; file?: File; fileName?: string }[];
 }
