@@ -90,5 +90,6 @@
   "JOB_APPROVAL.TAB": "التبويب",
   "JOB_APPROVAL.REVIEW_HISTORY": "تاريخ المراجعة",
   "JOB_APPROVAL.RESOLVED": "تم الحل",
-  "JOB_APPROVAL.ATTACHMENTS": "المرفقات"
+  "JOB_APPROVAL.ATTACHMENTS": "المرفقات",
+  "JOB_APPROVAL.NOTE_REQUIRED_FOR_RETURN":"يرجى إضافة ملاحظة"
 }
