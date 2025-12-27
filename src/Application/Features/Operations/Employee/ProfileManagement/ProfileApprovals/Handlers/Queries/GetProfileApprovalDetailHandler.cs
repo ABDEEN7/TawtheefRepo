@@ -22,7 +22,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
         CancellationToken ct)
     {
         
-        var profile = await UserProfileLoader.GetFullProfile(uow, request.UserProfileId, ct: ct);
+        var profile = await UserProfileLoader.GetFullProfileByProfileId(uow, request.UserProfileId, ct: ct);
         if (profile is null)
             return Result.Fail<GetProfileApprovalDetailDto>(ErrorsCodes.UserProfileNotFound);
 

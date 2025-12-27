@@ -24,7 +24,7 @@ public sealed class ProfileCompletenessService(
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return new ProfileStatusDto();
         
-        var profile = await UserProfileLoader.GetFullProfile(uow, userId, ct: ct) ?? new UserProfile {UserId = userId};
+        var profile = await UserProfileLoader.GetFullProfileByUserId(uow, userId, ct: ct) ?? new UserProfile {UserId = userId};
 
         var prefill = await BuildPrefillAsync(user, ct);
         user.Email = (user.Email?.Contains(ConstantQatarPass.PlaceholderEmailDomain) ?? true) ? null : user.Email;

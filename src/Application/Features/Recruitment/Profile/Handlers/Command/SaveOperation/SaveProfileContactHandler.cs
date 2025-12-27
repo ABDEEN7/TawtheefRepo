@@ -21,7 +21,7 @@ public sealed class SaveProfileContactHandler(
 {
     public async Task<IResult<Unit>> Handle(SaveProfileContactCommand cmd, CancellationToken ct)
     {
-        var profile = await UserProfileLoader.GetFullProfile(uow, cmd.UserId, true, ct);
+        var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 

@@ -13,9 +13,30 @@ public static class UserProfileLoader
         return Result.Ok(profile);
     }
 
-    public static async Task<UserProfile?> GetFullProfile(IUnitOfWork uow, Guid userId, bool tracking = false, CancellationToken ct = default) {
-        var repo = uow.GetEntityRepository<UserProfile>();
-        var query = repo.DbSet.AsSplitQuery()
+    public static async Task<UserProfile?> GetFullProfileByUserId(IUnitOfWork uow, 
+        Guid userId,bool tracking = false, CancellationToken ct = default)
+    {
+        var query = GenerateUserProfileQuery(uow);
+        
+        if (!tracking)
+            query = query.AsTracking();
+        
+        var profile =  await query.FirstOrDefaultAsync(p => p.UserId == userId, ct);
+        return profile;
+    }
+    public static async Task<UserProfile?> GetFullProfileByProfileId(IUnitOfWork uow, 
+        Guid profileId,bool tracking = false, CancellationToken ct = default)
+    {
+        var query = GenerateUserProfileQuery(uow);
+        
+        if (!tracking)
+            query = query.AsTracking();
+        
+        var profile =  await query.FirstOrDefaultAsync(p => p.Id == profileId, ct);
+        return profile;
+    }
+    
+    private static IQueryable<UserProfile> GenerateUserProfileQuery(IUnitOfWork uow) => uow.GetEntityRepository<UserProfile>().DbSet.AsSplitQuery()
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
@@ -65,12 +86,4 @@ public static class UserProfileLoader
             .Include(p => p.Languages)!.ThenInclude(l => l.ReadingLevel)
 
             .Include(p => p.AdditionalAttachments)!.ThenInclude(a => a.Attachment).AsQueryable();
-        
-        if (!tracking)
-            query = query.AsTracking();
-        
-        var profile = await query.FirstOrDefaultAsync(p => p.UserId == userId, ct);
-
-        return profile;
-    }
 }

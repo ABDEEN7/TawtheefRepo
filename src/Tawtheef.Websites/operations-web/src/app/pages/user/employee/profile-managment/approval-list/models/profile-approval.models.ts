@@ -1,6 +1,7 @@
 import { GUID } from '../../../../../../shared/types/guid.type';
 import { dropdownOptionsModel } from '../../../../../../shared/models/dropdown-options.model';
 import { ProfileStatusNumber } from '../../../../../../core/enums/lookups.enum';
+import {PaginatedRequest} from '../../../../../../core/models/paginated-request.model';
 
 export enum ReviewStatus {
   NotReviewed = 0,
@@ -150,14 +151,12 @@ export interface ProfileApprovalListItem {
   allowedOperations?: string[];
 }
 
-export interface ProfileApprovalListFilter {
+export interface ProfileApprovalListFilter extends PaginatedRequest {
   search?: string;
   specialization?: string;
   status?: ReviewStatus | '';
   targetEntity?: string;
   candidateType?: string;
-  sort?: 'name' | 'status' | 'entity' | 'date';
-  sortDirection?: 'asc' | 'desc';
 }
 
 export type FinalApprovalAction =

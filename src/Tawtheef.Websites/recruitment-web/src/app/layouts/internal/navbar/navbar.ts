@@ -5,6 +5,7 @@ import {NgIf} from '@angular/common';
 import {routes} from '../../../routes/routes';
 import {AuthService} from '../../../core/auth/auth.service';
 import {TranslatePipe} from '@ngx-translate/core';
+import {AvatarUtils} from '../../../core/utils/avatar-utils';
 
 @Component({
   selector: 'app-nav',
@@ -50,7 +51,7 @@ export class Navbar implements OnInit{
     }
 
     this.userName = this.buildDisplayName(user.fullName);
-    this.userAvatar = user.profilePictureUrl ?? this.buildAvatar(this.userName);
+    this.userAvatar = user.profilePictureUrl ?? AvatarUtils.build(this.userName);
     this.notificationCount = user.notifications ?? 0;
   }
 
@@ -63,15 +64,9 @@ export class Navbar implements OnInit{
       : `${parts[0]} ${parts.at(-1)}`;
   }
 
-  private buildAvatar(userName: string | null): string {
-    return userName
-      ? `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userName)}`
-      : 'https://placehold.co/30';
-  }
-
   private resetUserView(): void {
     this.userName = null;
-    this.userAvatar = 'https://placehold.co/30';
+    this.userAvatar = AvatarUtils.default;
     this.notificationCount = 0;
   }
 

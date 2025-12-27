@@ -10,6 +10,18 @@ public static class QueryableExtensions
 {
     extension<TSource>(IQueryable<TSource> source) where TSource : class
     {
+        public async Task<List<TSource>> ToPaginatedResultAsync(PaginatedRequest paginatedRequest,
+            CancellationToken cancellationToken = default)
+        {
+            var items = await source
+                .SortBy(paginatedRequest.SortBy, paginatedRequest.SortDirection)
+                .Skip((paginatedRequest.PageNumber - 1) * paginatedRequest.PageSize)
+                .Take(paginatedRequest.PageSize)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            return items;
+        }
         public async Task<PaginatedResult<TSource>> ToPaginatedListAsync(PaginatedRequest paginatedRequest,
             CancellationToken cancellationToken = default)
         {

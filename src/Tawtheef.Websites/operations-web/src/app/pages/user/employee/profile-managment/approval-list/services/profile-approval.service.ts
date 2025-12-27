@@ -9,14 +9,15 @@ import {
 import {EndpointsService} from '../../../../../../core/http/endpoints.service';
 import {HttpService} from '../../../../../../core/http/http.service';
 import {FinalizeProfileApprovalRequest} from '../models/profile-approval-finalize.model';
+import {PaginatedResult} from '../../../../../../core/models/paginated-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileApprovalService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
-  getProfiles(filters?: ProfileApprovalListFilter): Observable<ProfileApprovalListItem[]> {
-    return this.http.get<ProfileApprovalListItem[]>(this.endpoints.approvals.list, filters);
+  getProfiles(filters?: ProfileApprovalListFilter): Observable<PaginatedResult<ProfileApprovalListItem>> {
+    return this.http.get<PaginatedResult<ProfileApprovalListItem>>(this.endpoints.approvals.list, filters);
   }
 
   getProfile(profileId: string): Observable<ProfileApprovalDetail> {
