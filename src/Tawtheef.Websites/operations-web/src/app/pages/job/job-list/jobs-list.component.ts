@@ -42,7 +42,7 @@ export class JobListComponent implements OnInit {
   ngOnInit() {
     this.loadJobsWithFilters();
     this.lookupsService.loadJobStatus();
-    this.lookupsService.jobCategories();
+    this.lookupsService.loadJobCategories();
   }
 
   loadJobsWithFilters() {

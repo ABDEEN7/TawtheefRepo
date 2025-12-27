@@ -1,79 +1,79 @@
-<section i18nNamespace="pages/job-list">
-  <header
-    class="py-3"
-    style="background: radial-gradient(1200px 400px at 50% -50%, #ffe9ef, transparent 70%)"
-  >
-    <div class="container d-flex align-items-center justify-content-between">
-      <div>
-        <h4 class="mb-1 text-brand fw-bold">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h4>
-        <div class="small-muted">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</div>
-      </div>
-      <div>
-        <button class="btn btn-brand" (click)="createNewJob()">
-          <i class="fa fa-plus me-2"></i>
-          {{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}
-        </button>
+<section i18nNamespace="pages/job-list" class="job-list-container">
+  <div class="job-list-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <h1 class="main-title">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h1>
+        <div class="header-description">
+          <div class="description-text">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</div>
+          <button class="create-job-btn" (click)="createNewJob()">
+            <i class="fa fa-plus me-2"></i>
+            {{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}
+          </button>
+        </div>
       </div>
     </div>
-  </header>
+  </div>
 
-  <main class="py-4">
-    <div class="container">
-      <!-- Filters -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-3 col-sm-6">
-          <div class="card h-100 border-0 shadow-sm" style="background-color: #fff0f0">
-            <div class="card-body d-flex align-items-center justify-content-between">
-              <div>
-                <h3 class="fw-bold text-danger mb-0">1</h3>
-                <span class="text-muted small">{{ 'STATS_CANCELLED' | translate }}</span>
-              </div>
-              <i class="fa fa-times-circle text-danger fs-3 opacity-50"></i>
-            </div>
-          </div>
+  <div class="stats-section">
+    <div class="stats-header">
+      <div class="stats-title">{{ 'JOB_LIST_STATISTICS' | translate }}</div>
+      <!-- <div class="year-filter">
+        <select class="form-select border-0 bg-transparent">
+          <option>2025/2026</option>
+        </select>
+      </div> -->
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card stat-cancelled">
+        <div class="stat-icon">
+          <i class="fa fa-times-circle text-danger fs-4"></i>
         </div>
-
-        <div class="col-md-3 col-sm-6">
-          <div class="card h-100 border-0 shadow-sm" style="background-color: #fff8e1">
-            <div class="card-body d-flex align-items-center justify-content-between">
-              <div>
-                <h3 class="fw-bold text-warning mb-0">3</h3>
-                <span class="text-muted small">{{ 'STATS_UNDER_REVIEW' | translate }}</span>
-              </div>
-              <i class="fa fa-hourglass-half text-warning fs-3 opacity-50"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6">
-          <div class="card h-100 border-0 shadow-sm" style="background-color: #f0fdf4">
-            <div class="card-body d-flex align-items-center justify-content-between">
-              <div>
-                <h3 class="fw-bold text-success mb-0">3</h3>
-                <span class="text-muted small">{{ 'STATS_ACCEPTED' | translate }}</span>
-              </div>
-              <i class="fa fa-check-circle text-success fs-3 opacity-50"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6">
-          <div class="card h-100 border-0 shadow-sm" style="background-color: #eff6ff">
-            <div class="card-body d-flex align-items-center justify-content-between">
-              <div>
-                <h3 class="fw-bold text-primary mb-0">3</h3>
-                <span class="text-muted small">{{ 'STATS_NEW' | translate }}</span>
-              </div>
-              <i class="fa fa-star text-primary fs-3 opacity-50"></i>
-            </div>
-          </div>
+        <div class="stat-content">
+          <div class="stat-number">1</div>
+          <div class="stat-label">{{ 'STATS_CANCELLED' | translate }}</div>
         </div>
       </div>
-      <div class="card card-lite p-3 mb-3">
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-          <div class="filter-title">{{ 'JOB_LIST_FILTERS_TITLE' | translate }}</div>
-          <div class="small-muted">{{ 'JOB_LIST_FILTERS_HINT' | translate }}</div>
+      
+      <div class="stat-card stat-review">
+        <div class="stat-icon">
+          <i class="fa fa-hourglass-half text-warning fs-4"></i>
         </div>
+        <div class="stat-content">
+          <div class="stat-number">3</div>
+          <div class="stat-label">{{ 'STATS_UNDER_REVIEW' | translate }}</div>
+        </div>
+      </div>
+      
+      <div class="stat-card stat-accepted">
+        <div class="stat-icon">
+          <i class="fa fa-check-circle text-success fs-4"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">3</div>
+          <div class="stat-label">{{ 'STATS_ACCEPTED' | translate }}</div>
+        </div>
+      </div>
+      
+      <div class="stat-card stat-new">
+        <div class="stat-icon">
+          <i class="fa fa-star text-primary fs-4"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">3</div>
+          <div class="stat-label">{{ 'STATS_NEW' | translate }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jobs-list-section">
+    <div class="section-title-container">
+      <h2 class="section-title">{{ 'JOB_LIST_JOB_LIST' | translate }}</h2>
+    </div>
+    
+    <div class="filters-section">
+      <div class="p-3 mb-3">
         <div class="row g-2">
           <div class="col-lg-4 col-md-6">
             <input
@@ -115,86 +115,94 @@
           </div>
         </div>
       </div>
-
-      <!-- Table -->
-      <div class="card card-lite p-2">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
+      
+      <div class="table-container">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th class="table-header-cell">#</th>
+              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_TITLE_AR' | translate }}</th>
+              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_TITLE_EN' | translate }}</th>
+              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_JOB_CATEGORY' | translate }}</th>
+              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_STATUS' | translate }}</th>
+              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_VACANCIES' | translate }}</th>
+              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_DEADLINE' | translate }}</th>
+              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (jobs?.items && jobs?.items?.length) { 
+              @for (job of jobs?.items; track job.id; let i = $index) {
               <tr>
-                <th>#</th>
-                <th>{{ 'JOB_LIST_COLUMNS_TITLE_AR' | translate }}</th>
-                <th>{{ 'JOB_LIST_COLUMNS_TITLE_EN' | translate }}</th>
-                <th>{{ 'JOB_LIST_COLUMNS_JOB_CATEGORY' | translate }}</th>
-                <th>{{ 'JOB_LIST_COLUMNS_VACANCIES' | translate }}</th>
-                <th>{{ 'JOB_LIST_COLUMNS_STATUS' | translate }}</th>
-                <th>{{ 'JOB_LIST_COLUMNS_DEADLINE' | translate }}</th>
-                <th class="text-end">{{ 'JOB_LIST_COLUMNS_ACTIONS' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @if (jobs?.items && jobs?.items?.length ) { @for (job of jobs?.items; track job.id;
-              let i = $index) {
-              <tr>
-                <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
-                <td class="fw-bold">{{ job.titleAr }}</td>
-                <td class="fw-bold">{{ job.titleEn }}</td>
-                <td>
-                  <span class="badge" [ngClass]="getJobCategoryBadgeClass(job.jobCategory.name)">
-                    {{ job.jobCategory.name }}
-                  </span>
+                <td class="table-body-cell table-body-cell-alt" style="width: 106px">
+                  {{ (currentPage() - 1) * itemsPerPage + i + 1 }}
                 </td>
-                <td>
-                  <span class="badge bg-light text-dark">
-                    {{ job.numberOfVacancies }}
-                  </span>
+                
+                <td class="table-body-cell" style="width: 250px">
+                  <span class="fw-bold">{{ job.titleAr }}</span>
                 </td>
-                <td>
-                  <span class="badge" [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)">
+                
+                <td class="table-body-cell table-body-cell-alt" style="width: 164px">
+                  <span class="fw-bold">{{ job.titleEn }}</span>
+                </td>
+                
+                <td class="table-body-cell" style="width: 164px">
+                  <span class="text-muted">{{ job.jobCategory.name }}</span>
+                </td>
+                
+                <td class="table-body-cell table-body-cell-alt" style="width: 164px">
+                  <span [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)" class="status-badge">
                     {{ job.jobStatus.name }}
                   </span>
                 </td>
-                <td>
-                  <small class="text-muted">
-                    {{ job.closingDate | date : 'yyyy/MM/dd' }}
-                  </small>
+                
+                <td class="table-body-cell" style="width: 200px">
+                  <span class="text-muted">{{ job.numberOfVacancies }}</span>
                 </td>
-                <td class="text-end">
-                  <div class="btn-group" role="group">
+                
+                <td class="table-body-cell table-body-cell-alt" style="width: 200px">
+                  <span class="text-muted">{{ job.closingDate | date : 'yyyy/MM/dd' }}</span>
+                </td>
+                
+                <td class="table-body-cell">
+                  <div class="action-buttons">
                     @if (job.jobStatus.backendName === jobStatus.Approved) {
                     <button
                       type="button"
-                      class="btn btn-sm btn-outline-secondary me-1"
+                      class="action-btn btn-outline-brand btn-small me-1"
                       (click)="openPointsModal(job)"
                       [title]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate"
                     >
                       <i class="fa fa-gear"></i>
                     </button>
-                    } @if (job.jobStatus.backendName === jobStatus.Draft ||
-                    job.jobStatus.backendName === jobStatus.NeedUpdate) {
+                    } 
+                    
+                    @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate) {
                     <button
                       type="button"
-                      class="btn btn-sm btn-outline-brand me-1"
+                      class="action-btn btn-brand btn-medium"
                       (click)="editJob(job)"
                       [title]="'JOB_LIST_BUTTONS_EDIT' | translate"
                     >
                       <i class="fa fa-pen-to-square"></i>
                     </button>
-                    } @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName
-                    !== jobStatus.PendingApproval && job.jobStatus.backendName !==
-                    jobStatus.NeedUpdate) {
+                    } 
+                    
+                    @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !== jobStatus.PendingApproval && job.jobStatus.backendName !== jobStatus.NeedUpdate) {
                     <button
                       type="button"
-                      class="btn btn-sm btn-outline-gray me-1"
+                      class="action-btn btn-outline-brand btn-medium"
                       (click)="viewJob(job)"
                       [title]="'JOB_LIST_BUTTONS_VIEW' | translate"
                     >
                       <i class="fa fa-eye"></i>
                     </button>
-                    } @if(job.jobStatus.backendName !== jobStatus.Approved){
+                    }
+                    
+                    @if(job.jobStatus.backendName !== jobStatus.Approved) {
                     <div class="dropdown d-inline-block">
                       <button
-                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        class="action-btn btn-outline-brand btn-small dropdown-toggle"
                         type="button"
                         data-bs-toggle="dropdown"
                         [title]="'JOB_LIST_BUTTONS_MORE_ACTIONS' | translate"
@@ -215,24 +223,34 @@
                             {{ 'JOB_LIST_BUTTONS_REJECT' | translate }}
                           </button>
                         </li>
-                        } @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
+                        } 
+                        
+                        @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
                         <li>
                           <button class="dropdown-item" (click)="publishJob(job)">
                             <i class="fa fa-upload me-2"></i>
                             {{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}
                           </button>
                         </li>
-                        } @if (job.jobStatus.backendName === jobStatus.Published) {
+                        } 
+                        
+                        @if (job.jobStatus.backendName === jobStatus.Published) {
                         <li>
                           <button class="dropdown-item" (click)="closeJob(job)">
                             <i class="fa fa-lock me-2"></i>
                             {{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}
                           </button>
                         </li>
+                        <li>
+                          <button class="dropdown-item" (click)="cancelJob(job)">
+                            <i class="fa fa-times me-2"></i>
+                            {{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}
+                          </button>
+                        </li>
                         }
+                        
+                        @if(job.jobStatus.backendName !== jobStatus.Published && job.jobStatus.backendName !== jobStatus.Approved) {
                         <li><hr class="dropdown-divider" /></li>
-                        @if(job.jobStatus.backendName !== jobStatus.Published &&
-                        job.jobStatus.backendName !== jobStatus.Approved) {
                         <li>
                           <button class="dropdown-item text-danger" (click)="deleteJob(job)">
                             <i class="fa fa-trash me-2"></i>
@@ -246,23 +264,27 @@
                   </div>
                 </td>
               </tr>
-              } } @else {
+              }
+            } 
+            @else {
               <tr>
-                <td colspan="8" class="text-center py-5">
+                <td colspan="8" class="no-jobs-found">
                   <i class="fa fa-briefcase fa-3x text-muted mb-3"></i>
-                  <p class="text-muted">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</p>
-                  <button class="btn btn-brand" (click)="createNewJob()">
+                  <p class="no-jobs-text">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</p>
+                  <button class="action-btn btn-brand btn-medium" (click)="createNewJob()">
                     <i class="fa fa-plus me-2"></i>
                     {{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}
                   </button>
                 </td>
               </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-        @if (paginationMetadata && paginationMetadata.totalCount > 0) {
+  @if (paginationMetadata && paginationMetadata.totalCount > 0) {
         <div class="p-3 border-top">
           <app-pagination
             [currentPage]="currentPage()"
@@ -273,7 +295,4 @@
           </app-pagination>
         </div>
         }
-      </div>
-    </div>
-  </main>
 </section>
