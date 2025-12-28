@@ -17,7 +17,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
 {
     #region Lookups
     [HttpGet("lookups/job-categories")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobInvitationsView)]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
     public async Task<IActionResult> GetJobCategories()
     {
         var result = await mediator.Send(new GetJobCategoriesQuery());
@@ -25,7 +25,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/departments")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobInvitationsView)]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
     public async Task<IActionResult> GetDepartments()
     {
         var result = await mediator.Send(new GetDepartmentsQuery());
@@ -33,7 +33,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/job-statuses")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobInvitationsView)]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
     public async Task<IActionResult> GetJobStatusesQuery()
     {
         var result = await mediator.Send(new GetJobStatusesQuery());
@@ -43,7 +43,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     
     #region Retrive Job Invitation Data
     [HttpGet("get-invitations-summary")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobInvitationsView)]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
     public async Task<IActionResult> GetInvitationsSummary([FromQuery] GetJobInvitationSummaryQuery query)
     {
         var result = await mediator.Send(query);
