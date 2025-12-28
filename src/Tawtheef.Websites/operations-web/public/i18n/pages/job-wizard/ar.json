@@ -96,6 +96,9 @@
   "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "أدخل عدد الشواغر",
   "JOB_WIZARD.STEPS.BASICS.DEADLINE": "تاريخ الإغلاق",
 
+   "JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD_TITLE": "إلغاء عملية إستكمال المعلومات للوظيفة",
+  "JOB_BASIC_MODAL.CANCEL_CONFIRM_TITLE": "إلغاء",
+
   "JOB_WIZARD.VALIDATION.SECTOR_REQUIRED": "يجب اختيار القطاع أولاً",
   "JOB_WIZARD.VALIDATION.MANAGEMENT_REQUIRED": "يجب اختيار الإدارة أولاً",
   "JOB_WIZARD.VALIDATION.MAJOR_REQUIRED": "يجب اختيار التخصص الرئيسي أولاً",

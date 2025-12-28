@@ -31,11 +31,11 @@ import { ReviewStepComponent } from '../wizard-steps/review-step.component/revie
 import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic-modal.component';
 import { routes } from '../../../../routes/routes';
 import { JobTabType } from '../../enums/job-tab-type';
-import { JobTabReviewNoteResponse } from '../../models/job-tab-review-note-response';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { JobReviewResponse } from '../../models/job-review-response';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { JobStatus } from '../../../../core/enums/lookups.enum';
+import { DialogHelperService } from '../../../../core/services/dialog-helper.service';
 
 @Component({
   selector: 'app-wizard',
@@ -54,7 +54,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   private translateService = inject(TranslateService);
   lookupsService = inject(JobLookupService);
   protected fileUtils = inject(FileUtilsService);
-
+  private dialogHelperService = inject(DialogHelperService);
   private destroy$ = new Subject<void>();
   private retryCount = 0;
   private maxRetries = 20;
@@ -388,11 +388,19 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   cancelWizard(): void {
-    const confirmMessage = this.translateService.instant('JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD');
-    if (confirm(confirmMessage)) {
-      this.router.navigate([routes.employee.JobList]);
-    }
-  }
+  const ref = this.dialogHelperService.openConfirmDialog({
+    type: 'submit',
+    title: 'JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD_TITLE',
+    description: 'JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD',
+    cancelText: 'common.cancel',
+    confirmText: 'common.confirm',
+  });
+
+  ref?.onClose.subscribe((result) => {
+    if (!result) return;
+    this.router.navigate([routes.employee.JobList]);
+  });
+}
 
   private getTabByStepIndex(stepIndex: number): JobTabType | undefined {
     return (Object.keys(this.tabToStepIndex) as JobTabType[]).find(

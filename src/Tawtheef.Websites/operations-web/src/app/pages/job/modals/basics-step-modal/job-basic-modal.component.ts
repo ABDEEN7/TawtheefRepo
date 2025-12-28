@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { JobService } from '../../services/job.service';
 import { JobLookupService } from '../../services/job-lookup.service';
@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { routes } from '../../../../routes/routes';
 import { EndpointsService } from '../../../../core/http/endpoints.service';
+import { DialogHelperService } from '../../../../core/services/dialog-helper.service';
 
 @Component({
   selector: 'app-job-basic-modal',
@@ -25,6 +26,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   public ref = inject(DynamicDialogRef);
   public config = inject(DynamicDialogConfig);
+  private dialogHelperService = inject(DialogHelperService);
   protected endpoints = inject(EndpointsService);
 
   
@@ -273,14 +275,23 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   }
 
   cancel(): void {
-    if (this.isCreateMode && this.showInWizard) {
-      if (confirm(this.translationService.instant('JOB_BASIC_MODAL.CANCEL_CONFIRM'))) {
-        this.ref.close({ success: false });
-      }
-    } else {
+  if (this.isCreateMode && this.showInWizard) {
+    const ref = this.dialogHelperService.openConfirmDialog({
+      type: 'submit',
+      title: 'JOB_BASIC_MODAL.CANCEL_CONFIRM_TITLE',
+      description: 'JOB_BASIC_MODAL.CANCEL_CONFIRM',
+      cancelText: 'common.cancel',
+      confirmText: 'common.confirm',
+    });
+
+    ref?.onClose.subscribe((result) => {
+      if (!result) return;
       this.ref.close({ success: false });
-    }
+    });
+  } else {
+    this.ref.close({ success: false });
   }
+}
 
   private markAllAsTouched(): void {
     Object.values(this.form.controls).forEach(control => {
