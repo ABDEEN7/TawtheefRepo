@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
@@ -13,6 +13,8 @@ import { GUID } from '../../../../../shared/types/guid.type';
   styleUrls: ['./review-step.component.scss']
 })
 export class ReviewStepComponent extends WizardStepComponent implements OnInit {
+  @Output() editStep = new EventEmitter<number>(); 
+
   protected jobService = inject(JobService);
   protected lookupService = inject(JobLookupService);
   private fb = inject(FormBuilder);
@@ -39,8 +41,8 @@ export class ReviewStepComponent extends WizardStepComponent implements OnInit {
     return true;
   }
 
-  goToStep(stepNumber: number): void {
- 
+   goToStep(stepNumber: number): void {
+    this.editStep.emit(stepNumber);
   }
 
   getSkillName(skillId: GUID): string {

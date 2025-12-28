@@ -1,0 +1,109 @@
+<div class="attachment-modal">
+  <div class="modal-header">
+    <h3>{{ 'JOB_APPROVAL.REVIEW_ATTACHMENTS' | translate }}</h3>
+  </div>
+
+  <div class="modal-content">
+    <form [formGroup]="attachmentForm" class="attachment-form">
+      <div class="form-group">
+        <label for="title">{{ 'JOB_APPROVAL.ATTACHMENTS.TITLE' | translate }} *</label>
+        <input
+          type="text"
+          id="title"
+          formControlName="title"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('title')"
+          placeholder="{{ 'JOB_APPROVAL.ATTACHMENTS.TITLE_PLACEHOLDER' | translate }}"
+        />
+        @if (isFieldInvalid('title')) {
+          <div class="invalid-feedback">
+            {{ 'JOB_APPROVAL.ATTACHMENTS.TITLE_REQUIRED' | translate }}
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="file">{{ 'JOB_APPROVAL.ATTACHMENTS.UPLOAD_FILE' | translate }} *</label>
+        <div class="file-upload-container">
+          <input
+            type="file"
+            id="file"
+            (change)="onFileChange($event)"
+            class="file-input"
+            [class.is-invalid]="isFieldInvalid('file')"
+          />
+          <label for="file" class="file-upload-label">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>{{ 'JOB_APPROVAL.ATTACHMENTS.CHOOSE_FILE' | translate }}</span>
+          </label>
+          @if (fileName) {
+            <div class="file-name">{{ fileName }}</div>
+          }
+        </div>
+        @if (isFieldInvalid('file')) {
+          <div class="invalid-feedback">
+            {{ 'JOB_APPROVAL.ATTACHMENTS.FILE_REQUIRED' | translate }}
+          </div>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="btn-add"
+        (click)="addAttachment()"
+      >
+        <i class="fa-solid fa-plus"></i>
+        {{ 'JOB_APPROVAL.ADD_ATTACHMENT' | translate }}
+      </button>
+    </form>
+
+    <div class="attachments-list">
+      <h4>{{ 'JOB_APPROVAL.ATTACHMENTS_LIST' | translate }}</h4>
+      @if (attachments.length === 0) {
+        <div class="empty-state">
+          <i class="fa-solid fa-inbox"></i>
+          <p>{{ 'JOB_APPROVAL.NO_ATTACHMENTS' | translate }}</p>
+        </div>
+      } @else {
+        <div class="attachments-container">
+          @for (attachment of attachments; track $index; let i = $index) {
+            <div class="attachment-item">
+              <div class="attachment-info">
+                <i class="fa-solid fa-file"></i>
+                <span>{{ attachment.fileName }}</span>
+              </div>
+              <div class="attachment-actions">
+                <button
+                  type="button"
+                  class="btn-preview"
+                  (click)="previewAttachment(attachment)"
+                  [disabled]="!attachment.file"
+                  title="{{ 'COMMON.PREVIEW' | translate }}"
+                >
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn-delete"
+                  (click)="removeAttachment(i)"
+                  title="{{ 'COMMON.DELETE' | translate }}"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn-cancel" (click)="cancel()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button type="button" class="btn-save" (click)="save()">
+      {{ 'common.save' | translate }}
+    </button>
+  </div>
+</div>

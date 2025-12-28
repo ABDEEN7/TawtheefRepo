@@ -2,6 +2,7 @@
 import { ApiConfigService } from '../services/api-config.service';
 import { CaseUtils } from '../utils/case-utils';
 import {ReviewStatus} from '../../pages/user/employee/profile-managment/approval-list/models/profile-approval.models';
+import { GUID } from '../../shared/types/guid.type';
 
 @Injectable({ providedIn: 'root' })
 export class EndpointsService {
@@ -46,9 +47,13 @@ export class EndpointsService {
   job = {
     job : this.getFullUrl('/job'),
     jobApproval : this.getFullUrl('/jobApproval'),
+    getLatestReview : (jobId : GUID) => this.getFullUrl(`/jobApproval/${jobId}/latest`),
     jobPoints : this.getFullUrl('/jobPoints'),
+    getJobPoints :(jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}`),
+    getJobPointsConfig :(jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}/config`),
+    approveJobPoints : (jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}/approve`),
     searchJob : this.getFullUrl('/job/search'),
-    CountByStatus : this.getFullUrl('/job/stats/count'),
+    CountByStatus : (jobStatusId : GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
     lookups: {
       sectors: this.getFullUrl('/job/lookups/sectors'),
       skills: this.getFullUrl('/job/lookups/skills'),

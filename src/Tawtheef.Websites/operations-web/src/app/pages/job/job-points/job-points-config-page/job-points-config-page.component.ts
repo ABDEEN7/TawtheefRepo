@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GUID } from '../../../../shared/types/guid.type';
 import { GuidUtils } from '../../../../core/utils/guid-utils';
 import { JobService } from '../../services/job.service';
@@ -13,6 +13,11 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { TranslateService } from '@ngx-translate/core';
 import { JobPointsDetail } from '../../models/job-points-details.model';
 import { JobPointRuleTypeEnum } from '../../enums/job-point-rule-type';
+import { Subject, takeUntil } from 'rxjs';
+import { DialogHelperService } from '../../../../core/services/dialog-helper.service';
+import { JobStatus } from '../../../../core/enums/lookups.enum';
+import { JobLookupService } from '../../services/job-lookup.service';
+import { routes } from '../../../../routes/routes';
 
 @Component({
   selector: 'app-job-points-config-page',
@@ -20,7 +25,7 @@ import { JobPointRuleTypeEnum } from '../../enums/job-point-rule-type';
   templateUrl: './job-points-config-page.component.html',
   styleUrls: ['./job-points-config-page.component.scss'],
 })
-export class JobPointsConfigPageComponent implements OnInit {
+export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private pointsCalculationService = inject(JobPointsCalculationService);
@@ -30,11 +35,20 @@ export class JobPointsConfigPageComponent implements OnInit {
   private mapper = inject(JobPointsMapperService);
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslateService);
+  private dialogHelperService = inject(DialogHelperService);
+  private lookupsService = inject(JobLookupService)
+  private router = inject(Router);
+
+  private destroy$ = new Subject<void>();
 
   jobId: GUID = GuidUtils.emptyGuid;
   job: JobResponse | null = null;
   jobPoints: JobPointsResponse | null = null;
   mainKeys: { key: string; totalPercent: number }[] = [];
+
+  systemMaxPoints: number = 0;
+  isFinalApprovalAvailable: boolean = false;
+  isLoading: boolean = false;
 
   form!: FormGroup;
   isEditMode = false;
@@ -49,20 +63,25 @@ export class JobPointsConfigPageComponent implements OnInit {
     if (paramId) {
       this.jobId = paramId as GUID;
       this.loadJob();
-      this.loadJobPointsConfig();
     }
+    this.lookupsService.loadJobStatus().subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initForm(): void {
     this.form = this.fb.group({
       main: this.fb.group({
-        applicantCategory: [0],
-        education: [0],
-        experience: [0],
-        training: [0],
-        skills: [0],
-        languages: [0],
-        certificates: [0],
+        applicantCategory: [0, [Validators.min(0)]],
+        education: [0, [Validators.min(0)]],
+        experience: [0, [Validators.min(0)]],
+        training: [0, [Validators.min(0)]],
+        skills: [0, [Validators.min(0)]],
+        languages: [0, [Validators.min(0)]],
+        certificates: [0, [Validators.min(0)]],
         total: [{ value: 0, disabled: true }],
       }),
       details: this.fb.group({
@@ -92,52 +111,91 @@ export class JobPointsConfigPageComponent implements OnInit {
   private loadJob(): void {
     if (!this.jobId || this.jobId === GuidUtils.emptyGuid) return;
 
-    this.jobService.getById(this.jobId).subscribe((job) => {
-      this.job = job;
-      if (job.jobPoints.id) {
-        this.jobPointsService.getJobPoints(this.jobId).subscribe((response) => {
-          this.jobPoints = response;
-          this.mapper.mapResponseToForm(response, this.mainFormGroup, this.detailsFormGroup);
-          this.isEditMode = true;
-          this.cdr.detectChanges();
-        });
-      }
-    });
+    this.isLoading = true;
+    this.jobService
+      .getById(this.jobId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (job) => {
+          this.job = job;
+          this.loadJobPointsConfig();
+        },
+      });
   }
 
   private loadJobPointsConfig(): void {
-    this.jobPointsService.getJobPointsConfiguration(this.jobId).subscribe((config) => {
-      this.mainKeys = [
-        { key: 'applicantCategory', totalPercent: config.applicantCategoryMaxPoints },
-        { key: 'education', totalPercent: config.educationMaxPoints },
-        { key: 'experience', totalPercent: config.experienceMaxPoints },
-        { key: 'training', totalPercent: config.trainingMaxPoints },
-        { key: 'skills', totalPercent: config.skillsMaxPoints },
-        { key: 'languages', totalPercent: config.languagesMaxPoints },
-        { key: 'certificates', totalPercent: config.certificatesMaxPoints },
-      ];
-      this.cdr.detectChanges();
-    });
+    this.jobPointsService
+      .getJobPointsConfiguration(this.jobId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (config) => {
+          this.systemMaxPoints = config.maxPoints;
+          this.mainKeys = [
+            { key: 'applicantCategory', totalPercent: config.applicantCategoryMaxPoints },
+            { key: 'education', totalPercent: config.educationMaxPoints },
+            { key: 'experience', totalPercent: config.experienceMaxPoints },
+            { key: 'training', totalPercent: config.trainingMaxPoints },
+            { key: 'skills', totalPercent: config.skillsMaxPoints },
+            { key: 'languages', totalPercent: config.languagesMaxPoints },
+            { key: 'certificates', totalPercent: config.certificatesMaxPoints },
+          ];
+
+          if (this.job?.jobPoints?.id) {
+            this.loadJobPoints();
+          } else {
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          }
+        },
+      });
+  }
+
+  private loadJobPoints(): void {
+    this.jobPointsService
+      .getJobPoints(this.jobId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.jobPoints = response;
+          this.mapper.mapResponseToForm(response, this.mainFormGroup, this.detailsFormGroup);
+          this.isEditMode = true;
+          this.isFinalApprovalAvailable = !response.isApproved && this.areAllCategoriesValid();
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   private handleMainTotal(): void {
-    this.mainFormGroup.valueChanges.subscribe((main) => {
+    this.mainFormGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((main) => {
       const total = this.mainKeys.reduce((sum, k) => sum + (main[k.key] || 0), 0);
       this.mainFormGroup.get('total')?.setValue(total, { emitEvent: false });
+
+      this.updateFinalApprovalAvailability();
     });
   }
 
   private handleExperienceTotal(): void {
     const exp = this.detailsFormGroup.get('experience') as FormGroup;
-    exp.valueChanges.subscribe((v) => {
+    exp.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((v) => {
       const total = this.pointsCalculationService.experienceTotal(exp);
       exp.get('total')?.setValue(total, { emitEvent: false });
+      this.updateFinalApprovalAvailability();
     });
   }
 
+  private updateFinalApprovalAvailability(): void {
+    const mainTotal = this.mainFormGroup.get('total')?.value || 0;
+    const isMainValid = mainTotal === this.systemMaxPoints;
+    const areDetailsValid = this.areAllCategoriesValid();
+
+    this.isFinalApprovalAvailable =
+      isMainValid && areDetailsValid && (!this.jobPoints || !this.jobPoints.isApproved);
+  }
+
   canAccessDetails(): boolean {
-    const max = this.mainKeys.reduce((s, k) => s + k.totalPercent, 0);
-    return this.mainFormGroup.get('total')?.value === max;
+    const mainTotal = this.mainFormGroup.get('total')?.value || 0;
+    return mainTotal === this.systemMaxPoints;
   }
 
   areAllCategoriesValid(): boolean {
@@ -156,6 +214,16 @@ export class JobPointsConfigPageComponent implements OnInit {
       return;
     }
 
+    const mainTotal = this.mainFormGroup.get('total')?.value || 0;
+    if (mainTotal !== this.systemMaxPoints) {
+      this.notificationService.error(
+        this.translationService.instant('JOB_POINTS.VALIDATION.TOTAL_MUST_EQUAL_MAX', {
+          required: this.systemMaxPoints,
+        })
+      );
+      return;
+    }
+
     const isUpdate = this.jobPoints && this.jobPoints.id !== GuidUtils.emptyGuid;
     const payload = {
       request: {
@@ -163,23 +231,117 @@ export class JobPointsConfigPageComponent implements OnInit {
         jobId: this.jobId,
         ...this.getMainPoints(),
         details: this.getDetails(),
+        isApproved: false,
       },
     };
 
-    this.jobPointsService.saveJobPoints(payload).subscribe((responseId) => {
-      if (!isUpdate) {
-        this.jobPoints = {
-          id: responseId,
-          jobId: this.jobId,
-          ...this.getMainPoints(),
-          details: [],
-        };
-      }
-      this.notificationService.success(this.translationService.instant('JOB_POINTS.SAVE.SUCCESS'));
-    });
+    this.jobPointsService
+      .saveJobPoints(payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (responseId) => {
+          if (!isUpdate) {
+            this.jobPoints = {
+              id: responseId,
+              jobId: this.jobId,
+              ...this.getMainPoints(),
+              details: [],
+              isApproved: false,
+            };
+          } else {
+            this.jobPoints!.isApproved = false;
+          }
+
+          this.notificationService.success(
+            this.translationService.instant('JOB_POINTS.SAVE.SUCCESS')
+          );
+          this.updateFinalApprovalAvailability();
+          this.cdr.detectChanges();
+        },
+      });
   }
 
-  private getMainPoints(): Omit<JobPointsResponse, 'id' | 'jobId' | 'details'> {
+  approvePoints(): void {
+  if (!this.isFinalApprovalAvailable) {
+    this.notificationService.warn(
+      this.translationService.instant('JOB_POINTS.VALIDATION.CANNOT_APPROVE')
+    );
+    return;
+  }
+
+  const ref = this.dialogHelperService.openConfirmDialog({
+    type: 'submit',
+    title: 'JOB_POINTS.APPROVE.CONFIRMATION_TITLE',
+    description: 'JOB_POINTS.APPROVE.CONFIRMATION_DESCRIPTION',
+    cancelText: 'common.cancel',
+    confirmText: 'common.confirm',
+  });
+
+  ref?.onClose
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((result) => {
+      if (!result) return;
+
+      this.isLoading = true;
+
+      this.jobPointsService
+        .approveJobPoints(this.jobId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (resp) => {
+            if (!resp) {
+              this.isLoading = false;
+              this.cdr.detectChanges();
+              return;
+            }
+
+            if (this.jobPoints) {
+              this.jobPoints.isApproved = true;
+            }
+
+            const statusId =
+              this.lookupsService.getStatusIdByEnum(
+                JobStatus.ReadyForAnnouncement
+              );
+
+            if (!statusId) {
+              this.isLoading = false;
+              this.cdr.detectChanges();
+              return;
+            }
+
+            this.jobService
+              .changeStatus(this.jobId, statusId)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: () => {
+                  this.notificationService.success(
+                    this.translationService.instant(
+                      'JOB_POINTS.APPROVE.SUCCESS'
+                    )
+                  );
+
+                  this.isFinalApprovalAvailable = false;
+                  this.isLoading = false;
+
+                  this.router.navigate([routes.employee.JobList]);
+                  this.cdr.detectChanges();
+                },
+                error: () => {
+                  this.isLoading = false;
+                  this.cdr.detectChanges();
+                },
+              });
+          },
+          error: () => {
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          },
+        });
+    });
+}
+
+  private getMainPoints(): Omit<JobPointsResponse, 'id' | 'jobId' | 'details' | 'isApproved'> {
     const main = this.mainFormGroup.getRawValue();
     return {
       applicantCategory: main.applicantCategory || 0,
@@ -204,19 +366,6 @@ export class JobPointsConfigPageComponent implements OnInit {
     this.pushCategory(result, d.certificates, JobPointRuleTypeEnum.Certificate);
     this.pushCategory(result, d.experience, JobPointRuleTypeEnum.Experience);
     this.pushCategory(result, d.languages, JobPointRuleTypeEnum.Language);
-
-    for (const section of this.pointsCalculationService.sections) {
-      const group = this.detailsFormGroup.get(section) as FormGroup;
-
-      let sectionSum: number;
-      if (section === 'experience') {
-        sectionSum = this.pointsCalculationService.experienceTotal(group);
-      } else if (section === 'languages') {
-        sectionSum = this.pointsCalculationService.sumLanguagesCategory(group);
-      } else {
-        sectionSum = this.pointsCalculationService.sumCategory(group);
-      }
-    }
 
     return result;
   }

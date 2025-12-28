@@ -67,6 +67,8 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.JobResponsibilities)
             .Include(j => j.JobRequiredAttachments)
             .Include(j => j.Invitations)
+            .Include(j => j.TabReviewNotes)
+            .Include(j => j.ReviewAttachment)
             .FirstOrDefaultAsync(j => j.Id == id);
 
         return job is null

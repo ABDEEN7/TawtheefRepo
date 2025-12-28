@@ -42,6 +42,8 @@ import { JobPointsMainElementsComponent } from './job-points/job-points-main-ele
 import { JobPointsTabComponent } from './job-points/job-points-points-tab/job-points-tab.component';
 import { TabsModule } from 'primeng/tabs';
 import { FilterByKeyPrefixPipe } from './pipes/filter-by-key-prefix.pipe';
+import { ProgressSpinner } from "primeng/progressspinner";
+import { RemoteSelectComponent } from '../../shared/components/remote-select/remote-select';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -86,10 +88,12 @@ import { FilterByKeyPrefixPipe } from './pipes/filter-by-key-prefix.pipe';
     InputNumber,
     Scroller,
     Toast,
-    ConfirmDialog, 
-    FaDirArrowDirective, 
-    TabsModule, 
-    ],
+    ConfirmDialog,
+    FaDirArrowDirective,
+    TabsModule,
+    ProgressSpinner,
+    RemoteSelectComponent
+],
   exports: [
     JobDetailsComponent,
     JobListComponent,

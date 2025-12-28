@@ -31,6 +31,9 @@ public class JobPointConfiguration : EventEntity
     [Required]
     public int LanguagesMaxPoints { get; set; }
 
+    [Required]
+    public int MaxPoints { get; set; }
+
     public bool IsValid()
     {
         int total = ApplicantCategoryMaxPoints +
@@ -41,6 +44,6 @@ public class JobPointConfiguration : EventEntity
                     SkillsMaxPoints +
                     LanguagesMaxPoints;
 
-        return total == 1000;
+        return total == MaxPoints;
     }
 }

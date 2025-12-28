@@ -1,4 +1,5 @@
 using Mapster;
+using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -38,15 +39,23 @@ public class JobProfile : IRegister
             .Map(dest => dest.Skills, src => src.JobSkills)
             .Map(dest => dest.Responsibilities, src => src.JobResponsibilities)
             .Map(dest => dest.RequiredAttachments, src => src.JobRequiredAttachments)
-            .Map(dest => dest.TabReviewNotes, src => src.TabReviewNotes);
+            .Map(dest => dest.TabReviewNotes, src => src.TabReviewNotes)
+            .Map(dest => dest.ReviewAttachments, src => src.ReviewAttachment);
 
         config.NewConfig<JobDegree, JobDegreeResponseDto>();
         config.NewConfig<JobCondition, JobConditionResponseDto>();
         config.NewConfig<JobSkill, JobSkillResponseDto>();
         config.NewConfig<JobResponsibility, JobResponsibilityResponseDto>();
         config.NewConfig<JobRequiredAttachment, JobRequiredAttachmentResponseDto>();
-        config.NewConfig<JobTabReviewNote, JobTabReviewNoteResponseDto>()
-            .Map(dest => dest.Attachments, src => src.Attachments.Where(a=>a.Attachment != null).Select(a=>a.Attachment!));
+        config.NewConfig<JobTabReviewNote, JobTabReviewNoteResponseDto>();
+        config.NewConfig<JobTabReviewNote, JobTabReviewUpsertDto>()
+            .Map(dest => dest.Status, src => src.TabStatus);
+        config.NewConfig<JobTabReviewUpsertDto, JobTabReviewNote>()
+            .Map(dest => dest.TabStatus, src => src.Status);
+        config.NewConfig<JobReviewAttachment, FileRefDto>()
+            .Map(dest => dest.ResourceId, src => src.AttachmentId)
+            .Map(dest => dest.FileName, src => src.FileName)
+            .Map(dest => dest.Url, src => src.Attachment != null ? src.Attachment.Url : string.Empty);
     }
 
 }

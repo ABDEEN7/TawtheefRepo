@@ -24,10 +24,5 @@ public class JobTabReviewNoteConfiguration : IEntityTypeConfiguration<JobTabRevi
             .WithMany(j => j.TabReviewNotes)
             .HasForeignKey(x => x.JobId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasMany(x => x.Attachments)
-             .WithOne(x => x.JobTabReviewNote)
-             .HasForeignKey(x => x.JobTabReviewNoteId)
-             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -119,7 +119,7 @@
                     
                     @if (!isFieldValid(i, 'titleAr')) {
                       <div class="invalid-feedback d-block">
-                        {{ 'JOB_WIZARD.VALIDATION.REQUIRED_FIELD' | translate }}
+                        {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
                       </div>
                     }
                   </div>
@@ -132,7 +132,13 @@
                       type="text" 
                       formControlName="titleEn" 
                       class="form-control custom-input" 
-                      dir="ltr">
+                      dir="ltr"
+                      [class.is-invalid]="!isFieldValid(i, 'titleEn')">
+                       @if (!isFieldValid(i, 'titleEn')) {
+                      <div class="invalid-feedback d-block">
+                        {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                      </div>
+                    }
                   </div>
 
                   <div class="col-12">
@@ -167,7 +173,7 @@
 
     </div>
   </form>
-  @if (note?.tabStatus === jobService.jobTabStatus.Returned) {
+</div>
+@if (note?.tabStatus === jobService.jobTabStatus.Returned) {
     <app-review-note [note]="note"></app-review-note>
   }
-</div>

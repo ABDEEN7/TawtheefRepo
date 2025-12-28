@@ -11,8 +11,8 @@ public static class LocalPathBuilder
 
     #region Operation
     
-    public static string JobReview( Guid jobId, string tab, Guid fileId, string ext, string hash, bool isPublic)
-        => Key( Scope(isPublic), "operation", "j", jobId.ToString(), "reviews", tab, FileName(fileId, hash, ext));
+    public static string JobReview( Guid jobId, Guid fileId, string ext, string hash, bool isPublic)
+        => Key( Scope(isPublic), "operation", "j", jobId.ToString(), "reviews", FileName(fileId, hash, ext));
 
     #endregion
 

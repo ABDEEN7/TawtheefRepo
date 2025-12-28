@@ -13,6 +13,6 @@ public class JobPointsMainResponseDto
     public int Skills { get; set; }
     public int Languages { get; set; }
     public int Total { get; set; }
-
-    public List<JobPointsDetailResponseDto> Details { get; set; } = new();
+    public bool IsApproved { get; set; }
+    public List<JobPointsDetailResponseDto> Details { get; set; } = [];
 }

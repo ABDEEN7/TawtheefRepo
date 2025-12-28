@@ -17,7 +17,6 @@ public class JobPointsRepository(IGenericRepository<JobPointsMain> repository, I
     public async Task<IResult<JobPointsMain>> GetByJobIdAsync(Guid jobId)
     {
         var jobPoints = await Repository.DbSet
-            .AsNoTracking()
             .Include(p => p.Details) 
             .FirstOrDefaultAsync(p => p.JobId == jobId);
 

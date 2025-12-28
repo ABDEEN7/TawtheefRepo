@@ -13,6 +13,6 @@ export interface JobPointsResponse {
   skills: number;
   languages: number;
   total: number;
-
+  isApproved:boolean;
   details: JobPointsDetailResponse[];
 }
