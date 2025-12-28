@@ -29,7 +29,7 @@ export class AuthService {
     return this.state.isAuthenticated$;
   }
    get isAuthenticated(): boolean {
-    return this.state.isAuthenticated();
+    return this.state.isAuthenticated(true);
    }
 
   get token(): string | null {

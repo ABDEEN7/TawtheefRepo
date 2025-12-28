@@ -6,8 +6,9 @@ import { LoadingService } from '../services/loading.service';
 import { environment } from '../../../environments/environment';
 import { Subject, fromEvent, interval, of } from 'rxjs';
 import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import {AuthResponse} from '../models/auth/auth-response.model';
-import {ExternalMsg} from '../../pages/auth/popup-callback/popup-callback';
+import { ExternalMsg } from '../../pages/auth/popup-callback/popup-callback';
+import {TranslateService} from '@ngx-translate/core';
+import {NotificationService} from '../services/notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class ExternalLoginService implements OnDestroy {
@@ -19,9 +20,10 @@ export class ExternalLoginService implements OnDestroy {
 
   private readonly ngZone = inject(NgZone);
   private readonly authService = inject(AuthService);
-  private readonly messageService = inject(MessageService);
+  private readonly notificationService = inject(NotificationService);
   private readonly endpoints = inject(EndpointsService);
   private readonly loadingService = inject(LoadingService);
+  private readonly translate = inject(TranslateService);
 
   loading = false;
 
@@ -31,6 +33,25 @@ export class ExternalLoginService implements OnDestroy {
     environment.apiBaseUrl
   ]);
 
+  // i18n keys (service-local)
+  private readonly i18n = {
+    popupBlockedSummary: 'auth.externalLogin.popupBlocked.summary',
+    popupBlockedDetail: 'auth.externalLogin.popupBlocked.detail',
+
+    authErrorSummary: 'auth.externalLogin.authError.summary',
+    authErrorDetail: 'auth.externalLogin.authError.detail',
+
+    loginFailedSummary: 'auth.externalLogin.loginFailed.summary',
+    loginFailedDetail: 'auth.externalLogin.loginFailed.detail',
+
+    externalAuthFailedSummary: 'auth.externalLogin.externalAuthFailed.summary',
+    externalAuthFailedDetailFallback: 'auth.externalLogin.externalAuthFailed.detailFallback'
+  } as const;
+
+
+  private i18nText(key: string): string {
+    return this.translate.instant(key);
+  }
   private safeIsPopupClosed(): boolean {
     try {
       // Accessing .closed can throw under COOP when popup is cross-origin
@@ -40,6 +61,7 @@ export class ExternalLoginService implements OnDestroy {
       return false;
     }
   }
+
   constructor() {
     // mirror loading flag
     this.loadingService.loading$
@@ -83,7 +105,7 @@ export class ExternalLoginService implements OnDestroy {
     );
 
     if (this.safeIsPopupClosed()) {
-      this.toast('warn', 'Popup Blocked', 'Please allow popups for this site to continue with external login');
+      this.toastKey('warn', this.i18n.popupBlockedSummary, this.i18n.popupBlockedDetail);
       return;
     }
 
@@ -106,20 +128,26 @@ export class ExternalLoginService implements OnDestroy {
           .pipe(
             switchMap(user => this.authService.externalLogin(user!)),
             catchError(() => {
-              this.toast('error', 'Error', 'An error occurred during authentication');
+              this.toastKey('error', this.i18n.authErrorSummary, this.i18n.authErrorDetail);
               return of(false);
             })
           )
           .subscribe(success => {
             if (!success) {
-              this.toast('error', 'Login Failed', 'Could not authenticate with external provider');
+              this.toastKey('error', this.i18n.loginFailedSummary, this.i18n.loginFailedDetail);
             }
           });
         this.closePopup();
         break;
 
       case 'EXTERNAL_LOGIN_ERROR':
-        this.toast('error', 'Login Failed', msg.content ?? 'External authentication failed');
+        // If msg.content is already localized by the popup, you can pass it through.
+        // Otherwise, use a fallback key.
+        this.toast(
+          'error',
+          this.i18nText(this.i18n.externalAuthFailedSummary),
+          msg.content ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback)
+        );
         this.closePopup();
         break;
 
@@ -150,8 +178,42 @@ export class ExternalLoginService implements OnDestroy {
     this.popup = null;
   }
 
+  private toastKey(
+    severity: 'success' | 'info' | 'warn' | 'error',
+    summaryKey: string,
+    detailKey: string
+  ) {
+    switch (severity) {
+      case 'success':
+        this.notificationService.success(this.i18nText(summaryKey), this.i18nText(detailKey));
+        break;
+      case 'info':
+        this.notificationService.info(this.i18nText(summaryKey), this.i18nText(detailKey));
+        break;
+      case 'warn':
+        this.notificationService.warn(this.i18nText(summaryKey), this.i18nText(detailKey));
+        break;
+      case 'error':
+        this.notificationService.error(this.i18nText(summaryKey), this.i18nText(detailKey));
+        break;
+    }
+  }
+
   private toast(severity: 'success' | 'info' | 'warn' | 'error', summary: string, detail: string) {
-    this.messageService.add({ severity, summary, detail });
+    switch (severity) {
+      case 'success':
+        this.notificationService.success(summary, detail);
+        break;
+      case 'info':
+        this.notificationService.info(summary, detail);
+        break;
+      case 'warn':
+        this.notificationService.warn(summary, detail);
+        break;
+      case 'error':
+        this.notificationService.error(summary, detail);
+        break;
+    }
   }
 
   /** teardown */

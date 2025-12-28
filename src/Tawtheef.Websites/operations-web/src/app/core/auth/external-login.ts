@@ -2,12 +2,12 @@
 import { AuthService } from './auth.service';
 import { MessageService } from 'primeng/api';
 import { EndpointsService } from '../http/endpoints.service';
-import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from '../services/loading.service';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { Subject, Subscription, fromEvent, interval } from 'rxjs';
+import { Subject, fromEvent, interval } from 'rxjs';
 import { filter, map, takeUntil, tap } from 'rxjs/operators';
+import {NotificationService} from '../services/notification.service';
+import {TranslateService} from '@ngx-translate/core';
 
 type ExternalMessageType = 'EXTERNAL_LOGIN_SUCCESS' | 'EXTERNAL_LOGIN_ERROR' | 'EXTERNAL_POPUP_CLOSED';
 interface ExternalMessage {
@@ -25,11 +25,34 @@ export class ExternalLoginService implements OnDestroy {
 
   private readonly ngZone = inject(NgZone);
   private readonly authService = inject(AuthService);
-  private readonly messageService = inject(MessageService);
+  private readonly notificationService = inject(NotificationService);
   private readonly endpoints = inject(EndpointsService);
   private readonly loadingService = inject(LoadingService);
+  private readonly translate = inject(TranslateService);
 
   loading = false;
+
+  // i18n keys (service-local)
+  private readonly i18n = {
+    popupBlockedSummary: 'auth.externalLogin.popupBlocked.summary',
+    popupBlockedDetailShort: 'auth.externalLogin.popupBlocked.detailShort',
+    popupBlockedDetailContinue: 'auth.externalLogin.popupBlocked.detailContinue',
+
+    loginSuccessfulSummary: 'auth.externalLogin.loginSuccessful.summary',
+    loginSuccessfulDetail: 'auth.externalLogin.loginSuccessful.detail',
+
+    loginFailedSummary: 'auth.externalLogin.loginFailed.summary',
+    loginFailedDetailProvider: 'auth.externalLogin.loginFailed.detailProvider',
+
+    authErrorSummary: 'auth.externalLogin.authError.summary',
+    authErrorDetailLogin: 'auth.externalLogin.authError.detailLogin',
+
+    externalAuthFailedDetailFallback: 'auth.externalLogin.externalAuthFailed.detailFallback',
+  } as const;
+
+  private i18nText(key: string): string {
+    return this.translate.instant(key);
+  }
   private safeIsPopupClosed(): boolean {
     try {
       // Accessing .closed can throw under COOP when popup is cross-origin
@@ -39,6 +62,7 @@ export class ExternalLoginService implements OnDestroy {
       return false;
     }
   }
+
   constructor() {
     this.loadingService.loading$
       .pipe(takeUntil(this.destroy$))
@@ -67,7 +91,7 @@ export class ExternalLoginService implements OnDestroy {
     );
 
     if (this.safeIsPopupClosed()) {
-      return this.toastWarn('Popup Blocked', 'Please allow popups for this site');
+      return this.toastKey('warn', this.i18n.popupBlockedSummary, this.i18n.popupBlockedDetailShort);
     }
 
     // RxJS polling to detect manual popup close
@@ -101,7 +125,7 @@ export class ExternalLoginService implements OnDestroy {
     );
 
     if (this.safeIsPopupClosed()) {
-      this.toast('warn', 'Popup Blocked', 'Please allow popups for this site to continue with external login');
+      this.toastKey('warn', this.i18n.popupBlockedSummary, this.i18n.popupBlockedDetailContinue);
       return;
     }
 
@@ -115,6 +139,7 @@ export class ExternalLoginService implements OnDestroy {
       )
       .subscribe();
   }
+
   /** Handles all incoming messages */
   private handleMessage(msg: ExternalMessage) {
     switch (msg.type) {
@@ -122,15 +147,20 @@ export class ExternalLoginService implements OnDestroy {
         this.authService.externalLogin(msg.userData).subscribe({
           next: (success) =>
             success
-              ? this.toastSuccess('Login Successful', 'You are now logged in')
-              : this.toastError('Login Failed', 'Could not authenticate with provider'),
-          error: () => this.toastError('Error', 'An error occurred during login'),
+              ? this.toastKey('success', this.i18n.loginSuccessfulSummary, this.i18n.loginSuccessfulDetail)
+              : this.toastKey('error', this.i18n.loginFailedSummary, this.i18n.loginFailedDetailProvider),
+          error: () => this.toastKey('error', this.i18n.authErrorSummary, this.i18n.authErrorDetailLogin),
         });
         this.closePopup();
         break;
 
       case 'EXTERNAL_LOGIN_ERROR':
-        this.toastError('Login Failed', msg.content ?? 'External authentication failed');
+        // If msg.content is localized (sent by backend/popup), pass it through; otherwise fallback to key.
+        this.toast(
+          'error',
+          this.i18nText(this.i18n.loginFailedSummary),
+          msg.content ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback)
+        );
         this.closePopup();
         break;
 
@@ -159,15 +189,26 @@ export class ExternalLoginService implements OnDestroy {
     return { left, top };
   }
 
-  /** Toast helpers */
-  private toastWarn(summary: string, detail: string) {
-    this.messageService.add({ severity: 'warn', summary, detail });
-  }
-  private toastError(summary: string, detail: string) {
-    this.messageService.add({ severity: 'error', summary, detail });
-  }
-  private toastSuccess(summary: string, detail: string) {
-    this.messageService.add({ severity: 'success', summary, detail });
+  /** Toast helpers (key-based) */
+  private toastKey(
+    severity: 'success' | 'info' | 'warn' | 'error',
+    summaryKey: string,
+    detailKey: string
+  ) {
+    switch (severity) {
+      case 'success':
+        this.notificationService.success(this.i18nText(summaryKey), this.i18nText(detailKey));
+        break;
+      case 'info':
+        this.notificationService.info(this.i18nText(summaryKey), this.i18nText(detailKey));
+        break;
+      case 'warn':
+        this.notificationService.warn(this.i18nText(summaryKey), this.i18nText(detailKey));
+        break;
+      case 'error':
+        this.notificationService.error(this.i18nText(summaryKey), this.i18nText(detailKey));
+        break;
+    }
   }
 
   /** Utilities */
@@ -183,8 +224,22 @@ export class ExternalLoginService implements OnDestroy {
   }
 
   private toast(severity: 'success' | 'info' | 'warn' | 'error', summary: string, detail: string) {
-    this.messageService.add({ severity, summary, detail });
+    switch (severity) {
+      case 'success':
+        this.notificationService.success(summary, detail);
+        break;
+      case 'info':
+        this.notificationService.info(summary, detail);
+        break;
+      case 'warn':
+        this.notificationService.warn(summary, detail);
+        break;
+      case 'error':
+        this.notificationService.error(summary, detail);
+        break;
+    }
   }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
