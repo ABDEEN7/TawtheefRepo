@@ -131,7 +131,7 @@ readonly jobStatus = JobStatus;
 
     ref?.onClose.subscribe((result) => {
       if (!result) return;
-      this.jobService.reject(job.id, rejectedStatus.id as GUID).subscribe({
+      this.jobService.changeStatus(job.id, rejectedStatus.id as GUID).subscribe({
         next: () => {
           this.notificationService.success(
             this.translateService.instant('JOB_LIST_MESSAGES_JOB_REJECTED')
@@ -149,7 +149,7 @@ readonly jobStatus = JobStatus;
       .find((s) => s.backendName === this.jobStatus.Published);
 
     if (publishedStatus) {
-      this.jobService.publish(job.id, publishedStatus.id as GUID).subscribe({
+      this.jobService.changeStatus(job.id, publishedStatus.id as GUID).subscribe({
         next: () => {
           this.notificationService.success(
             this.translateService.instant('JOB_LIST_MESSAGES_JOB_PUBLISHED')
@@ -176,7 +176,7 @@ readonly jobStatus = JobStatus;
 
     ref?.onClose.subscribe((result) => {
       if (!result) return;
-      this.jobService.close(job.id, closedStatus.id as GUID).subscribe({
+      this.jobService.changeStatus(job.id, closedStatus.id as GUID).subscribe({
         next: () => {
           this.notificationService.success(
             this.translateService.instant('JOB_LIST_MESSAGES_JOB_CLOSED')
@@ -188,27 +188,33 @@ readonly jobStatus = JobStatus;
   }
 }
 
-  // reopenJob(job: JobResponse) {
-  //   const draftStatus = this.lookupsService.jobStatus().find(s =>
-  //     s.backendName === this.jobStatus.Draft
-  //   );
+  reopenJob(job: JobResponse) {
+    const draftStatus = this.lookupsService.jobStatus().find(s =>
+      s.backendName === this.jobStatus.Draft
+    );
 
-  //   if (draftStatus) {
-  //     this.jobService.changeStatus(job.id, draftStatus.id  as GUID).subscribe({
-  //       next: () => {
-  //         this.notificationService.success(
-  //           this.translateService.instant('JOB_LIST_MESSAGES_JOB_REOPENED')
-  //         );
-  //         this.loadJobsWithFilters();
-  //       },
-  //       error: (error) => {
-  //         this.notificationService.error(
-  //           this.translateService.instant('JOB_LIST_ERRORS_REOPEN_FAILED')
-  //         );
-  //       }
-  //     });
-  //   }
-  // }
+    if (draftStatus) {
+      const ref = this.dialogHelperService.openConfirmDialog({
+      type: 'submit',
+      title: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB',
+      description: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE',
+      cancelText: 'common.cancel',
+      confirmText: 'common.confirm',
+    });
+
+    ref?.onClose.subscribe((result) => {
+      if (!result) return;
+      this.jobService.changeStatus(job.id, draftStatus.id as GUID).subscribe({
+        next: () => {
+          this.notificationService.success(
+            this.translateService.instant('JOB_LIST_MESSAGES_JOB_REOPENED')
+          );
+          this.loadJobsWithFilters();
+        },
+      });
+    });
+    }
+  }
 
   cancelJob(job: JobResponse) {
   const cancelledStatus = this.lookupsService
@@ -226,7 +232,7 @@ readonly jobStatus = JobStatus;
 
     ref?.onClose.subscribe((result) => {
       if (!result) return;
-      this.jobService.cancel(job.id, cancelledStatus.id as GUID).subscribe({
+      this.jobService.changeStatus(job.id, cancelledStatus.id as GUID).subscribe({
         next: () => {
           this.notificationService.success(
             this.translateService.instant('JOB_LIST_MESSAGES_JOB_CANCELLED')
