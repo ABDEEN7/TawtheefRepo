@@ -43,6 +43,7 @@ import {
   ItemDialogResult,
   ItemReviewDialogComponent,
 } from '../approval-list/dialogs/item-review-dialog/item-review-dialog';
+import {AvatarUtils} from '../../../../../core/utils/avatar-utils';
 
 @Component({
   selector: 'app-profile-approval-detail-page',
@@ -674,4 +675,6 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       attachments: profile.attachments ?? [],
     };
   }
+
+  protected readonly AvatarUtils = AvatarUtils;
 }

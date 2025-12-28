@@ -2,6 +2,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
@@ -12,34 +13,65 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
 public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
-    : IRequestHandler<GetProfileApprovalsQuery, Result<IReadOnlyList<ProfileApprovalListItemDto>>>
+    : IRequestHandler<GetProfileApprovalsQuery, Result<PaginatedResult<ProfileApprovalListItemDto>>>
 {
-    public async Task<Result<IReadOnlyList<ProfileApprovalListItemDto>>> Handle(
+    public async Task<Result<PaginatedResult<ProfileApprovalListItemDto>>> Handle(
         GetProfileApprovalsQuery request,
         CancellationToken ct)
     {
+        // Guard clauses
         if (request.OfficerId == Guid.Empty)
-            return Result.Fail<IReadOnlyList<ProfileApprovalListItemDto>>(ErrorsCodes.InvalidUserIdentifier);
+            return Result.Fail<PaginatedResult<ProfileApprovalListItemDto>>(ErrorsCodes.InvalidUserIdentifier);
 
-        // 1) Get assigned profiles (active assignments only)
+        // 1) Active assignments -> profile ids
+        var assignedProfileIds = await GetAssignedProfileIdsAsync(request.OfficerId, ct);
+        if (assignedProfileIds.Count == 0)
+            return Result.Ok(PaginatedResult<ProfileApprovalListItemDto>.Empty);
+
+        // 2) Load profiles (only relevant statuses) + apply DB pagination
+        var profiles = await GetProfilesPageAsync(assignedProfileIds, request, ct);
+        if (profiles.Count == 0)
+            return Result.Ok(PaginatedResult<ProfileApprovalListItemDto>.Empty);
+
+        var profileIds = profiles.Select(p => p.Id).ToList();
+
+        // 3) Review summaries
+        var fullReviewMap = await GetFullReviewSummariesAsync(profileIds, ct);       // phase 1: section-level, changeId == null
+        var changeReviewMap = await GetChangeRequestSummariesAsync(profileIds, ct);  // phase 2: changeId != null
+
+        // 4) Build DTOs (phase 1 + phase 2)
+        var dtoList = BuildDtos(profiles, fullReviewMap, changeReviewMap);
+
+        // 5) Apply in-memory filters (search + dropdown filters) + in-memory pagination
+        var filtered = ApplyFiltersAndPagination(dtoList, request);
+
+        return Result.Ok(filtered);
+    }
+
+    // ----------------------------
+    // Data access helpers
+    // ----------------------------
+
+    private async Task<List<Guid>> GetAssignedProfileIdsAsync(Guid officerId, CancellationToken ct)
+    {
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
-        var assignedProfileIds = await assignmentRepo.DbSet
+        return await assignmentRepo.DbSet
             .AsNoTracking()
-            .Where(a => a.IsActive && a.EmployeeId == request.OfficerId)
+            .Where(a => a.IsActive && a.EmployeeId == officerId)
             .Select(a => a.UserProfileId)
             .Distinct()
             .ToListAsync(ct);
+    }
 
-        if (assignedProfileIds.Count == 0)
-            return Result.Ok<IReadOnlyList<ProfileApprovalListItemDto>>([]);
-
-        // 2) Load assigned profiles for:
-        // - Full review (phase 1): Submitted / UnderReview
-        // - Change requests (phase 2): Approved + pending change review items
+    private async Task<List<UserProfile>> GetProfilesPageAsync(
+        List<Guid> assignedProfileIds,
+        GetProfileApprovalsQuery request,
+        CancellationToken ct)
+    {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
 
-        var profiles = await profileRepo.DbSet
+        return await profileRepo.DbSet
             .AsNoTracking()
             .AsSplitQuery()
             .Include(p => p.User)
@@ -51,153 +83,188 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
                 p.Status == UserProfileStatus.Submitted ||
                 p.Status == UserProfileStatus.UnderReview ||
                 p.Status == UserProfileStatus.Approved)
-            .ToListAsync(ct);
+            .ToPaginatedResultAsync(request, ct);
+    }
 
-        if (profiles.Count == 0)
-            return Result.Ok<IReadOnlyList<ProfileApprovalListItemDto>>([]);
-
-        var profileIds = profiles.Select(p => p.Id).ToList();
-
+    private async Task<Dictionary<Guid, FullReviewSummary>> GetFullReviewSummariesAsync(
+        List<Guid> profileIds,
+        CancellationToken ct)
+    {
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
-        // 3-a) Full Review summary: Section-only, ProfileChangeId == null (phase 1)
-        var fullReviewSummaries = await reviewRepo.DbSet
+        var summaries = await reviewRepo.DbSet
             .AsNoTracking()
             .Where(r => profileIds.Contains(r.UserProfileId))
             .Where(r => r.TargetType == ReviewTargetType.Section)
             .Where(r => r.ProfileChangeId == null) // phase 1 only
             .GroupBy(r => r.UserProfileId)
-            .Select(g => new
+            .Select(g => new FullReviewSummary
             {
                 UserProfileId = g.Key,
-
-                PendingSections = g.Count(r =>
-                    r.Status == ReviewStatus.Pending ||
-                    r.Status == ReviewStatus.NotReviewed),
-
+                PendingSections = g.Count(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed),
                 FlaggedSections = g.Count(r => r.Status == ReviewStatus.NeedsCorrection),
-
                 ApprovedSections = g.Count(r => r.Status == ReviewStatus.Approved),
-
-                OverallStatus =
-                    g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
-                        ? ReviewStatus.NeedsCorrection
-                        : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed)
-                            ? ReviewStatus.Pending
-                            : ReviewStatus.Approved,
-
+                OverallStatus = g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
+                    ? ReviewStatus.NeedsCorrection
+                    : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed)
+                        ? ReviewStatus.Pending
+                        : ReviewStatus.Approved,
                 LastUpdatedAtUtc = g.Max(r => r.UpdatedDate ?? r.CreatedDate)
             })
             .ToListAsync(ct);
 
-        var fullSummaryMap = fullReviewSummaries.ToDictionary(x => x.UserProfileId, x => x);
+        return summaries.ToDictionary(x => x.UserProfileId, x => x);
+    }
 
-        // 3-b) Change Requests summary: ProfileChangeId != null (phase 2)
-        var changeSummaries = await reviewRepo.DbSet
+    private async Task<Dictionary<Guid, ChangeRequestSummary>> GetChangeRequestSummariesAsync(
+        List<Guid> profileIds,
+        CancellationToken ct)
+    {
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+
+        var summaries = await reviewRepo.DbSet
             .AsNoTracking()
             .Where(r => profileIds.Contains(r.UserProfileId))
             .Where(r => r.ProfileChangeId != null) // phase 2 only
             .GroupBy(r => r.UserProfileId)
-            .Select(g => new
+            .Select(g => new ChangeRequestSummary
             {
                 UserProfileId = g.Key,
                 Outstanding = g.Count(r => r.Status != ReviewStatus.Approved),
                 Pending = g.Count(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed),
                 Flagged = g.Count(r => r.Status == ReviewStatus.NeedsCorrection),
                 Rejected = g.Count(r => r.Status == ReviewStatus.Rejected),
-                OverallStatus =
-                    g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
-                        ? ReviewStatus.NeedsCorrection
-                        : g.Any(r => r.Status == ReviewStatus.Rejected)
-                            ? ReviewStatus.Rejected
-                            : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed)
-                                ? ReviewStatus.Pending
-                                : ReviewStatus.Approved,
+                OverallStatus = g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
+                    ? ReviewStatus.NeedsCorrection
+                    : g.Any(r => r.Status == ReviewStatus.Rejected)
+                        ? ReviewStatus.Rejected
+                        : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed)
+                            ? ReviewStatus.Pending
+                            : ReviewStatus.Approved,
                 LastUpdatedAtUtc = g.Max(r => r.UpdatedDate ?? r.CreatedDate)
             })
             .ToListAsync(ct);
 
-        var changeSummaryMap = changeSummaries.ToDictionary(x => x.UserProfileId, x => x);
+        return summaries.ToDictionary(x => x.UserProfileId, x => x);
+    }
 
-        // 4) Build list DTOs (phase 1 + phase 2)
-        var list = profiles
-            .Select(profile =>
+    // ----------------------------
+    // Mapping + filtering helpers
+    // ----------------------------
+
+    private static List<ProfileApprovalListItemDto> BuildDtos(
+        List<UserProfile> profiles,
+        Dictionary<Guid, FullReviewSummary> fullReviewMap,
+        Dictionary<Guid, ChangeRequestSummary> changeSummaryMap)
+    {
+        var result = new List<ProfileApprovalListItemDto>(profiles.Count);
+
+        foreach (var profile in profiles)
+        {
+            // Phase 2: Approved profile with outstanding change requests
+            if (IsApprovedWithOutstandingChanges(profile, changeSummaryMap, out var change))
             {
-                // Phase 2: Approved profile with outstanding change requests
-                if (profile.Status == UserProfileStatus.Approved &&
-                    changeSummaryMap.TryGetValue(profile.Id, out var change) &&
-                    change.Outstanding > 0)
-                {
-                    return new ProfileApprovalListItemDto
-                    {
-                        UserProfileId = profile.Id,
-                        UserId = profile.UserId,
-                        FullName = profile.User?.FullNameEn ?? profile.User?.FullNameAr ?? string.Empty,
+                if(change is not null)
+                    result.Add(MapPhase2(profile, change));
+                continue;
+            }
 
-                        CandidateType = profile.CandidateType?.NameEn ?? profile.CandidateType?.NameAr,
-                        TargetEntity = profile.TargetEntity?.NameEn ?? profile.TargetEntity?.NameAr,
+            // Phase 1: Full review queue (Submitted / UnderReview only)
+            if (profile.Status is not (UserProfileStatus.Submitted or UserProfileStatus.UnderReview))
+                continue;
 
-                        Specialization = profile.Qualifications?.FirstOrDefault()?.Major?.NameEn
-                                         ?? profile.Qualifications?.FirstOrDefault()?.Major?.NameAr,
+            fullReviewMap.TryGetValue(profile.Id, out var full);
+            result.Add(MapPhase1(profile, full));
+        }
 
-                        SubmittedAtUtc =  change.LastUpdatedAtUtc,
-                        ProfileStatus = profile.Status,
+        return result;
+    }
 
-                        PendingCount = change.Pending,
-                        OverallStatus = change.OverallStatus,
-                        LastUpdatedAtUtc = change.LastUpdatedAtUtc,
+    private static bool IsApprovedWithOutstandingChanges(
+        UserProfile profile,
+        Dictionary<Guid, ChangeRequestSummary> changeSummaryMap,
+        out ChangeRequestSummary? change)
+    {
+        change = null;
+        if (profile.Status != UserProfileStatus.Approved)
+            return false;
 
-                        AllowedOperations = ResolveAllowedOperations(profile.Status)
-                    };
-                }
+        if (!changeSummaryMap.TryGetValue(profile.Id, out change))
+            return false;
 
-                // Phase 1: Full review queue (Submitted / UnderReview)
-                if (profile.Status is not (UserProfileStatus.Submitted or UserProfileStatus.UnderReview))
-                    return null;
+        return change.Outstanding > 0;
+    }
 
-                fullSummaryMap.TryGetValue(profile.Id, out var summary);
+    private static ProfileApprovalListItemDto MapPhase2(UserProfile profile, ChangeRequestSummary change)
+    {
+        return new ProfileApprovalListItemDto
+        {
+            UserProfileId = profile.Id,
+            UserId = profile.UserId,
+            FullName = ResolveFullName(profile),
 
-                var pendingSections = summary?.PendingSections
-                                      ?? ProfileApprovalFlow.Sections.Length; // if no review items found, treat as all pending
+            CandidateType = ResolveBilingualName(profile.CandidateType?.NameEn, profile.CandidateType?.NameAr),
+            TargetEntity = ResolveBilingualName(profile.TargetEntity?.NameEn, profile.TargetEntity?.NameAr),
+            Specialization = ResolveSpecialization(profile),
 
-                var overallStatus = summary?.OverallStatus ?? ReviewStatus.Pending;
+            SubmittedAtUtc = change.LastUpdatedAtUtc,
+            ProfileStatus = profile.Status,
 
-                var submittedAtUtc = profile.CreatedDate;
+            PendingCount = change.Pending,
+            OverallStatus = change.OverallStatus,
+            LastUpdatedAtUtc = change.LastUpdatedAtUtc,
 
-                var lastUpdated =
-                    summary?.LastUpdatedAtUtc
-                    ?? profile.UpdatedDate
-                    ?? profile.CreatedDate;
+            AllowedOperations = ResolveAllowedOperations(profile.Status)
+        };
+    }
 
-                return new ProfileApprovalListItemDto
-                {
-                    UserProfileId = profile.Id,
-                    UserId = profile.UserId,
-                    FullName = profile.User?.FullNameEn ?? profile.User?.FullNameAr ?? string.Empty,
+    private static ProfileApprovalListItemDto MapPhase1(UserProfile profile, FullReviewSummary? summary)
+    {
+        var pendingSections = summary?.PendingSections ?? ProfileApprovalFlow.Sections.Length;
+        var overallStatus = summary?.OverallStatus ?? ReviewStatus.Pending;
 
-                    CandidateType = profile.CandidateType?.NameEn ?? profile.CandidateType?.NameAr,
-                    TargetEntity = profile.TargetEntity?.NameEn ?? profile.TargetEntity?.NameAr,
+        var lastUpdatedAtUtc =
+            summary?.LastUpdatedAtUtc
+            ?? profile.UpdatedDate
+            ?? profile.CreatedDate;
 
-                    Specialization = profile.Qualifications?.FirstOrDefault()?.Major?.NameEn
-                                     ?? profile.Qualifications?.FirstOrDefault()?.Major?.NameAr,
+        return new ProfileApprovalListItemDto
+        {
+            UserProfileId = profile.Id,
+            UserId = profile.UserId,
+            FullName = ResolveFullName(profile),
 
-                    SubmittedAtUtc = submittedAtUtc,
-                    ProfileStatus = profile.Status,
+            CandidateType = ResolveBilingualName(profile.CandidateType?.NameEn, profile.CandidateType?.NameAr),
+            TargetEntity = ResolveBilingualName(profile.TargetEntity?.NameEn, profile.TargetEntity?.NameAr),
+            Specialization = ResolveSpecialization(profile),
 
-                    // In phase 1, we want pending count to represent pending sections only
-                    PendingCount = pendingSections,
+            SubmittedAtUtc = profile.CreatedDate,
+            ProfileStatus = profile.Status,
 
-                    OverallStatus = overallStatus,
-                    LastUpdatedAtUtc = lastUpdated,
+            PendingCount = pendingSections,
+            OverallStatus = overallStatus,
+            LastUpdatedAtUtc = lastUpdatedAtUtc,
 
-                    AllowedOperations = ResolveAllowedOperations(profile.Status)
-                };
-            })
-            .Where(x => x is not null)
-            .Select(x => x!)
-            .ToList();
+            AllowedOperations = ResolveAllowedOperations(profile.Status)
+        };
+    }
 
-        // 5) Filters (search + dropdown filters)
+    private static string ResolveFullName(UserProfile profile)
+        => profile.User?.FullNameEn
+           ?? profile.User?.FullNameAr
+           ?? string.Empty;
+
+    private static string? ResolveBilingualName(string? en, string? ar)
+        => en ?? ar;
+
+    private static string? ResolveSpecialization(UserProfile profile)
+        => profile.Qualifications?.FirstOrDefault()?.Major?.NameEn
+           ?? profile.Qualifications?.FirstOrDefault()?.Major?.NameAr;
+
+    private static PaginatedResult<ProfileApprovalListItemDto> ApplyFiltersAndPagination(
+        List<ProfileApprovalListItemDto> list,
+        GetProfileApprovalsQuery request)
+    {
         var filtered = list
             .WhereIf(!string.IsNullOrWhiteSpace(request.Search), p =>
                 p.FullName.Contains(request.Search!, StringComparison.OrdinalIgnoreCase) ||
@@ -215,51 +282,30 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
                 !string.IsNullOrWhiteSpace(p.Specialization) &&
                 p.Specialization.Contains(request.Specialization!, StringComparison.OrdinalIgnoreCase))
             .WhereIf(request.Status is not null, p => p.OverallStatus == request.Status)
-            .AsQueryable();
+            .ToPaginatedList(request);
 
-        // 6) Sorting
-        var sortDirection = string.Equals(request.SortDirection, "asc", StringComparison.OrdinalIgnoreCase)
-            ? "asc"
-            : "desc";
-
-        filtered = request.Sort?.ToLowerInvariant() switch
-        {
-            "name" => sortDirection == "asc"
-                ? filtered.OrderBy(p => p.FullName)
-                : filtered.OrderByDescending(p => p.FullName),
-
-            "status" => sortDirection == "asc"
-                ? filtered.OrderBy(p => p.OverallStatus)
-                : filtered.OrderByDescending(p => p.OverallStatus),
-
-            "entity" => sortDirection == "asc"
-                ? filtered.OrderBy(p => p.TargetEntity)
-                : filtered.OrderByDescending(p => p.TargetEntity),
-
-            _ => sortDirection == "asc"
-                ? filtered.OrderBy(p => p.LastUpdatedAtUtc ?? p.SubmittedAtUtc)
-                : filtered.OrderByDescending(p => p.LastUpdatedAtUtc ?? p.SubmittedAtUtc)
-        };
-
-        return Result.Ok<IReadOnlyList<ProfileApprovalListItemDto>>(filtered.ToList());
+        return filtered;
     }
 
     private static IReadOnlyList<string> ResolveAllowedOperations(UserProfileStatus status)
     {
-        // Phase 1:
-        // - Submitted/UnderReview => reviewer can view + decide sections + finalize
-        // - Approved => view only (optional if you include Approved in list)
         var ops = new List<string> { "view" };
 
+        // Phase 1: reviewer can review/finalize
         if (status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
         {
             ops.Add("review");
             ops.Add("finalize");
         }
 
+        // Phase 2: view only (optional marker)
         if (status == UserProfileStatus.Approved)
             ops.Add("view-only");
 
         return ops;
     }
+
+    // ----------------------------
+    // Local summary models (readability)
+    // ----------------------------
 }

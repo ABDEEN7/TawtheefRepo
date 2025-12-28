@@ -10,7 +10,7 @@
 
           <div class="avatar-stack d-inline-flex align-items-center gap-3">
             <span class="avatar-ring">
-              <p-avatar size="xlarge" shape="circle" [image]="info.profile.profilePhoto || 'assets/img/avatar.png'"></p-avatar>
+              <p-avatar size="xlarge" shape="circle" [image]="info.profile.profilePhoto || AvatarUtils.build(info.fullName) "></p-avatar>
             </span>
             <div class="head-title">
               <p class="title mb-1 text-uppercase">{{ 'profileApproval.detail.eyebrow' | translate }}</p>
