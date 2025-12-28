@@ -2,9 +2,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Operations.Admin.Users.Commands;
 using Tawtheef.Application.Features.Operations.Admin.Users.Queries;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers;
 
@@ -14,6 +16,7 @@ namespace Operations.API.Controllers;
 public class UserManagementController(IMediator mediator) : ControllerBase
 {
     [HttpGet("list-users")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UsersView)]
     public async Task<IActionResult> ListUsers([FromQuery] GetListUsersQuery query)
     {
         var result = await mediator.Send(query);
@@ -21,6 +24,7 @@ public class UserManagementController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{id:guid}/roles")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UsersView)]
     public async Task<IActionResult> GetUserRoles(Guid id)
     {
         var result = await mediator.Send(new GetUserRolesQuery(id));
@@ -28,6 +32,7 @@ public class UserManagementController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{id:guid}/role-ids")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UsersView)]
     public async Task<IActionResult> GetUserRoleIds(Guid id)
     {
         var result = await mediator.Send(new GetUserAssignedRoleIdsQuery(id));
@@ -35,6 +40,7 @@ public class UserManagementController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}/roles")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UsersManage)]
     public async Task<IActionResult> UpdateUserRoles(Guid id, [FromBody] UpdateUserRolesCommand command)
     {
         var result = await mediator.Send(command with { UserId = id });
@@ -42,6 +48,7 @@ public class UserManagementController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}/block-status")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UsersManage)]
     public async Task<IActionResult> UpdateUserBlockStatus(Guid id, [FromBody] UpdateUserBlockStatusCommand command)
     {
         var result = await mediator.Send(command with { UserId = id });

@@ -2,6 +2,7 @@
 import {errorRoutes} from "./error-routes";
 import {adminRoutes} from './admin-routes';
 import {employeeRoutes} from './employee-routes';
+import {Roles} from '../core/constants/roles';
 
 export let routes = {
   baseUrl: '',
@@ -14,9 +15,9 @@ export let routes = {
   ...errorRoutes,
   dashboard(role: string) {
     switch (role.toLowerCase()) {
-      case 'admin':
+      case Roles.SystemAdmin:
         return this.admin.dashboard;
-      case 'employee':
+      case Roles.Employee:
         return this.employee.dashboard;
       default:
         return this.employee.dashboard;
@@ -24,9 +25,9 @@ export let routes = {
   },
   settings(role: string) {
     switch (role.toLowerCase()) {
-      case 'admin':
+      case Roles.SystemAdmin:
         return this.admin.settings;
-      case 'employee':
+      case Roles.Employee:
         return this.employee.settings;
       default:
         return this.employee.settings;

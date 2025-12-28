@@ -13,6 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { JobStatus } from '../../../core/enums/lookups.enum';
 import { routes } from '../../../routes/routes';
 import { take } from 'rxjs';
+import {AuthService} from '../../../core/auth/auth.service';
+import {Permissions} from '../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-list',
@@ -25,6 +27,7 @@ export class JobListComponent implements OnInit {
   private router = inject(Router);
   private notificationService = inject(NotificationService);
   private translateService = inject(TranslateService);
+  private authService = inject(AuthService);
 
   lookupsService = inject(JobLookupService);
 
@@ -94,27 +97,49 @@ readonly jobStatus = JobStatus;
     this.loadJobsWithFilters();
   }
 
+  canManageJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.Manage);
+  }
+
+  canApproveJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.Approve);
+  }
+
+  canViewJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.View);
+  }
+
+  canManageJobPoints(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.PointsManage);
+  }
+
   editJob(job: JobResponse) {
+    if (!this.canManageJobs()) return;
     this.router.navigate([routes.employee.jobEdit, job.id]).then();
   }
 
   viewJob(job: JobResponse) {
+    if (!this.canViewJobs()) return;
     this.router.navigate([routes.employee.jobView, job.id]).then();
   }
 
   createNewJob() {
+    if (!this.canManageJobs()) return;
     this.router.navigate([routes.employee.jobCreate]).then();
   }
 
   openPointsModal(job: JobResponse) {
+    if (!this.canManageJobPoints()) return;
     this.router.navigate([routes.employee.jobPoints,job.id]).then();
   }
 
   approveJob(job: JobResponse) {
+    if (!this.canApproveJobs()) return;
     this.router.navigate([routes.employee.approvalJob, job.id]).then();
   }
 
   rejectJob(job: JobResponse) {
+    if (!this.canApproveJobs()) return;
     const rejectedStatus = this.lookupsService
       .jobStatus()
       .find((s) => s.backendName === this.jobStatus.Rejected);
@@ -134,6 +159,7 @@ readonly jobStatus = JobStatus;
   }
 
   publishJob(job: JobResponse) {
+    if (!this.canApproveJobs()) return;
     const publishedStatus = this.lookupsService
       .jobStatus()
       .find((s) => s.backendName === this.jobStatus.Published);
@@ -151,6 +177,7 @@ readonly jobStatus = JobStatus;
   }
 
   closeJob(job: JobResponse) {
+    if (!this.canApproveJobs()) return;
     const closedStatus = this.lookupsService
       .jobStatus()
       .find((s) => s.backendName === this.jobStatus.Closed);
@@ -192,6 +219,7 @@ readonly jobStatus = JobStatus;
   // }
 
   cancelJob(job: JobResponse) {
+    if (!this.canManageJobs()) return;
     const cancelledStatus = this.lookupsService
       .jobStatus()
       .find((s) => s.backendName === this.jobStatus.Cancelled);
@@ -211,6 +239,7 @@ readonly jobStatus = JobStatus;
   }
 
   deleteJob(job: JobResponse) {
+    if (!this.canManageJobs()) return;
     if (confirm(this.translateService.instant('JOB_LIST_CONFIRMATIONS_DELETE_JOB'))) {
       this.jobService.delete(job.id).subscribe({
         next: () => {

@@ -4,19 +4,20 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/profile-approvals")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-//[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.JobsManage)]
 public class ProfileApprovalsController(IMediator mediator) : ControllerBase
 {
     private Result<Guid> OfficerId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
@@ -26,6 +27,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     };
 
     [HttpGet]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileApprovalView)]
     public async Task<IActionResult> GetList([FromQuery] GetProfileApprovalsQuery query, CancellationToken ct)
     {
         if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
@@ -35,6 +37,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{userProfileId:guid}")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileApprovalView)]
     public async Task<IActionResult> GetDetail(Guid userProfileId, CancellationToken ct = default)
     {
         if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
@@ -44,6 +47,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{userProfileId:guid}/changes")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileApprovalChanges)]
     public async Task<IActionResult> GetChangesDetail(Guid userProfileId, CancellationToken ct = default)
     {
         if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
@@ -53,6 +57,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("{userProfileId:guid}/start-review")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileApprovalReview)]
     public async Task<IActionResult> StartReview(Guid userProfileId, CancellationToken ct)
     {
         if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
@@ -68,6 +73,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     /// This does NOT expose notes to the user until Finalize is done.
     /// </summary>
     [HttpPut("{userProfileId:guid}/sections/{section}/decision")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileApprovalReview)]
     public async Task<IActionResult> DecideSection(
         Guid userProfileId,
         ProfileSection section,
@@ -92,6 +98,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("review-items/{reviewItemId:guid}")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileApprovalReview)]
     public async Task<IActionResult> DecideReviewItem(
         Guid reviewItemId,
         [FromBody] DecideProfileReviewItemRequest body,
@@ -120,6 +127,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     /// - If any Pending => fail
     /// </summary>
     [HttpPost("{userProfileId:guid}/finalize")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileApprovalReview)]
     public async Task<IActionResult> Finalize(Guid userProfileId, [FromForm] FinalizeUserProfileReviewRequest body, CancellationToken ct)
     {
         if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
