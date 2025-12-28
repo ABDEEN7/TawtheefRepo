@@ -13,6 +13,7 @@ using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -78,7 +79,29 @@ namespace Operations.API.Controllers
             return Redirect(url);
         }
 
+        [HttpGet("google/external-login-callback", Name = nameof(GoogleExternalLoginCallback))]
+        public async Task<IActionResult> GoogleExternalLoginCallback(
+            [FromQuery] RequestGoogleExternalCallbackLoginCommand req,
+            [FromServices] IOptions<AppConfigSettings> appConfig)
+        {
+            var result = await mediator.Send(new GoogleExternalCallbackLoginCommand(UserTypeIds.OfficeUser, req.ReturnUrl, req.RemoteError));
 
+            var spaOrigin = GetOriginOnly(appConfig.Value.FrontendUrl);
+            var spaCallback = $"{spaOrigin}/auth/popup-callback";
+
+            object message = result.IsFailed
+                ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors }
+                : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
+
+            var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var b64 = Base64UrlEncode(json);
+            var url = $"{spaCallback}#payload={b64}";
+            return Redirect(url);
+        }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()

@@ -20,7 +20,7 @@ public sealed class AzureExternalCallbackLoginHandler(
 ) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     protected override string Provider => "Azure";
-    protected override Guid DefaultUserType => UserTypeIds.Employee;
+    protected override Guid? DefaultUserType => UserTypeIds.Employee;
     public async Task<IResult<AuthResponse>> Handle(AzureExternalCallbackLoginCommand request, CancellationToken ct)
     {
         if (!string.IsNullOrWhiteSpace(request.Error))

@@ -27,5 +27,16 @@
   "common.confirm": "تأكيد",
   "common.yes": "نعم",
   "common.no": "لا",
-  "common.charactersRemaining": "{{count}} حرف متبقي"
+  "common.charactersRemaining": "{{count}} حرف متبقي",
+  "auth.externalLogin.popupBlocked.summary": "تم حظر النافذة المنبثقة",
+  "auth.externalLogin.popupBlocked.detail": "يرجى السماح بالنوافذ المنبثقة لهذا الموقع للمتابعة بتسجيل الدخول الخارجي",
+
+  "auth.externalLogin.authError.summary": "خطأ",
+  "auth.externalLogin.authError.detail": "حدث خطأ أثناء المصادقة",
+
+  "auth.externalLogin.loginFailed.summary": "فشل تسجيل الدخول",
+  "auth.externalLogin.loginFailed.detail": "تعذر المصادقة عبر مزود تسجيل الدخول الخارجي",
+
+  "auth.externalLogin.externalAuthFailed.summary": "فشل تسجيل الدخول",
+  "auth.externalLogin.externalAuthFailed.detailFallback": "فشلت المصادقة الخارجية"
 }

@@ -1,7 +1,8 @@
 .app-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  max-height: 100vh;
+  height: 105%;
 }
 
 .content-wrapper {
@@ -17,11 +18,12 @@
   min-height: calc(100vh - 160px); // Fallback height
   overflow-y: auto; // Allow scrolling if content is long
   transition: margin-right 0.3s ease;
-  
+  max-height: 100vh;
+
   .content-wrapper:has(.sidebar.collapsed) & {
     margin-right: 0px;
   }
-  
+
   .content-wrapper:has(.sidebar:not(.collapsed)) & {
     margin-right: 0px;
   }
@@ -30,7 +32,7 @@
 @media (max-width: 1024px) {
   .main-content {
     padding: 1.5rem;
-    
+
     .content-wrapper:has(.sidebar:not(.collapsed)) & {
       margin-right: 200px;
     }
@@ -40,11 +42,11 @@
 @media (max-width: 768px) {
   .main-content {
     padding: 1rem;
-    
+
     .content-wrapper:has(.sidebar.collapsed) & {
       margin-right: 70px;
     }
-    
+
     .content-wrapper:has(.sidebar:not(.collapsed)) & {
       margin-right: 180px;
     }
@@ -54,11 +56,11 @@
 @media (max-width: 480px) {
   .main-content {
     padding: 0.75rem;
-    
+
     .content-wrapper:has(.sidebar.collapsed) & {
       margin-right: 60px;
     }
-    
+
     .content-wrapper:has(.sidebar:not(.collapsed)) & {
       margin-right: 160px;
     }

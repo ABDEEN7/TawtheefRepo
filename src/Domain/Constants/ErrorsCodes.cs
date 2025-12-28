@@ -35,10 +35,10 @@ public class ErrorsCodes
     public const string SessionExpired = "SESSION_EXPIRED";
     public const string EmailNotVerified = "EMAIL_NOT_VERIFIED";
     public const string AccountStatusNotAllowedForLogin = "ACCOUNT_STATUS_NOT_ALLOWED_FOR_LOGIN";
-    public const string YourAccountRequiresAdminApproval = "YOUR_ACCOUNT_REQUIRES_ADMIN_APPROVAL";
-    public const string SocialAccountNotLinked = "SOCIAL_ACCOUNT_NOT_LINKED";
-    public const string UnlinkSocialAccountFailed = "UNLINK_SOCIAL_ACCOUNT_FAILED";
-    public const string ExternalLoginMissingTokens = "EXTERNAL_LOGIN_MISSING_TOKENS";
+    public const string ExternalLoginNotLinkedOfficeUser = "EXTERNAL_LOGIN_NOT_LINKED_OFFICE_USER";
+    public const string ExternalLoginOfficeUserInvalidType = "EXTERNAL_LOGIN_OFFICE_USER_INVALID_TYPE";
+    public const string ExternalLoginOfficeUserNotLinkedToOffice = "EXTERNAL_LOGIN_OFFICE_USER_NOT_LINKED_TO_OFFICE";
+    public const string ExternalLoginOfficeUserOfficeDeletedOrNotFound = "EXTERNAL_LOGIN_OFFICE_USER_OFFICE_DELETED_OR_NOT_FOUND";
     public static string ExternalLoginCreateUserFailed(IEnumerable<IdentityError> error) =>
         $"EXTERNAL_LOGIN_CREATE_USER_FAILED: {error}";
     public static string ExternalLoginLinkFailed(IEnumerable<IdentityError> error) =>

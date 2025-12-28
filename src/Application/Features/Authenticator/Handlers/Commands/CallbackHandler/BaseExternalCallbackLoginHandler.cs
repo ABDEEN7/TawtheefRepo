@@ -7,7 +7,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.Callback
 public abstract class BaseExternalCallbackLoginHandler(ILoginAuditService loginAudit)
 {
     protected abstract string Provider { get; }
-    protected abstract Guid DefaultUserType { get; }
+    protected abstract Guid? DefaultUserType { get; }
     protected async Task<IResult<AuthResponse>> LogFailureAsync(string reason, 
         Guid? userId = null, Guid? userTypeId = null, CancellationToken ct = default)
     {

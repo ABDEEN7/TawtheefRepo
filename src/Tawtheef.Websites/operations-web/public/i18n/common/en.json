@@ -26,5 +26,16 @@
   "common.confirm": "Confirm",
   "common.yes": "Yes",
   "common.no": "No",
-  "common.charactersRemaining": "{{count}} characters remaining"
+  "common.charactersRemaining": "{{count}} characters remaining",
+  "auth.externalLogin.popupBlocked.summary": "Popup Blocked",
+  "auth.externalLogin.popupBlocked.detail": "Please allow popups for this site to continue with external login",
+
+  "auth.externalLogin.authError.summary": "Error",
+  "auth.externalLogin.authError.detail": "An error occurred during authentication",
+
+  "auth.externalLogin.loginFailed.summary": "Login Failed",
+  "auth.externalLogin.loginFailed.detail": "Could not authenticate with external provider",
+
+  "auth.externalLogin.externalAuthFailed.summary": "Login Failed",
+  "auth.externalLogin.externalAuthFailed.detailFallback": "External authentication failed"
 }
