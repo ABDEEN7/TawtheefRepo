@@ -64,7 +64,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
       this.jobId = paramId as GUID;
       this.loadJob();
     }
-    this.lookupsService.loadJobStatus();
+    this.lookupsService.loadJobStatus().subscribe();
   }
 
   ngOnDestroy(): void {
@@ -277,39 +277,68 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     confirmText: 'common.confirm',
   });
 
-  ref?.onClose.subscribe((result) => {
-    if (!result) return;
-    
-    this.isLoading = true;
-    this.jobPointsService
-      .approveJobPoints(this.jobId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (resp) => {
-          if (this.jobPoints) {
-            this.jobPoints.isApproved = resp;
-          }
+  ref?.onClose
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((result) => {
+      if (!result) return;
 
-          this.isFinalApprovalAvailable = false;
-          this.isLoading = false;
+      this.isLoading = true;
 
-          if(resp)
-          {
-          this.notificationService.success(
-            this.translationService.instant('JOB_POINTS.APPROVE.SUCCESS')
-          );
+      this.jobPointsService
+        .approveJobPoints(this.jobId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (resp) => {
+            if (!resp) {
+              this.isLoading = false;
+              this.cdr.detectChanges();
+              return;
+            }
 
-          this.jobService.changeStatus(this.jobId,this.lookupsService.getStatusIdByEnum(JobStatus.ReadyForAnnouncement)).subscribe()
-          this.router.navigate([routes.employee.JobList]);
-          }
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
-  });
+            if (this.jobPoints) {
+              this.jobPoints.isApproved = true;
+            }
+
+            const statusId =
+              this.lookupsService.getStatusIdByEnum(
+                JobStatus.ReadyForAnnouncement
+              );
+
+            if (!statusId) {
+              this.isLoading = false;
+              this.cdr.detectChanges();
+              return;
+            }
+
+            this.jobService
+              .changeStatus(this.jobId, statusId)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: () => {
+                  this.notificationService.success(
+                    this.translationService.instant(
+                      'JOB_POINTS.APPROVE.SUCCESS'
+                    )
+                  );
+
+                  this.isFinalApprovalAvailable = false;
+                  this.isLoading = false;
+
+                  this.router.navigate([routes.employee.JobList]);
+                  this.cdr.detectChanges();
+                },
+                error: () => {
+                  this.isLoading = false;
+                  this.cdr.detectChanges();
+                },
+              });
+          },
+          error: () => {
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          },
+        });
+    });
 }
 
   private getMainPoints(): Omit<JobPointsResponse, 'id' | 'jobId' | 'details' | 'isApproved'> {

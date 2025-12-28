@@ -22,16 +22,16 @@ export class JobPointsConfigService {
   }
 
   getJobPoints(jobId: GUID): Observable<JobPointsResponse> {
-    return this.httpService.get<JobPointsResponse>(`${this.endpoints.job.jobPoints}/${jobId}`);
+    return this.httpService.get<JobPointsResponse>(this.endpoints.job.getJobPoints(jobId));
   }
 
   getJobPointsConfiguration(jobId: GUID): Observable<JobPointConfiguration> {
     return this.httpService.get<JobPointConfiguration>(
-      `${this.endpoints.job.jobPoints}/${jobId}/config`
+      `${this.endpoints.job.getJobPointsConfig(jobId)}`
     );
   }
 
   approveJobPoints(jobId: GUID): Observable<boolean> {
-    return this.httpService.post<boolean>(`${this.endpoints.job.jobPoints}/${jobId}/approve`, {});
+    return this.httpService.post<boolean>(this.endpoints.job.approveJobPoints(jobId), {});
   }
 }

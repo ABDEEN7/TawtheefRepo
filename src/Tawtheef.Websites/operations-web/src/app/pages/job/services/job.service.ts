@@ -421,10 +421,10 @@ export class JobService {
   }
   
   getLatestReview(jobId: GUID): Observable<JobReviewResponse> {
-  return this.httpService.get<JobReviewResponse>(`${this.endpoints.job.jobApproval}/${jobId}/latest`);
+  return this.httpService.get<JobReviewResponse>(this.endpoints.job.getLatestReview(jobId));
   }
-  GetJobsCountByStatus(jobStatusId: string): Observable<number> {
-    const url = `${this.endpoints.job.CountByStatus}?jobStatusId=${encodeURIComponent(jobStatusId)}`;    
+  GetJobsCountByStatus(jobStatusId: GUID): Observable<number> {
+    const url = `${this.endpoints.job.CountByStatus(jobStatusId)}`;    
     return this.httpService.get<number>(url);
 }
 }

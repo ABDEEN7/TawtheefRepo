@@ -57,6 +57,7 @@
   "JOB_POINTS.APPROVE.ALREADY_APPROVED": "تم إعتماد النقاط بالفعل",
   "JOB_POINTS.APPROVE.CONFIRMATION_TITLE": "تأكيد إعتماد النقاط",
   "JOB_POINTS.APPROVE.CONFIRMATION_DESCRIPTION": "هل أنت متأكد من رغبتك في إعتماد نقاط الوظيفة؟ لا يمكن التراجع عن هذا الإجراء بعد التنفيذ.",
-  "JOB_POINTS.APPROVE.SUCCESS" : "تم إعتماد النقاط بنجاح"
+  "JOB_POINTS.APPROVE.SUCCESS" : "تم إعتماد النقاط بنجاح",
+  "JOB_POINTS.SAVE.SUCCESS":"تم حفظ النقاط بنجاح"
 
 }

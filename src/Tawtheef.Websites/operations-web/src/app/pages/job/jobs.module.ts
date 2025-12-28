@@ -43,6 +43,7 @@ import { JobPointsTabComponent } from './job-points/job-points-points-tab/job-po
 import { TabsModule } from 'primeng/tabs';
 import { FilterByKeyPrefixPipe } from './pipes/filter-by-key-prefix.pipe';
 import { ProgressSpinner } from "primeng/progressspinner";
+import { RemoteSelectComponent } from '../../shared/components/remote-select/remote-select';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -90,7 +91,8 @@ import { ProgressSpinner } from "primeng/progressspinner";
     ConfirmDialog,
     FaDirArrowDirective,
     TabsModule,
-    ProgressSpinner
+    ProgressSpinner,
+    RemoteSelectComponent
 ],
   exports: [
     JobDetailsComponent,

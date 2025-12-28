@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { routes } from '../../../../routes/routes';
+import { EndpointsService } from '../../../../core/http/endpoints.service';
 
 @Component({
   selector: 'app-job-basic-modal',
@@ -24,6 +25,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   public ref = inject(DynamicDialogRef);
   public config = inject(DynamicDialogConfig);
+  protected endpoints = inject(EndpointsService);
+
   
   lookupsService = inject(JobLookupService);
   
@@ -152,9 +155,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           this.lookupsService.loadDepartmentsByManagement(jobResponse.management.id as GUID);
         }
         
-        if (jobResponse.major.id) {
-          this.lookupsService.loadSubMajorsByMajor(jobResponse.major.id as GUID);
-        }
+        
         
         this.isLoading = false;
       },
@@ -225,7 +226,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           this.router.navigate([routes.employee.JobList, jobId, 'wizard']);
         }
       },
-      error: (err) => {
+      error: () => {
         this.isLoading = false;
       }
     });
@@ -306,6 +307,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   }
 
   canSelectSubMajor(): boolean {
-    return !!this.form.controls.majorId.value && this.lookupsService.subMajors().length > 0;
+    return !!this.form.controls.majorId.value;
   }
 }
