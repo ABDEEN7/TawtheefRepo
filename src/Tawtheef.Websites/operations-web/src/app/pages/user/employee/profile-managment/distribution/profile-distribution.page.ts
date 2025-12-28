@@ -31,6 +31,8 @@ import {DistributionDialogResult} from './models/profile-distribution.dialogs';
 import {ManualAssignDialog} from './dialogs/manual-assign-dialog/manual-assign-dialog';
 import {AutoAssignDialog} from './dialogs/auto-assign-dialog/auto-assign-dialog';
 import {DialogService} from 'primeng/dynamicdialog';
+import {AuthService} from '../../../../../core/auth/auth.service';
+import {Permissions} from '../../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -61,6 +63,7 @@ export class ProfileDistributionPage implements OnInit {
   private api = inject(ProfileDistributionService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
+  private authService = inject(AuthService);
 
   files = signal<DistributionFile[]>([]);
   employees = signal<DistributionEmployee[]>([]);
@@ -142,6 +145,7 @@ export class ProfileDistributionPage implements OnInit {
     this.selectedIds.set(new Set());
   }
   openManualDialog(profileId?: string): void {
+    if (!this.canManageDistribution()) return;
     if (profileId) this.selectedIds.set(new Set([profileId]));
     const ids = Array.from(this.selectedIds());
     if (ids.length === 0) return;
@@ -163,6 +167,7 @@ export class ProfileDistributionPage implements OnInit {
   }
 
   openAutoDialog(): void {
+    if (!this.canManageDistribution()) return;
     const ids = Array.from(this.selectedIds());
     if (ids.length === 0) {
       this.error.set(this.translate.instant('distribution.errors.noProfilesSelected'));
@@ -185,6 +190,7 @@ export class ProfileDistributionPage implements OnInit {
     });
   }
   private assignManual(payload: ManualAssignRequest): void {
+    if (!this.canManageDistribution()) return;
     this.loading.set(true);
     this.api.assignManually(payload)
       .pipe(finalize(() => this.loading.set(false)))
@@ -195,6 +201,7 @@ export class ProfileDistributionPage implements OnInit {
   }
 
   private assignAuto(payload: AutoAssignRequest): void {
+    if (!this.canManageDistribution()) return;
     this.loading.set(true);
     this.api.assignAutomatically(payload)
       .pipe(finalize(() => this.loading.set(false)))
@@ -205,6 +212,7 @@ export class ProfileDistributionPage implements OnInit {
   }
 
   redistribute(mode: 'manual' | 'auto'): void {
+    if (!this.canManageDistribution()) return;
     if (this.selectedIds().size === 0) return;
 
     const payload: ReassignRequest = {
@@ -291,6 +299,10 @@ export class ProfileDistributionPage implements OnInit {
     const message = error?.error ?? fallback;
     this.error.set(typeof message === 'string' ? message : fallback);
     this.successMessage.set(null);
+  }
+
+  canManageDistribution(): boolean {
+    return this.authService.hasPermission(Permissions.ProfileDistribution.Manage);
   }
 
   protected readonly Number = Number;

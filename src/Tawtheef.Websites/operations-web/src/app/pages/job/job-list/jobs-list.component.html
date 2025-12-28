@@ -9,10 +9,12 @@
         <div class="small-muted">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</div>
       </div>
       <div>
-        <button class="btn btn-brand" (click)="createNewJob()">
-          <i class="fa fa-plus me-2"></i>
-          {{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}
-        </button>
+        @if (canManageJobs()) {
+          <button class="btn btn-brand" (click)="createNewJob()">
+            <i class="fa fa-plus me-2"></i>
+            {{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}
+          </button>
+        }
       </div>
     </div>
   </header>
@@ -161,7 +163,7 @@
                     </td>
                     <td class="text-end">
                       <div class="btn-group" role="group">
-                        @if (job.jobStatus.backendName === jobStatus.Published || job.jobStatus.backendName === jobStatus.Approved) {
+                        @if (canManageJobPoints() && (job.jobStatus.backendName === jobStatus.Published || job.jobStatus.backendName === jobStatus.Approved)) {
                           <button
                             type="button"
                             class="btn btn-sm btn-outline-secondary me-1"
@@ -172,7 +174,7 @@
                           </button>
                         }
                         
-                        @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate) {
+                        @if (canManageJobs() && (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate)) {
                           <button
                             type="button"
                             class="btn btn-sm btn-outline-brand me-1"
@@ -182,7 +184,7 @@
                             <i class="fa fa-pen-to-square"></i>
                           </button>
                         }
-                        @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !== jobStatus.PendingApproval && job.jobStatus.backendName !== jobStatus.NeedUpdate) {
+                        @if(canViewJobs() && job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !== jobStatus.PendingApproval && job.jobStatus.backendName !== jobStatus.NeedUpdate) {
                         <button
                           type="button"
                           class="btn btn-sm btn-outline-gray me-1"
@@ -192,7 +194,7 @@
                           <i class="fa fa-eye"></i>
                         </button>
                       }
-                        @if(job.jobStatus.backendName !== jobStatus.Approved){
+                        @if(job.jobStatus.backendName !== jobStatus.Approved && (canApproveJobs() || canManageJobs())){
                         <div class="dropdown d-inline-block">
                           <button
                             class="btn btn-sm btn-outline-secondary dropdown-toggle"
@@ -203,7 +205,7 @@
                             <i class="fa fa-ellipsis-h"></i>
                           </button>
                           <ul class="dropdown-menu dropdown-menu-end">
-                            @if (job.jobStatus.backendName === jobStatus.PendingApproval) {
+                            @if (canApproveJobs() && job.jobStatus.backendName === jobStatus.PendingApproval) {
                               <li>
                                 <button class="dropdown-item" (click)="approveJob(job)">
                                   <i class="fa fa-check me-2"></i>
@@ -217,7 +219,7 @@
                                 </button>
                               </li>
                             }
-                            @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
+                            @if (canApproveJobs() && job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
                               <li>
                                 <button class="dropdown-item" (click)="publishJob(job)">
                                   <i class="fa fa-upload me-2"></i>
@@ -225,7 +227,7 @@
                                 </button>
                               </li>
                             }
-                            @if (job.jobStatus.backendName === jobStatus.Published) {
+                            @if (canApproveJobs() && job.jobStatus.backendName === jobStatus.Published) {
                               <li>
                                 <button class="dropdown-item" (click)="closeJob(job)">
                                   <i class="fa fa-lock me-2"></i>
@@ -234,7 +236,7 @@
                               </li>
                             }
                             <li><hr class="dropdown-divider"></li>
-                            @if(job.jobStatus.backendName !== jobStatus.Published && job.jobStatus.backendName !== jobStatus.Approved) {
+                            @if(canManageJobs() && job.jobStatus.backendName !== jobStatus.Published && job.jobStatus.backendName !== jobStatus.Approved) {
                             <li>
                               <button class="dropdown-item text-danger" (click)="deleteJob(job)">
                                 <i class="fa fa-trash me-2"></i>
@@ -254,10 +256,12 @@
                   <td colspan="8" class="text-center py-5">
                     <i class="fa fa-briefcase fa-3x text-muted mb-3"></i>
                     <p class="text-muted">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</p>
-                    <button class="btn btn-brand" (click)="createNewJob()">
-                      <i class="fa fa-plus me-2"></i>
-                      {{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}
-                    </button>
+                    @if (canManageJobs()) {
+                      <button class="btn btn-brand" (click)="createNewJob()">
+                        <i class="fa fa-plus me-2"></i>
+                        {{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}
+                      </button>
+                    }
                   </td>
                 </tr>
               }

@@ -2,11 +2,13 @@ import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe, TranslateService} from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {Tooltip} from 'primeng/tooltip';
 import {routes} from '../../../routes/routes';
 import {AuthService} from '../../../core/auth/auth.service';
 import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
+import {Permissions} from '../../../core/constants/permissions';
+import {HasPermissionDirective} from '../../../shared/directives/has-permission.directive';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,7 +16,7 @@ import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directiv
   host: { 'data-test': 'sidebar-main' },
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective]
+  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective]
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
@@ -24,10 +26,10 @@ export class SidebarComponent implements OnInit {
   activeItem = '';
 
   menuItems = [
-    { key: 'home', label: 'admin.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.dashboard('admin') },
-    { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/shield.svg', route: routes.admin.roleManagement },
-    { key: 'users', label: 'admin.sidebar.users', icon: 'assets/img/icons/users.svg', route: routes.admin.usersManagement },
-    { key: 'offices', label: 'admin.sidebar.offices', icon: 'assets/img/icons/files.svg', route: routes.admin.officesManagement },
+    { key: 'home', label: 'admin.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.dashboard('admin'), permission: Permissions.Dashboard.View },
+    { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/shield.svg', route: routes.admin.roleManagement, permission: Permissions.Roles.Manage },
+    { key: 'users', label: 'admin.sidebar.users', icon: 'assets/img/icons/users.svg', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
+    { key: 'offices', label: 'admin.sidebar.offices', icon: 'assets/img/icons/files.svg', route: routes.admin.officesManagement, permission: Permissions.Offices.Manage },
   ];
 
   constructor(private router: Router) {}
