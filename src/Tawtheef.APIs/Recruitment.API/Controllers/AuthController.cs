@@ -13,6 +13,7 @@ using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -53,10 +54,10 @@ public class AuthController(IMediator mediator) : ControllerBase
 
     [HttpGet("google/external-login-callback", Name = nameof(GoogleExternalLoginCallback))]
     public async Task<IActionResult> GoogleExternalLoginCallback(
-        [FromQuery] GoogleExternalCallbackLoginCommand command,
+        [FromQuery] RequestGoogleExternalCallbackLoginCommand req,
         [FromServices] IOptions<AppConfigSettings> appConfig)
     {
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(new GoogleExternalCallbackLoginCommand(UserTypeIds.Applicant, req.ReturnUrl, req.RemoteError));
 
         var spaOrigin = GetOriginOnly(appConfig.Value.FrontendUrl);
         var spaCallback = $"{spaOrigin}/auth/popup-callback";
