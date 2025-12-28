@@ -37,11 +37,6 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    const currentJob = this.jobService.getCurrentJob();
-    if (currentJob) {
-      this.setJobData(currentJob);
-    }
-
     this.form.valueChanges
       .pipe(
         debounceTime(300),
