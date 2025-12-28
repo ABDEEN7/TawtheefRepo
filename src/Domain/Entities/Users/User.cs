@@ -11,7 +11,7 @@ using Tawtheef.Domain.ValueObjects.User;
 
 namespace Tawtheef.Domain.Entities.Users;
 
-public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents
+public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalizedFullName
 {
     [Required, StringLength(100)]
     public required string FullNameEn { get; set; }

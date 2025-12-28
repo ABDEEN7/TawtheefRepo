@@ -148,7 +148,7 @@ public sealed class GetProfilePartialChangesHandler(
         {
             UserProfileId = profile.Id,
             UserId = profile.UserId,
-            FullName = profile.User?.FullNameEn ?? profile.User?.FullNameAr ?? string.Empty,
+            FullName = localization.GetLocalizedFullName(profile.User),
             CandidateType = localization.GetLocalizedName(profile.CandidateType),
             TargetEntity = localization.GetLocalizedName(profile.TargetEntity),
             Profile = profileData,

@@ -14,6 +14,8 @@ public static class LocalizedNameExtensions
                 return null;
             case ILocalizedName localized:
                 return localized.GetLocalizedName(language);
+            case ILocalizedFullName localized:
+                return localized.GetLocalizedName(language);
             default:
             {
                 // Reflection fallback (slower but flexible)

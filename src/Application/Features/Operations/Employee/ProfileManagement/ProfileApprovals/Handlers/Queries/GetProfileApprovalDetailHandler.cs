@@ -15,7 +15,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
-public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
+public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media, ILocalizationService localization)
     : IRequestHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
 {
     public async Task<Result<GetProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request,
@@ -67,9 +67,9 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
         {
             UserProfileId = profile.Id,
             UserId = profile.UserId,
-            FullName = profile.User?.FullNameEn ?? profile.User?.FullNameAr ?? string.Empty,
-            CandidateType = profile.CandidateType?.NameAr ?? profile.CandidateType?.NameEn,
-            TargetEntity = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn,
+            FullName = localization.GetLocalizedFullName(profile.User),
+            CandidateType = localization.GetLocalizedName(profile.CandidateType),
+            TargetEntity = localization.GetLocalizedName(profile.TargetEntity),
             Profile = profileData,
             Sections = sections
         };

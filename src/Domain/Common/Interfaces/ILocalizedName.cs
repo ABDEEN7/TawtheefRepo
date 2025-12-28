@@ -10,3 +10,13 @@ public interface ILocalizedName
         _ => NameEn
     };
 }
+public interface ILocalizedFullName
+{
+    string FullNameAr { get; set; }
+    string FullNameEn { get; set; }
+    string GetLocalizedName(string language) => language.ToLower() switch
+    {
+        "ar" => FullNameAr,
+        _ => FullNameEn
+    };
+}
