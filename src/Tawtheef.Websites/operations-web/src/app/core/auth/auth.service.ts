@@ -60,6 +60,9 @@ export class AuthService {
     return this.user.getCurrentUser();
   }
 
+  isLoggedIn(): boolean {
+    return this.state.checkAuthState(false);
+  }
   private getPermissionsFromToken(): Set<string> {
     if (this.permissionsCache) {
       return this.permissionsCache;
