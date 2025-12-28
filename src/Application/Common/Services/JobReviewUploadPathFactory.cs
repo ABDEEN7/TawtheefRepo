@@ -7,7 +7,6 @@ public static class JobReviewUploadPathFactory
 {
     public static async Task<JobUploadPath> CreateAsync(
         Guid jobId,
-        TabType tab,
         IFormFile file,
         bool isPublic,
         CancellationToken ct)
@@ -21,7 +20,6 @@ public static class JobReviewUploadPathFactory
 
         var path = LocalPathBuilder.JobReview(
             jobId,
-            tab.ToString().ToLowerInvariant(),
             fileId,
             ext,
             hash,

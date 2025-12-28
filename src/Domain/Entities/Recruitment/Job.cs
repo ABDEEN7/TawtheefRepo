@@ -85,11 +85,12 @@ public class Job : EventEntity
     public virtual WorkType? WorkType { get; set; }
     public virtual JobStatus? JobStatus { get; set; }
     public virtual JobPointsMain? JobPoints { get; set; }
-    public virtual List<JobDegree> JobDegrees { get; set; } = new List<JobDegree>();
-    public virtual List<JobCondition> JobConditions { get; set; } = new List<JobCondition>();
-    public virtual List<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
-    public virtual List<JobResponsibility> JobResponsibilities { get; set; } = new List<JobResponsibility>();
-    public virtual List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = new List<JobRequiredAttachment>();
-    public virtual List<Invitation> Invitations { get; set; } = new List<Invitation>();
-    public virtual List<JobTabReviewNote> TabReviewNotes { get; set; } = new List<JobTabReviewNote>();
+    public virtual JobReviewAttachment? ReviewAttachment { get; set; }
+    public virtual List<JobDegree> JobDegrees { get; set; } = [];
+    public virtual List<JobCondition> JobConditions { get; set; } = [];
+    public virtual List<JobSkill> JobSkills { get; set; } = [];
+    public virtual List<JobResponsibility> JobResponsibilities { get; set; } = [];
+    public virtual List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = [];
+    public virtual List<Invitation> Invitations { get; set; } = [];
+    public virtual List<JobTabReviewNote> TabReviewNotes { get; set; } = [];
 }

@@ -10,14 +10,17 @@ public class JobPointsMain : EventEntity
     [Required]
     public Guid JobId { get; set; }
     public virtual Job Job { get; set; } = default!;
-    [Required, Range(0, 100)] public int ApplicantCategory { get; set; }
-    [Required, Range(0, 100)] public int Education { get; set; }
-    [Required, Range(0, 100)] public int Experience { get; set; }
-    [Required, Range(0, 100)] public int Training { get; set; }
-    [Required, Range(0, 100)] public int Certificates { get; set; }
-    [Required, Range(0, 100)] public int Skills { get; set; }
-    [Required, Range(0, 100)] public int Languages { get; set; }
+    [Required] public int ApplicantCategory { get; set; }
+    [Required] public int Education { get; set; }
+    [Required] public int Experience { get; set; }
+    [Required] public int Training { get; set; }
+    [Required] public int Certificates { get; set; }
+    [Required] public int Skills { get; set; }
+    [Required] public int Languages { get; set; }
     [Required, Range(0, 1000)] public int Total { get; set; }
 
-    public virtual ICollection<JobPointsDetail>? Details { get; set; } = new List<JobPointsDetail>();
+    [Required]
+    public bool IsApproved { get; set; } = false;
+
+    public virtual ICollection<JobPointsDetail> Details { get; set; } = [];
 }

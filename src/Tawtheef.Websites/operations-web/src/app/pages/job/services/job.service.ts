@@ -17,6 +17,7 @@ import { JobLookupService } from './job-lookup.service';
 import { JobStatus } from '../../../core/enums/lookups.enum';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 import { JobTabStatus } from '../enums/job-tab-status';
+import { JobReviewResponse } from '../models/job-review-response';
 
 @Injectable({
   providedIn: 'root',
@@ -418,21 +419,12 @@ export class JobService {
       })
     );
   }
-
-  getTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
-    return this.httpService.get<JobTabReviewNoteResponse[]>(
-      `${this.endpoints.job.jobApproval}/${jobId}`
-    );
+  
+  getLatestReview(jobId: GUID): Observable<JobReviewResponse> {
+  return this.httpService.get<JobReviewResponse>(this.endpoints.job.getLatestReview(jobId));
   }
-
-  getLatestTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
-    return this.httpService.get<JobTabReviewNoteResponse[]>(
-      `${this.endpoints.job.jobApproval}/${jobId}/latest`
-    );
-  }
-
-  GetJobsCountByStatus(jobStatusId: string): Observable<number> {
-    const url = `${this.endpoints.job.CountByStatus}?jobStatusId=${encodeURIComponent(jobStatusId)}`;    
+  GetJobsCountByStatus(jobStatusId: GUID): Observable<number> {
+    const url = `${this.endpoints.job.CountByStatus(jobStatusId)}`;    
     return this.httpService.get<number>(url);
 }
 }

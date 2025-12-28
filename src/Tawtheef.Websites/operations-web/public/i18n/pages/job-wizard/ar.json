@@ -61,7 +61,6 @@
   "JOB_BASIC_MODAL.SUCCESS.UPDATED": "تم تحديث البيانات الأساسية بنجاح",
   "JOB_BASIC_MODAL.ERROR.UPDATE_FAILED": "فشل في تحديث البيانات",
 
-  "COMMON.LOADING": "جاري التحميل...",
 
   "VALIDATION.REQUIRED_FIELD": "هذا الحقل مطلوب",
 
@@ -96,6 +95,9 @@
   "JOB_WIZARD.STEPS.BASICS.VACANCIES": "عدد الشواغر",
   "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "أدخل عدد الشواغر",
   "JOB_WIZARD.STEPS.BASICS.DEADLINE": "تاريخ الإغلاق",
+
+   "JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD_TITLE": "إلغاء عملية إستكمال المعلومات للوظيفة",
+  "JOB_BASIC_MODAL.CANCEL_CONFIRM_TITLE": "إلغاء",
 
   "JOB_WIZARD.VALIDATION.SECTOR_REQUIRED": "يجب اختيار القطاع أولاً",
   "JOB_WIZARD.VALIDATION.MANAGEMENT_REQUIRED": "يجب اختيار الإدارة أولاً",

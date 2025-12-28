@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output, inject, output } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { JobResponse } from '../../models/job-response-model';
 import { DetailItem } from '../../models/detail-Item';
@@ -32,79 +32,121 @@ export class JobPointsTabComponent implements OnInit {
   private fb = inject(FormBuilder);
   private pointsCalculationService = inject(JobPointsCalculationService);
 
-  applicantCategoryFormGroup!: FormGroup;
-  educationFormGroup!: FormGroup;
-  experienceFormGroup!: FormGroup;
-  trainingFormGroup!: FormGroup;
-  skillsFormGroup!: FormGroup;
-  languagesFormGroup!: FormGroup;
-  certificatesFormGroup!: FormGroup;
-
-  applicantCategoryItems = APPLICANT_CATEGORY_ITEMS;
-  trainingItems = TRAINING_ITEMS;
-  experienceItems = EXPERIENCE_ITEMS;
-  educationItems = EDUCATION_ITEMS;
-  skillsItems = SKILLS_ITEMS;
-  languageItems = LANGUAGE_ITEMS;
-  certificatesItems = CERTIFICATES_ITEMS;
-
-  get speakingFormGroup(): FormGroup {
-    return this.languagesFormGroup.get('speaking') as FormGroup;
-  }
-
-  get readingFormGroup(): FormGroup {
-    return this.languagesFormGroup.get('reading') as FormGroup;
-  }
-
-  get conversationFormGroup(): FormGroup {
-    return this.languagesFormGroup.get('conversation') as FormGroup;
-  }
-
-  ngOnInit(): void {
-    this.skillsItems =
-      this.job?.skills.map((s) => ({
-        key: s.skill.backendName,
-        label: s.skill.name,
-        id: s.skill.id,
-      })) || [];
-
-    this.educationItems =
-      this.job?.degrees.map((d) => ({
+  // Define form group mappings
+  private formGroupMappings = {
+    applicantCategory: {
+      items: APPLICANT_CATEGORY_ITEMS,
+      getter: () => this.form.get('applicantCategory') as FormGroup,
+      sum: () => this.pointsCalculationService.sumCategory(this.applicantCategoryFormGroup)
+    },
+    education: {
+      items: EDUCATION_ITEMS,
+      getter: () => this.form.get('education') as FormGroup,
+      sum: () => this.pointsCalculationService.sumCategory(this.educationFormGroup),
+      dynamicItems: () => this.job?.degrees.map((d) => ({
         key: d.degree.backendName,
         label: d.degree.name,
         id: d.degree.id,
-      })) || [];
+      })) || []
+    },
+    experience: {
+      items: EXPERIENCE_ITEMS,
+      getter: () => this.form.get('experience') as FormGroup,
+      total: () => {
+        const exp = this.experienceFormGroup?.getRawValue();
+        return (exp?.pointsPerYear || 0) * (exp?.maxYears || 0);
+      }
+    },
+    training: {
+      items: TRAINING_ITEMS,
+      getter: () => this.form.get('training') as FormGroup,
+      sum: () => this.pointsCalculationService.sumCategory(this.trainingFormGroup)
+    },
+    skills: {
+      items: SKILLS_ITEMS,
+      getter: () => this.form.get('skills') as FormGroup,
+      sum: () => this.pointsCalculationService.sumCategory(this.skillsFormGroup),
+      dynamicItems: () => this.job?.skills.map((s) => ({
+        key: s.skill.backendName,
+        label: s.skill.name,
+        id: s.skill.id,
+      })) || []
+    },
+    languages: {
+      items: LANGUAGE_ITEMS,
+      getter: () => this.form.get('languages') as FormGroup,
+      sum: () => this.pointsCalculationService.sumLanguagesCategory(this.languagesFormGroup)
+    },
+    certificates: {
+      items: CERTIFICATES_ITEMS,
+      getter: () => this.form.get('certificates') as FormGroup,
+      sum: () => this.pointsCalculationService.sumCategory(this.certificatesFormGroup)
+    }
+  };
 
-    this.applicantCategoryFormGroup = this.form.get('applicantCategory') as FormGroup;
-    this.educationFormGroup = this.form.get('education') as FormGroup;
-    this.experienceFormGroup = this.form.get('experience') as FormGroup;
-    this.trainingFormGroup = this.form.get('training') as FormGroup;
-    this.skillsFormGroup = this.form.get('skills') as FormGroup;
-    this.languagesFormGroup = this.form.get('languages') as FormGroup;
-    this.certificatesFormGroup = this.form.get('certificates') as FormGroup;
+  // Public getters for template
+  get applicantCategoryFormGroup(): FormGroup { return this.formGroupMappings.applicantCategory.getter(); }
+  get educationFormGroup(): FormGroup { return this.formGroupMappings.education.getter(); }
+  get experienceFormGroup(): FormGroup { return this.formGroupMappings.experience.getter(); }
+  get trainingFormGroup(): FormGroup { return this.formGroupMappings.training.getter(); }
+  get skillsFormGroup(): FormGroup { return this.formGroupMappings.skills.getter(); }
+  get languagesFormGroup(): FormGroup { return this.formGroupMappings.languages.getter(); }
+  get certificatesFormGroup(): FormGroup { return this.formGroupMappings.certificates.getter(); }
 
-    this.initControls();
+  // Item arrays (some are dynamic)
+  applicantCategoryItems = APPLICANT_CATEGORY_ITEMS;
+  trainingItems = TRAINING_ITEMS;
+  experienceItems = EXPERIENCE_ITEMS;
+  certificatesItems = CERTIFICATES_ITEMS;
+  
+  // These will be set in ngOnInit
+  educationItems: DetailItem[] = [];
+  skillsItems: DetailItem[] = [];
+  languageItems = LANGUAGE_ITEMS;
+
+  // Language ability getters
+  get speakingFormGroup(): FormGroup { return this.languagesFormGroup.get('speaking') as FormGroup; }
+  get readingFormGroup(): FormGroup { return this.languagesFormGroup.get('reading') as FormGroup; }
+  get conversationFormGroup(): FormGroup { return this.languagesFormGroup.get('conversation') as FormGroup; }
+
+  ngOnInit(): void {
+    // Initialize dynamic items
+    this.educationItems = this.formGroupMappings.education.dynamicItems?.() || EDUCATION_ITEMS;
+    this.skillsItems = this.formGroupMappings.skills.dynamicItems?.() || SKILLS_ITEMS;
+
+    this.initFormControls();
     this.ready.emit();
   }
 
-  private initControls(): void {
-    this.addControls(this.applicantCategoryFormGroup, this.applicantCategoryItems);
-    this.addControls(this.educationFormGroup, this.educationItems);
+  private initFormControls(): void {
+    // Initialize all form controls
+    Object.keys(this.formGroupMappings).forEach(key => {
+      const mapping = this.formGroupMappings[key as keyof typeof this.formGroupMappings];
+      const group = mapping.getter();
+      const items = key === 'education' ? this.educationItems :
+                    key === 'skills' ? this.skillsItems :
+                    mapping.items;
 
-    this.experienceItems.forEach((item) => {
-      if (!this.experienceFormGroup.get(item.key)) {
-        this.experienceFormGroup.addControl(item.key, this.fb.control(0));
+      if (key === 'languages') {
+        this.addControlsNested(group, items);
+      } else if (key === 'experience') {
+        this.addExperienceControls(group, items);
+      } else {
+        this.addControls(group, items);
       }
     });
-
-    this.addControls(this.trainingFormGroup, this.trainingItems);
-    this.addControls(this.skillsFormGroup, this.skillsItems);
-    this.addControlsNested(this.languagesFormGroup, this.languageItems); 
-    this.addControls(this.certificatesFormGroup, this.certificatesItems);
   }
 
   private addControls(group: FormGroup, items: DetailItem[]): void {
-    items.forEach((item) => {
+    items.forEach(item => {
+      if (!group.get(item.key)) {
+        group.addControl(item.key, this.fb.control(0));
+      }
+    });
+  }
+
+  private addExperienceControls(group: FormGroup, items: DetailItem[]): void {
+    items.forEach(item => {
       if (!group.get(item.key)) {
         group.addControl(item.key, this.fb.control(0));
       }
@@ -112,56 +154,41 @@ export class JobPointsTabComponent implements OnInit {
   }
 
   private addControlsNested(group: FormGroup, items: DetailItem[]): void {
-    items.forEach((item) => {
+    items.forEach(item => {
       const path = item.key.split('.');
-
+      
       if (path.length === 1) {
-        if (!group.get(item.key)) {
-          group.addControl(item.key, this.fb.control(0));
-        }
+        this.ensureControlExists(group, item.key);
       } else if (path.length === 2) {
         const [parentKey, childKey] = path;
-        let parentGroup = group.get(parentKey) as FormGroup;
-
-        if (!parentGroup) {
-          parentGroup = this.fb.group({});
-          group.addControl(parentKey, parentGroup);
-        }
-        if (!parentGroup.get(childKey)) {
-          parentGroup.addControl(childKey, this.fb.control(0));
-        }
+        const parentGroup = this.getOrCreateNestedGroup(group, parentKey);
+        this.ensureControlExists(parentGroup, childKey);
       }
     });
   }
 
-  get experienceTotal(): number {
-    const exp = this.experienceFormGroup?.getRawValue();
-    return (exp?.pointsPerYear || 0) * (exp?.maxYears || 0);
+  private getOrCreateNestedGroup(parentGroup: FormGroup, groupName: string): FormGroup {
+    let nestedGroup = parentGroup.get(groupName) as FormGroup;
+    if (!nestedGroup) {
+      nestedGroup = this.fb.group({});
+      parentGroup.addControl(groupName, nestedGroup);
+    }
+    return nestedGroup;
   }
 
-  applicantCategorySum() {
-    return this.pointsCalculationService.sumCategory(this.applicantCategoryFormGroup);
+  private ensureControlExists(group: FormGroup, controlName: string): void {
+    if (!group.get(controlName)) {
+      group.addControl(controlName, this.fb.control(0));
+    }
   }
 
-  educationSum() {
-    return this.pointsCalculationService.sumCategory(this.educationFormGroup);
-  }
-
-  trainingSum() {
-    return this.pointsCalculationService.sumCategory(this.trainingFormGroup);
-  }
-
-  skillsSum() {
-    return this.pointsCalculationService.sumCategory(this.skillsFormGroup);
-  }
-
-  languagesSum(): number {
-    return this.pointsCalculationService.sumLanguagesCategory(this.languagesFormGroup);
-  }
-
-  certificatesSum() {
-    return this.pointsCalculationService.sumCategory(this.certificatesFormGroup);
-  }
+  applicantCategorySum(): number { return this.formGroupMappings.applicantCategory.sum!(); }
+  educationSum(): number { return this.formGroupMappings.education.sum!(); }
+  trainingSum(): number { return this.formGroupMappings.training.sum!(); }
+  skillsSum(): number { return this.formGroupMappings.skills.sum!(); }
+  languagesSum(): number { return this.formGroupMappings.languages.sum!(); }
+  certificatesSum(): number { return this.formGroupMappings.certificates.sum!(); }
+  get experienceTotal(): number { return this.formGroupMappings.experience.total!(); }
 
   areAllCategoriesValid(): boolean {
     return this.pointsCalculationService.areAllCategoriesValid(

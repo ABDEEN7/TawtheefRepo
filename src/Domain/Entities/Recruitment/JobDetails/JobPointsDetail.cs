@@ -10,12 +10,12 @@ public class JobPointsDetail : EventEntity
     [Required]
     public Guid JobPointsMainId { get; set; }
 
-    public virtual JobPointsMain JobPointsMain { get; set; } = default!;
+    public virtual JobPointsMain? JobPointsMain { get; set; }
 
     public JobPointRuleType Type { get; set; }
 
     [Required]
-    public string Code { get; set; } = default!;
+    public required string Code { get; set; }
 
     public string? Name { get; set; }
 

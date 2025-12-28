@@ -42,17 +42,18 @@ public class JobController(IMediator mediator) : ControllerBase
 
     [HttpGet("lookups/majors")]
     [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsView)]
-    public async Task<IActionResult> GetMajors()
-    {
-        var result = await mediator.Send(new GetMajorsQuery());
+    public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
+   {
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(query with { Language = language });
         return result.ToActionResult();
     }
 
     [HttpGet("lookups/sub-majors")]
     [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsView)]
-    public async Task<IActionResult> GetSubMajors([FromQuery] Guid majorId)
+    public async Task<IActionResult> GetSubMajors([FromQuery] GetSubMajorsQuery query)
     {
-        var result = await mediator.Send(new GetSubMajorsQuery(majorId));
+        var result = await mediator.Send(query);
         return result.ToActionResult();
     }
 

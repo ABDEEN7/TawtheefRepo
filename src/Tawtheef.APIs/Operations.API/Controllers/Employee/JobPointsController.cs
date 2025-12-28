@@ -24,6 +24,13 @@ public class JobPointsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPost("{jobId:guid}/approve")]
+    public async Task<IActionResult> ApproveJobPoints(Guid jobId)
+    {
+        var result = await mediator.Send(new ApproveJobPointsCommand(jobId));
+        return result.ToActionResult();
+    }
+
     #region Points Configurations
 
     [HttpGet("{jobId:guid}/config")]
@@ -33,7 +40,7 @@ public class JobPointsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPost("add")]
+    [HttpPost("configurations/add")]
     public async Task<IActionResult> AddJobPointsConfiguration([FromBody] AddJobPointsConfigurationCommand command)
     {
         var result = await mediator.Send(command);

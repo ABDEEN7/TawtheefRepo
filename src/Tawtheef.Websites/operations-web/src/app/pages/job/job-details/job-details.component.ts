@@ -65,22 +65,6 @@ export class JobDetailsComponent implements OnInit {
     return this.tabsContent.find(tab => tab.id === this.activeTab) || this.tabsContent[0];
   }
 
-  openConfirmModal(): void {
-    const ref = this.dialogService.open(ConfirmApplyModalComponent, {
-      width: '600px',
-      height: '350px',
-      dismissableMask: true,
-      closeOnEscape: true,
-    });
-
-    ref?.onClose.subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.confirmApply();
-        this.notificationService.success('JOB_DETAILS.APPLY_SUCCESS');
-      }
-    });
-  }
-
   confirmApply(): void {
     this.hasApplied = true;
   }

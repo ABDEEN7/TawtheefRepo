@@ -1,0 +1,22 @@
+<div class="select-with-loading">
+  <p-select
+    [options]="options"
+    [filter]="true"
+    [optionLabel]="optionLabel"
+    [optionValue]="optionValue"
+    [placeholder]="computedPlaceholder"
+    [disabled]="isDisabledComputed"
+    (onFilter)="onFilter($event)"
+    (onShow)="onOpen()"
+    (onChange)="handleChange($event)"
+    [(ngModel)]="value"
+    [emptyMessage]="emptyMessage"
+    [size]="size"
+    [appendTo]="appendTo"
+    [panelStyle]="panelStyle"
+    [ngClass]="{ 'p-invalid': invalid }">
+  </p-select>
+  <div class="select-loading-overlay" *ngIf="isLoading">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+  </div>
+</div>

@@ -6,4 +6,5 @@ export interface JobPointConfiguration{
   certificatesMaxPoints: number;
   skillsMaxPoints: number;
   languagesMaxPoints: number;
+  maxPoints : number;
 }

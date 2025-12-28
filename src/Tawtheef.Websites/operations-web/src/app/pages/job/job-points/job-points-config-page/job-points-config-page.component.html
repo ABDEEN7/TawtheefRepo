@@ -11,41 +11,73 @@
     </div>
   </div>
 
-  <p-tabs [(value)]="activeTab" class="tabs-shell">
-    <p-tablist>
-      <p-tab value="0">
-        <i class="pi pi-list mr-2"></i>
-        {{ 'JOB_POINTS.CONFIG.TABS.MAIN' | translate }}
-      </p-tab>
+  @if (isLoading) {
+    <div class="loading-overlay">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" strokeWidth="4"></p-progressSpinner>
+      <p class="loading-text">{{ 'common.loading' | translate }}</p>
+    </div>
+  }
 
-      <p-tab value="1" [disabled]="!canAccessDetails()">
-        <i class="pi pi-table mr-2"></i>
-        {{ 'JOB_POINTS.CONFIG.TABS.DETAILS' | translate }}
-      </p-tab>
-    </p-tablist>
+  @if (!isLoading) {
+    <p-tabs [(value)]="activeTab" class="tabs-shell">
+      <p-tablist>
+        <p-tab value="0">
+          <i class="pi pi-list mr-2"></i>
+          {{ 'JOB_POINTS.CONFIG.TABS.MAIN' | translate }}
+        </p-tab>
 
-    <p-tabpanels>
-      <!-- ================= Main Points ================= -->
-      <p-tabpanel value="0">
-        <app-job-points-main-elements
-          [form]="mainFormGroup"
-          [keys]="mainKeys"
-          (next)="goToDetails()"
-        />
-      </p-tabpanel>
+        <p-tab value="1" [disabled]="!canAccessDetails()">
+          <i class="pi pi-table mr-2"></i>
+          {{ 'JOB_POINTS.CONFIG.TABS.DETAILS' | translate }}
+        </p-tab>
+      </p-tablist>
 
-      <!-- ================= Details ================= -->
-      <p-tabpanel value="1">
-        @if (canAccessDetails()) {
-          <app-job-points-tab
-            [mainForm]="mainFormGroup"
-            [form]="detailsFormGroup"
-            [job]="job"
-            (save)="save()"
-            (goPrevious)="goBack()"
-          />
-        }
-      </p-tabpanel>
-    </p-tabpanels>
-  </p-tabs>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+          <app-job-points-main-elements
+            [form]="mainFormGroup"
+            [keys]="mainKeys"
+            [systemMaxPoints]="systemMaxPoints"
+            (next)="goToDetails()"
+          ></app-job-points-main-elements>
+        </p-tabpanel>
+
+        <p-tabpanel value="1">
+          @if (canAccessDetails()) {
+            <app-job-points-tab
+              [mainForm]="mainFormGroup"
+              [form]="detailsFormGroup"
+              [job]="job"
+              (save)="save()"
+              (goPrevious)="goBack()"
+            ></app-job-points-tab>
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  }
+
+  @if (isFinalApprovalAvailable && !isLoading) {
+    <div class="final-approval-section">
+      <div class="approval-info">
+        <i class="pi pi-check-circle mr-2"></i>
+        {{ 'JOB_POINTS.APPROVE.READY_FOR_APPROVAL' | translate }}
+      </div>
+      <button
+        type="button"
+        class="approve-button primary-pill"
+        (click)="approvePoints()"
+        [disabled]="isLoading"
+      >
+        <i class="pi pi-check mr-2"></i>
+        {{ 'JOB_POINTS.APPROVE.BUTTON' | translate }}
+      </button>
+    </div>
+  }
+  @if (jobPoints?.isApproved) {
+    <div class="already-approved">
+      <i class="pi pi-check-circle mr-2"></i>
+      {{ 'JOB_POINTS.APPROVE.ALREADY_APPROVED' | translate }}
+    </div>
+  }
 </section>
