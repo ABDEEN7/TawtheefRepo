@@ -9,6 +9,7 @@ import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operato
 import { ExternalMsg } from '../../pages/auth/popup-callback/popup-callback';
 import {TranslateService} from '@ngx-translate/core';
 import {NotificationService} from '../services/notification.service';
+import {OAUTH_STATE_KEY} from '../constants/auth-tokens.const';
 
 @Injectable({ providedIn: 'root' })
 export class ExternalLoginService implements OnDestroy {
@@ -94,7 +95,7 @@ export class ExternalLoginService implements OnDestroy {
     this.closePopup();
 
     const state = Math.random().toString(36).slice(2);
-    localStorage.setItem('oauth_state', state);
+    localStorage.setItem(OAUTH_STATE_KEY, state);
     const url = baseUrl.includes('?') ? `${baseUrl}&state=${state}` : `${baseUrl}?state=${state}`;
 
     const { left, top } = this.centeredPosition();

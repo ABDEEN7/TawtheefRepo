@@ -61,10 +61,6 @@ export class AuthService {
     return this.user.getCurrentUser();
   }
 
-  isPasswordlessUser(): boolean {
-    return this.user.isPasswordlessUser();
-  }
-
   isLoggedIn(): boolean {
     return this.state.checkAuthState(false);
   }

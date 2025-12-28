@@ -6,7 +6,6 @@ public sealed class SaveProfilePrereqRequest
 {
     public Guid CandidateTypeId { get; set; }
     public Guid TargetEntityId { get; set; }
-    public Guid? OfficeId { get; set; }
     public DateOnly? QIDExpiry { get; set; }
 
     public string? CvFileName { get; set; }

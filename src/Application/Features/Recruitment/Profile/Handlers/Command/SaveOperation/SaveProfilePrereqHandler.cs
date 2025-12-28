@@ -11,6 +11,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Utils;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
@@ -54,13 +55,11 @@ public sealed class SaveProfilePrereqHandler(
         profile.CandidateTypeId = r.CandidateTypeId;
         profile.TargetEntityId  = r.TargetEntityId;
 
-        var needsSponsor = PrereqSectionSnapshot.RequiresSponsor(profile.CandidateTypeId);
-        var needsBirthCertificate = PrereqSectionSnapshot.RequiresBirthCertificate(profile.CandidateTypeId);
-        var needsMarriageCertificate = PrereqSectionSnapshot.RequiresMarriageCertificate(profile.CandidateTypeId);
-        var needsOffice = PrereqSectionSnapshot.RequiresOffice(profile.CandidateTypeId);
-        var requiresNationalAddress = PrereqSectionSnapshot.RequiresNationalAddress(profile.CandidateTypeId);
+        var needsSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
+        var needsBirthCertificate = ProfileValidatorUtils.RequiresBirthCertificate(profile.CandidateTypeId);
+        var needsMarriageCertificate = ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId);
+        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
 
-        profile.OfficeId = needsOffice ? r.OfficeId : null;
         profile.QIDExpiry = requiresNationalAddress ? r.QIDExpiry ?? profile.QIDExpiry : null;
 
         // CV
@@ -119,12 +118,6 @@ public sealed class SaveProfilePrereqHandler(
             {
                 profile.Address = null;
             }
-
-            if (!needsOffice)
-            {
-                profile.Office = null;
-                profile.OfficeId = null;
-            }
         }
 
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId, string category)
@@ -144,92 +137,4 @@ public sealed class SaveProfilePrereqHandler(
             return Result.Ok<Guid?>(uploadResult.Value!.ResourceId);
         }
     }
-}
-
-file sealed record PrereqSectionSnapshot
-{
-    public Guid? CandidateTypeId { get; init; }
-    public Guid? TargetEntityId { get; init; }
-    public Guid? OfficeId { get; init; }
-    public DateOnly? QidExpiry { get; init; }
-    public Guid? ResumeAttachmentId { get; init; }
-    public Guid? NationalCardId { get; init; }
-    public Guid? BirthCertificateId { get; init; }
-    public Guid? MarriageCertificateId { get; init; }
-
-    public static PrereqSectionSnapshot From(UserProfile profile) => new()
-    {
-        CandidateTypeId = profile.CandidateTypeId,
-        TargetEntityId = profile.TargetEntityId,
-        OfficeId = profile.OfficeId,
-        QidExpiry = profile.QIDExpiry,
-        ResumeAttachmentId = profile.ResumeAttachmentId,
-        NationalCardId = profile.NationalCardId,
-        BirthCertificateId = profile.BirthdayCertificateId,
-        MarriageCertificateId = profile.MarriageCertificateId
-    };
-
-    public PrereqSectionSnapshot ApplyRequest(
-        SaveProfilePrereqRequest request,
-        Guid? resumeAttachmentId,
-        Guid? nationalCardId,
-        Guid? birthCertificateId,
-        Guid? marriageCertificateId)
-    {
-        var nextCandidateTypeId = request.CandidateTypeId;
-        var snapshot = this with
-        {
-            CandidateTypeId = nextCandidateTypeId,
-            TargetEntityId = request.TargetEntityId,
-            OfficeId = request.OfficeId ?? OfficeId,
-            QidExpiry = request.QIDExpiry ?? QidExpiry,
-            ResumeAttachmentId = resumeAttachmentId ?? ResumeAttachmentId,
-            NationalCardId = nationalCardId ?? NationalCardId
-        };
-
-        if (RequiresBirthCertificate(nextCandidateTypeId))
-        {
-            snapshot = snapshot with { BirthCertificateId = birthCertificateId ?? BirthCertificateId };
-        }
-        else
-        {
-            snapshot = snapshot with { BirthCertificateId = null };
-        }
-
-        if (RequiresMarriageCertificate(nextCandidateTypeId))
-        {
-            snapshot = snapshot with { MarriageCertificateId = marriageCertificateId ?? MarriageCertificateId };
-        }
-        else
-        {
-            snapshot = snapshot with { MarriageCertificateId = null };
-        }
-
-        if (!RequiresOffice(nextCandidateTypeId))
-        {
-            snapshot = snapshot with { OfficeId = null };
-        }
-
-        if (!RequiresNationalAddress(nextCandidateTypeId))
-        {
-            snapshot = snapshot with { QidExpiry = null };
-        }
-
-        return snapshot;
-    }
-
-    public static bool RequiresSponsor(Guid? candidateTypeId) =>
-        candidateTypeId == CandidateTypeIds.ResidentQatar;
-
-    public static bool RequiresBirthCertificate(Guid? candidateTypeId) =>
-        candidateTypeId == CandidateTypeIds.SonOfQatariMother;
-
-    public static bool RequiresMarriageCertificate(Guid? candidateTypeId) =>
-        candidateTypeId == CandidateTypeIds.WifeOfQatari;
-
-    public static bool RequiresOffice(Guid? candidateTypeId) =>
-        candidateTypeId == CandidateTypeIds.NonQatari || candidateTypeId == CandidateTypeIds.GCC;
-
-    public static bool RequiresNationalAddress(Guid? candidateTypeId) =>
-        candidateTypeId != CandidateTypeIds.NonQatari && candidateTypeId != CandidateTypeIds.GCC;
 }

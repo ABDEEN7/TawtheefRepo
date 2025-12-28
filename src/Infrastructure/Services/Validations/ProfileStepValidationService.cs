@@ -88,6 +88,8 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
             }
         }
         
+        if(ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && request.OfficeId is null)
+            return Result.Fail(ErrorsCodes.OfficeRequired);
 
         return Result.Ok();
     }
@@ -177,9 +179,6 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId) && profile.MarriageCertificateId is null)
             return false;
 
-        if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && profile.OfficeId is null)
-            return false;
-
         return true;
     }
 
@@ -227,6 +226,9 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
                    profile.ResidenceAddress.UnitNo >= 0 &&
                    profile.ResidenceAddress.CertificateId != Guid.Empty;
         }
+
+        if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && profile.OfficeId is null)
+            return false;
 
         return !string.IsNullOrWhiteSpace(profile.Address);
     }

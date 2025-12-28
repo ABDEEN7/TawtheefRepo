@@ -18,7 +18,6 @@ export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestM
     submit: false,
     candidateTypeId: state.candidateType!.id,
     targetEntityId: state.targetEntity!.id,
-    officeId: state.office?.id ?? null,
     qidExpiry: state.qidExpiry ?? null,
     cvFileName: state.cvName,
     idFileName: state.idName,
@@ -66,6 +65,7 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
 
     residenceCountryId: state.country?.id ?? null,
     interviewLocationId: state.interviewPlace?.id ?? null,
+    officeId: state.office?.id ?? null,
 
     address: state.address ?? null,
     nationalAddress: hasNa

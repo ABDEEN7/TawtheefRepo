@@ -1,4 +1,5 @@
-﻿
+﻿import {GUID} from '../../../../../shared/types/guid.type';
+
 export interface NationalAddressDto {
   zone: string | null;
   street: string | null;
@@ -10,8 +11,9 @@ export interface NationalAddressDto {
 export interface SaveProfileContactRequestDto {
   submit: boolean;
 
-  residenceCountryId: string | null;
-  interviewLocationId: string | null;
+  residenceCountryId: GUID | null;
+  interviewLocationId: GUID | null;
+  officeId?: GUID | null;
 
   address: string | null;
   nationalAddress: NationalAddressDto | null;

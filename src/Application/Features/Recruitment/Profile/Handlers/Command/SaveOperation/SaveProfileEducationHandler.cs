@@ -134,7 +134,6 @@ public sealed class SaveProfileEducationHandler(
                 existingQualification.GraduationYear = dto.GradYear;
                 existingQualification.GPA            = dto.Gpa;
                 existingQualification.CertificateId  = attachmentId;
-
                 updatedQualifications.Add(existingQualification);
             }
         }
@@ -253,32 +252,4 @@ public sealed class SaveProfileEducationHandler(
 
         return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
-}
-
-file sealed record PendingQualificationSnapshot
-{
-    public Guid? DegreeId { get; init; }
-    public Guid? GradCountryId { get; init; }
-    public Guid? UniversityId { get; init; }
-    public Guid? MajorId { get; init; }
-    public Guid? SubMajorId { get; init; }
-    public Guid? StudyTypeId { get; init; }
-    public Guid? GradeId { get; init; }
-    public int? GradYear { get; init; }
-    public decimal? Gpa { get; init; }
-    public Guid? AttachmentResourceId { get; init; }
-
-    public static PendingQualificationSnapshot From(SaveProfileEducationDegreeDto dto, Guid? attachmentResourceId) => new()
-    {
-        DegreeId = dto.DegreeId,
-        GradCountryId = dto.GradCountryId,
-        UniversityId = dto.UniversityId,
-        MajorId = dto.MajorId,
-        SubMajorId = dto.SubMajorId,
-        StudyTypeId = dto.StudyTypeId,
-        GradeId = dto.GradeId,
-        GradYear = dto.GradYear,
-        Gpa = dto.Gpa,
-        AttachmentResourceId = attachmentResourceId
-    };
 }

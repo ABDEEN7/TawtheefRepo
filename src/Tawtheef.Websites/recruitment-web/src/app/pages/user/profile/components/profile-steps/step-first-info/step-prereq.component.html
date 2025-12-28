@@ -22,14 +22,6 @@
                 (ngModelChange)="ds.up('targetEntity',$event)" fluid></p-select>
     </div>
 
-    <div class="col-md-6" *ngIf="ds.state().candidateType && !ds.isResidentQatar">
-      <label for="office" class="form-label required">{{ 'wizard.prereq.officeLabel' | translate }}</label>
-      <p-select [options]="lookups.offices()" [(ngModel)]="ds.state().office"
-                [filter]="false" [loading]="false" filterBy="name" optionLabel="name"
-                class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectOffice' | translate"
-                (ngModelChange)="ds.up('office',$event)" fluid></p-select>
-    </div>
-
     <div class="col-md-6" *ngIf="ds.isResidentQatar">
       <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
       <p-date-picker name="qidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"

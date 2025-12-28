@@ -8,12 +8,13 @@ import { Subject, fromEvent, interval } from 'rxjs';
 import { filter, map, takeUntil, tap } from 'rxjs/operators';
 import {NotificationService} from '../services/notification.service';
 import {TranslateService} from '@ngx-translate/core';
+import {OAUTH_STATE_KEY} from '../constants/auth-tokens.const';
 
 type ExternalMessageType = 'EXTERNAL_LOGIN_SUCCESS' | 'EXTERNAL_LOGIN_ERROR' | 'EXTERNAL_POPUP_CLOSED';
 interface ExternalMessage {
   type: ExternalMessageType;
   userData?: any;
-  content?: string;
+  message?: { message: string }[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -50,8 +51,13 @@ export class ExternalLoginService implements OnDestroy {
     externalAuthFailedDetailFallback: 'auth.externalLogin.externalAuthFailed.detailFallback',
   } as const;
 
-  private i18nText(key: string): string {
-    return this.translate.instant(key);
+  private i18nText(key: string, prefix: string = ''): string {
+    const error_message = [prefix, key].filter(key=> !!key).join('.');
+    const translate_message = this.translate.instant(error_message);
+    if(translate_message == error_message)
+      return key;
+
+    return translate_message;
   }
   private safeIsPopupClosed(): boolean {
     try {
@@ -114,7 +120,7 @@ export class ExternalLoginService implements OnDestroy {
     this.closePopup();
 
     const state = Math.random().toString(36).slice(2);
-    localStorage.setItem('oauth_state', state);
+    localStorage.setItem(OAUTH_STATE_KEY, state);
     const url = baseUrl.includes('?') ? `${baseUrl}&state=${state}` : `${baseUrl}?state=${state}`;
 
     const { left, top } = this.centeredPosition();
@@ -155,11 +161,12 @@ export class ExternalLoginService implements OnDestroy {
         break;
 
       case 'EXTERNAL_LOGIN_ERROR':
-        // If msg.content is localized (sent by backend/popup), pass it through; otherwise fallback to key.
+        const error_list = msg.message;
         this.toast(
           'error',
           this.i18nText(this.i18n.loginFailedSummary),
-          msg.content ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback)
+          error_list?.map(k=> this.i18nText(k.message, 'server-error')).join('\n')
+            ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback),
         );
         this.closePopup();
         break;
@@ -197,16 +204,16 @@ export class ExternalLoginService implements OnDestroy {
   ) {
     switch (severity) {
       case 'success':
-        this.notificationService.success(this.i18nText(summaryKey), this.i18nText(detailKey));
+        this.notificationService.success(this.i18nText(detailKey), this.i18nText(summaryKey));
         break;
       case 'info':
-        this.notificationService.info(this.i18nText(summaryKey), this.i18nText(detailKey));
+        this.notificationService.info(this.i18nText(detailKey), this.i18nText(summaryKey));
         break;
       case 'warn':
-        this.notificationService.warn(this.i18nText(summaryKey), this.i18nText(detailKey));
+        this.notificationService.warn(this.i18nText(detailKey), this.i18nText(summaryKey));
         break;
       case 'error':
-        this.notificationService.error(this.i18nText(summaryKey), this.i18nText(detailKey));
+        this.notificationService.error(this.i18nText(detailKey), this.i18nText(summaryKey));
         break;
     }
   }
@@ -226,16 +233,16 @@ export class ExternalLoginService implements OnDestroy {
   private toast(severity: 'success' | 'info' | 'warn' | 'error', summary: string, detail: string) {
     switch (severity) {
       case 'success':
-        this.notificationService.success(summary, detail);
+        this.notificationService.success(detail, summary);
         break;
       case 'info':
-        this.notificationService.info(summary, detail);
+        this.notificationService.info(detail, summary);
         break;
       case 'warn':
-        this.notificationService.warn(summary, detail);
+        this.notificationService.warn(detail, summary);
         break;
       case 'error':
-        this.notificationService.error(summary, detail);
+        this.notificationService.error(detail, summary);
         break;
     }
   }
