@@ -19,13 +19,6 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
                 RuleFor(x => x.Request.CandidateTypeId).NotEmpty();
                 RuleFor(x => x.Request.TargetEntityId).NotEmpty();
 
-                When(x => RequiresOfficeSelection(x.Request), () =>
-                {
-                    RuleFor(x => x.Request.OfficeId)
-                        .NotEmpty()
-                        .WithMessage(ErrorsCodes.OfficeRequired);
-                });
-
                 When(x => RequiresResidencyExpiry(x.Request), () =>
                 {
                     RuleFor(x => x.Request.QIDExpiry).NotEmpty();
@@ -64,9 +57,6 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
 
     private static bool RequiresMarriageCertificate(SaveProfilePrereqRequest r)
         => r.CandidateTypeId == CandidateTypeIds.WifeOfQatari;
-
-    private static bool RequiresOfficeSelection(SaveProfilePrereqRequest r)
-        => r.CandidateTypeId == CandidateTypeIds.NonQatari || r.CandidateTypeId == CandidateTypeIds.GCC;
 
     private static bool RequiresResidencyExpiry(SaveProfilePrereqRequest r)
         => r.CandidateTypeId != CandidateTypeIds.NonQatari && r.CandidateTypeId != CandidateTypeIds.GCC;

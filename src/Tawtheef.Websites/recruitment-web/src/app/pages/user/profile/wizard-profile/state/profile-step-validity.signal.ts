@@ -106,10 +106,6 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'basic', 'targetEntity');
   }
 
-  if (!isResident && !isFilledField(s.office)) {
-    addRequiredError(errors, 'basic', 'office');
-  }
-
   if (isResident && !isFilledField(s.qidExpiry)) {
     addRequiredError(errors, 'basic', 'qidExpiry');
   }
@@ -210,12 +206,18 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 /* ========== CONTACT STEP ========== */
 function validateContactStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
+  const backendType = candidateTypeFromState(s);
+  const isResident = candidateTypeIsResident(backendType, s.provider);
 
   if (!isFilledField(s.country)) {
     addRequiredError(errors, 'contact', 'country');
   }
   if (!isFilledField(s.interviewPlace)) {
     addRequiredError(errors, 'contact', 'interviewPlace');
+  }
+
+  if (!isResident && !isFilledField(s.office)) {
+    addRequiredError(errors, 'basic', 'office');
   }
 
   if (!s.phone) {
@@ -233,8 +235,6 @@ function validateContactStep(s: ProfileState): StepValidationResult {
   if (!s.emailVerified) {
     addRequiredError(errors, 'contact', 'emailVerified');
   }
-
-  const isResident = candidateTypeIsResident(candidateTypeFromState(s), s.provider);
 
   if (!isResident) {
     if (!isFilledField(s.address)) {

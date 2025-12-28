@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Validators;
 
@@ -21,7 +23,7 @@ public sealed class SaveProfileContactCommandValidator : AbstractValidator<SaveP
                     .Must(r => !string.IsNullOrWhiteSpace(r.Address) ||
                                r.NationalAddress is not null)
                     .WithMessage(ErrorsCodes.AddressRequired);
-
+                
                 When(x => x.Request.NationalAddress is not null, () =>
                 {
                     RuleFor(x => x.Request.NationalAddress!.Zone).GreaterThan(0);

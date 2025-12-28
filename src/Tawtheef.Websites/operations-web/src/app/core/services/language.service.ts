@@ -3,10 +3,10 @@ import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { DOCUMENT } from '@angular/common';
 import {PRIME_NG_CONFIG, PrimeNG} from 'primeng/config';
+import {APP_LANGUAGE_KEY} from '../constants/website-storage.const';
 
 export type Lang = 'ar' | 'en';
 
-const STORAGE_KEY = 'app.lang';
 const DEFAULT_LANG: Lang = 'ar';
 const SUPPORTED_LANGS: Lang[] = ['ar', 'en'];
 
@@ -56,7 +56,7 @@ export class LanguageService {
 
   // ---- internals ----
   private resolveInitialLang(): Lang {
-    const stored = this.safeGet(STORAGE_KEY)?.toLowerCase();
+    const stored = this.safeGet(APP_LANGUAGE_KEY)?.toLowerCase();
     if (stored === 'ar' || stored === 'en') return stored as Lang;
 
     const nav = (navigator?.language || (navigator as any)?.languages?.[0] || DEFAULT_LANG).toLowerCase();
@@ -95,7 +95,7 @@ export class LanguageService {
       }
     }
 
-    if (opts.persist) this.safeSet(STORAGE_KEY, lang);
+    if (opts.persist) this.safeSet(APP_LANGUAGE_KEY, lang);
 
     this.isRtlSubj.next(isRtl);
     if (opts.emit) this.current$.next(lang);

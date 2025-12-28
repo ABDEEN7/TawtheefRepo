@@ -183,7 +183,7 @@ public class GoogleExternalCallbackLoginHandler(
     private static (string givenName, string surname) EnsureNames(string? givenName, string? surname, string? fullName)
     {
         if (!string.IsNullOrWhiteSpace(givenName) && !string.IsNullOrWhiteSpace(surname))
-            return (givenName!, surname!);
+            return (givenName, surname);
 
         if (string.IsNullOrWhiteSpace(fullName))
             return (givenName ?? "User", surname ?? "Account");

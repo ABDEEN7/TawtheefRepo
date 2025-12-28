@@ -76,11 +76,7 @@ export class ProfileService {
   // ========== CONTACT ==========
   saveContactSection(dto: SaveProfileContactRequestDto, files?: { nationalAddressFile?: FileLike }) {
     const b = this.fd()
-      // keep your exact binding keys
-      .scalar('submit', dto.submit)
-      .scalar('residenceCountryId', dto.residenceCountryId)
-      .scalar('interviewLocationId', dto.interviewLocationId)
-      .scalar('address', dto.address);
+      .json(dto);
 
     if (dto.nationalAddress) {
       const na = dto.nationalAddress;
