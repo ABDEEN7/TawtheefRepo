@@ -3,5 +3,5 @@
 namespace Tawtheef.Domain.Events.User;
 
 public sealed record UserDeletionRequestedEvent(
-    Guid UserId, string Email, DateTime OccurredOn
+    Guid UserId, string Email, DateTimeOffset OccurredOn
 ) : BaseEvent(OccurredOn);

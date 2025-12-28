@@ -242,10 +242,21 @@
                             {{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}
                           </button>
                         </li>
+                        }
+                        @if (job.jobStatus.backendName === jobStatus.Published || job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
                         <li>
                           <button class="dropdown-item" (click)="cancelJob(job)">
                             <i class="fa fa-times me-2"></i>
                             {{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}
+                          </button>
+                        </li>
+                        }
+
+                        @if (job.jobStatus.backendName === jobStatus.Rejected) {
+                        <li>
+                          <button class="dropdown-item" (click)="reopenJob(job)">
+                            <i class="fa-regular fa-circle-check"></i>
+                            {{ 'JOB_LIST_BUTTONS_REOPEN' | translate }}
                           </button>
                         </li>
                         }

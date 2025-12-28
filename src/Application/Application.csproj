@@ -28,7 +28,6 @@
 
     <ItemGroup>
       <Folder Include="Common\Behaviours\" />
-      <Folder Include="Common\Events\" />
       <Folder Include="Common\Mappers\AdminProfiles\" />
       <Folder Include="Common\Mappers\Utils\" />
       <Folder Include="Features\Authenticator\Handlers\Queries\" />

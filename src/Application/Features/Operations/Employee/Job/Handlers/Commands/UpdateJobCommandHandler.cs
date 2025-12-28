@@ -54,7 +54,7 @@ public class UpdateJobCommandHandler(
         existingJob.BenefitsEn = request.Job.BenefitsEn;
         existingJob.QualificationDescriptionAr = request.Job.QualificationsDescriptionAr;
         existingJob.QualificationDescriptionEn = request.Job.QualificationsDescriptionEn;
-        existingJob.JobStatusId = JobStatusIds.PendingApproval;
+        existingJob.ChangeStatus(JobStatusIds.PendingApproval);
 
         await jobRepository.Repository.UpdateAsync(existingJob);
         var updated = await unitOfWork.SaveChangesAsync(cancellationToken);
