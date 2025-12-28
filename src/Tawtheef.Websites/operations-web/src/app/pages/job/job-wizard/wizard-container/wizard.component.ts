@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ComponentRef,
+  EventEmitter,
   inject,
   OnDestroy,
   OnInit,
@@ -249,6 +250,12 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
           componentRef.instance.setJobData(currentJob, stepNotes);
         }
 
+         if (this.hasEditStep(componentRef.instance)) {
+        componentRef.instance.editStep.subscribe((stepNumber: number) => {
+        this.goTo(stepNumber);
+        });
+        }
+
         const element = componentRef.location.nativeElement as HTMLElement;
         element.style.display = 'none';
 
@@ -456,4 +463,8 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   fileIcon(name?: string): string {
     return name ? this.fileUtils.getFileIconClass(name) : '';
   }
+
+  private hasEditStep(instance: any): instance is { editStep: EventEmitter<number> } {
+  return instance && 'editStep' in instance && instance.editStep instanceof EventEmitter;
+}
 }
