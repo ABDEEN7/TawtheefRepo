@@ -2,5 +2,5 @@
 
 namespace Tawtheef.Domain.Events.User;
 
-public sealed record UserRegisteredEvent(Guid UserId,string Email,string Name, Guid UserTypeId,DateTime OccurredOn) 
+public sealed record UserRegisteredEvent(Guid UserId,string Email,string Name, Guid UserTypeId, DateTimeOffset OccurredOn) 
     : BaseEvent(OccurredOn);

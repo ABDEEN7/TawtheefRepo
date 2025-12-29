@@ -1,16 +1,13 @@
 ﻿using FluentResults;
-using Mapster;
 using MapsterMapper;
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
-using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
-public class GetLatestJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobTabReviewRepository,IMediaUrlResolver media, IMapper mapper)
+public class GetLatestJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobTabReviewRepository, IMapper mapper)
     : IRequestHandler<GetLatestJobTabReviewsQuery, IResult<List<JobTabReviewNoteResponseDto>>>
 {
     public async Task<IResult<List<JobTabReviewNoteResponseDto>>> Handle(GetLatestJobTabReviewsQuery request, CancellationToken cancellationToken)
@@ -20,14 +17,12 @@ public class GetLatestJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobT
         if (result.IsFailed)
             return Result.Fail<List<JobTabReviewNoteResponseDto>>(result.Errors);
 
-        var job = result.Value;
+        var jobTabReview = result.Value;
 
-        if (job is null)
-            return Result.Fail<List<JobTabReviewNoteResponseDto>>(JobMessages.JOB_NOT_FOUND);
+        if (jobTabReview is null)
+            return Result.Fail<List<JobTabReviewNoteResponseDto>>(JobMessages.JOB_TAB_REVIEW_NOT_FOUND);
 
-        using var scope = new MapContextScope();
-        scope.Context.Parameters[ResourceMapper.MediaKey] = media;
-        var jobDto = mapper.Map<List<JobTabReviewNoteResponseDto>>(job);
+        var jobDto = mapper.Map<List<JobTabReviewNoteResponseDto>>(jobTabReview);
         return Result.Ok(jobDto);
     }
 }

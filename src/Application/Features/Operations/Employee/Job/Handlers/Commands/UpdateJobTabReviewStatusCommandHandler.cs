@@ -19,7 +19,7 @@ public sealed class UpdateJobTabReviewStatusCommandHandler(
         var reviewsResult = await jobTabReviewNoteRepository
             .GetByIdWithDetailsAsync(cmd.JobId);
 
-        if (reviewsResult.IsFailed || reviewsResult.Value is null || !reviewsResult.Value.Any())
+        if (reviewsResult.IsFailed || reviewsResult.Value is null || reviewsResult.Value.Count == 0)
         {
             return Result.Fail<Unit>(JobMessages.REVIEW_NOTE_FOUND);
         }

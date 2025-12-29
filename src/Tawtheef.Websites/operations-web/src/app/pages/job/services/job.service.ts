@@ -17,6 +17,7 @@ import { JobLookupService } from './job-lookup.service';
 import { JobStatus } from '../../../core/enums/lookups.enum';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 import { JobTabStatus } from '../enums/job-tab-status';
+import { JobReviewResponse } from '../models/job-review-response';
 
 @Injectable({
   providedIn: 'root',
@@ -289,56 +290,6 @@ export class JobService {
     return this.changeStatus(jobId, statusId);
   }
 
-  approve(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.APPROVED')
-        );
-      })
-    );
-  }
-
-  reject(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.REJECTED')
-        );
-      })
-    );
-  }
-
-  publish(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.PUBLISHED')
-        );
-      })
-    );
-  }
-
-  close(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.CLOSED')
-        );
-      })
-    );
-  }
-
-  cancel(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.CANCELLED')
-        );
-      })
-    );
-  }
-
   getAll(
     pagination: PaginatedRequest = { pageNumber: 1, pageSize: 10 },
     filter?: JobQueryFilter
@@ -418,21 +369,12 @@ export class JobService {
       })
     );
   }
-
-  getTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
-    return this.httpService.get<JobTabReviewNoteResponse[]>(
-      `${this.endpoints.job.jobApproval}/${jobId}`
-    );
+  
+  getLatestReview(jobId: GUID): Observable<JobReviewResponse> {
+  return this.httpService.get<JobReviewResponse>(this.endpoints.job.getLatestReview(jobId));
   }
-
-  getLatestTabReviewNotes(jobId: GUID): Observable<JobTabReviewNoteResponse[]> {
-    return this.httpService.get<JobTabReviewNoteResponse[]>(
-      `${this.endpoints.job.jobApproval}/${jobId}/latest`
-    );
-  }
-
-  GetJobsCountByStatus(jobStatusId: string): Observable<number> {
-    const url = `${this.endpoints.job.CountByStatus}?jobStatusId=${encodeURIComponent(jobStatusId)}`;    
+  GetJobsCountByStatus(jobStatusId: GUID): Observable<number> {
+    const url = `${this.endpoints.job.CountByStatus(jobStatusId)}`;    
     return this.httpService.get<number>(url);
 }
 }

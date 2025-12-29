@@ -105,99 +105,121 @@
             </h2>
 
             <div class="article-summary">
-              @if (activeTab === tabType.Overview) { @if (job.overViewAr || job.overViewEn) {
-              <div class="dual-text-container">
-                <div class="text-area">
-                  <h6>{{ 'JOB_APPROVAL.OVERVIEWAR' | translate }}</h6>
-                  <div [innerHTML]="job.overViewAr"></div>
+              @if (activeTab === tabType.Overview) { 
+                @if (job.overViewAr || job.overViewEn) {
+                <div class="dual-text-container">
+                  <div class="text-area">
+                    <h6>{{ 'JOB_APPROVAL.OVERVIEWAR' | translate }}</h6>
+                    <div [innerHTML]="job.overViewAr"></div>
+                  </div>
+                  <div class="text-area">
+                    <h6>{{ 'JOB_APPROVAL.OVERVIEWEN' | translate }}</h6>
+                    <div [innerHTML]="job.overViewEn"></div>
+                  </div>
                 </div>
-                <div class="text-area">
-                  <h6>{{ 'JOB_APPROVAL.OVERVIEWEN' | translate }}</h6>
-                  <div [innerHTML]="job.overViewEn"></div>
-                </div>
-              </div>
-              } } @if (activeTab === tabType.Responsibilities) { @if (getResponsibilities().length >
-              0) {
-              <ul>
-                @for (responsibility of getResponsibilities(); track $index) {
-                <li>{{ responsibility }}</li>
-                }
-              </ul>
-              } } @if (activeTab === tabType.Conditions) {
-              <h3>{{ 'JOB_APPROVAL.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
-              <p>{{ getDegreeRequirements() }}</p>
-              @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
-              <h3>{{ 'JOB_APPROVAL.QUALIFICATIONS' | translate }}</h3>
-              <div class="dual-text-container">
-                <div class="text-area">
-                  <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                  <div [innerHTML]="job.qualificationDescriptionAr"></div>
-                </div>
-                <div class="text-area">
-                  <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                  <div [innerHTML]="job.qualificationDescriptionEn"></div>
-                </div>
-              </div>
-              } @if (getJobConditions().length > 0) {
-              <div class="basic-requirements">
-                <h3>{{ 'JOB_APPROVAL.CONDITIONS' | translate }}</h3>
-                @for (condition of getJobConditions(); track $index) {
+                } 
+              } 
+              
+              @if (activeTab === tabType.Responsibilities) { 
+                @if (getResponsibilities().length > 0) {
+                <ul>
+                  @for (responsibility of getResponsibilities(); track $index) {
+                  <li>{{ responsibility }}</li>
+                  }
+                </ul>
+                } 
+              } 
+              
+              @if (activeTab === tabType.Conditions) {
+                <h3>{{ 'JOB_APPROVAL.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
+                <p>{{ getDegreeRequirements() }}</p>
+                @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
+                <h3>{{ 'JOB_APPROVAL.QUALIFICATIONS' | translate }}</h3>
                 <div class="dual-text-container">
                   <div class="text-area">
                     <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                    <div [innerHTML]="condition.textAr"></div>
+                    <div [innerHTML]="job.qualificationDescriptionAr"></div>
                   </div>
                   <div class="text-area">
                     <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                    <div [innerHTML]="condition.textEn"></div>
+                    <div [innerHTML]="job.qualificationDescriptionEn"></div>
                   </div>
                 </div>
-                }
-              </div>
-              } } @if (activeTab === tabType.Skills) { @if (getJobSkills().length > 0) {
-              <ul>
-                @for (skill of getJobSkills(); track $index) {
-                <li>{{ skill }}</li>
-                }
-              </ul>
-              } } @if (activeTab === tabType.Benefits) { @if (job.benefitsAr || job.benefitsEn) {
-              <div class="dual-text-container">
-                <div class="text-area">
-                  <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                  <div [innerHTML]="job.benefitsAr"></div>
-                </div>
-                <div class="text-area">
-                  <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                  <div [innerHTML]="job.benefitsEn"></div>
-                </div>
-              </div>
-              } } @if (activeTab === tabType.Attachments) { @if (job.requiredAttachments &&
-              job.requiredAttachments.length) {
-              <ul>
-                @for (attachment of job.requiredAttachments; track $index) {
-                <li>
+                } 
+                @if (getJobConditions().length > 0) {
+                <div class="basic-requirements">
+                  <h3>{{ 'JOB_APPROVAL.CONDITIONS' | translate }}</h3>
+                  @for (condition of getJobConditions(); track $index) {
                   <div class="dual-text-container">
-                    <div class="attachmentAr">
+                    <div class="text-area">
                       <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                      <div [innerHTML]="attachment.titleAr"></div>
+                      <div [innerHTML]="condition.textAr"></div>
                     </div>
-                    <div class="attachmentEn">
+                    <div class="text-area">
                       <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                      <div [innerHTML]="attachment.titleEn"></div>
-                    </div>
-                    <div class="form-check form-switch m-0">
-                      <input
-                        class="form-check-input switch-lg"
-                        disabled="true"
-                        type="checkbox"
-                        [(ngModel)]="attachment.isMandatory"
-                      />
+                      <div [innerHTML]="condition.textEn"></div>
                     </div>
                   </div>
-                </li>
-                }
-              </ul>
-              } }@if (activeTab === 'Review') {
+                  }
+                </div>
+                } 
+              } 
+              
+              @if (activeTab === tabType.Skills) { 
+                @if (getJobSkills().length > 0) {
+                <ul>
+                  @for (skill of getJobSkills(); track $index) {
+                  <li>{{ skill }}</li>
+                  }
+                </ul>
+                } 
+              } 
+              
+              @if (activeTab === tabType.Benefits) { 
+                @if (job.benefitsAr || job.benefitsEn) {
+                <div class="dual-text-container">
+                  <div class="text-area">
+                    <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
+                    <div [innerHTML]="job.benefitsAr"></div>
+                  </div>
+                  <div class="text-area">
+                    <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
+                    <div [innerHTML]="job.benefitsEn"></div>
+                  </div>
+                </div>
+                } 
+              } 
+              
+              @if (activeTab === tabType.Attachments) { 
+                @if (job.requiredAttachments && job.requiredAttachments.length) {
+                <ul>
+                  @for (attachment of job.requiredAttachments; track $index) {
+                  <li>
+                    <div class="dual-text-container">
+                      <div class="attachmentAr">
+                        <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
+                        <div [innerHTML]="attachment.titleAr"></div>
+                      </div>
+                      <div class="attachmentEn">
+                        <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
+                        <div [innerHTML]="attachment.titleEn"></div>
+                      </div>
+                      <div class="form-check form-switch m-0">
+                        <input
+                          class="form-check-input switch-lg"
+                          disabled="true"
+                          type="checkbox"
+                          [(ngModel)]="attachment.isMandatory"
+                        />
+                      </div>
+                    </div>
+                  </li>
+                  }
+                </ul>
+                } 
+              }
+              
+              @if (activeTab === 'Review') {
               <div class="review-wrapper">
                 @for (item of tabNotes; track $index) {
                 <div class="review-card">
@@ -210,15 +232,31 @@
                   <div class="review-note">
                     {{ item?.note || '—' }}
                   </div>
-                  @if (item?.reviewAttachments?.length) {
-                  <div class="review-attachments">
-                    <ul>
-                      @for (att of item.reviewAttachments; track $index) {
-                      <li>{{ att.fileName }}</li>
+                </div>
+                }
+                
+                <!-- Job-level review attachments -->
+                @if (jobReviewAttachments.length > 0) {
+                <div class="review-attachments-card">
+                  <h4>{{ 'JOB_APPROVAL.REVIEW_ATTACHMENTS' | translate }}</h4>
+                  <div class="attachments-list">
+                    @for (attachment of jobReviewAttachments; track $index) {
+                    <div class="attachment-item">
+                      <i class="fa-solid fa-file"></i>
+                      <span>{{ attachment.fileName }}</span>
+                      @if (attachment.file) {
+                      <button
+                        type="button"
+                        class="btn-preview"
+                        (click)="previewAttachment(attachment)"
+                        title="{{ 'COMMON.PREVIEW' | translate }}"
+                      >
+                        <i class="fa-solid fa-eye"></i>
+                      </button>
                       }
-                    </ul>
+                    </div>
+                    }
                   </div>
-                  }
                 </div>
                 }
               </div>
@@ -261,15 +299,18 @@
       </div>
     </div>
 
+    <!-- Notes section for all tabs except Review -->
     @if(activeTab !== 'Review') {
     <div class="job-note-card">
-      @let currentNote = getCurrentTabNote(); @if (currentNote) {
+      @let tabControls = getCurrentTabControls();
+      
+      @if (tabControls) {
       <div class="note-section">
         <div class="tabstatus note-field">
           <label for="tabStatus">{{ 'JOB_APPROVAL.STATUS' | translate }}</label>
           <p-select
             [options]="tabStatus"
-            [(ngModel)]="currentNote.tabStatus"
+            [formControl]="tabControls.tabControl"
             id="tabStatus"
             placeholder="{{ 'JOB_APPROVAL.SELECT_PLACEHOLDER' | translate }}"
             class="status-ddl"
@@ -279,97 +320,27 @@
         <div class="note note-field">
           <label for="note">{{ 'JOB_APPROVAL.NOTE' | translate }}</label>
           <textarea
-            [(ngModel)]="currentNote.note"
+            [formControl]="tabControls.noteControl"
             placeholder="{{ 'JOB_APPROVAL.NOTE_PLACEHOLDER' | translate }}"
             rows="4"
             id="note"
             class="note-textarea"
+            [ngClass]="{'is-invalid': hasNoteError()}"
           ></textarea>
+          
+          @if (hasNoteError()) {
+          <div class="error-message text-danger">
+            {{ 'JOB_APPROVAL.NOTE_REQUIRED_FOR_RETURN' | translate }}
+          </div>
+          }
         </div>
       </div>
       }
     </div>
-    } @if(activeTab !== 'Review') {
-    <div class="job-note-card">
-      <div class="note-attachment-section">
-        <div class="attachments-container">
-          <div class="attachments-header">
-            <h3 class="attachments-title">
-              <i class="fa-solid fa-file"></i>
-              {{ 'JOB_APPROVAL.REQUIRED_ATTACHMENTS' | translate }}
-            </h3>
+    }
 
-            <button type="button" class="btn-add-attachment" (click)="addNewRow()">
-              <i class="fa-solid fa-plus"></i>
-              {{ 'JOB_APPROVAL.ADD' | translate }}
-            </button>
-          </div>
-
-          <form [formGroup]="currentTabForm" *ngIf="currentTabForm">
-            <div class="attachments-list" formArrayName="attachments">
-              @for (g of attachmentsArray.controls; track $index; let i = $index) {
-              <div class="attachment-row">
-                <div [formGroupName]="i" class="row-content">
-                  <div class="input-group">
-                    <label [for]="'title-' + i + activeTab" class="input-label">
-                      {{ 'JOB_APPROVAL.ATTACHMENTS.TITLE' | translate }}
-                    </label>
-                    <input
-                      type="text"
-                      class="attachment-input"
-                      [id]="'title-' + i + activeTab"
-                      formControlName="title"
-                      placeholder="{{ 'JOB_APPROVAL.ATTACHMENTS.PLACEHOLDER' | translate }}"
-                      [class.is-invalid]="isInvalid(i, 'title')"
-                    />
-                  </div>
-
-                  <div class="file-upload-group">
-                    <label [for]="'fileInput-' + i + activeTab" class="input-label">
-                      {{ 'JOB_APPROVAL.ATTACHMENTS.UPLOAD' | translate }}
-                    </label>
-                    <div class="file-upload-wrapper">
-                      <input
-                        type="file"
-                        class="file-input"
-                        (change)="onFileChange(i, $event)"
-                        [class.is-invalid]="isInvalid(i, 'file')"
-                        [attr.id]="'fileInput-' + i + activeTab"
-                      />
-                      <label [for]="'fileInput-' + i + activeTab" class="upload-btn">
-                        <i class="fa-solid fa-cloud-arrow-down"></i>
-                        <span>{{ 'JOB_APPROVAL.ATTACHMENTS.UPLOAD' | translate }}</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  class="btn-preview"
-                  (click)="previewFile(i)"
-                  [disabled]="!getFile(i)"
-                  title="Preview file"
-                >
-                  <i class="fa-solid fa-eye"></i>
-                </button>
-
-                <button type="button" class="btn-delete" (click)="removeRow(i)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-              } @if (attachmentsArray.length === 0) {
-              <div class="empty-state">
-                <i class="fa-solid fa-inbox"></i>
-                <p>{{ 'JOB_APPROVAL.ATTACHMENTS.EMPTY' | translate }}</p>
-              </div>
-              }
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-    } @if (activeTab === "Review") {
+    <!-- Action buttons for Review tab -->
+    @if (activeTab === "Review") {
     <div class="actions-bar">
       @if(!isAllTabsApproved()) {
       <div class="job-btns">
@@ -382,7 +353,8 @@
           <span>{{ 'JOB_APPROVAL.BACK_TO_EDIT' | translate }}</span>
         </button>
       </div>
-      } @if(isAllTabsApproved()) {
+      } 
+      @if(isAllTabsApproved()) {
       <div class="approve-btn">
         <button class="apply-button-large" [disabled]="!isReviewComplete()" (click)="confirm()">
           <i class="fa fa-check"></i>
@@ -391,84 +363,57 @@
       </div>
       }
     </div>
-    } } @else {
+    } 
+    
+    } @else {
     <div style="text-align: center; padding: 60px 20px; color: #999">
       <i class="fa-solid fa-spinner fa-spin" style="font-size: 48px; margin-bottom: 20px"></i>
-      <p style="font-size: 16px; font-weight: 500">{{ 'COMMON.LOADING' | translate }}</p>
+      <p style="font-size: 16px; font-weight: 500">{{ 'common.loading' | translate }}</p>
     </div>
     }
 
-    <div class="job-note-card" *ngIf="reviewHistory.length">
-      @if (reviewHistory.length) {
-      <div class="job-note-card">
-        <h3 class="content-title-header">
-          <i class="fa fa-history"></i>
-          {{ 'JOB_APPROVAL.REVIEW_HISTORY' | translate }}
-        </h3>
+    <!-- Review History Section -->
+    @if (reviewHistory.length) {
+    <div class="job-note-card">
+      <h3 class="content-title-header">
+        <i class="fa fa-history"></i>
+        {{ 'JOB_APPROVAL.REVIEW_HISTORY' | translate }}
+      </h3>
 
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>{{ 'JOB_APPROVAL.TAB' | translate }}</th>
-              <th>{{ 'JOB_APPROVAL.NOTE' | translate }}</th>
-              <th>{{ 'JOB_APPROVAL.STATUS' | translate }}</th>
-              <th>{{ 'JOB_APPROVAL.RESOLVED' | translate }}</th>
-              <th>{{ 'JOB_APPROVAL.ATTACHMENTS' | translate }}</th>
-            </tr>
-          </thead>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>{{ 'JOB_APPROVAL.TAB' | translate }}</th>
+            <th>{{ 'JOB_APPROVAL.NOTE' | translate }}</th>
+            <th>{{ 'JOB_APPROVAL.STATUS' | translate }}</th>
+            <th>{{ 'JOB_APPROVAL.RESOLVED' | translate }}</th>
+          </tr>
+        </thead>
 
-          <tbody>
-            @for (h of reviewHistory; track $index) {
-            <tr>
-              <td>{{ h.tab | translate }}</td>
-              <td>{{ h.note || '—' }}</td>
-              <td>
-                <span class="status-badge" [ngClass]="h.tabStatus">
-                  {{ h.tabStatus }}
-                </span>
-              </td>
-              <td>
-                <span
-                  class="resolved-badge"
-                  [class.resolved]="h.isResolved"
-                  [class.unresolved]="!h.isResolved"
-                >
-                  {{ h.isResolved ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
-                </span>
-              </td>
-              <td>
-                @if (h.attachments?.length) {
-                <ul class="attachment-list">
-                  @for (att of h.attachments; track $index) {
-                  <li class="attachment-item">
-                    <div class="attachment-info">
-                      <i class="fa fa-paperclip attachment-icon"></i>
-                      <span class="attachment-name" title="{{ att.fileName }}">
-                        {{ att.fileName }}
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-secondary attachment-btn"
-                      (click)="preview(att)"
-                      title="Preview"
-                    >
-                      <i class="fa fa-eye"></i>
-                    </button>
-                  </li>
-                  }
-                </ul>
-                } @else {
-                <span>—</span>
-                }
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-      }
+        <tbody>
+          @for (h of reviewHistory; track $index) {
+          <tr>
+            <td>{{ h.tab | translate }}</td>
+            <td>{{ h.note || '—' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="h.tabStatus">
+                {{ h.tabStatus }}
+              </span>
+            </td>
+            <td>
+              <span
+                class="resolved-badge"
+                [class.resolved]="h.isResolved"
+                [class.unresolved]="!h.isResolved"
+              >
+                {{ h.isResolved ? ('common.yes' | translate) : ('common.no' | translate) }}
+              </span>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
+    }
   </div>
 </div>

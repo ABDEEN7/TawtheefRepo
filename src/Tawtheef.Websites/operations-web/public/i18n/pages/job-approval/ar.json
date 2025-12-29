@@ -64,7 +64,6 @@
   "JOB_APPROVAL_REVIEW_SUBMITTED_SUCCESSFULY": "تم إرسال مراجعة التبويب بنجاح",
   "JOB_APPROVAL_REVIEW_SUBMITTED_NOT_SUCCESSFULY": "لم يتم إرسال مراجعة التبويب بنجاح",
 
-  "JOB_APPROVAL.APPROVED": "تم اعتماد الوظيفة بنجاح",
   "JOB_APPROVAL.JOB_NOT_APPROVED": "لم يتم اعتماد الوظيفة",
 
   "JOB_APPROVAL.REJECT_CONFIRMATION": "تأكيد رفض الوظيفة",
@@ -72,20 +71,26 @@
   "JOB_APPROVAL.JOB_REJECTED": "تم رفض الوظيفة بنجاح",
   "JOB_APPROVAL.REJECT_FAILED": "فشل في رفض الوظيفة",
 
-  "JOB_APPROVAL.ADD": "إضافة",
-  "JOB_APPROVAL.ATTACHMENTS.TITLE": "عنوان المرفق",
-  "JOB_APPROVAL.ATTACHMENTS.PLACEHOLDER": "أدخل عنوان المرفق",
-  "JOB_APPROVAL.ATTACHMENTS.UPLOAD": "تحميل الملف",
-  "JOB_APPROVAL.ATTACHMENTS.EMPTY": "لم يتم إضافة أي مرفقات حتى الآن",
+  "JOB_APPROVAL.REVIEW_ATTACHMENTS": "مراجعة المرفقات",
+    "JOB_APPROVAL.ATTACHMENTS.TITLE": "العنوان",
+  "JOB_APPROVAL.ATTACHMENTS.TITLE_PLACEHOLDER": "أدخل العنوان",
+  "JOB_APPROVAL.ATTACHMENTS.TITLE_REQUIRED": "العنوان مطلوب",
+  "JOB_APPROVAL.ATTACHMENTS.UPLOAD_FILE": "تحميل الملف",
+  "JOB_APPROVAL.ATTACHMENTS.CHOOSE_FILE": "اختر ملف",
+  "JOB_APPROVAL.ATTACHMENTS.FILE_REQUIRED": "الملف مطلوب",
+  "JOB_APPROVAL.ADD_ATTACHMENT": "إضافة مرفق",
+  "JOB_APPROVAL.ATTACHMENTS_LIST": "قائمة المرفقات",
+  "JOB_APPROVAL.NO_ATTACHMENTS": "لا توجد مرفقات",
+  "JOB_APPROVAL.ADD_REVIEW_ATTACHMENT":"مرفق للمراجعة",
 
-  "JOB_APPROVAL.Approved":"تم الاعتماد",
+  "JOB_APPROVAL.SUBMIT_REVIEW_SUCCESS":"تم اعتماد الوظيفة بنجاح",
+
   "JOB_APPROVAL.Returned":"تم الإرجاع",
 
-  "COMMON.CANCEL": "إلغاء",
-  "COMMON.CONFIRM": "تأكيد",
-  "COMMON.ACTION_CANCELED": "تم إلغاء العملية",
   "JOB_APPROVAL.TAB": "التبويب",
   "JOB_APPROVAL.REVIEW_HISTORY": "تاريخ المراجعة",
   "JOB_APPROVAL.RESOLVED": "تم الحل",
-  "JOB_APPROVAL.ATTACHMENTS": "المرفقات"
+  "JOB_APPROVAL.ATTACHMENTS": "المرفقات",
+  "JOB_APPROVAL.NOTE_REQUIRED_FOR_RETURN":"يرجى إضافة ملاحظة",
+  "JOB_LIST_STATS_APPROVED":"معتمدة"
 }

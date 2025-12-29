@@ -61,8 +61,9 @@
   "JOB_BASIC_MODAL.SUCCESS.UPDATED": "Basic information updated successfully",
   "JOB_BASIC_MODAL.ERROR.UPDATE_FAILED": "Failed to update basic information",
 
-  "COMMON.LOADING": "Loading...",
-
+  "JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD_TITLE": "Cancel Wizard",
+  "JOB_BASIC_MODAL.CANCEL_CONFIRM_TITLE": "Cancel",
+  
   "VALIDATION.REQUIRED_FIELD": "This field is required",
 
   "JOB_WIZARD.STEPS.BASICS.SECTOR": "Sector",

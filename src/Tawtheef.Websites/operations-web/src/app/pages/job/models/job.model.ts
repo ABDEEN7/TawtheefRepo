@@ -4,10 +4,9 @@ import { JobCondition } from './job-condition.model';
 import { JobSkill } from './job-skill.model';
 import { JobResponsibility } from './job-responsibility.model';
 import { JobRequiredAttachment } from './required-attachment.model';
-import { JobTabReviewNote } from './job-tab-review-note';
-import { JobReviewAttachment } from './job-review-attachment';
 import { dropdownOptionsModel } from '../../../shared/models/dropdown-options.model';
 import { JobTabReviewNoteResponse } from './job-tab-review-note-response';
+import { JobReviewAttachmentResponse } from './job-review-attachment-response';
 
 export interface Job {
   titleAr: string;
@@ -39,5 +38,6 @@ export interface Job {
   skills?: JobSkill[];
   requiredAttachments?: JobRequiredAttachment[];
   tabReviewNotes?: JobTabReviewNoteResponse[];
+  ReviewAttachment?: JobReviewAttachmentResponse; 
 }
 

@@ -33,7 +33,9 @@ public class AddJobPointsConfigurationCommandHandler(
             TrainingMaxPoints = dto.TrainingMaxPoints,
             CertificatesMaxPoints = dto.CertificatesMaxPoints,
             SkillsMaxPoints = dto.SkillsMaxPoints,
-            LanguagesMaxPoints = dto.LanguagesMaxPoints
+            LanguagesMaxPoints = dto.LanguagesMaxPoints,
+            MaxPoints =dto.MaxPoints,
+            
         };
 
         if (!jobPointsConfig.IsValid())

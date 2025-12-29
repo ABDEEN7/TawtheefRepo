@@ -17,7 +17,8 @@
           {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW' | translate }}
         </h5>
         <button class="btn btn-outline-brand btn-sm" type="button" 
-                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_OVERVIEW' | translate">
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_OVERVIEW' | translate"
+                (click)="goToStep(STEP_NUMBERS.OVERVIEW)">
           <i class="fa fa-edit me-1"></i>
           {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
         </button>
@@ -47,7 +48,8 @@
           {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS' | translate }}
         </h5>
         <button class="btn btn-outline-brand btn-sm" type="button" 
-                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_QUALIFICATIONS' | translate">
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_QUALIFICATIONS' | translate"
+                (click)="goToStep(STEP_NUMBERS.QUALIFICATIONS)">
           <i class="fa fa-edit me-1"></i>
           {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
         </button>
@@ -88,7 +90,8 @@
           {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
         </h5>
         <button class="btn btn-outline-brand btn-sm" type="button" 
-                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_RESPONSIBILITIES' | translate">
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_RESPONSIBILITIES' | translate"
+                (click)="goToStep(STEP_NUMBERS.RESPONSIBILITIES)">
           <i class="fa fa-edit me-1"></i>
           {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
         </button>
@@ -128,7 +131,8 @@
           {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS' | translate }}
         </h5>
         <button class="btn btn-outline-brand btn-sm" type="button" 
-                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_CONDITIONS' | translate">
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_CONDITIONS' | translate"
+                (click)="goToStep(STEP_NUMBERS.CONDITIONS)">
           <i class="fa fa-edit me-1"></i>
           {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
         </button>
@@ -168,7 +172,8 @@
           {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS' | translate }}
         </h5>
         <button class="btn btn-outline-brand btn-sm" type="button" 
-                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_SKILLS' | translate">
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_SKILLS' | translate"
+                (click)="goToStep(STEP_NUMBERS.SKILLS)">
           <i class="fa fa-edit me-1"></i>
           {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
         </button>
@@ -204,7 +209,8 @@
           {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS' | translate }}
         </h5>
         <button class="btn btn-outline-brand btn-sm" type="button" 
-                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_ATTACHMENTS' | translate">
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_ATTACHMENTS' | translate"
+                (click)="goToStep(STEP_NUMBERS.ATTACHMENTS)">
           <i class="fa fa-edit me-1"></i>
           {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
         </button>
@@ -243,7 +249,8 @@
           {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS' | translate }}
         </h5>
         <button class="btn btn-outline-brand btn-sm" type="button" 
-                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_BENEFITS' | translate">
+                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_BENEFITS' | translate"
+                (click)="goToStep(STEP_NUMBERS.BENEFITS)">
           <i class="fa fa-edit me-1"></i>
           {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
         </button>

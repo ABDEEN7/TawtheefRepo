@@ -6,6 +6,5 @@ public sealed class JobTabReviewUpsertDto
 {
     public TabType Tab { get; set; }
     public TabStatus Status { get; set; }
-    public string? Note { get; set; } = string.Empty;
-    public string? AttachmentsJson { get; set; } = string.Empty;
+    public string? Note { get; set; }
 }

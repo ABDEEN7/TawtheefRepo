@@ -143,15 +143,16 @@
           <label class="form-label fw-bold">
             <span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MAJOR' | translate }}
           </label>
-          <p-select
-            [options]="lookupsService.majors()"
-            formControlName="majorId"
-            optionLabel="name"
-            optionValue="id"
-            [showClear]="true"
-            placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER' | translate }}"
-            class="w-100">
-          </p-select>
+           <app-remote-select
+              formControlName="majorId"
+              [searchUrl]="endpoints.job.lookups.majors"
+              [placeholder]="'JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER' | translate"
+              optionLabel="name"
+              optionValue="id"
+              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [invalid]="form.controls.majorId.invalid && (form.controls.majorId.dirty || form.controls.majorId.touched)"
+              >
+            </app-remote-select>
           @if (form.controls.majorId.touched && form.controls.majorId.invalid) {
             <div class="text-danger small mt-1">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
           }
@@ -162,15 +163,16 @@
             <label class="form-label fw-bold">
               {{ 'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR' | translate }}
             </label>
-            <p-select
-              [options]="lookupsService.subMajors()"
-              formControlName="subMajorId"
+            <app-remote-select
+              formControlName="subMajorId" [minChars]="1"
+              [parentId]="form.controls.majorId.value"
+              parentParamName="parentId" [requireParent]="true"
+              [searchUrl]="endpoints.job.lookups.subMajors"
+              [placeholder]="'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER' | translate"
               optionLabel="name"
               optionValue="id"
-              [showClear]="true"
-              placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER' | translate }}"
-              class="w-100">
-            </p-select>
+              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }">
+            </app-remote-select>
           }
         </div>
 
@@ -312,7 +314,7 @@
       <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
         <span class="visually-hidden">{{ 'JOB_BASIC_MODAL.LOADING' | translate }}</span>
       </div>
-      <p class="mt-3 text-muted">{{ 'COMMON.LOADING' | translate }}</p>
+      <p class="mt-3 text-muted">{{ 'common.loading' | translate }}</p>
     </div>
   </ng-template>
 </div>

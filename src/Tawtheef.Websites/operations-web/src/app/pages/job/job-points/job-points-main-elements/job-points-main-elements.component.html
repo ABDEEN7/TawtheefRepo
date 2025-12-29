@@ -9,28 +9,28 @@
 
       <div class="row g-3">
         @for (key of keys; track key.key) {
-          <div class="col-12 col-md-6 col-lg-4">
-            <div class="d-flex flex-column gap-2">
-              <h3 class="element-title">
-                {{ 'JOB_POINTS.MAIN_ELEMENTS.' + key.key | translate }}
-                ({{ 'JOB_POINTS.MAIN_ELEMENTS.MAX' | translate }})
-              </h3>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="d-flex flex-column gap-2">
+            <h3 class="element-title">
+              {{ 'JOB_POINTS.MAIN_ELEMENTS.' + key.key | translate }}
+              ({{ 'JOB_POINTS.MAIN_ELEMENTS.MAX' | translate }})
+            </h3>
 
-              <div class="points-control">
-                <span class="points-chip">
-                  {{ form.get(key.key)?.value ?? 0 }}/{{ key.totalPercent }}
-                </span>
+            <div class="points-control">
+              <span class="points-chip">
+                {{ form.get(key.key)?.value ?? 0 }}/{{ key.totalPercent }}
+              </span>
 
-                <p-inputNumber
-                  [formControlName]="key.key"
-                  [min]="0"
-                  [max]="key.totalPercent"
-                  [showButtons]="true"
-                  class="points-input"
-                />
-              </div>
+              <p-inputNumber
+                [formControlName]="key.key"
+                [min]="0"
+                [max]="key.totalPercent"
+                [showButtons]="true"
+                class="points-input"
+              />
             </div>
           </div>
+        </div>
         }
       </div>
 
@@ -38,15 +38,30 @@
         <div class="total-label">
           {{ 'JOB_POINTS.MAIN_ELEMENTS.TOTAL_POINTS' | translate }}
         </div>
-        <div class="total-pill">
-          {{ form.get('total')?.value ?? 0 }}
+        <div
+          class="total-pill"
+          [ngClass]="{
+            'total-valid': isTotalValid(),
+            'total-invalid': !isTotalValid()
+          }"
+        >
+          {{ form.get('total')?.value ?? 0 }}/{{ systemMaxPoints }}
           {{ 'JOB_POINTS.MAIN_ELEMENTS.POINT' | translate }}
         </div>
       </div>
+
+      @if(!isTotalValid()){
+      <div class="validation-message error">
+        <i class="pi pi-exclamation-triangle mr-2"></i>
+        {{
+          'JOB_POINTS.VALIDATION.TOTAL_MUST_EQUAL_MAX' | translate : { required: systemMaxPoints }
+        }}
+      </div>
+    }
     </div>
 
     <div class="bottom-nav">
-      <button type="button" class="primary-pill" (click)="next.emit()">
+      <button type="button" class="primary-pill" (click)="next.emit()" [disabled]="!isTotalValid()">
         <i class="fa fa-arrow-left" faDirArrow="end"></i>
         {{ 'JOB_POINTS.MAIN_ELEMENTS.NEXT' | translate }}
       </button>

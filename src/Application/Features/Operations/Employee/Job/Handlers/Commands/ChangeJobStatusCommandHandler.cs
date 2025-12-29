@@ -32,46 +32,13 @@ public class ChangeJobStatusCommandHandler(
         if (!validationResult.IsValid)
             return Result.Fail<Unit>(validationResult.Errors.Select(e => e.ErrorMessage));
 
-        job.JobStatusId = request.NewStatusId;
+        job.ChangeStatus(request.NewStatusId);
 
         var jobReviewsStatus = await mediator.Send(
             new UpdateJobTabReviewStatusCommand(job.Id),
             cancellationToken);
-        var saveResult = await unitOfWork.SaveChangesAsync(cancellationToken);
-        if (saveResult == 0)
-            return Result.Fail<Unit>("Failed to update job status");
-
-        //TODO :: SEND NOTIFICATION
-        //await SendNotifications(job, request.NewStatusId);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);
     }
-
-    //TODO :: SEND NOTIFICATION
-    //private async Task SendNotifications(JobEntity job, Guid newStatusId)
-    //{
-    //    switch (newStatusId)
-    //    {
-    //        case var id when id == JobStatusIds.PendingApproval:
-    //            await notificationService.NotifyDepartmentHeadForJobApproval(
-    //                job.DepartmentId,
-    //                job.Id,
-    //                job.TitleAr);
-    //            break;
-
-    //        case var id when id == JobStatusIds.Approved:
-    //            await notificationService.NotifyJobCreatorOfApproval(
-    //                job.CreatedBy,
-    //                job.Id,
-    //                job.TitleAr);
-    //            break;
-
-    //        case var id when id == JobStatusIds.Rejected:
-    //            await notificationService.NotifyJobCreatorOfRejection(
-    //                job.CreatedBy,
-    //                job.Id,
-    //                job.TitleAr);
-    //            break;
-    //    }
-    //}
 }

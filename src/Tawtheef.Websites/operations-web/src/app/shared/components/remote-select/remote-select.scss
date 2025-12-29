@@ -1,0 +1,21 @@
+.select-with-loading {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.select-with-loading .p-select {
+  width: 100%;
+}
+
+.select-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 2.5rem;
+  pointer-events: none;
+  font-size: 1rem;
+  opacity: 0.8;
+}

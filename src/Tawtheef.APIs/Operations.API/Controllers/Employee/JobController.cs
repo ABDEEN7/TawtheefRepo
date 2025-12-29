@@ -2,12 +2,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
@@ -39,16 +37,17 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/majors")]
-    public async Task<IActionResult> GetMajors()
-    {
-        var result = await mediator.Send(new GetMajorsQuery());
+    public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
+   {
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(query with { Language = language });
         return result.ToActionResult();
     }
 
     [HttpGet("lookups/sub-majors")]
-    public async Task<IActionResult> GetSubMajors([FromQuery] Guid majorId)
+    public async Task<IActionResult> GetSubMajors([FromQuery] GetSubMajorsQuery query)
     {
-        var result = await mediator.Send(new GetSubMajorsQuery(majorId));
+        var result = await mediator.Send(query);
         return result.ToActionResult();
     }
 

@@ -15,65 +15,64 @@ public sealed class SaveJobPointsCommandHandler(
 {
     public async Task<IResult<Unit>> Handle(SaveJobPointsCommand cmd, CancellationToken ct)
     {
-        var jobRepo = uow.GetEntityRepository<JobEntity>();
-
-        var job = await jobRepo.DbSet
-            .Include(j => j.JobPoints)
-                .ThenInclude(p => p!.Details)
-            .FirstOrDefaultAsync(j => j.Id == cmd.Request.JobId, ct);
-
-        if (job is null)
-            return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
-
         var dto = cmd.Request;
 
-        var jobPointsMain = job.JobPoints ?? new JobPointsMain
+        if (!await uow.GetEntityRepository<JobEntity>()
+                .DbSet.AnyAsync(x => x.Id == dto.JobId, ct))
+            return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
+
+        var repo = uow.GetEntityRepository<JobPointsMain>();
+
+        var main = await repo.DbSet
+            .Include(x => x.Details)
+            .FirstOrDefaultAsync(x => x.JobId == dto.JobId, ct);
+
+        if (main == null)
         {
-            JobId = job.Id,
-            Details = new List<JobPointsDetail>()
-        };
-
-        jobPointsMain.ApplicantCategory = dto.ApplicantCategory;
-        jobPointsMain.Education = dto.Education;
-        jobPointsMain.Experience = dto.Experience;
-        jobPointsMain.Training = dto.Training;
-        jobPointsMain.Skills = dto.Skills;
-        jobPointsMain.Languages = dto.Languages;
-        jobPointsMain.Certificates = dto.Certificates;
-        jobPointsMain.Total = dto.Total;
-
-        foreach (var detailDto in dto.Details)
-        {
-            var existingDetail = jobPointsMain.Details?
-                .FirstOrDefault(d => d.Code == detailDto.Code && d.Type == detailDto.Type);
-
-            if (existingDetail != null)
+            main = new JobPointsMain
             {
-                existingDetail.Points = detailDto.Points;
-                existingDetail.Name = detailDto.Name;
-                existingDetail.ReferenceId = detailDto.ReferenceId;
-                existingDetail.IsDeleted = false;
-            }
-            else
-            {
-                
-                jobPointsMain.Details?.Add(new JobPointsDetail
+                JobId = dto.JobId,
+                ApplicantCategory = dto.ApplicantCategory,
+                Education = dto.Education,
+                Experience = dto.Experience,
+                Training = dto.Training,
+                Skills = dto.Skills,
+                Languages = dto.Languages,
+                Certificates = dto.Certificates,
+                Total = dto.Total,
+                Details = [.. dto.Details.Select(d => new JobPointsDetail
                 {
-                    JobPointsMain = jobPointsMain,
-                    Type = detailDto.Type,
-                    Code = detailDto.Code,
-                    Name = detailDto.Name,
-                    Points = detailDto.Points,
-                    ReferenceId = detailDto.ReferenceId,
-                    IsDeleted = false
-                });
+                    Type = d.Type,
+                    Code = d.Code,
+                    Name = d.Name,
+                    ReferenceId = d.ReferenceId,
+                    Points = d.Points
+                })]
+            };
+
+            await repo.AddAsync(main);
+        }
+        else
+        {
+            main.Total = dto.Total;
+            main.ApplicantCategory = dto.ApplicantCategory;
+            main.Education = dto.Education;
+            main.Experience = dto.Experience;
+            main.Training = dto.Training;
+            main.Skills = dto.Skills;
+            main.Languages = dto.Languages;
+            main.Certificates = dto.Certificates;
+
+            foreach (var d in dto.Details)
+            {
+                var detail = main.Details
+                    .FirstOrDefault(x => x.Code == d.Code && x.Type == d.Type);
+
+                detail?.Points = d.Points;
             }
         }
 
-        job.JobPoints ??= jobPointsMain;
-
         await uow.SaveChangesAsync(ct);
-
         return Result.Ok(Unit.Value);
     }
 }

@@ -193,7 +193,8 @@ public static class JobBusinessRules
         {
             [JobStatusIds.Draft] = [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
             [JobStatusIds.PendingApproval] = [JobStatusIds.NeedUpdate,JobStatusIds.Approved, JobStatusIds.Rejected, JobStatusIds.Cancelled],
-            [JobStatusIds.Approved] = [JobStatusIds.Published, JobStatusIds.Cancelled],
+            [JobStatusIds.Approved] = [JobStatusIds.ReadyForAnnouncement, JobStatusIds.Cancelled],
+            [JobStatusIds.ReadyForAnnouncement] = [JobStatusIds.Published],
             [JobStatusIds.Published] = [JobStatusIds.Closed, JobStatusIds.Cancelled],
             [JobStatusIds.Rejected] = [JobStatusIds.Draft],
             [JobStatusIds.Closed] = [],

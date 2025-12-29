@@ -132,4 +132,41 @@
   margin-top: 1.75rem;
 }
 
+.validation-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+
+  font-size: 0.9rem;
+  line-height: 1.4;
+
+  margin-top: 0.5rem;
+  animation: fadeSlideIn 0.25s ease-out;
+}
+
+.validation-message.error {
+  background-color: #fff5f5;
+  border: 1px solid #f5c2c7;
+  color: #b42318;
+}
+
+.validation-message.error i {
+  font-size: 1.1rem;
+  color: #d92d20;
+}
+
+/* subtle entrance animation */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 

@@ -15,8 +15,6 @@ public class JobTabReviewNoteRepository(IGenericRepository<JobTabReviewNote> rep
         var result = await Repository.DbSet
             .AsNoTracking()
             .Where(t => t.JobId == jobId)
-            .Include(t => t.Attachments)
-            .ThenInclude(a => a.Attachment)
             .OrderByDescending(t => t.CreatedDate)
             .ToListAsync();
 
@@ -38,8 +36,6 @@ public class JobTabReviewNoteRepository(IGenericRepository<JobTabReviewNote> rep
         var result = await Repository.DbSet
             .AsNoTracking()
             .Where(x => x.JobId == jobId && x.ReviewCycleId == lastCycleId)
-            .Include(x => x.Attachments)
-                .ThenInclude(a => a.Attachment)
             .ToListAsync();
 
         return Result.Ok(result);
