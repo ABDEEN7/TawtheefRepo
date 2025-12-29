@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities;
@@ -293,73 +294,75 @@ public sealed class GetProfilePartialChangesHandler(
 
                     switch (prop.Name)
                     {
-                        case "CandidateTypeId":
+                        case nameof(SaveProfilePrereqRequest.CandidateTypeId):
                             candidateTypeIds.Add(id);
                             break;
-                        case "TargetEntityId":
+                        case nameof(SaveProfilePrereqRequest.TargetEntityId):
                             targetEntityIds.Add(id);
                             break;
-                        case "OfficeId":
+                        case nameof(SaveProfileContactRequest.OfficeId):
                             officeIds.Add(id);
                             break;
 
-                        case "NationalityId":
-                        case "ResidenceCountryId":
-                        case "InterviewLocationId":
-                        case "GradCountryId":
-                        case "CountryId":
+                        case nameof(SaveProfilePersonalRequest.NationalityId):
+                        case nameof(SaveProfileContactRequest.ResidenceCountryId):
+                        case nameof(SaveProfileContactRequest.InterviewLocationId):
+                        case nameof(SaveProfileEducationDegreeDto.GradCountryId):
+                        case nameof(ExperienceUpsertDto.CountryId):
+                        //case nameof(TrainingCourseUpsertDto.CountryId):
+                        //case nameof(AchievementUpsertDto.CountryId):
                             countryIds.Add(id);
                             break;
 
-                        case "GenderId":
+                        case nameof(SaveProfilePersonalRequest.GenderId):
                             genderIds.Add(id);
                             break;
-                        case "ReligionId":
+                        case nameof(SaveProfilePersonalRequest.ReligionId):
                             religionIds.Add(id);
                             break;
-                        case "MaritalStatusId":
+                        case nameof(SaveProfilePersonalRequest.MaritalStatusId):
                             maritalStatusIds.Add(id);
                             break;
-                        case "SponsorTypeId":
+                        case nameof(SaveProfilePersonalRequest.SponsorTypeId):
                             sponsorTypeIds.Add(id);
                             break;
 
-                        case "DegreeId":
+                        case nameof(SaveProfileEducationDegreeDto.DegreeId):
                             degreeIds.Add(id);
                             break;
-                        case "UniversityId":
+                        case nameof(SaveProfileEducationDegreeDto.UniversityId):
                             universityIds.Add(id);
                             break;
-                        case "MajorId":
-                        case "SubMajorId":
+                        case nameof(SaveProfileEducationDegreeDto.MajorId):
+                        case nameof(SaveProfileEducationDegreeDto.SubMajorId):
                             majorIds.Add(id);
                             break;
-                        case "StudyTypeId":
+                        case nameof(SaveProfileEducationDegreeDto.StudyTypeId):
                             studyTypeIds.Add(id);
                             break;
-                        case "GradeId":
+                        case nameof(SaveProfileEducationDegreeDto.GradeId):
                             ratingGradeIds.Add(id);
                             break;
-                        case "AchievementTypeId":
+                        case nameof(AchievementUpsertDto.AchievementTypeId):
                             achievementTypeIds.Add(id);
                             break;
 
-                        case "SkillId":
+                        case nameof(SkillUpsertDto.SkillId):
                             skillIds.Add(id);
                             break;
-                        case "LevelId":
+                        case nameof(SkillUpsertDto.LevelId):
                             skillLevelIds.Add(id);
                             break;
-                        case "LanguageId":
+                        case nameof(ProfileLanguageUpsertDto.LanguageId):
                             languageIds.Add(id);
                             break;
-                        case "SpeakingLevelId":
-                        case "WritingLevelId":
-                        case "ReadingLevelId":
+                        case nameof(ProfileLanguageUpsertDto.SpeakingLevelId):
+                        case nameof(ProfileLanguageUpsertDto.WritingLevelId):
+                        case nameof(ProfileLanguageUpsertDto.ReadingLevelId):
                             languageLevelIds.Add(id);
                             break;
 
-                        case "QualificationId":
+                        case nameof(ExperienceUpsertDto.QualificationId):
                             qualificationIds.Add(id);
                             break;
                     }
@@ -449,63 +452,68 @@ public sealed class GetProfilePartialChangesHandler(
             var name = string.Empty;
             return fieldName switch
             {
-                "CandidateTypeId" when maps.CandidateTypeNames.TryGetValue(id, out name)
+                nameof(SaveProfilePrereqRequest.CandidateTypeId) when maps.CandidateTypeNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "TargetEntityId" when maps.TargetEntityNames.TryGetValue(id, out name)
+                nameof(SaveProfilePrereqRequest.TargetEntityId) when maps.TargetEntityNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "OfficeId" when maps.OfficeNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-
-                "NationalityId" when maps.CountryNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "ResidenceCountryId" when maps.CountryNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "InterviewLocationId" when maps.CountryNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "GradCountryId" when maps.CountryNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "CountryId" when maps.CountryNames.TryGetValue(id, out name)
+                nameof(SaveProfileContactRequest.OfficeId) when maps.OfficeNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
 
-                "GenderId" when maps.GenderNames.TryGetValue(id, out name)
+                nameof(SaveProfilePersonalRequest.NationalityId) when maps.CountryNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "ReligionId" when maps.ReligionNames.TryGetValue(id, out name)
+                nameof(SaveProfileContactRequest.ResidenceCountryId) when maps.CountryNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "MaritalStatusId" when maps.MaritalStatusNames.TryGetValue(id, out name)
+                nameof(SaveProfileContactRequest.InterviewLocationId) when maps.CountryNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "SponsorTypeId" when maps.SponsorTypeNames.TryGetValue(id, out name)
+                nameof(SaveProfileEducationDegreeDto.GradCountryId) when maps.CountryNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-
-                "DegreeId" when maps.DegreeNames.TryGetValue(id, out name)
+                
+                nameof(ExperienceUpsertDto.CountryId) when maps.CountryNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "UniversityId" when maps.UniversityNames.TryGetValue(id, out name)
+                nameof(TrainingCourseUpsertDto.CountryId) when maps.CountryNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "MajorId" when maps.MajorNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "SubMajorId" when maps.MajorNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "StudyTypeId" when maps.StudyTypeNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "GradeId" when maps.RatingGradeNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "AchievementTypeId" when maps.AchievementTypeNames.TryGetValue(id, out name)
+                nameof(AchievementUpsertDto.CountryId) when maps.CountryNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
 
-                "SkillId" when maps.SkillNames.TryGetValue(id, out name)
+                nameof(SaveProfilePersonalRequest.GenderId) when maps.GenderNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "LevelId" when maps.SkillLevelNames.TryGetValue(id, out name)
+                nameof(SaveProfilePersonalRequest.ReligionId) when maps.ReligionNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-
-                "LanguageId" when maps.LanguageNames.TryGetValue(id, out name)
+                nameof(SaveProfilePersonalRequest.MaritalStatusId) when maps.MaritalStatusNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
-                "SpeakingLevelId" when maps.LanguageLevelNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "WritingLevelId" when maps.LanguageLevelNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                "ReadingLevelId" when maps.LanguageLevelNames.TryGetValue(id, out name)
+                nameof(SaveProfilePersonalRequest.SponsorTypeId) when maps.SponsorTypeNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
 
-                "QualificationId" when maps.QualificationLabels.TryGetValue(id, out name)
+                nameof(SaveProfileEducationDegreeDto.DegreeId) when maps.DegreeNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(SaveProfileEducationDegreeDto.UniversityId) when maps.UniversityNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(SaveProfileEducationDegreeDto.MajorId) when maps.MajorNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(SaveProfileEducationDegreeDto.SubMajorId) when maps.MajorNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(SaveProfileEducationDegreeDto.StudyTypeId) when maps.StudyTypeNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(SaveProfileEducationDegreeDto.GradeId) when maps.RatingGradeNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(AchievementUpsertDto.AchievementTypeId) when maps.AchievementTypeNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+
+                nameof(SkillUpsertDto.SkillId) when maps.SkillNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(SkillUpsertDto.LevelId) when maps.SkillLevelNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                
+                nameof(ProfileLanguageUpsertDto.LanguageId) when maps.LanguageNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(ProfileLanguageUpsertDto.SpeakingLevelId) when maps.LanguageLevelNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(ProfileLanguageUpsertDto.WritingLevelId) when maps.LanguageLevelNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                nameof(ProfileLanguageUpsertDto.ReadingLevelId) when maps.LanguageLevelNames.TryGetValue(id, out name)
+                    => LookupObj(id, name),
+                
+                nameof(ExperienceUpsertDto.QualificationId) when maps.QualificationLabels.TryGetValue(id, out name)
                     => LookupObj(id, name),
 
                 _ => raw
