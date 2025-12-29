@@ -2,6 +2,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
@@ -12,12 +13,10 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
-public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
+public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationService localization)
     : IRequestHandler<GetProfileApprovalsQuery, Result<PaginatedResult<ProfileApprovalListItemDto>>>
 {
-    public async Task<Result<PaginatedResult<ProfileApprovalListItemDto>>> Handle(
-        GetProfileApprovalsQuery request,
-        CancellationToken ct)
+    public async Task<Result<PaginatedResult<ProfileApprovalListItemDto>>> Handle(GetProfileApprovalsQuery request, CancellationToken ct)
     {
         // Guard clauses
         if (request.OfficerId == Guid.Empty)
@@ -36,11 +35,11 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
         var profileIds = profiles.Select(p => p.Id).ToList();
 
         // 3) Review summaries
-        var fullReviewMap = await GetFullReviewSummariesAsync(profileIds, ct);       // phase 1: section-level, changeId == null
-        var changeReviewMap = await GetChangeRequestSummariesAsync(profileIds, ct);  // phase 2: changeId != null
+        var fullReviewMap = await GetFullReviewSummariesAsync(profileIds, ct);
+        var changeReviewMap = await GetChangeRequestSummariesAsync(profileIds, ct);
 
-        // 4) Build DTOs (phase 1 + phase 2)
-        var dtoList = BuildDtos(profiles, fullReviewMap, changeReviewMap);
+        // 4) Build DTOs
+        var dtoList = BuildDtos(localization, profiles, fullReviewMap, changeReviewMap);
 
         // 5) Apply in-memory filters (search + dropdown filters) + in-memory pagination
         var filtered = ApplyFiltersAndPagination(dtoList, request);
@@ -64,10 +63,7 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
             .ToListAsync(ct);
     }
 
-    private async Task<List<UserProfile>> GetProfilesPageAsync(
-        List<Guid> assignedProfileIds,
-        GetProfileApprovalsQuery request,
-        CancellationToken ct)
+    private async Task<List<UserProfile>> GetProfilesPageAsync(List<Guid> assignedProfileIds, GetProfileApprovalsQuery request, CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
 
@@ -86,9 +82,7 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
             .ToPaginatedResultAsync(request, ct);
     }
 
-    private async Task<Dictionary<Guid, FullReviewSummary>> GetFullReviewSummariesAsync(
-        List<Guid> profileIds,
-        CancellationToken ct)
+    private async Task<Dictionary<Guid, FullReviewSummary>> GetFullReviewSummariesAsync(List<Guid> profileIds, CancellationToken ct)
     {
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
@@ -148,11 +142,7 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
         return summaries.ToDictionary(x => x.UserProfileId, x => x);
     }
 
-    // ----------------------------
-    // Mapping + filtering helpers
-    // ----------------------------
-
-    private static List<ProfileApprovalListItemDto> BuildDtos(
+    private static List<ProfileApprovalListItemDto> BuildDtos(ILocalizationService localization,
         List<UserProfile> profiles,
         Dictionary<Guid, FullReviewSummary> fullReviewMap,
         Dictionary<Guid, ChangeRequestSummary> changeSummaryMap)
@@ -161,20 +151,20 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
 
         foreach (var profile in profiles)
         {
-            // Phase 2: Approved profile with outstanding change requests
+            // Approved profile with outstanding change requests
             if (IsApprovedWithOutstandingChanges(profile, changeSummaryMap, out var change))
             {
                 if(change is not null)
-                    result.Add(MapPhase2(profile, change));
+                    result.Add(MapPhase2(localization, profile, change));
                 continue;
             }
 
-            // Phase 1: Full review queue (Submitted / UnderReview only)
+            // Full review queue (Submitted / UnderReview only)
             if (profile.Status is not (UserProfileStatus.Submitted or UserProfileStatus.UnderReview))
                 continue;
 
             fullReviewMap.TryGetValue(profile.Id, out var full);
-            result.Add(MapPhase1(profile, full));
+            result.Add(MapPhase1(localization, profile, full));
         }
 
         return result;
@@ -195,18 +185,18 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
         return change.Outstanding > 0;
     }
 
-    private static ProfileApprovalListItemDto MapPhase2(UserProfile profile, ChangeRequestSummary change)
+    private static ProfileApprovalListItemDto MapPhase2(ILocalizationService localization, UserProfile profile, ChangeRequestSummary change)
     {
         return new ProfileApprovalListItemDto
         {
             UserProfileId = profile.Id,
             UserId = profile.UserId,
-            FullName = ResolveFullName(profile),
 
-            CandidateType = ResolveBilingualName(profile.CandidateType?.NameEn, profile.CandidateType?.NameAr),
-            TargetEntity = ResolveBilingualName(profile.TargetEntity?.NameEn, profile.TargetEntity?.NameAr),
-            Specialization = ResolveSpecialization(profile),
-
+            FullName = localization.GetLocalizedFullName(profile.User),
+            CandidateType = localization.GetLocalizedName(profile.CandidateType),
+            TargetEntity = localization.GetLocalizedName(profile.TargetEntity),
+            Specialization =  localization.GetLocalizedName(profile.Qualifications?.FirstOrDefault()?.Major),
+                
             SubmittedAtUtc = change.LastUpdatedAtUtc,
             ProfileStatus = profile.Status,
 
@@ -218,7 +208,7 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
         };
     }
 
-    private static ProfileApprovalListItemDto MapPhase1(UserProfile profile, FullReviewSummary? summary)
+    private static ProfileApprovalListItemDto MapPhase1(ILocalizationService localization, UserProfile profile, FullReviewSummary? summary)
     {
         var pendingSections = summary?.PendingSections ?? ProfileApprovalFlow.Sections.Length;
         var overallStatus = summary?.OverallStatus ?? ReviewStatus.Pending;
@@ -232,11 +222,10 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
         {
             UserProfileId = profile.Id,
             UserId = profile.UserId,
-            FullName = ResolveFullName(profile),
-
-            CandidateType = ResolveBilingualName(profile.CandidateType?.NameEn, profile.CandidateType?.NameAr),
-            TargetEntity = ResolveBilingualName(profile.TargetEntity?.NameEn, profile.TargetEntity?.NameAr),
-            Specialization = ResolveSpecialization(profile),
+            FullName = localization.GetLocalizedFullName(profile.User),
+            CandidateType = localization.GetLocalizedName(profile.CandidateType),
+            TargetEntity = localization.GetLocalizedName(profile.TargetEntity),
+            Specialization =  localization.GetLocalizedName(profile.Qualifications?.FirstOrDefault()?.Major),
 
             SubmittedAtUtc = profile.CreatedDate,
             ProfileStatus = profile.Status,
@@ -248,18 +237,6 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow)
             AllowedOperations = ResolveAllowedOperations(profile.Status)
         };
     }
-
-    private static string ResolveFullName(UserProfile profile)
-        => profile.User?.FullNameEn
-           ?? profile.User?.FullNameAr
-           ?? string.Empty;
-
-    private static string? ResolveBilingualName(string? en, string? ar)
-        => en ?? ar;
-
-    private static string? ResolveSpecialization(UserProfile profile)
-        => profile.Qualifications?.FirstOrDefault()?.Major?.NameEn
-           ?? profile.Qualifications?.FirstOrDefault()?.Major?.NameAr;
 
     private static PaginatedResult<ProfileApprovalListItemDto> ApplyFiltersAndPagination(
         List<ProfileApprovalListItemDto> list,

@@ -40,6 +40,7 @@ export class UserService {
   clearCurrentUser(): void {
     localStorage.removeItem(USER_DATA_KEY);
     localStorage.removeItem(PREFILL_DATA_KEY);
+    localStorage.removeItem(VERIFIED_PHONE_KEY);
     this.currentUserSubject.next(null);
   }
 }

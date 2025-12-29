@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, of, tap } from 'rxjs';
+import {BehaviorSubject, catchError, Observable, of, shareReplay, tap} from 'rxjs';
 import { Router, UrlTree } from '@angular/router';
 import { HttpService } from '../http/http.service';
 import { EndpointsService } from '../http/endpoints.service';
@@ -9,19 +9,21 @@ import { routes } from '../../routes/routes';
 import { HttpHeaders } from "@angular/common/http";
 import {HDR} from '../utils/headers.flags';
 import {finalize} from 'rxjs/operators';
+import {ProfileStatusDto} from '../models/auth/auth-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {
   readonly routes = routes;
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   readonly isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+  private bootstrap$?: Observable<ProfileStatusDto> | null;
 
   constructor(
     private router: Router,
     private http: HttpService,
     private endpoints: EndpointsService,
     private tokenService: TokenService,
-    private userService: UserService
+    private userService: UserService,
   ) {}
 
   /** one-shot setter for components/services */
@@ -68,12 +70,30 @@ export class AuthStateService {
     return ok;
   }
 
+
+  getAuthBootstrap$(): Observable<Partial<ProfileStatusDto>> {
+    if (this.bootstrap$) return this.bootstrap$;
+    const token = this.tokenService.getToken();
+    if (!token) {
+      this.bootstrap$ = of({
+        isComplete: false,
+      } as ProfileStatusDto).pipe(shareReplay(1));
+      return this.bootstrap$;
+    }
+
+    this.bootstrap$ = this.http.get<ProfileStatusDto>(this.endpoints.user.bootstrap).pipe(shareReplay(1));
+    return this.bootstrap$;
+  }
+  resetBootstrap(): void {
+    this.bootstrap$ = null;
+  }
   /** robust logout: clears locally even if API fails */
   logout(callServer: boolean = true): void {
     const doLocalClear = () => {
       this.tokenService.clearTokens();
       this.userService.clearCurrentUser();
       this.isAuthenticatedSubject.next(false);
+      this.resetBootstrap();
       this.router.navigate([this.routes.auth.login]);
     };
 

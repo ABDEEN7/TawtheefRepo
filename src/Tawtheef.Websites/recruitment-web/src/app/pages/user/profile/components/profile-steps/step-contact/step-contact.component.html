@@ -62,7 +62,7 @@
             {{ 'wizard.contact.phoneFailed' | translate }}
           </span>
         </div>
-        <div class="mt-2 d-flex align-items-center gap-2" *ngIf="!ds.state().phoneVerified">
+        <div class="mt-2 d-flex align-items-center gap-2" *ngIf="!ds.state().phoneVerified && canVerifyPhone">
           <button
             type="button"
             class="btn btn-outline-secondary btn-sm"

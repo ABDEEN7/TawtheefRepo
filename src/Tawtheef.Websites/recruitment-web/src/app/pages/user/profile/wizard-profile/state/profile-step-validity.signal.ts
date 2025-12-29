@@ -208,6 +208,8 @@ function validateContactStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   const backendType = candidateTypeFromState(s);
   const isResident = candidateTypeIsResident(backendType, s.provider);
+  const phoneE164 = s.phone?.e164Number ?? '';
+  const isQatarPhone = phoneE164.startsWith('+974');
 
   if (!isFilledField(s.country)) {
     addRequiredError(errors, 'contact', 'country');
@@ -220,12 +222,20 @@ function validateContactStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'basic', 'office');
   }
 
+
   if (!s.phone) {
     addRequiredError(errors, 'contact', 'phone');
-  }
+  } else {
+    // Qatar only: require verification
+    if (isQatarPhone && !s.phoneVerified) {
+      addRequiredError(errors, 'contact', 'phoneVerified');
+    }
 
-  if (!s.phoneVerified) {
-    addRequiredError(errors, 'contact', 'phoneVerified');
+    // Non-Qatar: force "no verified phone" (optional but recommended)
+    // This keeps state consistent even if something sets phoneVerified=true by mistake.
+    if (!isQatarPhone && s.phoneVerified) {
+      addRequiredError(errors, 'contact', 'phoneVerified');
+    }
   }
 
   if (!isFilledField(s.email)) {
