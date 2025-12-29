@@ -55,7 +55,9 @@ public sealed class ListUsersQueryHandler(
                 {
                     Id = r.Id,
                     NameAr = r.NameAr ?? r.Name ?? string.Empty,
-                    NameEn = r.NameEn ?? r.Name ?? string.Empty
+                    NameEn = r.NameEn ?? r.Name ?? string.Empty,
+                    SystemName = r.Name ?? string.Empty,
+                    IsSystemRole = r.IsSystemRole
                 })
                 .ToArray();
 

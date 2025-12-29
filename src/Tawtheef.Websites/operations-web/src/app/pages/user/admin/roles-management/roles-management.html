@@ -45,27 +45,29 @@
               </td>
 
               <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-                <button
-                  type="button"
-                  class="icon-btn"
-                  (click)="this.openEdit(role)"
-                  [pTooltip]="'ROLES.EDIT' | translate"
-                  tooltipPosition="top"
-                  [tooltipDisabled]="false"
-                  aria-label="{{ 'ROLES.EDIT' | translate }}">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
+                @if (!role.isSystemRole) {
+                  <button
+                    type="button"
+                    class="icon-btn"
+                    (click)="this.openEdit(role)"
+                    [pTooltip]="'ROLES.EDIT' | translate"
+                    tooltipPosition="top"
+                    [tooltipDisabled]="false"
+                    aria-label="{{ 'ROLES.EDIT' | translate }}">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
 
-                <button
-                  type="button"
-                  class="icon-btn text-danger"
-                  (click)="this.confirmDelete(role)"
-                  [pTooltip]="'ROLES.DELETE' | translate"
-                  tooltipPosition="top"
-                  [tooltipDisabled]="false"
-                  aria-label="{{ 'ROLES.DELETE' | translate }}">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  <button
+                    type="button"
+                    class="icon-btn text-danger"
+                    (click)="this.confirmDelete(role)"
+                    [pTooltip]="'ROLES.DELETE' | translate"
+                    tooltipPosition="top"
+                    [tooltipDisabled]="false"
+                    aria-label="{{ 'ROLES.DELETE' | translate }}">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                }
               </td>
             </tr>
           }

@@ -16,7 +16,8 @@ public sealed class ListRoleLookupsQueryHandler(RoleManager<ApplicationRole> rol
         ListRoleLookupsQuery request,
         CancellationToken cancellationToken)
     {
-        var roles = await roleManager.Roles.AsNoTracking().ToListAsync(cancellationToken);
+        var roles = await roleManager.Roles.AsNoTracking()
+            .ToListAsync(cancellationToken);
 
         return Result.Ok(mapper.Map<List<RoleLookupDto>>(roles));
     }
