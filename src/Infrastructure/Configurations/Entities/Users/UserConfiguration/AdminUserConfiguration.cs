@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
@@ -49,31 +47,3 @@ public class AdminUserConfiguration : ApplicationUserConfiguration<AdminUser>
 }
 
 // assign admin role for user
-public class AdminRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<Guid>>
-{
-    public void Configure(EntityTypeBuilder<IdentityUserRole<Guid>> builder)
-    {
-        builder.HasData(
-            new IdentityUserRole<Guid>
-            {
-                UserId = AdminUserIds.Admin1UserId,
-                RoleId = SystemRoleIds.SystemAdmin,
-            },
-            new IdentityUserRole<Guid>
-            {
-                UserId = AdminUserIds.Admin2UserId,
-                RoleId = SystemRoleIds.SystemAdmin,
-            },
-            new IdentityUserRole<Guid>
-            {
-                UserId = AdminUserIds.Admin3UserId,
-                RoleId = SystemRoleIds.SystemAdmin,
-            },
-            new IdentityUserRole<Guid>
-            {
-                UserId = AdminUserIds.Admin4UserId,
-                RoleId = SystemRoleIds.SystemAdmin,
-            }
-        );
-    }
-}

@@ -14,23 +14,23 @@ export let routes = {
   auth:{...authRoutes},
   ...errorRoutes,
   dashboard(role: string) {
-    switch (role.toLowerCase()) {
+    switch (role) {
       case Roles.SystemAdmin:
         return this.admin.dashboard;
       case Roles.Employee:
         return this.employee.dashboard;
       default:
-        return this.employee.dashboard;
+        return '/';
     }
   },
   settings(role: string) {
-    switch (role.toLowerCase()) {
+    switch (role) {
       case Roles.SystemAdmin:
         return this.admin.settings;
       case Roles.Employee:
         return this.employee.settings;
       default:
-        return this.employee.settings;
+        return '/';
     }
   },
 };

@@ -9,6 +9,7 @@ interface TokenPair {
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
+  private readonly RoleIdentifier = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
   private jwtHelper = new JwtHelperService();
   private mem: Partial<TokenPair> = {}; // fallback
 
@@ -46,9 +47,11 @@ export class TokenService {
     return decoded?.[claimName];
   }
 
-  getRoleFromToken(token: string): string {
+  getRolesFromToken(token: string): string[] {
     const decoded = this.decodeToken(token);
-    return decoded?.userType ?? '';
+    const roles = decoded?.[this.RoleIdentifier];
+    if (Array.isArray(roles)) return roles;
+    else return [roles];
   }
 
   tryPersistTokens(tokens: TokenPair): boolean {

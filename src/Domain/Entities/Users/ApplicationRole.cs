@@ -9,6 +9,7 @@ public static class SystemRoleIds
     public static Guid Employee = Guid.Parse("5f12e420-f666-4af4-a8fa-4e4aa755fdcd");
     public static Guid OfficeAdmin = Guid.Parse("98e20970-b6bc-4da9-a947-f75e9adae3ca");
     public static Guid OfficeUser = Guid.Parse("12f5805d-6970-4a9e-a275-2b7cf3db3bb8");
+    public static Guid EmployeeSuperAdmin = Guid.Parse("d8689e0c-d872-42e9-87b7-c3bb27305e07");
 }
 public class ApplicationRole : IdentityRole<Guid>
 {

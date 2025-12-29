@@ -40,8 +40,8 @@ export class AuthService {
     return this.user.currentUser$;
   }
 
-  get getCurrentUserRole() {
-    return () => this.user.getCurrentUser()?.userType || '';
+  get getCurrentUserRoles() {
+    return () => this.user.getCurrentUser()?.userRoles || '';
   }
 
   externalLogin(data: AuthResponse) {
