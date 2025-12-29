@@ -1,0 +1,101 @@
+<section i18nNamespace="pages/job-list" class="page-shell">
+  <div class="page-header">
+    <div class="page-header__title">
+      <h1 class="title">{{ 'JOB_APPLICATION_AVAILABLE_JOBS' | translate }}</h1>
+      <p class="subtitle">{{ 'JOB_APPLICATION_REVIEW_EDIT_JOBS' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head panel__head--spaced">
+      <div class="panel__title">{{ 'JOB_APPLICATION_JOB_APPLICATION' | translate }}</div>
+    </div>
+
+    <div class="filters-bar">
+      <button class="chip chip--brand" type="button" (click)="clearFilters()">
+        <i class="fa fa-filter me-2"></i>
+        {{ 'JOB_APPLICATION_BUTTONS_CLEAR_FILTERS' | translate }}
+      </button>
+
+      <div class="filters-bar__controls">
+        <input
+          class="input"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event); onFilterChange()"
+          [placeholder]="'JOB_APPLICATION_FILTERS_SEARCH_PLACEHOLDER' | translate"
+        />
+
+        <p-select
+          class="select"
+          [options]="lookupsService.jobCategories()"
+          [ngModel]="filterType()"
+          (ngModelChange)="filterType.set($event); onFilterChange()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'JOB_APPLICATION_FILTERS_JOB_CATEGORY' | translate"
+        ></p-select>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'JOB_APPLICATION_COLUMNS_TITLE_AR' | translate }}</th>
+            <th>{{ 'JOB_APPLICATION_COLUMNS_TITLE_EN' | translate }}</th>
+            <th>{{ 'JOB_APPLICATION_COLUMNS_DEPARTMENT' | translate }}</th>
+            <th>{{ 'JOB_APPLICATION_COLUMNS_JOBCATEGORY' | translate }}</th>
+            <th>{{ 'JOB_APPLICATION_COLUMNS_CREATIONDATE' | translate }}</th>
+            <th>{{ 'JOB_APPLICATION_COLUMNS_STATUS' | translate }}</th>
+            <th class="th-actions">{{ 'JOB_APPLICATION_COLUMNS_ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (jobs?.items && jobs?.items?.length) {
+            @for (job of jobs?.items; track job.id; let i = $index) {
+              <tr>
+                <td><span class="fw-bold">{{ job.titleAr }}</span></td>
+                <td class="cell-alt"><span class="fw-bold">{{ job.titleEn }}</span></td>
+                <td><span class="muted">{{ job.department.name }}</span></td>
+                <td><span class="muted">{{ job.jobCategory.name }}</span></td>
+                <td class="cell-alt"><span class="muted">{{ job.createdDate | date:'yyyy/MM/dd' }}</span></td>
+                <td class="cell-alt">
+                  <span class="badge" [ngClass]="'bg-success'">
+                    {{ job.jobStatus.name }}
+                  </span>
+                </td>
+                <td class="td-actions">
+                  <div class="row-actions">
+                    @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate) {
+                      <button
+                        class="btn-pill btn-pill--brand"
+                        type="button"
+                        (click)="sendInvitaion(job)"
+                        [title]="'JOB_APPLICATION_BUTTONS_EDIT' | translate"
+                      >
+                        <i class="fa fa-pen-to-square"></i>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (paginationMetadata && paginationMetadata.totalCount > 0) {
+      <div class="pagination-box">
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalItems]="paginationMetadata.totalCount"
+          [itemsPerPage]="itemsPerPage"
+          (pageChanged)="onPageChange($event)"
+        ></app-pagination>
+      </div>
+    }
+  </div>
+</section>

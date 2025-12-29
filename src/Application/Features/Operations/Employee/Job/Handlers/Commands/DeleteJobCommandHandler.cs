@@ -15,7 +15,7 @@ public class DeleteJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
 
             var existingJobResult = await jobRepository.Repository.GetByIdAsync(request.JobId);
             if (existingJobResult.IsFailed)
-                return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
+                return Result.Fail<Unit>(JobMessages.JobNotFound);
 
             var existingJob = existingJobResult.Value;
 

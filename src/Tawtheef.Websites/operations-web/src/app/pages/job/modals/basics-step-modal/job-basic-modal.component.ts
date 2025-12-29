@@ -320,4 +320,11 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   canSelectSubMajor(): boolean {
     return !!this.form.controls.majorId.value;
   }
+
+  private toDateOnly(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`; // YYYY-MM-DD
+}
 }

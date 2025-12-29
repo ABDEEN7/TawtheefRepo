@@ -11,7 +11,7 @@ public class CreateJobCommandValidator : AbstractValidator<CreateJobCommand>
     {
         RuleFor(x => x.Job)
             .NotNull()
-            .WithMessage(JobMessages.JOB_REQUIRED);
+            .WithMessage(JobMessages.JobRequired);
 
         RuleFor(x => x)
             .CustomAsync(async (command, context, _) =>

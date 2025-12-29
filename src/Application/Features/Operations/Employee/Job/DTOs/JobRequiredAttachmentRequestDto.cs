@@ -5,12 +5,12 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 public class JobRequiredAttachmentRequestDto
 {
-    [Required(ErrorMessage = JobMessages.ATTACHMENT_TITLE_REQUIRED)]
-    [MaxLength(200, ErrorMessage = JobMessages.ATTACHMENT_TITLE_MAX_LENGTH)]
+    [Required(ErrorMessage = JobMessages.AttachmentTitleRequired)]
+    [MaxLength(200, ErrorMessage = JobMessages.AttachmentTitleMaxLength)]
     public required string TitleAr { get; set; }
 
-    [Required(ErrorMessage = JobMessages.ATTACHMENT_TITLE_REQUIRED)]
-    [MaxLength(200, ErrorMessage = JobMessages.ATTACHMENT_TITLE_MAX_LENGTH)]
+    [Required(ErrorMessage = JobMessages.AttachmentTitleRequired)]
+    [MaxLength(200, ErrorMessage = JobMessages.AttachmentTitleMaxLength)]
     public required string TitleEn { get; set; }
 
     public bool IsMandatory { get; set; } = true;
