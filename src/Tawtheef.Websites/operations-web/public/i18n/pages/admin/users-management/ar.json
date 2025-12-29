@@ -31,5 +31,8 @@
   "USERS.BLOCK_FAILED": "فشل تحديث حالة الحظر.",
   "USERS.UNBLOCK_FAILED": "فشل تحديث حالة الحظر.",
   "USERS.ROLES_UPDATE_SUCCESS": "تم تحديث أدوار المستخدم بنجاح.",
-  "USERS.ROLES_UPDATE_FAILED": "فشل تحديث أدوار المستخدم. يرجى المحاولة مرة أخرى."
+  "USERS.ROLES_UPDATE_FAILED": "فشل تحديث أدوار المستخدم. يرجى المحاولة مرة أخرى.",
+  "USERS.SYSTEM_ADMIN_MANAGE_DISABLED": "يتم إدارة دور مدير النظام يدويًا ولا يمكن تغييره من هنا.",
+  "USERS.MULTIPLE_SYSTEM_ROLES_NOT_ALLOWED": "يمكن تعيين دور نظامي واحد فقط لكل مستخدم.",
+  "USERS.SYSTEM_ADMIN_BLOCK_DISABLED": "لا يمكن حظر المستخدمين بدور مدير النظام."
 }

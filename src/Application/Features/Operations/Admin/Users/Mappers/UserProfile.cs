@@ -25,6 +25,8 @@ public sealed class UserProfile : IRegister
         config.NewConfig<RoleWithClaims, RoleSummaryDto>()
             .Map(dest => dest.Id, src => src.Role.Id)
             .Map(dest => dest.NameAr, src => src.Role.NameAr ?? src.Role.Name ?? string.Empty)
-            .Map(dest => dest.NameEn, src => src.Role.NameEn ?? src.Role.Name ?? string.Empty);
+            .Map(dest => dest.NameEn, src => src.Role.NameEn ?? src.Role.Name ?? string.Empty)
+            .Map(dest => dest.SystemName, src => src.Role.Name ?? string.Empty)
+            .Map(dest => dest.IsSystemRole, src => src.Role.IsSystemRole);
     }
 }

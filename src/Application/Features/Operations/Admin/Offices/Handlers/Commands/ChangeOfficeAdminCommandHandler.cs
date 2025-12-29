@@ -77,6 +77,22 @@ public sealed class ChangeOfficeAdminCommandHandler(
         if (await userManager.IsInRoleAsync(user, nameof(SystemRoleIds.OfficeAdmin)))
             return Result.Ok(Unit.Value);
 
+        var currentRoles = await userManager.GetRolesAsync(user);
+        if (currentRoles.Contains(nameof(SystemRoleIds.SystemAdmin), StringComparer.OrdinalIgnoreCase))
+            return Result.Fail<Unit>(ErrorsCodes.SystemAdminAssignmentNotAllowed);
+
+        var removableSystemRoles = currentRoles
+            .Where(r => r.Equals(nameof(SystemRoleIds.OfficeUser), StringComparison.OrdinalIgnoreCase) ||
+                        r.Equals(nameof(SystemRoleIds.Employee), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        if (removableSystemRoles.Length > 0)
+        {
+            var removeResult = await userManager.RemoveFromRolesAsync(user, removableSystemRoles);
+            if (!removeResult.Succeeded)
+                return IdentityFailure(removeResult);
+        }
+
         var promote = await userManager.AddToRoleAsync(user,
             nameof(SystemRoleIds.OfficeAdmin));
 

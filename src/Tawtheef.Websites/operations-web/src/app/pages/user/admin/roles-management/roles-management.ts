@@ -63,6 +63,8 @@ export class RolesManagement implements OnInit {
     nameEn: '',
     descriptionAr: '',
     descriptionEn: '',
+    systemName: '',
+    isSystemRole: false,
     permissions: []
   });
 
@@ -107,6 +109,8 @@ export class RolesManagement implements OnInit {
       nameEn: '',
       descriptionAr: '',
       descriptionEn: '',
+      systemName: '',
+      isSystemRole: false,
       permissions: []
     });
     this.permissionSearch.set('');

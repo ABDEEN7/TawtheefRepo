@@ -14,6 +14,7 @@ import {Lang, LanguageService} from '../../../../core/services/language.service'
 import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {NotificationService} from '../../../../core/services/notification.service';
+import {SystemRoles} from '../../../../core/constants/systemRoles';
 
 @Component({
   selector: 'app-users-management',
@@ -149,9 +150,19 @@ export class UsersManagement implements OnInit {
     const roles = user.roles ?? [];
 
     if (roles.length) {
-      return roles.map(r => this.localizedRole(r));
+      return roles.map(r => ({
+        display: this.localizedRole(r),
+        isSystemRole: !!r.isSystemRole
+      }));
     }
 
-    return user.roleNames ?? [];
+    return (user.roleNames ?? []).map(name => ({ display: name, isSystemRole: false }));
+  }
+
+  hasSystemAdminRole(user: UserDto) {
+    const namesFromRoles = (user.roles ?? []).map(r => r.systemName || r.nameEn || r.nameAr);
+    const names = [...namesFromRoles, ...(user.roleNames ?? [])];
+
+    return names.some(name => name === SystemRoles.SystemAdmin);
   }
 }
