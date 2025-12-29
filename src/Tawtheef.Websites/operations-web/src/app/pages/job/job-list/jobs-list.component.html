@@ -130,11 +130,12 @@
 
             <td class="col-actions">
               <div class="row-actions">
+                @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !== jobStatus.NeedUpdate){
                 <button class="btn-pill btn-pill--outline" type="button" (click)="viewJob(job)">
                   <i class="fa fa-eye"></i>
                   <span>{{ 'JOB_LIST_BUTTONS_VIEW' | translate }}</span>
                 </button>
-
+              }
                 @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate) {
                   <button class="btn-pill btn-pill--brand" type="button" (click)="editJob(job)">
                     <i class="fa fa-pen-to-square"></i>

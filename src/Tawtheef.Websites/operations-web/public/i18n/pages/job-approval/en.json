@@ -91,5 +91,7 @@
 "JOB_APPROVAL.REVIEW_HISTORY": "Review History",
 "JOB_APPROVAL.RESOLVED": "Resolved",
 "JOB_APPROVAL.ATTACHMENTS": "Attachments",
-"JOB_APPROVAL.NOTE_REQUIRED_FOR_RETURN":"Please add a note"
+"JOB_APPROVAL.NOTE_REQUIRED_FOR_RETURN":"Please add a note",
+"JOB_TAB_STATUS.Approved":"Appreve",
+"JOB_TAB_STATUS.Returned":"Return"
 }

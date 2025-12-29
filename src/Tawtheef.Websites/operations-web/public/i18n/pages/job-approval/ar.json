@@ -92,5 +92,7 @@
   "JOB_APPROVAL.RESOLVED": "تم الحل",
   "JOB_APPROVAL.ATTACHMENTS": "المرفقات",
   "JOB_APPROVAL.NOTE_REQUIRED_FOR_RETURN":"يرجى إضافة ملاحظة",
-  "JOB_LIST_STATS_APPROVED":"معتمدة"
+  "JOB_LIST_STATS_APPROVED":"معتمدة",
+  "JOB_TAB_STATUS.Approved":"إعتماد",
+  "JOB_TAB_STATUS.Returned":"إعادة"
 }
