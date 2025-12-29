@@ -11,14 +11,12 @@ import {EndpointsService} from '../http/endpoints.service';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  private bootstrap$?: Observable<ProfileStatusDto>;
   private permissionsCache: Set<string> | null = null;
   constructor(
     protected core: AuthCoreService,
     protected state: AuthStateService,
     protected user: UserService,
     protected http: HttpClient,
-    protected endpointService: EndpointsService,
   ) {
     this.state.checkAuthState(false);
     this.state.isAuthenticated$.subscribe(isAuth => {
@@ -60,30 +58,15 @@ export class AuthService {
   getCurrentUser(): UserInfoModel | null {
     return this.user.getCurrentUser();
   }
-
+  getAuthBootstrap$(): Observable<Partial<ProfileStatusDto>>{
+    return this.state.getAuthBootstrap$();
+  }
   isLoggedIn(): boolean {
     return this.state.checkAuthState(false);
   }
 
   deleteAccount(): void {
     this.state.logout(false);
-  }
-
-  getAuthBootstrap$(): Observable<Partial<ProfileStatusDto>> {
-    if (this.bootstrap$) return this.bootstrap$;
-    const token = this.token;
-    if (!token) {
-      this.bootstrap$ = of({
-        isComplete: false,
-      } as ProfileStatusDto).pipe(shareReplay(1));
-      return this.bootstrap$;
-    }
-
-    this.bootstrap$ = this.http.get<ProfileStatusDto>(this.endpointService.user.bootstrap).pipe(
-      shareReplay(1)
-    );
-
-    return this.bootstrap$;
   }
   private getPermissionsFromToken(): Set<string> {
     if (this.permissionsCache) {

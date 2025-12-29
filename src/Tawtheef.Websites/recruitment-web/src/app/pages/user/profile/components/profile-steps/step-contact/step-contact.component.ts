@@ -78,7 +78,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   private naLocalFile: FileSlot = createFileSlot();
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
-
+  private readonly QATAR_E164_PREFIX = '+974';
   // verification states
   phoneInput: PhoneNumber | null = null;
   phone: VerificationState = {
@@ -105,18 +105,6 @@ export class StepContactComponent implements OnInit, OnDestroy {
   selectedCountryIso2: CountryISO = CountryISO.Qatar;
   savingContact = false;
   private lastSubmittedSignature: string | null = null;
-  private getLastVerifiedPhoneE164(): string | null {
-    try { return sessionStorage.getItem(VERIFIED_PHONE_KEY); } catch { return null; }
-  }
-
-  private setLastVerifiedPhoneE164(e164: string | null): void {
-    try {
-      if (!e164) sessionStorage.removeItem(VERIFIED_PHONE_KEY);
-      else sessionStorage.setItem(VERIFIED_PHONE_KEY, e164);
-    } catch {
-      // ignore storage failures (private mode etc.)
-    }
-  }
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
@@ -136,18 +124,24 @@ export class StepContactComponent implements OnInit, OnDestroy {
       this.phone.value = state.phone.e164Number;
       this.phone.valid = true;
     }
-
-    if (state.phoneVerified) {
-      this.phone.status = 'verified';
-      this.setLastVerifiedPhoneE164(state.phone!.e164Number);
-    }
-
-    // If backend is not verified but user re-entered same last verified phone in this wizard session:
-    if (!state.phoneVerified && state.phone?.e164Number) {
-      const cached = this.getLastVerifiedPhoneE164();
-      if (cached && cached === state.phone.e164Number) {
-        this.ds.up('phoneVerified', true);
+    // Enforce rule on initial load:
+    if (state.phone && !this.isQatarPhone(state.phone)) {
+      // Non-Qatar: never verified
+      this.resetPhoneVerificationState();
+    } else {
+      // Qatar: keep your existing behavior
+      if (state.phoneVerified) {
         this.phone.status = 'verified';
+        this.setLastVerifiedPhoneE164(state.phone!.e164Number);
+      }
+
+      // restore verified in-session if same cached phone
+      if (!state.phoneVerified && state.phone?.e164Number) {
+        const cached = this.getLastVerifiedPhoneE164();
+        if (cached && cached === state.phone.e164Number) {
+          this.ds.up('phoneVerified', true);
+          this.phone.status = 'verified';
+        }
       }
     }
     // init email
@@ -168,11 +162,38 @@ export class StepContactComponent implements OnInit, OnDestroy {
     // clear timers to avoid leaks
     if (this.phone.cooldownTimer) clearInterval(this.phone.cooldownTimer);
     if (this.email.cooldownTimer) clearInterval(this.email.cooldownTimer);
-    localStorage.removeItem(VERIFIED_PHONE_KEY);
+    this.setLastVerifiedPhoneE164(null);
   }
 
   // ========== Cooldown helper ==========
 
+  private getLastVerifiedPhoneE164(): string | null {
+    try { return sessionStorage.getItem(VERIFIED_PHONE_KEY); } catch { return null; }
+  }
+
+  private setLastVerifiedPhoneE164(e164: string | null): void {
+    try {
+      if (!e164) sessionStorage.removeItem(VERIFIED_PHONE_KEY);
+      else sessionStorage.setItem(VERIFIED_PHONE_KEY, e164);
+    } catch {
+      // ignore storage failures (private mode etc.)
+    }
+  }
+
+  private isQatarPhone(value: PhoneNumber | null): boolean {
+    return (value as any)?.countryCode?.toUpperCase?.() === 'QA' || (value?.e164Number ?? '').startsWith('+974');
+  }
+  get canVerifyPhone(): boolean {
+    return this.isQatarPhone(this.ds.state().phone ?? null);
+  }
+
+  private resetPhoneVerificationState(): void {
+    this.ds.up('phoneVerified', false);
+    this.phone.status = 'idle';
+    this.phone.otp = '';
+    this.phone.errorMessage = null;
+    this.setLastVerifiedPhoneE164(null); // clear cached verified phone
+  }
   private startCooldown(target: VerificationState, seconds: number): void {
     target.cooldown = seconds;
     if (target.cooldownTimer) clearInterval(target.cooldownTimer);
@@ -222,7 +243,13 @@ export class StepContactComponent implements OnInit, OnDestroy {
     // Save phone object to state
     this.ds.up('phone', value);
 
-    // if this number matches last verified in this session, restore verified
+    // If NOT Qatar: disable verification always
+    if (!this.isQatarPhone(value)) {
+      this.resetPhoneVerificationState();
+      return;
+    }
+
+    // Qatar only: allow restore from cached verified phone
     const cached = this.getLastVerifiedPhoneE164();
     if (cached && cached === value.e164Number) {
       this.ds.up('phoneVerified', true);
@@ -230,13 +257,19 @@ export class StepContactComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Otherwise require verification
+    // Otherwise require verification for Qatar
     this.ds.up('phoneVerified', false);
     this.phone.status = 'idle';
   }
 
   sendPhoneCode(): void {
     const state = this.ds.state();
+    // Qatar-only
+    if (!this.isQatarPhone(state.phone ?? null)) {
+      this.resetPhoneVerificationState();
+      return;
+    }
+
     if (!this.phone.valid || !state.phone || this.phone.cooldown > 0) return;
 
     this.phone.status = 'sending';
@@ -269,9 +302,14 @@ export class StepContactComponent implements OnInit, OnDestroy {
       });
   }
   verifyPhoneCode(): void {
-    if (!this.phone.otp) return;
-
     const state = this.ds.state();
+    // Qatar-only
+    if (!this.isQatarPhone(state.phone ?? null)) {
+      this.resetPhoneVerificationState();
+      return;
+    }
+
+    if (!this.phone.otp) return;
     if (!state.phone) return;
 
     this.phone.status = 'verifying';
