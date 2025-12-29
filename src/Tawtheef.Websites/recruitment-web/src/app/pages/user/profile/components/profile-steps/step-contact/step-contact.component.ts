@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { PhoneNumberUtil } from 'google-libphonenumber';
-import {CountryISO, NgxIntlTelInputModule, SearchCountryField} from 'ngx-intl-tel-input';
+import {CountryISO, SearchCountryField} from 'ngx-intl-tel-input';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {ContactVerificationService} from '../../../wizard-profile/services/contact-verification.service';
@@ -28,6 +28,7 @@ import {
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
 import {mapContactSection} from '../../../wizard-profile/services/profile.mapper';
 import {PhoneNumber} from '../../../wizard-profile/models/phone-number.model';
+import {VERIFIED_PHONE_KEY} from '../../../../../../core/constants/wizard-keys.const';
 
 
 type VerificationStatus =
@@ -75,17 +76,11 @@ export class StepContactComponent implements OnInit, OnDestroy {
   maxNaFileSize = 2 * 1024 * 1024; // 2MB
   allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   private naLocalFile: FileSlot = createFileSlot();
-
-  get step(){
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
-    return validity['contact'];
-  }
-
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
 
   // verification states
+  phoneInput: PhoneNumber | null = null;
   phone: VerificationState = {
     value: null,
     valid: false,
@@ -110,6 +105,23 @@ export class StepContactComponent implements OnInit, OnDestroy {
   selectedCountryIso2: CountryISO = CountryISO.Qatar;
   savingContact = false;
   private lastSubmittedSignature: string | null = null;
+  private getLastVerifiedPhoneE164(): string | null {
+    try { return sessionStorage.getItem(VERIFIED_PHONE_KEY); } catch { return null; }
+  }
+
+  private setLastVerifiedPhoneE164(e164: string | null): void {
+    try {
+      if (!e164) sessionStorage.removeItem(VERIFIED_PHONE_KEY);
+      else sessionStorage.setItem(VERIFIED_PHONE_KEY, e164);
+    } catch {
+      // ignore storage failures (private mode etc.)
+    }
+  }
+  get step(){
+    const stepValidity = createStepValiditySignal(this.ds.state);
+    const validity = stepValidity();
+    return validity['contact'];
+  }
 
   ngOnInit(): void {
     this.geoIp.getCountryIso2().subscribe(code => {
@@ -119,14 +131,25 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const state = this.ds.state();
 
     // init phone
+    this.phoneInput = state.phone ?? null;
     if (state.phone) {
       this.phone.value = state.phone.e164Number;
       this.phone.valid = true;
     }
+
     if (state.phoneVerified) {
       this.phone.status = 'verified';
+      this.setLastVerifiedPhoneE164(state.phone!.e164Number);
     }
 
+    // If backend is not verified but user re-entered same last verified phone in this wizard session:
+    if (!state.phoneVerified && state.phone?.e164Number) {
+      const cached = this.getLastVerifiedPhoneE164();
+      if (cached && cached === state.phone.e164Number) {
+        this.ds.up('phoneVerified', true);
+        this.phone.status = 'verified';
+      }
+    }
     // init email
     if (state.email) {
       this.email.value = state.email;
@@ -145,6 +168,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     // clear timers to avoid leaks
     if (this.phone.cooldownTimer) clearInterval(this.phone.cooldownTimer);
     if (this.email.cooldownTimer) clearInterval(this.email.cooldownTimer);
+    localStorage.removeItem(VERIFIED_PHONE_KEY);
   }
 
   // ========== Cooldown helper ==========
@@ -164,29 +188,51 @@ export class StepContactComponent implements OnInit, OnDestroy {
   }
 
   // ========== Phone ==========
-
-  onPhoneChange(value: PhoneNumber): void {
+  onPhoneChange(value: PhoneNumber | null): void {
     if (!value || this.ds.isLocked('phone')) return;
 
+    this.phoneInput = value;
     this.phone.touched = true;
     this.phone.errorMessage = null;
 
-    const phoneNumber = this.phoneNumberUtil.parseAndKeepRawInput(value.e164Number);
-    this.phone.valid = this.phoneNumberUtil.isValidNumber(phoneNumber);
-
-    if (this.phone.valid) {
-      this.phone.value = value.number;
-      this.ds.up('phone', value);
-
-      if (this.phone.status === 'verified' && (value.e164Number !== this.ds.state().phone?.e164Number || !this.ds.state().phoneVerified)) {
-        this.phone.status = 'idle';
-        this.ds.up('phoneVerified', false);
-      }
+    // Reset OTP workflow when the phone changes
+    if (this.phone.status === 'codeSent' || this.phone.status === 'verifying' || this.phone.status === 'failed') {
+      this.phone.otp = '';
+      this.phone.status = 'idle';
     }
-    else {
-      this.phone.value = null;
+
+    // Validate safely
+    let isValid = false;
+    try {
+      const parsed = this.phoneNumberUtil.parseAndKeepRawInput(value.e164Number);
+      isValid = this.phoneNumberUtil.isValidNumber(parsed);
+    } catch {
+      isValid = false;
+    }
+
+    this.phone.valid = isValid;
+
+    if (!isValid) {
       this.ds.up('phone', null);
+      this.ds.up('phoneVerified', false);
+      this.phone.status = 'idle';
+      return;
     }
+
+    // Save phone object to state
+    this.ds.up('phone', value);
+
+    // if this number matches last verified in this session, restore verified
+    const cached = this.getLastVerifiedPhoneE164();
+    if (cached && cached === value.e164Number) {
+      this.ds.up('phoneVerified', true);
+      this.phone.status = 'verified';
+      return;
+    }
+
+    // Otherwise require verification
+    this.ds.up('phoneVerified', false);
+    this.phone.status = 'idle';
   }
 
   sendPhoneCode(): void {
@@ -222,32 +268,32 @@ export class StepContactComponent implements OnInit, OnDestroy {
         }
       });
   }
-
   verifyPhoneCode(): void {
     if (!this.phone.otp) return;
+
     const state = this.ds.state();
     if (!state.phone) return;
 
     this.phone.status = 'verifying';
     this.phone.errorMessage = null;
 
-    this.verificationService
-      .verifyPhoneCode({
-        phoneE164: state.phone.e164Number,
-        code: this.phone.otp
-      })
-      .subscribe({
-        next: () => {
-          this.phone.status = 'verified';
-          this.ds.up('phoneVerified', true);
-        },
-        error: () => {
-          this.phone.status = 'failed';
-          this.phone.errorMessage = this.translate.instant(
-            'wizard.contact.codeSent.phone.error'
-          );
-        }
-      });
+    this.verificationService.verifyPhoneCode({
+      phoneE164: state.phone.e164Number,
+      code: this.phone.otp
+    }).subscribe({
+      next: () => {
+        this.phone.status = 'verified';
+        this.ds.up('phoneVerified', true);
+
+        // Cache last verified phone outside ProfileState
+        this.setLastVerifiedPhoneE164(state.phone!.e164Number);
+        this.phone.otp = '';
+      },
+      error: () => {
+        this.phone.status = 'failed';
+        this.phone.errorMessage = this.translate.instant('wizard.contact.codeSent.phone.error');
+      }
+    });
   }
 
   // ========== Email ==========

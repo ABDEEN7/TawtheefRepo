@@ -29,7 +29,7 @@
   "JOB_LIST_BUTTONS_REJECT": "الرفض",
   "JOB_LIST_BUTTONS_PUBLISH": "النشر",
   "JOB_LIST_BUTTONS_CLOSE": "إغلاق",
-  "JOB_LIST_BUTTONS_REOPEN": "إعادة فتح",
+  "JOB_LIST_BUTTONS_REOPEN": "إعادة تفعيل",
   "JOB_LIST_BUTTONS_CANCEL": "إلغاء",
   "JOB_LIST_BUTTONS_DELETE": "حذف",
   
@@ -60,5 +60,7 @@
   "JOB_LIST_STATS_PENDING_APPROVAL":"قيد الأعتماد",
   "JOB_LIST_STATS_APPROVED":"معتمدة",
   "JOB_LIST_STATS_DRAFTED":"مسؤدة",
-  "JOB_LIST_CONFIRMATIONS_DELETE_JOB_NOTE": "هل أنت متأكد أنك تريد حذف هذه الوظيفة؟"
+  "JOB_LIST_CONFIRMATIONS_DELETE_JOB_NOTE": "هل أنت متأكد أنك تريد حذف هذه الوظيفة؟",
+  "JOB_LIST_CONFIRMATIONS_REOPEN_JOB":"إعادة تفعيل الوظيفة",
+  "JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE": "هل أنت متأكد من إعادة تفعيل هذه الوظيفة ؟"
 }

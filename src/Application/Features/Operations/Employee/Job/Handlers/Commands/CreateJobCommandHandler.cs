@@ -18,7 +18,7 @@ public class CreateJobCommandHandler(
     {
         
         var job = request.Job.Adapt<JobEntity>();
-        job.JobStatusId = JobStatusIds.Draft;
+        job.ChangeStatus(JobStatusIds.Draft);
         var result = await jobRepository.Repository.AddAsync(job);
         if (result.IsFailed)
             return Result.Fail<Guid>(result.Errors);

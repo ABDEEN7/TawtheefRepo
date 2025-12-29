@@ -319,6 +319,7 @@
   "wizard.profile.contact.naStreet.required": "يرجى إدخال الشارع في العنوان الوطني",
   "wizard.profile.contact.naBuilding.required": "يرجى إدخال المبنى في العنوان الوطني",
   "wizard.profile.contact.naFile.required": "يرجى إرفاق وثيقة العنوان الوطني",
+  "wizard.profile.contact.interviewPlace.required": "يرجى اختيار مكان المقابلة المفضّل",
   "wizard.profile.degrees.atLeastOne.required": "يجب إضافة مؤهل علمي واحد على الأقل",
   "wizard.profile.degrees.gradYear.future": "لا يمكن أن تكون سنة التخرج في المستقبل",
   "wizard.profile.degrees.gradYear.beforeDob": "لا يمكن أن تكون سنة التخرج قبل تاريخ الميلاد",

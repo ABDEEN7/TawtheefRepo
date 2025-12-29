@@ -7,6 +7,7 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgIf} from '@angular/common';
 import {ExternalLoginService} from '../../../core/auth/external-login';
 import {HttpService} from '../../../core/http/http.service';
+import {RESIDENCY_CHOSEN_MANUALLY_KEY, RESIDENCY_MODE_KEY} from '../../../core/constants/website-storage.const';
 
 
 type ResidencyMode = 'resident' | 'nonresident';
@@ -23,7 +24,7 @@ export class Login implements OnInit, OnDestroy{
   private http = inject(HttpService);
 
   currentLang: 'ar' | 'en' = 'ar';
-  residencyMode: ResidencyMode = (localStorage.getItem('residencyMode') as ResidencyMode) || 'resident';
+  residencyMode: ResidencyMode = (localStorage.getItem(RESIDENCY_MODE_KEY) as ResidencyMode) || 'resident';
 
   private subs: Subscription[] = [];
 
@@ -35,7 +36,7 @@ export class Login implements OnInit, OnDestroy{
     this.subs.push(s);
 
     // best-effort GeoIP (short timeouts) if user didn’t choose manually this session
-    if (sessionStorage.getItem('residencyChosenManually') !== '1') {
+    if (sessionStorage.getItem(RESIDENCY_CHOSEN_MANUALLY_KEY) !== '1') {
       this.bestEffortGeoip();
     }
   }
@@ -51,8 +52,8 @@ export class Login implements OnInit, OnDestroy{
 
   setMode(mode: ResidencyMode): void {
     this.residencyMode = mode;
-    localStorage.setItem('residencyMode', mode);
-    sessionStorage.setItem('residencyChosenManually', '1');
+    localStorage.setItem(RESIDENCY_MODE_KEY, mode);
+    sessionStorage.setItem(RESIDENCY_CHOSEN_MANUALLY_KEY, '1');
   }
 
   onSegmentKey(e: KeyboardEvent): void {

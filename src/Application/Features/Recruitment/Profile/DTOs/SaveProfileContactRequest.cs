@@ -9,6 +9,7 @@ public sealed class SaveProfileContactRequest
     public Guid ResidenceCountryId { get; set; }
     public string? Address { get; set; }
     public Guid InterviewLocationId { get; set; }
+    public Guid? OfficeId { get; set; }
 
     public NationalAddressDto? NationalAddress { get; set; }
 }

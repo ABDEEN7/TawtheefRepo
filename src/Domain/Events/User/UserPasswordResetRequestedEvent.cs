@@ -5,5 +5,5 @@ namespace Tawtheef.Domain.Events.User;
 public sealed record UserPasswordResetRequestedEvent(
     Guid UserId,
     string Email,
-    DateTime OccurredOn
+    DateTimeOffset OccurredOn
 ) : BaseEvent(OccurredOn);

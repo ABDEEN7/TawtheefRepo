@@ -290,56 +290,6 @@ export class JobService {
     return this.changeStatus(jobId, statusId);
   }
 
-  approve(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.APPROVED')
-        );
-      })
-    );
-  }
-
-  reject(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.REJECTED')
-        );
-      })
-    );
-  }
-
-  publish(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.PUBLISHED')
-        );
-      })
-    );
-  }
-
-  close(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.CLOSED')
-        );
-      })
-    );
-  }
-
-  cancel(jobId: GUID, statusId: GUID): Observable<void> {
-    return this.changeStatus(jobId, statusId).pipe(
-      tap(() => {
-        this.notificationService.success(
-          this.translationService.instant('JOB_WIZARD.MESSAGES.CANCELLED')
-        );
-      })
-    );
-  }
-
   getAll(
     pagination: PaginatedRequest = { pageNumber: 1, pageSize: 10 },
     filter?: JobQueryFilter

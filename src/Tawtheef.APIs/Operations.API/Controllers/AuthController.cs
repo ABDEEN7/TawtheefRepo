@@ -47,7 +47,11 @@ namespace Operations.API.Controllers
                 return BadRequest(ErrorsCodes.ExternalLoginProviderRequired);
 
             var returnUrl = request.ReturnUrl ?? Url.Content("~/");
-            var redirectUrl = Url.ActionLink(nameof(AzureExternalLoginCallback), controller: null,
+            
+            var actionUrl = provider == "Google"
+                ? nameof(GoogleExternalLoginCallback)
+                : nameof(AzureExternalLoginCallback);
+            var redirectUrl = Url.ActionLink(actionUrl, controller: null,
                 values: new { returnUrl },
                 protocol: Request.Scheme);
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);

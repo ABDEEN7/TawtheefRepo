@@ -72,6 +72,7 @@ file sealed record ContactSectionSnapshot
     public Guid? ResidenceCountryId { get; init; }
     public Guid? InterviewLocationId { get; init; }
     public string? Address { get; init; }
+    public Guid? OfficeId { get; init; }
     public int? Zone { get; init; }
     public int? Street { get; init; }
     public int? Building { get; init; }
@@ -96,7 +97,8 @@ file sealed record ContactSectionSnapshot
         {
             ResidenceCountryId = request.ResidenceCountryId,
             InterviewLocationId = request.InterviewLocationId,
-            Address = request.Address ?? Address
+            Address = request.Address ?? Address,
+            OfficeId = request.OfficeId ?? OfficeId,
         };
 
         if (request.NationalAddress is not null)

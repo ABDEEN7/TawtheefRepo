@@ -118,7 +118,6 @@ file sealed record PrereqSectionSnapshot
         {
             CandidateTypeId = nextCandidateTypeId,
             TargetEntityId = request.TargetEntityId,
-            OfficeId = request.OfficeId ?? OfficeId,
             QidExpiry = request.QIDExpiry ?? QidExpiry,
             ResumeAttachmentId = resumeAttachmentId ?? ResumeAttachmentId,
             NationalCardId = nationalCardId ?? NationalCardId

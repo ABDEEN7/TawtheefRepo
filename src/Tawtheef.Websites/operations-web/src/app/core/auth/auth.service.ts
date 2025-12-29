@@ -60,14 +60,9 @@ export class AuthService {
     return this.user.getCurrentUser();
   }
 
-  isPasswordlessUser(): boolean {
-    return this.user.isPasswordlessUser();
-  }
-
   isLoggedIn(): boolean {
     return this.state.checkAuthState(false);
   }
-
   private getPermissionsFromToken(): Set<string> {
     if (this.permissionsCache) {
       return this.permissionsCache;

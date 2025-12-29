@@ -9,8 +9,7 @@ import { routes } from './app.routes';
 import {
   HttpBackend,
   provideHttpClient,
-  withInterceptors,
-  withInterceptorsFromDi
+  withInterceptors
 } from '@angular/common/http';
 import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
@@ -29,6 +28,7 @@ import {customHttpInterceptor} from './core/interceptors/http.interceptor';
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   return new MultiTranslateHttpLoader(_httpBackend, [
     {prefix: '/i18n/common/', suffix: '.json'},
+    {prefix: '/i18n/server-error/', suffix: '.json'},
   ]);
 }
 

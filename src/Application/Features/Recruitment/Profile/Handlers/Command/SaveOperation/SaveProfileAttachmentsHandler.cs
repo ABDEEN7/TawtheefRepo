@@ -129,9 +129,3 @@ public sealed class SaveProfileAttachmentsHandler(
         }
     }
 }
-
-file sealed record PendingAttachmentSnapshot
-{
-    public Guid? AttachmentResourceId { get; init; }
-    public string? FileName { get; init; }
-}
