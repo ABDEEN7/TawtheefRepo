@@ -41,7 +41,7 @@ export class JobsReadyApplicationComponent {
    searchQuery = signal<string>('');
    filterType = signal<GUID | null>(null);
  
- readonly jobStatus = JobStatus;
+    readonly jobStatus = JobStatus;
  
    ngOnInit(): void {
      this.loadJobsWithFilters();
@@ -95,7 +95,7 @@ export class JobsReadyApplicationComponent {
    sendInvitaion(job:JobResponse){
 
    }
- 
+
    getJobCategoryBadgeClass(categoryName: string): string {
      switch (categoryName?.toLowerCase()) {
        case 'academic':

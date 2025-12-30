@@ -130,68 +130,77 @@
 
             <td class="col-actions">
               <div class="row-actions">
-                @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !== jobStatus.NeedUpdate){
+                @if (job.jobStatus.backendName === jobStatus.Approved) {
+                <button
+                  type="button"
+                  class="btn-pill btn-pill--outline"
+                  (click)="openPointsModal(job)"
+                  [title]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate"
+                >
+                  <i class="fa fa-gear"></i>
+                </button>
+                } @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !==
+                jobStatus.NeedUpdate){
                 <button class="btn-pill btn-pill--outline" type="button" (click)="viewJob(job)">
                   <i class="fa fa-eye"></i>
                   <span>{{ 'JOB_LIST_BUTTONS_VIEW' | translate }}</span>
                 </button>
-              }
-                @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate) {
-                  <button class="btn-pill btn-pill--brand" type="button" (click)="editJob(job)">
-                    <i class="fa fa-pen-to-square"></i>
-                    <span>{{ 'JOB_LIST_BUTTONS_EDIT' | translate }}</span>
-                  </button>
-                }
+                } @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName
+                === jobStatus.NeedUpdate) {
+                <button class="btn-pill btn-pill--brand" type="button" (click)="editJob(job)">
+                  <i class="fa fa-pen-to-square"></i>
+                  <span>{{ 'JOB_LIST_BUTTONS_EDIT' | translate }}</span>
+                </button>
+                } @if (job.jobStatus.backendName === jobStatus.PendingApproval) {
+                <button class="btn-pill btn-pill--outline" type="button" (click)="approveJob(job)">
+                  <i class="fa fa-check"></i>
+                  <span>{{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}</span>
+                </button>
 
-                @if (job.jobStatus.backendName === jobStatus.PendingApproval) {
-                  <button class="btn-pill btn-pill--outline" type="button" (click)="approveJob(job)">
-                    <i class="fa fa-check"></i>
-                    <span>{{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}</span>
-                  </button>
-
-                  <button class="btn-pill btn-pill--outline btn-danger-outline" type="button" (click)="rejectJob(job)">
-                    <i class="fa fa-times"></i>
-                    <span>{{ 'JOB_LIST_BUTTONS_REJECT' | translate }}</span>
-                  </button>
-                }
-
-                @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
-                  <button class="btn-pill btn-pill--outline" type="button" (click)="publishJob(job)">
-                    <i class="fa fa-upload"></i>
-                    <span>{{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}</span>
-                  </button>
-                }
-
-                @if (job.jobStatus.backendName === jobStatus.Published) {
-                  <button class="btn-pill btn-pill--outline" type="button" (click)="closeJob(job)">
-                    <i class="fa fa-lock"></i>
-                    <span>{{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}</span>
-                  </button>
-                }
-
-                @if (
-                  job.jobStatus.backendName === jobStatus.Published ||
-                  job.jobStatus.backendName === jobStatus.Draft ||
-                  job.jobStatus.backendName === jobStatus.ReadyForAnnouncement
-                ) {
-                  <button class="btn-pill btn-pill--outline btn-danger-outline" type="button" (click)="cancelJob(job)">
-                    <i class="fa fa-ban"></i>
-                    <span>{{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}</span>
-                  </button>
-                }
-
-                @if (job.jobStatus.backendName === jobStatus.Rejected) {
-                  <button class="btn-pill btn-pill--outline" type="button" (click)="reopenJob(job)">
-                    <i class="fa-regular fa-circle-check"></i>
-                    <span>{{ 'JOB_LIST_BUTTONS_REOPEN' | translate }}</span>
-                  </button>
-                }
-
-                @if (job.jobStatus.backendName !== jobStatus.Published && job.jobStatus.backendName !== jobStatus.Approved) {
-                  <button class="btn-pill btn-pill--outline btn-danger-outline" type="button" (click)="deleteJob(job)">
-                    <i class="fa fa-trash"></i>
-                    <span>{{ 'JOB_LIST_BUTTONS_DELETE' | translate }}</span>
-                  </button>
+                <button
+                  class="btn-pill btn-pill--outline btn-danger-outline"
+                  type="button"
+                  (click)="rejectJob(job)"
+                >
+                  <i class="fa fa-times"></i>
+                  <span>{{ 'JOB_LIST_BUTTONS_REJECT' | translate }}</span>
+                </button>
+                } @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
+                <button class="btn-pill btn-pill--outline" type="button" (click)="publishJob(job)">
+                  <i class="fa fa-upload"></i>
+                  <span>{{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}</span>
+                </button>
+                } @if (job.jobStatus.backendName === jobStatus.Published) {
+                <button class="btn-pill btn-pill--outline" type="button" (click)="closeJob(job)">
+                  <i class="fa fa-lock"></i>
+                  <span>{{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}</span>
+                </button>
+                } @if ( job.jobStatus.backendName === jobStatus.Published ||
+                job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName ===
+                jobStatus.ReadyForAnnouncement ) {
+                <button
+                  class="btn-pill btn-pill--outline btn-danger-outline"
+                  type="button"
+                  (click)="cancelJob(job)"
+                >
+                  <i class="fa fa-ban"></i>
+                  <span>{{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}</span>
+                </button>
+                } @if (job.jobStatus.backendName === jobStatus.Rejected) {
+                <button class="btn-pill btn-pill--outline" type="button" (click)="reopenJob(job)">
+                  <i class="fa-regular fa-circle-check"></i>
+                  <span>{{ 'JOB_LIST_BUTTONS_REOPEN' | translate }}</span>
+                </button>
+                } @if (job.jobStatus.backendName !== jobStatus.Published &&
+                job.jobStatus.backendName !== jobStatus.Approved) {
+                <button
+                  class="btn-pill btn-pill--outline btn-danger-outline"
+                  type="button"
+                  (click)="deleteJob(job)"
+                >
+                  <i class="fa fa-trash"></i>
+                  <span>{{ 'JOB_LIST_BUTTONS_DELETE' | translate }}</span>
+                </button>
                 }
               </div>
             </td>
@@ -214,14 +223,14 @@
     </div>
 
     @if (paginationMetadata && paginationMetadata.totalCount > 0) {
-      <div class="pagination-box">
-        <app-pagination
-          [currentPage]="currentPage()"
-          [totalItems]="paginationMetadata.totalCount"
-          [itemsPerPage]="itemsPerPage"
-          (pageChanged)="onPageChange($event)"
-        ></app-pagination>
-      </div>
+    <div class="pagination-box">
+      <app-pagination
+        [currentPage]="currentPage()"
+        [totalItems]="paginationMetadata.totalCount"
+        [itemsPerPage]="itemsPerPage"
+        (pageChanged)="onPageChange($event)"
+      ></app-pagination>
+    </div>
     }
   </div>
 </section>
