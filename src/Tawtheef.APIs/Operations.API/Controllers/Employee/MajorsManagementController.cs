@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Commands;
+using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Employee;
@@ -11,7 +11,15 @@ namespace Operations.API.Controllers.Employee;
 public class MajorsManagementController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllMajors(GetMajorsQuery query,CancellationToken cancellationToken)
+    [Route("GetMainMajors")]
+    public async Task<IActionResult> GetMainMajors([FromQuery] GetMainMajorsQuery query,CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query,cancellationToken);
+        return result.ToActionResult();
+    }
+    [HttpGet]
+    [Route("GetSubMajors")]
+    public async Task<IActionResult> GetSubMajors([FromQuery] GetSubMajorsQuery query,CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query,cancellationToken);
         return result.ToActionResult();

@@ -47,56 +47,44 @@ export class MajorsSkillsManagementService {
 
   // =============== Skills ===============
   getSkills(filters: SkillFiltersModel): Observable<PaginatedResult<SkillListItemModel>> {
-    return this.http.get<PaginatedResult<SkillListItemModel>>(this.endpoints.skillsManagement.list, filters);
+    return this.http.get<PaginatedResult<SkillListItemModel>>(this.endpoints.majorSkillsManagement.skills.list, filters);
   }
 
   createSkill(payload: any): Observable<void> {
-    return this.http.post<void>(this.endpoints.skillsManagement.create, payload);
+    return this.http.post<void>(this.endpoints.majorSkillsManagement.skills.create, payload);
   }
 
   updateSkill(payload: any): Observable<void> {
-    return this.http.put<void>(this.endpoints.skillsManagement.update, payload);
+    return this.http.put<void>(this.endpoints.majorSkillsManagement.skills.update, payload);
   }
 
   changeSkillActivation(id: string, isActive: boolean): Observable<void> {
-    return this.http.put<void>(this.endpoints.skillsManagement.changeActivation, { id, isActive });
+    return this.http.put<void>(this.endpoints.majorSkillsManagement.skills.changeActivation, { id, isActive });
   }
 
   // =============== Majors ===============
-  getMainMajors(filters: MajorFiltersModel): Observable<MajorListItemModel[]> {
-    return this.http.get<MajorListItemModel[]>(this.endpoints.majorsManagement.list, { search: filters.search });
+  getMainMajors(filters: MajorFiltersModel): Observable<PaginatedResult<dropdownOptionsModel>> {
+    return this.http.get<PaginatedResult<dropdownOptionsModel>>(this.endpoints.majorSkillsManagement.majors.main_list, { search: filters.search });
   }
 
   createMajor(payload: any): Observable<void> {
-    return this.http.post<void>(this.endpoints.majorsManagement.create, payload);
+    return this.http.post<void>(this.endpoints.majorSkillsManagement.majors.create, payload);
   }
 
   updateMajor(payload: any): Observable<void> {
-    return this.http.put<void>(this.endpoints.majorsManagement.update, payload);
+    return this.http.put<void>(this.endpoints.majorSkillsManagement.majors.update, payload);
   }
 
   changeMajorActivation(id: string, isActive: boolean): Observable<void> {
-    return this.http.put<void>(this.endpoints.majorsManagement.changeActivation, { id, isActive });
+    return this.http.put<void>(this.endpoints.majorSkillsManagement.majors.changeActivation, { id, isActive });
   }
 
   // =============== Lookups ===============
-  getSubMajors(parentMajorId: string): Observable<dropdownOptionsModel[]> {
-    return this.http.get<dropdownOptionsModel[]>(
-      `${this.endpoints.job.lookups.subMajors}?majorId=${parentMajorId}`
-    );
+  getSubMajors(parentMajorId: string): Observable<PaginatedResult<dropdownOptionsModel>> {
+    return this.http.get<PaginatedResult<dropdownOptionsModel>>(`${this.endpoints.majorSkillsManagement.majors.sub_list}?parentId=${parentMajorId}`);
   }
 
-  /**
-   * NOTE:
-   * You were deriving "Skill Types" from skills list. Stateless service should *not*
-   * mutate/store. Either:
-   * 1) create a real endpoint (recommended): endpoints.skillsManagement.skillTypes
-   * 2) or keep this helper that just returns the raw page and let the component map it.
-   */
-  getSkillsPageForTypes(pageNumber = 1, pageSize = 50): Observable<PaginatedResult<SkillListItemModel>> {
-    return this.http.get<PaginatedResult<SkillListItemModel>>(this.endpoints.skillsManagement.list, {
-      pageNumber,
-      pageSize
-    });
+  getSkillsPageForTypes(): Observable<SkillListItemModel[]> {
+    return this.http.get<SkillListItemModel[]>(this.endpoints.majorSkillsManagement.lookups.skillTypes);
   }
 }

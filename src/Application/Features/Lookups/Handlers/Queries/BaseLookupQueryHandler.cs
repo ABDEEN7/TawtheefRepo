@@ -28,10 +28,9 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(IUnitOfWork unit
                     EF.Functions.Like(s.NameEn, $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionAr ?? "", $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionEn ?? "", $"%{request.Search}%"))
-            //.OrderBy(x => x.DisplayOrder)
-            .OrderBy(x=> x.GetLocalizedName(request.Language))
             .ToListAsync(cancellationToken);
 
-        return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));
+        var data = mapper.Map<List<DropdownOptions>>(entities).OrderBy(e => e.Name).ToList();
+        return Result.Ok(data);
     }
 }

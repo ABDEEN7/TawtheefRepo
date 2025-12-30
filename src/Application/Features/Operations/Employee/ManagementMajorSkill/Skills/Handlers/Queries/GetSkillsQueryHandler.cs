@@ -20,9 +20,9 @@ public sealed class GetSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
         var result = await uow.GetEntityRepository<Skill>().DbSet
             .AsNoTracking()
             .WhereIf(!string.IsNullOrWhiteSpace(request.Search), x =>
-                x.NameAr.Contains(request.Search.Trim()) ||
-                x.NameEn.Contains(request.Search.Trim()) ||
-                x.BackendName.Contains(request.Search.Trim()))
+                x.NameAr.Contains(request.Search!.Trim()) ||
+                x.NameEn.Contains(request.Search!.Trim()) ||
+                x.BackendName.Contains(request.Search!.Trim()))
             .WhereIf(request.SkillTypeId.HasValue, x => x.SkillTypeId == request.SkillTypeId!.Value)
             .ToPaginatedListAsync<Skill, DropdownOptions>(mapper, request, ct);
         return Result.Ok(result);

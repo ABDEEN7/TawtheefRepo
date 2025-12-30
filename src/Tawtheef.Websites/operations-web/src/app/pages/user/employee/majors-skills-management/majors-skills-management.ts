@@ -24,6 +24,7 @@ import { MajorListItemModel } from './models/major-list-item.model';
 import { SkillFiltersModel } from './models/skill-filters.model';
 import { SkillListItemModel } from './models/skill-list-item.model';
 import {ToggleSwitch} from 'primeng/toggleswitch';
+import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 
 @Component({
   selector: 'app-majors-skills-management',
@@ -49,7 +50,7 @@ export class MajorsSkillsManagement implements OnInit {
     const parentId = this.subMajorFilters().parentMajorId;
     if (!parentId) return '-';
 
-    const major = this.mainMajors().find(m => m.id === parentId);
+    const major = this.mainMajorsItems().find(m => m.id === parentId);
     return major?.name ?? '-';
   });
   currentLang = signal<Lang>(this.language.get());
@@ -64,9 +65,22 @@ export class MajorsSkillsManagement implements OnInit {
   skills = signal<SkillListItemModel[]>([]);
   skillsMeta = signal<PaginationMetadata | null>(null);
 
-  mainMajors = signal<MajorListItemModel[]>([]);
-  subMajors = signal<dropdownOptionsModel[]>([]);
-  skillTypes = signal<dropdownOptionsModel[]>([]);
+  mainMajorsResult = signal<PaginatedResult<MajorListItemModel> | null>(null);
+  subMajorsResult  = signal<PaginatedResult<MajorListItemModel> | null>(null);
+
+  mainMajorsItems = computed(() => this.mainMajorsResult()?.items ?? []);
+  subMajorsItems  = computed(() => this.subMajorsResult()?.items ?? []);
+
+  mainMajorsMeta = computed<PaginationMetadata>(() =>
+    this.mainMajorsResult()?.metadata ??
+    this.buildMetadata(0, this.mainMajorFilters().pageNumber, this.mainMajorFilters().pageSize)
+  );
+
+  subMajorsMeta = computed<PaginationMetadata>(() =>
+    this.subMajorsResult()?.metadata ??
+    this.buildMetadata(0, this.subMajorFilters().pageNumber, this.subMajorFilters().pageSize)
+  );
+  skillTypes = signal<dropdownOptionsModel[] | null>(null);
 
   majorSkillFilters = signal<MajorSkillFiltersModel>({
     search: '',
@@ -98,29 +112,16 @@ export class MajorsSkillsManagement implements OnInit {
     pageSize: 10
   });
 
-  // Local pagination (client-side for majors/submajors arrays)
-  mainMajorsMeta = computed<PaginationMetadata>(() => this.buildMetadata(
-    this.mainMajors().length,
-    this.mainMajorFilters().pageNumber,
-    this.mainMajorFilters().pageSize
-  ));
-
-  subMajorsMeta = computed<PaginationMetadata>(() => this.buildMetadata(
-    this.subMajors().length,
-    this.subMajorFilters().pageNumber,
-    this.subMajorFilters().pageSize
-  ));
-
   mainMajorsPage = computed(() => {
     const { pageNumber, pageSize } = this.mainMajorFilters();
     const start = (pageNumber - 1) * pageSize;
-    return this.mainMajors().slice(start, start + pageSize);
+    return this.mainMajorsItems().slice(start, start + pageSize);
   });
 
   subMajorsPage = computed(() => {
     const { pageNumber, pageSize } = this.subMajorFilters();
     const start = (pageNumber - 1) * pageSize;
-    return this.subMajors().slice(start, start + pageSize);
+    return this.subMajorsItems().slice(start, start + pageSize);
   });
 
   ngOnInit(): void {
@@ -133,7 +134,7 @@ export class MajorsSkillsManagement implements OnInit {
 
   switchTab(tab: 'mapping' | 'mainMajors' | 'subMajors' | 'skills') {
     this.activeTab.set(tab);
-    if (tab === 'subMajors' && this.subMajors().length === 0) {
+    if (tab === 'subMajors' && this.subMajorsItems().length === 0) {
       this.loadSubMajors();
     }
   }
@@ -172,9 +173,9 @@ export class MajorsSkillsManagement implements OnInit {
   loadMainMajors() {
     this.managementService.getMainMajors(this.mainMajorFilters()).subscribe({
       next: (res) => {
-        this.mainMajors.set(res || []);
-        if (!this.majorSkillFilters().parentMajorId && this.mainMajors().length > 0) {
-          const firstId = this.mainMajors()[0].id;
+        this.mainMajorsResult.set(res);
+        if (!this.majorSkillFilters().parentMajorId && this.mainMajorsItems().length > 0) {
+          const firstId = this.mainMajorsItems()[0].id;
           this.majorSkillFilters.update(f => ({ ...f, parentMajorId: firstId }));
           this.subMajorFilters.update(f => ({ ...f, parentMajorId: firstId }));
           this.loadSubMajors();
@@ -187,37 +188,20 @@ export class MajorsSkillsManagement implements OnInit {
   loadSubMajors() {
     const parentId = this.subMajorFilters().parentMajorId || this.majorSkillFilters().parentMajorId || '';
     if (!parentId) {
-      this.subMajors.set([]);
+      this.subMajorsResult.set(null);
       this.subMajorsMeta(); // recompute
       return;
     }
 
     this.managementService.getSubMajors(parentId).subscribe({
-      next: (res) => this.subMajors.set(res || []),
+      next: (res) => this.subMajorsResult.set(res),
       error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.LOAD_ERROR'))
     });
   }
 
   loadSkillTypes() {
-    this.managementService.getSkillsPageForTypes(1, 50).pipe(
-      tap(res => {
-        const uniqueTypes = new Map<string, dropdownOptionsModel>();
-        (res.items || []).forEach(skill => {
-          const skillTypeId = (skill as any).skillTypeId || skill.additionalData?.skillTypeId;
-          const skillTypeName = (skill as any).skillTypeName || skill.additionalData?.skillTypeName;
-          if (skillTypeId && !uniqueTypes.has(skillTypeId)) {
-            uniqueTypes.set(skillTypeId, {
-              id: skillTypeId,
-              name: skillTypeName || '',
-              backendName: skillTypeName || '',
-              description: skillTypeName || '',
-              additionalData: null
-            } as dropdownOptionsModel);
-          }
-        });
-        this.skillTypes.set(Array.from(uniqueTypes.values()));
-      })
-    ).subscribe({
+    this.managementService.getSkillsPageForTypes().subscribe({
+      next: (res) => this.skillTypes.set(res),
       error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.LOAD_ERROR'))
     });
   }

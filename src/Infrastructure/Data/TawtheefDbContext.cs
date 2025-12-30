@@ -115,6 +115,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Notification> Notifications { get; set; }
     
     public DbSet<Resource> Resources { get; set; }
+    public DbSet<MajorSkill> MajorSkill { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // ensure client-side evaluation works properly

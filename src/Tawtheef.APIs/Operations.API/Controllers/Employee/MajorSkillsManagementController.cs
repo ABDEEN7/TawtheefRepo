@@ -11,7 +11,7 @@ namespace Operations.API.Controllers.Employee;
 public class MajorSkillsManagementController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllMajorSkills(GetMajorSkillsQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllMajorSkills([FromQuery] GetMajorSkillsQuery query, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query, cancellationToken);
         return result.ToActionResult();

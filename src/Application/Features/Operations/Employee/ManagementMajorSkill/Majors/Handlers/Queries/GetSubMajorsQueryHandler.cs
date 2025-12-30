@@ -24,7 +24,6 @@ public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IReques
                     EF.Functions.Like(s.NameEn, $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionAr ?? "", $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionEn ?? "", $"%{request.Search}%"))
-            .OrderBy(x => x.GetLocalizedName(request.Language))
             .ToPaginatedListAsync<Major, DropdownOptions>(mapper, request, cancellationToken);
 
         return Result.Ok(majors);
