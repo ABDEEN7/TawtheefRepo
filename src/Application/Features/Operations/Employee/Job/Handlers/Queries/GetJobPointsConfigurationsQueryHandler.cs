@@ -7,13 +7,13 @@ using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
-public class GetJobPointsConfigurationsByJobIdQueryHandler(IJobPointsConfigurationsRepository jobPointsConfigRepository, IMapper mapper)
-    : IRequestHandler<GetJobPointsConfigurationsByJobIdQuery, IResult<JobPointConfigurationResponseDto>>
+public class GetJobPointsConfigurationsQueryHandler(IJobPointsConfigurationsRepository jobPointsConfigRepository, IMapper mapper)
+    : IRequestHandler<GetJobPointsConfigurationsQuery, IResult<JobPointConfigurationResponseDto>>
 {
 
-    public async Task<IResult<JobPointConfigurationResponseDto>> Handle(GetJobPointsConfigurationsByJobIdQuery request, CancellationToken cancellationToken)
+    public async Task<IResult<JobPointConfigurationResponseDto>> Handle(GetJobPointsConfigurationsQuery request, CancellationToken cancellationToken)
     {
-        var result = await jobPointsConfigRepository.GetByJobIdAsync(request.JobId);
+        var result = await jobPointsConfigRepository.GetAsync();
         if (result.IsFailed)
             return Result.Fail<JobPointConfigurationResponseDto>(result.Errors);
         var jobPoints = result.Value;

@@ -5,5 +5,5 @@ export interface UserInfoModel {
   profilePictureUrl: string | null;
   notifications: number;
   provider: string;
-  userType: string;
+  userRoles: string[];
 }

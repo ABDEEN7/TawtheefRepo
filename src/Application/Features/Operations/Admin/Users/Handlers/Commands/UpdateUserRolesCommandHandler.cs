@@ -31,12 +31,23 @@ public sealed class UpdateUserRolesCommandHandler(
         if (roles.Count != request.RoleIds.Count)
             return Result.Fail<Unit>(ErrorsCodes.RoleNotFound);
 
+        var systemRoles = roles.Where(r => r.IsSystemRole).ToList();
+        if (systemRoles.Any(r => r.Id == SystemRoleIds.SystemAdmin))
+            return Result.Fail<Unit>(ErrorsCodes.SystemAdminAssignmentNotAllowed);
+
+        if (systemRoles.Count > 1)
+            return Result.Fail<Unit>(ErrorsCodes.MultipleSystemRolesNotAllowed);
+
         var currentRoles = await userManager.GetRolesAsync(user);
         var desiredRoles = roles
             .Select(r => r.Name)
             .Where(n => !string.IsNullOrWhiteSpace(n))
             .Cast<string>()
             .ToArray();
+
+        if (currentRoles.Contains(nameof(SystemRoleIds.SystemAdmin), StringComparer.OrdinalIgnoreCase) &&
+            !desiredRoles.Contains(nameof(SystemRoleIds.SystemAdmin), StringComparer.OrdinalIgnoreCase))
+            return Result.Fail<Unit>(ErrorsCodes.SystemAdminAssignmentNotAllowed);
 
         var toRemove = currentRoles.Except(desiredRoles, StringComparer.OrdinalIgnoreCase).ToArray();
         var toAdd = desiredRoles.Except(currentRoles, StringComparer.OrdinalIgnoreCase).ToArray();

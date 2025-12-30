@@ -13,6 +13,7 @@
     @for (item of menuItems; track item.key) {
       <button
         class="nav-item"
+        *hasPermission="item.permission"
         [class.active]="activeItem === item.key"
         (click)="navigateTo(item)"
         [pTooltip]="isCollapsed ? (item.label | translate) : ''"

@@ -8,9 +8,10 @@
     <label class="form-label">{{ 'USERS.SELECT_ROLES' | translate }}</label>
     <p-multiSelect
       class="role-multiselect"
-      [options]="roleOptions()"
+      [options]="allRoleOptions()"
       [optionLabel]="currentLang() === 'ar' ? 'nameAr' : 'nameEn'"
       optionValue="id"
+      optionDisabled="isSystemRole"
       display="chip"
       [ngModel]="selectedRoleIds()"
       (ngModelChange)="onRolesChange($event)"

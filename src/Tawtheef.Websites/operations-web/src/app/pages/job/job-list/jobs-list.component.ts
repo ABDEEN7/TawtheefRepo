@@ -14,6 +14,8 @@ import { JobStatus } from '../../../core/enums/lookups.enum';
 import { routes } from '../../../routes/routes';
 import { take } from 'rxjs';
 import { DialogHelperService } from '../../../core/services/dialog-helper.service';
+import {AuthService} from '../../../core/auth/auth.service';
+import {Permissions} from '../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-list',
@@ -27,6 +29,7 @@ export class JobListComponent implements OnInit {
   private notificationService = inject(NotificationService);
   private translateService = inject(TranslateService);
   private dialogHelperService = inject(DialogHelperService);
+  private authService = inject(AuthService);
   lookupsService = inject(JobLookupService);
 
   jobs: PaginatedResult<JobResponse> | undefined;
@@ -95,30 +98,52 @@ readonly jobStatus = JobStatus;
     this.loadJobsWithFilters();
   }
 
+  canManageJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.Manage);
+  }
+
+  canApproveJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.Approve);
+  }
+
+  canViewJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.View);
+  }
+
+  canManageJobPoints(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.PointsManage);
+  }
+
   editJob(job: JobResponse) {
+    if (!this.canManageJobs()) return;
     this.router.navigate([routes.employee.jobEdit, job.id]).then();
   }
 
   viewJob(job: JobResponse) {
+    if (!this.canViewJobs()) return;
     this.router.navigate([routes.employee.jobView, job.id]).then();
   }
 
   createNewJob() {
+    if (!this.canManageJobs()) return;
     this.router.navigate([routes.employee.jobCreate]).then();
   }
 
   openPointsModal(job: JobResponse) {
+    if (!this.canManageJobPoints()) return;
     this.router.navigate([routes.employee.jobPoints,job.id]).then();
   }
 
   approveJob(job: JobResponse) {
+    if (!this.canApproveJobs()) return;
     this.router.navigate([routes.employee.approvalJob, job.id]).then();
   }
 
   rejectJob(job: JobResponse) {
-  const rejectedStatus = this.lookupsService
-    .jobStatus()
-    .find((s) => s.backendName === this.jobStatus.Rejected);
+    if (!this.canApproveJobs()) return;
+    const rejectedStatus = this.lookupsService
+      .jobStatus()
+      .find((s) => s.backendName === this.jobStatus.Rejected);
 
   if (rejectedStatus) {
     const ref = this.dialogHelperService.openConfirmDialog({
@@ -144,6 +169,7 @@ readonly jobStatus = JobStatus;
 }
 
   publishJob(job: JobResponse) {
+    if (!this.canApproveJobs()) return;
     const publishedStatus = this.lookupsService
       .jobStatus()
       .find((s) => s.backendName === this.jobStatus.Published);
@@ -161,9 +187,10 @@ readonly jobStatus = JobStatus;
   }
 
   closeJob(job: JobResponse) {
-  const closedStatus = this.lookupsService
-    .jobStatus()
-    .find((s) => s.backendName === this.jobStatus.Closed);
+    if (!this.canApproveJobs()) return;
+    const closedStatus = this.lookupsService
+      .jobStatus()
+      .find((s) => s.backendName === this.jobStatus.Closed);
 
   if (closedStatus) {
     const ref = this.dialogHelperService.openConfirmDialog({
@@ -217,9 +244,10 @@ readonly jobStatus = JobStatus;
   }
 
   cancelJob(job: JobResponse) {
-  const cancelledStatus = this.lookupsService
-    .jobStatus()
-    .find((s) => s.backendName === this.jobStatus.Cancelled);
+    if (!this.canManageJobs()) return;
+    const cancelledStatus = this.lookupsService
+      .jobStatus()
+      .find((s) => s.backendName === this.jobStatus.Cancelled);
 
   if (cancelledStatus) {
     const ref = this.dialogHelperService.openConfirmDialog({
@@ -245,6 +273,7 @@ readonly jobStatus = JobStatus;
 }
 
   deleteJob(job: JobResponse) {
+    if (!this.canManageJobs()) return;
   const ref = this.dialogHelperService.openConfirmDialog({
     type: 'submit',
     title: 'JOB_LIST_CONFIRMATIONS_DELETE_JOB',

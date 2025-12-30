@@ -32,7 +32,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
-    private const string PermClaimType = "perm";
+    private const string PermClaimType = "permission";
     private const string ProfileCompleteClaimType = "profile.complete";
     private const string UserTypeClaimType = "user_type";
     
@@ -64,7 +64,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         var accessToken =
             await GenerateAccessTokenAsync(user, userType, [
                 new Claim(JwtRegisteredClaimNames.Sid, sid),
-                new(ProfileCompleteClaimType, data.IsComplete ? "true" : "false")
+                new Claim(ProfileCompleteClaimType, data.IsComplete ? "true" : "false")
             ], ct);
 
         await loginAudit.LogAsync(new LoginAttemptEntry(user.Id, user.UserTypeId,  loginSource,

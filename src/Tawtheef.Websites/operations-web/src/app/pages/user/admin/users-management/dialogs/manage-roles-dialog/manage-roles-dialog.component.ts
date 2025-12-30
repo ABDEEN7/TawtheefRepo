@@ -34,7 +34,10 @@ export class ManageRolesDialogComponent implements OnInit {
   private translate = inject(TranslateService);
 
   user: UserDto | undefined = this.config.data?.user as UserDto | undefined;
-  roleOptions = signal<RoleSummaryDto[]>(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
+  allRoleOptions = signal<RoleSummaryDto[]>(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
+  lockedSystemRoleIds = signal<string[]>([]);
+  systemRoleIds = signal<string[]>([]);
+  selectedAssignableRoleIds = signal<string[]>([]);
   selectedRoleIds = signal<string[]>([]);
   isLoading = signal(false);
   currentLang = signal<Lang>(this.language.get());
@@ -45,14 +48,21 @@ export class ManageRolesDialogComponent implements OnInit {
       return;
     }
 
-    this.roleOptions.set(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
+    this.initializeRoleOptions();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
     this.isLoading.set(true);
     this.usersService.getUserAssignedRoleIds(this.user.id)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (assignedRoles: string[]) => {
-          this.selectedRoleIds.set(assignedRoles.map(id => id.toString()));
+          const roleIds = assignedRoles.map(id => id.toString());
+
+          const assignedSystemRoles = roleIds.filter(id => this.isSystemRoleId(id));
+          const assignableRoles = roleIds.filter(id => !this.isSystemRoleId(id));
+
+          this.lockedSystemRoleIds.set(assignedSystemRoles);
+          this.selectedAssignableRoleIds.set(assignableRoles);
+          this.updateSelectedRoles(assignableRoles);
         },
         error: () => {
           this.notification.error(this.translate.instant('USERS.LOAD_FAILED'));
@@ -61,8 +71,9 @@ export class ManageRolesDialogComponent implements OnInit {
       });
   }
 
-  onRolesChange(roleIds: string[]) {
-    this.selectedRoleIds.set(roleIds);
+  onRolesChange(assignableRoleIds: string[]) {
+    this.selectedAssignableRoleIds.set(assignableRoleIds);
+    this.updateSelectedRoles(assignableRoleIds);
   }
 
   saveRoles() {
@@ -80,5 +91,21 @@ export class ManageRolesDialogComponent implements OnInit {
 
   cancel() {
     this.dialogRef.close(false);
+  }
+
+  private initializeRoleOptions() {
+    const options = this.config.data?.roleOptions as RoleSummaryDto[] ?? [];
+    this.allRoleOptions.set(options);
+    this.systemRoleIds.set(options.filter(role => role.isSystemRole).map(role => role.id));
+  }
+
+  private isSystemRoleId(roleId: string) {
+    return this.systemRoleIds().includes(roleId);
+  }
+
+  private updateSelectedRoles(assignableRoleIds: string[]) {
+    const merged = [...this.lockedSystemRoleIds(), ...assignableRoleIds];
+    const uniqueIds = Array.from(new Set(merged));
+    this.selectedRoleIds.set(uniqueIds);
   }
 }

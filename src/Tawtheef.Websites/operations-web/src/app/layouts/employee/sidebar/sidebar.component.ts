@@ -2,17 +2,20 @@ import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe, TranslateService} from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {Tooltip} from 'primeng/tooltip';
 import {routes} from '../../../routes/routes';
 import {AuthService} from '../../../core/auth/auth.service';
 import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
+import {Permissions} from '../../../core/constants/permissions';
+import {HasPermissionDirective} from '../../../shared/directives/has-permission.directive';
+import {MenuItem} from '../../admin/sidebar/sidebar.models';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective]
+  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective]
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
@@ -21,13 +24,13 @@ export class SidebarComponent implements OnInit {
   isCollapsed = true;
   activeItem = '';
 
-  menuItems = [
-    { key: 'home', label: 'internal.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.employee.dashboard },
-    { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'assets/img/icons/files.svg', route: routes.employee.profileDistribution },
-    { key: 'approve-job', label: 'internal.sidebar.approve-job', icon: 'assets/img/icons/approve.svg', route: routes.employee.JobList },
-    { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalProfile },
-    { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: routes.employee.JobList },
-    { key: 'transfer', label: 'internal.sidebar.transfer', icon: 'assets/img/icons/transfer.svg', route: routes.employee.nominations },
+  menuItems: MenuItem[] = [
+    { key: 'home', label: 'internal.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.employee.dashboard, permission: Permissions.Dashboard.View },
+    { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'assets/img/icons/files.svg', route: routes.employee.profileDistribution, permission: Permissions.ProfileDistribution.View },
+    { key: 'approve-job', label: 'internal.sidebar.approve-job', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalJob, permission: Permissions.Jobs.Approve },
+    { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalProfile, permission: Permissions.ProfileApproval.View },
+    { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: routes.employee.JobList, permission: Permissions.Jobs.View },
+    { key: 'transfer', label: 'internal.sidebar.transfer', icon: 'assets/img/icons/transfer.svg', route: routes.employee.nominations, permission: Permissions.Nominations.View },
     { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'assets/img/icons/job.svg', route: routes.employee.majorsSkillsManagement }
   ];
 
@@ -44,7 +47,16 @@ export class SidebarComponent implements OnInit {
   }
 
   highlightActive(url: string) {
-    const matched = this.menuItems.find(i => url.includes(i.route));
+    const matched = this.menuItems.reduce<MenuItem | null>((best, item) => {
+      if (!this.isMatchingRoute(url, item.route)) return best;
+
+      if (!best || item.route.length > best.route.length) {
+        return item;
+      }
+
+      return best;
+    }, null);
+
     this.activeItem = matched ? matched.key : '';
   }
 
@@ -65,5 +77,10 @@ export class SidebarComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  private isMatchingRoute(url: string, route: string) {
+    const normalizedUrl = url.split('?')[0];
+    return normalizedUrl === route || normalizedUrl.startsWith(`${route}/`);
   }
 }

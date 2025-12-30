@@ -8,6 +8,7 @@ using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Events.Operation.Employee.Register;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
@@ -110,6 +111,8 @@ public sealed class AzureExternalCallbackLoginHandler(
             return await LogFailureAsync(createUserRes.Errors, ct: ct);
 
         var newUser = (EmployeeUser)createUserRes.Value;
+        newUser.AddDomainEvent(new EmployeeRegisterEvent(newUser.Id, newUser.FullNameEn, newUser.Email!, DateTimeOffset.UtcNow));
+        
         var createRes = await userManager.CreateAsync(newUser);
         if (!createRes.Succeeded)
             return await LogFailureAsync(string.Join(", ", createRes.Errors.Select(e => e.Description)), newUser.Id, newUser.UserTypeId, ct: ct);

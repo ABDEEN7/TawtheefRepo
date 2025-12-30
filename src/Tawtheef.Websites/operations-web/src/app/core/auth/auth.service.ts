@@ -40,8 +40,8 @@ export class AuthService {
     return this.user.currentUser$;
   }
 
-  get getCurrentUserRole() {
-    return () => this.user.getCurrentUser()?.userType || '';
+  get getCurrentUserRoles() {
+    return () => this.user.getCurrentUser()?.userRoles || '';
   }
 
   externalLogin(data: AuthResponse) {
@@ -79,7 +79,7 @@ export class AuthService {
     const result = new Set<string>();
 
     // 1) `permissions` as array
-    const permissionsArray = payload['perm'];
+    const permissionsArray = payload['permission'];
     if (Array.isArray(permissionsArray)) {
       permissionsArray.forEach((p: any) => {
         if (typeof p === 'string') result.add(p);
@@ -95,7 +95,7 @@ export class AuthService {
     }
 
     // 3) multiple `permission` claims (if server serializes them like that)
-    const singlePermission = payload['perm'];
+    const singlePermission = payload['permission'];
     if (Array.isArray(singlePermission)) {
       singlePermission.forEach((p: any) => {
         if (typeof p === 'string') result.add(p);

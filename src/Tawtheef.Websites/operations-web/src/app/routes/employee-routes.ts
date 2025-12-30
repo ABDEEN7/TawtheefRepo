@@ -24,6 +24,9 @@
   approvalProfileChanges (id: string){
     return this.approvalProfile + `/${id}/changes`;
     },
+  get jobInvitationSummary(){
+    return this.employee + '/job-invitation-summary';
+  },
   get jobCreate(){
     return this.employee + '/jobs/create';
   },

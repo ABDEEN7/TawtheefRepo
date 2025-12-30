@@ -4,11 +4,13 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Commands;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Admin;
 
@@ -24,6 +26,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     };
     
     [HttpGet("list-offices")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.OfficesView)]
     public async Task<IActionResult> ListOffices([FromQuery] GetListOfficesQuery query)
     {
         var result = await mediator.Send(query);
@@ -31,6 +34,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("office-details/{id:guid}")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.OfficesView)]
     public async Task<IActionResult> OfficeDetails(Guid id)
     {
         var result = await mediator.Send(new GetOfficeDetailsQuery(id));
@@ -38,6 +42,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/countries")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.OfficesView)]
     public async Task<IActionResult> ListCountries()
     {
         var language = Request.Headers.AcceptLanguage.ToString();
@@ -46,6 +51,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("create-office")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.OfficesManage)]
     public async Task<IActionResult> CreateOffice([FromBody] CreateOfficeCommand command)
     {
         var result = await mediator.Send(command);
@@ -53,6 +59,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("update-office/{id:guid}")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.OfficesManage)]
     public async Task<IActionResult> UpdateOffice(Guid id, [FromBody] UpdateOfficeCommand command)
     {
         var result = await mediator.Send(command with { Id = id });
@@ -60,6 +67,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("delete-office/{id:guid}")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.OfficesManage)]
     public async Task<IActionResult> DeleteOffice(Guid id)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -69,6 +77,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{officeId:guid}/users/{userId:guid}/block-status")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.OfficesManage)]
     public async Task<IActionResult> UpdateBlockStatus(Guid officeId, Guid userId, [FromBody] BlockOfficeUserCommand command)
     {
         var result = await mediator.Send(command with { OfficeId = officeId, UserId = userId });
@@ -76,6 +85,7 @@ public class OfficesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{officeId:guid}/set-admin/{userId:guid}")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.OfficesManage)]
     public async Task<IActionResult> SetOfficeAdmin(Guid officeId, Guid userId)
     {
         var result = await mediator.Send(new ChangeOfficeAdminCommand(officeId, userId));

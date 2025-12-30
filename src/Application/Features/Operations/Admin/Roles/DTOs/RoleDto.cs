@@ -7,5 +7,7 @@ public sealed record RoleDto
     public required string NameEn { get; init; }
     public string? DescriptionAr { get; init; }
     public string? DescriptionEn { get; init; }
+    public bool IsSystemRole { get; init; }
+    public required string SystemName { get; init; }
     public IReadOnlyCollection<string> Permissions { get; init; } = Array.Empty<string>();
 }

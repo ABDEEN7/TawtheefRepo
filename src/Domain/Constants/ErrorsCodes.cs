@@ -49,6 +49,11 @@ public class ErrorsCodes
     public const string RoleNotFound = "ROLE_NOT_FOUND";
     public const string RoleNameExists = "ROLE_NAME_EXISTS";
     public const string InvalidPermission = "INVALID_PERMISSION";
+    public const string SystemRoleModificationNotAllowed = "SYSTEM_ROLE_MODIFICATION_NOT_ALLOWED";
+    public const string MultipleSystemRolesNotAllowed = "MULTIPLE_SYSTEM_ROLES_NOT_ALLOWED";
+    public const string SystemAdminAssignmentNotAllowed = "SYSTEM_ADMIN_ASSIGNMENT_NOT_ALLOWED";
+    public const string ProtectedUserDeletionNotAllowed = "PROTECTED_USER_DELETION_NOT_ALLOWED";
+    public const string SystemAdminBlockNotAllowed = "SYSTEM_ADMIN_BLOCK_NOT_ALLOWED";
     #endregion
 
     #region Registration Errors

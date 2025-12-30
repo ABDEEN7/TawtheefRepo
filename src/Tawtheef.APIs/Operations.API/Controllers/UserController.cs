@@ -4,9 +4,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Authenticator.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers;
 
@@ -22,6 +24,7 @@ public class UserController(IMediator mediator) : ControllerBase
     };
     
     [HttpGet]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileView)]
     public async Task<IActionResult> GetProfile()
     {
         if(UserId.IsFailed)

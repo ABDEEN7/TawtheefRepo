@@ -10,20 +10,20 @@ export class NavigationService {
   ) {
   }
 
-  navigateAfterLogin(userType: string): void {
+  navigateAfterLogin(mainUserRole: string): void {
     const returnUrl = this.getReturnUrl();
     if (returnUrl && this.isSafeReturnUrl(returnUrl)) {
-      this.router.navigateByUrl(returnUrl).catch(() => this.redirectBasedOnRole(userType));
+      this.router.navigateByUrl(returnUrl).catch(() => this.redirectBasedOnRole(mainUserRole));
     } else {
-      this.redirectBasedOnRole(userType);
+      this.redirectBasedOnRole(mainUserRole);
     }
   }
 
-  safeNavigateAfterLogin(userType: string) {
+  safeNavigateAfterLogin(mainUserRole: string) {
     try {
-      this.navigateAfterLogin(userType);
+      this.navigateAfterLogin(mainUserRole);
     } catch {
-      this.redirectBasedOnRole(userType);
+      this.redirectBasedOnRole(mainUserRole);
     }
   }
 
@@ -31,8 +31,8 @@ export class NavigationService {
     return !/^https?:\/\//i.test(url);
   }
 
-  redirectBasedOnRole(userType: string): void {
-    this.router.navigate([routes.dashboard(userType)], { replaceUrl: true });
+  redirectBasedOnRole(mainUserRole: string): void {
+    this.router.navigate([routes.dashboard(mainUserRole)], { replaceUrl: true });
   }
   private getReturnUrl(): string | null {
     const tree = this.router.parseUrl(this.router.url);

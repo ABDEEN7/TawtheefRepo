@@ -12,11 +12,10 @@ public class JobPointsConfigurationsRepository(IGenericRepository<JobPointConfig
     : BaseRepository<JobPointConfiguration>(repository), IJobPointsConfigurationsRepository
 {
 
-    public async Task<IResult<JobPointConfiguration>> GetByJobIdAsync(Guid jobId)
+    public async Task<IResult<JobPointConfiguration>> GetAsync()
     {
         var jobPointsConfiguration = await Repository.DbSet
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.JobId == jobId);
+            .FirstOrDefaultAsync();
 
         return jobPointsConfiguration == null
             ? Result.Fail<JobPointConfiguration>(JobMessages.JobPointsConfigurationNotFound)

@@ -25,9 +25,9 @@ export class JobPointsConfigService {
     return this.httpService.get<JobPointsResponse>(this.endpoints.job.getJobPoints(jobId));
   }
 
-  getJobPointsConfiguration(jobId: GUID): Observable<JobPointConfiguration> {
+  getJobPointsConfiguration(): Observable<JobPointConfiguration> {
     return this.httpService.get<JobPointConfiguration>(
-      `${this.endpoints.job.getJobPointsConfig(jobId)}`
+      `${this.endpoints.job.getJobPointsConfig}`
     );
   }
 

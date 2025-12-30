@@ -3,6 +3,7 @@ import {Layout as AdminLayout} from './layouts/admin/layout/layout';
 import {Layout as EmployeeLayout} from './layouts/employee/layout/layout';
 import {loggedOutOnlyGuard} from './core/guards/route-guard/logged-out-only-guard';
 import {authGuard} from './core/guards/route-guard/auth-guard';
+import {SystemRoles} from './core/constants/systemRoles';
 export const routes: Routes = [
   {
     path: '',
@@ -26,7 +27,7 @@ export const routes: Routes = [
     path: '',
     component: AdminLayout,
     canActivate: [authGuard],
-    data: { roles: ['admin'] },
+    data: { roles: [SystemRoles.SystemAdmin] },
     children:[
       { path: 'admin', loadChildren: () => import('./pages/user/admin/admin.module').then((m) => m.AdminModule),}
     ]
@@ -35,7 +36,7 @@ export const routes: Routes = [
     path: '',
     component: EmployeeLayout,
     canActivate: [authGuard],
-    //data: { roles: ['employee'] },
+    data: { roles: [SystemRoles.Employee, SystemRoles.OfficeAdmin, SystemRoles.OfficeUser] },
     children:[
       { path: 'employee', loadChildren: () => import('./pages/user/employee/employee.module').then((m) => m.EmployeeModule),}
     ]
