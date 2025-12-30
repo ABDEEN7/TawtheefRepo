@@ -28,6 +28,7 @@ export class SidebarComponent implements OnInit {
     { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/shield.svg', route: routes.admin.roleManagement },
     { key: 'users', label: 'admin.sidebar.users', icon: 'assets/img/icons/users.svg', route: routes.admin.usersManagement },
     { key: 'offices', label: 'admin.sidebar.offices', icon: 'assets/img/icons/files.svg', route: routes.admin.officesManagement },
+    { key: 'majors', label: 'admin.sidebar.majors', icon: 'assets/img/icons/job.svg', route: routes.admin.majorsSkillsManagement },
   ];
 
   constructor(private router: Router) {}

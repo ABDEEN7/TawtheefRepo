@@ -38,6 +38,7 @@
   "admin.sidebar.roles": "إدارة الصلاحيات",
   "admin.sidebar.users": "إدارة المستخدمين",
   "admin.sidebar.offices": "إدارة المكاتب",
+  "admin.sidebar.majors": "إدارة التخصصات والمهارات",
 
   "common.sidebar.settings": "الإعدادات",
   "common.sidebar.logout": "الخروج",
