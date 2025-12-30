@@ -6,7 +6,7 @@ using Tawtheef.Application.Features.Operations.Admin.Users.Commands;
 using Tawtheef.Application.Features.Operations.Admin.Users.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
-namespace Operations.API.Controllers;
+namespace Operations.API.Controllers.Admin;
 
 [ApiController]
 [Route("api/[controller]")]

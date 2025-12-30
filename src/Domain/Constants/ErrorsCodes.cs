@@ -90,7 +90,6 @@ public class ErrorsCodes
     public const string DegreeNotFound = "DEGREE_NOT_FOUND";
     public const string ReviewItemNotFound = "REVIEW_ITEM_NOT_FOUND";
     public const string ExperienceNotFound = "EXPERIENCE_NOT_FOUND";
-    public const string SkillNotFound = "SKILL_NOT_FOUND";
     public const string LanguageProfileNotFound = "LANGUAGE_PROFILE_NOT_FOUND";
     public const string TrainingNotFound = "TRAINING_NOT_FOUND";
     public const string AchievementNotFound = "ACHIEVEMENT_NOT_FOUND";
@@ -249,5 +248,29 @@ public class ErrorsCodes
     public const string OfficeAdminNotFound = "OFFICE_ADMIN_NOT_FOUND";
     public const string OfficeAdminRoleNotFound = "OFFICE_ADMIN_ROLE_NOT_FOUND";
     public const string OfficeUserRoleNotFound = "OFFICE_USER_ROLE_NOT_FOUND";
+    #endregion
+
+    #region Major Managements
+    
+    public const string MajorNotFound = "MAJOR_NOT_FOUND";
+    public const string MajorAlreadyUsed = "MAJOR_ALREADY_USED";
+    public const string ChangingHierarchyTypeNotAllowed = "CHANGING_HIERARCHY_TYPE_NOT_ALLOWED";
+    public const string MajorNameAlreadyExists = "MAJOR_NAME_ALREADY_EXISTS";
+    public const string MajorSkillLinkAlreadyExists = "MAJOR_SKILL_LINK_ALREADY_EXISTS";
+    public const string MajorSkillLinkNotFound = "MAJOR_SKILL_LINK_NOT_FOUND";
+    public const string CannotLinkInactiveMajorOrSkill = "CANNOT_LINK_INACTIVE_MAJOR_OR_SKILL";
+    public const string CannotActivateMajorSkillLinkBecauseParentMajorIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_PARENT_MAJOR_IS_INACTIVE";
+    public const string CannotActivateMajorSkillLinkBecauseMajorIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_MAJOR_IS_INACTIVE";
+    public const string CannotActivateMajorSkillLinkBecauseSkillIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE";
+    
+
+    #endregion
+    #region Skill Managements
+    
+    public const string SkillNotFound = "SKILL_NOT_FOUND";
+    public const string SkillAlreadyUsed = "SKILL_ALREADY_USED";
+    public const string SkillNameAlreadyExists = "SKILL_NAME_ALREADY_EXISTS";
+    
+
     #endregion
 }

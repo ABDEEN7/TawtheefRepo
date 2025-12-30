@@ -24,5 +24,20 @@ public class LookupProfile : IRegister
                dest.Name = localized.GetLocalizedName(src);
                dest.Description = localized.GetLocalizedDescription(src);
            });
+       
+        config.NewConfig<LocalizedLookupBase, string>()
+            .MapWith(src =>
+                MapContext.Current!
+                    .GetService<ILocalizationService>()!
+                    .GetLocalizedName(src));
+       
+       config.NewConfig<LocalizedLookupBase, DropdownOptions>()
+           .Map(dest => dest.Id, src => src.Id)
+           .AfterMapping((src, dest) =>
+           {
+               var localized = MapContext.Current!.GetService<ILocalizationService>();
+               dest.Name = localized.GetLocalizedName(src);
+               dest.Description = localized.GetLocalizedDescription(src);
+           });
     }
 }

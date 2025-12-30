@@ -10,7 +10,7 @@ using Tawtheef.Application.Features.Operations.Admin.Offices.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
-namespace Operations.API.Controllers;
+namespace Operations.API.Controllers.Admin;
 
 [ApiController]
 [Route("api/[controller]")]
