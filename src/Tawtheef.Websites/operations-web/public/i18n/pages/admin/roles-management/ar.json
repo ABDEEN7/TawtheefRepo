@@ -18,6 +18,7 @@
   "ROLES.DELETE": "حذف",
   "ROLES.SAVE": "حفظ",
   "ROLES.CANCEL": "إلغاء",
+  "ROLES.SYSTEM_ROLE_PROTECTED": "لا يمكن تعديل أو حذف الأدوار النظامية.",
 
   "ROLES.DELETE_CONFIRM": "هل أنت متأكد من حذف هذا الدور؟",
   "ROLES.SAVE_SUCCESS": "تم حفظ الدور بنجاح",

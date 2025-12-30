@@ -31,5 +31,8 @@
   "USERS.BLOCK_FAILED": "Failed to update block status.",
   "USERS.UNBLOCK_FAILED": "Failed to update block status.",
   "USERS.ROLES_UPDATE_SUCCESS": "User roles updated successfully.",
-  "USERS.ROLES_UPDATE_FAILED": "Updating user roles failed. Please try again."
+  "USERS.ROLES_UPDATE_FAILED": "Updating user roles failed. Please try again.",
+  "USERS.SYSTEM_ADMIN_MANAGE_DISABLED": "System Admin role is managed manually and cannot be changed here.",
+  "USERS.MULTIPLE_SYSTEM_ROLES_NOT_ALLOWED": "Only one system role can be assigned to a user.",
+  "USERS.SYSTEM_ADMIN_BLOCK_DISABLED": "System Admin users cannot be blocked."
 }

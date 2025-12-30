@@ -12,6 +12,7 @@ import {NavigationService} from '../services/navigation.service';
 import {AuthResponse} from '../models/auth-response.model';
 import {UserInfoModel} from '../../shared/models/user-info.model';
 import {TokenModel} from '../models/token.model';
+import {SystemRoles} from '../constants/systemRoles';
 
 @Injectable({providedIn: 'root'})
 export class AuthCoreService {
@@ -56,9 +57,15 @@ export class AuthCoreService {
     return user$.pipe(
       map(user => {
         this.updateAuthState(user, accessToken);
-        const rawRole = this.tokenService.getRoleFromToken(accessToken);
-        const role = (rawRole || '').toString().toLowerCase();
-        this.navigation.safeNavigateAfterLogin(role);
+        const rawRoles = this.tokenService.getRolesFromToken(accessToken);
+
+        const mainSystemRole =
+            rawRoles.includes(SystemRoles.SystemAdmin) ? SystemRoles.SystemAdmin
+          : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
+          : rawRoles.includes(SystemRoles.OfficeAdmin) ? SystemRoles.OfficeAdmin
+          : rawRoles.includes(SystemRoles.OfficeUser) ? SystemRoles.OfficeUser
+          : '';
+        this.navigation.safeNavigateAfterLogin(mainSystemRole);
         return true;
       }),
       catchError(err => {

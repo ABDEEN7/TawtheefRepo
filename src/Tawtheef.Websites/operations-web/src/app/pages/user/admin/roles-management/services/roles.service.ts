@@ -1,11 +1,10 @@
-import {Injectable, inject, signal} from '@angular/core';
+import {Injectable, inject} from '@angular/core';
 import { Observable } from 'rxjs';
 import {RoleDto} from '../models/permission.model';
 import {PermissionDto} from '../models/role.model';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {HttpService} from '../../../../../core/http/http.service';
 import {EndpointsService} from '../../../../../core/http/endpoints.service';
-import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
 import {PaginatedRequest} from '../../../../../core/models/paginated-request.model';
 import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
 
@@ -14,23 +13,12 @@ export class RolesService {
 
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
-  private _paginationMetadata = signal<PaginationMetadata | null>(null);
-  private _roles = signal<RoleDto[]>([]);
-
-  public roles = this._roles.asReadonly();
-  public paginationMetadata = this._paginationMetadata.asReadonly();
 
   // =========================
   // GET ALL ROLES
   // =========================
-  getRoles(pagination?: PaginatedRequest): Observable<void> {
-    return this.http.get<PaginatedResult<RoleDto>>(this.endpoints.roles.listRoles, pagination).pipe(
-      tap(response => {
-        this._paginationMetadata.set(response.metadata);
-        this._roles.set(response.items || []);
-      }),
-      map(() => void 0)
-    );
+  getRoles(pagination?: PaginatedRequest): Observable<PaginatedResult<RoleDto>> {
+    return this.http.get<PaginatedResult<RoleDto>>(this.endpoints.roles.listRoles, pagination);
   }
 
   // =========================

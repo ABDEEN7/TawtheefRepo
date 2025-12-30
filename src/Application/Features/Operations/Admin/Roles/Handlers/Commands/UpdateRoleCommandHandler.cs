@@ -20,6 +20,9 @@ public sealed class UpdateRoleCommandHandler(RoleManager<ApplicationRole> roleMa
         if (role is null)
             return Result.Fail<RoleDto>(ErrorsCodes.RoleNotFound);
 
+        if (role.IsSystemRole)
+            return Result.Fail<RoleDto>(ErrorsCodes.SystemRoleModificationNotAllowed);
+
         var normalized = request.NameEn.ToUpperInvariant();
         var conflict = await roleManager.Roles.AsNoTracking()
             .AnyAsync(r => r.Id != role.Id && r.NormalizedName == normalized, cancellationToken);

@@ -1,4 +1,4 @@
-import {inject, Injectable, signal} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {HttpService} from '../../../../../core/http/http.service';
 import {EndpointsService} from '../../../../../core/http/endpoints.service';
 import {OfficeDto} from '../models/office.dto';
@@ -6,9 +6,8 @@ import {OfficeFilters} from '../models/office-filters.dto';
 import {CreateOfficeRequest} from '../models/create-office-request.dto';
 import {UpdateOfficeRequest} from '../models/update-office-request.dto';
 import {OfficeDetailsDto} from '../models/office-details.dto';
-import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
 import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 
@@ -17,25 +16,12 @@ export class OfficesService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
-  private _offices = signal<OfficeDto[]>([]);
-  private _paginationMetadata = signal<PaginationMetadata | null>(null);
-
-  public offices = this._offices.asReadonly();
-  public paginationMetadata = this._paginationMetadata.asReadonly();
-
   getOfficeDetails(id: string): Observable<OfficeDetailsDto> {
     return this.http.get<OfficeDetailsDto>(this.endpoints.offices.officeDetails(id));
   }
 
-  getOffices(filters: OfficeFilters): Observable<void> {
-    return this.http.get<PaginatedResult<OfficeDto>>(this.endpoints.offices.listOffices, filters)
-      .pipe(
-        tap(res => {
-          this._offices.set(res.items || []);
-          this._paginationMetadata.set(res.metadata);
-        }),
-        map(() => void 0)
-      );
+  getOffices(filters: OfficeFilters): Observable<PaginatedResult<OfficeDto>> {
+    return this.http.get<PaginatedResult<OfficeDto>>(this.endpoints.offices.listOffices, filters);
   }
 
   getCountries(): Observable<dropdownOptionsModel[]> {

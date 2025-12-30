@@ -2,20 +2,22 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Queries;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/profile-distributions")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-//[Authorize(Policy = PermissionPolicyProvider.POLICY_PREFIX + PermissionNames.JobsManage)]
 public class ProfileDistributionController(IMediator mediator) : ControllerBase
 {
     [HttpGet("profiles")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileDistributionView)]
     public async Task<IActionResult> GetFiles([FromQuery] UserProfileStatus? status, CancellationToken ct)
     {
         var result = await mediator.Send(new GetDistributionProfilesQuery(status), ct);
@@ -23,6 +25,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("employees")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileDistributionView)]
     public async Task<IActionResult> GetEmployees(CancellationToken ct)
     {
         var result = await mediator.Send(new GetDistributionEmployeesQuery(), ct);
@@ -30,6 +33,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("assign/manual")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileDistributionManage)]
     public async Task<IActionResult> AssignManually([FromBody] ManualAssignRequest request, CancellationToken ct)
     {
         var command = new ManualAssignProfilesCommand(request.EmployeeId, request.ProfileIds);
@@ -38,6 +42,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("assign/auto")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileDistributionManage)]
     public async Task<IActionResult> AssignAutomatically([FromBody] AutoAssignRequest request, CancellationToken ct)
     {
         var command = new AutoAssignProfilesCommand(request.EmployeeIds, request.ProfileIds, request.PerEmployeeCount);
@@ -46,6 +51,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("reassign")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileDistributionManage)]
     public async Task<IActionResult> Reassign([FromBody] ReassignRequest request, CancellationToken ct)
     {
         var command = new ReassignProfilesCommand(

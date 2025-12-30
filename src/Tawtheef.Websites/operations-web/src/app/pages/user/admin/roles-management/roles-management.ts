@@ -12,6 +12,8 @@ import {PaginationComponent} from '../../../../shared/components/pagination/pagi
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {Lang, LanguageService} from '../../../../core/services/language.service';
 import {NotificationService} from '../../../../core/services/notification.service';
+import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
+import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 
 @Component({
   selector: 'app-roles-management',
@@ -36,9 +38,13 @@ export class RolesManagement implements OnInit {
   private language = inject(LanguageService);
   private notification = inject(NotificationService);
 
-  paginationMetadata = this.rolesService.paginationMetadata;
+  // Component now manages its own state
+  private _roles = signal<RoleDto[]>([]);
+  private _paginationMetadata = signal<PaginationMetadata | null>(null);
 
-  roles = this.rolesService.roles;
+  public roles = this._roles.asReadonly();
+  public paginationMetadata = this._paginationMetadata.asReadonly();
+
   permissions = signal<PermissionDto[]>([]);
   permissionSearch = signal('');
   filteredPermissions = computed(() => {
@@ -63,6 +69,8 @@ export class RolesManagement implements OnInit {
     nameEn: '',
     descriptionAr: '',
     descriptionEn: '',
+    systemName: '',
+    isSystemRole: false,
     permissions: []
   });
 
@@ -81,11 +89,13 @@ export class RolesManagement implements OnInit {
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage()
     }).subscribe({
-      next: () => {
-        const metadata = this.paginationMetadata();
-        if (metadata) {
-          this.currentPage.set(metadata.currentPage);
-          this.itemsPerPage.set(metadata.pageSize);
+      next: (response: PaginatedResult<RoleDto>) => {
+        this._roles.set(response.items || []);
+        this._paginationMetadata.set(response.metadata);
+
+        if (response.metadata) {
+          this.currentPage.set(response.metadata.currentPage);
+          this.itemsPerPage.set(response.metadata.pageSize);
         }
       },
       error: () => this.notification.error(this.translate.instant('ROLES.LOAD_FAILED'))
@@ -107,6 +117,8 @@ export class RolesManagement implements OnInit {
       nameEn: '',
       descriptionAr: '',
       descriptionEn: '',
+      systemName: '',
+      isSystemRole: false,
       permissions: []
     });
     this.permissionSearch.set('');
@@ -139,10 +151,19 @@ export class RolesManagement implements OnInit {
       : this.rolesService.addRole(model);
 
     request$.subscribe({
-      next: () => {
+      next: (savedRole) => {
         this.notification.success(this.translate.instant('ROLES.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
-        this.loadRoles();
+
+        if (this.isEditing()) {
+          // Update role in local state
+          this._roles.update(roles =>
+            roles.map(r => r.id === savedRole.id ? savedRole : r)
+          );
+        } else {
+          // Add new role to local state and refresh list for pagination consistency
+          this.loadRoles();
+        }
       },
       error: () => {
         this.notification.error(this.translate.instant('ROLES.SAVE_FAILED'));
@@ -164,7 +185,19 @@ export class RolesManagement implements OnInit {
         this.rolesService.deleteRole(role.id).subscribe({
           next: () => {
             this.notification.success(this.translate.instant('ROLES.DELETE_SUCCESS'));
-            this.loadRoles();
+
+            // Remove role from local state
+            this._roles.update(roles => roles.filter(r => r.id !== role.id));
+
+            // Update pagination metadata
+            this._paginationMetadata.update(metadata => {
+              if (!metadata) return metadata;
+              return {
+                ...metadata,
+                totalCount: Math.max(0, metadata.totalCount - 1),
+                totalPages: Math.ceil(Math.max(0, metadata.totalCount - 1) / metadata.pageSize)
+              };
+            });
           },
           error: () => {
             this.notification.error(this.translate.instant('ROLES.DELETE_FAILED'));

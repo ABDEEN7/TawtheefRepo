@@ -28,7 +28,7 @@ export class UserService {
       email: user.email,
       fullName: user.fullName,
       profilePictureUrl: user.profilePictureUrl ?? null,
-      userType: this.tokenService.getRoleFromToken(accessToken),
+      userRoles: this.tokenService.getRolesFromToken(accessToken),
       provider: user.provider ?? AUTH_PROVIDER.LOCAL,
       notifications: user.notifications ?? 0
     };

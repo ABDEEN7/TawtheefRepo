@@ -17,10 +17,8 @@ export const authGuard: CanActivateChildFn = (_route, state) => {
   const requiredRoles = (_route.data?.['roles'] as string[] | undefined) ?? [];
   if (requiredRoles.length === 0) return true;
 
-  const role = (tokenService.getRoleFromToken(tokenService.getToken() || '') || '')
-    .toString()
-    .toLowerCase();
+  const role = tokenService.getRolesFromToken(tokenService.getToken() || '');
 
-  const ok = requiredRoles.some(r => r.toLowerCase() === role);
+  const ok = requiredRoles.some(r => role.includes(r));
   return ok ? true : router.createUrlTree([routes.accessDenied]);
 };

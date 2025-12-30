@@ -16,6 +16,9 @@ public sealed class DeleteRoleCommandHandler(RoleManager<ApplicationRole> roleMa
         if (role is null)
             return Result.Fail<Unit>(ErrorsCodes.RoleNotFound);
 
+        if (role.IsSystemRole)
+            return Result.Fail<Unit>(ErrorsCodes.SystemRoleModificationNotAllowed);
+
         var deleteResult = await roleManager.DeleteAsync(role);
         return deleteResult.Succeeded
             ? Result.Ok<Unit>(Unit.Value)

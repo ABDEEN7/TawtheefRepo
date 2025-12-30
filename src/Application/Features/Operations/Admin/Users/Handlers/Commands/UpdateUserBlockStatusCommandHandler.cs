@@ -24,6 +24,10 @@ public sealed class UpdateUserBlockStatusCommandHandler(UserManager<User> userMa
         if (user is null)
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
 
+        var roles = await userManager.GetRolesAsync(user);
+        if (roles.Contains(nameof(SystemRoleIds.SystemAdmin), StringComparer.OrdinalIgnoreCase))
+            return Result.Fail<Unit>(ErrorsCodes.SystemAdminBlockNotAllowed);
+
         user.IsBlocked = request.IsBlocked;
 
         var updateResult = await userManager.UpdateAsync(user);

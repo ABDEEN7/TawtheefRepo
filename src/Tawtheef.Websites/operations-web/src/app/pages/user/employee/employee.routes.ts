@@ -5,54 +5,54 @@ import {ProfileApprovalDetailPage} from './profile-managment/approval-detail/pro
 import {ProfileDistributionPage} from './profile-managment/distribution/profile-distribution.page';
 import {JobInvitationSummary} from './job-managment/job-invitation-summary/job-invitation-summary';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
+import {Permissions} from '../../../core/constants/permissions';
 
 export const employeeRoutes: Routes = [
   {
     path: 'dashboard',
     canActivate: [permissionGuard],
-    //data: { permissions: ['dashboard.view'] },
+    data: { permissions: [Permissions.Dashboard.View] },
     component: Dashboard
   },
   {
     path: 'approval-profile',
     canActivate: [permissionGuard],
-    //data: { permissions: ['profile.approval.view'] },
+    data: { permissions: [Permissions.ProfileApproval.View] },
     component: ProfileApprovalListPage
   },
   {
     path: 'approval-profile/:profileId',
     canActivate: [permissionGuard],
-    //data: { permissions: ['profile.approval.details.view'] },
+    data: { permissions: [Permissions.ProfileApproval.View] },
     component: ProfileApprovalDetailPage
   },
   {
     path: 'approval-profile/:profileId/review',
     canActivate: [permissionGuard],
-    //data: { permissions: ['profile.approval.details.review'] },
+    data: { permissions: [Permissions.ProfileApproval.Review] },
     component: ProfileApprovalDetailPage
   },
   {
     path: 'approval-profile/:profileId/changes',
     canActivate: [permissionGuard],
-    //data: { permissions: ['profile.approval.details.changes'] },
+    data: { permissions: [Permissions.ProfileApproval.Changes] },
     component: ProfileApprovalDetailPage
   },
   {
     path: 'profile-distribution',
     canActivate: [permissionGuard],
-    //data: { permissions: ['profile.distribution.view'] },
+    data: { permissions: [Permissions.ProfileDistribution.View] },
     component: ProfileDistributionPage
   },
   {
     path: 'job-invitation-summary',
     canActivate: [permissionGuard],
-    //data: { permissions: ['job.invitation.view'] },
+    data: { permissions: [Permissions.JobInvitations.View] },
     component: JobInvitationSummary
   },
   {
     path: 'jobs',
     canActivate: [permissionGuard],
-    //data: { permissions: ['job.list.view'] },
     loadChildren: () => import('../../job/jobs.module').then(m => m.JobsModule),
   },
 ];

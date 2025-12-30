@@ -204,14 +204,13 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     {
         try
         {
-
             var userIdClaim = this.GetService<IHttpContextAccessor>().HttpContext?.User
                 .FindFirst(ClaimTypes.NameIdentifier);
             return userIdClaim != null ? Guid.Parse(userIdClaim.Value) : null;
         }
         catch (Exception)
         {
-            return AdminUserIds.AdminUserId;
+            return AdminUserIds.Admin1UserId;
         }
     }
     public override int SaveChanges()

@@ -6,9 +6,10 @@ namespace Tawtheef.Domain.Entities.Users;
 public static class SystemRoleIds
 {
     public static Guid SystemAdmin = Guid.Parse("1361d691-53c5-4a84-aea1-64ff134cf082");
-    public static Guid HRAdmin = Guid.Parse("5f12e420-f666-4af4-a8fa-4e4aa755fdcd");
+    public static Guid Employee = Guid.Parse("5f12e420-f666-4af4-a8fa-4e4aa755fdcd");
     public static Guid OfficeAdmin = Guid.Parse("98e20970-b6bc-4da9-a947-f75e9adae3ca");
     public static Guid OfficeUser = Guid.Parse("12f5805d-6970-4a9e-a275-2b7cf3db3bb8");
+    public static Guid EmployeeSuperAdmin = Guid.Parse("d8689e0c-d872-42e9-87b7-c3bb27305e07");
 }
 public class ApplicationRole : IdentityRole<Guid>
 {
@@ -20,5 +21,5 @@ public class ApplicationRole : IdentityRole<Guid>
     public string? DescriptionAr { get; set; }
     [MaxLength(150)]
     public string? DescriptionEn { get; set; }
-    public bool IsSystemRole { get; set; } = false;
+    public bool IsSystemRole { get; init; }
 }

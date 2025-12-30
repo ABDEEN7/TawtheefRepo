@@ -490,3 +490,4 @@ src/.idea/
 src/Tawtheef.Websites/.idea/
 src/Tawtheef.APIs/Operations.API/appsettings.*.json
 src/Tawtheef.APIs/Recruitment.API/appsettings.*.json
+src/Infrastructure/Migrations/

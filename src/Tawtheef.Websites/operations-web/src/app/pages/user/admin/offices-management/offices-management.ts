@@ -18,6 +18,8 @@ import {OfficeModalComponent} from './components/office-modal/office-modal.compo
 import {OfficeDetailsDto} from './models/office-details.dto';
 import {finalize} from 'rxjs/operators';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
+import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 
 @Component({
   selector: 'app-offices-management',
@@ -43,8 +45,12 @@ export class OfficesManagement implements OnInit {
   private language = inject(LanguageService);
   private notification = inject(NotificationService);
 
-  offices = this.officesService.offices;
-  paginationMetadata = this.officesService.paginationMetadata;
+  // Component now manages its own state
+  private _offices = signal<OfficeDto[]>([]);
+  private _paginationMetadata = signal<PaginationMetadata | null>(null);
+
+  public offices = this._offices.asReadonly();
+  public paginationMetadata = this._paginationMetadata.asReadonly();
 
   filters = signal<OfficeFilters>({
     pageNumber: 1,
@@ -70,13 +76,15 @@ export class OfficesManagement implements OnInit {
 
   loadOffices() {
     this.officesService.getOffices(this.filters()).subscribe({
-      next: () => {
-        const metadata = this.paginationMetadata();
-        if (metadata) {
+      next: (response: PaginatedResult<OfficeDto>) => {
+        this._offices.set(response.items || []);
+        this._paginationMetadata.set(response.metadata);
+
+        if (response.metadata) {
           this.filters.update(f => ({
             ...f,
-            pageNumber: metadata.currentPage,
-            pageSize: metadata.pageSize
+            pageNumber: response.metadata.currentPage,
+            pageSize: response.metadata.pageSize
           }));
         }
       },
@@ -243,7 +251,18 @@ export class OfficesManagement implements OnInit {
         this.officesService.deleteOffice(office.id).subscribe({
           next: () => {
             this.notification.success(this.translate.instant('OFFICES.DELETE_SUCCESS'));
-            this.loadOffices();
+            // Remove office from local state
+            this._offices.update(offices => offices.filter(o => o.id !== office.id));
+
+            // Update pagination metadata
+            this._paginationMetadata.update(metadata => {
+              if (!metadata) return metadata;
+              return {
+                ...metadata,
+                totalCount: Math.max(0, metadata.totalCount - 1),
+                totalPages: Math.ceil(Math.max(0, metadata.totalCount - 1) / metadata.pageSize)
+              };
+            });
           },
           error: () => this.notification.error(this.translate.instant('OFFICES.DELETE_FAILED'))
         });
