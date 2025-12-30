@@ -48,6 +48,7 @@
     <ItemGroup>
       <Folder Include="Configurations\Entities\SeedData\" />
       <Folder Include="Migrations\Development\" />
+      <Folder Include="Migrations\Stage\" />
       <Folder Include="Services\Environment\" />
       <Folder Include="Templates\" />
     </ItemGroup>

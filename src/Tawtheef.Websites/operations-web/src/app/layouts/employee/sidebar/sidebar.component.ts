@@ -31,7 +31,7 @@ export class SidebarComponent implements OnInit {
     { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalProfile, permission: Permissions.ProfileApproval.View },
     { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: routes.employee.JobList, permission: Permissions.Jobs.View },
     { key: 'transfer', label: 'internal.sidebar.transfer', icon: 'assets/img/icons/transfer.svg', route: routes.employee.nominations, permission: Permissions.Nominations.View },
-    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'assets/img/icons/job.svg', route: routes.employee.majorsSkillsManagement }
+    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'assets/img/icons/job.svg', route: routes.employee.majorsSkillsManagement, permission: null }
   ];
 
   constructor(private router: Router) {}

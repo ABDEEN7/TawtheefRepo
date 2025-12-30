@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Services.Identity;
 
@@ -18,8 +19,8 @@ public class Program
         Console.WriteLine("=== Import Started ===");
 
         const string ConnectionString =
-           // "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
-            "Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
+            "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
+            //"Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
 
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -56,7 +57,7 @@ public class Program
         ImportCities(db, errors, cityIds, cityBackendNames, countryIds);
         ImportUniversities(db, errors, universityIds, universityBackendNames, cityIds);
         ImportMajors(db, errors);
-        //ImportOffices(db, errors);
+        ImportOffices(db, errors);
         ImportSkillTypes(db, errors);
 
         try
@@ -390,49 +391,49 @@ public class Program
     }
 
     // ================= Import Offices =================
-    // static void ImportOffices(TawtheefDbContext db, List<ImportError> errors)
-    // {
-    //     try
-    //     {
-    //         var jordanId = Guid.Parse("b7f89fce-4f81-464a-9e99-7fc7c8bd1d54");
-    //         var syriaId = Guid.Parse("21d0a391-7e7f-4a3e-bd27-9c26345c7e09");
-    //         var ukId = Guid.Parse("cba347b0-123e-4eb1-91be-ca3a2725bbeb");
-    //
-    //         var offices = new (Guid CountryId,string Code, string BackendName, string Ar, string En, int Order)[]
-    //         {
-    //             (jordanId, "JO-AMM", "AMMAN_OFFICE", "مكتب عمّان", "Amman Office", 1),
-    //             (jordanId, "JO-IRB", "IRBID_OFFICE", "مكتب إربد", "Irbid Office", 2),
-    //             (jordanId, "JO-ZAR", "ZARQA_OFFICE", "مكتب الزرقاء", "Zarqa Office", 3),
-    //             (syriaId, "SY-DAM", "DAMASCUS_OFFICE", "مكتب دمشق", "Damascus Office", 4),
-    //             (syriaId, "SY-ALA", "ALEPPO_OFFICE", "مكتب حلب", "Aleppo Office", 5),
-    //             (syriaId, "SY-HOM", "HOMS_OFFICE", "مكتب حمص", "Homs Office", 6),
-    //             (ukId, "UK-LON", "LONDON_OFFICE", "مكتب لندن", "London Office", 7),
-    //             (ukId, "UK-MAN", "MANCHESTER_OFFICE", "مكتب مانشستر", "Manchester Office", 8),
-    //             (ukId, "UK-BIR", "BIRMINGHAM_OFFICE", "مكتب برمنغهام", "Birmingham Office", 9),
-    //             (ukId, "UK-LIV", "LIVERPOOL_OFFICE", "مكتب ليفربول", "Liverpool Office", 10),
-    //         };
-    //
-    //         foreach (var o in offices)
-    //             if (!db.Office.Any(x => x.BackendName == o.BackendName))
-    //                 db.Office.Add(new Office
-    //                 {
-    //                     Id = Guid.NewGuid(),
-    //                     CreatedDate = DateTimeOffset.UtcNow,
-    //                     IsDeleted = false,
-    //                     OfficeAdminId = AdminUserIds.AdminUserId,
-    //                     CountryId = o.CountryId,
-    //                     Code = o.Code,
-    //                     BackendName = o.BackendName,
-    //                     NameAr = o.Ar,
-    //                     NameEn = o.En,
-    //                     DisplayOrder = o.Order
-    //                 });
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         errors.Add(new ImportError("InsertOffices", null, ex.GetBaseException().Message));
-    //     }
-    //}
+     static void ImportOffices(TawtheefDbContext db, List<ImportError> errors)
+     {
+         try
+         {
+             var jordanId = Guid.Parse("b7f89fce-4f81-464a-9e99-7fc7c8bd1d54");
+             var syriaId = Guid.Parse("21d0a391-7e7f-4a3e-bd27-9c26345c7e09");
+             var ukId = Guid.Parse("cba347b0-123e-4eb1-91be-ca3a2725bbeb");
+    
+             var offices = new (Guid CountryId,string Code, string BackendName, string Ar, string En, int Order)[]
+             {
+                 (jordanId, "JO-AMM", "AMMAN_OFFICE", "مكتب عمّان", "Amman Office", 1),
+                 (jordanId, "JO-IRB", "IRBID_OFFICE", "مكتب إربد", "Irbid Office", 2),
+                 (jordanId, "JO-ZAR", "ZARQA_OFFICE", "مكتب الزرقاء", "Zarqa Office", 3),
+                 (syriaId, "SY-DAM", "DAMASCUS_OFFICE", "مكتب دمشق", "Damascus Office", 4),
+                 (syriaId, "SY-ALA", "ALEPPO_OFFICE", "مكتب حلب", "Aleppo Office", 5),
+                 (syriaId, "SY-HOM", "HOMS_OFFICE", "مكتب حمص", "Homs Office", 6),
+                 (ukId, "UK-LON", "LONDON_OFFICE", "مكتب لندن", "London Office", 7),
+                 (ukId, "UK-MAN", "MANCHESTER_OFFICE", "مكتب مانشستر", "Manchester Office", 8),
+                 (ukId, "UK-BIR", "BIRMINGHAM_OFFICE", "مكتب برمنغهام", "Birmingham Office", 9),
+                 (ukId, "UK-LIV", "LIVERPOOL_OFFICE", "مكتب ليفربول", "Liverpool Office", 10),
+             };
+    
+             foreach (var o in offices)
+                 if (!db.Office.Any(x => x.BackendName == o.BackendName))
+                     db.Office.Add(new Office
+                     {
+                         Id = Guid.NewGuid(),
+                         CreatedDate = DateTimeOffset.UtcNow,
+                         IsDeleted = false,
+                         OfficeAdminId = AdminUserIds.Admin1UserId,
+                         CountryId = o.CountryId,
+                         Code = o.Code,
+                         BackendName = o.BackendName,
+                         NameAr = o.Ar,
+                         NameEn = o.En,
+                         DisplayOrder = o.Order
+                     });
+         }
+         catch (Exception ex)
+         {
+             errors.Add(new ImportError("InsertOffices", null, ex.GetBaseException().Message));
+         }
+    }
 
 
 // ================= Import SkillTypes =================
