@@ -20,7 +20,7 @@ public class Program
 
         const string ConnectionString =
             "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
-            //"Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
+        //"Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
 
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -59,6 +59,7 @@ public class Program
         ImportMajors(db, errors);
         ImportOffices(db, errors);
         ImportSkillTypes(db, errors);
+        ImportSkills(db, errors);
 
         try
         {
@@ -391,48 +392,48 @@ public class Program
     }
 
     // ================= Import Offices =================
-     static void ImportOffices(TawtheefDbContext db, List<ImportError> errors)
-     {
-         try
-         {
-             var jordanId = Guid.Parse("b7f89fce-4f81-464a-9e99-7fc7c8bd1d54");
-             var syriaId = Guid.Parse("21d0a391-7e7f-4a3e-bd27-9c26345c7e09");
-             var ukId = Guid.Parse("cba347b0-123e-4eb1-91be-ca3a2725bbeb");
-    
-             var offices = new (Guid CountryId,string Code, string BackendName, string Ar, string En, int Order)[]
-             {
-                 (jordanId, "JO-AMM", "AMMAN_OFFICE", "مكتب عمّان", "Amman Office", 1),
-                 (jordanId, "JO-IRB", "IRBID_OFFICE", "مكتب إربد", "Irbid Office", 2),
-                 (jordanId, "JO-ZAR", "ZARQA_OFFICE", "مكتب الزرقاء", "Zarqa Office", 3),
-                 (syriaId, "SY-DAM", "DAMASCUS_OFFICE", "مكتب دمشق", "Damascus Office", 4),
-                 (syriaId, "SY-ALA", "ALEPPO_OFFICE", "مكتب حلب", "Aleppo Office", 5),
-                 (syriaId, "SY-HOM", "HOMS_OFFICE", "مكتب حمص", "Homs Office", 6),
-                 (ukId, "UK-LON", "LONDON_OFFICE", "مكتب لندن", "London Office", 7),
-                 (ukId, "UK-MAN", "MANCHESTER_OFFICE", "مكتب مانشستر", "Manchester Office", 8),
-                 (ukId, "UK-BIR", "BIRMINGHAM_OFFICE", "مكتب برمنغهام", "Birmingham Office", 9),
-                 (ukId, "UK-LIV", "LIVERPOOL_OFFICE", "مكتب ليفربول", "Liverpool Office", 10),
-             };
-    
-             foreach (var o in offices)
-                 if (!db.Office.Any(x => x.BackendName == o.BackendName))
-                     db.Office.Add(new Office
-                     {
-                         Id = Guid.NewGuid(),
-                         CreatedDate = DateTimeOffset.UtcNow,
-                         IsDeleted = false,
-                         OfficeAdminId = AdminUserIds.Admin1UserId,
-                         CountryId = o.CountryId,
-                         Code = o.Code,
-                         BackendName = o.BackendName,
-                         NameAr = o.Ar,
-                         NameEn = o.En,
-                         DisplayOrder = o.Order
-                     });
-         }
-         catch (Exception ex)
-         {
-             errors.Add(new ImportError("InsertOffices", null, ex.GetBaseException().Message));
-         }
+    static void ImportOffices(TawtheefDbContext db, List<ImportError> errors)
+    {
+        try
+        {
+            var jordanId = Guid.Parse("b7f89fce-4f81-464a-9e99-7fc7c8bd1d54");
+            var syriaId = Guid.Parse("21d0a391-7e7f-4a3e-bd27-9c26345c7e09");
+            var ukId = Guid.Parse("cba347b0-123e-4eb1-91be-ca3a2725bbeb");
+
+            var offices = new (Guid CountryId, string Code, string BackendName, string Ar, string En, int Order)[]
+            {
+                (jordanId, "JO-AMM", "AMMAN_OFFICE", "مكتب عمّان", "Amman Office", 1),
+                (jordanId, "JO-IRB", "IRBID_OFFICE", "مكتب إربد", "Irbid Office", 2),
+                (jordanId, "JO-ZAR", "ZARQA_OFFICE", "مكتب الزرقاء", "Zarqa Office", 3),
+                (syriaId, "SY-DAM", "DAMASCUS_OFFICE", "مكتب دمشق", "Damascus Office", 4),
+                (syriaId, "SY-ALA", "ALEPPO_OFFICE", "مكتب حلب", "Aleppo Office", 5),
+                (syriaId, "SY-HOM", "HOMS_OFFICE", "مكتب حمص", "Homs Office", 6),
+                (ukId, "UK-LON", "LONDON_OFFICE", "مكتب لندن", "London Office", 7),
+                (ukId, "UK-MAN", "MANCHESTER_OFFICE", "مكتب مانشستر", "Manchester Office", 8),
+                (ukId, "UK-BIR", "BIRMINGHAM_OFFICE", "مكتب برمنغهام", "Birmingham Office", 9),
+                (ukId, "UK-LIV", "LIVERPOOL_OFFICE", "مكتب ليفربول", "Liverpool Office", 10),
+            };
+
+            foreach (var o in offices)
+                if (!db.Office.Any(x => x.BackendName == o.BackendName))
+                    db.Office.Add(new Office
+                    {
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTimeOffset.UtcNow,
+                        IsDeleted = false,
+                        OfficeAdminId = AdminUserIds.Admin1UserId,
+                        CountryId = o.CountryId,
+                        Code = o.Code,
+                        BackendName = o.BackendName,
+                        NameAr = o.Ar,
+                        NameEn = o.En,
+                        DisplayOrder = o.Order
+                    });
+        }
+        catch (Exception ex)
+        {
+            errors.Add(new ImportError("InsertOffices", null, ex.GetBaseException().Message));
+        }
     }
 
 
@@ -443,8 +444,7 @@ public class Program
         {
             var skills = new (string Backend, string Ar, string En, int Order)[]
             {
-                ("TECHNICAL", "مهارات تقنية", "Technical Skills", 1), 
-                ("SOFT", "مهارات شخصية", "Soft Skills", 2),
+                ("TECHNICAL", "مهارات تقنية", "Technical Skills", 1), ("SOFT", "مهارات شخصية", "Soft Skills", 2),
                 ("LANGUAGE", "مهارات لغوية", "Language Skills", 3),
                 ("MANAGEMENT", "مهارات إدارية", "Management Skills", 4),
                 ("LEADERSHIP", "مهارات قيادية", "Leadership Skills", 5),
@@ -475,6 +475,81 @@ public class Program
         catch (Exception ex)
         {
             errors.Add(new ImportError("InsertSkillTypes", null, ex.GetBaseException().Message));
+        }
+    }
+
+
+    static void ImportSkills(TawtheefDbContext db, List<ImportError> errors)
+    {
+        try
+        {
+            var skillTypeId = Guid.Parse("2F1B6CE7-CBC3-2B5C-B264-A02C6A87BE1D");
+            var createdById = Guid.Parse("42E0D563-7603-453C-81B1-6B2325622B40");
+            var now = DateTimeOffset.UtcNow;
+
+            var skills = new (string Backend, string Ar, string En, string? DescAr, string? DescEn, int Order)[]
+            {
+                ("REQUIREMENTS_ANALYSIS", "تحليل المتطلبات", "Requirements Analysis",
+                    "تحليل احتياجات النظام وتحويلها إلى متطلبات واضحة",
+                    "Analyzing system needs and translating them into clear requirements", 1),
+                ("SYSTEM_DESIGN", "تصميم النظام", "System Design",
+                    "تصميم هيكلية النظام والمكونات الرئيسية",
+                    "Designing system architecture and core components", 2),
+                ("BACKEND_DEVELOPMENT", "برمجة الواجهة الخلفية", "Backend Development",
+                    "تطوير منطق الأعمال والخدمات الخلفية",
+                    "Developing business logic and backend services", 3),
+                ("FRONTEND_DEVELOPMENT", "برمجة الواجهة الأمامية", "Frontend Development",
+                    "تطوير واجهات المستخدم وتجربة الاستخدام",
+                    "Developing user interfaces and user experience", 4),
+                ("DATABASE_MANAGEMENT", "إدارة قواعد البيانات", "Database Management",
+                    "تصميم وإدارة قواعد البيانات",
+                    "Designing and managing databases", 5),
+                ("SOFTWARE_TESTING", "اختبار البرمجيات", "Software Testing",
+                    "اختبار جودة وأداء النظام",
+                    "Testing system quality and performance", 6),
+                ("SYSTEM_INTEGRATION", "تكامل الأنظمة", "System Integration",
+                    "ربط الأنظمة والخدمات الخارجية",
+                    "Integrating systems and external services", 7),
+                ("INFORMATION_SECURITY", "أمن المعلومات", "Information Security",
+                    "تأمين النظام وحماية البيانات",
+                    "Securing the system and protecting data", 8),
+                ("VERSION_MANAGEMENT", "إدارة الإصدارات", "Version Management",
+                    "إدارة إصدارات النظام والتحديثات",
+                    "Managing system versions and releases", 9),
+                ("SYSTEM_SUPPORT", "دعم وصيانة النظام", "System Support & Maintenance",
+                    "دعم النظام ومعالجة المشاكل",
+                    "Supporting the system and handling issues", 10),
+            };
+
+            // Load existing backend names once (avoid N queries)
+            var existingBackends = new HashSet<string>(
+                db.Skill.AsNoTracking().Select(x => x.BackendName));
+
+            foreach (var s in skills)
+            {
+                if (!existingBackends.Add(s.Backend))
+                    continue;
+
+                db.Skill.Add(new Skill
+                {
+                    Id = Guid.NewGuid(),
+                    SkillTypeId = skillTypeId,
+                    NameAr = s.Ar,
+                    NameEn = s.En,
+                    DescriptionAr = s.DescAr,
+                    DescriptionEn = s.DescEn,
+                    BackendName = s.Backend,
+                    DisplayOrder = s.Order,
+                    IsActive = true,
+                    IsDeleted = false,
+                    CreatedById = createdById,
+                    CreatedDate = now
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add(new ImportError("InsertSkills", null, ex.GetBaseException().Message));
         }
     }
 }

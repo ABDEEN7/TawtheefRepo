@@ -67,6 +67,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<City> City { get; set; }
     public DbSet<Country> Country { get; set; }
     public DbSet<Major> Major { get; set; }
+    public DbSet<Skill> Skill { get; set; }
     public DbSet<Office> Office { get; set; }
     public DbSet<SkillType> SkillType { get; set; }
     public DbSet<University> University { get; set; }
