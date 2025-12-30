@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Queries;
 using Tawtheef.Infrastructure.Extensions;
@@ -44,6 +45,23 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
+        return result.ToActionResult();
+    }
+    
+    
+    [HttpGet("lookups/majors")]
+    public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
+    {
+        //get language from header
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(query with {Language = language});
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/sub-majors")]
+    public async Task<IActionResult> GetMajors([FromQuery] GetSubMajorsQuery query)
+    {
+        var result = await mediator.Send(query);
         return result.ToActionResult();
     }
 }

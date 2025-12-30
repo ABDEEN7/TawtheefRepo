@@ -47,27 +47,36 @@
             </div>
             <div class="col-lg-3 col-md-6">
               <label class="form-label">{{ 'MAJORS_SKILLS.MAJOR_LABEL' | translate }}</label>
-              <p-select
-                [options]="mainMajorsItems()"
+              <app-remote-select
+                [searchUrl]="endpoints.majorSkillsManagement.lookups.majors"
+                [placeholder]="'MAJORS_SKILLS.MAJOR_PLACEHOLDER' | translate"
                 optionLabel="name"
-                optionValue="id" filter="true"
+                optionValue="id"
+                [showClear]="true"
+                [minChars]="1"
                 [ngModel]="majorSkillFilters().parentMajorId"
                 (ngModelChange)="updateSelectedParentMajor($event)"
-                class="w-100"
-                [showClear]="true"
-                [placeholder]="'MAJORS_SKILLS.MAJOR_PLACEHOLDER' | translate"></p-select>
+                [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }">
+              </app-remote-select>
             </div>
             <div class="col-lg-3 col-md-6">
               <label class="form-label">{{ 'MAJORS_SKILLS.SUB_MAJOR_LABEL' | translate }}</label>
-              <p-select
-                [options]="subMajorsItems()"
+
+              <app-remote-select
+                [searchUrl]="endpoints.majorSkillsManagement.lookups.subMajors"
+                [placeholder]="'MAJORS_SKILLS.SUB_MAJOR_PLACEHOLDER' | translate"
                 optionLabel="name"
-                optionValue="id" filter="true"
+                optionValue="id"
+                [showClear]="true"
+                [requireParent]="true"
+                [parentId]="majorSkillFilters().parentMajorId"
+                parentParamName="parentId"
                 [ngModel]="majorSkillFilters().subMajorId"
                 (ngModelChange)="setMajorSkillSubMajor($event)"
-                class="w-100"
-                [showClear]="true"
-                [placeholder]="'MAJORS_SKILLS.SUB_MAJOR_PLACEHOLDER' | translate"></p-select>
+                [minChars]="1"
+                [appendTo]="'body'"
+                [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }">
+              </app-remote-select>
             </div>
             <div class="col-lg-2 col-md-6">
               <label class="form-label">{{ 'MAJORS_SKILLS.SKILL_TYPE' | translate }}</label>
@@ -186,12 +195,12 @@
             </tr>
             </thead>
             <tbody>
-            @if (mainMajorsPage().length === 0) {
+            @if (mainMajorsItems().length === 0) {
               <tr>
                 <td colspan="3" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
               </tr>
             } @else {
-              @for (major of mainMajorsPage(); track major.id; let i = $index) {
+              @for (major of mainMajorsItems(); track major.id; let i = $index) {
                 <tr [ngClass]="{ 'row-even': i % 2 === 0 }">
                   <td>
                     <div class="fw-semibold">{{ major.name }}</div>
@@ -239,15 +248,17 @@
           <div class="row g-3 align-items-end">
             <div class="col-lg-3 col-md-6">
               <label class="form-label">{{ 'MAJORS_SKILLS.MAJOR_LABEL' | translate }}</label>
-              <p-select
-                [options]="mainMajorsItems()"
+              <app-remote-select
+                [searchUrl]="endpoints.majorSkillsManagement.lookups.majors"
+                [placeholder]="'MAJORS_SKILLS.MAJOR_PLACEHOLDER' | translate"
                 optionLabel="name"
                 optionValue="id"
+                [showClear]="true"
+                [minChars]="1"
                 [ngModel]="subMajorFilters().parentMajorId"
                 (ngModelChange)="setSubMajorParent($event)"
-                class="w-100"
-                [showClear]="true"
-                [placeholder]="'MAJORS_SKILLS.MAJOR_PLACEHOLDER' | translate"></p-select>
+                [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }">
+              </app-remote-select>
             </div>
             <div class="col-lg-3 col-md-6">
               <label class="form-label">{{ 'MAJORS_SKILLS.SEARCH_LABEL' | translate }}</label>
@@ -273,12 +284,12 @@
             </tr>
             </thead>
             <tbody>
-            @if (subMajorsPage().length === 0) {
+            @if (subMajorsItems().length === 0) {
               <tr>
                 <td colspan="3" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
               </tr>
             } @else {
-              @for (major of subMajorsPage(); track major.id; let i = $index) {
+              @for (major of subMajorsItems(); track major.id; let i = $index) {
                 <tr [ngClass]="{ 'row-even': i % 2 === 0 }">
                   <td>{{ major.name }}</td>
                   <td>{{ parentMajorName() }}</td>

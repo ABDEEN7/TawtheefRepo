@@ -1,16 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 import { tap } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { RemoteSelectComponent } from '../../../../shared/components/remote-select/remote-select';
 
 import { MajorsSkillsManagementService } from './services/majors-skills-management.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { EndpointsService } from '../../../../core/http/endpoints.service';
 
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
 import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
@@ -23,8 +27,9 @@ import { MajorListItemModel } from './models/major-list-item.model';
 
 import { SkillFiltersModel } from './models/skill-filters.model';
 import { SkillListItemModel } from './models/skill-list-item.model';
-import {ToggleSwitch} from 'primeng/toggleswitch';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+
+type TabKey = 'mapping' | 'mainMajors' | 'subMajors' | 'skills';
 
 @Component({
   selector: 'app-majors-skills-management',
@@ -36,29 +41,27 @@ import {PaginatedResult} from '../../../../core/models/paginated-result.model';
     FormsModule,
     TranslatePipe,
     Select,
+    ToggleSwitch,
     PaginationComponent,
     I18nNamespaceDirective,
-    ToggleSwitch
+    RemoteSelectComponent,
   ],
 })
 export class MajorsSkillsManagement implements OnInit {
+  private destroyRef = inject(DestroyRef);
+
   private managementService = inject(MajorsSkillsManagementService);
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
-  parentMajorName = computed(() => {
-    const parentId = this.subMajorFilters().parentMajorId;
-    if (!parentId) return '-';
+  public endpoints = inject(EndpointsService);
 
-    const major = this.mainMajorsItems().find(m => m.id === parentId);
-    return major?.name ?? '-';
-  });
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
 
-  activeTab = signal<'mapping' | 'mainMajors' | 'subMajors' | 'skills'>('mapping');
+  activeTab = signal<TabKey>('mapping');
 
-  // ======= Component State (was in service) =======
+  // ======= Data =======
   majorSkills = signal<MajorSkillListItemModel[]>([]);
   majorSkillsMeta = signal<PaginationMetadata | null>(null);
 
@@ -66,22 +69,17 @@ export class MajorsSkillsManagement implements OnInit {
   skillsMeta = signal<PaginationMetadata | null>(null);
 
   mainMajorsResult = signal<PaginatedResult<MajorListItemModel> | null>(null);
-  subMajorsResult  = signal<PaginatedResult<MajorListItemModel> | null>(null);
+  subMajorsResult = signal<PaginatedResult<MajorListItemModel> | null>(null);
 
   mainMajorsItems = computed(() => this.mainMajorsResult()?.items ?? []);
-  subMajorsItems  = computed(() => this.subMajorsResult()?.items ?? []);
+  subMajorsItems = computed(() => this.subMajorsResult()?.items ?? []);
 
-  mainMajorsMeta = computed<PaginationMetadata>(() =>
-    this.mainMajorsResult()?.metadata ??
-    this.buildMetadata(0, this.mainMajorFilters().pageNumber, this.mainMajorFilters().pageSize)
-  );
+  mainMajorsMeta = computed(() => this.mainMajorsResult()?.metadata ?? this.emptyMeta(this.mainMajorFilters()));
+  subMajorsMeta = computed(() => this.subMajorsResult()?.metadata ?? this.emptyMeta(this.subMajorFilters()));
 
-  subMajorsMeta = computed<PaginationMetadata>(() =>
-    this.subMajorsResult()?.metadata ??
-    this.buildMetadata(0, this.subMajorFilters().pageNumber, this.subMajorFilters().pageSize)
-  );
   skillTypes = signal<dropdownOptionsModel[] | null>(null);
 
+  // ======= Filters =======
   majorSkillFilters = signal<MajorSkillFiltersModel>({
     search: '',
     parentMajorId: '',
@@ -112,33 +110,31 @@ export class MajorsSkillsManagement implements OnInit {
     pageSize: 10
   });
 
-  mainMajorsPage = computed(() => {
-    const { pageNumber, pageSize } = this.mainMajorFilters();
-    const start = (pageNumber - 1) * pageSize;
-    return this.mainMajorsItems().slice(start, start + pageSize);
-  });
-
-  subMajorsPage = computed(() => {
-    const { pageNumber, pageSize } = this.subMajorFilters();
-    const start = (pageNumber - 1) * pageSize;
-    return this.subMajorsItems().slice(start, start + pageSize);
+  parentMajorName = computed(() => {
+    const parentId = this.subMajorFilters().parentMajorId;
+    if (!parentId) return '-';
+    return this.mainMajorsItems().find(m => m.id === parentId)?.name ?? '-';
   });
 
   ngOnInit(): void {
-    this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    this.language.current$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(lang => this.currentLang.set(lang));
+
     this.loadSkillTypes();
-    this.loadMainMajors();
+    this.loadMainMajors();     // will auto-pick first parent and load subMajors + majorSkills
     this.loadMajorSkills();
     this.loadSkills();
   }
 
-  switchTab(tab: 'mapping' | 'mainMajors' | 'subMajors' | 'skills') {
+  switchTab(tab: TabKey) {
     this.activeTab.set(tab);
-    if (tab === 'subMajors' && this.subMajorsItems().length === 0) {
-      this.loadSubMajors();
-    }
+
+    // Lazy load sub majors only when needed
+    if (tab === 'subMajors') this.loadSubMajors();
   }
 
+  // ===================== Loaders =====================
   loadMajorSkills() {
     this.managementService.getMajorSkills(this.majorSkillFilters()).pipe(
       tap(res => {
@@ -154,7 +150,6 @@ export class MajorsSkillsManagement implements OnInit {
   loadSkills() {
     this.managementService.getSkills(this.skillFilters()).pipe(
       tap(res => {
-        // keep your compatibility mapping here (component concerns)
         const mapped = (res.items || []).map(s => ({
           ...s,
           isActive: (s as any).isActive ?? s.additionalData?.isActive ?? true,
@@ -172,190 +167,183 @@ export class MajorsSkillsManagement implements OnInit {
 
   loadMainMajors() {
     this.managementService.getMainMajors(this.mainMajorFilters()).subscribe({
-      next: (res) => {
+      next: res => {
         this.mainMajorsResult.set(res);
-        if (!this.majorSkillFilters().parentMajorId && this.mainMajorsItems().length > 0) {
-          const firstId = this.mainMajorsItems()[0].id;
-          this.majorSkillFilters.update(f => ({ ...f, parentMajorId: firstId }));
-          this.subMajorFilters.update(f => ({ ...f, parentMajorId: firstId }));
-          this.loadSubMajors();
+
+        // auto-select first parentMajor if not selected
+        const selected = this.majorSkillFilters().parentMajorId;
+        const first = this.mainMajorsItems()[0]?.id;
+        if (!selected && first) {
+          this.patchSignal(this.majorSkillFilters, { parentMajorId: first, subMajorId: '', pageNumber: 1 });
+          this.patchSignal(this.subMajorFilters, { parentMajorId: first, pageNumber: 1 });
         }
+
+        // ensure sub majors + mapping refresh
+        this.loadSubMajors();
+        this.loadMajorSkills();
       },
       error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.LOAD_ERROR'))
     });
   }
 
   loadSubMajors() {
-    const parentId = this.subMajorFilters().parentMajorId || this.majorSkillFilters().parentMajorId || '';
+    const parentId = this.subMajorFilters().parentMajorId || this.majorSkillFilters().parentMajorId;
     if (!parentId) {
       this.subMajorsResult.set(null);
-      this.subMajorsMeta(); // recompute
       return;
     }
 
-    this.managementService.getSubMajors(parentId).subscribe({
-      next: (res) => this.subMajorsResult.set(res),
+    // IMPORTANT:
+    // Ideally your API should be: getSubMajors(filters) => PaginatedResult
+    // If you only have getSubMajors(parentId) today, pagination/search will remain limited.
+    // Below assumes you have a paginated endpoint; if not, adjust service accordingly.
+    this.managementService.getSubMajorsPaged({
+      ...this.subMajorFilters(),
+      parentMajorId: parentId
+    }).subscribe({
+      next: res => this.subMajorsResult.set(res),
       error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.LOAD_ERROR'))
     });
   }
 
   loadSkillTypes() {
     this.managementService.getSkillsPageForTypes().subscribe({
-      next: (res) => this.skillTypes.set(res),
+      next: res => this.skillTypes.set(res),
       error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.LOAD_ERROR'))
     });
   }
 
-  // ===== Actions remain the same but call service then refresh =====
+  // ===================== Actions =====================
   changeMajorSkillStatus(id: string, isActive: boolean) {
     this.managementService.changeMajorSkillActivation(id, isActive).subscribe({
-      next: () => {
-        this.notification.success(this.translate.instant('MAJORS_SKILLS.STATUS_UPDATED'));
-        this.loadMajorSkills();
-      },
-      error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.UPDATE_FAILED'))
+      next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadMajorSkills(); },
+      error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
     });
   }
 
   changeMajorSkillRequirement(id: string, isSkillRequired: boolean, isActive: boolean) {
     this.managementService.updateMajorSkill({ id, isSkillRequired, isActive }).subscribe({
-      next: () => {
-        this.notification.success(this.translate.instant('MAJORS_SKILLS.SAVE_SUCCESS'));
-        this.loadMajorSkills();
-      },
-      error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.UPDATE_FAILED'))
+      next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMajorSkills(); },
+      error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
     });
   }
 
   changeMajorStatus(id: string, isActive: boolean) {
     this.managementService.changeMajorActivation(id, isActive).subscribe({
-      next: () => {
-        this.notification.success(this.translate.instant('MAJORS_SKILLS.STATUS_UPDATED'));
-        this.loadMainMajors();
-      },
-      error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.UPDATE_FAILED'))
+      next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadMainMajors(); },
+      error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
     });
   }
 
   changeSkillStatus(id: string, isActive: boolean) {
     this.managementService.changeSkillActivation(id, isActive).subscribe({
-      next: () => {
-        this.notification.success(this.translate.instant('MAJORS_SKILLS.STATUS_UPDATED'));
-        this.loadSkills();
-      },
-      error: () => this.notification.error(this.translate.instant('MAJORS_SKILLS.UPDATE_FAILED'))
+      next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadSkills(); },
+      error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
     });
   }
 
-  // ===== Pagination + Filters =====
+  // ===================== Pagination =====================
   onMajorSkillPageChange(page: number) {
-    this.majorSkillFilters.update(f => ({ ...f, pageNumber: page }));
+    this.patchSignal(this.majorSkillFilters, { pageNumber: page });
     this.loadMajorSkills();
   }
 
   onMainMajorsPageChange(page: number) {
-    this.mainMajorFilters.update(f => ({ ...f, pageNumber: page }));
-  }
-
-  onSubMajorsPageChange(page: number) {
-    this.subMajorFilters.update(f => ({ ...f, pageNumber: page }));
-  }
-
-  onSkillsPageChange(page: number) {
-    this.skillFilters.update(f => ({ ...f, pageNumber: page }));
-    this.loadSkills();
-  }
-
-  onMajorSkillFilterChange() {
-    this.majorSkillFilters.update(f => ({ ...f, pageNumber: 1 }));
-    this.loadMajorSkills();
-  }
-
-  onSkillFilterChange() {
-    this.skillFilters.update(f => ({ ...f, pageNumber: 1 }));
-    this.loadSkills();
-  }
-
-  onMainMajorSearchChange() {
-    this.mainMajorFilters.update(f => ({ ...f, pageNumber: 1 }));
+    this.patchSignal(this.mainMajorFilters, { pageNumber: page });
     this.loadMainMajors();
   }
 
-  onSubMajorSearchChange() {
-    this.subMajorFilters.update(f => ({ ...f, pageNumber: 1 }));
+  onSubMajorsPageChange(page: number) {
+    this.patchSignal(this.subMajorFilters, { pageNumber: page });
     this.loadSubMajors();
   }
 
-  updateSelectedParentMajor(value: string) {
-    this.majorSkillFilters.update(f => ({ ...f, parentMajorId: value, subMajorId: '' }));
-    this.subMajorFilters.update(f => ({ ...f, parentMajorId: value, pageNumber: 1 }));
-    this.loadSubMajors();
+  onSkillsPageChange(page: number) {
+    this.patchSignal(this.skillFilters, { pageNumber: page });
+    this.loadSkills();
+  }
+
+  // ===================== Filter setters =====================
+  setMajorSkillSearch(value: string) {
+    this.patchSignal(this.majorSkillFilters, { search: value, pageNumber: 1 });
     this.loadMajorSkills();
   }
 
-  private buildMetadata(total: number, currentPage: number, pageSize: number): PaginationMetadata {
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    return {
-      totalCount: total,
-      pageSize,
-      currentPage,
-      totalPages,
-      hasPreviousPage: currentPage > 1,
-      hasNext: currentPage < totalPages
-    };
-  }
+  updateSelectedParentMajor(value: string) {
+    this.patchSignal(this.majorSkillFilters, { parentMajorId: value, subMajorId: '', pageNumber: 1 });
+    this.patchSignal(this.subMajorFilters, { parentMajorId: value, pageNumber: 1 });
 
-  private syncPagination(meta: PaginationMetadata | null, filterSignal: any) {
-    if (!meta) return;
-    filterSignal.update((f: any) => ({
-      ...f,
-      pageNumber: meta.currentPage,
-      pageSize: meta.pageSize
-    }));
-  }
-  setMajorSkillSearch(value: string) {
-    this.majorSkillFilters.update(f => ({ ...f, search: value, pageNumber: 1 }));
+    this.loadSubMajors();
     this.loadMajorSkills();
   }
 
   setMajorSkillSubMajor(subMajorId: string) {
-    this.majorSkillFilters.update(f => ({ ...f, subMajorId, pageNumber: 1 }));
+    this.patchSignal(this.majorSkillFilters, { subMajorId, pageNumber: 1 });
     this.loadMajorSkills();
   }
 
   setMajorSkillType(skillTypeId: string) {
-    this.majorSkillFilters.update(f => ({ ...f, skillTypeId, pageNumber: 1 }));
+    this.patchSignal(this.majorSkillFilters, { skillTypeId, pageNumber: 1 });
     this.loadMajorSkills();
   }
 
   setMajorSkillActiveOnly(ev: Event) {
     const checked = (ev.target as HTMLInputElement | null)?.checked ?? false;
-    this.majorSkillFilters.update(f => ({ ...f, isActive: checked ? true : null, pageNumber: 1 }));
+    this.patchSignal(this.majorSkillFilters, { isActive: checked ? true : null, pageNumber: 1 });
     this.loadMajorSkills();
   }
 
   setMainMajorSearch(value: string) {
-    this.mainMajorFilters.update(f => ({ ...f, search: value, pageNumber: 1 }));
+    this.patchSignal(this.mainMajorFilters, { search: value, pageNumber: 1 });
     this.loadMainMajors();
   }
 
   setSubMajorParent(parentMajorId: string) {
-    this.subMajorFilters.update(f => ({ ...f, parentMajorId, pageNumber: 1 }));
-    this.updateSelectedParentMajor(parentMajorId); // يحدّث majorSkillFilters + يحمل subMajors + majorSkills
+    this.patchSignal(this.subMajorFilters, { parentMajorId, pageNumber: 1 });
+    this.patchSignal(this.majorSkillFilters, { parentMajorId, subMajorId: '', pageNumber: 1 });
+
+    this.loadSubMajors();
+    this.loadMajorSkills();
   }
 
   setSubMajorSearch(value: string) {
-    this.subMajorFilters.update(f => ({ ...f, search: value, pageNumber: 1 }));
+    this.patchSignal(this.subMajorFilters, { search: value, pageNumber: 1 });
     this.loadSubMajors();
   }
 
   setSkillSearch(value: string) {
-    this.skillFilters.update(f => ({ ...f, search: value, pageNumber: 1 }));
+    this.patchSignal(this.skillFilters, { search: value, pageNumber: 1 });
     this.loadSkills();
   }
 
   setSkillType(skillTypeId: string) {
-    this.skillFilters.update(f => ({ ...f, skillTypeId, pageNumber: 1 }));
+    this.patchSignal(this.skillFilters, { skillTypeId, pageNumber: 1 });
     this.loadSkills();
+  }
+
+  // ===================== Helpers =====================
+  private toast(key: string, isError = false) {
+    const msg = this.translate.instant(key);
+    isError ? this.notification.error(msg) : this.notification.success(msg);
+  }
+
+  private patchSignal<T extends object>(sig: { update: (fn: (v: T) => T) => void }, patch: Partial<T>) {
+    sig.update(v => ({ ...v, ...patch }));
+  }
+
+  private emptyMeta(filters: { pageNumber: number; pageSize: number }): PaginationMetadata {
+    return {
+      totalCount: 0,
+      pageSize: filters.pageSize,
+      currentPage: filters.pageNumber,
+      totalPages: 1,
+      hasPreviousPage: filters.pageNumber > 1,
+      hasNext: false,
+    };
+  }
+
+  private syncPagination(meta: PaginationMetadata | null, filterSignal: { update: (fn: (v: any) => any) => void }) {
+    if (!meta) return;
+    filterSignal.update(f => ({ ...f, pageNumber: meta.currentPage, pageSize: meta.pageSize }));
   }
 }

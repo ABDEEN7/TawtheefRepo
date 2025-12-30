@@ -148,7 +148,9 @@ export class EndpointsService {
       changeActivation: this.getFullUrl('/SkillsManagement/change-activation')
     },
     lookups:{
-      skillTypes: this.getFullUrl('/SkillsManagement/lookups/skill-types')
+      skillTypes: this.getFullUrl('/SkillsManagement/lookups/skill-types'),
+      majors: this.getFullUrl('/MajorSkillsManagement/lookups/majors'),
+      subMajors: this.getFullUrl('/MajorSkillsManagement/lookups/sub-majors'),
     }
   };
 }

@@ -64,7 +64,7 @@ export class MajorsSkillsManagementService {
 
   // =============== Majors ===============
   getMainMajors(filters: MajorFiltersModel): Observable<PaginatedResult<dropdownOptionsModel>> {
-    return this.http.get<PaginatedResult<dropdownOptionsModel>>(this.endpoints.majorSkillsManagement.majors.main_list, { search: filters.search });
+    return this.http.get<PaginatedResult<dropdownOptionsModel>>(this.endpoints.majorSkillsManagement.majors.main_list, filters);
   }
 
   createMajor(payload: any): Observable<void> {
@@ -87,4 +87,9 @@ export class MajorsSkillsManagementService {
   getSkillsPageForTypes(): Observable<SkillListItemModel[]> {
     return this.http.get<SkillListItemModel[]>(this.endpoints.majorSkillsManagement.lookups.skillTypes);
   }
+
+  getSubMajorsPaged(filters: MajorFiltersModel & { parentMajorId: string }): Observable<PaginatedResult<MajorListItemModel>>{
+    return this.http.get<PaginatedResult<MajorListItemModel>>(this.endpoints.majorSkillsManagement.majors.sub_list, filters);
+  }
+
 }

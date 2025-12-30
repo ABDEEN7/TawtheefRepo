@@ -17,7 +17,7 @@ public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IReques
     {
         var majors = await uow.GetEntityRepository<Major>().DbSet.AsNoTracking()
             .Where(x => x.IsActive)
-            .Where(x => x.ParentId == request.ParentId)
+            .Where(x => x.ParentId == request.ParentMajorId)
             .WhereIf(!string.IsNullOrEmpty(request.Search),
                 s =>
                     EF.Functions.Like(s.NameAr, $"%{request.Search}%") ||

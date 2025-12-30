@@ -30,6 +30,7 @@ export class RemoteSelectComponent
   @Input() searchUrl!: string;
   @Input() minChars = 3;
   @Input() debounceMs = 400;
+  @Input() showClear = false;
 
   @Input() optionLabel = 'name';
   @Input() optionValue?: string;
