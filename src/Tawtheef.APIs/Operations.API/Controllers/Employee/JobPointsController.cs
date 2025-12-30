@@ -33,7 +33,7 @@ public class JobPointsController(IMediator mediator) : ControllerBase
 
     #region Points Configurations
 
-    [HttpGet("{jobId:guid}/config")]
+    [HttpGet("config")]
     public async Task<IActionResult> GetJobPointsConfigurations()
     {
         var result = await mediator.Send(new GetJobPointsConfigurationsQuery());
