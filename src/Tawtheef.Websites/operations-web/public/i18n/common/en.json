@@ -5,6 +5,7 @@
   "app.pagination.no_results": "No results found",
   "app.pagination.previous": "Previous",
   "app.pagination.next": "Next",
+  "app.pagination.page_size": "Page size",
 
   "validation.requiredEmail": "Email is required.",
   "validation.invalidEmail": "Enter a valid email address.",

@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using MapsterMapper;
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.DTOs;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -10,7 +11,10 @@ public class MajorSkillManagementProfile : IRegister
 {
      public void Register(TypeAdapterConfig config)
      {
-         // Skill -> SkillDetailsDto
+         TypeAdapterConfig<Major, MajorDetailsDto>.NewConfig()
+             .Map(d => d, s => s.Adapt<DropdownOptions>())
+             .Map(d => d.IsActive, s => s.IsActive)
+             .Map(d => d.Parent, s => s.Parent == null ? null : s.Parent.Adapt<DropdownOptions>());
          TypeAdapterConfig<Skill, SkillDetailsDto>.NewConfig()
              .Map(d => d, s => s.Adapt<DropdownOptions>())
              .Map(d => d.IsActive, s => s.IsActive)

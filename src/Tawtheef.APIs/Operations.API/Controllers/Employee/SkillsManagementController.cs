@@ -47,4 +47,13 @@ public class SkillsManagementController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query, cancellationToken);
         return result.ToActionResult();
     }
+    
+    [HttpGet]
+    [Route("lookups/skills")]
+    public async Task<IActionResult> GetSkills([FromQuery] Tawtheef.Application.Features.Lookups.Queries.GetSkillsQuery query,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query, cancellationToken);
+        return result.ToActionResult();
+    }
 }
