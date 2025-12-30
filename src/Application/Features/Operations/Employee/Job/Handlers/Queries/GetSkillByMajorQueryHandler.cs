@@ -9,16 +9,18 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
-public class GetSkillByMajorQueryHnadler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetSkillByMajorQuery, IResult<List<DropdownOptions>>>
+public class GetSkillByMajorQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetSkillByMajorQuery, IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(GetSkillByMajorQuery request, CancellationToken cancellationToken)
     {
-        var dbSet = unitOfWork.GetEntityRepository<Skill>().DbSet;
+        var dbSet = unitOfWork.GetEntityRepository<MajorSkill>().DbSet;
 
         var entities = await dbSet
             .AsNoTracking()
-            .Where(m => m.MajorId == request.MajorId)
-            .OrderBy(x => x.DisplayOrder)
+            .Where(ms => ms.IsActive)
+            .Where(ms => ms.MajorId == request.MajorId)
+            .Select(ms=> ms.Skill!)
+            .OrderBy(s => s.DisplayOrder)
             .ToListAsync(cancellationToken);
 
         return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));

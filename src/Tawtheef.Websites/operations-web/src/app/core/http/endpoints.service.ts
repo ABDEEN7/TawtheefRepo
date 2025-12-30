@@ -128,4 +128,27 @@ export class EndpointsService {
       this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
     setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)
   };
+  majorSkillsManagement = {
+    list: this.getFullUrl('/MajorSkillsManagement'),
+    details: (id: string) => this.getFullUrl(`/MajorSkillsManagement/${id}`),
+    create: this.getFullUrl('/MajorSkillsManagement'),
+    update: this.getFullUrl('/MajorSkillsManagement'),
+    changeActivation: this.getFullUrl('/MajorSkillsManagement/change-activation'),
+    majors: {
+      main_list: this.getFullUrl('/MajorsManagement/GetMainMajors'),
+      sub_list: this.getFullUrl('/MajorsManagement/GetSubMajors'),
+      create: this.getFullUrl('/MajorsManagement'),
+      update: this.getFullUrl('/MajorsManagement'),
+      changeActivation: this.getFullUrl('/MajorsManagement/change-activation')
+    },
+    skills: {
+      list: this.getFullUrl('/SkillsManagement'),
+      create: this.getFullUrl('/SkillsManagement'),
+      update: this.getFullUrl('/SkillsManagement'),
+      changeActivation: this.getFullUrl('/SkillsManagement/change-activation')
+    },
+    lookups:{
+      skillTypes: this.getFullUrl('/SkillsManagement/lookups/skill-types')
+    }
+  };
 }

@@ -67,9 +67,9 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<City> City { get; set; }
     public DbSet<Country> Country { get; set; }
     public DbSet<Major> Major { get; set; }
+    public DbSet<Skill> Skill { get; set; }
     public DbSet<Office> Office { get; set; }
     public DbSet<SkillType> SkillType { get; set; }
-    public DbSet<SkillRequirementType> SkillRequirementType { get; set; }
     public DbSet<University> University { get; set; }
 
     // Base User Tables
@@ -116,6 +116,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Notification> Notifications { get; set; }
     
     public DbSet<Resource> Resources { get; set; }
+    public DbSet<MajorSkill> MajorSkill { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // ensure client-side evaluation works properly

@@ -1,0 +1,31 @@
+using FluentResults;
+using MapsterMapper;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Extensions;
+using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Queries;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+
+namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Handlers.Queries;
+
+public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IRequestHandler<GetSubMajorsQuery, IResult<PaginatedResult<DropdownOptions>>>
+{
+    public async Task<IResult<PaginatedResult<DropdownOptions>>> Handle(GetSubMajorsQuery request, CancellationToken cancellationToken)
+    {
+        var majors = await uow.GetEntityRepository<Major>().DbSet.AsNoTracking()
+            .Where(x => x.IsActive)
+            .Where(x => x.ParentId == request.ParentId)
+            .WhereIf(!string.IsNullOrEmpty(request.Search),
+                s =>
+                    EF.Functions.Like(s.NameAr, $"%{request.Search}%") ||
+                    EF.Functions.Like(s.NameEn, $"%{request.Search}%") ||
+                    EF.Functions.Like(s.DescriptionAr ?? "", $"%{request.Search}%") ||
+                    EF.Functions.Like(s.DescriptionEn ?? "", $"%{request.Search}%"))
+            .ToPaginatedListAsync<Major, DropdownOptions>(mapper, request, cancellationToken);
+
+        return Result.Ok(majors);
+    }
+}

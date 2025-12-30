@@ -49,5 +49,8 @@ export const employeeRoutes = {
   },
    get jobPoints(){
     return this.employee + '/jobs/job-points';
-  }
+  },
+  get majorsSkillsManagement(){
+    return this.employee + '/majors-skills-management'
+  },
 }
