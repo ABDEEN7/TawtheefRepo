@@ -124,7 +124,9 @@ p{
       background: rgb(13, 67, 97) !important;
       color:white !important;
     }
-
+.p-button{
+  border-radius:2rem !important;
+}
 
 
 
@@ -494,14 +496,27 @@ $badge-bg-select: rgba(241, 230, 229, 1);
 .ltr .p-datatable-tbody > tr > td:last-child{
   border-right: 1px solid rgba(203, 203, 203, 1) !important
 }
-.rtl .p-datatable-tbody > tr > td:first-child{
-  border-right: 1px solid rgba(203, 203, 203, 1) !important
+
+.p-datatable-tbody > tr:last-child > td:first-child{
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0.6rem;
 }
-.rtl .p-datatable-tbody tr:last-child td:last-child{
+.rtl .p-datatable-tbody > tr > td:first-child{
+  border-right: 1px solid rgba(203, 203, 203, 1) !important;
 
 }
+.rtl .p-datatable-tbody > tr:last-child > td:first-child {
+  border-bottom-right-radius: 0.6rem;
+  border-bottom-left-radius: 0;
+}
+.p-datatable-tbody tr:last-child td:last-child {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0.6rem !important;
+}
 .rtl .p-datatable-tbody tr:last-child td:last-child {
-  border-bottom-left-radius: 0.6rem;
+  border-bottom-right-radius: 0 !important;
+  border-bottom-left-radius: 0.6rem !important;
+
 }
 /* Square bullet list */
 .square-bullet {
@@ -587,7 +602,8 @@ body.ltr
     width: 100%;
   }
 }
-.p-datatable-table .p-datatable-thead th{
+.p-datatable-table .p-datatable-thead th,
+.distribution-table th{
   background-color: #8a1538 !important;
   color:white
 }

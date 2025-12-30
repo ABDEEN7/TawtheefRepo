@@ -1,371 +1,377 @@
 <section class="distribution-shell" i18nNamespace="pages/profile-distribution">
-  <div class="card page-header shadow-sm border-0">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-      <div>
-        <p class="eyebrow mb-1">{{ 'distribution.eyebrow' | translate }}</p>
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-          <h2 class="page-title mb-0">{{ 'distribution.title' | translate }}</h2>
-          <span class="pill soft">{{ 'distribution.table.title' | translate }}</span>
-        </div>
-        <p class="text-muted mt-2 mb-0">{{ 'distribution.subtitle' | translate }}</p>
-      </div>
-      <div class="d-flex align-items-center gap-2 flex-wrap">
-        <span class="pill info">
-          <i class="pi pi-users"></i>
-          {{ 'distribution.availableEmployees' | translate }}
-          <span class="count">{{ employees().length }}</span>
-        </span>
-        <span class="pill neutral">
-          <i class="pi pi-check-square"></i>
-          {{ 'distribution.selectedCount' | translate }}
-          <span class="count">{{ selectedIds().size }}</span>
-        </span>
-        <button
-          pButton
-          type="button"
-          class="p-button-outlined"
-          (click)="loadData()"
-          [disabled]="loading()">
-          <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
-          <i class="pi pi-refresh" pButtonIcon></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="card filter-card shadow-sm border-0">
-    <div class="row g-3 align-items-end">
-      <div class="col-lg-5 col-md-6">
-        <label class="form-label">{{ 'distribution.filters.search' | translate }}</label>
-        <span class="p-input-icon-left w-100">
-          <i class="pi pi-search"></i>
-          <input
-            pInputText
-            type="search"
-            class="w-100"
-            [placeholder]="'distribution.filters.searchPlaceholder' | translate"
-            [ngModel]="search()"
-            (ngModelChange)="search.set($event)"
-          />
-        </span>
-      </div>
-      <div class="col-lg-3 col-md-4">
-        <label class="form-label">{{ 'distribution.filters.status' | translate }}</label>
-        <p-select
-          class="w-100"
-          [options]="statusOptions"
-          optionValue="value"
-          [ngModel]="statusFilter()"
-          (onChange)="statusFilter.set($event.value)"
-        >
-          <ng-template pTemplate="selectedItem" let-item>
-            <span>{{ item?.label | translate }}</span>
-          </ng-template>
-          <ng-template let-item pTemplate="item">
-            <span>{{ item.label | translate }}</span>
-          </ng-template>
-        </p-select>
-      </div>
-      <div class="col-lg-4 col-md-12 d-flex gap-2 justify-content-end flex-wrap">
-        <button pButton class="p-button-text" type="button" (click)="selectAll()">
-          {{ 'distribution.filters.selectAll' | translate }}
-        </button>
-        <button pButton class="p-button-text" type="button" (click)="clearSelection()">
-          {{ 'distribution.filters.clearSelection' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="row g-3">
-    <div class="col-lg-9">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
-          <div>
-            <div class="card-title">{{ 'distribution.incoming.title' | translate }}</div>
-            <div class="card-sub">{{ 'distribution.incoming.subtitle' | translate }}</div>
-          </div>
-          <div class="small text-muted" *ngIf="loading()">{{ 'distribution.loading' | translate }}</div>
-        </div>
-
-        <p-table
-          [value]="filteredFiles()"
-          dataKey="profileId"
-          [scrollable]="true"
-          scrollHeight="520px"
-          [selection]="selectedFiles()"
-          (selectionChange)="onSelectionChange($event)"
-          selectionMode="multiple"
-          class="distribution-table"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th style="width: 60px">
-                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              </th>
-              <th>{{ 'distribution.table.candidate' | translate }}</th>
-              <th>{{ 'distribution.table.specialization' | translate }}</th>
-              <th>{{ 'distribution.table.status' | translate }}</th>
-              <th>{{ 'distribution.table.entity' | translate }}</th>
-              <th>{{ 'distribution.table.assignee' | translate }}</th>
-              <th>{{ 'distribution.table.receivedAt' | translate }}</th>
-              <th style="width: 120px">{{ 'distribution.table.actions' | translate }}</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-profile>
-            <tr>
-              <td>
-                <p-tableCheckbox [value]="profile"></p-tableCheckbox>
-              </td>
-              <td>
-                <div class="fw-semibold">{{ profile.candidateName }}</div>
-              </td>
-              <td>
-                <span class="badge text-bg-light border">{{ profile.specialization || ('distribution.table.noValue' | translate) }}</span>
-              </td>
-              <td>
-                <p-tag
-                  [severity]="statusSeverity(profile.status)"
-                  [value]="statusLabel(profile.status) | translate"
-                ></p-tag>
-              </td>
-              <td>
-                <div class="text-truncate" style="max-width: 180px">
-                  {{ profile.targetEntity || ('distribution.table.noValue' | translate) }}
+      <div class="card card-table mb-4">
+           <div class="card-body">
+                <div class="row mb-4">
+                     <div class="col-md-6">
+                         <div>
+                           <p class="eyebrow text-primary mb-0">{{ 'distribution.eyebrow' | translate }}</p>
+                           <div class="d-flex align-items-center gap-2 flex-wrap">
+                             <h2 class="page-title mb-0">{{ 'distribution.title' | translate }}</h2>
+                             <span class="btn btn-outline-primary soft btn-sm">{{ 'distribution.table.title' | translate }}</span>
+                           </div>
+                           <p class="text-muted mt-2 mb-0">{{ 'distribution.subtitle' | translate }}</p>
+                         </div>
+                     </div>
+                     <div class="col-md-6">
+                       <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                            <span class="pill info">
+                              <i class="pi pi-users"></i>
+                              {{ 'distribution.availableEmployees' | translate }}
+                              <span class="count">{{ employees().length }}</span>
+                            </span>
+                             <span class="pill neutral">
+                                   <i class="pi pi-check-square"></i>
+                                   {{ 'distribution.selectedCount' | translate }}
+                                   <span class="count">{{ selectedIds().size }}</span>
+                              </span>
+                             <button pButton type="button"  class="p-button-outlined" (click)="loadData()" [disabled]="loading()">
+                                 <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
+                                 <i class="pi pi-refresh" pButtonIcon></i>
+                             </button>
+                       </div>
+                     </div>
                 </div>
-              </td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <p-avatar
-                    icon="pi pi-user"
-                    shape="circle"
-                    class="bg-light text-muted d-none d-xl-flex"
-                    *ngIf="!profile.assignedEmployeeName"
-                  ></p-avatar>
-                  <p-avatar
-                    [label]="profile.assignedEmployeeName ? profile.assignedEmployeeName[0] : ''"
-                    shape="circle"
-                    class="bg-primary text-white"
-                    *ngIf="profile.assignedEmployeeName"
-                  ></p-avatar>
-                  <div>
-                    <div class="fw-semibold">{{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}</div>
-                  </div>
+                <div class="row">
+                     <div class="col-md-12">
+                       <div class="card card-table mb-4">
+                         <div class="card-body">
+                           <div class="row align-items-end">
+                             <div class="col-lg-5 col-md-6">
+                               <label class="form-label">{{ 'distribution.filters.search' | translate }}</label>
+                               <span class="p-input-icon-left w-100">
+                                     <i class="pi pi-search ms-2"></i>
+                                    <input
+                                      pInputText
+                                      type="search"
+                                      class="w-100 form-control"
+                                      [placeholder]="'distribution.filters.searchPlaceholder' | translate"
+                                      [ngModel]="search()"
+                                      (ngModelChange)="search.set($event)"
+                                    />
+                                  </span>
+                             </div>
+                             <div class="col-lg-3 col-md-4">
+                                 <label class="form-label">{{ 'distribution.filters.status' | translate }}</label>
+                                 <p-select
+                                   class="w-100"
+                                   [options]="statusOptions"
+                                   optionValue="value"
+                                   [ngModel]="statusFilter()"
+                                   (onChange)="statusFilter.set($event.value)">
+                                   <ng-template pTemplate="selectedItem" let-item>
+                                     <span>{{ item?.label | translate }}</span>
+                                   </ng-template>
+                                   <ng-template let-item pTemplate="item">
+                                     <span>{{ item.label | translate }}</span>
+                                   </ng-template>
+                                 </p-select>
+                             </div>
+                             <div class="col-lg-4 col-md-12 d-flex gap-2  flex-wrap">
+                                 <button pButton class="btn btn-primary" type="button" (click)="selectAll()">
+                                   {{ 'distribution.filters.selectAll' | translate }}
+                                 </button>
+                                 <button pButton class="btn p-button-text" type="button" (click)="clearSelection()">
+                                   {{ 'distribution.filters.clearSelection' | translate }}
+                                 </button>
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
                 </div>
-              </td>
-              <td>
-                <div class="small fw-semibold">{{ profile.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
-                <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
-              </td>
-              <td class="text-end">
-        <div class="d-flex gap-2 justify-content-end">
-          @if (canManageDistribution()) {
-            <button
-              pButton
-              pRipple
-              type="button"
-              class="p-button-rounded p-button-text"
-              [pTooltip]="'distribution.actions.assignTo' | translate"
-              (click)="openManualDialog(profile.profileId)">
-              <i class="pi pi-user-plus" pButtonIcon></i>
-            </button>
-            <button
-              pButton
-              pRipple
-              type="button"
-              class="p-button-rounded p-button-text"
-              [pTooltip]="'distribution.actions.redistribute' | translate"
-              (click)="redistribute('auto')">
-              <i class="pi pi-sync" pButtonIcon></i></button>
-          }
-        </div>
-      </td>
-    </tr>
-  </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td [attr.colspan]="8" class="text-center py-4 text-muted">
-                {{ 'distribution.table.empty' | translate }}
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-    </div>
+                <div class="row g-3">
+                     <div class="col-lg-9">
+                         <div class="card card-table mb-4">
+                               <div class="card-body">
+                                   <div class="mb-3">
+                                        <h5 class="mb-0">{{ 'distribution.incoming.title' | translate }}</h5>
+                                        <p class="mb-0">{{ 'distribution.incoming.subtitle' | translate }}</p>
+                                   </div>
+                                    <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
 
-    <div class="col-lg-3">
-      <div class="card shadow-sm border-0 side-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div>
-            <div class="card-title mb-1">{{ 'distribution.summary.title' | translate }}</div>
-            <div class="card-sub">{{ 'distribution.summary.subtitle' | translate }}</div>
-          </div>
-          <p-badge [value]="selectedIds().size" severity="danger"></p-badge>
-        </div>
-        <div class="summary-block">
-          <span class="label">{{ 'distribution.summary.selected' | translate }}</span>
-          <strong>{{ selectedIds().size }}</strong>
-        </div>
-        <div class="summary-block">
-          <span class="label">{{ 'distribution.summary.available' | translate }}</span>
-          <strong>{{ availableEmployees().length }}</strong>
-        </div>
-        <div class="summary-block">
-          <span class="label">{{ 'distribution.summary.total' | translate }}</span>
-          <strong>{{ files().length }}</strong>
-        </div>
-      </div>
+                                   <div class="small text-muted" *ngIf="loading()">{{ 'distribution.loading' | translate }}</div>
+                                 </div>
+                                         <div class="table-card rounded overflow-hidden">
+                                              <div class="table-responsive">
+                                                  <p-table  [value]="filteredFiles()" dataKey="profileId" [scrollable]="true" scrollHeight="520px" [selection]="selectedFiles()" (selectionChange)="onSelectionChange($event)" selectionMode="multiple" class="distribution-table">
+                                         <ng-template pTemplate="header">
+                                           <tr>
+                                             <th style="width: 60px">
+                                               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                             </th>
+                                             <th>{{ 'distribution.table.candidate' | translate }}</th>
+                                             <th>{{ 'distribution.table.specialization' | translate }}</th>
+                                             <th>{{ 'distribution.table.status' | translate }}</th>
+                                             <th>{{ 'distribution.table.entity' | translate }}</th>
+                                             <th>{{ 'distribution.table.assignee' | translate }}</th>
+                                             <th>{{ 'distribution.table.receivedAt' | translate }}</th>
+                                             <th style="width: 120px">{{ 'distribution.table.actions' | translate }}</th>
+                                           </tr>
+                                         </ng-template>
+                                         <ng-template pTemplate="body" let-profile>
+                                           <tr>
+                                             <td>
+                                               <p-tableCheckbox [value]="profile"></p-tableCheckbox>
+                                             </td>
+                                             <td>
+                                               <div class="fw-semibold">{{ profile.candidateName }}</div>
+                                             </td>
+                                             <td>
+                                               <span class="badge text-bg-light border">{{ profile.specialization || ('distribution.table.noValue' | translate) }}</span>
+                                             </td>
+                                             <td>
+                                               <p-tag
+                                                 [severity]="statusSeverity(profile.status)"
+                                                 [value]="statusLabel(profile.status) | translate"
+                                               ></p-tag>
+                                             </td>
+                                             <td>
+                                               <div class="text-truncate" style="max-width: 180px">
+                                                 {{ profile.targetEntity || ('distribution.table.noValue' | translate) }}
+                                               </div>
+                                             </td>
+                                             <td>
+                                               <div class="d-flex align-items-center gap-2">
+                                                 <p-avatar
+                                                   icon="pi pi-user"
+                                                   shape="circle"
+                                                   class="bg-light text-muted d-none d-xl-flex"
+                                                   *ngIf="!profile.assignedEmployeeName"
+                                                 ></p-avatar>
+                                                 <p-avatar
+                                                   [label]="profile.assignedEmployeeName ? profile.assignedEmployeeName[0] : ''"
+                                                   shape="circle"
+                                                   class="bg-primary text-white"
+                                                   *ngIf="profile.assignedEmployeeName"
+                                                 ></p-avatar>
+                                                 <div>
+                                                   <div class="fw-semibold">{{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}</div>
+                                                 </div>
+                                               </div>
+                                             </td>
+                                             <td>
+                                               <div class="small fw-semibold">{{ profile.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
+                                               <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
+                                             </td>
+                                             <td class="text-end">
+                                               <div class="d-flex gap-2 justify-content-end">
+                                                 <button
+                                                   pButton
+                                                   pRipple
+                                                   type="button"
+                                                   class="p-button-rounded p-button-text"
+                                                   [pTooltip]="'distribution.actions.assignTo' | translate"
+                                                   (click)="openManualDialog(profile.profileId)">
+                                                   <i class="pi pi-user-plus" pButtonIcon></i>
+                                                 </button>
+                                                 <button
+                                                   pButton
+                                                   pRipple
+                                                   type="button"
+                                                   class="p-button-rounded p-button-text"
+                                                   [pTooltip]="'distribution.actions.redistribute' | translate"
+                                                   (click)="redistribute('auto')">
+                                                   <i class="pi pi-sync" pButtonIcon></i></button>
+                                               </div>
+                                             </td>
+                                           </tr>
+                                         </ng-template>
+                                         <ng-template pTemplate="emptymessage">
+                                           <tr>
+                                             <td [attr.colspan]="8" class="text-center py-4 text-muted">
+                                               {{ 'distribution.table.empty' | translate }}
+                                             </td>
+                                           </tr>
+                                         </ng-template>
+                                       </p-table>
+                                             </div>
+                                        </div>
+                                     </div>
+                         </div>
+                     </div>
+                     <div class="col-lg-3">
+                          <div class="card card-table mb-4">
+                               <div class="card-body">
+                                 <div class="side-card">
+                                     <div class="d-flex justify-content-between align-items-center mb-3">
+                                         <div>
+                                             <div class="card-title mb-1">{{ 'distribution.summary.title' | translate }}</div>
+                                             <div class="card-sub">{{ 'distribution.summary.subtitle' | translate }}</div>
+                                         </div>
+                                         <p-badge [value]="selectedIds().size" severity="danger"></p-badge>
+                                     </div>
+                                     <div class="summary-block">
+                                         <span class="label">{{ 'distribution.summary.selected' | translate }}</span>
+                                         <strong>{{ selectedIds().size }}</strong>
+                                     </div>
+                                     <div class="summary-block">
+                                         <span class="label">{{ 'distribution.summary.available' | translate }}</span>
+                                         <strong>{{ availableEmployees().length }}</strong>
+                                     </div>
+                                     <div class="summary-block">
+                                         <span class="label">{{ 'distribution.summary.total' | translate }}</span>
+                                         <strong>{{ files().length }}</strong>
+                                     </div>
+                                 </div>
 
-      <div class="card shadow-sm border-0 side-card">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <div>
-            <div class="card-title mb-1">{{ 'distribution.auto.title' | translate }}</div>
-            <div class="card-sub">{{ 'distribution.auto.subtitle' | translate }}</div>
-          </div>
-          <i class="pi pi-cog text-secondary"></i>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">{{ 'distribution.auto.limit' | translate }}</label>
-          <p-input-number
-            inputId="autoLimit"
-            [ngModel]="autoLimit()"
-            (onInput)="autoLimit.set($event.value)"
-            mode="decimal"
-            inputStyleClass="form-control"
-            [placeholder]="'distribution.auto.limitPlaceholder' | translate"
-            [min]="1"
-          ></p-input-number>
-        </div>
-        <div class="employee-mini-list">
-          <div
-            class="employee-tile"
-            *ngFor="let employee of availableEmployees()"
-            [class.disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available">
-            <div class="d-flex justify-content-between align-items-center gap-2">
-              <div>
-                <div class="fw-semibold">{{ employee.name }}</div>
-                <div class="small text-muted">{{ availabilityLabel(employee.availability) | translate }}</div>
-              </div>
-              <p-toggle-switch
-                [ngModel]="autoEmployeeIds().has(employee.employeeId)"
-                (onChange)="toggleEmployee(employee.employeeId)"
-                [disabled]="!canManageDistribution() || !employee.isActive || employee.availability !== EmployeeAvailability.Available"
-              ></p-toggle-switch>
+                                 <div class="side-card">
+                                   <div class="d-flex justify-content-between align-items-center mb-2">
+                                     <div>
+                                       <div class="card-title mb-1">{{ 'distribution.auto.title' | translate }}</div>
+                                       <div class="card-sub">{{ 'distribution.auto.subtitle' | translate }}</div>
+                                     </div>
+                                     <i class="pi pi-cog text-secondary"></i>
+                                   </div>
+                                   <div class="mb-3">
+                                     <label class="form-label d-block">{{ 'distribution.auto.limit' | translate }}</label>
+                                     <p-input-number
+                                       inputId="autoLimit"
+                                       [ngModel]="autoLimit()"
+                                       (onInput)="autoLimit.set($event.value)"
+                                       mode="decimal"
+                                       inputStyleClass="form-control"
+                                       [placeholder]="'distribution.auto.limitPlaceholder' | translate"
+                                       [min]="1"
+                                     ></p-input-number>
+                                   </div>
+                                   <div class="employee-mini-list">
+                                     <div
+                                       class="employee-tile"
+                                       *ngFor="let employee of availableEmployees()"
+                                       [class.disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available">
+                                       <div class="d-flex justify-content-between align-items-center gap-2">
+                                         <div>
+                                           <div class="fw-semibold">{{ employee.name }}</div>
+                                           <div class="small text-muted">{{ availabilityLabel(employee.availability) | translate }}</div>
+                                         </div>
+                                         <p-toggle-switch
+                                           [ngModel]="autoEmployeeIds().has(employee.employeeId)"
+                                           (onChange)="toggleEmployee(employee.employeeId)"
+                                           [disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available"
+                                         ></p-toggle-switch>
+                                       </div>
+                                       <div class="d-flex gap-2 flex-wrap mt-2">
+                                         <span class="pill neutral small-pill">{{ 'distribution.employees.total' | translate }} {{ employee.totalAssigned }}</span>
+                                         <span class="pill success small-pill">{{ 'distribution.employees.completed' | translate }} {{ employee.completed }}</span>
+                                         <span class="pill info small-pill">{{ 'distribution.employees.inReview' | translate }} {{ employee.inReview }}</span>
+                                       </div>
+                                     </div>
+                                   </div>
+                                   <div class="d-flex gap-2 mt-3 flex-wrap">
+                                     <button
+                                       pButton
+                                       class="w-100"
+                                       type="button"
+                                       (click)="openAutoDialog()"
+                                       [disabled]="loading()">
+                                       <span pButtonLabel>{{'distribution.auto.assign' | translate}}</span>
+                                       <i class="pi pi-play" pButtonIcon></i>
+                                     </button>
+                                     <button
+                                       pButton
+                                       class="p-button-outlined w-100"
+                                       type="button"
+                                       (click)="redistribute('auto')"
+                                       [disabled]="loading() || selectedIds().size === 0">
+                                       <span pButtonLabel>{{'distribution.auto.reassign' | translate}}</span>
+                                       <i class="pi replay" pButtonIcon></i>
+                                     </button>
+                                   </div>
+                                 </div>
+
+                                 <div class="side-card">
+                                   <div class="d-flex justify-content-between align-items-center mb-2">
+                                     <div>
+                                       <div class="card-title mb-1">{{ 'distribution.manual.title' | translate }}</div>
+                                       <div class="card-sub">{{ 'distribution.manual.subtitle' | translate }}</div>
+                                     </div>
+                                     <i class="pi pi-user-plus text-secondary"></i>
+                                   </div>
+                                   <div class="mb-3">
+                                     <label class="form-label  d-block">{{ 'distribution.manual.employee' | translate }}</label>
+                                     <p-select
+                                       class="w-100"
+                                       [options]="availableEmployees()"
+                                       optionLabel="name"
+                                       optionValue="employeeId"
+                                       [filter]="true"
+                                       [ngModel]="manualEmployeeId()"
+                                       (onChange)="manualEmployeeId.set($event.value)"
+                                       [showClear]="true"
+                                       [placeholder]="'distribution.manual.selectPlaceholder' | translate"
+                                     ></p-select>
+                                   </div>
+                                   <div class="d-flex gap-2 flex-wrap">
+                                     <button
+                                       pButton
+                                       class="w-100"
+                                       type="button"
+                                       (click)="openManualDialog()"
+                                       [disabled]="loading()">
+                                       <span pButtonLabel>{{'distribution.manual.assign' | translate}}</span>
+                                       <i class="pi user" pButtonIcon></i></button>
+                                     <button
+                                       pButton
+                                       class="p-button-outlined w-100"
+                                       type="button"
+                                       (click)="redistribute('manual')"
+                                       [disabled]="loading() || selectedIds().size === 0 || !manualEmployeeId()">
+                                       <span pButtonLabel>{{'distribution.manual.reassign' | translate}}</span>
+                                       <i class="pi replay" pButtonIcon></i>
+                                     </button>
+                                   </div>
+                                 </div>
+                               </div>
+                          </div>
+                     </div>
+                     <div class="col-md-12">
+                          <div class="card card-table">
+                            <div class="card-body">
+                              <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                                <div>
+                                  <div class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</div>
+                                  <div class="text-muted small">{{ 'distribution.summary.ctaSubtitle' | translate }}</div>
+                                </div>
+                                <div class="d-flex gap-2 flex-wrap">
+                                  <button
+                                    pButton
+                                    class="p-button-outlined"
+                                    type="button"
+                                    (click)="redistribute('manual')"
+                                    [disabled]="loading() || selectedIds().size === 0">
+                                    <span pButtonLabel>{{'distribution.actions.redistribute' | translate}}</span>
+                                    <i class="pi pi-replay" pButtonIcon></i>
+                                  </button>
+                                  <button
+                                    pButton
+                                    class="p-button-secondary"
+                                    type="button"
+                                    (click)="openAutoDialog()"
+                                    [disabled]="loading()">
+                                    <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
+                                    <i class="pi pi-sync" pButtonIcon></i>
+                                  </button>
+                                  <button
+                                    pButton
+                                    type="button"
+                                    (click)="openManualDialog()"
+                                    [disabled]="loading()">
+                                    <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
+                                    <i class="pi pi-user-plus" pButtonIcon></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                     </div>
+                </div>
             </div>
-            <div class="d-flex gap-2 flex-wrap mt-2">
-              <span class="pill neutral small-pill">{{ 'distribution.employees.total' | translate }} {{ employee.totalAssigned }}</span>
-              <span class="pill success small-pill">{{ 'distribution.employees.completed' | translate }} {{ employee.completed }}</span>
-              <span class="pill info small-pill">{{ 'distribution.employees.inReview' | translate }} {{ employee.inReview }}</span>
-            </div>
-          </div>
-        </div>
-        @if (canManageDistribution()) {
-          <div class="d-flex gap-2 mt-3 flex-wrap">
-            <button
-              pButton
-              class="w-100"
-              type="button"
-              (click)="openAutoDialog()"
-              [disabled]="loading()">
-              <span pButtonLabel>{{'distribution.auto.assign' | translate}}</span>
-              <i class="pi pi-play" pButtonIcon></i>
-            </button>
-            <button
-              pButton
-              class="p-button-outlined w-100"
-              type="button"
-              (click)="redistribute('auto')"
-              [disabled]="loading() || selectedIds().size === 0">
-              <span pButtonLabel>{{'distribution.auto.reassign' | translate}}</span>
-              <i class="pi replay" pButtonIcon></i>
-            </button>
-          </div>
-        }
-      </div>
+       </div>
 
-      <div class="card shadow-sm border-0 side-card">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <div>
-            <div class="card-title mb-1">{{ 'distribution.manual.title' | translate }}</div>
-            <div class="card-sub">{{ 'distribution.manual.subtitle' | translate }}</div>
-          </div>
-          <i class="pi pi-user-plus text-secondary"></i>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">{{ 'distribution.manual.employee' | translate }}</label>
-          <p-select
-            class="w-100"
-            [options]="availableEmployees()"
-            optionLabel="name"
-            optionValue="employeeId"
-            [filter]="true"
-            [ngModel]="manualEmployeeId()"
-            (onChange)="manualEmployeeId.set($event.value)"
-            [showClear]="true"
-            [placeholder]="'distribution.manual.selectPlaceholder' | translate"
-          ></p-select>
-        </div>
-        @if (canManageDistribution()) {
-          <div class="d-flex gap-2 flex-wrap">
-            <button
-              pButton
-              class="w-100"
-              type="button"
-              (click)="openManualDialog()"
-              [disabled]="loading()">
-              <span pButtonLabel>{{'distribution.manual.assign' | translate}}</span>
-              <i class="pi user" pButtonIcon></i></button>
-            <button
-              pButton
-              class="p-button-outlined w-100"
-              type="button"
-              (click)="redistribute('manual')"
-              [disabled]="loading() || selectedIds().size === 0 || !manualEmployeeId()">
-              <span pButtonLabel>{{'distribution.manual.reassign' | translate}}</span>
-              <i class="pi replay" pButtonIcon></i>
-            </button>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
 
-  <div class="card action-footer shadow-sm border-0">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <div class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</div>
-        <div class="text-muted small">{{ 'distribution.summary.ctaSubtitle' | translate }}</div>
-      </div>
-      @if (canManageDistribution()) {
-        <div class="d-flex gap-2 flex-wrap">
-          <button
-            pButton
-            class="p-button-outlined"
-            type="button"
-            (click)="redistribute('manual')"
-            [disabled]="loading() || selectedIds().size === 0">
-            <span pButtonLabel>{{'distribution.actions.redistribute' | translate}}</span>
-            <i class="pi pi-replay" pButtonIcon></i>
-          </button>
-          <button
-            pButton
-            class="p-button-secondary"
-            type="button"
-            (click)="openAutoDialog()"
-            [disabled]="loading()">
-            <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
-            <i class="pi pi-sync" pButtonIcon></i>
-          </button>
-          <button
-            pButton
-            type="button"
-            (click)="openManualDialog()"
-            [disabled]="loading()">
-            <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
-            <i class="pi pi-user-plus" pButtonIcon></i>
-          </button>
-        </div>
-      }
-    </div>
-  </div>
+
+
+
+
+
 </section>

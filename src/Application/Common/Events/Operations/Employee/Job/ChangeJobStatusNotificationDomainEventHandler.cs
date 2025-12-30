@@ -4,7 +4,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
 
-namespace Tawtheef.Application.Common.Events.Opertaions.Employee.Job;
+namespace Tawtheef.Application.Common.Events.Operations.Employee.Job;
 
 public sealed class NewJobRequiresReviewDomainEventHandler(
     IEmailSender emailSender,

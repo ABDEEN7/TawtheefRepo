@@ -13,60 +13,60 @@ namespace Tawtheef.Domain.Entities.Recruitment;
 public class Job : EventEntity
 {
 
-    [Required(ErrorMessage = JobMessages.JOB_TITLE_AR_REQUIRED)]
-    [MaxLength(500, ErrorMessage = JobMessages.JOB_TITLE_AR_MAX_LENGTH)]
+    [Required(ErrorMessage = JobMessages.JobTitleArRequired)]
+    [MaxLength(500, ErrorMessage = JobMessages.JobTitleArMaxLength)]
     public required string TitleAr { get; set; }
 
-    [Required(ErrorMessage = JobMessages.JOB_TITLE_EN_REQUIRED)]
-    [MaxLength(500, ErrorMessage = JobMessages.JOB_TITLE_EN_MAX_LENGTH)]
+    [Required(ErrorMessage = JobMessages.JobTitleEnRequired)]
+    [MaxLength(500, ErrorMessage = JobMessages.JobTitleEnMaxLength)]
     public required string TitleEn { get; set; }
 
-    [Required(ErrorMessage = JobMessages.SECTOR_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.SectorRequired)]
     public Guid SectorId { get; set; }
 
-    [Required(ErrorMessage = JobMessages.MANAGEMENT_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.ManagementRequired)]
     public Guid ManagementId { get; set; }
 
-    [Required(ErrorMessage = JobMessages.DEPARTMENT_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.DepartmentRequired)]
     public Guid DepartmentId { get; set; } 
 
-    [Required(ErrorMessage = JobMessages.YEARS_EXPERIENCE_REQUIRED)]
-    [Range(0, 100, ErrorMessage = JobMessages.YEARS_EXPERIENCE_RANGE)]
+    [Required(ErrorMessage = JobMessages.YearsExperienceRequired)]
+    [Range(0, 100, ErrorMessage = JobMessages.YearsExperienceRange)]
     public int YearsOfExperience { get; set; }
 
-    [Required(ErrorMessage = JobMessages.JOB_CATEGORY_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.JobCategoryRequired)]
     public Guid JobCategoryId { get; set; }
 
-    [Required(ErrorMessage = JobMessages.WORK_LOCATION_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.WorkLocationRequired)]
     public Guid WorkLocationId { get; set; }
 
     public Guid? GenderId { get; set; }
 
-    [Required(ErrorMessage = JobMessages.MAJOR_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.MajorRequired)]
     public Guid MajorId { get; set; }
 
     public Guid? SubMajorId { get; set; } 
 
-    [Required(ErrorMessage = JobMessages.WORK_TYPE_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.WorkTypeRequired)]
     public Guid WorkTypeId { get; set; }
 
-    [Required(ErrorMessage = JobMessages.VACANCIES_REQUIRED)]
-    [Range(1, int.MaxValue, ErrorMessage = JobMessages.VACANCIES_GREATER_THAN_ZERO)]
+    [Required(ErrorMessage = JobMessages.VacanciesRequired)]
+    [Range(1, int.MaxValue, ErrorMessage = JobMessages.VacanciesGreaterThanZero)]
     public int NumberOfVacancies { get; set; }
 
-    [Required(ErrorMessage = JobMessages.CLOSING_DATE_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.ClosingDateRequired)]
     public DateTimeOffset ClosingDate { get; set; }
 
     public DateTimeOffset? PublishAt { get; set; }  
     public DateTimeOffset? CancelledAt { get; set; }
 
-    [Required(ErrorMessage = JobMessages.MINIMUM_AGE_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.MinimumAgeRequired)]
     public int MinimumAge { get; set; }
 
-    [Required(ErrorMessage = JobMessages.MAXIMUM_AGE_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.MaximumAgeRequired)]
     public int MaximumAge { get; set; }
 
-    [Required(ErrorMessage = JobMessages.JOB_STATUS_REQUIRED)]
+    [Required(ErrorMessage = JobMessages.JobStatusRequired)]
     public Guid JobStatusId { get; set; }
     public string? OverViewAr { get; set; }
     public string? OverViewEn { get; set; } 

@@ -26,7 +26,7 @@ public sealed class SaveJobReviewCommandHandler(
     {
         var isJobExists = await uow.GetEntityRepository<JobEntity>().DbSet.AnyAsync(x => x.Id == cmd.JobId, ct);
         if (!isJobExists)
-            return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
+            return Result.Fail<Unit>(JobMessages.JobNotFound);
 
         var reviewCycleId = Guid.NewGuid();
 

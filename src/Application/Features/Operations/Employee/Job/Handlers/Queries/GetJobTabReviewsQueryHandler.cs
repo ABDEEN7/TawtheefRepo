@@ -21,7 +21,7 @@ public class GetJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobTabRevi
         var job = result.Value;
 
         if (job is null)
-            return Result.Fail<List<JobTabReviewNoteResponseDto>>(JobMessages.JOB_NOT_FOUND);
+            return Result.Fail<List<JobTabReviewNoteResponseDto>>(JobMessages.JobNotFound);
 
         var jobDto = mapper.Map<List<JobTabReviewNoteResponseDto>>(job);
         return Result.Ok(jobDto);

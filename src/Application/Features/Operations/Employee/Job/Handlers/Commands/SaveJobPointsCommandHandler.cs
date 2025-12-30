@@ -19,7 +19,7 @@ public sealed class SaveJobPointsCommandHandler(
 
         if (!await uow.GetEntityRepository<JobEntity>()
                 .DbSet.AnyAsync(x => x.Id == dto.JobId, ct))
-            return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
+            return Result.Fail<Unit>(JobMessages.JobNotFound);
 
         var repo = uow.GetEntityRepository<JobPointsMain>();
 

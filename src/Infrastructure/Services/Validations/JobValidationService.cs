@@ -26,16 +26,16 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             dto.MajorId, dto.NumberOfVacancies, dto.ClosingDate,
             dto.MinimumAge, dto.MaximumAge, dto.YearsOfExperience))
         {
-            failures.Add(new ValidationFailure("BasicFields", JobMessages.FIELD_REQUIRED));
+            failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
         }
 
         if (!JobBusinessRules.IsValidVacancyCount(dto.NumberOfVacancies))
             failures.Add(new ValidationFailure(nameof(dto.NumberOfVacancies),
-                JobMessages.VACANCIES_GREATER_THAN_ZERO));
+                JobMessages.VacanciesGreaterThanZero));
 
         if (!JobBusinessRules.IsValidClosingDate(dto.ClosingDate))
             failures.Add(new ValidationFailure(nameof(dto.ClosingDate),
-                JobMessages.CLOSING_DATE_FUTURE));
+                JobMessages.ClosingDateFuture));
 
         var ageValidation = JobBusinessRules.ValidateAgeRange(
             dto.MinimumAge, dto.MaximumAge, 18, 65);
@@ -44,7 +44,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             failures.Add(new ValidationFailure("AgeRange", ageValidation.ErrorMessage));
 
         if (await IsDuplicateJob(dto))
-            failures.Add(new ValidationFailure("Duplicate", JobMessages.DUPLICATE_JOB));
+            failures.Add(new ValidationFailure("Duplicate", JobMessages.DuplicateJob));
 
         var hierarchicalErrors = await ValidateHierarchicalRelationships(dto);
         failures.AddRange(hierarchicalErrors);
@@ -75,7 +75,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             {
                 failures.Add(new ValidationFailure(
                     nameof(dto.Skills),
-                    JobMessages.SKILL_NOT_IN_MAJOR));
+                    JobMessages.SkillNotInMajor));
             }
         }
 
@@ -101,71 +101,71 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
              dto.MaximumAge != existingJob.MaximumAge) &&
             !JobBusinessRules.CanModifyAgeRange(existingJob.JobStatusId))
         {
-            failures.Add(new ValidationFailure("AgeRange", JobMessages.CANNOT_MODIFY_AGE_RANGE));
+            failures.Add(new ValidationFailure("AgeRange", JobMessages.CannotModifyAgeRange));
         }
 
         if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
         {
-            failures.Add(new ValidationFailure("EditMode", JobMessages.CAN_ONLY_EDIT_IN_DRAFT));
+            failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
         }
 
         if (JobBusinessRules.IsInApprovalProcess(existingJob.JobStatusId))
         {
-            failures.Add(new ValidationFailure("ApprovalStatus", JobMessages.CANNOT_EDIT_IN_APPROVAL));
+            failures.Add(new ValidationFailure("ApprovalStatus", JobMessages.CannotEditInApproval));
         }
 
         if (dto.Conditions?.Any(c => string.IsNullOrWhiteSpace(c.TextAr)) == true)
-            failures.Add(new ValidationFailure("Condition.TextAr", JobMessages.CONDITION_TEXT_REQUIRED));
+            failures.Add(new ValidationFailure("Condition.TextAr", JobMessages.ConditionTextRequired));
 
         if (dto.Conditions?.Any(c => string.IsNullOrWhiteSpace(c.TextEn)) == true)
-            failures.Add(new ValidationFailure("Condition.TextEn", JobMessages.CONDITION_TEXT_REQUIRED));
+            failures.Add(new ValidationFailure("Condition.TextEn", JobMessages.ConditionTextRequired));
 
         if (dto.Responsibilities?.Any(r => string.IsNullOrWhiteSpace(r.TextAr)) == true)
-            failures.Add(new ValidationFailure("Responsibility.TextAr", JobMessages.RESPONSIBILITY_TEXT_REQUIRED));
+            failures.Add(new ValidationFailure("Responsibility.TextAr", JobMessages.ResponsibilityTextRequired));
 
         if (dto.Responsibilities?.Any(r => string.IsNullOrWhiteSpace(r.TextEn)) == true)
-            failures.Add(new ValidationFailure("Responsibility.TextEn", JobMessages.RESPONSIBILITY_TEXT_REQUIRED));
+            failures.Add(new ValidationFailure("Responsibility.TextEn", JobMessages.ResponsibilityTextRequired));
 
         if (dto.Conditions != null && HasDuplicates(dto.Conditions, c => c.TextAr))
-            failures.Add(new ValidationFailure("Conditions", JobMessages.DUPLICATE_CONDITION));
+            failures.Add(new ValidationFailure("Conditions", JobMessages.DuplicateCondition));
 
         if (dto.Conditions != null && HasDuplicates(dto.Conditions, c => c.TextEn))
-            failures.Add(new ValidationFailure("Conditions", JobMessages.DUPLICATE_CONDITION));
+            failures.Add(new ValidationFailure("Conditions", JobMessages.DuplicateCondition));
 
         if (dto.Responsibilities != null && HasDuplicates(dto.Responsibilities, r => r.TextAr))
-            failures.Add(new ValidationFailure("Responsibilities", JobMessages.DUPLICATE_RESPONSIBILITY));
+            failures.Add(new ValidationFailure("Responsibilities", JobMessages.DuplicateResponsibility));
 
         if (dto.Responsibilities != null && HasDuplicates(dto.Responsibilities, r => r.TextEn))
-            failures.Add(new ValidationFailure("Responsibilities", JobMessages.DUPLICATE_RESPONSIBILITY));
+            failures.Add(new ValidationFailure("Responsibilities", JobMessages.DuplicateResponsibility));
 
         if (dto.RequiredAttachments != null && HasDuplicates(dto.RequiredAttachments, a => a.TitleAr))
-            failures.Add(new ValidationFailure("RequiredAttachments", JobMessages.DUPLICATE_ATTACHMENT));
+            failures.Add(new ValidationFailure("RequiredAttachments", JobMessages.DuplicateAttachment));
 
         if (dto.RequiredAttachments != null && HasDuplicates(dto.RequiredAttachments, a => a.TitleEn))
-            failures.Add(new ValidationFailure("RequiredAttachments", JobMessages.DUPLICATE_ATTACHMENT));
+            failures.Add(new ValidationFailure("RequiredAttachments", JobMessages.DuplicateAttachment));
 
         if (dto.RequiredAttachments?.Any(a => string.IsNullOrWhiteSpace(a.TitleAr)) == true)
-            failures.Add(new ValidationFailure("Attachment.TitleAr", JobMessages.ATTACHMENT_TITLE_REQUIRED));
+            failures.Add(new ValidationFailure("Attachment.TitleAr", JobMessages.AttachmentTitleRequired));
 
         if (dto.RequiredAttachments?.Any(a => string.IsNullOrWhiteSpace(a.TitleEn)) == true)
-            failures.Add(new ValidationFailure("Attachment.TitleEn", JobMessages.ATTACHMENT_TITLE_REQUIRED));
+            failures.Add(new ValidationFailure("Attachment.TitleEn", JobMessages.AttachmentTitleRequired));
 
         if ((dto.TitleAr != existingJob.TitleAr || dto.TitleEn != existingJob.TitleEn) &&
             !JobBusinessRules.CanModifyTitle(existingJob.JobStatusId))
         {
-            failures.Add(new ValidationFailure("Title", JobMessages.CANNOT_MODIFY_TITLE));
+            failures.Add(new ValidationFailure("Title", JobMessages.CannotModifyTitle));
         }
 
         if (HaveDegreesChanged(dto.Degrees, existingJob.JobDegrees) &&
             !JobBusinessRules.CanModifyQualifications(existingJob.JobStatusId))
         {
-            failures.Add(new ValidationFailure("Degrees", JobMessages.CANNOT_MODIFY_QUALIFICATIONS));
+            failures.Add(new ValidationFailure("Degrees", JobMessages.CannotModifyQualifications));
         }
 
         if (HaveSkillsChanged(dto.Skills, existingJob.JobSkills) &&
             !JobBusinessRules.CanModifySkills(existingJob.JobStatusId))
         {
-            failures.Add(new ValidationFailure("Skills", JobMessages.CANNOT_MODIFY_SKILLS));
+            failures.Add(new ValidationFailure("Skills", JobMessages.CannotModifySkills));
         }
 
         var skillMajorErrors = await ValidateSkillsByMajor(dto);
@@ -190,7 +190,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             );
 
             if (!allTabsCompleted)
-                failures.Add(new ValidationFailure("TabsCompletion", JobMessages.ALL_TABS_REQUIRED));
+                failures.Add(new ValidationFailure("TabsCompletion", JobMessages.AllTabsRequired));
         }
 
         if (newStatusId == JobStatusIds.Published &&
@@ -198,7 +198,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         {
             failures.Add(new ValidationFailure(
                 "Status",
-                JobMessages.CAN_ONLY_PUBLISH_APPROVED));
+                JobMessages.CanOnlyPublishApproved));
         }
 
         if (newStatusId == JobStatusIds.Closed)
@@ -207,7 +207,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             {
                 failures.Add(new ValidationFailure(
                     nameof(job.ClosingDate),
-                    JobMessages.CANNOT_CLOSE_MANUALLY_BEFORE_DEADLINE));
+                    JobMessages.CannotCloseManuallyBeforeDeadline));
             }
         }
 
@@ -218,7 +218,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             {
                 failures.Add(new ValidationFailure(
                     "Status",
-                    JobMessages.CANNOT_CANCEL_FINAL_STATE));
+                    JobMessages.CannotCancelFinalState));
             }
         }
 
@@ -226,7 +226,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         {
             failures.Add(new ValidationFailure(
                 "StateMachine",
-                JobMessages.INVALID_STATUS_TRANSITION));
+                JobMessages.InvalidStatusTransition));
         }
 
         return Task.FromResult(failures.Count != 0
@@ -273,7 +273,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             if (!isValid)
                 failures.Add(new ValidationFailure(
                     nameof(dto.ManagementId),
-                    JobMessages.MANAGEMENT_NOT_UNDER_SECTOR));
+                    JobMessages.ManagementNotUnderSector));
         }
 
         if (dto.ManagementId != Guid.Empty && dto.DepartmentId != Guid.Empty)
@@ -282,7 +282,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             if (!isValid)
                 failures.Add(new ValidationFailure(
                     nameof(dto.DepartmentId),
-                    JobMessages.DEPARTMENT_NOT_UNDER_MANAGEMENT));
+                    JobMessages.DepartmentNotUnderManagement));
         }
 
         if (dto.MajorId != Guid.Empty && dto.SubMajorId.HasValue)
@@ -291,7 +291,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             if (!isValid)
                 failures.Add(new ValidationFailure(
                     nameof(dto.SubMajorId),
-                    JobMessages.SUBMAJOR_NOT_UNDER_MAJOR));
+                    JobMessages.SubmajorNotUnderMajor));
         }
 
         return failures;

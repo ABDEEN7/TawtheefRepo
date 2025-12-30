@@ -22,7 +22,7 @@ public class AddJobPointsConfigurationCommandHandler(
 
         var existingResult = await jobPointsRepository.GetByJobIdAsync(dto.JobId);
         if (existingResult.IsSuccess)
-            return Result.Fail<JobPointConfigurationResponseDto>(JobMessages.JOB_POINTS_ALREADY_EXIST);
+            return Result.Fail<JobPointConfigurationResponseDto>(JobMessages.JobPointsAlreadyExist);
 
         var jobPointsConfig = new JobPointConfiguration
         {
@@ -39,7 +39,7 @@ public class AddJobPointsConfigurationCommandHandler(
         };
 
         if (!jobPointsConfig.IsValid())
-            return Result.Fail<JobPointConfigurationResponseDto>(JobMessages.JOB_POINTS_TOTAL_NOT_VALID);
+            return Result.Fail<JobPointConfigurationResponseDto>(JobMessages.JobPointsTotalNotValid);
 
         await jobPointsRepository.Repository.AddAsync(jobPointsConfig);
         await uow.SaveChangesAsync(cancellationToken);

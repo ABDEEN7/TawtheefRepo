@@ -19,7 +19,7 @@ public class JobPointsConfigurationsRepository(IGenericRepository<JobPointConfig
             .FirstOrDefaultAsync(p => p.JobId == jobId);
 
         return jobPointsConfiguration == null
-            ? Result.Fail<JobPointConfiguration>(JobMessages.JOB_POINTS_CONFIGURATION_NOT_FOUND)
+            ? Result.Fail<JobPointConfiguration>(JobMessages.JobPointsConfigurationNotFound)
             : Result.Ok(jobPointsConfiguration);
     }
 }

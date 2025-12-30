@@ -14,7 +14,6 @@
 }
 
 .eyebrow {
-  color: #b6205e;
   font-weight: 700;
   letter-spacing: 0.3px;
 }
@@ -92,18 +91,18 @@
   font-size: 12px;
 }
 
-.distribution-table ::ng-deep th {
-  background: #faf5f7 !important;
-  color: #5a1a5d;
-  font-weight: 700;
-}
+//.distribution-table ::ng-deep th {
+//  background: #faf5f7 !important;
+//  color: #5a1a5d;
+//  font-weight: 700;
+//}
 
-.distribution-table ::ng-deep tbody tr:hover {
-  background: #fdf4f7;
-}
+//.distribution-table ::ng-deep tbody tr:hover {
+//  background: #fdf4f7;
+//}
 
 .distribution-table ::ng-deep .p-tag {
-  border-radius: 12px;
+  border-radius: 2rem;
   padding: 6px 12px;
   font-weight: 700;
 }
@@ -115,6 +114,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 1rem;
 }
 
 .summary-block {

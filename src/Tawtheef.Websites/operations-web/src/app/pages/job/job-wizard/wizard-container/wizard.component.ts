@@ -137,29 +137,24 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private openBasicDataPopup(): void {
-    const ref = this.dialogService.open(JobBasicModalComponent, {
-      width: '950px',
+    this.dialogService.open(JobBasicModalComponent, {
+      width: 'min(920px, 96vw)',
       modal: true,
       header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
       styleClass: 'custom-bootstrap-dialog',
-      closable: true,
-      closeOnEscape: false,
       data: {
         isCreateMode: true,
         showInWizard: true,
       },
-    });
-
-    ref?.onClose.pipe(takeUntil(this.destroy$)).subscribe((result) => {
+    })?.onClose.subscribe((result) => {
       if (result?.success && result?.jobId) {
         this.hasBasicData = true;
         this.jobId = result.jobId;
         this.isEditMode = true;
-
         this.loadJobForWizard();
-      } else {
-        this.router.navigate([routes.employee.JobList]);
-      }
+        return;
+      } 
+      this.router.navigate([routes.employee.JobList]);
     });
   }
 
