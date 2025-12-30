@@ -11,25 +11,26 @@ public sealed class ApplicationRoleClaimsConfiguration
 {
     public void Configure(EntityTypeBuilder<IdentityRoleClaim<Guid>> builder)
     {
-        foreach (var claim in PermissionNames.SystemAdminPermissions)
+        var id = -1;
+
+        void Seed(Guid roleId, IEnumerable<string> permissions)
         {
-            builder.HasData(new IdentityRoleClaim<Guid> { RoleId = SystemRoleIds.SystemAdmin, ClaimType = RoleClaimTypes.Permission , ClaimValue = claim });
+            foreach (var permission in permissions)
+            {
+                builder.HasData(new IdentityRoleClaim<Guid>
+                {
+                    Id = id--,
+                    RoleId = roleId,
+                    ClaimType = RoleClaimTypes.Permission,
+                    ClaimValue = permission
+                });
+            }
         }
-        foreach (var claim in PermissionNames.EmployeePermissions)
-        {
-            builder.HasData(new IdentityRoleClaim<Guid> { RoleId = SystemRoleIds.Employee, ClaimType = RoleClaimTypes.Permission , ClaimValue = claim });
-        }
-        foreach (var claim in PermissionNames.OfficeAdminPermissions)
-        {
-            builder.HasData(new IdentityRoleClaim<Guid> { RoleId = SystemRoleIds.OfficeAdmin, ClaimType = RoleClaimTypes.Permission , ClaimValue = claim });
-        }
-        foreach (var claim in PermissionNames.OfficeUserPermissions)
-        {
-            builder.HasData(new IdentityRoleClaim<Guid> { RoleId = SystemRoleIds.OfficeUser, ClaimType = RoleClaimTypes.Permission , ClaimValue = claim });
-        }
-        foreach (var claim in PermissionNames.EmployeeSuperAdminPermissions)
-        {
-            builder.HasData(new IdentityRoleClaim<Guid> { RoleId = SystemRoleIds.EmployeeSuperAdmin, ClaimType = RoleClaimTypes.Permission , ClaimValue = claim });
-        }
+
+        Seed(SystemRoleIds.SystemAdmin, PermissionNames.SystemAdminPermissions);
+        Seed(SystemRoleIds.Employee, PermissionNames.EmployeePermissions);
+        Seed(SystemRoleIds.OfficeAdmin, PermissionNames.OfficeAdminPermissions);
+        Seed(SystemRoleIds.OfficeUser, PermissionNames.OfficeUserPermissions);
+        Seed(SystemRoleIds.EmployeeSuperAdmin, PermissionNames.EmployeeSuperAdminPermissions);
     }
 }

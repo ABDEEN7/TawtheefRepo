@@ -44,6 +44,211 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            ClaimType = "permission",
+                            ClaimValue = "dashboard.view",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -2,
+                            ClaimType = "permission",
+                            ClaimValue = "roles.view",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -3,
+                            ClaimType = "permission",
+                            ClaimValue = "roles.manage",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -4,
+                            ClaimType = "permission",
+                            ClaimValue = "users.view",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -5,
+                            ClaimType = "permission",
+                            ClaimValue = "users.manage",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -6,
+                            ClaimType = "permission",
+                            ClaimValue = "offices.view",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -7,
+                            ClaimType = "permission",
+                            ClaimValue = "offices.manage",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -8,
+                            ClaimType = "permission",
+                            ClaimValue = "dashboard.view",
+                            RoleId = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd")
+                        },
+                        new
+                        {
+                            Id = -9,
+                            ClaimType = "permission",
+                            ClaimValue = "dashboard.view",
+                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
+                        },
+                        new
+                        {
+                            Id = -10,
+                            ClaimType = "permission",
+                            ClaimValue = "office.users.view",
+                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
+                        },
+                        new
+                        {
+                            Id = -11,
+                            ClaimType = "permission",
+                            ClaimValue = "office.users.manage",
+                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
+                        },
+                        new
+                        {
+                            Id = -12,
+                            ClaimType = "permission",
+                            ClaimValue = "dashboard.view",
+                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
+                        },
+                        new
+                        {
+                            Id = -13,
+                            ClaimType = "permission",
+                            ClaimValue = "dashboard.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -14,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -15,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.manage",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -16,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.distribution.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -17,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.distribution.manage",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -18,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -19,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.review",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -20,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.changes",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -21,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -22,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.manage",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -23,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.approve",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -24,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.points.manage",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -25,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.invitations.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -26,
+                            ClaimType = "permission",
+                            ClaimValue = "nominations.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -27,
+                            ClaimType = "permission",
+                            ClaimValue = "nominations.manage",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -28,
+                            ClaimType = "permission",
+                            ClaimValue = "office.users.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -29,
+                            ClaimType = "permission",
+                            ClaimValue = "office.users.manage",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -125,6 +330,26 @@ namespace Tawtheef.Infrastructure.Migrations
                         {
                             UserId = new Guid("5a4c8063-07a4-43ba-b4a8-8d980a323738"),
                             RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            UserId = new Guid("200c5018-fa8c-4ee7-a088-9077200b125c"),
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            UserId = new Guid("781561c3-0175-4165-80c1-7c6a79130b25"),
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            UserId = new Guid("0593ad82-e44e-4f55-aa08-c5c80764a873"),
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            UserId = new Guid("42e0d563-7603-453c-81b1-6b2325622b40"),
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         });
                 });
 
@@ -6410,7 +6635,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082"),
-                            ConcurrencyStamp = "be86e8fa-83c6-4dde-a518-8acd9fc361f6",
+                            ConcurrencyStamp = "00ef28cd-ca1e-4a83-9a29-7e6e07c50e78",
                             DescriptionAr = "مدير النظام الكامل",
                             DescriptionEn = "Full system administrator",
                             IsSystemRole = true,
@@ -6422,23 +6647,23 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd"),
-                            ConcurrencyStamp = "f48c5f27-8acf-4e83-8223-83d7ede14d6e",
-                            DescriptionAr = "مدير شؤون الموظفين",
-                            DescriptionEn = "Human resources administrator",
+                            ConcurrencyStamp = "82bb983f-1a91-4572-8d70-0598885b0514",
+                            DescriptionAr = "موظف اساسي",
+                            DescriptionEn = "Basic Employee",
                             IsSystemRole = true,
                             Name = "Employee",
-                            NameAr = "مدير الموارد البشرية",
-                            NameEn = "HR Admin",
+                            NameAr = "موظف",
+                            NameEn = "Employee",
                             NormalizedName = "EMPLOYEE"
                         },
                         new
                         {
                             Id = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca"),
-                            ConcurrencyStamp = "85ee1114-f412-4902-9924-5a83c4127ce2",
+                            ConcurrencyStamp = "51961925-7d86-4e6a-bf60-646475d80319",
                             DescriptionAr = "مدير المكتب والصلاحيات المرتبطة",
                             DescriptionEn = "Office administrator",
                             IsSystemRole = true,
-                            Name = "Employee",
+                            Name = "OfficeAdmin",
                             NameAr = "مدير المكتب",
                             NameEn = "Office Admin",
                             NormalizedName = "OFFICEADMIN"
@@ -6446,14 +6671,26 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8"),
-                            ConcurrencyStamp = "92e30096-1fad-44fd-bbba-7623ef7598d3",
+                            ConcurrencyStamp = "d0f6fe80-b684-40c0-9351-727e2feef829",
                             DescriptionAr = "موظف المكتب العادي",
                             DescriptionEn = "Office user",
                             IsSystemRole = true,
-                            Name = "Employee",
+                            Name = "OfficeUser",
                             NameAr = "موظف المكتب",
                             NameEn = "Office User",
                             NormalizedName = "OFFICEUSER"
+                        },
+                        new
+                        {
+                            Id = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07"),
+                            ConcurrencyStamp = "b8d1862f-102c-4e76-9d53-3e9452930ce0",
+                            DescriptionAr = "موظف بصلاحية كاملة",
+                            DescriptionEn = "Employee Super Admin",
+                            IsSystemRole = false,
+                            Name = "EmployeeSuperAdmin",
+                            NameAr = "موظف بصلاحية كاملة",
+                            NameEn = "Employee Super Admin",
+                            NormalizedName = "EMPLOYEESUPERADMIN"
                         });
                 });
 
@@ -7044,26 +7281,94 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2464b38a-5439-421d-ac39-e0bfbdcbc17e"),
+                            Id = new Guid("200c5018-fa8c-4ee7-a088-9077200b125c"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ae0628d3-8171-4a35-b168-fee762654e7a",
+                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
                             CreatedDate = new DateTimeOffset(new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 3, 0, 0, 0)),
-                            Email = "qa.e@tawtheef.com",
+                            Email = "t-m.abdin@edu.gov.qa",
                             EmailConfirmed = true,
-                            FullNameAr = "QA. E",
-                            FullNameEn = "QA. E",
+                            FullNameAr = "Employee Super Admin",
+                            FullNameEn = "Employee Super Admin",
                             IsBlocked = false,
                             IsDeleted = false,
                             LockoutEnabled = false,
-                            NormalizedEmail = "QA.E@TAWTHEEF.COM",
-                            NormalizedUserName = "QA.E@TAWTHEEF.COM",
+                            NormalizedEmail = "T-M.ABDIN@EDU.GOV.QA",
+                            NormalizedUserName = "T-M.ABDIN@EDU.GOV.QA",
                             OtpAttempts = 0,
                             OtpSends = 0,
-                            PasswordHash = "AQAAAAIAAYagAAAAEGcM+djZ3c2Q/N1kjZpDwcwjH2sfsRHkNS5H4lObrCaoiN238MHwgDFbLXiNsm5J4A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "55669db7-ef3a-493f-89a6-a1d608403f83",
+                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                             TwoFactorEnabled = false,
-                            UserName = "qa.e@tawtheef.com",
+                            UserName = "t-m.abdin@edu.gov.qa",
+                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
+                        },
+                        new
+                        {
+                            Id = new Guid("781561c3-0175-4165-80c1-7c6a79130b25"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
+                            CreatedDate = new DateTimeOffset(new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 3, 0, 0, 0)),
+                            Email = "t-a.jaber@edu.gov.qa",
+                            EmailConfirmed = true,
+                            FullNameAr = "Employee Super Admin",
+                            FullNameEn = "Employee Super Admin",
+                            IsBlocked = false,
+                            IsDeleted = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "T-A.JABER@EDU.GOV.QA",
+                            NormalizedUserName = "T-A.JABER@EDU.GOV.QA",
+                            OtpAttempts = 0,
+                            OtpSends = 0,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
+                            TwoFactorEnabled = false,
+                            UserName = "t-a.jaber@edu.gov.qa",
+                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
+                        },
+                        new
+                        {
+                            Id = new Guid("0593ad82-e44e-4f55-aa08-c5c80764a873"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
+                            CreatedDate = new DateTimeOffset(new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 3, 0, 0, 0)),
+                            Email = "t-m.khatatbeh@edu.gov.qa",
+                            EmailConfirmed = true,
+                            FullNameAr = "Employee Super Admin",
+                            FullNameEn = "Employee Super Admin",
+                            IsBlocked = false,
+                            IsDeleted = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "T-M.KHATATBEH@EDU.GOV.QA",
+                            NormalizedUserName = "T-M.KHATATBEH@EDU.GOV.QA",
+                            OtpAttempts = 0,
+                            OtpSends = 0,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
+                            TwoFactorEnabled = false,
+                            UserName = "t-m.khatatbeh@edu.gov.qa",
+                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
+                        },
+                        new
+                        {
+                            Id = new Guid("42e0d563-7603-453c-81b1-6b2325622b40"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
+                            CreatedDate = new DateTimeOffset(new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 3, 0, 0, 0)),
+                            Email = "t-hu.ahmed@edu.gov.qa",
+                            EmailConfirmed = true,
+                            FullNameAr = "Employee Super Admin",
+                            FullNameEn = "Employee Super Admin",
+                            IsBlocked = false,
+                            IsDeleted = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "T-HU.AHMED@EDU.GOV.QA",
+                            NormalizedUserName = "T-HU.AHMED@EDU.GOV.QA",
+                            OtpAttempts = 0,
+                            OtpSends = 0,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
+                            TwoFactorEnabled = false,
+                            UserName = "t-hu.ahmed@edu.gov.qa",
                             UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
                         });
                 });

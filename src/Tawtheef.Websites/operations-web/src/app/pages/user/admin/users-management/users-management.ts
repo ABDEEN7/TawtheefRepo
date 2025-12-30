@@ -15,6 +15,8 @@ import {PaginationComponent} from '../../../../shared/components/pagination/pagi
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {NotificationService} from '../../../../core/services/notification.service';
 import {SystemRoles} from '../../../../core/constants/systemRoles';
+import {PaginatedResult} from '../../../../core/models/paginated-result.model';
+import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
 
 @Component({
   selector: 'app-users-management',
@@ -39,8 +41,12 @@ export class UsersManagement implements OnInit {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
 
-  users = this.usersService.users;
-  paginationMetadata = this.usersService.paginationMetadata;
+  // Component now manages its own state
+  private _users = signal<UserDto[]>([]);
+  private _paginationMetadata = signal<PaginationMetadata | null>(null);
+
+  public users = this._users.asReadonly();
+  public paginationMetadata = this._paginationMetadata.asReadonly();
 
   filters = signal<UserFilters>({
     pageNumber: 1,
@@ -70,13 +76,15 @@ export class UsersManagement implements OnInit {
 
   loadUsers() {
     this.usersService.getUsers(this.filters()).subscribe({
-      next: () => {
-        const metadata = this.paginationMetadata();
-        if (metadata) {
+      next: (response: PaginatedResult<UserDto>) => {
+        this._users.set(response.items);
+        this._paginationMetadata.set(response.metadata);
+
+        if (response.metadata) {
           this.filters.update(f => ({
             ...f,
-            pageNumber: metadata.currentPage,
-            pageSize: metadata.pageSize
+            pageNumber: response.metadata.currentPage,
+            pageSize: response.metadata.pageSize
           }));
         }
       },
@@ -125,9 +133,11 @@ export class UsersManagement implements OnInit {
     this.usersService.updateBlockStatus(user.id, desiredState)
       .subscribe({
         next: () => {
-          user.isBlocked = desiredState;
+          // Update local state
+          this._users.update(users =>
+            users.map(u => u.id === user.id ? {...u, isBlocked: desiredState} : u)
+          );
           this.notification.success(this.translate.instant(desiredState ? 'USERS.BLOCK_SUCCESS' : 'USERS.UNBLOCK_SUCCESS'));
-          this.loadUsers();
         },
         error: () => {
           this.notification.error(this.translate.instant(desiredState ? 'USERS.BLOCK_FAILED' : 'USERS.UNBLOCK_FAILED'));
@@ -138,25 +148,6 @@ export class UsersManagement implements OnInit {
   onBlockedFilterChange(value: boolean | null) {
     this.filters.update(f => ({...f, isBlocked: value ?? null}));
     this.onSearchChange();
-  }
-
-  localizedRole(role: RoleSummaryDto) {
-    return this.currentLang() === 'ar'
-      ? role.nameAr || role.nameEn
-      : role.nameEn || role.nameAr;
-  }
-
-  userRoles(user: UserDto) {
-    const roles = user.roles ?? [];
-
-    if (roles.length) {
-      return roles.map(r => ({
-        display: this.localizedRole(r),
-        isSystemRole: !!r.isSystemRole
-      }));
-    }
-
-    return (user.roleNames ?? []).map(name => ({ display: name, isSystemRole: false }));
   }
 
   hasSystemAdminRole(user: UserDto) {

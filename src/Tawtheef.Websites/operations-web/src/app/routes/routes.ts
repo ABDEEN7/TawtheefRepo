@@ -2,7 +2,7 @@
 import {errorRoutes} from "./error-routes";
 import {adminRoutes} from './admin-routes';
 import {employeeRoutes} from './employee-routes';
-import {Roles} from '../core/constants/roles';
+import {SystemRoles} from '../core/constants/systemRoles';
 
 export let routes = {
   baseUrl: '',
@@ -15,9 +15,11 @@ export let routes = {
   ...errorRoutes,
   dashboard(role: string) {
     switch (role) {
-      case Roles.SystemAdmin:
+      case SystemRoles.SystemAdmin:
         return this.admin.dashboard;
-      case Roles.Employee:
+      case SystemRoles.Employee:
+      case SystemRoles.OfficeAdmin:
+      case SystemRoles.OfficeUser:
         return this.employee.dashboard;
       default:
         return '/';
@@ -25,9 +27,11 @@ export let routes = {
   },
   settings(role: string) {
     switch (role) {
-      case Roles.SystemAdmin:
+      case SystemRoles.SystemAdmin:
         return this.admin.settings;
-      case Roles.Employee:
+      case SystemRoles.Employee:
+      case SystemRoles.OfficeAdmin:
+      case SystemRoles.OfficeUser:
         return this.employee.settings;
       default:
         return '/';

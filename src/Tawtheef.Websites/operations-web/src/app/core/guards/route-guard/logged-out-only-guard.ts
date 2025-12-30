@@ -3,7 +3,7 @@ import {inject} from "@angular/core";
 import {AuthStateService} from "../../auth/auth-state.service";
 import {TokenService} from "../../auth/token.service";
 import {routes} from "../../../routes/routes";
-import {Roles} from '../../constants/roles';
+import {SystemRoles} from '../../constants/systemRoles';
 
 /** optional: prevent going to /auth/* if already logged in */
 export const loggedOutOnlyGuard: CanMatchFn = () => {
@@ -12,8 +12,10 @@ export const loggedOutOnlyGuard: CanMatchFn = () => {
   const router = inject(Router);
   const rawRoles = tokenService.getRolesFromToken(tokenService.getToken() || '');
   const mainSystemRole =
-    rawRoles.includes(Roles.SystemAdmin) ? Roles.SystemAdmin
-      : rawRoles.includes(Roles.Employee) ? Roles.Employee
+    rawRoles.includes(SystemRoles.SystemAdmin) ? SystemRoles.SystemAdmin
+      : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
+        : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
+          : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
         : '';
   return auth.isAuthenticated(true) ? router.createUrlTree([routes.dashboard(mainSystemRole)]) : true;
 };

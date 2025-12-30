@@ -24,15 +24,16 @@ public class EmployeeUser : User
         var name = FullName.TryParse(displayName);
         if (name.IsFailed) return Result.Fail<User>(name.Errors);
 
+        var userId = Guid.NewGuid();
         var user = new EmployeeUser
         {
+            Id = userId,
             Email = email,
             UserName = email,
             FullNameEn = name.Value.First + " " + name.Value.Last,
             FullNameAr = name.Value.First + " " + name.Value.Last,
             UserTypeId = UserTypeIds.Employee
         };
-
         return Result.Ok<User>(user);
     }
 

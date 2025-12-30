@@ -84,14 +84,14 @@
                 </span>
               </td>
               <td>
-                @if (userRoles(user).length > 0) {
-                  @for (role of userRoles(user); track role) {
+                @if (user.roles && user.roles!.length > 0) {
+                  @for (role of user.roles; track role) {
                     <span class="badge me-1 mb-1 role-chip"
                           [class.bg-secondary-subtle]="!role.isSystemRole"
                           [class.text-secondary]="!role.isSystemRole"
                           [class.bg-info-subtle]="role.isSystemRole"
                           [class.text-info]="role.isSystemRole">
-                      {{ role.display }}
+                      {{ this.currentLang() === 'ar' ? (role.nameAr || role.nameEn) : (role.nameEn || role.nameAr) }}
                     </span>
                   }
                 } @else {

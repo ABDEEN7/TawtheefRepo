@@ -43,9 +43,8 @@
                   </span>
                 }
               </td>
-
-              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-                @if (!role.isSystemRole) {
+              @if (!role.isSystemRole) {
+                  <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
                   <button
                     type="button"
                     class="icon-btn"
@@ -67,8 +66,11 @@
                     aria-label="{{ 'ROLES.DELETE' | translate }}">
                     <i class="bi bi-trash"></i>
                   </button>
-                }
-              </td>
+                </td>
+              }
+              @else {
+                <td></td>
+              }
             </tr>
           }
         }
