@@ -5,6 +5,7 @@ import {ProfileApprovalDetailPage} from './profile-managment/approval-detail/pro
 import {ProfileDistributionPage} from './profile-managment/distribution/profile-distribution.page';
 import {JobInvitationSummary} from './job-managment/job-invitation-summary/job-invitation-summary';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
+import {MajorsSkillsManagement} from './majors-skills-management/majors-skills-management';
 
 export const employeeRoutes: Routes = [
   {
@@ -54,5 +55,10 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     //data: { permissions: ['job.list.view'] },
     loadChildren: () => import('../../job/jobs.module').then(m => m.JobsModule),
+  },
+  { path: 'majors-skills-management',
+    canActivate: [permissionGuard],
+    //data: { permissions: ['major-skill.management'] },
+    component: MajorsSkillsManagement
   },
 ];

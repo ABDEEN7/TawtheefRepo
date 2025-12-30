@@ -9,9 +9,5 @@ public sealed class CreateMajorSkillCommandValidator : AbstractValidator<CreateM
     {
         RuleFor(x => x.MajorId).NotEmpty();
         RuleFor(x => x.SkillId).NotEmpty();
-
-        RuleFor(x => x.Weight)
-            .InclusiveBetween(MajorSkillRules.WeightMin, MajorSkillRules.WeightMax)
-            .WithMessage($"Weight must be between {MajorSkillRules.WeightMin} and {MajorSkillRules.WeightMax}.");
     }
 }

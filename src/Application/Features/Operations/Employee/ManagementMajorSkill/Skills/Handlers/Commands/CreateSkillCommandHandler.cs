@@ -18,6 +18,7 @@ public sealed class CreateSkillCommandHandler(IUnitOfWork uow)
         //check if name ar or name en already exists
         var isNameDuplicated = await uow.GetEntityRepository<Skill>().DbSet
             .AnyAsync(x => (x.NameAr == request.NameAr || x.NameEn == request.NameEn) && x.SkillTypeId == request.SkillTypeId, ct);
+        
         if(isNameDuplicated)
             return Result.Fail<Unit>(new Error(ErrorsCodes.MajorNameAlreadyExists));
 

@@ -15,7 +15,4 @@
   get officesManagement(){
     return this.admin + '/offices-management'
   },
-  get majorsSkillsManagement(){
-    return this.admin + '/majors-skills-management'
-  },
 }

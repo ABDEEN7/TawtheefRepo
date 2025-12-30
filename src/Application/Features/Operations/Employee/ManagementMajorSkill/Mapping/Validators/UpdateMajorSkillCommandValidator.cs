@@ -8,9 +8,5 @@ public sealed class UpdateMajorSkillCommandValidator : AbstractValidator<UpdateM
     public UpdateMajorSkillCommandValidator()
     {
         RuleFor(x => x.Id).NotEmpty();
-
-        RuleFor(x => x.Weight)
-            .InclusiveBetween(MajorSkillRules.WeightMin, MajorSkillRules.WeightMax)
-            .WithMessage($"Weight must be between {MajorSkillRules.WeightMin} and {MajorSkillRules.WeightMax}.");
     }
 }

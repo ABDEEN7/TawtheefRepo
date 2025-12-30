@@ -1,4 +1,4 @@
-<div class="management-page" i18nNamespace="pages/admin/majors-skills-management" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+<div class="management-page" i18nNamespace="pages/employee/majors-skills-management" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
   <div class="card shadow-sm header-card p-4 mb-4">
     <div class="d-flex justify-content-between flex-wrap gap-3 align-items-center">
       <div>
@@ -58,7 +58,7 @@
                 class="form-control border-start-0"
                 [placeholder]="'MAJORS_SKILLS.SEARCH_PLACEHOLDER' | translate"
                 [ngModel]="majorSkillFilters().search"
-                (ngModelChange)="majorSkillFilters.update(f => ({...f, search: $event})); onMajorSkillFilterChange()" />
+                (ngModelChange)="setMajorSkillSearch($event)" />
             </div>
           </div>
           <div class="col-lg-3 col-md-6">
@@ -80,7 +80,7 @@
               optionLabel="name"
               optionValue="id"
               [ngModel]="majorSkillFilters().subMajorId"
-              (ngModelChange)="majorSkillFilters.update(f => ({...f, subMajorId: $event})); onMajorSkillFilterChange()"
+              (ngModelChange)="setMajorSkillSubMajor($event)"
               class="w-100"
               [showClear]="true"
               [placeholder]="'MAJORS_SKILLS.SUB_MAJOR_PLACEHOLDER' | translate"></p-select>
@@ -92,7 +92,7 @@
               optionLabel="name"
               optionValue="id"
               [ngModel]="majorSkillFilters().skillTypeId"
-              (ngModelChange)="majorSkillFilters.update(f => ({...f, skillTypeId: $event})); onMajorSkillFilterChange()"
+              (ngModelChange)="setMajorSkillType($event)"
               class="w-100"
               [showClear]="true"
               [placeholder]="'MAJORS_SKILLS.SKILL_TYPE_PLACEHOLDER' | translate"></p-select>
@@ -104,7 +104,7 @@
                 type="checkbox"
                 class="form-check-input mt-0"
                 [checked]="majorSkillFilters().isActive === true"
-                (change)="majorSkillFilters.update(f => ({...f, isActive: $event.target.checked ? true : null})); onMajorSkillFilterChange()" />
+                (change)="setMajorSkillActiveOnly($event)" />
               <small class="text-muted">{{ 'MAJORS_SKILLS.SHOW_ACTIVE' | translate }}</small>
             </div>
           </div>
@@ -130,14 +130,14 @@
           } @else {
             @for (item of majorSkills(); track item.id; let i = $index) {
               <tr [ngClass]="{ 'row-even': i % 2 === 0 }">
-                <td>{{ item.major?.name || '-' }}</td>
-                <td>{{ item.skill?.name || '-' }}</td>
+                <td>{{ item.major.name || '-' }}</td>
+                <td>{{ item.skill.name || '-' }}</td>
                 <td>
-                  <p-inputSwitch
+                  <p-toggle-switch
                     [ngModel]="item.isSkillRequired"
                     (ngModelChange)="changeMajorSkillRequirement(item.id, $event, item.isActive)"
                     [trueValue]="true"
-                    [falseValue]="false"></p-inputSwitch>
+                    [falseValue]="false"></p-toggle-switch>
                 </td>
                 <td>
                   <span class="badge" [class.bg-success-subtle]="item.isActive" [class.bg-danger-subtle]="!item.isActive">
@@ -145,11 +145,11 @@
                   </span>
                 </td>
                 <td class="text-end">
-                  <p-inputSwitch
+                  <p-toggle-switch
                     [ngModel]="item.isActive"
                     (ngModelChange)="changeMajorSkillStatus(item.id, $event)"
                     [trueValue]="true"
-                    [falseValue]="false"></p-inputSwitch>
+                    [falseValue]="false"></p-toggle-switch>
                 </td>
               </tr>
             }
@@ -186,7 +186,7 @@
                 class="form-control border-start-0"
                 [placeholder]="'MAJORS_SKILLS.MAIN_SEARCH' | translate"
                 [ngModel]="mainMajorFilters().search"
-                (ngModelChange)="mainMajorFilters.update(f => ({...f, search: $event})); onMainMajorSearchChange()" />
+                (ngModelChange)="setMainMajorSearch($event)" />
             </div>
           </div>
         </div>
@@ -219,11 +219,11 @@
                   </span>
                 </td>
                 <td class="text-end">
-                  <p-inputSwitch
+                  <p-toggle-switch
                     [ngModel]="major.isActive !== false"
                     (ngModelChange)="changeMajorStatus(major.id, $event)"
                     [trueValue]="true"
-                    [falseValue]="false"></p-inputSwitch>
+                    [falseValue]="false"></p-toggle-switch>
                 </td>
               </tr>
             }
@@ -260,7 +260,7 @@
               optionLabel="name"
               optionValue="id"
               [ngModel]="subMajorFilters().parentMajorId"
-              (ngModelChange)="subMajorFilters.update(f => ({...f, parentMajorId: $event})); updateSelectedParentMajor($event)"
+              (ngModelChange)="setSubMajorParent($event)"
               class="w-100"
               [showClear]="true"
               [placeholder]="'MAJORS_SKILLS.MAJOR_PLACEHOLDER' | translate"></p-select>
@@ -273,7 +273,7 @@
                 class="form-control border-start-0"
                 [placeholder]="'MAJORS_SKILLS.SUB_SEARCH' | translate"
                 [ngModel]="subMajorFilters().search"
-                (ngModelChange)="subMajorFilters.update(f => ({...f, search: $event})); onSubMajorSearchChange()" />
+                (ngModelChange)="setSubMajorSearch($event)" />
             </div>
           </div>
         </div>
@@ -297,7 +297,7 @@
             @for (major of subMajorsPage(); track major.id; let i = $index) {
               <tr [ngClass]="{ 'row-even': i % 2 === 0 }">
                 <td>{{ major.name }}</td>
-                <td>{{ mainMajors().find(m => m.id === subMajorFilters().parentMajorId)?.name || '-' }}</td>
+                <td>{{ parentMajorName() }}</td>
                 <td class="text-end">
                   <span class="badge bg-success-subtle">{{ 'MAJORS_SKILLS.ACTIVE' | translate }}</span>
                 </td>
@@ -337,7 +337,7 @@
                 class="form-control border-start-0"
                 [placeholder]="'MAJORS_SKILLS.SKILL_SEARCH' | translate"
                 [ngModel]="skillFilters().search"
-                (ngModelChange)="skillFilters.update(f => ({...f, search: $event})); onSkillFilterChange()" />
+                (ngModelChange)="setSkillSearch($event)" />
             </div>
           </div>
           <div class="col-lg-3 col-md-6">
@@ -347,7 +347,7 @@
               optionLabel="name"
               optionValue="id"
               [ngModel]="skillFilters().skillTypeId"
-              (ngModelChange)="skillFilters.update(f => ({...f, skillTypeId: $event})); onSkillFilterChange()"
+              (ngModelChange)="setSkillType($event)"
               class="w-100"
               [showClear]="true"
               [placeholder]="'MAJORS_SKILLS.SKILL_TYPE_PLACEHOLDER' | translate"></p-select>
@@ -381,11 +381,11 @@
                   </span>
                 </td>
                 <td class="text-end">
-                  <p-inputSwitch
+                  <p-toggle-switch
                     [ngModel]="skill.isActive !== false"
                     (ngModelChange)="changeSkillStatus(skill.id, $event)"
                     [trueValue]="true"
-                    [falseValue]="false"></p-inputSwitch>
+                    [falseValue]="false"></p-toggle-switch>
                 </td>
               </tr>
             }
