@@ -36,7 +36,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslateService);
   private dialogHelperService = inject(DialogHelperService);
-  private lookupsService = inject(JobLookupService)
+  private lookupsService = inject(JobLookupService);
   private router = inject(Router);
 
   private destroy$ = new Subject<void>();
@@ -44,7 +44,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   jobId: GUID = GuidUtils.emptyGuid;
   job: JobResponse | null = null;
   jobPoints: JobPointsResponse | null = null;
-  mainKeys: { key: string; totalPercent: number }[] = [];
+  mainKeys: { key: string; initialValue: number }[] = [];
 
   systemMaxPoints: number = 0;
   isFinalApprovalAvailable: boolean = false;
@@ -125,24 +125,36 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
 
   private loadJobPointsConfig(): void {
     this.jobPointsService
-      .getJobPointsConfiguration(this.jobId)
+      .getJobPointsConfiguration()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (config) => {
           this.systemMaxPoints = config.maxPoints;
           this.mainKeys = [
-            { key: 'applicantCategory', totalPercent: config.applicantCategoryMaxPoints },
-            { key: 'education', totalPercent: config.educationMaxPoints },
-            { key: 'experience', totalPercent: config.experienceMaxPoints },
-            { key: 'training', totalPercent: config.trainingMaxPoints },
-            { key: 'skills', totalPercent: config.skillsMaxPoints },
-            { key: 'languages', totalPercent: config.languagesMaxPoints },
-            { key: 'certificates', totalPercent: config.certificatesMaxPoints },
+            { key: 'applicantCategory', initialValue: config.applicantCategoryMaxPoints },
+            { key: 'education', initialValue: config.educationMaxPoints },
+            { key: 'experience', initialValue: config.experienceMaxPoints },
+            { key: 'training', initialValue: config.trainingMaxPoints },
+            { key: 'skills', initialValue: config.skillsMaxPoints },
+            { key: 'languages', initialValue: config.languagesMaxPoints },
+            { key: 'certificates', initialValue: config.certificatesMaxPoints },
           ];
 
           if (this.job?.jobPoints?.id) {
             this.loadJobPoints();
           } else {
+            this.mainFormGroup.patchValue(
+              {
+                applicantCategory: config.applicantCategoryMaxPoints,
+                education: config.educationMaxPoints,
+                experience: config.experienceMaxPoints,
+                training: config.trainingMaxPoints,
+                skills: config.skillsMaxPoints,
+                languages: config.languagesMaxPoints,
+                certificates: config.certificatesMaxPoints,
+              },
+              { emitEvent: true } 
+            );
             this.isLoading = false;
             this.cdr.detectChanges();
           }
@@ -262,24 +274,22 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   }
 
   approvePoints(): void {
-  if (!this.isFinalApprovalAvailable) {
-    this.notificationService.warn(
-      this.translationService.instant('JOB_POINTS.VALIDATION.CANNOT_APPROVE')
-    );
-    return;
-  }
+    if (!this.isFinalApprovalAvailable) {
+      this.notificationService.warn(
+        this.translationService.instant('JOB_POINTS.VALIDATION.CANNOT_APPROVE')
+      );
+      return;
+    }
 
-  const ref = this.dialogHelperService.openConfirmDialog({
-    type: 'submit',
-    title: 'JOB_POINTS.APPROVE.CONFIRMATION_TITLE',
-    description: 'JOB_POINTS.APPROVE.CONFIRMATION_DESCRIPTION',
-    cancelText: 'common.cancel',
-    confirmText: 'common.confirm',
-  });
+    const ref = this.dialogHelperService.openConfirmDialog({
+      type: 'submit',
+      title: 'JOB_POINTS.APPROVE.CONFIRMATION_TITLE',
+      description: 'JOB_POINTS.APPROVE.CONFIRMATION_DESCRIPTION',
+      cancelText: 'common.cancel',
+      confirmText: 'common.confirm',
+    });
 
-  ref?.onClose
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((result) => {
+    ref?.onClose.pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (!result) return;
 
       this.isLoading = true;
@@ -299,10 +309,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
               this.jobPoints.isApproved = true;
             }
 
-            const statusId =
-              this.lookupsService.getStatusIdByEnum(
-                JobStatus.ReadyForAnnouncement
-              );
+            const statusId = this.lookupsService.getStatusIdByEnum(JobStatus.ReadyForAnnouncement);
 
             if (!statusId) {
               this.isLoading = false;
@@ -316,9 +323,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
               .subscribe({
                 next: () => {
                   this.notificationService.success(
-                    this.translationService.instant(
-                      'JOB_POINTS.APPROVE.SUCCESS'
-                    )
+                    this.translationService.instant('JOB_POINTS.APPROVE.SUCCESS')
                   );
 
                   this.isFinalApprovalAvailable = false;
@@ -339,7 +344,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
           },
         });
     });
-}
+  }
 
   private getMainPoints(): Omit<JobPointsResponse, 'id' | 'jobId' | 'details' | 'isApproved'> {
     const main = this.mainFormGroup.getRawValue();

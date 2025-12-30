@@ -9,13 +9,13 @@ import { FormGroup } from '@angular/forms';
 })
 export class JobPointsMainElementsComponent {
   @Input() form!: FormGroup;
-  @Input() keys: { key: string; totalPercent: number }[] = [];
-  @Input() systemMaxPoints: number = 0; // Added
+  @Input() keys: { key: string; initialValue: number }[] = [];
+  @Input() systemMaxPoints = 0;
 
   @Output() next = new EventEmitter<void>();
 
   get maxTotal(): number {
-    return this.keys.reduce((sum, k) => sum + k.totalPercent, 0);
+    return this.keys.reduce((sum, k) => sum + k.initialValue, 0);
   }
 
   isTotalValid(): boolean {

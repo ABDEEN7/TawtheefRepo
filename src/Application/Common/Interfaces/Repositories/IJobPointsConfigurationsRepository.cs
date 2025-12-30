@@ -6,5 +6,5 @@ namespace Tawtheef.Application.Common.Interfaces.Repositories;
 
 public interface IJobPointsConfigurationsRepository : IBaseRepository<JobPointConfiguration>
 {
-    Task<IResult<JobPointConfiguration>> GetByJobIdAsync(Guid jobId);
+    Task<IResult<JobPointConfiguration>> GetAsync();
 }

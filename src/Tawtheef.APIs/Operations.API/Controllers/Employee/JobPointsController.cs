@@ -34,14 +34,14 @@ public class JobPointsController(IMediator mediator) : ControllerBase
     #region Points Configurations
 
     [HttpGet("{jobId:guid}/config")]
-    public async Task<IActionResult> GetJobPointsConfigurations(Guid jobId)
+    public async Task<IActionResult> GetJobPointsConfigurations()
     {
-        var result = await mediator.Send(new GetJobPointsConfigurationsByJobIdQuery(jobId));
+        var result = await mediator.Send(new GetJobPointsConfigurationsQuery());
         return result.ToActionResult();
     }
 
-    [HttpPost("configurations/add")]
-    public async Task<IActionResult> AddJobPointsConfiguration([FromBody] AddJobPointsConfigurationCommand command)
+    [HttpPost("configurations/save")]
+    public async Task<IActionResult> SaveJobPointsConfiguration([FromBody] SaveJobPointsConfigurationCommand command)
     {
         var result = await mediator.Send(command);
         return result.ToActionResult();
