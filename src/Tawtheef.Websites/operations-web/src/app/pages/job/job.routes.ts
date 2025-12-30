@@ -8,6 +8,7 @@ import { JobPointsConfigPageComponent } from './job-points/job-points-config-pag
 import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
 import {permissionGuard} from '../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../core/constants/permissions';
+import { JobCandidatesComponent } from './job-candidates.component/job-candidates.component';
 
 export const jobRoutes: Routes = [
   { path: '', component: JobListComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.View] } },
@@ -16,6 +17,7 @@ export const jobRoutes: Routes = [
   { path: 'view/:id', component: JobDetailsComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.View] } },
   { path: 'approval-job/:id', component: JobApprovalComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.Approve] } },
   { path: 'job-points/:id', component: JobPointsConfigPageComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.PointsManage] } },
-  { path: 'ready-jobs', component: JobsReadyApplicationComponent },
+  { path: 'view/:id/candidates', component: JobCandidatesComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.Manage] } },
+  { path: 'ready', component: JobsReadyApplicationComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.Manage] } },
   { path: 'invites/:id', component: JobInvitesDetailsComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.JobInvitations.View] } },
 ];

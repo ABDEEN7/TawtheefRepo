@@ -13,6 +13,7 @@ import { GUID } from '../../../shared/types/guid.type';
 import { PaginatedRequest } from '../../../core/models/paginated-request.model';
 import { take } from 'rxjs';
 import { JobQueryFilter } from '../models/job-query-filter.model';
+import { routes } from '../../../routes/routes';
 
 @Component({
   selector: 'app-jobs-ready-application.component',
@@ -22,10 +23,7 @@ import { JobQueryFilter } from '../models/job-query-filter.model';
 })
 export class JobsReadyApplicationComponent {
   private jobService = inject(JobService);
-   private router = inject(Router);
-   private notificationService = inject(NotificationService);
-   private translateService = inject(TranslateService);
-   private dialogHelperService = inject(DialogHelperService);
+  private router = inject(Router);
    lookupsService = inject(JobLookupService);
  
    jobs: PaginatedResult<JobResponse> | undefined;
@@ -44,13 +42,10 @@ export class JobsReadyApplicationComponent {
     readonly jobStatus = JobStatus;
  
    ngOnInit(): void {
-     this.loadJobsWithFilters();
+    this.lookupsService.loadJobStatus().pipe(take(1)).subscribe(res=>{
+           this.loadJobsWithFilters();
+    })
      this.lookupsService.loadJobCategories();
- 
-     this.lookupsService
-       .loadJobStatus()
-       .pipe(take(1))
-       .subscribe();
    }
  
    loadJobsWithFilters() {
@@ -92,8 +87,13 @@ export class JobsReadyApplicationComponent {
      this.loadJobsWithFilters();
    }
  
-   sendInvitaion(job:JobResponse){
+   sendInvitation(){
+    //
+   }
 
+   viewJobCandidate(jobId : GUID){
+    const url = routes.employee.jobcandidates(jobId)
+     this.router.navigate([url]);
    }
 
    getJobCategoryBadgeClass(categoryName: string): string {
