@@ -2,7 +2,6 @@
 
 public class JobPointConfigurationRequestDto
 {
-    public Guid JobId { get; set; }
     public int ApplicantCategoryMaxPoints { get; set; }
     public int EducationMaxPoints { get; set; }
     public int ExperienceMaxPoints { get; set; }

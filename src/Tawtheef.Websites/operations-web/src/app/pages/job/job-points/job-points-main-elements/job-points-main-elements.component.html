@@ -13,18 +13,20 @@
           <div class="d-flex flex-column gap-2">
             <h3 class="element-title">
               {{ 'JOB_POINTS.MAIN_ELEMENTS.' + key.key | translate }}
-              ({{ 'JOB_POINTS.MAIN_ELEMENTS.MAX' | translate }})
+              <span class="muted">
+                ({{ 'JOB_POINTS.MAIN_ELEMENTS.INITIAL' | translate }}: {{ key.initialValue }})
+              </span>
             </h3>
 
             <div class="points-control">
               <span class="points-chip">
-                {{ form.get(key.key)?.value ?? 0 }}/{{ key.totalPercent }}
+                {{ form.get(key.key)?.value ?? 0 }}
               </span>
 
               <p-inputNumber
                 [formControlName]="key.key"
                 [min]="0"
-                [max]="key.totalPercent"
+                [max]="systemMaxPoints"
                 [showButtons]="true"
                 class="points-input"
               />
@@ -57,7 +59,7 @@
           'JOB_POINTS.VALIDATION.TOTAL_MUST_EQUAL_MAX' | translate : { required: systemMaxPoints }
         }}
       </div>
-    }
+      }
     </div>
 
     <div class="bottom-nav">
