@@ -9,12 +9,13 @@ import {AuthService} from '../../../core/auth/auth.service';
 import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
 import {MenuItem} from '../../admin/sidebar/sidebar.models';
 import {Permissions} from '../../../core/constants/permissions';
+import {HasPermissionDirective} from '../../../shared/directives/has-permission.directive';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective]
+  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective]
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
