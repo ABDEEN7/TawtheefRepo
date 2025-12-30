@@ -12,27 +12,48 @@ using Tawtheef.Infrastructure.Services.Identity;
 
 namespace Migration;
 
-public class Program
+public static class Program
 {
     public static async Task Main(string[] args)
     {
-        Console.WriteLine("=== Import Started ===");
+        Console.Title = "Tawtheef Import Tool";
+        ConsoleUi.PrintHeader("Tawtheef Seed Import");
 
-        const string ConnectionString =
-           // "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
-        "Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
+        // 1) Connection string selection
+        var connectionString = ConsoleUi.PromptConnectionString([
+            new SavedConnection("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=TawtheefDB1;Trusted_Connection=True;"),
+            new SavedConnection("Stage", "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T;Password=Abc@1234;")
+        ]);
+
+        // 2) Import tasks (multi-select)
+        var selected = ConsoleUi.PromptMultiSelect(
+            title: "Select import steps (multi-select)",
+            items: ImportCatalog.All,
+            render: x => $"{x.Code,-10} {x.Title}",
+            allowAllKeyword: true);
+
+        if (selected.Count == 0)
+        {
+            ConsoleUi.Warn("No steps selected. Exiting.");
+            return;
+        }
+
+        ConsoleUi.PrintSection("Summary");
+        Console.WriteLine($"Connection: {ConsoleUi.MaskConnection(connectionString)}");
+        Console.WriteLine("Steps:");
+        foreach (var step in selected) Console.WriteLine($"  - {step.Title} ({step.Code})");
+        Console.WriteLine();
 
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();
 
-        var host = Host.CreateDefaultBuilder(args)
+        using var host = Host.CreateDefaultBuilder(args)
             .UseSerilog()
             .ConfigureServices((_, services) =>
             {
                 services.AddSingleton(Log.Logger);
-                services.AddDbContext<TawtheefDbContext>(options =>
-                    options.UseSqlServer(ConnectionString));
+                services.AddDbContext<TawtheefDbContext>(opt => opt.UseSqlServer(connectionString));
                 services.AddScoped<CurrentUserService>();
             })
             .Build();
@@ -41,62 +62,386 @@ public class Program
         var db = scope.ServiceProvider.GetRequiredService<TawtheefDbContext>();
 
         var errors = new List<ImportError>();
+        var ct = CancellationToken.None;
 
-        // ====== Pre-load existing data from DB ======
-        var countryIds = new HashSet<Guid>(db.Country.Select(x => x.Id));
-        var countryBackendNames = new HashSet<string>(db.Country.Select(x => x.BackendName));
+        ConsoleUi.PrintSection("Running");
+        var runner = new ImportRunner(db, errors);
 
-        var cityIds = new HashSet<Guid>(db.City.Select(x => x.Id));
-        var cityBackendNames = new HashSet<string>(db.City.Select(x => x.BackendName));
+        foreach (var step in selected)
+        {
+            ConsoleUi.StepStart(step.Title);
 
-        var universityIds = new HashSet<Guid>(db.University.Select(x => x.Id));
-        var universityBackendNames = new HashSet<string>(db.University.Select(x => x.BackendName));
+            try
+            {
+                await step.RunAsync(runner, ct);
+                ConsoleUi.StepOk(step.Title);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Step failed: {Step}", step.Title);
+                errors.Add(new ImportError(step.Code, null, ex.GetBaseException().Message));
+                ConsoleUi.StepFail(step.Title, ex.GetBaseException().Message);
+            }
+        }
 
-        // ====== Import with validation ======
-        ImportCountries(db, errors, countryIds, countryBackendNames);
-        ImportCities(db, errors, cityIds, cityBackendNames, countryIds);
-        ImportUniversities(db, errors, universityIds, universityBackendNames, cityIds);
-        ImportMajors(db, errors);
-        ImportOffices(db, errors);
-        ImportSkillTypes(db, errors);
-        ImportSkills(db, errors);
-        ImportMajorSkills(db, errors);
-
+        // Save once at the end
+        ConsoleUi.PrintSection("Saving changes");
         try
         {
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(ct);
+            ConsoleUi.Ok("SaveChanges succeeded.");
         }
         catch (DbUpdateException ex)
         {
             Log.Error(ex, "SaveChanges failed");
             errors.Add(new ImportError("DB", 0, ex.GetBaseException().Message));
+            ConsoleUi.Error("SaveChanges failed.");
         }
 
-        Console.WriteLine("=== Import Finished ===");
-
+        ConsoleUi.PrintSection("Finished");
         if (errors.Any())
         {
-            Console.WriteLine("=== ERRORS SUMMARY ===");
+            ConsoleUi.Error("ERRORS SUMMARY");
             foreach (var e in errors)
-            {
-                Console.WriteLine($"{e.FileName} - Row {e.RowNumber}: {e.Message}");
-            }
+                Console.WriteLine($"{e.FileName} - Row {e.RowNumber?.ToString() ?? "-"}: {e.Message}");
         }
         else
         {
-            Console.WriteLine("No errors 🎉");
+            ConsoleUi.Ok("No errors.");
         }
+
+        ConsoleUi.Footer();
+    }
+}
+
+#region Console UI
+
+internal static class ConsoleUi
+{
+    public static void PrintHeader(string title)
+    {
+        Console.WriteLine(new string('=', 72));
+        Console.WriteLine($"  {title}");
+        Console.WriteLine(new string('=', 72));
+        Console.WriteLine();
+    }
+
+    public static void Footer()
+    {
+        Console.WriteLine();
+        Console.WriteLine(new string('-', 72));
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey(intercept: true);
+    }
+
+    public static void PrintSection(string title)
+    {
+        Console.WriteLine();
+        Console.WriteLine($"--- {title} ---");
+    }
+
+    public static void Ok(string message) => WriteColored(message, ConsoleColor.Green);
+    public static void Warn(string message) => WriteColored(message, ConsoleColor.Yellow);
+    public static void Error(string message) => WriteColored(message, ConsoleColor.Red);
+
+    public static void StepStart(string title) => Console.Write($"[....] {title} ");
+
+    public static void StepOk(string title)
+    {
+        Console.WriteLine();
+        WriteColored($"[ OK ] {title}", ConsoleColor.Green);
+    }
+
+    public static void StepFail(string title, string reason)
+    {
+        Console.WriteLine();
+        WriteColored($"[FAIL] {title} :: {reason}", ConsoleColor.Red);
+    }
+
+    public static string PromptConnectionString(IReadOnlyList<SavedConnection> presets)
+    {
+        PrintSection("Connection");
+        Console.WriteLine("Choose a connection string:");
+        for (var i = 0; i < presets.Count; i++)
+            Console.WriteLine($"  {i + 1}) {presets[i].Name}  ({MaskConnection(presets[i].ConnectionString)})");
+        Console.WriteLine($"  {presets.Count + 1}) Enter a new connection string");
+        Console.WriteLine();
+
+        while (true)
+        {
+            var choice = PromptInt($"Select [1..{presets.Count + 1}]: ", 1, presets.Count + 1);
+
+            if (choice <= presets.Count)
+                return presets[choice - 1].ConnectionString;
+
+            var entered = PromptText("Paste connection string: ");
+            if (IsLikelyConnectionString(entered))
+                return entered;
+
+            Warn("That does not look like a valid SQL Server connection string. Try again.");
+        }
+    }
+
+    public static string MaskConnection(string cs)
+    {
+        if (string.IsNullOrWhiteSpace(cs)) return cs;
+
+        var parts = cs.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        for (int i = 0; i < parts.Count; i++)
+        {
+            if (parts[i].StartsWith("Password=", StringComparison.OrdinalIgnoreCase) ||
+                parts[i].StartsWith("Pwd=", StringComparison.OrdinalIgnoreCase))
+            {
+                var key = parts[i].Split('=')[0];
+                parts[i] = $"{key}=***";
+            }
+        }
+        return string.Join("; ", parts) + ";";
+    }
+
+    public static List<T> PromptMultiSelect<T>(
+        string title,
+        IReadOnlyList<T> items,
+        Func<T, string> render,
+        bool allowAllKeyword)
+    {
+        PrintSection(title);
+        for (var i = 0; i < items.Count; i++)
+            Console.WriteLine($"  {i + 1,2}) {render(items[i])}");
+
+        if (allowAllKeyword)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Type: 1,3,5  or 2-6  or all");
+        }
+
+        Console.WriteLine();
+
+        while (true)
+        {
+            var raw = PromptText("Select: ").Trim();
+
+            if (allowAllKeyword && raw.Equals("all", StringComparison.OrdinalIgnoreCase))
+                return items.ToList();
+
+            var indices = ParseMultiSelection(raw, items.Count);
+            if (indices.Count == 0)
+            {
+                Warn("Invalid selection. Examples: 1,3,5 or 2-6 or all");
+                continue;
+            }
+
+            return indices.Select(i => items[i - 1]).ToList();
+        }
+    }
+
+    private static List<int> ParseMultiSelection(string input, int max)
+    {
+        var result = new HashSet<int>();
+        if (string.IsNullOrWhiteSpace(input)) return [];
+
+        var tokens = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        foreach (var token in tokens)
+        {
+            if (token.Contains('-', StringComparison.Ordinal))
+            {
+                var range = token.Split('-', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                if (range.Length != 2) return [];
+                if (!int.TryParse(range[0], out var a)) return [];
+                if (!int.TryParse(range[1], out var b)) return [];
+                if (a < 1 || b < 1 || a > max || b > max) return [];
+                if (a > b) (a, b) = (b, a);
+                for (var i = a; i <= b; i++) result.Add(i);
+            }
+            else
+            {
+                if (!int.TryParse(token, out var n)) return [];
+                if (n < 1 || n > max) return [];
+                result.Add(n);
+            }
+        }
+        return result.OrderBy(x => x).ToList();
+    }
+
+    private static int PromptInt(string message, int min, int max)
+    {
+        while (true)
+        {
+            Console.Write(message);
+            var raw = Console.ReadLine();
+            if (int.TryParse(raw, out var n) && n >= min && n <= max)
+                return n;
+
+            Warn($"Enter a number between {min} and {max}.");
+        }
+    }
+
+    private static string PromptText(string message)
+    {
+        Console.Write(message);
+        return Console.ReadLine() ?? string.Empty;
+    }
+
+    private static bool IsLikelyConnectionString(string cs)
+        => cs.Contains("Server=", StringComparison.OrdinalIgnoreCase) ||
+           cs.Contains("Data Source=", StringComparison.OrdinalIgnoreCase);
+
+    private static void WriteColored(string text, ConsoleColor color)
+    {
+        var old = Console.ForegroundColor;
+        Console.ForegroundColor = color;
+        Console.WriteLine(text);
+        Console.ForegroundColor = old;
+    }
+}
+
+internal sealed record SavedConnection(string Name, string ConnectionString);
+
+#endregion
+
+#region Import Catalog + Runner
+
+internal sealed class ImportStep
+{
+    public required string Code { get; init; }
+    public required string Title { get; init; }
+    public required Func<ImportRunner, CancellationToken, Task> RunAsync { get; init; }
+}
+
+internal static class ImportCatalog
+{
+    public static readonly List<ImportStep> All =
+    [
+        new ImportStep { Code = "COUNTRY", Title = "Import Countries (CSV)", RunAsync = (r, ct) => r.ImportCountriesAsync(ct) },
+        new ImportStep { Code = "CITY",    Title = "Import Cities (CSV)",    RunAsync = (r, ct) => r.ImportCitiesAsync(ct) },
+        new ImportStep { Code = "UNIV",    Title = "Import Universities (CSV)", RunAsync = (r, ct) => r.ImportUniversitiesAsync(ct) },
+        new ImportStep { Code = "MAJOR",   Title = "Import Majors (CSV)",    RunAsync = (r, ct) => r.ImportMajorsAsync(ct) },
+        new ImportStep { Code = "OFFICE",  Title = "Insert Offices (Code)",  RunAsync = (r, ct) => r.ImportOfficesAsync(ct) },
+        new ImportStep { Code = "SKTYPE",  Title = "Insert SkillTypes (Code)", RunAsync = (r, ct) => r.ImportSkillTypesAsync(ct) },
+        new ImportStep { Code = "SKILL",   Title = "Insert Skills (Code)",   RunAsync = (r, ct) => r.ImportSkillsAsync(ct) },
+        new ImportStep { Code = "MSLINK",  Title = "Insert Major-Skill Links (Code)", RunAsync = (r, ct) => r.ImportMajorSkillsAsync(ct) },
+    ];
+}
+
+internal sealed class ImportRunner
+{
+    private readonly TawtheefDbContext _db;
+    private readonly List<ImportError> _errors;
+
+    // Cached preloads (only loaded if/when needed)
+    private HashSet<Guid>? _countryIds;
+    private HashSet<string>? _countryBackends;
+
+    private HashSet<Guid>? _cityIds;
+    private HashSet<string>? _cityBackends;
+
+    private HashSet<Guid>? _univIds;
+    private HashSet<string>? _univBackends;
+
+    private HashSet<Guid>? _majorIds;
+    private HashSet<string>? _majorBackends;
+
+    public ImportRunner(TawtheefDbContext db, List<ImportError> errors)
+    {
+        _db = db;
+        _errors = errors;
+    }
+
+    public Task ImportCountriesAsync(CancellationToken ct)
+    {
+        EnsurePreloadCountries();
+        ImportCountries(_db, _errors, _countryIds!, _countryBackends!);
+        return Task.CompletedTask;
+    }
+
+    public Task ImportCitiesAsync(CancellationToken ct)
+    {
+        EnsurePreloadCountries();
+        EnsurePreloadCities();
+        ImportCities(_db, _errors, _cityIds!, _cityBackends!, _countryIds!);
+        return Task.CompletedTask;
+    }
+
+    public Task ImportUniversitiesAsync(CancellationToken ct)
+    {
+        EnsurePreloadCities();
+        EnsurePreloadUniversities();
+        ImportUniversities(_db, _errors, _univIds!, _univBackends!, _cityIds!);
+        return Task.CompletedTask;
+    }
+
+    public Task ImportMajorsAsync(CancellationToken ct)
+    {
+        EnsurePreloadMajors();
+        ImportMajors(_db, _errors, _majorIds!, _majorBackends!);
+        return Task.CompletedTask;
+    }
+
+    public Task ImportOfficesAsync(CancellationToken ct)
+    {
+        ImportOffices(_db, _errors);
+        return Task.CompletedTask;
+    }
+
+    public Task ImportSkillTypesAsync(CancellationToken ct)
+    {
+        ImportSkillTypes(_db, _errors);
+        return Task.CompletedTask;
+    }
+
+    public Task ImportSkillsAsync(CancellationToken ct)
+    {
+        ImportSkills(_db, _errors);
+        return Task.CompletedTask;
+    }
+
+    public Task ImportMajorSkillsAsync(CancellationToken ct)
+    {
+        ImportMajorSkills(_db, _errors);
+        return Task.CompletedTask;
+    }
+
+    private void EnsurePreloadCountries()
+    {
+        if (_countryIds is not null) return;
+        _countryIds = new HashSet<Guid>(_db.Country.AsNoTracking().Select(x => x.Id));
+        _countryBackends = new HashSet<string>(_db.Country.AsNoTracking().Select(x => x.BackendName),
+            StringComparer.OrdinalIgnoreCase);
+    }
+
+    private void EnsurePreloadCities()
+    {
+        if (_cityIds is not null) return;
+        _cityIds = new HashSet<Guid>(_db.City.AsNoTracking().Select(x => x.Id));
+        _cityBackends = new HashSet<string>(_db.City.AsNoTracking().Select(x => x.BackendName),
+            StringComparer.OrdinalIgnoreCase);
+    }
+
+    private void EnsurePreloadUniversities()
+    {
+        if (_univIds is not null) return;
+        _univIds = new HashSet<Guid>(_db.University.AsNoTracking().Select(x => x.Id));
+        _univBackends = new HashSet<string>(_db.University.AsNoTracking().Select(x => x.BackendName),
+            StringComparer.OrdinalIgnoreCase);
+    }
+
+    private void EnsurePreloadMajors()
+    {
+        if (_majorIds is not null) return;
+        _majorIds = new HashSet<Guid>(_db.Major.AsNoTracking().Select(x => x.Id));
+        _majorBackends = new HashSet<string>(_db.Major.AsNoTracking().Select(x => x.BackendName),
+            StringComparer.OrdinalIgnoreCase);
     }
 
     // ================= Helpers =================
 
-    static string GetDataPath(string fileName)
+    private static string GetDataPath(string fileName)
     {
         var basePath = AppContext.BaseDirectory;
         return Path.Combine(basePath, "SeedData", fileName);
     }
 
-    static string ToBackendName(string? nameEn)
+    private static string ToBackendName(string? nameEn)
     {
         if (string.IsNullOrWhiteSpace(nameEn))
             return string.Empty;
@@ -114,9 +459,26 @@ public class Program
         return joined.Length > 50 ? joined[..50] : joined;
     }
 
-    // ================ Import Countries =================
+    private static bool GuardId(HashSet<Guid> existingIds, List<ImportError> errors, string file, int? row, Guid id)
+    {
+        if (existingIds.Add(id)) return true;
+        errors.Add(new ImportError(file, row, $"Duplicate Id: {id}"));
+        return false;
+    }
 
-    static void ImportCountries(
+    private static bool GuardBackend(HashSet<string> existingBackends, List<ImportError> errors, string file, int? row, string backend)
+    {
+        if (string.IsNullOrWhiteSpace(backend)) return true;
+
+        if (existingBackends.Add(backend)) return true;
+
+        errors.Add(new ImportError(file, row, $"Duplicate BackendName: {backend}"));
+        return false;
+    }
+
+    // ================= Import Countries =================
+
+    private static void ImportCountries(
         TawtheefDbContext db,
         List<ImportError> errors,
         HashSet<Guid> existingIds,
@@ -137,20 +499,11 @@ public class Program
                 var backendNameRaw = (string)r.BackendName;
                 var backendName = backendNameRaw[..Math.Min(50, backendNameRaw.Length)];
 
-                // Duplicate Id
-                if (!existingIds.Add(id))
-                {
-                    errors.Add(new ImportError("CountryData.csv", row, $"Duplicate Id: {id}"));
+                if (!GuardId(existingIds, errors, "CountryData.csv", row, id))
                     continue;
-                }
 
-                // Duplicate BackendName
-                if (!string.IsNullOrWhiteSpace(backendName) &&
-                    !backendNames.Add(backendName))
-                {
-                    errors.Add(new ImportError("CountryData.csv", row, $"Duplicate BackendName: {backendName}"));
+                if (!GuardBackend(backendNames, errors, "CountryData.csv", row, backendName))
                     continue;
-                }
 
                 db.Country.Add(new Country
                 {
@@ -173,9 +526,9 @@ public class Program
         }
     }
 
-    // ================ Import Cities =================
+    // ================= Import Cities =================
 
-    static void ImportCities(
+    private static void ImportCities(
         TawtheefDbContext db,
         List<ImportError> errors,
         HashSet<Guid> existingIds,
@@ -197,22 +550,12 @@ public class Program
                 var countryId = Guid.Parse((string)r.CountryId);
                 var backendName = ToBackendName((string)r.NameEn);
 
-                // Duplicate Id
-                if (!existingIds.Add(id))
-                {
-                    errors.Add(new ImportError("CityData.csv", row, $"Duplicate Id: {id}"));
+                if (!GuardId(existingIds, errors, "CityData.csv", row, id))
                     continue;
-                }
 
-                // Duplicate BackendName
-                if (!string.IsNullOrWhiteSpace(backendName) &&
-                    !backendNames.Add(backendName))
-                {
-                    errors.Add(new ImportError("CityData.csv", row, $"Duplicate BackendName: {backendName}"));
+                if (!GuardBackend(backendNames, errors, "CityData.csv", row, backendName))
                     continue;
-                }
 
-                // FK check: CountryId must exist
                 if (!validCountryIds.Contains(countryId))
                 {
                     errors.Add(new ImportError("CityData.csv", row, $"Invalid CountryId (no FK found): {countryId}"));
@@ -239,9 +582,9 @@ public class Program
         }
     }
 
-    // ================ Import Universities =================
+    // ================= Import Universities =================
 
-    static void ImportUniversities(
+    private static void ImportUniversities(
         TawtheefDbContext db,
         List<ImportError> errors,
         HashSet<Guid> existingIds,
@@ -263,22 +606,12 @@ public class Program
                 var cityId = Guid.Parse((string)r.CityId);
                 var backendName = ToBackendName((string)r.NameEn);
 
-                // Duplicate Id
-                if (!existingIds.Add(id))
-                {
-                    errors.Add(new ImportError("UniversityData.csv", row, $"Duplicate Id: {id}"));
+                if (!GuardId(existingIds, errors, "UniversityData.csv", row, id))
                     continue;
-                }
 
-                // Duplicate BackendName
-                if (!string.IsNullOrWhiteSpace(backendName) &&
-                    !backendNames.Add(backendName))
-                {
-                    errors.Add(new ImportError("UniversityData.csv", row, $"Duplicate BackendName: {backendName}"));
+                if (!GuardBackend(backendNames, errors, "UniversityData.csv", row, backendName))
                     continue;
-                }
 
-                // FK check: CityId must exist
                 if (!validCityIds.Contains(cityId))
                 {
                     errors.Add(new ImportError("UniversityData.csv", row, $"Invalid CityId (no FK found): {cityId}"));
@@ -311,89 +644,109 @@ public class Program
         }
     }
 
-    // ================ Import Majors =================
+    // ================= Import Majors (FIXED: avoid duplicate PK Id) =================
 
-    static void ImportMajors(TawtheefDbContext db, List<ImportError> errors)
+    private static void ImportMajors(
+        TawtheefDbContext db,
+        List<ImportError> errors,
+        HashSet<Guid> existingIds,
+        HashSet<string> existingBackends)
     {
         var path = GetDataPath("MajorData.csv");
         using var reader = new StreamReader(path);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-        var rows = new List<dynamic>();
-
+        var rows = new List<(int Row, dynamic Record)>();
         while (csv.Read())
         {
-            rows.Add(csv.GetRecord<dynamic>());
+            var rowNumber = csv.Context.Parser?.Row ?? 0;
+            rows.Add((rowNumber, csv.GetRecord<dynamic>()));
         }
 
-        // Keep track of processed items
         var remaining = rows.ToList();
-        var inserted = new HashSet<Guid>();
+        var insertedInThisRun = new HashSet<Guid>();
 
-        int safetyCounter = 0;
-        while (remaining.Any() && safetyCounter < 10000) // protect against infinite loop
+        var safety = 0;
+        while (remaining.Any() && safety++ < 10000)
         {
-            safetyCounter++;
-
-            var toInsert = remaining
-                .Where(r =>
+            var ready = remaining
+                .Where(x =>
                 {
-                    string parentIdStr = r.ParentId;
+                    string parentIdStr = x.Record.ParentId;
                     if (string.IsNullOrWhiteSpace(parentIdStr))
-                        return true; // root item (insert now)
+                        return true;
 
                     var parentId = Guid.Parse(parentIdStr);
-                    return inserted.Contains(parentId); // parent already inserted
+
+                    // Parent must exist either:
+                    // - already in DB (existingIds has it), or
+                    // - inserted earlier in this run
+                    return existingIds.Contains(parentId) || insertedInThisRun.Contains(parentId);
                 })
                 .ToList();
 
-            if (!toInsert.Any())
+            if (!ready.Any())
             {
-                // No progress — break and report remaining as errors
-                foreach (var r in remaining)
+                foreach (var x in remaining)
                 {
-                    var rowNumber = csv.Context.Parser?.Row;
-                    errors.Add(new ImportError("MajorData.csv", rowNumber,
-                        $"Parent not found for child: {r.Id} | Parent: {r.ParentId}"));
+                    errors.Add(new ImportError("MajorData.csv", x.Row,
+                        $"Parent not found for child: {x.Record.Id} | Parent: {x.Record.ParentId}"));
                 }
 
                 break;
             }
 
-            foreach (var r in toInsert)
+            foreach (var x in ready)
             {
-                var rowNumber = csv.Context.Parser?.Row;
                 try
                 {
-                    Guid? parent = string.IsNullOrWhiteSpace(r.ParentId) ? null : Guid.Parse(r.ParentId);
+                    var id = Guid.Parse((string)x.Record.Id);
+
+                    if (!GuardId(existingIds, errors, "MajorData.csv", x.Row, id))
+                    {
+                        remaining.Remove(x);
+                        continue;
+                    }
+
+                    var backend = ToBackendName((string)x.Record.BackendName);
+                    if (!GuardBackend(existingBackends, errors, "MajorData.csv", x.Row, backend))
+                    {
+                        remaining.Remove(x);
+                        continue;
+                    }
+
+                    Guid? parent = string.IsNullOrWhiteSpace(x.Record.ParentId)
+                        ? null
+                        : Guid.Parse(x.Record.ParentId);
 
                     var entity = new Major
                     {
-                        Id = Guid.Parse((string)r.Id),
-                        BackendName = ToBackendName((string)r.BackendName),
-                        NameAr = r.NameAr,
-                        NameEn = r.NameEn,
-                        DescriptionAr = r.DescriptionAr,
-                        DescriptionEn = r.DescriptionEn,
-                        DisplayOrder = int.Parse((string)r.DisplayOrder),
+                        Id = id,
+                        BackendName = backend,
+                        NameAr = x.Record.NameAr,
+                        NameEn = x.Record.NameEn,
+                        DescriptionAr = x.Record.DescriptionAr,
+                        DescriptionEn = x.Record.DescriptionEn,
+                        DisplayOrder = int.Parse((string)x.Record.DisplayOrder),
                         ParentId = parent
                     };
 
                     db.Major.Add(entity);
-                    inserted.Add(entity.Id);
+                    insertedInThisRun.Add(entity.Id);
                 }
                 catch (Exception ex)
                 {
-                    errors.Add(new ImportError("MajorData.csv", rowNumber, ex.GetBaseException().Message));
+                    errors.Add(new ImportError("MajorData.csv", x.Row, ex.GetBaseException().Message));
                 }
 
-                remaining.Remove(r);
+                remaining.Remove(x);
             }
         }
     }
 
     // ================= Import Offices =================
-    static void ImportOffices(TawtheefDbContext db, List<ImportError> errors)
+
+    private static void ImportOffices(TawtheefDbContext db, List<ImportError> errors)
     {
         try
         {
@@ -415,21 +768,29 @@ public class Program
                 (ukId, "UK-LIV", "LIVERPOOL_OFFICE", "مكتب ليفربول", "Liverpool Office", 10),
             };
 
+            var existing = new HashSet<string>(
+                db.Office.AsNoTracking().Select(x => x.BackendName),
+                StringComparer.OrdinalIgnoreCase);
+
             foreach (var o in offices)
-                if (!db.Office.Any(x => x.BackendName == o.BackendName))
-                    db.Office.Add(new Office
-                    {
-                        Id = Guid.NewGuid(),
-                        CreatedDate = DateTimeOffset.UtcNow,
-                        IsDeleted = false,
-                        OfficeAdminId = AdminUserIds.Admin1UserId,
-                        CountryId = o.CountryId,
-                        Code = o.Code,
-                        BackendName = o.BackendName,
-                        NameAr = o.Ar,
-                        NameEn = o.En,
-                        DisplayOrder = o.Order
-                    });
+            {
+                if (!existing.Add(o.BackendName))
+                    continue;
+
+                db.Office.Add(new Office
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedDate = DateTimeOffset.UtcNow,
+                    IsDeleted = false,
+                    OfficeAdminId = AdminUserIds.Admin1UserId,
+                    CountryId = o.CountryId,
+                    Code = o.Code,
+                    BackendName = o.BackendName,
+                    NameAr = o.Ar,
+                    NameEn = o.En,
+                    DisplayOrder = o.Order
+                });
+            }
         }
         catch (Exception ex)
         {
@@ -437,15 +798,16 @@ public class Program
         }
     }
 
+    // ================= Import SkillTypes =================
 
-// ================= Import SkillTypes =================
-    static void ImportSkillTypes(TawtheefDbContext db, List<ImportError> errors)
+    private static void ImportSkillTypes(TawtheefDbContext db, List<ImportError> errors)
     {
         try
         {
             var skills = new (string Backend, string Ar, string En, int Order)[]
             {
-                ("TECHNICAL", "مهارات تقنية", "Technical Skills", 1), ("SOFT", "مهارات شخصية", "Soft Skills", 2),
+                ("TECHNICAL", "مهارات تقنية", "Technical Skills", 1), 
+                ("SOFT", "مهارات شخصية", "Soft Skills", 2),
                 ("LANGUAGE", "مهارات لغوية", "Language Skills", 3),
                 ("MANAGEMENT", "مهارات إدارية", "Management Skills", 4),
                 ("LEADERSHIP", "مهارات قيادية", "Leadership Skills", 5),
@@ -456,9 +818,13 @@ public class Program
                 ("OTHER", "مهارات أخرى", "Other Skills", 10)
             };
 
+            var existing = new HashSet<string>(
+                db.SkillType.AsNoTracking().Select(x => x.BackendName),
+                StringComparer.OrdinalIgnoreCase);
+
             foreach (var s in skills)
             {
-                if (db.SkillType.Any(x => x.BackendName == s.Backend))
+                if (!existing.Add(s.Backend))
                     continue;
 
                 db.SkillType.Add(new SkillType
@@ -479,8 +845,9 @@ public class Program
         }
     }
 
+    // ================= Import Skills =================
 
-    static void ImportSkills(TawtheefDbContext db, List<ImportError> errors)
+    private static void ImportSkills(TawtheefDbContext db, List<ImportError> errors)
     {
         try
         {
@@ -522,9 +889,9 @@ public class Program
                     "Supporting the system and handling issues", 10),
             };
 
-            // Load existing backend names once (avoid N queries)
             var existingBackends = new HashSet<string>(
-                db.Skill.AsNoTracking().Select(x => x.BackendName));
+                db.Skill.AsNoTracking().Select(x => x.BackendName),
+                StringComparer.OrdinalIgnoreCase);
 
             foreach (var s in skills)
             {
@@ -554,86 +921,57 @@ public class Program
         }
     }
 
-    static void ImportMajorSkills(TawtheefDbContext db, List<ImportError> errors)
+    // ================= Import MajorSkills =================
+
+    private static void ImportMajorSkills(TawtheefDbContext db, List<ImportError> errors, int majorsCount = 10, int skillsCount = 10)
     {
         try
         {
             var createdById = AdminUserIds.Admin1UserId;
             var now = DateTimeOffset.UtcNow;
 
-            // 1) Load majors & skills (use AsNoTracking for lookup dictionaries)
-            var majors = db.Major.AsNoTracking()
-                .Select(m => new { m.Id, m.BackendName })
+            var majorIds = db.Major.AsNoTracking()
+                .OrderBy(m => m.DisplayOrder)
+                .ThenBy(m => m.NameEn)
+                .Select(m => m.Id)
+                .Take(majorsCount)
                 .ToList();
 
-            var skills = db.Skill.AsNoTracking()
-                .Select(s => new { s.Id, s.BackendName })
+            var skillIds = db.Skill.AsNoTracking()
+                .OrderBy(s => s.DisplayOrder)
+                .ThenBy(s => s.NameEn)
+                .Select(s => s.Id)
+                .Take(skillsCount)
                 .ToList();
 
-            // 2) Build dictionaries by BackendName (case-insensitive safe)
-            var majorByBackend = majors
-                .Where(x => !string.IsNullOrWhiteSpace(x.BackendName))
-                .ToDictionary(x => x.BackendName, x => x.Id, StringComparer.OrdinalIgnoreCase);
+            if (majorIds.Count == 0)
+            {
+                errors.Add(new ImportError("SeedMajorSkills", null, "No majors found to seed."));
+                return;
+            }
 
-            var skillByBackend = skills
-                .Where(x => !string.IsNullOrWhiteSpace(x.BackendName))
-                .ToDictionary(x => x.BackendName, x => x.Id, StringComparer.OrdinalIgnoreCase);
+            if (skillIds.Count == 0)
+            {
+                errors.Add(new ImportError("SeedMajorSkills", null, "No skills found to seed."));
+                return;
+            }
 
-            // 3) Existing links (avoid duplicates)
             var existingLinks = new HashSet<(Guid MajorId, Guid SkillId)>(
                 db.Set<MajorSkill>()
                     .AsNoTracking()
-                    .Where(x => !x.IsDeleted)
+                    .Where(x => !x.IsDeleted && majorIds.Contains(x.MajorId) && skillIds.Contains(x.SkillId))
                     .Select(x => new ValueTuple<Guid, Guid>(x.MajorId, x.SkillId)));
 
-            // 4) Define your seeding rules (examples)
-            //    You can replace these "major backend names" with your real ones from MajorData.csv.
-            var seed = new (string MajorBackend, string SkillBackend, bool IsRequired, bool IsActive)[]
+            foreach (var majorId in majorIds)
+            foreach (var skillId in skillIds.Where(skillId => existingLinks.Add((majorId, skillId))))
             {
-                // Example: IT / Software-related majors
-                ("4196495b1c314f51b52d017b130aba91physics", "SOFTWARE_TESTING", true, true),
-                ("4196495b1c314f51b52d017b130aba91physics", "FRONTEND_DEVELOPMENT", true, true),
-                ("4196495b1c314f51b52d017b130aba91physics", "SYSTEM_SUPPORT", true, true),
-                ("A8df32c0534747459a45150a2c3b198cmathematics", "FRONTEND_DEVELOPMENT", false, true),
-                ("A8df32c0534747459a45150a2c3b198cmathematics", "SYSTEM_INTEGRATION", true, true),
-                ("A8df32c0534747459a45150a2c3b198cmathematics", "SOFTWARE_TESTING", true, true),
-                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "SOFTWARE_TESTING", true, true),
-                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "FRONTEND_DEVELOPMENT", true, true),
-                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "SYSTEM_SUPPORT", true, true),
-                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "VERSION_MANAGEMENT", false, true),
-                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "SYSTEM_INTEGRATION", false, true),
-
-                // Example: generic “for all majors” baseline skills
-                // (you can apply via loop instead of listing; see below)
-            };
-
-            // 5) Insert links from the seed array
-            foreach (var (majorBackend, skillBackend, required, active) in seed)
-            {
-                if (!majorByBackend.TryGetValue(majorBackend, out var majorId))
-                {
-                    errors.Add(new ImportError("SeedMajorSkills", null,
-                        $"Major BackendName not found: {majorBackend}"));
-                    continue;
-                }
-
-                if (!skillByBackend.TryGetValue(skillBackend, out var skillId))
-                {
-                    errors.Add(new ImportError("SeedMajorSkills", null,
-                        $"Skill BackendName not found: {skillBackend}"));
-                    continue;
-                }
-
-                if (!existingLinks.Add((majorId, skillId)))
-                    continue; // already exists
-
                 db.Set<MajorSkill>().Add(new MajorSkill
                 {
                     Id = Guid.NewGuid(),
                     MajorId = majorId,
                     SkillId = skillId,
-                    IsSkillRequired = required,
-                    IsActive = active,
+                    IsSkillRequired = false,
+                    IsActive = true,
                     IsDeleted = false,
                     CreatedById = createdById,
                     CreatedDate = now
@@ -647,6 +985,10 @@ public class Program
     }
 }
 
-// ================ Error Model =================
+#endregion
 
-public record ImportError(string FileName, int? RowNumber, string Message);
+#region Error Model
+
+public sealed record ImportError(string FileName, int? RowNumber, string Message);
+
+#endregion

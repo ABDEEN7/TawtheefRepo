@@ -369,7 +369,7 @@
               @for (skill of skills(); track skill.id; let i = $index) {
                 <tr [ngClass]="{ 'row-even': i % 2 === 0 }">
                   <td>{{ skill.name }}</td>
-                  <td>{{ skill.skillTypeName || ('MAJORS_SKILLS.NOT_AVAILABLE' | translate) }}</td>
+                  <td>{{ skill.skillType?.name || ('MAJORS_SKILLS.NOT_AVAILABLE' | translate) }}</td>
                   <td>
                     <span class="badge" [class.bg-success-subtle]="skill.isActive !== false" [class.bg-danger-subtle]="skill.isActive === false">
                       {{ skill.isActive === false ? ('MAJORS_SKILLS.INACTIVE' | translate) : ('MAJORS_SKILLS.ACTIVE' | translate) }}

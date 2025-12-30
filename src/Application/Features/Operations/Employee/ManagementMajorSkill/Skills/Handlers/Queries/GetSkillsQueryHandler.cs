@@ -6,6 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
+using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.Queries;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -13,18 +14,19 @@ namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill
 
 
 public sealed class GetSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
-    : IRequestHandler<GetSkillsQuery, IResult<PaginatedResult<DropdownOptions>>>
+    : IRequestHandler<GetSkillsQuery, IResult<PaginatedResult<SkillDetailsDto>>>
 {
-    public async Task<IResult<PaginatedResult<DropdownOptions>>> Handle(GetSkillsQuery request, CancellationToken ct)
+    public async Task<IResult<PaginatedResult<SkillDetailsDto>>> Handle(GetSkillsQuery request, CancellationToken ct)
     {
         var result = await uow.GetEntityRepository<Skill>().DbSet
             .AsNoTracking()
+            .Include(b=> b.SkillType)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Search), x =>
                 x.NameAr.Contains(request.Search!.Trim()) ||
                 x.NameEn.Contains(request.Search!.Trim()) ||
                 x.BackendName.Contains(request.Search!.Trim()))
             .WhereIf(request.SkillTypeId.HasValue, x => x.SkillTypeId == request.SkillTypeId!.Value)
-            .ToPaginatedListAsync<Skill, DropdownOptions>(mapper, request, ct);
+            .ToPaginatedListAsync<Skill, SkillDetailsDto>(mapper, request, ct);
         return Result.Ok(result);
     }
 }

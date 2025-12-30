@@ -4,7 +4,7 @@ using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary.DTO
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 
-namespace Tawtheef.Application.Common.Mappers.EmployeePorfiles;
+namespace Tawtheef.Application.Common.Mappers.EmployeeProfiles;
 
 public class JobInvitationSummaryProfile: IRegister
 {
