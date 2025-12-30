@@ -20,7 +20,7 @@ public class GetLatestJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobT
         var jobTabReview = result.Value;
 
         if (jobTabReview is null)
-            return Result.Fail<List<JobTabReviewNoteResponseDto>>(JobMessages.JOB_TAB_REVIEW_NOT_FOUND);
+            return Result.Fail<List<JobTabReviewNoteResponseDto>>(JobMessages.JobTabReviewNotFound);
 
         var jobDto = mapper.Map<List<JobTabReviewNoteResponseDto>>(jobTabReview);
         return Result.Ok(jobDto);

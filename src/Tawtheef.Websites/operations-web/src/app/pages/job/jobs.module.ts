@@ -44,6 +44,9 @@ import { TabsModule } from 'primeng/tabs';
 import { FilterByKeyPrefixPipe } from './pipes/filter-by-key-prefix.pipe';
 import { ProgressSpinner } from "primeng/progressspinner";
 import { RemoteSelectComponent } from '../../shared/components/remote-select/remote-select';
+import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
+import { TableModule } from 'primeng/table';
+import { RadioButtonModule } from 'primeng/radiobutton'; 
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -65,6 +68,7 @@ import { RemoteSelectComponent } from '../../shared/components/remote-select/rem
     JobPointsConfigPageComponent,
     JobPointsMainElementsComponent,
     JobPointsTabComponent,
+    JobsReadyApplicationComponent,
     FilterByKeyPrefixPipe
   ],
   imports: [
@@ -92,7 +96,9 @@ import { RemoteSelectComponent } from '../../shared/components/remote-select/rem
     FaDirArrowDirective,
     TabsModule,
     ProgressSpinner,
-    RemoteSelectComponent
+    RemoteSelectComponent,
+    TableModule,
+    RadioButtonModule 
 ],
   exports: [
     JobDetailsComponent,

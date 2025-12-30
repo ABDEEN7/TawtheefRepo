@@ -1,69 +1,48 @@
-<div class="login-shell" i18nNamespace="pages/auth">
-  <div class="brand-card u-card">
-    <div class="brand-head u-gradient-brand">
-      <div class="w-100 text-center">
-        <img class="logo mb-2" src="assets/img/logo.png" alt="{{ 'auth.login.ministry_name' | translate }}">
-        <div class="fw-bold fs-4 text-white">{{ 'auth.login.tawtheef' | translate }}</div>
+<div i18nNamespace="pages/auth">
+  <section class="login-wrapper">
+      <div class="container h-100">
+          <div class="row align-items-center h-100">
+              <div class="col-lg-6 d-lg-flex d-none">
+                  <div class="login-background">
+                    <div class="authentication-card w-100">
+                      <img src="../../../../assets/img/login-bg.png" alt="Img" class="img-fluid">
+                      <div class="authen-overlay-content">
+                        <h2 class="text-white fw-bold">مرحباً بكم في بوابة التوظيف</h2>
+                        <p class="text-white fs-20 fw-semibold">منصة موحدة لإدارة طلبات التوظيف</p>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-md-12 col-sm-12">
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-8">
+                         <div><img class="logo" src="assets/img/logo-black.png" alt="{{ 'auth.login.ministry_name' | translate }}"></div>
+                         <div class="fw-bold fs-4 ">{{ 'auth.login.tawtheef' | translate }}</div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                         <button type="button" class="btn btn-outline-primary btn-sm"  (click)="toggleLang()"> {{ currentLang === 'ar' ? 'English' : 'عربي' }}</button>
+                    </div>
+                  </div>
+                  <div class="w-100 mt-5">
+                    <h2 class="fw-bold fs-4"></h2>
+                    <h5 class="hint">{{ 'auth.login.choose_residency' | translate }}</h5>
+                  </div>
+                  <button type="button" class="btn btn-primary btn-lg w-100 mb-3" (click)="startLogin('tawtheeq')">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>{{ 'auth.login.tawtheeq_cta' | translate }}</span>
+                  </button>
+                <div class="title-wrapper"><span class="title-text">او</span></div>
+                <div class="text-center my-5">
+                    <h5 class="fw-bold ">للمكاتب المعتمدة</h5>
+
+                    <button type="button" class="btn btn-outline-primary w-100 btn-lg my-3" (click)="startLogin('google')"><i class="fa-brands fa-google"></i><span>{{ 'auth.login.google_cta' | translate }}</span>
+                    </button>
+                </div>
+
+
+
+            </div>
+          </div>
       </div>
-
-      <button type="button"
-              class="lang-switch u-pill"
-              (click)="toggleLang()">
-        {{ currentLang === 'ar' ? 'English' : 'عربي' }}
-      </button>
-    </div>
-
-    <div class="brand-body">
-      <div class="mb-2 hint">{{ 'auth.login.choose_residency' | translate }}</div>
-
-      <div class="segment"
-           role="tablist"
-           aria-label="Residency selector"
-           tabindex="0"
-           (keydown)="onSegmentKey($event)">
-
-        <button type="button"
-                class="seg-btn"
-                [class.active]="residencyMode==='resident'"
-                (click)="setMode('resident')">
-          <i class="fa-solid fa-house me-2"></i>
-          {{ 'auth.login.mode_resident' | translate }}
-        </button>
-
-        <button type="button"
-                class="seg-btn"
-                [class.active]="residencyMode==='nonresident'"
-                (click)="setMode('nonresident')">
-          <i class="fa-solid fa-plane me-2"></i>
-          {{ 'auth.login.mode_nonresident' | translate }}
-        </button>
-      </div>
-
-      <div class="row g-3 mt-2">
-        <!-- Resident (Tawtheeq) -->
-        <div class="col-12" *ngIf="residencyMode==='resident'">
-          <button type="button"
-                  class="btn-login btn-tawtheeq"
-                  (click)="startLogin('tawtheeq')">
-            <i class="fa-solid fa-shield-halved"></i>
-            <span>{{ 'auth.login.tawtheeq_cta' | translate }}</span>
-          </button>
-        </div>
-
-        <!-- Non-resident (Google) -->
-        <div class="col-12" *ngIf="residencyMode==='nonresident'">
-          <button type="button"
-                  class="btn-login btn-google"
-                  (click)="startLogin('google')">
-            <i class="fa-brands fa-google"></i>
-            <span>{{ 'auth.login.google_cta' | translate }}</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="footer small">
-        © {{ 'auth.login.footer_owner' | translate }}
-      </div>
-    </div>
-  </div>
+  </section>
 </div>

@@ -38,5 +38,6 @@
   "auth.externalLogin.loginFailed.detail": "تعذر المصادقة عبر مزود تسجيل الدخول الخارجي",
 
   "auth.externalLogin.externalAuthFailed.summary": "فشل تسجيل الدخول",
-  "auth.externalLogin.externalAuthFailed.detailFallback": "فشلت المصادقة الخارجية"
+  "auth.externalLogin.externalAuthFailed.detailFallback": "فشلت المصادقة الخارجية",
+  "remote-select.search-hint": "اكتب على الأقل {{minChars}} أحرف للبحث"
 }

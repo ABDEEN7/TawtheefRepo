@@ -21,7 +21,7 @@ public sealed class UpdateJobTabReviewStatusCommandHandler(
 
         if (reviewsResult.IsFailed || reviewsResult.Value is null || reviewsResult.Value.Count == 0)
         {
-            return Result.Fail<Unit>(JobMessages.REVIEW_NOTE_FOUND);
+            return Result.Fail<Unit>(JobMessages.ReviewNoteFound);
         }
 
         reviewsResult.Value.ForEach(r => r.IsResolved = true);

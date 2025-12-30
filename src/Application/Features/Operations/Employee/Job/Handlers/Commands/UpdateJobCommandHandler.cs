@@ -26,12 +26,12 @@ public class UpdateJobCommandHandler(
     {
         var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
         if (existingJobResult.IsFailed || existingJobResult.Value == null)
-            return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
+            return Result.Fail<Unit>(JobMessages.JobNotFound);
 
         var existingJob = existingJobResult.Value;
 
         if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
-            return Result.Fail<Unit>(JobMessages.CAN_ONLY_EDIT_IN_DRAFT);
+            return Result.Fail<Unit>(JobMessages.CanOnlyEditInDraft);
 
         if (request.Job.Skills?.Any() ?? false)
             await UpdateSkillsAsync(existingJob, request.Job.Skills);
@@ -58,7 +58,7 @@ public class UpdateJobCommandHandler(
 
         await jobRepository.Repository.UpdateAsync(existingJob);
         var updated = await unitOfWork.SaveChangesAsync(cancellationToken);
-        return updated > 0 ? Result.Ok(Unit.Value) : Result.Fail<Unit>(JobMessages.UPDATE_FAILED);
+        return updated > 0 ? Result.Ok(Unit.Value) : Result.Fail<Unit>(JobMessages.UpdateFailed);
     }
 
     private async Task UpdateSkillsAsync(JobEntity job, List<JobSkillRequestDto> newSkills)

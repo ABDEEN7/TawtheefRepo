@@ -23,7 +23,7 @@ public class JobPointsRepository(IGenericRepository<JobPointsMain> repository, I
         if (jobPoints == null)
         {
             logger.Error($"Job points for JobId '{jobId}' not found.");
-            return Result.Fail<JobPointsMain>(JobMessages.JOB_POINTS_NOT_FOUND);
+            return Result.Fail<JobPointsMain>(JobMessages.JobPointsNotFound);
         }
 
         return Result.Ok(jobPoints);
