@@ -15,7 +15,7 @@ public class ApproveJobPointsCommandHandler(
     {
         var jobPoints = await jobPointsRepository.GetByJobIdAsync(request.JobId);
         if (jobPoints.IsFailed)
-            return Result.Fail<bool>(JobMessages.JOB_POINTS_NOT_FOUND);
+            return Result.Fail<bool>(JobMessages.JobPointsNotFound);
 
         var points = jobPoints.Value;
         points.IsApproved = true;

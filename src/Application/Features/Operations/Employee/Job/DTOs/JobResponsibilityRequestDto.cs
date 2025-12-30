@@ -5,11 +5,11 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 public class JobResponsibilityRequestDto
 {
-    [Required(ErrorMessage = JobMessages.RESPONSIBILITY_TEXT_REQUIRED)]
-    [MaxLength(500, ErrorMessage = JobMessages.RESPONSIBILITY_MAX_LENGTH)]
+    [Required(ErrorMessage = JobMessages.ResponsibilityTextRequired)]
+    [MaxLength(500, ErrorMessage = JobMessages.ResponsibilityMaxLength)]
     public required string TextAr { get; set; }
 
-    [Required(ErrorMessage = JobMessages.RESPONSIBILITY_TEXT_REQUIRED)]
-    [MaxLength(500, ErrorMessage = JobMessages.RESPONSIBILITY_MAX_LENGTH)]
+    [Required(ErrorMessage = JobMessages.ResponsibilityTextRequired)]
+    [MaxLength(500, ErrorMessage = JobMessages.ResponsibilityMaxLength)]
     public required string TextEn { get; set; }
 }

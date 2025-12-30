@@ -21,7 +21,7 @@ public class ChangeJobStatusCommandHandler(
     {
         var jobResult = await jobRepository.Repository.GetByIdAsync(request.JobId);
         if (jobResult.IsFailed || jobResult.Value == null)
-            return Result.Fail<Unit>(JobMessages.JOB_NOT_FOUND);
+            return Result.Fail<Unit>(JobMessages.JobNotFound);
 
         var job = jobResult.Value;
 

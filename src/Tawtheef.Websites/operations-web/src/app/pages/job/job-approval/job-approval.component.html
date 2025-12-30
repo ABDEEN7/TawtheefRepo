@@ -105,121 +105,99 @@
             </h2>
 
             <div class="article-summary">
-              @if (activeTab === tabType.Overview) { 
-                @if (job.overViewAr || job.overViewEn) {
-                <div class="dual-text-container">
-                  <div class="text-area">
-                    <h6>{{ 'JOB_APPROVAL.OVERVIEWAR' | translate }}</h6>
-                    <div [innerHTML]="job.overViewAr"></div>
-                  </div>
-                  <div class="text-area">
-                    <h6>{{ 'JOB_APPROVAL.OVERVIEWEN' | translate }}</h6>
-                    <div [innerHTML]="job.overViewEn"></div>
-                  </div>
+              @if (activeTab === tabType.Overview) { @if (job.overViewAr || job.overViewEn) {
+              <div class="dual-text-container">
+                <div class="text-area">
+                  <h6>{{ 'JOB_APPROVAL.OVERVIEWAR' | translate }}</h6>
+                  <div [innerHTML]="job.overViewAr"></div>
                 </div>
-                } 
-              } 
-              
-              @if (activeTab === tabType.Responsibilities) { 
-                @if (getResponsibilities().length > 0) {
-                <ul>
-                  @for (responsibility of getResponsibilities(); track $index) {
-                  <li>{{ responsibility }}</li>
-                  }
-                </ul>
-                } 
-              } 
-              
-              @if (activeTab === tabType.Conditions) {
-                <h3>{{ 'JOB_APPROVAL.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
-                <p>{{ getDegreeRequirements() }}</p>
-                @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
-                <h3>{{ 'JOB_APPROVAL.QUALIFICATIONS' | translate }}</h3>
+                <div class="text-area">
+                  <h6>{{ 'JOB_APPROVAL.OVERVIEWEN' | translate }}</h6>
+                  <div [innerHTML]="job.overViewEn"></div>
+                </div>
+              </div>
+              } } @if (activeTab === tabType.Responsibilities) { @if (getResponsibilities().length >
+              0) {
+              <ul>
+                @for (responsibility of getResponsibilities(); track $index) {
+                <li>{{ responsibility }}</li>
+                }
+              </ul>
+              } } @if (activeTab === tabType.Conditions) {
+              <h3>{{ 'JOB_APPROVAL.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
+              <p>{{ getDegreeRequirements() }}</p>
+              @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
+              <h3>{{ 'JOB_APPROVAL.QUALIFICATIONS' | translate }}</h3>
+              <div class="dual-text-container">
+                <div class="text-area">
+                  <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
+                  <div [innerHTML]="job.qualificationDescriptionAr"></div>
+                </div>
+                <div class="text-area">
+                  <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
+                  <div [innerHTML]="job.qualificationDescriptionEn"></div>
+                </div>
+              </div>
+              } @if (getJobConditions().length > 0) {
+              <div class="basic-requirements">
+                <h3>{{ 'JOB_APPROVAL.CONDITIONS' | translate }}</h3>
+                @for (condition of getJobConditions(); track $index) {
                 <div class="dual-text-container">
                   <div class="text-area">
                     <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                    <div [innerHTML]="job.qualificationDescriptionAr"></div>
+                    <div [innerHTML]="condition.textAr"></div>
                   </div>
                   <div class="text-area">
                     <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                    <div [innerHTML]="job.qualificationDescriptionEn"></div>
+                    <div [innerHTML]="condition.textEn"></div>
                   </div>
                 </div>
-                } 
-                @if (getJobConditions().length > 0) {
-                <div class="basic-requirements">
-                  <h3>{{ 'JOB_APPROVAL.CONDITIONS' | translate }}</h3>
-                  @for (condition of getJobConditions(); track $index) {
+                }
+              </div>
+              } } @if (activeTab === tabType.Skills) { @if (getJobSkills().length > 0) {
+              <ul>
+                @for (skill of getJobSkills(); track $index) {
+                <li>{{ skill }}</li>
+                }
+              </ul>
+              } } @if (activeTab === tabType.Benefits) { @if (job.benefitsAr || job.benefitsEn) {
+              <div class="dual-text-container">
+                <div class="text-area">
+                  <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
+                  <div [innerHTML]="job.benefitsAr"></div>
+                </div>
+                <div class="text-area">
+                  <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
+                  <div [innerHTML]="job.benefitsEn"></div>
+                </div>
+              </div>
+              } } @if (activeTab === tabType.Attachments) { @if (job.requiredAttachments &&
+              job.requiredAttachments.length) {
+              <ul>
+                @for (attachment of job.requiredAttachments; track $index) {
+                <li>
                   <div class="dual-text-container">
-                    <div class="text-area">
+                    <div class="attachmentAr">
                       <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                      <div [innerHTML]="condition.textAr"></div>
+                      <div [innerHTML]="attachment.titleAr"></div>
                     </div>
-                    <div class="text-area">
+                    <div class="attachmentEn">
                       <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                      <div [innerHTML]="condition.textEn"></div>
+                      <div [innerHTML]="attachment.titleEn"></div>
+                    </div>
+                    <div class="form-check form-switch m-0">
+                      <input
+                        class="form-check-input switch-lg"
+                        disabled="true"
+                        type="checkbox"
+                        [(ngModel)]="attachment.isMandatory"
+                      />
                     </div>
                   </div>
-                  }
-                </div>
-                } 
-              } 
-              
-              @if (activeTab === tabType.Skills) { 
-                @if (getJobSkills().length > 0) {
-                <ul>
-                  @for (skill of getJobSkills(); track $index) {
-                  <li>{{ skill }}</li>
-                  }
-                </ul>
-                } 
-              } 
-              
-              @if (activeTab === tabType.Benefits) { 
-                @if (job.benefitsAr || job.benefitsEn) {
-                <div class="dual-text-container">
-                  <div class="text-area">
-                    <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                    <div [innerHTML]="job.benefitsAr"></div>
-                  </div>
-                  <div class="text-area">
-                    <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                    <div [innerHTML]="job.benefitsEn"></div>
-                  </div>
-                </div>
-                } 
-              } 
-              
-              @if (activeTab === tabType.Attachments) { 
-                @if (job.requiredAttachments && job.requiredAttachments.length) {
-                <ul>
-                  @for (attachment of job.requiredAttachments; track $index) {
-                  <li>
-                    <div class="dual-text-container">
-                      <div class="attachmentAr">
-                        <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                        <div [innerHTML]="attachment.titleAr"></div>
-                      </div>
-                      <div class="attachmentEn">
-                        <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                        <div [innerHTML]="attachment.titleEn"></div>
-                      </div>
-                      <div class="form-check form-switch m-0">
-                        <input
-                          class="form-check-input switch-lg"
-                          disabled="true"
-                          type="checkbox"
-                          [(ngModel)]="attachment.isMandatory"
-                        />
-                      </div>
-                    </div>
-                  </li>
-                  }
-                </ul>
-                } 
-              }
-              
-              @if (activeTab === 'Review') {
+                </li>
+                }
+              </ul>
+              } } @if (activeTab === 'Review') {
               <div class="review-wrapper">
                 @for (item of tabNotes; track $index) {
                 <div class="review-card">
@@ -234,7 +212,7 @@
                   </div>
                 </div>
                 }
-                
+
                 <!-- Job-level review attachments -->
                 @if (jobReviewAttachments.length > 0) {
                 <div class="review-attachments-card">
@@ -302,19 +280,24 @@
     <!-- Notes section for all tabs except Review -->
     @if(activeTab !== 'Review') {
     <div class="job-note-card">
-      @let tabControls = getCurrentTabControls();
-      
-      @if (tabControls) {
+      @let tabControls = getCurrentTabControls(); @if (tabControls) {
       <div class="note-section">
         <div class="tabstatus note-field">
           <label for="tabStatus">{{ 'JOB_APPROVAL.STATUS' | translate }}</label>
-          <p-select
-            [options]="tabStatus"
+          <p-select [options]="tabStatus" 
             [formControl]="tabControls.tabControl"
             id="tabStatus"
             placeholder="{{ 'JOB_APPROVAL.SELECT_PLACEHOLDER' | translate }}"
             class="status-ddl"
-          ></p-select>
+            >
+            <ng-template let-status pTemplate="item">
+              {{ 'JOB_TAB_STATUS.' + status | translate }}
+            </ng-template>
+
+            <ng-template let-status pTemplate="selectedItem">
+              {{ 'JOB_TAB_STATUS.' + status | translate }}
+            </ng-template>
+          </p-select>
         </div>
 
         <div class="note note-field">
@@ -325,9 +308,9 @@
             rows="4"
             id="note"
             class="note-textarea"
-            [ngClass]="{'is-invalid': hasNoteError()}"
+            [ngClass]="{ 'is-invalid': hasNoteError() }"
           ></textarea>
-          
+
           @if (hasNoteError()) {
           <div class="error-message text-danger">
             {{ 'JOB_APPROVAL.NOTE_REQUIRED_FOR_RETURN' | translate }}
@@ -353,8 +336,7 @@
           <span>{{ 'JOB_APPROVAL.BACK_TO_EDIT' | translate }}</span>
         </button>
       </div>
-      } 
-      @if(isAllTabsApproved()) {
+      } @if(isAllTabsApproved()) {
       <div class="approve-btn">
         <button class="apply-button-large" [disabled]="!isReviewComplete()" (click)="confirm()">
           <i class="fa fa-check"></i>
@@ -363,9 +345,7 @@
       </div>
       }
     </div>
-    } 
-    
-    } @else {
+    } } @else {
     <div style="text-align: center; padding: 60px 20px; color: #999">
       <i class="fa-solid fa-spinner fa-spin" style="font-size: 48px; margin-bottom: 20px"></i>
       <p style="font-size: 16px; font-weight: 500">{{ 'common.loading' | translate }}</p>
@@ -397,7 +377,7 @@
             <td>{{ h.note || '—' }}</td>
             <td>
               <span class="status-badge" [ngClass]="h.tabStatus">
-                {{ h.tabStatus }}
+                {{'JOB_TAB_STATUS.'+ h.tabStatus | translate}}
               </span>
             </td>
             <td>

@@ -195,7 +195,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       subMajorId: formValue.subMajorId as GUID,
       workTypeId: formValue.workTypeId as GUID,
       numberOfVacancies: formValue.numberOfVacancies,
-      closingDate: formValue.closingDate ? new Date(formValue.closingDate) : new Date(),
+      closingDate: this.normalizeDate(formValue.closingDate),
       minimumAge: formValue.minimumAge,
       maximumAge: formValue.maximumAge,
       overviewAr: '',
@@ -320,4 +320,13 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   canSelectSubMajor(): boolean {
     return !!this.form.controls.majorId.value;
   }
+
+  private normalizeDate(d: Date | null): Date {
+    if(!d)
+      return new Date();
+
+  const x = new Date(d);
+  x.setHours(12, 0, 0, 0); // noon local time
+  return x;
+}
 }
