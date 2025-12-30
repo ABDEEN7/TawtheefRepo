@@ -304,6 +304,7 @@ readonly jobStatus = JobStatus;
       [JobStatus.Closed]: 'bg-dark',
       [JobStatus.Rejected]: 'bg-danger',
       [JobStatus.Cancelled]: 'bg-secondary',
+      [JobStatus.ReadyForAnnouncement]: 'bg-warning text-dark',
     };
     return STATUS_BADGE_MAP[statusName] || 'bg-light text-dark';
   }
