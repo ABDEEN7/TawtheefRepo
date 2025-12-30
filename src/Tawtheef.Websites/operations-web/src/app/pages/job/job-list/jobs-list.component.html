@@ -1,310 +1,320 @@
-<section i18nNamespace="pages/job-list" class="job-list-container">
-  <div class="job-list-header">
-    <div class="header-content">
-      <div class="header-title-section">
-        <h1 class="main-title">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h1>
-        <div class="header-description">
-          <div class="description-text">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</div>
-          <button class="create-job-btn" (click)="createNewJob()">
+<section i18nNamespace="pages/job-list">
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="row align-items-center mb-3">
+        <div class="col-md-6">
+          <h3 class="fw-bold mb-0">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h3>
+          <p class="text-muted mt-2 mb-0">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
+        </div>
+        <div class="col-md-6 text-end">
+          <button class="btn btn-outline-primary" (click)="createNewJob()">
             <i class="fa fa-plus me-2"></i>
             {{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}
           </button>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="stats-section">
-    <div class="stats-header">
-      <div class="stats-title">{{ 'JOB_LIST_STATISTICS' | translate }}</div>
-      <!-- <div class="year-filter">
-        <select class="form-select border-0 bg-transparent">
-          <option>2025/2026</option>
-        </select>
-      </div> -->
-    </div>
-    
-    <div class="stats-grid">
-      <div class="stat-card stat-cancelled">
-        <div class="stat-icon">
-          <i class="fa fa-times-circle text-danger fs-4"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">{{cancelledCount}}</div>
-          <div class="stat-label">{{ 'JOB_LIST_STATS_CANCELLED' | translate }}</div>
-        </div>
-      </div>
-      
-      
-      <div class="stat-card stat-review">
-        <div class="stat-icon">
-          <i class="fa fa-hourglass-half text-warning fs-4"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">{{pendingApprovalCount}}</div>
-          <div class="stat-label">{{ 'JOB_LIST_STATS_PENDING_APPROVAL' | translate }}</div>
-        </div>
-      </div>
-      
-      <div class="stat-card stat-accepted">
-        <div class="stat-icon">
-          <i class="fa fa-check-circle text-success fs-4"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">{{approvedCount}}</div>
-          <div class="stat-label">{{ 'JOB_LIST_STATS_APPROVED' | translate }}</div>
-        </div>
-      </div>
-      
-      <div class="stat-card stat-new">
-        <div class="stat-icon">
-          <i class="fa fa-star text-primary fs-4"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">{{draftCount}}</div>
-          <div class="stat-label">{{ 'JOB_LIST_STATS_DRAFTED' | translate }}</div>
-        </div>
-      </div>
-    </div>
-  </div>
+     <div class="row mt-4">
+          <div class="col-12">
+               <div class="card card-table">
+                    <div class="card-body">
+                         <h4 class="fw-bold mb-3">{{ 'JOB_LIST_STATISTICS' | translate }}</h4>
+                         <!-- KPIs -->
+                         <div class="row">
+                           <div class="col-md-3">
+                             <div class="shadow-sm card card-table bg-info-light border-0">
+                               <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                 <div class="d-flex flex-column">
+                                   <h2 class="fw-bold text-dark">{{ cancelledCount}}</h2>
+                                   <p class="m-0">{{ 'JOB_LIST_STATS_CANCELLED' | translate }}</p>
 
-  <div class="jobs-list-section">
-    <div class="section-title-container">
-      <h2 class="section-title">{{ 'JOB_LIST_JOB_LIST' | translate }}</h2>
-    </div>
-    
-    <div class="filters-section">
-      <div class="p-3 mb-3">
-        <div class="row g-2">
-          <div class="col-lg-4 col-md-6">
-            <input
-              class="form-control"
-              [ngModel]="searchQuery()"
-              (ngModelChange)="searchQuery.set($event); onFilterChange()"
-              [placeholder]="'JOB_LIST_FILTERS_SEARCH_PLACEHOLDER' | translate"
-            />
-          </div>
-          <div class="col-lg-2 col-md-4">
-            <p-select
-              [options]="lookupsService.jobCategories()"
-              [ngModel]="filterType()"
-              (ngModelChange)="filterType.set($event); onFilterChange()"
-              optionLabel="name"
-              optionValue="id"
-              [showClear]="true"
-              [placeholder]="'JOB_LIST_FILTERS_JOB_CATEGORY' | translate"
-              class="w-100"
-            ></p-select>
-          </div>
-          <div class="col-lg-2 col-md-4">
-            <p-select
-              [options]="lookupsService.jobStatus()"
-              [ngModel]="filterStatus()"
-              (ngModelChange)="filterStatus.set($event); onFilterChange()"
-              optionLabel="name"
-              optionValue="id"
-              [showClear]="true"
-              [placeholder]="'JOB_LIST_FILTERS_STATUS' | translate"
-              class="w-100 height-100"
-            ></p-select>
-          </div>
-          <div class="col-lg-4 col-md-4 d-flex align-items-stretch">
-            <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
-              <i class="fa fa-rotate-left"></i>
-              {{ 'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <div class="table-container">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th class="table-header-cell">#</th>
-              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_TITLE_AR' | translate }}</th>
-              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_TITLE_EN' | translate }}</th>
-              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_JOB_CATEGORY' | translate }}</th>
-              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_STATUS' | translate }}</th>
-              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_VACANCIES' | translate }}</th>
-              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_DEADLINE' | translate }}</th>
-              <th class="table-header-cell">{{ 'JOB_LIST_COLUMNS_ACTIONS' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (jobs?.items && jobs?.items?.length) { 
-              @for (job of jobs?.items; track job.id; let i = $index) {
-              <tr>
-                <td class="table-body-cell table-body-cell-alt" style="width: 106px">
-                  {{ (currentPage() - 1) * itemsPerPage + i + 1 }}
-                </td>
-                
-                <td class="table-body-cell" style="width: 250px">
-                  <span class="fw-bold">{{ job.titleAr }}</span>
-                </td>
-                
-                <td class="table-body-cell table-body-cell-alt" style="width: 164px">
-                  <span class="fw-bold">{{ job.titleEn }}</span>
-                </td>
-                
-                <td class="table-body-cell" style="width: 164px">
-                  <span class="text-muted">{{ job.jobCategory.name }}</span>
-                </td>
-                
-                <td class="table-body-cell table-body-cell-alt" style="width: 164px">
-                  <span [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)" class="status-badge">
-                    {{ job.jobStatus.name }}
-                  </span>
-                </td>
-                
-                <td class="table-body-cell" style="width: 200px">
-                  <span class="text-muted">{{ job.numberOfVacancies }}</span>
-                </td>
-                
-                <td class="table-body-cell table-body-cell-alt" style="width: 200px">
-                  <span class="text-muted">{{ job.closingDate | date : 'yyyy/MM/dd' }}</span>
-                </td>
-                
-                <td class="table-body-cell">
-                  <div class="action-buttons">
-                    @if (job.jobStatus.backendName === jobStatus.Approved) {
-                    <button
-                      type="button"
-                      class="action-btn btn-outline-brand btn-small me-1"
-                      (click)="openPointsModal(job)"
-                      [title]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate"
-                    >
-                      <i class="fa fa-gear"></i>
-                    </button>
-                    } 
-                    
-                    @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate) {
-                    <button
-                      type="button"
-                      class="action-btn btn-brand btn-medium"
-                      (click)="editJob(job)"
-                      [title]="'JOB_LIST_BUTTONS_EDIT' | translate"
-                    >
-                      <i class="fa fa-pen-to-square"></i>
-                    </button>
-                    } 
-                    
-                    @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !== jobStatus.PendingApproval && job.jobStatus.backendName !== jobStatus.NeedUpdate) {
-                    <button
-                      type="button"
-                      class="action-btn btn-outline-brand btn-medium"
-                      (click)="viewJob(job)"
-                      [title]="'JOB_LIST_BUTTONS_VIEW' | translate"
-                    >
-                      <i class="fa fa-eye"></i>
-                    </button>
-                    }
-                    
-                    @if(job.jobStatus.backendName !== jobStatus.Approved) {
-                    <div class="dropdown d-inline-block">
-                      <button
-                        class="action-btn btn-outline-brand btn-small dropdown-toggle"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        [title]="'JOB_LIST_BUTTONS_MORE_ACTIONS' | translate"
-                      >
-                        <i class="fa fa-ellipsis-h"></i>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end">
-                        @if (job.jobStatus.backendName === jobStatus.PendingApproval) {
-                        <li>
-                          <button class="dropdown-item" (click)="approveJob(job)">
-                            <i class="fa fa-check me-2"></i>
-                            {{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}
-                          </button>
-                        </li>
-                        <li>
-                          <button class="dropdown-item text-danger" (click)="rejectJob(job)">
-                            <i class="fa fa-times me-2"></i>
-                            {{ 'JOB_LIST_BUTTONS_REJECT' | translate }}
-                          </button>
-                        </li>
-                        } 
-                        
-                        @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
-                        <li>
-                          <button class="dropdown-item" (click)="publishJob(job)">
-                            <i class="fa fa-upload me-2"></i>
-                            {{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}
-                          </button>
-                        </li>
-                        } 
-                        
-                        @if (job.jobStatus.backendName === jobStatus.Published) {
-                        <li>
-                          <button class="dropdown-item" (click)="closeJob(job)">
-                            <i class="fa fa-lock me-2"></i>
-                            {{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}
-                          </button>
-                        </li>
-                        }
-                        @if (job.jobStatus.backendName === jobStatus.Published || job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
-                        <li>
-                          <button class="dropdown-item" (click)="cancelJob(job)">
-                            <i class="fa fa-times me-2"></i>
-                            {{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}
-                          </button>
-                        </li>
-                        }
+                                 </div>
+                                 <div><i class="hgi hgi-stroke hgi-star text-blue h2"></i></div>
+                               </div>
 
-                        @if (job.jobStatus.backendName === jobStatus.Rejected) {
-                        <li>
-                          <button class="dropdown-item" (click)="reopenJob(job)">
-                            <i class="fa-regular fa-circle-check"></i>
-                            {{ 'JOB_LIST_BUTTONS_REOPEN' | translate }}
-                          </button>
-                        </li>
-                        }
-                        
-                        @if(job.jobStatus.backendName !== jobStatus.Published && job.jobStatus.backendName !== jobStatus.Approved) {
-                        <li><hr class="dropdown-divider" /></li>
-                        <li>
-                          <button class="dropdown-item text-danger" (click)="deleteJob(job)">
-                            <i class="fa fa-trash me-2"></i>
-                            {{ 'JOB_LIST_BUTTONS_DELETE' | translate }}
-                          </button>
-                        </li>
-                        }
-                      </ul>
+                             </div>
+
+                           </div>
+                           <div class="col-md-3">
+                             <div class="shadow-sm card card-table bg-success-light border-0">
+                               <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                 <div class="d-flex flex-column">
+                                   <h2 class="fw-bold text-dark">{{ pendingApprovalCount }}</h2>
+                                   <p class="m-0">{{ 'JOB_LIST_STATS_PENDING_APPROVAL' | translate }}</p>
+                                 </div>
+                                 <div><i class="hgi hgi-stroke hgi-checkmark-circle-02 text-success h2"></i></div>
+                               </div>
+                             </div>
+                           </div>
+                           <div class="col-md-3">
+                             <div class="shadow-sm card card-table bg-alert-light border-0">
+                               <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                 <div class="d-flex flex-column">
+                                   <h2 class=" fw-bold">{{ approvedCount }}</h2>
+                                   <p class="m-0">{{ 'JOB_LIST_STATS_APPROVED' | translate }}</p>
+
+                                 </div>
+                                 <div><i class="hgi hgi-stroke hgi-comment-01 text-warning h2"></i></div>
+                               </div>
+
+                             </div>
+                           </div>
+                           <div class="col-md-3">
+                             <div class="shadow-sm card card-table bg-warning-light border-0">
+                               <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                 <div class="d-flex  flex-column">
+                                   <h2 class=" fw-bold">{{ draftCount }}</h2>
+                                   <p class="m-0">{{ 'JOB_LIST_STATS_DRAFTED' | translate }}</p>
+                                 </div>
+                                 <div><i class="hgi hgi-stroke hgi-cancel-circle text-danger h2"></i></div>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
                     </div>
-                    }
-                  </div>
-                </td>
-              </tr>
+               </div>
+         </div>
+     </div>
+
+      <div class="card card-table my-4">
+        <div class="card-body">
+          <h4 class="fw-bold mb-3">{{ 'JOB_LIST_JOB_LIST' | translate }}</h4>
+          <div class="row mb-4">
+            <div class="col-lg-3">
+              <input
+                class="form-control"
+                [ngModel]="searchQuery()"
+                (ngModelChange)="searchQuery.set($event); onFilterChange()"
+                [placeholder]="'JOB_LIST_FILTERS_SEARCH_PLACEHOLDER' | translate"
+              />
+            </div>
+            <div class="col-lg-3">
+              <p-select
+                [options]="lookupsService.jobCategories()"
+                [ngModel]="filterType()"
+                (ngModelChange)="filterType.set($event); onFilterChange()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [placeholder]="'JOB_LIST_FILTERS_JOB_CATEGORY' | translate"
+                class="w-100"
+              ></p-select>
+            </div>
+            <div class="col-lg-3">
+              <p-select
+                [options]="lookupsService.jobStatus()"
+                [ngModel]="filterStatus()"
+                (ngModelChange)="filterStatus.set($event); onFilterChange()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [placeholder]="'JOB_LIST_FILTERS_STATUS' | translate"
+                class="w-100 height-100"
+              ></p-select>
+            </div>
+            <div class="col-lg-3">
+              <button class="btn btn-outline-primary" (click)="clearFilters()">
+                <i class="fa fa-rotate-left"></i>
+                {{ 'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}
+              </button>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <div class="table-card rounded overflow-hidden">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover align-middle w-100">
+                    <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>{{ 'JOB_LIST_COLUMNS_TITLE_AR' | translate }}</th>
+                      <th>{{ 'JOB_LIST_COLUMNS_TITLE_EN' | translate }}</th>
+                      <th>{{ 'JOB_LIST_COLUMNS_JOB_CATEGORY' | translate }}</th>
+                      <th>{{ 'JOB_LIST_COLUMNS_STATUS' | translate }}</th>
+                      <th>{{ 'JOB_LIST_COLUMNS_VACANCIES' | translate }}</th>
+                      <th>{{ 'JOB_LIST_COLUMNS_DEADLINE' | translate }}</th>
+                      <th>{{ 'JOB_LIST_COLUMNS_ACTIONS' | translate }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      @if (jobs?.items && jobs?.items?.length) {
+                        @for (job of jobs?.items; track job.id; let i = $index) {
+                          <tr>
+                            <td>
+                              {{ (currentPage() - 1) * itemsPerPage + i + 1 }}
+                            </td>
+
+                            <td>
+                              <span class="fw-bold">{{ job.titleAr }}</span>
+                            </td>
+
+                            <td>
+                              <span class="fw-bold">{{ job.titleEn }}</span>
+                            </td>
+
+                            <td>
+                              <span class="text-muted">{{ job.jobCategory.name }}</span>
+                            </td>
+
+                            <td>
+                                <span [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)" class="status-badge">
+                                  {{ job.jobStatus.name }}
+                                </span>
+                            </td>
+
+                            <td>
+                              <span class="text-muted">{{ job.numberOfVacancies }}</span>
+                            </td>
+
+                            <td >
+                              <span class="text-muted">{{ job.closingDate | date : 'yyyy/MM/dd' }}</span>
+                            </td>
+
+                            <td>
+                              <div class="action-buttons">
+                                @if (job.jobStatus.backendName === jobStatus.Approved) {
+                                  <button
+                                    type="button"
+                                    class="action-btn btn-outline-brand btn-small me-1"
+                                    (click)="openPointsModal(job)"
+                                    [title]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate"
+                                  >
+                                    <i class="fa fa-gear"></i>
+                                  </button>
+                                }
+
+                                @if (job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.NeedUpdate) {
+                                  <button
+                                    type="button"
+                                    class="action-btn btn-brand btn-medium"
+                                    (click)="editJob(job)"
+                                    [title]="'JOB_LIST_BUTTONS_EDIT' | translate"
+                                  >
+                                    <i class="fa fa-pen-to-square"></i>
+                                  </button>
+                                }
+
+                                @if(job.jobStatus.backendName !== jobStatus.Draft && job.jobStatus.backendName !== jobStatus.PendingApproval && job.jobStatus.backendName !== jobStatus.NeedUpdate) {
+                                  <button
+                                    type="button"
+                                    class="action-btn btn-outline-brand btn-medium"
+                                    (click)="viewJob(job)"
+                                    [title]="'JOB_LIST_BUTTONS_VIEW' | translate"
+                                  >
+                                    <i class="fa fa-eye"></i>
+                                  </button>
+                                }
+
+                                @if(job.jobStatus.backendName !== jobStatus.Approved) {
+                                  <div class="dropdown d-inline-block">
+                                    <button
+                                      class="action-btn btn-outline-brand btn-small dropdown-toggle"
+                                      type="button"
+                                      data-bs-toggle="dropdown"
+                                      [title]="'JOB_LIST_BUTTONS_MORE_ACTIONS' | translate"
+                                    >
+                                      <i class="fa fa-ellipsis-h"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                      @if (job.jobStatus.backendName === jobStatus.PendingApproval) {
+                                        <li>
+                                          <button class="dropdown-item" (click)="approveJob(job)">
+                                            <i class="fa fa-check me-2"></i>
+                                            {{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}
+                                          </button>
+                                        </li>
+                                        <li>
+                                          <button class="dropdown-item text-danger" (click)="rejectJob(job)">
+                                            <i class="fa fa-times me-2"></i>
+                                            {{ 'JOB_LIST_BUTTONS_REJECT' | translate }}
+                                          </button>
+                                        </li>
+                                      }
+
+                                      @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
+                                        <li>
+                                          <button class="dropdown-item" (click)="publishJob(job)">
+                                            <i class="fa fa-upload me-2"></i>
+                                            {{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}
+                                          </button>
+                                        </li>
+                                      }
+
+                                      @if (job.jobStatus.backendName === jobStatus.Published) {
+                                        <li>
+                                          <button class="dropdown-item" (click)="closeJob(job)">
+                                            <i class="fa fa-lock me-2"></i>
+                                            {{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}
+                                          </button>
+                                        </li>
+                                      }
+                                      @if (job.jobStatus.backendName === jobStatus.Published || job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
+                                        <li>
+                                          <button class="dropdown-item" (click)="cancelJob(job)">
+                                            <i class="fa fa-times me-2"></i>
+                                            {{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}
+                                          </button>
+                                        </li>
+                                      }
+
+                                      @if (job.jobStatus.backendName === jobStatus.Rejected) {
+                                        <li>
+                                          <button class="dropdown-item" (click)="reopenJob(job)">
+                                            <i class="fa-regular fa-circle-check"></i>
+                                            {{ 'JOB_LIST_BUTTONS_REOPEN' | translate }}
+                                          </button>
+                                        </li>
+                                      }
+
+                                      @if(job.jobStatus.backendName !== jobStatus.Published && job.jobStatus.backendName !== jobStatus.Approved) {
+                                        <li><hr class="dropdown-divider" /></li>
+                                        <li>
+                                          <button class="dropdown-item text-danger" (click)="deleteJob(job)">
+                                            <i class="fa fa-trash me-2"></i>
+                                            {{ 'JOB_LIST_BUTTONS_DELETE' | translate }}
+                                          </button>
+                                        </li>
+                                      }
+                                    </ul>
+                                  </div>
+                                }
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                      }
+                      @else {
+                        <tr>
+                          <td colspan="8" class="no-jobs-found">
+                            <i class="fa fa-briefcase fa-3x text-muted mb-3"></i>
+                            <p class="no-jobs-text">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</p>
+                            <button class="action-btn btn-brand btn-medium" (click)="createNewJob()">
+                              <i class="fa fa-plus me-2"></i>
+                              {{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              @if (paginationMetadata && paginationMetadata.totalCount > 0) {
+                <div class="p-3 border-top">
+                  <app-pagination [currentPage]="currentPage()" [totalItems]="paginationMetadata.totalCount" [itemsPerPage]="itemsPerPage" (pageChanged)="onPageChange($event)"> </app-pagination>
+                </div>
               }
-            } 
-            @else {
-              <tr>
-                <td colspan="8" class="no-jobs-found">
-                  <i class="fa fa-briefcase fa-3x text-muted mb-3"></i>
-                  <p class="no-jobs-text">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</p>
-                  <button class="action-btn btn-brand btn-medium" (click)="createNewJob()">
-                    <i class="fa fa-plus me-2"></i>
-                    {{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+            </div>
+          </div>
+
+        </div>
       </div>
+
     </div>
   </div>
 
-  @if (paginationMetadata && paginationMetadata.totalCount > 0) {
-        <div class="p-3 border-top">
-          <app-pagination
-            [currentPage]="currentPage()"
-            [totalItems]="paginationMetadata.totalCount"
-            [itemsPerPage]="itemsPerPage"
-            (pageChanged)="onPageChange($event)"
-          >
-          </app-pagination>
-        </div>
-        }
 </section>
