@@ -32,8 +32,7 @@ export class HasPermissionDirective {
    * *hasPermission="['jobs.manage','users.manage']; hasPermissionRequireAll: true">
    */
   @Input()
-  set hasPermission(value: string | string[] | null) {
-    if (!value) return;
+  set hasPermission(value: string | string[]) {
     this.permissions = Array.isArray(value) ? value : [value];
     this.updateView();
   }
