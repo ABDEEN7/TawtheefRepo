@@ -9,6 +9,7 @@ import {AuthService} from '../../../core/auth/auth.service';
 import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
 import {Permissions} from '../../../core/constants/permissions';
 import {HasPermissionDirective} from '../../../shared/directives/has-permission.directive';
+import {MenuItem} from './sidebar.models';
 
 @Component({
   selector: 'app-sidebar',
@@ -25,7 +26,7 @@ export class SidebarComponent implements OnInit {
   isCollapsed = true;
   activeItem = '';
 
-  menuItems = [
+  menuItems: MenuItem[] = [
     { key: 'home', label: 'admin.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.dashboard('admin'), permission: Permissions.Dashboard.View },
     { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/shield.svg', route: routes.admin.roleManagement, permission: Permissions.Roles.Manage },
     { key: 'users', label: 'admin.sidebar.users', icon: 'assets/img/icons/users.svg', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
@@ -45,7 +46,16 @@ export class SidebarComponent implements OnInit {
   }
 
   highlightActive(url: string) {
-    const matched = this.menuItems.find(i => url.includes(i.route));
+    const matched = this.menuItems.reduce<MenuItem | null>((best, item) => {
+      if (!this.isMatchingRoute(url, item.route)) return best;
+
+      if (!best || item.route.length > best.route.length) {
+        return item;
+      }
+
+      return best;
+    }, null);
+
     this.activeItem = matched ? matched.key : '';
   }
 
@@ -66,5 +76,10 @@ export class SidebarComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  private isMatchingRoute(url: string, route: string) {
+    const normalizedUrl = url.split('?')[0];
+    return normalizedUrl === route || normalizedUrl.startsWith(`${route}/`);
   }
 }
