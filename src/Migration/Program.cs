@@ -19,8 +19,8 @@ public class Program
         Console.WriteLine("=== Import Started ===");
 
         const string ConnectionString =
-            "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
-        //"Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
+           // "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
+        "Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
 
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -53,13 +53,13 @@ public class Program
         var universityBackendNames = new HashSet<string>(db.University.Select(x => x.BackendName));
 
         // ====== Import with validation ======
-        //ImportCountries(db, errors, countryIds, countryBackendNames);
-        //ImportCities(db, errors, cityIds, cityBackendNames, countryIds);
-        //ImportUniversities(db, errors, universityIds, universityBackendNames, cityIds);
-        //ImportMajors(db, errors);
-        //ImportOffices(db, errors);
-        //ImportSkillTypes(db, errors);
-        //ImportSkills(db, errors);
+        ImportCountries(db, errors, countryIds, countryBackendNames);
+        ImportCities(db, errors, cityIds, cityBackendNames, countryIds);
+        ImportUniversities(db, errors, universityIds, universityBackendNames, cityIds);
+        ImportMajors(db, errors);
+        ImportOffices(db, errors);
+        ImportSkillTypes(db, errors);
+        ImportSkills(db, errors);
         ImportMajorSkills(db, errors);
 
         try
