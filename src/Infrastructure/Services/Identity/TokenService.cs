@@ -178,7 +178,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             .ToList();
 
         if (roles.Count == 0)
-            return Array.Empty<string>();
+            return [];
 
         // Fetch roles (no need for custom tables)
         var roleEntities = await roleManager.Roles
