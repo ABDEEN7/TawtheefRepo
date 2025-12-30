@@ -11,7 +11,6 @@ import {finalize} from 'rxjs/operators';
 import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
 import {Lang, LanguageService} from '../../../../../../core/services/language.service';
 import {NotificationService} from '../../../../../../core/services/notification.service';
-import {SystemRoles} from '../../../../../../core/constants/systemRoles';
 
 @Component({
   selector: 'app-manage-roles-dialog',
@@ -35,11 +34,13 @@ export class ManageRolesDialogComponent implements OnInit {
   private translate = inject(TranslateService);
 
   user: UserDto | undefined = this.config.data?.user as UserDto | undefined;
-  roleOptions = signal<RoleSummaryDto[]>(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
+  allRoleOptions = signal<RoleSummaryDto[]>(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
+  lockedSystemRoleIds = signal<string[]>([]);
+  systemRoleIds = signal<string[]>([]);
+  selectedAssignableRoleIds = signal<string[]>([]);
   selectedRoleIds = signal<string[]>([]);
   isLoading = signal(false);
   currentLang = signal<Lang>(this.language.get());
-  systemAdminRoleId = signal<string | null>(null);
 
   ngOnInit(): void {
     if (!this.user) {
@@ -56,19 +57,12 @@ export class ManageRolesDialogComponent implements OnInit {
         next: (assignedRoles: string[]) => {
           const roleIds = assignedRoles.map(id => id.toString());
 
-          if (this.isSystemAdminSelected(roleIds)) {
-            this.notification.error(this.translate.instant('USERS.SYSTEM_ADMIN_MANAGE_DISABLED'));
-            this.dialogRef.close(false);
-            return;
-          }
+          const assignedSystemRoles = roleIds.filter(id => this.isSystemRoleId(id));
+          const assignableRoles = roleIds.filter(id => !this.isSystemRoleId(id));
 
-          if (this.hasMultipleSystemRoles(roleIds)) {
-            this.notification.error(this.translate.instant('USERS.MULTIPLE_SYSTEM_ROLES_NOT_ALLOWED'));
-            this.dialogRef.close(false);
-            return;
-          }
-
-          this.selectedRoleIds.set(roleIds);
+          this.lockedSystemRoleIds.set(assignedSystemRoles);
+          this.selectedAssignableRoleIds.set(assignableRoles);
+          this.updateSelectedRoles(assignableRoles);
         },
         error: () => {
           this.notification.error(this.translate.instant('USERS.LOAD_FAILED'));
@@ -77,22 +71,9 @@ export class ManageRolesDialogComponent implements OnInit {
       });
   }
 
-  onRolesChange(roleIds: string[]) {
-    const previous = this.selectedRoleIds();
-
-    if (this.isSystemAdminSelected(roleIds)) {
-      this.notification.error(this.translate.instant('USERS.SYSTEM_ADMIN_MANAGE_DISABLED'));
-      this.selectedRoleIds.set(previous);
-      return;
-    }
-
-    if (this.hasMultipleSystemRoles(roleIds)) {
-      this.notification.error(this.translate.instant('USERS.MULTIPLE_SYSTEM_ROLES_NOT_ALLOWED'));
-      this.selectedRoleIds.set(previous);
-      return;
-    }
-
-    this.selectedRoleIds.set(roleIds);
+  onRolesChange(assignableRoleIds: string[]) {
+    this.selectedAssignableRoleIds.set(assignableRoleIds);
+    this.updateSelectedRoles(assignableRoleIds);
   }
 
   saveRoles() {
@@ -114,23 +95,17 @@ export class ManageRolesDialogComponent implements OnInit {
 
   private initializeRoleOptions() {
     const options = this.config.data?.roleOptions as RoleSummaryDto[] ?? [];
-    const systemAdminRole = options.find(r => r.systemName === SystemRoles.SystemAdmin);
-    this.systemAdminRoleId.set(systemAdminRole?.id ?? null);
-    this.roleOptions.set(options.filter(r => r.systemName !== SystemRoles.SystemAdmin));
+    this.allRoleOptions.set(options);
+    this.systemRoleIds.set(options.filter(role => role.isSystemRole).map(role => role.id));
   }
 
-  private isSystemAdminSelected(roleIds: string[]) {
-    const systemAdminId = this.systemAdminRoleId();
-    return !!systemAdminId && roleIds.includes(systemAdminId);
+  private isSystemRoleId(roleId: string) {
+    return this.systemRoleIds().includes(roleId);
   }
 
-  private hasMultipleSystemRoles(roleIds: string[]) {
-    const selectableSystemRoles = [
-      ...this.roleOptions().filter(r => r.isSystemRole).map(r => r.id),
-      ...(this.systemAdminRoleId() ? [this.systemAdminRoleId() as string] : [])
-    ];
-
-    const selectedSystemRoles = roleIds.filter(id => selectableSystemRoles.includes(id));
-    return selectedSystemRoles.length > 1;
+  private updateSelectedRoles(assignableRoleIds: string[]) {
+    const merged = [...this.lockedSystemRoleIds(), ...assignableRoleIds];
+    const uniqueIds = Array.from(new Set(merged));
+    this.selectedRoleIds.set(uniqueIds);
   }
 }
