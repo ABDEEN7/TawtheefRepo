@@ -19,16 +19,36 @@
 
     <div class="mb-3">
       <label class="form-label required" for="phoneNumber">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</label>
-      <input
-        id="phoneNumber"
-        type="tel"
-        class="form-control"
-        pInputText
+      <ngx-intl-tel-input
+        inputId="phoneNumber"
+        class="prime-tel-input"
+        [selectFirstCountry]="true"
+        [preferredCountries]="qatarOnly"
+        [onlyCountries]="qatarOnly"
+        [enableAutoCountrySelect]="false"
+        [enablePlaceholder]="true"
+        [searchCountryFlag]="false"
+        [searchCountryField]="[]"
+        [phoneValidation]="true"
+        [separateDialCode]="true"
         [formControl]="phoneControl"
-        [readonly]="requestForm.disabled"
-        autocomplete="tel" />
-      <small class="text-danger" *ngIf="phoneControl?.touched && phoneControl?.invalid">
+        [disabled]="requestForm.disabled"
+      ></ngx-intl-tel-input>
+      <small class="text-danger" *ngIf="phoneControl?.touched && phoneControl?.hasError('required')">
         {{ 'validation.required' | translate }}
+      </small>
+      <small
+        class="text-danger"
+        *ngIf="
+          phoneControl?.touched &&
+          !phoneControl?.hasError('required') &&
+          phoneControl?.hasError('validatePhoneNumber')
+        "
+      >
+        {{ 'validation.phoneInvalid' | translate }}
+      </small>
+      <small class="text-danger" *ngIf="phoneControl?.touched && phoneControl?.hasError('nonQatar')">
+        {{ 'auth.login.qatarResidentDialog.qatarPhoneOnly' | translate }}
       </small>
     </div>
 
