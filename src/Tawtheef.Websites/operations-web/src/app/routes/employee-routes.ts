@@ -1,4 +1,6 @@
-﻿export const employeeRoutes = {
+﻿import { GUID } from "../shared/types/guid.type";
+
+export const employeeRoutes = {
   employee: '/employee',
   get dashboard() {
     return this.employee + '/dashboard';
@@ -35,6 +37,9 @@
   },
   get jobView(){
     return this.employee + '/jobs/view';
+  },
+  jobcandidates(id: GUID){
+    return this.employee + `/jobs/view/${id}/candidates`;
   },
   get jobEdit(){
     return this.employee + '/jobs/edit';
