@@ -2,12 +2,16 @@ using System.Security.Claims;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
+using Tawtheef.Application.Common.Utilities;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
@@ -23,7 +27,8 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     UserManager<User> userManager,
     ITokenService tokenService,
     IQatarPassClient qatarPassClient,
-    ILoginAuditService loginAudit
+    ILoginAuditService loginAudit,
+    IUnitOfWork uow
 ) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<QatarPassExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     protected override string Provider => ConstantQatarPass.Provider;
@@ -47,7 +52,16 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         if (string.IsNullOrWhiteSpace(qp.UserQid))
             return await LogFailureAsync("QatarPass: QID is missing.", ct: ct);
 
-        var providerKey = qp.UserQid.Trim();
+        var providerKey = QidUtilities.Normalize(qp.UserQid);
+        if (!QidUtilities.IsValid(providerKey))
+            return await LogFailureAsync(ErrorsCodes.QatarPassQidNotAllowed, ct: ct);
+
+        var kawaderRepo = uow.GetEntityRepository<KawaderQid>();
+        var isAllowed = await kawaderRepo.DbSet.AsNoTracking()
+            .AnyAsync(q => q.Qid == providerKey, ct);
+
+        if (!isAllowed)
+            return await LogFailureAsync(ErrorsCodes.QatarPassQidNotAllowed, ct: ct);
         var normalizedPhone = NormalizePhone(qp.MobileNumber);
 
         var placeholderEmail = $"qp{providerKey}{ConstantQatarPass.PlaceholderEmailDomain}";

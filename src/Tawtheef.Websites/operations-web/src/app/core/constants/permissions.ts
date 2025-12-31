@@ -40,4 +40,7 @@ export const Permissions = {
     View: 'nominations.view',
     Manage: 'nominations.manage',
   },
+  Kawader: {
+    Manage: 'kawader.manage',
+  },
 } as const;
