@@ -36,6 +36,12 @@ public static class QueryableExtensions
             return new PaginatedResult<TSource>(items, count, paginatedRequest.PageNumber, paginatedRequest.PageSize);
         }
 
+        public async Task<PaginatedResult<TSource>> ToPaginationListAsync(PaginatedRequest paginatedRequest,
+            CancellationToken cancellationToken = default)
+        {
+            return await source.ToPaginatedListAsync(paginatedRequest, cancellationToken);
+        }
+
         public async Task<PaginatedResult<TDestination>> ToPaginatedListAsync<TDestination>(IMapper mapper,
             PaginatedRequest paginatedRequest,
             CancellationToken cancellationToken = default)

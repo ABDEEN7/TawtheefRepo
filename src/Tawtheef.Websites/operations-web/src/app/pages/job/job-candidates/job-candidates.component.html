@@ -50,11 +50,9 @@
 
         <p-select
           class="select"
-          [options]="lookupsService.jobCategories()"
-          [ngModel]="filterType()"
-          (ngModelChange)="filterType.set($event); onFilterChange()"
-          optionLabel="name"
-          optionValue="id"
+          [options]="minimumPointsOptions"
+          [ngModel]="minimumPoints()"
+          (ngModelChange)="minimumPoints.set($event); onFilterChange()"
           [showClear]="true"
           [placeholder]="'JOB_CANDIDATE_FILTERS_MINIMUM_POINTS' | translate"
         ></p-select>
@@ -62,8 +60,8 @@
         <p-select
           class="select"
           [options]="lookupsService.jobCategories()"
-          [ngModel]="filterType()"
-          (ngModelChange)="filterType.set($event); onFilterChange()"
+          [ngModel]="filterJobCategory()"
+          (ngModelChange)="filterJobCategory.set($event); onFilterChange()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
@@ -72,9 +70,9 @@
 
         <p-select
           class="select"
-          [options]="lookupsService.jobStatus()"
-          [ngModel]="filterStatus()"
-          (ngModelChange)="filterStatus.set($event); onFilterChange()"
+          [options]="lookupsService.candidateTypes()"
+          [ngModel]="filterCandidateCategory()"
+          (ngModelChange)="filterCandidateCategory.set($event); onFilterChange()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
@@ -88,9 +86,17 @@
     </div>
 
     <div class="table-wrap">
-      <p-table class="ptable-reset" [value]="candidates?.items ?? []">
+      <p-table
+        class="ptable-reset"
+        [value]="candidates?.items ?? []"
+        dataKey="invitationId"
+        [(selection)]="selectedCandidates"
+      >
         <ng-template pTemplate="header">
           <tr>
+            <th class="col-select">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
             <th class="col-index">#</th>
             <th>{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_NAME' | translate }}</th>
             <th>{{ 'JOB_CANDIDATE_COLUMNS_DEPARTMENT' | translate }}</th>
@@ -105,18 +111,22 @@
 
         <ng-template pTemplate="body" let-candidate let-i="rowIndex">
           <tr>
+            <td class="col-select">
+              <p-tableCheckbox [value]="candidate"></p-tableCheckbox>
+            </td>
             <td class="cell-alt col-index">{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
 
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ candidate.candidateName }}</td>
+            <td>{{ candidate.department }}</td>
+            <td>{{ candidate.jobCategory }}</td>
+            <td>{{ candidate.candidateCategory }}</td>
+            <td>{{ candidate.candidateMajor }}</td>
+            <td>{{ candidate.candidateGender }}</td>
+            <td>{{ candidate.points }}</td>
 
             <td class="col-actions">
               <div class="row-actions">
-                <button class="btn-pill btn-pill--outline" type="button" (click)="viewDetails(candidate.id)">
+                <button class="btn-pill btn-pill--outline" type="button" (click)="viewDetails(candidate.candidateId)">
                   <i class="fa fa-eye"></i>
                   <span>{{ 'JOB_CANDIDATE_BUTTONS_VIEW' | translate }}</span>
                 </button>
