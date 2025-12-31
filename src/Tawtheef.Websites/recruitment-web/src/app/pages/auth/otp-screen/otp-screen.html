@@ -1,0 +1,213 @@
+<div class="otp-page container py-4" [attr.dir]="isRtl ? 'rtl' : 'ltr'">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-9 col-lg-6">
+
+      <div class="card shadow-sm border-0 otp-card">
+        <div class="card-body p-4 p-md-5">
+
+          <!-- Header -->
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h4 class="mb-1 fw-bold">{{ 'auth.otp.title' | translate }}</h4>
+              <div class="text-muted small">{{ 'auth.otp.subtitle' | translate }}</div>
+            </div>
+            <div class="otp-badge">
+              <i class="pi pi-shield"></i>
+            </div>
+          </div>
+
+          <!-- Step indicator -->
+          <div class="stepper mb-4">
+            <div class="step" [class.active]="step === 1">
+              <div class="dot"></div>
+              <div class="label">{{ 'auth.otp.step1' | translate }}</div>
+            </div>
+            <div class="line"></div>
+            <div class="step" [class.active]="step === 2">
+              <div class="dot"></div>
+              <div class="label">{{ 'auth.otp.step2' | translate }}</div>
+            </div>
+          </div>
+
+          <!-- STEP 1: QID + Phone -->
+          <div *ngIf="step === 1">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label fw-semibold">{{ 'auth.otp.qidLabel' | translate }}</label>
+
+                <span class="p-input-icon-left w-100">
+                  <i class="pi pi-id-card"></i>
+                  <input
+                    pInputText
+                    class="w-100 otp-input"
+                    [ngClass]="{ 'is-invalid': submitted && !qid }"
+                    [(ngModel)]="qid"
+                    name="qid"
+                    inputmode="numeric"
+                    maxlength="11"
+                    placeholder="{{ 'auth.otp.qidPlaceholder' | translate }}"
+                  />
+                </span>
+
+                <div class="invalid-feedback d-block" *ngIf="submitted && !qid">
+                  {{ 'auth.otp.required' | translate }}
+                </div>
+                <div class="form-text">
+                  {{ 'auth.otp.qidHint' | translate }}
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-semibold">{{ 'auth.otp.phoneLabel' | translate }}</label>
+
+                <div class="input-group">
+                  <span class="input-group-text otp-prefix">+974</span>
+
+                  <span class="p-input-icon-left flex-grow-1">
+                    <i class="pi pi-phone"></i>
+                    <input
+                      pInputText
+                      class="w-100 otp-input"
+                      [ngClass]="{ 'is-invalid': submitted && !phone }"
+                      [(ngModel)]="phone"
+                      name="phone"
+                      inputmode="tel"
+                      maxlength="8"
+                      placeholder="{{ 'auth.otp.phonePlaceholder' | translate }}"
+                    />
+                  </span>
+                </div>
+
+                <div class="invalid-feedback d-block" *ngIf="submitted && !phone">
+                  {{ 'auth.otp.required' | translate }}
+                </div>
+                <div class="form-text">
+                  {{ 'auth.otp.phoneHint' | translate }}
+                </div>
+              </div>
+
+              <div class="col-12 d-grid mt-2">
+                <button
+                  pButton
+                  type="button"
+                  class="p-button p-button-raised otp-btn"
+                  [disabled]="loadingSend"
+                  (click)="sendOtp()"
+                >
+                  <span class="d-inline-flex align-items-center gap-2">
+                    <i class="pi" [ngClass]="loadingSend ? 'pi-spin pi-spinner' : 'pi-send'"></i>
+                    <span>{{ 'auth.otp.send' | translate }}</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: OTP input -->
+          <div *ngIf="step === 2">
+            <div class="mb-3">
+              <div class="d-flex align-items-start justify-content-between gap-3">
+                <div>
+                  <div class="fw-semibold mb-1">{{ 'auth.otp.otpSentTo' | translate }}</div>
+                  <div class="text-muted small">
+                    +974 {{ phone }} • {{ maskQid(qid) }}
+                  </div>
+                </div>
+
+                <button
+                  pButton
+                  type="button"
+                  class="p-button p-button-text p-button-sm"
+                  (click)="editInfo()"
+                >
+                  <i class="pi pi-pencil me-1"></i>
+                  {{ 'auth.otp.edit' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="otp-panel p-3 p-md-4 mb-3">
+              <div class="text-center mb-3">
+                <div class="fw-semibold">{{ 'auth.otp.enterCode' | translate }}</div>
+                <div class="text-muted small">{{ 'auth.otp.enterCodeHint' | translate }}</div>
+              </div>
+
+              <!-- PrimeNG OTP -->
+              <div class="d-flex justify-content-center">
+                <p-input-otp
+                  [(ngModel)]="otp"
+                  [length]="6"
+                  [integerOnly]="true"
+                  styleClass="otp-control"
+                ></p-input-otp>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+                <!-- Resend -->
+                <button
+                  pButton
+                  type="button"
+                  class="p-button p-button-outlined"
+                  [disabled]="resendRemainingSec > 0 || loadingResend"
+                  (click)="resendOtp()"
+                >
+                  <span class="d-inline-flex align-items-center gap-2">
+                    <i class="pi" [ngClass]="loadingResend ? 'pi-spin pi-spinner' : 'pi-refresh'"></i>
+                    <span>{{ 'auth.otp.resend' | translate }}</span>
+                  </span>
+                </button>
+
+                <!-- Countdown -->
+                <div class="countdown text-muted small" *ngIf="resendRemainingSec > 0">
+                  <i class="pi pi-clock me-1"></i>
+                  {{ 'auth.otp.resendIn' | translate }}:
+                  <span class="fw-semibold">{{ formatSeconds(resendRemainingSec) }}</span>
+                </div>
+
+                <!-- Hint -->
+                <div class="text-muted small" *ngIf="resendRemainingSec === 0">
+                  {{ 'auth.otp.didNotReceive' | translate }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-2">
+              <div class="col-12 col-md-7 d-grid">
+                <button
+                  pButton
+                  type="button"
+                  class="p-button p-button-raised otp-btn"
+                  [disabled]="loadingVerify || !isOtpComplete()"
+                  (click)="verifyOtp()"
+                >
+                  <span class="d-inline-flex align-items-center gap-2">
+                    <i class="pi" [ngClass]="loadingVerify ? 'pi-spin pi-spinner' : 'pi-check'"></i>
+                    <span>{{ 'auth.otp.verify' | translate }}</span>
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-12 col-md-5 d-grid">
+                <button pButton type="button" class="p-button p-button-secondary p-button-outlined" (click)="cancel()">
+                  <i class="pi pi-times me-1"></i>
+                  {{ 'auth.otp.cancel' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-3 small text-muted">
+              {{ 'auth.otp.securityNote' | translate }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center text-muted small mt-3">
+        {{ 'auth.otp.footer' | translate }}
+      </div>
+
+    </div>
+  </div>
+</div>

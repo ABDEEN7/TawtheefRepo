@@ -175,14 +175,7 @@
     }
   }
 }
-.ltr .sidebar{
-  border-left:0;
-  border-right: 1px solid #CBCBCB;
-}
-.rtl .sidebar{
-  border-right:0;
-  border-left: 1px solid #CBCBCB;
-}
+
 // Responsive sidebar
 @media (max-width: 768px) {
   .sidebar {

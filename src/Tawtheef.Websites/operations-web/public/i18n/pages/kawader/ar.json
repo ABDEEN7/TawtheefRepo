@@ -1,0 +1,27 @@
+{
+  "kawader.header.eyebrow": "خدمة كوادر",
+  "kawader.header.title": "رفع أرقام البطاقات الشخصية",
+  "kawader.header.subtitle": "أرسل ملف إكسل يحتوي على عمود واحد لأرقام البطاقات للتحكم في دخول قطر باس.",
+
+  "kawader.upload.label": "ملف إكسل (.xlsx)",
+  "kawader.upload.helper": "يجب أن يكون الملف مكونًا من عمود واحد يحتوي على أرقام البطاقات القطرية فقط.",
+  "kawader.upload.required": "يرجى اختيار ملف للرفع.",
+  "kawader.upload.submit": "إرسال الملف",
+  "kawader.upload.clear": "إعادة تعيين",
+  "kawader.upload.success": "تم حفظ جميع السجلات بنجاح.",
+  "kawader.upload.partial": "تمت معالجة الملف مع وجود بعض الملاحظات.",
+  "kawader.upload.failed": "فشل رفع الملف، الرجاء المحاولة مرة أخرى.",
+
+  "kawader.result.success": "تم الحفظ بدون أخطاء",
+  "kawader.result.partial": "تم الحفظ مع وجود حالات مرفوضة",
+  "kawader.result.summary": "تم استيراد {{imported}} من أصل {{total}} صف",
+  "kawader.result.errorsTitle": "الصفوف التي لم يتم حفظها",
+  "kawader.result.row": "الصف",
+  "kawader.result.value": "القيمة",
+  "kawader.result.reason": "سبب الرفض",
+  "kawader.result.noErrors": "تمت إضافة جميع الصفوف بنجاح.",
+
+  "kawader.errors.invalid": "رقم البطاقة غير صالح",
+  "kawader.errors.duplicate": "مكرر داخل الملف",
+  "kawader.errors.exists": "موجود مسبقًا في كوادر"
+}
