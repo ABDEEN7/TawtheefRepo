@@ -30,6 +30,7 @@ export class RemoteSelectComponent
   @Input() searchUrl!: string;
   @Input() minChars = 3;
   @Input() debounceMs = 400;
+  @Input() showClear = false;
 
   @Input() optionLabel = 'name';
   @Input() optionValue?: string;
@@ -39,6 +40,11 @@ export class RemoteSelectComponent
   @Input() panelStyle: any;
 
   @Input() disableWhileLoading = true;
+  /**
+   * Preload a list of options so the component can display existing values (e.g. in edit mode)
+   * without requiring the user to search again.
+   */
+  @Input() preloadedOptions: any[] = [];
 
   // ====== Parent dependency (cascading) ======
   /** ID from previous select (e.g. degreeId, countryId, etc.) */
@@ -67,6 +73,7 @@ export class RemoteSelectComponent
 
   writeValue(val: any): void {
     this.value = val;
+    this.options = this.mergeWithSelected(this.options);
   }
 
   registerOnChange(fn: any): void {
@@ -83,6 +90,8 @@ export class RemoteSelectComponent
 
   // ====== Lifecycle ======
   ngOnInit(): void {
+    this.options = this.mergeWithSelected(this.preloadedOptions);
+
     this.sub = this.search$
       .pipe(
         debounceTime(this.debounceMs),
@@ -115,8 +124,8 @@ export class RemoteSelectComponent
         })
       )
       .subscribe({
-        next: res => (this.options = res || []),
-        error: () => (this.options = []),
+        next: res => (this.options = this.mergeWithSelected(res || [])),
+        error: () => (this.options = this.mergeWithSelected([])),
       });
   }
 
@@ -126,6 +135,10 @@ export class RemoteSelectComponent
       this.options = [];
       this.value = null;
       this.onChange(null);
+    }
+
+    if (changes['preloadedOptions']) {
+      this.options = this.mergeWithSelected(this.preloadedOptions);
     }
   }
 
@@ -174,5 +187,43 @@ export class RemoteSelectComponent
     this.value = newVal;
     this.onChange(newVal);
     this.onTouched();
+  }
+
+  private mergeWithSelected(nextOptions: any[]): any[] {
+    const merged = [...nextOptions];
+
+    const selectedOption = this.findSelectedOption();
+    if (selectedOption && !this.containsOption(merged, selectedOption)) {
+      merged.push(selectedOption);
+    }
+
+    return merged;
+  }
+
+  private findSelectedOption(): any | null {
+    if (this.value === null || this.value === undefined) return null;
+
+    if (!this.optionValue) {
+      return this.value;
+    }
+
+    const fromPreloaded = this.preloadedOptions.find(
+      opt => this.getOptionValue(opt) === this.value
+    );
+    return fromPreloaded ?? null;
+  }
+
+  private containsOption(options: any[], option: any): boolean {
+    if (!this.optionValue) {
+      return options.includes(option);
+    }
+
+    const optionVal = this.getOptionValue(option);
+    return options.some(opt => this.getOptionValue(opt) === optionVal);
+  }
+
+  private getOptionValue(option: any): any {
+    if (!option || !this.optionValue) return option;
+    return option?.[this.optionValue];
   }
 }

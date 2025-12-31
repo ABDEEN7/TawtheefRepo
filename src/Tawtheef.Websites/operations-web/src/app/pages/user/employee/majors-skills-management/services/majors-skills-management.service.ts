@@ -41,8 +41,8 @@ export class MajorsSkillsManagementService {
     return this.http.put<void>(this.endpoints.majorSkillsManagement.update, payload);
   }
 
-  changeMajorSkillActivation(id: string, isActive: boolean): Observable<void> {
-    return this.http.put<void>(this.endpoints.majorSkillsManagement.changeActivation, { id, isActive });
+  changeMajorSkillActivation(id: string, isActive: boolean, applyOnHierarchy = false): Observable<void> {
+    return this.http.put<void>(this.endpoints.majorSkillsManagement.changeActivation, { id, isActive, applyOnHierarchy });
   }
 
   // =============== Skills ===============
@@ -58,13 +58,13 @@ export class MajorsSkillsManagementService {
     return this.http.put<void>(this.endpoints.majorSkillsManagement.skills.update, payload);
   }
 
-  changeSkillActivation(id: string, isActive: boolean): Observable<void> {
-    return this.http.put<void>(this.endpoints.majorSkillsManagement.skills.changeActivation, { id, isActive });
+  changeSkillActivation(id: string, isActive: boolean, applyOnHierarchy = false): Observable<void> {
+    return this.http.put<void>(this.endpoints.majorSkillsManagement.skills.changeActivation, { id, isActive, applyOnHierarchy });
   }
 
   // =============== Majors ===============
-  getMainMajors(filters: MajorFiltersModel): Observable<PaginatedResult<dropdownOptionsModel>> {
-    return this.http.get<PaginatedResult<dropdownOptionsModel>>(this.endpoints.majorSkillsManagement.majors.main_list, { search: filters.search });
+  getMainMajors(filters: MajorFiltersModel): Observable<PaginatedResult<MajorListItemModel>> {
+    return this.http.get<PaginatedResult<MajorListItemModel>>(this.endpoints.majorSkillsManagement.majors.main_list, filters);
   }
 
   createMajor(payload: any): Observable<void> {
@@ -75,8 +75,8 @@ export class MajorsSkillsManagementService {
     return this.http.put<void>(this.endpoints.majorSkillsManagement.majors.update, payload);
   }
 
-  changeMajorActivation(id: string, isActive: boolean): Observable<void> {
-    return this.http.put<void>(this.endpoints.majorSkillsManagement.majors.changeActivation, { id, isActive });
+  changeMajorActivation(id: string, isActive: boolean, applyOnHierarchy = false): Observable<void> {
+    return this.http.put<void>(this.endpoints.majorSkillsManagement.majors.changeActivation, { id, isActive, applyOnHierarchy });
   }
 
   // =============== Lookups ===============
@@ -87,4 +87,9 @@ export class MajorsSkillsManagementService {
   getSkillsPageForTypes(): Observable<SkillListItemModel[]> {
     return this.http.get<SkillListItemModel[]>(this.endpoints.majorSkillsManagement.lookups.skillTypes);
   }
+
+  getSubMajorsPaged(filters: MajorFiltersModel & { parentMajorId: string }): Observable<PaginatedResult<MajorListItemModel>>{
+    return this.http.get<PaginatedResult<MajorListItemModel>>(this.endpoints.majorSkillsManagement.majors.sub_list, filters);
+  }
+
 }

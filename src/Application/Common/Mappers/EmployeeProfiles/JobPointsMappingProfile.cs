@@ -2,7 +2,7 @@
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Tawtheef.Application.Common.Mappers.EmployeePorfiles;
+namespace Tawtheef.Application.Common.Mappers.EmployeeProfiles;
 
 public class JobPointsMappingProfile : IRegister
 {

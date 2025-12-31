@@ -1,11 +1,12 @@
 import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {TranslatePipe} from '@ngx-translate/core';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, FormsModule],
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss']
 })
@@ -18,7 +19,10 @@ export class PaginationComponent {
   showControls = input(true);
   translationPrefix = input('app.pagination');
 
+  pageSizeOptions = input<number[]>([10, 20, 50]);
+
   pageChanged = output<number>();
+  pageSizeChanged = output<number>();
 
   totalPages = computed(() =>
     Math.max(1, Math.ceil(this.totalItems() / this.itemsPerPage()))
@@ -61,6 +65,9 @@ export class PaginationComponent {
     if (page >= 1 && page <= this.totalPages() && page !== this.currentPage()) {
       this.pageChanged.emit(page);
     }
+  }
+  changePageSize(size: number) {
+    this.pageSizeChanged.emit(size);
   }
 
   nextPage() {
