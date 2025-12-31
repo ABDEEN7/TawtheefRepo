@@ -1,0 +1,27 @@
+{
+  "kawader.header.eyebrow": "Kawader service",
+  "kawader.header.title": "Upload Qatar ID list",
+  "kawader.header.subtitle": "Send a single-column Excel file with Qatar ID numbers to control Qatar Pass access.",
+
+  "kawader.upload.label": "Excel file (.xlsx)",
+  "kawader.upload.helper": "Only one column is required and each cell should contain a Qatar ID number.",
+  "kawader.upload.required": "Please choose a file to upload.",
+  "kawader.upload.submit": "Send file",
+  "kawader.upload.clear": "Reset",
+  "kawader.upload.success": "All records were saved successfully.",
+  "kawader.upload.partial": "Processed file with some issues.",
+  "kawader.upload.failed": "File upload failed. Please try again.",
+
+  "kawader.result.success": "Saved without errors",
+  "kawader.result.partial": "Saved with reported issues",
+  "kawader.result.summary": "Imported {{imported}} of {{total}} rows",
+  "kawader.result.errorsTitle": "Rows that could not be saved",
+  "kawader.result.row": "Row",
+  "kawader.result.value": "Value",
+  "kawader.result.reason": "Reason",
+  "kawader.result.noErrors": "All rows were added successfully.",
+
+  "kawader.errors.invalid": "Invalid Qatar ID number",
+  "kawader.errors.duplicate": "Duplicate inside the file",
+  "kawader.errors.exists": "Already exists in Kawader"
+}
