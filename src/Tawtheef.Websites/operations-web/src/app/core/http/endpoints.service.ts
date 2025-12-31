@@ -150,6 +150,17 @@ export class EndpointsService {
     updateLanguage: (id: string) => this.getFullUrl(`/languages/update-language/${id}`),
     updateStatus: (id: string) => this.getFullUrl(`/languages/${id}/status`)
   };
+  universities = {
+    listUniversities: this.getFullUrl('/universities/list-universities'),
+    universityDetails: (id: string) => this.getFullUrl(`/universities/university-details/${id}`),
+    createUniversity: this.getFullUrl('/universities/create-university'),
+    updateUniversity: (id: string) => this.getFullUrl(`/universities/update-university/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/universities/${id}/status`),
+    lookups: {
+      countries: this.getFullUrl('/universities/lookups/countries'),
+      cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
+    }
+  };
   majorSkillsManagement = {
     list: this.getFullUrl('/MajorSkillsManagement'),
     details: (id: string) => this.getFullUrl(`/MajorSkillsManagement/${id}`),

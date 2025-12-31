@@ -22,6 +22,10 @@ export const Permissions = {
     View: 'countries.view',
     Manage: 'countries.manage',
   },
+  Universities: {
+    View: 'universities.view',
+    Manage: 'universities.manage',
+  },
   Profile: {
     View: 'profile.view',
     Manage: 'profile.manage',
