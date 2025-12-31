@@ -664,9 +664,10 @@ body.ltr
   align-items: center;
   gap: 6px;
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 3px 12px;
   font-weight: 600;
   border: 1px solid transparent;
+  line-height: 1.5;
 
   &.soft {
     background: #fff5f7;
@@ -720,10 +721,12 @@ body.ltr
 /*--------------------------------------------------------------
 # Action Buttons Section
 --------------------------------------------------------------*/
+.action-buttons{ display: flex;gap:10px}
 .action-buttons .btn{
  border-color:rgba(203, 203, 203, 1);
   color: $color-primary;
   background-color: $color-white ;
   min-width: 35px;
   height: 35px;
+
 }
