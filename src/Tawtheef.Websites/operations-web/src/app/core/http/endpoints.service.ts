@@ -72,6 +72,16 @@ export class EndpointsService {
     }
   };
 
+  jobCandidates = {
+    overview: this.getFullUrl('/jobCandidates/overview'),
+    search: this.getFullUrl('/jobCandidates/search'),
+    export: this.getFullUrl('/jobCandidates/export'),
+    sendInvitations: this.getFullUrl('/jobCandidates/send-invitations'),
+    lookups: {
+      candidateTypes: this.getFullUrl('/jobCandidates/lookups/candidate-types'),
+    },
+  };
+
   kawader = {
     upload: this.getFullUrl('/kawader/upload'),
   };

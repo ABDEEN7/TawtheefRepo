@@ -31,6 +31,7 @@ export class JobLookupService {
   nationalities = signal<dropdownOptionsModel[]>([]);
   jobStatus = signal<dropdownOptionsModel[]>([]);
   jobInvitesStatus = signal<dropdownOptionsModel[]>([]);
+  candidateTypes = signal<dropdownOptionsModel[]>([]);
   managements = signal<dropdownOptionsModel[]>([]);
   sectors = signal<dropdownOptionsModel[]>([]);
   skills = signal<dropdownOptionsModel[]>([]);
@@ -53,6 +54,7 @@ export class JobLookupService {
       nationalities: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.nationalities),
       jobStatus: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.jobStatus),
       jobInvitesStatus: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.jobInvitesStatus),
+      candidateTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.jobCandidates.lookups.candidateTypes),
     }).subscribe({
       next: (res) => {
         this.sectors.set(res.sectors);
@@ -65,6 +67,7 @@ export class JobLookupService {
         this.nationalities.set(res.nationalities);
         this.jobStatus.set(res.jobStatus);
         this.jobInvitesStatus.set(res.jobInvitesStatus);
+        this.candidateTypes.set(res.candidateTypes);
         
         this.loaded.set(true);
         this.loading.set(false);
@@ -231,6 +234,17 @@ export class JobLookupService {
       error: (err) => {
         this.jobCategories.set([]);
       }
+    });
+  }
+
+  loadCandidateTypes(): void {
+    this.http.get<dropdownOptionsModel[]>(
+      this.endpoints.jobCandidates.lookups.candidateTypes
+    ).subscribe({
+      next: (types) => this.candidateTypes.set(types),
+      error: () => {
+        this.candidateTypes.set([]);
+      },
     });
   }
   
