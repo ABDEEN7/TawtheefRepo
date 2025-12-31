@@ -10,7 +10,7 @@
       pButton
       type="button"
       icon="pi pi-plus"
-      (click)="store.openCreateMajor(null)">
+      (click)="service.openCreateMajor(null)">
       {{ 'MAJORS_SKILLS.CREATE' | translate }}
     </button>
   </div>
@@ -23,7 +23,7 @@
           class="form-control"
           [placeholder]="'MAJORS_SKILLS.MAIN_SEARCH' | translate"
           [ngModel]="store.mainMajorFilters().search"
-          (ngModelChange)="store.setMainMajorSearch($event)" />
+          (ngModelChange)="service.setMainMajorSearch($event)" />
       </div>
     </div>
   </div>
@@ -36,6 +36,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th>{{ 'MAJORS_SKILLS.MAJOR_COLUMN' | translate }}</th>
+        <th>{{ 'MAJORS_SKILLS.USED_IN_MAPPING' | translate }}</th>
         <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
         <th class="text-end">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
       </tr>
@@ -47,6 +48,8 @@
           <div class="fw-semibold">{{ major.name }}</div>
           <small class="text-muted">{{ major.description || '' }}</small>
         </td>
+
+        <td>{{ major.usedInMappingsCount || 0 }}</td>
 
         <td>
           <span class="badge"
@@ -61,14 +64,14 @@
             pButton
             type="button"
             class="p-button-outlined p-button-sm"
-            (click)="store.openEditMajor(major)">
+            (click)="service.openEditMajor(major)">
             <i class="pi pi-pencil" pButtonIcon></i>
             <span pButtonLabel>{{'common.edit' |translate}}</span>
           </button>
 
           <p-toggle-switch
             [ngModel]="major.isActive !== false"
-            (ngModelChange)="store.toggleMajorActive(major.id, $event)">
+            (ngModelChange)="service.toggleMajorActive(major, $event)">
           </p-toggle-switch>
         </td>
       </tr>
@@ -85,7 +88,7 @@
     [currentPage]="store.mainMajorFilters().pageNumber ?? 1"
     [totalItems]="store.mainMajorsMeta().totalCount"
     [itemsPerPage]="store.mainMajorFilters().pageSize ?? 10"
-    (pageChanged)="store.onMainMajorsPageChange($event)"
-    (pageSizeChanged)="store.onMainMajorsPageSizeChange($event)">
+    (pageChanged)="service.onMainMajorsPageChange($event)"
+    (pageSizeChanged)="service.onMainMajorsPageSizeChange($event)">
   </app-pagination>
 </div>

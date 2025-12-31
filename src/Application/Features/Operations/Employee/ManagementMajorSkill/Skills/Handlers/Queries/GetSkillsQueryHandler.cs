@@ -18,6 +18,11 @@ public sealed class GetSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
 {
     public async Task<IResult<PaginatedResult<SkillDetailsDto>>> Handle(GetSkillsQuery request, CancellationToken ct)
     {
+        var skillUsageCounts = await uow.GetEntityRepository<MajorSkill>().DbSet.AsNoTracking()
+            .GroupBy(x => x.SkillId)
+            .Select(g => new { SkillId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.SkillId, x => x.Count, ct);
+
         var result = await uow.GetEntityRepository<Skill>().DbSet
             .AsNoTracking()
             .Include(b=> b.SkillType)
@@ -27,6 +32,11 @@ public sealed class GetSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
                 x.BackendName.Contains(request.Search!.Trim()))
             .WhereIf(request.SkillTypeId.HasValue, x => x.SkillTypeId == request.SkillTypeId!.Value)
             .ToPaginatedListAsync<Skill, SkillDetailsDto>(mapper, request, ct);
+
+        foreach (var skill in result.Items)
+        {
+            skill.UsedInMappingsCount = skillUsageCounts.TryGetValue(skill.Id, out var count) ? count : 0;
+        }
         return Result.Ok(result);
     }
 }

@@ -16,6 +16,11 @@ public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IReques
 {
     public async Task<IResult<PaginatedResult<MajorDetailsDto>>> Handle(GetSubMajorsQuery request, CancellationToken cancellationToken)
     {
+        var majorUsageCounts = await uow.GetEntityRepository<MajorSkill>().DbSet.AsNoTracking()
+            .GroupBy(x => x.MajorId)
+            .Select(g => new { MajorId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.MajorId, x => x.Count, cancellationToken);
+
         var majors = await uow.GetEntityRepository<Major>().DbSet.AsNoTracking()
             .Where(x => x.IsActive)
             .Where(x => x.ParentId == request.ParentMajorId)
@@ -26,6 +31,11 @@ public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IReques
                     EF.Functions.Like(s.DescriptionAr ?? "", $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionEn ?? "", $"%{request.Search}%"))
             .ToPaginatedListAsync<Major, MajorDetailsDto>(mapper, request, cancellationToken);
+
+        foreach (var major in majors.Items)
+        {
+            major.UsedInMappingsCount = majorUsageCounts.TryGetValue(major.Id, out var count) ? count : 0;
+        }
 
         return Result.Ok(majors);
     }

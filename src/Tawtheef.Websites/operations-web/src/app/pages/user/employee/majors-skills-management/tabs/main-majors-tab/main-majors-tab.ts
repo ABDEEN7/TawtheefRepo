@@ -6,8 +6,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitch } from 'primeng/toggleswitch';
-import {RemoteSelectComponent} from '../../../../../../shared/components/remote-select/remote-select';
 import {MajorsSkillsManagementStore} from '../../majors-skills-management.store';
+import { MajorsSkillsManagementFacade } from '../../majors-skills-management.facade';
 import {PaginationComponent} from '../../../../../../shared/components/pagination/pagination.component';
 
 
@@ -27,4 +27,5 @@ import {PaginationComponent} from '../../../../../../shared/components/paginatio
 })
 export class MainMajorsTabComponent {
   store = inject(MajorsSkillsManagementStore);
+  service = inject(MajorsSkillsManagementFacade);
 }

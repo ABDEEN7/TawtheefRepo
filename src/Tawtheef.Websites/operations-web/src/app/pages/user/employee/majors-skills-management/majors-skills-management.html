@@ -2,16 +2,16 @@
 <div class="management-page" i18nNamespace="pages/employee/majors-skills-management" [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'">
   <div class="card shadow-sm p-3 mb-4 tab-card">
     <div class="d-flex flex-wrap gap-2">
-      <button class="btn tab-btn" [class.active]="store.activeTab() === 'mapping'" (click)="store.switchTab('mapping')">
+      <button class="btn tab-btn" [class.active]="store.activeTab() === 'mapping'" (click)="service.switchTab('mapping')">
         {{ 'MAJORS_SKILLS.MAJOR_SKILL_TAB' | translate }}
       </button>
-      <button class="btn tab-btn" [class.active]="store.activeTab() === 'mainMajors'" (click)="store.switchTab('mainMajors')">
+      <button class="btn tab-btn" [class.active]="store.activeTab() === 'mainMajors'" (click)="service.switchTab('mainMajors')">
         {{ 'MAJORS_SKILLS.MAIN_MAJORS_TAB' | translate }}
       </button>
-      <button class="btn tab-btn" [class.active]="store.activeTab() === 'subMajors'" (click)="store.switchTab('subMajors')">
+      <button class="btn tab-btn" [class.active]="store.activeTab() === 'subMajors'" (click)="service.switchTab('subMajors')">
         {{ 'MAJORS_SKILLS.SUB_MAJORS_TAB' | translate }}
       </button>
-      <button class="btn tab-btn" [class.active]="store.activeTab() === 'skills'" (click)="store.switchTab('skills')">
+      <button class="btn tab-btn" [class.active]="store.activeTab() === 'skills'" (click)="service.switchTab('skills')">
         {{ 'MAJORS_SKILLS.SKILLS_TAB' | translate }}
       </button>
     </div>
@@ -29,4 +29,5 @@
   @if (store.activeTab() === 'skills') {
     <app-skills-tab />
   }
+  <p-confirmDialog></p-confirmDialog>
 </div>

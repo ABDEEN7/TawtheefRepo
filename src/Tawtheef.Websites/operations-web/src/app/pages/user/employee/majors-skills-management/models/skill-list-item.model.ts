@@ -6,4 +6,5 @@ export interface SkillListItemModel extends dropdownOptionsModel {
   skillTypeId?: GUID;
   skillType?: dropdownOptionsModel;
   additionalData?: any;
+  usedInMappingsCount?: number;
 }
