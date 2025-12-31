@@ -1,13 +1,15 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {race, Subscription, timer} from 'rxjs';
 import {LanguageService} from '../../../core/services/language.service';
-import {HttpClient} from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgIf} from '@angular/common';
 import {ExternalLoginService} from '../../../core/auth/external-login';
 import {HttpService} from '../../../core/http/http.service';
 import {RESIDENCY_CHOSEN_MANUALLY_KEY, RESIDENCY_MODE_KEY} from '../../../core/constants/website-storage.const';
+import { DialogService } from 'primeng/dynamicdialog';
+import { QatarResidentOtpDialogComponent } from './components/qatar-resident-otp-dialog/qatar-resident-otp-dialog.component';
 
 
 type ResidencyMode = 'resident' | 'nonresident';
@@ -22,6 +24,8 @@ export class Login implements OnInit, OnDestroy{
   private lang = inject(LanguageService);
   private auth = inject(ExternalLoginService);
   private http = inject(HttpService);
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
 
   currentLang: 'ar' | 'en' = 'ar';
   residencyMode: ResidencyMode = (localStorage.getItem(RESIDENCY_MODE_KEY) as ResidencyMode) || 'resident';
@@ -63,10 +67,16 @@ export class Login implements OnInit, OnDestroy{
     }
   }
 
-  startLogin(kind: 'tawtheeq' | 'google'): void {
+  startLogin(kind: 'qatarResident' | 'google'): void {
     switch (kind) {
-      case 'tawtheeq':
-        this.auth.loginUsingQatarPass();
+      case 'qatarResident':
+        this.dialog.open(QatarResidentOtpDialogComponent, {
+          header: this.translate.instant('auth.login.qatarResidentDialog.title'),
+          width: '520px',
+          contentStyle: { 'border-radius': '12px' },
+          dismissableMask: true,
+          closable: true
+        });
         break;
       case 'google':
         this.auth.loginUsingGoogle();

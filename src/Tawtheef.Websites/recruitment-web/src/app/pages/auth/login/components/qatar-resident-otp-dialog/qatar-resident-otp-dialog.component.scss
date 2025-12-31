@@ -1,0 +1,11 @@
+.qatar-otp-dialog {
+  .required::after {
+    content: '*';
+    color: #dc3545;
+    margin-inline-start: 4px;
+  }
+
+  .p-button {
+    min-width: 160px;
+  }
+}
