@@ -12,7 +12,8 @@
 }
 
 .main-content {
-
+  flex: 1;
+  padding: 2rem;
   background: #f8f9fa;
   min-height: calc(100vh - 160px); // Fallback height
   overflow-y: auto; // Allow scrolling if content is long

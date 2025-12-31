@@ -301,7 +301,7 @@ readonly jobStatus = JobStatus;
       [JobStatus.PendingApproval]: 'pill warning',
       [JobStatus.Approved]: 'pill success',
       [JobStatus.Published]: 'pill info',
-      [JobStatus.Closed]: 'bg-dark',
+      [JobStatus.Closed]: 'pill danger',
       [JobStatus.Rejected]: 'pill danger',
       [JobStatus.Cancelled]: 'pill secondary',
       [JobStatus.ReadyForAnnouncement]: 'bg-warning text-dark',
@@ -322,6 +322,14 @@ readonly jobStatus = JobStatus;
     }
   }
 
+   sendInvitation(){
+    //
+   }
+
+   viewJobCandidate(jobId : GUID){
+    const url = routes.employee.jobcandidates(jobId)
+     this.router.navigate([url]);
+   }
   private loadStats(): void {
     this.loadCount(JobStatus.Cancelled, (v) => (this.cancelledCount = v));
     this.loadCount(JobStatus.PendingApproval, (v) => (this.pendingApprovalCount = v));

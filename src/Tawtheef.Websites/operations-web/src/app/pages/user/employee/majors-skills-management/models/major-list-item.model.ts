@@ -3,4 +3,5 @@ import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-option
 export interface MajorListItemModel extends dropdownOptionsModel {
   parentId?: string | null;
   isActive?: boolean;
+  usedInMappingsCount?: number;
 }

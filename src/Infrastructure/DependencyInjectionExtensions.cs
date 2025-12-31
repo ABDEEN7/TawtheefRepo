@@ -399,6 +399,15 @@ namespace Tawtheef.Infrastructure
                 client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
             });
 
+            // ===== Qatar Resident OTP Verification =====
+            services.Configure<QatarResidentOtpSettings>(configuration.GetSection(QatarResidentOtpSettings.SectionName));
+            services.AddHttpClient<IQatarResidentVerificationClient, QatarResidentVerificationClient>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<QatarResidentOtpSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+            });
+
             // ===== Hodhod SMS =====
             services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
             services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>((sp, client) =>

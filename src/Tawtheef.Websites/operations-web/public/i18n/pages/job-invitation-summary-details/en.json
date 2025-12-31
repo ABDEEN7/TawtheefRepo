@@ -1,0 +1,28 @@
+{
+  "JOB_INVITES_DETAILS_TITLE": "Invitation details",
+  "JOB_INVITES_DETAILS_SUBTITLE": "Browse people who have received events for this job and current statuses",
+  "JOB_INVITES_DETAILS_TOTAL_INVITATIONS": "Total invitations",
+
+  "JOB_INVITES_DETAILS_STATS": "Statistics",
+  "JOB_INVITES_DETAILS_STAT_CANCELLED": "Cancelled",
+  "JOB_INVITES_DETAILS_STAT_DECLINED": "Rejected",
+  "JOB_INVITES_DETAILS_STAT_APPLIED": "Applied",
+  "JOB_INVITES_DETAILS_STAT_NEW": "New",
+  "JOB_INVITES_DETAILS_FILES": "Files",
+
+  "JOB_INVITES_DETAILS_CLEAR_FILTERS": "Clear Filters",
+
+  "JOB_INVITES_DETAILS_SEARCH": "Search",
+
+  "JOB_INVITES_DETAILS_COL_NAME": "Name",
+
+  "JOB_INVITES_DETAILS_COL_NATIONALITY": "Nationality",
+
+  "JOB_INVITES_DETAILS_COL_PHONE": "Phone",
+
+  "JOB_INVITES_DETAILS_COL_STATUS": "Status",
+
+  "JOB_INVITES_DETAILS_COL_SENT_DATE": "Book Date",
+
+  "JOB_INVITES_DETAILS_EMPTY": "None"
+}

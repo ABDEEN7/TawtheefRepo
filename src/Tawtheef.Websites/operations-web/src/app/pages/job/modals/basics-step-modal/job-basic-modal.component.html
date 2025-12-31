@@ -183,6 +183,7 @@
           [placeholder]="'JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER' | translate"
           optionLabel="name"
           optionValue="id"
+          [preloadedOptions]="majorOptions"
           [appendTo]="'body'"
           [panelStyle]="{ maxHeight: '260px', overflow: 'auto', width: '100%' }"
           [invalid]="
@@ -214,6 +215,7 @@
           [placeholder]="'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER' | translate"
           optionLabel="name"
           optionValue="id"
+          [preloadedOptions]="subMajorOptions"
           [appendTo]="'body'"
           [panelStyle]="{ maxHeight: '260px', overflow: 'auto', width: '100%' }"
         ></app-remote-select>

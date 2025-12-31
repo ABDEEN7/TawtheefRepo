@@ -18,6 +18,8 @@ public sealed class GetMajorSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
     {
         var repo = uow.GetEntityRepository<MajorSkill>();
         var links = await repo.DbSet.AsNoTracking()
+            .Include(m=> m.Major)
+            .Include(m=> m.Skill)
             .ToPaginatedListAsync<MajorSkill, MajorSkillListItemDto>(mapper, request, ct);
         return Result.Ok(links);
     }

@@ -1,0 +1,94 @@
+<div class="card shadow-sm p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+    <div>
+      <div class="badge text-bg-light mb-2 px-3 py-2 title-badge">{{ 'MAJORS_SKILLS.MAIN_BADGE' | translate }}</div>
+      <h4 class="mb-1">{{ 'MAJORS_SKILLS.MAIN_TITLE' | translate }}</h4>
+      <p class="text-muted mb-0 small">{{ 'MAJORS_SKILLS.MAIN_HINT' | translate }}</p>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      (click)="service.openCreateMajor(null)">
+      {{ 'MAJORS_SKILLS.CREATE' | translate }}
+    </button>
+  </div>
+
+  <div class="filters card p-3 mb-3">
+    <div class="row g-3 align-items-end">
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label">{{ 'MAJORS_SKILLS.SEARCH_LABEL' | translate }}</label>
+        <input
+          class="form-control"
+          [placeholder]="'MAJORS_SKILLS.MAIN_SEARCH' | translate"
+          [ngModel]="store.mainMajorFilters().search"
+          (ngModelChange)="service.setMainMajorSearch($event)" />
+      </div>
+    </div>
+  </div>
+
+  <p-table
+    [value]="store.mainMajorsItems()"
+    [rowHover]="true"
+    responsiveLayout="scroll">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'MAJORS_SKILLS.MAJOR_COLUMN' | translate }}</th>
+        <th>{{ 'MAJORS_SKILLS.USED_IN_MAPPING' | translate }}</th>
+        <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
+        <th class="text-end">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-major>
+      <tr>
+        <td>
+          <div class="fw-semibold">{{ major.name }}</div>
+          <small class="text-muted">{{ major.description || '' }}</small>
+        </td>
+
+        <td>{{ major.usedInMappingsCount || 0 }}</td>
+
+        <td>
+          <span class="badge"
+                [class.bg-success-subtle]="major.isActive !== false"
+                [class.bg-danger-subtle]="major.isActive === false">
+            {{ major.isActive === false ? ('MAJORS_SKILLS.INACTIVE' | translate) : ('MAJORS_SKILLS.ACTIVE' | translate) }}
+          </span>
+        </td>
+
+        <td class="text-end d-flex justify-content-end gap-2">
+          <button
+            pButton
+            type="button"
+            class="p-button-outlined p-button-sm"
+            (click)="service.openEditMajor(major)">
+            <i class="pi pi-pencil" pButtonIcon></i>
+            <span pButtonLabel>{{'common.edit' |translate}}</span>
+          </button>
+
+          <p-toggle-switch
+            [ngModel]="major.isActive !== false"
+            (ngModelChange)="service.toggleMajorActive(major, $event)">
+          </p-toggle-switch>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="3" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <app-pagination
+    [currentPage]="store.mainMajorFilters().pageNumber ?? 1"
+    [totalItems]="store.mainMajorsMeta().totalCount"
+    [itemsPerPage]="store.mainMajorFilters().pageSize ?? 10"
+    (pageChanged)="service.onMainMajorsPageChange($event)"
+    (pageSizeChanged)="service.onMainMajorsPageSizeChange($event)">
+  </app-pagination>
+</div>

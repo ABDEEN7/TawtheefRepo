@@ -1,39 +1,38 @@
 <section i18nNamespace="pages/job-invitation-summary">
-  <nav class="navbar navbar-expand-lg sticky-top bg-white shadow-sm">
-    <div class="container">
-      <a class="navbar-brand fw-bold text-brand" href="#">
-        <i class="fa-solid fa-clipboard-list"></i>
-        {{ 'JOB_INVITATION_SUMMARY.DASHBOARD_TITLE' | translate }}
-      </a>
-      <div class="ms-auto d-flex align-items-center gap-2">
-        <a routerLink="/send-job" class="btn btn-outline-secondary btn-sm rounded-pill">
-          <i class="fa fa-paper-plane"></i>
-          {{ 'JOB_INVITATION_SUMMARY.SEND_INVITATIONS' | translate }}
-        </a>
-      </div>
-    </div>
-  </nav>
 
-  <header class="py-3">
+  <!-- Header -->
+  <header class="py-3 header-hero">
     <div class="container d-flex align-items-center justify-content-between">
       <div>
-        <h4 class="mb-1 text-brand fw-bold">{{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}</h4>
+        <h3 class="mb-1 fw-bold">{{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}</h3>
         <div class="text-muted small">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</div>
-      </div>
-      <div class="d-flex gap-2">
-        <a routerLink="/jobs-list" class="btn btn-outline-secondary btn-sm">
-          <i class="fa fa-briefcase"></i>
-          {{ 'JOB_INVITATION_SUMMARY.JOBS_LIST' | translate }}
-        </a>
       </div>
     </div>
   </header>
 
   <main class="py-4">
     <div class="container">
-      <!-- Quick Filters -->
+
+      <!-- Filters Card -->
       <div class="card border-0 shadow-sm p-3 mb-3">
-        <div class="row g-2 search-bar">
+        <div class="row g-2 align-items-end">
+
+          <!-- Search -->
+          <div class="col-md-3">
+            <label class="form-label fw-bold small mb-1">&nbsp;</label>
+            <div class="search-pill w-100">
+              <i class="fa fa-search"></i>
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                [placeholder]="'JOB_INVITATION_SUMMARY.SEARCH' | translate"
+                [ngModel]="searchText()"
+                (ngModelChange)="searchText.set($event); onFilterChange()"
+              />
+            </div>
+          </div>
+
+          <!-- Job Type -->
           <div class="col-md-3">
             <label class="form-label fw-bold small mb-1">
               {{ 'JOB_INVITATION_SUMMARY.JOB_TYPE' | translate }}
@@ -42,17 +41,18 @@
               [options]="jobInvitationSummaryService.jobCategories()"
               [showClear]="true"
               [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate"
-              name="jobCategories"
-              (onChange)="this.onFilterChange()"
               [filter]="true"
-              [(ngModel)]="selectedCategory"
               filterBy="name"
               optionLabel="name"
               optionValue="id"
               size="small"
-              class="form-select form-select-sm"
+              class="w-100"
+              [ngModel]="selectedCategory()"
+              (ngModelChange)="selectedCategory.set($event); onFilterChange()"
             ></p-select>
           </div>
+
+          <!-- Department -->
           <div class="col-md-3">
             <label class="form-label fw-bold small mb-1">
               {{ 'JOB_INVITATION_SUMMARY.REQUESTING_ENTITY' | translate }}
@@ -61,86 +61,107 @@
               [options]="jobInvitationSummaryService.departments()"
               [showClear]="true"
               [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate"
-              name="departments"
-              (onChange)="this.onFilterChange()"
               [filter]="true"
-              [(ngModel)]="selectedDepartment"
               filterBy="name"
               optionLabel="name"
               optionValue="id"
               size="small"
-              class="form-select form-select-sm"
+              class="w-100"
+              [ngModel]="selectedDepartment()"
+              (ngModelChange)="selectedDepartment.set($event); onFilterChange()"
             ></p-select>
           </div>
+
+          <!-- Status -->
           <div class="col-md-3">
             <label class="form-label fw-bold small mb-1">
               {{ 'JOB_INVITATION_SUMMARY.STATUS' | translate }}
             </label>
-            <p-select
-              [options]="jobInvitationSummaryService.jobStatuses()"
-              [showClear]="true"
-              [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate"
-              name="departments"
-              (onChange)="this.onFilterChange()"
-              [filter]="true"
-              [(ngModel)]="selectedStatus"
-              filterBy="name"
-              optionLabel="name"
-              optionValue="id"
-              size="small"
-              class="form-select form-select-sm"
-            ></p-select>
+
+            <div class="d-flex gap-2">
+              <p-select
+                [options]="jobInvitationSummaryService.jobStatuses()"
+                [showClear]="true"
+                [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate"
+                [filter]="true"
+                filterBy="name"
+                optionLabel="name"
+                optionValue="id"
+                size="small"
+                class="w-100"
+                [ngModel]="selectedStatus()"
+                (ngModelChange)="selectedStatus.set($event); onFilterChange()"
+              ></p-select>
+
+              <button (click)="clearFilters()" class="btn btn-outline-secondary btn-sm rounded-pill flex-shrink-0">
+                <i class="fa fa-rotate-left"></i>
+                {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
+              </button>
+            </div>
           </div>
-          <div class="col-md-3 d-flex align-items-end justify-content-end gap-2">
-            <button (click)="clearFilters()" class="btn btn-outline-secondary btn-sm rounded-pill">
-              <i class="fa fa-rotate-left"></i>
-              {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
-            </button>
-          </div>
+
         </div>
       </div>
 
-      <!-- Table -->
-      <div class="card border-0 shadow-sm">
+      <!-- Table Card -->
+      <div class="card border-0 shadow-sm overflow-hidden">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-            <tr>
-              <th>#</th>
-              <th>{{ 'JOB_INVITATION_SUMMARY.JOB_TITLE' | translate }}</th>
-              <th>{{ 'JOB_INVITATION_SUMMARY.ENTITY' | translate }}</th>
-              <th>{{ 'JOB_INVITATION_SUMMARY.TYPE' | translate }}</th>
-              <th>{{ 'JOB_INVITATION_SUMMARY.JOB_STATUS' | translate }}</th>
-              <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.INVITATIONS' | translate }}</th>
-              <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.APPLICANTS' | translate }}</th>
-              <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.DECLINED' | translate }}</th>
-              <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.UNSEEN' | translate }}</th>
-              <th class="text-end">{{ 'JOB_INVITATION_SUMMARY.ACTION' | translate }}</th>
-            </tr>
+            <thead class="table-head-brand">
+              <tr>
+                <th>#</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.JOB_TITLE' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.ENTITY' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.TYPE' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.JOB_STATUS' | translate }}</th>
+                <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.INVITATIONS' | translate }}</th>
+                <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.APPLICANTS' | translate }}</th>
+                <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.DECLINED' | translate }}</th>
+                <th class="text-center">{{ 'JOB_INVITATION_SUMMARY.UNSEEN' | translate }}</th>
+                <th class="text-end">{{ 'JOB_INVITATION_SUMMARY.ACTION' | translate }}</th>
+              </tr>
             </thead>
+
             <tbody>
-              @for (summary of this.pagedInvitation(); track summary.jobId; let i = $index) {
+              @for (summary of pagedInvitation(); track summary.jobId; let i = $index) {
                 <tr>
-                  <td>{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
+                  <td class="text-muted">
+                    {{ (currentPage() - 1) * itemsPerPage() + i + 1 }}
+                  </td>
+
                   <td class="fw-bold">{{ summary.jobName }}</td>
                   <td>{{ summary.departmentName }}</td>
+
                   <td>
-                  <span [class]="'badge-soft ' + summary.jobCategory">
-                    {{ summary.jobCategory }}
-                  </span>
+                    <span [class]="'badge-soft ' + summary.jobCategory">
+                      {{ summary.jobCategory }}
+                    </span>
                   </td>
+
                   <td>
-                    <span class="badge rounded-pill" [ngClass]="getStatusClasses(summary.jobStatus.backendName)">
+                    <span class="status-pill" [ngClass]="getStatusPillClass(summary.jobStatus.backendName)">
                       {{ summary.jobStatus.name }}
                     </span>
                   </td>
-                  <td class="text-center"><span class="pill pill-total">{{ summary.invitationCount }}</span></td>
-                  <td class="text-center"><span class="pill pill-applied">{{ summary.applicantsCount }}</span></td>
-                  <td class="text-center"><span class="pill pill-declined">{{ summary.refusedCount }}</span></td>
-                  <td class="text-center"><span class="pill pill-unseen">{{ summary.notSeenCount }}</span></td>
+
+                  <td class="text-center">
+                    <span class="pill pill-total">{{ summary.invitationCount }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="pill pill-applied">{{ summary.applicantsCount }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="pill pill-declined">{{ summary.refusedCount }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="pill pill-unseen">{{ summary.notSeenCount }}</span>
+                  </td>
+
                   <td class="text-end">
-                    <a [routerLink]="['/staff-invites-details', summary.jobId]"
-                       class="btn btn-sm btn-outline-secondary">
+                    <a
+                      [routerLink]="['../job-invitation-summary-details', summary.jobId]"
+                      class="btn btn-sm btn-view"
+                    >
                       <i class="fa fa-eye"></i>
                       {{ 'JOB_INVITATION_SUMMARY.VIEW_DETAILS' | translate }}
                     </a>
@@ -153,14 +174,15 @@
       </div>
 
       <!-- Pagination -->
-      <app-pagination
-        [currentPage]="currentPage()"
-        [totalItems]="totalItems()"
-        [itemsPerPage]="itemsPerPage()"
-        (pageChanged)="onPageChange($event)"
-      >
-      </app-pagination>
+      <div class="mt-3">
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalItems]="totalItems()"
+          [itemsPerPage]="itemsPerPage()"
+          (pageChanged)="onPageChange($event)"
+        ></app-pagination>
+      </div>
+
     </div>
   </main>
-
 </section>

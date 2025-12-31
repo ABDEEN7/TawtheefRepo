@@ -1,0 +1,111 @@
+<div
+  class="languages-container card shadow-sm p-4"
+  i18nNamespace="pages/admin/languages-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.table-rtl]="isRtl()">
+
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="page-title mb-0">{{ 'LANGUAGES.TITLE' | translate }}</h3>
+    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
+      {{ 'LANGUAGES.ADD_LANGUAGE' | translate }}
+    </button>
+  </div>
+
+  <div class="filters card p-3 mb-3">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-5 col-lg-4">
+        <label class="form-label">{{ 'LANGUAGES.SEARCH_BY_NAME' | translate }}</label>
+        <div class="input-group search-bar">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+          <input
+            type="text"
+            class="form-control form-control-sm border-start-0"
+            [placeholder]="'LANGUAGES.SEARCH_PLACEHOLDER' | translate"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive table-wrapper">
+    <table class="table custom-table align-middle mb-0">
+      <thead>
+      <tr>
+        <th>{{ 'LANGUAGES.NAME_AR' | translate }}</th>
+        <th>{{ 'LANGUAGES.NAME_EN' | translate }}</th>
+        <th>{{ 'LANGUAGES.DESC_AR' | translate }}</th>
+        <th>{{ 'LANGUAGES.DESC_EN' | translate }}</th>
+        <th>{{ 'LANGUAGES.STATUS' | translate }}</th>
+        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'LANGUAGES.ACTIONS' | translate }}</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @if (languages().length === 0) {
+          <tr>
+            <td colspan="6" class="text-muted no-data text-center">
+              {{ 'NO_RECORDS' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (language of languages(); track language.id; let i = $index) {
+            <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+              <td>{{ language.nameAr }}</td>
+              <td>{{ language.nameEn }}</td>
+              <td>{{ language.descriptionAr || ('LANGUAGES.NO_DESCRIPTION' | translate) }}</td>
+              <td>{{ language.descriptionEn || ('LANGUAGES.NO_DESCRIPTION' | translate) }}</td>
+              <td>
+                <span class="badge" [class.bg-success-subtle]="language.isActive" [class.text-success]="language.isActive" [class.bg-danger-subtle]="!language.isActive" [class.text-danger]="!language.isActive">
+                  {{ language.isActive ? ('LANGUAGES.ACTIVE' | translate) : ('LANGUAGES.INACTIVE' | translate) }}
+                </span>
+              </td>
+              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  (click)="openEdit(language)"
+                  [pTooltip]="'LANGUAGES.EDIT' | translate"
+                  tooltipPosition="top"
+                  aria-label="{{ 'LANGUAGES.EDIT' | translate }}">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="icon-btn"
+                  (click)="toggleStatus(language)"
+                  [pTooltip]="language.isActive ? ('LANGUAGES.DEACTIVATE' | translate) : ('LANGUAGES.ACTIVATE' | translate)"
+                  tooltipPosition="top"
+                  aria-label="{{ language.isActive ? ('LANGUAGES.DEACTIVATE' | translate) : ('LANGUAGES.ACTIVATE' | translate) }}">
+                  <i class="bi" [ngClass]="language.isActive ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" [class.flex-row-reverse]="isRtl()">
+  <app-pagination
+    [currentPage]="filters().pageNumber"
+    [totalItems]="totalItems()"
+    [itemsPerPage]="filters().pageSize"
+    (pageChanged)="onPageChange($event)"
+    (pageSizeChanged)="onPageSizeChange($event)">
+  </app-pagination>
+</div>
+
+@if (isModalOpen()) {
+  <app-language-modal
+    [visible]="isModalOpen()"
+    [mode]="modalMode()"
+    [language]="editingLanguage()"
+    [loading]="isModalLoading()"
+    (cancel)="closeModal()"
+    (create)="createLanguage($event)"
+    (update)="updateLanguage($event)"></app-language-modal>
+}

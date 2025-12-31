@@ -100,6 +100,20 @@ public class AuthController(IMediator mediator) : ControllerBase
         return Redirect(url);
     }
 
+    [HttpPost("qatar-resident/request-otp")]
+    public async Task<IActionResult> RequestQatarResidentOtp([FromBody] RequestQatarResidentOtpCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("qatar-resident/verify-otp")]
+    public async Task<IActionResult> VerifyQatarResidentOtp([FromBody] VerifyQatarResidentOtpCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("logout")]

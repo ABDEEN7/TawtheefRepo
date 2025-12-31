@@ -2,7 +2,8 @@ using FluentResults;
 using MediatR;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.Queries;
 
-public record GetSkillsQuery(string? Search,Guid? SkillTypeId) : PaginatedRequest, IRequest<IResult<PaginatedResult<DropdownOptions>>>;
+public record GetSkillsQuery(string? Search,Guid? SkillTypeId) : PaginatedRequest, IRequest<IResult<PaginatedResult<SkillDetailsDto>>>;

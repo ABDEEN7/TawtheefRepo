@@ -18,7 +18,7 @@ public class GetSkillByMajorQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
         var entities = await dbSet
             .AsNoTracking()
             .Where(ms => ms.IsActive)
-            .Where(ms => ms.MajorId == request.MajorId)
+            .Where(ms => ms.MajorId == request.MajorId || ms.Major!.ParentId == request.MajorId)
             .Select(ms=> ms.Skill!)
             .OrderBy(s => s.DisplayOrder)
             .ToListAsync(cancellationToken);

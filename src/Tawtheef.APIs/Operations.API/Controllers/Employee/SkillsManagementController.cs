@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.Commands;
 using Tawtheef.Infrastructure.Extensions;
+using GetSkillsQuery = Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.Queries.GetSkillsQuery;
 
 namespace Operations.API.Controllers.Employee;
 
@@ -42,6 +43,15 @@ public class SkillsManagementController(IMediator mediator) : ControllerBase
     [HttpGet]
     [Route("lookups/skill-types")]
     public async Task<IActionResult> GetSkillTypes([FromQuery] GetSkillTypesQuery query, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query, cancellationToken);
+        return result.ToActionResult();
+    }
+    
+    [HttpGet]
+    [Route("lookups/skills")]
+    public async Task<IActionResult> GetSkills([FromQuery] Tawtheef.Application.Features.Lookups.Queries.GetSkillsQuery query,
+        CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query, cancellationToken);
         return result.ToActionResult();

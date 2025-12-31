@@ -10,9 +10,17 @@ export const Permissions = {
     View: 'users.view',
     Manage: 'users.manage',
   },
+  Languages: {
+    View: 'languages.view',
+    Manage: 'languages.manage',
+  },
   Offices: {
     View: 'offices.view',
     Manage: 'offices.manage',
+  },
+  Countries: {
+    View: 'countries.view',
+    Manage: 'countries.manage',
   },
   Profile: {
     View: 'profile.view',
@@ -39,5 +47,8 @@ export const Permissions = {
   Nominations: {
     View: 'nominations.view',
     Manage: 'nominations.manage',
+  },
+  Kawader: {
+    Manage: 'kawader.manage',
   },
 } as const;

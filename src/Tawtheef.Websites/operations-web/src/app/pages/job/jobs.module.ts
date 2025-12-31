@@ -98,9 +98,8 @@ import { JobCandidatesComponent } from './job-candidates.component/job-candidate
     ProgressSpinner,
     RemoteSelectComponent,
     TableModule,
-    RadioButtonModule,
-    TranslatePipe
-  ],
+    RadioButtonModule
+],
   exports: [
     JobDetailsComponent,
     JobListComponent,

@@ -72,6 +72,20 @@ export class EndpointsService {
     }
   };
 
+  jobCandidates = {
+    overview: this.getFullUrl('/jobCandidates/overview'),
+    search: this.getFullUrl('/jobCandidates/search'),
+    export: this.getFullUrl('/jobCandidates/export'),
+    sendInvitations: this.getFullUrl('/jobCandidates/send-invitations'),
+    lookups: {
+      candidateTypes: this.getFullUrl('/jobCandidates/lookups/candidate-types'),
+    },
+  };
+
+  kawader = {
+    upload: this.getFullUrl('/kawader/upload'),
+  };
+
   approvals = {
     list: this.getFullUrl('/profile-approvals'),
     detail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}`),
@@ -128,6 +142,14 @@ export class EndpointsService {
       this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
     setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)
   };
+
+  languages = {
+    listLanguages: this.getFullUrl('/languages/list-languages'),
+    languageDetails: (id: string) => this.getFullUrl(`/languages/language-details/${id}`),
+    createLanguage: this.getFullUrl('/languages/create-language'),
+    updateLanguage: (id: string) => this.getFullUrl(`/languages/update-language/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/languages/${id}/status`)
+  };
   majorSkillsManagement = {
     list: this.getFullUrl('/MajorSkillsManagement'),
     details: (id: string) => this.getFullUrl(`/MajorSkillsManagement/${id}`),
@@ -148,7 +170,15 @@ export class EndpointsService {
       changeActivation: this.getFullUrl('/SkillsManagement/change-activation')
     },
     lookups:{
-      skillTypes: this.getFullUrl('/SkillsManagement/lookups/skill-types')
+      skills: this.getFullUrl('/SkillsManagement/lookups/skills'),
+      skillTypes: this.getFullUrl('/SkillsManagement/lookups/skill-types'),
+      majors: this.getFullUrl('/MajorSkillsManagement/lookups/majors'),
+      subMajors: this.getFullUrl('/MajorSkillsManagement/lookups/sub-majors'),
     }
+  };
+
+  countries = {
+    listCountries: this.getFullUrl('/countryManagement/list-countries'),
+    updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`)
   };
 }

@@ -30,8 +30,10 @@
   "internal.sidebar.approve-profile": "اعتماد الملفات",
   "internal.sidebar.approve-job": "اعتماد الوظيفة",
   "internal.sidebar.job": "إنشاء وظيفة",
+  "internal.sidebar.kawader": "كوادر",
   "internal.sidebar.transfer": "الترشيحات",
   "internal.sidebar.major-skill": "أدارة التخصصات والمهارات",
+  "internal.sidebar.invitation-summary":"ملخص دعوات التوظيف",
 
 
 
@@ -40,6 +42,8 @@
   "admin.sidebar.users": "إدارة المستخدمين",
   "admin.sidebar.offices": "إدارة المكاتب",
   "admin.sidebar.majors": "إدارة التخصصات والمهارات",
+  "admin.sidebar.countries": "إدارة الدول",
+  "admin.sidebar.languages": "إدارة اللغات",
 
   "common.sidebar.settings": "الإعدادات",
   "common.sidebar.logout": "الخروج",
