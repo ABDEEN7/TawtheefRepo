@@ -4,6 +4,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Events.User;

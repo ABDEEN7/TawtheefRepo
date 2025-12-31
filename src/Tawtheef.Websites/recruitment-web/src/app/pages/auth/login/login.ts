@@ -1,5 +1,4 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {race, Subscription, timer} from 'rxjs';
 import {LanguageService} from '../../../core/services/language.service';
 import {catchError, map} from 'rxjs/operators';
@@ -67,9 +66,15 @@ export class Login implements OnInit, OnDestroy{
     }
   }
 
-  startLogin(kind: 'qatarResident' | 'google'): void {
+  startLogin(kind: 'qatar_pass' | 'qatar_resident' | 'google'): void {
     switch (kind) {
-      case 'qatarResident':
+      case 'google':
+        this.auth.loginUsingGoogle();
+        break;
+      case 'qatar_pass':
+        this.auth.loginUsingQatarPass();
+        break;
+      case 'qatar_resident':
         this.dialog.open(QatarResidentOtpDialogComponent, {
           header: this.translate.instant('auth.login.qatarResidentDialog.title'),
           width: '520px',
@@ -77,12 +82,6 @@ export class Login implements OnInit, OnDestroy{
           dismissableMask: true,
           closable: true
         });
-        break;
-      case 'google':
-        this.auth.loginUsingGoogle();
-        break;
-      case 'qatar_resident':
-        this.auth.loginAsQatarResident();
         break;
     }
   }

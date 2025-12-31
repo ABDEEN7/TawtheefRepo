@@ -86,12 +86,9 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         var update = await userManager.UpdateAsync(user);
         if (!update.Succeeded) return FailureFromIdentity<Unit>(update);
 
-        var smsResult = await smsSender.SendAsync(verifiedPhone,
-            $"Your verification code is: {otp}", cancellationToken);
+        _ = await smsSender.SendAsync(verifiedPhone,$"Your verification code is: {otp}", cancellationToken);
 
-        return smsResult.ok
-            ? Result.Ok(Unit.Value)
-            : Result.Fail<Unit>(smsResult.error ?? new Error(ErrorsCodes.QatarResidentVerificationFailed));
+        return Result.Ok(Unit.Value);
     }
 
     private static string NormalizePhone(string phone)
