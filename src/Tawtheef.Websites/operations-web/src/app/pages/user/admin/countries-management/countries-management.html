@@ -97,7 +97,7 @@
 
 <div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" [class.flex-row-reverse]="isRtl()">
   <div class="items-per-page d-flex align-items-center gap-2">
-    <label class="form-label mb-0">{{ 'app.pagination.items_per_page' | translate }}</label>
+    <label class="form-label mb-0">{{ 'app.pagination.page_size' | translate }}</label>
     <select class="form-select form-select-sm w-auto"
             [ngModel]="filters().pageSize"
             (ngModelChange)="onPageSizeChange($event)">

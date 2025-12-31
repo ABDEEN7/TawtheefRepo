@@ -1,4 +1,3 @@
-using System;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +33,7 @@ public sealed class UpdateCountryStatusCommandHandler(
         country.UpdatedDate = now;
         country.UpdatedById = hasUser ? userId : country.UpdatedById;
 
-        repository.Update(country);
+        await repository.UpdateAsync(country);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);

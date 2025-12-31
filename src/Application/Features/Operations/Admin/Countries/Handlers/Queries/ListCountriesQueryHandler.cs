@@ -1,4 +1,5 @@
 using FluentResults;
+using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +11,9 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Countries.Handlers.Queries;
 
-public sealed class ListCountriesQueryHandler(IUnitOfWork unitOfWork)
+public sealed class ListCountriesQueryHandler(
+    IUnitOfWork unitOfWork,
+    IMapper mapper)
     : IRequestHandler<GetListCountriesQuery, IResult<PaginatedResult<CountryAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<CountryAdminDto>>> Handle(
@@ -18,35 +21,26 @@ public sealed class ListCountriesQueryHandler(IUnitOfWork unitOfWork)
         CancellationToken cancellationToken)
     {
         var nameFilter = request.Name?.Trim();
-        var queryable = unitOfWork.GetEntityRepository<Country>().DbSet
+
+        var countries = await unitOfWork
+            .GetEntityRepository<Country>()
+            .DbSet
             .AsNoTracking()
-            .WhereIf(!string.IsNullOrWhiteSpace(nameFilter),
+            .WhereIf(
+                !string.IsNullOrWhiteSpace(nameFilter),
                 c => EF.Functions.Like(c.NameEn, $"%{nameFilter}%") ||
                      EF.Functions.Like(c.NameAr, $"%{nameFilter}%") ||
                      EF.Functions.Like(c.BackendName, $"%{nameFilter}%"))
-            .WhereIf(request.IsActive.HasValue, c => c.IsActive == request.IsActive!.Value);
-
-        var totalCount = await queryable.CountAsync(cancellationToken);
-
-        var countries = await queryable
+            .WhereIf(
+                request.IsActive.HasValue,
+                c => c.IsActive == request.IsActive!.Value)
             .OrderBy(c => c.DisplayOrder)
             .ThenBy(c => c.NameEn)
-            .Skip((request.PageNumber - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .Select(c => new CountryAdminDto
-            {
-                Id = c.Id,
-                NameAr = c.NameAr,
-                NameEn = c.NameEn,
-                Code = c.Code,
-                ISOCode = c.ISOCode,
-                CodeAlpha = c.CodeAlpha,
-                IsActive = c.IsActive
-            })
-            .ToListAsync(cancellationToken);
+            .ToPaginatedListAsync<Country, CountryAdminDto>(
+                mapper,
+                request,
+                cancellationToken);
 
-        var result = new PaginatedResult<CountryAdminDto>(countries, totalCount, request.PageNumber, request.PageSize);
-
-        return Result.Ok(result);
+        return Result.Ok(countries);
     }
 }
