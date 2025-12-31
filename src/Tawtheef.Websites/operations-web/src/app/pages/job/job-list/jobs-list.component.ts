@@ -297,13 +297,14 @@ readonly jobStatus = JobStatus;
 
   getStatusBadgeClass(statusName: string): string {
     const STATUS_BADGE_MAP: Record<string, string> = {
-      [JobStatus.Draft]: 'bg-secondary',
-      [JobStatus.PendingApproval]: 'bg-warning text-dark',
-      [JobStatus.Approved]: 'bg-success',
-      [JobStatus.Published]: 'bg-info',
+      [JobStatus.Draft]: 'pill secondary',
+      [JobStatus.PendingApproval]: 'pill warning',
+      [JobStatus.Approved]: 'pill success',
+      [JobStatus.Published]: 'pill info',
       [JobStatus.Closed]: 'bg-dark',
-      [JobStatus.Rejected]: 'bg-danger',
-      [JobStatus.Cancelled]: 'bg-secondary',
+      [JobStatus.Rejected]: 'pill danger',
+      [JobStatus.Cancelled]: 'pill secondary',
+      [JobStatus.ReadyForAnnouncement]: 'bg-warning text-dark',
     };
     return STATUS_BADGE_MAP[statusName] || 'bg-light text-dark';
   }

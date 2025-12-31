@@ -5,13 +5,15 @@ public record PaginatedRequest
 {
     private const int MaxPageSize = 50;
     private int _pageSize = 10;
-    public int PageNumber { get; set; } = 1;
+    public int PageNumber { get; init; } = 1;
     public int PageSize
     {
         get => _pageSize;
         set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
     }
-    public string? SortBy { get; set; }
+    public string? SortBy { get; init; }
     [AllowedValues("asc", "desc", ErrorMessage = "Sort direction must be either 'asc' or 'desc'.")]
-    public string? SortDirection { get; set; } = "asc";
+    public string? SortDirection { get; init; } = "asc";
+
+    public string Language { get; init; } = "ar";
 }

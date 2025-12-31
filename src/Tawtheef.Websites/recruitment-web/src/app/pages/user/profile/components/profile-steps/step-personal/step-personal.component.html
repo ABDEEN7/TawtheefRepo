@@ -81,7 +81,7 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
       <p-date-picker name="dob" placeholder="{{ 'wizard.personal.dob' | translate }}"
-                     view="month" [defaultDate]="defaultBirthDate" [maxDate]="today"
+                     [defaultDate]="defaultBirthDate" [maxDate]="today"
                      [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event)!)"
                      [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
                      [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
@@ -278,8 +278,8 @@
                (click)="sponsorInput.click()">
 
             <div class="upload-field__icon">
-              <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().sponsorCardName"/>
-              <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().sponsorCardName"
+              <img alt="" src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().sponsorCardName"/>
+              <img alt="" src="assets/img/icons/file-eye.svg" *ngIf="ds.state().sponsorCardName"
                    class="cursor-pointer"
                    (click)="previewSponsorCard($event)"/>
             </div>

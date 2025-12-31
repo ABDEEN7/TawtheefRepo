@@ -1,7 +1,6 @@
-using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using FluentResults;
 using Tawtheef.Domain.Entities.Lookups;
-using Tawtheef.Domain.ValueObjects.User;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Domain.Entities.Users;
 

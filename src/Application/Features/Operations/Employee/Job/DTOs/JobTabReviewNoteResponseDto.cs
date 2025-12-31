@@ -1,6 +1,4 @@
-﻿using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
-
-namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
+﻿namespace Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 public class JobTabReviewNoteResponseDto
 {

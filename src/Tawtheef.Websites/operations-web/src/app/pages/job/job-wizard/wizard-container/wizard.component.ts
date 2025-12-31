@@ -153,7 +153,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         this.isEditMode = true;
         this.loadJobForWizard();
         return;
-      } 
+      }
       this.router.navigate([routes.employee.JobList]);
     });
   }
@@ -174,7 +174,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
               this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')
             );
             this.router.navigate([routes.employee.JobList]);
-            return EMPTY; 
+            return EMPTY;
           }
 
           if (job.jobStatus?.backendName === JobStatus.NeedUpdate) {

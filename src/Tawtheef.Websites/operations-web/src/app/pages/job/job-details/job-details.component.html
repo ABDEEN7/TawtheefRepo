@@ -103,9 +103,18 @@
               } } @if (activeTab === tabType.Responsibilities) { @if (getResponsibilities().length >
               0) {
               <ul>
-                @for (responsibility of getResponsibilities(); track $index) {
-                <li>{{ responsibility }}</li>
-                }
+                  @for (responsibility of getResponsibilities(); track $index) {
+                <div class="dual-text-container">
+                  <div class="text-area">
+                    <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                    <div [innerHTML]="responsibility.textAr"></div>
+                  </div>
+                  <div class="text-area">
+                    <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                    <div [innerHTML]="responsibility.textEn"></div>
+                  </div>
+                </div>
+              }
               </ul>
               } } @if (activeTab === tabType.Conditions) {
               <h3>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h3>

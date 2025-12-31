@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

@@ -2,6 +2,6 @@ namespace Tawtheef.Application.Features.Lookups.Queries;
 
 public record BaseSearchQuery
 {
-    public string? Search { get; set; }
-    public string? Language { get; set; }
+    public string? Search { get; init; }
+    public string Language { get; init; } = "en";
 }

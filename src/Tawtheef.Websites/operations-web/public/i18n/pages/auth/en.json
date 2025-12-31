@@ -1,9 +1,12 @@
 ﻿{
   "auth.azure.title": "Sign in - Azure",
-  "auth.azure.hint": "Please use your organization account via Azure to sign in.",
+  "auth.azure.hint": "You will be redirected to log in using your official work account.",
   "auth.azure.cta": "Sign in with Azure (Employee)",
   "auth.login.google_cta": "Sign in with Google (Office)",
-
   "auth.login.ministry_name": "Ministry of Education and Higher Education",
+  "auth.qatar.use": "For accredited offices",
+  "auth.welcome" : "Welcome to the employment portal",
+  "auth.detail" : "A unified platform for managing job applications",
+  "auth.or" : "Or",
   "auth.login.footer_owner": "Ministry of Education and Higher Education – IT Department"
 }

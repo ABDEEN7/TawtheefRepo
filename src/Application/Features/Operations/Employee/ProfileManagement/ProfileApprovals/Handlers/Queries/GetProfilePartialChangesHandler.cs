@@ -376,7 +376,7 @@ public sealed class GetProfilePartialChangesHandler(
     }
 
     private async Task FillLookupAsync<TLookup>(HashSet<Guid> ids, Dictionary<Guid, string> target, CancellationToken ct)
-        where TLookup : LookupBase
+        where TLookup : LocalizedLookupBase
     {
         target.Clear();
         if (ids.Count == 0)

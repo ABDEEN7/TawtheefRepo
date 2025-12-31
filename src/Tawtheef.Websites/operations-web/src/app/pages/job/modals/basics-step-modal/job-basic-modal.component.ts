@@ -29,9 +29,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   private dialogHelperService = inject(DialogHelperService);
   protected endpoints = inject(EndpointsService);
 
-  
+
   lookupsService = inject(JobLookupService);
-  
+
   private destroy$ = new Subject<void>();
   isLoading = false;
   isEditMode = false;
@@ -59,12 +59,15 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     maximumAge: [60, [Validators.required, Validators.min(18)]],
   });
 
+  majorOptions: any[] = [];
+  subMajorOptions: any[] = [];
+
   ngOnInit(): void {
     const today = new Date();
     this.currentDate = today;
     this.isCreateMode = this.config.data?.isCreateMode || false;
     this.showInWizard = this.config.data?.showInWizard || false;
-    
+
     if (this.config.data?.jobId) {
       this.isEditMode = true;
       this.jobId = this.config.data.jobId;
@@ -72,7 +75,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     } else if (!this.isCreateMode) {
       this.isCreateMode = true;
     }
-    
+
     this.setupSequenceListeners();
   }
 
@@ -96,7 +99,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           this.form.controls.departmentId.setValue('');
         }
       });
-    
+
     this.form.controls.managementId.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(managementId => {
@@ -108,7 +111,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           this.form.controls.departmentId.setValue('');
         }
       });
-    
+
     this.form.controls.majorId.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(majorId => {
@@ -124,7 +127,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
 
   private loadJobForEdit(): void {
     if (!this.jobId) return;
-    
+
     this.isLoading = true;
     this.jobService.getById(this.jobId).subscribe({
       next: (jobResponse) => {
@@ -149,16 +152,19 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           maximumAge: jobResponse.maximumAge || 60
         });
 
+        this.majorOptions = jobResponse.major?.id ? [jobResponse.major] : [];
+        this.subMajorOptions = jobResponse.subMajor?.id ? [jobResponse.subMajor] : [];
+
         if (jobResponse.sector.id) {
           this.lookupsService.loadManagementsBySector(jobResponse.sector.id as GUID);
         }
-        
+
         if (jobResponse.management.id) {
           this.lookupsService.loadDepartmentsByManagement(jobResponse.management.id as GUID);
         }
-        
-        
-        
+
+
+
         this.isLoading = false;
       },
       error: () => {
@@ -179,7 +185,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    
+
     const formValue = this.form.getRawValue();
     const jobData = {
       titleAr: formValue.titleAr,
@@ -211,15 +217,15 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       requiredAttachments: []
     };
 
-    
+
     this.jobService.create(jobData).subscribe({
       next: (jobId) => {
         this.isLoading = false;
         this.notificationService.success(this.translationService.instant('JOB_BASIC_MODAL.SUCCESS.CREATED'));
-        
+
         if (this.showInWizard) {
-          this.ref.close({ 
-            success: true, 
+          this.ref.close({
+            success: true,
             jobId: jobId,
             data: jobData
           });
@@ -242,7 +248,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     const formValue = this.form.getRawValue();
-    
+
     const updateData = {
       titleAr: formValue.titleAr,
       titleEn: formValue.titleEn,
@@ -312,7 +318,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     const control = this.form.get(fieldName);
     return control ? control.hasValidator(Validators.required) : false;
   }
- 
+
   canSelectDepartment(): boolean {
     return !!this.form.controls.managementId.value;
   }

@@ -209,9 +209,12 @@ export class JobApprovalComponent implements OnInit {
     }
   }
 
-  getResponsibilities(): string[] {
+  getResponsibilities(): { textAr: string; textEn: string }[] {
     if (!this.job?.responsibilities?.length) return [];
-    return this.job.responsibilities.map((r) => r.textAr);
+    return this.job.responsibilities.map((c) => ({
+      textAr: c.textAr,
+      textEn: c.textEn,
+    }));
   }
 
   getJobConditions(): { textAr: string; textEn: string }[] {

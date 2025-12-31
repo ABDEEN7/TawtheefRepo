@@ -7,11 +7,11 @@ namespace Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 [Table(nameof(Office), Schema = Schemas.Lookup)]
 public class Office : LookupBase
 {
-    public required Guid CountryId { get; set; }
-    public Country? Country { get; set; }
-    public required Guid OfficeAdminId { get; set; }
-    public OfficeUser? OfficeAdmin { get; set; }
-    public required string Code { get; set; }
-    public List<OfficeUser>? OfficeUsers { get; set; }
-    public List<OfficeSupportedCountry> SupportedCountries { get; set; } = [];
+    public required Guid CountryId { get; init; }
+    public Country? Country { get; init; }
+    public required Guid OfficeAdminId { get; init; }
+    public OfficeUser? OfficeAdmin { get; init; }
+    public required string Code { get; init; }
+    public List<OfficeUser>? OfficeUsers { get; init; }
+    public List<OfficeSupportedCountry> SupportedCountries { get; init; } = [];
 }

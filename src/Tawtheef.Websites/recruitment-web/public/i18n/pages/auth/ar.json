@@ -6,5 +6,8 @@
   "auth.login.mode_nonresident": "لست مقيمًا في قطر",
   "auth.login.tawtheeq_cta": "الدخول عبر نظام التوثيق الوطني (مقيمون داخل قطر)",
   "auth.login.google_cta": "تسجيل الدخول بحساب Google (لغير المقيمين)",
+  "auth.login.non_qatar" : "للمستخدمين غير المقيمين في دولة قطر",
+  "auth.login.welcome" : "مرحباً بكم في بوابة التوظيف",
+  "auth.login.detail" : "منصة موحدة لإدارة طلبات التوظيف",
   "auth.login.footer_owner": "وزارة التربية والتعليم والتعليم العالي – إدارة نظم المعلومات"
 }

@@ -451,7 +451,6 @@ $badge-bg-select: rgba(241, 230, 229, 1);
 
   td {
     p {
-      display: flex;
       line-height: 1.2;
       margin: 0;
       color: $text-muted;
@@ -653,4 +652,81 @@ body.ltr
 .upload-field {
   min-height: 45px !important;
   border: 1px solid $grey-border !important;
+}
+
+
+
+/*--------------------------------------------------------------
+# Pill Styles
+--------------------------------------------------------------*/
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  line-height: 1.5;
+
+  &.soft {
+    background: #fff5f7;
+    color: #a21b52;
+    border-color: #f6d4e1;
+  }
+  &.info {
+    background: #eef6ff;
+    color: #1a5fb4;
+    border-color: #d5e7ff;
+  }
+  &.neutral {
+    background: #f7f7f7;
+    color: #4b4b4b;
+    border-color: #e8e8e8;
+  }
+  &.secondary{
+    background: #dddddd;
+    color: #6c757d;
+    border-color: #6c757d;
+  }
+  &.success {
+    background: #e6f5eb;
+    color: #1f7a3a;
+    border-color: #c5e7cf;
+  }
+  &.warning {
+    background: #fff5d6;
+    color: #9a6b00;
+    border-color: #ffe3a6;
+  }
+}
+
+.small-pill {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+
+/*--------------------------------------------------------------
+# P-tag Section
+--------------------------------------------------------------*/
+
+.p-tag {
+  border-radius: 2rem !important;
+  padding: 6px 12px;
+  font-weight: 700;
+}
+
+
+/*--------------------------------------------------------------
+# Action Buttons Section
+--------------------------------------------------------------*/
+.action-buttons{ display: flex;gap:10px}
+.action-buttons .btn{
+ border-color:rgba(203, 203, 203, 1);
+  color: $color-primary;
+  background-color: $color-white ;
+  min-width: 35px;
+  height: 35px;
+
 }

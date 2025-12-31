@@ -6,5 +6,8 @@
   "auth.login.mode_nonresident": "I am not residing in Qatar",
   "auth.login.tawtheeq_cta": "Login via National Authentication (Residents in Qatar)",
   "auth.login.google_cta": "Sign in with Google (Non-residents)",
+  "auth.login.non_qatar" : "For users not residing in the State of Qatar",
+  "auth.login.welcome" : "Welcome to the employment portal",
+  "auth.login.detail" : "A unified platform for managing job applications",
   "auth.login.footer_owner": "Ministry of Education and Higher Education – IT Department"
 }

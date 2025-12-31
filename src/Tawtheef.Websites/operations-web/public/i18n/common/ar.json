@@ -1,4 +1,19 @@
 ﻿{
+  "common.next": "التالي",
+  "common.previous": "السابق",
+  "common.finish": "إنهاء",
+  "common.upload": "رفع ملف",
+  "common.download": "تحميل",
+  "common.view": "عرض",
+  "common.sections": "الأقسام",
+  "common.complete": "مكتمل",
+  "common.missing": "مفقود",
+  "common.verified": "موثق",
+  "common.notVerified": "غير موثق",
+  "common.none": "لا شيء",
+  "common.loadFailed": "فشل تحميل البيانات",
+  "app.pagination.page_size": "حجم الصفحة",
+
   "app.pagination.showing": "عرض",
   "app.pagination.of": "من",
   "app.pagination.results": "نتيجة",
@@ -40,5 +55,14 @@
 
   "auth.externalLogin.externalAuthFailed.summary": "فشل تسجيل الدخول",
   "auth.externalLogin.externalAuthFailed.detailFallback": "فشلت المصادقة الخارجية",
-  "remote-select.search-hint": "اكتب على الأقل {{minChars}} أحرف للبحث"
+  "remote-select.search-hint": "اكتب على الأقل {{minChars}} أحرف للبحث",
+  "auth.externalLogin.popupBlocked.detailShort": "قام المتصفح بحظر نافذة تسجيل الدخول المنبثقة.",
+  "auth.externalLogin.popupBlocked.detailContinue": "يرجى السماح بالنوافذ المنبثقة لهذا الموقع ثم المحاولة مرة أخرى.",
+
+  "auth.externalLogin.loginSuccessful.summary": "تم تسجيل الدخول بنجاح",
+  "auth.externalLogin.loginSuccessful.detail": "تم تسجيل الدخول بنجاح باستخدام مزود تسجيل الدخول الخارجي.",
+
+  "auth.externalLogin.loginFailed.detailProvider": "فشلت عملية المصادقة مع مزود تسجيل الدخول الخارجي المحدد.",
+
+  "auth.externalLogin.authError.detailLogin": "حدث خطأ أثناء عملية تسجيل الدخول الخارجي. يرجى المحاولة مرة أخرى."
 }

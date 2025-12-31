@@ -31,6 +31,7 @@
   "internal.sidebar.approve-job": "اعتماد الوظيفة",
   "internal.sidebar.job": "إنشاء وظيفة",
   "internal.sidebar.transfer": "الترشيحات",
+  "internal.sidebar.major-skill": "أدارة التخصصات والمهارات",
 
 
 
@@ -38,6 +39,7 @@
   "admin.sidebar.roles": "إدارة الصلاحيات",
   "admin.sidebar.users": "إدارة المستخدمين",
   "admin.sidebar.offices": "إدارة المكاتب",
+  "admin.sidebar.majors": "إدارة التخصصات والمهارات",
   "admin.sidebar.countries": "إدارة الدول",
 
   "common.sidebar.settings": "الإعدادات",

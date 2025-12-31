@@ -8,9 +8,6 @@ namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 public class JobPointConfiguration : EventEntity
 {
     [Required]
-    public Guid JobId { get; set; }
-
-    [Required]
     public int ApplicantCategoryMaxPoints { get; set; }
 
     [Required]

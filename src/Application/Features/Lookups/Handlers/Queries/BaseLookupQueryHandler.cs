@@ -21,15 +21,16 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(IUnitOfWork unit
 
         var entities = await dbSet
             .AsNoTracking()
+            .Where(x=>x.IsActive)
             .WhereIf(!string.IsNullOrEmpty(request.Search), 
                 s => 
                     EF.Functions.Like(s.NameAr, $"%{request.Search}%") ||
                     EF.Functions.Like(s.NameEn, $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionAr ?? "", $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionEn ?? "", $"%{request.Search}%"))
-            .OrderBy(x => x.DisplayOrder)
             .ToListAsync(cancellationToken);
 
-        return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));
+        var data = mapper.Map<List<DropdownOptions>>(entities).OrderBy(e => e.Name).ToList();
+        return Result.Ok(data);
     }
 }

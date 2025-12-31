@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Application.Common.Services;
 

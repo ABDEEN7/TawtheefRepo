@@ -12,7 +12,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Services.Authorization;
 
-namespace Operations.API.Controllers;
+namespace Operations.API.Controllers.Admin;
 
 [ApiController]
 [Route("api/[controller]")]
