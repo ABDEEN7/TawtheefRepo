@@ -55,6 +55,30 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
         OtpSends++;
     }
 
+    public Result ValidateOtp(string otp, DateTime utcNow, int maxAttempts)
+    {
+        if (OtpExpiry is null || string.IsNullOrWhiteSpace(OtpReference))
+            return Result.Fail(ErrorsCodes.InvalidCode);
+
+        if (OtpExpiry <= utcNow)
+            return Result.Fail(ErrorsCodes.VerificationCodeExpired);
+
+        if (OtpAttempts >= maxAttempts)
+            return Result.Fail(ErrorsCodes.TooManyAttempts);
+
+        if (!string.Equals(OtpReference, otp, StringComparison.Ordinal))
+        {
+            OtpAttempts++;
+            return Result.Fail(ErrorsCodes.InvalidCode);
+        }
+
+        OtpReference = null;
+        OtpExpiry = null;
+        OtpAttempts = 0;
+
+        return Result.Ok();
+    }
+
     public static Result<User> Register(string email, string displayName, Guid userTypeId)
     {
         var name = FullName.TryParse(displayName);
