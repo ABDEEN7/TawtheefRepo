@@ -87,18 +87,6 @@ export interface UpsertSkillDialogData {
           </small>
         </div>
 
-        <div>
-          <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_BACKEND_NAME' | translate }}</label>
-          <input pInputText class="w-100"
-                 name="backendName"
-                 [(ngModel)]="vm.backendName"
-                 required maxlength="100"
-                 [placeholder]="'MAJORS_SKILLS.PLACEHOLDER_SKILL_BACKEND_NAME' | translate" />
-          <small class="text-muted" *ngIf="f.submitted && !vm.backendName">
-            {{ 'MAJORS_SKILLS.VALIDATION_REQUIRED' | translate }}
-          </small>
-        </div>
-
         <div class="d-flex gap-3 flex-wrap">
           <div class="flex-grow-1 min-w-250">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_DESCRIPTION_EN' | translate }}</label>
@@ -169,7 +157,6 @@ export class UpsertSkillDialogComponent {
     nameEn: this.model?.nameEn ?? this.model?.name ?? '',
     nameAr: this.model?.nameAr ?? '',
     skillTypeId: this.model?.skillTypeId ?? this.model?.skillType?.id ?? '',
-    backendName: this.model?.backendName ?? '',
     descriptionEn: this.model?.descriptionEn ?? '',
     descriptionAr: this.model?.descriptionAr ?? '',
     displayOrder: this.model?.displayOrder ?? null,
@@ -179,7 +166,6 @@ export class UpsertSkillDialogComponent {
   isValid(): boolean {
     return !!this.vm.nameEn?.trim()
       && !!this.vm.nameAr?.trim()
-      && !!this.vm.backendName?.trim()
       && !!this.vm.skillTypeId;
   }
 
@@ -191,7 +177,6 @@ export class UpsertSkillDialogComponent {
       nameEn: this.vm.nameEn.trim(),
       nameAr: this.vm.nameAr.trim(),
       skillTypeId: this.vm.skillTypeId,
-      backendName: this.vm.backendName.trim(),
       descriptionEn: this.vm.descriptionEn?.trim() || null,
       descriptionAr: this.vm.descriptionAr?.trim() || null,
       displayOrder: this.vm.displayOrder ?? undefined,

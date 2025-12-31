@@ -60,19 +60,6 @@ export interface UpsertMajorDialogData {
           </div>
         </div>
 
-        <div>
-          <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_BACKEND_NAME' | translate }}</label>
-          <input pInputText class="w-100"
-                 name="backendName"
-                 [(ngModel)]="vm.backendName"
-                 required
-                 maxlength="100"
-                 [placeholder]="'MAJORS_SKILLS.PLACEHOLDER_BACKEND_NAME' | translate" />
-          <small class="text-muted" *ngIf="f.submitted && !vm.backendName">
-            {{ 'MAJORS_SKILLS.VALIDATION_REQUIRED' | translate }}
-          </small>
-        </div>
-
         <div class="d-flex gap-3 flex-wrap">
           <div class="flex-grow-1 min-w-250">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_DESCRIPTION_EN' | translate }}</label>
@@ -130,14 +117,13 @@ export class UpsertMajorDialogComponent {
     // try common shapes:
     nameEn: this.data.model?.nameEn ?? this.data.model?.name?.en ?? this.data.model?.name ?? '',
     nameAr: this.data.model?.nameAr ?? this.data.model?.name?.ar ?? '',
-    backendName: this.data.model?.backendName ?? '',
     descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.description ?? '',
     descriptionAr: this.data.model?.descriptionAr ?? '',
     isActive: (this.data.model?.isActive ?? true) !== false
   };
 
   isValid(): boolean {
-    return !!this.vm.nameEn?.trim() && !!this.vm.nameAr?.trim() && !!this.vm.backendName?.trim();
+    return !!this.vm.nameEn?.trim() && !!this.vm.nameAr?.trim();
   }
 
   save() {
@@ -149,7 +135,6 @@ export class UpsertMajorDialogComponent {
       parentId: this.vm.parentId ?? undefined,
       nameEn: this.vm.nameEn.trim(),
       nameAr: this.vm.nameAr.trim(),
-      backendName: this.vm.backendName.trim(),
       descriptionEn: this.vm.descriptionEn?.trim() || null,
       descriptionAr: this.vm.descriptionAr?.trim() || null,
       isActive: this.vm.isActive
