@@ -120,8 +120,17 @@
               0) {
               <ul>
                 @for (responsibility of getResponsibilities(); track $index) {
-                <li>{{ responsibility }}</li>
-                }
+                <div class="dual-text-container">
+                  <div class="text-area">
+                    <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
+                    <div [innerHTML]="responsibility.textAr"></div>
+                  </div>
+                  <div class="text-area">
+                    <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
+                    <div [innerHTML]="responsibility.textEn"></div>
+                  </div>
+                </div>
+              }
               </ul>
               } } @if (activeTab === tabType.Conditions) {
               <h3>{{ 'JOB_APPROVAL.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
