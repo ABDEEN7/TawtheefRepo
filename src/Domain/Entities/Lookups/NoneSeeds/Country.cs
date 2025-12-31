@@ -8,5 +8,6 @@ public class Country : LookupBase
     public int Code { get; set; }
     public required string ISOCode { get; set; }
     public required string CodeAlpha { get; set; }
+    public bool IsActive { get; set; } = true;
     
 }

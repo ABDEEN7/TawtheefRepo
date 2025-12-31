@@ -128,4 +128,9 @@ export class EndpointsService {
       this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
     setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)
   };
+
+  countries = {
+    listCountries: this.getFullUrl('/countryManagement/list-countries'),
+    updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`)
+  };
 }
