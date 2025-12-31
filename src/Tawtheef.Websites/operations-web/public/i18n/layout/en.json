@@ -1,30 +1,38 @@
 ﻿{
-  "internal.nav.logoAlt": "Ministry of Education and Higher Education",
-  "internal.nav.home": "Home",
-  "internal.nav.personalProfile": "Personal Profile",
-  "internal.nav.jobs": "Jobs",
-  "internal.nav.jobsSearch": "Search Jobs",
-  "internal.nav.jobsApplications": "My Applications",
-  "internal.nav.languageToggle": "English",
-  "internal.nav.notifications": "Notifications",
-  "internal.nav.login": "Login",
-  "internal.nav.userAvatarAlt": "User Avatar",
-  "internal.nav.userProfile": "Profile",
-  "internal.nav.userSettings": "Settings",
-  "internal.nav.logout": "Logout",
-
   "internal.footer.terms": "Terms and Conditions",
-  "internal.footer.privacy": "Privacy Policy",
-  "internal.footer.rights": "All rights reserved © 2025",
-  "internal.footer.ministry": "Ministry of Education and Higher Education — State of Qatar",
 
-  "public.nav.about": "About",
-  "public.nav.tracks": "Career Paths",
-  "public.nav.why": "Why Us",
-  "public.nav.success": "Success Stories",
-  "public.nav.faq": "FAQ",
-  "public.nav.login": "Login",
+"internal.footer.privacy": "Privacy Policy",
 
+"internal.footer.rights": "All rights reserved © 2025",
+
+"internal.footer.ministry": "Ministry of Education and Higher Education 2025 — All rights reserved",
+
+"internal.nav.logoAlt": "Ministry of Education and Higher Education",
+
+"internal.nav.home": "Home",
+
+"internal.nav.personalProfile": "Profile",
+
+"internal.nav.jobs": "Jobs",
+
+"internal.nav.jobsSearch": "Job Search",
+
+"internal.nav.jobsApplications": "My Applications",
+
+"internal.nav.notifications": "Notifications",
+
+"internal.nav.login": "Login",
+"internal.nav.userAvatarAlt": "User Avatar",
+"internal.nav.userProfile": "Profile",
+"internal.nav.userSettings": "Settings",
+"internal.nav.logout": "Logout",
+
+"public.nav.about": "About the platform",
+"public.nav.tracks": "Career paths",
+"public.nav.why": "Why with us",
+"public.nav.success": "Success stories",
+"public.nav.faq": "Frequently Asked Questions",
+"public.nav.login": "Login",
 
   "internal.sidebar.home": "Home",
   "internal.sidebar.distribution": "Facility Distribution",
@@ -32,17 +40,19 @@
   "internal.sidebar.approve-job": "Approve Facilities",
   "internal.sidebar.job": "Create Job",
   "internal.sidebar.kawader": "Kawader",
+  "internal.sidebar.major-skill": "Manage Majors and Skills",
+  "internal.sidebar.invitation-summary": "Job Invitation Summary",
   "internal.sidebar.transfer": "Nominations",
 
-  "admin.sidebar.home": "Dashboard",
-  "admin.sidebar.roles": "Role Management",
-  "admin.sidebar.users": "User Management",
-  "admin.sidebar.offices": "Offices Management",
-  "admin.sidebar.majors": "Majors & Skills",
+"admin.sidebar.home": "Home",
+"admin.sidebar.roles": "Manage Permissions",
+"admin.sidebar.users": "Manage Users",
+"admin.sidebar.offices": "Manage School",
+"admin.sidebar.majors": "Manage Majors and Skills",
 
-  "common.sidebar.settings": "Settings",
-  "common.sidebar.logout": "Logout",
+"common.sidebar.settings": "Settings",
+"common.sidebar.logout": "Logout",
 
-  "public.footer.rights": "All rights reserved © 2025",
-  "public.footer.ministry": "Ministry of Education and Higher Education — State of Qatar"
+"public.footer.rights": "All Rights Reserved © 2025",
+"public.footer.ministry": "Ministry of Education and Higher Education 2025 — All rights reserved"
 }

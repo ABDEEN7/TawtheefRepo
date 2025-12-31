@@ -27,11 +27,10 @@ export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
     { key: 'home', label: 'internal.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.employee.dashboard, permission: Permissions.Dashboard.View },
     { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'assets/img/icons/files.svg', route: routes.employee.profileDistribution, permission: Permissions.ProfileDistribution.View },
-    //{ key: 'approve-job', label: 'internal.sidebar.approve-job', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalJob, permission: Permissions.Jobs.Approve },
     { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalProfile, permission: Permissions.ProfileApproval.View },
     { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: routes.employee.JobList, permission: Permissions.Jobs.View },
-    //{ key: 'transfer', label: 'internal.sidebar.transfer', icon: 'assets/img/icons/transfer.svg', route: routes.employee.nominations, permission: Permissions.Nominations.View },
-    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'assets/img/icons/job.svg', route: routes.employee.majorsSkillsManagement, permission: Permissions.Nominations.View },
+    { key: 'invitation-summary', label: 'internal.sidebar.invitation-summary', icon: 'assets/img/icons/add-to-list-stroke-rounded.svg', route: routes.employee.jobInvitationSummary, permission: Permissions.Nominations.View },
+    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'assets/img/icons/workflow-square-06-stroke-rounded.svg', route: routes.employee.majorsSkillsManagement, permission: Permissions.Nominations.View },
     { key: 'kawader', label: 'internal.sidebar.kawader', icon: 'assets/img/icons/users.svg', route: routes.employee.kawader, permission: Permissions.Kawader.Manage }
   ];
 
