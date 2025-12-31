@@ -18,4 +18,7 @@
   get countriesManagement(){
     return this.admin + '/countries-management'
   },
+  get languagesManagement(){
+    return this.admin + '/languages-management'
+  },
 }

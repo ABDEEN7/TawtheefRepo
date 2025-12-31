@@ -142,6 +142,14 @@ export class EndpointsService {
       this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
     setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)
   };
+
+  languages = {
+    listLanguages: this.getFullUrl('/languages/list-languages'),
+    languageDetails: (id: string) => this.getFullUrl(`/languages/language-details/${id}`),
+    createLanguage: this.getFullUrl('/languages/create-language'),
+    updateLanguage: (id: string) => this.getFullUrl(`/languages/update-language/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/languages/${id}/status`)
+  };
   majorSkillsManagement = {
     list: this.getFullUrl('/MajorSkillsManagement'),
     details: (id: string) => this.getFullUrl(`/MajorSkillsManagement/${id}`),

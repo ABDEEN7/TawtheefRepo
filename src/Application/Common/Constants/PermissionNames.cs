@@ -18,6 +18,10 @@ public static class PermissionNames
     public const string OfficesView = "offices.view";
     public const string OfficesManage = "offices.manage";
 
+    // Languages
+    public const string LanguagesView = "languages.view";
+    public const string LanguagesManage = "languages.manage";
+
     // Countries
     public const string CountriesView = "countries.view";
     public const string CountriesManage = "countries.manage";
@@ -71,6 +75,7 @@ public static class PermissionNames
         RolesView, RolesManage,
         UsersView, UsersManage,
         OfficesView, OfficesManage,
+        LanguagesView, LanguagesManage,
         CountriesView, CountriesManage,
         ProfileView, ProfileManage,
         ProfileDistributionView, ProfileDistributionManage,
@@ -89,6 +94,8 @@ public static class PermissionNames
         UsersManage,
         OfficesView,
         OfficesManage,
+        LanguagesView,
+        LanguagesManage,
         KawaderManage,
         CountriesView,
         CountriesManage,

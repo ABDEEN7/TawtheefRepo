@@ -32,6 +32,7 @@ export class SidebarComponent implements OnInit {
     { key: 'users', label: 'admin.sidebar.users', icon: 'assets/img/icons/users.svg', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
     { key: 'offices', label: 'admin.sidebar.offices', icon: 'assets/img/icons/files.svg', route: routes.admin.officesManagement, permission: Permissions.Offices.Manage },
     { key: 'countries', label: 'admin.sidebar.countries', icon: 'assets/img/icons/globe.svg', route: routes.admin.countriesManagement, permission: Permissions.Countries.Manage },
+    { key: 'languages', label: 'admin.sidebar.languages', icon: 'assets/img/icons/globe.svg', route: routes.admin.languagesManagement, permission: Permissions.Languages.Manage },
   ];
 
   constructor(private router: Router) {}
