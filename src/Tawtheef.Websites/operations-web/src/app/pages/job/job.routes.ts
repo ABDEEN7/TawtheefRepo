@@ -8,7 +8,7 @@ import { JobPointsConfigPageComponent } from './job-points/job-points-config-pag
 import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
 import {permissionGuard} from '../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../core/constants/permissions';
-import { JobCandidatesComponent } from './job-candidates.component/job-candidates.component';
+import { JobCandidatesComponent } from './job-candidates/job-candidates.component';
 
 export const jobRoutes: Routes = [
   { path: '', component: JobListComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.View] } },
