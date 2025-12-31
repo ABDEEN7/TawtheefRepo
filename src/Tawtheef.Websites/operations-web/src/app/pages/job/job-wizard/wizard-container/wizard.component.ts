@@ -119,14 +119,14 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
       this.jobService.createNewDraft();
 
       setTimeout(() => {
-        this.openBasicDataPopup();
+        this.openBasicDataPopup(true);
       }, 300);
     }
   }
 
   ngAfterViewInit(): void {
     if (this.isEditMode && this.jobId) {
-      this.loadJobForWizard();
+      this.openBasicDataPopup(false, this.jobId);
     }
   }
 
@@ -136,15 +136,16 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cleanupSteps();
   }
 
-  private openBasicDataPopup(): void {
+  private openBasicDataPopup(isCreateMode: boolean, jobId?: GUID): void {
     this.dialogService.open(JobBasicModalComponent, {
       width: 'min(920px, 96vw)',
       modal: true,
       header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
       styleClass: 'custom-bootstrap-dialog',
       data: {
-        isCreateMode: true,
+        isCreateMode: isCreateMode,
         showInWizard: true,
+        jobId
       },
     })?.onClose.subscribe((result) => {
       if (result?.success && result?.jobId) {
@@ -154,6 +155,17 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         this.loadJobForWizard();
         return;
       }
+      if (isCreateMode) {
+        this.router.navigate([routes.employee.JobList]);
+        return;
+      }
+
+      if (jobId) {
+        this.hasBasicData = true;
+        this.loadJobForWizard();
+        return;
+      }
+
       this.router.navigate([routes.employee.JobList]);
     });
   }
@@ -296,6 +308,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     const currentStep = this.stepRefs[this.step - 1]?.instance;
 
     if (currentStep && currentStep.isValid()) {
+      this.saveDraft();
       if (this.step < this.total) {
         this.step++;
         this.showActive();
@@ -308,6 +321,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   prev(): void {
     if (this.step > 1) {
+      this.saveDraft();
       this.step--;
       this.showActive();
       this.scrollToActive();
@@ -332,6 +346,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         this.showWarnMessage('JOB_WIZARD.WARNINGS.COMPLETE_PREVIOUS_STEPS');
         return;
       }
+      this.saveDraft();
     }
 
     this.step = stepNumber;
@@ -366,14 +381,36 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
       return;
     }
 
+    const currentJob = this.jobService.getCurrentJob();
+    if (!currentJob) {
+      this.showErrorMessage('JOB_WIZARD.ERRORS.NO_JOB_TO_SUBMIT');
+      return;
+    }
+
+    const validation = this.jobService.validateRequiredFields(currentJob);
+    if (!validation.isValid) {
+      const errorMessage = validation.errors
+        .map((errorKey) => this.translateService.instant(errorKey))
+        .join('\n');
+      this.notificationService.error(errorMessage);
+      return;
+    }
+
     if (!this.canGoToReview()) {
       this.showErrorMessage('JOB_WIZARD.ERRORS.COMPLETE_ALL_STEPS');
+      return;
+    }
+
+    const pendingStatusId = this.lookupsService.getStatusIdByEnum(JobStatus.PendingApproval);
+    if (!pendingStatusId) {
+      this.showErrorMessage('JOB_WIZARD.ERRORS.STATUS_NOT_FOUND');
       return;
     }
 
     this.isLoading = true;
     this.jobService
       .update(this.jobId)
+      .pipe(switchMap(() => this.jobService.changeStatus(this.jobId, pendingStatusId)))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -404,6 +441,20 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   });
 }
 
+private saveDraft(): void {
+    if (!this.jobId) {
+      return;
+    }
+
+    this.jobService
+      .update(this.jobId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        error: () => {
+          this.showErrorMessage('JOB_WIZARD.ERRORS.SAVE_DRAFT_FAILED');
+        },
+      });
+  }
   private getTabByStepIndex(stepIndex: number): JobTabType | undefined {
     return (Object.keys(this.tabToStepIndex) as JobTabType[]).find(
       (tab) => this.tabToStepIndex[tab] === stepIndex
