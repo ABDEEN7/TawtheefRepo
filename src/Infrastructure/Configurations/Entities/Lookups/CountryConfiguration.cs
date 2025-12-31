@@ -11,5 +11,6 @@ public class CountryConfiguration : LookupBaseConfiguration<Country>
 
         builder.Property(c => c.ISOCode).HasMaxLength(5).IsRequired();
         builder.Property(c => c.CodeAlpha).HasMaxLength(5).IsRequired();
+        builder.Property(c => c.IsActive).HasDefaultValue(true);
     }
 }

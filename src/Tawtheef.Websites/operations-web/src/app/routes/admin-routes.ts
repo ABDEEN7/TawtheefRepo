@@ -15,4 +15,7 @@
   get officesManagement(){
     return this.admin + '/offices-management'
   },
+  get countriesManagement(){
+    return this.admin + '/countries-management'
+  },
 }

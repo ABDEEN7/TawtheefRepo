@@ -5,6 +5,7 @@
   "app.pagination.no_results": "لا توجد نتائج",
   "app.pagination.previous": "السابق",
   "app.pagination.next": "التالي",
+  "app.pagination.items_per_page": "عدد النتائج في الصفحة",
 
   "validation.requiredEmail": "البريد الإلكتروني مطلوب.",
   "validation.invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",

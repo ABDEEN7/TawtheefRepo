@@ -15,6 +15,10 @@ public sealed class ListPermissionsQueryHandler
         {
             new(PermissionNames.UsersView, PermissionNames.UsersView),
             new(PermissionNames.UsersManage, PermissionNames.UsersManage),
+            new(PermissionNames.OfficesView, PermissionNames.OfficesView),
+            new(PermissionNames.OfficesManage, PermissionNames.OfficesManage),
+            new(PermissionNames.CountriesView, PermissionNames.CountriesView),
+            new(PermissionNames.CountriesManage, PermissionNames.CountriesManage),
             new(PermissionNames.ProfileView, PermissionNames.ProfileView),
             new(PermissionNames.ProfileManage, PermissionNames.ProfileManage),
             new(PermissionNames.JobsView, PermissionNames.JobsView),

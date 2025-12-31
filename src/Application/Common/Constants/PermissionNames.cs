@@ -18,6 +18,10 @@ public static class PermissionNames
     public const string OfficesView = "offices.view";
     public const string OfficesManage = "offices.manage";
 
+    // Countries
+    public const string CountriesView = "countries.view";
+    public const string CountriesManage = "countries.manage";
+
     #endregion
 
     #region Employee Console Permissions
@@ -64,6 +68,7 @@ public static class PermissionNames
         RolesView, RolesManage,
         UsersView, UsersManage,
         OfficesView, OfficesManage,
+        CountriesView, CountriesManage,
         ProfileView, ProfileManage,
         ProfileDistributionView, ProfileDistributionManage,
         ProfileApprovalView, ProfileApprovalReview, ProfileApprovalChanges,
@@ -80,6 +85,8 @@ public static class PermissionNames
         UsersManage,
         OfficesView,
         OfficesManage,
+        CountriesView,
+        CountriesManage,
     ];
     
     public static readonly IReadOnlyList<string> EmployeePermissions =
