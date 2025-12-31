@@ -81,7 +81,7 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.dob' | translate }}</label>
       <p-date-picker name="dob" placeholder="{{ 'wizard.personal.dob' | translate }}"
-                     view="month" [defaultDate]="defaultBirthDate" [maxDate]="today"
+                     [defaultDate]="defaultBirthDate" [maxDate]="today"
                      [ngModel]="ds.state().dob" (onSelect)="updateField('dob', dateToDateOnly($event)!)"
                      [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
                      [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
