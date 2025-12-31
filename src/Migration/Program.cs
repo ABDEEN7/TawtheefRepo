@@ -19,8 +19,8 @@ public class Program
         Console.WriteLine("=== Import Started ===");
 
         const string ConnectionString =
-            "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
-        //"Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
+           // "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=Sch_T; Password=Abc@1234;";
+        "Server=(localdb)\\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;";
 
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -60,6 +60,7 @@ public class Program
         ImportOffices(db, errors);
         ImportSkillTypes(db, errors);
         ImportSkills(db, errors);
+        ImportMajorSkills(db, errors);
 
         try
         {
@@ -550,6 +551,98 @@ public class Program
         catch (Exception ex)
         {
             errors.Add(new ImportError("InsertSkills", null, ex.GetBaseException().Message));
+        }
+    }
+
+    static void ImportMajorSkills(TawtheefDbContext db, List<ImportError> errors)
+    {
+        try
+        {
+            var createdById = AdminUserIds.Admin1UserId;
+            var now = DateTimeOffset.UtcNow;
+
+            // 1) Load majors & skills (use AsNoTracking for lookup dictionaries)
+            var majors = db.Major.AsNoTracking()
+                .Select(m => new { m.Id, m.BackendName })
+                .ToList();
+
+            var skills = db.Skill.AsNoTracking()
+                .Select(s => new { s.Id, s.BackendName })
+                .ToList();
+
+            // 2) Build dictionaries by BackendName (case-insensitive safe)
+            var majorByBackend = majors
+                .Where(x => !string.IsNullOrWhiteSpace(x.BackendName))
+                .ToDictionary(x => x.BackendName, x => x.Id, StringComparer.OrdinalIgnoreCase);
+
+            var skillByBackend = skills
+                .Where(x => !string.IsNullOrWhiteSpace(x.BackendName))
+                .ToDictionary(x => x.BackendName, x => x.Id, StringComparer.OrdinalIgnoreCase);
+
+            // 3) Existing links (avoid duplicates)
+            var existingLinks = new HashSet<(Guid MajorId, Guid SkillId)>(
+                db.Set<MajorSkill>()
+                    .AsNoTracking()
+                    .Where(x => !x.IsDeleted)
+                    .Select(x => new ValueTuple<Guid, Guid>(x.MajorId, x.SkillId)));
+
+            // 4) Define your seeding rules (examples)
+            //    You can replace these "major backend names" with your real ones from MajorData.csv.
+            var seed = new (string MajorBackend, string SkillBackend, bool IsRequired, bool IsActive)[]
+            {
+                // Example: IT / Software-related majors
+                ("4196495b1c314f51b52d017b130aba91physics", "SOFTWARE_TESTING", true, true),
+                ("4196495b1c314f51b52d017b130aba91physics", "FRONTEND_DEVELOPMENT", true, true),
+                ("4196495b1c314f51b52d017b130aba91physics", "SYSTEM_SUPPORT", true, true),
+                ("A8df32c0534747459a45150a2c3b198cmathematics", "FRONTEND_DEVELOPMENT", false, true),
+                ("A8df32c0534747459a45150a2c3b198cmathematics", "SYSTEM_INTEGRATION", true, true),
+                ("A8df32c0534747459a45150a2c3b198cmathematics", "SOFTWARE_TESTING", true, true),
+                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "SOFTWARE_TESTING", true, true),
+                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "FRONTEND_DEVELOPMENT", true, true),
+                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "SYSTEM_SUPPORT", true, true),
+                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "VERSION_MANAGEMENT", false, true),
+                ("92b1806a2e2d421a92db344e1ca3e34asoftwareEngineerin", "SYSTEM_INTEGRATION", false, true),
+
+                // Example: generic “for all majors” baseline skills
+                // (you can apply via loop instead of listing; see below)
+            };
+
+            // 5) Insert links from the seed array
+            foreach (var (majorBackend, skillBackend, required, active) in seed)
+            {
+                if (!majorByBackend.TryGetValue(majorBackend, out var majorId))
+                {
+                    errors.Add(new ImportError("SeedMajorSkills", null,
+                        $"Major BackendName not found: {majorBackend}"));
+                    continue;
+                }
+
+                if (!skillByBackend.TryGetValue(skillBackend, out var skillId))
+                {
+                    errors.Add(new ImportError("SeedMajorSkills", null,
+                        $"Skill BackendName not found: {skillBackend}"));
+                    continue;
+                }
+
+                if (!existingLinks.Add((majorId, skillId)))
+                    continue; // already exists
+
+                db.Set<MajorSkill>().Add(new MajorSkill
+                {
+                    Id = Guid.NewGuid(),
+                    MajorId = majorId,
+                    SkillId = skillId,
+                    IsSkillRequired = required,
+                    IsActive = active,
+                    IsDeleted = false,
+                    CreatedById = createdById,
+                    CreatedDate = now
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add(new ImportError("SeedMajorSkills", null, ex.GetBaseException().Message));
         }
     }
 }
