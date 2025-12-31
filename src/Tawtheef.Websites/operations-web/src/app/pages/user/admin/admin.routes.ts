@@ -4,6 +4,7 @@ import {Dashboard} from './dashboard/dashboard';
 import {UsersManagement} from './users-management/users-management';
 import {OfficesManagement} from './offices-management/offices-management';
 import {CountriesManagement} from './countries-management/countries-management';
+import {LanguagesManagement} from './languages-management/languages-management';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../../core/constants/permissions';
 
@@ -13,4 +14,5 @@ export const adminRoutes: Routes = [
   { path: 'users-management', component: UsersManagement, canActivate: [permissionGuard], data: { permissions: [Permissions.Users.Manage] } },
   { path: 'offices-management', component: OfficesManagement, canActivate: [permissionGuard], data: { permissions: [Permissions.Offices.Manage] } },
   { path: 'countries-management', component: CountriesManagement, canActivate: [permissionGuard], data: { permissions: [Permissions.Countries.Manage] } },
+  { path: 'languages-management', component: LanguagesManagement, canActivate: [permissionGuard], data: { permissions: [Permissions.Languages.Manage] } },
 ];

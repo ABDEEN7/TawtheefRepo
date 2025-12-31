@@ -1,0 +1,68 @@
+<div
+  class="modal-overlay"
+  i18nNamespace="pages/admin/languages-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div class="modal-card">
+    <h4 class="modal-title">
+      {{ isEditMode() ? ('LANGUAGES.EDIT_LANGUAGE' | translate) : ('LANGUAGES.ADD_LANGUAGE' | translate) }}
+    </h4>
+
+    <form (ngSubmit)="submit()" [formGroup]="form" class="modal-form">
+      @if (loading) {
+        <div class="loading-overlay">
+          <div class="spinner-border text-maroon" role="status">
+            <span class="visually-hidden">{{ 'LOADING' | translate }}</span>
+          </div>
+        </div>
+      }
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">{{ 'LANGUAGES.NAME_AR' | translate }}</label>
+          <input
+            class="form-control"
+            formControlName="nameAr"
+            [class.is-invalid]="submitted && form.controls.nameAr.invalid" />
+          @if (submitted && form.controls.nameAr.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('nameAr') }}</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">{{ 'LANGUAGES.NAME_EN' | translate }}</label>
+          <input
+            class="form-control"
+            formControlName="nameEn"
+            [class.is-invalid]="submitted && form.controls.nameEn.invalid" />
+          @if (submitted && form.controls.nameEn.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('nameEn') }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <label class="form-label">{{ 'LANGUAGES.DESC_AR' | translate }}</label>
+          <textarea class="form-control" rows="3" formControlName="descriptionAr"></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">{{ 'LANGUAGES.DESC_EN' | translate }}</label>
+          <textarea class="form-control" rows="3" formControlName="descriptionEn"></textarea>
+        </div>
+      </div>
+
+      <div class="form-check form-switch mt-3">
+        <input class="form-check-input" type="checkbox" role="switch" id="isActiveSwitch" formControlName="isActive" />
+        <label class="form-check-label" for="isActiveSwitch">{{ 'LANGUAGES.IS_ACTIVE' | translate }}</label>
+      </div>
+
+      <div class="d-flex justify-content-end mt-4 gap-2">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          {{ 'LANGUAGES.CANCEL' | translate }}
+        </button>
+        <button type="submit" class="btn btn-maroon shadow-sm" [disabled]="loading">
+          {{ 'LANGUAGES.SAVE' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

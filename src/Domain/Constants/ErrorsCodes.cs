@@ -248,6 +248,11 @@ public class ErrorsCodes
     public const string CountryNotFound = "COUNTRY_NOT_FOUND";
     #endregion
 
+    #region Languages
+    public const string LanguageNotFound = "LANGUAGE_NOT_FOUND";
+    public const string LanguageNameExists = "LANGUAGE_NAME_EXISTS";
+    #endregion
+
     #region Offices
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
     public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";
