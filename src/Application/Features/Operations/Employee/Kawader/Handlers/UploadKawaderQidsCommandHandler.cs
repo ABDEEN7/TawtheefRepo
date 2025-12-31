@@ -1,15 +1,14 @@
 using System.Text;
-using System.IO;
 using ExcelDataReader;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Utilities;
 using Tawtheef.Application.Features.Operations.Employee.Kawader.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Kawader.DTOs;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Kawader.Handlers;
@@ -27,7 +26,7 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
 
     public async Task<IResult<KawaderUploadResultDto>> Handle(UploadKawaderQidsCommand request, CancellationToken ct)
     {
-        if (request.File is null || request.File.Length == 0)
+        if (request.File.Length == 0)
             return Result.Fail<KawaderUploadResultDto>(ErrorsCodes.EmptyFile);
 
         var extension = Path.GetExtension(request.File.FileName);
@@ -133,7 +132,7 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
             while (reader.Read())
             {
                 rowNumber++;
-                var rawValue = reader.GetValue(0)?.ToString()?.Trim() ?? string.Empty;
+                var rawValue = reader.GetValue(0).ToString()?.Trim() ?? string.Empty;
                 var normalized = QidUtilities.Normalize(rawValue);
 
                 rows.Add(new RowEntry(rowNumber, rawValue, normalized));
