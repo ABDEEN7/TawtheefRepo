@@ -26,6 +26,10 @@ public static class PermissionNames
     public const string CountriesView = "countries.view";
     public const string CountriesManage = "countries.manage";
 
+    // Universities
+    public const string UniversitiesView = "universities.view";
+    public const string UniversitiesManage = "universities.manage";
+
     #endregion
 
     #region Employee Console Permissions
@@ -77,6 +81,7 @@ public static class PermissionNames
         OfficesView, OfficesManage,
         LanguagesView, LanguagesManage,
         CountriesView, CountriesManage,
+        UniversitiesView, UniversitiesManage,
         ProfileView, ProfileManage,
         ProfileDistributionView, ProfileDistributionManage,
         ProfileApprovalView, ProfileApprovalReview, ProfileApprovalChanges,
@@ -96,6 +101,8 @@ public static class PermissionNames
         OfficesManage,
         LanguagesView,
         LanguagesManage,
+        UniversitiesView,
+        UniversitiesManage,
         KawaderManage,
         CountriesView,
         CountriesManage,

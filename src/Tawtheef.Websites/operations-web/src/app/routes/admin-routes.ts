@@ -21,4 +21,7 @@
   get languagesManagement(){
     return this.admin + '/languages-management'
   },
+  get universitiesManagement(){
+    return this.admin + '/universities-management'
+  },
 }
