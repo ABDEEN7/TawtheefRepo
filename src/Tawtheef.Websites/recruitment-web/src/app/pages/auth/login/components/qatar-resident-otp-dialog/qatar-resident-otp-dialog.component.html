@@ -1,33 +1,35 @@
 <div i18nNamespace="pages/auth" class="qatar-otp-dialog">
   <p class="text-muted mb-3">{{ 'auth.login.qatarResidentDialog.subtitle' | translate }}</p>
 
-  <form (ngSubmit)="step === 'identify' ? submitIdentification() : submitOtp()">
-    <div class="mb-3">
+  <form [formGroup]="step === 'identify' ? requestForm : otpForm"
+        (ngSubmit)="step === 'identify' ? submitIdentification() : submitOtp()">
+
+    <div class="mb-3" *ngIf="step === 'identify'">
       <label class="form-label required" for="qid">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</label>
       <input
         id="qid"
         type="text"
         class="form-control"
         pInputText
-        [formControl]="qidControl"
+        formControlName="qid"
         [readonly]="requestForm.disabled"
         autocomplete="off" />
-      <small class="text-danger" *ngIf="qidControl?.touched && qidControl?.invalid">
+      <small class="text-danger" *ngIf="requestForm.controls.qid.touched && requestForm.controls.qid.invalid">
         {{ 'validation.required' | translate }}
       </small>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3" *ngIf="step === 'identify'">
       <label class="form-label required" for="phoneNumber">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</label>
       <input
         id="phoneNumber"
         type="tel"
         class="form-control"
         pInputText
-        [formControl]="phoneControl"
+        formControlName="phoneNumber"
         [readonly]="requestForm.disabled"
         autocomplete="tel" />
-      <small class="text-danger" *ngIf="phoneControl?.touched && phoneControl?.invalid">
+      <small class="text-danger" *ngIf="requestForm.controls.phoneNumber.touched && requestForm.controls.phoneNumber.invalid">
         {{ 'validation.required' | translate }}
       </small>
     </div>
@@ -39,10 +41,14 @@
         type="text"
         class="form-control"
         pInputText
-        [formControl]="otpControl"
+        formControlName="otp"
         autocomplete="one-time-code" />
-      <small class="text-danger" *ngIf="otpControl?.touched && otpControl?.invalid">
-        {{ otpControl?.errors?.['minlength'] ? ('validation.minLength' | translate:{ min: 4 }) : ('validation.required' | translate) }}
+      <small class="text-danger" *ngIf="otpForm.controls.otp.touched && otpForm.controls.otp.invalid">
+        {{
+          otpForm.controls.otp.errors?.['minlength']
+            ? ('validation.minLength' | translate:{ min: 4 })
+            : ('validation.required' | translate)
+        }}
       </small>
     </div>
 
@@ -51,8 +57,11 @@
         {{ 'common.cancel' | translate }}
       </button>
       <button pButton type="submit" [loading]="loading" [disabled]="loading">
-        {{ step === 'identify' ? ('auth.login.qatarResidentDialog.requestCta' | translate) : ('auth.login.qatarResidentDialog.verifyCta' | translate) }}
+        {{ step === 'identify'
+        ? ('auth.login.qatarResidentDialog.requestCta' | translate)
+        : ('auth.login.qatarResidentDialog.verifyCta' | translate) }}
       </button>
     </div>
+
   </form>
 </div>

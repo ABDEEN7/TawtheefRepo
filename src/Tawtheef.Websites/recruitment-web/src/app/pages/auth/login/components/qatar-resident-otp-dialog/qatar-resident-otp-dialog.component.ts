@@ -1,16 +1,27 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { TranslateService } from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import { QatarResidentOtpService } from '../../../../../core/auth/qatar-resident-otp.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { finalize } from 'rxjs/operators';
+import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
+import {InputText} from 'primeng/inputtext';
+import {ButtonDirective} from 'primeng/button';
 
 @Component({
   selector: 'app-qatar-resident-otp-dialog',
   templateUrl: './qatar-resident-otp-dialog.component.html',
   styleUrl: './qatar-resident-otp-dialog.component.scss',
+  imports: [
+    I18nNamespaceDirective,
+    TranslatePipe,
+    InputText,
+    ReactiveFormsModule,
+    ButtonDirective,
+    FormsModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QatarResidentOtpDialogComponent {
