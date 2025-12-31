@@ -56,6 +56,7 @@ export interface UpsertMajorSkillDialogData {
               [ngModel]="vm.parentMajorId"
               (ngModelChange)="onParentMajorChange($event)"
               name="parentMajorId"
+              [preloadedOptions]="parentMajorOptions"
               [appendTo]="'body'">
             </app-remote-select>
             <small class="text-muted" *ngIf="f.submitted && !vm.parentMajorId">
@@ -77,6 +78,7 @@ export interface UpsertMajorSkillDialogData {
               [ngModel]="vm.subMajorId"
               (ngModelChange)="vm.subMajorId = $event"
               name="subMajorId"
+              [preloadedOptions]="subMajorOptions"
               [appendTo]="'body'">
             </app-remote-select>
           </div>
@@ -92,6 +94,7 @@ export interface UpsertMajorSkillDialogData {
               [ngModel]="vm.skillId"
               (ngModelChange)="vm.skillId = $event"
               name="skillId"
+              [preloadedOptions]="skillOptions"
               [appendTo]="'body'">
             </app-remote-select>
             <small class="text-muted" *ngIf="f.submitted && !vm.skillId">
@@ -146,6 +149,10 @@ export class UpsertMajorSkillDialogComponent {
     isSkillRequired: this.model?.isSkillRequired ?? false,
     isActive: (this.model?.isActive ?? true) !== false
   };
+
+  parentMajorOptions = this.model?.major ? [this.model.major] : [];
+  subMajorOptions = this.model?.subMajor ? [this.model.subMajor] : [];
+  skillOptions = this.model?.skill ? [this.model.skill] : [];
 
   onParentMajorChange(id: string) {
     this.vm.parentMajorId = id;

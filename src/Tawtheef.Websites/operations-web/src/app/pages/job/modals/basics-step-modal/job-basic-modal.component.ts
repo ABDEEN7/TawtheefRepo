@@ -59,6 +59,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     maximumAge: [60, [Validators.required, Validators.min(18)]],
   });
 
+  majorOptions: any[] = [];
+  subMajorOptions: any[] = [];
+
   ngOnInit(): void {
     const today = new Date();
     this.currentDate = today;
@@ -148,6 +151,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           minimumAge: jobResponse.minimumAge || 18,
           maximumAge: jobResponse.maximumAge || 60
         });
+
+        this.majorOptions = jobResponse.major?.id ? [jobResponse.major] : [];
+        this.subMajorOptions = jobResponse.subMajor?.id ? [jobResponse.subMajor] : [];
 
         if (jobResponse.sector.id) {
           this.lookupsService.loadManagementsBySector(jobResponse.sector.id as GUID);
