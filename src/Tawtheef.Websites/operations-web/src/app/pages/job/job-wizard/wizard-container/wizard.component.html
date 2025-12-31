@@ -1,22 +1,30 @@
 <section i18nNamespace="pages/job-wizard">
-  <p-toast position="top-center" key="wizardToast"></p-toast>
-
+      <p-toast position="top-center" key="wizardToast"></p-toast>
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="row align-items-center mb-3">
+           <div class="col-md-6">
+                 <h3 class="fw-bold mb-0">{{ getHeaderTitle() | translate }}</h3>
+                 <p class="text-muted mt-2 mb-0">{{ getHeaderSubtitle() | translate }}</p>
+           </div>
+           <div class="col-md-6">
+               @if (showWizardContent) {
+                 <div class="d-flex align-items-center gap-3 justify-content-end">
+                      <app-progress-bar [value]="progress"></app-progress-bar>
+                       <button class="btn btn-outline-danger btn-sm" (click)="cancelWizard()"><i class="fa fa-times me-1"></i> {{ 'JOB_WIZARD.BUTTONS.CANCEL' | translate }} </button>
+                 </div>
+               }
+           </div>
+      </div>
+    </div>
+  </div>
   <header class="py-3 header-bg">
     <div class="container d-flex align-items-center justify-content-between">
       <div>
-        <h4 class="mb-1 text-brand fw-bold">{{ getHeaderTitle() | translate }}</h4>
-        <div class="small-muted">{{ getHeaderSubtitle() | translate }}</div>
+
       </div>
 
-      @if (showWizardContent) {
-      <div class="d-flex align-items-center gap-3">
-        <app-progress-bar [value]="progress"></app-progress-bar>
-        <button class="btn btn-outline-danger btn-sm" (click)="cancelWizard()">
-          <i class="fa fa-times me-1"></i>
-          {{ 'JOB_WIZARD.BUTTONS.CANCEL' | translate }}
-        </button>
-      </div>
-      }
+
     </div>
   </header>
 

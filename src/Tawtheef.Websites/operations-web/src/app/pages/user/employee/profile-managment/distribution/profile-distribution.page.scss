@@ -38,50 +38,7 @@
   font-size: 14px;
 }
 
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-weight: 600;
-  border: 1px solid transparent;
-}
 
-.pill.soft {
-  background: #fff5f7;
-  color: #a21b52;
-  border-color: #f6d4e1;
-}
-
-.pill.info {
-  background: #eef6ff;
-  color: #1a5fb4;
-  border-color: #d5e7ff;
-}
-
-.pill.neutral {
-  background: #f7f7f7;
-  color: #4b4b4b;
-  border-color: #e8e8e8;
-}
-
-.pill.success {
-  background: #e6f5eb;
-  color: #1f7a3a;
-  border-color: #c5e7cf;
-}
-
-.pill.warning {
-  background: #fff5d6;
-  color: #9a6b00;
-  border-color: #ffe3a6;
-}
-
-.small-pill {
-  font-size: 12px;
-  padding: 4px 10px;
-}
 
 .count {
   background: #b6205e;
@@ -101,11 +58,6 @@
 //  background: #fdf4f7;
 //}
 
-.distribution-table ::ng-deep .p-tag {
-  border-radius: 2rem;
-  padding: 6px 12px;
-  font-weight: 700;
-}
 
 .side-card {
   border: 1px solid #f1e5ea;
