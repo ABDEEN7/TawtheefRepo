@@ -13,7 +13,7 @@ import { KawaderUploadResult } from './models/kawader-upload.model';
   standalone: true,
   templateUrl: './kawader.page.html',
   styleUrls: ['./kawader.page.scss'],
-  imports: [CommonModule, ReactiveFormsModule, Button, TranslatePipe, I18nNamespaceDirective, ButtonDirective, ButtonLabel]
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, ButtonDirective, ButtonLabel]
 })
 export class KawaderPage {
   private service = inject(KawaderService);

@@ -24,6 +24,10 @@ export class EndpointsService {
     forgotPassword: this.getFullUrl(`/auth/forgot-password`),
     resetPassword: this.getFullUrl(`/auth/reset-password`),
     resendOtp: this.getFullUrl(`/auth/resend-otp`),
+    qatarResident: {
+      requestOtp: this.getFullUrl('/auth/qatar-resident/request-otp'),
+      verifyOtp: this.getFullUrl('/auth/qatar-resident/verify-otp')
+    }
   };
   user= {
     bootstrap: this.getFullUrl(`/me/bootstrap`),
