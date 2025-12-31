@@ -6,7 +6,7 @@
                          <div>
                            <p class="eyebrow text-primary mb-0">{{ 'distribution.eyebrow' | translate }}</p>
                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                             <h2 class="page-title mb-0">{{ 'distribution.title' | translate }}</h2>
+                             <h3 class="fw-bold mb-0">{{ 'distribution.title' | translate }}</h3>
                              <span class="btn btn-outline-primary soft btn-sm">{{ 'distribution.table.title' | translate }}</span>
                            </div>
                            <p class="text-muted mt-2 mb-0">{{ 'distribution.subtitle' | translate }}</p>
@@ -96,7 +96,7 @@
                                                   <p-table  [value]="filteredFiles()" dataKey="profileId" [scrollable]="true" scrollHeight="520px" [selection]="selectedFiles()" (selectionChange)="onSelectionChange($event)" selectionMode="multiple" class="distribution-table">
                                          <ng-template pTemplate="header">
                                            <tr>
-                                             <th style="width: 60px">
+                                             <th>
                                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                                              </th>
                                              <th>{{ 'distribution.table.candidate' | translate }}</th>

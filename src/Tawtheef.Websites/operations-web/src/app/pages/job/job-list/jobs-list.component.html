@@ -1,17 +1,20 @@
 <section i18nNamespace="pages/job-list" class="page-shell">
-  <div class="page-header">
-    <div class="page-header__title">
-      <h1 class="title">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h1>
-      <p class="subtitle">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
+    <div class="card card-table">
+         <div class="card-body">
+              <div class="row">
+                   <div class="col-md-10">
+                       <h3 class="fw-bold mb-0">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h3>
+                       <p class="text-muted mt-2 mb-0">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
+                   </div>
+                   <div class="col-md-2 text-end">
+                       <button class="btn btn-primary d-flex" (click)="createNewJob()">
+                         <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+                         <span>{{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}</span>
+                       </button>
+                   </div>
+              </div>
+         </div>
     </div>
-
-    <div class="page-header__actions">
-      <button class="btn-pill btn-pill--brand" (click)="createNewJob()">
-        <i class="fa fa-plus"></i>
-        <span>{{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}</span>
-      </button>
-    </div>
-  </div>
 
   <div class="panel">
     <div class="panel__head">
