@@ -16,6 +16,7 @@ using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
@@ -114,9 +115,10 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<EmailQueue> EmailQueues { get; set; }
     public DbSet<EmailTemplate> EmailTemplates { get; set; }
     public DbSet<Notification> Notifications { get; set; }
-    
+
     public DbSet<Resource> Resources { get; set; }
     public DbSet<MajorSkill> MajorSkill { get; set; }
+    public DbSet<KawaderQid> KawaderQids { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // ensure client-side evaluation works properly

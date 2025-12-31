@@ -53,4 +53,7 @@ export const employeeRoutes = {
   get majorsSkillsManagement(){
     return this.employee + '/majors-skills-management'
   },
+  get kawader(){
+    return this.employee + '/kawader';
+  },
 }

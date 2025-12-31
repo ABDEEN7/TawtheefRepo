@@ -7,6 +7,8 @@ import {JobInvitationSummary} from './job-managment/job-invitation-summary/job-i
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {MajorsSkillsManagementPage} from './majors-skills-management/majors-skills-management';
 import {Permissions} from '../../../core/constants/permissions';
+import {KawaderPage} from './kawader/kawader.page';
+import { JobInvitationSummaryDetailsComponent } from './job-managment/job-invitation-summary-details/job-invitation-summary-details.component';
 
 export const employeeRoutes: Routes = [
   {
@@ -52,6 +54,11 @@ export const employeeRoutes: Routes = [
     component: JobInvitationSummary
   },
   {
+  path: 'job-invitation-summary-details/:jobId',
+  canActivate: [permissionGuard],
+  component: JobInvitationSummaryDetailsComponent
+  },
+  {
     path: 'jobs',
     canActivate: [permissionGuard],
     loadChildren: () => import('../../job/jobs.module').then(m => m.JobsModule),
@@ -60,5 +67,11 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     //data: { permissions: ['major-skill.management'] },
     component: MajorsSkillsManagementPage
+  },
+  {
+    path: 'kawader',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Kawader.Manage] },
+    component: KawaderPage
   },
 ];

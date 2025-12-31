@@ -1,5 +1,5 @@
-import {PaginatedRequest} from '../../../../../../core/models/paginated-request.model';
-import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import {PaginatedRequest} from '../../../../../core/models/paginated-request.model';
+import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 
 export interface JobInvitationSummary {
   jobId: string; // Guid
@@ -18,4 +18,6 @@ export interface JobSummaryFilters extends PaginatedRequest {
   jobCategoryId?: string | null;
   departmentId?: string | null;
   jobStatusId?: string | null;
+  searchText?: string | null;
+
 }

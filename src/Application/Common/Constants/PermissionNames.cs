@@ -44,6 +44,9 @@ public static class PermissionNames
     // Nominations
     public const string NominationsView = "nominations.view";
     public const string NominationsManage = "nominations.manage";
+
+    // Kawader
+    public const string KawaderManage = "kawader.manage";
     
     // Offices Users
     public const string OfficeUsersView = "office.users.view";
@@ -73,7 +76,8 @@ public static class PermissionNames
         ProfileDistributionView, ProfileDistributionManage,
         ProfileApprovalView, ProfileApprovalReview, ProfileApprovalChanges,
         JobsView, JobsManage, JobsApprove, JobsPointsManage, JobsInvitationsView,
-        NominationsView, NominationsManage
+        NominationsView, NominationsManage,
+        KawaderManage
     ];
 
     public static readonly IReadOnlyList<string> SystemAdminPermissions =
@@ -85,6 +89,7 @@ public static class PermissionNames
         UsersManage,
         OfficesView,
         OfficesManage,
+        KawaderManage,
         CountriesView,
         CountriesManage,
     ];
@@ -123,6 +128,7 @@ public static class PermissionNames
         JobsInvitationsView,
         NominationsView,
         NominationsManage,
+        KawaderManage,
         OfficeUsersView,
         OfficeUsersManage
     ];

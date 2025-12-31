@@ -61,6 +61,17 @@
 
         <p-select
           class="select"
+          [options]="lookupsService.jobCategories()"
+          [ngModel]="filterType()"
+          (ngModelChange)="filterType.set($event); onFilterChange()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'JOB_CANDIDATE_FILTERS_JOB_CATEGORY' | translate"
+        ></p-select>
+
+        <p-select
+          class="select"
           [options]="lookupsService.jobStatus()"
           [ngModel]="filterStatus()"
           (ngModelChange)="filterStatus.set($event); onFilterChange()"
@@ -127,8 +138,21 @@
       ></app-pagination>
     </div>
     }
-    <div class="action-bar">
-        <!--TODO :: ADD TWO BUTTONS EXPORT,SEND INVETIATIONS-->
-    </div>
+    <div class="bottom-actions">
+  <button class="btn btn-outline-primary" type="button" (click)="exportToExcel()">
+    <i class="hgi hgi-stroke hgi-file-download"></i>
+    <span>{{ 'JOB_CANDIDATE_BUTTONS_EXPORT_TO_EXCEL' | translate }}</span>
+  </button>
+
+  <button
+    class="btn btn-primary"
+    type="button"
+    (click)="sendInvitations()"
+    [disabled]="availableCandidatesCount === 0"
+  >
+    <i class="hgi hgi-stroke hgi-sent"></i>
+    <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>
+  </button>
+</div>
   </div>
 </section>

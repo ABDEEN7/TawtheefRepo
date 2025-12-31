@@ -1,11 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
-import {HttpService} from '../../../../../../core/http/http.service';
-import {EndpointsService} from '../../../../../../core/http/endpoints.service';
-import {PaginationMetadata} from '../../../../../../core/models/pagination-metadata.model';
+import {HttpService} from '../../../../../core/http/http.service';
+import {EndpointsService} from '../../../../../core/http/endpoints.service';
+import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
 import {JobInvitationSummary, JobSummaryFilters} from '../models/job-invitation-summary.model';
-import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 import {forkJoin} from 'rxjs';
-import {PaginatedResult} from '../../../../../../core/models/paginated-result.model';
+import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
 import {tap} from 'rxjs/operators';
 
 

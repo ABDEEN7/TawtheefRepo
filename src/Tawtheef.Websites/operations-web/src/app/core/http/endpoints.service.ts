@@ -72,6 +72,10 @@ export class EndpointsService {
     }
   };
 
+  kawader = {
+    upload: this.getFullUrl('/kawader/upload'),
+  };
+
   approvals = {
     list: this.getFullUrl('/profile-approvals'),
     detail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}`),

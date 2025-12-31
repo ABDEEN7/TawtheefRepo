@@ -1,0 +1,97 @@
+.otp-page {
+  .otp-card {
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .otp-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    font-size: 18px;
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .line {
+      flex: 1;
+      height: 2px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 99px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 99px;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .label {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.55);
+        white-space: nowrap;
+      }
+
+      &.active {
+        .dot {
+          background: rgba(0, 0, 0, 0.7);
+        }
+        .label {
+          color: rgba(0, 0, 0, 0.8);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .otp-input {
+    border-radius: 12px;
+    padding-block: 0.7rem;
+  }
+
+  .otp-prefix {
+    border-radius: 12px;
+  }
+
+  .otp-btn {
+    border-radius: 12px;
+    padding-block: 0.8rem;
+    font-weight: 600;
+  }
+
+  .otp-panel {
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  /* PrimeNG OTP styling */
+  :host ::ng-deep .otp-control {
+    .p-inputtext {
+      width: 46px;
+      height: 52px;
+      border-radius: 14px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+  }
+
+  .countdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}

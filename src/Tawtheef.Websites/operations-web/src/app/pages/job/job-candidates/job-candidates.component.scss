@@ -309,3 +309,10 @@ $alt: #fbfbfb;
   padding-top: 10px;
   border-top: 1px solid $border;
 }
+
+.bottom-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 6px 0;
+}
