@@ -28,12 +28,12 @@ export class JobDetailsComponent implements OnInit {
   tabType = JobTabType;
   
   private tabsContent: { id: string, title: string, icon: string}[] = [
-    { id: 'overview', title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
-    { id: 'skills', title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
-    { id: 'conditions', title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-graduation-cap' },
-    { id: 'benefits', title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
-    { id: 'responsebilites', title: 'JOB_DETAILS.RESPONSEBILITES', icon: 'fa-info-circle' },
-    { id: 'requiredAttachments', title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-info-circle' }
+    { id: 'Overview', title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
+    { id: 'Skills', title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
+    { id: 'Conditions', title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-graduation-cap' },
+    { id: 'Benefits', title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
+    { id: 'Responsibilities', title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-info-circle' },
+    { id: 'RequiredAttachments', title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-info-circle' }
   ];
 
   private cdr = inject(ChangeDetectorRef);
@@ -86,9 +86,12 @@ export class JobDetailsComponent implements OnInit {
     }
   }
 
-  getResponsibilities(): string[] {
+  getResponsibilities(): { textAr: string; textEn: string }[] {
     if (!this.job?.responsibilities?.length) return [];
-    return this.job.responsibilities.map(r => r.textAr);
+    return this.job.responsibilities.map((c) => ({
+      textAr: c.textAr,
+      textEn: c.textEn,
+    }));
   }
 
   getJobConditions(): { textAr: string; textEn: string }[] {
