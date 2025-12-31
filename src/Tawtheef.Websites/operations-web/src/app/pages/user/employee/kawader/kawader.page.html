@@ -27,18 +27,19 @@
           <button
             pButton
             type="submit"
-            [label]="'kawader.upload.submit' | translate"
             [disabled]="isUploading()"
-            [loading]="isUploading()"
-          ></button>
+            [loading]="isUploading()">
+            <span pButtonLabel>{{'kawader.upload.submit' | translate}}</span>
+          </button>
           <button
             pButton
             type="button"
             class="p-button-text"
-            [label]="'kawader.upload.clear' | translate"
             (click)="reset()"
             [disabled]="isUploading()"
-          ></button>
+          >
+            <span pButtonLabel>{{'kawader.upload.clear' | translate}}</span>
+          </button>
         </div>
       </form>
     </div>
@@ -61,7 +62,7 @@
         </span>
       </div>
 
-      <ng-container *ngIf="lastResult()?.errors.length; else noErrors">
+      <ng-container *ngIf="lastResult()?.errors?.length; else noErrors">
         <h6 class="fw-semibold mb-2">{{ 'kawader.result.errorsTitle' | translate }}</h6>
         <div class="table-responsive">
           <table class="table align-middle mb-0">

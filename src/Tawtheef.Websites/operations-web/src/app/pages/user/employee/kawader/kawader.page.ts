@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Button } from 'primeng/button';
+import {Button, ButtonDirective, ButtonLabel} from 'primeng/button';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { KawaderService } from './services/kawader.service';
@@ -13,7 +13,7 @@ import { KawaderUploadResult } from './models/kawader-upload.model';
   standalone: true,
   templateUrl: './kawader.page.html',
   styleUrls: ['./kawader.page.scss'],
-  imports: [CommonModule, ReactiveFormsModule, Button, TranslatePipe, I18nNamespaceDirective]
+  imports: [CommonModule, ReactiveFormsModule, Button, TranslatePipe, I18nNamespaceDirective, ButtonDirective, ButtonLabel]
 })
 export class KawaderPage {
   private service = inject(KawaderService);
