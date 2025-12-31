@@ -63,13 +63,16 @@ export class Login implements OnInit, OnDestroy{
     }
   }
 
-  startLogin(kind: 'tawtheeq' | 'google'): void {
+  startLogin(kind: 'tawtheeq' | 'qatar_resident' | 'google'): void {
     switch (kind) {
       case 'tawtheeq':
         this.auth.loginUsingQatarPass();
         break;
       case 'google':
         this.auth.loginUsingGoogle();
+        break;
+      case 'qatar_resident':
+        this.auth.loginAsQatarResident();
         break;
     }
   }

@@ -90,6 +90,11 @@ export class ExternalLoginService implements OnDestroy {
     this.openPopupWithState(url);
   }
 
+  loginAsQatarResident(){
+    // open popup
+    // bass success auth
+  }
+
   /** Open popup (centered), add `state`, and start polling for manual close */
   private openPopupWithState(baseUrl: string): void {
     this.closePopup();
