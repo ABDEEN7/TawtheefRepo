@@ -13,22 +13,22 @@
           type="button"
           class="p-button-outlined"
           icon="pi pi-info-circle"
-          (click)="store.openParentMajorInfo()"
+          (click)="service.openParentMajorInfo()"
           [pTooltip]="'MAJORS_SKILLS.PARENT_MAJOR_INFO' | translate"
           tooltipPosition="bottom"
           [appendTo]="'body'">
         </button>
       }
 
-      <button
-        pButton
-        type="button"
-        icon="pi pi-plus"
-        class="p-button"
-        (click)="store.openCreateMajorSkill()">
-        {{ 'MAJORS_SKILLS.CREATE' | translate }}
-      </button>
-    </div>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-plus"
+          class="p-button"
+          (click)="service.openCreateMajorSkill()">
+          {{ 'MAJORS_SKILLS.CREATE' | translate }}
+        </button>
+      </div>
   </div>
 
   <div class="filters card p-3 mb-3">
@@ -37,7 +37,7 @@
         <label class="form-label">{{ 'MAJORS_SKILLS.SEARCH_LABEL' | translate }}</label>
         <input class="form-control"
                [ngModel]="store.majorSkillFilters().search"
-               (ngModelChange)="store.setMajorSkillSearch($event)"
+               (ngModelChange)="service.setMajorSkillSearch($event)"
                [placeholder]="'MAJORS_SKILLS.SEARCH_PLACEHOLDER' | translate" />
       </div>
 
@@ -50,7 +50,7 @@
           [showClear]="true"
           [minChars]="1"
           [ngModel]="store.majorSkillFilters().parentMajorId"
-          (ngModelChange)="store.setMajorSkillParent($event)"
+          (ngModelChange)="service.setMajorSkillParent($event)"
           [appendTo]="'body'">
         </app-remote-select>
       </div>
@@ -67,7 +67,7 @@
           parentParamName="parentId"
           [minChars]="1"
           [ngModel]="store.majorSkillFilters().subMajorId"
-          (ngModelChange)="store.setMajorSkillSubMajor($event)"
+          (ngModelChange)="service.setMajorSkillSubMajor($event)"
           [appendTo]="'body'">
         </app-remote-select>
       </div>
@@ -82,7 +82,7 @@
           [showClear]="true"
           class="w-100"
           [ngModel]="store.majorSkillFilters().skillTypeId"
-          (ngModelChange)="store.setMajorSkillType($event)"
+          (ngModelChange)="service.setMajorSkillType($event)"
           [placeholder]="'MAJORS_SKILLS.SKILL_TYPE_PLACEHOLDER' | translate">
         </p-select>
       </div>
@@ -123,7 +123,7 @@
         <td>
           <p-toggle-switch
             [ngModel]="item.isSkillRequired"
-            (ngModelChange)="store.changeMajorSkillRequirement(item.id, $event, item.isActive)">
+            (ngModelChange)="service.changeMajorSkillRequirement(item.id, $event, item.isActive)">
           </p-toggle-switch>
         </td>
 
@@ -138,14 +138,14 @@
             pButton
             type="button"
             class="p-button-outlined p-button-sm"
-            (click)="store.openEditMajorSkill(item.id)">
+            (click)="service.openEditMajorSkill(item.id)">
             <i class="pi pi-pencil" pButtonIcon></i>
             <span pButtonLabel>{{'common.edit' |translate}}</span>
           </button>
 
           <p-toggle-switch
             [ngModel]="item.isActive"
-            (ngModelChange)="store.toggleMajorSkillActive(item.id, $event)">
+            (ngModelChange)="service.toggleMajorSkillActive(item.id, $event)">
           </p-toggle-switch>
         </td>
       </tr>
@@ -163,7 +163,7 @@
     [currentPage]="store.majorSkillFilters().pageNumber ?? 1"
     [totalItems]="store.majorSkillsMeta()?.totalCount ?? 0"
     [itemsPerPage]="store.majorSkillFilters().pageSize ?? 10"
-    (pageChanged)="store.onMajorSkillPageChange($event)"
-    (pageSizeChanged)="store.onMajorSkillPageSizeChange($event)">
+    (pageChanged)="service.onMajorSkillPageChange($event)"
+    (pageSizeChanged)="service.onMajorSkillPageSizeChange($event)">
   </app-pagination>
 </div>

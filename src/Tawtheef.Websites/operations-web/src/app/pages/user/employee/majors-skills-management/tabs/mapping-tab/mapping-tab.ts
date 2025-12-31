@@ -10,6 +10,7 @@ import { ToggleSwitch } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import {RemoteSelectComponent} from '../../../../../../shared/components/remote-select/remote-select';
 import {MajorsSkillsManagementStore} from '../../majors-skills-management.store';
+import { MajorsSkillsManagementFacade } from '../../majors-skills-management.facade';
 import {PaginationComponent} from '../../../../../../shared/components/pagination/pagination.component';
 import {Checkbox} from 'primeng/checkbox';
 @Component({
@@ -32,8 +33,9 @@ import {Checkbox} from 'primeng/checkbox';
 })
 export class MappingTabComponent {
   store = inject(MajorsSkillsManagementStore);
+  service = inject(MajorsSkillsManagementFacade);
 
   setMajorSkillActiveOnly(evt: { checked: boolean; }){
-    this.store.setMajorSkillActiveOnly(evt.checked)
+    this.service.setMajorSkillActiveOnly(evt.checked)
   }
 }

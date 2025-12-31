@@ -10,7 +10,7 @@
       pButton
       type="button"
       icon="pi pi-plus"
-      (click)="store.openCreateSkill()">
+      (click)="service.openCreateSkill()">
       {{ 'MAJORS_SKILLS.CREATE' | translate }}
     </button>
   </div>
@@ -23,7 +23,7 @@
           class="form-control"
           [placeholder]="'MAJORS_SKILLS.SKILL_SEARCH' | translate"
           [ngModel]="store.skillFilters().search"
-          (ngModelChange)="store.setSkillSearch($event)" />
+          (ngModelChange)="service.setSkillSearch($event)" />
       </div>
 
       <div class="col-lg-3 col-md-6">
@@ -38,7 +38,7 @@
           [appendTo]="'body'"
           [placeholder]="'MAJORS_SKILLS.SKILL_TYPE_PLACEHOLDER' | translate"
           [ngModel]="store.skillFilters().skillTypeId"
-          (ngModelChange)="store.setSkillType($event)">
+          (ngModelChange)="service.setSkillType($event)">
         </p-select>
       </div>
     </div>
@@ -53,6 +53,7 @@
       <tr>
         <th>{{ 'MAJORS_SKILLS.SKILL_NAME' | translate }}</th>
         <th>{{ 'MAJORS_SKILLS.SKILL_TYPE' | translate }}</th>
+        <th>{{ 'MAJORS_SKILLS.USED_IN_MAPPING' | translate }}</th>
         <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
         <th class="text-end">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
       </tr>
@@ -62,6 +63,8 @@
       <tr>
         <td>{{ skill.name }}</td>
         <td>{{ skill.skillType?.name || ('MAJORS_SKILLS.NOT_AVAILABLE' | translate) }}</td>
+
+        <td>{{ skill.usedInMappingsCount || 0 }}</td>
 
         <td>
           <span class="badge"
@@ -76,14 +79,14 @@
             pButton
             type="button"
             class="p-button-outlined p-button-sm"
-            (click)="store.openEditSkill(skill.id)">
+            (click)="service.openEditSkill(skill.id)">
             <i class="pi pi-pencil" pButtonIcon></i>
             <span pButtonLabel>{{'common.edit' |translate}}</span>
           </button>
 
           <p-toggle-switch
             [ngModel]="skill.isActive !== false"
-            (ngModelChange)="store.toggleSkillActive(skill.id, $event)">
+            (ngModelChange)="service.toggleSkillActive(skill, $event)">
           </p-toggle-switch>
         </td>
       </tr>
@@ -100,7 +103,7 @@
     [currentPage]="store.skillFilters().pageNumber"
     [totalItems]="store.skillsMeta()?.totalCount ?? 0"
     [itemsPerPage]="store.skillFilters().pageSize"
-    (pageChanged)="store.onSkillsPageChange($event)"
-    (pageSizeChanged)="store.onSkillsPageSizeChange($event)">
+    (pageChanged)="service.onSkillsPageChange($event)"
+    (pageSizeChanged)="service.onSkillsPageSizeChange($event)">
   </app-pagination>
 </div>

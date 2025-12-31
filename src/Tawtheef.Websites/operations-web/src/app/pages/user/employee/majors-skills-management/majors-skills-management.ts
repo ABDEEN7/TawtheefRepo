@@ -6,8 +6,11 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 
 import { MajorsSkillsManagementStore } from './majors-skills-management.store';
+import { MajorsSkillsManagementFacade } from './majors-skills-management.facade';
 
 import { DialogService } from 'primeng/dynamicdialog';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 import {MappingTabComponent} from './tabs/mapping-tab/mapping-tab';
 import {MainMajorsTabComponent} from './tabs/main-majors-tab/main-majors-tab';
 import {SubMajorsTabComponent} from './tabs/sub-majors-tab/sub-majors-tab';
@@ -26,16 +29,20 @@ import {SkillsTabComponent} from './tabs/skills-tab/skills-tab';
     MainMajorsTabComponent,
     SubMajorsTabComponent,
     SkillsTabComponent,
+    ConfirmDialog
   ],
   providers: [
     MajorsSkillsManagementStore,
-    DialogService
+    MajorsSkillsManagementFacade,
+    DialogService,
+    ConfirmationService
   ]
 })
 export class MajorsSkillsManagementPage implements OnInit {
   store = inject(MajorsSkillsManagementStore);
+  service = inject(MajorsSkillsManagementFacade);
 
   ngOnInit(): void {
-    this.store.init();
+    this.service.init();
   }
 }

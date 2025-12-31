@@ -10,7 +10,7 @@
       pButton
       type="button"
       icon="pi pi-plus"
-      (click)="store.openCreateMajor(store.subMajorFilters().parentMajorId || null)"
+      (click)="service.openCreateMajor(store.subMajorFilters().parentMajorId || null)"
       [disabled]="!store.subMajorFilters().parentMajorId">
       {{ 'MAJORS_SKILLS.CREATE' | translate }}
     </button>
@@ -27,7 +27,7 @@
           [showClear]="true"
           [minChars]="1"
           [ngModel]="store.subMajorFilters().parentMajorId"
-          (ngModelChange)="store.setSubMajorParent($event)"
+          (ngModelChange)="service.setSubMajorParent($event)"
           [appendTo]="'body'">
         </app-remote-select>
       </div>
@@ -36,7 +36,7 @@
         <label class="form-label">{{ 'MAJORS_SKILLS.SEARCH_LABEL' | translate }}</label>
         <input class="form-control"
                [ngModel]="store.subMajorFilters().search"
-               (ngModelChange)="store.setSubMajorSearch($event)"
+               (ngModelChange)="service.setSubMajorSearch($event)"
                [placeholder]="'MAJORS_SKILLS.SUB_SEARCH' | translate" />
       </div>
     </div>
@@ -51,6 +51,7 @@
       <tr>
         <th>{{ 'MAJORS_SKILLS.SUB_MAJOR_COLUMN' | translate }}</th>
         <th>{{ 'MAJORS_SKILLS.PARENT_MAJOR_COLUMN' | translate }}</th>
+        <th>{{ 'MAJORS_SKILLS.USED_IN_MAPPING' | translate }}</th>
         <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
         <th class="text-end">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
       </tr>
@@ -60,6 +61,8 @@
       <tr>
         <td>{{ major.name }}</td>
         <td>{{ store.parentMajorName() }}</td>
+
+        <td>{{ major.usedInMappingsCount || 0 }}</td>
 
         <td>
           <span class="badge"
@@ -74,14 +77,14 @@
             pButton
             type="button"
             class="p-button-outlined p-button-sm"
-            (click)="store.openEditMajor(major)">
+            (click)="service.openEditMajor(major)">
             <i class="pi pi-pencil" pButtonIcon></i>
             <span pButtonLabel>{{'common.edit' |translate}}</span>
           </button>
 
           <p-toggle-switch
             [ngModel]="major.isActive !== false"
-            (ngModelChange)="store.toggleMajorActive(major.id, $event)">
+            (ngModelChange)="service.toggleMajorActive(major, $event)">
           </p-toggle-switch>
         </td>
       </tr>
@@ -99,7 +102,7 @@
     [currentPage]="store.subMajorFilters().pageNumber ?? 1"
     [totalItems]="store.subMajorsMeta().totalCount"
     [itemsPerPage]="store.subMajorFilters().pageSize ?? 10"
-    (pageChanged)="store.onSubMajorsPageChange($event)"
-    (pageSizeChanged)="store.onSubMajorsPageSizeChange($event)">
+    (pageChanged)="service.onSubMajorsPageChange($event)"
+    (pageSizeChanged)="service.onSubMajorsPageSizeChange($event)">
   </app-pagination>
 </div>
