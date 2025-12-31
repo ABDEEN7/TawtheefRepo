@@ -8,8 +8,8 @@
             <div class="authentication-card w-100">
                  <img src="../../../../assets/img/login-bg.png" alt="Img" class="img-fluid">
                 <div class="authen-overlay-content">
-                  <h2 class="text-white fw-bold">مرحباً بكم في بوابة التوظيف</h2>
-                  <p class="text-white fs-20 fw-semibold">منصة موحدة لإدارة طلبات التوظيف</p>
+                  <h2 class="text-white fw-bold">{{ 'auth.welcome' | translate }}</h2>
+                  <p class="text-white fs-20 fw-semibold">{{ 'auth.detail' | translate }}</p>
                 </div>
             </div>
           </div>
@@ -30,10 +30,10 @@
                      <span>{{ 'auth.azure.cta' | translate }}</span>
                  </button>
              <div class="title-wrapper">
-               <span class="title-text">او</span>
+               <span class="title-text">{{ 'auth.or' | translate }}</span>
              </div>
                  <div class="text-center my-5">
-                     <h5 class="fw-bold ">للمستخدمين غير المقيمين في دولة قطر</h5>
+                     <h5 class="fw-bold ">{{ 'auth.qatar.use' | translate}}</h5>
                      <button type="button" class="btn btn-outline-primary w-100 btn-lg my-3" (click)="startLogin('google')">
                        <i class="fa-brands fa-google"></i>
                        <span>{{ 'auth.login.google_cta' | translate }}</span>
