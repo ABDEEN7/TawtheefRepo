@@ -1,0 +1,116 @@
+<div
+  class="countries-container card shadow-sm p-4"
+  i18nNamespace="pages/admin/countries-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.table-rtl]="isRtl()">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="page-title mb-0">{{ 'COUNTRIES.TITLE' | translate }}</h3>
+  </div>
+
+  <div class="filters card p-3 mb-3">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">{{ 'COUNTRIES.SEARCH_NAME' | translate }}</label>
+        <input type="text"
+               class="form-control form-control-sm"
+               [(ngModel)]="nameFilter"
+               (input)="this.onSearchChange()"
+               [placeholder]="'COUNTRIES.SEARCH_NAME_PLACEHOLDER' | translate"/>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">{{ 'COUNTRIES.FILTER_STATUS' | translate }}</label>
+        <p-select
+          [options]="statusOptions"
+          [showClear]="true"
+          [placeholder]="'COUNTRIES.STATUS_ANY' | translate"
+          name="statusOptions"
+          (onChange)="onStatusChange($event.value)"
+          (onClear)="onStatusChange(null)"
+          [filter]="true"
+          [ngModel]="filters().isActive"
+          optionLabel="name"
+          optionValue="id"
+          size="small"
+          class="form-select form-select-sm"
+        >
+          <ng-template #selectedItem let-option>
+            {{ option.name | translate }}
+          </ng-template>
+          <ng-template #item let-option>
+            {{ option.name | translate }}
+          </ng-template>
+        </p-select>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive table-wrapper">
+    <table class="table custom-table align-middle mb-0">
+      <thead>
+      <tr>
+        <th>{{ 'COUNTRIES.NAME' | translate }}</th>
+        <th>{{ 'COUNTRIES.ISO_CODE' | translate }}</th>
+        <th>{{ 'COUNTRIES.CODE_ALPHA' | translate }}</th>
+        <th>{{ 'COUNTRIES.DIAL_CODE' | translate }}</th>
+        <th>{{ 'COUNTRIES.STATUS' | translate }}</th>
+        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'COUNTRIES.ACTIONS' | translate }}</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @if (this.countries().length === 0) {
+          <tr>
+            <td colspan="6" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+              {{ 'NO_RECORDS' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (country of this.countries(); track country.id; let i = $index) {
+            <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+              <td>{{ this.currentLang() === 'ar' ? (country.nameAr || country.nameEn) : (country.nameEn || country.nameAr) }}</td>
+              <td>{{ country.isoCode }}</td>
+              <td>{{ country.codeAlpha }}</td>
+              <td>+{{ country.code }}</td>
+              <td>
+                <span class="badge" [class.bg-success-subtle]="country.isActive" [class.text-success]="country.isActive" [class.bg-danger-subtle]="!country.isActive" [class.text-danger]="!country.isActive">
+                  {{ country.isActive ? ('COUNTRIES.ACTIVE' | translate) : ('COUNTRIES.INACTIVE' | translate) }}
+                </span>
+              </td>
+              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  (click)="toggleStatus(country)"
+                  [pTooltip]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)"
+                  tooltipPosition="top"
+                  aria-label="{{ country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate) }}">
+                  <i class="bi" [ngClass]="country.isActive ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" [class.flex-row-reverse]="isRtl()">
+  <div class="items-per-page d-flex align-items-center gap-2">
+    <label class="form-label mb-0">{{ 'app.pagination.items_per_page' | translate }}</label>
+    <select class="form-select form-select-sm w-auto"
+            [ngModel]="filters().pageSize"
+            (ngModelChange)="onPageSizeChange($event)">
+      @for (size of itemsPerPageOptions; track size) {
+        <option [ngValue]="size">{{ size }}</option>
+      }
+    </select>
+  </div>
+
+  <app-pagination
+    [currentPage]="filters().pageNumber"
+    [totalItems]="totalItems()"
+    [itemsPerPage]="filters().pageSize"
+    (pageChanged)="onPageChange($event)"
+  ></app-pagination>
+</div>

@@ -37,6 +37,7 @@
   "admin.sidebar.roles": "Role Management",
   "admin.sidebar.users": "User Management",
   "admin.sidebar.offices": "Offices Management",
+  "admin.sidebar.countries": "Countries Management",
 
   "common.sidebar.settings": "Settings",
   "common.sidebar.logout": "Logout",
