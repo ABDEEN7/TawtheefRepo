@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {InputText} from 'primeng/inputtext';
 import {ButtonDirective} from 'primeng/button';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-qatar-resident-otp-dialog',
@@ -20,7 +21,8 @@ import {ButtonDirective} from 'primeng/button';
     InputText,
     ReactiveFormsModule,
     ButtonDirective,
-    FormsModule
+    FormsModule,
+    NgIf
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
