@@ -50,6 +50,7 @@
 "admin.sidebar.offices": "Manage School",
 "admin.sidebar.majors": "Manage Majors and Skills",
 "admin.sidebar.countries": "Countries Management",
+"admin.sidebar.languages": "Languages Management",
 
 "common.sidebar.settings": "Settings",
 "common.sidebar.logout": "Logout",
