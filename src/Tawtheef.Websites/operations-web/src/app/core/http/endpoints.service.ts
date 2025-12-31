@@ -158,4 +158,9 @@ export class EndpointsService {
       subMajors: this.getFullUrl('/MajorSkillsManagement/lookups/sub-majors'),
     }
   };
+
+  countries = {
+    listCountries: this.getFullUrl('/countryManagement/list-countries'),
+    updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`)
+  };
 }
