@@ -59,8 +59,13 @@ export class JobCandidatesComponent implements OnInit {
 
   viewDetails(candidateId :GUID)
   {
-
   }
+  exportToExcel() {
+  }
+
+  sendInvitations() {
+  }
+
     onPageChange(page: number) {
     this.currentPage.set(page);
     //TODO :: Load Candidates here
