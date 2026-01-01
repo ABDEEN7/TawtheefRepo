@@ -41,5 +41,7 @@
   "UNIVERSITIES.FILTER_COUNTRY": "تصفية حسب الدولة",
   "UNIVERSITIES.SELECT_COUNTRY": "اختر الدولة",
   "UNIVERSITIES.SELECT_CITY": "اختر المدينة",
-  "UNIVERSITIES.EXISTING_LOGO": "سيتم الاحتفاظ بالشعار الحالي إذا لم يتم رفع ملف جديد."
+  "UNIVERSITIES.EXISTING_LOGO": "سيتم الاحتفاظ بالشعار الحالي إذا لم يتم رفع ملف جديد.",
+  "UNIVERSITIES.INVALID_LOGO_TYPE": "يُسمح بتحميل ملفات الصور فقط.",
+  "UNIVERSITIES.LOGO_PREVIEW": "معاينة الشعار"
 }

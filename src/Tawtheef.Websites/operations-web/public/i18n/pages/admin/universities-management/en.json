@@ -41,5 +41,7 @@
   "UNIVERSITIES.FILTER_COUNTRY": "Filter by country",
   "UNIVERSITIES.SELECT_COUNTRY": "Select country",
   "UNIVERSITIES.SELECT_CITY": "Select city",
-  "UNIVERSITIES.EXISTING_LOGO": "Existing logo will be kept if a new file is not uploaded."
+  "UNIVERSITIES.EXISTING_LOGO": "Existing logo will be kept if a new file is not uploaded.",
+  "UNIVERSITIES.INVALID_LOGO_TYPE": "Only image files are allowed.",
+  "UNIVERSITIES.LOGO_PREVIEW": "Logo preview"
 }

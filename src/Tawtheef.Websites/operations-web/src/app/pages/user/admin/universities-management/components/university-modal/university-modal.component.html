@@ -121,16 +121,32 @@
       <div class="row g-3 mt-1">
         <div class="col-md-6">
           <label class="form-label">{{ 'UNIVERSITIES.LOGO_AR' | translate }}</label>
-          <input type="file" class="form-control" (change)="onLogoArSelected($event)" />
-          @if (university?.logoAr && isEditMode()) {
-            <small class="text-muted">{{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}</small>
+          <input type="file" class="form-control" accept="image/*" (change)="onLogoArSelected($event)" />
+          @if (logoArError()) {
+            <div class="text-danger small mt-1">{{ logoArError() }}</div>
+          }
+          @if (logoArPreview()) {
+            <div class="logo-preview mt-2">
+              <div class="preview-label text-muted small">{{ 'UNIVERSITIES.LOGO_PREVIEW' | translate }}</div>
+              <img class="logo-image" [src]="logoArPreview()!" [attr.alt]="'UNIVERSITIES.LOGO_AR' | translate" />
+            </div>
+          } @else if (university?.logoAr && isEditMode()) {
+            <small class="text-muted d-block mt-2">{{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}</small>
           }
         </div>
         <div class="col-md-6">
           <label class="form-label">{{ 'UNIVERSITIES.LOGO_EN' | translate }}</label>
-          <input type="file" class="form-control" (change)="onLogoEnSelected($event)" />
-          @if (university?.logoEn && isEditMode()) {
-            <small class="text-muted">{{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}</small>
+          <input type="file" class="form-control" accept="image/*" (change)="onLogoEnSelected($event)" />
+          @if (logoEnError()) {
+            <div class="text-danger small mt-1">{{ logoEnError() }}</div>
+          }
+          @if (logoEnPreview()) {
+            <div class="logo-preview mt-2">
+              <div class="preview-label text-muted small">{{ 'UNIVERSITIES.LOGO_PREVIEW' | translate }}</div>
+              <img class="logo-image" [src]="logoEnPreview()!" [attr.alt]="'UNIVERSITIES.LOGO_EN' | translate" />
+            </div>
+          } @else if (university?.logoEn && isEditMode()) {
+            <small class="text-muted d-block mt-2">{{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}</small>
           }
         </div>
       </div>
