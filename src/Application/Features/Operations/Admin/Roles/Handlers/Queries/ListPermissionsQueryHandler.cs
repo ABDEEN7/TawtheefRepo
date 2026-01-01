@@ -1,26 +1,25 @@
 using FluentResults;
 using MediatR;
-using Tawtheef.Application.Common.Constants;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
+using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
-public sealed class ListPermissionsQueryHandler
+public sealed class ListPermissionsQueryHandler(IUnitOfWork uow)
     : IRequestHandler<ListPermissionsQuery, IResult<List<PermissionDto>>>
 {
-    public Task<IResult<List<PermissionDto>>> Handle(ListPermissionsQuery request, CancellationToken cancellationToken)
+    public async Task<IResult<List<PermissionDto>>> Handle(ListPermissionsQuery request, CancellationToken cancellationToken)
     {
-        var permissions = new List<PermissionDto>
-        {
-            new(PermissionNames.UsersView, PermissionNames.UsersView),
-            new(PermissionNames.UsersManage, PermissionNames.UsersManage),
-            new(PermissionNames.ProfileView, PermissionNames.ProfileView),
-            new(PermissionNames.ProfileManage, PermissionNames.ProfileManage),
-            new(PermissionNames.JobsView, PermissionNames.JobsView),
-            new(PermissionNames.JobsManage, PermissionNames.JobsManage)
-        };
+        var permissions = await uow.GetEntityRepository<Permission>().DbSet
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.DisplayOrder)
+            .Select(p => new PermissionDto(p.BackendName, p.NameEn))
+            .ToListAsync(cancellationToken);
 
-        return Task.FromResult<IResult<List<PermissionDto>>>(Result.Ok(permissions));
+        return Result.Ok(permissions);
     }
 }
