@@ -90,7 +90,7 @@ export class StepReviewComponent {
       .subscribe({
         next: () => {
           this.submitted.set(true);
-          this.router.navigate([routes.user.dashboard]);
+          this.router.navigateByUrl(routes.user.dashboard);
         },
         error: (err) => {
           this.errorText.set(

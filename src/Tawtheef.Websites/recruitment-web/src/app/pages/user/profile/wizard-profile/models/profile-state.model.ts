@@ -6,6 +6,7 @@ import {Achievement} from './achievement.model';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 import {PhoneNumber} from './phone-number.model';
 import {Skill} from './skill.model';
+import {CountryDto} from '../services/profile-lookups.service';
 
 export interface UploadedFileRef {
   resourceId: string;
@@ -48,7 +49,7 @@ export interface ProfileState {
   sponsorCard?: UploadedFileRef | null;
 
   // contact
-  country?: dropdownOptionsModel;
+  country?: CountryDto;
   address?: string;
   phone?: PhoneNumber | null;
   phoneVerified: boolean | null;

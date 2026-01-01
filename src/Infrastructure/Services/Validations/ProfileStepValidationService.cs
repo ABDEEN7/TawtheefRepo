@@ -200,9 +200,6 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         if (profile.ChildrenCount < 0)
             return false;
 
-        if (profile.HasDisability && string.IsNullOrWhiteSpace(profile.DisabilityDetails))
-            return false;
-
         return true;
     }
 

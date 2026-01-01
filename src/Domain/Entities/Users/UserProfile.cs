@@ -132,8 +132,6 @@ public class UserProfile : EventEntity
             return false;
         if (ChildrenCount < 0)
             return false;
-        if(HasDisability && string.IsNullOrWhiteSpace(DisabilityDetails))
-            return false;
         if (ProfileValidatorUtils.RequiresSponsor(CandidateTypeId, Provider))
         {
             if (SponsorProfileId is null) return false;

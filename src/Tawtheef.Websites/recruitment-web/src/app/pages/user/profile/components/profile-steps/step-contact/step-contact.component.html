@@ -34,8 +34,7 @@
         [phoneValidation]="true"
         [selectedCountryISO]="selectedCountryIso2"
         [onlyCountries]="onlyPhoneCountries"
-        [excludeCountries]="excludedPhoneCountries"
-        [ngModel]="phoneInput"
+        [ngModel]="phoneInput" [separateDialCode]="true"
         (ngModelChange)="onPhoneChange($event)"
         [disabled]="ds.isLocked('phone')"
       ></ngx-intl-tel-input>
@@ -45,7 +44,7 @@
       <div *ngIf="phone.touched && !phone.valid" class="text-danger fz-2xs small mt-1">
         {{ 'validation.phoneInvalid' | translate }}
       </div>
-      <ng-container *ngIf="ds.state().phone">
+      <ng-container *ngIf="ds.state().phone && canVerifyPhone">
         <div class="mt-1 d-flex align-items-center gap-2 fz-2xs">
           <span *ngIf="phone.status === 'idle'" class="text-muted">
             {{ 'wizard.contact.phoneNotVerified' | translate }}
@@ -64,7 +63,7 @@
             {{ 'wizard.contact.phoneFailed' | translate }}
           </span>
         </div>
-        <div class="mt-2 d-flex align-items-center gap-2" *ngIf="!ds.state().phoneVerified && canVerifyPhone">
+        <div class="mt-2 d-flex align-items-center gap-2" *ngIf="!ds.state().phoneVerified">
           <button
             type="button"
             class="btn btn-outline-secondary btn-sm"

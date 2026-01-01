@@ -128,6 +128,8 @@ export class ProfileService {
         };
       });
 
+    if(payload.length === 0) return of(null);
+
     const fd = this.fd()
       .json({ degreesJson: payload })
       .files('DegreeFiles', fileBucket)

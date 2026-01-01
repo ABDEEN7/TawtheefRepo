@@ -82,7 +82,6 @@ export function createProfileOverviewCardsSignal(
         highlights: [
           { labelKey: 'profileView.fields.candidateType', value: safeText(s.candidateType?.name) },
           { labelKey: 'profileView.fields.targetEntity', value: safeText(s.targetEntity?.name) },
-          ...(isResident ? [] : [{ labelKey: 'profileView.fields.office', value: safeText(s.office?.name) }]),
           ...(isResident ? [{ labelKey: 'profileView.fields.qidExpiry', value: safeText(s.qidExpiry) }] : []),
         ],
         requiredFiles: [

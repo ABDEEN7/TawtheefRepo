@@ -24,15 +24,6 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                 RuleFor(x => x.Request.ReligionId).NotNull();
                 RuleFor(x => x.Request.MaritalStatusId).NotNull();
 
-                RuleFor(x => x.Request.ChildrenCount)
-                    .GreaterThanOrEqualTo(0)
-                    .When(x => x.Request.ChildrenCount.HasValue);
-
-                When(x => x.Request.HasDisability, () =>
-                {
-                    RuleFor(x => x.Request.DisabilityDetails).NotEmpty();
-                });
-
                 When(x => x.Request.SponsorTypeId.HasValue, () => 
                 {
                     RuleFor(x => x.Request.SponsorEmployerName).NotEmpty();
