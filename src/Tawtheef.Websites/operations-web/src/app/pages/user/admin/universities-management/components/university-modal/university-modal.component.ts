@@ -21,6 +21,7 @@ import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-opt
 import {UniversitiesService} from '../../services/universities.service';
 import {UniversityFormPayload} from '../../models/university-form.payload';
 import {finalize} from 'rxjs/operators';
+import {EndpointsService} from '../../../../../../core/http/endpoints.service';
 
 @Component({
   selector: 'app-university-modal',
@@ -34,6 +35,7 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
   private languageService = inject(LanguageService);
   private translate = inject(TranslateService);
   private universitiesService = inject(UniversitiesService);
+  private endpoints = inject(EndpointsService);
 
   @Input() visible = false;
   @Input() mode: 'create' | 'edit' = 'create';
@@ -131,8 +133,8 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
       if (this.university.countryId) {
         this.loadCities(this.university.countryId, true);
       }
-      this.setPreview('ar', this.university.logoAr ?? null);
-      this.setPreview('en', this.university.logoEn ?? null);
+      this.setPreview('ar', this.resolveLogoUrl(this.university.logoAr ?? null));
+      this.setPreview('en', this.resolveLogoUrl(this.university.logoEn ?? null));
     } else {
       this.cities.set([]);
       this.setPreview('ar', null);
@@ -235,11 +237,12 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
 
     const errorSignal = type === 'ar' ? this.logoArError : this.logoEnError;
     const existingLogo = type === 'ar' ? this.university?.logoAr ?? null : this.university?.logoEn ?? null;
+    const resolvedExisting = this.resolveLogoUrl(existingLogo);
 
     if (file && !file.type.startsWith('image/')) {
       errorSignal.set(this.translate.instant('UNIVERSITIES.INVALID_LOGO_TYPE'));
       this.setLogoFile(type, null);
-      this.setPreview(type, existingLogo);
+      this.setPreview(type, resolvedExisting);
       input.value = '';
       return;
     }
@@ -249,7 +252,7 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
     if (file) {
       this.setPreview(type, URL.createObjectURL(file), true);
     } else {
-      this.setPreview(type, existingLogo);
+      this.setPreview(type, resolvedExisting);
     }
   }
 
@@ -285,5 +288,17 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
       URL.revokeObjectURL(this.logoEnObjectUrl);
       this.logoEnObjectUrl = null;
     }
+  }
+
+  private resolveLogoUrl(fileId: string | null): string | null {
+    if (!fileId) {
+      return null;
+    }
+
+    if (fileId.startsWith('http')) {
+      return fileId;
+    }
+
+    return this.endpoints.files.download(fileId);
   }
 }
