@@ -1,3 +1,4 @@
+using System;
 using FluentResults;
 using MapsterMapper;
 using MediatR;
@@ -18,11 +19,29 @@ public sealed class GetCandidateTypesByProviderQueryHandler(IUnitOfWork unitOfWo
     {
         var candidateTypes = await unitOfWork.GetEntityRepository<ProviderLogin>()
             .DbSet
-            .Where(pl => pl.BackendName.ToLower() == request.Provider.ToLower())
-            .SelectMany(cl=> cl.CandidateTypeProviderLogins)
+            .Where(pl => pl.BackendName.Equals(request.Provider, StringComparison.OrdinalIgnoreCase))
+            .SelectMany(cl => cl.CandidateTypeProviderLogins)
             .Select(ct => ct.CandidateType!)
             .ToListAsync(cancellationToken);
-        
+
+        if (IsQatarPassOrResidentOtp(request.Provider))
+        {
+            var qatari = await unitOfWork.GetEntityRepository<CandidateType>()
+                .DbSet
+                .FirstOrDefaultAsync(x => x.Id == CandidateTypeIds.Qatari, cancellationToken);
+
+            if (qatari is not null && candidateTypes.All(ct => ct.Id != qatari.Id))
+            {
+                candidateTypes.Add(qatari);
+            }
+        }
+
         return Result.Ok(mapper.Map<List<DropdownOptions>>(candidateTypes));
+    }
+
+    private static bool IsQatarPassOrResidentOtp(string provider)
+    {
+        return provider.Equals("QatarPass", StringComparison.OrdinalIgnoreCase)
+            || provider.Equals("QatarResidentOtp", StringComparison.OrdinalIgnoreCase);
     }
 }

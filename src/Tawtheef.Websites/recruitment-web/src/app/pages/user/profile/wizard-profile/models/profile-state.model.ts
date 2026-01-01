@@ -14,7 +14,7 @@ export interface UploadedFileRef {
   file?: File | null;
 }
 export interface ProfileState {
-  provider: string;
+  provider: 'Google' | 'QatarPass' | 'QatarResidentOtp'
   // prereq
   candidateType?: dropdownOptionsModel;
   targetEntity?: dropdownOptionsModel;
@@ -74,4 +74,5 @@ export interface ProfileState {
   // ui
   available: boolean;
   avatarUrl?: string;
+  isKawaderQid?: boolean;
 }

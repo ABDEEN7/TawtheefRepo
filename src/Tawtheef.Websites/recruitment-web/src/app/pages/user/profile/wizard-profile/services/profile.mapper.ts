@@ -99,8 +99,15 @@ export function mapProfileStatusToState(
     qualificationNames.set(q.id, `${degreeName}${majorName ? ' - ' + majorName : ''}${gradYear}`.trim());
   });
 
+  const isKawaderQid = dto.isKawaderQid
+    ?? (dto as any).isKwaderQid
+    ?? prefill?.isKawaderQid
+    ?? (prefill as any)?.isKwaderQid
+    ?? false;
+
   return {
-    provider: dto.provider,
+    provider: (dto.provider as ProfileState['provider']) ?? 'Google',
+    isKawaderQid,
     // ----------- Prereq -----------
     candidateType: mapIdToDropdown(lookups, 'candidateType', dto.candidateTypeId) as dropdownOptionsModel,
     targetEntity: mapIdToDropdown(lookups, 'targetEntity', dto.targetEntityId) as dropdownOptionsModel,

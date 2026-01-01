@@ -28,6 +28,7 @@ export interface PrefillData
   dob?: string | null;
   locale?: string | null;
   provider?: string | null;
+  isKawaderQid?: boolean | null;
 }
 
 export interface ProfileStatusDto {
@@ -98,6 +99,7 @@ export interface ProfileStatusDto {
   skills?: SkillDto[] | null;
   languages?: LanguageDto[] | null;
   achievements: AchievementDto[];
+  isKawaderQid?: boolean | null;
 }
 export interface AdditionalAttachmentDto {
   id: GUID;
