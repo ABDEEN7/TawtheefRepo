@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import {JobWizardComponent} from './job-wizard/wizard-container/wizard.component';
 import {JobListComponent} from './job-list/jobs-list.component';
 import {JobDetailsComponent} from './job-details/job-details.component';
-import { JobInvitesDetailsComponent } from './job-invites-details/job-invites-details.component';
 import { JobApprovalComponent } from './job-approval/job-approval.component';
 import { JobPointsConfigPageComponent } from './job-points/job-points-config-page/job-points-config-page.component';
 import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
@@ -19,5 +18,4 @@ export const jobRoutes: Routes = [
   { path: 'job-points/:id', component: JobPointsConfigPageComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.PointsManage] } },
   { path: 'view/:id/candidates', component: JobCandidatesComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.Manage] } },
   { path: 'ready', component: JobsReadyApplicationComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.Jobs.Manage] } },
-  { path: 'invites/:id', component: JobInvitesDetailsComponent, canActivate: [permissionGuard], data: { permissions: [Permissions.JobInvitations.View] } },
 ];

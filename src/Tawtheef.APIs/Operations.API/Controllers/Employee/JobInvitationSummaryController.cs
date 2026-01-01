@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary.Queries;
+using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.Queries;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Services.Authorization;
 
@@ -45,6 +46,31 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     [HttpGet("get-invitations-summary")]
     [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
     public async Task<IActionResult> GetInvitationsSummary([FromQuery] GetJobInvitationSummaryQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+    
+    
+    [HttpGet("{jobId:guid}/info")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    public async Task<IActionResult> GetInvitationJobInfo(Guid jobId)
+    {
+        var result = await mediator.Send(new GetJobInvitationSummaryDetailsInfoQuery(jobId));
+        return result.ToActionResult();
+    }
+
+    [HttpPost("get-invitations-stats")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    public async Task<IActionResult> GetInvitationStats([FromBody] GetJobInvitationSummaryDetailsStatsQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("get-invitations-details")]
+    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    public async Task<IActionResult> GetInvitationRows([FromBody] GetJobInvitationSummaryDetailsRowsQuery query)
     {
         var result = await mediator.Send(query);
         return result.ToActionResult();

@@ -106,6 +106,11 @@ export class EndpointsService {
 
   JobInvitationSummary = {
     invitationsSummary: this.getFullUrl(`/jobInvitationSummary/get-invitations-summary`),
+    details: {
+      jobInfo: (jobId: string) => this.getFullUrl(`/jobInvitationSummary/${jobId}/info`),
+      stats: this.getFullUrl(`/jobInvitationSummary/get-invitations-stats`),
+      rows: this.getFullUrl(`/jobInvitationSummary/get-invitations-details`)
+    },
     lookups: {
       jobStatuses: this.getFullUrl(`/jobInvitationSummary/lookups/job-statuses`),
       jobCategories: this.getFullUrl(`/jobInvitationSummary/lookups/job-categories`),
