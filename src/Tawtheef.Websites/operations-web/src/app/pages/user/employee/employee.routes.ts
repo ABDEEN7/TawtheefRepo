@@ -65,7 +65,7 @@ export const employeeRoutes: Routes = [
   },
   { path: 'majors-skills-management',
     canActivate: [permissionGuard],
-    //data: { permissions: ['major-skill.management'] },
+    data: { permissions: [Permissions.MajorSkills.Manage] },
     component: MajorsSkillsManagementPage
   },
   {

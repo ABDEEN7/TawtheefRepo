@@ -1,19 +1,14 @@
 using FluentResults;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Domain.Constants;
+using System.Linq;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers;
 
 internal static class RolePermissionHelper
 {
-    private static readonly HashSet<string> AllowedPermissions = new([
-        PermissionNames.UsersView,
-        PermissionNames.UsersManage,
-        PermissionNames.ProfileView,
-        PermissionNames.ProfileManage,
-        PermissionNames.JobsView,
-        PermissionNames.JobsManage
-    ], StringComparer.OrdinalIgnoreCase);
+    private static readonly HashSet<string> AllowedPermissions =
+        PermissionNames.All.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
     public static Result<List<string>> Validate(IEnumerable<string> permissions)
     {
