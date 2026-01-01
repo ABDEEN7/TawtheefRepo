@@ -2,12 +2,12 @@ using FluentResults;
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
-using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Resources.Commands;
+using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
+namespace Tawtheef.Application.Features.Resources.Handlers.Commands;
 
 public class UploadAttachmentHandler(
     IUnitOfWork uow,

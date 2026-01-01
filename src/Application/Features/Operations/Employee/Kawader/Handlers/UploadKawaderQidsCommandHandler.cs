@@ -132,7 +132,7 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
             while (reader.Read())
             {
                 rowNumber++;
-                var rawValue = reader.GetValue(0).ToString()?.Trim() ?? string.Empty;
+                var rawValue = reader.GetValue(0)?.ToString()?.Trim() ?? string.Empty;
                 var normalized = QidUtilities.Normalize(rawValue);
 
                 rows.Add(new RowEntry(rowNumber, rawValue, normalized));

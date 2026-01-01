@@ -33,7 +33,6 @@
       <Folder Include="Common\Mappers\Utils\" />
       <Folder Include="Features\Authenticator\Handlers\Queries\" />
       <Folder Include="Features\Authenticator\Queries\" />
-      <Folder Include="Features\Common\" />
       <Folder Include="Features\Lookups\Commands\" />
       <Folder Include="Features\Lookups\Handlers\Commands\" />
       <Folder Include="Features\Operations\Admin\" />

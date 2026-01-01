@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 

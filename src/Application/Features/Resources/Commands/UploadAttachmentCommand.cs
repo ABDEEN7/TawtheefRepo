@@ -1,9 +1,9 @@
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Resources.DTOs;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Command;
+namespace Tawtheef.Application.Features.Resources.Commands;
 
 public sealed record UploadAttachmentCommand(
     Guid UserId,
