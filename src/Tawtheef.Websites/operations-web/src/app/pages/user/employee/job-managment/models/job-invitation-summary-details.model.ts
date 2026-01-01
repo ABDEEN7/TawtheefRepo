@@ -22,7 +22,7 @@ export interface InviteRowVM {
   nationality: string;
   phone: string;
   status: StatusVM;
-  sentDate: string; // format comes from API
+  sentDate: string;
 }
 
 export interface PaginationMetadata {
@@ -40,8 +40,7 @@ export interface JobInvitesStatsVM {
 
 export interface JobInvitesRowsFilters {
   jobId: string;
-  academicYear: string;
-  statusId: string;
+  statusId: string | null;
   search: string;
   pageNumber: number;
   pageSize: number;

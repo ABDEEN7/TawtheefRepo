@@ -1,53 +1,37 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { Observable, forkJoin } from 'rxjs';
+import { HttpService } from '../../../../../core/http/http.service';
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
+import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import {
   InviteRowVM,
   JobInfoVM,
   JobInvitesRowsFilters,
   JobInvitesStatsVM,
-  LookupOption,
-  PaginationMetadata,
 } from '../models/job-invitation-summary-details.model';
-
-// اربط هنا HttpClient و Endpoints الخاصة بكم
+import { GUID } from '../../../../../shared/types/guid.type';
 @Injectable({ providedIn: 'root' })
 export class JobInvitationSummaryDetailsService {
-  // state
-  jobInfo = signal<JobInfoVM | null>(null);
-  stats = signal<JobInvitesStatsVM | null>(null);
-  rows = signal<InviteRowVM[]>([]);
-  paginationMetadata = signal<PaginationMetadata | null>(null);
+  private httpService = inject(HttpService);
+  private endpoints = inject(EndpointsService);
 
-  // lookups
-  private _yearsOptions = signal<LookupOption[]>([]);
-  private _statusOptions = signal<LookupOption[]>([]);
-
-  yearsOptions() {
-    return this._yearsOptions();
+  loadLookups(): Observable<dropdownOptionsModel[]> {
+    return this.httpService.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.jobInvitesStatus)
   }
 
-  statusOptions() {
-    return this._statusOptions();
+  getJobInvites(jobId: GUID): Observable<JobInfoVM> {
+    return this.httpService.get<JobInfoVM>(this.endpoints.JobInvitationSummary.details.jobInfo(jobId));
   }
 
-  loadLookups(): void {
-    // TODO: API call
-    // this.http.get(...).subscribe(res => this._yearsOptions.set(res))
-    // this.http.get(...).subscribe(res => this._statusOptions.set(res))
+  getStats(payload: { jobId: GUID}): Observable<JobInvitesStatsVM> {
+    return this.httpService.post<JobInvitesStatsVM>(this.endpoints.JobInvitationSummary.details.stats, payload);
   }
 
-  getJobInfo(jobId: string): void {
-    // TODO: API call
-    // this.http.get<JobInfoVM>(`.../${jobId}`).subscribe(res => this.jobInfo.set(res))
-  }
-
-  getStats(payload: { jobId: string; academicYear: string }): void {
-    // TODO: API call
-    // this.http.post<JobInvitesStatsVM>(`...`, payload).subscribe(res => this.stats.set(res))
-  }
-
-  getRows(filters: JobInvitesRowsFilters): void {
-    // TODO: API call
-    // this.http.post<{ items: InviteRowVM[]; metadata: PaginationMetadata }>(`...`, filters)
-    //   .subscribe(res => { this.rows.set(res.items); this.paginationMetadata.set(res.metadata); })
+  getRows(filters: JobInvitesRowsFilters): Observable<PaginatedResult<InviteRowVM>> {
+    return this.httpService.post<PaginatedResult<InviteRowVM>>(
+      this.endpoints.JobInvitationSummary.details.rows,
+      filters
+    );
   }
 }

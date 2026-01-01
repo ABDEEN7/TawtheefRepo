@@ -8,9 +8,113 @@
   color: var(--brand);
 }
 
-.header-hero {
-  background: radial-gradient(1000px 350px at 50% -60%, #ffe9ef, transparent 70%);
-  border-bottom: 1px solid var(--border);
+.page-hero {
+  position: relative;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  .back-link {
+    position: absolute;
+    top: 1.4rem;
+    right: 1.4rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.65);
+    background: #fff;
+    text-decoration: none;
+
+    &:hover {
+      background: rgba(107, 15, 43, 0.06);
+      border-color: rgba(107, 15, 43, 0.25);
+      color: var(--brand);
+    }
+  }
+
+  .hero-text {
+    padding-right: 3rem;
+  }
+
+  .page-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #111;
+    letter-spacing: -0.3px;
+
+    .title-sep {
+      margin: 0 0.35rem;
+      color: rgba(0, 0, 0, 0.35);
+      font-weight: 700;
+    }
+
+    .job-name {
+      color: #111;
+    }
+  }
+
+  .page-subtitle {
+    margin: 0.4rem 0 0;
+    color: rgba(0, 0, 0, 0.55);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .hero-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+  }
+
+  .badge-total {
+    border: 1px solid rgba(107, 15, 43, 0.2);
+    color: var(--brand);
+    background: rgba(107, 15, 43, 0.04);
+    border-radius: 999px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 800;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+}
+
+
+.back-link {
+    position: absolute;
+    top: 1.4rem;
+    right: 1.4rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.65);
+    background: #fff;
+    text-decoration: none;
+
+    &:hover {
+      background: rgba(107, 15, 43, 0.06);
+      border-color: rgba(107, 15, 43, 0.25);
+      color: var(--brand);
+    }
+  }
+
+.card-shell {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.04);
 }
 
 .card {
@@ -43,9 +147,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 0.45rem 0.85rem;
   background: #fff;
 
   i {
@@ -54,7 +156,6 @@
   }
 
   .form-control {
-    border: none !important;
     box-shadow: none !important;
     padding: 0;
     background: transparent;
@@ -151,11 +252,4 @@
     background: rgba(107, 15, 43, 0.06);
     border-color: rgba(107, 15, 43, 0.35);
   }
-}
-
-/* RTL support */
-:host-context([dir="rtl"]) {
-  .ms-auto { margin-left: 0 !important; margin-right: auto !important; }
-  .text-end { text-align: left !important; }
-  .pagination { direction: ltr; }
 }

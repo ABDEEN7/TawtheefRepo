@@ -129,7 +129,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     if (!this.jobId) return;
 
     this.isLoading = true;
-    this.jobService.getById(this.jobId).subscribe({
+    this.jobService.loadJobForEdit(this.jobId).subscribe({
       next: (jobResponse) => {
         const deadline = jobResponse.closingDate ? new Date(jobResponse.closingDate) : null;
 
@@ -150,7 +150,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           closingDate: deadline,
           minimumAge: jobResponse.minimumAge || 18,
           maximumAge: jobResponse.maximumAge || 60
-        });
+        }, { emitEvent: false });
+
 
         this.majorOptions = jobResponse.major?.id ? [jobResponse.major] : [];
         this.subMajorOptions = jobResponse.subMajor?.id ? [jobResponse.subMajor] : [];
@@ -163,7 +164,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           this.lookupsService.loadDepartmentsByManagement(jobResponse.management.id as GUID);
         }
 
-
+        if (jobResponse.major?.id) {
+          this.lookupsService.loadSubMajorsByMajor(jobResponse.major.id as GUID);
+        }
 
         this.isLoading = false;
       },
@@ -263,11 +266,12 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       subMajorId: formValue.subMajorId as GUID,
       workTypeId: formValue.workTypeId as GUID,
       numberOfVacancies: formValue.numberOfVacancies,
-      closingDate: formValue.closingDate ? new Date(formValue.closingDate) : new Date(),
+      closingDate: this.normalizeDate(formValue.closingDate),
       minimumAge: formValue.minimumAge,
       maximumAge: formValue.maximumAge
     };
 
+    this.jobService.updateCurrentJobBasics(updateData);
     this.jobService.update(this.jobId).subscribe({
       next: () => {
         this.isLoading = false;

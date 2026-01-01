@@ -23,7 +23,6 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {DatePickerModule} from 'primeng/datepicker';
 import {PaginationComponent} from '../../shared/components/pagination/pagination.component';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { JobInvitesDetailsComponent } from './job-invites-details/job-invites-details.component';
 import { Scroller } from "primeng/scroller";
 import { OverviewStepComponent } from './job-wizard/wizard-steps/overview-step.component.ts/overview-step.component';
 import { QualificationsStepComponent } from './job-wizard/wizard-steps/qualifications-step.component/qualifications-step.component';
@@ -45,14 +44,13 @@ import { ProgressSpinner } from "primeng/progressspinner";
 import { RemoteSelectComponent } from '../../shared/components/remote-select/remote-select';
 import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
 import { TableModule } from 'primeng/table';
-import { RadioButtonModule } from 'primeng/radiobutton'; 
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { JobCandidatesComponent } from './job-candidates/job-candidates.component';
-import { TooltipModule } from 'primeng/tooltip';
+import {Tooltip} from 'primeng/tooltip';
 @NgModule({
   declarations: [
     JobDetailsComponent,
     JobListComponent,
-    JobInvitesDetailsComponent,
     StepperComponent,
     JobWizardComponent,
     ProgressBarComponent,
@@ -100,8 +98,8 @@ import { TooltipModule } from 'primeng/tooltip';
     RemoteSelectComponent,
     TableModule,
     RadioButtonModule,
-    TooltipModule
-],
+    Tooltip
+  ],
   exports: [
     JobDetailsComponent,
     JobListComponent,

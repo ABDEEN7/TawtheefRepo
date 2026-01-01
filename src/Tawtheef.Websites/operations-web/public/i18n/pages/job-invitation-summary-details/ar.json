@@ -18,6 +18,7 @@
   "JOB_INVITES_DETAILS_COL_PHONE": "الهاتف",
   "JOB_INVITES_DETAILS_COL_STATUS": "الحالة",
   "JOB_INVITES_DETAILS_COL_SENT_DATE": "تاريخ الإرسال",
+  "JOB_INVITES_DETAILS_SEARCH_STATE":"إختر الحالة",
 
   "JOB_INVITES_DETAILS_EMPTY": "لا توجد بيانات"
 }

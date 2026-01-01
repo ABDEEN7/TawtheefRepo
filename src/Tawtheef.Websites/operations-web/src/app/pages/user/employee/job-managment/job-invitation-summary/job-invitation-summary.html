@@ -1,16 +1,21 @@
 <section i18nNamespace="pages/job-invitation-summary">
 
   <!-- Header -->
-  <header class="py-3 header-hero">
-    <div class="container d-flex align-items-center justify-content-between">
-      <div>
-        <h3 class="mb-1 fw-bold">{{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}</h3>
-        <div class="text-muted small">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</div>
+    <div class="page-hero card-shell">
+      <a class="back-link" (click)="navigateTo()" aria-label="Back">
+        <i class="fa fa-chevron-right"></i>
+      </a>
+
+      <div class="hero-text">
+        <h2 class="page-title">
+          {{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}
+          <span class="title-sep">-</span>
+        </h2>
+        <p class="page-subtitle">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</p>
       </div>
     </div>
-  </header>
 
-  <main class="py-4">
+  <main>
     <div class="container">
 
       <!-- Filters Card -->

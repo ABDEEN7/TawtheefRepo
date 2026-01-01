@@ -180,13 +180,23 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
     {
         var failures = new List<ValidationFailure>();
 
-        if (newStatusId == JobStatusIds.PendingApproval && job.JobStatusId == JobStatusIds.Draft)
+        if (newStatusId == JobStatusIds.PendingApproval &&
+            (job.JobStatusId == JobStatusIds.Draft || job.JobStatusId == JobStatusIds.NeedUpdate))
         {
+            if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
+                    job.TitleAr, job.TitleEn,
+                    job.SectorId, job.ManagementId, job.DepartmentId,
+                    job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
+                    job.MajorId, job.NumberOfVacancies, job.ClosingDate,
+                    job.MinimumAge, job.MaximumAge, job.YearsOfExperience))
+            {
+                failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
+            }
+
             var allTabsCompleted = JobBusinessRules.AreAllTabsCompleted(
                 job.JobDegrees.Any(),
                 job.JobConditions.Any(),
                 job.JobResponsibilities.Any(),
-                job.JobRequiredAttachments.Any(),
                 !string.IsNullOrWhiteSpace(job.OverViewAr) && !string.IsNullOrWhiteSpace(job.OverViewEn),
                 !string.IsNullOrWhiteSpace(job.BenefitsAr) && !string.IsNullOrWhiteSpace(job.BenefitsEn)
             );

@@ -72,6 +72,16 @@ export class EndpointsService {
     }
   };
 
+  jobCandidates = {
+    overview: this.getFullUrl('/jobCandidates/overview'),
+    search: this.getFullUrl('/jobCandidates/search'),
+    export: this.getFullUrl('/jobCandidates/export'),
+    sendInvitations: this.getFullUrl('/jobCandidates/send-invitations'),
+    lookups: {
+      candidateTypes: this.getFullUrl('/jobCandidates/lookups/candidate-types'),
+    },
+  };
+
   kawader = {
     upload: this.getFullUrl('/kawader/upload'),
   };
@@ -96,6 +106,11 @@ export class EndpointsService {
 
   JobInvitationSummary = {
     invitationsSummary: this.getFullUrl(`/jobInvitationSummary/get-invitations-summary`),
+    details: {
+      jobInfo: (jobId: string) => this.getFullUrl(`/jobInvitationSummary/${jobId}/info`),
+      stats: this.getFullUrl(`/jobInvitationSummary/get-invitations-stats`),
+      rows: this.getFullUrl(`/jobInvitationSummary/get-invitations-details`)
+    },
     lookups: {
       jobStatuses: this.getFullUrl(`/jobInvitationSummary/lookups/job-statuses`),
       jobCategories: this.getFullUrl(`/jobInvitationSummary/lookups/job-categories`),
@@ -132,6 +147,25 @@ export class EndpointsService {
       this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
     setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)
   };
+
+  languages = {
+    listLanguages: this.getFullUrl('/languages/list-languages'),
+    languageDetails: (id: string) => this.getFullUrl(`/languages/language-details/${id}`),
+    createLanguage: this.getFullUrl('/languages/create-language'),
+    updateLanguage: (id: string) => this.getFullUrl(`/languages/update-language/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/languages/${id}/status`)
+  };
+  universities = {
+    listUniversities: this.getFullUrl('/universities/list-universities'),
+    universityDetails: (id: string) => this.getFullUrl(`/universities/university-details/${id}`),
+    createUniversity: this.getFullUrl('/universities/create-university'),
+    updateUniversity: (id: string) => this.getFullUrl(`/universities/update-university/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/universities/${id}/status`),
+    lookups: {
+      countries: this.getFullUrl('/universities/lookups/countries'),
+      cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
+    }
+  };
   majorSkillsManagement = {
     list: this.getFullUrl('/MajorSkillsManagement'),
     details: (id: string) => this.getFullUrl(`/MajorSkillsManagement/${id}`),
@@ -157,5 +191,10 @@ export class EndpointsService {
       majors: this.getFullUrl('/MajorSkillsManagement/lookups/majors'),
       subMajors: this.getFullUrl('/MajorSkillsManagement/lookups/sub-majors'),
     }
+  };
+
+  countries = {
+    listCountries: this.getFullUrl('/countryManagement/list-countries'),
+    updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`)
   };
 }

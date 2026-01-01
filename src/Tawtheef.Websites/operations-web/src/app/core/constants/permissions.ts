@@ -10,9 +10,21 @@ export const Permissions = {
     View: 'users.view',
     Manage: 'users.manage',
   },
+  Languages: {
+    View: 'languages.view',
+    Manage: 'languages.manage',
+  },
   Offices: {
     View: 'offices.view',
     Manage: 'offices.manage',
+  },
+  Countries: {
+    View: 'countries.view',
+    Manage: 'countries.manage',
+  },
+  Universities: {
+    View: 'universities.view',
+    Manage: 'universities.manage',
   },
   Profile: {
     View: 'profile.view',

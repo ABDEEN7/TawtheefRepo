@@ -26,4 +26,11 @@ public class LocalizationService(IHttpContextAccessor httpContextAccessor) : ILo
         if (source == null) return string.Empty;
         return source.GetLocalizedDescription(GetCurrentLanguage());
     }
+    
+    public string GetLocalizedValue(string valueAr, string valueEn)
+    {
+        return string.Equals(GetCurrentLanguage(), "ar", StringComparison.OrdinalIgnoreCase)
+            ? valueAr
+            : valueEn;
+    }
 }

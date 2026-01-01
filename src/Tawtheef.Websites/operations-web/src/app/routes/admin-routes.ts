@@ -15,4 +15,13 @@
   get officesManagement(){
     return this.admin + '/offices-management'
   },
+  get countriesManagement(){
+    return this.admin + '/countries-management'
+  },
+  get languagesManagement(){
+    return this.admin + '/languages-management'
+  },
+  get universitiesManagement(){
+    return this.admin + '/universities-management'
+  },
 }

@@ -22,5 +22,11 @@
   "JOB_CANDIDATE_FILTERS_CANDIDATE_CATEGORY":"Candidate Category",
   "JOB_CANDIDATE_BUTTONS_VIEW": "View Details",
   "JOB_CANDIDATE_BUTTONS_EXPORT_TO_EXCEL":"Export To Excel",
-  "JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS":"Send Invitation"
+  "JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS":"Send Invitation",
+  "JOB_CANDIDATE_MESSAGES_EXPORT_SUCCESS":"Job candidates exported successfully.",
+  "JOB_CANDIDATE_MESSAGES_EXPORT_FAILED":"Failed to export job candidates.",
+  "JOB_CANDIDATE_MESSAGES_INVITES_SENT":"Invitations sent successfully.",
+  "JOB_CANDIDATE_MESSAGES_INVITES_FAILED":"Failed to send invitations.",
+  "JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_TITLE":"Send invitations",
+  "JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_DESCRIPTION":"Are you sure you want to send invitations to the selected candidates?"
 }
