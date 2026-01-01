@@ -253,6 +253,12 @@ public class ErrorsCodes
     public const string LanguageNameExists = "LANGUAGE_NAME_EXISTS";
     #endregion
 
+    #region Universities
+    public const string UniversityNotFound = "UNIVERSITY_NOT_FOUND";
+    public const string UniversityNameExists = "UNIVERSITY_NAME_EXISTS";
+    public const string CityNotFound = "CITY_NOT_FOUND";
+    #endregion
+
     #region Offices
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
     public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";
