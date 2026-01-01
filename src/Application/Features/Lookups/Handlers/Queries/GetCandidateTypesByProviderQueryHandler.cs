@@ -18,13 +18,14 @@ public sealed class GetCandidateTypesByProviderQueryHandler(IUnitOfWork unitOfWo
     {
         var candidateTypes = await unitOfWork.GetEntityRepository<ProviderLogin>()
             .DbSet
-            .Where(pl => pl.BackendName.Equals(request.Provider, StringComparison.OrdinalIgnoreCase))
+            .Where(pl => pl.BackendName.ToLower() == request.Provider.ToLower())
             .SelectMany(cl => cl.CandidateTypeProviderLogins)
             .Select(ct => ct.CandidateType!)
             .ToListAsync(cancellationToken);
 
         if (IsQatarPassOrResidentOtp(request.Provider))
         {
+            //TODO: should be check if user is from KwaderQIDs
             var qatari = await unitOfWork.GetEntityRepository<CandidateType>()
                 .DbSet
                 .FirstOrDefaultAsync(x => x.Id == CandidateTypeIds.Qatari, cancellationToken);

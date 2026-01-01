@@ -59,6 +59,7 @@ public static class PermissionNames
     // Offices Users
     public const string OfficeUsersView = "office.users.view";
     public const string OfficeUsersManage = "office.users.manage";
+    public const string MajorSkillsManage = "major-skill.management";
     #endregion
     
     
@@ -87,7 +88,9 @@ public static class PermissionNames
         ProfileApprovalView, ProfileApprovalReview, ProfileApprovalChanges,
         JobsView, JobsManage, JobsApprove, JobsPointsManage, JobsInvitationsView,
         NominationsView, NominationsManage,
-        KawaderManage
+        KawaderManage,
+        OfficeUsersView, OfficeUsersManage,
+        MajorSkillsManage
     ];
 
     public static readonly IReadOnlyList<string> SystemAdminPermissions =
@@ -106,6 +109,9 @@ public static class PermissionNames
         KawaderManage,
         CountriesView,
         CountriesManage,
+        OfficeUsersView,
+        OfficeUsersManage,
+        MajorSkillsManage
     ];
     
     public static readonly IReadOnlyList<string> EmployeePermissions =
@@ -144,6 +150,7 @@ public static class PermissionNames
         NominationsManage,
         KawaderManage,
         OfficeUsersView,
-        OfficeUsersManage
+        OfficeUsersManage,
+        MajorSkillsManage
     ];
 }

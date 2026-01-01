@@ -27,7 +27,6 @@ export function createProfileOverviewVisibility(p: ProfileStatusDto) {
       needsMarriage: candidateTypeNeedsMarriageCertificate(type),
 
       // Derived flags (optional)
-      showOffice: !isResident,
       showQidExpiry: isResident,
       showNationalAddress: isResident,
       showForeignAddress: !isResident,

@@ -227,12 +227,6 @@ function validateContactStep(s: ProfileState): StepValidationResult {
     if (isQatarPhone && !s.phoneVerified) {
       addRequiredError(errors, 'contact', 'phoneVerified');
     }
-
-    // Non-Qatar: force "no verified phone" (optional but recommended)
-    // This keeps state consistent even if something sets phoneVerified=true by mistake.
-    if (!isQatarPhone && s.phoneVerified) {
-      addRequiredError(errors, 'contact', 'phoneVerified');
-    }
   }
 
   if (!isFilledField(s.email)) {

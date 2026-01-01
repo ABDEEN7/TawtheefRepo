@@ -107,9 +107,9 @@ export class StepContactComponent implements OnInit, OnDestroy {
     useCode: true
   };
 
-  selectedCountryIso2: CountryISO = CountryISO.Qatar;
-  onlyPhoneCountries: CountryISO[] | undefined;
-  excludedPhoneCountries: CountryISO[] = [];
+  selectedCountryIso2: CountryISO = CountryISO.UnitedStates;
+  onlyPhoneCountries: CountryISO[] = [];
+  readonly CountryISO = CountryISO;
   savingContact = false;
   private lastSubmittedSignature: string | null = null;
   private pendingGeoCountryIso2: string | null = null;
@@ -127,10 +127,15 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.configurePhoneCountries();
-    this.geoIp.getCountryIso2().subscribe(code => {
-      this.selectedCountryIso2 = this.resolveInitialPhoneCountry(code);
-      this.pendingGeoCountryIso2 = code;
-      this.tryApplyPendingGeoCountry();
+    this.geoIp.getCountryIso2().subscribe({
+      next:(code)=>{
+        const ipCountry = code as CountryISO;
+        if (this.onlyPhoneCountries.includes(ipCountry)) {
+          this.selectedCountryIso2 = ipCountry;
+          this.pendingGeoCountryIso2 = code;
+          this.tryApplyPendingGeoCountry();
+        }
+      }
     });
 
     const state = this.ds.state();
@@ -200,16 +205,21 @@ export class StepContactComponent implements OnInit, OnDestroy {
     return (value as any)?.countryCode?.toUpperCase?.() === 'QA' || (value?.e164Number ?? '').startsWith('+974');
   }
   get canVerifyPhone(): boolean {
-    return this.isQatarPhone(this.ds.state().phone ?? null);
+    return this.requiresPhoneVerification;
   }
 
-  private isQatarOnlyProvider(): boolean {
+  private isQatarProvider(): boolean {
     const provider = (this.ds.state().provider ?? '').toLowerCase();
     return provider === this.QATAR_PASS_PROVIDER || provider === this.QATAR_RESIDENT_PROVIDER;
   }
 
   private isGoogleProvider(): boolean {
     return (this.ds.state().provider ?? '').toLowerCase() === this.GOOGLE_PROVIDER;
+  }
+  /** Qatar provider requires Qatar phone and OTP verification. */
+  get requiresPhoneVerification(): boolean {
+    const phone = this.ds.state().phone ?? null;
+    return this.isQatarProvider() && this.isQatarPhone(phone);
   }
 
   private resetPhoneVerificationState(): void {
@@ -234,30 +244,19 @@ export class StepContactComponent implements OnInit, OnDestroy {
   }
 
   private configurePhoneCountries(): void {
-    if (this.isQatarOnlyProvider()) {
+    if (this.isQatarProvider()) {
       this.onlyPhoneCountries = [CountryISO.Qatar];
-      this.excludedPhoneCountries = [];
       this.selectedCountryIso2 = CountryISO.Qatar;
       return;
     }
 
     if (this.isGoogleProvider()) {
-      this.onlyPhoneCountries = undefined;
-      this.excludedPhoneCountries = [CountryISO.Qatar];
+      this.onlyPhoneCountries = Object.values(CountryISO)
+        .filter(c => c !== CountryISO.Qatar) as CountryISO[];
       return;
     }
 
-    this.onlyPhoneCountries = undefined;
-    this.excludedPhoneCountries = [];
-  }
-
-  private resolveInitialPhoneCountry(iso2: string): CountryISO {
-    const normalized = (iso2 ?? '').toLowerCase() as CountryISO;
-    if (this.isQatarOnlyProvider()) return CountryISO.Qatar;
-    if (this.isGoogleProvider() && normalized === CountryISO.Qatar) {
-      return CountryISO.UnitedArabEmirates;
-    }
-    return normalized || CountryISO.Qatar;
+    this.onlyPhoneCountries = [];
   }
 
   private setCountryFromIso(iso2: string): void {
@@ -308,7 +307,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.phone.touched = true;
     this.phone.errorMessage = null;
 
-    // Reset OTP workflow when the phone changes
+    // reset OTP workflow when the phone changes
     if (this.phone.status === 'codeSent' || this.phone.status === 'verifying' || this.phone.status === 'failed') {
       this.phone.otp = '';
       this.phone.status = 'idle';
@@ -319,6 +318,16 @@ export class StepContactComponent implements OnInit, OnDestroy {
     try {
       const parsed = this.phoneNumberUtil.parseAndKeepRawInput(value.e164Number);
       isValid = this.phoneNumberUtil.isValidNumber(parsed);
+
+      // Qatar provider must be Qatar number only (UI already restricts, but keep server-safe guard)
+      if (this.isQatarProvider()) {
+        isValid = isValid && this.isQatarPhone(value);
+      }
+
+      // Google provider must be NON-Qatar (UI already restricts, but keep server-safe guard)
+      if (this.isGoogleProvider()) {
+        isValid = isValid && !this.isQatarPhone(value);
+      }
     } catch {
       isValid = false;
     }
@@ -332,26 +341,37 @@ export class StepContactComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Save phone object to state
+    // Save phone in state
     this.ds.up('phone', value);
 
-    // If NOT Qatar: disable verification always
-    if (!this.isQatarPhone(value)) {
-      this.resetPhoneVerificationState();
+    // Behavior by provider:
+
+    // Qatar provider: require OTP verification
+    if (this.isQatarProvider()) {
+      // restore verified in-session if same cached phone
+      const cached = this.getLastVerifiedPhoneE164();
+      if (cached && cached === value.e164Number) {
+        this.ds.up('phoneVerified', true);
+        this.phone.status = 'verified';
+        return;
+      }
+
+      this.ds.up('phoneVerified', false);
+      this.phone.status = 'idle';
       return;
     }
 
-    // Qatar only: allow restore from cached verified phone
-    const cached = this.getLastVerifiedPhoneE164();
-    if (cached && cached === value.e164Number) {
-      this.ds.up('phoneVerified', true);
+    // Google provider: no OTP required (verification UI hidden)
+    if (this.isGoogleProvider()) {
+      this.ds.up('phoneVerified', true); // treat as confirmed in UI to allow Next
       this.phone.status = 'verified';
+      this.setLastVerifiedPhoneE164(null);
       return;
     }
 
-    // Otherwise require verification for Qatar
-    this.ds.up('phoneVerified', false);
-    this.phone.status = 'idle';
+    // Other providers (if any): default no OTP
+    this.ds.up('phoneVerified', true);
+    this.phone.status = 'verified';
   }
 
   onCountryChange(country: CountryDto | null): void {
@@ -361,9 +381,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   sendPhoneCode(): void {
     const state = this.ds.state();
-    // Qatar-only
-    if (!this.isQatarPhone(state.phone ?? null)) {
-      this.resetPhoneVerificationState();
+    if (!this.isQatarProvider() || !this.isQatarPhone(state.phone ?? null)) {
       return;
     }
 
@@ -400,9 +418,9 @@ export class StepContactComponent implements OnInit, OnDestroy {
   }
   verifyPhoneCode(): void {
     const state = this.ds.state();
-    // Qatar-only
-    if (!this.isQatarPhone(state.phone ?? null)) {
-      this.resetPhoneVerificationState();
+
+    // Only Qatar provider + Qatar phone can verify OTP
+    if (!this.isQatarProvider() || !this.isQatarPhone(state.phone ?? null)) {
       return;
     }
 
@@ -430,7 +448,47 @@ export class StepContactComponent implements OnInit, OnDestroy {
       }
     });
   }
+  private updatePhoneIfGoogleProvider(): Promise<boolean> {
+    const s = this.ds.state();
+    if (!this.isGoogleProvider()) return Promise.resolve(true);
 
+    // If no phone, let step validation handle it
+    if (!s.phone?.e164Number) return Promise.resolve(true);
+
+    // Safety: Google must not submit +974 due to backend rule
+    if (s.phone.e164Number.startsWith(this.QATAR_E164_PREFIX)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('wizard.validationErrorTitle'),
+        detail: this.translate.instant('wizard.contact.googleProviderNonQatarOnly'),
+        life: 5000
+      });
+      return Promise.resolve(false);
+    }
+
+    // Call update endpoint (no OTP)
+    return new Promise<boolean>((resolve) => {
+      this.verificationService
+        .updatePhone({ phoneE164: s.phone!.e164Number })
+        .subscribe({
+          next: () => {
+            // reflect confirmed phone in UI state
+            this.ds.up('phoneVerified', true);
+            this.phone.status = 'verified';
+            resolve(true);
+          },
+          error: () => {
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant('wizard.validationErrorTitle'),
+              detail: this.translate.instant('wizard.contact.phoneUpdateFailed'),
+              life: 5000
+            });
+            resolve(false);
+          }
+        });
+    });
+  }
   // ========== Email ==========
 
   onEmailChange(value: string): void {
@@ -537,7 +595,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.ds.up('naFile', { resourceId: 'local', fileName: file.name, file: file } as any);
     input.value = '';
   }
-  onNext(): void {
+  async onNext(): Promise<void> {
     if (!this.step.valid) {
       this.messageService.add({
         severity: 'error',
@@ -547,6 +605,10 @@ export class StepContactComponent implements OnInit, OnDestroy {
       });
       return;
     }
+
+    // If Google provider: update phone before saving contact section
+    const ok = await this.updatePhoneIfGoogleProvider();
+    if (!ok) return;
 
     const s = this.ds.state();
     const dto = mapContactSection(s);

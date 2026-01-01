@@ -17,9 +17,10 @@ public static class EmployeeSuperAdminIds
 
 public class EmployeeUser : User
 {
-    public ICollection<ProfileAssignment> ProfileAssignments { get; set; } = [];
-    
+    public Guid? EmployeeProfileId { get; init; }
     public EmployeeProfile? EmployeeProfile { get; set; }
+    public ICollection<ProfileAssignment> ProfileAssignments { get; init; } = [];
+    
     public static Result<User> Register(string email,string displayName)
     {
         var name = FullName.TryParse(displayName);
@@ -37,8 +38,6 @@ public class EmployeeUser : User
         };
         return Result.Ok<User>(user);
     }
-
-    // domain behavior - attempt to create assignment and update profile
     public Result<ProfileAssignment> CreateProfileAssignmentIfAllowed(UserProfile profile, int currentLoad, int assignedThisRound, int? perEmployeeLimit)
     {
         // Respect per-employee cap for this distribution run

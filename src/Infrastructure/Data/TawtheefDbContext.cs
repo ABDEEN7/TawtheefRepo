@@ -12,11 +12,11 @@ using Tawtheef.Domain.Common.Interfaces;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Auth;
+using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Notification;
-using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
@@ -64,6 +64,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<SponsorType> SponsorType { get; set; }
     public DbSet<CandidateTypeProviderLogin> CandidateTypeProviderLogin { get; set; }
     public DbSet<ProviderLogin> ProviderLogin { get; set; }
+    public DbSet<Permission> Permission { get; set; }
 
     public DbSet<City> City { get; set; }
     public DbSet<Country> Country { get; set; }

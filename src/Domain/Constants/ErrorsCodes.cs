@@ -79,6 +79,7 @@ public class ErrorsCodes
     public const string InvalidTokenOrEmail = "INVALID_TOKEN_OR_EMAIL";
     public const string TooManyAttempts = "TOO_MANY_ATTEMPTS";
     public const string InvalidVerificationCode = "INVALID_VERIFICATION_CODE";
+    public const string ShouldVerifiyQatarPhoneNumberBeforeAssignIt = "SHOULD_VERIFIY_QATAR_PHONE_NUMBER_BEFORE_ASSIGN_IT";
     public const string ResendCooldownActive = "RESEND_COOLDOWN_ACTIVE";
     public const string EmailAlreadyVerified = "EMAIL_ALREADY_VERIFIED";
     public const string SendOtpLimitReached = "SEND_OTP_LIMIT_REACHED";

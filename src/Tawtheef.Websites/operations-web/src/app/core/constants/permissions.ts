@@ -48,6 +48,9 @@ export const Permissions = {
   JobInvitations: {
     View: 'jobs.invitations.view',
   },
+  MajorSkills: {
+    Manage: 'major-skill.management',
+  },
   Nominations: {
     View: 'nominations.view',
     Manage: 'nominations.manage',
