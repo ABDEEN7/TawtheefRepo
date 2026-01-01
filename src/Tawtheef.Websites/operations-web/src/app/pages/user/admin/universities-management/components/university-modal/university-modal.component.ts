@@ -6,6 +6,7 @@ import {
   inject,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   signal,
@@ -28,7 +29,7 @@ import {finalize} from 'rxjs/operators';
   styleUrls: ['./university-modal.component.scss'],
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective]
 })
-export class UniversityModalComponent implements OnInit, OnChanges {
+export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
   private fb = inject(FormBuilder);
   private languageService = inject(LanguageService);
   private translate = inject(TranslateService);
@@ -52,6 +53,13 @@ export class UniversityModalComponent implements OnInit, OnChanges {
 
   logoArFile: File | null = null;
   logoEnFile: File | null = null;
+  logoArPreview = signal<string | null>(null);
+  logoEnPreview = signal<string | null>(null);
+  logoArError = signal<string | null>(null);
+  logoEnError = signal<string | null>(null);
+
+  private logoArObjectUrl: string | null = null;
+  private logoEnObjectUrl: string | null = null;
 
   form = this.fb.nonNullable.group({
     nameAr: ['', Validators.required],
@@ -78,10 +86,17 @@ export class UniversityModalComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy(): void {
+    this.revokeObjectUrl('ar');
+    this.revokeObjectUrl('en');
+  }
+
   private patchForm() {
     this.submitted = false;
     this.logoArFile = null;
     this.logoEnFile = null;
+    this.logoArError.set(null);
+    this.logoEnError.set(null);
 
     this.form.reset({
       nameAr: '',
@@ -116,8 +131,12 @@ export class UniversityModalComponent implements OnInit, OnChanges {
       if (this.university.countryId) {
         this.loadCities(this.university.countryId, true);
       }
+      this.setPreview('ar', this.university.logoAr ?? null);
+      this.setPreview('en', this.university.logoEn ?? null);
     } else {
       this.cities.set([]);
+      this.setPreview('ar', null);
+      this.setPreview('en', null);
     }
   }
 
@@ -148,13 +167,11 @@ export class UniversityModalComponent implements OnInit, OnChanges {
   }
 
   onLogoArSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.logoArFile = input.files?.[0] ?? null;
+    this.handleLogoSelection(event, 'ar');
   }
 
   onLogoEnSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.logoEnFile = input.files?.[0] ?? null;
+    this.handleLogoSelection(event, 'en');
   }
 
   isCreateMode() {
@@ -167,7 +184,7 @@ export class UniversityModalComponent implements OnInit, OnChanges {
 
   submit() {
     this.submitted = true;
-    if (this.form.invalid) {
+    if (this.form.invalid || this.logoArError() || this.logoEnError()) {
       this.form.markAllAsTouched();
       return;
     }
@@ -210,5 +227,63 @@ export class UniversityModalComponent implements OnInit, OnChanges {
       return this.translate.instant('UNIVERSITIES.INVALID_EMAIL');
     }
     return '';
+  }
+
+  private handleLogoSelection(event: Event, type: 'ar' | 'en') {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    const errorSignal = type === 'ar' ? this.logoArError : this.logoEnError;
+    const existingLogo = type === 'ar' ? this.university?.logoAr ?? null : this.university?.logoEn ?? null;
+
+    if (file && !file.type.startsWith('image/')) {
+      errorSignal.set(this.translate.instant('UNIVERSITIES.INVALID_LOGO_TYPE'));
+      this.setLogoFile(type, null);
+      this.setPreview(type, existingLogo);
+      input.value = '';
+      return;
+    }
+
+    errorSignal.set(null);
+    this.setLogoFile(type, file);
+    if (file) {
+      this.setPreview(type, URL.createObjectURL(file), true);
+    } else {
+      this.setPreview(type, existingLogo);
+    }
+  }
+
+  private setLogoFile(type: 'ar' | 'en', file: File | null) {
+    if (type === 'ar') {
+      this.logoArFile = file;
+      return;
+    }
+
+    this.logoEnFile = file;
+  }
+
+  private setPreview(type: 'ar' | 'en', url: string | null, isObjectUrl = false) {
+    this.revokeObjectUrl(type);
+    if (type === 'ar') {
+      this.logoArPreview.set(url);
+      this.logoArObjectUrl = isObjectUrl ? url : null;
+      return;
+    }
+
+    this.logoEnPreview.set(url);
+    this.logoEnObjectUrl = isObjectUrl ? url : null;
+  }
+
+  private revokeObjectUrl(type: 'ar' | 'en') {
+    if (type === 'ar' && this.logoArObjectUrl) {
+      URL.revokeObjectURL(this.logoArObjectUrl);
+      this.logoArObjectUrl = null;
+      return;
+    }
+
+    if (type === 'en' && this.logoEnObjectUrl) {
+      URL.revokeObjectURL(this.logoEnObjectUrl);
+      this.logoEnObjectUrl = null;
+    }
   }
 }
