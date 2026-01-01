@@ -46,7 +46,7 @@ import { RemoteSelectComponent } from '../../shared/components/remote-select/rem
 import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
 import { TableModule } from 'primeng/table';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { JobCandidatesComponent } from './job-candidates.component/job-candidates.component';
+import { JobCandidatesComponent } from './job-candidates/job-candidates.component';
 @NgModule({
   declarations: [
     JobDetailsComponent,
