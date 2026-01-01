@@ -43,9 +43,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 0.45rem 0.85rem;
   background: #fff;
 
   i {
@@ -54,7 +52,6 @@
   }
 
   .form-control {
-    border: none !important;
     box-shadow: none !important;
     padding: 0;
     background: transparent;

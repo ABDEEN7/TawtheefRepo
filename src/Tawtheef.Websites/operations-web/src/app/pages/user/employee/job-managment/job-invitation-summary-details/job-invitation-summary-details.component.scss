@@ -100,23 +100,6 @@
   margin-bottom: 1.25rem;
 }
 
-.stats-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-
-  .stats-title {
-    font-weight: 900;
-    font-size: 1.25rem;
-  }
-
-  .year-select {
-    min-width: 160px;
-  }
-}
-
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(180px, 1fr));
@@ -178,17 +161,32 @@
   margin-bottom: 0.9rem;
 }
 
+/* ✅ Filters row updated to match screenshot */
 .filters-row {
-  display: grid;
-  grid-template-columns: auto 240px 1fr;
-  gap: 0.75rem;
+  display: flex;
   align-items: center;
+  gap: 0.75rem;
   margin-bottom: 0.9rem;
 
-  .status-select {
+  /* default (LTR): Search | Status | Clear */
+  .search-pill   { order: 1; flex: 1 1 520px; min-width: 240px; }
+  .status-select { order: 2; flex: 0 0 220px; }
+  .clear-btn     { order: 3; flex: 0 0 auto; }
+
+  /* make PrimeNG select match pill height better */
+  :deep(.p-dropdown),
+  :deep(.p-select) {
     width: 100%;
+    border-radius: 999px !important;
+  }
+
+  :deep(.p-dropdown .p-dropdown-label),
+  :deep(.p-select .p-select-label) {
+    padding-block: 0.45rem;
+    font-weight: 700;
   }
 }
+
 
 /* Search pill */
 .search-pill {
@@ -273,41 +271,17 @@
   padding-top: 0.75rem;
 }
 
-/* RTL support */
-:host-context([dir="rtl"]) {
-  .page-hero {
-    .back-link {
-      right: auto;
-      left: 1.4rem;
-      transform: rotate(180deg);
-    }
-
-    .hero-text {
-      padding-right: 0;
-      padding-left: 3rem;
-    }
-  }
-
-  .stats-grid .stat-card {
-    .stat-num,
-    .stat-label {
-      text-align: right;
-    }
-  }
-
-  .pagination {
-    direction: ltr;
-  }
-}
-
-/* Responsive */
 @media (max-width: 992px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .filters-row {
-    grid-template-columns: 1fr;
+    flex-wrap: wrap;
+
+    .search-pill   { flex: 1 1 100%; min-width: 0; }
+    .status-select { flex: 1 1 220px; }
+    .clear-btn     { flex: 1 1 auto; }
   }
 }
 
@@ -319,5 +293,12 @@
   .page-hero {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .filters-row {
+    .status-select,
+    .clear-btn {
+      flex: 1 1 100%;
+    }
   }
 }

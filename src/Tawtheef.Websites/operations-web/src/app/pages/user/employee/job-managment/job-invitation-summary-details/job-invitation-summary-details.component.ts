@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
 import { JobInvitationSummaryDetailsService } from '../services/job-invitation-summary-details.service';
+import { GUID } from '../../../../../shared/types/guid.type';
+import { GuidUtils } from '../../../../../core/utils/guid-utils';
+import { routes } from '../../../../../routes/routes';
 
 @Component({
   selector: 'app-job-invitation-summary-details',
@@ -26,52 +29,44 @@ import { JobInvitationSummaryDetailsService } from '../services/job-invitation-s
 })
 export class JobInvitationSummaryDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   detailsService = inject(JobInvitationSummaryDetailsService);
 
-  // route param
-  jobId = signal<string>('');
+  jobId = signal<GUID>(GuidUtils.emptyGuid);
 
-  // filters (UI)
-  selectedYear = signal<string>('');
-  selectedStatus = signal<string>('');
+  selectedStatus = signal<string | null>(null);
   searchText = signal<string>('');
 
-  // paging
   currentPage = signal(1);
   itemsPerPage = signal(7);
 
-  // data from service
-  jobInfo = this.detailsService.jobInfo;                 // { jobName, ... }
-  stats = this.detailsService.stats;                     // { total, applied, new, declined, cancelled }
-  rows = this.detailsService.rows;                       // table rows
+  jobInfo = this.detailsService.jobInfo;                 
+  stats = this.detailsService.stats;                    
+  rows = this.detailsService.rows;                       
   paginationMetadata = this.detailsService.paginationMetadata;
 
   totalItems = computed(() => this.paginationMetadata()?.totalCount ?? 0);
 
-  // lookups
-  yearsOptions = computed(() => this.detailsService.yearsOptions());
   statusOptions = computed(() => this.detailsService.statusOptions());
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('jobId') ?? '';
-    this.jobId.set(id);
+    this.jobId.set(id as GUID);
 
-    this.detailsService.loadLookups();
+    this.detailsService.loadLookups(this.jobId());
     this.loadAll();
   }
 
   loadAll(): void {
-    this.detailsService.getJobInfo(this.jobId());
+    this.detailsService.getJobInvites(this.jobId());
 
     this.detailsService.getStats({
       jobId: this.jobId(),
-      academicYear: this.selectedYear() || '',
     });
 
     this.detailsService.getRows({
       jobId: this.jobId(),
-      academicYear: this.selectedYear() || '',
-      statusId: this.selectedStatus() || '',
+      statusId: this.selectedStatus() || null,
       search: this.searchText() || '',
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage(),
@@ -108,5 +103,9 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
     };
 
     return map[backendName] ?? 'status-pill status-default';
+  }
+
+  navigateTo() {
+    this.router.navigate([routes.employee.jobInvitationSummary]);
   }
 }
