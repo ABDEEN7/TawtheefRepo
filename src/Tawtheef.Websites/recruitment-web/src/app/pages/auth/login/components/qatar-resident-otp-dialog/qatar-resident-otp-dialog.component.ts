@@ -11,6 +11,7 @@ import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { SharedModule } from '../../../../../shared/shared.module';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+import {MultiSelect} from 'primeng/multiselect';
 
 type QatarPhoneNumber = {
   number: string;

@@ -1,6 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, inject} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {LoadingService} from "../../../core/services/loading.service";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoadingService } from '../../../core/services/loading.service';
 
 @Component({
   selector: 'app-progress-bar',
@@ -11,36 +16,42 @@ import {LoadingService} from "../../../core/services/loading.service";
 })
 export class ProgressBarComponent {
   private readonly loading = inject(LoadingService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   progressValue = 0;
   visible = false;
-  private timer?: any;
+  private timer?: number;
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor() {
     this.loading.loading$
       .pipe(takeUntilDestroyed())
-      .subscribe(isLoading => isLoading ? this.start() : this.finish());
+      .subscribe(isLoading => {
+        isLoading ? this.start() : this.finish();
+      });
   }
 
   private start() {
     this.clearTimer();
     this.visible = true;
     this.progressValue = 8;
-    this.timer = setInterval(() => {
-      // ease toward 95% while loading
+    this.cdr.markForCheck();
+
+    this.timer = window.setInterval(() => {
       const delta = Math.max(1, Math.round((100 - this.progressValue) * 0.08));
       this.progressValue = Math.min(this.progressValue + delta, 95);
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     }, 180);
   }
 
   private finish() {
     this.clearTimer();
     this.progressValue = 100;
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+
     setTimeout(() => {
       this.visible = false;
       this.progressValue = 0;
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     }, 250);
   }
 

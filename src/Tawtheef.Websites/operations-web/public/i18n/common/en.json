@@ -27,6 +27,7 @@
   "common.confirm": "Confirm",
   "common.yes": "Yes",
   "common.no": "No",
+  "common.goBack": "Go Back",
   "common.charactersRemaining": "{{count}} characters remaining",
   "auth.externalLogin.popupBlocked.summary": "Popup Blocked",
   "auth.externalLogin.popupBlocked.detail": "Please allow popups for this site to continue with external login",

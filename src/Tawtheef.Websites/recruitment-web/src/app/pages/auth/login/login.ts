@@ -9,6 +9,7 @@ import {HttpService} from '../../../core/http/http.service';
 import {RESIDENCY_CHOSEN_MANUALLY_KEY, RESIDENCY_MODE_KEY} from '../../../core/constants/website-storage.const';
 import { DialogService } from 'primeng/dynamicdialog';
 import { QatarResidentOtpDialogComponent } from './components/qatar-resident-otp-dialog/qatar-resident-otp-dialog.component';
+import {GeoIpService} from '../../../core/services/geo-ip.service';
 
 
 type ResidencyMode = 'resident' | 'nonresident';
@@ -25,6 +26,7 @@ export class Login implements OnInit, OnDestroy{
   private http = inject(HttpService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
+  private geoIpService = inject(GeoIpService);
 
   currentLang: 'ar' | 'en' = 'ar';
   residencyMode: ResidencyMode = (localStorage.getItem(RESIDENCY_MODE_KEY) as ResidencyMode) || 'resident';
@@ -87,18 +89,7 @@ export class Login implements OnInit, OnDestroy{
   }
 
   private bestEffortGeoip(): void {
-    const timeout$ = timer(1800).pipe(map(() => ({ country: '' })));
-
-    const ipapi$ = this.http.get<any>('https://ipapi.co/json/').pipe(
-      catchError(() => this.http.get<any>('https://ipwhois.app/json/')),
-      catchError(() => this.http.get<any>('https://www.geoplugin.net/json.gp')),
-      catchError(() => [ { country: '' } ] as any)
-    );
-
-    const sub = race(ipapi$, timeout$).subscribe(data => {
-      const code = (data?.country || data?.country_code || data?.geoplugin_countryCode || '').toString().toUpperCase();
-      if (!code) return;
-
+    const sub = this.geoIpService.getCountryIso2().subscribe(code => {
       const mode: ResidencyMode = code === 'QA' ? 'resident' : 'nonresident';
       this.setMode(mode);
     });

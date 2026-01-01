@@ -35,25 +35,16 @@
       {{ 'app.accessDenied.goHome' | translate }}
     </a>
 
-<!--    <a *ngIf="authService.isLoggedIn()" [routerLink]="routes.dashboard(authService.getCurrentUserRole())"-->
-<!--       class="btn btn-secondary">-->
-<!--      <i class="fas fa-tachometer-alt me-2"></i>-->
-<!--      {{ 'app.accessDenied.goDashboard' | translate }}-->
-<!--    </a>-->
+    <a *ngIf="authService.isLoggedIn()" [routerLink]="routes.dashboard(tokenService.getMainUserRole())"
+       class="btn btn-secondary">
+      <i class="fas fa-tachometer-alt me-2"></i>
+      {{ 'app.accessDenied.goDashboard' | translate }}
+    </a>
 
     <a *ngIf="!(authService.isLoggedIn())" [routerLink]="routes.auth.login" [queryParams]="{returnUrl: previousUrl}"
        class="btn btn-outline-primary">
       <i class="fas fa-sign-in-alt me-2"></i>
       {{ 'app.accessDenied.login' | translate }}
-    </a>
-  </div>
-
-  <!-- Contact support -->
-  <div class="mt-4 text-center">
-    <p class="mb-2">{{ 'app.accessDenied.needHelp' | translate }}</p>
-    <a href="mailto:medvision.life@gmail.com" class="btn btn-link">
-      <i class="fas fa-envelope me-2"></i>
-      {{ 'app.accessDenied.contactSupport' | translate }}
     </a>
   </div>
 </div>

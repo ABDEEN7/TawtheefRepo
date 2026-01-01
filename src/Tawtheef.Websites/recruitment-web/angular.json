@@ -34,7 +34,8 @@
               "src/styles.scss",
               "node_modules/aos/dist/aos.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "node_modules/intl-tel-input/build/css/intlTelInput.css"
+              "node_modules/intl-tel-input/build/css/intlTelInput.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ]
           },
           "configurations": {

@@ -53,6 +53,22 @@
         }
       }
 
+      .iti {
+         width: 100%;
+       }
+
+      .iti__country-list {
+        z-index: 2000 !important; /* higher than modal/dialog */
+      }
+
+      /* If parent container clips children */
+      .modal,
+      .p-dialog-content,
+      .p-dialog,
+      .your-dialog-wrapper {
+        overflow: visible !important;
+      }
+
       .iti__country-list {
         background: var(--surface-overlay, #ffffff);
         border: 1px solid var(--surface-border, #ced4da);

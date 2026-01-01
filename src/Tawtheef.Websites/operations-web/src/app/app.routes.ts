@@ -10,7 +10,13 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+        pathMatch: 'full',
+        redirectTo: 'auth/login',
+      },
+      {
+        path: 'index',
+        pathMatch: 'full',
+        redirectTo: 'auth/login',
       },
       {
         path: 'auth',
@@ -24,21 +30,21 @@ export const routes: Routes = [
     ],
   },
   {
-    path: '',
+    path: 'admin',
     component: AdminLayout,
-    canActivate: [authGuard],
+    canActivate: [authGuard], // then make guard CanActivateFn
     data: { roles: [SystemRoles.SystemAdmin] },
-    children:[
-      { path: 'admin', loadChildren: () => import('./pages/user/admin/admin.module').then((m) => m.AdminModule),}
+    children: [
+      { path: '', loadChildren: () => import('./pages/user/admin/admin.module').then(m => m.AdminModule) }
     ]
   },
   {
-    path: '',
+    path: 'employee',
     component: EmployeeLayout,
     canActivate: [authGuard],
     data: { roles: [SystemRoles.Employee, SystemRoles.OfficeAdmin, SystemRoles.OfficeUser] },
-    children:[
-      { path: 'employee', loadChildren: () => import('./pages/user/employee/employee.module').then((m) => m.EmployeeModule),}
+    children: [
+      { path: '', loadChildren: () => import('./pages/user/employee/employee.module').then(m => m.EmployeeModule) }
     ]
   },
   // Fallback

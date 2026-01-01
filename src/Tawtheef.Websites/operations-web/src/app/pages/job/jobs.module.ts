@@ -107,7 +107,8 @@ import {Tooltip} from 'primeng/tooltip';
     JobApprovalComponent,
     ConfirmApplyModalComponent,
     JobPointsMainElementsComponent,
-    JobPointsTabComponent
+    JobPointsTabComponent,
+    ProgressBarComponent
   ],
   providers: [
     JobService,

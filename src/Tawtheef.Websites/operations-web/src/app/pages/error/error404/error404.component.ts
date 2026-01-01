@@ -16,4 +16,7 @@ import {TranslatePipe} from "@ngx-translate/core";
 export class Error404Component  {
   public routes = routes;
 
+  protected back() {
+    window.history.back();
+  }
 }

@@ -4,11 +4,11 @@ using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Job;
 
-public class JobConfiguration : IEntityTypeConfiguration<Job>
+public class JobConfiguration : IEntityTypeConfiguration<Domain.Entities.Recruitment.Job>
 {
-    public void Configure(EntityTypeBuilder<Job> builder)
+    public void Configure(EntityTypeBuilder<Domain.Entities.Recruitment.Job> builder)
     {
         builder.HasQueryFilter(j => !j.IsDeleted);
 

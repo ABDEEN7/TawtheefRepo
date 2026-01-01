@@ -1,9 +1,11 @@
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {majorDetails} from './major.details';
 
 export interface MajorSkillListItemModel {
   id: string;
-  major: dropdownOptionsModel;
+  major: majorDetails;
   skill: dropdownOptionsModel;
   isSkillRequired: boolean;
   isActive: boolean;
 }
+

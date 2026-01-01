@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Recruitment;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Profile;
 
 public sealed class ProfileChangeRequestConfiguration : IEntityTypeConfiguration<ProfileChangeRequest>
 {

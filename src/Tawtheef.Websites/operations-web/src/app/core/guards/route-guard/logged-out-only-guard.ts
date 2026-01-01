@@ -10,12 +10,7 @@ export const loggedOutOnlyGuard: CanMatchFn = () => {
   const auth = inject(AuthStateService);
   const tokenService = inject(TokenService);
   const router = inject(Router);
-  const rawRoles = tokenService.getRolesFromToken(tokenService.getToken() || '');
-  const mainSystemRole =
-    rawRoles.includes(SystemRoles.SystemAdmin) ? SystemRoles.SystemAdmin
-      : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
-        : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
-          : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
-        : '';
-  return auth.isAuthenticated(true) ? router.createUrlTree([routes.dashboard(mainSystemRole)]) : true;
+  return auth.isAuthenticated(true) ?
+    router.createUrlTree([routes.dashboard(tokenService.getMainUserRole())])
+    : true;
 };

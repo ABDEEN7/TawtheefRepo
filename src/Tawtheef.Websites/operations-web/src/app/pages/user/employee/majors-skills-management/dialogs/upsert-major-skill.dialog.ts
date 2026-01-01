@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
@@ -9,8 +9,10 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { RemoteSelectComponent } from '../../../../../shared/components/remote-select/remote-select';
 import { EndpointsService } from '../../../../../core/http/endpoints.service';
-import {UpsertSkillDialogData} from './upsert-skill.dialog';
-import {TranslatePipe} from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import {MajorSkillDetailsModel} from '../models/major-skill-details.model';
+import {majorDetails} from '../models/major.details';
+import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 
 export interface DropdownOption {
   id: string;
@@ -21,13 +23,22 @@ type DialogMode = 'create' | 'edit';
 
 export interface UpsertMajorSkillDialogData {
   mode: DialogMode;
-  model?: any; // MajorSkillDetailsModel for edit
+  model?: MajorSkillDetailsModel;
   skillTypes: DropdownOption[];
 
   // preselect from filters when create:
   parentMajorId?: string;
   subMajorId?: string;
 }
+
+type Vm = {
+  id: string | null;
+  parentMajorId: string;
+  subMajorId: string;
+  skillId: string;
+  isSkillRequired: boolean;
+  isActive: boolean;
+};
 
 @Component({
   standalone: true,
@@ -39,77 +50,91 @@ export interface UpsertMajorSkillDialogData {
     ToggleSwitchModule,
     SelectModule,
     RemoteSelectComponent,
-    TranslatePipe
-  ],template: `
+    TranslatePipe,
+  ],
+  template: `
     <div class="p-2">
       <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
 
         <div class="row g-3">
           <div class="col-12 col-md-6">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_PARENT_MAJOR' | translate }}</label>
+
             <app-remote-select
-              [searchUrl]="endpoints.majorSkillsManagement.lookups.majors"
+              [searchUrl]="selectCfg.parentMajor.searchUrl"
               optionLabel="name"
               optionValue="id"
               [showClear]="true"
               [minChars]="1"
-              [ngModel]="vm.parentMajorId"
+              [ngModel]="vm().parentMajorId"
               (ngModelChange)="onParentMajorChange($event)"
               name="parentMajorId"
-              [preloadedOptions]="parentMajorOptions"
+              [preloadedOptions]="parentMajorOptions()"
               [appendTo]="'body'">
             </app-remote-select>
-            <small class="text-muted" *ngIf="f.submitted && !vm.parentMajorId">
+
+            <small class="text-muted" *ngIf="f.submitted && !vm().parentMajorId">
               {{ 'MAJORS_SKILLS.VALIDATION_REQUIRED' | translate }}
             </small>
           </div>
 
           <div class="col-12 col-md-6">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SUB_MAJOR_OPTIONAL' | translate }}</label>
+
             <app-remote-select
-              [searchUrl]="endpoints.majorSkillsManagement.lookups.subMajors"
+              [searchUrl]="selectCfg.subMajor.searchUrl"
               optionLabel="name"
               optionValue="id"
               [showClear]="true"
               [requireParent]="true"
-              [parentId]="vm.parentMajorId"
+              [parentId]="vm().parentMajorId"
               parentParamName="parentId"
               [minChars]="1"
-              [ngModel]="vm.subMajorId"
-              (ngModelChange)="vm.subMajorId = $event"
+              [ngModel]="vm().subMajorId"
+              (ngModelChange)="patchVm({ subMajorId: $event })"
               name="subMajorId"
-              [preloadedOptions]="subMajorOptions"
+              [preloadedOptions]="subMajorOptions()"
               [appendTo]="'body'">
             </app-remote-select>
           </div>
 
           <div class="col-12">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SKILL' | translate }}</label>
+
             <app-remote-select
-              [searchUrl]="endpoints.majorSkillsManagement.lookups.skills"
+              [searchUrl]="selectCfg.skill.searchUrl"
               optionLabel="name"
               optionValue="id"
               [showClear]="true"
               [minChars]="1"
-              [ngModel]="vm.skillId"
-              (ngModelChange)="vm.skillId = $event"
+              [ngModel]="vm().skillId"
+              (ngModelChange)="patchVm({ skillId: $event })"
               name="skillId"
-              [preloadedOptions]="skillOptions"
+              [preloadedOptions]="skillOptions()"
               [appendTo]="'body'">
             </app-remote-select>
-            <small class="text-muted" *ngIf="f.submitted && !vm.skillId">
+
+            <small class="text-muted" *ngIf="f.submitted && !vm().skillId">
               {{ 'MAJORS_SKILLS.VALIDATION_REQUIRED' | translate }}
             </small>
           </div>
 
           <div class="col-12 col-md-6 d-flex align-items-end justify-content-between gap-3">
             <div class="d-flex align-items-center gap-2">
-              <p-toggle-switch [(ngModel)]="vm.isSkillRequired" name="isSkillRequired"></p-toggle-switch>
+              <p-toggle-switch
+                [(ngModel)]="vm().isSkillRequired"
+                (ngModelChange)="patchVm({ isSkillRequired: $event })"
+                name="isSkillRequired">
+              </p-toggle-switch>
               <span>{{ 'MAJORS_SKILLS.FIELD_REQUIRED' | translate }}</span>
             </div>
 
             <div class="d-flex align-items-center gap-2">
-              <p-toggle-switch [(ngModel)]="vm.isActive" name="isActive"></p-toggle-switch>
+              <p-toggle-switch
+                [(ngModel)]="vm().isActive"
+                (ngModelChange)="patchVm({ isActive: $event })"
+                name="isActive">
+              </p-toggle-switch>
               <span>{{ 'MAJORS_SKILLS.FIELD_ACTIVE' | translate }}</span>
             </div>
           </div>
@@ -126,62 +151,118 @@ export interface UpsertMajorSkillDialogData {
 
       </form>
     </div>
-  `
-
+  `,
 })
 export class UpsertMajorSkillDialogComponent {
-  endpoints = inject(EndpointsService);
-  public ref = inject(DynamicDialogRef)
-  public config = inject(DynamicDialogConfig<UpsertMajorSkillDialogData>)
+  private readonly endpoints = inject(EndpointsService);
+  private readonly ref = inject(DynamicDialogRef);
+  private readonly config = inject(DynamicDialogConfig<UpsertMajorSkillDialogData>);
 
-  get skillTypes(): DropdownOption[] {
-    return this.config.data?.skillTypes ?? [];
-  }
-
-  private data = this.config?.data ?? { mode: 'create' as const };
-  private model = this.data.model;
-
-  vm = {
-    id: this.model?.id ?? null,
-    parentMajorId: this.data.parentMajorId ?? this.model?.majorId ?? this.model?.major?.id ?? '',
-    subMajorId: this.data.subMajorId ?? '',
-    skillId: this.model?.skillId ?? this.model?.skill?.id ?? '',
-    isSkillRequired: this.model?.isSkillRequired ?? false,
-    isActive: (this.model?.isActive ?? true) !== false
+  // centralize URLs (template becomes dumb)
+  readonly selectCfg = {
+    parentMajor: { searchUrl: this.endpoints.majorSkillsManagement.lookups.majors },
+    subMajor: { searchUrl: this.endpoints.majorSkillsManagement.lookups.subMajors },
+    skill: { searchUrl: this.endpoints.majorSkillsManagement.lookups.skills },
   };
 
-  parentMajorOptions = this.model?.major ? [this.model.major] : [];
-  subMajorOptions = this.model?.subMajor ? [this.model.subMajor] : [];
-  skillOptions = this.model?.skill ? [this.model.skill] : [];
+  // Normalize incoming data safely
+  private readonly data: UpsertMajorSkillDialogData = this.config.data ?? {
+    mode: 'create',
+    skillTypes: [],
+  };
+
+  private readonly model: MajorSkillDetailsModel | undefined = this.data.model;
+
+  // Determine parent/child relationship once
+  private readonly isParentMajor = !this.model?.major?.parentId;
+
+  // View model in a signal: easier to patch, no accidental mutation in multiple places
+  readonly vm = signal<Vm>(this.buildInitialVm());
+
+  // Preloaded options as computed values (always consistent with model/vm)
+  readonly parentMajorOptions = computed<majorDetails[]>(() => {
+    const major = this.model?.major ?? null;
+    if (!major) return [];
+
+    return this.isParentMajor
+      ? [major]
+      : major.parent
+        ? [major.parent]
+        : [];
+  });
+
+  readonly subMajorOptions = computed<majorDetails[]>(() => {
+    const major = this.model?.major ?? null;
+    if (!major) return [];
+
+    return this.isParentMajor ? [] : [major];
+  });
+
+  readonly skillOptions = computed<dropdownOptionsModel[]>(() => {
+    const skill = this.model?.skill ?? null;
+    return skill ? [skill] : [];
+  });
+
+  get skillTypes(): DropdownOption[] {
+    return this.data.skillTypes ?? [];
+  }
+
+  patchVm(patch: Partial<Vm>) {
+    this.vm.update((cur) => ({ ...cur, ...patch }));
+  }
 
   onParentMajorChange(id: string) {
-    this.vm.parentMajorId = id;
-    this.vm.subMajorId = ''; // clear sub when parent changes
+    // if parent changes, always clear sub major
+    this.patchVm({ parentMajorId: id, subMajorId: '' });
   }
 
   isValid(): boolean {
-    return !!this.vm.parentMajorId && !!this.vm.skillId;
+    const v = this.vm();
+    return !!v.parentMajorId && !!v.skillId;
   }
 
   save() {
+    const v = this.vm();
     if (!this.isValid()) return;
 
     // Decide the actual majorId to send:
     // If user selected a sub-major, use it. Otherwise use parent major.
-    const majorIdToSave = this.vm.subMajorId || this.vm.parentMajorId;
+    const majorIdToSave = v.subMajorId || v.parentMajorId;
 
-    const payload: any = {
-      id: this.vm.id ?? undefined,
+    this.ref.close({
+      id: v.id ?? undefined,
       majorId: majorIdToSave,
-      skillId: this.vm.skillId,
-      isSkillRequired: this.vm.isSkillRequired,
-      isActive: this.vm.isActive
-    };
-
-    this.ref.close(payload);
+      skillId: v.skillId,
+      isSkillRequired: v.isSkillRequired,
+      isActive: v.isActive,
+    });
   }
 
   cancel() {
     this.ref.close();
+  }
+
+  private buildInitialVm(): Vm {
+    // If create mode with preselected filters, prefer those.
+    // If edit mode, derive from model.
+    const preParent = this.data.parentMajorId ?? '';
+    const preSub = this.data.subMajorId ?? '';
+
+    const model = this.model;
+
+    const parentFromModel =
+      (this.isParentMajor ? model?.major?.id : model?.major?.parentId) ?? '';
+
+    const subFromModel =
+      this.isParentMajor ? '' : (model?.majorId ?? model?.major?.id ?? '');
+
+    return {
+      id: (model?.id ?? null) as string | null,
+      parentMajorId: preParent || parentFromModel,
+      subMajorId: preSub || subFromModel,
+      skillId: model?.skillId ?? model?.skill?.id ?? '',
+      isSkillRequired: !!model?.isSkillRequired,
+      isActive: (model?.isActive ?? true),
+    };
   }
 }

@@ -11,7 +11,11 @@ public class MajorSkillManagementProfile : IRegister
 {
      public void Register(TypeAdapterConfig config)
      {
-         TypeAdapterConfig<Major, MajorDetailsDto>.NewConfig()
+         TypeAdapterConfig<Major, Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.DTOs.MajorDetailsDto>.NewConfig()
+             .Map(d => d, s => s.Adapt<DropdownOptions>())
+             .Map(d => d.IsActive, s => s.IsActive)
+             .Map(d => d.Parent, s => s.Parent == null ? null : s.Parent.Adapt<DropdownOptions>());
+         TypeAdapterConfig<Major, Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.DTOs.MajorDetailsDto>.NewConfig()
              .Map(d => d, s => s.Adapt<DropdownOptions>())
              .Map(d => d.IsActive, s => s.IsActive)
              .Map(d => d.Parent, s => s.Parent == null ? null : s.Parent.Adapt<DropdownOptions>());

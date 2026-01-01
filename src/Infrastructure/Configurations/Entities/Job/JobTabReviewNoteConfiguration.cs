@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Job;
 
 public class JobTabReviewNoteConfiguration : IEntityTypeConfiguration<JobTabReviewNote>
 {

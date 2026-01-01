@@ -19,7 +19,7 @@ public sealed class GetMajorSkillByIdQueryHandler(IUnitOfWork uow, IMapper mappe
 
         var link = await repo.DbSet
             .AsNoTracking()
-            .Include(ms=> ms.Major)
+            .Include(ms=> ms.Major!.Parent)
             .Include(ms=> ms.Skill)
             .FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsDeleted, ct);
 

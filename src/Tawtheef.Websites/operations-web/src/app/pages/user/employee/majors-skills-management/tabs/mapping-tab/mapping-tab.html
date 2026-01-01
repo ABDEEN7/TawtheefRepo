@@ -38,6 +38,7 @@
         <input class="form-control"
                [ngModel]="store.majorSkillFilters().search"
                (ngModelChange)="service.setMajorSkillSearch($event)"
+               [ngModelOptions]="{ standalone: true }"
                [placeholder]="'MAJORS_SKILLS.SEARCH_PLACEHOLDER' | translate" />
       </div>
 
@@ -49,6 +50,7 @@
           optionValue="id"
           [showClear]="true"
           [minChars]="1"
+          [ngModelOptions]="{ standalone: true }"
           [ngModel]="store.majorSkillFilters().parentMajorId"
           (ngModelChange)="service.setMajorSkillParent($event)"
           [appendTo]="'body'">
@@ -66,6 +68,7 @@
           [parentId]="store.majorSkillFilters().parentMajorId"
           parentParamName="parentId"
           [minChars]="1"
+          [ngModelOptions]="{ standalone: true }"
           [ngModel]="store.majorSkillFilters().subMajorId"
           (ngModelChange)="service.setMajorSkillSubMajor($event)"
           [appendTo]="'body'">
@@ -81,6 +84,7 @@
           filter="true"
           [showClear]="true"
           class="w-100"
+          [ngModelOptions]="{ standalone: true }"
           [ngModel]="store.majorSkillFilters().skillTypeId"
           (ngModelChange)="service.setMajorSkillType($event)"
           [placeholder]="'MAJORS_SKILLS.SKILL_TYPE_PLACEHOLDER' | translate">
@@ -90,11 +94,12 @@
       <div class="col-lg-1 col-md-3 text-center">
         <label class="form-label">{{ 'MAJORS_SKILLS.ACTIVE_FILTER' | translate }}</label>
         <div class="d-flex align-items-center justify-content-center gap-2">
-          <p-check-box
+          <p-checkbox
             [binary]="true"
             [ngModel]="store.majorSkillFilters().isActive === true"
-            (ngModelChange)="setMajorSkillActiveOnly($event)">
-          </p-check-box>
+            (ngModelChange)="setMajorSkillActiveOnly($event)"
+            [ngModelOptions]="{ standalone: true }">
+          </p-checkbox>
         </div>
       </div>
     </div>
@@ -108,7 +113,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th>{{ 'MAJORS_SKILLS.MAJOR_COLUMN' | translate }}</th>
-        <th>{{ 'MAJORS_SKILLS.SUB_MAJOR_COLUMN' | translate }}</th>
+        <th>{{ 'MAJORS_SKILLS.SKILL_COLUMN' | translate }}</th>
         <th>{{ 'MAJORS_SKILLS.SKILL_REQUIRED' | translate }}</th>
         <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
         <th class="text-end">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
@@ -117,7 +122,25 @@
 
     <ng-template pTemplate="body" let-item>
       <tr>
-        <td>{{ item.major?.name ?? '-' }}</td>
+        <td>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <!-- Major Name -->
+            <span class="fw-semibold">{{ item.major?.name ?? '-' }}</span>
+
+            <!-- Parent / Sub tag -->
+            @if (item.major?.parentId) {
+              <!-- Parent info tooltip for sub-major -->
+              <button
+                type="button"
+                class="btn btn-link p-0 major-parent-info-btn"
+                pTooltip="{{ ('MAJORS_SKILLS.SUB_MAJOR_OF' | translate) + ': ' + (item.major?.parent?.name ?? '-') }}"
+                tooltipPosition="top"
+                [appendTo]="'body'">
+                <i class="pi pi-info-circle"></i>
+              </button>
+            }
+          </div>
+        </td>
         <td>{{ item.skill?.name ?? '-' }}</td>
 
         <td>

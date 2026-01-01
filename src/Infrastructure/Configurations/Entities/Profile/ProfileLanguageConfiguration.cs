@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Applicant;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Profile;
 
 public class ProfileLanguageConfiguration : IEntityTypeConfiguration<ProfileLanguage>
 {
