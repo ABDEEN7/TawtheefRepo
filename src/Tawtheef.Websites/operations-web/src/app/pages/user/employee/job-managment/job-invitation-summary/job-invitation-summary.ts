@@ -1,13 +1,14 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { JobSummaryFilters } from '../models/job-invitation-summary.model';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { Select } from 'primeng/select';
 import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
 import { JobInvitationSummaryService } from '../services/job-invitation-summary.service';
+import { routes } from '../../../../../routes/routes';
 
 @Component({
   selector: 'app-job-invitation-summary',
@@ -25,7 +26,10 @@ import { JobInvitationSummaryService } from '../services/job-invitation-summary.
   ]
 })
 export class JobInvitationSummary implements OnInit {
+  private router = inject(Router);
+
   jobInvitationSummaryService = inject(JobInvitationSummaryService);
+  
 
   // Signals
   currentPage = signal(1);
@@ -90,4 +94,8 @@ export class JobInvitationSummary implements OnInit {
     this.currentPage.set(page);
     this.loadSummaries();
   }
+
+  navigateTo() {
+      this.router.navigate([routes.employee.dashboard]);
+    }
 }

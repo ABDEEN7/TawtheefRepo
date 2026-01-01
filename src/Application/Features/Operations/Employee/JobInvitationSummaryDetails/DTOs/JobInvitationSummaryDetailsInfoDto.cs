@@ -3,5 +3,5 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary
 public sealed class JobInvitationSummaryDetailsInfoDto
 {
     public Guid JobId { get; init; }
-    public string JobName { get; init; } = string.Empty;
+    public string JobName { get; set; } = string.Empty;
 }

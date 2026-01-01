@@ -20,12 +20,6 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
             .AsNoTracking()
             .Where(invitation => invitation.JobId == query.JobId);
 
-        if (!string.IsNullOrWhiteSpace(query.AcademicYear) &&
-            int.TryParse(query.AcademicYear, out var year))
-        {
-            invitations = invitations.Where(invitation => invitation.CreatedDate.Year == year);
-        }
-
         var total = await invitations.CountAsync(cancellationToken);
 
         var stats = new JobInvitationSummaryDetailsStatsDto

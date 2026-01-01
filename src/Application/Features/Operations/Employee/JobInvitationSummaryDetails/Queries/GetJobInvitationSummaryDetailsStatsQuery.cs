@@ -4,5 +4,5 @@ using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDeta
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.Queries;
 
-public sealed record GetJobInvitationSummaryDetailsStatsQuery(Guid JobId, string? AcademicYear)
+public sealed record GetJobInvitationSummaryDetailsStatsQuery(Guid JobId)
     : IRequest<IResult<JobInvitationSummaryDetailsStatsDto>>;

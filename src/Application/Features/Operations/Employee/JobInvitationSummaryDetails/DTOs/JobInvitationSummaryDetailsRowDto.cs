@@ -5,9 +5,9 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary
 public sealed class JobInvitationSummaryDetailsRowDto
 {
     public Guid InviteId { get; init; }
-    public string FullName { get; init; } = string.Empty;
-    public string Nationality { get; init; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Nationality { get; set; } = string.Empty;
     public string Phone { get; init; } = string.Empty;
-    public DropdownOptions Status { get; init; } = new();
+    public DropdownOptions Status { get; set; } = new();
     public DateTimeOffset SentDate { get; init; }
 }
