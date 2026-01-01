@@ -1,21 +1,22 @@
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Queries;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.MajorSkillsManage)]
+[Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class MajorSkillsManagementController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
+    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> GetAllMajorSkills([FromQuery] GetMajorSkillsQuery query, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query, cancellationToken);
@@ -23,6 +24,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     }
 
     [HttpGet("{id:guid}")]
+    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> GetMajorSkillById([FromRoute] GetMajorSkillByIdQuery query, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query, cancellationToken);
@@ -37,6 +39,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     }
     
     [HttpPut]
+    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> UpdateMajorSkill([FromBody] UpdateMajorSkillCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
@@ -45,6 +48,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
 
     [HttpPut]
     [Route("change-activation")]
+    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> ChangeMajorSkillActivation([FromBody] ChangeActiveStatusMajorSkillCommand command,
         CancellationToken cancellationToken)
     {
@@ -54,6 +58,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     
     
     [HttpGet("lookups/majors")]
+    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
     {
         //get language from header
@@ -63,6 +68,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     }
 
     [HttpGet("lookups/sub-majors")]
+    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> GetMajors([FromQuery] GetSubMajorsQuery query)
     {
         var result = await mediator.Send(query);

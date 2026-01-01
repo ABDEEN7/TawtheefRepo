@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace Tawtheef.Infrastructure.Services.Authorization;
+namespace Tawtheef.Application.Common.Security;
 
 public class PermissionRequirement(string permission) : IAuthorizationRequirement
 {

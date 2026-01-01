@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Users;
 
 public class ApplicationUserConfiguration<T> : IEntityTypeConfiguration<T> where T : User
 {

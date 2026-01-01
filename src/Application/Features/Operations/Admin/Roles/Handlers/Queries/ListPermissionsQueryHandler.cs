@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
-using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Security;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 

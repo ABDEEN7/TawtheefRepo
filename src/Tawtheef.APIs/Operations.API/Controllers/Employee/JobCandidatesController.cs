@@ -1,24 +1,23 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Commands;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Queries;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
 {
     #region Lookups
     [HttpGet("lookups/candidate-types")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsManage)]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetCandidateTypes()
     {
         var result = await mediator.Send(new GetCandidateTypesQuery());
@@ -28,7 +27,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
 
     #region Job Candidates
     [HttpGet("overview")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsManage)]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetOverview([FromQuery] GetJobCandidatesOverviewQuery query)
     {
         var result = await mediator.Send(query);
@@ -36,7 +35,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("search")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsManage)]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> Search([FromBody] GetJobCandidatesQuery query)
     {
         var result = await mediator.Send(query);
@@ -44,7 +43,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("export")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsManage)]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> Export([FromBody] ExportJobCandidatesQuery query)
     {
         var result = await mediator.Send(query);
@@ -58,7 +57,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("send-invitations")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsManage)]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> SendInvitations([FromBody] SendJobCandidateInvitationsCommand command)
     {
         var result = await mediator.Send(command);

@@ -1,4 +1,4 @@
-namespace Tawtheef.Application.Common.Constants;
+namespace Tawtheef.Application.Common.Security;
 
 public static class PolicyNames
 {
