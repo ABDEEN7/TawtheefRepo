@@ -165,15 +165,16 @@
                   <p-tag severity="warn" [value]="sec.notesCount + ''"></p-tag>
                   <span class="fw-semibold">{{ sec.labelKey | translate }}</span>
                 </div>
-
-                <button
-                  pButton
-                  type="button"
-                  class="p-button-sm p-button-outlined"
-                  icon="pi pi-pencil"
-                  (click)="editSection(sec.section)"
-                  [label]="'profileView.review.editSection' | translate"
-                ></button>
+                @if (canShowEdit(sec.section)) {
+                  <button
+                    pButton
+                    type="button"
+                    class="p-button-sm p-button-outlined"
+                    icon="pi pi-pencil"
+                    (click)="editSection(sec.section)"
+                    [label]="'profileView.review.editSection' | translate"
+                  ></button>
+                }
               </div>
 
               <div class="notes mt-2">
@@ -293,7 +294,7 @@
                 </div>
               </div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Prerequisites)">
               <button
                 pButton
                 type="button"
@@ -319,14 +320,6 @@
                   <div class="v">{{ vm()!.prereq.targetEntity!.name }}</div>
                 </div>
               </div>
-              @if(vm()!.visibility.showOffice){
-                <div class="col-md-4">
-                  <div class="kv">
-                    <div class="k">{{ 'profileView.fields.office' | translate }}</div>
-                    <div class="v">{{ vm()!.prereq.office?.name }}</div>
-                  </div>
-                </div>
-              }
             </div>
 
             <div class="attach-grid mt-3">
@@ -363,7 +356,7 @@
                 <div class="subtitle text-muted">{{ 'profileView.sections.personal' | translate }}</div>
               </div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Personal)">
               <button
                 pButton
                 type="button"
@@ -489,7 +482,7 @@
                 <div class="subtitle text-muted">{{ 'profileView.sections.contact' | translate }}</div>
               </div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Contact)">
               <button
                 pButton
                 type="button"
@@ -567,7 +560,7 @@
               <div class="icon"><i class="pi pi-graduation-cap"></i></div>
               <div><div class="title">{{ 'profileView.sections.qualifications' | translate }}</div></div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Qualifications)">
               <button
                 pButton
                 type="button"
@@ -634,7 +627,7 @@
               <div class="icon"><i class="pi pi-briefcase"></i></div>
               <div class="title">{{ 'profileView.sections.experiences' | translate }}</div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Experience)">
               <button
                 pButton
                 type="button"
@@ -694,7 +687,7 @@
               <div class="icon"><i class="pi pi-book"></i></div>
               <div class="title">{{ 'profileView.sections.trainingCourses' | translate }}</div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.TrainingCourses)">
               <button
                 pButton
                 type="button"
@@ -751,7 +744,7 @@
               <div class="icon"><i class="pi pi-star"></i></div>
               <div class="title">{{ 'profileView.sections.certificatesAndAwards' | translate }}</div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.CertificatesAndAwards)">
               <button
                 pButton
                 type="button"
@@ -808,7 +801,7 @@
               <div class="icon"><i class="pi pi-bolt"></i></div>
               <div class="title">{{ 'profileView.sections.skills' | translate }}</div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Skills)">
               <button
                 pButton
                 type="button"
@@ -839,7 +832,7 @@
               <div class="icon"><i class="pi pi-language"></i></div>
               <div class="title">{{ 'profileView.sections.languages' | translate }}</div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Languages)">
               <button
                 pButton
                 type="button"
@@ -882,7 +875,7 @@
               <div class="icon"><i class="pi pi-paperclip"></i></div>
               <div class="title">{{ 'profileView.sections.attachments' | translate }}</div>
             </div>
-            <div class="right">
+            <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Attachments)">
               <button
                 pButton
                 type="button"
