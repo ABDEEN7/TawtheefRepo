@@ -50,3 +50,21 @@
     border-color: #64002d;
   }
 }
+
+.logo-preview {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px dashed #dee2e6;
+  border-radius: 8px;
+  max-width: 180px;
+  background-color: #fafafa;
+}
+
+.logo-image {
+  width: 100%;
+  height: auto;
+  max-height: 140px;
+  object-fit: contain;
+}
