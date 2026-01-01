@@ -17,8 +17,8 @@ public sealed class AzureExternalCallbackLoginHandler(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService,
-    ILoginAuditService loginAudit,
-    IEmployeeProfileService employeeProfileService
+    ILoginAuditService loginAudit//,
+    //IEmployeeProfileService employeeProfileService
 ) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     protected override string Provider => "Azure";
@@ -202,13 +202,16 @@ public sealed class AzureExternalCallbackLoginHandler(
 
     private async Task<Result> SyncEmployeeProfileAsync(User user, CancellationToken ct)
     {
-        if (user is not EmployeeUser employeeUser)
-            return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
-
-        var syncResult = await employeeProfileService.SyncFromDirectoryAsync(employeeUser, ct);
-        return syncResult.IsFailed
-            ? Result.Fail(syncResult.Errors)
-            : Result.Ok();
+        await Task.Delay(1000, ct);
+        return Result.Ok();
+        
+        // if (user is not EmployeeUser employeeUser)
+        //     return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
+        //
+        // var syncResult = await employeeProfileService.SyncFromDirectoryAsync(employeeUser, ct);
+        // return syncResult.IsFailed
+        //     ? Result.Fail(syncResult.Errors)
+        //     : Result.Ok();
     }
 
     private static bool IsEduGovQaEmail(string? email)
