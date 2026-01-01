@@ -1,8 +1,8 @@
 using FluentResults;
-using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Admin.Universities.DTOs;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Universities.Handlers.Queries;
 
-public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, ILocalizationService localizationService)
     : IRequestHandler<GetListUniversitiesQuery, IResult<PaginatedResult<UniversityAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<UniversityAdminDto>>> Handle(
@@ -24,7 +24,6 @@ public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper
             .GetEntityRepository<University>()
             .DbSet
             .AsNoTracking()
-            .Include(u => u.City)!.ThenInclude(c => c.Country)
             .WhereIf(
                 !string.IsNullOrWhiteSpace(searchTerm),
                 u => EF.Functions.Like(u.NameEn, $"%{searchTerm}%") ||
@@ -32,9 +31,27 @@ public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper
             .WhereIf(
                 request.CountryId.HasValue,
                 u => u.City != null && u.City.CountryId == request.CountryId)
-            .OrderBy(u => u.DisplayOrder)
-            .ThenBy(u => u.NameEn)
-            .ToPaginatedListAsync<University, UniversityAdminDto>(mapper, request, cancellationToken);
+            .Select(u => new UniversityAdminDto()
+            {
+                Id = u.Id,
+                NameEn = u.NameEn,
+                NameAr = u.NameAr,
+                CountryId = u.City!.CountryId,
+                CountryName = localizationService.GetLocalizedName(u.City!.Country!),
+                CityId = u.CityId,
+                CityName = localizationService.GetLocalizedName(u.City!),
+                Code = u.Code,
+                Email = u.Email,
+                Phone = u.Phone,
+                WebSite = u.WebSite,
+                IsActive = u.IsActive,
+                DescriptionEn = u.DescriptionEn,
+                DescriptionAr = u.DescriptionAr,
+                LogoEn = u.LogoEn,
+                LogoAr = u.LogoAr,
+                OriginalName = u.OriginalName
+            })
+            .ToPaginatedListAsync<UniversityAdminDto>(request, cancellationToken);
 
         return Result.Ok(universities);
     }

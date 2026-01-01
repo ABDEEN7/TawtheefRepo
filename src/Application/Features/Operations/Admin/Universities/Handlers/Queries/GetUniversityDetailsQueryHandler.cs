@@ -21,7 +21,7 @@ public sealed class GetUniversityDetailsQueryHandler(IUnitOfWork unitOfWork, IMa
             .GetEntityRepository<University>()
             .DbSet
             .AsNoTracking()
-            .Include(u => u.City)!.ThenInclude(c => c.Country)
+            .Include(u => u.City)!.ThenInclude(c => c!.Country)
             .FirstOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
 
         if (university is null)

@@ -6,11 +6,9 @@ export interface UniversityDto {
   descriptionAr?: string;
   descriptionEn?: string;
   countryId: string;
-  countryNameAr?: string;
-  countryNameEn?: string;
+  countryName?: string;
   cityId: string;
-  cityNameAr?: string;
-  cityNameEn?: string;
+  cityName?: string;
   webSite?: string;
   phone?: string;
   email?: string;

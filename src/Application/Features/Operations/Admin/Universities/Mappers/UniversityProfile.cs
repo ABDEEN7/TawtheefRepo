@@ -1,4 +1,5 @@
 using Mapster;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Admin.Universities.DTOs;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -17,11 +18,7 @@ public sealed class UniversityProfile : IRegister
             .Map(dest => dest.DescriptionAr, src => src.DescriptionAr)
             .Map(dest => dest.DescriptionEn, src => src.DescriptionEn)
             .Map(dest => dest.CityId, src => src.CityId)
-            .Map(dest => dest.CityNameAr, src => src.City != null ? src.City.NameAr : null)
-            .Map(dest => dest.CityNameEn, src => src.City != null ? src.City.NameEn : null)
             .Map(dest => dest.CountryId, src => src.City != null ? src.City.CountryId : Guid.Empty)
-            .Map(dest => dest.CountryNameAr, src => src.City != null && src.City.Country != null ? src.City.Country.NameAr : null)
-            .Map(dest => dest.CountryNameEn, src => src.City != null && src.City.Country != null ? src.City.Country.NameEn : null)
             .Map(dest => dest.WebSite, src => src.WebSite)
             .Map(dest => dest.Phone, src => src.Phone)
             .Map(dest => dest.Email, src => src.Email)
@@ -29,6 +26,12 @@ public sealed class UniversityProfile : IRegister
             .Map(dest => dest.LogoAr, src => src.LogoAr)
             .Map(dest => dest.LogoEn, src => src.LogoEn)
             .Map(dest => dest.OriginalName, src => src.OriginalName)
-            .Map(dest => dest.IsActive, src => src.IsActive);
+            .Map(dest => dest.IsActive, src => src.IsActive)
+            .AfterMapping((src, dest) =>
+            {
+                var localized = MapContext.Current!.GetService<ILocalizationService>();
+                dest.CountryName = localized.GetLocalizedName(src.City!.Country);
+                dest.CityName = localized.GetLocalizedName(src.City);
+            });
     }
 }
