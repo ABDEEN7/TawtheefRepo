@@ -101,6 +101,7 @@ namespace Tawtheef.Infrastructure
             services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
             services.Configure<StorageSettings>(configuration.GetSection(StorageSettings.SectionName));
             services.Configure<EmailDispatcherSettings>(configuration.GetSection(EmailDispatcherSettings.SectionName));
+            services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
         }
 
         #endregion
@@ -438,6 +439,13 @@ namespace Tawtheef.Infrastructure
                         UseDefaultCredentials = false
                     };
                 });
+            // ===== Employee Directory =====
+            services.AddHttpClient<IEmployeeDirectoryClient, EmployeeDirectoryClient>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<HrServiceSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+            });
         }
         extension(IServiceCollection services)
         {
@@ -484,6 +492,7 @@ namespace Tawtheef.Infrastructure
                 services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
                 services.AddScoped<ILoginAuditService, LoginAuditService>();
+                services.AddScoped<IEmployeeProfileService, EmployeeProfileService>();
                 services.AddScoped<ITokenService, TokenService>();
                 services.AddScoped<ISessionService, EfSessionService>();
                 

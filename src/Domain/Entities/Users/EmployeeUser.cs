@@ -19,6 +19,7 @@ public class EmployeeUser : User
 {
     public ICollection<ProfileAssignment> ProfileAssignments { get; set; } = [];
     
+    public EmployeeProfile? EmployeeProfile { get; set; }
     public static Result<User> Register(string email,string displayName)
     {
         var name = FullName.TryParse(displayName);

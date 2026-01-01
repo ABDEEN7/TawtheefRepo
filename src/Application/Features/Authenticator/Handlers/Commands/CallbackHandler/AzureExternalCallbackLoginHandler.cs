@@ -17,7 +17,8 @@ public sealed class AzureExternalCallbackLoginHandler(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService,
-    ILoginAuditService loginAudit
+    ILoginAuditService loginAudit,
+    IEmployeeProfileService employeeProfileService
 ) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     protected override string Provider => "Azure";
@@ -55,19 +56,22 @@ public sealed class AzureExternalCallbackLoginHandler(
         var fullName  = principal.FindFirst(ClaimTypes.Name)?.Value ??
                         principal.FindFirst("name")?.Value ??
                         $"{principal.FindFirst(ClaimTypes.GivenName)?.Value} {principal.FindFirst(ClaimTypes.Surname)?.Value}".Trim();
+        if (string.IsNullOrWhiteSpace(email))
+            return await LogFailureAsync(ErrorsCodes.ExternalLoginEmailNotFound, ct: ct);
 
+        if (!IsEduGovQaEmail(email))
+            return await LogFailureAsync(ErrorsCodes.ExternalLoginEmailDomainNotAllowed, ct: ct);
         // If already linked, sign-in directly
         var linkedUser = await userManager.FindByLoginAsync(Provider, providerKey);
         if (linkedUser is not null)
         {
             await UpsertProviderClaimsAsync(userManager, linkedUser, Provider, principal);
+            var syncResult = await SyncEmployeeProfileAsync(linkedUser, ct);
+            if (syncResult.IsFailed)
+                return await LogFailureAsync(syncResult.Errors, linkedUser.Id, linkedUser.UserTypeId, ct: ct);
             await signInManager.SignInAsync(linkedUser, isPersistent: false);
             return await tokenService.IssueTokensAsync(linkedUser, Provider, ct);
         }
-
-        // Not linked: attach to existing by email, or create new
-        if (string.IsNullOrWhiteSpace(email))
-            return await LogFailureAsync(ErrorsCodes.ExternalLoginEmailNotFound, ct: ct);
 
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser is not null)
@@ -84,6 +88,9 @@ public sealed class AzureExternalCallbackLoginHandler(
                     existingUser.Id, existingUser.UserTypeId, ct: ct);
 
             await UpsertProviderClaimsAsync(userManager, existingUser, Provider, principal);
+            var syncExistingResult = await SyncEmployeeProfileAsync(existingUser, ct);
+            if (syncExistingResult.IsFailed)
+                return await LogFailureAsync(syncExistingResult.Errors, existingUser.Id, existingUser.UserTypeId, ct: ct);
             await signInManager.SignInAsync(existingUser, isPersistent: false);
 
 
@@ -123,6 +130,10 @@ public sealed class AzureExternalCallbackLoginHandler(
             return await LogFailureAsync(string.Join(", ", addLogin.Errors.Select(e => e.Description)), newUser.Id, newUser.UserTypeId, ct: ct);
 
         await UpsertProviderClaimsAsync(userManager, newUser, Provider, principal);
+        
+        var syncNewResult = await SyncEmployeeProfileAsync(newUser, ct);
+        if (syncNewResult.IsFailed)
+            return await LogFailureAsync(syncNewResult.Errors, newUser.Id, newUser.UserTypeId, ct: ct);
         return await tokenService.IssueTokensAsync(newUser, Provider, ct);
     }
     private static string? GetProviderKey(ClaimsPrincipal p)
@@ -187,5 +198,22 @@ public sealed class AzureExternalCallbackLoginHandler(
         user.EmailConfirmed = true;
 
         await userManager.UpdateAsync(user);
+    }
+
+    private async Task<Result> SyncEmployeeProfileAsync(User user, CancellationToken ct)
+    {
+        if (user is not EmployeeUser employeeUser)
+            return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
+
+        var syncResult = await employeeProfileService.SyncFromDirectoryAsync(employeeUser, ct);
+        return syncResult.IsFailed
+            ? Result.Fail(syncResult.Errors)
+            : Result.Ok();
+    }
+
+    private static bool IsEduGovQaEmail(string? email)
+    {
+        return !string.IsNullOrWhiteSpace(email) &&
+               email.EndsWith("@edu.gov.qa", StringComparison.OrdinalIgnoreCase);
     }
 }

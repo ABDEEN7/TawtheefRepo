@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
@@ -10,6 +11,22 @@ public class EmployeeUserConfiguration : ApplicationUserConfiguration<EmployeeUs
     public override void Configure(EntityTypeBuilder<EmployeeUser> builder)
     {
         base.Configure(builder);
+        
+        builder.OwnsOne(e => e.EmployeeProfile, nav =>
+        {
+            nav.Property(p => p.EmployeeNumber).HasMaxLength(50);
+            nav.Property(p => p.Qid).HasMaxLength(50);
+            nav.Property(p => p.FullNameAr).HasMaxLength(300);
+            nav.Property(p => p.FullNameEn).HasMaxLength(300);
+            nav.Property(p => p.Email).HasMaxLength(200);
+            nav.Property(p => p.MobileNumber).HasMaxLength(50);
+            nav.Property(p => p.Department).HasMaxLength(300);
+            nav.Property(p => p.DepartmentNumber).HasMaxLength(100);
+            nav.Property(p => p.Section).HasMaxLength(300);
+            nav.Property(p => p.SectionNumber).HasMaxLength(100);
+            nav.Property(p => p.JobTitle).HasMaxLength(300);
+            nav.Property(p => p.RawPayload).HasColumnType("text");
+        });
         builder.HasData(
             GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId1, "t-m.abdin@edu.gov.qa"),
             GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId2, "t-a.jaber@edu.gov.qa"),

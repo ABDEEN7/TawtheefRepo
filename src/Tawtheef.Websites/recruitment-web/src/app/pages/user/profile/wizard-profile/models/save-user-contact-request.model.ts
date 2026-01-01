@@ -1,4 +1,5 @@
-﻿import {GUID} from '../../../../../shared/types/guid.type';
+import {GUID} from '../../../../../shared/types/guid.type';
+import {PhoneNumber} from './phone-number.model';
 
 export interface NationalAddressDto {
   zone: string | null;
@@ -13,8 +14,12 @@ export interface SaveProfileContactRequestDto {
 
   residenceCountryId: GUID | null;
   interviewLocationId: GUID | null;
-  officeId?: GUID | null;
 
   address: string | null;
   nationalAddress: NationalAddressDto | null;
+
+  phone: PhoneNumber | null;
+  phoneVerified: boolean;
+  email: string | null;
+  emailVerified: boolean;
 }
