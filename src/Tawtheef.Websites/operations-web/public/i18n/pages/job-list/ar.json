@@ -64,6 +64,6 @@
   "JOB_LIST_CONFIRMATIONS_REOPEN_JOB":"إعادة تفعيل الوظيفة",
   "JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE": "هل أنت متأكد من إعادة تفعيل هذه الوظيفة ؟",
   "JOB_LIST_BUTTONS_VIEW_CANDIDATE":"عرض المرشحين",
-  "JOB_LIST_BUTTONS_SEND_INVITATIONS":"إرسال الدعوات"
-
+  "JOB_LIST_BUTTONS_SEND_INVITATIONS":"إرسال الدعوات",
+  "JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE":"هل أنت متأكد أنك تريد إلغاء هذه المهمة ؟"
 }

@@ -87,9 +87,9 @@ public static class JobBusinessRules
 
     public static bool AreAllTabsCompleted(
         bool hasDegrees, bool hasConditions,
-        bool hasResponsibilities, bool hasAttachments, bool hasOverview, bool hasBenefits)
+        bool hasResponsibilities, bool hasOverview, bool hasBenefits)
     {
-        return hasDegrees && hasConditions && hasResponsibilities && hasAttachments && hasOverview && hasBenefits;
+        return hasDegrees && hasConditions && hasResponsibilities && hasOverview && hasBenefits;
     }
 
     public static bool IsInApprovalProcess(Guid jobStatusId)
@@ -194,6 +194,7 @@ public static class JobBusinessRules
             [JobStatusIds.Draft] = [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
             [JobStatusIds.PendingApproval] = [JobStatusIds.NeedUpdate,JobStatusIds.Approved, JobStatusIds.Rejected, JobStatusIds.Cancelled],
             [JobStatusIds.Approved] = [JobStatusIds.ReadyForAnnouncement, JobStatusIds.Cancelled],
+            [JobStatusIds.NeedUpdate]= [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
             [JobStatusIds.ReadyForAnnouncement] = [JobStatusIds.Published],
             [JobStatusIds.Published] = [JobStatusIds.Closed, JobStatusIds.Cancelled],
             [JobStatusIds.Rejected] = [JobStatusIds.Draft],

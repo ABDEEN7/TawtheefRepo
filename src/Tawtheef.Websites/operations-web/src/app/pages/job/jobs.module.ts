@@ -45,9 +45,9 @@ import { ProgressSpinner } from "primeng/progressspinner";
 import { RemoteSelectComponent } from '../../shared/components/remote-select/remote-select';
 import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
 import { TableModule } from 'primeng/table';
-import { RadioButtonModule } from 'primeng/radiobutton'; 
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { JobCandidatesComponent } from './job-candidates/job-candidates.component';
-import { TooltipModule } from 'primeng/tooltip';
+import {Tooltip} from 'primeng/tooltip';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -100,8 +100,8 @@ import { TooltipModule } from 'primeng/tooltip';
     RemoteSelectComponent,
     TableModule,
     RadioButtonModule,
-    TooltipModule
-],
+    Tooltip
+  ],
   exports: [
     JobDetailsComponent,
     JobListComponent,

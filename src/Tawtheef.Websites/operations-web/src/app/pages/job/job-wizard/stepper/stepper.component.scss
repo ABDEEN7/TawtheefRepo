@@ -1,18 +1,7 @@
-.stepper-container {
-  width: 100%;
-  background: #FBFBFB;
-  border: 1px solid #CBCBCB;
-  border-radius: 24px;
-  padding: 24px;
-  display: flex;
-  justify-content: center;
-  overflow-x: auto;
-  box-sizing: border-box;
-}
 
 .stepper {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
   min-width: 100%;
   gap: 0;
@@ -21,8 +10,7 @@
 .step-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  flex: 1 1 0; 
+  flex: 1 1 0;
   position: relative;
 }
 
@@ -96,7 +84,7 @@
 }
 
 .connector-line {
-  flex-grow: 1; 
+  flex-grow: 1;
   height: 3px;
   background: #CBCBCB;
   border-radius: 2px;

@@ -6,7 +6,6 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
@@ -33,32 +32,47 @@ public class UpdateJobCommandHandler(
         if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
             return Result.Fail<Unit>(JobMessages.CanOnlyEditInDraft);
 
-        if (request.Job.Skills?.Any() ?? false)
+        if (request.Job.Skills != null)
             await UpdateSkillsAsync(existingJob, request.Job.Skills);
 
-        if (request.Job.Conditions?.Any() ?? false)
+        if (request.Job.Conditions != null)
             await UpdateConditionsAsync(existingJob, request.Job.Conditions);
 
-        if (request.Job.Degrees?.Any() ?? false)
+        if (request.Job.Degrees != null)
             await UpdateDegreesAsync(existingJob, request.Job.Degrees.Select(d => d.DegreeId).ToList());
 
-        if (request.Job.Responsibilities?.Any() ?? false)
+        if (request.Job.Responsibilities != null)
             await UpdateResponsibilitiesAsync(existingJob, request.Job.Responsibilities);
 
-        if (request.Job.RequiredAttachments?.Any() ?? false)
+        if (request.Job.RequiredAttachments != null)
             await UpdateRequiredAttachmentsAsync(existingJob, request.Job.RequiredAttachments);
 
+        existingJob.TitleAr = request.Job.TitleAr;
+        existingJob.TitleEn = request.Job.TitleEn;
+        existingJob.SectorId = request.Job.SectorId;
+        existingJob.ManagementId = request.Job.ManagementId;
+        existingJob.DepartmentId = request.Job.DepartmentId;
+        existingJob.YearsOfExperience = request.Job.YearsOfExperience;
+        existingJob.JobCategoryId = request.Job.JobCategoryId;
+        existingJob.WorkLocationId = request.Job.WorkLocationId;
+        existingJob.GenderId = request.Job.GenderId;
+        existingJob.MajorId = request.Job.MajorId;
+        existingJob.SubMajorId = request.Job.SubMajorId;
+        existingJob.WorkTypeId = request.Job.WorkTypeId;
+        existingJob.NumberOfVacancies = request.Job.NumberOfVacancies;
+        existingJob.ClosingDate = request.Job.ClosingDate;
+        existingJob.MinimumAge = request.Job.MinimumAge;
+        existingJob.MaximumAge = request.Job.MaximumAge;
         existingJob.OverViewAr = request.Job.OverviewAr;
         existingJob.OverViewEn = request.Job.OverviewEn;
         existingJob.BenefitsAr = request.Job.BenefitsAr;
         existingJob.BenefitsEn = request.Job.BenefitsEn;
         existingJob.QualificationDescriptionAr = request.Job.QualificationsDescriptionAr;
         existingJob.QualificationDescriptionEn = request.Job.QualificationsDescriptionEn;
-        existingJob.ChangeStatus(JobStatusIds.PendingApproval);
 
         await jobRepository.Repository.UpdateAsync(existingJob);
-        var updated = await unitOfWork.SaveChangesAsync(cancellationToken);
-        return updated > 0 ? Result.Ok(Unit.Value) : Result.Fail<Unit>(JobMessages.UpdateFailed);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Result.Ok(Unit.Value);
     }
 
     private async Task UpdateSkillsAsync(JobEntity job, List<JobSkillRequestDto> newSkills)
