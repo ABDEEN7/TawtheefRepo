@@ -130,7 +130,6 @@
   "profileView.fields.gender": "Gender",
   "profileView.fields.religion": "Religion",
   "profileView.fields.maritalStatus": "Marital Status",
-  "profileView.fields.childrenCount": "Number of Children",
   "profileView.fields.hasDisability": "Do you have a disability?",
   "profileView.fields.disabilityDetails": "Disability Details",
   "profileView.fields.sponsorType": "Sponsor Type",

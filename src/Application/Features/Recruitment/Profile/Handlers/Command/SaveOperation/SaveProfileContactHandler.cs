@@ -1,12 +1,14 @@
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
@@ -35,11 +37,25 @@ public sealed class SaveProfileContactHandler(
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var needsOffice = ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider);
-        
+
+        Guid? officeId = null;
+        if (needsOffice)
+        {
+            officeId = await uow.GetEntityRepository<Office>().DbSet.AsNoTracking()
+                .Where(o => o.CountryId == r.ResidenceCountryId)
+                .OrderBy(o => o.DisplayOrder)
+                .ThenBy(o => o.NameEn)
+                .Select(o => (Guid?)o.Id)
+                .FirstOrDefaultAsync(ct);
+
+            if (officeId is null)
+                return Result.Fail<Unit>(ErrorsCodes.OfficeRequired);
+        }
+
         profile.ResidenceCountryId = r.ResidenceCountryId;
         profile.InterviewLocationId = r.InterviewLocationId;
         profile.Address = r.Address;
-        profile.OfficeId = needsOffice ? r.OfficeId : null;
+        profile.OfficeId = needsOffice ? officeId : null;
 
         if (r.NationalAddress is not null)
         {

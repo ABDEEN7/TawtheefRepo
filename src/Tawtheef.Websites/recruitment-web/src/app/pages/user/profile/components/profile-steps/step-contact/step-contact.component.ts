@@ -4,7 +4,8 @@ import {
   Output,
   inject,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  effect
 } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { PhoneNumberUtil } from 'google-libphonenumber';
@@ -29,6 +30,7 @@ import {createStepValiditySignal} from '../../../wizard-profile/state/profile-st
 import {mapContactSection} from '../../../wizard-profile/services/profile.mapper';
 import {PhoneNumber} from '../../../wizard-profile/models/phone-number.model';
 import {VERIFIED_PHONE_KEY} from '../../../../../../core/constants/wizard-keys.const';
+import {CountryDto} from '../../../wizard-profile/services/profile-lookups.service';
 
 
 type VerificationStatus =
@@ -79,6 +81,9 @@ export class StepContactComponent implements OnInit, OnDestroy {
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
   private readonly QATAR_E164_PREFIX = '+974';
+  private readonly GOOGLE_PROVIDER = 'google';
+  private readonly QATAR_PASS_PROVIDER = 'qatarpass';
+  private readonly QATAR_RESIDENT_PROVIDER = 'qatarresidentotp';
   // verification states
   phoneInput: PhoneNumber | null = null;
   phone: VerificationState = {
@@ -103,17 +108,29 @@ export class StepContactComponent implements OnInit, OnDestroy {
   };
 
   selectedCountryIso2: CountryISO = CountryISO.Qatar;
+  onlyPhoneCountries: CountryISO[] | undefined;
+  excludedPhoneCountries: CountryISO[] = [];
   savingContact = false;
   private lastSubmittedSignature: string | null = null;
+  private pendingGeoCountryIso2: string | null = null;
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
     return validity['contact'];
   }
 
+  private readonly geoCountrySync = effect(() => {
+    // Re-run when countries lookup refreshes to apply GeoIP once available.
+    this.lookups.countries();
+    this.tryApplyPendingGeoCountry();
+  });
+
   ngOnInit(): void {
+    this.configurePhoneCountries();
     this.geoIp.getCountryIso2().subscribe(code => {
-      this.selectedCountryIso2 = code.toLowerCase() as CountryISO;
+      this.selectedCountryIso2 = this.resolveInitialPhoneCountry(code);
+      this.pendingGeoCountryIso2 = code;
+      this.tryApplyPendingGeoCountry();
     });
 
     const state = this.ds.state();
@@ -144,6 +161,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.syncCountryDependents(this.ds.state().country ?? null);
     // init email
     if (state.email) {
       this.email.value = state.email;
@@ -152,8 +170,6 @@ export class StepContactComponent implements OnInit, OnDestroy {
     if (state.emailVerified) {
       this.email.status = 'verified';
     }
-
-    const dto = mapContactSection(state);
     updateRemote(this.naLocalFile, state.naFile);
     this.lastSubmittedSignature = null;
   }
@@ -187,6 +203,15 @@ export class StepContactComponent implements OnInit, OnDestroy {
     return this.isQatarPhone(this.ds.state().phone ?? null);
   }
 
+  private isQatarOnlyProvider(): boolean {
+    const provider = (this.ds.state().provider ?? '').toLowerCase();
+    return provider === this.QATAR_PASS_PROVIDER || provider === this.QATAR_RESIDENT_PROVIDER;
+  }
+
+  private isGoogleProvider(): boolean {
+    return (this.ds.state().provider ?? '').toLowerCase() === this.GOOGLE_PROVIDER;
+  }
+
   private resetPhoneVerificationState(): void {
     this.ds.up('phoneVerified', false);
     this.phone.status = 'idle';
@@ -206,6 +231,73 @@ export class StepContactComponent implements OnInit, OnDestroy {
         target.cooldownTimer = undefined;
       }
     }, 1000);
+  }
+
+  private configurePhoneCountries(): void {
+    if (this.isQatarOnlyProvider()) {
+      this.onlyPhoneCountries = [CountryISO.Qatar];
+      this.excludedPhoneCountries = [];
+      this.selectedCountryIso2 = CountryISO.Qatar;
+      return;
+    }
+
+    if (this.isGoogleProvider()) {
+      this.onlyPhoneCountries = undefined;
+      this.excludedPhoneCountries = [CountryISO.Qatar];
+      return;
+    }
+
+    this.onlyPhoneCountries = undefined;
+    this.excludedPhoneCountries = [];
+  }
+
+  private resolveInitialPhoneCountry(iso2: string): CountryISO {
+    const normalized = (iso2 ?? '').toLowerCase() as CountryISO;
+    if (this.isQatarOnlyProvider()) return CountryISO.Qatar;
+    if (this.isGoogleProvider() && normalized === CountryISO.Qatar) {
+      return CountryISO.UnitedArabEmirates;
+    }
+    return normalized || CountryISO.Qatar;
+  }
+
+  private setCountryFromIso(iso2: string): void {
+    if (!iso2) return;
+
+    const countries = this.lookups.countries();
+    if (!countries || countries.length === 0) {
+      this.pendingGeoCountryIso2 = iso2;
+      return;
+    }
+
+    this.pendingGeoCountryIso2 = null;
+
+    if (this.ds.isLocked('country') && this.ds.state().country) {
+      this.syncCountryDependents(this.ds.state().country ?? null);
+      return;
+    }
+
+    if (this.ds.state().country) {
+      this.syncCountryDependents(this.ds.state().country ?? null);
+      return;
+    }
+
+    const match = this.lookups.countries().find(c => c.code?.toLowerCase() === iso2?.toLowerCase());
+    if (match) {
+      this.onCountryChange(match);
+    }
+  }
+
+  private tryApplyPendingGeoCountry(): void {
+    if (!this.pendingGeoCountryIso2) return;
+    this.setCountryFromIso(this.pendingGeoCountryIso2);
+  }
+
+  private syncCountryDependents(country: CountryDto | null): void {
+    this.syncInterviewPlace(country);
+  }
+
+  private syncInterviewPlace(country: CountryDto | null): void {
+    this.ds.up('interviewPlace', country ?? null);
   }
 
   // ========== Phone ==========
@@ -260,6 +352,11 @@ export class StepContactComponent implements OnInit, OnDestroy {
     // Otherwise require verification for Qatar
     this.ds.up('phoneVerified', false);
     this.phone.status = 'idle';
+  }
+
+  onCountryChange(country: CountryDto | null): void {
+    this.ds.up('country', country ?? null);
+    this.syncCountryDependents(country);
   }
 
   sendPhoneCode(): void {

@@ -210,10 +210,6 @@ export class ProfileDataService {
       next.address = undefined;
     }
 
-    if (candidateTypeIsResident(type, state.provider)) {
-      next.office = null;
-    }
-
     return next;
   }
 

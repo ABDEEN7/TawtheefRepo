@@ -63,8 +63,6 @@ export interface ProfileStatusDto {
   maritalStatusId?: GUID | null;
   maritalStatus?: dropdownOptionsModel | null;
 
-  childrenCount: number;
-
   residenceCountryId?: GUID | null;
   residenceCountry?: dropdownOptionsModel | null;
   interviewLocationId?: GUID | null;

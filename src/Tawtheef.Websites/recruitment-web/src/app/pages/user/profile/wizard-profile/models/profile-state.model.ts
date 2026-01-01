@@ -18,7 +18,6 @@ export interface ProfileState {
   // prereq
   candidateType?: dropdownOptionsModel;
   targetEntity?: dropdownOptionsModel;
-  office?: dropdownOptionsModel | null;
   cvName?: string | null;
   cvFile?: UploadedFileRef | null;
   idName?: string | null;
@@ -37,7 +36,6 @@ export interface ProfileState {
   gender?: dropdownOptionsModel;
   religion?: dropdownOptionsModel;
   marital?: dropdownOptionsModel;
-  children?: number;
   dob?: string;
 
   hasDisability: boolean;

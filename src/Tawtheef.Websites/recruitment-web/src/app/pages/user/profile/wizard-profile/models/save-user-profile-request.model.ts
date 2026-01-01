@@ -18,11 +18,10 @@ birthDate?: string | null; // ISO: 'YYYY-MM-DD'
 
 nationalityId?: string | null;
 genderId?: string | null;
-religionId?: string | null;
-maritalStatusId?: string | null;
-childrenCount?: number | null;
+  religionId?: string | null;
+  maritalStatusId?: string | null;
 
-residenceCountryId?: string | null;
+  residenceCountryId?: string | null;
 address?: string | null;
 interviewLocationId?: string | null;
 
