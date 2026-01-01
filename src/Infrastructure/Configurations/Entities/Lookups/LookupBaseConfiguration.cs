@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Common;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
 public class LookupBaseConfiguration<T> : IEntityTypeConfiguration<T> 
     where T : LookupBase

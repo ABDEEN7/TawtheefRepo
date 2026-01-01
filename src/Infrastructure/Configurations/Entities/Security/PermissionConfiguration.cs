@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.Security;
+using Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Security;
 
