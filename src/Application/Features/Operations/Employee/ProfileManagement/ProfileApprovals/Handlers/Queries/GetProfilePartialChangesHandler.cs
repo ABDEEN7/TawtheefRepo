@@ -175,7 +175,6 @@ public sealed class GetProfilePartialChangesHandler(
         public HashSet<Guid> ResourceIds { get; } = [];
         public Dictionary<Guid, string> CandidateTypeNames { get; } = new();
         public Dictionary<Guid, string> TargetEntityNames { get; } = new();
-        public Dictionary<Guid, string> OfficeNames { get; } = new();
         public Dictionary<Guid, string> CountryNames { get; } = new();
         public Dictionary<Guid, string> GenderNames { get; } = new();
         public Dictionary<Guid, string> ReligionNames { get; } = new();
@@ -202,7 +201,6 @@ public sealed class GetProfilePartialChangesHandler(
 
         var candidateTypeIds = new HashSet<Guid>();
         var targetEntityIds = new HashSet<Guid>();
-        var officeIds = new HashSet<Guid>();
         var countryIds = new HashSet<Guid>();
         var genderIds = new HashSet<Guid>();
         var religionIds = new HashSet<Guid>();
@@ -232,7 +230,6 @@ public sealed class GetProfilePartialChangesHandler(
 
         await FillLookupAsync<CandidateType>(candidateTypeIds, maps.CandidateTypeNames, ct);
         await FillLookupAsync<TargetEntity>(targetEntityIds, maps.TargetEntityNames, ct);
-        await FillLookupAsync<Office>(officeIds, maps.OfficeNames, ct);
         await FillLookupAsync<Country>(countryIds, maps.CountryNames, ct);
         await FillLookupAsync<Gender>(genderIds, maps.GenderNames, ct);
         await FillLookupAsync<Religion>(religionIds, maps.ReligionNames, ct);
@@ -300,10 +297,6 @@ public sealed class GetProfilePartialChangesHandler(
                         case nameof(SaveProfilePrereqRequest.TargetEntityId):
                             targetEntityIds.Add(id);
                             break;
-                        case nameof(SaveProfileContactRequest.OfficeId):
-                            officeIds.Add(id);
-                            break;
-
                         case nameof(SaveProfilePersonalRequest.NationalityId):
                         case nameof(SaveProfileContactRequest.ResidenceCountryId):
                         case nameof(SaveProfileContactRequest.InterviewLocationId):
@@ -455,8 +448,6 @@ public sealed class GetProfilePartialChangesHandler(
                 nameof(SaveProfilePrereqRequest.CandidateTypeId) when maps.CandidateTypeNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
                 nameof(SaveProfilePrereqRequest.TargetEntityId) when maps.TargetEntityNames.TryGetValue(id, out name)
-                    => LookupObj(id, name),
-                nameof(SaveProfileContactRequest.OfficeId) when maps.OfficeNames.TryGetValue(id, out name)
                     => LookupObj(id, name),
 
                 nameof(SaveProfilePersonalRequest.NationalityId) when maps.CountryNames.TryGetValue(id, out name)

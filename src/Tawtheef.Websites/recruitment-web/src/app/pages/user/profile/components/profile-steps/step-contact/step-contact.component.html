@@ -13,11 +13,11 @@
         [options]="lookups.countries()"
         name="nationality"
         [ngModel]="ds.state().country"
-        (ngModelChange)="ds.up('country',$event)"
+        (ngModelChange)="onCountryChange($event)"
         [filter]="true"
         filterBy="name"
         optionLabel="name"
-                [placeholder]="'wizard.placeholders.selectCountry' | translate"
+        [placeholder]="'wizard.placeholders.selectCountry' | translate"
         class="w-full md:w-56"
         [disabled]="ds.isLocked('country')"
         [ngClass]="{ 'locked-field': ds.isLocked('country') }"></p-select>
@@ -33,6 +33,8 @@
         [maxLength]="15"
         [phoneValidation]="true"
         [selectedCountryISO]="selectedCountryIso2"
+        [onlyCountries]="onlyPhoneCountries"
+        [excludeCountries]="excludedPhoneCountries"
         [ngModel]="phoneInput"
         (ngModelChange)="onPhoneChange($event)"
         [disabled]="ds.isLocked('phone')"
@@ -175,21 +177,14 @@
     </div>
     <div class="col-md-3 d-flex flex-column">
       <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
-      <p-select [options]="lookups.countries()" [(ngModel)]="ds.state().interviewPlace"
+      <p-select [options]="lookups.countries()" [ngModel]="ds.state().interviewPlace"
                 [filter]="true" [loading]="false" filterBy="name" optionLabel="name"
                 class="w-full md:w-56"
                 [placeholder]="'wizard.placeholders.selectInterviewPlace' | translate"
-                (ngModelChange)="ds.up('interviewPlace',$event)"></p-select>
+                [disabled]="true"></p-select>
     </div>
 
 
-    <div class="col-md-3" *ngIf="ds.state().candidateType && !ds.isResidentQatar">
-      <label for="office" class="form-label required">{{ 'wizard.prereq.officeLabel' | translate }}</label>
-      <p-select [options]="lookups.offices()" [(ngModel)]="ds.state().office"
-                [filter]="false" [loading]="false" filterBy="name" optionLabel="name"
-                class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectOffice' | translate"
-                (ngModelChange)="ds.up('office',$event)" fluid></p-select>
-    </div>
   </div>
 
   <ng-container *ngIf="ds.isResidentQatar">

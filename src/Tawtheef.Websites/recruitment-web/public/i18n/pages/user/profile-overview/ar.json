@@ -129,7 +129,6 @@
   "profileView.fields.gender": "الجنس",
   "profileView.fields.religion": "الديانة",
   "profileView.fields.maritalStatus": "الحالة الاجتماعية",
-  "profileView.fields.childrenCount": "عدد الأبناء",
   "profileView.fields.hasDisability": "هل لديك إعاقة؟",
   "profileView.fields.disabilityDetails": "تفاصيل الإعاقة",
   "profileView.fields.sponsorType": "نوع الكفيل",

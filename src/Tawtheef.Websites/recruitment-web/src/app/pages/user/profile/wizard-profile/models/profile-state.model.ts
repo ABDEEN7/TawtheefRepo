@@ -14,11 +14,10 @@ export interface UploadedFileRef {
   file?: File | null;
 }
 export interface ProfileState {
-  provider: 'Google' | 'QatarPass'
+  provider: string;
   // prereq
   candidateType?: dropdownOptionsModel;
   targetEntity?: dropdownOptionsModel;
-  office?: dropdownOptionsModel | null;
   cvName?: string | null;
   cvFile?: UploadedFileRef | null;
   idName?: string | null;
@@ -37,7 +36,6 @@ export interface ProfileState {
   gender?: dropdownOptionsModel;
   religion?: dropdownOptionsModel;
   marital?: dropdownOptionsModel;
-  children?: number;
   dob?: string;
 
   hasDisability: boolean;

@@ -37,7 +37,6 @@ export class ProfileLookupsService {
   residenceCountry        = signal<CountryDto[]>([]);
   graduationCountry        = signal<CountryDto[]>([]);
   sponsorTypes        = signal<dropdownOptionsModel[]>([]);
-  offices        = signal<dropdownOptionsModel[]>([]);
 
   loadAll(): Observable<void> {
     if (this.loaded()) return new Observable(observer => {
@@ -63,7 +62,6 @@ export class ProfileLookupsService {
       languages: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languages),
       languageLevels: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.languageLevels),
       sponsorTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.sponsorTypes),
-      offices: this.http.get<dropdownOptionsModel[]>(this.endpoints.profile.lookups.offices),
     }).pipe(
       map(res => {
         this.candidateTypes.set(res.candidateTypes);
@@ -84,7 +82,6 @@ export class ProfileLookupsService {
         this.languages.set(res.languages);
         this.languageLevels.set(res.languageLevels);
         this.sponsorTypes.set(res.sponsorTypes);
-        this.offices.set(res.offices);
 
         this.loaded.set(true);
         this.loading.set(false);

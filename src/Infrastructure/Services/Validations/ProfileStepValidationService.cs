@@ -88,9 +88,6 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
             }
         }
         
-        if(ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && request.OfficeId is null)
-            return Result.Fail(ErrorsCodes.OfficeRequired);
-
         return Result.Ok();
     }
 

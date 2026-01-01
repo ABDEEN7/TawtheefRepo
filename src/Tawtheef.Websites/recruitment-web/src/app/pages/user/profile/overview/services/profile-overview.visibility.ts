@@ -7,7 +7,6 @@ import {
   candidateTypeNeedsSponsor
 } from '../../wizard-profile/state/profile-step-validity.signal';
 import {ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
-import {MaritalStatus} from '../../../../../core/enums/lookups.enum';
 import {ProfileState} from '../../wizard-profile/models/profile-state.model';
 
 export function createProfileOverviewVisibility(p: ProfileStatusDto) {
@@ -30,7 +29,6 @@ export function createProfileOverviewVisibility(p: ProfileStatusDto) {
       // Derived flags (optional)
       showOffice: !isResident,
       showQidExpiry: isResident,
-      showNumberOfChild: p.maritalStatus?.backendName != MaritalStatus.Single,
       showNationalAddress: isResident,
       showForeignAddress: !isResident,
       showSponsorSection: candidateTypeNeedsSponsor(type)

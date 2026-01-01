@@ -2,7 +2,6 @@
   basic: {
     candidateType: 'wizard.profile.basic.candidateType.required',
     targetEntity: 'wizard.profile.basic.targetEntity.required',
-    office: 'wizard.profile.basic.office.required',
     qidExpiry: 'wizard.profile.basic.qidExpiry.required',
     cvName: 'wizard.profile.basic.cv.required',
     idName: 'wizard.profile.basic.id.required',
@@ -18,7 +17,6 @@
     gender: 'wizard.profile.personal.gender.required',
     religion: 'wizard.profile.personal.religion.required',
     marital: 'wizard.profile.personal.marital.required',
-    disabilityDetails: 'wizard.profile.personal.disabilityDetails.required',
     sponsorType: 'wizard.profile.personal.sponsorType.required',
     sponsorEmployerName: 'wizard.profile.personal.sponsorEmployerName.required',
     sponsorEmployerNumber: 'wizard.profile.personal.sponsorEmployerNumber.required',

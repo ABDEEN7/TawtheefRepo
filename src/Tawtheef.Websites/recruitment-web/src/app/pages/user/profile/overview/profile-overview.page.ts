@@ -179,7 +179,6 @@ export class ProfileOverviewPage {
         gender: p.gender,
         religion: p.religion,
         maritalStatus: p.maritalStatus,
-        childrenCount: p.childrenCount ?? 0,
         hasDisability: p.hasDisability,
         disabilityDetails: p.disabilityDetails ?? null,
 
