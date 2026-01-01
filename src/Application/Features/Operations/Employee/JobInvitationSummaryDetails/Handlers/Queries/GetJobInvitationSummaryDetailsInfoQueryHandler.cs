@@ -3,6 +3,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.Queries;
 using Tawtheef.Domain.Constants;
@@ -11,7 +12,8 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary
 
 public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper)
+    IMapper mapper,
+    ILocalizationService localizationService)
     : IRequestHandler<GetJobInvitationSummaryDetailsInfoQuery, IResult<JobInvitationSummaryDetailsInfoDto>>
 {
     public async Task<IResult<JobInvitationSummaryDetailsInfoDto>> Handle(
@@ -22,6 +24,12 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
             .AsNoTracking()
             .FirstOrDefaultAsync(j => j.Id == query.JobId, cancellationToken);
 
-        return job is null ? Result.Fail<JobInvitationSummaryDetailsInfoDto>(JobMessages.JobNotFound) : Result.Ok(mapper.Map<JobInvitationSummaryDetailsInfoDto>(job));
+        if (job is null)
+            return Result.Fail<JobInvitationSummaryDetailsInfoDto>(JobMessages.JobNotFound);
+
+        var dto = mapper.Map<JobInvitationSummaryDetailsInfoDto>(job);
+        dto.JobName = localizationService.GetLocalizedValue(job.TitleAr, job.TitleEn);
+
+        return Result.Ok(dto);
     }
 }

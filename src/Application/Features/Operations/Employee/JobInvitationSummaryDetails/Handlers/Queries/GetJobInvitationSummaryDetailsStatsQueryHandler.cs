@@ -16,6 +16,7 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
         GetJobInvitationSummaryDetailsStatsQuery query,
         CancellationToken cancellationToken)
     {
+
         var invitations = unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
             .Where(invitation => invitation.JobId == query.JobId);
