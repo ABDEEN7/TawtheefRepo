@@ -198,7 +198,12 @@ export class JobService {
     if (!job.workLocationId) errors.push('VALIDATION.JOB.WORK_LOCATION_REQUIRED');
     if (!job.majorId) errors.push('VALIDATION.JOB.MAJOR_REQUIRED');
     if (!job.workTypeId) errors.push('VALIDATION.JOB.WORK_TYPE_REQUIRED');
-
+     if (job.numberOfVacancies <= 0) errors.push('JOB_WIZARD.VALIDATION.MIN_VACANCIES');
+    if (!job.closingDate || new Date(job.closingDate) <= new Date())
+      errors.push('JOB_WIZARD.VALIDATION.FUTURE_DATE_REQUIRED');
+    if (job.minimumAge <= 0 || job.maximumAge <= 0 || job.maximumAge <= job.minimumAge)
+      errors.push('JOB_WIZARD.VALIDATION.AGE_RANGE_INVALID');
+    if (job.yearsOfExperience < 0) errors.push('JOB_WIZARD.VALIDATION.MIN_EXPERIENCE');
     return {
       isValid: errors.length === 0,
       errors,

@@ -19,7 +19,7 @@ public class ChangeJobStatusCommandHandler(
         ChangeJobStatusCommand request,
         CancellationToken cancellationToken)
     {
-        var jobResult = await jobRepository.Repository.GetByIdAsync(request.JobId);
+        var jobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
         if (jobResult.IsFailed || jobResult.Value == null)
             return Result.Fail<Unit>(JobMessages.JobNotFound);
 
