@@ -57,15 +57,7 @@ export class AuthCoreService {
     return user$.pipe(
       map(user => {
         this.updateAuthState(user, accessToken);
-        const rawRoles = this.tokenService.getRolesFromToken(accessToken);
-
-        const mainSystemRole =
-            rawRoles.includes(SystemRoles.SystemAdmin) ? SystemRoles.SystemAdmin
-          : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
-          : rawRoles.includes(SystemRoles.OfficeAdmin) ? SystemRoles.OfficeAdmin
-          : rawRoles.includes(SystemRoles.OfficeUser) ? SystemRoles.OfficeUser
-          : '';
-        this.navigation.safeNavigateAfterLogin(mainSystemRole);
+        this.navigation.safeNavigateAfterLogin(this.tokenService.getMainUserRole());
         return true;
       }),
       catchError(err => {

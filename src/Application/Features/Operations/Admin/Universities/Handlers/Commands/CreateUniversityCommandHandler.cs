@@ -6,7 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Operations.Admin.Universities.Commands;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 

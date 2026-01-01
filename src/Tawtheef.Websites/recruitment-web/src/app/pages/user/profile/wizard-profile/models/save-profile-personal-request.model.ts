@@ -11,10 +11,9 @@
   genderId: string | null;
   religionId: string | null;
   maritalStatusId: string | null;
-  childrenCount: number | null;
 
   hasDisability: boolean;
-  disabilityDetails: string | null;
+  disabilityDetails?: string | null;
 
   sponsorEmployerName: string | null;
   sponsorEmployerNumber: string | null;

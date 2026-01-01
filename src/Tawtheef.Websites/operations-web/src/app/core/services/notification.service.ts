@@ -13,16 +13,44 @@ export class NotificationService {
 
 
   success(detail: string, summary = 'common.success'){
-    this.show('success', summary, detail);
+    if(summary == 'common.success'){
+      this.translate.get('common.success').subscribe(translated => {
+        summary = translated;
+        this.show('success', summary, detail);
+      });
+    } else {
+      this.show('success', summary, detail);
+    }
   }
   error(detail: string, summary = 'common.error'){
-    this.show('error', summary, detail);
+    if(summary == 'common.error'){
+      this.translate.get('common.error').subscribe(translated => {
+        summary = translated;
+        this.show('error', summary, detail);
+      });
+    } else {
+      this.show('error', summary, detail);
+    }
   }
   info(detail: string, summary = 'common.info'){
-    this.show('info', summary, detail);
+    if(summary == 'common.info'){
+      this.translate.get('common.info').subscribe(translated => {
+        summary = translated;
+        this.show('info', summary, detail);
+      });
+    } else {
+      this.show('info', summary, detail);
+    }
   }
   warn(detail: string, summary = 'common.warning'){
-    this.show('warn', summary, detail);
+    if(summary == 'common.warning'){
+      this.translate.get('common.warning').subscribe(translated => {
+        summary = translated;
+        this.show('warn', summary, detail);
+      });
+    } else {
+      this.show('warn', summary, detail);
+    }
   }
 
   private show(severity: Severity, summary: string, detail: string) {

@@ -67,6 +67,7 @@ export class EndpointsService {
       phone:{
         request: this.getFullUrl(`/user/verify/phone/request`),
         confirm: this.getFullUrl(`/user/verify/phone/confirm`),
+        update: this.getFullUrl(`/user/update/phone`),
       },
       email:{
         request: this.getFullUrl(`/user/verify/email/request`),

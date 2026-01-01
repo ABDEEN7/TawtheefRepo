@@ -1,23 +1,22 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Admin.Universities.Commands;
 using Tawtheef.Application.Features.Operations.Admin.Universities.Queries;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Admin;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UniversitiesController(IMediator mediator) : ControllerBase
 {
     [HttpGet("list-universities")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UniversitiesView)]
+    [AuthorizePermission(PermissionKeys.Universities.View)]
     public async Task<IActionResult> ListUniversities([FromQuery] GetListUniversitiesQuery query)
     {
         var result = await mediator.Send(query);
@@ -25,7 +24,7 @@ public class UniversitiesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("university-details/{id:guid}")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UniversitiesView)]
+    [AuthorizePermission(PermissionKeys.Universities.View)]
     public async Task<IActionResult> UniversityDetails(Guid id)
     {
         var result = await mediator.Send(new GetUniversityDetailsQuery(id));
@@ -33,7 +32,7 @@ public class UniversitiesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("create-university")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UniversitiesManage)]
+    [AuthorizePermission(PermissionKeys.Universities.Manage)]
     public async Task<IActionResult> CreateUniversity([FromForm] CreateUniversityCommand command)
     {
         var result = await mediator.Send(command);
@@ -41,7 +40,7 @@ public class UniversitiesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("update-university/{id:guid}")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UniversitiesManage)]
+    [AuthorizePermission(PermissionKeys.Universities.Manage)]
     public async Task<IActionResult> UpdateUniversity(Guid id, [FromForm] UpdateUniversityCommand command)
     {
         var result = await mediator.Send(command with { Id = id });
@@ -49,7 +48,7 @@ public class UniversitiesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}/status")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UniversitiesManage)]
+    [AuthorizePermission(PermissionKeys.Universities.Manage)]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateUniversityStatusCommand command)
     {
         var result = await mediator.Send(command with { UniversityId = id });
@@ -57,7 +56,7 @@ public class UniversitiesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/countries")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UniversitiesView)]
+    [AuthorizePermission(PermissionKeys.Universities.View)]
     public async Task<IActionResult> ListCountries()
     {
         var language = Request.Headers.AcceptLanguage.ToString();
@@ -66,7 +65,7 @@ public class UniversitiesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/cities")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.UniversitiesView)]
+    [AuthorizePermission(PermissionKeys.Universities.View)]
     public async Task<IActionResult> ListCities([FromQuery] Guid countryId)
     {
         var language = Request.Headers.AcceptLanguage.ToString();

@@ -9,6 +9,7 @@ import { QatarResidentOtpDialogComponent } from './login/components/qatar-reside
 import { DynamicDialogModule, DialogService } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ButtonModule } from 'primeng/button';
     I18nNamespaceDirective,
     DynamicDialogModule,
     InputTextModule,
-    ButtonModule
+    ButtonModule,
+    NgxIntlTelInputModule
   ],
   providers: [DialogService]
 })

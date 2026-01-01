@@ -10,6 +10,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Validators;
+using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;

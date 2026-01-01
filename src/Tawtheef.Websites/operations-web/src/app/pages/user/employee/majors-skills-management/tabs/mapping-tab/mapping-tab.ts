@@ -35,7 +35,7 @@ export class MappingTabComponent {
   store = inject(MajorsSkillsManagementStore);
   service = inject(MajorsSkillsManagementFacade);
 
-  setMajorSkillActiveOnly(evt: { checked: boolean; }){
-    this.service.setMajorSkillActiveOnly(evt.checked)
+  setMajorSkillActiveOnly(checked: boolean) {
+    this.service.setMajorSkillActiveOnly(checked);
   }
 }

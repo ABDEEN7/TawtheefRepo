@@ -73,7 +73,6 @@
   "wizard.personal.gender": "Gender",
   "wizard.personal.religion": "Religion",
   "wizard.personal.marital": "Marital Status",
-  "wizard.personal.children": "Number of Children",
   "wizard.personal.verify.title": "Verify Data",
   "wizard.personal.verify.button": "Verify ID Data",
   "wizard.personal.verify.loading": "Verifying...",

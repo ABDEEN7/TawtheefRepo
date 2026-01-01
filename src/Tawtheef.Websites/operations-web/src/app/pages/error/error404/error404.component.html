@@ -1,25 +1,55 @@
-<div class="error-box">
-  <img src="assets/img/error/img-01.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-01"/>
-  <img src="assets/img/error/img-02.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-02"/>
-  <img src="assets/img/error/img-03.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-03"/>
-  <img src="assets/img/error/img-04.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-04"/>
-  <img src="assets/img/error/img-05.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-05"/>
-  <img src="assets/img/error/img-06.svg" [alt]="'decorativeElement' | translate" class="img-fluid bg-06"/>
-  <div class="error-logo">
-    <a [routerLink]="routes.home">
-      <img src="assets/img/logo.svg" style="height: 200px" class="img-fluid" [alt]="'logoAltText' | translate"/>
+<div class="error-page d-flex align-items-center justify-content-center min-vh-100">
+  <!-- Decorative background -->
+  <div class="decorations">
+    <img src="assets/img/error/img-01.svg" alt="" class="dec bg-01" />
+    <img src="assets/img/error/img-02.svg" alt="" class="dec bg-02" />
+    <img src="assets/img/error/img-03.svg" alt="" class="dec bg-03" />
+    <img src="assets/img/error/img-04.svg" alt="" class="dec bg-04" />
+    <img src="assets/img/error/img-05.svg" alt="" class="dec bg-05" />
+    <img src="assets/img/error/img-06.svg" alt="" class="dec bg-06" />
+  </div>
+
+  <!-- Content card -->
+  <div class="error-card text-center p-4 p-md-5 shadow-sm">
+    <!-- Logo -->
+    <a [routerLink]="routes.home" class="brand mb-4 d-inline-flex">
+      <img
+        src="assets/img/logo.svg"
+        height="72"
+        class="img-fluid"
+        [alt]="'logoAltText' | translate"
+      />
     </a>
+
+    <!-- Illustration -->
+    <div class="illustration mb-4">
+      <img
+        src="assets/img/error/error-01.svg"
+        class="img-fluid"
+        [alt]="'notFoundImage' | translate"
+      />
+    </div>
+
+    <!-- Text -->
+    <h1 class="display-6 fw-bold mb-2">
+      {{ 'app.error404.ohNoError' | translate }}
+      <span class="code ms-2">404</span>
+    </h1>
+
+    <p class="text-muted mb-4">
+      {{ 'app.error404.pageNotFoundMessage' | translate }}
+    </p>
+
+    <!-- Actions -->
+    <div class="actions d-flex gap-2 justify-content-center flex-wrap">
+      <a [routerLink]="routes.home" class="btn btn-primary px-4">
+        <i class="isax isax-arrow-left-2 me-2"></i>
+        {{ 'app.error404.backToHome' | translate }}
+      </a>
+
+      <button type="button" class="btn btn-outline-secondary px-4" (click)="back()">
+        {{ 'common.goBack' | translate }}
+      </button>
+    </div>
   </div>
-  <div class="error-box-img">
-    <img src="assets/img/error/error-01.svg" [alt]="'notFoundImage' | translate" class="img-fluid"/>
-  </div>
-  <h3 class="h2 mb-3">
-    {{ 'app.error404.ohNoError' | translate }} <span class="text-secondary ms-1">404</span>
-  </h3>
-  <p class="h4 font-weight-normal">
-    {{ 'app.error404.pageNotFoundMessage' | translate }}
-  </p>
-  <a [routerLink]="routes.home" class="btn back-to-home-btn">
-    <i class="isax isax-arrow-left-2 me-1"></i> {{ 'app.error404.backToHome' | translate }}
-  </a>
 </div>

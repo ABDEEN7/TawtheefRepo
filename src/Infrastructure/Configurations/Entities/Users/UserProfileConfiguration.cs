@@ -8,6 +8,11 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
 {
     public virtual void Configure(EntityTypeBuilder<UserProfile> builder)
     {
+        builder.Property(u => u.Status)
+            .HasMaxLength(50)
+            .HasConversion<string>()
+            .HasDefaultValue(UserProfileStatus.InCreation);
+        
         builder
             .HasOne(u => u.ResidenceCountry)
             .WithMany()

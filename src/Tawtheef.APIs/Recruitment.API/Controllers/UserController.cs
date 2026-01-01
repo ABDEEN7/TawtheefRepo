@@ -69,6 +69,15 @@ public class UserController(IMediator mediator) : ControllerBase
     
 
     #region Verification Actions
+    [HttpPost("update/phone")]
+    [EnableRateLimiting(LimitsPolicyKeys.VerificationRequestPolicy)]
+    public async Task<IActionResult> RequestUpdatePhone([FromBody] RequestUpdatePhoneCommand command)
+    {
+        if(UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(command with { UserId = UserId.Value });
+        return result.ToActionResult();
+    }
+    
     [HttpPost("verify/phone/request")]
     [EnableRateLimiting(LimitsPolicyKeys.VerificationRequestPolicy)]
     public async Task<IActionResult> RequestPhoneVerification([FromBody] RequestPhoneVerificationCommand command)

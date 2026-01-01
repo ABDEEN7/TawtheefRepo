@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Tawtheef.Application.Common.Security;
 
 namespace Tawtheef.Infrastructure.Services.Authorization;
 

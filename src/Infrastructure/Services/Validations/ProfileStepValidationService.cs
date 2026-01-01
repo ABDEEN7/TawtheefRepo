@@ -88,9 +88,6 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
             }
         }
         
-        if(ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && request.OfficeId is null)
-            return Result.Fail(ErrorsCodes.OfficeRequired);
-
         return Result.Ok();
     }
 
@@ -201,9 +198,6 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
             return false;
 
         if (profile.ChildrenCount < 0)
-            return false;
-
-        if (profile.HasDisability && string.IsNullOrWhiteSpace(profile.DisabilityDetails))
             return false;
 
         return true;

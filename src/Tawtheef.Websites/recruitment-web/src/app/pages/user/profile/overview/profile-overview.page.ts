@@ -179,7 +179,6 @@ export class ProfileOverviewPage {
         gender: p.gender,
         religion: p.religion,
         maritalStatus: p.maritalStatus,
-        childrenCount: p.childrenCount ?? 0,
         hasDisability: p.hasDisability,
         disabilityDetails: p.disabilityDetails ?? null,
 
@@ -320,6 +319,22 @@ export class ProfileOverviewPage {
       default:
         return { severity: 'secondary', labelKey: 'profileView.status.inCreation', hintKey: 'profileView.statusHint.inCreation' };
     }
+  }
+  canShowEdit(section: ProfileSectionEnum): boolean {
+    const v = this.vm();
+    if (!v) return false;
+
+    // If profile is complete, allow edits ONLY when reviewer requested changes
+    const status = v.status.value;
+    const needsCorrections =
+      status === UserProfileStatusEnum.RequiresUpdate ||
+      status === UserProfileStatusEnum.Rejected;
+
+    if (!needsCorrections) return false;
+
+    // Show edit only if this specific section has notes (needs correction)
+    const notesCount = v.review.sectionIndex?.[section] ?? 0;
+    return notesCount > 0;
   }
   private sectionLabelKey(section: number): string {
     switch (section) {

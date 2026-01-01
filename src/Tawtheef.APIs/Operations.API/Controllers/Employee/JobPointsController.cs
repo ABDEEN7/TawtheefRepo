@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
@@ -8,6 +10,7 @@ namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class JobPointsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]

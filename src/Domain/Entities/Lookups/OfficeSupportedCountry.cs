@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
+namespace Tawtheef.Domain.Entities.Lookups;
+
 [Table(nameof(OfficeSupportedCountry), Schema = Schemas.Lookup)]
 public class OfficeSupportedCountry: EventEntity
 {

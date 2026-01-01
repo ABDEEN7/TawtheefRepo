@@ -24,6 +24,11 @@ export class MajorsSkillsManagementStore {
   private language = inject(LanguageService);
   public endpoints = inject(EndpointsService);
 
+  mappingInitialized = signal(false);
+  mainMajorsInitialized = signal(false);
+  subMajorsInitialized = signal(false);
+  skillsInitialized = signal(false);
+
   // ===== UI State =====
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');

@@ -39,7 +39,6 @@ export function mapPersonalSection(state: ProfileState): SaveProfilePersonalRequ
     genderId: state.gender?.id ?? null,
     religionId: state.religion?.id ?? null,
     maritalStatusId: state.marital?.id ?? null,
-    childrenCount: state.children ?? null,
 
     hasDisability: state.hasDisability,
     disabilityDetails: state.disabilityDetails ?? null,
@@ -60,12 +59,13 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
     !!state.naFile ||
     !!state.naFileName;
 
+  const isQatarPhone = (state.phone?.e164Number ?? '').startsWith('+974');
+
   return {
     submit: false,
 
     residenceCountryId: state.country?.id ?? null,
     interviewLocationId: state.interviewPlace?.id ?? null,
-    officeId: state.office?.id ?? null,
 
     address: state.address ?? null,
     nationalAddress: hasNa
@@ -76,6 +76,11 @@ export function mapContactSection(state: ProfileState): SaveProfileContactReques
         unit: state.naUnit ?? null,
         nationalAddressFileName: state.naFileName ?? null,
       } : null,
+
+    phone: state.phone ?? null,
+    phoneVerified: isQatarPhone ? !!state.phoneVerified : false,
+    email: state.email ?? null,
+    emailVerified: state.emailVerified ?? false,
   };
 }
 
@@ -94,13 +99,18 @@ export function mapProfileStatusToState(
     qualificationNames.set(q.id, `${degreeName}${majorName ? ' - ' + majorName : ''}${gradYear}`.trim());
   });
 
+  const isKawaderQid = dto.isKawaderQid
+    ?? (dto as any).isKwaderQid
+    ?? prefill?.isKawaderQid
+    ?? (prefill as any)?.isKwaderQid
+    ?? false;
+
   return {
-    provider: dto.provider,
+    provider: (dto.provider as ProfileState['provider']) ?? 'Google',
+    isKawaderQid,
     // ----------- Prereq -----------
     candidateType: mapIdToDropdown(lookups, 'candidateType', dto.candidateTypeId) as dropdownOptionsModel,
     targetEntity: mapIdToDropdown(lookups, 'targetEntity', dto.targetEntityId) as dropdownOptionsModel,
-    office: mapIdToDropdown(lookups, 'office', dto.officeId) as dropdownOptionsModel,
-
     // Attachments
     cvFile: mapFile(dto.resumeAttachment),
     cvName: dto.resumeAttachment?.fileName ?? null,
@@ -126,8 +136,6 @@ export function mapProfileStatusToState(
     religion: mapIdToDropdown(lookups, 'religion', dto.religionId ?? undefined),
     marital: mapIdToDropdown(lookups, 'marital', dto.maritalStatusId ?? undefined),
     sponsorType: mapIdToDropdown(lookups, 'sponsorType', dto.sponsorTypeId ?? undefined),
-
-    children: dto.childrenCount,
 
     dob: dto.birthDate ?? prefill?.dob ?? undefined,
 
@@ -271,7 +279,7 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
 // Convert backend ID → dropdownOptionsModel
 export function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
 'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |'skillLevel' |
-'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'office' | 'achievementTypes',
+'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'achievementTypes',
   id?: string | null): dropdownOptionsModel | undefined {
   if (!id) return undefined;
   switch (kind) {
@@ -309,8 +317,6 @@ export function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidate
       return lookups.graduationCountry().find(gc => gc.id === id);
     case 'sponsorType':
       return lookups.sponsorTypes().find(st => st.id === id);
-    case 'office':
-      return lookups.offices().find(o => o.id === id);
     case 'countries':
       return lookups.countries().find(c => c.id === id);
     default:

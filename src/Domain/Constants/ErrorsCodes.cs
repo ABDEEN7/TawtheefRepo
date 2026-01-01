@@ -79,6 +79,7 @@ public class ErrorsCodes
     public const string InvalidTokenOrEmail = "INVALID_TOKEN_OR_EMAIL";
     public const string TooManyAttempts = "TOO_MANY_ATTEMPTS";
     public const string InvalidVerificationCode = "INVALID_VERIFICATION_CODE";
+    public const string ShouldVerifiyQatarPhoneNumberBeforeAssignIt = "SHOULD_VERIFIY_QATAR_PHONE_NUMBER_BEFORE_ASSIGN_IT";
     public const string ResendCooldownActive = "RESEND_COOLDOWN_ACTIVE";
     public const string EmailAlreadyVerified = "EMAIL_ALREADY_VERIFIED";
     public const string SendOtpLimitReached = "SEND_OTP_LIMIT_REACHED";
@@ -297,4 +298,7 @@ public class ErrorsCodes
     
 
     #endregion
+    public const string ExternalLoginEmailDomainNotAllowed = "EXTERNAL_LOGIN_EMAIL_DOMAIN_NOT_ALLOWED";
+    public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
+    public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
 }

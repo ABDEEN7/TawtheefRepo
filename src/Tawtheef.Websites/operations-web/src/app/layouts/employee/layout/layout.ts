@@ -4,6 +4,7 @@ import {Navbar} from '../../common/navbar/navbar';
 import {Footer} from '../../common/footer/footer';
 import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
 import {SidebarComponent} from '../sidebar/sidebar.component';
+import {ProgressBarComponent} from '../../../shared/components/progress-bar/progress-bar.component';
 
 @Component({
   selector: 'app-user-layout',
@@ -12,8 +13,9 @@ import {SidebarComponent} from '../sidebar/sidebar.component';
     Navbar,
     Footer,
     I18nNamespaceDirective,
-    SidebarComponent
-],
+    SidebarComponent,
+    ProgressBarComponent
+  ],
   standalone: true,
   host: { 'data-test': 'user-layout-main' },
   templateUrl: './layout.html',

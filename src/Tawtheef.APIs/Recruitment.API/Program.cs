@@ -5,7 +5,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Tawtheef.Application;
-using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Middlewares;

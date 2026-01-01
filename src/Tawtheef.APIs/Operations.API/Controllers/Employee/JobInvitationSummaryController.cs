@@ -1,24 +1,23 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.Queries;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
 {
     #region Lookups
     [HttpGet("lookups/job-categories")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.View)]
     public async Task<IActionResult> GetJobCategories()
     {
         var result = await mediator.Send(new GetJobCategoriesQuery());
@@ -26,7 +25,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/departments")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.View)]
     public async Task<IActionResult> GetDepartments()
     {
         var result = await mediator.Send(new GetDepartmentsQuery());
@@ -34,7 +33,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/job-statuses")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.View)]
     public async Task<IActionResult> GetJobStatusesQuery()
     {
         var result = await mediator.Send(new GetJobStatusesQuery());
@@ -44,7 +43,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     
     #region Retrive Job Invitation Data
     [HttpGet("get-invitations-summary")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.View)]
     public async Task<IActionResult> GetInvitationsSummary([FromQuery] GetJobInvitationSummaryQuery query)
     {
         var result = await mediator.Send(query);
@@ -53,7 +52,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     
     
     [HttpGet("{jobId:guid}/info")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.View)]
     public async Task<IActionResult> GetInvitationJobInfo(Guid jobId)
     {
         var result = await mediator.Send(new GetJobInvitationSummaryDetailsInfoQuery(jobId));
@@ -61,7 +60,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("get-invitations-stats")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.View)]
     public async Task<IActionResult> GetInvitationStats([FromBody] GetJobInvitationSummaryDetailsStatsQuery query)
     {
         var result = await mediator.Send(query);
@@ -69,7 +68,7 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("get-invitations-details")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.JobsInvitationsView)]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.View)]
     public async Task<IActionResult> GetInvitationRows([FromBody] GetJobInvitationSummaryDetailsRowsQuery query)
     {
         var result = await mediator.Send(query);
