@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Utilities;
 using Tawtheef.Application.Features.Operations.Employee.Kawader.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Kawader.DTOs;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Kawader.Handlers;
