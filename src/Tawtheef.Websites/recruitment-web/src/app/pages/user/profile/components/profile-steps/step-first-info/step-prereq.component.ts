@@ -62,6 +62,7 @@ export class StepPrereqComponent implements OnInit {
   }
 
   onCandidateTypeChange(option: any) {
+    if (this.ds.isCandidateTypeLocked) return;
     this.ds.up('candidateType', option);
     this.hasCheckedProfile = false;
   }

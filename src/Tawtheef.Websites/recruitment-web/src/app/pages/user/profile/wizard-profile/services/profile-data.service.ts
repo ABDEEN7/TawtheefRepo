@@ -23,7 +23,7 @@ import {NationalityMapperService} from './nationality-mapper.service';
 import {take, tap} from 'rxjs';
 import {mapProfileStatusToState} from './profile.mapper';
 import {UserService} from '../../../../../core/auth/user.service';
-import {SponsorType} from '../../../../../core/enums/lookups.enum';
+import {CandidateType, SponsorType} from '../../../../../core/enums/lookups.enum';
 
 @Injectable()
 export class ProfileDataService {
@@ -34,6 +34,7 @@ export class ProfileDataService {
   profileService = inject(ProfileService);
   state = signal<ProfileState>({
     provider: 'Google',
+    isKawaderQid: false,
     degrees: [], experiences: [], courses: [], achievements: [],
     skills: [], languages: [], attachments: [],
     available: true, hasDisability: false,
@@ -61,6 +62,10 @@ export class ProfileDataService {
     return this.state().sponsorType?.backendName === SponsorType.Individual;
   }
 
+  get isCandidateTypeLocked(): boolean {
+    return this.shouldLockCandidateType();
+  }
+
   private locked = signal<Partial<Record<keyof ProfileState, boolean>>>({});
 
   isLocked<K extends keyof ProfileState>(key: K): boolean {
@@ -69,11 +74,12 @@ export class ProfileDataService {
 
     if (this.isResidentQatar && (key === 'fullNameAr' || key === 'fullNameEn')) return true;
     if (this.isIndividualSponsor && key === 'sponsorEmployerName') return true;
+    if (this.shouldLockCandidateType() && key === 'candidateType') return true;
 
     return false;
   }
 
-  private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email','fullNameAr','fullNameEn','sponsorEmployerName','sponsorEmployerNumber'];
+  private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email','fullNameAr','fullNameEn','sponsorEmployerName','sponsorEmployerNumber','candidateType'];
   lockFields(keys: (keyof ProfileState)[]) {
     this.locked.update(m => {
       const copy = { ...m };
@@ -84,6 +90,7 @@ export class ProfileDataService {
   prefillFromBootstrap(userData: Partial<ProfileState>) {
     this.state.update(s => ({ ...s, ...userData }));
     this.lockedPrefillData();
+    this.applyKawaderCandidateType();
     this.prefillFromCheckProfile();
   }
   private lockedPrefillData() {
@@ -142,6 +149,7 @@ export class ProfileDataService {
   });
 
   up<K extends keyof ProfileState>(key: K, val: ProfileState[K] | null) {
+    if (key === 'candidateType' && this.shouldLockCandidateType()) return;
     this.state.update(s => {
       const updated = { ...s, [key]: val } as ProfileState;
 
@@ -207,6 +215,29 @@ export class ProfileDataService {
     }
 
     return next;
+  }
+
+  private shouldLockCandidateType(): boolean {
+    const provider = (this.state().provider ?? '').toString().toLowerCase();
+    const isPreferredProvider = ['qatarpass', 'qatarresidentotp'].includes(provider);
+    return isPreferredProvider && !!this.state().isKawaderQid;
+  }
+
+  private applyKawaderCandidateType(): void {
+    if (!this.shouldLockCandidateType()) return;
+
+    const qatariOption = this.lookups
+      .candidateTypes()
+      .find(type => type.backendName === CandidateType.Qatari);
+
+    if (!qatariOption) return;
+
+    this.state.update(s => {
+      const updated = { ...s, candidateType: qatariOption } as ProfileState;
+      return this.cleanCandidateTypeDependents(updated);
+    });
+
+    this.locked.update(m => ({ ...m, candidateType: true }));
   }
 
   applyMoiPersonalInfo(info: MoiPersonalInfo) {
@@ -331,6 +362,8 @@ export class ProfileDataService {
 
   private createEmptyState(): ProfileState {
     return {
+      provider: 'Google',
+      isKawaderQid: false,
       prerequisites: {},
       personal: {},
       contact: {},

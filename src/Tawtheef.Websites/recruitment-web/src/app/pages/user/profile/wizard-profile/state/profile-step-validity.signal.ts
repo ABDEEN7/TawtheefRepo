@@ -58,15 +58,21 @@ export function candidateTypeNeedsMarriageCertificate(type: CandidateType | unde
   return !!type && [CandidateType.WifeOfQatari].includes(type);
 }
 
-export function candidateTypeIsResident(type: CandidateType | undefined, provider: 'Google' | 'QatarPass'): boolean {
+export function candidateTypeIsResident(
+  type: CandidateType | undefined,
+  provider: 'Google' | 'QatarPass' | 'QatarResidentOtp'
+): boolean {
   if (!type) return false;
+
+  const normalizedProvider = (provider ?? '').toString().toLowerCase();
+  const providerAllowsGcc = ['qatarpass', 'qatarresidentotp'].includes(normalizedProvider);
 
   return [
     CandidateType.ResidentQatar,
     CandidateType.Qatari,
     CandidateType.SonOfQatariMother,
     CandidateType.WifeOfQatari
-  ].includes(type) || (type == CandidateType.GCC && provider === 'QatarPass');
+  ].includes(type) || (type == CandidateType.GCC && providerAllowsGcc);
 }
 
 /** Small helper to push a "required" error using VALIDATION_KEYS */
