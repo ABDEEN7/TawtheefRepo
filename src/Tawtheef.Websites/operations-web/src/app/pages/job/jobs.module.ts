@@ -47,6 +47,7 @@ import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-rea
 import { TableModule } from 'primeng/table';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { JobCandidatesComponent } from './job-candidates/job-candidates.component';
+import {Tooltip} from 'primeng/tooltip';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -98,8 +99,9 @@ import { JobCandidatesComponent } from './job-candidates/job-candidates.componen
     ProgressSpinner,
     RemoteSelectComponent,
     TableModule,
-    RadioButtonModule
-],
+    RadioButtonModule,
+    Tooltip
+  ],
   exports: [
     JobDetailsComponent,
     JobListComponent,
