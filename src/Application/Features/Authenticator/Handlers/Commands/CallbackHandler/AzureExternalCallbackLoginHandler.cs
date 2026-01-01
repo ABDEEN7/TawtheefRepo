@@ -2,6 +2,8 @@ using System.Security.Claims;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.FeatureManagement;
+using Tawtheef.Application.Common.Constants.Operations;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
@@ -17,8 +19,9 @@ public sealed class AzureExternalCallbackLoginHandler(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService,
-    ILoginAuditService loginAudit//,
-    //IEmployeeProfileService employeeProfileService
+    IFeatureManager featureManager,
+    IEmployeeProfileService employeeProfileService,
+    ILoginAuditService loginAudit
 ) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     protected override string Provider => "Azure";
@@ -202,16 +205,22 @@ public sealed class AzureExternalCallbackLoginHandler(
 
     private async Task<Result> SyncEmployeeProfileAsync(User user, CancellationToken ct)
     {
-        await Task.Delay(1000, ct);
-        return Result.Ok();
-        
-        // if (user is not EmployeeUser employeeUser)
-        //     return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
-        //
-        // var syncResult = await employeeProfileService.SyncFromDirectoryAsync(employeeUser, ct);
-        // return syncResult.IsFailed
-        //     ? Result.Fail(syncResult.Errors)
-        //     : Result.Ok();
+        var isSyncEnabled = await featureManager.IsEnabledAsync(FeatureKeys.DirectorySync);
+        if (isSyncEnabled)
+        {
+            if (user is not EmployeeUser employeeUser)
+                return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
+
+            var syncResult = await employeeProfileService.SyncFromDirectoryAsync(employeeUser, ct);
+            return syncResult.IsFailed
+                ? Result.Fail(syncResult.Errors)
+                : Result.Ok();
+        }
+        else
+        {
+            await Task.Delay(1000, ct);
+            return Result.Ok();
+        }
     }
 
     private static bool IsEduGovQaEmail(string? email)
