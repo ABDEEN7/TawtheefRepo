@@ -69,7 +69,7 @@ namespace Tawtheef.Infrastructure
         public static void AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
         {
             // Feature flags
-            services.AddFeatureManagement();
+            services.AddFeatureManagement(configuration.GetSection("FeatureFlags"));
 
             // Configuration objects (IOptions<T>)
             ConfigureOptions(services, configuration);
