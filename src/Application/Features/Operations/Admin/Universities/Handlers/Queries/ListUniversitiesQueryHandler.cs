@@ -31,7 +31,7 @@ public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, ILocali
             .WhereIf(
                 request.CountryId.HasValue,
                 u => u.City != null && u.City.CountryId == request.CountryId)
-            .Select(u => new UniversityAdminDto()
+            .Select(u => new UniversityAdminDto
             {
                 Id = u.Id,
                 NameEn = u.NameEn,
@@ -47,8 +47,6 @@ public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, ILocali
                 IsActive = u.IsActive,
                 DescriptionEn = u.DescriptionEn,
                 DescriptionAr = u.DescriptionAr,
-                LogoEn = u.LogoEn,
-                LogoAr = u.LogoAr,
                 OriginalName = u.OriginalName
             })
             .ToPaginatedListAsync<UniversityAdminDto>(request, cancellationToken);

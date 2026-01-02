@@ -74,8 +74,8 @@ public sealed class CreateUniversityCommandHandler(
             Email = request.Email,
             Code = request.Code,
             OriginalName = request.OriginalName,
-            LogoAr = logoArResult.Value,
-            LogoEn = logoEnResult.Value,
+            LogoArId = logoArResult.Value,
+            LogoEnId = logoEnResult.Value,
             IsActive = request.IsActive,
             CreatedDate = now,
             CreatedById = userId
@@ -94,7 +94,7 @@ public sealed class CreateUniversityCommandHandler(
             : $"UNIV-{cleaned.Replace(' ', '-').ToUpperInvariant()}";
     }
 
-    private async Task<Result<string?>> UploadLogoAsync(
+    private async Task<Result<Guid?>> UploadLogoAsync(
         Guid universityId,
         string logoType,
         int? fileIndex,
@@ -102,14 +102,14 @@ public sealed class CreateUniversityCommandHandler(
         CancellationToken ct)
     {
         if (fileIndex is null)
-            return Result.Ok<string?>(null);
+            return Result.Ok<Guid?>(null);
 
         if (fileIndex.Value < 0 || fileIndex.Value >= files.Count)
-            return Result.Fail<string?>(ErrorsCodes.InvalidAttachmentFileIndex);
+            return Result.Fail<Guid?>(ErrorsCodes.InvalidAttachmentFileIndex);
 
         var file = files[fileIndex.Value];
         if (file.Length == 0)
-            return Result.Fail<string?>(ErrorsCodes.InvalidAttachmentFile);
+            return Result.Fail<Guid?>(ErrorsCodes.InvalidAttachmentFile);
 
         var uploadPath = await UniversityLogoUploadPathFactory.CreateAsync(universityId, logoType, file, false, ct);
 
@@ -123,8 +123,8 @@ public sealed class CreateUniversityCommandHandler(
             ct);
 
         if (uploadResult.IsFailed)
-            return Result.Fail<string?>(uploadResult.Errors);
+            return Result.Fail<Guid?>(uploadResult.Errors);
 
-        return Result.Ok<string?>(uploadResult.Value.ResourceId.ToString());
+        return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 }

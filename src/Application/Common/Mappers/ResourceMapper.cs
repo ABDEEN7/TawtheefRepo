@@ -16,6 +16,9 @@ public sealed class ResourceMapper : IRegister
         
         config.NewConfig<Resource?, string>()
             .Map(dest => dest, src => src == null ? null : Resolve(src.Url));
+        
+        config.NewConfig<Resource?, string?>()
+            .Map(dest => dest, src => src == null ? null : Resolve(src.Url));
 
         config.NewConfig<Resource, FileRefDto>()
             .Map(dest => dest.ResourceId, src => src.Id)
@@ -31,7 +34,7 @@ public sealed class ResourceMapper : IRegister
             });
     }
 
-    private static string Resolve(string? url)
+    public static string Resolve(string? url)
     {
         var ctx = MapContext.Current;
         if (ctx?.Parameters is null) return url ?? string.Empty;

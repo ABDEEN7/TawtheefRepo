@@ -1,7 +1,6 @@
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
-using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -29,21 +28,6 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.OldValue, src => src.ProfileChange != null ? src.ProfileChange.OldValue : null)
             .Map(dest => dest.NewValue, src => src.ProfileChange != null ? src.ProfileChange.NewValue : null)
             .Map(dest => dest.ReviewedAtUtc, src => src.ReviewedAtUtc);
-
-        config.NewConfig<Resource, FileRefDto>()
-            .Map(dest => dest.ResourceId, src => src.Id)
-            .Map(dest => dest.FileName, src => src.Name)
-            .Map(dest => dest.Url, src => ResolveResourceUrl(src.Url));
-
-        config.NewConfig<Resource?, FileRefDto?>()
-            .MapWith(src => src == null
-                ? null
-                : new FileRefDto
-                {
-                    ResourceId = src.Id,
-                    FileName = src.Name,
-                    Url = ResolveResourceUrl(src.Url)
-                });
 
         config.NewConfig<ProfileAdditionalAttachment, AdditionalAttachmentDto>()
             .Map(dest => dest.Title, src => src.FileName)

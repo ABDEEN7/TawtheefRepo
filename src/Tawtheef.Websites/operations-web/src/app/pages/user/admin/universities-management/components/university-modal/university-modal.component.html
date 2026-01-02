@@ -119,34 +119,112 @@
       </div>
 
       <div class="row g-3 mt-1">
+        <!-- Logo AR -->
         <div class="col-md-6">
-          <label class="form-label">{{ 'UNIVERSITIES.LOGO_AR' | translate }}</label>
-          <input type="file" class="form-control" accept="image/*" (change)="onLogoArSelected($event)" />
-          @if (logoArError()) {
-            <div class="text-danger small mt-1">{{ logoArError() }}</div>
-          }
-          @if (logoArPreview()) {
-            <div class="logo-preview mt-2">
-              <div class="preview-label text-muted small">{{ 'UNIVERSITIES.LOGO_PREVIEW' | translate }}</div>
-              <img class="logo-image" [src]="logoArPreview()!" [attr.alt]="'UNIVERSITIES.LOGO_AR' | translate" />
+          <label class="form-label d-block">
+            {{ 'UNIVERSITIES.LOGO_AR' | translate }}
+            <span class="text-muted fz-2xs">(Image)</span>
+          </label>
+
+          <div class="upload-field" (click)="logoArInput.click()">
+            <div class="upload-field__icon">
+              <!-- Upload icon when no file -->
+              <img
+                src="assets/img/icons/file-upload.svg"
+                *ngIf="!logoArPreview()"
+                [attr.alt]="'upload'"/>
+
+              <!-- Preview icon when has preview -->
+              <img
+                src="assets/img/icons/file-eye.svg"
+                *ngIf="logoArPreview()"
+                [attr.alt]="'view'"
+                class="cursor-pointer"
+                (click)="previewLogo($event, 'ar')"/>
             </div>
-          } @else if (university?.logoAr && isEditMode()) {
-            <small class="text-muted d-block mt-2">{{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}</small>
+
+            <div class="upload-field__text">
+              {{ logoArDisplayName() || ('UNIVERSITIES.CHOOSE_LOGO' | translate) }}
+            </div>
+
+            <div class="upload-field__actions" *ngIf="logoArPreview()">
+              <button
+                type="button"
+                class="btn btn-sm btn-light"
+                (click)="clearLogo($event, 'ar')">
+                {{ 'UNIVERSITIES.CLEAR' | translate }}
+              </button>
+            </div>
+
+            <input
+              #logoArInput
+              type="file"
+              class="d-none"
+              accept="image/*"
+              (change)="onLogoArSelected($event)" />
+          </div>
+
+          @if (logoArError()) {
+            <small class="text-danger mt-1 d-block">{{ logoArError() }}</small>
+          }
+
+          @if (!logoArPreview() && university?.logoAr && isEditMode()) {
+            <small class="text-muted d-block mt-2">
+              {{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}
+            </small>
           }
         </div>
+
+        <!-- Logo EN -->
         <div class="col-md-6">
-          <label class="form-label">{{ 'UNIVERSITIES.LOGO_EN' | translate }}</label>
-          <input type="file" class="form-control" accept="image/*" (change)="onLogoEnSelected($event)" />
-          @if (logoEnError()) {
-            <div class="text-danger small mt-1">{{ logoEnError() }}</div>
-          }
-          @if (logoEnPreview()) {
-            <div class="logo-preview mt-2">
-              <div class="preview-label text-muted small">{{ 'UNIVERSITIES.LOGO_PREVIEW' | translate }}</div>
-              <img class="logo-image" [src]="logoEnPreview()!" [attr.alt]="'UNIVERSITIES.LOGO_EN' | translate" />
+          <label class="form-label d-block">
+            {{ 'UNIVERSITIES.LOGO_EN' | translate }}
+            <span class="text-muted fz-2xs">(Image)</span>
+          </label>
+
+          <div class="upload-field" (click)="logoEnInput.click()">
+            <div class="upload-field__icon">
+              <img
+                src="assets/img/icons/file-upload.svg"
+                *ngIf="!logoEnPreview()"
+                [attr.alt]="'upload'"/>
+
+              <img
+                src="assets/img/icons/file-eye.svg"
+                *ngIf="logoEnPreview()"
+                [attr.alt]="'view'"
+                class="cursor-pointer"
+                (click)="previewLogo($event, 'en')"/>
             </div>
-          } @else if (university?.logoEn && isEditMode()) {
-            <small class="text-muted d-block mt-2">{{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}</small>
+
+            <div class="upload-field__text">
+              {{ logoEnDisplayName() || ('UNIVERSITIES.CHOOSE_LOGO' | translate) }}
+            </div>
+
+            <div class="upload-field__actions" *ngIf="logoEnPreview()">
+              <button
+                type="button"
+                class="btn btn-sm btn-light"
+                (click)="clearLogo($event, 'en')">
+                {{ 'UNIVERSITIES.CLEAR' | translate }}
+              </button>
+            </div>
+
+            <input
+              #logoEnInput
+              type="file"
+              class="d-none"
+              accept="image/*"
+              (change)="onLogoEnSelected($event)" />
+          </div>
+
+          @if (logoEnError()) {
+            <small class="text-danger mt-1 d-block">{{ logoEnError() }}</small>
+          }
+          @if (!logoEnPreview() && university?.logoEn && isEditMode()) {
+            <small class="text-muted d-block mt-2">
+              {{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}
+            </small>
           }
         </div>
       </div>

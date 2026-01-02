@@ -22,6 +22,7 @@ import {UniversitiesService} from '../../services/universities.service';
 import {UniversityFormPayload} from '../../models/university-form.payload';
 import {finalize} from 'rxjs/operators';
 import {EndpointsService} from '../../../../../../core/http/endpoints.service';
+import {FileUtilsService} from '../../../../../../core/utils/file-utils';
 
 @Component({
   selector: 'app-university-modal',
@@ -36,6 +37,7 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
   private translate = inject(TranslateService);
   private universitiesService = inject(UniversitiesService);
   private endpoints = inject(EndpointsService);
+  private fileUtils = inject(FileUtilsService);
 
   @Input() visible = false;
   @Input() mode: 'create' | 'edit' = 'create';
@@ -62,6 +64,12 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
 
   private logoArObjectUrl: string | null = null;
   private logoEnObjectUrl: string | null = null;
+
+  logoArName = signal<string | null>(null);
+  logoEnName = signal<string | null>(null);
+
+  logoArDisplayName = computed(() => this.logoArName() || this.getExistingLogoName('ar'));
+  logoEnDisplayName = computed(() => this.logoEnName() || this.getExistingLogoName('en'));
 
   form = this.fb.nonNullable.group({
     nameAr: ['', Validators.required],
@@ -97,8 +105,11 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
     this.submitted = false;
     this.logoArFile = null;
     this.logoEnFile = null;
+    this.logoArName.set(null);
+    this.logoEnName.set(null);
     this.logoArError.set(null);
     this.logoEnError.set(null);
+
 
     this.form.reset({
       nameAr: '',
@@ -135,6 +146,8 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
       }
       this.setPreview('ar', this.resolveLogoUrl(this.university.logoAr ?? null));
       this.setPreview('en', this.resolveLogoUrl(this.university.logoEn ?? null));
+      this.logoArName.set(this.getExistingLogoName('ar'));
+      this.logoEnName.set(this.getExistingLogoName('en'));
     } else {
       this.cities.set([]);
       this.setPreview('ar', null);
@@ -236,12 +249,18 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
     const file = input.files?.[0] ?? null;
 
     const errorSignal = type === 'ar' ? this.logoArError : this.logoEnError;
-    const existingLogo = type === 'ar' ? this.university?.logoAr ?? null : this.university?.logoEn ?? null;
+    const nameSignal  = type === 'ar' ? this.logoArName  : this.logoEnName;
+
+    const existingLogo = type === 'ar'
+      ? this.university?.logoAr ?? null
+      : this.university?.logoEn ?? null;
+
     const resolvedExisting = this.resolveLogoUrl(existingLogo);
 
     if (file && !file.type.startsWith('image/')) {
       errorSignal.set(this.translate.instant('UNIVERSITIES.INVALID_LOGO_TYPE'));
       this.setLogoFile(type, null);
+      nameSignal.set(this.getExistingLogoName(type));
       this.setPreview(type, resolvedExisting);
       input.value = '';
       return;
@@ -249,13 +268,71 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
 
     errorSignal.set(null);
     this.setLogoFile(type, file);
+
     if (file) {
+      nameSignal.set(file.name);
       this.setPreview(type, URL.createObjectURL(file), true);
     } else {
+      nameSignal.set(this.getExistingLogoName(type));
       this.setPreview(type, resolvedExisting);
     }
   }
+  async previewLogo(ev: MouseEvent, type: 'ar' | 'en') {
+    ev.stopPropagation();
+    ev.preventDefault();
 
+    const file = type === 'ar' ? this.logoArFile : this.logoEnFile;
+    const preview = type === 'ar' ? this.logoArPreview() : this.logoEnPreview();
+
+    // 1) If user selected a new file => preview it
+    if (file) {
+      this.fileUtils.previewBlob(file);
+      return;
+    }
+
+    // 2) Otherwise preview existing URL (protected endpoint => forceAuthFetch)
+    if (preview) {
+      await this.fileUtils.previewUrl(preview, '', true);
+    }
+  }
+  clearLogo(ev: MouseEvent, type: 'ar' | 'en') {
+    ev.stopPropagation();
+    ev.preventDefault();
+
+    const existingLogo = type === 'ar'
+      ? this.university?.logoAr ?? null
+      : this.university?.logoEn ?? null;
+
+    this.setLogoFile(type, null);
+
+    if (type === 'ar') {
+      this.logoArError.set(null);
+      this.logoArName.set(this.getExistingLogoName('ar'));
+    } else {
+      this.logoEnError.set(null);
+      this.logoEnName.set(this.getExistingLogoName('en'));
+    }
+
+    this.setPreview(type, this.resolveLogoUrl(existingLogo));
+  }
+  private getExistingLogoName(type: 'ar' | 'en'): string | null {
+    const raw = type === 'ar' ? (this.university?.logoAr ?? null) : (this.university?.logoEn ?? null);
+    if (!raw) return null;
+
+    // If backend sends a URL: try extract last segment
+    if (raw.startsWith('http')) {
+      try {
+        const u = new URL(raw);
+        const last = u.pathname.split('/').filter(Boolean).pop();
+        return last ?? null;
+      } catch {
+        return raw.split('/').pop() ?? null;
+      }
+    }
+
+    // If it’s an ID, show short friendly label
+    return `${this.translate.instant(type === 'ar' ? 'UNIVERSITIES.LOGO_AR' : 'UNIVERSITIES.LOGO_EN')} (${raw.slice(0, 8)}...)`;
+  }
   private setLogoFile(type: 'ar' | 'en', file: File | null) {
     if (type === 'ar') {
       this.logoArFile = file;

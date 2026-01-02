@@ -12,7 +12,9 @@ public class University : LookupBase
     public string? Phone { get; set; }
     public string? Email { get; set; }
     public string? Code { get; set; }
-    public string? LogoEn { get; set; }
-    public string? LogoAr { get; set; }
+    public Guid? LogoEnId { get; set; }
+    public Resource? LogoEn { get; set; }
+    public Guid? LogoArId { get; set; }
+    public Resource? LogoAr { get; set; }
     public string? OriginalName { get; set; }
 }
