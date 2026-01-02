@@ -14,6 +14,10 @@ export const Permissions = {
     View: 'languages.view',
     Manage: 'languages.manage',
   },
+  Religions: {
+    View: 'religions.view',
+    Manage: 'religions.manage',
+  },
   Offices: {
     View: 'offices.view',
     Manage: 'offices.manage',
