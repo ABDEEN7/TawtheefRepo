@@ -35,6 +35,12 @@ public static class PermissionKeys
         public const string Manage = "languages.manage";
     }
 
+    public static class Religions
+    {
+        public const string View = "religions.view";
+        public const string Manage = "religions.manage";
+    }
+
     public static class Countries
     {
         public const string View = "countries.view";
