@@ -185,11 +185,11 @@
   "profileView.status.adminCancelled": "ملغي",
 
   "profileView.statusHint.inCreation": "ملفك الشخصي ما زال قيد الإعداد.",
-  "profileView.statusHint.submitted": "تم إرسال ملفك الشخصي وبانتظار المراجعة.",
-  "profileView.statusHint.underReview": "ملفك الشخصي قيد المراجعة حالياً.",
-  "profileView.statusHint.requiresUpdate": "يوجد ملاحظات من المراجع. يرجى تعديل الأقسام المطلوبة.",
-  "profileView.statusHint.approved": "تمت الموافقة على ملفك الشخصي.",
-  "profileView.statusHint.rejected": "تم رفض ملفك الشخصي. يرجى مراجعة الملاحظات وإجراء التعديلات.",
+  "profileView.statusHint.submitted": "تم إرسال ملفك وبانتظار المراجعة، ولا يمكنك التعديل حتى تنتهي.",
+  "profileView.statusHint.underReview": "ملفك قيد المراجعة حالياً، ولا يمكن إجراء تعديلات حتى صدور القرار.",
+  "profileView.statusHint.requiresUpdate": "يمكنك تعديل العناصر التي حالتها بحاجة لتصحيح فقط، أما العناصر المعتمدة فتبقى مقفلة.",
+  "profileView.statusHint.approved": "تمت الموافقة على ملفك. يمكنك تحديث البيانات الأساسية وإضافة عناصر جديدة أو استبدال المستندات، لكن لا يمكنك حذف العناصر المعتمدة.",
+  "profileView.statusHint.rejected": "تم رفض الملف. عالج ملاحظات التصحيح المطلوبة بينما تبقى العناصر المعتمدة للقراءة فقط.",
   "profileView.statusHint.adminCancelled": "تم إلغاء الطلب من قبل الإدارة.",
 
   "profileView.review.title": "ملاحظات المراجع",

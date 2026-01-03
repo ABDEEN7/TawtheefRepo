@@ -134,6 +134,11 @@ export class ProfileOverviewPage {
       acc[section.section] = section.notesCount ?? 0;
       return acc;
     }, {} as Record<number, number>);
+    const sectionCorrections = reviewSections.reduce((acc, section) => {
+      const notes = section.notes ?? [];
+      acc[section.section] = notes.some(n => n.status === ReviewStatusEnum.NeedsCorrection);
+      return acc;
+    }, {} as Record<number, boolean>);
 
     const visibility = createProfileOverviewVisibility(p);
     return {
@@ -157,7 +162,8 @@ export class ProfileOverviewPage {
       review: {
         totalNotes: review.totalNotes ?? 0,
         sections: reviewSections,
-        sectionIndex
+        sectionIndex,
+        sectionCorrections
       },
       prereq: {
         candidateType: p.candidateType,
@@ -262,6 +268,9 @@ export class ProfileOverviewPage {
   }
 
   editSection(section: ProfileSectionEnum) {
+    const viewModel = this.vm();
+    if (viewModel && this.isLockedForReview(viewModel.status.value)) return;
+
     if (!this.isProfileComplete()) {
       const step = SECTION_STEP_MAP[section] ?? 1;
       this.navigateToWizard(step);
@@ -286,10 +295,15 @@ export class ProfileOverviewPage {
       return;
     }
 
+    const viewModel = this.vm();
     const review = this.data.value()?.review as MyProfileReviewSummaryDto | undefined;
     const firstSectionWithNotes = (review?.sections ?? []).find(s => (s.notesCount ?? 0) > 0)?.section;
-    if (firstSectionWithNotes) {
-      this.navigateToEditSection(firstSectionWithNotes as ProfileSectionEnum);
+    const firstSectionNeedingCorrection = viewModel?.review.sections.find(
+      s => viewModel.review.sectionCorrections?.[s.section]
+    )?.section;
+    const targetSection = firstSectionNeedingCorrection ?? firstSectionWithNotes;
+    if (targetSection) {
+      this.navigateToEditSection(targetSection as ProfileSectionEnum);
       return;
     }
 
@@ -324,17 +338,21 @@ export class ProfileOverviewPage {
     const v = this.vm();
     if (!v) return false;
 
-    // If profile is complete, allow edits ONLY when reviewer requested changes
     const status = v.status.value;
-    const needsCorrections =
-      status === UserProfileStatusEnum.RequiresUpdate ||
-      status === UserProfileStatusEnum.Rejected;
+    if (this.isLockedForReview(status)) return false;
 
-    if (!needsCorrections) return false;
+    if (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Rejected) {
+      return v.review.sectionCorrections?.[section] ?? false;
+    }
 
-    // Show edit only if this specific section has notes (needs correction)
-    const notesCount = v.review.sectionIndex?.[section] ?? 0;
-    return notesCount > 0;
+    if (status === UserProfileStatusEnum.Approved) return true;
+
+    if (status === UserProfileStatusEnum.InCreation) return true;
+
+    return false;
+  }
+  private isLockedForReview(status: number): boolean {
+    return status === UserProfileStatusEnum.UnderReview || status === UserProfileStatusEnum.Submitted;
   }
   private sectionLabelKey(section: number): string {
     switch (section) {
