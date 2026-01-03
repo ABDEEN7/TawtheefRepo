@@ -17,7 +17,8 @@ public sealed class GetCitiesByCountryQueryHandler(IUnitOfWork unitOfWork, IMapp
     {
         var entities = await unitOfWork.GetEntityRepository<City>().DbSet
             .AsNoTracking()
-            .Where(c => c.CountryId == request.CountryId && c.IsActive)
+            .Where(s => s.IsActive)
+            .Where(c => c.CountryId == request.CountryId)
             .WhereIf(!string.IsNullOrEmpty(request.Search),
                 c => EF.Functions.Like(c.NameAr, $"%{request.Search}%") ||
                      EF.Functions.Like(c.NameEn, $"%{request.Search}%") ||

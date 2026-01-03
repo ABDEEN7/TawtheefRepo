@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import {ReviewStatus} from '../../../approval-list/models/profile-approval.models';
-import {ButtonDirective} from 'primeng/button';
-import {Textarea} from 'primeng/textarea';
-import {TranslatePipe} from '@ngx-translate/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ReviewStatus } from '../../../approval-list/models/profile-approval.models';
+import { ButtonDirective } from 'primeng/button';
+import { TranslatePipe } from '@ngx-translate/core';
 import {NgClass, NgIf} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-item-inline-review',
@@ -13,11 +12,10 @@ import {FormsModule} from '@angular/forms';
   styleUrl: './item-inline-review.scss',
   imports: [
     ButtonDirective,
-    Textarea,
     TranslatePipe,
+    NgClass,
+    TooltipModule,
     NgIf,
-    FormsModule,
-    NgClass
   ]
 })
 export class ItemInlineReviewComponent {
@@ -28,10 +26,7 @@ export class ItemInlineReviewComponent {
   @Output() review = new EventEmitter<{
     reviewItemId: string;
     status: ReviewStatus;
-    note?: string;
   }>();
-
-  noteDraft = signal(this.note ?? '');
 
   approve(): void {
     this.review.emit({
@@ -44,35 +39,45 @@ export class ItemInlineReviewComponent {
     this.review.emit({
       reviewItemId: this.reviewItemId,
       status: ReviewStatus.ChangesRequested,
-      note: this.noteDraft().trim(),
     });
   }
 
-  reject(): void {
-    this.review.emit({
-      reviewItemId: this.reviewItemId,
-      status: ReviewStatus.Rejected,
-      note: this.noteDraft().trim(),
-    });
+  getClassStatus(): string {
+    switch (this.status) {
+      case ReviewStatus.Approved:
+        return 'status-approved';
+      case ReviewStatus.ChangesRequested:
+        return 'status-changes';
+      case ReviewStatus.Rejected:
+        return 'status-rejected';
+      default:
+        return 'status-pending';
+    }
   }
 
-  needsNote(): boolean {
-    return (
-      this.status === ReviewStatus.ChangesRequested ||
-      this.status === ReviewStatus.Rejected
-    );
-  }
-
-  getClassStatus(): string{
+  getStatusKey(): string {
     switch (this.status) {
       case ReviewStatus.Approved:
         return 'approved';
       case ReviewStatus.ChangesRequested:
-        return 'changes-requested';
+        return 'changes';
       case ReviewStatus.Rejected:
         return 'rejected';
       default:
         return 'pending';
+    }
+  }
+
+  getStatusIcon(): string {
+    switch (this.status) {
+      case ReviewStatus.Approved:
+        return 'pi pi-check-circle text-success';
+      case ReviewStatus.ChangesRequested:
+        return 'pi pi-exclamation-circle text-warning';
+      case ReviewStatus.Rejected:
+        return 'pi pi-ban text-danger';
+      default:
+        return 'pi pi-hourglass text-secondary';
     }
   }
 }

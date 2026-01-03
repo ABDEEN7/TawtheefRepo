@@ -23,6 +23,7 @@ public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper)
 
         var matches = await uow.GetEntityRepository<SkillType>().DbSet
             .AsNoTracking()
+            .Where(s => s.IsActive)
             .Where(s =>
                 EF.Functions.Like(s.NameAr, $"%{term}%") ||
                 EF.Functions.Like(s.NameEn, $"%{term}%") ||

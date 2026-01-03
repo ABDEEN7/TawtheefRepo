@@ -17,6 +17,7 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
     {
         var entities = await unitOfWork.GetEntityRepository<University>().DbSet
             .AsNoTracking()
+            .Where(s => s.IsActive)
             .Where(u => u.City!.CountryId == request.CountryId)
             .WhereIf(!string.IsNullOrEmpty(request.Search),
                 university =>

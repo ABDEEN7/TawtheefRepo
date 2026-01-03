@@ -456,7 +456,7 @@ function validateLanguagesStep(s: ProfileState): StepValidationResult {
 function validateAttachmentsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
   s.attachments?.forEach((attachment, index) => {
-    if (!isFilledField(attachment?.fileName ?? attachment?.name)) {
+    if (!isFilledField(attachment?.title)) {
       errors.push({
         field: `attachments[${index}].fileName`,
         i18nKey: 'wizard.profile.attachments.fileName.required',

@@ -16,13 +16,5 @@ public class GetProfileApprovalDetailDto
     /// </summary>
     public ProfileApprovalDataDto Profile { get; set; } = default!;
 
-    public List<SectionReviewDto> Sections { get; set; } = [];
-}
-
-public class SectionReviewDto
-{
-    public ProfileSection Section { get; init; }
-    public ReviewStatus Status { get; set; }
-    public string? Note { get; set; }
-    public DateTimeOffset? ReviewedAtUtc { get; set; }
+    public List<ProfileApprovalSectionDto> Sections { get; set; } = [];
 }

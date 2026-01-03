@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -9,18 +9,20 @@ import {
   ProfileApprovalItem, ReviewStatus,
   SpecializationRelationLevel
 } from '../../../../approval-list/models/profile-approval.models';
-import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-review';
+import { ItemInlineReviewComponent } from '../../item-inline-review/item-inline-review';
 
 @Component({
   selector: 'app-profile-approval-experiences-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule],
+  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule, ItemInlineReviewComponent],
   templateUrl: './experiences-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class ExperiencesSectionComponent {
   @Input() experiences?: any[] | null = null;
+  @Input() reviewItems: ProfileApprovalItem[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
+  @Output() reviewItem = new EventEmitter<{ reviewItemId: string; status: ReviewStatus; note?: string }>();
   private translate = inject(TranslateService);
 
   preview(url?: string | null): void {
@@ -36,5 +38,10 @@ export class ExperiencesSectionComponent {
 
     const key = SpecializationRelationLevel[level];
     return this.translate.instant(`profileApproval.detail.specializationRelation.${key}`);
+  }
+
+  reviewItemFor(entityId?: string): ProfileApprovalItem | null {
+    if (!entityId) return null;
+    return (this.reviewItems ?? []).find(i => i.entityId === entityId) ?? null;
   }
 }

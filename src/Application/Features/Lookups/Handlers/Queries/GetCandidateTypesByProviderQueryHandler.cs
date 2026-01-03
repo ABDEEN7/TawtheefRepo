@@ -18,6 +18,7 @@ public sealed class GetCandidateTypesByProviderQueryHandler(IUnitOfWork unitOfWo
     {
         var candidateTypes = await unitOfWork.GetEntityRepository<ProviderLogin>()
             .DbSet
+            .Where(s => s.IsActive)
             .Where(pl => pl.BackendName.ToLower() == request.Provider.ToLower())
             .SelectMany(cl => cl.CandidateTypeProviderLogins)
             .Select(ct => ct.CandidateType!)
