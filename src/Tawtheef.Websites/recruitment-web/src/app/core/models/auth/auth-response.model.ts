@@ -36,6 +36,7 @@ export interface ProfileStatusDto {
   missing: string[];
   isDraft: boolean;
   avatar?: string | null;
+  availableForRecruitment?: boolean | null;
   provider: string;
   fullNameAr?: string | null;
   fullNameEn?: string | null;

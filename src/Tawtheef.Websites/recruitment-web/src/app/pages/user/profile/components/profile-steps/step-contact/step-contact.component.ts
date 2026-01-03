@@ -7,7 +7,7 @@ import {
   OnDestroy,
   effect
 } from '@angular/core';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 import {CountryISO, SearchCountryField} from 'ngx-intl-tel-input';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
@@ -621,8 +621,11 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     this.savingContact = true;
     this.profileService
-      .saveContactSection(dto, { nationalAddressFile: fileToUpload(this.naLocalFile) })
-      .pipe(finalize(() => (this.savingContact = false)))
+      .saveRecruitmentAvailability(s.available ?? true)
+      .pipe(
+        switchMap(() => this.profileService.saveContactSection(dto, { nationalAddressFile: fileToUpload(this.naLocalFile) })),
+        finalize(() => (this.savingContact = false))
+      )
       .subscribe({
         next: () => {
           this.lastSubmittedSignature = signature;
@@ -657,6 +660,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
         phoneVerified: state.phoneVerified ?? false,
         email: state.email ?? null,
         emailVerified: state.emailVerified ?? false,
+        availableForRecruitment: state.available,
       };
 
       return JSON.stringify({ dto, nationalAddress, contactInfo });

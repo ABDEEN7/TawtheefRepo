@@ -74,6 +74,10 @@ export class ProfileService {
   }
 
   // ========== CONTACT ==========
+  saveRecruitmentAvailability(available: boolean) {
+    return this.http.post(this.endpoints.user.profile.saveAvailability, { availableForRecruitment: available });
+  }
+
   saveContactSection(dto: SaveProfileContactRequestDto, files?: { nationalAddressFile?: FileLike }) {
     const b = this.fd()
       .json(dto);
