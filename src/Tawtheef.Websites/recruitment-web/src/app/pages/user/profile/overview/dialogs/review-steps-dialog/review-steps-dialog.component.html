@@ -1,0 +1,44 @@
+<section class="review-steps" i18nNamespace="pages/user/profile-overview">
+  <header class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+    <div>
+      <h3 class="mb-1">{{ 'profileView.reviewSteps.title' | translate }}</h3>
+      <p class="text-muted mb-0">{{ 'profileView.reviewSteps.subtitle' | translate }}</p>
+    </div>
+    <button pButton type="button" class="p-button-text" icon="pi pi-times" (click)="close()"></button>
+  </header>
+
+  <div class="step-list mt-3">
+    @for (s of steps(); track s.section) {
+      <div class="step-card">
+        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <div class="step-icon">
+              <i class="pi pi-list-check"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">{{ sectionLabelKey(s.section) | translate }}</div>
+              <div class="text-muted small">{{ sectionSummary(s) }}</div>
+            </div>
+          </div>
+          <p-tag [severity]="statusSeverity(s.notes[0]?.status as any)" [value]="(statusLabelKey(s.notes[0]?.status as any) | translate)"></p-tag>
+        </div>
+
+        <p-divider></p-divider>
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div class="hint text-muted small">
+            {{ 'profileView.reviewSteps.hint' | translate }}
+          </div>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            class="p-button-sm"
+            (click)="editSection(s.section as any)"
+            [label]="'profileView.reviewSteps.edit' | translate"
+          ></button>
+        </div>
+      </div>
+    }
+  </div>
+</section>

@@ -9,6 +9,8 @@ import { Skeleton } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { Chip } from 'primeng/chip';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { DialogService } from 'primeng/dynamicdialog';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { ProfileService } from '../wizard-profile/services/profile.service';
 import { ProfileLookupsService } from '../wizard-profile/services/profile-lookups.service';
@@ -16,9 +18,10 @@ import { mapIdToDropdown } from '../wizard-profile/services/profile.mapper';
 import {ProfileOverviewService} from './services/profile-overview.service';
 import {
   MyProfileReviewSummaryDto,
+  MyProfileReviewNoteDto,
   ProfileChangeRequestDto,
   ProfileChangeRequestStatusEnum,
-  ProfileSectionEnum, ReviewStatusEnum, UserProfileStatusEnum
+  ProfileSectionEnum, ReviewStatusEnum, ReviewTargetTypeEnum, UserProfileStatusEnum
 } from './models/profile-overview.model';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {FileUtilsService} from '../../../../core/utils/file-utils';
@@ -30,6 +33,8 @@ import {
   TrainingCourseDto, SkillDto
 } from '../../../../core/models/auth/auth-response.model';
 import {createProfileOverviewVisibility} from './services/profile-overview.visibility';
+import { ReviewStepsDialogComponent } from './dialogs/review-steps-dialog/review-steps-dialog.component';
+import { ReviewItemEditDialogComponent } from './dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
 
 type ProfileEditSection =
   | 'prerequisites'
@@ -80,11 +85,13 @@ const SECTION_EDIT_SEGMENT_MAP: Record<ProfileSectionEnum, ProfileEditSection> =
     Skeleton,
     TableModule,
     Chip,
-    I18nNamespaceDirective
+    I18nNamespaceDirective,
+    TooltipModule
   ],
   templateUrl: './profile-overview.page.html',
   styleUrls: ['./profile-overview.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DialogService]
 })
 export class ProfileOverviewPage {
   private readonly fileUtils = inject(FileUtilsService);
@@ -93,7 +100,9 @@ export class ProfileOverviewPage {
   private readonly lookups = inject(ProfileLookupsService);
   private readonly router = inject(Router);
   private readonly i18n = inject(TranslateService);
+  private readonly dialogService = inject(DialogService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
+  protected readonly ReviewTargetTypeEnum = ReviewTargetTypeEnum;
   protected readonly sectionNav = [
     { id: 'sec-prerequisites', icon: 'pi pi-file', labelKey: 'profileView.sections.prerequisites', section: ProfileSectionEnum.Prerequisites, step: SECTION_STEP_MAP[ProfileSectionEnum.Prerequisites] },
     { id: 'sec-personal', icon: 'pi pi-id-card', labelKey: 'profileView.sections.personal', section: ProfileSectionEnum.Personal, step: SECTION_STEP_MAP[ProfileSectionEnum.Personal] },
@@ -267,6 +276,37 @@ export class ProfileOverviewPage {
     return !!profile?.isComplete;
   }
 
+  private findFileUrl(note: MyProfileReviewNoteDto): string | null {
+    if (!note.resourceId) return null;
+
+    const targetId = (note.resourceId as string).toLowerCase();
+    const vm = this.vm();
+    if (!vm) return null;
+
+    const prereqFiles = [
+      vm.prereq.resume,
+      vm.prereq.nationalCard,
+      vm.prereq.birthdayCertificate,
+      vm.prereq.marriageCertificate,
+      vm.prereq.residenceAddressCertificate,
+      vm.prereq.sponsorCard
+    ];
+
+    const sectionFiles = [
+      ...vm.qualifications.map(q => q.attachment ?? null),
+      ...vm.experiences.map(e => e.attachment ?? null),
+      ...vm.trainingCourses.map(t => t.attachment ?? null),
+      ...vm.achievements.map(a => a.attachment ?? null),
+      ...vm.attachments.map(a => a.attachment ?? null)
+    ];
+
+    const match = [...prereqFiles, ...sectionFiles].find(f =>
+      f?.resourceId?.toString().toLowerCase() === targetId
+    );
+
+    return match?.url ?? null;
+  }
+
   editSection(section: ProfileSectionEnum) {
     const viewModel = this.vm();
     if (viewModel && this.isLockedForReview(viewModel.status.value)) return;
@@ -295,19 +335,43 @@ export class ProfileOverviewPage {
       return;
     }
 
-    const viewModel = this.vm();
     const review = this.data.value()?.review as MyProfileReviewSummaryDto | undefined;
-    const firstSectionWithNotes = (review?.sections ?? []).find(s => (s.notesCount ?? 0) > 0)?.section;
-    const firstSectionNeedingCorrection = viewModel?.review.sections.find(
-      s => viewModel.review.sectionCorrections?.[s.section]
-    )?.section;
-    const targetSection = firstSectionNeedingCorrection ?? firstSectionWithNotes;
-    if (targetSection) {
-      this.navigateToEditSection(targetSection as ProfileSectionEnum);
-      return;
-    }
+    const ref = this.dialogService.open(ReviewStepsDialogComponent, {
+      header: this.i18n.instant('profileView.reviewSteps.dialogTitle'),
+      data: { sections: review?.sections ?? [] },
+      styleClass: 'w-100 w-md-75'
+    });
 
-    this.scrollTo('review-panel');
+    ref.onClose.subscribe(result => {
+      if (result?.section) {
+        this.navigateToEditSection(result.section as ProfileSectionEnum);
+      }
+    });
+  }
+
+  openReviewItem(note: MyProfileReviewNoteDto, section: ProfileSectionEnum) {
+    const ref = this.dialogService.open(ReviewItemEditDialogComponent, {
+      header: this.i18n.instant('profileView.reviewItemDialog.title'),
+      data: {
+        note,
+        section,
+        sectionLabel: this.sectionLabelKey(section),
+        canEdit: this.canShowEdit(section),
+        fileUrl: this.findFileUrl(note)
+      },
+      styleClass: 'w-100 w-md-50'
+    });
+
+    ref.onClose.subscribe(result => {
+      if (!result) return;
+      if (result.section) {
+        this.navigateToEditSection(result.section as ProfileSectionEnum);
+        return;
+      }
+      if (result.preview) {
+        this.fileUtils.previewUrl(result.preview as string);
+      }
+    });
   }
 
   // ================== UI Mapping ==================
