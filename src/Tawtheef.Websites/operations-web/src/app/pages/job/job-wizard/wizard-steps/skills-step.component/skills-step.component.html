@@ -1,8 +1,7 @@
 <div class="step-content">
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="markTouched()">
     <div class="page-card card card-lite p-4">
 
-      <!-- Header + Add Button -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="row-item">
           <div class="row-item-icon">
@@ -13,7 +12,7 @@
           </div>
         </div>
 
-        <button class="btn btn-brand btn-add w-50" [disabled]="form.disabled" (click)="addSkill()" type="button">
+        <button class="btn btn-brand btn-add" [disabled]="form.disabled" (click)="addSkill()" type="button">
           <i class="fa fa-plus me-2"></i>
           {{ 'JOB_WIZARD.STEPS.SKILLS.ADD_SKILL' | translate }}
         </button>
@@ -24,97 +23,128 @@
 
         @if (jobSkillsArray.length === 0) {
 
-        <div class="empty-card text-center py-5 border rounded">
-          <i class="fa fa-lightbulb fa-3x text-muted mb-3"></i>
-          <h6 class="text-muted">
-            {{ 'JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE_TITLE' | translate }}
-          </h6>
-          <p class="text-muted small">
-            {{ 'JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE_DESC' | translate }}
-          </p>
-
-          <div class="alert alert-info mt-3">
-            <i class="fa fa-info-circle me-2"></i>
-            {{ 'JOB_WIZARD.STEPS.SKILLS.OPTIONAL_INFO' | translate }}
+          <!-- empty like screenshot (simple) -->
+          <div class="skills-empty border rounded p-4 text-center">
+            <div class="mb-2">
+              <i class="fa fa-info-circle text-muted"></i>
+            </div>
+            <div class="text-muted">
+              {{ 'JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE_DESC' | translate }}
+            </div>
           </div>
-        </div>
 
         } @else {
 
-        <h5 class="fw-bold mb-3 brand-text">
-          {{ 'JOB_WIZARD.STEPS.SKILLS.LIST_TITLE' | translate }}
-          <span class="badge bg-brand ms-2">{{ jobSkillsArray.length }}</span>
-        </h5>
+          @for (skillGroup of jobSkillsArray.controls; track $index; let i = $index) {
 
-        @for (skillGroup of jobSkillsArray.controls; track $index; let i = $index) {
+            <div class="skill-row" [formGroupName]="i">        
 
-        <div class="rounded-card mb-3 shadow-sm-sm" [formGroupName]="i">
+              <div class="skill-fields">
 
-          <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <span class="fw-bold brand-text">
-              {{ 'JOB_WIZARD.STEPS.SKILLS.SKILL' | translate }} {{ i + 1 }}
-            </span>
+                <div class="field-block">
+                  <label class="field-label">
+                    {{ 'JOB_WIZARD.STEPS.SKILLS.SKILL_NAME' | translate }}
+                  </label>
 
-            <button class="btn btn-outline-danger btn-sm" (click)="removeSkill(i)" type="button"
-              [title]="'JOB_WIZARD.STEPS.SKILLS.REMOVE' | translate">
-              <i class="fa fa-trash"></i>
-            </button>
-          </div>
+                  <p-select
+                    class="w-100"
+                    [options]="lookupsService.skills()"
+                    formControlName="skillId"
+                    optionLabel="name"
+                    optionValue="id"
+                    [showClear]="true"
+                    placeholder="{{ 'JOB_WIZARD.STEPS.SKILLS.SKILL_PLACEHOLDER' | translate }}"
+                    (onBlur)="getSkillGroup(i).controls['skillId'].markAsTouched()"
+                  ></p-select>
 
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="field-label">
-                  {{ 'JOB_WIZARD.STEPS.SKILLS.SKILL_NAME' | translate }}
-                </label>
-
-                <p-select [options]="lookupsService.skills()" formControlName="skillId" optionLabel="name"
-                  optionValue="id" [showClear]="true"
-                  placeholder="{{ 'JOB_WIZARD.STEPS.SKILLS.SKILL_PLACEHOLDER' | translate }}" class="w-100"></p-select>
-
-                @if (getSkillGroup(i).controls['skillId'].invalid &&
-                getSkillGroup(i).controls['skillId'].touched) {
-
-                <div class="text-danger small mt-1">
-                  @if (getSkillGroup(i).controls['skillId'].errors?.['required']) {
-                  <i class="fa fa-exclamation-circle me-1"></i>
-                  {{ 'JOB_WIZARD.VALIDATION.SKILL_REQUIRED' | translate }}
+                  @if (getSkillGroup(i).controls['skillId'].invalid && getSkillGroup(i).controls['skillId'].touched) {
+                    <div class="text-danger small mt-1">
+                      <i class="fa fa-exclamation-circle me-1"></i>
+                      {{ 'JOB_WIZARD.VALIDATION.SKILL_REQUIRED' | translate }}
+                    </div>
                   }
                 </div>
-                }
-              </div>
 
-              <div class="col-md-4">
-                <label class="field-label">
-                  {{ 'JOB_WIZARD.STEPS.SKILLS.SHOW_TO_APPLICANTS' | translate }}
-                </label>
-
-                <div class="d-flex align-items-center mt-2">
-                  <label class="fw-bold me-3 mb-0">
+                <div class="field-block show-block">
+                  <label class="field-label">
                     {{ 'JOB_WIZARD.STEPS.SKILLS.SHOW_TO_APPLICANTS' | translate }}
                   </label>
 
-                  <div class="form-check form-switch m-0">
-                    <input class="form-check-input switch-lg" type="checkbox" formControlName="showToApplicants"
-                      id="showToApplicants{{ i }}" />
+                  <div class="yes-no">
+                    <div class="form-check-inline">
+                      <p-radioButton
+                        name="showToApplicants{{ i }}"
+                        [value]="true"
+                        formControlName="showToApplicants"
+                        inputId="showYes{{ i }}"
+                      ></p-radioButton>
+                      <label class="ms-2" for="showYes{{ i }}">
+                        {{ 'common.yes' | translate }}
+                      </label>
+                    </div>
+
+                    <div class="form-check-inline ms-4">
+                      <p-radioButton
+                        name="showToApplicants{{ i }}"
+                        [value]="false"
+                        formControlName="showToApplicants"
+                        inputId="showNo{{ i }}"
+                      ></p-radioButton>
+                      <label class="ms-2" for="showNo{{ i }}">
+                        {{ 'common.no' | translate }}
+                      </label>
+                    </div>
                   </div>
                 </div>
 
               </div>
+              <div class="skill-actions">
+                <button
+                  type="button"
+                  class="icon-btn danger"
+                  (click)="removeSkill(i)"
+                  [disabled]="form.disabled"
+                  [title]="'JOB_WIZARD.STEPS.SKILLS.REMOVE' | translate"
+                >
+                  <i class="fa fa-trash"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="pill-btn"
+                  (click)="onViewSkill(i)"
+                  [disabled]="form.disabled"
+                  [title]="'JOB_WIZARD.STEPS.SKILLS.VIEW' | translate"
+                >
+                  <i class="fa fa-eye me-2"></i>
+                  {{ 'JOB_WIZARD.STEPS.SKILLS.VIEW' | translate }}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-        } }
+
+          }
+        }
+
       </div>
 
-      @if (!isValid() && form.touched && jobSkillsArray.length > 0) {
-      <div class="alert alert-warning mt-4">
-        <i class="fa fa-exclamation-triangle me-2"></i>
-        {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_SKILLS' | translate }}
-      </div>
+      <!-- validation: must have at least one -->
+      @if (!form.disabled && form.touched && jobSkillsArray.length === 0) {
+        <div class="alert alert-warning mt-4">
+          <i class="fa fa-exclamation-triangle me-2"></i>
+          {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_SKILL' | translate }}
+        </div>
+      }
+
+      <!-- validation: fields -->
+      @if (!form.disabled && form.touched && jobSkillsArray.length > 0 && !form.valid) {
+        <div class="alert alert-warning mt-4">
+          <i class="fa fa-exclamation-triangle me-2"></i>
+          {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_SKILLS' | translate }}
+        </div>
       }
 
     </div>
   </form>
+
   <app-review-note [note]="note"></app-review-note>
 </div>
