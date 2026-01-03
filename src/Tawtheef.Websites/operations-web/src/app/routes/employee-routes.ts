@@ -20,6 +20,9 @@ export const employeeRoutes = {
   approvalProfileDetail(id: string){
     return this.approvalProfile + `/${id}`;
   },
+  approvalProfileWizard(id: string) {
+    return this.approvalProfile + `/${id}/wizard`;
+  },
   approvalProfileReview(id: string) {
     return this.approvalProfile + `/${id}/review`;
   },
