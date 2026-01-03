@@ -19,6 +19,7 @@ public sealed class GetMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper
 
         var entities = await dbSet
             .AsNoTracking()
+            .Where(s => s.IsActive)
             // we exclude majors that have no sub majors, because they are not selectable [Create Profile Page]
             .Where(m=> m.SubMajors!.Count > 0)
             .WhereIf(!string.IsNullOrEmpty(request.Search), 

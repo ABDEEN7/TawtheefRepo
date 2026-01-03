@@ -12,6 +12,7 @@ import {
   ReviewStatusEnum,
   ReviewTargetTypeEnum,
 } from '../../models/profile-overview.model';
+import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
 
 interface DialogData {
   note: MyProfileReviewNoteDto;
@@ -24,13 +25,13 @@ interface DialogData {
 @Component({
   selector: 'app-review-item-edit-dialog',
   standalone: true,
-  imports: [CommonModule, TranslateModule, ButtonDirective, Tag, TooltipModule],
+  imports: [CommonModule, TranslateModule, ButtonDirective, Tag, TooltipModule, I18nNamespaceDirective],
   templateUrl: './review-item-edit-dialog.component.html',
   styleUrls: ['./review-item-edit-dialog.component.scss'],
 })
 export class ReviewItemEditDialogComponent {
   private readonly translate = inject(TranslateService);
-  private readonly config = inject(DynamicDialogConfig<DialogData>());
+  private readonly config = inject(DynamicDialogConfig<DialogData>);
   private readonly ref = inject(DynamicDialogRef);
 
   protected readonly ReviewStatusEnum = ReviewStatusEnum;
@@ -75,7 +76,7 @@ export class ReviewItemEditDialogComponent {
 
   edit(): void {
     if (!this.canEdit) return;
-    this.ref.close({ section: this.config.data?.section });
+    this.ref.close({ section: this.config?.data?.section });
   }
 
   preview(): void {

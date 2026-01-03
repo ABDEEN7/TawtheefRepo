@@ -78,7 +78,7 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             .Where(p =>
                 p.Status == UserProfileStatus.Submitted ||
                 p.Status == UserProfileStatus.UnderReview ||
-                p.Status == UserProfileStatus.Approved)
+                p.ReviewItems.Any(r => r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Pending))
             .ToPaginatedResultAsync(request, ct);
     }
 

@@ -20,7 +20,7 @@
               <div class="text-muted small">{{ sectionSummary(s) }}</div>
             </div>
           </div>
-          <p-tag [severity]="statusSeverity(s.notes[0]?.status as any)" [value]="(statusLabelKey(s.notes[0]?.status as any) | translate)"></p-tag>
+          <p-tag [severity]="statusSeverity(s.notes[0]?.status)" [value]="(statusLabelKey(s.notes[0]?.status) | translate)"></p-tag>
         </div>
 
         <p-divider></p-divider>
@@ -34,7 +34,7 @@
             type="button"
             icon="pi pi-pencil"
             class="p-button-sm"
-            (click)="editSection(s.section as any)"
+            (click)="editSection(s.section)"
             [label]="'profileView.reviewSteps.edit' | translate"
           ></button>
         </div>

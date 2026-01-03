@@ -111,13 +111,21 @@
         <button pButton type="button" class="p-button-sm" (click)="onReview(item, 'approve')">
           {{ 'profileApproval.detail.approve' | translate }}
         </button>
-        <button
+        <button *ngIf="allowEdit"
           pButton
           type="button"
           class="p-button-sm p-button-warning"
           (click)="onReview(item, 'changes')"
         >
           {{ 'profileApproval.detail.requestChanges' | translate }}
+        </button>
+        <button *ngIf="!allowEdit"
+          pButton
+          type="button"
+          class="p-button-sm p-button-warning"
+          (click)="onReview(item, 'reject')"
+        >
+          {{ 'profileApproval.detail.reject' | translate }}
         </button>
       </div>
     </div>

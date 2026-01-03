@@ -20,6 +20,7 @@ public sealed class GetCountriesQueryHandler(IUnitOfWork unitOfWork)
         
         var countries = await unitOfWork.GetEntityRepository<Country>()
             .DbSet
+            .Where(s => s.IsActive)
             .Select((c)=> new DropdownOptions {
                 Id = c.Id,
                 Name = c.GetLocalizedName(language)!,

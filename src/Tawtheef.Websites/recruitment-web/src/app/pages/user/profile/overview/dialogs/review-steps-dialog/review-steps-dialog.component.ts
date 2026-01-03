@@ -11,21 +11,22 @@ import {
   ProfileSectionEnum,
   ReviewStatusEnum,
 } from '../../models/profile-overview.model';
+import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-review-steps-dialog',
   standalone: true,
-  imports: [CommonModule, TranslateModule, Tag, ButtonDirective, DividerModule],
+  imports: [CommonModule, TranslateModule, Tag, ButtonDirective, DividerModule, I18nNamespaceDirective],
   templateUrl: './review-steps-dialog.component.html',
   styleUrls: ['./review-steps-dialog.component.scss'],
 })
 export class ReviewStepsDialogComponent {
   private readonly translate = inject(TranslateService);
-  private readonly config = inject(DynamicDialogConfig<{ sections: MyProfileReviewSectionDto[] }>());
+  private readonly config = inject(DynamicDialogConfig<{ sections: MyProfileReviewSectionDto[] }>);
   private readonly ref = inject(DynamicDialogRef);
 
   protected readonly ReviewStatusEnum = ReviewStatusEnum;
-  protected readonly steps = computed(() => this.config.data?.sections ?? []);
+  protected readonly steps = computed(() => this.config?.data?.sections ?? []);
 
   sectionLabelKey(section: ProfileSectionEnum): string {
     switch (section) {

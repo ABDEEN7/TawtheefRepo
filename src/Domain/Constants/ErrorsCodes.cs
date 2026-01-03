@@ -87,6 +87,7 @@ public class ErrorsCodes
     public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
     public const string ProfileNotUnderReview = "PROFILE_NOT_UNDER_REVIEW";
+    public const string ProfileNotReadyForReview = "PROFILE_NOT_READY_FOR_REVIEW";
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";
     public const string InvalidPassword = "INVALID_PASSWORD";

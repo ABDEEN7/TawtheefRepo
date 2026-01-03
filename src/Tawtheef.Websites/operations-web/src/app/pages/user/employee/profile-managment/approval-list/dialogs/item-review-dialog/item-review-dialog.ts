@@ -5,7 +5,7 @@ import { DynamicDialogConfig, DynamicDialogRef, DynamicDialogModule } from 'prim
 import { TranslateModule } from '@ngx-translate/core';
 import {ProfileApprovalItem} from '../../models/profile-approval.models';
 
-export type ItemDialogAction = 'approve' | 'changes';
+export type ItemDialogAction = 'approve' | 'changes' | 'reject';
 
 export interface ItemDialogData {
   item: ProfileApprovalItem;

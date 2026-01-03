@@ -3,10 +3,10 @@
     <div>
       <div class="text-muted small">{{ sectionLabel | translate }}</div>
       <h3 class="mb-1">{{ note.title }}</h3>
-      <p class="text-muted mb-0 small">{{ targetHintKey(note.targetType as any) | translate }}</p>
+      <p class="text-muted mb-0 small">{{ targetHintKey(note.targetType) | translate }}</p>
     </div>
     <div class="d-flex align-items-center gap-2">
-      <p-tag [severity]="statusSeverity(note.status as any)" [value]="(statusLabelKey(note.status as any) | translate)"></p-tag>
+      <p-tag [severity]="statusSeverity(note.status)" [value]="(statusLabelKey(note.status) | translate)"></p-tag>
       <button pButton type="button" class="p-button-text" icon="pi pi-times" (click)="close()"></button>
     </div>
   </header>

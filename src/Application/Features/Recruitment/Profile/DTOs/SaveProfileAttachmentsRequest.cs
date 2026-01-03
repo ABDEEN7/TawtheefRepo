@@ -16,6 +16,7 @@ public sealed class SaveProfileAttachmentsRequest
 public sealed class AdditionalAttachmentUpsertDto
 {
     public Guid? Id { get; set; }
+    public string Title { get; set; } = default!;
     public string FileName { get; set; } = default!;
     public Guid? AttachmentId { get; set; }
     public int? FileIndex { get; set; }

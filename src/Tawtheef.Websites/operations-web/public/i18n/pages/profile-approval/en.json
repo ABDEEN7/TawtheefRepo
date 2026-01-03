@@ -298,5 +298,6 @@
   "profileApproval.status.cancelled": "Cancelled",
   "profileApproval.status.adminCancelled": "Cancelled by admin",
   "profileApproval.status.inCreation": "In creation",
-  "profileApproval.status.unknown": "Unknown status"
+  "profileApproval.status.unknown": "Unknown status",
+  "profileApproval.wizard.progressLabel": "Step {{current}} of {{total}}"
 }

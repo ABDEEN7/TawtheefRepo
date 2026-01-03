@@ -17,6 +17,7 @@ public sealed class GetOfficesQueryHandler(IUnitOfWork unitOfWork, IMapper mappe
     {
         var offices = await unitOfWork.GetEntityRepository<Office>()
             .DbSet
+            .Where(s => s.IsActive)
             .WhereIf(request.CountryId.HasValue, o => o.CountryId == request.CountryId!.Value)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Search), o => 
                 EF.Functions.Like(o.NameAr, $"%{request.Search}%") || 

@@ -19,6 +19,7 @@ public sealed class GetSubMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper map
 
         var entities = await dbSet
             .AsNoTracking()
+            .Where(s => s.IsActive)
             .Where(x => x.ParentId == request.ParentId)
             .WhereIf(!string.IsNullOrEmpty(request.Search), 
                 s => 

@@ -70,7 +70,7 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             if (profile is null)
                 return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-            var applyResult = ApplyChange(profile, item, change);
+            var applyResult = ApplyChange(profile, item, change!);
             if (applyResult.IsFailed)
                 return Result.Fail<Unit>(applyResult.Errors);
         }
@@ -462,7 +462,7 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail(snapshotResult.Errors);
 
         var s = snapshotResult.Value;
-        if (string.IsNullOrWhiteSpace(s.FileName))
+        if (string.IsNullOrWhiteSpace(s.Title))
             return Result.Fail(ErrorsCodes.UnExpectedError);
         if (s.AttachmentResourceId is null || s.AttachmentResourceId == Guid.Empty)
             return Result.Fail(ErrorsCodes.UnExpectedError);
@@ -475,7 +475,7 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         {
             Id = entityId,
             UserProfileId = profile.Id,
-            FileName = s.FileName,
+            FileName = s.Title,
             AttachmentId = s.AttachmentResourceId.Value
         });
 
@@ -594,6 +594,6 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
     private sealed record PendingAttachmentSnapshot
     {
         public Guid? AttachmentResourceId { get; init; }
-        public string? FileName { get; init; }
+        public required string Title { get; init; }
     }
 }

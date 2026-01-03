@@ -134,6 +134,14 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   ];
 
   total = computed(() => this.orderedSections(this.detail()).length || this.flowSections.length);
+  current = computed(() => {
+    // number of completed sections
+    const sections = this.orderedSections(this.detail());
+    return sections.filter(sec => {
+      const status = this.sectionReviewFor(sec).status ?? ReviewStatus.Pending;
+      return status !== ReviewStatus.Pending && status !== ReviewStatus.NotReviewed;
+    }).length;
+  });
 
   progress = computed(() => {
     const sections = this.orderedSections(this.detail());
@@ -314,11 +322,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
       next: () => {
         this.notifications.success(this.translate.instant('profileApproval.detail.sectionSaved'));
         this.loadDetail();
-      },
-      error: err => {
-        const msg = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.detail.sectionSaveFailed');
-        this.notifications.error(msg);
-      },
+      }
     });
   }
 
@@ -328,7 +332,9 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     const ref = this.dialogService.open(ItemReviewDialogComponent, {
       header: this.translate.instant('profileApproval.dialog.title'),
       data: { item: resolvedItem, action: 'changes', note: note ?? resolvedItem.note },
-      styleClass: 'w-100 w-md-50',
+      width: '520px',
+      modal: true,
+      dismissableMask: false
     });
 
     const sub = ref?.onClose.subscribe((result: ItemDialogResult | undefined) => {
@@ -343,9 +349,6 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
 
   onSectionStatusChange(section: number, status: ReviewStatus | null) {
     if (status === ReviewStatus.Approved && this.sectionHasCorrections(section)) {
-      this.notifications.error(
-        this.translate.instant('profileApproval.detail.sectionApproval.correctionBlock'),
-      );
       this.draftStatus[section] = ReviewStatus.NeedsCorrection;
       this.markDirty(section);
       return;
@@ -447,6 +450,12 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
           this.draftDirty[section] = false;
           this.notifications.success(this.translate.instant('profileApproval.detail.sectionSaved'));
           this.loadDetail();
+
+          //move to next section
+          const current = this.activeSection();
+          if (current === section) {
+            this.next();
+          }
         },
         error: err => {
           const msg = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.detail.sectionSaveFailed');
@@ -496,15 +505,10 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.notifications.success(this.translate.instant('profileApproval.detail.finalizeOk'));
-          this.loadDetail();
-          this.finalizeSummary = '';
-          this.finalizeNote = '';
           this.closeFinalizeDialog();
-        },
-        error: err => {
-          const msg = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.detail.finalizeFail');
-          this.notifications.error(msg);
-        },
+          // back to prev page
+          this.backToList();
+        }
       });
   }
 

@@ -20,7 +20,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
+        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         if (!profile.IsCompleted())

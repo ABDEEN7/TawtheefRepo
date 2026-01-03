@@ -282,7 +282,8 @@ export class ProfileService {
       .map(a => {
         const item: any = {
           id: a.id ?? null,
-          fileName: a.fileName ?? a.name,
+          title: a.title,
+          fileName: a.fileName ?? a.title,
           attachmentId: a.attachmentId ?? null,
         };
 

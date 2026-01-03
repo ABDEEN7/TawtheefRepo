@@ -175,7 +175,7 @@ export class StepAttachmentsComponent implements OnInit {
       return {
         id,
         attachmentId,
-        name: title,
+        title,
         fileName,
         file: this.filesStore[index] ?? null,
         fileRef: this.fileRefs[index] ?? null,
@@ -224,7 +224,7 @@ export class StepAttachmentsComponent implements OnInit {
       (attachments ?? []).map((a, index) => ({
         id: a.id ?? null,
         attachmentId: a.attachmentId ?? null,
-        name: a.name ?? '',
+        title: a.title ?? '',
         fileName: a.file?.name ?? a.fileName ?? a.fileRef?.resourceName ?? null,
         refId: a.fileRef?.resourceId ?? null,
         localStoreName: this.filesStore[index]?.name ?? null,

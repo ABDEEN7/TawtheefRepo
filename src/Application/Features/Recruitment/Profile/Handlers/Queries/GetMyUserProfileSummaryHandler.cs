@@ -18,7 +18,7 @@ public sealed class GetMyUserProfileSummaryHandler(IUnitOfWork uow)
         var profile = profileResult.Value;
         if (profile is null) return Result.Fail<UserProfileSummaryDto>(ErrorsCodes.UserProfileNotFound);
         
-        var canEdit = profile.Status == UserProfileStatus.InCreation;
+        var canEdit = profile.Status is UserProfileStatus.InCreation or UserProfileStatus.RequiresUpdate;
         var canSubmit = canEdit && profile.IsCompleted();
 
         return Result.Ok(new UserProfileSummaryDto

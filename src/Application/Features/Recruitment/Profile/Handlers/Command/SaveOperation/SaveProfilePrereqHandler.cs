@@ -48,7 +48,7 @@ public sealed class SaveProfilePrereqHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
-        if (profile.Status is not UserProfileStatus.InCreation)
+        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         profile.CandidateTypeId = r.CandidateTypeId;

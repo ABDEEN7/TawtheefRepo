@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ReviewStatus } from '../../../approval-list/models/profile-approval.models';
 import { ButtonDirective } from 'primeng/button';
 import { TranslatePipe } from '@ngx-translate/core';
-import { NgClass } from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
@@ -15,6 +15,7 @@ import { TooltipModule } from 'primeng/tooltip';
     TranslatePipe,
     NgClass,
     TooltipModule,
+    NgIf,
   ]
 })
 export class ItemInlineReviewComponent {

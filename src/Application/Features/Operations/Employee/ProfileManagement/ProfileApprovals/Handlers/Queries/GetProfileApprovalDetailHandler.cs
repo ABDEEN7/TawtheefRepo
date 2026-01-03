@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
+using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Domain.Entities;
@@ -16,7 +19,8 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
-public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media, ILocalizationService localization)
+public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, 
+    IMediaUrlResolver media, ILocalizationService localization)
     : IRequestHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
 {
     public async Task<Result<GetProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request,
@@ -26,6 +30,14 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
         var profile = await UserProfileLoader.GetFullProfileByProfileId(uow, request.UserProfileId, ct: ct);
         if (profile is null)
             return Result.Fail<GetProfileApprovalDetailDto>(ErrorsCodes.UserProfileNotFound);
+
+        if (profile.Status == UserProfileStatus.Submitted)
+        {
+            var startProfileUnderReview = new StartUserProfileReviewHandler(uow);
+            await startProfileUnderReview.Handle(new StartUserProfileReviewCommand(request.OfficerId, profile.Id), ct);
+        }
+        else if (profile.Status != UserProfileStatus.UnderReview)
+            return Result.Fail<GetProfileApprovalDetailDto>(ErrorsCodes.ProfileNotReadyForReview);
 
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
@@ -158,11 +170,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
         {
             using var scope = new MapContextScope();
             scope.Context.Parameters[ResourceMapper.MediaKey] = media;
-
             var result = mapper.Map<ProfileApprovalDataDto>(profileEntity);
-            result.Qualifications = profileEntity.Qualifications?
-                .Select(mapper.Map<QualificationDto>)
-                .ToList() ?? [];
             return result;
         }
     }

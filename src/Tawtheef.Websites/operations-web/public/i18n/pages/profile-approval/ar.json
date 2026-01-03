@@ -298,5 +298,6 @@
   "profileApproval.status.cancelled": "ملغى",
   "profileApproval.status.adminCancelled": "ملغى من الإدارة",
   "profileApproval.status.inCreation": "قيد الإنشاء",
-  "profileApproval.status.unknown": "حالة غير معروفة"
+  "profileApproval.status.unknown": "حالة غير معروفة",
+  "profileApproval.wizard.progressLabel": "الخطوة {{current}} من {{total}}"
 }

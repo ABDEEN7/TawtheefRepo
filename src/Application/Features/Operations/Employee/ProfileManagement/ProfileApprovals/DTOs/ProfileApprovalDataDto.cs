@@ -1,3 +1,5 @@
+using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
+
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 
 public record ProfileApprovalDataDto
@@ -18,7 +20,7 @@ public record BasicInformationSnapshot
     public string? CandidateType { get; init; }
     public string? TargetEntity { get; init; }
     public string? Office { get; init; }
-    public FileRefDto? ResumeAttachment { get; set; }
+    public FileRefDto ResumeAttachment { get; set; } = new();
     public FileRefDto? NationalCard { get; set; }
     public FileRefDto? BirthdayCertificate { get; set; }
     public FileRefDto? MarriageCertificate { get; set; }

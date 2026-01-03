@@ -297,7 +297,7 @@ export class ProfileOverviewPage {
       ...vm.experiences.map(e => e.attachment ?? null),
       ...vm.trainingCourses.map(t => t.attachment ?? null),
       ...vm.achievements.map(a => a.attachment ?? null),
-      ...vm.attachments.map(a => a.attachment ?? null)
+      ...vm.attachments.map(a => a.file ?? null)
     ];
 
     const match = [...prereqFiles, ...sectionFiles].find(f =>
@@ -336,13 +336,11 @@ export class ProfileOverviewPage {
     }
 
     const review = this.data.value()?.review as MyProfileReviewSummaryDto | undefined;
-    const ref = this.dialogService.open(ReviewStepsDialogComponent, {
+    this.dialogService.open(ReviewStepsDialogComponent, {
       header: this.i18n.instant('profileView.reviewSteps.dialogTitle'),
       data: { sections: review?.sections ?? [] },
       styleClass: 'w-100 w-md-75'
-    });
-
-    ref.onClose.subscribe(result => {
+    })?.onClose.subscribe(result => {
       if (result?.section) {
         this.navigateToEditSection(result.section as ProfileSectionEnum);
       }
@@ -350,7 +348,7 @@ export class ProfileOverviewPage {
   }
 
   openReviewItem(note: MyProfileReviewNoteDto, section: ProfileSectionEnum) {
-    const ref = this.dialogService.open(ReviewItemEditDialogComponent, {
+    this.dialogService.open(ReviewItemEditDialogComponent, {
       header: this.i18n.instant('profileView.reviewItemDialog.title'),
       data: {
         note,
@@ -360,9 +358,7 @@ export class ProfileOverviewPage {
         fileUrl: this.findFileUrl(note)
       },
       styleClass: 'w-100 w-md-50'
-    });
-
-    ref.onClose.subscribe(result => {
+    })?.onClose.subscribe(result => {
       if (!result) return;
       if (result.section) {
         this.navigateToEditSection(result.section as ProfileSectionEnum);

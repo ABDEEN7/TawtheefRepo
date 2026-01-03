@@ -88,7 +88,7 @@
               <div class="d-flex flex-wrap align-items-center gap-3">
                 <div class="flex-grow-1">
                   <div class="d-flex justify-content-between small text-muted mb-2">
-                    <span>{{ 'profileApproval.wizard.progressLabel' | translate }}</span>
+                    <span>{{ 'profileApproval.wizard.progressLabel' | translate: {current: current(), total: total()} }}</span>
                     <span>{{ progress() }}%</span>
                   </div>
                   <p-progressBar [value]="progress()"></p-progressBar>
@@ -294,7 +294,11 @@
                         </app-profile-approval-languages-section>
 
                         <app-profile-approval-attachments-section
-                          *ngSwitchCase="10" [attachments]="profile.attachments" (viewFile)="previewFile($event)">
+                          *ngSwitchCase="10"
+                          [attachments]="profile.attachments"
+                          [reviewItems]="sec.items"
+                          (reviewItem)="onInlineReview($event)"
+                          (viewFile)="previewFile($event)">
                         </app-profile-approval-attachments-section>
 
                         <div *ngSwitchDefault class="text-center text-muted py-4">

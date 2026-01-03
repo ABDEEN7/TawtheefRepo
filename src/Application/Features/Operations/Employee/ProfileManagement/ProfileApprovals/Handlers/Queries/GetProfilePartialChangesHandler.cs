@@ -63,9 +63,8 @@ public sealed class GetProfilePartialChangesHandler(
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var reviewItems = await reviewRepo.DbSet
             .AsNoTracking()
-            .Where(r => r.UserProfileId == profile.Id
-                        && r.ProfileChangeId != null
-                        && r.Status != ReviewStatus.Approved)
+            .Where(r => r.UserProfileId == profile.Id && r.ProfileChangeId != null)
+            .Where(r => r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Pending)
             .Include(r => r.ProfileChange)
             .OrderByDescending(r => r.UpdatedDate ?? r.CreatedDate)
             .ToListAsync(ct);
