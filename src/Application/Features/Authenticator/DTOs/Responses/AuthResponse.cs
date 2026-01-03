@@ -28,6 +28,7 @@ public sealed class ProfileStatusDto
 {
     public bool IsComplete { get; init; }
     public UserProfileStatus Status { get; init; }
+    public bool AvailableForRecruitment { get; init; }
 
     // ===== Scalars من UserProfile =====
     public Guid? CandidateTypeId { get; init; }

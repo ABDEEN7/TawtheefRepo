@@ -261,7 +261,7 @@ export function mapProfileStatusToState(
     } as Attachment)),
 
     // ----------- UI fields -----------
-    available: true,
+    available: dto.availableForRecruitment ?? true,
     avatarUrl: dto.avatar ?? prefill?.avatar ?? undefined,
   } as ProfileState;
 }
