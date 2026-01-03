@@ -19,25 +19,5 @@
     >
       {{ 'profileApproval.status.changes' | translate }}
     </button>
-
-    <button
-      pButton
-      type="button"
-      class="p-button-danger p-button-sm"
-      icon="pi pi-times"
-      (click)="reject()"
-    >
-      {{ 'profileApproval.status.rejected' | translate }}
-    </button>
   </div>
-
-  <textarea
-    *ngIf="needsNote()"
-    pInputTextarea
-    rows="2"
-    class="w-100 mt-2"
-    [ngModel]="noteDraft()"
-    (ngModelChange)="noteDraft.set($event)"
-    [placeholder]="'profileApproval.review.notePlaceholder' | translate"
-  ></textarea>
 </div>

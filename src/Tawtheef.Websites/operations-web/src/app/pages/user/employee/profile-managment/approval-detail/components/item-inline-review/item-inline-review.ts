@@ -1,10 +1,8 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import {ReviewStatus} from '../../../approval-list/models/profile-approval.models';
-import {ButtonDirective} from 'primeng/button';
-import {Textarea} from 'primeng/textarea';
-import {TranslatePipe} from '@ngx-translate/core';
-import {NgClass, NgIf} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ReviewStatus } from '../../../approval-list/models/profile-approval.models';
+import { ButtonDirective } from 'primeng/button';
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-item-inline-review',
@@ -13,11 +11,8 @@ import {FormsModule} from '@angular/forms';
   styleUrl: './item-inline-review.scss',
   imports: [
     ButtonDirective,
-    Textarea,
     TranslatePipe,
-    NgIf,
-    FormsModule,
-    NgClass
+    NgClass,
   ]
 })
 export class ItemInlineReviewComponent {
@@ -28,10 +23,7 @@ export class ItemInlineReviewComponent {
   @Output() review = new EventEmitter<{
     reviewItemId: string;
     status: ReviewStatus;
-    note?: string;
   }>();
-
-  noteDraft = signal(this.note ?? '');
 
   approve(): void {
     this.review.emit({
@@ -44,23 +36,7 @@ export class ItemInlineReviewComponent {
     this.review.emit({
       reviewItemId: this.reviewItemId,
       status: ReviewStatus.ChangesRequested,
-      note: this.noteDraft().trim(),
     });
-  }
-
-  reject(): void {
-    this.review.emit({
-      reviewItemId: this.reviewItemId,
-      status: ReviewStatus.Rejected,
-      note: this.noteDraft().trim(),
-    });
-  }
-
-  needsNote(): boolean {
-    return (
-      this.status === ReviewStatus.ChangesRequested ||
-      this.status === ReviewStatus.Rejected
-    );
   }
 
   getClassStatus(): string{

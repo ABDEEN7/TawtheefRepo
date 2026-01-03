@@ -5,11 +5,12 @@ import { DynamicDialogConfig, DynamicDialogRef, DynamicDialogModule } from 'prim
 import { TranslateModule } from '@ngx-translate/core';
 import {ProfileApprovalItem} from '../../models/profile-approval.models';
 
-export type ItemDialogAction = 'approve' | 'reject' | 'changes';
+export type ItemDialogAction = 'approve' | 'changes';
 
 export interface ItemDialogData {
   item: ProfileApprovalItem;
   action: ItemDialogAction;
+  note?: string | null;
 }
 
 export interface ItemDialogResult {
@@ -67,6 +68,7 @@ export class ItemReviewDialogComponent {
     public config: DynamicDialogConfig
   ) {
     this.data = this.config.data as ItemDialogData;
+    this.note = this.data?.note ?? '';
   }
 
   onCancel(): void {

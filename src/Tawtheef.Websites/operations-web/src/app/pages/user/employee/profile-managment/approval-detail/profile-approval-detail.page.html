@@ -233,36 +233,48 @@
                     <app-profile-approval-basic-info-section
                       *ngSwitchCase="2"
                       [profile]="profile"
+                      [reviewItems]="sec.items"
+                      (reviewItem)="onInlineReview($event)"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-basic-info-section>
 
                     <app-profile-approval-contact-info-section
                       *ngSwitchCase="3"
                       [profile]="profile"
+                      [reviewItems]="sec.items"
+                      (reviewItem)="onInlineReview($event)"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-contact-info-section>
 
                     <app-profile-approval-qualifications-section
                       *ngSwitchCase="4"
                       [qualifications]="profile.qualifications"
+                      [reviewItems]="sec.items"
+                      (reviewItem)="onInlineReview($event)"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-qualifications-section>
 
                     <app-profile-approval-experiences-section
                       *ngSwitchCase="5"
                       [experiences]="profile.experiences"
+                      [reviewItems]="sec.items"
+                      (reviewItem)="onInlineReview($event)"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-experiences-section>
 
                     <app-profile-approval-training-section
                       *ngSwitchCase="6"
                       [trainingCourses]="profile.trainingCourses"
+                      [reviewItems]="sec.items"
+                      (reviewItem)="onInlineReview($event)"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-training-section>
 
                     <app-profile-approval-certificates-section
                       *ngSwitchCase="7"
                       [certificates]="profile.professionalCertificatesAndAwards"
+                      [reviewItems]="sec.items"
+                      (reviewItem)="onInlineReview($event)"
                       (viewFile)="previewFile($event)"
                     ></app-profile-approval-certificates-section>
 
@@ -348,6 +360,12 @@
                       <div class="text-muted small mt-2" *ngIf="!draftStatus[sec.section] || draftStatus[sec.section] === ReviewStatus.Pending">
                         {{ 'profileApproval.detail.sectionApproval.statusRequiredHint' | translate }}
                       </div>
+                      <div class="text-danger small mt-2" *ngIf="sectionHasUndecidedItems(sec.section)">
+                        {{ 'profileApproval.detail.sectionApproval.pendingItemsBlock' | translate }}
+                      </div>
+                      <div class="text-danger small mt-2" *ngIf="sectionHasCorrections(sec.section)">
+                        {{ 'profileApproval.detail.sectionApproval.correctionBlock' | translate }}
+                      </div>
                     </div>
 
                     <div class="field col-12">
@@ -377,7 +395,7 @@
                     <button pButton type="button"
                             class="p-button-outlined"
                             (click)="saveSectionDecision(sec.section)"
-                            [disabled]="isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section)">
+                            [disabled]="isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section) || sectionApprovalBlocked(sec.section) || sectionHasUndecidedItems(sec.section)">
                       <ng-container *ngIf="!isSaving(sec.section); else savingTpl">
                         <i pButtonIcon class="pi pi-save"></i>
                         <span pButtonLabel>{{ 'profileApproval.detail.sectionApproval.save' | translate }}</span>

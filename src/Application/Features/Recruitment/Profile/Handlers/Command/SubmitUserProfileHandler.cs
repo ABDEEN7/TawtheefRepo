@@ -61,16 +61,56 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
     private static IEnumerable<ReviewItem> BuildProfileFiles(UserProfile profile)
     {
         if (profile.ResumeAttachmentId is not null)
-            yield return NewFile(profile.Id, "ResumeAttachmentId", profile.ResumeAttachmentId.Value, "Resume");
+            yield return NewFile(
+                profile.Id,
+                ProfileSection.Personal,
+                "ResumeAttachmentId",
+                profile.ResumeAttachmentId.Value,
+                "Resume");
 
         if (profile.NationalCardId is not null)
-            yield return NewFile(profile.Id, "NationalCardId", profile.NationalCardId.Value, "National Card");
+            yield return NewFile(
+                profile.Id,
+                ProfileSection.Personal,
+                "NationalCardId",
+                profile.NationalCardId.Value,
+                "National Card");
+
+        if (profile.SponsorProfile?.SponsorCardId is not null)
+            yield return NewFile(
+                profile.Id,
+                ProfileSection.Personal,
+                "SponsorCardResourceId",
+                profile.SponsorProfile.SponsorCardId.Value,
+                "Sponsor Card",
+                "SponsorProfile",
+                profile.SponsorProfile.Id);
+
+        if (profile.ResidenceAddress?.CertificateId is not null)
+            yield return NewFile(
+                profile.Id,
+                ProfileSection.Contact,
+                "NationalAddressCertificateId",
+                profile.ResidenceAddress.CertificateId,
+                "National Address Certificate",
+                "ResidenceAddress",
+                profile.ResidenceAddress.Id);
 
         if (profile.BirthdayCertificateId is not null)
-            yield return NewFile(profile.Id, "BirthdayCertificateId", profile.BirthdayCertificateId.Value, "Birth Certificate");
+            yield return NewFile(
+                profile.Id,
+                ProfileSection.Attachments,
+                "BirthdayCertificateId",
+                profile.BirthdayCertificateId.Value,
+                "Birth Certificate");
 
         if (profile.MarriageCertificateId is not null)
-            yield return NewFile(profile.Id, "MarriageCertificateId", profile.MarriageCertificateId.Value, "Marriage Certificate");
+            yield return NewFile(
+                profile.Id,
+                ProfileSection.Attachments,
+                "MarriageCertificateId",
+                profile.MarriageCertificateId.Value,
+                "Marriage Certificate");
 
         if (profile.AdditionalAttachments is not null)
         {
@@ -78,6 +118,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
             {
                 yield return NewFile(
                     profile.Id,
+                    ProfileSection.Attachments,
                     "AdditionalAttachments",
                     a.AttachmentId,
                     a.FileName,
@@ -90,6 +131,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
 
     private static ReviewItem NewFile(
         Guid profileId,
+        ProfileSection section,
         string fieldPath,
         Guid resourceId,
         string title,
@@ -98,7 +140,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
     {
         var item = ReviewItem.Create(
             profileId,
-            ProfileSection.Attachments,
+            section,
             ReviewTargetType.Attachment,
             fieldPath,
             entityName,

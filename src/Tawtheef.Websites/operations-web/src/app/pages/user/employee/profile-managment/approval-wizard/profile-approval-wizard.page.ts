@@ -7,6 +7,7 @@ import { finalize, Subscription, combineLatest } from 'rxjs';
 
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
@@ -22,6 +23,7 @@ import {
   ProfileApprovalItem,
   ProfileApprovalSection,
   ReviewStatus,
+  ReviewTargetType,
   SectionReviewSummary,
 } from '../approval-list/models/profile-approval.models';
 import { ProfileStatusNumber } from '../../../../../core/enums/lookups.enum';
@@ -61,6 +63,7 @@ import { ItemDialogResult, ItemReviewDialogComponent } from '../approval-list/di
     ToggleSwitchModule,
     Select,
     Textarea,
+    DialogModule,
 
     FaDirArrowDirective,
     I18nNamespaceDirective,
@@ -110,6 +113,9 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   finalizeSummary = '';
   finalizeNote = '';
 
+  finalDialogVisible = signal(false);
+  private finalDialogAutoShown = false;
+
   loadingDetail = signal(false);
   savingSection = signal<number | null>(null);
 
@@ -131,12 +137,14 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
 
   progress = computed(() => {
     const sections = this.orderedSections(this.detail());
-    const current = this.activeSection();
-    if (!sections.length || current == null) return 0;
+    if (!sections.length) return 0;
 
-    const index = sections.findIndex(s => s.section === current);
-    const pos = index >= 0 ? index + 1 : 1;
-    return Math.round((pos / sections.length) * 100);
+    const completed = sections.filter(sec => {
+      const status = this.sectionReviewFor(sec).status ?? ReviewStatus.Pending;
+      return status !== ReviewStatus.Pending && status !== ReviewStatus.NotReviewed;
+    }).length;
+
+    return Math.round((completed / sections.length) * 100);
   });
 
   canFinalizeUi = computed(() => this.canFinalize());
@@ -253,6 +261,8 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
           if (current == null || !(merged.sections ?? []).some(s => s.section === current)) {
             this.activeSection.set((merged.sections ?? [])[0]?.section ?? null);
           }
+
+          this.ensureFinalizeDialog();
         },
         error: () => this.error.set(this.translate.instant('profileApproval.errors.loadDetail')),
       });
@@ -279,6 +289,15 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     this.fileUtils.previewUrl(resourceUrl, '', false).then(() => {});
   }
 
+  onInlineReview(event: { reviewItemId: string; status: ReviewStatus; note?: string | null }): void {
+    if (event.status === ReviewStatus.Approved) {
+      this.submitReviewItem(event.reviewItemId, event.status, null);
+      return;
+    }
+
+    this.promptCorrection(event.reviewItemId, event.note ?? null);
+  }
+
   onReviewItemAction(event: { item: ProfileApprovalItem; action: ReviewAction }): void {
     const { item, action } = event;
 
@@ -287,25 +306,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
       return;
     }
 
-    const ref = this.dialogService.open(ItemReviewDialogComponent, {
-      header: this.translate.instant('profileApproval.dialog.title'),
-      data: { item, action },
-      styleClass: 'w-100 w-md-50',
-    });
-
-    const sub = ref?.onClose.subscribe((result: ItemDialogResult | undefined) => {
-      if (!result) return;
-
-      const status =
-        result.action === 'reject'
-          ? ReviewStatus.Rejected
-          : ReviewStatus.ChangesRequested;
-
-      const note = (result.note ?? '').trim() || null;
-      this.submitReviewItem(item.reviewItemId, status, note);
-    });
-
-    if (sub) this.subscriptions.push(sub);
+    this.promptCorrection(item.reviewItemId, item.note ?? null, item);
   }
 
   private submitReviewItem(reviewItemId: string, status: ReviewStatus, note: string | null): void {
@@ -321,7 +322,35 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     });
   }
 
+  private promptCorrection(reviewItemId: string, note?: string | null, item?: ProfileApprovalItem | null): void {
+    const resolvedItem = item ?? this.findReviewItem(reviewItemId) ?? this.buildPlaceholderItem(reviewItemId);
+
+    const ref = this.dialogService.open(ItemReviewDialogComponent, {
+      header: this.translate.instant('profileApproval.dialog.title'),
+      data: { item: resolvedItem, action: 'changes', note: note ?? resolvedItem.note },
+      styleClass: 'w-100 w-md-50',
+    });
+
+    const sub = ref?.onClose.subscribe((result: ItemDialogResult | undefined) => {
+      if (!result) return;
+
+      const nextNote = (result.note ?? '').trim() || null;
+      this.submitReviewItem(reviewItemId, ReviewStatus.ChangesRequested, nextNote);
+    });
+
+    if (sub) this.subscriptions.push(sub);
+  }
+
   onSectionStatusChange(section: number, status: ReviewStatus | null) {
+    if (status === ReviewStatus.Approved && this.sectionHasCorrections(section)) {
+      this.notifications.error(
+        this.translate.instant('profileApproval.detail.sectionApproval.correctionBlock'),
+      );
+      this.draftStatus[section] = ReviewStatus.NeedsCorrection;
+      this.markDirty(section);
+      return;
+    }
+
     this.draftStatus[section] = status ?? ReviewStatus.Pending;
     this.markDirty(section);
   }
@@ -333,6 +362,22 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
 
   isSaving(section: number): boolean {
     return this.savingSection() === section;
+  }
+
+  sectionHasUndecidedItems(section: number): boolean {
+    const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
+    return (sec?.items ?? []).some(item =>
+      item.status === ReviewStatus.Pending || item.status === ReviewStatus.NotReviewed,
+    );
+  }
+
+  sectionHasCorrections(section: number): boolean {
+    const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
+    return (sec?.items ?? []).some(item => item.status === ReviewStatus.NeedsCorrection);
+  }
+
+  sectionApprovalBlocked(section: number): boolean {
+    return this.draftStatus[section] === ReviewStatus.Approved && this.sectionHasCorrections(section);
   }
 
   private markDirty(section: number) {
@@ -370,6 +415,22 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     const note = (this.draftNote[section] ?? '').trim();
 
     if (st !== ReviewStatus.Approved && st !== ReviewStatus.NeedsCorrection) return;
+
+    if (this.sectionHasUndecidedItems(section)) {
+      this.notifications.error(
+        this.translate.instant('profileApproval.detail.sectionApproval.pendingItemsBlock'),
+      );
+      return;
+    }
+
+    if (st === ReviewStatus.Approved && this.sectionHasCorrections(section)) {
+      this.notifications.error(
+        this.translate.instant('profileApproval.detail.sectionApproval.correctionBlock'),
+      );
+      this.draftStatus[section] = ReviewStatus.NeedsCorrection;
+      this.markDirty(section);
+      return;
+    }
 
     if (st === ReviewStatus.NeedsCorrection && note.length === 0) {
       this.notifications.error(this.translate.instant('profileApproval.errors.notesRequired'));
@@ -438,12 +499,26 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
           this.loadDetail();
           this.finalizeSummary = '';
           this.finalizeNote = '';
+          this.closeFinalizeDialog();
         },
         error: err => {
           const msg = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.detail.finalizeFail');
           this.notifications.error(msg);
         },
       });
+  }
+
+  openFinalizeDialog(): void {
+    if (!this.canFinalize()) {
+      this.notifications.error(this.translate.instant('profileApproval.detail.finalizeBlocked'));
+      return;
+    }
+
+    this.finalDialogVisible.set(true);
+  }
+
+  closeFinalizeDialog(): void {
+    this.finalDialogVisible.set(false);
   }
 
   stepperSections(info: ProfileApprovalDetail): ProfileApprovalSection[] {
@@ -641,6 +716,43 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     const note = rawReview?.note ?? section?.note ?? null;
     const reviewedAtUtc = rawReview?.reviewedAtUtc ?? section?.reviewedAtUtc ?? null;
     return { status, note, reviewedAtUtc };
+  }
+
+  private ensureFinalizeDialog(): void {
+    if (this.isChangesMode()) {
+      this.closeFinalizeDialog();
+      this.finalDialogAutoShown = false;
+      return;
+    }
+
+    if (this.canFinalize()) {
+      if (!this.finalDialogAutoShown) {
+        this.finalDialogVisible.set(true);
+        this.finalDialogAutoShown = true;
+      }
+    } else {
+      this.closeFinalizeDialog();
+      this.finalDialogAutoShown = false;
+    }
+  }
+
+  private findReviewItem(reviewItemId: string): ProfileApprovalItem | null {
+    const sections = this.detail()?.sections ?? [];
+    for (const sec of sections) {
+      const match = (sec.items ?? []).find(item => item.reviewItemId === reviewItemId);
+      if (match) return match;
+    }
+    return null;
+  }
+
+  private buildPlaceholderItem(reviewItemId: string): ProfileApprovalItem {
+    return {
+      reviewItemId,
+      status: ReviewStatus.Pending,
+      targetType: ReviewTargetType.Row,
+      title: '',
+      version: 0,
+    };
   }
 
   private normalizeProfileData(profile: ProfileApprovalDetail['profile']): ProfileApprovalDetail['profile'] {

@@ -18,7 +18,7 @@ import {Select} from 'primeng/select';
 import {Textarea} from 'primeng/textarea';
 import { CertificatesSectionComponent } from './components/sections/certificates-section/certificates-section.component';
 import {
-  ProfileApprovalDetail, ProfileApprovalItem, ProfileApprovalSection, ReviewStatus, SectionReviewSummary
+  ProfileApprovalDetail, ProfileApprovalItem, ProfileApprovalSection, ReviewStatus, ReviewTargetType, SectionReviewSummary
 } from '../approval-list/models/profile-approval.models';
 import {routes} from '../../../../../routes/routes';
 import {ProfileApprovalService} from '../approval-list/services/profile-approval.service';
@@ -134,6 +134,15 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     this.draftDirty[section] = true;
   }
   onSectionStatusChange(section: number, status: ReviewStatus | null) {
+    if (status === ReviewStatus.Approved && this.sectionHasCorrections(section)) {
+      this.notifications.error(
+        this.translate.instant('profileApproval.detail.sectionApproval.correctionBlock'),
+      );
+      this.draftStatus[section] = ReviewStatus.NeedsCorrection;
+      this.markDirty(section);
+      return;
+    }
+
     this.draftStatus[section] = status ?? ReviewStatus.Pending;
     this.markDirty(section);
   }
@@ -144,6 +153,22 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   }
   isSaving(section: number): boolean {
     return this.savingSection() === section;
+  }
+
+  sectionHasCorrections(section: number): boolean {
+    const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
+    return (sec?.items ?? []).some(item => item.status === ReviewStatus.NeedsCorrection);
+  }
+
+  sectionHasUndecidedItems(section: number): boolean {
+    const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
+    return (sec?.items ?? []).some(item =>
+      item.status === ReviewStatus.Pending || item.status === ReviewStatus.NotReviewed,
+    );
+  }
+
+  sectionApprovalBlocked(section: number): boolean {
+    return this.draftStatus[section] === ReviewStatus.Approved && this.sectionHasCorrections(section);
   }
 
   initDraft(info: ProfileApprovalDetail) {
@@ -245,6 +270,15 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
     this.fileUtils.previewUrl(resourceUrl, '', false).then(() => {});
   }
 
+  onInlineReview(event: { reviewItemId: string; status: ReviewStatus; note?: string | null }): void {
+    if (event.status === ReviewStatus.Approved) {
+      this.submitReviewItem(event.reviewItemId, event.status, null);
+      return;
+    }
+
+    this.promptCorrection(event.reviewItemId, event.note ?? null);
+  }
+
   onReviewItemAction(event: { item: ProfileApprovalItem; action: ReviewAction }): void {
     const item = event.item;
     const action = event.action;
@@ -254,25 +288,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       return;
     }
 
-    const ref = this.dialogService.open(ItemReviewDialogComponent, {
-      header: this.translate.instant('profileApproval.dialog.title'),
-      data: { item, action },
-      styleClass: 'w-100 w-md-50',
-    });
-
-    const sub = ref?.onClose.subscribe((result: ItemDialogResult | undefined) => {
-      if (!result) return;
-
-      const status =
-        result.action === 'reject'
-          ? ReviewStatus.Rejected
-          : ReviewStatus.ChangesRequested;
-
-      const note = (result.note ?? '').trim() || null;
-      this.submitReviewItem(item.reviewItemId, status, note);
-    });
-
-    if(sub) this.subscriptions.push(sub);
+    this.promptCorrection(item.reviewItemId, item.note ?? null, item);
   }
 
   private submitReviewItem(reviewItemId: string, status: ReviewStatus, note: string | null): void {
@@ -286,6 +302,25 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
           this.notifications.error(msg);
         },
       });
+  }
+
+  private promptCorrection(reviewItemId: string, note?: string | null, item?: ProfileApprovalItem | null): void {
+    const resolvedItem = item ?? this.findReviewItem(reviewItemId) ?? this.buildPlaceholderItem(reviewItemId);
+
+    const ref = this.dialogService.open(ItemReviewDialogComponent, {
+      header: this.translate.instant('profileApproval.dialog.title'),
+      data: { item: resolvedItem, action: 'changes', note: note ?? resolvedItem.note },
+      styleClass: 'w-100 w-md-50',
+    });
+
+    const sub = ref?.onClose.subscribe((result: ItemDialogResult | undefined) => {
+      if (!result) return;
+
+      const nextNote = (result.note ?? '').trim() || null;
+      this.submitReviewItem(reviewItemId, ReviewStatus.ChangesRequested, nextNote);
+    });
+
+    if (sub) this.subscriptions.push(sub);
   }
 
   sectionName(section: number): string {
@@ -599,6 +634,22 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
     if (st !== ReviewStatus.Approved && st !== ReviewStatus.NeedsCorrection) return;
 
+    if (this.sectionHasUndecidedItems(section)) {
+      this.notifications.error(
+        this.translate.instant('profileApproval.detail.sectionApproval.pendingItemsBlock'),
+      );
+      return;
+    }
+
+    if (st === ReviewStatus.Approved && this.sectionHasCorrections(section)) {
+      this.notifications.error(
+        this.translate.instant('profileApproval.detail.sectionApproval.correctionBlock'),
+      );
+      this.draftStatus[section] = ReviewStatus.NeedsCorrection;
+      this.markDirty(section);
+      return;
+    }
+
     if (st === ReviewStatus.NeedsCorrection && note.length === 0) {
       this.notifications.error(this.translate.instant('profileApproval.errors.notesRequired'));
       return;
@@ -659,6 +710,25 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       rawReview?.reviewedAtUtc ?? section?.reviewedAtUtc ?? null;
 
     return { status, note, reviewedAtUtc };
+  }
+
+  private findReviewItem(reviewItemId: string): ProfileApprovalItem | null {
+    const sections = this.detail()?.sections ?? [];
+    for (const sec of sections) {
+      const match = (sec.items ?? []).find(item => item.reviewItemId === reviewItemId);
+      if (match) return match;
+    }
+    return null;
+  }
+
+  private buildPlaceholderItem(reviewItemId: string): ProfileApprovalItem {
+    return {
+      reviewItemId,
+      status: ReviewStatus.Pending,
+      targetType: ReviewTargetType.Row,
+      title: '',
+      version: 0,
+    };
   }
 
   private normalizeProfileData(profile: ProfileApprovalDetail['profile']): ProfileApprovalDetail['profile'] {

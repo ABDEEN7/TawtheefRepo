@@ -9,6 +9,7 @@ using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile;
+using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -42,8 +43,35 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
             .AsNoTracking()
             .Where(r => r.UserProfileId == profile.Id && r.ProfileChangeId == null)
             .ToListAsync(ct);
-        var sectionItems = reviewItems.Where(x => x.TargetType == ReviewTargetType.Section);
-        var detailItems = reviewItems.Where(x => x.TargetType != ReviewTargetType.Section);
+        var resourceRepo = uow.GetEntityRepository<Resource>();
+        var resourceIds = reviewItems
+            .Where(r => r.ResourceId.HasValue)
+            .Select(r => r.ResourceId!.Value)
+            .ToHashSet();
+
+        var resources = resourceIds.Count == 0
+            ? new Dictionary<Guid, string>()
+            : await resourceRepo.DbSet
+                .AsNoTracking()
+                .Where(r => resourceIds.Contains(r.Id))
+                .ToDictionaryAsync(r => r.Id, r => media.ResolveAbsolute(r.Url), ct);
+
+        var itemDtos = reviewItems
+            .Select(item =>
+            {
+                var dto = mapper.Map<ProfileApprovalItemDto>(item);
+                if (item.ResourceId.HasValue && resources.TryGetValue(item.ResourceId.Value, out var url))
+                {
+                    dto.ResourceUrl = url;
+                }
+
+                return (Entity: item, Dto: dto);
+            })
+            .ToList();
+
+        var itemDtoMap = itemDtos.ToDictionary(x => x.Entity.Id, x => x.Dto);
+        var sectionItems = reviewItems.Where(x => x.TargetType == ReviewTargetType.Section).ToList();
+        var detailItems = reviewItems.Where(x => x.TargetType != ReviewTargetType.Section).ToList();
         var detailBySection = detailItems
             .GroupBy(x => x.Section)
             .ToDictionary(g => g.Key, g => g.ToList());
@@ -54,14 +82,37 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
             {
                 var items = detailBySection.TryGetValue(sec, out var list) ? list : [];
 
-                var secItem  = sectionItems.FirstOrDefault(x => x.Section == sec);
-                var secStatus = (items.Count > 0 ? ResolveStatus(items) : secItem?.Status) ?? ReviewStatus.Pending;
-                return new SectionReviewDto
+                var secItem = sectionItems.FirstOrDefault(x => x.Section == sec);
+                var secReview = secItem != null && itemDtoMap.TryGetValue(secItem.Id, out var secDto) ? secDto : null;
+
+                var itemDtosBySection = items
+                    .Select(i => itemDtoMap.TryGetValue(i.Id, out var dto) ? dto : null)
+                    .Where(dto => dto != null)
+                    .Cast<ProfileApprovalItemDto>()
+                    .OrderBy(i => (int)i.TargetType)
+                    .ThenBy(i => i.Title)
+                    .ToList();
+
+                var status = ResolveStatus(itemDtosBySection, secReview);
+                var reviewedAt = itemDtosBySection
+                    .Where(i => i.ReviewedAtUtc.HasValue)
+                    .OrderByDescending(i => i.ReviewedAtUtc)
+                    .Select(i => i.ReviewedAtUtc)
+                    .FirstOrDefault() ?? secReview?.ReviewedAtUtc;
+
+                var note = secReview?.Note ?? itemDtosBySection
+                    .Select(i => i.Note)
+                    .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n));
+
+                return new ProfileApprovalSectionDto
                 {
                     Section = sec,
-                    Status = secStatus,
-                    Note = secItem?.ReviewerNote,
-                    ReviewedAtUtc = secItem?.ReviewedAtUtc ?? default
+                    Status = status,
+                    Note = note,
+                    ReviewedAtUtc = reviewedAt,
+                    SectionReview = secReview,
+                    Items = itemDtosBySection,
+                    HasAttachments = itemDtosBySection.Any(i => i.TargetType == ReviewTargetType.Attachment)
                 };
             })
             .ToList();
@@ -91,12 +142,15 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
 
         return Result.Ok(dto);
 
-        ReviewStatus ResolveStatus(IReadOnlyList<ReviewItem> items)
+        ReviewStatus ResolveStatus(IReadOnlyList<ProfileApprovalItemDto> items, ProfileApprovalItemDto? sectionReview)
         {
-            if (items.Any(i => i.Status == ReviewStatus.NeedsCorrection)) return ReviewStatus.NeedsCorrection;
-            if (items.Any(i => i.Status == ReviewStatus.Rejected)) return ReviewStatus.Rejected;
-            if (items.Any(i => i.Status is ReviewStatus.Pending or ReviewStatus.NotReviewed)) return ReviewStatus.Pending;
-            return items.Count == 0 ? ReviewStatus.Pending : ReviewStatus.Approved;
+            var source = items.Any() ? items : sectionReview != null ? [sectionReview] : Array.Empty<ProfileApprovalItemDto>();
+
+            if (source.Any(i => i.Status == ReviewStatus.NeedsCorrection)) return ReviewStatus.NeedsCorrection;
+            if (source.Any(i => i.Status == ReviewStatus.Rejected)) return ReviewStatus.Rejected;
+            if (source.Any(i => i.Status is ReviewStatus.Pending or ReviewStatus.NotReviewed)) return ReviewStatus.Pending;
+
+            return source.Count == 0 ? ReviewStatus.Pending : ReviewStatus.Approved;
         }
 
         // ===== Local helpers using mapper =====

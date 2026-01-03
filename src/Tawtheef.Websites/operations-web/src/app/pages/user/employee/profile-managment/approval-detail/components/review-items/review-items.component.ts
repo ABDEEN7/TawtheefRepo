@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import {ProfileApprovalItem, ReviewStatus, ReviewTargetType} from '../../../approval-list/models/profile-approval.models';
 
-export type ReviewAction = 'approve' | 'reject' | 'changes';
+export type ReviewAction = 'approve' | 'changes';
 
 type DiffRow = {
   field: string;

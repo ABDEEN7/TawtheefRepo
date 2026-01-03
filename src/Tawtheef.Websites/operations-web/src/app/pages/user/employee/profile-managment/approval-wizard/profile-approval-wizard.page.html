@@ -218,17 +218,17 @@
                         <span>{{ 'profileApproval.detail.unsavedChangesWarning' | translate }}</span>
                       </div>
                       <div class="d-flex gap-2">
-                        <button pButton type="button" class="p-button-outlined p-button-sm"
-                                (click)="resetDraft(sec.section)">
-                          {{ 'common.discard' | translate }}
-                        </button>
-                        <button pButton type="button" class="p-button-sm"
-                                (click)="saveSectionDecision(sec.section)"
-                                [disabled]="isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section)">
-                          {{ 'common.save' | translate }}
-                        </button>
-                      </div>
-                    </div>
+                            <button pButton type="button" class="p-button-outlined p-button-sm"
+                                    (click)="resetDraft(sec.section)">
+                              {{ 'common.discard' | translate }}
+                            </button>
+                            <button pButton type="button" class="p-button-sm"
+                                    (click)="saveSectionDecision(sec.section)"
+                                    [disabled]="isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section) || sectionHasUndecidedItems(sec.section) || sectionApprovalBlocked(sec.section)">
+                              {{ 'common.save' | translate }}
+                            </button>
+                          </div>
+                        </div>
 
                     <!-- Section content card -->
                     <div class="section-card p-3 bg-white rounded-4 shadow-sm">
@@ -238,27 +238,51 @@
                         </app-profile-approval-first-info-section>
 
                         <app-profile-approval-basic-info-section
-                          *ngSwitchCase="2" [profile]="profile" (viewFile)="previewFile($event)">
+                          *ngSwitchCase="2"
+                          [profile]="profile"
+                          [reviewItems]="sec.items"
+                          (reviewItem)="onInlineReview($event)"
+                          (viewFile)="previewFile($event)">
                         </app-profile-approval-basic-info-section>
 
                         <app-profile-approval-contact-info-section
-                          *ngSwitchCase="3" [profile]="profile" (viewFile)="previewFile($event)">
+                          *ngSwitchCase="3"
+                          [profile]="profile"
+                          [reviewItems]="sec.items"
+                          (reviewItem)="onInlineReview($event)"
+                          (viewFile)="previewFile($event)">
                         </app-profile-approval-contact-info-section>
 
                         <app-profile-approval-qualifications-section
-                          *ngSwitchCase="4" [qualifications]="profile.qualifications" (viewFile)="previewFile($event)">
+                          *ngSwitchCase="4"
+                          [qualifications]="profile.qualifications"
+                          [reviewItems]="sec.items"
+                          (reviewItem)="onInlineReview($event)"
+                          (viewFile)="previewFile($event)">
                         </app-profile-approval-qualifications-section>
 
                         <app-profile-approval-experiences-section
-                          *ngSwitchCase="5" [experiences]="profile.experiences" (viewFile)="previewFile($event)">
+                          *ngSwitchCase="5"
+                          [experiences]="profile.experiences"
+                          [reviewItems]="sec.items"
+                          (reviewItem)="onInlineReview($event)"
+                          (viewFile)="previewFile($event)">
                         </app-profile-approval-experiences-section>
 
                         <app-profile-approval-training-section
-                          *ngSwitchCase="6" [trainingCourses]="profile.trainingCourses" (viewFile)="previewFile($event)">
+                          *ngSwitchCase="6"
+                          [trainingCourses]="profile.trainingCourses"
+                          [reviewItems]="sec.items"
+                          (reviewItem)="onInlineReview($event)"
+                          (viewFile)="previewFile($event)">
                         </app-profile-approval-training-section>
 
                         <app-profile-approval-certificates-section
-                          *ngSwitchCase="7" [certificates]="profile.professionalCertificatesAndAwards" (viewFile)="previewFile($event)">
+                          *ngSwitchCase="7"
+                          [certificates]="profile.professionalCertificatesAndAwards"
+                          [reviewItems]="sec.items"
+                          (reviewItem)="onInlineReview($event)"
+                          (viewFile)="previewFile($event)">
                         </app-profile-approval-certificates-section>
 
                         <app-profile-approval-skills-section
@@ -322,6 +346,14 @@
                                    *ngIf="draftStatus[sec.section] === ReviewStatus.Pending">
                                 {{ 'profileApproval.detail.sectionApproval.statusRequiredHint' | translate }}
                               </div>
+                              <div class="text-danger small mt-2"
+                                   *ngIf="sectionHasUndecidedItems(sec.section)">
+                                {{ 'profileApproval.detail.sectionApproval.pendingItemsBlock' | translate }}
+                              </div>
+                              <div class="text-danger small mt-2"
+                                   *ngIf="sectionHasCorrections(sec.section)">
+                                {{ 'profileApproval.detail.sectionApproval.correctionBlock' | translate }}
+                              </div>
                             </div>
 
                             <!-- Notes appear when needed or user typed something -->
@@ -376,7 +408,7 @@
 
                               <button pButton type="button"
                                       (click)="saveSectionDecision(sec.section)"
-                                      [disabled]="isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section)">
+                                      [disabled]="isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section) || sectionHasUndecidedItems(sec.section) || sectionApprovalBlocked(sec.section)">
                                 <ng-container *ngIf="!isSaving(sec.section); else savingTpl">
                                   <i pButtonIcon class="pi pi-save"></i>
                                   <span pButtonLabel>{{ 'profileApproval.detail.sectionApproval.save' | translate }}</span>
@@ -426,8 +458,8 @@
           <!-- Finalize (review mode only) -->
           <div class="mt-3" *ngIf="!isChangesMode()">
             <div class="card shadow-sm border-0">
-              <div class="card-body">
-                <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="card-body d-flex flex-wrap align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
                   <span class="icon-circle"><i class="pi pi-clipboard"></i></span>
                   <div>
                     <div class="fw-bold">{{ 'profileApproval.final.tabTitle' | translate }}</div>
@@ -435,35 +467,88 @@
                   </div>
                 </div>
 
-                <div class="row g-3">
-                  <div class="col-12 col-lg-6">
-                    <label class="form-label">{{ 'profileApproval.final.summaryHeader' | translate }}</label>
-                    <textarea pInputTextarea rows="3" class="w-100"
-                              [(ngModel)]="finalizeSummary"
-                              [placeholder]="'profileApproval.final.summaryPlaceholder' | translate"></textarea>
-                  </div>
-
-                  <div class="col-12 col-lg-6">
-                    <label class="form-label">{{ 'profileApproval.final.actionNote' | translate }}</label>
-                    <textarea pInputTextarea rows="3" class="w-100"
-                              [(ngModel)]="finalizeNote"
-                              [placeholder]="'profileApproval.final.actionNotePlaceholder' | translate"></textarea>
-                  </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center gap-2 mt-3">
-                  <div class="text-muted small" *ngIf="!canFinalizeUi()">
+                <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
+                  <span class="text-muted small" *ngIf="!canFinalizeUi()">
                     {{ 'profileApproval.detail.finalizeHint' | translate }}
-                  </div>
+                  </span>
+                  <span class="text-success small" *ngIf="canFinalizeUi()">
+                    {{ 'profileApproval.status.approved' | translate }}
+                    / {{ 'profileApproval.status.needsCorrection' | translate }}
+                    {{ 'profileApproval.final.tabStatus' | translate | lowercase }}
+                  </span>
 
-                  <button pButton type="button" (click)="finalize()" [disabled]="loadingDetail() || !canFinalizeUi()">
-                    <i pButtonIcon class="pi pi-check"></i>
+                  <button
+                    pButton
+                    type="button"
+                    class="p-button-outlined"
+                    (click)="openFinalizeDialog()"
+                    [disabled]="loadingDetail() || !canFinalizeUi()">
+                    <i pButtonIcon class="pi pi-check-circle"></i>
                     <span pButtonLabel>{{ 'profileApproval.detail.finalize' | translate }}</span>
                   </button>
                 </div>
               </div>
             </div>
           </div>
+
+          <p-dialog
+            [modal]="true"
+            [draggable]="false"
+            [resizable]="false"
+            [visible]="finalDialogVisible()"
+            (onHide)="closeFinalizeDialog()"
+            [style]="{ width: '720px' }"
+            [breakpoints]="{ '960px': '95vw', '640px': '98vw' }"
+            [contentStyle]="{ overflow: 'visible' }"
+            [baseZIndex]="11000"
+            [closeOnEscape]="true"
+            [blockScroll]="true"
+            [focusOnShow]="false"
+            [dismissableMask]="true"
+            header="{{ 'profileApproval.final.tabTitle' | translate }}">
+
+            <div class="text-muted mb-3">{{ 'profileApproval.final.subtitle' | translate }}</div>
+
+            <div class="row g-3">
+              <div class="col-12 col-lg-6">
+                <label class="form-label">{{ 'profileApproval.final.summaryHeader' | translate }}</label>
+                <textarea
+                  pInputTextarea
+                  rows="4"
+                  class="w-100"
+                  [(ngModel)]="finalizeSummary"
+                  [placeholder]="'profileApproval.final.summaryPlaceholder' | translate"></textarea>
+              </div>
+
+              <div class="col-12 col-lg-6">
+                <label class="form-label">{{ 'profileApproval.final.actionNote' | translate }}</label>
+                <textarea
+                  pInputTextarea
+                  rows="4"
+                  class="w-100"
+                  [(ngModel)]="finalizeNote"
+                  [placeholder]="'profileApproval.final.actionNotePlaceholder' | translate"></textarea>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center gap-2 mt-3">
+              <div class="text-muted small" *ngIf="!canFinalizeUi()">
+                {{ 'profileApproval.detail.finalizeHint' | translate }}
+              </div>
+
+              <div class="ms-auto d-flex gap-2">
+                <button pButton type="button" class="p-button-outlined" (click)="closeFinalizeDialog()">
+                  <span pButtonLabel>{{ 'common.cancel' | translate }}</span>
+                </button>
+
+                <button pButton type="button" (click)="finalize()" [disabled]="loadingDetail() || !canFinalizeUi()">
+                  <i pButtonIcon class="pi pi-check"></i>
+                  <span pButtonLabel>{{ 'profileApproval.detail.finalize' | translate }}</span>
+                </button>
+              </div>
+            </div>
+
+          </p-dialog>
 
         </ng-container>
 
