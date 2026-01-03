@@ -68,7 +68,7 @@
                          [attr.aria-disabled]="!canGoTo(item.section)"
                          href
                          (click)="$event.preventDefault(); go(item.section)">
-                        <span class="step-index" [class.is-active]="activeSection()===item.section" [class.is-complete]="(sectionReviewFor(item).status ?? ReviewStatus.Pending) !== ReviewStatus.Pending">{{ item.section }}</span>
+                        <span class="step-index" [class.is-active]="activeSection()===item.section" [class.is-complete]="sectionReviewFor(item).status !== ReviewStatus.Pending">{{ item.section }}</span>
                         <span class="step-label">{{ sectionName(item.section) | translate }}</span>
                       </a>
                     </li>

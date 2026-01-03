@@ -29,7 +29,6 @@ export class BasicInfoSectionComponent {
       { label: 'profileApproval.detail.snapshot.nationality', value: this.profile.basicInformation.nationality },
       { label: 'profileApproval.detail.snapshot.religion', value: this.profile.basicInformation.religion },
       { label: 'profileApproval.detail.snapshot.maritalStatus', value: this.profile.basicInformation.maritalStatus },
-      { label: 'profileApproval.detail.snapshot.childrenCount', value: this.profile.basicInformation.childrenCount },
       {
         label: 'profileApproval.detail.snapshot.disability',
         value:

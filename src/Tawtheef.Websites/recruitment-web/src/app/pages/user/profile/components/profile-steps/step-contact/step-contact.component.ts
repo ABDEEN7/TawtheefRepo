@@ -621,11 +621,8 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     this.savingContact = true;
     this.profileService
-      .saveRecruitmentAvailability(s.available ?? true)
-      .pipe(
-        switchMap(() => this.profileService.saveContactSection(dto, { nationalAddressFile: fileToUpload(this.naLocalFile) })),
-        finalize(() => (this.savingContact = false))
-      )
+      .saveContactSection(dto, { nationalAddressFile: fileToUpload(this.naLocalFile) })
+      .pipe(finalize(() => (this.savingContact = false)))
       .subscribe({
         next: () => {
           this.lastSubmittedSignature = signature;

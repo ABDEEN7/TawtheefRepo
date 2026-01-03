@@ -42,6 +42,7 @@ import {
   ItemReviewDialogComponent,
 } from '../approval-list/dialogs/item-review-dialog/item-review-dialog';
 import {AvatarUtils} from '../../../../../core/utils/avatar-utils';
+import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-profile-approval-wizard-page',
@@ -70,6 +71,7 @@ import {AvatarUtils} from '../../../../../core/utils/avatar-utils';
     LanguagesSectionComponent,
     AttachmentsSectionComponent,
     ReviewItemsComponent,
+    I18nNamespaceDirective,
   ],
   providers: [DialogService],
   templateUrl: './profile-approval-wizard.page.html',

@@ -15,14 +15,14 @@
                                     </div>
                                     <div>
                                         <h3 class="fw-bold"> {{ ds.state().fullNameEn || ('wizard.personal.nameAr' | translate) }}</h3>
-                           <p class="fs-16 m-0">{{ 'wizard.personal.avatar.hint' | translate }}</p>
-                 </div>
+                                        <p class="fs-16 m-0">{{ 'wizard.personal.avatar.hint' | translate }}</p>
+                                    </div>
                                   </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="d-flex justify-content-end align-items-center gap-3 form-check form-switch">
                                         <label class="form-check-label">{{ 'wizard.availability' | translate }}</label>
-                                        <p-toggleswitch [ngModel]="ds.state().available"  (ngModelChange)="ds.up('available',$event)">
+                                        <p-toggleswitch [ngModel]="ds.state().available"  (ngModelChange)="onAvailabilityChange($event)">
                                           <ng-template #handle let-checked="checked">
                                             <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
                                           </ng-template>
