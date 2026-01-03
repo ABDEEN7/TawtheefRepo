@@ -89,8 +89,8 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
         var summaries = await reviewRepo.DbSet
             .AsNoTracking()
             .Where(r => profileIds.Contains(r.UserProfileId))
-            .Where(r => r.TargetType == ReviewTargetType.Section)
             .Where(r => r.ProfileChangeId == null) // phase 1 only
+            .Where(r => r.TargetType != ReviewTargetType.Field)
             .GroupBy(r => r.UserProfileId)
             .Select(g => new FullReviewSummary
             {

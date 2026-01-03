@@ -38,25 +38,30 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
 
         // ===== Reviews =====
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
-
-        var sectionItems = await reviewRepo.DbSet
+        var reviewItems = await reviewRepo.DbSet
             .AsNoTracking()
-            .Where(r => r.UserProfileId == profile.Id &&
-                        r.TargetType == ReviewTargetType.Section)
+            .Where(r => r.UserProfileId == profile.Id && r.ProfileChangeId == null)
             .ToListAsync(ct);
+        var sectionItems = reviewItems.Where(x => x.TargetType == ReviewTargetType.Section);
+        var detailItems = reviewItems.Where(x => x.TargetType != ReviewTargetType.Section);
+        var detailBySection = detailItems
+            .GroupBy(x => x.Section)
+            .ToDictionary(g => g.Key, g => g.ToList());
 
         var sections = ProfileApprovalFlow.Sections
             .OrderBy(s => (int)s)
             .Select(sec =>
             {
-                var item = sectionItems.FirstOrDefault(x => x.Section == sec);
+                var items = detailBySection.TryGetValue(sec, out var list) ? list : [];
+
+                var secItem  = sectionItems.FirstOrDefault(x => x.Section == sec);
 
                 return new SectionReviewDto
                 {
                     Section = sec,
-                    Status = item?.Status ?? ReviewStatus.Pending,
-                    Note = item?.ReviewerNote,
-                    ReviewedAtUtc = item?.ReviewedAtUtc ?? default
+                    Status = ResolveStatus(items),
+                    Note = secItem ?.ReviewerNote,
+                    ReviewedAtUtc = secItem ?.ReviewedAtUtc ?? default
                 };
             })
             .ToList();
@@ -86,8 +91,15 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
 
         return Result.Ok(dto);
 
-        // ===== Local helpers using mapper =====
+        ReviewStatus ResolveStatus(IReadOnlyList<ReviewItem> items)
+        {
+            if (items.Any(i => i.Status == ReviewStatus.NeedsCorrection)) return ReviewStatus.NeedsCorrection;
+            if (items.Any(i => i.Status == ReviewStatus.Rejected)) return ReviewStatus.Rejected;
+            if (items.Any(i => i.Status is ReviewStatus.Pending or ReviewStatus.NotReviewed)) return ReviewStatus.Pending;
+            return items.Count == 0 ? ReviewStatus.Pending : ReviewStatus.Approved;
+        }
 
+        // ===== Local helpers using mapper =====
         ProfileApprovalDataDto MapProfile(UserProfile profileEntity)
         {
             using var scope = new MapContextScope();

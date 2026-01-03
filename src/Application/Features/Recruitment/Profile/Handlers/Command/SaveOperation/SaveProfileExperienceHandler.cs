@@ -60,7 +60,6 @@ public sealed class SaveProfileExperienceHandler(
         var trainingFiles   = cmd.Request.TrainingCourseFiles;
 
         profile.Experiences ??= [];
-        var newExperiences = new List<Experience>();
         foreach (var dto in experiences)
         {
             var certResult = await UploadIfNeededAsync(
@@ -90,11 +89,9 @@ public sealed class SaveProfileExperienceHandler(
             };
 
             profile.Experiences.Add(entity);
-            newExperiences.Add(entity);
         }
 
         profile.TrainingCourses ??= [];
-        var newTrainings = new List<TrainingCourse>();
         foreach (var dto in trainings)
         {
             var certResult = await UploadIfNeededAsync(
@@ -123,7 +120,6 @@ public sealed class SaveProfileExperienceHandler(
             };
 
             profile.TrainingCourses.Add(entity);
-            newTrainings.Add(entity);
         }
 
         await uow.SaveChangesAsync(ct);

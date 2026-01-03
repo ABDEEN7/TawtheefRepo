@@ -103,6 +103,7 @@ public class ErrorsCodes
     public const string NotSubmitted = "NOT_SUBMITTED";
     public const string CanNotModifiedApprovedDocument = "CAN_NOT_MODIFIED_APPROVED_DOCUMENT";
     public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
+    public const string DuplicateNationalNumber = "DUPLICATE_NATIONAL_NUMBER";
     public const string NotesRequiredForCorrection = "NOTES_REQUIRED_FOR_CORRECTION";
     public const string MandatoryFieldsIncomplete = "MANDATORY_FIELDS_INCOMPLETE";
     public const string UnapprovedItemsExist = "UNAPPROVED_ITEMS_EXIST";
