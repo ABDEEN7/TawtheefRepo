@@ -3,6 +3,7 @@ import { ReviewStatus } from '../../../approval-list/models/profile-approval.mod
 import { ButtonDirective } from 'primeng/button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { NgClass } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-item-inline-review',
@@ -13,6 +14,7 @@ import { NgClass } from '@angular/common';
     ButtonDirective,
     TranslatePipe,
     NgClass,
+    TooltipModule,
   ]
 })
 export class ItemInlineReviewComponent {
@@ -39,16 +41,42 @@ export class ItemInlineReviewComponent {
     });
   }
 
-  getClassStatus(): string{
+  getClassStatus(): string {
+    switch (this.status) {
+      case ReviewStatus.Approved:
+        return 'status-approved';
+      case ReviewStatus.ChangesRequested:
+        return 'status-changes';
+      case ReviewStatus.Rejected:
+        return 'status-rejected';
+      default:
+        return 'status-pending';
+    }
+  }
+
+  getStatusKey(): string {
     switch (this.status) {
       case ReviewStatus.Approved:
         return 'approved';
       case ReviewStatus.ChangesRequested:
-        return 'changes-requested';
+        return 'changes';
       case ReviewStatus.Rejected:
         return 'rejected';
       default:
         return 'pending';
+    }
+  }
+
+  getStatusIcon(): string {
+    switch (this.status) {
+      case ReviewStatus.Approved:
+        return 'pi pi-check-circle text-success';
+      case ReviewStatus.ChangesRequested:
+        return 'pi pi-exclamation-circle text-warning';
+      case ReviewStatus.Rejected:
+        return 'pi pi-ban text-danger';
+      default:
+        return 'pi pi-hourglass text-secondary';
     }
   }
 }

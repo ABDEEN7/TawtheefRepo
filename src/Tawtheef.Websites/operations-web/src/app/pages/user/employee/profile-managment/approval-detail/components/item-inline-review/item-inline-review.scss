@@ -1,23 +1,72 @@
 .review-bar {
   margin-top: 1rem;
-  padding-top: 0.75rem;
-  border-top: 1px dashed #ddd;
+  padding: 0.75rem 1rem 0.5rem;
+  border: 1px dashed #ddd;
+  border-radius: 0.75rem;
+  background: #f8f9fa;
 
-  &.Approved {
+  &.status-approved {
     border-color: #198754;
+    background: #f4f8f5;
   }
 
-  &.Rejected {
+  &.status-rejected {
     border-color: #dc3545;
+    background: #fdf3f3;
   }
 
-  &.ChangesRequested {
+  &.status-changes {
     border-color: #ffc107;
+    background: #fff8e6;
+  }
+
+  &.status-pending {
+    border-color: #b8c2cc;
+  }
+
+  .review-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .status-block {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+
+    i {
+      font-size: 1.75rem;
+    }
+
+    .status-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+
+      .note {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+        max-width: 420px;
+        word-break: break-word;
+      }
+    }
+  }
+
+  .action-block {
+    flex: 1;
+    min-width: 220px;
   }
 
   .actions {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }

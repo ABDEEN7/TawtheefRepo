@@ -1,23 +1,44 @@
 <div class="review-bar" [ngClass]="getClassStatus()">
-  <div class="actions">
-    <button
-      pButton
-      type="button"
-      class="p-button-success p-button-sm"
-      icon="pi pi-check"
-      (click)="approve()"
-    >
-      {{ 'profileApproval.status.approved' | translate }}
-    </button>
+  <div class="review-row">
+    <div class="status-block">
+      <i [class]="getStatusIcon()"></i>
+      <div class="status-content">
+        <small class="text-muted">{{ 'profileApproval.detail.item.currentStatus' | translate }}</small>
+        <div class="fw-semibold">
+          {{ ('profileApproval.status.' + getStatusKey()) | translate }}
+        </div>
+        <div class="note" *ngIf="note">
+          <i class="pi pi-comment text-body-secondary"></i>
+          <span [pTooltip]="note" tooltipPosition="top">{{ note }}</span>
+        </div>
+      </div>
+    </div>
 
-    <button
-      pButton
-      type="button"
-      class="p-button-warning p-button-sm"
-      icon="pi pi-undo"
-      (click)="requestChanges()"
-    >
-      {{ 'profileApproval.status.changes' | translate }}
-    </button>
+    <div class="action-block">
+      <p class="text-muted mb-2">
+        {{ 'profileApproval.detail.item.actionHint' | translate }}
+      </p>
+      <div class="actions">
+        <button
+          pButton
+          type="button"
+          class="p-button-sm p-button-outlined"
+          icon="pi pi-check"
+          (click)="approve()"
+        >
+          {{ 'profileApproval.status.approved' | translate }}
+        </button>
+
+        <button
+          pButton
+          type="button"
+          class="p-button-warning p-button-sm"
+          icon="pi pi-pencil"
+          (click)="requestChanges()"
+        >
+          {{ 'profileApproval.status.changes' | translate }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

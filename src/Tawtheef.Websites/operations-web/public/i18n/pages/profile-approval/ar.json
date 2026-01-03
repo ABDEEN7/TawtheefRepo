@@ -265,6 +265,8 @@
   "profileApproval.detail.mode.switchToChanges": "عرض التغييرات فقط",
   "profileApproval.detail.mode.version": "رقم النسخة",
   "profileApproval.detail.itemSaved": "تم حفظ قرار العنصر.",
+  "profileApproval.detail.item.currentStatus": "الحالة الحالية",
+  "profileApproval.detail.item.actionHint": "اختر كيف تريد متابعة هذا العنصر.",
   "profileApproval.status.needsCorrection": "بحاجة لتصحيح",
   "profileApproval.detail.sectionApproval.savedAs": "تم حفظ القرار",
   "profileApproval.detail.sectionApproval.save": "حفظ القرار",

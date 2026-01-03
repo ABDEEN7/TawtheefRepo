@@ -265,6 +265,8 @@
   "profileApproval.detail.mode.switchToChanges": "View changes only",
   "profileApproval.detail.mode.version": "Submission version",
   "profileApproval.detail.itemSaved": "Item review saved.",
+  "profileApproval.detail.item.currentStatus": "Current status",
+  "profileApproval.detail.item.actionHint": "Select how you want to proceed with this item.",
   "profileApproval.status.needsCorrection": "Needs correction",
   "profileApproval.detail.sectionApproval.savedAs": "Decision saved",
   "profileApproval.detail.sectionApproval.save": "Save decision",
