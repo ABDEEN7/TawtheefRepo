@@ -40,9 +40,6 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         if (item is null)
             return Result.Fail<Unit>(ErrorsCodes.ReviewItemNotFound);
 
-        if (item.ProfileChangeId is null || item.ProfileChange is null)
-            return Result.Fail<Unit>(ErrorsCodes.UnExpectedError);
-
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var isAssigned = await assignmentRepo.DbSet
             .AsNoTracking()
@@ -52,8 +49,9 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail<Unit>(ErrorsCodes.UnauthorizedAction);
 
         var change = item.ProfileChange;
+        var hasChangeRequest = change is not null;
 
-        if (cmd.Status == ReviewStatus.Approved && item.Status != ReviewStatus.Approved)
+        if (cmd.Status == ReviewStatus.Approved && item.Status != ReviewStatus.Approved && hasChangeRequest)
         {
             var profileRepo = uow.GetEntityRepository<UserProfile>();
             var profile = await profileRepo.DbSet
@@ -83,14 +81,20 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         item.ReviewerNote = cmd.Note;
         item.ReviewedById = cmd.OfficerId;
         item.ReviewedAtUtc = now;
+        if (cmd.Status == ReviewStatus.Approved)
+            item.ApprovedHash = item.CurrentHash;
+
         item.IsOutdated = false;
 
-        change.Status = cmd.Status == ReviewStatus.Approved
-            ? ProfileChangeRequestStatus.Approved
-            : ProfileChangeRequestStatus.Rejected;
-        change.ReviewedById = cmd.OfficerId;
-        change.ReviewedAtUtc = now;
-        change.ReviewerNote = cmd.Note;
+        if (hasChangeRequest)
+        {
+            change!.Status = cmd.Status == ReviewStatus.Approved
+                ? ProfileChangeRequestStatus.Approved
+                : ProfileChangeRequestStatus.Rejected;
+            change.ReviewedById = cmd.OfficerId;
+            change.ReviewedAtUtc = now;
+            change.ReviewerNote = cmd.Note;
+        }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
