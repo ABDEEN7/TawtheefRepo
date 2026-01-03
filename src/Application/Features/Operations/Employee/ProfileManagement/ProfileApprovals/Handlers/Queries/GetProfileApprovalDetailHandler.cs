@@ -55,13 +55,13 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, IM
                 var items = detailBySection.TryGetValue(sec, out var list) ? list : [];
 
                 var secItem  = sectionItems.FirstOrDefault(x => x.Section == sec);
-
+                var secStatus = (items.Count > 0 ? ResolveStatus(items) : secItem?.Status) ?? ReviewStatus.Pending;
                 return new SectionReviewDto
                 {
                     Section = sec,
-                    Status = ResolveStatus(items),
-                    Note = secItem ?.ReviewerNote,
-                    ReviewedAtUtc = secItem ?.ReviewedAtUtc ?? default
+                    Status = secStatus,
+                    Note = secItem?.ReviewerNote,
+                    ReviewedAtUtc = secItem?.ReviewedAtUtc ?? default
                 };
             })
             .ToList();
