@@ -255,6 +255,11 @@ public class ErrorsCodes
     public const string CityNotFound = "CITY_NOT_FOUND";
     #endregion
 
+    #region Religions
+    public const string ReligionNotFound = "RELIGION_NOT_FOUND";
+    public const string ReligionNameExists = "RELIGION_NAME_EXISTS";
+    #endregion
+
     #region Offices
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
     public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";

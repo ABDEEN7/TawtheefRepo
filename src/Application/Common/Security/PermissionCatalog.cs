@@ -19,6 +19,8 @@ public static class PermissionCatalog
 
         Permissions.Languages.View,
         Permissions.Languages.Manage,
+        Permissions.Religions.View,
+        Permissions.Religions.Manage,
 
         Permissions.Countries.View,
         Permissions.Countries.Manage,

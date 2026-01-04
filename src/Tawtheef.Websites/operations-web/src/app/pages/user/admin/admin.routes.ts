@@ -5,6 +5,7 @@ import {UsersManagement} from './users-management/users-management';
 import {OfficesManagement} from './offices-management/offices-management';
 import {CountriesManagement} from './countries-management/countries-management';
 import {LanguagesManagement} from './languages-management/languages-management';
+import {ReligionsManagement} from './religions-management/religions-management';
 import {UniversitiesManagement} from './universities-management/universities-management';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../../core/constants/permissions';
@@ -47,10 +48,15 @@ export const adminRoutes: Routes = [
     data: { permissions: [Permissions.Languages.Manage] },
   },
   {
+    path: "religions-management",
+    component: ReligionsManagement,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Religions.Manage] },
+  },
+  {
     path: "universities-management",
     component: UniversitiesManagement,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Universities.Manage] },
   },
 ];
-

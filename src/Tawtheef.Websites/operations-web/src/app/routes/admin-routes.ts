@@ -21,6 +21,9 @@
   get languagesManagement(){
     return this.admin + '/languages-management'
   },
+  get religionsManagement(){
+    return this.admin + '/religions-management'
+  },
   get universitiesManagement(){
     return this.admin + '/universities-management'
   },
