@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
@@ -39,6 +40,9 @@ namespace Tawtheef.Application
             config.Scan(Assembly.GetExecutingAssembly());
             services.AddSingleton(config);
             services.AddScoped<IMapper>(sp => new ServiceMapper(sp, config));
+            #if DEBUG
+            TypeAdapterConfig.GlobalSettings.Compiler = exp => exp.CompileWithDebugInfo();
+            #endif
         }
 
         private static void RegisterMediator(IServiceCollection services)

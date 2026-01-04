@@ -632,8 +632,6 @@ internal sealed class ImportRunner
                     Phone = r.Phone,
                     Email = r.Email,
                     Code = r.Code,
-                    LogoEn = r.LogoEn,
-                    LogoAr = r.LogoAr,
                     OriginalName = r.OriginalName
                 });
             }

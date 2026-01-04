@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace Tawtheef.Domain.Constants;
+﻿namespace Tawtheef.Domain.Constants;
 public class ErrorsCodes
 {
     #region Common Errors
@@ -43,10 +41,7 @@ public class ErrorsCodes
     public const string QatarResidentInvalidQid = "QATAR_RESIDENT_INVALID_QID";
     public const string QatarResidentPhoneMismatch = "QATAR_RESIDENT_PHONE_MISMATCH";
     public const string QatarResidentVerificationFailed = "QATAR_RESIDENT_VERIFICATION_FAILED";
-    public static string ExternalLoginCreateUserFailed(IEnumerable<IdentityError> error) =>
-        $"EXTERNAL_LOGIN_CREATE_USER_FAILED: {error}";
-    public static string ExternalLoginLinkFailed(IEnumerable<IdentityError> error) =>
-        $"EXTERNAL_LOGIN_LINK_FAILED: {error}";
+    public const string ExternalLoginUserTypeNotAllowed = "EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED";
     #endregion
 
     #region Role Management Errors
@@ -306,4 +301,5 @@ public class ErrorsCodes
     public const string ExternalLoginEmailDomainNotAllowed = "EXTERNAL_LOGIN_EMAIL_DOMAIN_NOT_ALLOWED";
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
     public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
+    public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
 }
