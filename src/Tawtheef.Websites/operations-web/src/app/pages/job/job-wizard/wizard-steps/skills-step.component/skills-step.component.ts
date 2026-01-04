@@ -126,10 +126,4 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
     const skill = this.lookupsService.skills().find((s) => s.id === skillId);
     return skill?.name || '';
   }
-
-  // Optional (for the "عرض" button): open a simple preview dialog if you already have one.
-  // If you don't, keep it as no-op or remove button.
-  onViewSkill(i: number) {
-    // example: console.log(this.getSkillGroup(i).value);
-  }
 }
