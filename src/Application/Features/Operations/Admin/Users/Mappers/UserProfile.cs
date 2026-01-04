@@ -19,8 +19,7 @@ public sealed class UserProfile : IRegister
             .Map(dest => dest.Email, src => src.Email ?? string.Empty)
             .Map(dest => dest.IsBlocked, src => src.IsBlocked)
             .Map(dest => dest.LastLoginDate, src => src.LastLoginDate)
-            .Map(dest => dest.Roles, _ => new List<RoleSummaryDto>())
-            .Map(dest => dest.AssignedRoleIds, _ => Array.Empty<string>());
+            .Map(dest => dest.Roles, _ => new List<RoleSummaryDto>()).Map<IReadOnlyCollection<Guid>,>(dest => dest.AssignedRoleIds, _ => []);
 
         config.NewConfig<RoleWithClaims, RoleSummaryDto>()
             .Map(dest => dest.Id, src => src.Role.Id)

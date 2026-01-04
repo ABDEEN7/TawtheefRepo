@@ -8,7 +8,7 @@ public sealed class MyProfileReviewSectionDto
 
     // Reviewer notes count
     public int NotesCount { get; set; }
-    public IReadOnlyList<MyProfileReviewNoteDto> Notes { get; set; } = Array.Empty<MyProfileReviewNoteDto>();
+    public IReadOnlyList<MyProfileReviewNoteDto> Notes { get; set; } = [];
 
     // User changes inside this section (after review)
     public bool HasUserChanges { get; set; }

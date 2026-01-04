@@ -6,6 +6,6 @@ public sealed record KawaderUploadResultDto
 {
     public int ImportedCount { get; init; }
     public int ProcessedRows { get; init; }
-    public IReadOnlyList<KawaderUploadErrorDto> Errors { get; init; } = Array.Empty<KawaderUploadErrorDto>();
+    public IReadOnlyList<KawaderUploadErrorDto> Errors { get; init; } = [];
     public bool Success => Errors.Count == 0;
 }
