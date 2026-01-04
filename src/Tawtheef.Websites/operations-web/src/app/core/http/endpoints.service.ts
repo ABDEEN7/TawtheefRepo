@@ -175,6 +175,13 @@ export class EndpointsService {
       cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
     }
   };
+  targetEntities = {
+    listTargetEntities: this.getFullUrl('/targetentities/list-target-entities'),
+    targetEntityDetails: (id: string) => this.getFullUrl(`/targetentities/target-entity-details/${id}`),
+    createTargetEntity: this.getFullUrl('/targetentities/create-target-entity'),
+    updateTargetEntity: (id: string) => this.getFullUrl(`/targetentities/update-target-entity/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/targetentities/${id}/status`)
+  };
   majorSkillsManagement = {
     list: this.getFullUrl('/MajorSkillsManagement'),
     details: (id: string) => this.getFullUrl(`/MajorSkillsManagement/${id}`),
