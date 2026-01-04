@@ -173,6 +173,18 @@
                         </button>
                         } @if(job.jobStatus.backendName !== jobStatus.Draft &&
                         job.jobStatus.backendName !== jobStatus.NeedUpdate){
+                        @if (canCopyJob(job)) {
+                        <button
+                          class="btn d-flex gap-1 align-items-center"
+                          type="button"
+                          (click)="copyJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_COPY' | translate }}"
+                          tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_COPY' | translate"
+                        >
+                          <i class="hgi hgi-stroke hgi-copy-01"></i>
+                        </button>
+                        }
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"

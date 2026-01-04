@@ -32,6 +32,7 @@
   "JOB_LIST_BUTTONS_REOPEN": "إعادة تفعيل",
   "JOB_LIST_BUTTONS_CANCEL": "إلغاء",
   "JOB_LIST_BUTTONS_DELETE": "حذف",
+  "JOB_LIST_BUTTONS_COPY": "إنشاء من وظيفة سابقة",
   
   "JOB_LIST_CONFIRMATIONS_REJECT_JOB": "هل أنت متأكد من رفض هذه الوظيفة؟",
   "JOB_LIST_CONFIRMATIONS_CLOSE_JOB": "هل أنت متأكد من إغلاق هذه الوظيفة؟ سيتوقف استقبال الطلبات.",

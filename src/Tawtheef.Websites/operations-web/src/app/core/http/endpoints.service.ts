@@ -54,6 +54,8 @@ export class EndpointsService {
     approveJobPoints : (jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}/approve`),
     searchJob : this.getFullUrl('/job/search'),
     CountByStatus : (jobStatusId : GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
+    copyTemplate: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy-template`),
+    copyFromPrevious: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy`),
     lookups: {
       sectors: this.getFullUrl('/job/lookups/sectors'),
       skills: this.getFullUrl('/job/lookups/skills'),

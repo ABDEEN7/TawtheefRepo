@@ -20,5 +20,10 @@ public class JobPointsMappingProfile : IRegister
 
         config.NewConfig<JobPointConfigurationResponseDto, JobPointConfiguration>();
         config.NewConfig<JobPointConfigurationRequestDto, JobPointConfiguration>();
+        
+        config.NewConfig<JobPointsMain, JobPointsCopyDto>()
+            .Map(dest => dest.Details, src => src.Details);
+
+        config.NewConfig<JobPointsDetail, JobPointsDetailCopyDto>();
     }
 }
