@@ -44,6 +44,28 @@ public class CandidateTypeProviderLoginConfiguration
                 ProviderLoginId = ProviderLoginIds.QatarPass,
                 CandidateTypeId = CandidateTypeIds.GCC,
             },
+            
+            new CandidateTypeProviderLogin
+            {
+                ProviderLoginId = ProviderLoginIds.QatarResidentOtp,
+                CandidateTypeId = CandidateTypeIds.SonOfQatariMother,
+            },
+            new CandidateTypeProviderLogin
+            {
+                ProviderLoginId = ProviderLoginIds.QatarResidentOtp,
+                CandidateTypeId = CandidateTypeIds.WifeOfQatari,
+            },
+            new CandidateTypeProviderLogin
+            {
+                ProviderLoginId = ProviderLoginIds.QatarResidentOtp,
+                CandidateTypeId = CandidateTypeIds.ResidentQatar,
+            },
+            new CandidateTypeProviderLogin
+            {
+                ProviderLoginId = ProviderLoginIds.QatarResidentOtp,
+                CandidateTypeId = CandidateTypeIds.GCC,
+            },
+            
             new CandidateTypeProviderLogin
             {
                 ProviderLoginId = ProviderLoginIds.Google,

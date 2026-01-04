@@ -81,8 +81,8 @@ export class Login implements OnInit, OnDestroy{
           header: this.translate.instant('auth.login.qatarResidentDialog.title'),
           width: '520px',
           contentStyle: { 'border-radius': '12px' },
-          dismissableMask: true,
-          closable: true
+          dismissableMask: false,
+          closable: false
         });
         break;
     }

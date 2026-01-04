@@ -6,14 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
-using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile;
-using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -156,7 +155,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
 
         ReviewStatus ResolveStatus(IReadOnlyList<ProfileApprovalItemDto> items, ProfileApprovalItemDto? sectionReview)
         {
-            var source = items.Any() ? items : sectionReview != null ? [sectionReview] : Array.Empty<ProfileApprovalItemDto>();
+            var source = items.Any() ? items : sectionReview != null ? [sectionReview] : [];
 
             if (source.Any(i => i.Status == ReviewStatus.NeedsCorrection)) return ReviewStatus.NeedsCorrection;
             if (source.Any(i => i.Status == ReviewStatus.Rejected)) return ReviewStatus.Rejected;
