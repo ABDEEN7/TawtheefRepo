@@ -31,16 +31,10 @@ export const employeeRoutes: Routes = [
     component: ProfileApprovalDetailPage
   },
   {
-    path: 'approval-profile/:profileId/wizard',
-    canActivate: [permissionGuard],
-    data: { permissions: [Permissions.ProfileApproval.View] },
-    component: ProfileApprovalWizardPage
-  },
-  {
     path: 'approval-profile/:profileId/review',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileApproval.Review] },
-    component: ProfileApprovalDetailPage
+    component: ProfileApprovalWizardPage
   },
   {
     path: 'approval-profile/:profileId/changes',
