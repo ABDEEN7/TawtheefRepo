@@ -32,19 +32,8 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         var verification = await verificationClient.VerifyAsync(normalizedQid, normalizedPhone, cancellationToken);
         if (verification.IsFailed) return Result.Fail<Unit>(verification.Errors);
 
-        var verified = verification.Value;
-        if (!string.Equals(QidUtilities.Normalize(verified.Qid), normalizedQid, StringComparison.Ordinal))
+        if (!string.Equals(QidUtilities.Normalize(normalizedQid), normalizedQid, StringComparison.Ordinal))
             return Result.Fail<Unit>(ErrorsCodes.QatarResidentInvalidQid);
-
-        var verifiedPhone = NormalizePhone(string.IsNullOrWhiteSpace(verified.PhoneE164)
-            ? normalizedPhone
-            : verified.PhoneE164);
-
-        if (string.IsNullOrWhiteSpace(verifiedPhone))
-            return Result.Fail<Unit>(ErrorsCodes.UserPhoneRequired);
-
-        if (!string.Equals(verifiedPhone, normalizedPhone, StringComparison.Ordinal))
-            return Result.Fail<Unit>(ErrorsCodes.QatarResidentPhoneMismatch);
 
         var user = await userManager.FindByLoginAsync(QatarResidentOtpConstants.Provider, normalizedQid);
         var placeholderEmail = $"qr{normalizedQid}{QatarResidentOtpConstants.PlaceholderEmailDomain}";
@@ -58,7 +47,7 @@ public sealed class RequestQatarResidentOtpCommandHandler(
                 if (newUser.IsFailed) return Result.Fail<Unit>(newUser.Errors);
 
                 user = newUser.Value;
-                user.PhoneNumber = verifiedPhone;
+                user.PhoneNumber = normalizedPhone;
                 user.PhoneNumberConfirmed = false;
 
                 var createRes = await userManager.CreateAsync(user);
@@ -72,7 +61,7 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         }
         else
         {
-            user.PhoneNumber = verifiedPhone;
+            user.PhoneNumber = normalizedPhone;
             user.PhoneNumberConfirmed = false;
         }
 
@@ -86,7 +75,7 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         var update = await userManager.UpdateAsync(user);
         if (!update.Succeeded) return FailureFromIdentity<Unit>(update);
 
-        _ = await smsSender.SendAsync(verifiedPhone,
+        _ = await smsSender.SendAsync(normalizedPhone,
             $"Your verification code is: {otp}", cancellationToken);
 
         return Result.Ok(Unit.Value);
