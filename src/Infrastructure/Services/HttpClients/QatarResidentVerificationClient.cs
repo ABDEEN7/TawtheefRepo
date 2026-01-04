@@ -27,10 +27,15 @@ public sealed class QatarResidentVerificationClient(HttpClient httpClient, ILogg
         if (string.IsNullOrWhiteSpace(authResult.Value.AccessToken)) return Result.Fail<bool>(ErrorsCodes.QatarResidentVerificationFailed);
         
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Value.AccessToken);
+        httpClient.DefaultRequestHeaders.Add("UserName", _settings.GiveUserName);
         var response = await httpClient.GetAsync(BuildCustomerValidationUri(qid, phoneNumber), ct);
         if (!response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync(ct);
+            logger.Error("QatarResidentVerificationClient: Failed to verify. Status code: {(int)response.StatusCode}. Body: {Body}", (int)response.StatusCode, content);
             return Result.Fail<bool>(
                 $"QatarResidentVerificationClient: Failed to verify. Status code: {(int)response.StatusCode}");
+        }
 
         var payload = await response.Content.ReadFromJsonAsync<ValidateResponse>(cancellationToken: ct);
         if (payload is null)
@@ -42,8 +47,10 @@ public sealed class QatarResidentVerificationClient(HttpClient httpClient, ILogg
         
         Uri BuildCustomerValidationUri(string qid, string mobileNo)
         {
-            var query = $"QID={WebUtility.UrlEncode(qid)}&MobileNo={WebUtility.UrlEncode(mobileNo)}";
+            var query = $"QID={WebUtility.UrlEncode(qid)}&MobileNo={WebUtility.UrlEncode(NormalizeMobileNo(mobileNo))}";
             return new Uri($"{_settings.VerificationPath}?{query}", UriKind.Relative);
+            
+            string NormalizeMobileNo(string mobileNo) => mobileNo.StartsWith("+974") ? mobileNo[4..] : mobileNo;
         }
     }
     
@@ -61,6 +68,7 @@ public sealed class QatarResidentVerificationClient(HttpClient httpClient, ILogg
             };
             using var response = await httpClient.SendAsync(request, ct);
             response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync(ct);
             var payload = await response.Content.ReadFromJsonAsync<MOIAuthResponse>(cancellationToken: ct);
             return Result.Ok(payload);
         }

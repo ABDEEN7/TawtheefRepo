@@ -12,6 +12,8 @@ import { InputText } from 'primeng/inputtext';
 import { SharedModule } from '../../../../../shared/shared.module';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import {MultiSelect} from 'primeng/multiselect';
+import {DatePicker} from 'primeng/datepicker';
+import {toDateOnly} from '../../../../../shared/types/dateOnly.type';
 
 type QatarPhoneNumber = {
   number: string;
@@ -32,7 +34,8 @@ type QatarPhoneNumber = {
     InputText,
     SharedModule,
     I18nNamespaceDirective,
-    NgxIntlTelInputModule
+    NgxIntlTelInputModule,
+    DatePicker
   ]
 })
 export class QatarResidentOtpDialogComponent {
@@ -45,6 +48,7 @@ export class QatarResidentOtpDialogComponent {
   private config = inject(DynamicDialogConfig);
 
   readonly qatarOnly = [CountryISO.Qatar];
+  readonly today = new Date();
 
   step: 'identify' | 'otp' = 'identify';
   loading = false;
@@ -56,6 +60,7 @@ export class QatarResidentOtpDialogComponent {
       null,
       [Validators.required, this.qatarPhoneValidator]
     ),
+    qidExpiry: this.fb.nonNullable.control('', [Validators.required]),
     otp: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(4)])
   });
 
@@ -63,25 +68,32 @@ export class QatarResidentOtpDialogComponent {
     // نتحقق فقط من حقول identify
     this.form.controls.qid.markAsTouched();
     this.form.controls.phoneNumber.markAsTouched();
+    this.form.controls.qidExpiry.markAsTouched();
 
-    if (this.form.controls.qid.invalid || this.form.controls.phoneNumber.invalid) return;
+    if (this.form.controls.qid.invalid ||
+      this.form.controls.phoneNumber.invalid ||
+      this.form.controls.qidExpiry.invalid) return;
 
-    const qid = this.form.controls.qid.value;
+    const raw = this.form.getRawValue();
+    const qid = raw.qid;
     const phone = this.getPhoneE164();
-    if (!qid || !phone) return;
+    const qidExpiry = raw.qidExpiry;
+    if (!qid || !phone || !qidExpiry) return;
 
     this.loading = true;
-    this.otpService.requestOtp(qid, phone)
+    this.otpService.requestOtp(qid, phone, toDateOnly(qidExpiry))
       .pipe(finalize(() => {
         this.loading = false;
         this.form.controls.qid.enable();
         this.form.controls.phoneNumber.enable();
+        this.form.controls.qidExpiry.enable();
       }))
       .subscribe({
         next: () => {
           this.step = 'otp';
           this.form.controls.qid.disable();
           this.form.controls.phoneNumber.disable();
+          this.form.controls.qidExpiry.disable();
           this.notifier.success(
             this.translate.instant('auth.login.qatarResidentDialog.sent', {phone: this.getPhoneDisplay()}),
             this.translate.instant('auth.login.qatarResidentDialog.success'));
@@ -91,18 +103,17 @@ export class QatarResidentOtpDialogComponent {
 
   submitOtp(): void {
     this.form.controls.otp.markAsTouched();
-
-    // في خطوة OTP نحتاج otp + (qid/phone موجودين لكنهم disabled؛ نقرأهم بـ getRawValue)
     if (this.form.controls.otp.invalid) return;
 
     const raw = this.form.getRawValue();
     const qid = raw.qid;
     const otp = raw.otp;
     const phone = this.getPhoneE164();
+    const qidExpiry = raw.qidExpiry;
     if (!qid || !phone || !otp) return;
 
     this.loading = true;
-    this.otpService.verifyOtp(qid, phone, otp)
+    this.otpService.verifyOtp(qid, phone, otp, toDateOnly(qidExpiry))
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: res => {

@@ -20,6 +20,7 @@ public sealed class ProfilePrefillDto
     public bool PhoneVerified { get; init; }
     public string? Nationality { get; init; }
     public string? Qid { get; init; }
+    public DateOnly? QidExpiry { get; init; }
     public string? Locale { get; init; }
     public string? Provider { get; init; }
 }

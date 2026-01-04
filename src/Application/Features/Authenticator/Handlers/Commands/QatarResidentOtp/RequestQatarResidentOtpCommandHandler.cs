@@ -25,6 +25,9 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         if (!QidUtilities.IsValid(normalizedQid))
             return Result.Fail<Unit>(ErrorsCodes.QatarResidentInvalidQid);
 
+        if(!IsQatarMobileNumber(request.PhoneNumber))
+            return Result.Fail<Unit>(ErrorsCodes.QatarResidentPhoneInvalid);
+        
         var normalizedPhone = NormalizePhone(request.PhoneNumber);
         if (string.IsNullOrWhiteSpace(normalizedPhone))
             return Result.Fail<Unit>(ErrorsCodes.UserPhoneRequired);
@@ -80,6 +83,8 @@ public sealed class RequestQatarResidentOtpCommandHandler(
 
         return Result.Ok(Unit.Value);
     }
+    
+    public static bool IsQatarMobileNumber(string phone) => phone.StartsWith("+974");
 
     private static string NormalizePhone(string phone)
     {
