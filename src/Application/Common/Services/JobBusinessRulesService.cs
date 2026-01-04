@@ -220,4 +220,13 @@ public static class JobBusinessRules
             j.JobStatusId == JobStatusIds.PendingApproval &&
             !j.IsDeleted);
     }
+    
+    public static bool CanCopyFromPreviousJob(Guid jobStatusId)
+    {
+        return jobStatusId == JobStatusIds.Approved ||
+               jobStatusId == JobStatusIds.ReadyForAnnouncement ||
+               jobStatusId == JobStatusIds.Published ||
+               jobStatusId == JobStatusIds.Closed ||
+               jobStatusId == JobStatusIds.Cancelled;
+    }
 }

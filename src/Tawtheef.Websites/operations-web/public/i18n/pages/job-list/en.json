@@ -32,6 +32,9 @@
   "JOB_LIST_BUTTONS_REOPEN": "Reopen",
   "JOB_LIST_BUTTONS_CANCEL": "Cancel",
   "JOB_LIST_BUTTONS_DELETE": "Delete",
+  "JOB_LIST_BUTTONS_VIEW_CANDIDATE":"View Candidates",
+  "JOB_LIST_BUTTONS_SEND_INVITATIONS":"Send Invitations",
+  "JOB_LIST_BUTTONS_COPY": "Create from Previous",
   
   "JOB_LIST_CONFIRMATIONS_REJECT_JOB": "Are you sure you want to reject this job?",
   "JOB_LIST_CONFIRMATIONS_CLOSE_JOB": "Are you sure you want to close this job? It will stop receiving applications.",
@@ -63,8 +66,6 @@
   "JOB_LIST_STATS_APPROVED":"Approved",
   "JOB_LIST_STATS_DRAFTED":"Drafted",
   "JOB_LIST_CONFIRMATIONS_DELETE_JOB_NOTE": "Are you sure you want to delete this job ?",
-  "JOB_LIST_BUTTONS_VIEW_CANDIDATE":"View Candidates",
-  "JOB_LIST_BUTTONS_SEND_INVITATIONS":"Send Invitations",
-    "JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE":"Are you sure you want to cancel this job ?"
+  "JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE":"Are you sure you want to cancel this job ?"
 
 }
