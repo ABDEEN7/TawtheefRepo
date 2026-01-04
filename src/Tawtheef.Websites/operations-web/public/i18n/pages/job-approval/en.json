@@ -84,8 +84,7 @@
 "JOB_APPROVAL.ADD_REVIEW_ATTACHMENT":"Attachment for Review",
 
 "JOB_APPROVAL.SUBMIT_REVIEW_SUCCESS":"Job approved successfully",
-
-"JOB_APPROVAL.Returned":"Returned",
+"JOB_APPROVAL.JOB_RETURNED_NEED_UPDATES":"Job Returned to Update",
 
 "JOB_APPROVAL.TAB": "Tab",
 "JOB_APPROVAL.REVIEW_HISTORY": "Review History",
