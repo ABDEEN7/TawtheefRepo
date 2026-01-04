@@ -97,7 +97,7 @@
               {{ 'JOB_WIZARD.STEPS.CONDITIONS.CONDITION' | translate }} {{ i + 1 }}
             </span>
 
-            @if (conditionsArray.length > 1) {
+            @if (conditionsArray.length >= 1) {
             <button
               class="btn btn-outline-danger btn-sm"
               (click)="removeCondition(i)"
