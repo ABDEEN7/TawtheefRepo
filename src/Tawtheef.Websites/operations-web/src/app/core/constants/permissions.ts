@@ -30,6 +30,10 @@ export const Permissions = {
     View: 'universities.view',
     Manage: 'universities.manage',
   },
+  TargetEntities: {
+    View: 'targetentities.view',
+    Manage: 'targetentities.manage',
+  },
   Profile: {
     View: 'profile.view',
     Manage: 'profile.manage',

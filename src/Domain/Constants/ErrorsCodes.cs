@@ -260,6 +260,11 @@ public class ErrorsCodes
     public const string ReligionNameExists = "RELIGION_NAME_EXISTS";
     #endregion
 
+    #region Target Entities
+    public const string TargetEntityNotFound = "TARGET_ENTITY_NOT_FOUND";
+    public const string TargetEntityNameExists = "TARGET_ENTITY_NAME_EXISTS";
+    #endregion
+
     #region Offices
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
     public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";

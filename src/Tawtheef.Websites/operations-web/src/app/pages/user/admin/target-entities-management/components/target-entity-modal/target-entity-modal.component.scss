@@ -1,0 +1,14 @@
+.modal-content {
+  border-radius: 16px;
+}
+
+.btn-maroon {
+  background-color: #7b0037;
+  border-color: #7b0037;
+  color: #fff;
+
+  &:hover {
+    background-color: #64002d;
+    border-color: #64002d;
+  }
+}
