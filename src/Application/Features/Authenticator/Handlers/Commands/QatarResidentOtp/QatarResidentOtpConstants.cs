@@ -8,6 +8,5 @@ internal static class QatarResidentOtpConstants
     public const int OtpLength = 6;
     public const int OtpExpiryMinutes = 10;
     public const int MaxOtpAttempts = 5;
-    //TODO: Move to config, MAKE IT LESS THAN 5
-    public const int MaxOtpSends = 500;
+    public const int MaxOtpSends = 5;
 }
