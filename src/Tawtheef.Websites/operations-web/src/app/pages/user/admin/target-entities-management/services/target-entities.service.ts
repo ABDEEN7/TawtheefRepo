@@ -1,4 +1,5 @@
 import {inject, Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
 import {TargetEntityDto} from '../models/target-entity.dto';
 import {TargetEntityFilters} from '../models/target-entity-filters.dto';
@@ -13,7 +14,7 @@ export class TargetEntitiesService {
   private endpoints = inject(EndpointsService);
 
   getTargetEntities(filters: TargetEntityFilters): Observable<PaginatedResult<TargetEntityDto>> {
-    return this.http.get<PaginatedResult<CountryDto>>(this.endpoints.countries.listCountries, filters);
+    return this.http.get<PaginatedResult<TargetEntityDto>>(this.endpoints.targetEntities.listTargetEntities, filters);
   }
 
   getTargetEntityDetails(id: string) {
