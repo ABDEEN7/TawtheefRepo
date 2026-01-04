@@ -23,7 +23,7 @@ public sealed class GetMyProfileCorrectionsHandler(IUnitOfWork uow)
             return Result.Fail<ProfileCorrectionsDto>(ErrorsCodes.UserProfileNotFound);
 
         // Critical: no notes leakage before finalize
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
         {
             return Result.Ok(new ProfileCorrectionsDto
             {

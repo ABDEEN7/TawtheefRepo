@@ -18,6 +18,7 @@ public sealed class GetAchievementTypesQueryHandler(IUnitOfWork unitOfWork, IMap
 
         var entities = await dbSet
             .AsNoTracking()
+            .Where(s => s.IsActive)
             .OrderBy(x => x.DisplayOrder)
             .ToListAsync(cancellationToken);
 

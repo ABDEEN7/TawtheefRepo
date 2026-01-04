@@ -9,6 +9,7 @@ import {MajorsSkillsManagementPage} from './majors-skills-management/majors-skil
 import {Permissions} from '../../../core/constants/permissions';
 import {KawaderPage} from './kawader/kawader.page';
 import { JobInvitationSummaryDetailsComponent } from './job-managment/job-invitation-summary-details/job-invitation-summary-details.component';
+import {ProfileApprovalWizardPage} from './profile-managment/approval-wizard/profile-approval-wizard.page';
 
 export const employeeRoutes: Routes = [
   {
@@ -33,7 +34,7 @@ export const employeeRoutes: Routes = [
     path: 'approval-profile/:profileId/review',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileApproval.Review] },
-    component: ProfileApprovalDetailPage
+    component: ProfileApprovalWizardPage
   },
   {
     path: 'approval-profile/:profileId/changes',

@@ -87,6 +87,7 @@ public class ErrorsCodes
     public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
     public const string ProfileNotUnderReview = "PROFILE_NOT_UNDER_REVIEW";
+    public const string ProfileNotReadyForReview = "PROFILE_NOT_READY_FOR_REVIEW";
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";
     public const string InvalidPassword = "INVALID_PASSWORD";
@@ -103,6 +104,7 @@ public class ErrorsCodes
     public const string NotSubmitted = "NOT_SUBMITTED";
     public const string CanNotModifiedApprovedDocument = "CAN_NOT_MODIFIED_APPROVED_DOCUMENT";
     public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
+    public const string DuplicateNationalNumber = "DUPLICATE_NATIONAL_NUMBER";
     public const string NotesRequiredForCorrection = "NOTES_REQUIRED_FOR_CORRECTION";
     public const string MandatoryFieldsIncomplete = "MANDATORY_FIELDS_INCOMPLETE";
     public const string UnapprovedItemsExist = "UNAPPROVED_ITEMS_EXIST";

@@ -36,7 +36,7 @@ public sealed class SaveProfileAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
+        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateAttachments(profile);
@@ -73,13 +73,9 @@ public sealed class SaveProfileAttachmentsHandler(
             if (attachmentId is null || attachmentId == Guid.Empty)
                 return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
 
-            var fileName = uploadResult.Value?.ResourceName ?? dto.FileName;
-            if (string.IsNullOrWhiteSpace(fileName))
-                return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
-
             var attachment = new ProfileAdditionalAttachment
             {
-                FileName      = fileName,
+                FileName      = dto.Title,
                 AttachmentId  = attachmentId.Value,
                 UserProfileId = profile.Id
             };

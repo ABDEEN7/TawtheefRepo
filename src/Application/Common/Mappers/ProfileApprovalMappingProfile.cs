@@ -114,16 +114,15 @@ public sealed class ProfileApprovalMappingProfile : IRegister
         config.NewConfig<UserProfile, ProfileApprovalDataDto>()
             .Map(dest => dest.BasicInformation, src => src)
             .Map(dest => dest.ProfilePhoto, src=> src.User!.Avatar)
-            .Map(dest => dest.Qualifications, src => src.Qualifications == null ? null : src.Qualifications.OrderBy(q => q.GraduationYear))
-            .Map(dest => dest.Experiences, src => src.Experiences)
-            .Map(dest => dest.TrainingCourses, src => src.TrainingCourses)
-            .Map(dest => dest.ProfessionalCertificatesAndAwards, src => src.Achievements)
+            .Map(dest => dest.Qualifications, src => src.Qualifications == null ? null : src.Qualifications.OrderByDescending(q => q.GraduationYear))
+            .Map(dest => dest.Experiences, src => src.Experiences == null ? null : src.Experiences.OrderByDescending(q => q.StartDate))
+            .Map(dest => dest.TrainingCourses, src => src.TrainingCourses == null ? null : src.TrainingCourses.OrderByDescending(q => q.StartDate))
+            .Map(dest => dest.ProfessionalCertificatesAndAwards, src => src.Achievements == null ? null : src.Achievements.OrderByDescending(q => q.IssueDate))
             .Map(dest => dest.Skills, src => src.Skills)
             .Map(dest => dest.Languages, src => src.Languages)
             .Map(dest => dest.Attachments,
                  src => src.AdditionalAttachments == null
-                     ? null
-                     : src.AdditionalAttachments.Where(a => a.Attachment != null));
+                     ? null : src.AdditionalAttachments.Where(a => a.Attachment != null));
     }
 
     private static string ResolveResourceUrl(string? url)

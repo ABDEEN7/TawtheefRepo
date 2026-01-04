@@ -14,24 +14,30 @@ public sealed class ResourceMapper : IRegister
         config.NewConfig<Resource, string>()
             .Map(dest => dest, src => Resolve(src.Url));
         
-        config.NewConfig<Resource?, string>()
-            .Map(dest => dest, src => src == null ? null : Resolve(src.Url));
-        
-        config.NewConfig<Resource?, string?>()
-            .Map(dest => dest, src => src == null ? null : Resolve(src.Url));
+        // config.NewConfig<Resource?, string>()
+        //     .Map(dest => dest, src => src == null ? null : Resolve(src.Url));
+        //
+        // config.NewConfig<Resource?, string?>()
+        //     .Map(dest => dest, src => src == null ? null : Resolve(src.Url));
 
         config.NewConfig<Resource, FileRefDto>()
             .Map(dest => dest.ResourceId, src => src.Id)
             .Map(dest => dest.FileName,   src => src.Name)
             .Map(dest => dest.Url,        src => Resolve(src.Url));
+        //
+        // config.NewConfig<Resource, FileRefDto?>()
+        //     .Map(dest => dest!.ResourceId, src => src.Id)
+        //     .Map(dest => dest!.FileName,   src => src.Name)
+        //     .Map(dest => dest!.Url,        src => Resolve(src.Url));
 
-        config.NewConfig<Resource?, FileRefDto?>()
-            .MapWith(src => src == null ? null : new FileRefDto
-            {
-                ResourceId = src.Id,
-                FileName   = src.Name,
-                Url        = Resolve(src.Url)
-            });
+        // config.NewConfig<Resource?, FileRefDto?>()
+        //     .MapWith(src => src == null ? null : new FileRefDto
+        //     {
+        //         ResourceId = src.Id,
+        //         FileName   = src.Name,
+        //         Url        = Resolve(src.Url)
+        //     });
+
     }
 
     public static string Resolve(string? url)
