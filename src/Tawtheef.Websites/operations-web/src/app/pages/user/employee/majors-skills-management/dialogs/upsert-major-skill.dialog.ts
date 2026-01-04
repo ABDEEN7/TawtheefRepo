@@ -41,11 +41,10 @@ export interface UpsertMajorSkillDialogData {
     RemoteSelectComponent,
     TranslatePipe
   ],template: `
-    <div class="p-2">
-      <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
+      <form (ngSubmit)="save()" #f="ngForm">
 
-        <div class="row g-3">
-          <div class="col-12 col-md-6">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-3">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_PARENT_MAJOR' | translate }}</label>
             <app-remote-select
               [searchUrl]="endpoints.majorSkillsManagement.lookups.majors"
@@ -64,7 +63,7 @@ export interface UpsertMajorSkillDialogData {
             </small>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 mb-3">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SUB_MAJOR_OPTIONAL' | translate }}</label>
             <app-remote-select
               [searchUrl]="endpoints.majorSkillsManagement.lookups.subMajors"
@@ -83,7 +82,7 @@ export interface UpsertMajorSkillDialogData {
             </app-remote-select>
           </div>
 
-          <div class="col-12">
+          <div class="col-12 mb-3">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SKILL' | translate }}</label>
             <app-remote-select
               [searchUrl]="endpoints.majorSkillsManagement.lookups.skills"
@@ -102,7 +101,7 @@ export interface UpsertMajorSkillDialogData {
             </small>
           </div>
 
-          <div class="col-12 col-md-6 d-flex align-items-end justify-content-between gap-3">
+          <div class="col-12 col-md-6 d-flex align-items-end justify-content-between gap-3 mb-3">
             <div class="d-flex align-items-center gap-2">
               <p-toggle-switch [(ngModel)]="vm.isSkillRequired" name="isSkillRequired"></p-toggle-switch>
               <span>{{ 'MAJORS_SKILLS.FIELD_REQUIRED' | translate }}</span>
@@ -125,7 +124,6 @@ export interface UpsertMajorSkillDialogData {
         </div>
 
       </form>
-    </div>
   `
 
 })
