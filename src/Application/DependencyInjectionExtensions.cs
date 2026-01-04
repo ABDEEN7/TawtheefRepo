@@ -1,10 +1,12 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application.Common.Behaviours;
+using Tawtheef.Application.Common.Mappers;
 
 namespace Tawtheef.Application
 {
@@ -37,8 +39,12 @@ namespace Tawtheef.Application
         {
             var config = TypeAdapterConfig.GlobalSettings;
             config.Scan(Assembly.GetExecutingAssembly());
+            config.Scan(typeof(ResourceMapper).Assembly);
             services.AddSingleton(config);
             services.AddScoped<IMapper>(sp => new ServiceMapper(sp, config));
+            #if DEBUG
+            TypeAdapterConfig.GlobalSettings.Compiler = exp => exp.CompileWithDebugInfo();
+            #endif
         }
 
         private static void RegisterMediator(IServiceCollection services)

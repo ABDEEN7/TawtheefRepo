@@ -35,6 +35,7 @@ export class EndpointsService {
       reviewSummary: this.getFullUrl('/user/profile/review-summary'),
       savePrereq: this.getFullUrl(`/profiles/prereq`),
       savePersonal: this.getFullUrl(`/profiles/personal`),
+      saveAvailability: this.getFullUrl(`/profiles/availability`),
       saveContact: this.getFullUrl(`/profiles/contact`),
       saveEducation: this.getFullUrl(`/profiles/education`),
       deleteEducation: (id: string) => this.getFullUrl(`/profiles/education/${id}/delete`),
@@ -67,6 +68,7 @@ export class EndpointsService {
       phone:{
         request: this.getFullUrl(`/user/verify/phone/request`),
         confirm: this.getFullUrl(`/user/verify/phone/confirm`),
+        update: this.getFullUrl(`/user/update/phone`),
       },
       email:{
         request: this.getFullUrl(`/user/verify/email/request`),

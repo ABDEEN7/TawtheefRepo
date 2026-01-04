@@ -97,8 +97,11 @@ public class UserProfile : EventEntity
     public ICollection<ProfileLanguage>? Languages { get; set; } = [];
     public ICollection<ProfileAdditionalAttachment>? AdditionalAttachments { get; set; } = [];
     public ICollection<ProfileAssignment> ProfileAssignments { get; set; } = [];
-    
+    public ICollection<ReviewItem> ReviewItems { get; set; } = [];
+
     public UserProfileStatus Status { get; set; } = UserProfileStatus.InCreation;
+
+    public bool AvailableForRecruitment { get; set; } = true;
 
     public bool IsCompleted()
     {
@@ -131,8 +134,6 @@ public class UserProfile : EventEntity
         if (MaritalStatusId is null || MaritalStatusId == Guid.Empty)
             return false;
         if (ChildrenCount < 0)
-            return false;
-        if(HasDisability && string.IsNullOrWhiteSpace(DisabilityDetails))
             return false;
         if (ProfileValidatorUtils.RequiresSponsor(CandidateTypeId, Provider))
         {

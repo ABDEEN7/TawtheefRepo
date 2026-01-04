@@ -5,7 +5,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill
 public record MajorSkillDetailsDto(
     Guid Id,
     Guid MajorId,
-    DropdownOptions Major,
+    MajorDetailsDto Major,
     Guid SkillId,
     DropdownOptions Skill,
     bool IsSkillRequired,

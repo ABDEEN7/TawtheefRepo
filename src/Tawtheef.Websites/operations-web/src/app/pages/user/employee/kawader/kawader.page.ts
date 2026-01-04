@@ -7,6 +7,7 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { NotificationService } from '../../../../core/services/notification.service';
 import { KawaderService } from './services/kawader.service';
 import { KawaderUploadResult } from './models/kawader-upload.model';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-kawader-page',
@@ -54,22 +55,23 @@ export class KawaderPage {
     this.isUploading.set(true);
     this.lastResult.set(null);
 
-    this.service.upload(this.form.value.file).subscribe({
-      next: res => {
-        this.lastResult.set(res);
-        const messageKey = res.success ? 'kawader.upload.success' : 'kawader.upload.partial';
-        const message = this.translate.instant(messageKey);
+    this.service.upload(this.form.value.file)
+      .pipe(finalize(() => this.isUploading.set(false)))
+      .subscribe({
+        next: res => {
+          this.lastResult.set(res);
+          const messageKey = res.success ? 'kawader.upload.success' : 'kawader.upload.partial';
+          const message = this.translate.instant(messageKey);
 
-        if (res.success) {
-          this.notifications.success(message);
-        } else {
-          this.notifications.warn(message);
+          if (res.success) {
+            this.notifications.success(message);
+          } else {
+            this.notifications.warn(message);
+          }
+        },
+        error: () => {
+          this.notifications.error(this.translate.instant('kawader.upload.failed'));
         }
-      },
-      error: () => {
-        this.notifications.error(this.translate.instant('kawader.upload.failed'));
-      },
-      complete: () => this.isUploading.set(false)
     });
   }
 

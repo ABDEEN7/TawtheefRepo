@@ -46,26 +46,52 @@ export class MajorsSkillsManagementFacade {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(lang => this.store.setCurrentLang(lang));
 
+    // Shared lookup (used by mapping + skills)
     this.loadSkillTypes();
-    this.loadMainMajors();
-    this.loadMajorSkills();
-    this.loadSkills();
+
+    // Load only the default tab initially (mapping)
+    this.ensureTabLoaded('mapping');
   }
 
   switchTab(tab: MajorsSkillsTabKey) {
     this.store.setActiveTab(tab);
-    if (tab === 'subMajors') this.loadSubMajors();
+    this.ensureTabLoaded(tab);
   }
+  private ensureTabLoaded(tab: MajorsSkillsTabKey) {
+    switch (tab) {
+      case 'mapping':
+        if (this.store.mappingInitialized()) return;
+        this.store.mappingInitialized.set(true);
+        this.loadMajorSkills();
+        return;
 
+      case 'mainMajors':
+        if (this.store.mainMajorsInitialized()) return;
+        this.store.mainMajorsInitialized.set(true);
+
+        this.loadMainMajors(); // only main majors list
+        return;
+
+      case 'subMajors':
+        if (this.store.subMajorsInitialized()) return;
+        this.store.subMajorsInitialized.set(true);
+
+        // subMajors tab needs main majors to select parent
+        this.loadMainMajorsForSubMajorsTab();
+        this.loadSubMajors(); // only sub majors list (if parent set)
+        return;
+
+      case 'skills':
+        if (this.store.skillsInitialized()) return;
+        this.store.skillsInitialized.set(true);
+
+        this.loadSkills(); // only skills list
+        return;
+    }
+  }
   // ===================== Loaders =====================
-  loadMajorSkills() {
-    this.api.getMajorSkills(this.store.majorSkillFilters()).subscribe({
-      next: res => this.store.setMajorSkills(res),
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
-    });
-  }
 
-  loadMainMajors() {
+  private loadMainMajorsForMappingDefaults() {
     this.api.getMainMajors(this.store.mainMajorFilters()).subscribe({
       next: res => {
         this.store.setMainMajorsResult(res);
@@ -75,12 +101,37 @@ export class MajorsSkillsManagementFacade {
 
         if (!selectedParent && firstParent) {
           this.store.updateMajorSkillFilters({ parentMajorId: firstParent, subMajorId: '', pageNumber: 1 });
+        }
+      },
+      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+    });
+  }
+  private loadMainMajorsForSubMajorsTab() {
+    this.api.getMainMajors(this.store.mainMajorFilters()).subscribe({
+      next: res => {
+        this.store.setMainMajorsResult(res);
+
+        const selectedParent = this.store.subMajorFilters().parentMajorId;
+        const firstParent = this.store.mainMajorsItems()[0]?.id;
+
+        if (!selectedParent && firstParent) {
+          // ONLY update subMajors tab filters
           this.store.updateSubMajorFilters({ parentMajorId: firstParent, pageNumber: 1 });
         }
-
-        this.loadSubMajors();
-        this.loadMajorSkills();
       },
+      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+    });
+  }
+
+  loadMajorSkills() {
+    this.api.getMajorSkills(this.store.majorSkillFilters()).subscribe({
+      next: res => this.store.setMajorSkills(res),
+      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+    });
+  }
+  loadMainMajors() {
+    this.api.getMainMajors(this.store.mainMajorFilters()).subscribe({
+      next: res => this.store.setMainMajorsResult(res),
       error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
     });
   }
@@ -131,16 +182,27 @@ export class MajorsSkillsManagementFacade {
   toggleMajorActive(major: { id: string; parentId?: string | null }, isActive: boolean) {
     const proceed = (applyOnHierarchy: boolean) => {
       this.api.changeMajorActivation(major.id, isActive, applyOnHierarchy).subscribe({
-        next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadMainMajors(); this.loadSubMajors(); this.loadMajorSkills(); },
+        next: () => {
+          this.toast('MAJORS_SKILLS.STATUS_UPDATED');
+
+          const tab = this.store.activeTab();
+
+          if (tab === 'mainMajors') {
+            this.loadMainMajors();
+          } else if (tab === 'subMajors') {
+            this.loadSubMajors();
+          } else if (tab === 'mapping') {
+            this.loadMajorSkills();
+          } else {
+            // do nothing
+          }
+        },
         error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
       });
     };
 
-    if (isActive) {
-      this.askApplyOnHierarchy(major.parentId ? 'subMajor' : 'major', proceed);
-    } else {
-      proceed(false);
-    }
+    if (isActive) this.askApplyOnHierarchy(major.parentId ? 'subMajor' : 'major', proceed);
+    else proceed(false);
   }
 
   // ===================== Skills Actions =====================
@@ -287,10 +349,8 @@ export class MajorsSkillsManagementFacade {
   setMajorSkillSearch(v: string) { this.store.updateMajorSkillFilters({ search: v, pageNumber: 1 }); this.loadMajorSkills(); }
   setMajorSkillType(v: string)   { this.store.updateMajorSkillFilters({ skillTypeId: v, pageNumber: 1 }); this.loadMajorSkills(); }
   setMajorSkillSubMajor(v: string) { this.store.updateMajorSkillFilters({ subMajorId: v, pageNumber: 1 }); this.loadMajorSkills(); }
-  setMajorSkillParent(v: string) {
+  setMajorSkillParent(v: string | undefined) {
     this.store.updateMajorSkillFilters({ parentMajorId: v, subMajorId: '', pageNumber: 1 });
-    this.store.updateSubMajorFilters({ parentMajorId: v, pageNumber: 1 });
-    this.loadSubMajors();
     this.loadMajorSkills();
   }
   setMajorSkillActiveOnly(checked: boolean) {
@@ -300,11 +360,9 @@ export class MajorsSkillsManagementFacade {
 
   setMainMajorSearch(v: string) { this.store.updateMainMajorFilters({ search: v, pageNumber: 1 }); this.loadMainMajors(); }
   setSubMajorSearch(v: string)  { this.store.updateSubMajorFilters({ search: v, pageNumber: 1 }); this.loadSubMajors(); }
-  setSubMajorParent(v: string)  {
+  setSubMajorParent(v: string) {
     this.store.updateSubMajorFilters({ parentMajorId: v, pageNumber: 1 });
-    this.store.updateMajorSkillFilters({ parentMajorId: v, subMajorId: '', pageNumber: 1 });
     this.loadSubMajors();
-    this.loadMajorSkills();
   }
 
   setSkillSearch(v: string) { this.store.updateSkillFilters({ search: v, pageNumber: 1 }); this.loadSkills(); }

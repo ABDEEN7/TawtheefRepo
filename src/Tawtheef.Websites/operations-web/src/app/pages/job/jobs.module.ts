@@ -23,7 +23,6 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {DatePickerModule} from 'primeng/datepicker';
 import {PaginationComponent} from '../../shared/components/pagination/pagination.component';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { JobInvitesDetailsComponent } from './job-invites-details/job-invites-details.component';
 import { Scroller } from "primeng/scroller";
 import { OverviewStepComponent } from './job-wizard/wizard-steps/overview-step.component.ts/overview-step.component';
 import { QualificationsStepComponent } from './job-wizard/wizard-steps/qualifications-step.component/qualifications-step.component';
@@ -52,7 +51,6 @@ import {Tooltip} from 'primeng/tooltip';
   declarations: [
     JobDetailsComponent,
     JobListComponent,
-    JobInvitesDetailsComponent,
     StepperComponent,
     JobWizardComponent,
     ProgressBarComponent,
@@ -109,7 +107,8 @@ import {Tooltip} from 'primeng/tooltip';
     JobApprovalComponent,
     ConfirmApplyModalComponent,
     JobPointsMainElementsComponent,
-    JobPointsTabComponent
+    JobPointsTabComponent,
+    ProgressBarComponent
   ],
   providers: [
     JobService,

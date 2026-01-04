@@ -28,6 +28,7 @@ export interface PrefillData
   dob?: string | null;
   locale?: string | null;
   provider?: string | null;
+  isKawaderQid?: boolean | null;
 }
 
 export interface ProfileStatusDto {
@@ -35,6 +36,7 @@ export interface ProfileStatusDto {
   missing: string[];
   isDraft: boolean;
   avatar?: string | null;
+  availableForRecruitment?: boolean | null;
   provider: string;
   fullNameAr?: string | null;
   fullNameEn?: string | null;
@@ -61,8 +63,6 @@ export interface ProfileStatusDto {
   religion?: dropdownOptionsModel | null;
   maritalStatusId?: GUID | null;
   maritalStatus?: dropdownOptionsModel | null;
-
-  childrenCount: number;
 
   residenceCountryId?: GUID | null;
   residenceCountry?: dropdownOptionsModel | null;
@@ -100,6 +100,7 @@ export interface ProfileStatusDto {
   skills?: SkillDto[] | null;
   languages?: LanguageDto[] | null;
   achievements: AchievementDto[];
+  isKawaderQid?: boolean | null;
 }
 export interface AdditionalAttachmentDto {
   id: GUID;

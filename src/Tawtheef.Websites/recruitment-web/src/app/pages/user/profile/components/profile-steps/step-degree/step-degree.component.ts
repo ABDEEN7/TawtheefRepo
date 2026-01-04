@@ -113,9 +113,8 @@ export class StepDegreeComponent implements OnInit {
     }
 
     if (!degrees.length) {
-      this.notify.error(
-        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.translate.instant('wizard.degrees.validation.noRows')}`,
-      );
+      this.notify.error(`${this.translate.instant('wizard.degrees.validation.noRows')}`,
+      `${this.translate.instant('wizard.validationErrorTitle')}`);
       return;
     }
 

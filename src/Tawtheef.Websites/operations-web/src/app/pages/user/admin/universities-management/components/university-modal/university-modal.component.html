@@ -1,0 +1,247 @@
+<div
+  class="modal-overlay"
+  i18nNamespace="pages/admin/universities-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div class="modal-card">
+    <h4 class="modal-title">
+      {{ isEditMode() ? ('UNIVERSITIES.EDIT_UNIVERSITY' | translate) : ('UNIVERSITIES.ADD_UNIVERSITY' | translate) }}
+    </h4>
+
+    <form (ngSubmit)="submit()" [formGroup]="form" class="modal-form">
+      @if (loading) {
+        <div class="loading-overlay">
+          <div class="spinner-border text-maroon" role="status">
+            <span class="visually-hidden">{{ 'LOADING' | translate }}</span>
+          </div>
+        </div>
+      }
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">{{ 'UNIVERSITIES.NAME_AR' | translate }}</label>
+          <input
+            class="form-control"
+            formControlName="nameAr"
+            [class.is-invalid]="submitted && form.controls.nameAr.invalid" />
+          @if (submitted && form.controls.nameAr.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('nameAr') }}</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">{{ 'UNIVERSITIES.NAME_EN' | translate }}</label>
+          <input
+            class="form-control"
+            formControlName="nameEn"
+            [class.is-invalid]="submitted && form.controls.nameEn.invalid" />
+          @if (submitted && form.controls.nameEn.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('nameEn') }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <label class="form-label">{{ 'UNIVERSITIES.DESC_AR' | translate }}</label>
+          <textarea class="form-control" rows="3" formControlName="descriptionAr"></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">{{ 'UNIVERSITIES.DESC_EN' | translate }}</label>
+          <textarea class="form-control" rows="3" formControlName="descriptionEn"></textarea>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <label class="form-label">{{ 'UNIVERSITIES.COUNTRY' | translate }}</label>
+          <select
+            class="form-select"
+            formControlName="countryId"
+            (change)="onCountryChange($event)"
+            [class.is-invalid]="submitted && form.controls.countryId.invalid">
+            <option value="">{{ 'UNIVERSITIES.SELECT_COUNTRY' | translate }}</option>
+            @for (country of countries; track country.id) {
+              <option [value]="country.id">{{ country.name }}</option>
+            }
+          </select>
+          @if (submitted && form.controls.countryId.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('countryId') }}</div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">{{ 'UNIVERSITIES.CITY' | translate }}</label>
+          <select
+            class="form-select"
+            formControlName="cityId"
+            [disabled]="!form.controls.countryId.value || citiesLoading()"
+            [class.is-invalid]="submitted && form.controls.cityId.invalid">
+            <option value="">{{ 'UNIVERSITIES.SELECT_CITY' | translate }}</option>
+            @for (city of cities(); track city.id) {
+              <option [value]="city.id">{{ city.name }}</option>
+            }
+          </select>
+          @if (submitted && form.controls.cityId.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('cityId') }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <label class="form-label">{{ 'UNIVERSITIES.WEBSITE' | translate }}</label>
+          <input class="form-control" formControlName="webSite" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">{{ 'UNIVERSITIES.EMAIL' | translate }}</label>
+          <input
+            class="form-control"
+            formControlName="email"
+            [class.is-invalid]="submitted && form.controls.email.invalid" />
+          @if (submitted && form.controls.email.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('email') }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-4">
+          <label class="form-label">{{ 'UNIVERSITIES.PHONE' | translate }}</label>
+          <input class="form-control" formControlName="phone" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ 'UNIVERSITIES.CODE' | translate }}</label>
+          <input class="form-control" formControlName="code" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ 'UNIVERSITIES.ORIGINAL_NAME' | translate }}</label>
+          <input class="form-control" formControlName="originalName" />
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <!-- Logo AR -->
+        <div class="col-md-6">
+          <label class="form-label d-block">
+            {{ 'UNIVERSITIES.LOGO_AR' | translate }}
+            <span class="text-muted fz-2xs">(Image)</span>
+          </label>
+
+          <div class="upload-field" (click)="logoArInput.click()">
+            <div class="upload-field__icon">
+              <!-- Upload icon when no file -->
+              <img
+                src="assets/img/icons/file-upload.svg"
+                *ngIf="!logoArPreview()"
+                [attr.alt]="'upload'"/>
+
+              <!-- Preview icon when has preview -->
+              <img
+                src="assets/img/icons/file-eye.svg"
+                *ngIf="logoArPreview()"
+                [attr.alt]="'view'"
+                class="cursor-pointer"
+                (click)="previewLogo($event, 'ar')"/>
+            </div>
+
+            <div class="upload-field__text">
+              {{ logoArDisplayName() || ('UNIVERSITIES.CHOOSE_LOGO' | translate) }}
+            </div>
+
+            <div class="upload-field__actions" *ngIf="logoArPreview()">
+              <button
+                type="button"
+                class="btn btn-sm btn-light"
+                (click)="clearLogo($event, 'ar')">
+                {{ 'UNIVERSITIES.CLEAR' | translate }}
+              </button>
+            </div>
+
+            <input
+              #logoArInput
+              type="file"
+              class="d-none"
+              accept="image/*"
+              (change)="onLogoArSelected($event)" />
+          </div>
+
+          @if (logoArError()) {
+            <small class="text-danger mt-1 d-block">{{ logoArError() }}</small>
+          }
+
+          @if (!logoArPreview() && university?.logoAr && isEditMode()) {
+            <small class="text-muted d-block mt-2">
+              {{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}
+            </small>
+          }
+        </div>
+
+        <!-- Logo EN -->
+        <div class="col-md-6">
+          <label class="form-label d-block">
+            {{ 'UNIVERSITIES.LOGO_EN' | translate }}
+            <span class="text-muted fz-2xs">(Image)</span>
+          </label>
+
+          <div class="upload-field" (click)="logoEnInput.click()">
+            <div class="upload-field__icon">
+              <img
+                src="assets/img/icons/file-upload.svg"
+                *ngIf="!logoEnPreview()"
+                [attr.alt]="'upload'"/>
+
+              <img
+                src="assets/img/icons/file-eye.svg"
+                *ngIf="logoEnPreview()"
+                [attr.alt]="'view'"
+                class="cursor-pointer"
+                (click)="previewLogo($event, 'en')"/>
+            </div>
+
+            <div class="upload-field__text">
+              {{ logoEnDisplayName() || ('UNIVERSITIES.CHOOSE_LOGO' | translate) }}
+            </div>
+
+            <div class="upload-field__actions" *ngIf="logoEnPreview()">
+              <button
+                type="button"
+                class="btn btn-sm btn-light"
+                (click)="clearLogo($event, 'en')">
+                {{ 'UNIVERSITIES.CLEAR' | translate }}
+              </button>
+            </div>
+
+            <input
+              #logoEnInput
+              type="file"
+              class="d-none"
+              accept="image/*"
+              (change)="onLogoEnSelected($event)" />
+          </div>
+
+          @if (logoEnError()) {
+            <small class="text-danger mt-1 d-block">{{ logoEnError() }}</small>
+          }
+          @if (!logoEnPreview() && university?.logoEn && isEditMode()) {
+            <small class="text-muted d-block mt-2">
+              {{ 'UNIVERSITIES.EXISTING_LOGO' | translate }}
+            </small>
+          }
+        </div>
+      </div>
+
+      <div class="form-check form-switch mt-3">
+        <input class="form-check-input" type="checkbox" role="switch" id="isActiveSwitch" formControlName="isActive" />
+        <label class="form-check-label" for="isActiveSwitch">{{ 'UNIVERSITIES.IS_ACTIVE' | translate }}</label>
+      </div>
+
+      <div class="d-flex justify-content-end mt-4 gap-2">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          {{ 'UNIVERSITIES.CANCEL' | translate }}
+        </button>
+        <button type="submit" class="btn btn-maroon shadow-sm" [disabled]="loading">
+          {{ 'UNIVERSITIES.SAVE' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

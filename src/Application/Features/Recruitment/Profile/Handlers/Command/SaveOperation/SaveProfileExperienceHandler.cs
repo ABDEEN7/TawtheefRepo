@@ -8,6 +8,7 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Users;
@@ -31,7 +32,7 @@ public sealed class SaveProfileExperienceHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation)
+        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateExperience(profile);
@@ -59,7 +60,6 @@ public sealed class SaveProfileExperienceHandler(
         var trainingFiles   = cmd.Request.TrainingCourseFiles;
 
         profile.Experiences ??= [];
-        var newExperiences = new List<Experience>();
         foreach (var dto in experiences)
         {
             var certResult = await UploadIfNeededAsync(
@@ -89,11 +89,9 @@ public sealed class SaveProfileExperienceHandler(
             };
 
             profile.Experiences.Add(entity);
-            newExperiences.Add(entity);
         }
 
         profile.TrainingCourses ??= [];
-        var newTrainings = new List<TrainingCourse>();
         foreach (var dto in trainings)
         {
             var certResult = await UploadIfNeededAsync(
@@ -122,7 +120,6 @@ public sealed class SaveProfileExperienceHandler(
             };
 
             profile.TrainingCourses.Add(entity);
-            newTrainings.Add(entity);
         }
 
         await uow.SaveChangesAsync(ct);

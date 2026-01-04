@@ -1,0 +1,33 @@
+﻿@use "sass:map";
+
+$brand:  #8A1538;
+$accent: #8A1538;
+$border: rgba(0,0,0,.08);
+$muted:  #6b7280;
+$text:   #1e1b2c;
+$plate:  #1e73be;
+$blue:   rgba(13, 67, 97, 1);
+$colors: (
+  primary: #8A1538,
+  gold: #A29475,
+  dark-blue: #0D4261,
+  green: #009C80,
+  sea: #4194B3,
+  sunrise: #FDF39E,
+  text-title: #000000,
+  text-body: #666766,
+  stroke: #CCCCCC,
+  icons: #999999,
+  btn-primary: #9C1954,
+  btn-secondary: #F6F6F3,
+  bg-light: #F1E6E5,
+  bg-dark: #F6F6F3,
+);
+// helpers
+@mixin brand-gradient { background: linear-gradient(135deg, $brand, $accent); }
+@mixin focus-ring { border-color: $brand; box-shadow: 0 0 0 .2rem rgba(123,30,58,.15); }
+@mixin soft-card { background: #fff; border: 1px solid $border; border-radius: 16px; }
+
+@function color($name) {
+  @return map.get($colors, $name);
+}

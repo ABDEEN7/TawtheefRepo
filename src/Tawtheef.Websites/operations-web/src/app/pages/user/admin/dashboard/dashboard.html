@@ -1,1 +1,18 @@
-<p>dashboard works!</p>
+<div class="welcome-page vh-100 d-flex align-items-center justify-content-center">
+
+  <!-- Optional: Skeleton while loading -->
+  <p-skeleton
+    *ngIf="loading"
+    width="300px"
+    height="300px"
+    borderRadius="12px">
+  </p-skeleton>
+
+  <!-- Image -->
+  <img
+    *ngIf="!loading"
+    src="assets/img/logo-black.png"
+    alt="Welcome"
+    class="welcome-image img-fluid" />
+
+</div>

@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { routes } from '../../../../routes/routes';
 import { EndpointsService } from '../../../../core/http/endpoints.service';
 import { DialogHelperService } from '../../../../core/services/dialog-helper.service';
+import { JobCopyTemplate } from '../../models/job-copy-template.model';
 
 @Component({
   selector: 'app-job-basic-modal',
@@ -39,6 +40,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   showInWizard = false;
   jobId: GUID | null = null;
   currentDate: Date | undefined;
+  isCopyMode = false;
+  copyTemplate: JobCopyTemplate | null = null;
+  copySourceId: GUID | null = null;
 
   form = this.fb.nonNullable.group({
     sectorId: ['', Validators.required],
@@ -67,6 +71,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     this.currentDate = today;
     this.isCreateMode = this.config.data?.isCreateMode || false;
     this.showInWizard = this.config.data?.showInWizard || false;
+    this.copyTemplate = this.config.data?.copyTemplate || null;
+    this.copySourceId = this.config.data?.copySourceId || null;
 
     if (this.config.data?.jobId) {
       this.isEditMode = true;
@@ -77,6 +83,10 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     }
 
     this.setupSequenceListeners();
+    if (this.copyTemplate) {
+      this.isCopyMode = true;
+      this.applyTemplateToForm(this.copyTemplate);
+    }
   }
 
   ngOnDestroy(): void {
@@ -190,6 +200,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     const formValue = this.form.getRawValue();
+    const normalizedClosingDate = this.normalizeDate(formValue.closingDate);
     const jobData = {
       titleAr: formValue.titleAr,
       titleEn: formValue.titleEn,
@@ -204,7 +215,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       subMajorId: formValue.subMajorId as GUID,
       workTypeId: formValue.workTypeId as GUID,
       numberOfVacancies: formValue.numberOfVacancies,
-      closingDate: this.normalizeDate(formValue.closingDate),
+      closingDate: normalizedClosingDate,
       minimumAge: formValue.minimumAge,
       maximumAge: formValue.maximumAge,
       overviewAr: '',
@@ -219,6 +230,56 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       skills: [],
       requiredAttachments: []
     };
+
+    if (this.isCopyMode && this.copyTemplate && this.copySourceId) {
+      const copyPayload = {
+        ...this.copyTemplate,
+        titleAr: jobData.titleAr,
+        titleEn: jobData.titleEn,
+        sectorId: jobData.sectorId,
+        managementId: jobData.managementId,
+        departmentId: jobData.departmentId,
+        yearsOfExperience: jobData.yearsOfExperience,
+        jobCategoryId: jobData.jobCategoryId,
+        workLocationId: jobData.workLocationId,
+        genderId: jobData.genderId,
+        majorId: jobData.majorId,
+        subMajorId: jobData.subMajorId,
+        workTypeId: jobData.workTypeId,
+        numberOfVacancies: jobData.numberOfVacancies,
+        closingDate: normalizedClosingDate,
+        minimumAge: jobData.minimumAge,
+        maximumAge: jobData.maximumAge,
+        degrees: this.copyTemplate.degrees ?? [],
+        conditions: this.copyTemplate.conditions ?? [],
+        responsibilities: this.copyTemplate.responsibilities ?? [],
+        skills: this.copyTemplate.skills ?? [],
+        requiredAttachments: this.copyTemplate.requiredAttachments ?? [],
+        jobPoints: this.copyTemplate.jobPoints ?? null
+      };
+
+      this.jobService.createFromPrevious(this.copySourceId, copyPayload).subscribe({
+        next: (jobId) => {
+          this.isLoading = false;
+          this.notificationService.success(this.translationService.instant('JOB_BASIC_MODAL.SUCCESS.CREATED'));
+
+          if (this.showInWizard) {
+            this.ref.close({
+              success: true,
+              jobId: jobId,
+              data: jobData
+            });
+          } else {
+            this.ref.close({ success: true, jobId });
+            this.router.navigate([routes.employee.jobEdit, jobId]);
+          }
+        },
+        error: () => {
+          this.isLoading = false;
+        }
+      });
+      return;
+    }
 
 
     this.jobService.create(jobData).subscribe({
@@ -339,4 +400,39 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   x.setHours(12, 0, 0, 0); // noon local time
   return x;
 }
+
+private applyTemplateToForm(template: JobCopyTemplate): void {
+    const closingDate = template.closingDate ? new Date(template.closingDate) : null;
+
+    this.form.patchValue({
+      sectorId: template.sectorId || '',
+      managementId: template.managementId || '',
+      departmentId: template.departmentId || '',
+      yearsOfExperience: template.yearsOfExperience || 0,
+      titleAr: template.titleAr || '',
+      titleEn: template.titleEn || '',
+      jobCategoryId: template.jobCategoryId || '',
+      workLocationId: template.workLocationId || '',
+      genderId: template.genderId || '',
+      majorId: template.majorId || '',
+      subMajorId: template.subMajorId || '',
+      workTypeId: template.workTypeId || '',
+      numberOfVacancies: template.numberOfVacancies ?? 1,
+      closingDate: closingDate,
+      minimumAge: template.minimumAge || 18,
+      maximumAge: template.maximumAge || 60
+    });
+
+    if (template.sectorId) {
+      this.lookupsService.loadManagementsBySector(template.sectorId);
+    }
+
+    if (template.managementId) {
+      this.lookupsService.loadDepartmentsByManagement(template.managementId);
+    }
+
+    if (template.majorId) {
+      this.lookupsService.loadSubMajorsByMajor(template.majorId);
+    }
+  }
 }

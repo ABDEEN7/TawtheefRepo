@@ -78,10 +78,6 @@
           <i class="fa-solid" [class.fa-toggle-on]="ds.state().available" [class.fa-toggle-off]="!ds.state().available"></i>
         </div>
       </div>
-      <div class="col-md-3" *ngIf="ds.state().children !== null && ds.state().children !== undefined">
-        <div class="small text-muted">{{ 'wizard.personal.children' | translate }}</div>
-        <div class="fw-semibold">{{ ds.state().children }}</div>
-      </div>
       <div class="col-md-3" *ngIf="hasSponsor()">
         <div class="small text-muted">{{ 'wizard.personal.sponsorType' | translate }}</div>
         <div class="fw-semibold">{{ ds.state().sponsorType?.name || '—' }}</div>
@@ -384,7 +380,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td>{{ r.name }}</td>
+          <td>{{ r.title }}</td>
           <td>
             <ng-container *ngIf="r.fileName; else noAttachmentReviewFile">
               <div class="d-flex align-items-center gap-2">

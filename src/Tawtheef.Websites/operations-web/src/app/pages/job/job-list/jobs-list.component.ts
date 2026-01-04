@@ -134,6 +134,25 @@ readonly jobStatus = JobStatus;
     this.router.navigate([routes.employee.jobPoints,job.id]).then();
   }
 
+  canCopyJob(job: JobResponse): boolean {
+    const allowedStatuses = [
+      this.jobStatus.Approved,
+      this.jobStatus.ReadyForAnnouncement,
+      this.jobStatus.Published,
+      this.jobStatus.Closed,
+      this.jobStatus.Cancelled,
+    ];
+
+    return allowedStatuses.includes(job.jobStatus?.backendName as JobStatus);
+  }
+
+  copyJob(job: JobResponse) {
+    if (!this.canManageJobs() || !this.canCopyJob(job)) return;
+    this.router.navigate([routes.employee.jobCreate], {
+      queryParams: { copyFrom: job.id },
+    }).then();
+  }
+
   approveJob(job: JobResponse) {
     if (!this.canApproveJobs()) return;
     this.router.navigate([routes.employee.approvalJob, job.id]).then();

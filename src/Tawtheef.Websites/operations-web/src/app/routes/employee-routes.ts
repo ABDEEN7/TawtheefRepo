@@ -17,11 +17,8 @@ export const employeeRoutes = {
   get approvalProfile(){
     return this.employee + '/approval-profile';
   },
-  approvalProfileDetail(id: string){
-    return this.approvalProfile + `/${id}`;
-  },
   approvalProfileReview(id: string) {
-    return this.approvalProfile + `/${id}/review`;
+    return this.approvalProfile + `/${id}/wizard`;
   },
   approvalProfileChanges (id: string){
     return this.approvalProfile + `/${id}/changes`;

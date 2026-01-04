@@ -12,7 +12,7 @@
       <p-select [options]="lookups.candidateTypes()" [(ngModel)]="ds.state().candidateType"
                 [filter]="false" [loading]="false" filterBy="name" optionLabel="name"
                 class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectCandidateType' | translate"
-                (ngModelChange)="onCandidateTypeChange($event)" fluid></p-select>
+                (ngModelChange)="onCandidateTypeChange($event)" [disabled]="ds.isCandidateTypeLocked" fluid></p-select>
     </div>
     <div class="col-md-6">
       <label for="targetEntity" class="form-label required">{{ 'wizard.prereq.targetEntity' | translate }}</label>

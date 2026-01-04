@@ -19,7 +19,7 @@ import {ProfileState} from '../../../wizard-profile/models/profile-state.model';
 import {finalize} from 'rxjs/operators';
 import {normalizeMoiResponse} from '../../../wizard-profile/services/moi-response-normalizer';
 import {mapPersonalSection} from '../../../wizard-profile/services/profile.mapper';
-import {MaritalStatus, SponsorType} from '../../../../../../core/enums/lookups.enum';
+import {SponsorType} from '../../../../../../core/enums/lookups.enum';
 import {dateToDateOnly} from '../../../../../../shared/types/dateOnly.type';
 
 
@@ -105,10 +105,6 @@ export class StepPersonalComponent implements OnInit {
         error: (err: any) => console.log(err)
       });
   }
-  updateChildren(value: any) {
-    const num = value === null || value === '' ? 0 : Number(value);
-    this.updateField('children', isNaN(num) ? 0 : num);
-  }
 
   updateDisability(value: boolean) {
     this.updateField('hasDisability', value as any);
@@ -124,10 +120,6 @@ export class StepPersonalComponent implements OnInit {
     this.lastSubmittedSignature = null;
   }
 
-  get showChildrenField(): boolean {
-    const marital = this.ds.state().marital as any;
-    return !!marital && marital.backendName !== MaritalStatus.Single;
-  }
   get showDisabilityType(): boolean {
     return this.ds.state().hasDisability;
   }

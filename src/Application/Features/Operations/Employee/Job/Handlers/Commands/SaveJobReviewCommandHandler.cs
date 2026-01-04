@@ -9,6 +9,8 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Resources.Commands;
+using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;

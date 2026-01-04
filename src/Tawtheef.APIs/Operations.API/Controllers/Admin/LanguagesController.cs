@@ -1,22 +1,21 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Operations.Admin.Languages.Commands;
 using Tawtheef.Application.Features.Operations.Admin.Languages.Queries;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers.Admin;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class LanguagesController(IMediator mediator) : ControllerBase
 {
     [HttpGet("list-languages")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.LanguagesView)]
+    [AuthorizePermission(PermissionKeys.Languages.View)]
     public async Task<IActionResult> ListLanguages([FromQuery] GetListLanguagesQuery query)
     {
         var result = await mediator.Send(query);
@@ -24,7 +23,7 @@ public class LanguagesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("language-details/{id:guid}")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.LanguagesView)]
+    [AuthorizePermission(PermissionKeys.Languages.View)]
     public async Task<IActionResult> LanguageDetails(Guid id)
     {
         var result = await mediator.Send(new GetLanguageDetailsQuery(id));
@@ -32,7 +31,7 @@ public class LanguagesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("create-language")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.LanguagesManage)]
+    [AuthorizePermission(PermissionKeys.Languages.Manage)]
     public async Task<IActionResult> CreateLanguage([FromBody] SaveLanguageCommand command)
     {
         var result = await mediator.Send(command with { Id = null });
@@ -40,7 +39,7 @@ public class LanguagesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("update-language/{id:guid}")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.LanguagesManage)]
+    [AuthorizePermission(PermissionKeys.Languages.Manage)]
     public async Task<IActionResult> UpdateLanguage(Guid id, [FromBody] SaveLanguageCommand command)
     {
         var result = await mediator.Send(command with { Id = id });
@@ -48,7 +47,7 @@ public class LanguagesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}/status")]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.LanguagesManage)]
+    [AuthorizePermission(PermissionKeys.Languages.Manage)]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateLanguageStatusCommand command)
     {
         var result = await mediator.Send(command with { LanguageId = id });

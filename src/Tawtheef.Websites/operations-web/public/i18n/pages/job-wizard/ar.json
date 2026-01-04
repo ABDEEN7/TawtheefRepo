@@ -296,5 +296,8 @@
   "JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR":" لا يمكن إضافة مسؤولية مكررة.",
   "JOB_WIZARD.REVIEW_NOTES.TITLE": "ملاحظات ",
   "JOB_WIZARD.REVIEW_NOTES.NOTE":"الملاحظة: ",
-  "JOB_WIZARD.REVIEW_NOTES.ATTACHMENTS":"المرفقات الداعمه"
+  "JOB_WIZARD.REVIEW_NOTES.ATTACHMENTS":"المرفقات الداعمه",
+  "JOB_WIZARD.STEPS.NO_ENTERED_DATA_ERROR":"يجب إضافة بيانات",
+  "JOB_WIZARD.STEPS.SKILLS.VIEW":"عرض المهارة",
+  "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_SKILL":"يجب ان إضافة مهارة واحدة على الأقل"
 }

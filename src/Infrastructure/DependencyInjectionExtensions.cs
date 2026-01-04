@@ -24,13 +24,13 @@ using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Common.Interfaces.Validations;
+using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
@@ -69,7 +69,7 @@ namespace Tawtheef.Infrastructure
         public static void AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
         {
             // Feature flags
-            services.AddFeatureManagement();
+            services.AddFeatureManagement(configuration.GetSection("FeatureFlags"));
 
             // Configuration objects (IOptions<T>)
             ConfigureOptions(services, configuration);
@@ -101,6 +101,7 @@ namespace Tawtheef.Infrastructure
             services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
             services.Configure<StorageSettings>(configuration.GetSection(StorageSettings.SectionName));
             services.Configure<EmailDispatcherSettings>(configuration.GetSection(EmailDispatcherSettings.SectionName));
+            services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
         }
 
         #endregion
@@ -438,6 +439,13 @@ namespace Tawtheef.Infrastructure
                         UseDefaultCredentials = false
                     };
                 });
+            // ===== Employee Directory =====
+            services.AddHttpClient<IEmployeeDirectoryClient, EmployeeDirectoryClient>((sp, client) =>
+            {
+                var opt = sp.GetRequiredService<IOptions<HrServiceSettings>>().Value;
+                client.BaseAddress = new Uri(opt.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+            });
         }
         extension(IServiceCollection services)
         {
@@ -484,6 +492,7 @@ namespace Tawtheef.Infrastructure
                 services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
                 services.AddScoped<ILoginAuditService, LoginAuditService>();
+                services.AddScoped<IEmployeeProfileService, EmployeeProfileService>();
                 services.AddScoped<ITokenService, TokenService>();
                 services.AddScoped<ISessionService, EfSessionService>();
                 

@@ -78,7 +78,7 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             .Where(p =>
                 p.Status == UserProfileStatus.Submitted ||
                 p.Status == UserProfileStatus.UnderReview ||
-                p.Status == UserProfileStatus.Approved)
+                p.ReviewItems.Any(r => r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Pending))
             .ToPaginatedResultAsync(request, ct);
     }
 
@@ -89,8 +89,8 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
         var summaries = await reviewRepo.DbSet
             .AsNoTracking()
             .Where(r => profileIds.Contains(r.UserProfileId))
-            .Where(r => r.TargetType == ReviewTargetType.Section)
             .Where(r => r.ProfileChangeId == null) // phase 1 only
+            .Where(r => r.TargetType != ReviewTargetType.Field)
             .GroupBy(r => r.UserProfileId)
             .Select(g => new FullReviewSummary
             {

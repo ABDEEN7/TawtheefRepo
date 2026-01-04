@@ -4,23 +4,30 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TranslateModule } from '@ngx-translate/core';
-import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-review';
-import {ProfileApprovalItem, ReviewStatus} from '../../../../approval-list/models/profile-approval.models';
+import { ItemInlineReviewComponent } from '../../item-inline-review/item-inline-review';
+import { ProfileApprovalItem, ReviewStatus } from '../../../../approval-list/models/profile-approval.models';
 
 @Component({
   selector: 'app-profile-approval-certificates-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule],
+  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule, ItemInlineReviewComponent],
   templateUrl: './certificates-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class CertificatesSectionComponent {
   @Input() certificates?: any[] | null = null;
+  @Input() reviewItems: ProfileApprovalItem[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
+  @Output() reviewItem = new EventEmitter<{ reviewItemId: string; status: ReviewStatus; note?: string }>();
 
   preview(url?: string | null): void {
     if (url) {
       this.viewFile.emit(url);
     }
+  }
+
+  reviewItemFor(entityId?: string): ProfileApprovalItem | null {
+    if (!entityId) return null;
+    return (this.reviewItems ?? []).find(i => i.entityId === entityId) ?? null;
   }
 }

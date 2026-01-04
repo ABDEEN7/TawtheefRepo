@@ -163,7 +163,7 @@ export class RemoteSelectComponent
 
   get computedPlaceholder(): string {
     if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-      return this.placeholder || 'Select parent first';
+      return this.placeholder || this.translate.instant('remote-select.select-parent');
     }
     return this.placeholder;
   }

@@ -54,6 +54,8 @@ export class EndpointsService {
     approveJobPoints : (jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}/approve`),
     searchJob : this.getFullUrl('/job/search'),
     CountByStatus : (jobStatusId : GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
+    copyTemplate: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy-template`),
+    copyFromPrevious: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy`),
     lookups: {
       sectors: this.getFullUrl('/job/lookups/sectors'),
       skills: this.getFullUrl('/job/lookups/skills'),
@@ -106,6 +108,11 @@ export class EndpointsService {
 
   JobInvitationSummary = {
     invitationsSummary: this.getFullUrl(`/jobInvitationSummary/get-invitations-summary`),
+    details: {
+      jobInfo: (jobId: string) => this.getFullUrl(`/jobInvitationSummary/${jobId}/info`),
+      stats: this.getFullUrl(`/jobInvitationSummary/get-invitations-stats`),
+      rows: this.getFullUrl(`/jobInvitationSummary/get-invitations-details`)
+    },
     lookups: {
       jobStatuses: this.getFullUrl(`/jobInvitationSummary/lookups/job-statuses`),
       jobCategories: this.getFullUrl(`/jobInvitationSummary/lookups/job-categories`),
@@ -149,6 +156,24 @@ export class EndpointsService {
     createLanguage: this.getFullUrl('/languages/create-language'),
     updateLanguage: (id: string) => this.getFullUrl(`/languages/update-language/${id}`),
     updateStatus: (id: string) => this.getFullUrl(`/languages/${id}/status`)
+  };
+  religions = {
+    listReligions: this.getFullUrl('/religions/list-religions'),
+    religionDetails: (id: string) => this.getFullUrl(`/religions/religion-details/${id}`),
+    createReligion: this.getFullUrl('/religions/create-religion'),
+    updateReligion: (id: string) => this.getFullUrl(`/religions/update-religion/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/religions/${id}/status`)
+  };
+  universities = {
+    listUniversities: this.getFullUrl('/universities/list-universities'),
+    universityDetails: (id: string) => this.getFullUrl(`/universities/university-details/${id}`),
+    createUniversity: this.getFullUrl('/universities/create-university'),
+    updateUniversity: (id: string) => this.getFullUrl(`/universities/update-university/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/universities/${id}/status`),
+    lookups: {
+      countries: this.getFullUrl('/universities/lookups/countries'),
+      cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
+    }
   };
   majorSkillsManagement = {
     list: this.getFullUrl('/MajorSkillsManagement'),

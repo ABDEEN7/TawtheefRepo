@@ -2,19 +2,18 @@
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Authenticator.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Infrastructure.Services.Authorization;
 
 namespace Operations.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]/profile")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserController(IMediator mediator) : ControllerBase
 {
     private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
@@ -24,7 +23,7 @@ public class UserController(IMediator mediator) : ControllerBase
     };
     
     [HttpGet]
-    [Authorize(Policy = PermissionPolicyProvider.PolicyPrefix + PermissionNames.ProfileView)]
+    [AuthorizePermission(PermissionKeys.Users.View)]
     public async Task<IActionResult> GetProfile()
     {
         if(UserId.IsFailed)

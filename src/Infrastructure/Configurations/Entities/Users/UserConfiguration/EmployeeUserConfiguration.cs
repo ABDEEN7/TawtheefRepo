@@ -10,6 +10,7 @@ public class EmployeeUserConfiguration : ApplicationUserConfiguration<EmployeeUs
     public override void Configure(EntityTypeBuilder<EmployeeUser> builder)
     {
         base.Configure(builder);
+        
         builder.HasData(
             GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId1, "t-m.abdin@edu.gov.qa"),
             GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId2, "t-a.jaber@edu.gov.qa"),
@@ -32,8 +33,8 @@ public class EmployeeUserConfiguration : ApplicationUserConfiguration<EmployeeUs
                 ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
                 CreatedDate = DefaultConfig.DefaultCreatedDate,
                 EmailConfirmed = true,
-                FullNameEn = "Employee Super Admin",
-                FullNameAr = "Employee Super Admin",
+                FullNameEn = email.Split('@')[0],
+                FullNameAr = email.Split('@')[0],
                 IsDeleted = false,
                 LockoutEnabled = false,
                 OtpAttempts = 0,

@@ -86,7 +86,8 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         var update = await userManager.UpdateAsync(user);
         if (!update.Succeeded) return FailureFromIdentity<Unit>(update);
 
-        _ = await smsSender.SendAsync(verifiedPhone,$"Your verification code is: {otp}", cancellationToken);
+        _ = await smsSender.SendAsync(verifiedPhone,
+            $"Your verification code is: {otp}", cancellationToken);
 
         return Result.Ok(Unit.Value);
     }

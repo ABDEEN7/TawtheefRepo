@@ -1,6 +1,7 @@
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { Injectable } from '@angular/core';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {Injectable} from '@angular/core';
 import {AUTH_TOKEN_KEY, OAUTH_STATE_KEY, REFRESH_TOKEN_KEY} from '../constants/auth-tokens.const';
+import {SystemRoles} from '../constants/systemRoles';
 
 interface TokenPair {
   accessToken: string;
@@ -45,6 +46,15 @@ export class TokenService {
   getClaim(token: string, claimName: string): string | undefined {
     const decoded = this.decodeToken(token);
     return decoded?.[claimName];
+  }
+
+  public getMainUserRole(): string{
+    const rawRoles = this.getRolesFromToken(this.getToken() || '');
+    return rawRoles.includes(SystemRoles.SystemAdmin) ? SystemRoles.SystemAdmin
+      : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
+        : rawRoles.includes(SystemRoles.OfficeAdmin) ? SystemRoles.OfficeAdmin
+          : rawRoles.includes(SystemRoles.OfficeUser) ? SystemRoles.OfficeUser
+            : '';
   }
 
   getRolesFromToken(token: string): string[] {

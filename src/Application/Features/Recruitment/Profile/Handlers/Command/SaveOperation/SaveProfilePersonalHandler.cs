@@ -8,6 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 
@@ -37,6 +38,12 @@ public sealed class SaveProfilePersonalHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
+        
+        var checkNationalNumber = await uow.GetEntityRepository<UserProfile>()
+            .DbSet.AnyAsync(p => p.NationalNumber == r.NationalNumber && p.NationalityId == r.NationalityId
+                                 && p.Id != profile.Id, ct);
+        if (checkNationalNumber)
+            return Result.Fail<Unit>(ErrorsCodes.DuplicateNationalNumber);
 
         user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
         user.FullNameEn = r.FullNameEn ?? user.FullNameEn;

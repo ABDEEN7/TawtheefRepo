@@ -4,6 +4,7 @@ import {routes} from "../../../routes/routes";
 import {AuthService} from "../../../core/auth/auth.service";
 import {TranslatePipe} from "@ngx-translate/core";
 import {NgIf} from '@angular/common';
+import {TokenService} from '../../../core/auth/token.service';
 
 @Component({
   selector: 'app-access-denied',
@@ -22,6 +23,7 @@ export class AccessDeniedComponent implements OnInit{
 
   constructor(
     protected authService: AuthService,
+    protected tokenService: TokenService,
     private router: Router
   ) {}
 

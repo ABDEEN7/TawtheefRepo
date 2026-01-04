@@ -140,19 +140,9 @@
       ></p-select>
     </div>
 
-    <!-- Children -->
-    <div class="col-md-4" *ngIf="showChildrenField">
-      <label class="form-label required">{{ 'wizard.personal.children' | translate }}</label>
-      <p-inputNumber name="children" [ngModel]="ds.state().children ?? null"
-        (ngModelChange)="updateChildren($event)"
-        [min]="0" [max]="20" [step]="1"
-        [useGrouping]="false" [showButtons]="true" [allowEmpty]="true"
-        inputId="children" fluid>
-      </p-inputNumber>
-    </div>
     <!-- Has Disability -->
     <div class="col-md-4 d-flex flex-column">
-      <label class="form-label required">
+      <label class="form-label">
         {{ 'wizard.personal.hasDisability' | translate }}
       </label>
 
@@ -188,7 +178,7 @@
 
     <!-- Disability Type -->
     <div class="col-md-4 d-flex flex-column" *ngIf="showDisabilityType">
-      <label class="form-label required">
+      <label class="form-label">
         {{ 'wizard.personal.disabilityType' | translate }}
       </label>
       <input pInputText class="form-control" name="disabilityDetails"

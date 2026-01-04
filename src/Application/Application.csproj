@@ -9,12 +9,14 @@
     <ItemGroup>
         <PackageReference Include="CsvHelper" />
         <PackageReference Include="ExcelDataReader" />
+        <PackageReference Include="ExpressionDebugger" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="Mapster" />
         <PackageReference Include="Mapster.DependencyInjection" />
         <PackageReference Include="Microsoft.AspNetCore.Http" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" />
         <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.FeatureManagement" />
         <PackageReference Include="Serilog.AspNetCore" />
         <PackageReference Include="Serilog.Enrichers.Environment" />
         <PackageReference Include="Serilog.Exceptions" />
@@ -33,10 +35,10 @@
       <Folder Include="Common\Mappers\Utils\" />
       <Folder Include="Features\Authenticator\Handlers\Queries\" />
       <Folder Include="Features\Authenticator\Queries\" />
-      <Folder Include="Features\Common\" />
       <Folder Include="Features\Lookups\Commands\" />
       <Folder Include="Features\Lookups\Handlers\Commands\" />
       <Folder Include="Features\Operations\Admin\" />
+      <Folder Include="Features\Operations\Employee\JobInvitationSummaryDetails\Handlers\Commands\" />
       <Folder Include="Features\Operations\Employee\Job\Services\Background\" />
       <Folder Include="Features\Operations\Employee\ProfileManagement\" />
       <Folder Include="Features\Recruitment\Profile\Command\UpdateOperation\" />

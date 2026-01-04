@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -72,7 +73,6 @@ file sealed record ContactSectionSnapshot
     public Guid? ResidenceCountryId { get; init; }
     public Guid? InterviewLocationId { get; init; }
     public string? Address { get; init; }
-    public Guid? OfficeId { get; init; }
     public int? Zone { get; init; }
     public int? Street { get; init; }
     public int? Building { get; init; }
@@ -98,7 +98,6 @@ file sealed record ContactSectionSnapshot
             ResidenceCountryId = request.ResidenceCountryId,
             InterviewLocationId = request.InterviewLocationId,
             Address = request.Address ?? Address,
-            OfficeId = request.OfficeId ?? OfficeId,
         };
 
         if (request.NationalAddress is not null)

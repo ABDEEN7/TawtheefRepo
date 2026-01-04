@@ -30,10 +30,8 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
 
   ngOnInit() {
     const currentJob = this.jobService.getCurrentJob();
-    if (currentJob) {
-      if (currentJob.majorId) {
-        this.lookupsService.loadSkillsByMajor(currentJob.majorId);
-      }
+    if (currentJob?.majorId) {
+      this.lookupsService.loadSkillsByMajor(currentJob.majorId);
     }
 
     this.form.valueChanges.subscribe(() => {
@@ -52,17 +50,22 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   addSkill() {
     const skillGroup = this.fb.group({
       skillId: ['', [Validators.required]],
-      showToApplicants: [true],
+      showToApplicants: [true, [Validators.required]],
     });
 
     this.jobSkillsArray.push(skillGroup);
+
+    // so validation messages can appear after user starts interacting
+    this.form.markAsDirty();
   }
 
   removeSkill(i: number) {
     this.jobSkillsArray.removeAt(i);
+    this.form.markAsDirty();
+    this.form.updateValueAndValidity();
   }
 
-override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+  override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
     this.note = note;
     this.jobSkillsArray.clear();
@@ -71,7 +74,7 @@ override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): voi
       job.skills.forEach((skill: JobSkill) => {
         const skillGroup = this.fb.group({
           skillId: [skill.skillId, [Validators.required]],
-          showToApplicants: [skill.showToApplicants || false],
+          showToApplicants: [skill.showToApplicants ?? true, [Validators.required]],
         });
 
         this.jobSkillsArray.push(skillGroup);
@@ -83,28 +86,31 @@ override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): voi
     }
   }
 
-  isValid() {
-    if (this.jobSkillsArray.length === 0) {
-      return true;
-    }
+  // ✅ NEW RULE: valid ONLY if there is at least 1 skill (unless disabled)
+  isValid(): boolean {
+    if (this.form.disabled) return true;
 
-    if( this.form.disabled) {
-      return true;
-    }
+    if (this.jobSkillsArray.length === 0) return false;
+
     return this.form.valid;
+  }
+
+  markTouched() {
+    this.form.markAllAsTouched();
+    this.form.updateValueAndValidity();
   }
 
   private updateJobData(): void {
     const skills = this.jobSkillsArray.controls
       .filter((control) => {
         const group = control as FormGroup;
-        return group.get('skillId')?.value;
+        return !!group.get('skillId')?.value;
       })
       .map((control) => {
         const group = control as FormGroup;
         return {
           skillId: group.get('skillId')?.value || ('' as GUID),
-          showToApplicants: group.get('showToApplicants')?.value || false,
+          showToApplicants: !!group.get('showToApplicants')?.value,
         };
       });
 

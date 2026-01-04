@@ -40,10 +40,6 @@ export class AuthService {
     return this.user.currentUser$;
   }
 
-  get getCurrentUserRoles() {
-    return () => this.user.getCurrentUser()?.userRoles || '';
-  }
-
   externalLogin(data: AuthResponse) {
     return this.core.externalLogin(data);
   }
@@ -63,6 +59,7 @@ export class AuthService {
   isLoggedIn(): boolean {
     return this.state.checkAuthState(false);
   }
+
   private getPermissionsFromToken(): Set<string> {
     if (this.permissionsCache) {
       return this.permissionsCache;

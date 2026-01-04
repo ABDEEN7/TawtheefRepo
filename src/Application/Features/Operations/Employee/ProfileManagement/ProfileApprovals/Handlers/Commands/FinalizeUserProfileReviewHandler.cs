@@ -46,7 +46,7 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
             return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
 
         var hasCorrections = sectionItems.Any(i => i.Status == ReviewStatus.NeedsCorrection);
-        profile.Status = hasCorrections ? UserProfileStatus.InCreation: UserProfileStatus.Approved;
+        profile.Status = hasCorrections ? UserProfileStatus.RequiresUpdate: UserProfileStatus.Approved;
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace Tawtheef.Domain.Constants;
+﻿namespace Tawtheef.Domain.Constants;
 public class ErrorsCodes
 {
     #region Common Errors
@@ -43,10 +41,7 @@ public class ErrorsCodes
     public const string QatarResidentInvalidQid = "QATAR_RESIDENT_INVALID_QID";
     public const string QatarResidentPhoneMismatch = "QATAR_RESIDENT_PHONE_MISMATCH";
     public const string QatarResidentVerificationFailed = "QATAR_RESIDENT_VERIFICATION_FAILED";
-    public static string ExternalLoginCreateUserFailed(IEnumerable<IdentityError> error) =>
-        $"EXTERNAL_LOGIN_CREATE_USER_FAILED: {error}";
-    public static string ExternalLoginLinkFailed(IEnumerable<IdentityError> error) =>
-        $"EXTERNAL_LOGIN_LINK_FAILED: {error}";
+    public const string ExternalLoginUserTypeNotAllowed = "EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED";
     #endregion
 
     #region Role Management Errors
@@ -79,6 +74,7 @@ public class ErrorsCodes
     public const string InvalidTokenOrEmail = "INVALID_TOKEN_OR_EMAIL";
     public const string TooManyAttempts = "TOO_MANY_ATTEMPTS";
     public const string InvalidVerificationCode = "INVALID_VERIFICATION_CODE";
+    public const string ShouldVerifiyQatarPhoneNumberBeforeAssignIt = "SHOULD_VERIFIY_QATAR_PHONE_NUMBER_BEFORE_ASSIGN_IT";
     public const string ResendCooldownActive = "RESEND_COOLDOWN_ACTIVE";
     public const string EmailAlreadyVerified = "EMAIL_ALREADY_VERIFIED";
     public const string SendOtpLimitReached = "SEND_OTP_LIMIT_REACHED";
@@ -91,6 +87,7 @@ public class ErrorsCodes
     public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
     public const string ProfileNotUnderReview = "PROFILE_NOT_UNDER_REVIEW";
+    public const string ProfileNotReadyForReview = "PROFILE_NOT_READY_FOR_REVIEW";
     public const string InvalidGender = "INVALID_GENDER";
     public const string InvalidName = "INVALID_NAME";
     public const string InvalidPassword = "INVALID_PASSWORD";
@@ -107,6 +104,7 @@ public class ErrorsCodes
     public const string NotSubmitted = "NOT_SUBMITTED";
     public const string CanNotModifiedApprovedDocument = "CAN_NOT_MODIFIED_APPROVED_DOCUMENT";
     public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
+    public const string DuplicateNationalNumber = "DUPLICATE_NATIONAL_NUMBER";
     public const string NotesRequiredForCorrection = "NOTES_REQUIRED_FOR_CORRECTION";
     public const string MandatoryFieldsIncomplete = "MANDATORY_FIELDS_INCOMPLETE";
     public const string UnapprovedItemsExist = "UNAPPROVED_ITEMS_EXIST";
@@ -253,6 +251,17 @@ public class ErrorsCodes
     public const string LanguageNameExists = "LANGUAGE_NAME_EXISTS";
     #endregion
 
+    #region Universities
+    public const string UniversityNotFound = "UNIVERSITY_NOT_FOUND";
+    public const string UniversityNameExists = "UNIVERSITY_NAME_EXISTS";
+    public const string CityNotFound = "CITY_NOT_FOUND";
+    #endregion
+
+    #region Religions
+    public const string ReligionNotFound = "RELIGION_NOT_FOUND";
+    public const string ReligionNameExists = "RELIGION_NAME_EXISTS";
+    #endregion
+
     #region Offices
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
     public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";
@@ -291,4 +300,8 @@ public class ErrorsCodes
     
 
     #endregion
+    public const string ExternalLoginEmailDomainNotAllowed = "EXTERNAL_LOGIN_EMAIL_DOMAIN_NOT_ALLOWED";
+    public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
+    public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
+    public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
 }

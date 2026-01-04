@@ -24,4 +24,8 @@ export class ContactVerificationService {
   verifyEmailCode(payload: { email: string; code: string }): Observable<void> {
     return this.http.post<void>(this.endpoints.user.verify.email.confirm, payload);
   }
+
+  updatePhone(payload: { phoneE164: string; }): Observable<void> {
+    return this.http.post<void>(this.endpoints.user.verify.phone.update, payload);
+  }
 }

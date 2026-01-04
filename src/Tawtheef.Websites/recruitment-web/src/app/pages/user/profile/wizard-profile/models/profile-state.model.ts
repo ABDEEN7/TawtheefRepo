@@ -6,6 +6,7 @@ import {Achievement} from './achievement.model';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 import {PhoneNumber} from './phone-number.model';
 import {Skill} from './skill.model';
+import {CountryDto} from '../services/profile-lookups.service';
 
 export interface UploadedFileRef {
   resourceId: string;
@@ -14,11 +15,10 @@ export interface UploadedFileRef {
   file?: File | null;
 }
 export interface ProfileState {
-  provider: 'Google' | 'QatarPass'
+  provider: 'Google' | 'QatarPass' | 'QatarResidentOtp'
   // prereq
   candidateType?: dropdownOptionsModel;
   targetEntity?: dropdownOptionsModel;
-  office?: dropdownOptionsModel | null;
   cvName?: string | null;
   cvFile?: UploadedFileRef | null;
   idName?: string | null;
@@ -37,7 +37,6 @@ export interface ProfileState {
   gender?: dropdownOptionsModel;
   religion?: dropdownOptionsModel;
   marital?: dropdownOptionsModel;
-  children?: number;
   dob?: string;
 
   hasDisability: boolean;
@@ -50,7 +49,7 @@ export interface ProfileState {
   sponsorCard?: UploadedFileRef | null;
 
   // contact
-  country?: dropdownOptionsModel;
+  country?: CountryDto;
   address?: string;
   phone?: PhoneNumber | null;
   phoneVerified: boolean | null;
@@ -76,4 +75,5 @@ export interface ProfileState {
   // ui
   available: boolean;
   avatarUrl?: string;
+  isKawaderQid?: boolean;
 }

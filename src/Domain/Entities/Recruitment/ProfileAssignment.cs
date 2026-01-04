@@ -7,11 +7,11 @@ namespace Tawtheef.Domain.Entities.Recruitment;
 [Table(nameof(ProfileAssignment), Schema = Schemas.Hr)]
 public class ProfileAssignment : EventEntity
 {
-    public Guid UserProfileId { get; set; }
-    public UserProfile? UserProfile { get; set; }
+    public Guid UserProfileId { get; init; }
+    public UserProfile? UserProfile { get; init; }
 
-    public Guid EmployeeId { get; set; }
-    public EmployeeUser? Employee { get; set; }
+    public Guid EmployeeId { get; init; }
+    public EmployeeUser? Employee { get; init; }
 
     public bool IsActive { get; private set; } = true;
     public DateTimeOffset AssignedAtUtc { get; private set; } = DateTimeOffset.UtcNow;

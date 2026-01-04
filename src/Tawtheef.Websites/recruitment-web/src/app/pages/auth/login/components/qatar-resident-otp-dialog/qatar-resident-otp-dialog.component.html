@@ -1,10 +1,9 @@
 <div i18nNamespace="pages/auth" class="qatar-otp-dialog">
   <p class="text-muted mb-3">{{ 'auth.login.qatarResidentDialog.subtitle' | translate }}</p>
 
-  <form [formGroup]="step === 'identify' ? requestForm : otpForm"
-        (ngSubmit)="step === 'identify' ? submitIdentification() : submitOtp()">
+  <form [formGroup]="form" (ngSubmit)="step === 'identify' ? submitIdentification() : submitOtp()">
 
-    <div class="mb-3" *ngIf="step === 'identify'">
+    <div class="mb-3">
       <label class="form-label required" for="qid">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</label>
       <input
         id="qid"
@@ -12,25 +11,51 @@
         class="form-control"
         pInputText
         formControlName="qid"
-        [readonly]="requestForm.disabled"
+        [readonly]="form.disabled"
         autocomplete="off" />
-      <small class="text-danger" *ngIf="requestForm.controls.qid.touched && requestForm.controls.qid.invalid">
+
+      <small class="text-danger" *ngIf="form.controls.qid.touched && form.controls.qid.invalid">
         {{ 'validation.required' | translate }}
       </small>
     </div>
 
-    <div class="mb-3" *ngIf="step === 'identify'">
+    <div class="mb-3">
       <label class="form-label required" for="phoneNumber">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</label>
-      <input
-        id="phoneNumber"
-        type="tel"
-        class="form-control"
-        pInputText
+
+      <ngx-intl-tel-input
+        inputId="phoneNumber"
+        class="prime-tel-input"
+        [selectFirstCountry]="true"
+        [onlyCountries]="qatarOnly"
+
+        [enableAutoCountrySelect]="false"
+        [enablePlaceholder]="true"
+        [searchCountryFlag]="false"
+        [searchCountryField]="[]"
+
+        [phoneValidation]="true"
+        [separateDialCode]="true"
         formControlName="phoneNumber"
-        [readonly]="requestForm.disabled"
-        autocomplete="tel" />
-      <small class="text-danger" *ngIf="requestForm.controls.phoneNumber.touched && requestForm.controls.phoneNumber.invalid">
+        [disabled]="form.disabled"
+      ></ngx-intl-tel-input>
+
+      <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('required')">
         {{ 'validation.required' | translate }}
+      </small>
+
+      <small
+        class="text-danger"
+        *ngIf="
+          form.controls.phoneNumber.touched &&
+          !form.controls.phoneNumber.hasError('required') &&
+          form.controls.phoneNumber.hasError('validatePhoneNumber')
+        "
+      >
+        {{ 'validation.phoneInvalid' | translate }}
+      </small>
+
+      <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('nonQatar')">
+        {{ 'auth.login.qatarResidentDialog.qatarPhoneOnly' | translate }}
       </small>
     </div>
 
@@ -43,9 +68,10 @@
         pInputText
         formControlName="otp"
         autocomplete="one-time-code" />
-      <small class="text-danger" *ngIf="otpForm.controls.otp.touched && otpForm.controls.otp.invalid">
+
+      <small class="text-danger" *ngIf="form.controls.otp.touched && form.controls.otp.invalid">
         {{
-          otpForm.controls.otp.errors?.['minlength']
+          form.controls.otp.errors?.['minlength']
             ? ('validation.minLength' | translate:{ min: 4 })
             : ('validation.required' | translate)
         }}
@@ -56,10 +82,13 @@
       <button pButton type="button" class="p-button-text" (click)="close()" [disabled]="loading">
         {{ 'common.cancel' | translate }}
       </button>
+
       <button pButton type="submit" [loading]="loading" [disabled]="loading">
-        {{ step === 'identify'
-        ? ('auth.login.qatarResidentDialog.requestCta' | translate)
-        : ('auth.login.qatarResidentDialog.verifyCta' | translate) }}
+        {{
+          step === 'identify'
+            ? ('auth.login.qatarResidentDialog.requestCta' | translate)
+            : ('auth.login.qatarResidentDialog.verifyCta' | translate)
+        }}
       </button>
     </div>
 

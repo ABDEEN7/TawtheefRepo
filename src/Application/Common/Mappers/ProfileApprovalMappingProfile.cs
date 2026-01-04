@@ -1,7 +1,6 @@
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
-using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -29,21 +28,6 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.OldValue, src => src.ProfileChange != null ? src.ProfileChange.OldValue : null)
             .Map(dest => dest.NewValue, src => src.ProfileChange != null ? src.ProfileChange.NewValue : null)
             .Map(dest => dest.ReviewedAtUtc, src => src.ReviewedAtUtc);
-
-        config.NewConfig<Resource, FileRefDto>()
-            .Map(dest => dest.ResourceId, src => src.Id)
-            .Map(dest => dest.FileName, src => src.Name)
-            .Map(dest => dest.Url, src => ResolveResourceUrl(src.Url));
-
-        config.NewConfig<Resource?, FileRefDto?>()
-            .MapWith(src => src == null
-                ? null
-                : new FileRefDto
-                {
-                    ResourceId = src.Id,
-                    FileName = src.Name,
-                    Url = ResolveResourceUrl(src.Url)
-                });
 
         config.NewConfig<ProfileAdditionalAttachment, AdditionalAttachmentDto>()
             .Map(dest => dest.Title, src => src.FileName)
@@ -130,16 +114,15 @@ public sealed class ProfileApprovalMappingProfile : IRegister
         config.NewConfig<UserProfile, ProfileApprovalDataDto>()
             .Map(dest => dest.BasicInformation, src => src)
             .Map(dest => dest.ProfilePhoto, src=> src.User!.Avatar)
-            .Map(dest => dest.Qualifications, src => src.Qualifications == null ? null : src.Qualifications.OrderBy(q => q.GraduationYear))
-            .Map(dest => dest.Experiences, src => src.Experiences)
-            .Map(dest => dest.TrainingCourses, src => src.TrainingCourses)
-            .Map(dest => dest.ProfessionalCertificatesAndAwards, src => src.Achievements)
+            .Map(dest => dest.Qualifications, src => src.Qualifications == null ? null : src.Qualifications.OrderByDescending(q => q.GraduationYear))
+            .Map(dest => dest.Experiences, src => src.Experiences == null ? null : src.Experiences.OrderByDescending(q => q.StartDate))
+            .Map(dest => dest.TrainingCourses, src => src.TrainingCourses == null ? null : src.TrainingCourses.OrderByDescending(q => q.StartDate))
+            .Map(dest => dest.ProfessionalCertificatesAndAwards, src => src.Achievements == null ? null : src.Achievements.OrderByDescending(q => q.IssueDate))
             .Map(dest => dest.Skills, src => src.Skills)
             .Map(dest => dest.Languages, src => src.Languages)
             .Map(dest => dest.Attachments,
                  src => src.AdditionalAttachments == null
-                     ? null
-                     : src.AdditionalAttachments.Where(a => a.Attachment != null));
+                     ? null : src.AdditionalAttachments.Where(a => a.Attachment != null));
     }
 
     private static string ResolveResourceUrl(string? url)

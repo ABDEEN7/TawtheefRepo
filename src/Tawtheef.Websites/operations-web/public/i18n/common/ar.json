@@ -43,6 +43,7 @@
   "common.confirm": "تأكيد",
   "common.yes": "نعم",
   "common.no": "لا",
+  "common.goBack": "العودة",
   "common.charactersRemaining": "{{count}} حرف متبقي",
   "auth.externalLogin.popupBlocked.summary": "تم حظر النافذة المنبثقة",
   "auth.externalLogin.popupBlocked.detail": "يرجى السماح بالنوافذ المنبثقة لهذا الموقع للمتابعة بتسجيل الدخول الخارجي",
@@ -56,6 +57,7 @@
   "auth.externalLogin.externalAuthFailed.summary": "فشل تسجيل الدخول",
   "auth.externalLogin.externalAuthFailed.detailFallback": "فشلت المصادقة الخارجية",
   "remote-select.search-hint": "اكتب على الأقل {{minChars}} أحرف للبحث",
+  "remote-select.select-parent": "حدد قيمة الحقل ألأساسي أولا",
   "auth.externalLogin.popupBlocked.detailShort": "قام المتصفح بحظر نافذة تسجيل الدخول المنبثقة.",
   "auth.externalLogin.popupBlocked.detailContinue": "يرجى السماح بالنوافذ المنبثقة لهذا الموقع ثم المحاولة مرة أخرى.",
 
