@@ -177,6 +177,27 @@ public static class Permissions
                 15);
     }
 
+    public static class TargetEntities
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.TargetEntities.View,
+                nameof(PermissionKeys.TargetEntities),
+                PermissionAction.View,
+                "Target Entities - View",
+                "الجهات المستهدفة - عرض",
+                16);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.TargetEntities.Manage,
+                nameof(PermissionKeys.TargetEntities),
+                PermissionAction.Manage,
+                "Target Entities - Manage",
+                "الجهات المستهدفة - إدارة",
+                17);
+    }
+
     // =========================
     // Employee Console
     // =========================

@@ -28,6 +28,9 @@ public static class PermissionCatalog
         Permissions.Universities.View,
         Permissions.Universities.Manage,
 
+        Permissions.TargetEntities.View,
+        Permissions.TargetEntities.Manage,
+
         Permissions.Profile.View,
         Permissions.Profile.Manage,
 
