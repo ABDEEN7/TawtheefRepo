@@ -1,0 +1,55 @@
+.role-dialog {
+  .dialog-body {
+    padding: 8px 2px;
+  }
+
+  .permissions-box {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px;
+    background: #fafafa;
+  }
+
+  .permission-group + .permission-group {
+    margin-top: 12px;
+  }
+
+  .group-title {
+    font-weight: 700;
+    color: #4b0022;
+    margin-bottom: 8px;
+  }
+
+  .perm-list {
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    padding: 12px;
+    background: #fff;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .perm-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .search-bar .form-control {
+    box-shadow: none;
+  }
+
+  .btn-maroon {
+    background-color: #7b0037;
+    border-color: #7b0037;
+    color: #fff;
+    font-weight: 600;
+
+    &:hover {
+      background-color: #64002d;
+      border-color: #64002d;
+    }
+  }
+}

@@ -85,45 +85,6 @@
   }
 }
 
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1500;
-}
-
-.modal-card {
-  width: 720px;
-  max-width: 95vw;
-  background: #fff;
-  border-radius: 20px;
-  padding: 25px 28px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-}
-
-.perm-list {
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 15px;
-  background: #fafafa;
-  max-height: 320px;
-  overflow-y: auto;
-
-  .perm-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-}
-
-.search-bar .form-control {
-  box-shadow: none;
-}
-
 .page-title {
   font-weight: 700;
   color: #4b0022;
@@ -160,11 +121,6 @@
     background: #fff0f6;
     border-color: #cfa3b8;
   }
-}
-
-.modal-title {
-  font-weight: 700;
-  color: #4b0022;
 }
 
 :host ::ng-deep .p-confirm-dialog .p-dialog-header {
