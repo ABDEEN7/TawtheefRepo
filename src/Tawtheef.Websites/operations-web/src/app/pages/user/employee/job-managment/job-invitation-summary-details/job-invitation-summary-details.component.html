@@ -1,5 +1,4 @@
 <section i18nNamespace="pages/job-invitation-summary-details" class="page-shell">
-  <!-- Header / Title -->
   <div class="container">
     <div class="page-hero card-shell">
       <a class="back-link" (click)="navigateTo()" aria-label="Back">
@@ -50,13 +49,10 @@
       </div>
     </div>
 
-    <!-- Table Card -->
     <div class="card-shell table-shell">
       <div class="table-title">{{ 'JOB_INVITES_DETAILS_FILES' | translate }}</div>
 
-      <!-- Filters row (updated to match screenshot layout) -->
       <div class="filters-row">
-        <!-- Search -->
         <div class="search-pill">
           <i class="fa fa-search"></i>
           <input
@@ -68,7 +64,6 @@
           />
         </div>
 
-        <!-- Status dropdown -->
         <p-select
           [options]="statusOptions()"
           [showClear]="true"
@@ -80,17 +75,25 @@
           (ngModelChange)="selectedStatus.set($event); onFilterChange()"
         ></p-select>
 
-        <!-- Clear filters -->
-        <button class="btn btn-outline-secondary btn-sm rounded-pill clear-btn" (click)="clearFilters()">
+        <button
+          class="btn btn-outline-secondary btn-sm rounded-pill clear-btn"
+          (click)="clearFilters()"
+        >
           <i class="fa fa-rotate-left"></i>
           {{ 'JOB_INVITES_DETAILS_CLEAR_FILTERS' | translate }}
         </button>
       </div>
 
-      <!-- Table -->
-      <div class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead class="table-head-brand">
+      <div class="table-wrap">
+        <p-table
+          class="ptable-reset"
+          [value]="rows()"
+          [lazy]="true"
+          [paginator]="false"
+          [rows]="itemsPerPage()"
+          [rowHover]="true"
+        >
+          <ng-template pTemplate="header">
             <tr>
               <th>{{ 'JOB_INVITES_DETAILS_COL_NAME' | translate }}</th>
               <th>{{ 'JOB_INVITES_DETAILS_COL_NATIONALITY' | translate }}</th>
@@ -98,35 +101,45 @@
               <th>{{ 'JOB_INVITES_DETAILS_COL_STATUS' | translate }}</th>
               <th>{{ 'JOB_INVITES_DETAILS_COL_SENT_DATE' | translate }}</th>
             </tr>
-          </thead>
+          </ng-template>
 
-          <tbody>
-            @for (row of rows(); track row.inviteId) {
-              <tr>
-                <td class="fw-bold">{{ row.fullName }}</td>
-                <td>{{ row.nationality }}</td>
-                <td dir="ltr">{{ row.phone }}</td>
-                <td>
-                  <span [class]="getStatusPillClass(row.status.backendName)">
-                    {{ row.status.name }}
-                  </span>
-                </td>
-                <td>{{ row.sentDate }}</td>
-              </tr>
-            }
+          <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+            <tr>
+              <td class="fw-bold" [ngClass]="{ 'cell-alt': rowIndex % 2 === 1 }">
+                {{ row.fullName }}
+              </td>
 
-            @if (!rows().length) {
-              <tr>
-                <td colspan="5" class="empty-state">
-                  {{ 'JOB_INVITES_DETAILS_EMPTY' | translate }}
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+              <td [ngClass]="{ 'cell-alt': rowIndex % 2 === 1 }">
+                {{ row.nationality }}
+              </td>
+
+              <td [ngClass]="{ 'cell-alt': rowIndex % 2 === 1 }">
+                {{ row.phone }}
+              </td>
+
+              <td [ngClass]="{ 'cell-alt': rowIndex % 2 === 1 }">
+                <span [class]="getStatusPillClass(row.status.backendName)">
+                  {{ row.status.name }}
+                </span>
+              </td>
+
+              <td [ngClass]="{ 'cell-alt': rowIndex % 2 === 1 }">
+                {{ row.sentDate | date : 'yyyy/MM/dd' }}
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="empty">
+                <i class="fa fa-inbox fa-lg"></i>
+                <div class="empty__title">{{ 'JOB_INVITES_DETAILS_EMPTY' | translate }}</div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
 
-      <!-- Pagination -->
       <div class="pagination-wrap">
         <app-pagination
           [currentPage]="currentPage()"

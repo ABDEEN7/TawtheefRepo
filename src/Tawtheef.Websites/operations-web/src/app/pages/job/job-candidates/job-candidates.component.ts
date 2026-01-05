@@ -115,16 +115,16 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   exportToExcel() {
-    const invitationIds =
+    const applicantIds   =
       this.selectedCandidates.length > 0
-        ? this.selectedCandidates.map((candidate) => candidate.invitationId)
+        ? this.selectedCandidates.map((candidate) => candidate.candidateId )
         : undefined;
 
     this.jobCandidatesService
       .export({
         jobId: this.jobId,
         filter: this.buildFilter(),
-        invitationIds,
+        applicantIds,
       })
       .subscribe({
         next: (response) => {
@@ -134,12 +134,7 @@ export class JobCandidatesComponent implements OnInit {
           this.notificationService.success(
             this.translationService.instant('JOB_CANDIDATE_MESSAGES_EXPORT_SUCCESS')
           );
-        },
-        error: () => {
-          this.notificationService.error(
-            this.translationService.instant('JOB_CANDIDATE_MESSAGES_EXPORT_FAILED')
-          );
-        },
+        }
       });
   }
 
@@ -155,16 +150,16 @@ export class JobCandidatesComponent implements OnInit {
     ref?.onClose.subscribe((result) => {
       if (!result) return;
 
-      const invitationIds =
+      const applicantIds   =
         this.selectedCandidates.length > 0
-          ? this.selectedCandidates.map((candidate) => candidate.invitationId)
+          ? this.selectedCandidates.map((candidate) => candidate.candidateId)
           : undefined;
 
       this.jobCandidatesService
         .sendInvitations({
           jobId: this.jobId,
           filter: this.buildFilter(),
-          invitationIds,
+          applicantIds  ,
         })
         .subscribe({
           next: () => {
@@ -172,20 +167,16 @@ export class JobCandidatesComponent implements OnInit {
               this.translationService.instant('JOB_CANDIDATE_MESSAGES_INVITES_SENT')
             );
             this.loadCandidatesData();
-          },
-          error: () => {
-            this.notificationService.error(
-              this.translationService.instant('JOB_CANDIDATE_MESSAGES_INVITES_FAILED')
-            );
-          },
+          }
         });
     });
   }
 
   onPageChange(page: number) {
-    this.currentPage.set(page);
-    this.loadCandidatesData();
-  }
+  this.currentPage.set(page);
+  this.resetSelection();
+  this.loadCandidatesData();
+}
 
   private extractFileName(response: { headers: { get(name: string): string | null } }): string | null {
     const contentDisposition = response.headers.get('content-disposition') || '';

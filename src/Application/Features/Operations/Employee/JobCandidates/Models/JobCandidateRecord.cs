@@ -4,15 +4,18 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 
-public sealed record JobCandidateRecord
+public record JobCandidateRecord
 {
-    public Guid InvitationId { get; init; }
+    public Guid? InvitationId { get; init; }
     public Guid ApplicantId { get; init; }
-    public ApplicantUser? Applicant { get; init; }
+    public User? Applicant { get; init; }
     public UserProfile? Profile { get; init; }
-    public Domain.Entities.Recruitment.Job? Job { get; init; }
+
+    public Guid JobId { get; init; }
+
     public Major? Major { get; init; }
-    public Guid InvitationStatusId { get; init; }
+
+    public Guid? InvitationStatusId { get; init; } // or int? depending on your model
     public int Points { get; init; }
-    public DateTimeOffset CreatedDate { get; init; }
+    public DateTimeOffset? CreatedDate { get; init; }
 }

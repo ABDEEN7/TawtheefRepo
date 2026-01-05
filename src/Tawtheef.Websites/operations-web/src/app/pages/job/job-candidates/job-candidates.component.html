@@ -13,23 +13,23 @@
 
     <div class="stats-row">
       <div class="stat-card stat-card--light">
-        <div class="stat-card__value">{{ abovePointsCandidatesCount }}</div>
+        <div class="stat-card__value">{{ totalCandidatesCount }}</div>
         <div class="stat-card__label">{{ 'JOB_CANDIDATE_JOB_CANDIDATE' | translate }}</div>
       </div>
 
       <div class="stat-card stat-card--warn">
-        <div class="stat-card__value">{{ totalCandidatesCount }}</div>
-        <div class="stat-card__label">{{ 'JOB_CANDIDATE_STATS_PENDING_APPROVAL' | translate }}</div>
+        <div class="stat-card__value">{{ abovePointsCandidatesCount }}</div>
+        <div class="stat-card__label">{{ 'JOB_CANDIDATE_STATS_ABOVE_800_POINT' | translate }}</div>
       </div>
 
       <div class="stat-card stat-card--ok">
         <div class="stat-card__value">{{ availableCandidatesCount }}</div>
-        <div class="stat-card__label">{{ 'JOB_CANDIDATE_STATS_APPROVED' | translate }}</div>
+        <div class="stat-card__label">{{ 'JOB_CANDIDATE_AVAILABLE_CANDIDATES' | translate }}</div>
       </div>
 
       <div class="stat-card stat-card--blue">
         <div class="stat-card__value">{{ pointsAverage }}</div>
-        <div class="stat-card__label">{{ 'JOB_CANDIDATE_STATS_DRAFTED' | translate }}</div>
+        <div class="stat-card__label">{{ 'JOB_CANDIDATE_POINTS_AVERAGE' | translate }}</div>
       </div>
     </div>
   </div>
@@ -158,7 +158,7 @@
     class="btn btn-primary"
     type="button"
     (click)="sendInvitations()"
-    [disabled]="availableCandidatesCount === 0"
+    [disabled]="selectedCandidates.length === 0"
   >
     <i class="hgi hgi-stroke hgi-sent"></i>
     <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>

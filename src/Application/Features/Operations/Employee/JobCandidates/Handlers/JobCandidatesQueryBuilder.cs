@@ -9,15 +9,15 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handle
 
 internal static class JobCandidatesQueryBuilder
 {
-    public static IQueryable<JobCandidateRecord> Build(IUnitOfWork unitOfWork, Guid jobId, JobCandidatesFilter? filter)
+    public static IQueryable<JobCandidateRecord> Build(
+        IUnitOfWork unitOfWork,
+        Guid jobId,
+        JobCandidatesFilter? filter)
     {
         filter ??= new JobCandidatesFilter(null, null, null, null);
 
-        var invitations = unitOfWork.GetEntityRepository<Invitation>().DbSet
+        var invitationsForJob = unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
-            .Include(i => i.Job).ThenInclude(j => j!.Department)
-            .Include(i => i.Job).ThenInclude(j => j!.JobCategory)
-            .Include(i => i.Applicant)
             .Where(i => i.JobId == jobId);
 
         var profiles = unitOfWork.GetEntityRepository<UserProfile>().DbSet
@@ -25,28 +25,40 @@ internal static class JobCandidatesQueryBuilder
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.Gender)
-            .Include(p => p.Qualifications!)
-            .ThenInclude(q => q.Major);
+            .Include(p => p.Qualifications!).ThenInclude(q => q.Major)
+            .Include(p => p.Qualifications!).ThenInclude(q => q.Degree)
+            .Include(p => p.Qualifications!).ThenInclude(q => q.University)
+            .Include(p => p.Experiences)
+            .Include(p => p.TrainingCourses)
+            .Include(p => p.Achievements)
+            .Include(p => p.Skills)
+            .Include(p => p.Languages);
 
-        var query = invitations.Join(
-            profiles,
-            invitation => invitation.ApplicantId,
-            profile => profile.UserId,
-            (invitation, profile) => new JobCandidateRecord
-            {
-                InvitationId = invitation.Id,
-                ApplicantId = invitation.ApplicantId,
-                Applicant = invitation.Applicant,
-                Profile = profile,
-                Job = invitation.Job,
-                Major = profile.Qualifications!
-                    .OrderByDescending(q => q.GraduationYear)
-                    .Select(q => q.Major)
-                    .FirstOrDefault(),
-                InvitationStatusId = invitation.InvitationStatusId,
-                Points = 0,
-                CreatedDate = invitation.CreatedDate
-            });
+        // LEFT JOIN: profiles -> invitations (for this job)
+       var query =
+           from profile in profiles
+           join inv in invitationsForJob on profile.UserId equals inv.ApplicantId into invs
+           from inv in invs.DefaultIfEmpty()
+           where inv == null // ✅ exclude already-invited profiles for this job
+           select new JobCandidateRecord
+           {
+               InvitationId = null, // always null now (since inv is null)
+               ApplicantId = profile.UserId,
+               Applicant = profile.User,
+               Profile = profile,
+               JobId = jobId,
+       
+               Major = profile.Qualifications != null
+                   ? profile.Qualifications
+                       .OrderByDescending(q => q.GraduationYear)
+                       .Select(q => q.Major)
+                       .FirstOrDefault()
+                   : null,
+       
+               InvitationStatusId = null,
+               Points = 0,
+               CreatedDate = null
+           };
 
         var searchTerm = filter.SearchTerm?.Trim();
 
@@ -58,12 +70,8 @@ internal static class JobCandidatesQueryBuilder
                 (candidate.Profile != null &&
                  !string.IsNullOrWhiteSpace(candidate.Profile.NationalNumber) &&
                  candidate.Profile.NationalNumber!.Contains(searchTerm!)))
-            .WhereIf(filter.JobCategoryId.HasValue, candidate =>
-                candidate.Job != null && candidate.Job.JobCategoryId == filter.JobCategoryId!.Value)
             .WhereIf(filter.CandidateTypeId.HasValue, candidate =>
-                candidate.Profile != null && candidate.Profile.CandidateTypeId == filter.CandidateTypeId!.Value)
-            .WhereIf(filter.MinimumPoints.HasValue, candidate =>
-                candidate.Points >= filter.MinimumPoints!.Value);
+                candidate.Profile != null && candidate.Profile.CandidateTypeId == filter.CandidateTypeId!.Value);
 
         return query;
     }
