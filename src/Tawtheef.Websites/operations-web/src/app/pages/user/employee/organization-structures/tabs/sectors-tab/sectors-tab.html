@@ -122,9 +122,9 @@
 </div>
 
 <app-pagination
-  [currentPage]="store.sectorFilters().pageNumber ?? 1"
+  [currentPage]="store.sectorFilters().pageNumber"
   [totalItems]="store.sectorMeta().totalCount"
-  [itemsPerPage]="store.sectorFilters().pageSize ?? 10"
+  [itemsPerPage]="store.sectorFilters().pageSize"
   (pageChanged)="service.onSectorPageChange($event)"
   (pageSizeChanged)="service.onSectorPageSizeChange($event)"
   class="mt-4">

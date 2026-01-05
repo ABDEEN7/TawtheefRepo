@@ -155,9 +155,9 @@
 </div>
 
 <app-pagination
-  [currentPage]="store.departmentFilters().pageNumber ?? 1"
+  [currentPage]="store.departmentFilters().pageNumber"
   [totalItems]="store.departmentMeta().totalCount"
-  [itemsPerPage]="store.departmentFilters().pageSize ?? 10"
+  [itemsPerPage]="store.departmentFilters().pageSize"
   (pageChanged)="service.onDepartmentPageChange($event)"
   (pageSizeChanged)="service.onDepartmentPageSizeChange($event)"
   class="mt-4">

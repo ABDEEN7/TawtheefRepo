@@ -97,9 +97,9 @@
 
 
   <app-pagination
-    [currentPage]="store.mainMajorFilters().pageNumber ?? 1"
+    [currentPage]="store.mainMajorFilters().pageNumber"
     [totalItems]="store.mainMajorsMeta().totalCount"
-    [itemsPerPage]="store.mainMajorFilters().pageSize ?? 10"
+    [itemsPerPage]="store.mainMajorFilters().pageSize"
     (pageChanged)="service.onMainMajorsPageChange($event)"
     (pageSizeChanged)="service.onMainMajorsPageSizeChange($event)" class="mt-4">
   </app-pagination>

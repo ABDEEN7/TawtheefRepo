@@ -38,8 +38,9 @@ export class MajorsSkillsManagementStore {
   skillTypes = signal<dropdownOptionsModel[] | null>(null);
 
   // ===== Mapping Data =====
-  majorSkills = signal<MajorSkillListItemModel[]>([]);
-  majorSkillsMeta = signal<PaginationMetadata | null>(null);
+  majorSkillsResult = signal<PaginatedResult<MajorSkillListItemModel> | null>(null);
+  majorSkillsItems = computed(() => this.majorSkillsResult()?.items ?? []);
+  majorSkillsMeta = computed(() => this.majorSkillsResult()?.metadata ?? this.emptyMeta(this.majorSkillFilters()));
 
   // ===== Main Majors =====
   mainMajorsResult = signal<PaginatedResult<MajorListItemModel> | null>(null);
@@ -110,8 +111,7 @@ export class MajorsSkillsManagementStore {
   }
 
   setMajorSkills(result: PaginatedResult<MajorSkillListItemModel>) {
-    this.majorSkills.set(result.items ?? []);
-    this.majorSkillsMeta.set(result.metadata ?? null);
+    this.majorSkillsResult.set(result);
   }
 
   setMainMajorsResult(result: PaginatedResult<MajorListItemModel>) {
