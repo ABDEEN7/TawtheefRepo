@@ -13,15 +13,17 @@ public sealed class UserProfileLoggerConfiguration : IEntityTypeConfiguration<Us
         builder.HasIndex(x => x.PerformedById);
         builder.HasIndex(x => x.ActionType);
         builder.HasIndex(x => x.ReviewStatus);
-
-        builder.HasOne<UserProfile>()
-            .WithMany()
+        
+        builder.HasOne(x => x.UserProfile)
+            .WithMany(up => up.UserProfileLoggers)
             .HasForeignKey(x => x.UserProfileId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne<User>()
-            .WithMany()
+        
+        builder.HasOne(x => x.PerformedBy)
+            .WithMany(u => u.UserProfileLoggers)
             .HasForeignKey(x => x.PerformedById)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

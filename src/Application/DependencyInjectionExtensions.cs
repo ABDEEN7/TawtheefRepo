@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application.Common.Behaviours;
 using Tawtheef.Application.Common.Mappers;
+using Tawtheef.Domain;
 
 namespace Tawtheef.Application
 {
@@ -54,13 +55,12 @@ namespace Tawtheef.Application
             // Registers MediatR handlers from the current assembly.
             // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             
-            var anchor = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .Where(t => t is { IsClass: true, IsAbstract: false }).ToArray();
-            
             services.AddCortexMediator(
                 configuration: configuration,
-                handlerAssemblyMarkerTypes: anchor,
+                handlerAssemblyMarkerTypes: [
+                    typeof(ApplicationAssemblyMarker),
+                    typeof(DomainAssemblyMarker)
+                ],
                 configure: options =>
                 {
                     // This enables built-in logging, validation, and transaction behaviors

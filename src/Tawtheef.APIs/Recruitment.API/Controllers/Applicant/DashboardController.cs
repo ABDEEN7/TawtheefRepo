@@ -5,6 +5,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
 using Tawtheef.Domain.Constants;
