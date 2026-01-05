@@ -209,6 +209,34 @@ export class EndpointsService {
     }
   };
 
+  organizationStructures = {
+    sectors: {
+      list: this.getFullUrl('/OrganizationStructures/sectors'),
+      create: this.getFullUrl('/OrganizationStructures/sectors'),
+      update: (id: string) => this.getFullUrl(`/OrganizationStructures/sectors/${id}`),
+      changeActivation: this.getFullUrl('/OrganizationStructures/sectors/change-activation')
+    },
+    managements: {
+      list: this.getFullUrl('/OrganizationStructures/managements'),
+      create: this.getFullUrl('/OrganizationStructures/managements'),
+      update: (id: string) => this.getFullUrl(`/OrganizationStructures/managements/${id}`),
+      changeActivation: this.getFullUrl('/OrganizationStructures/managements/change-activation')
+    },
+    departments: {
+      list: this.getFullUrl('/OrganizationStructures/departments'),
+      create: this.getFullUrl('/OrganizationStructures/departments'),
+      update: (id: string) => this.getFullUrl(`/OrganizationStructures/departments/${id}`),
+      changeActivation: this.getFullUrl('/OrganizationStructures/departments/change-activation')
+    },
+    lookups: {
+      sectors: this.getFullUrl('/OrganizationStructures/lookups/sectors'),
+      managements: (sectorId: string) =>
+        this.getFullUrl(`/OrganizationStructures/lookups/managements?sectorId=${sectorId}`),
+      departments: (managementId: string) =>
+        this.getFullUrl(`/OrganizationStructures/lookups/departments?managementId=${managementId}`)
+    }
+  };
+
   countries = {
     listCountries: this.getFullUrl('/countryManagement/list-countries'),
     updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`)

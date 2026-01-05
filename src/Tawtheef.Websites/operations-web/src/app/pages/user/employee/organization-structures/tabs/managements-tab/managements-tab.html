@@ -1,0 +1,148 @@
+<div class="row mb-3 align-items-center">
+  <div class="col-md-6">
+    <p class="fw-bold text-primary mb-0">{{ 'ORG_STRUCTURES.MANAGEMENTS_BADGE' | translate }}</p>
+    <h3 class="fw-bold mb-0">{{ 'ORG_STRUCTURES.MANAGEMENTS_TITLE' | translate }}</h3>
+    <p class="fs-16 m-0">{{ 'ORG_STRUCTURES.MANAGEMENTS_HINT' | translate }}</p>
+  </div>
+  <div class="col-md-6 text-end">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      (click)="service.openCreateManagement()">
+      {{ 'ORG_STRUCTURES.CREATE_MANAGEMENT' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row align-items-end g-3">
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
+            <p-select
+              class="w-100"
+              [options]="store.sectorLookups()"
+              optionLabel="name"
+              optionValue="id"
+              [showClear]="true"
+              [ngModel]="store.managementFilters().sectorId"
+              (ngModelChange)="service.setManagementSector($event)"
+              [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
+            </p-select>
+          </div>
+
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'ORG_STRUCTURES.SEARCH_LABEL' | translate }}</label>
+            <input
+              class="form-control"
+              [placeholder]="'ORG_STRUCTURES.SEARCH_MANAGEMENTS' | translate"
+              [ngModel]="store.managementFilters().search"
+              (ngModelChange)="service.setManagementSearch($event)" />
+          </div>
+
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'ORG_STRUCTURES.STATUS_FILTER' | translate }}</label>
+            <p-select
+              class="w-100"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+              [placeholder]="'ORG_STRUCTURES.STATUS_FILTER' | translate"
+              [ngModel]="store.managementFilters().isActive"
+              (ngModelChange)="service.setManagementStatus($event)">
+              <ng-template pTemplate="selectedItem" let-selected>
+                <span>{{ selected?.label ? (selected.label | translate) : ('ORG_STRUCTURES.STATUS_FILTER' | translate) }}</span>
+              </ng-template>
+              <ng-template let-option pTemplate="item">
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table
+      [value]="store.managements()"
+      [rowHover]="true"
+      responsiveLayout="scroll">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'ORG_STRUCTURES.MANAGEMENT_COLUMN' | translate }}</th>
+          <th>{{ 'ORG_STRUCTURES.SECTOR_COLUMN' | translate }}</th>
+          <th>{{ 'ORG_STRUCTURES.ORDER_COLUMN' | translate }}</th>
+          <th>{{ 'ORG_STRUCTURES.STATUS' | translate }}</th>
+          <th [class.text-end]="!store.isRtl()" [class.text-start]="store.isRtl()">{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-management>
+        <tr>
+          <td>
+            <div class="fw-semibold">{{ management.name }}</div>
+            <small class="text-muted">{{ management.description || '' }}</small>
+          </td>
+          <td>{{ management.sector?.name || '-' }}</td>
+          <td>{{ management.displayOrder ?? 0 }}</td>
+          <td>
+            <span class="badge"
+                  [class.bg-success-subtle]="management.isActive !== false"
+                  [class.text-success]="management.isActive !== false"
+                  [class.bg-danger-subtle]="management.isActive === false"
+                  [class.text-danger]="management.isActive === false">
+              {{ management.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
+            </span>
+          </td>
+          <td
+            class="actions-cell text-nowrap"
+            [class.text-end]="!store.isRtl()"
+            [class.text-start]="store.isRtl()">
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="service.openEditManagement(management)"
+              [pTooltip]="'common.edit' | translate"
+              tooltipPosition="top"
+              [attr.aria-label]="'common.edit' | translate">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="service.toggleManagementActive(management, !(management.isActive !== false))"
+              [pTooltip]="(management.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
+              tooltipPosition="top"
+              [attr.aria-label]="(management.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
+              <i class="bi" [ngClass]="management.isActive !== false ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center text-muted">{{ 'ORG_STRUCTURES.NO_RECORDS' | translate }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<app-pagination
+  [currentPage]="store.managementFilters().pageNumber ?? 1"
+  [totalItems]="store.managementMeta().totalCount"
+  [itemsPerPage]="store.managementFilters().pageSize ?? 10"
+  (pageChanged)="service.onManagementPageChange($event)"
+  (pageSizeChanged)="service.onManagementPageSizeChange($event)"
+  class="mt-4">
+</app-pagination>

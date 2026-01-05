@@ -393,4 +393,16 @@ public static class Permissions
                 "مهارات التخصص - إدارة",
                 70);
     }
+
+    public static class OrganizationStructures
+    {
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.OrganizationStructures.Manage,
+                nameof(PermissionKeys.OrganizationStructures),
+                PermissionAction.Manage,
+                "Organization Structures - Manage",
+                "الهياكل التنظيمية - إدارة",
+                80);
+    }
 }
