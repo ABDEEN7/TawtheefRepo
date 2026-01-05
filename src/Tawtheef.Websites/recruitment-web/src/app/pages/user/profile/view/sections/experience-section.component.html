@@ -1,0 +1,15 @@
+<div class="section-body">
+  @if (profile?.experiences?.length) {
+    <div class="list-group list-group-flush">
+      @for (exp of profile?.experiences; track exp.id) {
+        <div class="list-group-item px-0">
+          <div class="fw-semibold">{{ exp.jobTitle || '-' }}</div>
+          <div class="text-muted small">{{ exp.employerName }} · {{ exp.country?.name }}</div>
+          <div class="text-muted small">{{ exp.startDate }} - {{ exp.endDate || ('profileView.fields.current' | translate) }}</div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="text-muted">{{ 'common.none' | translate }}</div>
+  }
+</div>
