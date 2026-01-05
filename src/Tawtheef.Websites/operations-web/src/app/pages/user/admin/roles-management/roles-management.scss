@@ -96,13 +96,21 @@
 }
 
 .action-cell {
-  display: flex;
-  gap: 8px;
   justify-content: flex-end;
 }
 
 .table-rtl .action-cell {
   justify-content: flex-start;
+}
+
+.action-cell {
+  min-width: 120px;   /* keeps column stable */
+  vertical-align: middle;
+}
+
+.action-placeholder {
+  display: inline-block;
+  width: 1px;
 }
 
 .icon-btn {
@@ -116,6 +124,7 @@
   justify-content: center;
   transition: all 0.2s ease;
   color: inherit;
+  margin: 5px;
 
   &:hover {
     background: #fff0f6;
