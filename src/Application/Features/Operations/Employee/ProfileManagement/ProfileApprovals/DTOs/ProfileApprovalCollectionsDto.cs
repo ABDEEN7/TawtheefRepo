@@ -1,15 +1,9 @@
 using System.Text.Json.Serialization;
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities.Applicant;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
-
-public sealed class FileRefDto
-{
-    public Guid ResourceId { get; init; }
-    public string FileName { get; init; } = string.Empty;
-    public string Url { get; set; } = string.Empty;
-}
 
 public sealed class AdditionalAttachmentDto
 {

@@ -14,6 +14,7 @@ import {LanguageService} from '../../../../core/services/language.service';
 import {UserService} from '../../../../core/auth/user.service';
 import {routes} from '../../../../routes/routes';
 import {AvatarModal} from '../components/profile-steps/step-personal/dialogs/avatar.modal/avatar.modal';
+import {ProfileService} from './services/profile.service';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -32,6 +33,7 @@ export class WizardProfileComponent implements OnInit {
   language = inject(LanguageService);
   phoneMapper = inject(PhoneMapperService);
   userService = inject(UserService);
+  profileService = inject(ProfileService);
 
   avatarPreviewUrl: string | null = null;
 
@@ -110,6 +112,16 @@ export class WizardProfileComponent implements OnInit {
       count + (validity[key] ? 1 : 0), 0);
     const reviewUnlocked = this.canGoTo(this.total) ? 1 : 0;
     return Math.min(this.total, completeCount + reviewUnlocked);
+  }
+  onAvailabilityChange(available: boolean) {
+    this.profileService
+      .saveRecruitmentAvailability(available)
+      .subscribe({
+        next: () => {
+          this.ds.up('available',available);
+        },
+        error: (err: any) => console.error(err)
+      });
   }
 
   ngOnInit(): void {

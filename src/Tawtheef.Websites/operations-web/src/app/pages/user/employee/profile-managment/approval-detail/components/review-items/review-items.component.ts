@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import {ProfileApprovalItem, ReviewStatus, ReviewTargetType} from '../../../approval-list/models/profile-approval.models';
 
-export type ReviewAction = 'approve' | 'reject' | 'changes';
+export type ReviewAction = 'approve' | 'changes' | 'reject';
 
 type DiffRow = {
   field: string;
@@ -31,6 +31,7 @@ export class ReviewItemsComponent {
 
   @Input() items: ProfileApprovalItem[] | null = [];
   @Input() titleKey = '';
+  @Input() allowEdit = true;
   @Output() review = new EventEmitter<{ item: ProfileApprovalItem; action: ReviewAction }>();
   @Output() viewFile = new EventEmitter<string>();
 

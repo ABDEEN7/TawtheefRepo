@@ -60,7 +60,7 @@ export interface ProfileApprovalSection {
   status?: ReviewStatus;
   note?: string | null;
   reviewedAtUtc?: string | null;
-  items?: ProfileApprovalItem[];
+  items: ProfileApprovalItem[] | null;
   hasAttachments?: boolean;
 }
 

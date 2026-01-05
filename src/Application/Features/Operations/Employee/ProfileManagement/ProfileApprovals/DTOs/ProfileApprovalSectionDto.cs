@@ -9,6 +9,6 @@ public record ProfileApprovalSectionDto
     public string? Note { get; init; }
     public DateTimeOffset? ReviewedAtUtc { get; init; }
     public ProfileApprovalItemDto? SectionReview { get; init; }
-    public IReadOnlyList<ProfileApprovalItemDto> Items { get; init; } = Array.Empty<ProfileApprovalItemDto>();
+    public IReadOnlyList<ProfileApprovalItemDto> Items { get; init; } = [];
     public bool HasAttachments { get; init; }
 }

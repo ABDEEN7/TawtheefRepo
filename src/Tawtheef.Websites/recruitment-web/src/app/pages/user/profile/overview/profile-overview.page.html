@@ -200,13 +200,24 @@
                         }
                       </div>
 
-                      <button
-                        pButton
-                        type="button"
-                        class="p-button-sm p-button-text"
-                        icon="pi pi-arrow-down"
-                        (click)="scrollTo(sec.scrollId)"
-                      ></button>
+                      <div class="d-flex flex-column gap-2 note-actions">
+                        <button
+                          pButton
+                          type="button"
+                          class="p-button-sm p-button-text"
+                          icon="pi pi-pencil"
+                          (click)="openReviewItem(n, sec.section)"
+                          [pTooltip]="'profileView.reviewItemDialog.open' | translate"
+                        ></button>
+                        <button
+                          pButton
+                          type="button"
+                          class="p-button-sm p-button-text"
+                          icon="pi pi-arrow-down"
+                          (click)="scrollTo(sec.scrollId)"
+                          [pTooltip]="'profileView.review.scroll' | translate"
+                        ></button>
+                      </div>
                     </div>
                   </div>
                 }

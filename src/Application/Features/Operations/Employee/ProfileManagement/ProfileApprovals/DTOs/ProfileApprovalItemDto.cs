@@ -15,5 +15,5 @@ public record ProfileApprovalItemDto
     public string? EntityName { get; init; }
     public string? OldValue { get; init; }
     public string? NewValue { get; init; }
-    public DateTime? ReviewedAtUtc { get; init; }
+    public DateTimeOffset? ReviewedAtUtc { get; init; }
 }

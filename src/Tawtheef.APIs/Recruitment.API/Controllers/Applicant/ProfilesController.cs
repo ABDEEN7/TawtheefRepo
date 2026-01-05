@@ -183,6 +183,15 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPost("availability")]
+    public async Task<IActionResult> SaveAvailability([FromBody] SaveProfileAvailabilityRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new SaveProfileAvailabilityCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
     [HttpPost("education")]
     public async Task<IActionResult> SaveEducation([FromForm] SaveProfileEducationRequest request, CancellationToken ct)
     {
@@ -331,7 +340,8 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     [HttpGet("lookups/candidate-types")]
     public async Task<IActionResult> GetCandidateTypes([FromQuery] string provider)
     {
-        var result = await mediator.Send(new GetCandidateTypesByProviderQuery(provider));
+        if (UserId.IsFailed) return Unauthorized(UserId.Errors);
+        var result = await mediator.Send(new GetCandidateTypesByProviderQuery(provider, UserId.Value));
         return result.ToActionResult();
     }
 

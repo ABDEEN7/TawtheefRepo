@@ -1,23 +1,27 @@
 <form [formGroup]="form">
+    <div class="row mb-3">
+         <div class="col-md-12"><h5 class="text-primary d-flex"><i class="fa fa-graduation-cap"></i> {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS' | translate }}</h5></div>
+    </div>
+    <div class="card card-table mb-4">
+         <div class="card-body">
+             <div class="row">
+               <div class="col-12">
+                 <label class="field-label">
+                   <span class="text-danger">*</span>
+                   <span class="form-label">{{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS' | translate }}</span>
+                 </label>
+               </div>
+             </div>
+         </div>
+    </div>
+
   <div class="card card-lite p-3">
 
-    <div class="row-item">
-      <div class="row-item-icon">
-        <i class="fa fa-graduation-cap"></i>
-      </div>
-      <div class="row-item-text">
-        {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS' | translate }}
-      </div>
-    </div>
+
 
     <div class="mb-4">
 
-      <label class="field-label">
-        <span class="required-asterisk">*</span>
-        <span class="label-text">
-          {{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS' | translate }}
-        </span>
-      </label>
+
 
       @if (lookupsService.degrees().length === 0) {
         <div class="alert alert-info">
@@ -28,9 +32,9 @@
         <div class="d-flex flex-wrap gap-4">
           @for (degree of lookupsService.degrees(); track degree.id) {
             <div class="form-check">
-              <input 
-                class="form-check-input" 
-                type="checkbox" 
+              <input
+                class="form-check-input"
+                type="checkbox"
                 [id]="'degree-' + degree.id"
                 [checked]="isDegreeChecked(degree.id)"
                 (change)="toggleDegree(degree.id, $event)"
@@ -59,7 +63,7 @@
         <span class="label-text">
           {{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ARABIC' | translate }}
         </span>
-        
+
       </label>
 
       <div class="custom-textarea-wrapper">

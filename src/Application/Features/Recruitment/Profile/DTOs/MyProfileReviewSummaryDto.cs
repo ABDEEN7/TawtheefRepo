@@ -9,12 +9,12 @@ public sealed class MyProfileReviewSummaryDto
     public UserProfileStatus ProfileStatus { get; set; }
 
     // ===== Reviewer Notes =====
-    public IReadOnlyList<MyProfileReviewSectionDto> Sections { get; set; } = Array.Empty<MyProfileReviewSectionDto>();
+    public IReadOnlyList<MyProfileReviewSectionDto> Sections { get; set; } = [];
     public int TotalNotes { get; set; }
 
     // ===== User Saved Changes (Phase 2) =====
     public bool HasSavedChanges { get; set; }
-    public IReadOnlyList<ProfileSection> ChangedSections { get; set; } = Array.Empty<ProfileSection>();
+    public IReadOnlyList<ProfileSection> ChangedSections { get; set; } = [];
 
     // Optional but very useful for UX:
     public DateTimeOffset? LastReviewerActionAtUtc { get; set; }

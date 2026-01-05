@@ -25,7 +25,7 @@ public sealed class GetUserAssignedRoleIdsQueryHandler(
         var assignedRoleNames = await userManager.GetRolesAsync(user);
 
         if (assignedRoleNames.Count == 0)
-            return Result.Ok<IReadOnlyCollection<Guid>>(Array.Empty<Guid>());
+            return Result.Ok<IReadOnlyCollection<Guid>>([]);
 
         var roleNameSet = new HashSet<string>(assignedRoleNames, StringComparer.OrdinalIgnoreCase);
 

@@ -20,6 +20,7 @@ public sealed class ProfilePrefillDto
     public bool PhoneVerified { get; init; }
     public string? Nationality { get; init; }
     public string? Qid { get; init; }
+    public DateOnly? QidExpiry { get; init; }
     public string? Locale { get; init; }
     public string? Provider { get; init; }
 }
@@ -28,6 +29,7 @@ public sealed class ProfileStatusDto
 {
     public bool IsComplete { get; init; }
     public UserProfileStatus Status { get; init; }
+    public bool AvailableForRecruitment { get; init; }
 
     // ===== Scalars من UserProfile =====
     public Guid? CandidateTypeId { get; init; }

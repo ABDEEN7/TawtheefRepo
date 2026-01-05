@@ -30,7 +30,12 @@ public enum ReviewStatus
     NeedsCorrection = 4,
     ChangesRequested = NeedsCorrection
 }
-public enum ReviewTargetType { Section = 1, Field=2, Row=3, Attachment=4 }
+public enum ReviewTargetType {
+    Section = 1, 
+    Field = 2, 
+    Row = 3, 
+    Attachment = 4
+}
 
 [Table(nameof(ReviewItem), Schema = Schemas.Hr)]
 public class ReviewItem : EventEntity

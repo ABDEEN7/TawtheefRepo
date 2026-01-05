@@ -12,6 +12,9 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
             .HasMaxLength(50)
             .HasConversion<string>()
             .HasDefaultValue(UserProfileStatus.InCreation);
+
+        builder.Property(u => u.AvailableForRecruitment)
+            .HasDefaultValue(true);
         
         builder
             .HasOne(u => u.ResidenceCountry)

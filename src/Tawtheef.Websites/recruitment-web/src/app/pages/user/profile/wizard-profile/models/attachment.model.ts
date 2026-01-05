@@ -2,7 +2,7 @@ import {UploadedFileRef} from './profile-state.model';
 
 export interface Attachment {
   id?: string;
-  name: string;
+  title: string;
   fileName?: string;
   attachmentId?: string;
   type?: string;
