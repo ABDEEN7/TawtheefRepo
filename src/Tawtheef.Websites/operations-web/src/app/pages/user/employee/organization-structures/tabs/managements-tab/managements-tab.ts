@@ -12,6 +12,7 @@ import { OrganizationStructuresStore } from '../../organization-structures.store
 import { OrganizationStructuresFacade } from '../../organization-structures.facade';
 import {PaginationComponent} from '../../../../../../shared/components/pagination/pagination.component';
 import {Select} from 'primeng/select';
+import {Tooltip} from 'primeng/tooltip';
 
 @Component({
   selector: 'app-managements-tab',
@@ -26,7 +27,8 @@ import {Select} from 'primeng/select';
     ToggleSwitch,
     InputTextModule,
     PaginationComponent,
-    Select
+    Select,
+    Tooltip
   ]
 })
 export class ManagementsTabComponent {
