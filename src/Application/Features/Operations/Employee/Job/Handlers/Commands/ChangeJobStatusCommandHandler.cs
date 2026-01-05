@@ -1,5 +1,6 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
@@ -13,7 +14,7 @@ public class ChangeJobStatusCommandHandler(
     IJobValidationService validationService,
     IMediator mediator,
     IUnitOfWork unitOfWork)
-    : IRequestHandler<ChangeJobStatusCommand, IResult<Unit>>
+    : ICommandHandler<ChangeJobStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         ChangeJobStatusCommand request,
@@ -34,9 +35,8 @@ public class ChangeJobStatusCommandHandler(
 
         job.ChangeStatus(request.NewStatusId);
 
-        var jobReviewsStatus = await mediator.Send(
-            new UpdateJobTabReviewStatusCommand(job.Id),
-            cancellationToken);
+        await mediator.SendCommandAsync<UpdateJobTabReviewStatusCommand, IResult<Unit>>(
+            new UpdateJobTabReviewStatusCommand(job.Id), cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);

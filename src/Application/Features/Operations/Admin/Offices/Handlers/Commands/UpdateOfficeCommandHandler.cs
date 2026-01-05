@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Commands;
 
 public sealed class UpdateOfficeCommandHandler(IUnitOfWork unitOfWork, UserManager<User> userManager)
-    : IRequestHandler<UpdateOfficeCommand, IResult<bool>>
+    : ICommandHandler<UpdateOfficeCommand, IResult<bool>>
 {
     public async Task<IResult<bool>> Handle(
         UpdateOfficeCommand request,

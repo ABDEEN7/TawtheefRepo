@@ -1,6 +1,8 @@
 using System.Text.Json;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,6 +13,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Validators;
 using Tawtheef.Application.Features.Resources.Commands;
+using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
@@ -22,7 +25,7 @@ public sealed class SaveProfileEducationHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService)
-    : IRequestHandler<SaveProfileEducationCommand, IResult<Unit>>
+    : ICommandHandler<SaveProfileEducationCommand, IResult<Unit>>
 {
     // JSON options مرة واحدة بدل ما نعيد إنشائها
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -244,7 +247,7 @@ public sealed class SaveProfileEducationHandler(
             return Result.Ok<Guid?>(null);
 
         var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "education", file!, false, ct);
-        var uploadResult = await mediator.Send(
+        var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
             new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
             ct);
 

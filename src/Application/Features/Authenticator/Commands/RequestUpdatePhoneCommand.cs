@@ -1,7 +1,8 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 
 namespace Tawtheef.Application.Features.Authenticator.Commands;
 
 public record RequestUpdatePhoneCommand(Guid? UserId, string PhoneE164)
-    : IRequest<IResult<Unit>>;
+    : ICommand<IResult<Unit>>;

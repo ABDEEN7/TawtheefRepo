@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿
+using Cortex.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.Commands;

@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -14,7 +14,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Countries.Handlers.Quer
 public sealed class ListCountriesQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper)
-    : IRequestHandler<GetListCountriesQuery, IResult<PaginatedResult<CountryAdminDto>>>
+    : IQueryHandler<GetListCountriesQuery, IResult<PaginatedResult<CountryAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<CountryAdminDto>>> Handle(
         GetListCountriesQuery request,

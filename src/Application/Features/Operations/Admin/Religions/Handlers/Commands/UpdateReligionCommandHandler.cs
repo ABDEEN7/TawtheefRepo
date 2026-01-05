@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -13,7 +13,7 @@ public sealed class UpdateReligionCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : IRequestHandler<UpdateReligionCommand, IResult<Guid>>
+    : ICommandHandler<UpdateReligionCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(UpdateReligionCommand request, CancellationToken cancellationToken)
     {

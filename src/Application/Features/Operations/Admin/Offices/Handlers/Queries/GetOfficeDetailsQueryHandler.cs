@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Admin.Offices.DTOs;
@@ -13,7 +13,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Querie
 public sealed class GetOfficeDetailsQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper)
-    : IRequestHandler<GetOfficeDetailsQuery, IResult<OfficeDetailsDto>>
+    : IQueryHandler<GetOfficeDetailsQuery, IResult<OfficeDetailsDto>>
 {
     public async Task<IResult<OfficeDetailsDto>> Handle(GetOfficeDetailsQuery request, CancellationToken cancellationToken)
     {

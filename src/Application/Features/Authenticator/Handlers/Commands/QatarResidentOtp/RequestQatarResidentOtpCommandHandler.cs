@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
@@ -17,7 +18,7 @@ public sealed class RequestQatarResidentOtpCommandHandler(
     UserManager<User> userManager,
     ISmsSender smsSender,
     TimeProvider timeProvider)
-    : IRequestHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
+    : ICommandHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestQatarResidentOtpCommand request, CancellationToken cancellationToken)
     {

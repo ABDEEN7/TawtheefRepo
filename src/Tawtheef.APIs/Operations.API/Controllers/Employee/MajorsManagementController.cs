@@ -1,4 +1,5 @@
-using MediatR;
+
+using Cortex.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Queries;

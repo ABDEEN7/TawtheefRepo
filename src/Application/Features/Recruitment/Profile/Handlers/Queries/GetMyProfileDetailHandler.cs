@@ -1,7 +1,8 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -18,7 +19,7 @@ public sealed class GetMyProfileDetailHandler(
     IUnitOfWork uow,
     IMapper mapper,
     IMediaUrlResolver media)
-    : IRequestHandler<GetMyProfileDetailQuery, Result<MyProfileDetailDto>>
+    : IQueryHandler<GetMyProfileDetailQuery, Result<MyProfileDetailDto>>
 {
     public async Task<Result<MyProfileDetailDto>> Handle(GetMyProfileDetailQuery request, CancellationToken ct)
     {

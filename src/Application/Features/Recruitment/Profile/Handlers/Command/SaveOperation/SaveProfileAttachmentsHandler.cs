@@ -1,6 +1,8 @@
 using System.Text.Json;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
@@ -21,7 +23,7 @@ public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService
-) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
+) : ICommandHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -117,7 +119,7 @@ public sealed class SaveProfileAttachmentsHandler(
                 return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
 
             var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "additional", file, false, cancellationToken);
-            var uploadResult = await mediator.Send(
+            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
             if (uploadResult.IsFailed)

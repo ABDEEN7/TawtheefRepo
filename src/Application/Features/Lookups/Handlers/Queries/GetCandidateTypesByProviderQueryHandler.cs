@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
@@ -14,7 +14,7 @@ namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 public sealed class GetCandidateTypesByProviderQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper)
-    : IRequestHandler<GetCandidateTypesByProviderQuery, IResult<List<DropdownOptions>>>
+    : IQueryHandler<GetCandidateTypesByProviderQuery, IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(
         GetCandidateTypesByProviderQuery request,

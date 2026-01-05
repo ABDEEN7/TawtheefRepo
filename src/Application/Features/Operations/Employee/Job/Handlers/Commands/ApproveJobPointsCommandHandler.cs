@@ -1,5 +1,5 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator.Commands;
+using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
@@ -9,7 +9,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Command
 
 public class ApproveJobPointsCommandHandler(
     IJobPointsRepository jobPointsRepository,
-    IUnitOfWork uow) : IRequestHandler<ApproveJobPointsCommand, IResult<bool>>
+    IUnitOfWork uow) : ICommandHandler<ApproveJobPointsCommand, IResult<bool>>
 {
     public async Task<IResult<bool>> Handle(ApproveJobPointsCommand request, CancellationToken cancellationToken)
     {

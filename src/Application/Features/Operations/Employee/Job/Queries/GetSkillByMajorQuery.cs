@@ -1,8 +1,8 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator.Queries;
+using FluentResults;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Lookups.Queries;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
-public record GetSkillByMajorQuery(Guid MajorId) : BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;
+public record GetSkillByMajorQuery(Guid MajorId) : BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>;

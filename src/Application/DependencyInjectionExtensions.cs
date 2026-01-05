@@ -1,9 +1,11 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+using Cortex.Mediator.DependencyInjection;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
-using MediatR;
+
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application.Common.Behaviours;
 using Tawtheef.Application.Common.Mappers;
@@ -19,10 +21,10 @@ namespace Tawtheef.Application
         /// <summary>
         /// Registers application-level services into DI.
         /// </summary>
-        public static void AddApplicationLayer(this IServiceCollection services)
+        public static void AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
         {
             RegisterMapster(services);
-            RegisterMediator(services);
+            RegisterMediator(services, configuration);
             RegisterValidators(services);
 
             services.AddHttpContextAccessor();
@@ -30,7 +32,7 @@ namespace Tawtheef.Application
 
             // Expose a time provider so services can rely on a testable time source.
             services.AddSingleton(TimeProvider.System);
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
         }
 
@@ -47,10 +49,24 @@ namespace Tawtheef.Application
             #endif
         }
 
-        private static void RegisterMediator(IServiceCollection services)
+        private static void RegisterMediator(IServiceCollection services, IConfiguration configuration)
         {
             // Registers MediatR handlers from the current assembly.
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            
+            var anchor = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => t is { IsClass: true, IsAbstract: false }).ToArray();
+            
+            services.AddCortexMediator(
+                configuration: configuration,
+                handlerAssemblyMarkerTypes: anchor,
+                configure: options =>
+                {
+                    // This enables built-in logging, validation, and transaction behaviors
+                    options.AddDefaultBehaviors();
+                }
+            );
         }
 
         private static void RegisterValidators(IServiceCollection services)

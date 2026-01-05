@@ -1,5 +1,6 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -12,7 +13,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.Verifica
 public class RequestUpdatePhoneCommandHandler(
     IUnitOfWork unitOfWork,
     UserManager<User> userManager)
-    : IRequestHandler<RequestUpdatePhoneCommand, IResult<Unit>>
+    : ICommandHandler<RequestUpdatePhoneCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestUpdatePhoneCommand request, CancellationToken cancellationToken)
     {

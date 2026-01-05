@@ -1,7 +1,8 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 
 namespace Tawtheef.Application.Features.Authenticator.Commands;
 
 public sealed record RequestQatarResidentOtpCommand(string Qid, string PhoneNumber, DateOnly QidExpiry)
-    : IRequest<IResult<Unit>>;
+    : ICommand<IResult<Unit>>;

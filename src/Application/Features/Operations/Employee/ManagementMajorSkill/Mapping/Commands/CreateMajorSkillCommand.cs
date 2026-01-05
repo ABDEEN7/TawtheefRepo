@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Commands;
 
@@ -8,4 +9,4 @@ public record CreateMajorSkillCommand(
     Guid SkillId,
     bool IsSkillRequired,
     bool IsActive
-) : IRequest<IResult<Unit>>;
+) : ICommand<IResult<Unit>>;

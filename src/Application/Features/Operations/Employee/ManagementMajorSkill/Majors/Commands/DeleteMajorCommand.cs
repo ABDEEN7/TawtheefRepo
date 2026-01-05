@@ -1,6 +1,7 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Commands;
 
-public record DeleteMajorCommand(Guid Id): IRequest<IResult<Unit>>;
+public record DeleteMajorCommand(Guid Id): ICommand<IResult<Unit>>;

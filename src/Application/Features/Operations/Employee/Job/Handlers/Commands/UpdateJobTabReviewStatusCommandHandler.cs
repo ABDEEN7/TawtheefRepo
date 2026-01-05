@@ -1,5 +1,6 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
@@ -10,7 +11,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Command
 public sealed class UpdateJobTabReviewStatusCommandHandler(
     IUnitOfWork uow,
     IJobTabReviewNoteRepository jobTabReviewNoteRepository
-) : IRequestHandler<UpdateJobTabReviewStatusCommand, IResult<Unit>>
+) : ICommandHandler<UpdateJobTabReviewStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateJobTabReviewStatusCommand cmd,

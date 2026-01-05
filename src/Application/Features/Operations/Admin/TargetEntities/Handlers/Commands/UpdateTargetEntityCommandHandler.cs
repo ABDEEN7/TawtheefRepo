@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -13,7 +13,7 @@ public sealed class UpdateTargetEntityCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : IRequestHandler<UpdateTargetEntityCommand, IResult<Guid>>
+    : ICommandHandler<UpdateTargetEntityCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(UpdateTargetEntityCommand request, CancellationToken cancellationToken)
     {

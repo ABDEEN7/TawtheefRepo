@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="FluentResults" />
-        <PackageReference Include="MediatR" />
+        <PackageReference Include="Cortex.Mediator" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     </ItemGroup>
 

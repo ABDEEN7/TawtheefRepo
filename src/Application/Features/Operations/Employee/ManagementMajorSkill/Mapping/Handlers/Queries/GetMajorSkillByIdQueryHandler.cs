@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.DTOs;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Handlers.Queries;
 
 public sealed class GetMajorSkillByIdQueryHandler(IUnitOfWork uow, IMapper mapper)
-    : IRequestHandler<GetMajorSkillByIdQuery, IResult<MajorSkillDetailsDto>>
+    : IQueryHandler<GetMajorSkillByIdQuery, IResult<MajorSkillDetailsDto>>
 {
     public async Task<IResult<MajorSkillDetailsDto>> Handle(GetMajorSkillByIdQuery request, CancellationToken ct)
     {

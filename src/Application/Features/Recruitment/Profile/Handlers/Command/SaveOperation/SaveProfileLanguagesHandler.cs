@@ -1,5 +1,7 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
@@ -13,7 +15,7 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 public sealed class SaveProfileLanguagesHandler(
     IUnitOfWork uow,
     IProfileStepValidationService validationService
-) : IRequestHandler<SaveProfileLanguagesCommand, IResult<Unit>>
+) : ICommandHandler<SaveProfileLanguagesCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileLanguagesCommand cmd, CancellationToken ct)
     {

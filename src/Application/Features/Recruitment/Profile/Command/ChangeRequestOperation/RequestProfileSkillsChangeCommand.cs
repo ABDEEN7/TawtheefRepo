@@ -1,5 +1,7 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
@@ -7,5 +9,5 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeReques
 public sealed record RequestProfileSkillsChangeCommand(
     Guid UserId,
     SaveProfileSkillsRequest Request
-) : IRequest<IResult<Unit>>;
+) : ICommand<IResult<Unit>>;
 

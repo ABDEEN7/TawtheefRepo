@@ -1,6 +1,6 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
 using Mapster;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
@@ -17,7 +17,7 @@ public class CreateJobFromPreviousCommandHandler(
     IJobRepository jobRepository,
     IJobPointsRepository jobPointsRepository,
     IUnitOfWork unitOfWork)
-    : IRequestHandler<CreateJobFromPreviousCommand, IResult<Guid>>
+    : ICommandHandler<CreateJobFromPreviousCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         CreateJobFromPreviousCommand request,

@@ -1,17 +1,17 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Commands;
+using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Commands;
 
 public sealed class CreateRoleCommandHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
-    : IRequestHandler<CreateRoleCommand, IResult<RoleDto>>
+    : ICommandHandler<CreateRoleCommand, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {

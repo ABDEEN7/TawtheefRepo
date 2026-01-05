@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Operations.Admin.Languages.Handlers.Queries;
 
 public sealed class ListLanguagesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetListLanguagesQuery, IResult<PaginatedResult<LanguageAdminDto>>>
+    : IQueryHandler<GetListLanguagesQuery, IResult<PaginatedResult<LanguageAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<LanguageAdminDto>>> Handle(
         GetListLanguagesQuery request,
