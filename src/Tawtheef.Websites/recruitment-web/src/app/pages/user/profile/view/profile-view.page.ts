@@ -19,7 +19,6 @@ import {
 } from '../overview/models/profile-overview.model';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { ProfileOverviewService } from '../overview/services/profile-overview.service';
-import { ProfileSectionQueriesService } from '../overview/services/profile-section.queries';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { ReviewStepsDialogComponent } from '../overview/dialogs/review-steps-dialog/review-steps-dialog.component';
 import { ReviewItemEditDialogComponent } from '../overview/dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
@@ -34,6 +33,7 @@ import { ProfileAchievementsSectionComponent } from './sections/achievements-sec
 import { ProfileSkillsSectionComponent } from './sections/skills-section.component';
 import { ProfileLanguagesSectionComponent } from './sections/languages-section.component';
 import { ProfileAttachmentsSectionComponent } from './sections/attachments-section.component';
+import { ProfileViewCqrs } from './profile-view.cqrs';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -73,7 +73,7 @@ export class ProfileViewPage {
   private readonly router = inject(Router);
   private readonly i18n = inject(TranslateService);
   private readonly overviewService = inject(ProfileOverviewService);
-  private readonly sectionQueries = inject(ProfileSectionQueriesService);
+  private readonly profileCqrs = inject(ProfileViewCqrs);
   private readonly dialogService = inject(DialogService);
 
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
@@ -91,7 +91,7 @@ export class ProfileViewPage {
   ];
 
   private readonly basics = rxResource({
-    loader: () => this.sectionQueries.loadBasics()
+    loader: () => this.profileCqrs.basics()
   });
 
   private readonly review = rxResource({
@@ -108,7 +108,7 @@ export class ProfileViewPage {
   constructor() {
     this.cards.forEach(card => {
       this.sections.set(card.section, rxResource({
-        loader: () => this.sectionQueries.loadSection(card.section),
+        loader: () => this.profileCqrs.section(card.section),
         manual: true
       }));
     });
