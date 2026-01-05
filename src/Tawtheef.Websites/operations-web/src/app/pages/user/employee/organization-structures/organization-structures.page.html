@@ -1,0 +1,31 @@
+<div class="management-page" i18nNamespace="pages/employee/organization-structures" [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'">
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      <div class="nav nav-pills flex-wrap stepper">
+        <button class="nav-link" [class.active]="store.activeTab() === 'sectors'" (click)="service.switchTab('sectors')">
+          {{ 'ORG_STRUCTURES.SECTORS_TAB' | translate }}
+        </button>
+        <button class="nav-link" [class.active]="store.activeTab() === 'managements'" (click)="service.switchTab('managements')">
+          {{ 'ORG_STRUCTURES.MANAGEMENTS_TAB' | translate }}
+        </button>
+        <button class="nav-link" [class.active]="store.activeTab() === 'departments'" (click)="service.switchTab('departments')">
+          {{ 'ORG_STRUCTURES.DEPARTMENTS_TAB' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      @if (store.activeTab() === 'sectors') {
+        <app-sectors-tab />
+      }
+      @if (store.activeTab() === 'managements') {
+        <app-managements-tab />
+      }
+      @if (store.activeTab() === 'departments') {
+        <app-departments-tab />
+      }
+    </div>
+  </div>
+</div>

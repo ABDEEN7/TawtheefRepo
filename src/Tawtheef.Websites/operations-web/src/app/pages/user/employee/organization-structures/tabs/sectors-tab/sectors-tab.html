@@ -1,0 +1,118 @@
+<div class="row mb-3 align-items-center">
+  <div class="col-md-6">
+    <p class="fw-bold text-primary mb-0">{{ 'ORG_STRUCTURES.SECTORS_BADGE' | translate }}</p>
+    <h3 class="fw-bold mb-0">{{ 'ORG_STRUCTURES.SECTORS_TITLE' | translate }}</h3>
+    <p class="fs-16 m-0">{{ 'ORG_STRUCTURES.SECTORS_HINT' | translate }}</p>
+  </div>
+  <div class="col-md-6 text-end">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      (click)="service.openCreateSector()">
+      {{ 'ORG_STRUCTURES.CREATE_SECTOR' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row align-items-end g-3">
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'ORG_STRUCTURES.SEARCH_LABEL' | translate }}</label>
+            <input
+              class="form-control"
+              [placeholder]="'ORG_STRUCTURES.SEARCH_SECTORS' | translate"
+              [ngModel]="store.sectorFilters().search"
+              (ngModelChange)="service.setSectorSearch($event)" />
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'ORG_STRUCTURES.STATUS_FILTER' | translate }}</label>
+            <p-dropdown
+              class="w-100"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              [ngModel]="store.sectorFilters().isActive"
+              (ngModelChange)="service.setSectorStatus($event)">
+              <ng-template pTemplate="selectedItem" let-selected>
+                <span>{{ (selected?.label || 'ORG_STRUCTURES.STATUS_ALL') | translate }}</span>
+              </ng-template>
+              <ng-template let-option pTemplate="item">
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table
+      [value]="store.sectors()"
+      [rowHover]="true"
+      responsiveLayout="scroll">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'ORG_STRUCTURES.SECTOR_COLUMN' | translate }}</th>
+          <th>{{ 'ORG_STRUCTURES.ORDER_COLUMN' | translate }}</th>
+          <th>{{ 'ORG_STRUCTURES.STATUS' | translate }}</th>
+          <th>{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-sector>
+        <tr>
+          <td>
+            <div class="fw-semibold">{{ sector.name }}</div>
+            <small class="text-muted">{{ sector.description || '' }}</small>
+          </td>
+          <td>{{ sector.displayOrder ?? 0 }}</td>
+          <td>
+            <span class="badge"
+                  [class.bg-success-subtle]="sector.isActive !== false"
+                  [class.bg-danger-subtle]="sector.isActive === false">
+              {{ sector.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
+            </span>
+          </td>
+          <td class="d-flex justify-content-start gap-2">
+            <button
+              pButton
+              type="button"
+              class="p-button-outlined p-button-sm"
+              (click)="service.openEditSector(sector)">
+              <i class="pi pi-pencil" pButtonIcon></i>
+              <span pButtonLabel>{{'common.edit' |translate}}</span>
+            </button>
+
+            <p-toggle-switch
+              [ngModel]="sector.isActive !== false"
+              (ngModelChange)="service.toggleSectorActive(sector, $event)">
+            </p-toggle-switch>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center text-muted">{{ 'ORG_STRUCTURES.NO_RECORDS' | translate }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<app-pagination
+  [currentPage]="store.sectorFilters().pageNumber ?? 1"
+  [totalItems]="store.sectorMeta().totalCount"
+  [itemsPerPage]="store.sectorFilters().pageSize ?? 10"
+  (pageChanged)="service.onSectorPageChange($event)"
+  (pageSizeChanged)="service.onSectorPageSizeChange($event)"
+  class="mt-4">
+</app-pagination>

@@ -59,6 +59,9 @@ export const Permissions = {
   MajorSkills: {
     Manage: 'major-skill.management',
   },
+  OrganizationStructures: {
+    Manage: 'organization-structures.manage',
+  },
   Nominations: {
     View: 'nominations.view',
     Manage: 'nominations.manage',

@@ -236,6 +236,16 @@ public class ErrorsCodes
     public const string NoteRequired = "NOTE_REQUIRED";
     #endregion
 
+    #region Organization Structures
+    public const string SectorNotFound = "SECTOR_NOT_FOUND";
+    public const string SectorNameAlreadyExists = "SECTOR_NAME_ALREADY_EXISTS";
+    public const string ManagementNotFound = "MANAGEMENT_NOT_FOUND";
+    public const string ManagementNameAlreadyExists = "MANAGEMENT_NAME_ALREADY_EXISTS";
+    public const string DepartmentNotFound = "DEPARTMENT_NOT_FOUND";
+    public const string DepartmentNameAlreadyExists = "DEPARTMENT_NAME_ALREADY_EXISTS";
+    public const string ParentRequired = "PARENT_REQUIRED";
+    #endregion
+
     #region MOI Service
 
     public const string MOIDataNotFound = "MOI_DATA_NOT_FOUND";

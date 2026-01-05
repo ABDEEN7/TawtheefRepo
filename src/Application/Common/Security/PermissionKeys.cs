@@ -116,4 +116,9 @@ public static class PermissionKeys
     {
         public const string Manage = "major-skill.management";
     }
+
+    public static class OrganizationStructures
+    {
+        public const string Manage = "organization-structures.manage";
+    }
 }
