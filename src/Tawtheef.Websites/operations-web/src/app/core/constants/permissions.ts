@@ -26,6 +26,9 @@ export const Permissions = {
     View: 'universities.view',
     Manage: 'universities.manage',
   },
+  ProfileLogs: {
+    View: 'profile.logs.view',
+  },
   Profile: {
     View: 'profile.view',
     Manage: 'profile.manage',
