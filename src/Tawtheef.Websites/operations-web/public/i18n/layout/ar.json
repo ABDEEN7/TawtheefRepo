@@ -37,6 +37,7 @@
   "internal.sidebar.job": "إنشاء وظيفة",
   "internal.sidebar.kawader": "كوادر",
   "internal.sidebar.transfer": "الترشيحات",
+  "internal.sidebar.organization-structures": "إدارة القطاعات والإدارات والأقسام",
   "internal.sidebar.major-skill": "أدارة التخصصات والمهارات",
   "internal.sidebar.invitation-summary":"ملخص دعوات التوظيف",
 
@@ -49,6 +50,8 @@
   "admin.sidebar.majors": "إدارة التخصصات والمهارات",
   "admin.sidebar.countries": "إدارة الدول",
   "admin.sidebar.languages": "إدارة اللغات",
+  "admin.sidebar.targetEntities": "إدارة الجهات المستهدفة",
+  "admin.sidebar.religions": "إدارة الديانات",
   "admin.sidebar.universities": "إدارة الجامعات",
   "admin.sidebar.profileLogs": "سجل نشاط الملفات",
 

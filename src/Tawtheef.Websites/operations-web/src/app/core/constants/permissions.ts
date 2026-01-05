@@ -14,6 +14,10 @@ export const Permissions = {
     View: 'languages.view',
     Manage: 'languages.manage',
   },
+  Religions: {
+    View: 'religions.view',
+    Manage: 'religions.manage',
+  },
   Offices: {
     View: 'offices.view',
     Manage: 'offices.manage',
@@ -28,6 +32,10 @@ export const Permissions = {
   },
   ProfileLogs: {
     View: 'profile.logs.view',
+  },
+  TargetEntities: {
+    View: 'targetentities.view',
+    Manage: 'targetentities.manage',
   },
   Profile: {
     View: 'profile.view',
@@ -53,6 +61,9 @@ export const Permissions = {
   },
   MajorSkills: {
     Manage: 'major-skill.management',
+  },
+  OrganizationStructures: {
+    Manage: 'organization-structures.manage',
   },
   Nominations: {
     View: 'nominations.view',

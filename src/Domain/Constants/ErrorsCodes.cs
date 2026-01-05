@@ -236,6 +236,16 @@ public class ErrorsCodes
     public const string NoteRequired = "NOTE_REQUIRED";
     #endregion
 
+    #region Organization Structures
+    public const string SectorNotFound = "SECTOR_NOT_FOUND";
+    public const string SectorNameAlreadyExists = "SECTOR_NAME_ALREADY_EXISTS";
+    public const string ManagementNotFound = "MANAGEMENT_NOT_FOUND";
+    public const string ManagementNameAlreadyExists = "MANAGEMENT_NAME_ALREADY_EXISTS";
+    public const string DepartmentNotFound = "DEPARTMENT_NOT_FOUND";
+    public const string DepartmentNameAlreadyExists = "DEPARTMENT_NAME_ALREADY_EXISTS";
+    public const string ParentRequired = "PARENT_REQUIRED";
+    #endregion
+
     #region MOI Service
 
     public const string MOIDataNotFound = "MOI_DATA_NOT_FOUND";
@@ -256,6 +266,16 @@ public class ErrorsCodes
     public const string UniversityNotFound = "UNIVERSITY_NOT_FOUND";
     public const string UniversityNameExists = "UNIVERSITY_NAME_EXISTS";
     public const string CityNotFound = "CITY_NOT_FOUND";
+    #endregion
+
+    #region Religions
+    public const string ReligionNotFound = "RELIGION_NOT_FOUND";
+    public const string ReligionNameExists = "RELIGION_NAME_EXISTS";
+    #endregion
+
+    #region Target Entities
+    public const string TargetEntityNotFound = "TARGET_ENTITY_NOT_FOUND";
+    public const string TargetEntityNameExists = "TARGET_ENTITY_NAME_EXISTS";
     #endregion
 
     #region Offices

@@ -19,12 +19,17 @@ public static class PermissionCatalog
 
         Permissions.Languages.View,
         Permissions.Languages.Manage,
+        Permissions.Religions.View,
+        Permissions.Religions.Manage,
 
         Permissions.Countries.View,
         Permissions.Countries.Manage,
 
         Permissions.Universities.View,
         Permissions.Universities.Manage,
+
+        Permissions.TargetEntities.View,
+        Permissions.TargetEntities.Manage,
 
         Permissions.ProfileLogs.View,
 
@@ -54,6 +59,7 @@ public static class PermissionCatalog
         Permissions.OfficeUsers.Manage,
 
         Permissions.MajorSkills.Manage,
+        Permissions.OrganizationStructures.Manage,
     ]);
 
     public static readonly ISet<string> Keys =

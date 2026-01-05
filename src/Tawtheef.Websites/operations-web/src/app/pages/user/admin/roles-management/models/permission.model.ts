@@ -7,4 +7,5 @@ export interface RoleDto {
   systemName: string;
   isSystemRole: boolean;
   permissions: string[]; // Permission IDs
+  permissionNames?: string[];
 }

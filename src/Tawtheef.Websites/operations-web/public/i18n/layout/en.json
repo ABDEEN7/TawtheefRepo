@@ -45,6 +45,7 @@
   "internal.sidebar.approve-job": "Approve Facilities",
   "internal.sidebar.job": "Create Job",
   "internal.sidebar.kawader": "Kawader",
+  "internal.sidebar.organization-structures": "Organization Structures",
   "internal.sidebar.major-skill": "Manage Majors and Skills",
   "internal.sidebar.invitation-summary": "Job Invitation Summary",
   "internal.sidebar.transfer": "Nominations",
@@ -58,6 +59,8 @@
 "admin.sidebar.languages": "Languages Management",
 "admin.sidebar.universities": "Universities Management",
 "admin.sidebar.profileLogs": "Profile logs",
+"admin.sidebar.targetEntities": "Target Entities Management",
+"admin.sidebar.religions": "Religions Management",
 
 "common.sidebar.settings": "Settings",
 "common.sidebar.logout": "Logout",

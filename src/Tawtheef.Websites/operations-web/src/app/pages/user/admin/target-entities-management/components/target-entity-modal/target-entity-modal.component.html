@@ -1,0 +1,57 @@
+<div
+  class="modal fade show"
+  tabindex="-1"
+  [ngClass]="{ 'd-block': visible }"
+  role="dialog"
+  aria-modal="true"
+  i18nNamespace="pages/admin/target-entities-management">
+  <div class="modal-dialog modal-lg" [class.modal-dialog-centered]="true" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ isCreateMode() ? ('TARGET_ENTITIES.ADD_TITLE' | translate) : ('TARGET_ENTITIES.EDIT_TITLE' | translate) }}
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">{{ 'TARGET_ENTITIES.NAME_AR' | translate }}</label>
+            <input type="text" class="form-control" formControlName="nameAr" [class.is-invalid]="submitted && form.controls.nameAr.invalid" />
+            <div class="invalid-feedback">{{ requiredError('nameAr') }}</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'TARGET_ENTITIES.NAME_EN' | translate }}</label>
+            <input type="text" class="form-control" formControlName="nameEn" [class.is-invalid]="submitted && form.controls.nameEn.invalid" />
+            <div class="invalid-feedback">{{ requiredError('nameEn') }}</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'TARGET_ENTITIES.DESC_AR' | translate }}</label>
+            <textarea class="form-control" formControlName="descriptionAr" rows="3"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'TARGET_ENTITIES.DESC_EN' | translate }}</label>
+            <textarea class="form-control" formControlName="descriptionEn" rows="3"></textarea>
+          </div>
+          <div class="col-12 form-check form-switch mt-2">
+            <input type="checkbox" class="form-check-input" formControlName="isActive" id="isActiveSwitch" />
+            <label class="form-check-label" for="isActiveSwitch">{{ 'TARGET_ENTITIES.IS_ACTIVE' | translate }}</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="close()">
+          {{ 'TARGET_ENTITIES.CANCEL' | translate }}
+        </button>
+        <button type="button" class="btn btn-maroon" (click)="submit()" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          }
+          {{ 'TARGET_ENTITIES.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="visible"></div>

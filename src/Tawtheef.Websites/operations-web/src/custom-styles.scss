@@ -726,11 +726,23 @@ body.ltr
 # Action Buttons Section
 --------------------------------------------------------------*/
 .action-buttons{ display: flex;gap:10px}
-.action-buttons .btn{
- border-color:rgba(203, 203, 203, 1);
-  color: $color-primary;
-  background-color: $color-white ;
-  min-width: 35px;
-  height: 35px;
+.action-buttons {
+  .btn{
+    border-color: rgb(203, 203, 203);
+    color: #8a1538;
+    background-color: #fff;
+    width: 35px;
+    height: 35px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+    &:hover{
+      border-color: #8a1538;
+      color: #8a1538;
+      background-color: #fff;
+    }
+  }
+
 
 }
