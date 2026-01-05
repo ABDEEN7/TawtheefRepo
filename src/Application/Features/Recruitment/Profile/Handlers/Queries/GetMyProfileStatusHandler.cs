@@ -29,7 +29,7 @@ public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, IMapper mapper, I
         using var scope = new MapContextScope();
         scope.Context.Parameters[ResourceMapper.MediaKey] = media;
 
-        var source = new ProfileBootstrapSource(profile, profile.User ?? new User { Id = request.UserId }, new ProfilePrefillDto());
+        var source = new ProfileBootstrapSource(profile, profile.User!, new ProfilePrefillDto());
         var dto = mapper.Map<ProfileStatusDto>(source);
         return Result.Ok(dto);
     }
@@ -50,13 +50,13 @@ public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, IMapper mapper, I
             .Include(p => p.MaritalStatus)
             .Include(p => p.ResidenceCountry)
             .Include(p => p.InterviewLocation)
-            .Include(p => p.ResidenceAddress)!.ThenInclude(r => r!.Certificate)
+            .Include(p => p.ResidenceAddress).ThenInclude(r => r!.Certificate)
             .Include(p => p.ResumeAttachment)
             .Include(p => p.NationalCard)
             .Include(p => p.BirthdayCertificate)
             .Include(p => p.MarriageCertificate)
-            .Include(p => p.SponsorProfile)!.ThenInclude(s => s.SponsorCard)
-            .Include(p => p.SponsorProfile)!.ThenInclude(s => s.SponsorType)
+            .Include(p => p.SponsorProfile).ThenInclude(s => s!.SponsorCard)
+            .Include(p => p.SponsorProfile).ThenInclude(s => s!.SponsorType)
             .AsQueryable();
 
         return section switch

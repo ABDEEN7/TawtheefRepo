@@ -21,12 +21,12 @@ export class ProfilePrerequisitesSectionComponent {
     const p = this.profile;
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
     return [
-      { key: 'resumeAttachment', titleKey: 'profileView.attachments.resume', file: p.resumeAttachment ?? null },
-      { key: 'nationalCard', titleKey: 'profileView.attachments.nationalCard', file: p.nationalCard ?? null },
-      { key: 'residenceAddressCertificate', titleKey: 'profileView.attachments.residenceAddressCertificate', file: p.residenceAddressCertificate ?? null },
-      { key: 'birthdayCertificate', titleKey: 'profileView.attachments.birthdayCertificate', file: p.birthdayCertificate ?? null },
-      { key: 'marriageCertificate', titleKey: 'profileView.attachments.marriageCertificate', file: p.marriageCertificate ?? null },
-      { key: 'sponsorCard', titleKey: 'profileView.attachments.sponsorCard', file: p.sponsorCard ?? null }
+      { key: 'resumeAttachment', titleKey: 'profileOverview.attachments.resume', file: p.resumeAttachment ?? null },
+      { key: 'nationalCard', titleKey: 'profileOverview.attachments.nationalCard', file: p.nationalCard ?? null },
+      { key: 'residenceAddressCertificate', titleKey: 'profileOverview.attachments.residenceAddressCertificate', file: p.residenceAddressCertificate ?? null },
+      { key: 'birthdayCertificate', titleKey: 'profileOverview.attachments.birthdayCertificate', file: p.birthdayCertificate ?? null },
+      { key: 'marriageCertificate', titleKey: 'profileOverview.attachments.marriageCertificate', file: p.marriageCertificate ?? null },
+      { key: 'sponsorCard', titleKey: 'profileOverview.attachments.sponsorCard', file: p.sponsorCard ?? null }
     ];
   });
 

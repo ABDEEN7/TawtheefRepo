@@ -31,25 +31,25 @@ export class ReviewStepsDialogComponent {
   sectionLabelKey(section: ProfileSectionEnum): string {
     switch (section) {
       case ProfileSectionEnum.Prerequisites:
-        return 'profileView.sections.prerequisites';
+        return 'profileOverview.sections.prerequisites';
       case ProfileSectionEnum.Personal:
-        return 'profileView.sections.personal';
+        return 'profileOverview.sections.personal';
       case ProfileSectionEnum.Contact:
-        return 'profileView.sections.contact';
+        return 'profileOverview.sections.contact';
       case ProfileSectionEnum.Qualifications:
-        return 'profileView.sections.qualifications';
+        return 'profileOverview.sections.qualifications';
       case ProfileSectionEnum.Experience:
-        return 'profileView.sections.experiences';
+        return 'profileOverview.sections.experiences';
       case ProfileSectionEnum.TrainingCourses:
-        return 'profileView.sections.trainingCourses';
+        return 'profileOverview.sections.trainingCourses';
       case ProfileSectionEnum.CertificatesAndAwards:
-        return 'profileView.sections.certificatesAndAwards';
+        return 'profileOverview.sections.certificatesAndAwards';
       case ProfileSectionEnum.Skills:
-        return 'profileView.sections.skills';
+        return 'profileOverview.sections.skills';
       case ProfileSectionEnum.Languages:
-        return 'profileView.sections.languages';
+        return 'profileOverview.sections.languages';
       case ProfileSectionEnum.Attachments:
-        return 'profileView.sections.attachments';
+        return 'profileOverview.sections.attachments';
       default:
         return 'common.section';
     }
@@ -58,14 +58,14 @@ export class ReviewStepsDialogComponent {
   statusLabelKey(status: ReviewStatusEnum): string {
     switch (status) {
       case ReviewStatusEnum.NeedsCorrection:
-        return 'profileView.reviewStatus.needsCorrection';
+        return 'profileOverview.reviewStatus.needsCorrection';
       case ReviewStatusEnum.Rejected:
-        return 'profileView.reviewStatus.rejected';
+        return 'profileOverview.reviewStatus.rejected';
       case ReviewStatusEnum.Approved:
-        return 'profileView.reviewStatus.approved';
+        return 'profileOverview.reviewStatus.approved';
       case ReviewStatusEnum.Pending:
       default:
-        return 'profileView.reviewStatus.other';
+        return 'profileOverview.reviewStatus.other';
     }
   }
 
@@ -92,7 +92,7 @@ export class ReviewStepsDialogComponent {
   }
 
   sectionSummary(section: MyProfileReviewSectionDto): string {
-    if (!section.notesCount) return this.translate.instant('profileView.reviewSteps.noNotes');
-    return this.translate.instant('profileView.reviewSteps.notesCount', { count: section.notesCount });
+    if (!section.notesCount) return this.translate.instant('profileOverview.reviewSteps.noNotes');
+    return this.translate.instant('profileOverview.reviewSteps.notesCount', { count: section.notesCount });
   }
 }

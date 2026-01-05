@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
-using Tawtheef.Application.Features.Operations.Admin.ProfileLogs;
 using Tawtheef.Application.Features.Operations.Admin.ProfileLogs.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.ProfileLogs.Queries;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -47,7 +46,7 @@ public sealed class GetProfileLogsQueryHandler(
                 {
                     Id = log.Id,
                     UserProfileId = log.UserProfileId,
-                    UserId = log.UserId ?? log.CreatedById,
+                    UserId = log.UserId,
                     ActionType = log.ActionType,
                     Section = log.Section,
                     Notes = log.Notes,

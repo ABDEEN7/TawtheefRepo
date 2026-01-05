@@ -1,3 +1,5 @@
+using Tawtheef.Domain.Entities.Recruitment;
+
 namespace Tawtheef.Application.Features.Operations.Admin.ProfileLogs;
 
 public static class ProfileLogSources

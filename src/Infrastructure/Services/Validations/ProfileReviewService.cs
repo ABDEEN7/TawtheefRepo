@@ -87,8 +87,8 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
 
         if (pending is not null)
         {
-            await AddAuditEntryAsync(auditRepo, userProfileId, requestedByUserId, targetType, section, fieldPath, entityId,
-                resourceId, createdNewChange, loggerRepo);
+            await AddAuditEntryAsync(auditRepo,loggerRepo, userProfileId, requestedByUserId, targetType, section, fieldPath, entityId,
+                resourceId, createdNewChange);
             return pending;
         }
 
@@ -100,8 +100,8 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         item.IsOutdated = true;
 
         await reviewRepo.AddAsync(item);
-        await AddAuditEntryAsync(auditRepo, userProfileId, requestedByUserId, targetType, section, fieldPath, entityId,
-            resourceId, createdNewChange, loggerRepo);
+        await AddAuditEntryAsync(auditRepo, loggerRepo, userProfileId, requestedByUserId, targetType, section, fieldPath, entityId,
+            resourceId, createdNewChange);
         return item;
     }
 

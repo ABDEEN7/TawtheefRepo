@@ -31,9 +31,6 @@ public static class RolePermissionCatalog
             [SystemRoleIds.EmployeeSuperAdmin] =
             [
                 Permissions.Dashboard.View.Key,
-
-                Permissions.ProfileLogs.View.Key,
-
                 Permissions.Profile.View.Key,
                 Permissions.Profile.Manage.Key,
                 Permissions.ProfileDistribution.View.Key,

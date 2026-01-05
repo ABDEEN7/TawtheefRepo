@@ -40,7 +40,10 @@ interface SectionCard {
   icon: string;
   labelKey: string;
 }
-
+// Base (non-generic) rxResource instance type
+type AnyRxRes = ReturnType<typeof rxResource>;
+// Generic wrapper: same shape, but value() is strongly typed
+type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
 @Component({
   selector: 'app-profile-view-page',
   standalone: true,
@@ -75,47 +78,59 @@ export class ProfileViewPage {
   private readonly overviewService = inject(ProfileOverviewService);
   private readonly profileCqrs = inject(ProfileViewCqrs);
   private readonly dialogService = inject(DialogService);
-
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
+
   protected readonly cards: SectionCard[] = [
-    { section: ProfileSectionEnum.Prerequisites, icon: 'pi pi-file', labelKey: 'profileView.sections.prerequisites' },
-    { section: ProfileSectionEnum.Personal, icon: 'pi pi-id-card', labelKey: 'profileView.sections.personal' },
-    { section: ProfileSectionEnum.Contact, icon: 'pi pi-map-marker', labelKey: 'profileView.sections.contact' },
-    { section: ProfileSectionEnum.Qualifications, icon: 'pi pi-graduation-cap', labelKey: 'profileView.sections.qualifications' },
-    { section: ProfileSectionEnum.Experience, icon: 'pi pi-briefcase', labelKey: 'profileView.sections.experiences' },
-    { section: ProfileSectionEnum.TrainingCourses, icon: 'pi pi-book', labelKey: 'profileView.sections.trainingCourses' },
-    { section: ProfileSectionEnum.CertificatesAndAwards, icon: 'pi pi-star', labelKey: 'profileView.sections.certificatesAndAwards' },
-    { section: ProfileSectionEnum.Skills, icon: 'pi pi-bolt', labelKey: 'profileView.sections.skills' },
-    { section: ProfileSectionEnum.Languages, icon: 'pi pi-language', labelKey: 'profileView.sections.languages' },
-    { section: ProfileSectionEnum.Attachments, icon: 'pi pi-paperclip', labelKey: 'profileView.sections.attachments' }
+    { section: ProfileSectionEnum.Prerequisites, icon: 'pi pi-file', labelKey: 'profileOverview.sections.prerequisites' },
+    { section: ProfileSectionEnum.Personal, icon: 'pi pi-id-card', labelKey: 'profileOverview.sections.personal' },
+    { section: ProfileSectionEnum.Contact, icon: 'pi pi-map-marker', labelKey: 'profileOverview.sections.contact' },
+    { section: ProfileSectionEnum.Qualifications, icon: 'pi pi-graduation-cap', labelKey: 'profileOverview.sections.qualifications' },
+    { section: ProfileSectionEnum.Experience, icon: 'pi pi-briefcase', labelKey: 'profileOverview.sections.experiences' },
+    { section: ProfileSectionEnum.TrainingCourses, icon: 'pi pi-book', labelKey: 'profileOverview.sections.trainingCourses' },
+    { section: ProfileSectionEnum.CertificatesAndAwards, icon: 'pi pi-star', labelKey: 'profileOverview.sections.certificatesAndAwards' },
+    { section: ProfileSectionEnum.Skills, icon: 'pi pi-bolt', labelKey: 'profileOverview.sections.skills' },
+    { section: ProfileSectionEnum.Languages, icon: 'pi pi-language', labelKey: 'profileOverview.sections.languages' },
+    { section: ProfileSectionEnum.Attachments, icon: 'pi pi-paperclip', labelKey: 'profileOverview.sections.attachments' }
   ];
+  get keyLabel(){
+    return this.cards.find(c => c.section === this.expanded())?.labelKey;
+  }
 
   private readonly basics = rxResource({
-    loader: () => this.profileCqrs.basics()
+    params: () => true,
+    stream: () => this.profileCqrs.basics()
   });
 
   private readonly review = rxResource({
-    loader: () => this.overviewService.getMyProfileReviewSummary()
+    params: () => true,
+    stream: () => this.overviewService.getMyProfileReviewSummary(),
   });
 
   private readonly changeRequests = rxResource({
-    loader: () => this.overviewService.getMyChangeRequests()
+    params: () => true,
+    stream: () => this.overviewService.getMyChangeRequests(),
   });
 
-  private readonly sections = new Map<ProfileSectionEnum, ReturnType<typeof rxResource<ProfileStatusDto>>>();
+  // FIX: correct rxResource typing inside Map.
+  // If loadSection returns a different DTO per section, make this RxRes<unknown> instead.
+  private readonly sections = new Map<ProfileSectionEnum, RxRes<ProfileStatusDto>>();
+
   protected readonly expanded = signal<ProfileSectionEnum | null>(null);
 
   constructor() {
     this.cards.forEach(card => {
-      this.sections.set(card.section, rxResource({
-        loader: () => this.profileCqrs.section(card.section),
-        manual: true
-      }));
+      this.sections.set(
+        card.section,
+        rxResource<ProfileStatusDto, unknown>({
+          stream: () => this.profileCqrs.section(card.section),
+        })
+      );
     });
   }
 
   readonly header = computed(() => this.basics.value());
   readonly loadingBasics = computed(() => this.basics.status() === 'loading');
+
   readonly reviewNotes = computed(() => {
     const review = this.review.value() as MyProfileReviewSummaryDto | undefined;
     if (!review) return undefined;
@@ -139,10 +154,10 @@ export class ProfileViewPage {
   }
 
   sectionValue(section: ProfileSectionEnum) {
-    return this.sections.get(section)?.value();
+    return this.sections.get(section)?.value() ?? null;
   }
 
-  changeRequestsVm = computed(() => {
+  readonly changeRequestsVm = computed(() => {
     const items = (this.changeRequests.value() as ProfileChangeRequestDto[] | undefined) ?? [];
     return items.map(item => ({
       ...item,
@@ -153,12 +168,15 @@ export class ProfileViewPage {
   });
 
   openReviewStep() {
-    const review = this.review.value();
-    this.dialogService.open(ReviewStepsDialogComponent, {
-      header: this.i18n.instant('profileView.reviewSteps.dialogTitle'),
-      data: { sections: review?.sections ?? [] },
-      styleClass: 'w-100 w-md-75'
-    })?.onClose.subscribe(result => {
+    const review = this.review.value() as MyProfileReviewSummaryDto | undefined;
+
+    this.dialogService
+      .open(ReviewStepsDialogComponent, {
+        header: this.i18n.instant('profileOverview.reviewSteps.dialogTitle'),
+        data: { sections: review?.sections ?? [] },
+        styleClass: 'w-100 w-md-75'
+      })
+      ?.onClose.subscribe(result => {
       if (result?.section) {
         this.navigateToEditSection(result.section as ProfileSectionEnum);
       }
@@ -167,7 +185,7 @@ export class ProfileViewPage {
 
   openReviewItem(note: any, section: ProfileSectionEnum) {
     this.dialogService.open(ReviewItemEditDialogComponent, {
-      header: this.i18n.instant('profileView.reviewItemDialog.title'),
+      header: this.i18n.instant('profileOverview.reviewItemDialog.title'),
       data: { note, section, sectionLabel: note?.title ?? '', canEdit: true, fileUrl: null },
       styleClass: 'w-100 w-md-50'
     });
@@ -210,26 +228,26 @@ export class ProfileViewPage {
   sectionLabelKey(section: number): string {
     switch (section) {
       case ProfileSectionEnum.Prerequisites:
-        return 'profileView.sections.prerequisites';
+        return 'profileOverview.sections.prerequisites';
       case ProfileSectionEnum.Personal:
-        return 'profileView.sections.personal';
+        return 'profileOverview.sections.personal';
       case ProfileSectionEnum.Contact:
-        return 'profileView.sections.contact';
+        return 'profileOverview.sections.contact';
       case ProfileSectionEnum.Qualifications:
-        return 'profileView.sections.qualifications';
+        return 'profileOverview.sections.qualifications';
       case ProfileSectionEnum.Experience:
-        return 'profileView.sections.experiences';
+        return 'profileOverview.sections.experiences';
       case ProfileSectionEnum.TrainingCourses:
-        return 'profileView.sections.trainingCourses';
+        return 'profileOverview.sections.trainingCourses';
       case ProfileSectionEnum.CertificatesAndAwards:
-        return 'profileView.sections.certificatesAndAwards';
+        return 'profileOverview.sections.certificatesAndAwards';
       case ProfileSectionEnum.Skills:
-        return 'profileView.sections.skills';
+        return 'profileOverview.sections.skills';
       case ProfileSectionEnum.Languages:
-        return 'profileView.sections.languages';
+        return 'profileOverview.sections.languages';
       case ProfileSectionEnum.Attachments:
       default:
-        return 'profileView.sections.attachments';
+        return 'profileOverview.sections.attachments';
     }
   }
 
@@ -240,25 +258,25 @@ export class ProfileViewPage {
   }
 
   noteStatusLabelKey(status: number): string {
-    if (status === ReviewStatusEnum.NeedsCorrection) return 'profileView.reviewStatus.needsCorrection';
-    if (status === ReviewStatusEnum.Rejected) return 'profileView.reviewStatus.rejected';
-    return 'profileView.reviewStatus.other';
+    if (status === ReviewStatusEnum.NeedsCorrection) return 'profileOverview.reviewStatus.needsCorrection';
+    if (status === ReviewStatusEnum.Rejected) return 'profileOverview.reviewStatus.rejected';
+    return 'profileOverview.reviewStatus.other';
   }
 
   changeStatusLabelKey(status: number): string {
     switch (status) {
       case ProfileChangeRequestStatusEnum.Pending:
-        return 'profileView.changeRequests.status.pending';
+        return 'profileOverview.changeRequests.status.pending';
       case ProfileChangeRequestStatusEnum.UnderReview:
-        return 'profileView.changeRequests.status.underReview';
+        return 'profileOverview.changeRequests.status.underReview';
       case ProfileChangeRequestStatusEnum.Approved:
-        return 'profileView.changeRequests.status.approved';
+        return 'profileOverview.changeRequests.status.approved';
       case ProfileChangeRequestStatusEnum.Rejected:
-        return 'profileView.changeRequests.status.rejected';
+        return 'profileOverview.changeRequests.status.rejected';
       case ProfileChangeRequestStatusEnum.Canceled:
-        return 'profileView.changeRequests.status.canceled';
+        return 'profileOverview.changeRequests.status.canceled';
       default:
-        return 'profileView.changeRequests.status.pending';
+        return 'profileOverview.changeRequests.status.pending';
     }
   }
 

@@ -16,7 +16,6 @@ import {DatePipe} from '@angular/common';
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
   imports: [
-    RouterLink,
     TranslatePipe,
     DatePipe
   ]

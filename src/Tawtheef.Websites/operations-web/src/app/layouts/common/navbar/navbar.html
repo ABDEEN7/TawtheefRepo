@@ -89,16 +89,11 @@
                 </button>
                 @if (showUserMenu) {
                   <ul class="user-dropdown">
-                    <li>
-                      <a [routerLink]="routes.dashboard('')">
-                        {{ 'internal.nav.userProfile' | translate }}
-                      </a>
-                    </li>
-                    <li>
-                      <a [routerLink]="routes.settings('')">
-                        {{ 'internal.nav.userSettings' | translate }}
-                      </a>
-                    </li>
+<!--                    <li>-->
+<!--                      <a [routerLink]="routes.settings('')">-->
+<!--                        {{ 'internal.nav.userSettings' | translate }}-->
+<!--                      </a>-->
+<!--                    </li>-->
                     <li>
                       <a (click)="logout()">
                         {{ 'internal.nav.logout' | translate }}
