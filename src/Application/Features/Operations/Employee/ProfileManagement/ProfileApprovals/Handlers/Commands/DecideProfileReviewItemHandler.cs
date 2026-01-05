@@ -33,6 +33,8 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail<Unit>(ErrorsCodes.NotesRequiredForCorrection);
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+        var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
         var item = await reviewRepo.DbSet
             .Include(r => r.ProfileChange)
             .FirstOrDefaultAsync(r => r.Id == cmd.ReviewItemId && !r.IsDeleted, ct);
@@ -95,6 +97,29 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             change.ReviewedAtUtc = now;
             change.ReviewerNote = cmd.Note;
         }
+
+        await auditRepo.AddAsync(new AuditTrailEntry
+        {
+            UserProfileId = item.UserProfileId,
+            UserId = cmd.OfficerId,
+            ActionType = "ReviewItemDecision",
+            Notes = $"Review item {item.Id} marked {cmd.Status}",
+            Section = item.Section.ToString(),
+            EntityId = item.EntityId ?? item.Id,
+            AttachmentId = item.ResourceId
+        });
+
+        await loggerRepo.AddAsync(new UserProfileLogger
+        {
+            UserProfileId = item.UserProfileId,
+            PerformedById = cmd.OfficerId,
+            ActionType = "ReviewItemDecision",
+            Notes = $"Review item {item.Id} marked {cmd.Status}",
+            Section = item.Section.ToString(),
+            EntityId = item.EntityId ?? item.Id,
+            AttachmentId = item.ResourceId,
+            ReviewStatus = cmd.Status
+        });
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

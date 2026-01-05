@@ -3,6 +3,9 @@
   get dashboard(){
     return this.admin + '/dashboard';
   },
+  get profileLogs(){
+    return this.admin + '/profile-logs';
+  },
   get settings(){
     return this.admin + '/settings';
   },

@@ -52,6 +52,7 @@
 "admin.sidebar.countries": "Countries Management",
 "admin.sidebar.languages": "Languages Management",
 "admin.sidebar.universities": "Universities Management",
+"admin.sidebar.profileLogs": "Profile logs",
 
 "common.sidebar.settings": "Settings",
 "common.sidebar.logout": "Logout",

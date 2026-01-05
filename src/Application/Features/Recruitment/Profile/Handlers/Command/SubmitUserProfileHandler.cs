@@ -27,6 +27,27 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotCompleted);
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+        var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
+
+        var activeAssignments = await assignmentRepo.DbSet
+            .Where(a => a.UserProfileId == profile.Id && a.IsActive)
+            .ToListAsync(ct);
+
+        foreach (var assignment in activeAssignments)
+        {
+            assignment.Deactivate();
+
+            await loggerRepo.AddAsync(new UserProfileLogger
+            {
+                UserProfileId = profile.Id,
+                PerformedById = cmd.UserId,
+                ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
+                Notes = "Profile resubmitted and returned to distribution",
+                Section = "Assignment",
+                EntityId = assignment.Id
+            });
+        }
 
         // 1️⃣ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)

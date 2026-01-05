@@ -6,6 +6,7 @@ import {OfficesManagement} from './offices-management/offices-management';
 import {CountriesManagement} from './countries-management/countries-management';
 import {LanguagesManagement} from './languages-management/languages-management';
 import {UniversitiesManagement} from './universities-management/universities-management';
+import {ProfileLogsComponent} from './profile-logs/profile-logs';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../../core/constants/permissions';
 
@@ -21,6 +22,12 @@ export const adminRoutes: Routes = [
     component: RolesManagement,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Roles.Manage] },
+  },
+  {
+    path: "profile-logs",
+    component: ProfileLogsComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.ProfileLogs.View] },
   },
   {
     path: "users-management",

@@ -166,6 +166,9 @@ export class EndpointsService {
       cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
     }
   };
+  profileLogs = {
+    list: this.getFullUrl('/profile-logs')
+  };
   majorSkillsManagement = {
     list: this.getFullUrl('/MajorSkillsManagement'),
     details: (id: string) => this.getFullUrl(`/MajorSkillsManagement/${id}`),
