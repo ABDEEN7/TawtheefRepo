@@ -5,7 +5,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { ToggleSwitch } from 'primeng/toggleswitch';
 import { InputTextModule } from 'primeng/inputtext';
 
 import { OrganizationStructuresStore } from '../../organization-structures.store';
@@ -18,13 +17,13 @@ import {Tooltip} from 'primeng/tooltip';
   selector: 'app-managements-tab',
   standalone: true,
   templateUrl: './managements-tab.html',
+  styleUrls: ['../../organization-structures-actions.scss'],
   imports: [
     CommonModule,
     FormsModule,
     TranslatePipe,
     TableModule,
     ButtonModule,
-    ToggleSwitch,
     InputTextModule,
     PaginationComponent,
     Select,
