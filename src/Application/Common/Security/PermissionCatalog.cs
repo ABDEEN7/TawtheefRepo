@@ -57,6 +57,7 @@ public static class PermissionCatalog
         Permissions.OfficeUsers.Manage,
 
         Permissions.MajorSkills.Manage,
+        Permissions.OrganizationStructures.Manage,
     ]);
 
     public static readonly ISet<string> Keys =

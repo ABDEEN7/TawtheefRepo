@@ -44,11 +44,14 @@ export const employeeRoutes = {
   get nominations(){
     return this.employee + '/nominations';
   },
-   get jobPoints(){
+  get jobPoints(){
     return this.employee + '/jobs/job-points';
   },
   get majorsSkillsManagement(){
     return this.employee + '/majors-skills-management'
+  },
+  get organizationStructures(){
+    return this.employee + '/organization-structures'
   },
   get kawader(){
     return this.employee + '/kawader';
