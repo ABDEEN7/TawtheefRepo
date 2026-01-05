@@ -5,6 +5,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 
 import { NotificationService } from '../../../../core/services/notification.service';
 import { LanguageService } from '../../../../core/services/language.service';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 
 import { OrganizationStructuresStore, OrganizationTabKey } from './organization-structures.store';
 import { OrganizationStructuresService } from './services/organization-structures.service';
@@ -70,7 +71,10 @@ export class OrganizationStructuresFacade {
 
   loadManagements() {
     const filters = this.store.managementFilters();
-    if (!filters.sectorId) return;
+    if (!filters.sectorId) {
+      this.store.setManagementsResult(this.emptyResult<ManagementListItemModel>(filters));
+      return;
+    }
 
     this.api.getManagements(filters).subscribe({
       next: res => this.store.setManagementsResult(res),
@@ -80,7 +84,10 @@ export class OrganizationStructuresFacade {
 
   loadDepartments() {
     const filters = this.store.departmentFilters();
-    if (!filters.managementId) return;
+    if (!filters.managementId) {
+      this.store.setDepartmentsResult(this.emptyResult<DepartmentListItemModel>(filters));
+      return;
+    }
 
     this.api.getDepartments(filters).subscribe({
       next: res => this.store.setDepartmentsResult(res),
@@ -115,6 +122,10 @@ export class OrganizationStructuresFacade {
       this.store.setManagementLookups([]);
       if (updateDepartmentFilters) {
         this.store.updateDepartmentFilters({ managementId: '' });
+      }
+      this.store.setManagementsResult(this.emptyResult<ManagementListItemModel>(this.store.managementFilters()));
+      if (updateDepartmentFilters) {
+        this.store.setDepartmentsResult(this.emptyResult<DepartmentListItemModel>(this.store.departmentFilters()));
       }
       return;
     }
@@ -167,10 +178,11 @@ export class OrganizationStructuresFacade {
     this.loadManagements();
   }
 
-  setManagementSector(sectorId: string) {
-    this.store.updateManagementFilters({ sectorId, pageNumber: 1 });
-    this.store.updateDepartmentFilters({ sectorId, managementId: '', pageNumber: 1 });
-    this.loadManagementLookups(sectorId, true, this.store.departmentsInitialized());
+  setManagementSector(sectorId: string | null) {
+    const value = sectorId ?? '';
+    this.store.updateManagementFilters({ sectorId: value, pageNumber: 1 });
+    this.store.updateDepartmentFilters({ sectorId: value, managementId: '', pageNumber: 1 });
+    this.loadManagementLookups(value, true, this.store.departmentsInitialized());
     this.loadManagements();
   }
 
@@ -194,13 +206,14 @@ export class OrganizationStructuresFacade {
     this.loadDepartments();
   }
 
-  setDepartmentSector(sectorId: string) {
-    this.store.updateDepartmentFilters({ sectorId, managementId: '', pageNumber: 1 });
-    this.loadManagementLookups(sectorId, true, true);
+  setDepartmentSector(sectorId: string | null) {
+    const value = sectorId ?? '';
+    this.store.updateDepartmentFilters({ sectorId: value, managementId: '', pageNumber: 1 });
+    this.loadManagementLookups(value, true, true);
   }
 
-  setDepartmentManagement(managementId: string) {
-    this.store.updateDepartmentFilters({ managementId, pageNumber: 1 });
+  setDepartmentManagement(managementId: string | null) {
+    this.store.updateDepartmentFilters({ managementId: managementId ?? '', pageNumber: 1 });
     this.loadDepartments();
   }
 
@@ -392,5 +405,19 @@ export class OrganizationStructuresFacade {
     const message = this.translate.instant(key);
     if (isError) this.notify.error(message);
     else this.notify.success(message);
+  }
+
+  private emptyResult<T>(filters: { pageNumber?: number; pageSize?: number }): PaginatedResult<T> {
+    return {
+      items: [],
+      metadata: {
+        totalCount: 0,
+        pageSize: filters.pageSize ?? 10,
+        currentPage: filters.pageNumber ?? 1,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNext: false,
+      },
+    };
   }
 }

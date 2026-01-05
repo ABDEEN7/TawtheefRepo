@@ -27,6 +27,7 @@
               [options]="store.sectorLookups()"
               optionLabel="name"
               optionValue="id"
+              [showClear]="true"
               [ngModel]="store.managementFilters().sectorId"
               (ngModelChange)="service.setManagementSector($event)"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
@@ -49,10 +50,12 @@
               [options]="statusOptions"
               optionLabel="label"
               optionValue="value"
+              [showClear]="true"
+              [placeholder]="'ORG_STRUCTURES.STATUS_FILTER' | translate"
               [ngModel]="store.managementFilters().isActive"
               (ngModelChange)="service.setManagementStatus($event)">
               <ng-template pTemplate="selectedItem" let-selected>
-                <span>{{ (selected?.label || 'ORG_STRUCTURES.STATUS_ALL') | translate }}</span>
+                <span>{{ selected?.label ? (selected.label | translate) : ('ORG_STRUCTURES.STATUS_FILTER' | translate) }}</span>
               </ng-template>
               <ng-template let-option pTemplate="item">
                 <span>{{ option.label | translate }}</span>
@@ -93,18 +96,22 @@
           <td>
             <span class="badge"
                   [class.bg-success-subtle]="management.isActive !== false"
-                  [class.bg-danger-subtle]="management.isActive === false">
+                  [class.text-success]="management.isActive !== false"
+                  [class.bg-danger-subtle]="management.isActive === false"
+                  [class.text-danger]="management.isActive === false">
               {{ management.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
             </span>
           </td>
-          <td class="d-flex justify-content-start gap-2">
+          <td class="actions-cell">
             <button
               pButton
               type="button"
-              class="p-button-outlined p-button-sm"
+              class="p-button-text p-button-rounded p-button-sm"
+              icon="pi pi-pencil"
+              [pTooltip]="'common.edit' | translate"
+              tooltipPosition="top"
+              [attr.aria-label]="'common.edit' | translate"
               (click)="service.openEditManagement(management)">
-              <i class="pi pi-pencil" pButtonIcon></i>
-              <span pButtonLabel>{{'common.edit' |translate}}</span>
             </button>
 
             <p-toggle-switch

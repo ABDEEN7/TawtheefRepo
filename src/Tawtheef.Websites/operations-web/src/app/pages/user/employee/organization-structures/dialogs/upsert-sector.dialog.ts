@@ -67,12 +67,6 @@ export interface UpsertSectorDialogData {
         </div>
 
         <div class="d-flex gap-3 flex-wrap align-items-center">
-          <div>
-            <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DISPLAY_ORDER' | translate }}</label>
-            <input pInputText type="number" class="w-100"
-                   name="displayOrder"
-                   [(ngModel)]="vm.displayOrder" />
-          </div>
           <div class="d-flex align-items-center gap-2">
             <p-toggle-switch [(ngModel)]="vm.isActive" name="isActive"></p-toggle-switch>
             <span>{{ 'ORG_STRUCTURES.FIELD_ACTIVE' | translate }}</span>
@@ -102,7 +96,6 @@ export class UpsertSectorDialogComponent {
     nameAr: this.data.model?.nameAr ?? '',
     descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.description ?? '',
     descriptionAr: this.data.model?.descriptionAr ?? '',
-    displayOrder: this.data.model?.displayOrder ?? 0,
     isActive: (this.data.model?.isActive ?? true) !== false
   };
 
@@ -117,7 +110,6 @@ export class UpsertSectorDialogComponent {
       nameAr: this.vm.nameAr.trim(),
       descriptionEn: this.vm.descriptionEn?.trim() || null,
       descriptionAr: this.vm.descriptionAr?.trim() || null,
-      displayOrder: Number(this.vm.displayOrder ?? 0),
       isActive: this.vm.isActive
     });
   }
