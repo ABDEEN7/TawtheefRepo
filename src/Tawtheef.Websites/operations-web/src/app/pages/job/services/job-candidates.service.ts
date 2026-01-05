@@ -24,7 +24,7 @@ export class JobCandidatesService {
     return this.http.get<JobCandidatesOverview>(this.endpoints.jobCandidates.overview, {
       jobId,
       searchTerm: filter?.searchTerm,
-      jobCategoryId: filter?.jobCategoryId,
+      jobCategoryId: filter?.genderId,
       candidateTypeId: filter?.candidateTypeId,
       minimumPoints: filter?.minimumPoints,
     });

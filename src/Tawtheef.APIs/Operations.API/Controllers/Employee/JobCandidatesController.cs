@@ -23,6 +23,15 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetCandidateTypesQuery());
         return result.ToActionResult();
     }
+    
+    [HttpGet("lookups/nationalities")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> GetNationalitiesTypes()
+    {
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetCountriesQuery() with { Language = language });
+        return result.ToActionResult();
+    }
     #endregion
 
     #region Job Candidates

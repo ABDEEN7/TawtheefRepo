@@ -13,25 +13,33 @@ import { PaginatedResult } from '../../../core/models/paginated-result.model';
 import { JobCandidateListItem } from '../models/job-candidate.model';
 import { JobCandidatesFilter } from '../models/job-candidates-filter.model';
 import { PaginatedRequest } from '../../../core/models/paginated-request.model';
+import { JobResponse } from '../models/job-response-model';
+import { JobService } from '../services/job.service';
+import { NationalityPreferenceRow } from '../models/nationality-preference.model';
+import { JobCandidatesNationalityFilterModalComponent } from '../modals/job-candidates-nationality-filter-modal/job-candidates-nationality-filter-modal.component';
+import { DialogService } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-job-candidates.component',
-  standalone:false,
+  standalone: false,
   templateUrl: './job-candidates.component.html',
   styleUrl: './job-candidates.component.scss',
 })
 export class JobCandidatesComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private jobCandidatesService = inject(JobCandidatesService);
+  private jobService = inject(JobService);
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslateService);
   private dialogHelperService = inject(DialogHelperService);
   private fileUtilsService = inject(FileUtilsService);
+  private dialogService = inject(DialogService);
   lookupsService = inject(JobLookupService);
 
   paginationMetadata: PaginationMetadata | undefined;
-  
+
   jobId!: GUID;
+  jobInfo!: JobResponse;
 
   totalCandidatesCount = 0;
   availableCandidatesCount = 0;
@@ -40,17 +48,20 @@ export class JobCandidatesComponent implements OnInit {
   currentPage = signal(1);
   itemsPerPage = 10;
 
-  candidates :PaginatedResult<JobCandidateListItem>  | undefined;
+  candidates: PaginatedResult<JobCandidateListItem> | undefined;
   selectedCandidates: JobCandidateListItem[] = [];
   searchQuery = signal<string>('');
-  filterJobCategory = signal<GUID | null>(null);
+  filterJobGender = signal<GUID | null>(null);
   filterCandidateCategory = signal<GUID | null>(null);
+  nationalityPreferences = signal<NationalityPreferenceRow[]>([]);
+
   minimumPoints = signal<number | null>(null);
 
   minimumPointsOptions = [200, 400, 600, 800];
 
   ngOnInit() {
     this.jobId = this.route.snapshot.paramMap.get('id') as GUID;
+    this.jobService.getById(this.jobId).subscribe((job) => (this.jobInfo = job));
     this.lookupsService.loadJobCategories();
     this.lookupsService.loadCandidateTypes();
     this.loadCandidatesData();
@@ -67,7 +78,7 @@ export class JobCandidatesComponent implements OnInit {
 
     forkJoin({
       overview: this.jobCandidatesService.getOverview(this.jobId, filter),
-      list: this.jobCandidatesService.search(this.jobId, pagination as PaginatedRequest , filter),
+      list: this.jobCandidatesService.search(this.jobId, pagination as PaginatedRequest, filter),
     }).subscribe({
       next: ({ overview, list }) => {
         this.totalCandidatesCount = overview.totalCandidatesCount;
@@ -84,7 +95,7 @@ export class JobCandidatesComponent implements OnInit {
   private buildFilter(): JobCandidatesFilter {
     return {
       searchTerm: this.searchQuery() || undefined,
-      jobCategoryId: this.filterJobCategory() || undefined,
+      genderId: this.filterJobGender() || undefined,
       candidateTypeId: this.filterCandidateCategory() || undefined,
       minimumPoints: this.minimumPoints() || undefined,
     };
@@ -102,7 +113,7 @@ export class JobCandidatesComponent implements OnInit {
 
   clearFilters() {
     this.searchQuery.set('');
-    this.filterJobCategory.set(null);
+    this.filterJobGender.set(null);
     this.filterCandidateCategory.set(null);
     this.minimumPoints.set(null);
     this.currentPage.set(1);
@@ -110,14 +121,14 @@ export class JobCandidatesComponent implements OnInit {
     this.loadCandidatesData();
   }
 
-  viewDetails(candidateId :GUID) {
+  viewDetails(candidateId: GUID) {
     void candidateId;
   }
 
   exportToExcel() {
-    const applicantIds   =
+    const applicantIds =
       this.selectedCandidates.length > 0
-        ? this.selectedCandidates.map((candidate) => candidate.candidateId )
+        ? this.selectedCandidates.map((candidate) => candidate.candidateId)
         : undefined;
 
     this.jobCandidatesService
@@ -134,7 +145,7 @@ export class JobCandidatesComponent implements OnInit {
           this.notificationService.success(
             this.translationService.instant('JOB_CANDIDATE_MESSAGES_EXPORT_SUCCESS')
           );
-        }
+        },
       });
   }
 
@@ -150,7 +161,7 @@ export class JobCandidatesComponent implements OnInit {
     ref?.onClose.subscribe((result) => {
       if (!result) return;
 
-      const applicantIds   =
+      const applicantIds =
         this.selectedCandidates.length > 0
           ? this.selectedCandidates.map((candidate) => candidate.candidateId)
           : undefined;
@@ -159,7 +170,7 @@ export class JobCandidatesComponent implements OnInit {
         .sendInvitations({
           jobId: this.jobId,
           filter: this.buildFilter(),
-          applicantIds  ,
+          applicantIds,
         })
         .subscribe({
           next: () => {
@@ -167,18 +178,39 @@ export class JobCandidatesComponent implements OnInit {
               this.translationService.instant('JOB_CANDIDATE_MESSAGES_INVITES_SENT')
             );
             this.loadCandidatesData();
-          }
+          },
         });
     });
   }
 
   onPageChange(page: number) {
-  this.currentPage.set(page);
-  this.resetSelection();
-  this.loadCandidatesData();
-}
+    this.currentPage.set(page);
+    this.resetSelection();
+    this.loadCandidatesData();
+  }
 
-  private extractFileName(response: { headers: { get(name: string): string | null } }): string | null {
+  openNationalityFilter(): void {
+    this.dialogService
+      .open(JobCandidatesNationalityFilterModalComponent, {
+        width: 'min(920px, 96vw)',
+        modal: true,
+        header: this.translationService.instant('JOB_CANDIDATE_FILTERS_NATIONALITY_TITLE'),
+        styleClass: 'custom-bootstrap-dialog',
+        data: {
+          nationalityPreferences: this.nationalityPreferences(),
+        },
+      })
+      ?.onClose.subscribe((result) => {
+        if (result?.success) {
+          this.nationalityPreferences.set(result.nationalityPreferences ?? []);
+          this.onFilterChange(); // reload
+        }
+      });
+  }
+
+  private extractFileName(response: {
+    headers: { get(name: string): string | null };
+  }): string | null {
     const contentDisposition = response.headers.get('content-disposition') || '';
     const match = /filename[*]?=(?:UTF-8''|\"|')?([^;\"']+)/i.exec(contentDisposition);
     if (!match?.[1]) return null;

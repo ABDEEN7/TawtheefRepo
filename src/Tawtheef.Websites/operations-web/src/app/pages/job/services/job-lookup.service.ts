@@ -248,6 +248,16 @@ export class JobLookupService {
     });
   }
   
+  loadNationalities(): void {
+    this.http.get<dropdownOptionsModel[]>(
+      this.endpoints.jobCandidates.lookups.nationalities
+    ).subscribe({
+      next: (types) => this.nationalities.set(types),
+      error: () => {
+        this.nationalities.set([]);
+      },
+    });
+  }
 
   getJobCategoryLabel(id: GUID): string {
     return this.jobCategories().find(jobcat => jobcat.id === id)?.name || '';

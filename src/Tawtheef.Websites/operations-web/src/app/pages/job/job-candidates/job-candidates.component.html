@@ -1,9 +1,13 @@
 <section i18nNamespace="pages/job-candidates" class="page-shell">
   <div class="page-header">
-    <div class="page-header__title">
-      <h1 class="title">{{ 'JOB_CANDIDATE_AVAILABLE_JOBS' | translate }}</h1>
-      <p class="subtitle">{{ 'JOB_CANDIDATE_REVIEW_EDIT_JOBS' | translate }}</p>
-    </div>
+    <div class="hero-text">
+        <h2 class="page-title">
+          {{ 'JOB_CANDIDATE_TITLE' | translate }}
+          <span class="title-sep">-</span>
+          <span class="job-name">{{ jobInfo?.titleAr }}/{{ jobInfo?.titleEn }}</span>
+        </h2>
+        <p class="page-subtitle">{{ 'JOB_CANDIDATE_SUBTITLE' | translate }}</p>
+      </div>
   </div>
 
   <div class="panel">
@@ -59,13 +63,13 @@
 
         <p-select
           class="select"
-          [options]="lookupsService.jobCategories()"
-          [ngModel]="filterJobCategory()"
-          (ngModelChange)="filterJobCategory.set($event); onFilterChange()"
+          [options]="lookupsService.genders()"
+          [ngModel]="filterJobGender()"
+          (ngModelChange)="filterJobGender.set($event); onFilterChange()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
-          [placeholder]="'JOB_CANDIDATE_FILTERS_JOB_CATEGORY' | translate"
+          [placeholder]="'JOB_CANDIDATE_FILTERS_CANDIDATE_GENDER' | translate"
         ></p-select>
 
         <p-select
@@ -79,9 +83,9 @@
           [placeholder]="'JOB_CANDIDATE_FILTERS_CANDIDATE_CATEGORY' | translate"
         ></p-select>
       </div>
-      <button class="chip" type="button" (click)="clearFilters()">
+      <button class="chip" type="button" (click)="openNationalityFilter()">
         <i class="fa fa-filter"></i>
-        <span>{{ 'JOB_CANDIDATE_BUTTONS_CLEAR_FILTERS' | translate }}</span>
+        <span>{{ 'JOB_CANDIDATE_BUTTONS_NATIONALITY_FILTERS' | translate }}</span>
       </button>
     </div>
 

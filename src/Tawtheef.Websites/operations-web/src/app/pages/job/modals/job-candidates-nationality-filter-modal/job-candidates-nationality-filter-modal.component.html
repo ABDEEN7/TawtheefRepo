@@ -1,0 +1,95 @@
+<div class="nf-modal">
+  <!-- Subtitle -->
+  <div class="nf-subtitle">
+    {{ 'JOB_CANDIDATE_FILTERS_HELPER_TEXT' | translate }}
+  </div>
+
+  <!-- Card -->
+  <div class="nf-card">
+    <div class="nf-card-header">
+      {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_PREFERENCES' | translate }}
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined nf-add"
+        (click)="addRow()"
+        icon="pi pi-plus"
+      >
+        {{ 'JOB_CANDIDATE_FILTERS_ADD_NATIONALITY' | translate }}
+      </button>
+    </div>
+
+    <form [formGroup]="form" class="nf-form">
+      <div formArrayName="rows">
+        @for (row of rows.controls; track row; let i = $index) {
+        <div class="nf-row" [formGroupName]="i">
+          <button
+            class="btn d-flex gap-1 align-items-center"
+            type="button"
+            (click)="removeRow(i)"
+            tooltipPosition="top"
+            [attr.aria-label]="'common_delete' | translate"
+          >
+            <i class="hgi hgi-stroke hgi-delete-02"></i>
+          </button>
+
+          <div class="nf-field nf-percentage">
+            <label>
+              {{ 'JOB_CANDIDATE_FILTERS_PERCENTAGE' | translate }}
+              <span class="req">*</span>
+            </label>
+
+            <div class="nf-percentage-wrap">
+              <p-inputNumber
+                formControlName="percentage"
+                [min]="0"
+                [max]="100"
+                [showButtons]="true"
+                [useGrouping]="false"
+                inputStyleClass="nf-percentage-input"
+              ></p-inputNumber>
+
+              <div class="nf-max-badge">100 ≥</div>
+            </div>
+          </div>
+
+          <!-- Nationality -->
+          <div class="nf-field nf-nationality">
+            <label>
+              {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_LIST' | translate }}
+              <span class="req">*</span>
+            </label>
+
+            <p-select
+              formControlName="nationalityId"
+              [options]="lookupsService.nationalities()"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'JOB_CANDIDATE_FILTERS_SELECT_NATIONALITY' | translate"
+              [showClear]="true"
+              class="nf-dropdown"
+            ></p-select>
+          </div>
+        </div>
+        }
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <div class="nf-footer">
+    <button
+      pButton
+      type="button"
+      class="p-button-text nf-cancel"
+      icon="pi pi-times"
+      (click)="close()"
+    >
+      {{ 'common.cancel' | translate }}
+    </button>
+
+    <button pButton type="button" class="nf-save" icon="pi pi-save" (click)="save()">
+      {{ 'JOB_CANDIDATE_FILTERS_SAVE' | translate }}
+    </button>
+  </div>
+</div>

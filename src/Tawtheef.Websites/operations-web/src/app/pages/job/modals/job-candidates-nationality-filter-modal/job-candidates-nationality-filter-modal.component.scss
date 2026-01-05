@@ -1,0 +1,234 @@
+:host {
+  --nf-maroon: #7a1f2d;
+  --nf-maroon-2: #8c2232;
+  --nf-border: #e7e7ea;
+  --nf-muted: #8c8c95;
+  --nf-bg: #ffffff;
+  --nf-soft: #f6f6f8;
+}
+
+
+.nf-close {
+  position: absolute;
+  top: 16px;
+  left: 16px; // screenshot has X on the left in RTL
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #444;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: #f2f2f4;
+  }
+}
+
+.nf-title {
+  text-align: center;
+  font-weight: 800;
+  color: var(--nf-maroon);
+  font-size: 22px;
+  margin-top: 6px;
+}
+
+.nf-subtitle {
+  color: var(--nf-muted);
+  font-size: 13px;
+  margin: 8px 0 18px;
+}
+
+.nf-add {
+  display: inline-flex;
+  gap: 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--nf-maroon) !important;
+  color: var(--nf-maroon) !important;
+  background: #fff !important;
+  padding: 10px 14px !important;
+
+  .pi {
+    font-size: 14px;
+  }
+}
+
+/* Card */
+.nf-card {
+  margin-top: 14px;
+  border: 1px solid var(--nf-border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.nf-card-header {
+  padding: 14px 16px;
+  font-weight: 700;
+  color: #334155;
+  background: #fafafb;
+  border-bottom: 1px solid var(--nf-border);
+}
+
+.nf-form {
+  padding: 14px 14px 6px;
+}
+
+.nf-row {
+  display: grid;
+  grid-template-columns: 46px 1fr 1fr;
+  gap: 14px;
+  align-items: end;
+  padding: 12px 10px;
+  border: 1px solid var(--nf-border);
+  border-radius: 14px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+/* Trash button like screenshot (circle/soft) */
+.nf-trash {
+  width: 40px;
+  height: 40px;
+
+  ::ng-deep .p-button {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--nf-border) !important;
+    background: #fff !important;
+    color: var(--nf-maroon) !important;
+  }
+
+  ::ng-deep .p-button:hover {
+    background: #f8f3f4 !important;
+    border-color: #e2c6cb !important;
+  }
+}
+
+/* Fields */
+.nf-field label {
+  display: inline-block;
+  font-size: 12.5px;
+  color: #334155;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.req {
+  color: #b42318;
+  margin-inline-start: 4px;
+}
+
+.nf-percentage-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Max badge (the small maroon pill “100 ≥”) */
+.nf-max-badge {
+  min-width: 74px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #f5e9eb;
+  color: var(--nf-maroon);
+  font-weight: 800;
+  border: 1px solid #ead1d6;
+}
+
+/* Footer */
+.nf-footer {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  padding-top: 14px;
+  margin-top: 10px;
+  border-top: 1px solid var(--nf-border);
+}
+
+.nf-cancel {
+  color: var(--nf-maroon) !important;
+  font-weight: 700;
+
+  ::ng-deep .p-button {
+    background: transparent !important;
+    border: none !important;
+  }
+}
+
+.nf-save {
+  ::ng-deep .p-button {
+    background: var(--nf-maroon) !important;
+    border: 1px solid var(--nf-maroon) !important;
+    border-radius: 14px !important;
+    padding: 10px 18px !important;
+    font-weight: 800 !important;
+  }
+
+  ::ng-deep .p-button:hover {
+    background: var(--nf-maroon-2) !important;
+    border-color: var(--nf-maroon-2) !important;
+  }
+}
+
+/* =========================
+   PrimeNG overrides
+   ========================= */
+::ng-deep .nf-modal .p-inputnumber {
+  width: 100%;
+}
+
+::ng-deep .nf-modal .p-inputnumber-input,
+::ng-deep .nf-modal .p-dropdown,
+::ng-deep .nf-modal .p-select {
+  height: 42px;
+  border-radius: 12px !important;
+  border: 1px solid var(--nf-border) !important;
+  box-shadow: none !important;
+}
+
+/* InputNumber buttons (up/down) */
+::ng-deep .nf-modal .p-inputnumber-button-group .p-button {
+  border-radius: 10px !important;
+  border: 1px solid var(--nf-border) !important;
+  background: #fff !important;
+  color: #64748b !important;
+}
+
+::ng-deep .nf-modal .p-inputnumber-button-group .p-button:hover {
+  background: #f5f5f7 !important;
+}
+
+/* Select (dropdown) */
+::ng-deep .nf-modal .p-dropdown,
+::ng-deep .nf-modal .p-select {
+  width: 100%;
+}
+
+::ng-deep .nf-modal .p-dropdown-label,
+::ng-deep .nf-modal .p-select-label {
+  padding: 10px 12px !important;
+  color: #111827;
+}
+
+::ng-deep .nf-modal .p-dropdown-trigger,
+::ng-deep .nf-modal .p-select-trigger {
+  width: 44px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+/* Focus */
+::ng-deep .nf-modal .p-inputtext:focus,
+::ng-deep .nf-modal .p-dropdown:focus,
+::ng-deep .nf-modal .p-select:focus,
+::ng-deep .nf-modal .p-inputnumber-input:focus {
+  border-color: #d7a5ae !important;
+  box-shadow: 0 0 0 4px rgba(122, 31, 45, 0.10) !important;
+}

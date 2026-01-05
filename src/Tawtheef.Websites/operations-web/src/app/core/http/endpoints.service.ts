@@ -81,6 +81,7 @@ export class EndpointsService {
     sendInvitations: this.getFullUrl('/jobCandidates/send-invitations'),
     lookups: {
       candidateTypes: this.getFullUrl('/jobCandidates/lookups/candidate-types'),
+      nationalities : this.getFullUrl('/jobCandidates/lookups/nationalities'),
     },
   };
 
