@@ -11,6 +11,9 @@ export class EndpointsService {
   }
 
   logger = this.getFullUrl(`/logger`);
+  notifications = {
+    list: this.getFullUrl('/notifications')
+  };
   auth = {
     me: this.getFullUrl(this.getFullUrl(`/auth/me`)),
     login: this.getFullUrl(`/auth/login`),

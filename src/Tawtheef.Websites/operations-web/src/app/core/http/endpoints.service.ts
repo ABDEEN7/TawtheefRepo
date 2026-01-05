@@ -39,6 +39,10 @@ export class EndpointsService {
     },
   };
 
+  notifications = {
+    list: this.getFullUrl('/notifications'),
+  };
+
   files = {
     upload: this.getFullUrl(`/files/upload`),
     download: (id: string) => this.getFullUrl(`/files/${id}/download`),
