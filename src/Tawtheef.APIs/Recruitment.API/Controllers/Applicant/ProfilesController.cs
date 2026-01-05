@@ -13,6 +13,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -38,12 +39,50 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("basics")]
+    public Task<IActionResult> GetBasics(CancellationToken ct) => GetProfileStatus(ct);
+
+    [HttpGet("prereq")]
+    public Task<IActionResult> GetPrerequisites(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Prerequisites);
+
+    [HttpGet("personal")]
+    public Task<IActionResult> GetPersonal(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Personal);
+
+    [HttpGet("contact")]
+    public Task<IActionResult> GetContact(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Contact);
+
+    [HttpGet("education")]
+    public Task<IActionResult> GetEducation(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Qualifications);
+
+    [HttpGet("experience")]
+    public Task<IActionResult> GetExperience(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Experience);
+
+    [HttpGet("achievements")]
+    public Task<IActionResult> GetAchievements(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.CertificatesAndAwards);
+
+    [HttpGet("skills")]
+    public Task<IActionResult> GetSkills(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Skills);
+
+    [HttpGet("languages")]
+    public Task<IActionResult> GetLanguages(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Languages);
+
+    [HttpGet("references")]
+    public Task<IActionResult> GetReferences(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Attachments);
+
     [HttpGet]
     public async Task<IActionResult> GetProfile(CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
         var result = await mediator.Send(new GetMyUserProfileQuery(UserId.Value), ct);
+        return result.ToActionResult();
+    }
+
+    private async Task<IActionResult> GetProfileStatus(CancellationToken ct, ProfileSection? section = null)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetMyProfileStatusQuery(UserId.Value, section), ct);
         return result.ToActionResult();
     }
 
