@@ -96,7 +96,7 @@
           <th>{{ 'ORG_STRUCTURES.SECTOR_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.ORDER_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.STATUS' | translate }}</th>
-          <th>{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
+          <th [class.text-end]="!store.isRtl()" [class.text-start]="store.isRtl()">{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
 
@@ -118,22 +118,29 @@
               {{ department.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
             </span>
           </td>
-          <td class="actions-cell">
+          <td
+            class="actions-cell text-nowrap"
+            [class.text-end]="!store.isRtl()"
+            [class.text-start]="store.isRtl()">
             <button
-              pButton
               type="button"
-              class="p-button-text p-button-rounded p-button-sm"
-              icon="pi pi-pencil"
+              class="icon-btn"
+              (click)="service.openEditDepartment(department)"
               [pTooltip]="'common.edit' | translate"
               tooltipPosition="top"
-              [attr.aria-label]="'common.edit' | translate"
-              (click)="service.openEditDepartment(department)">
+              [attr.aria-label]="'common.edit' | translate">
+              <i class="bi bi-pencil-square"></i>
             </button>
 
-            <p-toggle-switch
-              [ngModel]="department.isActive !== false"
-              (ngModelChange)="service.toggleDepartmentActive(department, $event)">
-            </p-toggle-switch>
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="service.toggleDepartmentActive(department, !(department.isActive !== false))"
+              [pTooltip]="(department.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
+              tooltipPosition="top"
+              [attr.aria-label]="(department.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
+              <i class="bi" [ngClass]="department.isActive !== false ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
+            </button>
           </td>
         </tr>
       </ng-template>
