@@ -1,0 +1,70 @@
+<div class="section-body">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.nationalNumber' | translate }}</div>
+        <div class="v">{{ profile?.nationalNumber || '-' }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.qidExpiry' | translate }}</div>
+        <div class="v">{{ profile?.qidExpiry || '-' }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.birthDate' | translate }}</div>
+        <div class="v">{{ profile?.birthDate || '-' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-3">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.nationality' | translate }}</div>
+        <div class="v">{{ profile?.nationality?.name || '-' }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.gender' | translate }}</div>
+        <div class="v">{{ profile?.gender?.name || '-' }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.religion' | translate }}</div>
+        <div class="v">{{ profile?.religion?.name || '-' }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.maritalStatus' | translate }}</div>
+        <div class="v">{{ profile?.maritalStatus?.name || '-' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-4">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.sponsorType' | translate }}</div>
+        <div class="v">{{ profile?.sponsorType?.name || '-' }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.sponsorEmployerName' | translate }}</div>
+        <div class="v">{{ profile?.sponsorEmployerName || '-' }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="kv">
+        <div class="k">{{ 'profileView.fields.hasDisability' | translate }}</div>
+        <div class="v">{{ profile?.hasDisability ? ('common.yes' | translate) : ('common.no' | translate) }}</div>
+      </div>
+    </div>
+  </div>
+</div>

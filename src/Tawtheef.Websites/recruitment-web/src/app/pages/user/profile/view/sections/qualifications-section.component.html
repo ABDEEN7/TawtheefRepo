@@ -1,0 +1,30 @@
+<div class="section-body">
+  @if (profile?.qualifications?.length) {
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>{{ 'profileView.fields.degree' | translate }}</th>
+            <th>{{ 'profileView.fields.university' | translate }}</th>
+            <th>{{ 'profileView.fields.gradCountry' | translate }}</th>
+            <th>{{ 'profileView.fields.graduationYear' | translate }}</th>
+            <th>{{ 'profileView.fields.studyType' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (q of profile?.qualifications; track q.id) {
+            <tr>
+              <td>{{ q.degree?.name || '-' }}</td>
+              <td>{{ q.university?.name || '-' }}</td>
+              <td>{{ q.gradCountry?.name || '-' }}</td>
+              <td>{{ q.graduationYear || '-' }}</td>
+              <td>{{ q.studyType?.name || '-' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="text-muted">{{ 'common.none' | translate }}</div>
+  }
+</div>

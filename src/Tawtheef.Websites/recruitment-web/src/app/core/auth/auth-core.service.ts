@@ -1,29 +1,33 @@
-import {Observable, of, switchMap} from "rxjs";
-import {Injectable} from "@angular/core";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {TokenService} from "./token.service";
-import {UserService} from "./user.service";
-import {AuthStateService} from "./auth-state.service";
-import {catchError, map} from "rxjs/operators";
-import {MessageService} from "primeng/api";
+import {Observable, of, switchMap} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {TokenService} from './token.service';
+import {UserService} from './user.service';
+import {AuthStateService} from './auth-state.service';
+import {catchError, map, tap} from 'rxjs/operators';
 import {EndpointsService} from '../http/endpoints.service';
 import {LoggerService} from '../services/logger.service';
 import {NavigationService} from '../services/navigation.service';
 import {UserInfoModel} from '../../shared/models/user-info.model';
 import {AuthResponse} from '../models/auth/auth-response.model';
 import {TokenModel} from '../models/auth/token.model';
+import {InAppNotificationService} from '../services/in-app-notification.service';
+import {NotificationService} from '../services/notification.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({providedIn: 'root'})
 export class AuthCoreService {
   constructor(
     private logger: LoggerService,
-    private messageService: MessageService,
     private http: HttpClient,
     private endpoints: EndpointsService,
     private tokenService: TokenService,
     private userService: UserService,
     private authState: AuthStateService,
-    private navigation: NavigationService
+    private navigation: NavigationService,
+    private inAppNotifications: InAppNotificationService,
+    private notifier: NotificationService,
+    private translate: TranslateService
   ) {
   }
 
@@ -65,7 +69,10 @@ export class AuthCoreService {
     });
     if (!stored) {
       this.logger.logError('Failed to store tokens', {err: res, email: res.user?.email || ''}).subscribe();
-      this.messageService.add({severity: 'error', summary: 'Storage blocked', detail: 'Your browser is blocking storage. Try normal browser (not in-app/private).'});
+      this.notifier.error(
+        this.translate.instant('auth.storageBlocked.detail'),
+        this.translate.instant('auth.storageBlocked.summary')
+      );
     }
 
     const user$ = res.user ? of(res.user) : this.loadCurrentUser();
@@ -93,7 +100,7 @@ export class AuthCoreService {
   }
 
   refreshToken(): Observable<string | null> {
-    if(this.authState.isAuthenticated(true)) {
+    if (this.authState.isAuthenticated(true)) {
       return this.http.post<TokenModel>(this.endpoints.auth.refresh, {
         accessToken: this.tokenService.getToken(),
         refreshToken: this.tokenService.getRefreshToken()
@@ -108,13 +115,17 @@ export class AuthCoreService {
           }
           return null;
         }),
+        tap(token => {
+          if (token) {
+            this.inAppNotifications.refreshAfterToken();
+          }
+        }),
         catchError(() => {
           this.authState.logout();
           return of(null);
         })
       );
-    }
-    else{
+    } else {
       this.authState.logout();
       return of(null);
     }

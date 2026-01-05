@@ -1,3 +1,115 @@
+.notification {
+  position: relative;
+
+  .notification-menu {
+    position: absolute;
+    right: 0;
+    top: 120%;
+    width: 320px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    z-index: 1001;
+  }
+
+  .notification-menu__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f3f5;
+
+    .notification-menu__title {
+      font-weight: 700;
+      color: #1f2933;
+      font-size: 0.95rem;
+    }
+
+    .notification-menu__refresh {
+      color: #6c757d;
+      padding: 0.25rem 0.5rem;
+      text-decoration: none;
+
+      &:disabled {
+        opacity: 0.6;
+      }
+
+      .spin {
+        animation: rotate 1s linear infinite;
+      }
+    }
+  }
+
+  .notification-menu__content {
+    max-height: 360px;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+  }
+
+  .notification-item {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #f8f9fa;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &__subject {
+      font-weight: 600;
+      color: #1f2933;
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+    }
+
+    &__body {
+      color: #4a5568;
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+
+    &__meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+
+    &__status {
+      border: 1px solid #e9ecef;
+      font-weight: 600;
+
+      &.status-error {
+        color: #c1121f;
+        border-color: #f8d7da;
+        background: #fff5f5;
+      }
+    }
+
+    &__timestamp {
+      margin-left: auto;
+    }
+  }
+
+  .notification-empty {
+    padding: 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .user-menu {
   position: relative;
 

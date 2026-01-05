@@ -11,6 +11,9 @@ export class EndpointsService {
   }
 
   logger = this.getFullUrl(`/logger`);
+  notifications = {
+    list: this.getFullUrl('/notifications')
+  };
   auth = {
     me: this.getFullUrl(this.getFullUrl(`/auth/me`)),
     login: this.getFullUrl(`/auth/login`),
@@ -33,6 +36,7 @@ export class EndpointsService {
     bootstrap: this.getFullUrl(`/me/bootstrap`),
     profile: {
       reviewSummary: this.getFullUrl('/user/profile/review-summary'),
+      basics: this.getFullUrl(`/profiles/basics`),
       savePrereq: this.getFullUrl(`/profiles/prereq`),
       savePersonal: this.getFullUrl(`/profiles/personal`),
       saveAvailability: this.getFullUrl(`/profiles/availability`),
@@ -62,6 +66,17 @@ export class EndpointsService {
         skills: this.getFullUrl(`/profiles/change-requests/skills`),
         languages: this.getFullUrl(`/profiles/change-requests/languages`),
         references: this.getFullUrl(`/profiles/change-requests/references`),
+      },
+      sections: {
+        prereq: this.getFullUrl(`/profiles/prereq`),
+        personal: this.getFullUrl(`/profiles/personal`),
+        contact: this.getFullUrl(`/profiles/contact`),
+        education: this.getFullUrl(`/profiles/education`),
+        experience: this.getFullUrl(`/profiles/experience`),
+        achievements: this.getFullUrl(`/profiles/achievements`),
+        skills: this.getFullUrl(`/profiles/skills`),
+        languages: this.getFullUrl(`/profiles/languages`),
+        attachments: this.getFullUrl(`/profiles/references`),
       },
     },
     verify:{
