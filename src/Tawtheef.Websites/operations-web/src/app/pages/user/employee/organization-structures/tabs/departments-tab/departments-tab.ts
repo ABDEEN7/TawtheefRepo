@@ -34,7 +34,6 @@ export class DepartmentsTabComponent {
   service = inject(OrganizationStructuresFacade);
 
   statusOptions = [
-    { label: 'ORG_STRUCTURES.STATUS_ALL', value: null },
     { label: 'ORG_STRUCTURES.ACTIVE', value: true },
     { label: 'ORG_STRUCTURES.INACTIVE', value: false },
   ];
