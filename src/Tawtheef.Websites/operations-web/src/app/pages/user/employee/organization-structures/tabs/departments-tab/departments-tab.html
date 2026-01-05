@@ -22,7 +22,7 @@
         <div class="row align-items-end g-3">
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-            <p-dropdown
+            <p-select
               class="w-100"
               [options]="store.sectorLookups()"
               optionLabel="name"
@@ -30,12 +30,12 @@
               [ngModel]="store.departmentFilters().sectorId"
               (ngModelChange)="service.setDepartmentSector($event)"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
-            </p-dropdown>
+            </p-select>
           </div>
 
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate }}</label>
-            <p-dropdown
+            <p-select
               class="w-100"
               [options]="store.managementLookups()"
               optionLabel="name"
@@ -43,7 +43,7 @@
               [ngModel]="store.departmentFilters().managementId"
               (ngModelChange)="service.setDepartmentManagement($event)"
               [placeholder]="'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate">
-            </p-dropdown>
+            </p-select>
           </div>
 
           <div class="col-lg-4 col-md-6">
@@ -57,7 +57,7 @@
 
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.STATUS_FILTER' | translate }}</label>
-            <p-dropdown
+            <p-select
               class="w-100"
               [options]="statusOptions"
               optionLabel="label"
@@ -70,7 +70,7 @@
               <ng-template let-option pTemplate="item">
                 <span>{{ option.label | translate }}</span>
               </ng-template>
-            </p-dropdown>
+            </p-select>
           </div>
         </div>
       </div>

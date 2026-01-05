@@ -7,11 +7,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import { OrganizationStructuresService } from '../services/organization-structures.service';
+import {Select} from 'primeng/select';
 
 type DialogMode = 'create' | 'edit';
 
@@ -33,7 +33,7 @@ export interface UpsertDepartmentDialogData {
     Textarea,
     ToggleSwitchModule,
     ButtonModule,
-    DropdownModule
+    Select,
   ],
   template: `
     <div class="p-2">
@@ -41,7 +41,7 @@ export interface UpsertDepartmentDialogData {
         <div class="d-flex gap-3 flex-wrap">
           <div class="flex-grow-1 min-w-250">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-            <p-dropdown
+            <p-select
               class="w-100"
               [options]="data.sectors"
               optionLabel="name"
@@ -52,12 +52,12 @@ export interface UpsertDepartmentDialogData {
               [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate"
               (onChange)="onSectorChange($event.value)">
-            </p-dropdown>
+            </p-select>
             <small class="text-muted" *ngIf="f.submitted && !vm.sectorId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
           </div>
           <div class="flex-grow-1 min-w-250">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate }}</label>
-            <p-dropdown
+            <p-select
               class="w-100"
               [options]="filteredManagements"
               optionLabel="name"
@@ -67,7 +67,7 @@ export interface UpsertDepartmentDialogData {
               [filter]="true"
               [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate">
-            </p-dropdown>
+            </p-select>
             <small class="text-muted" *ngIf="f.submitted && !vm.managementId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
           </div>
         </div>

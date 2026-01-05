@@ -216,13 +216,11 @@ export class OrganizationStructuresFacade {
 
   // ======== Upsert dialogs ========
   openCreateSector() {
-    const ref = this.dialog.open(UpsertSectorDialogComponent, {
+    this.dialog.open(UpsertSectorDialogComponent, {
       header: this.translate.instant('ORG_STRUCTURES.CREATE_SECTOR'),
       data: { mode: 'create' as const },
       dismissableMask: true,
-    });
-
-    ref.onClose.subscribe(payload => {
+    })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.createSector(payload).subscribe({
         next: () => {
@@ -236,13 +234,11 @@ export class OrganizationStructuresFacade {
   }
 
   openEditSector(sector: SectorListItemModel) {
-    const ref = this.dialog.open(UpsertSectorDialogComponent, {
+    this.dialog.open(UpsertSectorDialogComponent, {
       header: this.translate.instant('ORG_STRUCTURES.EDIT_SECTOR'),
       data: { mode: 'edit' as const, model: sector },
       dismissableMask: true,
-    });
-
-    ref.onClose.subscribe(payload => {
+    })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.updateSector(sector.id, payload).subscribe({
         next: () => {
@@ -256,13 +252,11 @@ export class OrganizationStructuresFacade {
   }
 
   openCreateManagement() {
-    const ref = this.dialog.open(UpsertManagementDialogComponent, {
+    this.dialog.open(UpsertManagementDialogComponent, {
       header: this.translate.instant('ORG_STRUCTURES.CREATE_MANAGEMENT'),
       data: { mode: 'create' as const, sectors: this.store.sectorLookups() },
       dismissableMask: true,
-    });
-
-    ref.onClose.subscribe(payload => {
+    })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.createManagement(payload).subscribe({
         next: () => {
@@ -276,13 +270,11 @@ export class OrganizationStructuresFacade {
   }
 
   openEditManagement(management: ManagementListItemModel) {
-    const ref = this.dialog.open(UpsertManagementDialogComponent, {
+    this.dialog.open(UpsertManagementDialogComponent, {
       header: this.translate.instant('ORG_STRUCTURES.EDIT_MANAGEMENT'),
       data: { mode: 'edit' as const, model: management, sectors: this.store.sectorLookups() },
       dismissableMask: true,
-    });
-
-    ref.onClose.subscribe(payload => {
+    })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.updateManagement(management.id, payload).subscribe({
         next: () => {
@@ -296,7 +288,7 @@ export class OrganizationStructuresFacade {
   }
 
   openCreateDepartment() {
-    const ref = this.dialog.open(UpsertDepartmentDialogComponent, {
+    this.dialog.open(UpsertDepartmentDialogComponent, {
       header: this.translate.instant('ORG_STRUCTURES.CREATE_DEPARTMENT'),
       data: {
         mode: 'create' as const,
@@ -304,9 +296,7 @@ export class OrganizationStructuresFacade {
         managements: this.store.managementLookups(),
       },
       dismissableMask: true,
-    });
-
-    ref.onClose.subscribe(payload => {
+    })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.createDepartment(payload).subscribe({
         next: () => {
@@ -319,7 +309,7 @@ export class OrganizationStructuresFacade {
   }
 
   openEditDepartment(department: DepartmentListItemModel) {
-    const ref = this.dialog.open(UpsertDepartmentDialogComponent, {
+    this.dialog.open(UpsertDepartmentDialogComponent, {
       header: this.translate.instant('ORG_STRUCTURES.EDIT_DEPARTMENT'),
       data: {
         mode: 'edit' as const,
@@ -328,9 +318,7 @@ export class OrganizationStructuresFacade {
         managements: this.store.managementLookups(),
       },
       dismissableMask: true,
-    });
-
-    ref.onClose.subscribe(payload => {
+    })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.updateDepartment(department.id, payload).subscribe({
         next: () => {

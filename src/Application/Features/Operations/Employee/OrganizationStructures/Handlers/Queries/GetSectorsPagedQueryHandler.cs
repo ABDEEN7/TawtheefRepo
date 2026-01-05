@@ -24,7 +24,7 @@ public sealed class GetSectorsPagedQueryHandler(IUnitOfWork uow, IMapper mapper)
                     EF.Functions.Like(s.NameEn, $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionAr ?? "", $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionEn ?? "", $"%{request.Search}%"))
-            .WhereIf(request.IsActive.HasValue, s => s.IsActive == request.IsActive.Value)
+            .WhereIf(request.IsActive.HasValue, s => s.IsActive == request.IsActive!.Value)
             .OrderBy(s => s.DisplayOrder);
 
         var result = await query.ToPaginatedListAsync<Sector, SectorDto>(mapper, request, cancellationToken);

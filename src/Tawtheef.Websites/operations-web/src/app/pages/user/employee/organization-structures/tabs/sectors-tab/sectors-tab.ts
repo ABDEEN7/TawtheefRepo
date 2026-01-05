@@ -7,11 +7,11 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
 
+import {PaginationComponent} from '../../../../../../shared/components/pagination/pagination.component';
 import { OrganizationStructuresStore } from '../../organization-structures.store';
 import { OrganizationStructuresFacade } from '../../organization-structures.facade';
-import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
+import {Select} from 'primeng/select';
 
 @Component({
   selector: 'app-sectors-tab',
@@ -25,8 +25,8 @@ import { PaginationComponent } from '../../../../../shared/components/pagination
     ButtonModule,
     ToggleSwitch,
     InputTextModule,
-    DropdownModule,
-    PaginationComponent
+    PaginationComponent,
+    Select
   ]
 })
 export class SectorsTabComponent {

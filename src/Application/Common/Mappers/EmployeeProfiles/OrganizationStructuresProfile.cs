@@ -28,6 +28,6 @@ public class OrganizationStructuresProfile : IRegister
             .Map(d => d.ManagementId, s => s.ManagementId)
             .Map(d => d.Management, s => s.Management == null ? null : s.Management.Adapt<DropdownOptions>())
             .Map(d => d.Sector,
-                s => s.Management?.Sector == null ? null : s.Management.Sector.Adapt<DropdownOptions>());
+                s => s.Management!.Sector == null ? null : s.Management.Sector.Adapt<DropdownOptions>());
     }
 }

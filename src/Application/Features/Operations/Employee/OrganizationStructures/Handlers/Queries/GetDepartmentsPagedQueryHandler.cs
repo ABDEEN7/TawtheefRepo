@@ -19,7 +19,7 @@ public sealed class GetDepartmentsPagedQueryHandler(IUnitOfWork uow, IMapper map
         var query = uow.GetEntityRepository<Department>().DbSet
             .AsNoTracking()
             .Include(d => d.Management)
-            .ThenInclude(m => m.Sector)
+            .ThenInclude(m => m!.Sector)
             .WhereIf(request.SectorId.HasValue, d => d.Management != null && d.Management.SectorId == request.SectorId)
             .WhereIf(request.ManagementId.HasValue, d => d.ManagementId == request.ManagementId)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Search),
@@ -28,7 +28,7 @@ public sealed class GetDepartmentsPagedQueryHandler(IUnitOfWork uow, IMapper map
                     EF.Functions.Like(s.NameEn, $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionAr ?? "", $"%{request.Search}%") ||
                     EF.Functions.Like(s.DescriptionEn ?? "", $"%{request.Search}%"))
-            .WhereIf(request.IsActive.HasValue, s => s.IsActive == request.IsActive.Value)
+            .WhereIf(request.IsActive.HasValue, s => s.IsActive == request.IsActive!.Value)
             .OrderBy(s => s.DisplayOrder);
 
         var result = await query.ToPaginatedListAsync<Department, DepartmentDto>(mapper, request, cancellationToken);

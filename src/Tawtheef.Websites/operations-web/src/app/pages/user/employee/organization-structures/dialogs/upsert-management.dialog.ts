@@ -7,10 +7,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
+import {Select} from 'primeng/select';
 
 type DialogMode = 'create' | 'edit';
 
@@ -31,14 +31,14 @@ export interface UpsertManagementDialogData {
     Textarea,
     ToggleSwitchModule,
     ButtonModule,
-    DropdownModule
+    Select,
   ],
   template: `
     <div class="p-2">
       <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
         <div class="flex-grow-1 min-w-250">
           <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-          <p-dropdown
+          <p-select
             class="w-100"
             [options]="data.sectors"
             optionLabel="name"
@@ -48,7 +48,7 @@ export interface UpsertManagementDialogData {
             [showClear]="true"
             [filter]="true"
             [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
-          </p-dropdown>
+          </p-select>
           <small class="text-muted" *ngIf="f.submitted && !vm.sectorId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
         </div>
 
