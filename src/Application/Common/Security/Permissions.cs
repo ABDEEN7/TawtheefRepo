@@ -156,6 +156,18 @@ public static class Permissions
                 13);
     }
 
+    public static class ProfileLogs
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.ProfileLogs.View,
+                nameof(PermissionKeys.ProfileLogs),
+                PermissionAction.View,
+                "Profile Logs - View",
+                "سجل الملفات - عرض",
+                14);
+    }
+
     // =========================
     // Employee Console
     // =========================

@@ -20,6 +20,8 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
+        var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
 
         var profiles = await profileRepo.DbSet
             .Where(p => request.ProfileIds.Contains(p.Id))
@@ -54,7 +56,19 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
             .ToListAsync(ct);
 
         foreach (var assignment in activeAssignments)
+        {
             assignment.Deactivate();
+
+            await loggerRepo.AddAsync(new UserProfileLogger
+            {
+                UserProfileId = assignment.UserProfileId,
+                PerformedById = null,
+                ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
+                Notes = "Existing assignment deactivated before reassignment",
+                Section = "Assignment",
+                EntityId = assignment.Id
+            });
+        }
 
         foreach (var profile in profiles)
         {
@@ -79,6 +93,23 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
                     profile.Status = UserProfileStatus.UnderReview;
 
                 assignmentRepo.DbSet.Add(ProfileAssignment.Assign(profile.Id, employee.Id));
+
+                await auditRepo.AddAsync(new AuditTrailEntry
+                {
+                    UserProfileId = profile.Id,
+                    UserId = employee.Id,
+                    ActionType = "ProfileAssigned",
+                    Notes = "Profile reassigned to reviewer (manual)",
+                    Section = "Assignment"
+                });
+                await loggerRepo.AddAsync(new UserProfileLogger
+                {
+                    UserProfileId = profile.Id,
+                    PerformedById = employee.Id,
+                    ActionType = "ProfileAssigned",
+                    Notes = "Profile reassigned to reviewer (manual)",
+                    Section = "Assignment"
+                });
             }
 
             await uow.SaveChangesAsync(ct);
