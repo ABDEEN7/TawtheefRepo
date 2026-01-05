@@ -20,6 +20,8 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
+        var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
 
         var targetEmployeeIds = request.EmployeeIds.ToList();
         var employees = await userManager.Users.OfType<EmployeeUser>()
@@ -84,6 +86,23 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
                 continue;
 
             assignmentRepo.DbSet.Add(assignmentResult.Value);
+            await auditRepo.AddAsync(new AuditTrailEntry
+            {
+                UserProfileId = profile.Id,
+                UserId = assignmentResult.Value.EmployeeId,
+                ActionType = "ProfileAssigned",
+                Notes = "Profile automatically assigned to reviewer",
+                Section = "Assignment"
+            });
+            await loggerRepo.AddAsync(new UserProfileLogger
+            {
+                UserProfileId = profile.Id,
+                PerformedById = assignmentResult.Value.EmployeeId,
+                ActionType = "ProfileAssigned",
+                Notes = "Profile automatically assigned to reviewer",
+                Section = "Assignment",
+                EntityId = assignmentResult.Value.Id
+            });
             newlyAssigned[chosen.Employee.Id]++;
         }
 

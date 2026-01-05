@@ -39,6 +39,10 @@ export class EndpointsService {
     },
   };
 
+  notifications = {
+    list: this.getFullUrl('/notifications'),
+  };
+
   files = {
     upload: this.getFullUrl(`/files/upload`),
     download: (id: string) => this.getFullUrl(`/files/${id}/download`),
@@ -174,6 +178,9 @@ export class EndpointsService {
       countries: this.getFullUrl('/universities/lookups/countries'),
       cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
     }
+  };
+  profileLogs = {
+    list: this.getFullUrl('/profile-logs')
   };
   targetEntities = {
     listTargetEntities: this.getFullUrl('/targetentities/list-target-entities'),

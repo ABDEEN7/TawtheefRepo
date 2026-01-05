@@ -5,6 +5,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
+[Table(nameof(Invitation), Schema = Schemas.Hr)]
 public class Invitation : EventEntity
 {
     public Guid JobId { get; set; }

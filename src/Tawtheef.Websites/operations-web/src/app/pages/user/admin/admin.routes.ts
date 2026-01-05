@@ -8,6 +8,7 @@ import {LanguagesManagement} from './languages-management/languages-management';
 import {TargetEntitiesManagement} from './target-entities-management/target-entities-management';
 import {ReligionsManagement} from './religions-management/religions-management';
 import {UniversitiesManagement} from './universities-management/universities-management';
+import {ProfileLogsComponent} from './profile-logs/profile-logs';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../../core/constants/permissions';
 
@@ -23,6 +24,12 @@ export const adminRoutes: Routes = [
     component: RolesManagement,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Roles.Manage] },
+  },
+  {
+    path: "profile-logs",
+    component: ProfileLogsComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.ProfileLogs.View] },
   },
   {
     path: "users-management",

@@ -40,6 +40,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
 
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
 
         var isAssigned = await assignmentRepo.DbSet
             .AsNoTracking()
@@ -145,6 +146,14 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
         {
             UserProfileId = profile.Id,
             UserId = request.OfficerId,
+            ActionType = "OpenProfile",
+            Notes = "Profile opened for review",
+            Section = nameof(ProfileSection.Personal)
+        });
+        await loggerRepo.AddAsync(new UserProfileLogger
+        {
+            UserProfileId = profile.Id,
+            PerformedById = request.OfficerId,
             ActionType = "OpenProfile",
             Notes = "Profile opened for review",
             Section = nameof(ProfileSection.Personal)

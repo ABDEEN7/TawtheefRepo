@@ -31,7 +31,7 @@ type SectionKey =
 
 type UrlPair = { normal: string; change: string };
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProfileService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
@@ -99,8 +99,48 @@ export class ProfileService {
     return this.http.post(this.url('contact'), b.build());
   }
 
+  getProfileBasics() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.basics);
+  }
+
   getProfileStatus() {
     return this.http.get<ProfileStatusDto>(this.endpoints.user.bootstrap);
+  }
+
+  getPrereqSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.prereq);
+  }
+
+  getPersonalSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.personal);
+  }
+
+  getContactSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.contact);
+  }
+
+  getQualificationsSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.education);
+  }
+
+  getExperienceSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.experience);
+  }
+
+  getAchievementsSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.achievements);
+  }
+
+  getSkillsSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.skills);
+  }
+
+  getLanguagesSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.languages);
+  }
+
+  getAttachmentsSection() {
+    return this.http.get<ProfileStatusDto>(this.endpoints.user.profile.sections.attachments);
   }
 
   // ========== EDUCATION (Degrees) ==========

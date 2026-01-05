@@ -104,16 +104,16 @@ export class ProfileOverviewPage {
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
   protected readonly ReviewTargetTypeEnum = ReviewTargetTypeEnum;
   protected readonly sectionNav = [
-    { id: 'sec-prerequisites', icon: 'pi pi-file', labelKey: 'profileView.sections.prerequisites', section: ProfileSectionEnum.Prerequisites, step: SECTION_STEP_MAP[ProfileSectionEnum.Prerequisites] },
-    { id: 'sec-personal', icon: 'pi pi-id-card', labelKey: 'profileView.sections.personal', section: ProfileSectionEnum.Personal, step: SECTION_STEP_MAP[ProfileSectionEnum.Personal] },
-    { id: 'sec-contact', icon: 'pi pi-map-marker', labelKey: 'profileView.sections.contact', section: ProfileSectionEnum.Contact, step: SECTION_STEP_MAP[ProfileSectionEnum.Contact] },
-    { id: 'sec-qualifications', icon: 'pi pi-graduation-cap', labelKey: 'profileView.sections.qualifications', section: ProfileSectionEnum.Qualifications, step: SECTION_STEP_MAP[ProfileSectionEnum.Qualifications] },
-    { id: 'sec-experiences', icon: 'pi pi-briefcase', labelKey: 'profileView.sections.experiences', section: ProfileSectionEnum.Experience, step: SECTION_STEP_MAP[ProfileSectionEnum.Experience] },
-    { id: 'sec-training', icon: 'pi pi-book', labelKey: 'profileView.sections.trainingCourses', section: ProfileSectionEnum.TrainingCourses, step: SECTION_STEP_MAP[ProfileSectionEnum.TrainingCourses] },
-    { id: 'sec-achievements', icon: 'pi pi-star', labelKey: 'profileView.sections.certificatesAndAwards', section: ProfileSectionEnum.CertificatesAndAwards, step: SECTION_STEP_MAP[ProfileSectionEnum.CertificatesAndAwards] },
-    { id: 'sec-skills', icon: 'pi pi-bolt', labelKey: 'profileView.sections.skills', section: ProfileSectionEnum.Skills, step: SECTION_STEP_MAP[ProfileSectionEnum.Skills] },
-    { id: 'sec-languages', icon: 'pi pi-language', labelKey: 'profileView.sections.languages', section: ProfileSectionEnum.Languages, step: SECTION_STEP_MAP[ProfileSectionEnum.Languages] },
-    { id: 'sec-attachments', icon: 'pi pi-paperclip', labelKey: 'profileView.sections.attachments', section: ProfileSectionEnum.Attachments, step: SECTION_STEP_MAP[ProfileSectionEnum.Attachments] }
+    { id: 'sec-prerequisites', icon: 'pi pi-file', labelKey: 'profileOverview.sections.prerequisites', section: ProfileSectionEnum.Prerequisites, step: SECTION_STEP_MAP[ProfileSectionEnum.Prerequisites] },
+    { id: 'sec-personal', icon: 'pi pi-id-card', labelKey: 'profileOverview.sections.personal', section: ProfileSectionEnum.Personal, step: SECTION_STEP_MAP[ProfileSectionEnum.Personal] },
+    { id: 'sec-contact', icon: 'pi pi-map-marker', labelKey: 'profileOverview.sections.contact', section: ProfileSectionEnum.Contact, step: SECTION_STEP_MAP[ProfileSectionEnum.Contact] },
+    { id: 'sec-qualifications', icon: 'pi pi-graduation-cap', labelKey: 'profileOverview.sections.qualifications', section: ProfileSectionEnum.Qualifications, step: SECTION_STEP_MAP[ProfileSectionEnum.Qualifications] },
+    { id: 'sec-experiences', icon: 'pi pi-briefcase', labelKey: 'profileOverview.sections.experiences', section: ProfileSectionEnum.Experience, step: SECTION_STEP_MAP[ProfileSectionEnum.Experience] },
+    { id: 'sec-training', icon: 'pi pi-book', labelKey: 'profileOverview.sections.trainingCourses', section: ProfileSectionEnum.TrainingCourses, step: SECTION_STEP_MAP[ProfileSectionEnum.TrainingCourses] },
+    { id: 'sec-achievements', icon: 'pi pi-star', labelKey: 'profileOverview.sections.certificatesAndAwards', section: ProfileSectionEnum.CertificatesAndAwards, step: SECTION_STEP_MAP[ProfileSectionEnum.CertificatesAndAwards] },
+    { id: 'sec-skills', icon: 'pi pi-bolt', labelKey: 'profileOverview.sections.skills', section: ProfileSectionEnum.Skills, step: SECTION_STEP_MAP[ProfileSectionEnum.Skills] },
+    { id: 'sec-languages', icon: 'pi pi-language', labelKey: 'profileOverview.sections.languages', section: ProfileSectionEnum.Languages, step: SECTION_STEP_MAP[ProfileSectionEnum.Languages] },
+    { id: 'sec-attachments', icon: 'pi pi-paperclip', labelKey: 'profileOverview.sections.attachments', section: ProfileSectionEnum.Attachments, step: SECTION_STEP_MAP[ProfileSectionEnum.Attachments] }
   ];
 
   data = rxResource({
@@ -231,26 +231,26 @@ export class ProfileOverviewPage {
     if (!v) return [];
     const vis = v.visibility;
     return [
-      { key: 'resume', titleKey: 'profileView.files.resume', file: v.prereq.resume },
-      { key: 'nationalCard', titleKey: 'profileView.files.nationalCard', file: v.prereq.nationalCard },
+      { key: 'resume', titleKey: 'profileOverview.files.resume', file: v.prereq.resume },
+      { key: 'nationalCard', titleKey: 'profileOverview.files.nationalCard', file: v.prereq.nationalCard },
       ...(vis.needsBirth ? [{
         key: 'birthdayCertificate',
-        titleKey: 'profileView.files.birthdayCertificate',
+        titleKey: 'profileOverview.files.birthdayCertificate',
         file: v.prereq.birthdayCertificate
       }] : []),
       ...(vis.needsMarriage ? [{
         key: 'marriageCertificate',
-        titleKey: 'profileView.files.marriageCertificate',
+        titleKey: 'profileOverview.files.marriageCertificate',
         file: v.prereq.marriageCertificate
       }] : []),
       ...(vis.isResident ? [{
         key: 'residenceAddressCertificate',
-        titleKey: 'profileView.files.residenceAddressCertificate',
+        titleKey: 'profileOverview.files.residenceAddressCertificate',
         file: v.prereq.residenceAddressCertificate
       }] : []),
       ...(vis.needsSponsor ? [{
         key: 'sponsorCard',
-        titleKey: 'profileView.files.sponsorCard',
+        titleKey: 'profileOverview.files.sponsorCard',
         file: v.prereq.sponsorCard
       }] : []),
     ];
@@ -337,7 +337,7 @@ export class ProfileOverviewPage {
 
     const review = this.data.value()?.review as MyProfileReviewSummaryDto | undefined;
     this.dialogService.open(ReviewStepsDialogComponent, {
-      header: this.i18n.instant('profileView.reviewSteps.dialogTitle'),
+      header: this.i18n.instant('profileOverview.reviewSteps.dialogTitle'),
       data: { sections: review?.sections ?? [] },
       styleClass: 'w-100 w-md-75'
     })?.onClose.subscribe(result => {
@@ -349,7 +349,7 @@ export class ProfileOverviewPage {
 
   openReviewItem(note: MyProfileReviewNoteDto, section: ProfileSectionEnum) {
     this.dialogService.open(ReviewItemEditDialogComponent, {
-      header: this.i18n.instant('profileView.reviewItemDialog.title'),
+      header: this.i18n.instant('profileOverview.reviewItemDialog.title'),
       data: {
         note,
         section,
@@ -378,20 +378,20 @@ export class ProfileOverviewPage {
   } {
     switch (status) {
       case UserProfileStatusEnum.Submitted:
-        return { severity: 'info', labelKey: 'profileView.status.submitted', hintKey: 'profileView.statusHint.submitted' };
+        return { severity: 'info', labelKey: 'profileOverview.status.submitted', hintKey: 'profileOverview.statusHint.submitted' };
       case UserProfileStatusEnum.UnderReview:
-        return { severity: 'info', labelKey: 'profileView.status.underReview', hintKey: 'profileView.statusHint.underReview' };
+        return { severity: 'info', labelKey: 'profileOverview.status.underReview', hintKey: 'profileOverview.statusHint.underReview' };
       case UserProfileStatusEnum.RequiresUpdate:
-        return { severity: 'warn', labelKey: 'profileView.status.requiresUpdate', hintKey: 'profileView.statusHint.requiresUpdate' };
+        return { severity: 'warn', labelKey: 'profileOverview.status.requiresUpdate', hintKey: 'profileOverview.statusHint.requiresUpdate' };
       case UserProfileStatusEnum.Approved:
-        return { severity: 'success', labelKey: 'profileView.status.approved', hintKey: 'profileView.statusHint.approved' };
+        return { severity: 'success', labelKey: 'profileOverview.status.approved', hintKey: 'profileOverview.statusHint.approved' };
       case UserProfileStatusEnum.Rejected:
-        return { severity: 'danger', labelKey: 'profileView.status.rejected', hintKey: 'profileView.statusHint.rejected' };
+        return { severity: 'danger', labelKey: 'profileOverview.status.rejected', hintKey: 'profileOverview.statusHint.rejected' };
       case UserProfileStatusEnum.AdminCancelled:
-        return { severity: 'secondary', labelKey: 'profileView.status.adminCancelled', hintKey: 'profileView.statusHint.adminCancelled' };
+        return { severity: 'secondary', labelKey: 'profileOverview.status.adminCancelled', hintKey: 'profileOverview.statusHint.adminCancelled' };
       case UserProfileStatusEnum.InCreation:
       default:
-        return { severity: 'secondary', labelKey: 'profileView.status.inCreation', hintKey: 'profileView.statusHint.inCreation' };
+        return { severity: 'secondary', labelKey: 'profileOverview.status.inCreation', hintKey: 'profileOverview.statusHint.inCreation' };
     }
   }
   canShowEdit(section: ProfileSectionEnum): boolean {
@@ -416,16 +416,16 @@ export class ProfileOverviewPage {
   }
   private sectionLabelKey(section: number): string {
     switch (section) {
-      case ProfileSectionEnum.Prerequisites: return 'profileView.sections.prerequisites';
-      case ProfileSectionEnum.Personal: return 'profileView.sections.personal';
-      case ProfileSectionEnum.Contact: return 'profileView.sections.contact';
-      case ProfileSectionEnum.Qualifications: return 'profileView.sections.qualifications';
-      case ProfileSectionEnum.Experience: return 'profileView.sections.experiences';
-      case ProfileSectionEnum.TrainingCourses: return 'profileView.sections.trainingCourses';
-      case ProfileSectionEnum.CertificatesAndAwards: return 'profileView.sections.certificatesAndAwards';
-      case ProfileSectionEnum.Skills: return 'profileView.sections.skills';
-      case ProfileSectionEnum.Languages: return 'profileView.sections.languages';
-      case ProfileSectionEnum.Attachments: return 'profileView.sections.attachments';
+      case ProfileSectionEnum.Prerequisites: return 'profileOverview.sections.prerequisites';
+      case ProfileSectionEnum.Personal: return 'profileOverview.sections.personal';
+      case ProfileSectionEnum.Contact: return 'profileOverview.sections.contact';
+      case ProfileSectionEnum.Qualifications: return 'profileOverview.sections.qualifications';
+      case ProfileSectionEnum.Experience: return 'profileOverview.sections.experiences';
+      case ProfileSectionEnum.TrainingCourses: return 'profileOverview.sections.trainingCourses';
+      case ProfileSectionEnum.CertificatesAndAwards: return 'profileOverview.sections.certificatesAndAwards';
+      case ProfileSectionEnum.Skills: return 'profileOverview.sections.skills';
+      case ProfileSectionEnum.Languages: return 'profileOverview.sections.languages';
+      case ProfileSectionEnum.Attachments: return 'profileOverview.sections.attachments';
       default: return 'common.section';
     }
   }
@@ -470,25 +470,25 @@ export class ProfileOverviewPage {
   }
 
   noteStatusLabelKey(status: number): string {
-    if (status === ReviewStatusEnum.NeedsCorrection) return 'profileView.reviewStatus.needsCorrection';
-    if (status === ReviewStatusEnum.Rejected) return 'profileView.reviewStatus.rejected';
-    return 'profileView.reviewStatus.other';
+    if (status === ReviewStatusEnum.NeedsCorrection) return 'profileOverview.reviewStatus.needsCorrection';
+    if (status === ReviewStatusEnum.Rejected) return 'profileOverview.reviewStatus.rejected';
+    return 'profileOverview.reviewStatus.other';
   }
 
   changeStatusLabelKey(status: number): string {
     switch (status) {
       case ProfileChangeRequestStatusEnum.Pending:
-        return 'profileView.changeRequests.status.pending';
+        return 'profileOverview.changeRequests.status.pending';
       case ProfileChangeRequestStatusEnum.UnderReview:
-        return 'profileView.changeRequests.status.underReview';
+        return 'profileOverview.changeRequests.status.underReview';
       case ProfileChangeRequestStatusEnum.Approved:
-        return 'profileView.changeRequests.status.approved';
+        return 'profileOverview.changeRequests.status.approved';
       case ProfileChangeRequestStatusEnum.Rejected:
-        return 'profileView.changeRequests.status.rejected';
+        return 'profileOverview.changeRequests.status.rejected';
       case ProfileChangeRequestStatusEnum.Canceled:
-        return 'profileView.changeRequests.status.canceled';
+        return 'profileOverview.changeRequests.status.canceled';
       default:
-        return 'profileView.changeRequests.status.pending';
+        return 'profileOverview.changeRequests.status.pending';
     }
   }
 

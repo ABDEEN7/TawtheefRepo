@@ -16,7 +16,7 @@ public sealed class MoiClient(ILogger logger, HttpClient http): IMoiClient
     {
         try
         {
-            var url = $"GetPersonalInfo?Qid={qid}&ExpiryDate={expiryDate:yyyy-MM-dd}";
+            var url = $"API/MOIApi/V1/GetPersonalInfo?Qid={qid}&ExpiryDate={expiryDate:yyyy-MM-dd}";
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
             using var response = await http.SendAsync(request, ct);

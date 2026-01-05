@@ -29,6 +29,7 @@ export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
     { key: 'home', label: 'admin.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.dashboard('admin'), permission: Permissions.Dashboard.View },
     { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/shield.svg', route: routes.admin.roleManagement, permission: Permissions.Roles.Manage },
+    { key: 'profileLogs', label: 'admin.sidebar.profileLogs', icon: 'assets/img/icons/file-eye.svg', route: routes.admin.profileLogs, permission: Permissions.ProfileLogs.View },
     { key: 'users', label: 'admin.sidebar.users', icon: 'assets/img/icons/users.svg', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
     { key: 'offices', label: 'admin.sidebar.offices', icon: 'assets/img/icons/files.svg', route: routes.admin.officesManagement, permission: Permissions.Offices.Manage },
     { key: 'countries', label: 'admin.sidebar.countries', icon: 'assets/img/icons/globe.svg', route: routes.admin.countriesManagement, permission: Permissions.Countries.Manage },

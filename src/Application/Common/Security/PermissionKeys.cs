@@ -53,6 +53,11 @@ public static class PermissionKeys
         public const string Manage = "universities.manage";
     }
 
+    public static class ProfileLogs
+    {
+        public const string View = "profile.logs.view";
+    }
+
     public static class TargetEntities
     {
         public const string View = "targetentities.view";
