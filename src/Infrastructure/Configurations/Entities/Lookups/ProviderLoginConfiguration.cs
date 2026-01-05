@@ -32,6 +32,14 @@ public class ProviderLoginConfiguration : LookupBaseConfiguration<ProviderLogin>
                 NameEn = "AzureAD",
                 NameAr = "أزور",
                 DisplayOrder = 3
+            },
+            new ProviderLogin
+            {
+                Id = ProviderLoginIds.QatarResidentOtp,
+                BackendName = nameof(ProviderLoginIds.QatarResidentOtp),
+                NameEn = "QatarResidentOtp",
+                NameAr = "قطر OTP",
+                DisplayOrder = 4
             }
         );
     }

@@ -9,6 +9,7 @@
   "auth.login.qatarResidentDialog.title": "Verify your Qatar ID",
   "auth.login.qatarResidentDialog.subtitle": "Enter your Qatar ID and phone number to receive a one-time password.",
   "auth.login.qatarResidentDialog.qid": "Qatar ID",
+  "auth.login.qatarResidentDialog.qidExpiry": "Qatar ID Expiry Date",
   "auth.login.qatarResidentDialog.phone": "Phone number",
   "auth.login.qatarResidentDialog.qatarPhoneOnly": "Please enter a Qatar (+974) phone number.",
   "auth.login.qatarResidentDialog.otp": "Verification code",

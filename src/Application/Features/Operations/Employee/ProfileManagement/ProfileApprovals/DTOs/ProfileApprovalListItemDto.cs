@@ -16,5 +16,5 @@ public record ProfileApprovalListItemDto
     public int PendingCount { get; init; }
     public ReviewStatus OverallStatus { get; init; }
     public DateTimeOffset? LastUpdatedAtUtc { get; init; }
-    public IReadOnlyList<string> AllowedOperations { get; init; } = Array.Empty<string>();
+    public IReadOnlyList<string> AllowedOperations { get; init; } = [];
 }

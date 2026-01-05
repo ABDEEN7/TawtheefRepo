@@ -47,10 +47,12 @@ public sealed class ProfileCompletenessService(
         var fullName   = C("google:name");
         var picture    = C("google:picture") ?? user.Avatar;
         var locale     = C("google:locale");
-        var qpQid      = C("qatarpass:qid");
-        var qpMobile   = C("qatarpass:mobile");
+        var qpQid      = C("qatarpass:qid") ?? C("qatarresidentotp:qid");
+        var qpQidExpiry      = C("qatarpass:qidExpiry") ?? C("qatarresidentotp:qidExpiry");
+        var qpMobile   = C("qatarpass:mobile") ?? C("qatarresidentotp:mobile");
         var qpNat      = C("qatarpass:nationality");
 
+        DateOnly.TryParse(qpQidExpiry, out var expiry);
 
         return new ProfilePrefillDto
         {
@@ -60,6 +62,7 @@ public sealed class ProfileCompletenessService(
             Avatar       = picture,
             Locale       = locale,
             Qid          = qpQid,
+            QidExpiry    = expiry,
             Phone    = qpMobile,
             PhoneVerified = user.PhoneNumberConfirmed,
             Nationality  = qpNat,

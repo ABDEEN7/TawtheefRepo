@@ -33,6 +33,7 @@ export class SidebarComponent implements OnInit {
     { key: 'offices', label: 'admin.sidebar.offices', icon: 'assets/img/icons/files.svg', route: routes.admin.officesManagement, permission: Permissions.Offices.Manage },
     { key: 'countries', label: 'admin.sidebar.countries', icon: 'assets/img/icons/globe.svg', route: routes.admin.countriesManagement, permission: Permissions.Countries.Manage },
     { key: 'languages', label: 'admin.sidebar.languages', icon: 'assets/img/icons/transfer.svg', route: routes.admin.languagesManagement, permission: Permissions.Languages.Manage },
+    { key: 'target-entities', label: 'admin.sidebar.targetEntities', icon: 'assets/img/icons/transfer.svg', route: routes.admin.targetEntitiesManagement, permission: Permissions.TargetEntities.Manage },
     { key: 'religions', label: 'admin.sidebar.religions', icon: 'assets/img/icons/workflow-square-06-stroke-rounded.svg', route: routes.admin.religionsManagement, permission: Permissions.Religions.Manage },
     { key: 'universities', label: 'admin.sidebar.universities', icon: 'assets/img/icons/university.svg', route: routes.admin.universitiesManagement, permission: Permissions.Universities.Manage },
   ];

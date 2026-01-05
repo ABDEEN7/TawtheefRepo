@@ -7,6 +7,6 @@ public sealed record UserRoleAssignmentDto
     public required string Email { get; init; }
     public bool IsBlocked { get; init; }
     public DateTime? LastLoginDate { get; init; }
-    public IReadOnlyCollection<RoleSummaryDto> Roles { get; init; } = Array.Empty<RoleSummaryDto>();
-    public IReadOnlyCollection<Guid> AssignedRoleIds { get; init; } = Array.Empty<Guid>();
+    public IReadOnlyCollection<RoleSummaryDto> Roles { get; init; } = [];
+    public IReadOnlyCollection<Guid> AssignedRoleIds { get; init; } = [];
 }
