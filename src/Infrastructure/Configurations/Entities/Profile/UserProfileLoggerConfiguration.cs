@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Recruitment;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Profile;
 

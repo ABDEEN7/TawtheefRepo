@@ -1,5 +1,3 @@
-using System;
-
 namespace Tawtheef.Application.Features.Operations.Admin.Languages.DTOs;
 
 public sealed record LanguageAdminDto

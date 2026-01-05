@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
-using Cortex.Mediator;
 using FluentValidation;
 
 using Microsoft.AspNetCore.Authentication;

@@ -7,7 +7,6 @@ using MapsterMapper;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Tawtheef.Application.Common.Behaviours;
 using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Domain;
 
