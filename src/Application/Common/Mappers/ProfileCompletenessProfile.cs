@@ -44,6 +44,7 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest, src => src.Profile)
             .Map(dest => dest.IsComplete,
                 src => src.Profile.IsCompleted() && src.Profile.Status != UserProfileStatus.InCreation)
+            .Map(dest => dest.AgreedToTerms, src => src.User.AgreedToTerms)
             .Map(dest => dest.Status, src => src.Profile.Status)
             .Map(dest => dest.Avatar, src => src.User.Avatar ?? src.Prefill.Avatar)
             .Map(dest => dest.AvailableForRecruitment, src => src.Profile.AvailableForRecruitment)
