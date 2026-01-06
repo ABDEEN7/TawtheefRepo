@@ -28,6 +28,7 @@ public class GetUserProfileHandler(IUserRepository userRepository, IMediaUrlReso
             Avatar = generator.ResolveAbsolute(user.Avatar),
             FullName = user.FullNameEn,
             PhoneNumber =  user.PhoneNumber ?? string.Empty,
+            AgreedToTerms = user.AgreedToTerms
         });
     }
 }

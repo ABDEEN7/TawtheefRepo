@@ -20,6 +20,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     [Required, StringLength(100)]
     public required string FullNameAr { get; set; }
     public bool IsBlocked { get; set; }
+    public bool AgreedToTerms { get; set; }
     public DateTime? LastLoginDate { get; set; }
     
     [StringLength(2048)]
