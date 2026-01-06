@@ -31,6 +31,23 @@ public class JobProfile : IRegister
             .Ignore(dest => dest.BenefitsEn!)
             .Ignore(dest => dest.QualificationDescriptionAr!)
             .Ignore(dest => dest.QualificationDescriptionEn!);
+        
+        config.NewConfig<CreateJobFromPreviousDto, Job>()
+            .Map(dest => dest.Id, _ => Guid.NewGuid())
+            .Map(dest => dest.JobStatusId, _ => JobStatusIds.PendingApproval)
+            .Map(dest => dest.OverViewAr, src => src.OverviewAr)
+            .Map(dest => dest.OverViewEn, src => src.OverviewEn)
+            .Map(dest => dest.QualificationDescriptionAr, src => src.QualificationsDescriptionAr)
+            .Map(dest => dest.QualificationDescriptionEn, src => src.QualificationsDescriptionEn)
+            .Ignore(dest => dest.JobDegrees)
+            .Ignore(dest => dest.JobConditions)
+            .Ignore(dest => dest.JobSkills)
+            .Ignore(dest => dest.JobPoints!)
+            .Ignore(dest => dest.JobResponsibilities)
+            .Ignore(dest => dest.JobRequiredAttachments)
+            .Ignore(dest => dest.Invitations)
+            .Ignore(dest => dest.TabReviewNotes)
+            .Ignore(dest => dest.ReviewAttachment!);
 
         config.NewConfig<Job, JobResponseDto>()
             .Map(dest => dest.JobStatus, src => src.JobStatus)
@@ -41,6 +58,17 @@ public class JobProfile : IRegister
             .Map(dest => dest.RequiredAttachments, src => src.JobRequiredAttachments)
             .Map(dest => dest.TabReviewNotes, src => src.TabReviewNotes)
             .Map(dest => dest.ReviewAttachments, src => src.ReviewAttachment);
+        
+        config.NewConfig<Job, JobCopyTemplateDto>()
+            .Map(dest => dest.OverviewAr, src => src.OverViewAr)
+            .Map(dest => dest.OverviewEn, src => src.OverViewEn)
+            .Map(dest => dest.QualificationsDescriptionAr, src => src.QualificationDescriptionAr)
+            .Map(dest => dest.QualificationsDescriptionEn, src => src.QualificationDescriptionEn)
+            .Map(dest => dest.Degrees, src => src.JobDegrees)
+            .Map(dest => dest.Conditions, src => src.JobConditions)
+            .Map(dest => dest.Skills, src => src.JobSkills)
+            .Map(dest => dest.Responsibilities, src => src.JobResponsibilities)
+            .Map(dest => dest.RequiredAttachments, src => src.JobRequiredAttachments);
 
         config.NewConfig<JobDegree, JobDegreeResponseDto>();
         config.NewConfig<JobCondition, JobConditionResponseDto>();
@@ -56,6 +84,13 @@ public class JobProfile : IRegister
             .Map(dest => dest.ResourceId, src => src.AttachmentId)
             .Map(dest => dest.FileName, src => src.FileName)
             .Map(dest => dest.Url, src => src.Attachment != null ? src.Attachment.Url : string.Empty);
+        
+        config.NewConfig<JobDegree, JobDegreeRequestDto>()
+            .Map(dest => dest.DegreeId, src => src.DegreeId);
+        config.NewConfig<JobCondition, JobConditionRequestDto>();
+        config.NewConfig<JobSkill, JobSkillRequestDto>();
+        config.NewConfig<JobResponsibility, JobResponsibilityRequestDto>();
+        config.NewConfig<JobRequiredAttachment, JobRequiredAttachmentRequestDto>();
     }
 
 }

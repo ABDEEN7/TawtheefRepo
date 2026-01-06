@@ -1,0 +1,67 @@
+{
+  "ORG_STRUCTURES.BADGE": "Operations",
+  "ORG_STRUCTURES.TITLE": "Organization Structures",
+  "ORG_STRUCTURES.SUBTITLE": "Manage sectors, managements, and departments.",
+
+  "ORG_STRUCTURES.SECTORS_TAB": "Sectors",
+  "ORG_STRUCTURES.MANAGEMENTS_TAB": "Managements",
+  "ORG_STRUCTURES.DEPARTMENTS_TAB": "Departments",
+
+  "ORG_STRUCTURES.SECTORS_BADGE": "Sectors",
+  "ORG_STRUCTURES.SECTORS_TITLE": "Sectors List",
+  "ORG_STRUCTURES.SECTORS_HINT": "Create and manage sectors.",
+
+  "ORG_STRUCTURES.MANAGEMENTS_BADGE": "Managements",
+  "ORG_STRUCTURES.MANAGEMENTS_TITLE": "Managements List",
+  "ORG_STRUCTURES.MANAGEMENTS_HINT": "Link managements to their parent sector.",
+
+  "ORG_STRUCTURES.DEPARTMENTS_BADGE": "Departments",
+  "ORG_STRUCTURES.DEPARTMENTS_TITLE": "Departments List",
+  "ORG_STRUCTURES.DEPARTMENTS_HINT": "Link departments to their parent management.",
+
+  "ORG_STRUCTURES.CREATE_SECTOR": "Create Sector",
+  "ORG_STRUCTURES.CREATE_MANAGEMENT": "Create Management",
+  "ORG_STRUCTURES.CREATE_DEPARTMENT": "Create Department",
+  "ORG_STRUCTURES.EDIT_SECTOR": "Edit Sector",
+  "ORG_STRUCTURES.EDIT_MANAGEMENT": "Edit Management",
+  "ORG_STRUCTURES.EDIT_DEPARTMENT": "Edit Department",
+
+  "ORG_STRUCTURES.SEARCH_LABEL": "Search",
+  "ORG_STRUCTURES.SEARCH_SECTORS": "Search in sectors",
+  "ORG_STRUCTURES.SEARCH_MANAGEMENTS": "Search in managements",
+  "ORG_STRUCTURES.SEARCH_DEPARTMENTS": "Search in departments",
+
+  "ORG_STRUCTURES.STATUS_FILTER": "Status",
+  "ORG_STRUCTURES.STATUS_ALL": "All statuses",
+  "ORG_STRUCTURES.STATUS": "Status",
+
+  "ORG_STRUCTURES.SECTOR_COLUMN": "Sector",
+  "ORG_STRUCTURES.MANAGEMENT_COLUMN": "Management",
+  "ORG_STRUCTURES.DEPARTMENT_COLUMN": "Department",
+  "ORG_STRUCTURES.ORDER_COLUMN": "Display Order",
+  "ORG_STRUCTURES.ACTIONS": "Actions",
+  "ORG_STRUCTURES.NO_RECORDS": "No records found",
+
+  "ORG_STRUCTURES.FIELD_SECTOR": "Sector",
+  "ORG_STRUCTURES.FIELD_MANAGEMENT": "Management",
+  "ORG_STRUCTURES.FIELD_NAME_EN": "Name (EN)",
+  "ORG_STRUCTURES.FIELD_NAME_AR": "Name (AR)",
+  "ORG_STRUCTURES.FIELD_DESCRIPTION_EN": "Description (EN)",
+  "ORG_STRUCTURES.FIELD_DESCRIPTION_AR": "Description (AR)",
+  "ORG_STRUCTURES.FIELD_DISPLAY_ORDER": "Display order",
+  "ORG_STRUCTURES.FIELD_ACTIVE": "Active",
+
+  "ORG_STRUCTURES.ACTIVE": "Active",
+  "ORG_STRUCTURES.INACTIVE": "Inactive",
+  "ORG_STRUCTURES.ACTIVATE": "Activate",
+  "ORG_STRUCTURES.DEACTIVATE": "Deactivate",
+  "ORG_STRUCTURES.SAVE": "Save",
+  "ORG_STRUCTURES.CANCEL": "Cancel",
+  "ORG_STRUCTURES.VALIDATION_REQUIRED": "Required",
+
+  "ORG_STRUCTURES.SUCCESS_SAVE": "Record saved successfully.",
+  "ORG_STRUCTURES.ERROR_SAVE": "Unable to save record.",
+  "ORG_STRUCTURES.STATUS_UPDATED": "Status updated successfully.",
+  "ORG_STRUCTURES.STATUS_UPDATE_FAILED": "Unable to update status.",
+  "ORG_STRUCTURES.ERROR_LOAD": "Failed to load data."
+}

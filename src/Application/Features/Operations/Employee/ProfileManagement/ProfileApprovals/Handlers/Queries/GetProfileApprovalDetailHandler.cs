@@ -1,19 +1,19 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
-using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile;
-using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -21,7 +21,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Pr
 
 public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, 
     IMediaUrlResolver media, ILocalizationService localization)
-    : IRequestHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
+    : IQueryHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
 {
     public async Task<Result<GetProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request,
         CancellationToken ct)
@@ -41,6 +41,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
 
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
 
         var isAssigned = await assignmentRepo.DbSet
             .AsNoTracking()
@@ -150,13 +151,21 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
             Notes = "Profile opened for review",
             Section = nameof(ProfileSection.Personal)
         });
+        await loggerRepo.AddAsync(new UserProfileLogger
+        {
+            UserProfileId = profile.Id,
+            PerformedById = request.OfficerId,
+            ActionType = "OpenProfile",
+            Notes = "Profile opened for review",
+            Section = nameof(ProfileSection.Personal)
+        });
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(dto);
 
         ReviewStatus ResolveStatus(IReadOnlyList<ProfileApprovalItemDto> items, ProfileApprovalItemDto? sectionReview)
         {
-            var source = items.Any() ? items : sectionReview != null ? [sectionReview] : Array.Empty<ProfileApprovalItemDto>();
+            var source = items.Any() ? items : sectionReview != null ? [sectionReview] : [];
 
             if (source.Any(i => i.Status == ReviewStatus.NeedsCorrection)) return ReviewStatus.NeedsCorrection;
             if (source.Any(i => i.Status == ReviewStatus.Rejected)) return ReviewStatus.Rejected;

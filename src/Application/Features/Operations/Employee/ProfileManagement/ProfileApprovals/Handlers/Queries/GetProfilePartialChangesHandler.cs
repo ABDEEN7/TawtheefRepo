@@ -1,8 +1,9 @@
 using System.Text.Json;
+using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -27,7 +28,7 @@ public sealed class GetProfilePartialChangesHandler(
         IMapper mapper,
         IMediaUrlResolver media,
         ILocalizationService localization)
-    : IRequestHandler<GetProfilePartialChangesQuery, Result<GetProfilePartialChangesDetailDto>>
+    : IQueryHandler<GetProfilePartialChangesQuery, Result<GetProfilePartialChangesDetailDto>>
 {
     private sealed record FileDisplay(string FileName, string Url);
 
@@ -156,10 +157,19 @@ public sealed class GetProfilePartialChangesHandler(
         };
 
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
         await auditRepo.AddAsync(new AuditTrailEntry
         {
             UserProfileId = profile.Id,
             UserId = request.OfficerId,
+            ActionType = "OpenProfileChangeReview",
+            Notes = "Profile opened for change requests review",
+            Section = nameof(ProfileSection.Personal)
+        });
+        await loggerRepo.AddAsync(new UserProfileLogger
+        {
+            UserProfileId = profile.Id,
+            PerformedById = request.OfficerId,
             ActionType = "OpenProfileChangeReview",
             Notes = "Profile opened for change requests review",
             Section = nameof(ProfileSection.Personal)

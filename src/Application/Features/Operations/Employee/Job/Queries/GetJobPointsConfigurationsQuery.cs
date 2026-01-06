@@ -1,9 +1,8 @@
-﻿
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
-public record GetJobPointsConfigurationsQuery : IRequest<IResult<JobPointConfigurationResponseDto>>;
+public record GetJobPointsConfigurationsQuery : IQuery<IResult<JobPointConfigurationResponseDto>>;
 

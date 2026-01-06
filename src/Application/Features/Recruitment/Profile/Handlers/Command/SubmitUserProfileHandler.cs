@@ -1,5 +1,7 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
@@ -12,7 +14,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
 public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
-    : IRequestHandler<SubmitUserProfileCommand, IResult<Unit>>
+    : ICommandHandler<SubmitUserProfileCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SubmitUserProfileCommand cmd, CancellationToken ct)
     {
@@ -27,6 +29,27 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotCompleted);
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+        var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
+
+        var activeAssignments = await assignmentRepo.DbSet
+            .Where(a => a.UserProfileId == profile.Id && a.IsActive)
+            .ToListAsync(ct);
+
+        foreach (var assignment in activeAssignments)
+        {
+            assignment.Deactivate();
+
+            await loggerRepo.AddAsync(new UserProfileLogger
+            {
+                UserProfileId = profile.Id,
+                PerformedById = cmd.UserId,
+                ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
+                Notes = "Profile resubmitted and returned to distribution",
+                Section = "Assignment",
+                EntityId = assignment.Id
+            });
+        }
 
         // 1️⃣ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)

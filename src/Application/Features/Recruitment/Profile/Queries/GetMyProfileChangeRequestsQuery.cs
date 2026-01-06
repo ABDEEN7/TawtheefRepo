@@ -1,5 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
@@ -9,10 +10,10 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Queries;
 
-public sealed record GetMyProfileChangeRequestsQuery(Guid UserId) : IRequest<Result<IReadOnlyList<ProfileChangeRequestDto>>>;
+public sealed record GetMyProfileChangeRequestsQuery(Guid UserId) : IQuery<Result<IReadOnlyList<ProfileChangeRequestDto>>>;
 
 public sealed class GetMyProfileChangeRequestsHandler(
-    IUnitOfWork uow) : IRequestHandler<GetMyProfileChangeRequestsQuery, Result<IReadOnlyList<ProfileChangeRequestDto>>>
+    IUnitOfWork uow) : IQueryHandler<GetMyProfileChangeRequestsQuery, Result<IReadOnlyList<ProfileChangeRequestDto>>>
 {
     public async Task<Result<IReadOnlyList<ProfileChangeRequestDto>>> Handle(GetMyProfileChangeRequestsQuery request, CancellationToken ct)
     {

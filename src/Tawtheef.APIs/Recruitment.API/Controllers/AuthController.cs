@@ -1,13 +1,15 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Cortex.Mediator;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;

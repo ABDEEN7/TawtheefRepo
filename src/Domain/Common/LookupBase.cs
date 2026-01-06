@@ -6,7 +6,7 @@ namespace Tawtheef.Domain.Common;
 public class LookupBase : LocalizedLookupBase
 {
     [MaxLength(50)]
-    public required string BackendName { get; init; }
+    public required string BackendName { get; set; }
 }
 
 public class LocalizedLookupBase : EventEntity, ILocalizedName, ILocalizedDescription
@@ -17,6 +17,6 @@ public class LocalizedLookupBase : EventEntity, ILocalizedName, ILocalizedDescri
     public required string NameEn { get; set; }
     public string? DescriptionAr { get; set; }
     public string? DescriptionEn { get; set; }
-    public int DisplayOrder { get; init; } = 0;
+    public int DisplayOrder { get; set; } = 0;
     public bool IsActive { get; set; } = true;
 }

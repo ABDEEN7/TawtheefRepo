@@ -1,5 +1,5 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.DTOs;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Recruitment;
 namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.Handlers.Queries;
 
 public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetJobInvitationSummaryDetailsStatsQuery, IResult<JobInvitationSummaryDetailsStatsDto>>
+    : IQueryHandler<GetJobInvitationSummaryDetailsStatsQuery, IResult<JobInvitationSummaryDetailsStatsDto>>
 {
     public async Task<IResult<JobInvitationSummaryDetailsStatsDto>> Handle(
         GetJobInvitationSummaryDetailsStatsQuery query,

@@ -1,5 +1,6 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator.Queries;
+using FluentResults;
+
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
@@ -9,7 +10,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Queries;
 
 public sealed class GetMyUserProfileSummaryHandler(IUnitOfWork uow)
-    : IRequestHandler<GetMyUserProfileSummaryQuery, Result<UserProfileSummaryDto>>
+    : IQueryHandler<GetMyUserProfileSummaryQuery, Result<UserProfileSummaryDto>>
 {
     public async Task<Result<UserProfileSummaryDto>> Handle(GetMyUserProfileSummaryQuery request, CancellationToken ct)
     {

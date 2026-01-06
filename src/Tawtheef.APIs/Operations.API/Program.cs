@@ -40,8 +40,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
-builder.Services.AddApplicationLayer();
 builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
+builder.Services.AddApplicationLayer(builder.Configuration);
 // builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 
 builder.Services.AddControllers()

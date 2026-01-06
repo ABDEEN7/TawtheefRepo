@@ -77,6 +77,7 @@ export class AuthStateService {
     if (!token) {
       this.bootstrap$ = of({
         isComplete: false,
+        agreedToTerms: true,
       } as ProfileStatusDto).pipe(shareReplay(1));
       return this.bootstrap$;
     }

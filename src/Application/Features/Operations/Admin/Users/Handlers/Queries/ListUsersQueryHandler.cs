@@ -1,5 +1,5 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -14,7 +14,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Queries;
 public sealed class ListUsersQueryHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager)
-    : IRequestHandler<GetListUsersQuery, IResult<PaginatedResult<UserListItemDto>>>
+    : IQueryHandler<GetListUsersQuery, IResult<PaginatedResult<UserListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<UserListItemDto>>> Handle(
         GetListUsersQuery request,

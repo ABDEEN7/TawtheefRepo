@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Commands;
@@ -10,7 +11,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill
 
 public sealed class UpdateMajorSkillCommandHandler(
     IUnitOfWork uow
-) : IRequestHandler<UpdateMajorSkillCommand, IResult<Unit>>
+) : ICommandHandler<UpdateMajorSkillCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateMajorSkillCommand request, CancellationToken ct)
     {

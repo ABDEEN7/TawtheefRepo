@@ -1,6 +1,6 @@
-﻿using FluentResults;
+using Cortex.Mediator.Queries;
+using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
-public class GetSkillByMajorQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetSkillByMajorQuery, IResult<List<DropdownOptions>>>
+public class GetSkillByMajorQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IQueryHandler<GetSkillByMajorQuery, IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(GetSkillByMajorQuery request, CancellationToken cancellationToken)
     {

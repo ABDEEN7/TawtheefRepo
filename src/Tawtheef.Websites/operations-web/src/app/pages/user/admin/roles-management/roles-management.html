@@ -11,151 +11,79 @@
     </button>
   </div>
 
-  <!-- Table -->
-  <div class="table-responsive table-wrapper">
-    <table class="table custom-table align-middle mb-0">
-      <thead>
-      <tr>
-        <th>{{ 'ROLES.NAME' | translate }}</th>
-        <th>{{ 'ROLES.DESCRIPTION' | translate }}</th>
-        <th>{{ 'ROLES.PERMISSIONS' | translate }}</th>
-        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'ROLES.ACTIONS' | translate }}</th>
-      </tr>
-      </thead>
+  <div class="table-wrapper">
+    <p-table class="custom-table" [value]="pagedRoles()" [rowHover]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'ROLES.NAME' | translate }}</th>
+          <th>{{ 'ROLES.DESCRIPTION' | translate }}</th>
+          <th>{{ 'ROLES.PERMISSIONS' | translate }}</th>
+          <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'ROLES.ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
 
-      <tbody>
-        @if (this.pagedRoles().length === 0) {
-          <tr>
-            <td colspan="4" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
-              {{ 'NO_RECORDS' | translate }}
+      <ng-template pTemplate="body" let-role let-i="rowIndex">
+        <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+          <td>{{ this.localizedName(role) }}</td>
+          <td>{{ this.localizedDescription(role) }}</td>
+          <td>
+            @for (perm of role.permissionNames?.length ? role.permissionNames : role.permissions; track perm) {
+              <span class="badge bg-secondary-subtle text-secondary me-1 mb-1 perm-pill">
+                {{ perm }}
+              </span>
+            }
+          </td>
+          @if (!role.isSystemRole) {
+              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+              <button
+                type="button"
+                class="icon-btn"
+                (click)="this.openEdit(role)"
+                [pTooltip]="'ROLES.EDIT' | translate"
+                tooltipPosition="top"
+                [tooltipDisabled]="false"
+                aria-label="{{ 'ROLES.EDIT' | translate }}">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+
+              <button
+                type="button"
+                class="icon-btn text-danger"
+                (click)="this.confirmDelete(role)"
+                [pTooltip]="'ROLES.DELETE' | translate"
+                tooltipPosition="top"
+                [tooltipDisabled]="false"
+                aria-label="{{ 'ROLES.DELETE' | translate }}">
+                <i class="bi bi-trash"></i>
+              </button>
             </td>
-          </tr>
-        } @else {
-          @for (role of this.pagedRoles(); track role.id; let i = $index) {
-            <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
-              <td>{{ this.localizedName(role) }}</td>
-              <td>{{ this.localizedDescription(role) }}</td>
-              <td>
-                @for (perm of role.permissions; track perm) {
-                  <span
-                    class="badge bg-secondary-subtle text-secondary me-1 mb-1 perm-pill">
-                    {{ perm }}
-                  </span>
-                }
-              </td>
-              @if (!role.isSystemRole) {
-                  <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-                  <button
-                    type="button"
-                    class="icon-btn"
-                    (click)="this.openEdit(role)"
-                    [pTooltip]="'ROLES.EDIT' | translate"
-                    tooltipPosition="top"
-                    [tooltipDisabled]="false"
-                    aria-label="{{ 'ROLES.EDIT' | translate }}">
-                    <i class="bi bi-pencil-square"></i>
-                  </button>
-
-                  <button
-                    type="button"
-                    class="icon-btn text-danger"
-                    (click)="this.confirmDelete(role)"
-                    [pTooltip]="'ROLES.DELETE' | translate"
-                    tooltipPosition="top"
-                    [tooltipDisabled]="false"
-                    aria-label="{{ 'ROLES.DELETE' | translate }}">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
-              }
-              @else {
-                <td></td>
-              }
-            </tr>
+          } @else {
+            <td></td>
           }
-        }
-      </tbody>
-    </table>
+          
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-muted no-data text-center">
+            {{ 'NO_RECORDS' | translate }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
   </div>
 </div>
-<!-- Pagination -->
-<app-pagination
-  [currentPage]="currentPage()"
-  [totalItems]="totalItems()"
-  [itemsPerPage]="itemsPerPage()"
-  (pageChanged)="onPageChange($event)"
->
-</app-pagination>
 
-
-<!-- Modal -->
-@if (this.isModalOpen()) {
-  <div class="modal-overlay">
-    <div class="modal-card">
-      <h4 class="modal-title">
-        {{ this.isEditing() ? ('ROLES.EDIT_ROLE' | translate) : ('ROLES.ADD_ROLE' | translate) }}
-      </h4>
-
-      <div class="form-group mb-3">
-        <label>{{ 'ROLES.NAME_AR' | translate }}</label>
-        <input class="form-control" [(ngModel)]="this.formModel().nameAr" />
-      </div>
-
-      <div class="form-group mb-3">
-        <label>{{ 'ROLES.NAME_EN' | translate }}</label>
-        <input class="form-control" [(ngModel)]="this.formModel().nameEn" />
-      </div>
-
-      <div class="form-group mb-3">
-        <label>{{ 'ROLES.DESCRIPTION_AR' | translate }}</label>
-        <textarea class="form-control" [(ngModel)]="this.formModel().descriptionAr"></textarea>
-      </div>
-
-      <div class="form-group mb-3">
-        <label>{{ 'ROLES.DESCRIPTION_EN' | translate }}</label>
-        <textarea class="form-control" [(ngModel)]="this.formModel().descriptionEn"></textarea>
-      </div>
-
-      <div class="permissions-box mb-3">
-        <label class="fw-bold mb-2">{{ 'ROLES.PERMISSIONS_LIST' | translate }}</label>
-
-        <div class="search-bar input-group mb-3">
-          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
-          <input
-            type="text"
-            class="form-control border-start-0"
-            [placeholder]="'SEARCH' | translate"
-            [ngModel]="this.permissionSearch()"
-            (ngModelChange)="this.permissionSearch.set($event)" />
-        </div>
-
-        <div class="perm-list">
-          @if (this.filteredPermissions().length === 0) {
-            <div class="text-muted small">{{ 'NO_RECORDS' | translate }}</div>
-          } @else {
-            @for (perm of this.filteredPermissions(); track perm.id) {
-              <label class="perm-item">
-                <input type="checkbox"
-                       [checked]="this.formModel().permissions.includes(perm.id)"
-                       (change)="this.togglePermission(perm.id)" />
-                <span>{{ perm.name }}</span>
-              </label>
-            }
-          }
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-end mt-4">
-        <button type="button" class="btn btn-secondary me-2" (click)="this.isModalOpen.set(false)">
-          {{ 'ROLES.CANCEL' | translate }}
-        </button>
-
-        <button type="button" class="btn btn-maroon shadow-sm" (click)="this.save()">
-          {{ 'ROLES.SAVE' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
-}
+<div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" [class.flex-row-reverse]="isRtl()">
+  <app-pagination
+    [currentPage]="currentPage()"
+    [totalItems]="totalItems()"
+    [itemsPerPage]="itemsPerPage()"
+    [pageSizeOptions]="itemsPerPageOptions"
+    (pageChanged)="onPageChange($event)"
+    (pageSizeChanged)="onPageSizeChange($event)">
+  </app-pagination>
+</div>
 
 <p-confirmDialog></p-confirmDialog>

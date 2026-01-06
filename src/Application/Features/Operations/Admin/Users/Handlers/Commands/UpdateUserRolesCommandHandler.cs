@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Users.Commands;
@@ -12,7 +13,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Commands
 public sealed class UpdateUserRolesCommandHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager)
-    : IRequestHandler<UpdateUserRolesCommand, IResult<Unit>>
+    : ICommandHandler<UpdateUserRolesCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
     {

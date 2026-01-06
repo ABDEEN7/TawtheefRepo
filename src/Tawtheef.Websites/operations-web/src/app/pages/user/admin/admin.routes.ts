@@ -5,7 +5,10 @@ import {UsersManagement} from './users-management/users-management';
 import {OfficesManagement} from './offices-management/offices-management';
 import {CountriesManagement} from './countries-management/countries-management';
 import {LanguagesManagement} from './languages-management/languages-management';
+import {TargetEntitiesManagement} from './target-entities-management/target-entities-management';
+import {ReligionsManagement} from './religions-management/religions-management';
 import {UniversitiesManagement} from './universities-management/universities-management';
+import {ProfileLogsComponent} from './profile-logs/profile-logs';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../../core/constants/permissions';
 
@@ -21,6 +24,12 @@ export const adminRoutes: Routes = [
     component: RolesManagement,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Roles.Manage] },
+  },
+  {
+    path: "profile-logs",
+    component: ProfileLogsComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.ProfileLogs.View] },
   },
   {
     path: "users-management",
@@ -47,10 +56,21 @@ export const adminRoutes: Routes = [
     data: { permissions: [Permissions.Languages.Manage] },
   },
   {
+    path: "target-entities-management",
+    component: TargetEntitiesManagement,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TargetEntities.Manage] },
+  },
+  {
+    path: "religions-management",
+    component: ReligionsManagement,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Religions.Manage] },
+  },
+  {
     path: "universities-management",
     component: UniversitiesManagement,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Universities.Manage] },
   },
 ];
-

@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿
+using Cortex.Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tawtheef.Domain.Common;
@@ -17,7 +18,7 @@ public class DomainEventDispatcher
 
         var events = entities.SelectMany(e => e.DomainEvents).ToList();
         foreach (var domainEvent in events)
-            await mediator.Publish(domainEvent, ct);
+            await mediator.PublishAsync(domainEvent, ct);
 
         entities.ForEach(e => e.ClearDomainEvents());
     }

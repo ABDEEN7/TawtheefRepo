@@ -1,18 +1,17 @@
-﻿using FluentResults;
+using Cortex.Mediator.Queries;
+using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Domain.Entities.Lookups;
 
-
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
 
 public sealed class GetDepartmentsByManagementQueryHnadler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetDepartmentsByManagementQuery, IResult<List<DropdownOptions>>>
+    : IQueryHandler<GetDepartmentsByManagementQuery, IResult<List<DropdownOptions>>>
 {
 
     public async Task<IResult<List<DropdownOptions>>> Handle(GetDepartmentsByManagementQuery request, CancellationToken cancellationToken)

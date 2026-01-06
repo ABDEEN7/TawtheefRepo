@@ -1,5 +1,4 @@
 using Mapster;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Operations.Admin.Universities.DTOs;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;

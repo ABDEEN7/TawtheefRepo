@@ -1,6 +1,8 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperation;
 
-public sealed record DeleteProfileTrainingCommand(Guid TrainingId): IRequest<IResult<Unit>>;
+public sealed record DeleteProfileTrainingCommand(Guid TrainingId): ICommand<IResult<Unit>>;

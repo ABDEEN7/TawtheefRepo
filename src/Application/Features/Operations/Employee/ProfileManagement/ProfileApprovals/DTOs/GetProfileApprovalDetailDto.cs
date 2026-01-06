@@ -1,5 +1,3 @@
-using Tawtheef.Domain.Entities.Recruitment;
-
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 
 public class GetProfileApprovalDetailDto

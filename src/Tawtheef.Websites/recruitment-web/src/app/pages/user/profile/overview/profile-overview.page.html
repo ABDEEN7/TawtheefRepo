@@ -1,4 +1,4 @@
-<section class="profile-view-shell p-4" i18nNamespace="pages/user/profile-overview">
+<section class="profile-view-shell p-4" i18nNamespace="['pages/user/profile-overview','pages/user/wizard-profile']">
   <!-- Header -->
   <div class="card shadow-sm border-0 header-card p-4">
     @if (loading()) {
@@ -27,7 +27,7 @@
             <div class="min-w-0">
               <div class="d-flex flex-wrap align-items-center gap-2">
                 <h2 class="mb-0 h5 text-truncate">
-                  {{ vm()?.header!.fullName || ('profileView.header.noName' | translate) }}
+                  {{ vm()?.header!.fullName || ('profileOverview.header.noName' | translate) }}
                 </h2>
 
                 <p-tag [severity]="vm()!.status.severity" [value]="(vm()!.status.labelKey | translate)">
@@ -35,7 +35,7 @@
 
                 @if (vm()!.review.totalNotes > 0) {
                   <span class="badge-notes">
-                                {{ 'profileView.review.notesCount' | translate }}: {{ vm()!.review.totalNotes }}
+                                {{ 'profileOverview.review.notesCount' | translate }}: {{ vm()!.review.totalNotes }}
                             </span>
                 }
               </div>
@@ -60,7 +60,7 @@
                 class="p-button-sm"
                 (click)="scrollTo('review-panel')"
                 icon="pi pi-comments"
-                [label]="'profileView.review.title' | translate"
+                [label]="'profileOverview.review.title' | translate"
               ></button>
             }
           </div>
@@ -72,7 +72,7 @@
               <i class="pi pi-envelope"></i>
             </div>
             <div class="verification-body">
-              <div class="label">{{ 'profileView.fields.email' | translate }}</div>
+              <div class="label">{{ 'profileOverview.fields.email' | translate }}</div>
               <div class="value text-truncate">{{ vm()?.header!.email || '-' }}</div>
             </div>
             <p-tag
@@ -87,7 +87,7 @@
               <i class="pi pi-phone"></i>
             </div>
             <div class="verification-body">
-              <div class="label">{{ 'profileView.fields.phone' | translate }}</div>
+              <div class="label">{{ 'profileOverview.fields.phone' | translate }}</div>
               <div class="value text-truncate">{{ vm()?.header!.phone || '-' }}</div>
             </div>
             <p-tag
@@ -101,13 +101,13 @@
         @if (vm()) {
           <div class="insight-grid">
             @for (stat of [
-              { icon: 'pi pi-graduation-cap', labelKey: 'profileView.sections.qualifications', value: vm()!.qualifications.length },
-              { icon: 'pi pi-briefcase', labelKey: 'profileView.sections.experiences', value: vm()!.experiences.length },
-              { icon: 'pi pi-book', labelKey: 'profileView.sections.trainingCourses', value: vm()!.trainingCourses.length },
-              { icon: 'pi pi-star', labelKey: 'profileView.sections.certificatesAndAwards', value: vm()!.achievements.length },
-              { icon: 'pi pi-bolt', labelKey: 'profileView.sections.skills', value: vm()!.skills.length },
-              { icon: 'pi pi-language', labelKey: 'profileView.sections.languages', value: vm()!.languages.length },
-              { icon: 'pi pi-paperclip', labelKey: 'profileView.sections.attachments', value: vm()!.attachments.length }
+              { icon: 'pi pi-graduation-cap', labelKey: 'profileOverview.sections.qualifications', value: vm()!.qualifications.length },
+              { icon: 'pi pi-briefcase', labelKey: 'profileOverview.sections.experiences', value: vm()!.experiences.length },
+              { icon: 'pi pi-book', labelKey: 'profileOverview.sections.trainingCourses', value: vm()!.trainingCourses.length },
+              { icon: 'pi pi-star', labelKey: 'profileOverview.sections.certificatesAndAwards', value: vm()!.achievements.length },
+              { icon: 'pi pi-bolt', labelKey: 'profileOverview.sections.skills', value: vm()!.skills.length },
+              { icon: 'pi pi-language', labelKey: 'profileOverview.sections.languages', value: vm()!.languages.length },
+              { icon: 'pi pi-paperclip', labelKey: 'profileOverview.sections.attachments', value: vm()!.attachments.length }
             ]; track stat.labelKey) {
               <div class="insight-card">
                 <div class="insight-icon">
@@ -138,13 +138,13 @@
           <div class="d-flex align-items-center gap-2">
             <i class="pi pi-comments"></i>
             <div>
-              <div class="fw-semibold">{{ 'profileView.review.title' | translate }}</div>
-              <div class="text-muted small">{{ 'profileView.review.subtitle' | translate }}</div>
+              <div class="fw-semibold">{{ 'profileOverview.review.title' | translate }}</div>
+              <div class="text-muted small">{{ 'profileOverview.review.subtitle' | translate }}</div>
             </div>
           </div>
           <div class="d-flex align-items-center gap-2 flex-wrap">
             <div class="text-muted small">
-              {{ 'profileView.review.total' | translate }}: <strong>{{ vm()!.review.totalNotes }}</strong>
+              {{ 'profileOverview.review.total' | translate }}: <strong>{{ vm()!.review.totalNotes }}</strong>
             </div>
             <button
               pButton
@@ -172,7 +172,7 @@
                     class="p-button-sm p-button-outlined"
                     icon="pi pi-pencil"
                     (click)="editSection(sec.section)"
-                    [label]="'profileView.review.editSection' | translate"
+                    [label]="'profileOverview.review.editSection' | translate"
                   ></button>
                 }
               </div>
@@ -195,7 +195,7 @@
                           <div class="note-body mt-1">{{ n.note }}</div>
                         } @else {
                           <div class="note-body mt-1 text-muted">
-                            {{ 'profileView.review.noNote' | translate }}
+                            {{ 'profileOverview.review.noNote' | translate }}
                           </div>
                         }
                       </div>
@@ -207,7 +207,7 @@
                           class="p-button-sm p-button-text"
                           icon="pi pi-pencil"
                           (click)="openReviewItem(n, sec.section)"
-                          [pTooltip]="'profileView.reviewItemDialog.open' | translate"
+                          [pTooltip]="'profileOverview.reviewItemDialog.open' | translate"
                         ></button>
                         <button
                           pButton
@@ -215,7 +215,7 @@
                           class="p-button-sm p-button-text"
                           icon="pi pi-arrow-down"
                           (click)="scrollTo(sec.scrollId)"
-                          [pTooltip]="'profileView.review.scroll' | translate"
+                          [pTooltip]="'profileOverview.review.scroll' | translate"
                         ></button>
                       </div>
                     </div>
@@ -236,12 +236,12 @@
           <div class="d-flex align-items-center gap-2">
             <i class="pi pi-refresh"></i>
             <div>
-              <div class="fw-semibold">{{ 'profileView.changeRequests.title' | translate }}</div>
-              <div class="text-muted small">{{ 'profileView.changeRequests.subtitle' | translate }}</div>
+              <div class="fw-semibold">{{ 'profileOverview.changeRequests.title' | translate }}</div>
+              <div class="text-muted small">{{ 'profileOverview.changeRequests.subtitle' | translate }}</div>
             </div>
           </div>
           <span class="badge bg-light text-muted">
-                      {{ 'profileView.changeRequests.count' | translate }}: {{ vm()!.changeRequests.length }}
+                      {{ 'profileOverview.changeRequests.count' | translate }}: {{ vm()!.changeRequests.length }}
                   </span>
         </div>
 
@@ -269,7 +269,7 @@
       <div class="card shadow-sm border-0 nav-card">
         <div class="card-body">
           <div class="d-flex align-items-center justify-content-between mb-2">
-            <div class="fw-semibold">{{ 'profileView.header.missingListTitle' | translate }}</div>
+            <div class="fw-semibold">{{ 'profileOverview.header.missingListTitle' | translate }}</div>
             <span class="text-muted small">{{ 'common.sections' | translate }}</span>
           </div>
 
@@ -299,9 +299,9 @@
             <div class="left">
               <div class="icon"><i class="pi pi-file"></i></div>
               <div>
-                <div class="title">{{ 'profileView.sections.prerequisites' | translate }}</div>
+                <div class="title">{{ 'profileOverview.sections.prerequisites' | translate }}</div>
                 <div class="subtitle text-muted">
-                  {{ 'profileView.sections.prerequisites' | translate }}
+                  {{ 'profileOverview.sections.prerequisites' | translate }}
                 </div>
               </div>
             </div>
@@ -321,13 +321,13 @@
             <div class="row g-3 mt-1">
               <div class="col-md-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.candidateType' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.candidateType' | translate }}</div>
                   <div class="v">{{ vm()!.prereq.candidateType!.name }}</div>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.targetEntity' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.targetEntity' | translate }}</div>
                   <div class="v">{{ vm()!.prereq.targetEntity!.name }}</div>
                 </div>
               </div>
@@ -363,8 +363,8 @@
             <div class="left">
               <div class="icon"><i class="pi pi-id-card"></i></div>
               <div>
-                <div class="title">{{ 'profileView.sections.personal' | translate }}</div>
-                <div class="subtitle text-muted">{{ 'profileView.sections.personal' | translate }}</div>
+                <div class="title">{{ 'profileOverview.sections.personal' | translate }}</div>
+                <div class="subtitle text-muted">{{ 'profileOverview.sections.personal' | translate }}</div>
               </div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Personal)">
@@ -383,51 +383,51 @@
             <div class="row g-3 mt-1">
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.nationalNumber' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.nationalNumber' | translate }}</div>
                   <div class="v">{{ vm()!.personal.nationalNumber || '—' }}</div>
                 </div>
               </div>
               @if(vm()!.visibility.showQidExpiry){
                 <div class="col-md-6 col-lg-4">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.qidExpiry' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.qidExpiry' | translate }}</div>
                     <div class="v">{{ vm()!.personal.qidExpiry || '—' }}</div>
                   </div>
                 </div>
               }
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.birthDate' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.birthDate' | translate }}</div>
                   <div class="v">{{ vm()!.personal.birthDate || '—' }}</div>
                 </div>
               </div>
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.nationality' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.nationality' | translate }}</div>
                   <div class="v">{{ vm()!.personal.nationality!.name }}</div>
                 </div>
               </div>
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.gender' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.gender' | translate }}</div>
                   <div class="v">{{ vm()!.personal.gender!.name }}</div>
                 </div>
               </div>
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.religion' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.religion' | translate }}</div>
                   <div class="v">{{ vm()!.personal.religion!.name }}</div>
                 </div>
               </div>
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.maritalStatus' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.maritalStatus' | translate }}</div>
                   <div class="v">{{ vm()!.personal.maritalStatus!.name }}</div>
                 </div>
               </div>
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.hasDisability' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.hasDisability' | translate }}</div>
                   <div class="v">
                     <p-tag
                       [severity]="vm()!.personal.hasDisability ? 'warn' : 'success'"
@@ -441,7 +441,7 @@
               @if (vm()!.personal.hasDisability) {
                 <div class="col-12">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.disabilityDetails' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.disabilityDetails' | translate }}</div>
                     <div class="v">{{ vm()!.personal.disabilityDetails || '—' }}</div>
                   </div>
                 </div>
@@ -450,29 +450,29 @@
 
             @if(vm()!.visibility.showSponsorSection){
               <div class="divider my-3"></div>
-              <div class="subhead">{{ 'profileView.sub.sponsor' | translate }}</div>
+              <div class="subhead">{{ 'profileOverview.sub.sponsor' | translate }}</div>
               <div class="row g-3 mt-1">
                 <div class="col-md-6 col-lg-4">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.sponsorType' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.sponsorType' | translate }}</div>
                     <div class="v">{{ vm()!.personal.sponsorType?.name }}</div>
                   </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.sponsorEmployerName' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.sponsorEmployerName' | translate }}</div>
                     <div class="v">{{ vm()!.personal.sponsorEmployerName || '—' }}</div>
                   </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.sponsorEmployerNumber' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.sponsorEmployerNumber' | translate }}</div>
                     <div class="v">{{ vm()!.personal.sponsorEmployerNumber || '—' }}</div>
                   </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.sponsorQidExpiry' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.sponsorQidExpiry' | translate }}</div>
                     <div class="v">{{ vm()!.personal.sponsorQidExpiry || '—' }}</div>
                   </div>
                 </div>
@@ -489,8 +489,8 @@
             <div class="left">
               <div class="icon"><i class="pi pi-map-marker"></i></div>
               <div>
-                <div class="title">{{ 'profileView.sections.contact' | translate }}</div>
-                <div class="subtitle text-muted">{{ 'profileView.sections.contact' | translate }}</div>
+                <div class="title">{{ 'profileOverview.sections.contact' | translate }}</div>
+                <div class="subtitle text-muted">{{ 'profileOverview.sections.contact' | translate }}</div>
               </div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Contact)">
@@ -509,13 +509,13 @@
             <div class="row g-3 mt-1">
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.residenceCountry' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.residenceCountry' | translate }}</div>
                   <div class="v">{{ vm()!.contact.residenceCountry!.name }}</div>
                 </div>
               </div>
               <div class="col-md-6 col-lg-4">
                 <div class="kv">
-                  <div class="k">{{ 'profileView.fields.interviewLocation' | translate }}</div>
+                  <div class="k">{{ 'profileOverview.fields.interviewLocation' | translate }}</div>
                   <div class="v">{{ vm()!.contact.interviewLocation!.name }}</div>
                 </div>
               </div>
@@ -523,7 +523,7 @@
               @if(vm()!.visibility.showForeignAddress){
                 <div class="col-12">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.address' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.address' | translate }}</div>
                     <div class="v">{{ vm()!.contact.address || '—' }}</div>
                   </div>
                 </div>
@@ -532,29 +532,29 @@
 
             @if(vm()!.visibility.showNationalAddress){
               <div class="divider my-3"></div>
-              <div class="subhead">{{ 'profileView.sub.nationalAddress' | translate }}</div>
+              <div class="subhead">{{ 'profileOverview.sub.nationalAddress' | translate }}</div>
               <div class="row g-3 mt-1">
                 <div class="col-md-6 col-lg-3">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.naZone' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.naZone' | translate }}</div>
                     <div class="v">{{ vm()!.contact.naZone || '—' }}</div>
                   </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.naStreet' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.naStreet' | translate }}</div>
                     <div class="v">{{ vm()!.contact.naStreet || '—' }}</div>
                   </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.naBuilding' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.naBuilding' | translate }}</div>
                     <div class="v">{{ vm()!.contact.naBuilding || '—' }}</div>
                   </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                   <div class="kv">
-                    <div class="k">{{ 'profileView.fields.naUnit' | translate }}</div>
+                    <div class="k">{{ 'profileOverview.fields.naUnit' | translate }}</div>
                     <div class="v">{{ vm()!.contact.naUnit || '—' }}</div>
                   </div>
                 </div>
@@ -569,7 +569,7 @@
           <div class="section-head">
             <div class="left">
               <div class="icon"><i class="pi pi-graduation-cap"></i></div>
-              <div><div class="title">{{ 'profileView.sections.qualifications' | translate }}</div></div>
+              <div><div class="title">{{ 'profileOverview.sections.qualifications' | translate }}</div></div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Qualifications)">
               <button
@@ -594,13 +594,13 @@
               <!-- keep your header/body templates as-is -->
               <ng-template pTemplate="header">
                 <tr>
-                  <th>{{ 'profileView.table.degree' | translate }}</th>
-                  <th>{{ 'profileView.table.major' | translate }}</th>
-                  <th>{{ 'profileView.table.university' | translate }}</th>
-                  <th>{{ 'profileView.table.country' | translate }}</th>
-                  <th>{{ 'profileView.table.year' | translate }}</th>
-                  <th>{{ 'profileView.table.gpa' | translate }}</th>
-                  <th>{{ 'profileView.table.attachment' | translate }}</th>
+                  <th>{{ 'profileOverview.table.degree' | translate }}</th>
+                  <th>{{ 'profileOverview.table.major' | translate }}</th>
+                  <th>{{ 'profileOverview.table.university' | translate }}</th>
+                  <th>{{ 'profileOverview.table.country' | translate }}</th>
+                  <th>{{ 'profileOverview.table.year' | translate }}</th>
+                  <th>{{ 'profileOverview.table.gpa' | translate }}</th>
+                  <th>{{ 'profileOverview.table.attachment' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -636,7 +636,7 @@
           <div class="section-head">
             <div class="left">
               <div class="icon"><i class="pi pi-briefcase"></i></div>
-              <div class="title">{{ 'profileView.sections.experiences' | translate }}</div>
+              <div class="title">{{ 'profileOverview.sections.experiences' | translate }}</div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Experience)">
               <button
@@ -655,11 +655,11 @@
               <!-- keep your templates -->
               <ng-template pTemplate="header">
                 <tr>
-                  <th>{{ 'profileView.table.employer' | translate }}</th>
-                  <th>{{ 'profileView.table.jobTitle' | translate }}</th>
-                  <th>{{ 'profileView.table.country' | translate }}</th>
-                  <th>{{ 'profileView.table.period' | translate }}</th>
-                  <th>{{ 'profileView.table.attachment' | translate }}</th>
+                  <th>{{ 'profileOverview.table.employer' | translate }}</th>
+                  <th>{{ 'profileOverview.table.jobTitle' | translate }}</th>
+                  <th>{{ 'profileOverview.table.country' | translate }}</th>
+                  <th>{{ 'profileOverview.table.period' | translate }}</th>
+                  <th>{{ 'profileOverview.table.attachment' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -668,7 +668,7 @@
                   <td>{{ row.jobTitle || '—' }}</td>
                   <td>{{ row.country?.name }}</td>
                   <td>
-                    {{ row.startDate || '—' }} — {{ row.isCurrent ? ('profileView.table.present' |
+                    {{ row.startDate || '—' }} — {{ row.isCurrent ? ('profileOverview.table.present' |
                     translate) : (row.endDate || '—') }}
                   </td>
                   <td>
@@ -696,7 +696,7 @@
           <div class="section-head">
             <div class="left">
               <div class="icon"><i class="pi pi-book"></i></div>
-              <div class="title">{{ 'profileView.sections.trainingCourses' | translate }}</div>
+              <div class="title">{{ 'profileOverview.sections.trainingCourses' | translate }}</div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.TrainingCourses)">
               <button
@@ -715,11 +715,11 @@
               <!-- keep your templates -->
               <ng-template pTemplate="header">
                 <tr>
-                  <th>{{ 'profileView.table.title' | translate }}</th>
-                  <th>{{ 'profileView.table.provider' | translate }}</th>
-                  <th>{{ 'profileView.table.country' | translate }}</th>
-                  <th>{{ 'profileView.table.period' | translate }}</th>
-                  <th>{{ 'profileView.table.attachment' | translate }}</th>
+                  <th>{{ 'profileOverview.table.title' | translate }}</th>
+                  <th>{{ 'profileOverview.table.provider' | translate }}</th>
+                  <th>{{ 'profileOverview.table.country' | translate }}</th>
+                  <th>{{ 'profileOverview.table.period' | translate }}</th>
+                  <th>{{ 'profileOverview.table.attachment' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -753,7 +753,7 @@
           <div class="section-head">
             <div class="left">
               <div class="icon"><i class="pi pi-star"></i></div>
-              <div class="title">{{ 'profileView.sections.certificatesAndAwards' | translate }}</div>
+              <div class="title">{{ 'profileOverview.sections.certificatesAndAwards' | translate }}</div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.CertificatesAndAwards)">
               <button
@@ -772,11 +772,11 @@
               <!-- keep your templates -->
               <ng-template pTemplate="header">
                 <tr>
-                  <th>{{ 'profileView.table.type' | translate }}</th>
-                  <th>{{ 'profileView.table.title' | translate }}</th>
-                  <th>{{ 'profileView.table.issuer' | translate }}</th>
-                  <th>{{ 'profileView.table.issueDate' | translate }}</th>
-                  <th>{{ 'profileView.table.attachment' | translate }}</th>
+                  <th>{{ 'profileOverview.table.type' | translate }}</th>
+                  <th>{{ 'profileOverview.table.title' | translate }}</th>
+                  <th>{{ 'profileOverview.table.issuer' | translate }}</th>
+                  <th>{{ 'profileOverview.table.issueDate' | translate }}</th>
+                  <th>{{ 'profileOverview.table.attachment' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -810,7 +810,7 @@
           <div class="section-head">
             <div class="left">
               <div class="icon"><i class="pi pi-bolt"></i></div>
-              <div class="title">{{ 'profileView.sections.skills' | translate }}</div>
+              <div class="title">{{ 'profileOverview.sections.skills' | translate }}</div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Skills)">
               <button
@@ -829,7 +829,7 @@
               @if (vm()!.skills.length) { @for (s of vm()!.skills; track s.skill.id) {
                 <p-chip [label]="s.skill.name + ' - ' + s.level.name"></p-chip>
               } } @else {
-                <span class="text-muted">{{ 'profileView.empty.skills' | translate }}</span>
+                <span class="text-muted">{{ 'profileOverview.empty.skills' | translate }}</span>
               }
             </div>
           }
@@ -841,7 +841,7 @@
           <div class="section-head">
             <div class="left">
               <div class="icon"><i class="pi pi-language"></i></div>
-              <div class="title">{{ 'profileView.sections.languages' | translate }}</div>
+              <div class="title">{{ 'profileOverview.sections.languages' | translate }}</div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Languages)">
               <button
@@ -860,10 +860,10 @@
               <!-- keep your templates -->
               <ng-template pTemplate="header">
                 <tr>
-                  <th>{{ 'profileView.table.language' | translate }}</th>
-                  <th>{{ 'profileView.table.speaking' | translate }}</th>
-                  <th>{{ 'profileView.table.writing' | translate }}</th>
-                  <th>{{ 'profileView.table.reading' | translate }}</th>
+                  <th>{{ 'profileOverview.table.language' | translate }}</th>
+                  <th>{{ 'profileOverview.table.speaking' | translate }}</th>
+                  <th>{{ 'profileOverview.table.writing' | translate }}</th>
+                  <th>{{ 'profileOverview.table.reading' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -884,7 +884,7 @@
           <div class="section-head">
             <div class="left">
               <div class="icon"><i class="pi pi-paperclip"></i></div>
-              <div class="title">{{ 'profileView.sections.attachments' | translate }}</div>
+              <div class="title">{{ 'profileOverview.sections.attachments' | translate }}</div>
             </div>
             <div class="right" *ngIf="canShowEdit(ProfileSectionEnum.Attachments)">
               <button
@@ -903,7 +903,7 @@
               @for (a of vm()!.attachments; track a.file?.url) {
                 <div class="attach-item">
                   <div class="attach-title">
-                    {{ a.title || ('profileView.files.attachment' | translate) }}
+                    {{ a.title || ('profileOverview.files.attachment' | translate) }}
                   </div>
                   <div class="attach-body">
                                 <span class="me-2 text-truncate d-inline-block" style="max-width: 260px">
@@ -919,7 +919,7 @@
                   </div>
                 </div>
               } @if (!vm()!.attachments.length) {
-              <div class="text-muted">{{ 'profileView.empty.attachments' | translate }}</div>
+              <div class="text-muted">{{ 'profileOverview.empty.attachments' | translate }}</div>
             }
             </div>
           }

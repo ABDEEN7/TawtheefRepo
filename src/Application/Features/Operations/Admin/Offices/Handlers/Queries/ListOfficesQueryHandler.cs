@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Queries;
 
 public sealed class ListOfficesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetListOfficesQuery, IResult<PaginatedResult<OfficeDto>>>
+    : IQueryHandler<GetListOfficesQuery, IResult<PaginatedResult<OfficeDto>>>
 {
     public async Task<IResult<PaginatedResult<OfficeDto>>> Handle(
         GetListOfficesQuery request,

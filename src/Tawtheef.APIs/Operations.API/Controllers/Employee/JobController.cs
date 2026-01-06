@@ -1,10 +1,13 @@
-using MediatR;
+
+using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
+using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -146,6 +149,25 @@ public class JobController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetJobByIdQuery(id));
         return result.ToActionResult();
     }
+     
+     [HttpPost("{id:guid}/copy")]
+     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+     public async Task<IActionResult> CreateJobFromPrevious(
+         Guid id,
+         [FromBody] CreateJobFromPreviousDto job)
+     {
+         var result = await mediator.Send(new CreateJobFromPreviousCommand(id, job));
+         return result.ToActionResult();
+     }
+
+     [HttpGet("{id:guid}/copy-template")]
+     [AuthorizePermission(PermissionKeys.Jobs.View)]
+     public async Task<IActionResult> GetJobCopyTemplate(Guid id)
+     {
+         var result = await mediator.Send(new GetJobCopyTemplateQuery(id));
+         return result.ToActionResult();
+     }
+
 
     [HttpPost("search")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]

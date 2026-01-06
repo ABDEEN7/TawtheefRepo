@@ -1,7 +1,7 @@
-﻿using FluentResults;
+using Cortex.Mediator.Queries;
+using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
@@ -11,7 +11,7 @@ using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
 public class GetLatestJobReviewAttachmentQueryHandler(IJobReviewAttachmentRepository jobReviewAttachmentRepository, IMediaUrlResolver media, IMapper mapper)
-    : IRequestHandler<GetLatestJobReviewAttachmentQuery, IResult<FileRefDto?>>
+    : IQueryHandler<GetLatestJobReviewAttachmentQuery, IResult<FileRefDto?>>
 {
     public async Task<IResult<FileRefDto?>> Handle(GetLatestJobReviewAttachmentQuery request, CancellationToken cancellationToken)
     {

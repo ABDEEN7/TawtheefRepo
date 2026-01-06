@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -13,7 +13,7 @@ public sealed class SaveLanguageCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : IRequestHandler<SaveLanguageCommand, IResult<Guid>>
+    : ICommandHandler<SaveLanguageCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         SaveLanguageCommand request,

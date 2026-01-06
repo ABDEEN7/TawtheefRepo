@@ -1,6 +1,6 @@
 export interface PaginatedRequest {
-  pageNumber?: number;        
-  pageSize?: number;          
+  pageNumber: number;
+  pageSize: number;
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
 }

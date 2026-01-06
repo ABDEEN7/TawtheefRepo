@@ -7,6 +7,7 @@ public class GetUserProfileDto
     public required string Email { get; set; }
     public required string PhoneNumber { get; set; }
     public required string Avatar { get; set; }
+    public bool AgreedToTerms { get; set; }
     public EmployeeProfileDto? Profile { get; set; }
 }
 

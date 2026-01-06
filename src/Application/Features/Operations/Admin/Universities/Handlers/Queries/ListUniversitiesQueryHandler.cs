@@ -1,5 +1,5 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Operations.Admin.Universities.Handlers.Queries;
 
 public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, ILocalizationService localizationService)
-    : IRequestHandler<GetListUniversitiesQuery, IResult<PaginatedResult<UniversityAdminDto>>>
+    : IQueryHandler<GetListUniversitiesQuery, IResult<PaginatedResult<UniversityAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<UniversityAdminDto>>> Handle(
         GetListUniversitiesQuery request,

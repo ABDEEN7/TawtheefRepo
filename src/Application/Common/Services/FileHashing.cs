@@ -18,7 +18,7 @@ public static class FileHashing
             sha.TransformBlock(buffer, 0, read, null, 0);
         }
 
-        sha.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-        return Convert.ToHexString(sha.Hash ?? Array.Empty<byte>());
+        sha.TransformFinalBlock([], 0, 0);
+        return Convert.ToHexString(sha.Hash ?? []);
     }
 }

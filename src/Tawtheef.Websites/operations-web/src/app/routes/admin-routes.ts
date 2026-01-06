@@ -3,6 +3,9 @@
   get dashboard(){
     return this.admin + '/dashboard';
   },
+  get profileLogs(){
+    return this.admin + '/profile-logs';
+  },
   get settings(){
     return this.admin + '/settings';
   },
@@ -20,6 +23,12 @@
   },
   get languagesManagement(){
     return this.admin + '/languages-management'
+  },
+  get targetEntitiesManagement(){
+    return this.admin + '/target-entities-management'
+  },
+  get religionsManagement(){
+    return this.admin + '/religions-management'
   },
   get universitiesManagement(){
     return this.admin + '/universities-management'

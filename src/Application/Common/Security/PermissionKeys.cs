@@ -35,6 +35,12 @@ public static class PermissionKeys
         public const string Manage = "languages.manage";
     }
 
+    public static class Religions
+    {
+        public const string View = "religions.view";
+        public const string Manage = "religions.manage";
+    }
+
     public static class Countries
     {
         public const string View = "countries.view";
@@ -45,6 +51,17 @@ public static class PermissionKeys
     {
         public const string View = "universities.view";
         public const string Manage = "universities.manage";
+    }
+
+    public static class ProfileLogs
+    {
+        public const string View = "profile.logs.view";
+    }
+
+    public static class TargetEntities
+    {
+        public const string View = "targetentities.view";
+        public const string Manage = "targetentities.manage";
     }
 
     public static class Profile
@@ -103,5 +120,10 @@ public static class PermissionKeys
     public static class MajorSkills
     {
         public const string Manage = "major-skill.management";
+    }
+
+    public static class OrganizationStructures
+    {
+        public const string Manage = "organization-structures.manage";
     }
 }

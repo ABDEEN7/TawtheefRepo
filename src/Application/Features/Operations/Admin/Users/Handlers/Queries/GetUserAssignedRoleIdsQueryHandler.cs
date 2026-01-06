@@ -1,5 +1,5 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Users.Queries;
@@ -11,7 +11,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Users.Handlers.Queries;
 public sealed class GetUserAssignedRoleIdsQueryHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager)
-    : IRequestHandler<GetUserAssignedRoleIdsQuery, IResult<IReadOnlyCollection<Guid>>>
+    : IQueryHandler<GetUserAssignedRoleIdsQuery, IResult<IReadOnlyCollection<Guid>>>
 {
     public async Task<IResult<IReadOnlyCollection<Guid>>> Handle(
         GetUserAssignedRoleIdsQuery request,
@@ -25,7 +25,7 @@ public sealed class GetUserAssignedRoleIdsQueryHandler(
         var assignedRoleNames = await userManager.GetRolesAsync(user);
 
         if (assignedRoleNames.Count == 0)
-            return Result.Ok<IReadOnlyCollection<Guid>>(Array.Empty<Guid>());
+            return Result.Ok<IReadOnlyCollection<Guid>>([]);
 
         var roleNameSet = new HashSet<string>(assignedRoleNames, StringComparer.OrdinalIgnoreCase);
 

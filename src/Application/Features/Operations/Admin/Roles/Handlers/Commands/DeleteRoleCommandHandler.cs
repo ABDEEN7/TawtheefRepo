@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Commands;
 using Tawtheef.Domain.Constants;
@@ -8,7 +9,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Commands;
 
 public sealed class DeleteRoleCommandHandler(RoleManager<ApplicationRole> roleManager)
-    : IRequestHandler<DeleteRoleCommand, IResult<Unit>>
+    : ICommandHandler<DeleteRoleCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
     {

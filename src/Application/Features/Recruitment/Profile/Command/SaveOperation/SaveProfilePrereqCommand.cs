@@ -1,5 +1,7 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
@@ -7,4 +9,4 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperatio
 public sealed record SaveProfilePrereqCommand(
     Guid UserId,
     SaveProfilePrereqRequest Request
-) : IRequest<IResult<Unit>>;
+) : ICommand<IResult<Unit>>;

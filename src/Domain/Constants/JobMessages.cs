@@ -55,9 +55,9 @@ public static class JobMessages
     public const string ResponsibilityMaxLength = "RESPONSIBILTY_MAX_LENGTH";
     public const string CannotCancelFinalState = "CANNOT_CANCEL_FINAL_STATE";
     public const string ReviewNoteFound = "REVIEW_NOTE_FOUND";
-    public const string JobPointsAlreadyExist = "JOB_POINTS_ALREADY_EXIST";
     public const string JobPointsTotalNotValid = "JOB_POINTS_TOTAL_NOT_VALID";
     public const string JobPointsNotFound = "JOB_POINTS_NOT_FOUND";
     public const string JobTabReviewNotFound = "JOB_TAB_REVIEW_NOT_FOUND";
     public const string JobPointsConfigurationNotFound = "JOB_POINTS_CONFIGURATION_NOT_FOUND";
+    public const string JobCannotBeCopied = "JOB_CANNOT_BE_COPIED";
 }

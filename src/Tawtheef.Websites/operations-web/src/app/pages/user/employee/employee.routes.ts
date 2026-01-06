@@ -10,6 +10,7 @@ import {Permissions} from '../../../core/constants/permissions';
 import {KawaderPage} from './kawader/kawader.page';
 import { JobInvitationSummaryDetailsComponent } from './job-managment/job-invitation-summary-details/job-invitation-summary-details.component';
 import {ProfileApprovalWizardPage} from './profile-managment/approval-wizard/profile-approval-wizard.page';
+import {OrganizationStructuresPage} from './organization-structures/organization-structures.page';
 
 export const employeeRoutes: Routes = [
   {
@@ -31,16 +32,10 @@ export const employeeRoutes: Routes = [
     component: ProfileApprovalDetailPage
   },
   {
-    path: 'approval-profile/:profileId/wizard',
-    canActivate: [permissionGuard],
-    data: { permissions: [Permissions.ProfileApproval.View] },
-    component: ProfileApprovalWizardPage
-  },
-  {
     path: 'approval-profile/:profileId/review',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileApproval.Review] },
-    component: ProfileApprovalDetailPage
+    component: ProfileApprovalWizardPage
   },
   {
     path: 'approval-profile/:profileId/changes',
@@ -65,6 +60,12 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.JobInvitations.View] },
     component: JobInvitationSummaryDetailsComponent
+  },
+  {
+    path: 'organization-structures',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.OrganizationStructures.Manage] },
+    component: OrganizationStructuresPage
   },
   {
     path: 'jobs',

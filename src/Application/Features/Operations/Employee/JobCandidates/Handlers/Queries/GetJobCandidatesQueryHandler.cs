@@ -1,5 +1,5 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -12,7 +12,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handle
 public sealed class GetJobCandidatesQueryHandler(
     IUnitOfWork unitOfWork,
     ILocalizationService localizationService)
-    : IRequestHandler<GetJobCandidatesQuery, IResult<PaginatedResult<JobCandidateListItemDto>>>
+    : IQueryHandler<GetJobCandidatesQuery, IResult<PaginatedResult<JobCandidateListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<JobCandidateListItemDto>>> Handle(
         GetJobCandidatesQuery request,

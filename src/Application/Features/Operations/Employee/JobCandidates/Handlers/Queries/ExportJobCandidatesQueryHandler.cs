@@ -1,6 +1,6 @@
 using System.Text;
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -12,7 +12,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handle
 public sealed class ExportJobCandidatesQueryHandler(
     IUnitOfWork unitOfWork,
     ILocalizationService localizationService)
-    : IRequestHandler<ExportJobCandidatesQuery, IResult<JobCandidatesExportResult>>
+    : IQueryHandler<ExportJobCandidatesQuery, IResult<JobCandidatesExportResult>>
 {
     public async Task<IResult<JobCandidatesExportResult>> Handle(
         ExportJobCandidatesQuery request,

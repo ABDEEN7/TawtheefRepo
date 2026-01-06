@@ -1,6 +1,6 @@
-﻿using FluentResults;
+using Cortex.Mediator.Queries;
+using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
@@ -11,7 +11,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries
 
 
 public sealed class GetManagementsBySectorQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetManagementsBySectorQuery, IResult<List<DropdownOptions>>>
+    : IQueryHandler<GetManagementsBySectorQuery, IResult<List<DropdownOptions>>>
 {
 
     public async Task<IResult<List<DropdownOptions>>> Handle(GetManagementsBySectorQuery request, CancellationToken cancellationToken)
