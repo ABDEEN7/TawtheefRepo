@@ -5,6 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Events.Operation.Employee.Job;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
 
@@ -22,6 +23,7 @@ public class DeleteJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
 
             if (existingJob != null)
             {
+                existingJob.AddDomainEvent(new JobDeletedDomainEvent(existingJob, DateTimeOffset.UtcNow));
                 var deleteResult = await jobRepository.Repository.DeleteAsync(existingJob);
                 if (deleteResult.IsFailed)
                     return Result.Fail<Unit>(deleteResult.Errors);

@@ -6,6 +6,7 @@ export interface UserInfoModel {
   fullName: string;
   profilePictureUrl: string | null;
   notifications: number;
+  agreedToTerms: boolean;
   provider: string;
   missingFields?: string[];
   prefill?:  PrefillData | null;

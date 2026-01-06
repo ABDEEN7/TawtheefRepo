@@ -103,15 +103,15 @@ readonly jobStatus = JobStatus;
   }
 
   canApproveJobs(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.Approve);
+    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.Jobs.Approve]);
   }
 
   canViewJobs(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.View);
+    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.Jobs.View]);
   }
 
   canManageJobPoints(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.PointsManage);
+    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.Jobs.PointsManage]);
   }
 
   editJob(job: JobResponse) {
@@ -341,14 +341,15 @@ readonly jobStatus = JobStatus;
     }
   }
 
-   sendInvitation(){
-    //
-   }
+  sendInvitation() {
+    if (!this.canManageJobs()) return;
+  }
 
-   viewJobCandidate(jobId : GUID){
-    const url = routes.employee.jobcandidates(jobId)
-     this.router.navigate([url]);
-   }
+  viewJobCandidate(jobId: GUID) {
+    if (!this.canViewJobs()) return;
+    const url = routes.employee.jobcandidates(jobId);
+    this.router.navigate([url]);
+  }
   private loadStats(): void {
     this.loadCount(JobStatus.Cancelled, (v) => (this.cancelledCount = v));
     this.loadCount(JobStatus.PendingApproval, (v) => (this.pendingApprovalCount = v));
