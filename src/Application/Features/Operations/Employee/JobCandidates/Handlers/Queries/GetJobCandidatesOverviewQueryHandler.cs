@@ -7,6 +7,7 @@ using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handlers.Queries;
 
@@ -75,13 +76,19 @@ public sealed class GetJobCandidatesOverviewQueryHandler(IUnitOfWork unitOfWork)
             pointsList.Add(points);
         }
 
+      
+        
+        var totalInvited = await unitOfWork
+            .GetEntityRepository<Invitation>()
+            .DbSet
+            .CountAsync(i => i.JobId == job.Id, cancellationToken: cancellationToken);
         var totalEligible = pointsList.Count;
         var abovePoints = pointsList.Count(x => x >= 800);
         var avg = totalEligible == 0 ? 0 : pointsList.Average();
 
         return Result.Ok(new JobCandidatesOverviewDto
         {
-            TotalCandidatesCount = totalEligible,
+            TotalCandidatesCount = totalInvited,
             AvailableCandidatesCount = totalEligible,
             AbovePointsCandidatesCount = abovePoints,
             PointsAverage = Math.Round(avg, 2)

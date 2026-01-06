@@ -154,7 +154,6 @@ export class JobCandidatesComponent implements OnInit {
     this.minimumPoints.set(null);
     this.currentPage.set(1);
     this.resetSelection();
-    this.saveFilterSettings();
   }
 
   viewDetails(candidateId: GUID) {
@@ -241,7 +240,6 @@ export class JobCandidatesComponent implements OnInit {
       if (!result) return;
       this.candidateTypePercentages = result.candidateTypePercentages ?? [];
       this.nationalityPercentages = result.nationalityPercentages ?? [];
-      this.onFilterSettingsChange();
     });
   }
 
@@ -262,6 +260,12 @@ export class JobCandidatesComponent implements OnInit {
       },
     });
   }
+
+  applyFilters() {
+  this.currentPage.set(1);
+  this.resetSelection();
+  this.saveFilterSettings();
+}
 
   private buildFilterSettings(): JobCandidatesFilterSettings {
     return {

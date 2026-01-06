@@ -1,3 +1,5 @@
+using Cortex.Mediator;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
@@ -15,6 +17,7 @@ internal static class JobCandidatesQueryBuilder
         JobRequirements req,
         JobCandidatesFilter? filter)
     {
+
         filter ??= new JobCandidatesFilter(null, null, null);
         var searchTerm = filter.SearchTerm?.Trim();
 
@@ -50,20 +53,14 @@ internal static class JobCandidatesQueryBuilder
         {
             profiles = profiles.Where(p =>
                 p.Qualifications != null &&
-                (
-                    p.Qualifications
-                        .OrderByDescending(q => q.GraduationYear)
-                        .Select(q => q.MajorId)
-                        .FirstOrDefault() == req.JobMajorId
-                    ||
-                    p.Qualifications
-                        .OrderByDescending(q => q.GraduationYear)
-                        .Select(q => q.MajorId)
-                        .FirstOrDefault() == req.JobSubMajorId
-                ));
+                p.Qualifications.Any(q =>
+                    q.MajorId == req.JobMajorId ||
+                    q.MajorId == req.JobSubMajorId
+                )
+            );
         }
 
-        // Required skills: MUST have ALL required skills (ProfileSkill.SkillId)
+        //Required skills: MUST have ALL required skills (ProfileSkill.SkillId)
         if (req.RequiredSkillIds.Count > 0)
         {
             profiles = profiles.Where(p =>
