@@ -8,6 +8,7 @@
   "job_invites_details.kpi.viewed": "Viewed",
   "job_invites_details.kpi.unseen": "Unseen",
 
+  "job_invites_details.filters.select_status": "Select status",
   "job_invites_details.filters.status": "Status",
   "job_invites_details.filters.search": "Search (candidate name)",
   "job_invites_details.filters.search_placeholder": "Type part of the name...",
