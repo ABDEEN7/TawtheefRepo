@@ -20,10 +20,12 @@
         </div>
 
         <div class="reject-btn">
+          @if (canManageJobs()) {
           <button class="reject-button" (click)="reject()">
             <i class="fa fa-times"></i>
             <span>{{ 'JOB_APPROVAL.REJECT' | translate }}</span>
           </button>
+          }
         </div>
       </div>
     </div>
@@ -334,7 +336,7 @@
     <!-- Action buttons for Review tab -->
     @if (activeTab === "Review") {
     <div class="actions-bar">
-      @if(!isAllTabsApproved()) {
+      @if(!isAllTabsApproved() && canManageJobs()) {
       <div class="job-btns">
         <button
           class="apply-button-large"
@@ -345,7 +347,7 @@
           <span>{{ 'JOB_APPROVAL.BACK_TO_EDIT' | translate }}</span>
         </button>
       </div>
-      } @if(isAllTabsApproved()) {
+      } @if(isAllTabsApproved() && canManageJobs()) {
       <div class="approve-btn">
         <button class="apply-button-large" [disabled]="!isReviewComplete()" (click)="confirm()">
           <i class="fa fa-check"></i>

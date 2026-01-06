@@ -1,6 +1,7 @@
 ﻿
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
@@ -13,6 +14,7 @@ namespace Operations.API.Controllers.Employee;
 public class JobApprovalController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> AddReviewJob([FromForm] SaveJobReviewCommand command)
     {
         var result = await mediator.Send(command);
@@ -20,13 +22,15 @@ public class JobApprovalController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{jobId:guid}")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetJobTabReviews(Guid jobId)
     {
         var result = await mediator.Send(new GetJobTabReviewsQuery(jobId));
-            return result.ToActionResult();
+        return result.ToActionResult();
     }
 
     [HttpGet("{jobId:guid}/latest")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetLatestJobTabReviews(Guid jobId)
     {
         var result = await mediator.Send(new GetLatestReviewQuery(jobId));
