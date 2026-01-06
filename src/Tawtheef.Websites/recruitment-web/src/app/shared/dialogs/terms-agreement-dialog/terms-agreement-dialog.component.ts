@@ -13,8 +13,7 @@ import {I18nNamespaceDirective} from '../../directives/i18n-namespace.directive'
   standalone: true,
   imports: [
     ButtonDirective,
-    TranslatePipe,
-    I18nNamespaceDirective
+    TranslatePipe
   ],
   templateUrl: './terms-agreement-dialog.component.html',
   styleUrl: './terms-agreement-dialog.component.scss'

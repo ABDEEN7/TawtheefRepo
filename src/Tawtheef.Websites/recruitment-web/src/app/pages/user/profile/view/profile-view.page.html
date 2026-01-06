@@ -1,103 +1,201 @@
-<section class="profile-view-shell p-4" i18nNamespace="pages/user/profile-overview">
-  <div class="card shadow-sm border-0 header-card p-4">
-    @if (loadingBasics()) {
-      <div class="d-flex gap-3 align-items-center">
-        <p-skeleton shape="circle" size="4rem"></p-skeleton>
-        <div class="flex-grow-1">
-          <p-skeleton width="18rem" height="1.6rem"></p-skeleton>
-          <p-skeleton class="mt-2" width="28rem"></p-skeleton>
-        </div>
-      </div>
-    } @else { @if (header()) {
-      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-        <div class="d-flex align-items-center gap-3">
-          <div class="avatar bg-light rounded-circle d-inline-flex align-items-center justify-content-center">
-            <i class="pi pi-user"></i>
-          </div>
-          <div>
-            <div class="h5 mb-1">{{ header()?.fullNameEn || header()?.fullNameAr }}</div>
-            <div class="text-muted small">{{ header()?.email }}</div>
-            <div class="text-muted small">{{ header()?.phone }}</div>
-          </div>
-        </div>
-        <p-tag [severity]="'info'" [value]="('profileOverview.status.inCreation' | translate)"></p-tag>
-      </div>
-    } }
-  </div>
+<main class="py-4" i18nNamespace="pages/user/profile-overview">
+  <!-- Big wrapper panel -->
+  <section class="panel p-3 p-md-4 shadow-sm">
+    <!-- Profile summary -->
+    <div class="panel-inner">
+      <div class="d-flex flex-column gap-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 header-row">
+          <div class="d-flex align-items-center gap-3">
+            <img class="avatar shadow-sm" [src]="header()?.avatar || 'https://via.placeholder.com/88x88.png?text=AV'" alt="Avatar" />
 
-  <div class="card shadow-sm border-0 mt-3" *ngIf="reviewNotes()">
-    <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
-      <div class="d-flex gap-2 align-items-center">
-        <i class="pi pi-comments"></i>
-        <div>
-          <div class="fw-semibold">{{ 'profileOverview.review.title' | translate }}</div>
-          <div class="text-muted small">{{ 'profileOverview.review.subtitle' | translate }}</div>
-        </div>
-      </div>
-      <button pButton type="button" class="p-button-sm p-button-secondary" (click)="openReviewStep()"
-              [label]="'wizard.steps.review' | translate"></button>
-    </div>
-  </div>
-
-  <div class="insight-grid mt-3">
-    @for (card of cards; track card.section) {
-      <button type="button" class="insight-card" (click)="openCard(card.section)">
-        <div class="icon"><i [ngClass]="card.icon"></i></div>
-        <div class="label">{{ card.labelKey | translate }}</div>
-        <div class="hint text-muted small" *ngIf="reviewNotes()?.sectionIndex?.[card.section]">
-          {{ 'profileOverview.review.notesCount' | translate }}: {{ reviewNotes()?.sectionIndex?.[card.section] }}
-        </div>
-      </button>
-    }
-  </div>
-
-  <div class="mt-3" *ngIf="expanded() as active">
-    <div class="card shadow-sm border-0">
-      <div class="card-body">
-        @if (sectionStatus(active) === 'loading') {
-          <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
-            <div class="fw-semibold">{{ keyLabel | translate }}</div>
-            <span class="text-muted small">{{ 'common.loading' | translate }}</span>
-          </div>
-          <div class="mt-3"><p-skeleton width="100%" height="3rem"></p-skeleton></div>
-        }
-
-        @if (sectionStatus(active) === 'error') {
-          <div class="alert alert-danger mt-3">{{ 'common.loadFailed' | translate }}</div>
-        }
-
-        @if (sectionStatus(active) === 'resolved') {
-          <div class="mt-3" [ngSwitch]="active">
-            <app-profile-prerequisites-section *ngSwitchCase="ProfileSectionEnum.Prerequisites" [profile]="sectionValue(active)"></app-profile-prerequisites-section>
-            <app-profile-personal-section *ngSwitchCase="ProfileSectionEnum.Personal" [profile]="sectionValue(active)"></app-profile-personal-section>
-            <app-profile-contact-section *ngSwitchCase="ProfileSectionEnum.Contact" [profile]="sectionValue(active)"></app-profile-contact-section>
-            <app-profile-qualifications-section *ngSwitchCase="ProfileSectionEnum.Qualifications" [profile]="sectionValue(active)"></app-profile-qualifications-section>
-            <app-profile-experience-section *ngSwitchCase="ProfileSectionEnum.Experience" [profile]="sectionValue(active)"></app-profile-experience-section>
-            <app-profile-training-section *ngSwitchCase="ProfileSectionEnum.TrainingCourses" [profile]="sectionValue(active)"></app-profile-training-section>
-            <app-profile-achievements-section *ngSwitchCase="ProfileSectionEnum.CertificatesAndAwards" [profile]="sectionValue(active)"></app-profile-achievements-section>
-            <app-profile-skills-section *ngSwitchCase="ProfileSectionEnum.Skills" [profile]="sectionValue(active)"></app-profile-skills-section>
-            <app-profile-languages-section *ngSwitchCase="ProfileSectionEnum.Languages" [profile]="sectionValue(active)"></app-profile-languages-section>
-            <app-profile-attachments-section *ngSwitchCase="ProfileSectionEnum.Attachments" [profile]="sectionValue(active)"></app-profile-attachments-section>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
-
-  <div class="card shadow-sm border-0 mt-3" *ngIf="changeRequestsVm().length">
-    <div class="card-body">
-      <div class="fw-semibold mb-2">{{ 'profileOverview.changeRequests.title' | translate }}</div>
-      <div class="d-flex flex-column gap-2">
-        @for (req of changeRequestsVm(); track req.id) {
-          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div>
-              <div class="fw-semibold">{{ req.sectionLabelKey | translate }}</div>
-              <div class="text-muted small">{{ req.requestedAtUtc | date:'medium' }}</div>
+            <div class="text-start">
+              <div class="d-flex align-items-center justify-content-end gap-2 flex-wrap">
+                <div class="fs-4 fw-bold">{{ header()?.fullNameAr || header()?.fullNameEn}}</div>
+                <span class="status-chip chip-warn">
+                  <i class="bi bi-x-circle"></i>
+                  {{ 'profileView.status.notMatched' | translate }}
+                </span>
+              </div>
+              <div class="muted small">
+                {{ 'profileView.header.subtitleWaitingReview' | translate }}
+              </div>
             </div>
-            <p-tag [severity]="req.statusSeverity" [value]="(req.statusLabelKey | translate)"></p-tag>
+
           </div>
-        }
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <div class="mini-card d-flex align-items-center justify-content-between lift-on-hover">
+              <div class="d-flex align-items-center gap-3">
+                <div class="icon icon-soft"><i class="bi bi-telephone"></i></div>
+                <div class="text-start">
+                  <div class="muted small">{{ 'profileView.fields.phone' | translate }}</div>
+                  <div class="fw-bold">{{ header()?.phone || '—' }}</div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="status-chip chip-ok">
+                  <i class="bi bi-check2"></i>
+                  {{ 'profileView.verification.verified' | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="mini-card d-flex align-items-center justify-content-between lift-on-hover">
+              <div class="d-flex align-items-center gap-3">
+                <div class="icon icon-soft"><i class="bi bi-envelope"></i></div>
+                <div class="text-start">
+                  <div class="muted small">{{ 'profileView.fields.email' | translate }}</div>
+                  <div class="fw-bold">{{ header()?.email || '—' }}</div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="status-chip chip-ok">
+                  <i class="bi bi-check2"></i>
+                  {{ 'profileView.verification.verified' | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section tiles -->
+        <div class="row g-3 mt-1 tiles-row row-cols-1 row-cols-sm-2 row-cols-lg-5">
+          @for (card of cards; track card.section) {
+            <div class="col">
+              <div
+                class="section-tile lift-on-hover"
+                role="button"
+                tabindex="0"
+                [ngClass]="expanded() === card.section ? 'active' : ''"
+                (click)="openCard(card.section)"
+                (keydown.enter)="openCard(card.section)"
+                (keydown.space)="$event.preventDefault(); openCard(card.section)">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="tile-num" *ngIf="reviewNotes()?.sectionIndex?.[card.section]">
+                    {{ reviewNotes()?.sectionIndex?.[card.section] }}
+                  </div>
+
+                  <div class="float-end">
+                    <span class="tile-badge badge-fix"
+                          *ngIf="reviewNotes()?.sectionIndex?.[card.section] as c">
+                      <i class="bi bi-exclamation-triangle"></i>
+                      {{ 'profileOverview.review.notesCount' | translate }}
+                    </span>
+                    <span class="tile-badge badge-done"
+                          *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
+                      <i class="bi bi-check2"></i>
+                      {{ 'profileView.sections.status.ok' | translate }}
+                    </span>
+                  </div>
+                </div>
+                <div class="mt-2 tile-title">
+                  {{ card.labelKey | translate }}
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
       </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <section class="panel p-3 mt-3 p-md-4 shadow-sm">
+    <!-- HR Notes -->
+    <div class="panel-inner mt-3" *ngIf="reviewNotes()?.sectionIndex?.[expanded()!]">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <div class="hr-title">
+          <i class="bi bi-journal-text"></i>
+          {{ 'profileView.hrNotes.title' | translate }}
+        </div>
+      </div>
+
+      <div class="mini-card" style="min-height:140px">
+        <div class="d-flex gap-3">
+          <div class="text-start">
+            <ol class="mb-0 small">
+              <li>{{ 'profileView.hrNotes.items.fullNameMustMatch' | translate }}</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-inner mt-3">
+      <div class="mt-3" *ngIf="expanded() as active">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            @if (sectionStatus(active) === 'loading') {
+              <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                <div class="fw-semibold">{{ keyLabel | translate }}</div>
+                <span class="text-muted small">{{ 'common.loading' | translate }}</span>
+              </div>
+              <div class="mt-3">
+                <p-skeleton width="100%" height="3rem"></p-skeleton>
+              </div>
+            }
+
+            @if (sectionStatus(active) === 'error') {
+              <div class="alert alert-danger mt-3">{{ 'common.loadFailed' | translate }}</div>
+            }
+
+            @if (sectionStatus(active) === 'resolved') {
+              <div [ngSwitch]="active">
+                <app-profile-prerequisites-section
+                  *ngSwitchCase="ProfileSectionEnum.Prerequisites"
+                  [profile]="sectionValue(active)">
+                </app-profile-prerequisites-section>
+
+                <app-profile-personal-section
+                  *ngSwitchCase="ProfileSectionEnum.Personal"
+                  [profile]="sectionValue(active)">
+                </app-profile-personal-section>
+
+                <app-profile-contact-section
+                  *ngSwitchCase="ProfileSectionEnum.Contact"
+                  [profile]="sectionValue(active)">
+                </app-profile-contact-section>
+
+                <app-profile-qualifications-section
+                  *ngSwitchCase="ProfileSectionEnum.Qualifications"
+                  [profile]="sectionValue(active)">
+                </app-profile-qualifications-section>
+
+                <app-profile-experience-section
+                  *ngSwitchCase="ProfileSectionEnum.Experience"
+                  [profile]="sectionValue(active)">
+                </app-profile-experience-section>
+
+                <app-profile-training-section
+                  *ngSwitchCase="ProfileSectionEnum.TrainingCourses"
+                  [profile]="sectionValue(active)">
+                </app-profile-training-section>
+
+                <app-profile-achievements-section
+                  *ngSwitchCase="ProfileSectionEnum.CertificatesAndAwards"
+                  [profile]="sectionValue(active)">
+                </app-profile-achievements-section>
+
+                <app-profile-skills-section
+                  *ngSwitchCase="ProfileSectionEnum.Skills"
+                  [profile]="sectionValue(active)">
+                </app-profile-skills-section>
+
+                <app-profile-languages-section
+                  *ngSwitchCase="ProfileSectionEnum.Languages"
+                  [profile]="sectionValue(active)">
+                </app-profile-languages-section>
+
+                <app-profile-attachments-section
+                  *ngSwitchCase="ProfileSectionEnum.Attachments"
+                  [profile]="sectionValue(active)">
+                </app-profile-attachments-section>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

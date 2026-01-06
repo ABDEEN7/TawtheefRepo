@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ProfileStatusDto } from '../../../../../core/models/auth/auth-response.model';
+import { ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
 
 @Component({
-  selector: 'app-profile-experience-section',
+  selector: 'app-profile-contact-section',
   standalone: true,
   imports: [CommonModule, TranslatePipe],
-  templateUrl: './experience-section.component.html',
+  templateUrl: './contact-section.component.html',
+  styleUrls: ['./contact-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProfileExperienceSectionComponent {
+export class ProfileContactSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
 }

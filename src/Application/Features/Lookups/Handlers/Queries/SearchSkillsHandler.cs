@@ -6,13 +6,13 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper)
     : IQueryHandler<SearchSkillsQuery, IResult<List<DropdownOptions>>>
 {
-
     public async Task<IResult<List<DropdownOptions>>> Handle(
         SearchSkillsQuery request,
         CancellationToken cancellationToken)
@@ -21,7 +21,7 @@ public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper)
         if (string.IsNullOrWhiteSpace(term) || term.Length < 3) 
             return Result.Ok(new List<DropdownOptions>());
 
-        var matches = await uow.GetEntityRepository<SkillType>().DbSet
+        var matches = await uow.GetEntityRepository<Skill>().DbSet
             .AsNoTracking()
             .Where(s => s.IsActive)
             .Where(s =>

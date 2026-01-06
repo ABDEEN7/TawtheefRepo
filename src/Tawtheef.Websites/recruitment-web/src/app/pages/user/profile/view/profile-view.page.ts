@@ -23,17 +23,18 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { ReviewStepsDialogComponent } from '../overview/dialogs/review-steps-dialog/review-steps-dialog.component';
 import { ReviewItemEditDialogComponent } from '../overview/dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
 import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
-import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites-section.component';
-import { ProfilePersonalSectionComponent } from './sections/personal-section.component';
-import { ProfileContactSectionComponent } from './sections/contact-section.component';
-import { ProfileQualificationsSectionComponent } from './sections/qualifications-section.component';
-import { ProfileExperienceSectionComponent } from './sections/experience-section.component';
-import { ProfileTrainingSectionComponent } from './sections/training-section.component';
-import { ProfileAchievementsSectionComponent } from './sections/achievements-section.component';
-import { ProfileSkillsSectionComponent } from './sections/skills-section.component';
-import { ProfileLanguagesSectionComponent } from './sections/languages-section.component';
-import { ProfileAttachmentsSectionComponent } from './sections/attachments-section.component';
+import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites/prerequisites-section.component';
+import { ProfilePersonalSectionComponent } from './sections/personal/personal-section.component';
+import { ProfileContactSectionComponent } from './sections/contact/contact-section.component';
+import { ProfileQualificationsSectionComponent } from './sections/qualifications/qualifications-section.component';
+import { ProfileExperienceSectionComponent } from './sections/experience/experience-section.component';
+import { ProfileTrainingSectionComponent } from './sections/training/training-section.component';
+import { ProfileAchievementsSectionComponent } from './sections/achievements/achievements-section.component';
+import { ProfileSkillsSectionComponent } from './sections/skills/skills-section.component';
+import { ProfileLanguagesSectionComponent } from './sections/languages/languages-section.component';
+import { ProfileAttachmentsSectionComponent } from './sections/attachments/attachments-section.component';
 import { ProfileViewCqrs } from './profile-view.cqrs';
+import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.directive';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -50,8 +51,6 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
   imports: [
     CommonModule,
     TranslatePipe,
-    ButtonDirective,
-    Tag,
     Skeleton,
     TooltipModule,
     I18nNamespaceDirective,
@@ -64,7 +63,8 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
     ProfileAchievementsSectionComponent,
     ProfileSkillsSectionComponent,
     ProfileLanguagesSectionComponent,
-    ProfileAttachmentsSectionComponent
+    ProfileAttachmentsSectionComponent,
+    FaDirArrowDirective
   ],
   templateUrl: './profile-view.page.html',
   styleUrls: ['./profile-view.page.scss'],
@@ -115,7 +115,7 @@ export class ProfileViewPage {
   // If loadSection returns a different DTO per section, make this RxRes<unknown> instead.
   private readonly sections = new Map<ProfileSectionEnum, RxRes<ProfileStatusDto>>();
 
-  protected readonly expanded = signal<ProfileSectionEnum | null>(null);
+  protected readonly expanded = signal<ProfileSectionEnum>(ProfileSectionEnum.Personal);
 
   constructor() {
     this.cards.forEach(card => {

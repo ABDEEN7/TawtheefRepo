@@ -290,5 +290,13 @@
   "profileOverview.fields.university": "University",
   "profileOverview.fields.gradCountry": "Country of Graduation",
   "profileOverview.fields.graduationYear": "Graduation Year",
-  "profileOverview.fields.studyType": "Study Type"
+  "profileOverview.fields.studyType": "Study Type",
+  "profileView.sections.status.ok": "Approved",
+  "profileOverview.reviewStatus.pending": "Pending Review",
+  "profileView.verification.verified": "Verified",
+  "profileView.verification.unverified": "Unverified",
+  "profileView.status.notMatched": "Not Matched",
+  "profileView.status.matched": "Matched",
+  "profileView.actions.edit": "Edit Profile",
+  "profileView.actions.view": "View Profile"
 }
