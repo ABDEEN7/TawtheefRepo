@@ -51,13 +51,6 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command);
         return result.ToActionResult();
     }
-    [HttpGet("overview")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
-    public async Task<IActionResult> GetOverview([FromQuery] GetJobCandidatesOverviewQuery query)
-    {
-        var result = await mediator.Send(query);
-        return result.ToActionResult();
-    }
 
     [HttpPost("search")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]

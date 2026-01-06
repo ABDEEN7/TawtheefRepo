@@ -1,7 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
 import { PaginationMetadata } from '../../../core/models/pagination-metadata.model';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DialogHelperService } from '../../../core/services/dialog-helper.service';
@@ -22,8 +21,9 @@ import {
   JobCandidatesFilterSettings,
   JobCandidateTypePercentage,
 } from '../models/job-candidates-filter-settings.model';
-import {Permissions} from '../../../core/constants/permissions';
+import { Permissions } from '../../../core/constants/permissions';
 import { AuthService } from '../../../core/auth/auth.service';
+import { JobCandidatesResponse } from '../models/job-candidates-response';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -68,9 +68,8 @@ export class JobCandidatesComponent implements OnInit {
   ngOnInit() {
     this.jobId = this.route.snapshot.paramMap.get('id') as GUID;
     this.jobService.getById(this.jobId).subscribe((job) => {
-      if(!job)
-        return;
-      this.jobInfo = job
+      if (!job) return;
+      this.jobInfo = job;
       this.lookupsService.loadGenders().subscribe();
       this.lookupsService.loadNationalities().subscribe();
       this.loadFilterSettings();
@@ -114,20 +113,21 @@ export class JobCandidatesComponent implements OnInit {
       sortDirection: 'desc',
     };
 
-    forkJoin({
-      overview: this.jobCandidatesService.getOverview(this.jobId, filter),
-      list: this.jobCandidatesService.search(this.jobId, pagination as PaginatedRequest, filter),
-    }).subscribe({
-      next: ({ overview, list }) => {
-        this.totalCandidatesCount = overview.totalCandidatesCount;
-        this.availableCandidatesCount = overview.availableCandidatesCount;
-        this.abovePointsCandidatesCount = overview.abovePointsCandidatesCount;
-        this.pointsAverage = overview.pointsAverage;
+    this.jobCandidatesService
+      .getCandidates(this.jobId, pagination as PaginatedRequest, filter)
+      .subscribe({
+        next: (res: JobCandidatesResponse) => {
+          const { overview, list } = res;
 
-        this.candidates = list;
-        this.paginationMetadata = list.metadata;
-      },
-    });
+          this.totalCandidatesCount = overview.totalCandidatesCount;
+          this.availableCandidatesCount = overview.availableCandidatesCount;
+          this.abovePointsCandidatesCount = overview.abovePointsCandidatesCount;
+          this.pointsAverage = overview.pointsAverage;
+
+          this.candidates = list;
+          this.paginationMetadata = list.metadata;
+        },
+      });
   }
 
   private buildFilter(): JobCandidatesFilter {
@@ -262,10 +262,10 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   applyFilters() {
-  this.currentPage.set(1);
-  this.resetSelection();
-  this.saveFilterSettings();
-}
+    this.currentPage.set(1);
+    this.resetSelection();
+    this.saveFilterSettings();
+  }
 
   private buildFilterSettings(): JobCandidatesFilterSettings {
     return {

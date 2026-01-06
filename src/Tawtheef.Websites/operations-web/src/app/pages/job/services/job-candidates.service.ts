@@ -15,20 +15,12 @@ import {
   SendJobCandidateInvitationsResult,
 } from '../models/job-candidates-invitations.model';
 import { JobCandidatesFilterSettings } from '../models/job-candidates-filter-settings.model';
+import { JobCandidatesResponse } from '../models/job-candidates-response';
 
 @Injectable({ providedIn: 'root' })
 export class JobCandidatesService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
-
-  getOverview(jobId: GUID, filter?: JobCandidatesFilter): Observable<JobCandidatesOverview> {
-    return this.http.get<JobCandidatesOverview>(this.endpoints.jobCandidates.overview, {
-      jobId,
-      searchTerm: filter?.searchTerm,
-      genderId: filter?.genderId,
-      minimumPoints: filter?.minimumPoints,
-    });
-  }
 
   getFilterSettings(jobId: GUID): Observable<JobCandidatesFilterSettings> {
     return this.http.get<JobCandidatesFilterSettings>(this.endpoints.jobCandidates.filters, { jobId });
@@ -40,12 +32,12 @@ export class JobCandidatesService {
     });
   }
 
-  search(
+  getCandidates(
     jobId: GUID,
     pagination: PaginatedRequest,
     filter?: JobCandidatesFilter
-  ): Observable<PaginatedResult<JobCandidateListItem>> {
-    return this.http.post<PaginatedResult<JobCandidateListItem>>(
+  ): Observable<JobCandidatesResponse> {
+    return this.http.post<JobCandidatesResponse>(
       this.endpoints.jobCandidates.search,
       {
         jobId,
