@@ -743,6 +743,24 @@ body.ltr
       background-color: #fff;
     }
   }
+  .btn-text{
+    border:1px solid rgb(203, 203, 203);
+    color: #8a1538;
+    background-color: #fff;
+    min-width: 35px;
+    min-height: 35px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    border-radius: 2rem;
+    padding:0 0.5rem;
+
+    &:hover{
+      border-color: #8a1538;
+      color: #8a1538;
+      background-color: #fff;
+    }
+  }
 
 
 }
