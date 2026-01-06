@@ -13,10 +13,12 @@ import { PaginatedResult } from '../../../core/models/paginated-result.model';
 import { JobCandidateListItem } from '../models/job-candidate.model';
 import { JobCandidatesFilter } from '../models/job-candidates-filter.model';
 import { PaginatedRequest } from '../../../core/models/paginated-request.model';
+import { AuthService } from '../../../core/auth/auth.service';
+import { Permissions } from '../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-candidates.component',
-  standalone:false,
+  standalone: false,
   templateUrl: './job-candidates.component.html',
   styleUrl: './job-candidates.component.scss',
 })
@@ -27,10 +29,11 @@ export class JobCandidatesComponent implements OnInit {
   private translationService = inject(TranslateService);
   private dialogHelperService = inject(DialogHelperService);
   private fileUtilsService = inject(FileUtilsService);
+  private authService = inject(AuthService);
   lookupsService = inject(JobLookupService);
 
   paginationMetadata: PaginationMetadata | undefined;
-  
+
   jobId!: GUID;
 
   totalCandidatesCount = 0;
@@ -40,7 +43,7 @@ export class JobCandidatesComponent implements OnInit {
   currentPage = signal(1);
   itemsPerPage = 10;
 
-  candidates :PaginatedResult<JobCandidateListItem>  | undefined;
+  candidates: PaginatedResult<JobCandidateListItem> | undefined;
   selectedCandidates: JobCandidateListItem[] = [];
   searchQuery = signal<string>('');
   filterJobCategory = signal<GUID | null>(null);
@@ -67,7 +70,7 @@ export class JobCandidatesComponent implements OnInit {
 
     forkJoin({
       overview: this.jobCandidatesService.getOverview(this.jobId, filter),
-      list: this.jobCandidatesService.search(this.jobId, pagination as PaginatedRequest , filter),
+      list: this.jobCandidatesService.search(this.jobId, pagination as PaginatedRequest, filter),
     }).subscribe({
       next: ({ overview, list }) => {
         this.totalCandidatesCount = overview.totalCandidatesCount;
@@ -110,11 +113,13 @@ export class JobCandidatesComponent implements OnInit {
     this.loadCandidatesData();
   }
 
-  viewDetails(candidateId :GUID) {
+  viewDetails(candidateId: GUID) {
+    if (!this.canViewJobs()) return;
     void candidateId;
   }
 
   exportToExcel() {
+    if (!this.canManageJobs()) return;
     const invitationIds =
       this.selectedCandidates.length > 0
         ? this.selectedCandidates.map((candidate) => candidate.invitationId)
@@ -144,6 +149,7 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   sendInvitations() {
+    if (!this.canManageJobs()) return;
     const ref = this.dialogHelperService.openConfirmDialog({
       type: 'submit',
       title: 'JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_TITLE',
@@ -192,5 +198,13 @@ export class JobCandidatesComponent implements OnInit {
     const match = /filename[*]?=(?:UTF-8''|\"|')?([^;\"']+)/i.exec(contentDisposition);
     if (!match?.[1]) return null;
     return decodeURIComponent(match[1].replace(/\"/g, ''));
+  }
+
+  canManageJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.Manage);
+  }
+
+  canViewJobs(): boolean {
+    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.Jobs.View]);
   }
 }

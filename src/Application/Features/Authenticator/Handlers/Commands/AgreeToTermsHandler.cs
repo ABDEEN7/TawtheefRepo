@@ -26,8 +26,6 @@ public sealed class AgreeToTermsHandler(
             return Result.Ok(Unit.Value);
 
         user.AgreedToTerms = true;
-
-        await uow.GetEntityRepository<User>().UpdateAsync(user);
         await uow.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);
