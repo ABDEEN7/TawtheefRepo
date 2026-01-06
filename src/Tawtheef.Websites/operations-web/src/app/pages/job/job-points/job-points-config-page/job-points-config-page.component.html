@@ -57,7 +57,7 @@
     </p-tabs>
   }
 
-  @if (isFinalApprovalAvailable && !isLoading) {
+  @if (isFinalApprovalAvailable && !isLoading && canManageJobs()) {
     <div class="final-approval-section">
       <div class="approval-info">
         <i class="pi pi-check-circle mr-2"></i>

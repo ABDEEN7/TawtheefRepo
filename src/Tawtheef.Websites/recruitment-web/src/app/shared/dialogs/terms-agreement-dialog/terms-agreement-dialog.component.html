@@ -1,0 +1,25 @@
+<section class="terms-dialog" [i18nNamespace]="'layout.internal.termsDialog'">
+  <h3 class="mb-3">{{ 'layout.internal.termsDialog.title' | translate }}</h3>
+  <p class="mb-3">{{ 'layout.internal.termsDialog.description' | translate }}</p>
+  <ul class="mb-4">
+    <li>{{ 'layout.internal.termsDialog.points.review' | translate }}</li>
+    <li>{{ 'layout.internal.termsDialog.points.updates' | translate }}</li>
+  </ul>
+  <div class="d-flex justify-content-end gap-2">
+    <button
+      pButton
+      type="button"
+      class="p-button-text"
+      (click)="close()">
+      {{ 'layout.internal.termsDialog.later' | translate }}
+    </button>
+    <button
+      pButton
+      type="button"
+      severity="primary"
+      [loading]="loading"
+      (click)="accept()">
+      {{ 'layout.internal.termsDialog.accept' | translate }}
+    </button>
+  </div>
+</section>

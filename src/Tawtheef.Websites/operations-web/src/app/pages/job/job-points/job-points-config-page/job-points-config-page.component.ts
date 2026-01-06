@@ -18,6 +18,8 @@ import { DialogHelperService } from '../../../../core/services/dialog-helper.ser
 import { JobStatus } from '../../../../core/enums/lookups.enum';
 import { JobLookupService } from '../../services/job-lookup.service';
 import { routes } from '../../../../routes/routes';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { Permissions } from '../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-points-config-page',
@@ -38,6 +40,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   private dialogHelperService = inject(DialogHelperService);
   private lookupsService = inject(JobLookupService);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   private destroy$ = new Subject<void>();
 
@@ -254,6 +257,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
+    if (!this.canManageJobs()) return;
     if (!this.areAllCategoriesValid()) {
       this.notificationService.warn(
         this.translationService.instant('JOB_POINTS.VALIDATION.DETAILS_EXCEED_MAIN')
@@ -309,6 +313,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   }
 
   approvePoints(): void {
+    if (!this.canManageJobs()) return;
     if (!this.isFinalApprovalAvailable) {
       this.notificationService.warn(
         this.translationService.instant('JOB_POINTS.VALIDATION.CANNOT_APPROVE')
@@ -449,5 +454,9 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     this.activeTab = '0';
+  }
+
+  canManageJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.Manage);
   }
 }

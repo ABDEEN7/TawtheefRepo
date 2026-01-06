@@ -2,7 +2,6 @@ using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Commands;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
@@ -14,10 +13,7 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handlers.Commands;
 
-public sealed class SendJobCandidateInvitationsCommandHandler(
-    IUnitOfWork unitOfWork,
-    IEmailSender emailSender,
-    ISmsSender smsSender)
+public sealed class SendJobCandidateInvitationsCommandHandler(IUnitOfWork unitOfWork)
     : ICommandHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
     private readonly JobCandidatePointsCalculator _pointsCalculator = new();

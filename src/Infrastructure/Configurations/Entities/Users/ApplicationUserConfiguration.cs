@@ -10,6 +10,10 @@ public class ApplicationUserConfiguration<T> : IEntityTypeConfiguration<T> where
     {
         builder.HasIndex(u => u.Email).IsUnique();
 
+        builder.Property(u => u.AgreedToTerms)
+            .IsRequired()
+            .HasDefaultValue(false);
+
         builder.HasOne(u => u.UserType)
             .WithMany()
             .HasForeignKey(u => u.UserTypeId)

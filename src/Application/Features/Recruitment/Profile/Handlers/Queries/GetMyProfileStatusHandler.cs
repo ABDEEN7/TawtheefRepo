@@ -2,7 +2,7 @@ using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -14,7 +14,8 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Queries;
 
-public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
+public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, UserManager<User> userManager, 
+    IMapper mapper, IMediaUrlResolver media)
     : IQueryHandler<GetMyProfileStatusQuery, Result<ProfileStatusDto>>
 {
     public async Task<Result<ProfileStatusDto>> Handle(GetMyProfileStatusQuery request, CancellationToken ct)
@@ -24,7 +25,14 @@ public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, IMapper mapper, I
         var profile = await query.FirstOrDefaultAsync(p => p.UserId == request.UserId, ct);
         if (profile is null)
         {
-            return Result.Ok(new ProfileStatusDto());
+            var user = await userManager.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == request.UserId, ct);
+
+            return Result.Ok(new ProfileStatusDto
+            {
+                AgreedToTerms = user?.AgreedToTerms ?? false
+            });
         }
 
         using var scope = new MapContextScope();
