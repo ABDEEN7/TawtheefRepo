@@ -72,33 +72,68 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private initForm(): void {
-    this.form = this.fb.group({
-      main: this.fb.group({
-        applicantCategory: [0, [Validators.min(0)]],
-        education: [0, [Validators.min(0)]],
-        experience: [0, [Validators.min(0)]],
-        training: [0, [Validators.min(0)]],
-        skills: [0, [Validators.min(0)]],
-        languages: [0, [Validators.min(0)]],
-        certificates: [0, [Validators.min(0)]],
+ private initForm(): void {
+  this.form = this.fb.group({
+    main: this.fb.group({
+      applicantCategory: [0, [Validators.min(0)]],
+      education: [0, [Validators.min(0)]],
+      experience: [0, [Validators.min(0)]],
+      training: [0, [Validators.min(0)]],
+      skills: [0, [Validators.min(0)]],
+      languages: [0, [Validators.min(0)]],
+      certificates: [0, [Validators.min(0)]],
+      total: [{ value: 0, disabled: true }],
+    }),
+
+    details: this.fb.group({
+      applicantCategory: this.fb.group({}), // dynamic -> will be added later
+      education: this.fb.group({}),         // dynamic -> will be added later
+      skills: this.fb.group({}),            // dynamic -> will be added later
+
+      experience: this.fb.group({
+        pointsPerYear: [0],
+        maxYears: [0],
         total: [{ value: 0, disabled: true }],
       }),
-      details: this.fb.group({
-        applicantCategory: this.fb.group({}),
-        education: this.fb.group({}),
-        experience: this.fb.group({
-          pointsPerYear: [0],
-          maxYears: [0],
-          total: [{ value: 0, disabled: true }],
-        }),
-        training: this.fb.group({}),
-        languages: this.fb.group({}),
-        certificates: this.fb.group({}),
-        skills: this.fb.group({}),
+
+      training: this.fb.group({
+        highLinked: [0],
+        mediumLinked: [0],
+        lowLinked: [0],
       }),
-    });
-  }
+
+      certificates: this.fb.group({
+        certificatesLinked: [0],
+        certificatesNotLinked: [0],
+        prize: [0],
+      }),
+
+      languages: this.fb.group({
+        speaking: this.fb.group({
+          max: [0],
+          excellent: [0],
+          veryGood: [0],
+          good: [0],
+        }),
+        reading: this.fb.group({
+          max: [0],
+          excellent: [0],
+          veryGood: [0],
+          good: [0],
+        }),
+        conversation: this.fb.group({
+          max: [0],
+          excellent: [0],
+          veryGood: [0],
+          good: [0],
+        }),
+
+        // ✅ your LANGUAGE_ITEMS includes 'native', so it must exist too:
+        native: [0],
+      }),
+    }),
+  });
+}
 
   get mainFormGroup(): FormGroup {
     return this.form.get('main') as FormGroup;

@@ -11,7 +11,7 @@ public record JobCandidateRecord
     public UserProfile? Profile { get; init; }
 
     public Guid JobId { get; init; }
-
+    public Domain.Entities.Recruitment.Job? Job { get; init; }
     public Major? Major { get; init; }
 
     public Guid? InvitationStatusId { get; init; } // or int? depending on your model

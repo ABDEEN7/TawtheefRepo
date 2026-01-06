@@ -289,18 +289,6 @@
                         </button>
                         } @if(job.jobStatus.backendName === jobStatus.Published){
                         <button
-                          class="btn d-flex gap-1 align-items-center btn-danger-outline"
-                          type="button"
-                          (click)="sendInvitation()"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_SEND_INVITATIONS' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_SEND_INVITATIONS' | translate"
-                        >
-                        <i class="hgi hgi-stroke hgi-sent"></i>
-                          
-                        </button>
-
-                        <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
                           (click)="viewJobCandidate(job.id)"

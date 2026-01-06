@@ -14,6 +14,7 @@ import {
   SendJobCandidateInvitationsRequest,
   SendJobCandidateInvitationsResult,
 } from '../models/job-candidates-invitations.model';
+import { JobCandidatesFilterSettings } from '../models/job-candidates-filter-settings.model';
 
 @Injectable({ providedIn: 'root' })
 export class JobCandidatesService {
@@ -24,9 +25,18 @@ export class JobCandidatesService {
     return this.http.get<JobCandidatesOverview>(this.endpoints.jobCandidates.overview, {
       jobId,
       searchTerm: filter?.searchTerm,
-      jobCategoryId: filter?.genderId,
-      candidateTypeId: filter?.candidateTypeId,
+      genderId: filter?.genderId,
       minimumPoints: filter?.minimumPoints,
+    });
+  }
+
+  getFilterSettings(jobId: GUID): Observable<JobCandidatesFilterSettings> {
+    return this.http.get<JobCandidatesFilterSettings>(this.endpoints.jobCandidates.filters, { jobId });
+  }
+
+  saveFilterSettings(settings: JobCandidatesFilterSettings): Observable<JobCandidatesFilterSettings> {
+    return this.http.post<JobCandidatesFilterSettings>(this.endpoints.jobCandidates.filters, {
+      request: settings,
     });
   }
 
@@ -46,10 +56,15 @@ export class JobCandidatesService {
   }
 
   export(request: JobCandidatesExportRequest): Observable<HttpResponse<Blob>> {
-    return this.http.post<HttpResponse<Blob>>(this.endpoints.jobCandidates.export, request, undefined, {
-      observe: 'response',
-      responseType: 'blob',
-    });
+    return this.http.post<HttpResponse<Blob>>(
+      this.endpoints.jobCandidates.export,
+      request,
+      undefined,
+      {
+        observe: 'response',
+        responseType: 'blob',
+      }
+    );
   }
 
   sendInvitations(

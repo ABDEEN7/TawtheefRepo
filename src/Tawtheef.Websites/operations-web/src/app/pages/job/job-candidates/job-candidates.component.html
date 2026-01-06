@@ -52,35 +52,24 @@
           [placeholder]="'JOB_CANDIDATE_FILTERS_SEARCH_PLACEHOLDER' | translate"
         />
 
-        <p-select
+         <p-inputNumber
           class="select"
-          [options]="minimumPointsOptions"
           [ngModel]="minimumPoints()"
           (ngModelChange)="minimumPoints.set($event); onFilterChange()"
-          [showClear]="true"
+          [showButtons]="false"
+          [min]="0"
           [placeholder]="'JOB_CANDIDATE_FILTERS_MINIMUM_POINTS' | translate"
-        ></p-select>
+        ></p-inputNumber>
 
         <p-select
           class="select"
           [options]="lookupsService.genders()"
-          [ngModel]="filterJobGender()"
-          (ngModelChange)="filterJobGender.set($event); onFilterChange()"
+          [ngModel]="filterGender()"
+          (ngModelChange)="filterGender.set($event); onFilterChange()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
           [placeholder]="'JOB_CANDIDATE_FILTERS_CANDIDATE_GENDER' | translate"
-        ></p-select>
-
-        <p-select
-          class="select"
-          [options]="lookupsService.candidateTypes()"
-          [ngModel]="filterCandidateCategory()"
-          (ngModelChange)="filterCandidateCategory.set($event); onFilterChange()"
-          optionLabel="name"
-          optionValue="id"
-          [showClear]="true"
-          [placeholder]="'JOB_CANDIDATE_FILTERS_CANDIDATE_CATEGORY' | translate"
         ></p-select>
       </div>
       <button class="chip" type="button" (click)="openNationalityFilter()">
@@ -98,9 +87,12 @@
       >
         <ng-template pTemplate="header">
           <tr>
+             @if (canSelectCandidates()) {
             <th class="col-select">
+             
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
+            }
             <th class="col-index">#</th>
             <th>{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_NAME' | translate }}</th>
             <th>{{ 'JOB_CANDIDATE_COLUMNS_DEPARTMENT' | translate }}</th>
@@ -115,9 +107,11 @@
 
         <ng-template pTemplate="body" let-candidate let-i="rowIndex">
           <tr>
+             @if (canSelectCandidates()) {
             <td class="col-select">
               <p-tableCheckbox [value]="candidate"></p-tableCheckbox>
             </td>
+          }
             <td class="cell-alt col-index">{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
 
             <td>{{ candidate.candidateName }}</td>

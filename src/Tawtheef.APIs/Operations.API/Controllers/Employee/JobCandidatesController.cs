@@ -37,6 +37,21 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     #endregion
 
     #region Job Candidates
+    [HttpGet("filters")]
+    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    public async Task<IActionResult> GetFilterSettings([FromQuery] GetJobCandidatesFilterSettingsQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("filters")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> SaveFilterSettings([FromBody] SaveJobCandidatesFilterSettingsCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
     [HttpGet("overview")]
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetOverview([FromQuery] GetJobCandidatesOverviewQuery query)

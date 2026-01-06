@@ -1,87 +1,128 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { NationalityPreferenceRow } from '../../models/nationality-preference.model';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { DynamicDialogConfig, DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { JobLookupService } from '../../services/job-lookup.service';
-import { Select } from "primeng/select";
-import { InputNumber } from 'primeng/inputnumber';
-import { TranslatePipe } from '@ngx-translate/core';
+import { CandidateType } from '../../../../core/enums/lookups.enum';
+import {
+  JobCandidateNationalityPercentage,
+  JobCandidateTypePercentage,
+} from '../../models/job-candidates-filter-settings.model';
+import { JobCandidatesNationalityBreakdownDialogComponent } from '../job-candidates-nationality-breakdown/job-candidates-nationality-breakdown.dialog.component';
+import { GUID } from '../../../../shared/types/guid.type';
 
 @Component({
-  selector: 'app-job-candidates-nationality-filter-modal',
+  selector: 'app-job-candidates-nationality-filter-dialog',
   templateUrl: './job-candidates-nationality-filter-modal.component.html',
-  styleUrls: ['./job-candidates-nationality-filter-modal.component.scss'],
-  imports: [Select,InputNumber,TranslatePipe,FormsModule,ReactiveFormsModule],
+  styleUrl: './job-candidates-nationality-filter-modal.component.scss',
+  standalone: false,
 })
 export class JobCandidatesNationalityFilterModalComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private ref = inject(DynamicDialogRef);
-  private config = inject(DynamicDialogConfig);
+  private dialogRef = inject(DynamicDialogRef);
+  private dialogConfig = inject(DynamicDialogConfig);
+  private formBuilder = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  private lookupsService = inject(JobLookupService);
 
-  lookupsService = inject(JobLookupService);
+  candidateTypePercentages: JobCandidateTypePercentage[] = [];
+  nationalityPercentages: JobCandidateNationalityPercentage[] = [];
 
-  form!: FormGroup;
+  form = this.formBuilder.group({
+    percentages: this.formBuilder.array([]),
+  });
 
-  get rows(): FormArray {
-    return this.form.get('rows') as FormArray;
+  get percentageControls(): FormArray {
+    return this.form.get('percentages') as FormArray;
   }
 
   ngOnInit(): void {
-    this.lookupsService.loadNationalities?.();
+    const data = this.dialogConfig.data ?? {};
+    this.candidateTypePercentages = data.candidateTypePercentages ?? [];
+    this.nationalityPercentages = data.nationalityPercentages ?? [];
 
-    const initial: NationalityPreferenceRow[] =
-      (this.config.data?.nationalityPreferences as NationalityPreferenceRow[])?.length
-        ? this.config.data.nationalityPreferences
-        : [{ nationalityId: null, percentage: 100 }];
-
-    this.form = this.fb.group({
-      rows: this.fb.array(initial.map((r) => this.createRow(r))),
+    this.lookupsService.loadCandidateTypes().subscribe((resp) => {
+      resp.forEach((candidateType) => {
+        const existing = this.candidateTypePercentages.find(
+          (item) => item.candidateTypeId === candidateType.id
+        );
+        this.percentageControls.push(
+          this.formBuilder.group({
+            candidateTypeId: [candidateType.id],
+            percentage: [existing?.percentage ?? 0, [Validators.min(0), Validators.max(100)]],
+          })
+        );
+      });
     });
   }
 
-  createRow(row?: NationalityPreferenceRow): FormGroup {
-    return this.fb.group({
-      nationalityId: [row?.nationalityId ?? null, Validators.required],
-      percentage: [
-        row?.percentage ?? 100,
-        [Validators.required, Validators.min(0), Validators.max(100)],
-      ],
+  getCandidateTypeName(candidateTypeId: GUID): string {
+    return (
+      this.lookupsService.candidateTypes().find((type) => type.id === candidateTypeId)?.name ?? ''
+    );
+  }
+
+  hasNationalityBreakdown(candidateTypeId: GUID): boolean {
+    const candidateType = this.lookupsService
+      .candidateTypes()
+      .find((type) => type.id === candidateTypeId);
+    return (
+      candidateType?.backendName === CandidateType.ResidentQatar ||
+      candidateType?.backendName === CandidateType.NonQatari
+    );
+  }
+
+  getNationalityBreakdownCount(candidateTypeId: GUID): number {
+    return this.nationalityPercentages.filter((item) => item.candidateTypeId === candidateTypeId)
+      .length;
+  }
+
+  openNationalityBreakdown(candidateTypeId: GUID): void {
+    const candidateTypeName = this.getCandidateTypeName(candidateTypeId);
+    const breakdowns = this.nationalityPercentages.filter(
+      (item) => item.candidateTypeId === candidateTypeId
+    );
+
+    const ref = this.dialogService.open(JobCandidatesNationalityBreakdownDialogComponent, {
+      header: candidateTypeName,
+      width: '52rem',
+      breakpoints: {
+        '1200px': '70vw',
+        '992px': '85vw',
+        '576px': '96vw',
+      },
+      contentStyle: { overflow: 'hidden' },
+      data: {
+        candidateTypeId,
+        candidateTypeName,
+        breakdowns,
+      },
     });
-  }
 
-  addRow(): void {
-    this.rows.push(this.createRow({ nationalityId: null, percentage: 100 }));
-  }
-
-  removeRow(index: number): void {
-    this.rows.removeAt(index);
-    if (this.rows.length === 0) this.addRow();
-  }
-
-  close(): void {
-    this.ref.close(null);
+    ref?.onClose.subscribe((result) => {
+      if (!result) return;
+      this.nationalityPercentages = [
+        ...this.nationalityPercentages.filter((item) => item.candidateTypeId !== candidateTypeId),
+        ...result,
+      ];
+    });
   }
 
   save(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.form.invalid) return;
 
-    const value = this.form.value.rows as NationalityPreferenceRow[];
+    const candidateTypePercentages = this.percentageControls.value.map(
+      (item: { candidateTypeId: GUID; percentage: number }) => ({
+        candidateTypeId: item.candidateTypeId,
+        percentage: Number(item.percentage ?? 0),
+      })
+    );
 
-    const seen = new Set<string>();
-    const deduped = value.filter((x) => {
-      const key = String(x.nationalityId);
-      if (!x.nationalityId) return true;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
+    this.dialogRef.close({
+      candidateTypePercentages,
+      nationalityPercentages: this.nationalityPercentages,
     });
+  }
 
-    this.ref.close({
-      success: true,
-      nationalityPreferences: deduped,
-    });
+  close(): void {
+    this.dialogRef.close();
   }
 }

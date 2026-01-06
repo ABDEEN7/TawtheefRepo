@@ -1,125 +1,99 @@
 using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
-using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handlers.Queries;
 
 public sealed class GetJobCandidatesQueryHandler(
     IUnitOfWork unitOfWork,
-    ILocalizationService localizationService,
-    IJobPointsRepository jobPointsRepository)
-    : IRequestHandler<GetJobCandidatesQuery, IResult<PaginatedResult<JobCandidateListItemDto>>>
+    ILocalizationService localizationService)
+    : IQueryHandler<GetJobCandidatesQuery, IResult<PaginatedResult<JobCandidateListItemDto>>>
 {
-    private readonly JobCandidatePointsCalculator _pointsCalculator = new();
+    private readonly JobCandidateScoringService _scoring = new();
 
     public async Task<IResult<PaginatedResult<JobCandidateListItemDto>>> Handle(
         GetJobCandidatesQuery request,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var query = JobCandidatesQueryBuilder.Build(unitOfWork, request.JobId, request.Filter);
+        var job = await LoadJobAsync(request.JobId, ct);
+        if (job == null)
+            return Result.Fail<PaginatedResult<JobCandidateListItemDto>>(JobMessages.JobNotFound);
 
-        var candidates = await query.ToListAsync(cancellationToken);
-        var jobPoints = await LoadJobPointsAsync(request.JobId);
+        var targetCount = GetTargetCount(job);
 
-        var job = await unitOfWork.GetEntityRepository<Domain.Entities.Recruitment.Job>().DbSet
+        var req = await JobRequirementsService.GetAsync(unitOfWork, job, ct);
+
+        var baseQuery = JobCandidatesQueryBuilder.BuildEligibleQuery(unitOfWork, job, req, request.Filter);
+
+        var windowSize = Math.Max(targetCount * 10, request.Pagination.PageSize * 10);
+        var window = await baseQuery.OrderByDescending(x => x.CreatedDate).Take(windowSize).ToListAsync(ct);
+
+        if (window.Count == 0)
+            return Result.Ok(new PaginatedResult<JobCandidateListItemDto>([], 0, request.Pagination.PageNumber, request.Pagination.PageSize));
+
+        var ids = window.Select(x => x.ApplicantId).Distinct().ToList();
+        var profiles = await CandidateProfileLoader.LoadForScoringAsync(unitOfWork, ids, ct);
+
+        var scored = _scoring.Score(window, profiles, job, req);
+
+        if (request.Filter?.MinimumPoints is not null)
+            scored = scored.Where(x => x.Points >= request.Filter.MinimumPoints.Value).ToList();
+
+        var sorted = scored.OrderByDescending(x => x.Points).ThenByDescending(x => x.CreatedDate).ToList();
+
+        var settings = await unitOfWork.GetEntityRepository<JobCandidateFilterSetting>().DbSet
             .AsNoTracking()
-            .Include(j => j.Department)
-            .Include((j => j.JobSkills))
-            .ThenInclude(s=>s.Skill)
-            .Include(j => j.JobCategory)
-            .FirstOrDefaultAsync(j => j.Id == request.JobId, cancellationToken);
+            .Include(s => s.CandidateTypePercentages)
+            .Include(s => s.NationalityPercentages)
+            .FirstOrDefaultAsync(s => s.JobId == request.JobId, ct);
 
-        var candidatesWithPoints = candidates
-            .Select(candidate => candidate with { Points = _pointsCalculator.Calculate(candidate, jobPoints) })
-            .ToList();
+        var finalList = JobCandidatesFilterProcessor.ApplyPercentageFilters(sorted, settings, targetCount);
 
-        if (request.Filter?.MinimumPoints is { } minPoints)
-        {
-            candidatesWithPoints = candidatesWithPoints
-                .Where(candidate => candidate.Points >= minPoints)
-                .ToList();
-        }
+        var pageNumber = request.Pagination.PageNumber;
+        var pageSize = request.Pagination.PageSize;
 
-        var paginated = CreatePaginatedResult(candidatesWithPoints, request.Pagination);
+        var paged = finalList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
-        var items = paginated.Items.Select(candidate => new JobCandidateListItemDto
+        var items = paged.Select(candidate => new JobCandidateListItemDto
         {
             InvitationId = candidate.InvitationId,
             CandidateId = candidate.ApplicantId,
             CandidateName = localizationService.GetLocalizedFullName(candidate.Applicant),
-            Department = localizationService.GetLocalizedName(job?.Department),
-            JobCategory = localizationService.GetLocalizedName(job?.JobCategory),
+            Department = localizationService.GetLocalizedName(job.Department),
+            JobCategory = localizationService.GetLocalizedName(job.JobCategory),
             CandidateCategory = localizationService.GetLocalizedName(candidate.Profile?.CandidateType),
             CandidateMajor = localizationService.GetLocalizedName(candidate.Major),
             CandidateGender = localizationService.GetLocalizedName(candidate.Profile?.Gender),
             Points = candidate.Points
         }).ToList();
 
-        var result = new PaginatedResult<JobCandidateListItemDto>(
-            items,
-            paginated.Metadata.TotalCount,
-            paginated.Metadata.CurrentPage,
-            paginated.Metadata.PageSize);
-
-        return Result.Ok(result);
+        return Result.Ok(new PaginatedResult<JobCandidateListItemDto>(items, finalList.Count, pageNumber, pageSize));
     }
 
-    private async Task<JobPointsMain?> LoadJobPointsAsync(Guid jobId)
+    private async Task<Domain.Entities.Recruitment.Job?> LoadJobAsync(Guid jobId, CancellationToken ct)
     {
-        var result = await jobPointsRepository.GetByJobIdAsync(jobId);
-        return result.IsSuccess ? result.Value : null;
+        return await unitOfWork.GetEntityRepository<Domain.Entities.Recruitment.Job>().DbSet
+            .AsNoTracking()
+            .Include(j => j.JobPoints).ThenInclude(p => p!.Details)
+            .Include(j => j.Department)
+            .Include(j => j.JobCategory)
+            .Include(j => j.Major)
+            .Include(j => j.SubMajor)
+            .FirstOrDefaultAsync(j => j.Id == jobId, ct);
     }
 
-    private static PaginatedResult<JobCandidateRecord> CreatePaginatedResult(
-        IReadOnlyList<JobCandidateRecord> candidates,
-        PaginatedRequest pagination)
+    private static int GetTargetCount(Domain.Entities.Recruitment.Job job)
     {
-        var sorted = SortCandidates(candidates, pagination.SortBy, pagination.SortDirection);
-        var totalCount = sorted.Count;
-
-        var items = sorted
-            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
-            .Take(pagination.PageSize)
-            .ToList();
-
-        return new PaginatedResult<JobCandidateRecord>(
-            items,
-            totalCount,
-            pagination.PageNumber,
-            pagination.PageSize);
-    }
-
-    private static List<JobCandidateRecord> SortCandidates(
-        IReadOnlyList<JobCandidateRecord> candidates,
-        string? sortBy,
-        string? sortDirection)
-    {
-        if (string.IsNullOrWhiteSpace(sortBy))
-        {
-            return candidates.ToList();
-        }
-
-        var isDescending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
-
-        if (string.Equals(sortBy, nameof(JobCandidateRecord.CreatedDate), StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(sortBy, "createdDate", StringComparison.OrdinalIgnoreCase))
-        {
-            // CreatedDate is nullable now: handle nulls
-            return isDescending
-                ? candidates.OrderByDescending(c => c.CreatedDate ?? DateTime.MinValue).ToList()
-                : candidates.OrderBy(c => c.CreatedDate ?? DateTime.MinValue).ToList();
-        }
-
-        return candidates.ToList();
+        var vacancies = Math.Max(1, job.NumberOfVacancies);
+        return job.JobCategoryId == JobCategoryIds.Academic ? vacancies * 5 : vacancies;
     }
 }

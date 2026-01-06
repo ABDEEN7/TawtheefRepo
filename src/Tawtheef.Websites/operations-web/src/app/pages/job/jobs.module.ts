@@ -47,6 +47,8 @@ import { TableModule } from 'primeng/table';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { JobCandidatesComponent } from './job-candidates/job-candidates.component';
 import {Tooltip} from 'primeng/tooltip';
+import { JobCandidatesNationalityFilterModalComponent } from './modals/job-candidates-nationality-filter-modal/job-candidates-nationality-filter-modal.component';
+import { JobCandidatesNationalityBreakdownDialogComponent } from './modals/job-candidates-nationality-breakdown/job-candidates-nationality-breakdown.dialog.component';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -69,6 +71,8 @@ import {Tooltip} from 'primeng/tooltip';
     JobPointsTabComponent,
     JobsReadyApplicationComponent,
     JobCandidatesComponent,
+    JobCandidatesNationalityFilterModalComponent,
+    JobCandidatesNationalityBreakdownDialogComponent,
   ],
   imports: [
     RouterModule.forChild(jobRoutes),

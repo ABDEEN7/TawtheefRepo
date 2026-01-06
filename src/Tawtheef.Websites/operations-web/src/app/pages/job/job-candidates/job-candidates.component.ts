@@ -15,9 +15,15 @@ import { JobCandidatesFilter } from '../models/job-candidates-filter.model';
 import { PaginatedRequest } from '../../../core/models/paginated-request.model';
 import { JobResponse } from '../models/job-response-model';
 import { JobService } from '../services/job.service';
-import { NationalityPreferenceRow } from '../models/nationality-preference.model';
 import { JobCandidatesNationalityFilterModalComponent } from '../modals/job-candidates-nationality-filter-modal/job-candidates-nationality-filter-modal.component';
 import { DialogService } from 'primeng/dynamicdialog';
+import {
+  JobCandidateNationalityPercentage,
+  JobCandidatesFilterSettings,
+  JobCandidateTypePercentage,
+} from '../models/job-candidates-filter-settings.model';
+import {Permissions} from '../../../core/constants/permissions';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -34,12 +40,13 @@ export class JobCandidatesComponent implements OnInit {
   private dialogHelperService = inject(DialogHelperService);
   private fileUtilsService = inject(FileUtilsService);
   private dialogService = inject(DialogService);
+  private authService = inject(AuthService);
   lookupsService = inject(JobLookupService);
 
   paginationMetadata: PaginationMetadata | undefined;
 
   jobId!: GUID;
-  jobInfo!: JobResponse;
+  jobInfo?: JobResponse;
 
   totalCandidatesCount = 0;
   availableCandidatesCount = 0;
@@ -51,23 +58,54 @@ export class JobCandidatesComponent implements OnInit {
   candidates: PaginatedResult<JobCandidateListItem> | undefined;
   selectedCandidates: JobCandidateListItem[] = [];
   searchQuery = signal<string>('');
-  filterJobGender = signal<GUID | null>(null);
-  filterCandidateCategory = signal<GUID | null>(null);
-  nationalityPreferences = signal<NationalityPreferenceRow[]>([]);
-
+  filterGender = signal<GUID | null>(null);
   minimumPoints = signal<number | null>(null);
 
-  minimumPointsOptions = [200, 400, 600, 800];
+  candidateTypePercentages: JobCandidateTypePercentage[] = [];
+  nationalityPercentages: JobCandidateNationalityPercentage[] = [];
+  filterSettingsLoaded = false;
 
   ngOnInit() {
     this.jobId = this.route.snapshot.paramMap.get('id') as GUID;
-    this.jobService.getById(this.jobId).subscribe((job) => (this.jobInfo = job));
-    this.lookupsService.loadJobCategories();
-    this.lookupsService.loadCandidateTypes();
-    this.loadCandidatesData();
+    this.jobService.getById(this.jobId).subscribe((job) => {
+      if(!job)
+        return;
+      this.jobInfo = job
+      this.lookupsService.loadGenders().subscribe();
+      this.lookupsService.loadNationalities().subscribe();
+      this.loadFilterSettings();
+    });
+  }
+
+  private loadFilterSettings(): void {
+    this.jobCandidatesService.getFilterSettings(this.jobId).subscribe({
+      next: (settings) => {
+        this.filterGender.set(settings.genderId ?? null);
+        this.minimumPoints.set(settings.minimumPoints ?? null);
+        this.candidateTypePercentages = settings.candidateTypePercentages ?? [];
+        this.nationalityPercentages = settings.nationalityPercentages ?? [];
+        this.filterSettingsLoaded = true;
+        this.loadCandidatesData();
+      },
+      error: () => {
+        this.filterSettingsLoaded = true;
+      },
+    });
   }
 
   private loadCandidatesData(): void {
+    if (!this.filterSettingsLoaded) return;
+
+    if (!this.hasActiveFilters()) {
+      this.candidates = undefined;
+      this.paginationMetadata = undefined;
+      this.totalCandidatesCount = 0;
+      this.availableCandidatesCount = 0;
+      this.abovePointsCandidatesCount = 0;
+      this.pointsAverage = 0;
+      return;
+    }
+
     const filter = this.buildFilter();
     const pagination = {
       pageNumber: this.currentPage(),
@@ -95,9 +133,8 @@ export class JobCandidatesComponent implements OnInit {
   private buildFilter(): JobCandidatesFilter {
     return {
       searchTerm: this.searchQuery() || undefined,
-      genderId: this.filterJobGender() || undefined,
-      candidateTypeId: this.filterCandidateCategory() || undefined,
       minimumPoints: this.minimumPoints() || undefined,
+      genderId: this.filterGender() || undefined,
     };
   }
 
@@ -113,12 +150,11 @@ export class JobCandidatesComponent implements OnInit {
 
   clearFilters() {
     this.searchQuery.set('');
-    this.filterJobGender.set(null);
-    this.filterCandidateCategory.set(null);
+    this.filterGender.set(null);
     this.minimumPoints.set(null);
     this.currentPage.set(1);
     this.resetSelection();
-    this.loadCandidatesData();
+    this.saveFilterSettings();
   }
 
   viewDetails(candidateId: GUID) {
@@ -190,22 +226,69 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   openNationalityFilter(): void {
-    this.dialogService
-      .open(JobCandidatesNationalityFilterModalComponent, {
-        width: 'min(920px, 96vw)',
-        modal: true,
-        header: this.translationService.instant('JOB_CANDIDATE_FILTERS_NATIONALITY_TITLE'),
-        styleClass: 'custom-bootstrap-dialog',
-        data: {
-          nationalityPreferences: this.nationalityPreferences(),
-        },
-      })
-      ?.onClose.subscribe((result) => {
-        if (result?.success) {
-          this.nationalityPreferences.set(result.nationalityPreferences ?? []);
-          this.onFilterChange(); // reload
-        }
-      });
+    const ref = this.dialogService.open(JobCandidatesNationalityFilterModalComponent, {
+      header: this.translationService.instant('JOB_CANDIDATE_FILTERS_PERCENTAGE_TITLE'),
+      width: '60vw',
+      data: {
+        candidateTypePercentages: this.candidateTypePercentages,
+        nationalityPercentages: this.nationalityPercentages,
+      },
+    });
+
+    ref?.onClose.subscribe((result) => {
+      if (!result) return;
+      this.candidateTypePercentages = result.candidateTypePercentages ?? [];
+      this.nationalityPercentages = result.nationalityPercentages ?? [];
+      this.onFilterSettingsChange();
+    });
+  }
+
+  private saveFilterSettings(): void {
+    const payload = this.buildFilterSettings();
+    this.jobCandidatesService.saveFilterSettings(payload).subscribe({
+      next: (settings) => {
+        this.candidateTypePercentages = settings.candidateTypePercentages ?? [];
+        this.nationalityPercentages = settings.nationalityPercentages ?? [];
+        this.filterGender.set(settings.genderId ?? null);
+        this.minimumPoints.set(settings.minimumPoints ?? null);
+        this.loadCandidatesData();
+      },
+      error: () => {
+        this.notificationService.error(
+          this.translationService.instant('JOB_CANDIDATE_MESSAGES_FILTER_SAVE_FAILED')
+        );
+      },
+    });
+  }
+
+  private buildFilterSettings(): JobCandidatesFilterSettings {
+    return {
+      jobId: this.jobId,
+      genderId: this.filterGender() || undefined,
+      minimumPoints: this.minimumPoints() ?? undefined,
+      candidateTypePercentages: this.candidateTypePercentages.filter((item) => item.percentage > 0),
+      nationalityPercentages: this.nationalityPercentages.filter((item) => item.percentage > 0),
+    };
+  }
+
+  private hasActiveFilters(): boolean {
+    return Boolean(
+      (this.searchQuery() || '').trim() ||
+        this.filterGender() ||
+        this.minimumPoints() ||
+        this.candidateTypePercentages.some((item) => item.percentage > 0) ||
+        this.nationalityPercentages.some((item) => item.percentage > 0)
+    );
+  }
+
+  onFilterSettingsChange() {
+    this.currentPage.set(1);
+    this.resetSelection();
+    this.saveFilterSettings();
+  }
+
+  canSelectCandidates(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.Manage);
   }
 
   private extractFileName(response: {

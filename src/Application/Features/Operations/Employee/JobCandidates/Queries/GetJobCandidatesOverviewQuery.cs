@@ -9,10 +9,9 @@ public sealed record GetJobCandidatesOverviewQuery(Guid JobId)
     : IQuery<IResult<JobCandidatesOverviewDto>>
 {
     public string? SearchTerm { get; init; }
-    public Guid? JobCategoryId { get; init; }
-    public Guid? CandidateTypeId { get; init; }
+    public Guid? GenderId { get; init; }
     public int? MinimumPoints { get; init; }
 
     public JobCandidatesFilter ToFilter() =>
-        new(SearchTerm, JobCategoryId, CandidateTypeId, MinimumPoints);
+        new(SearchTerm, GenderId, MinimumPoints);
 }

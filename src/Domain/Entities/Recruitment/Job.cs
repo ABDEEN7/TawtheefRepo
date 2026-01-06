@@ -86,6 +86,7 @@ public class Job : EventEntity
     public virtual WorkType? WorkType { get; set; }
     public virtual JobStatus? JobStatus { get; set; }
     public virtual JobPointsMain? JobPoints { get; set; }
+    public virtual JobCandidateFilterSetting? CandidateFilterSetting { get; set; }
     public virtual JobReviewAttachment? ReviewAttachment { get; set; }
     public virtual List<JobDegree> JobDegrees { get; set; } = [];
     public virtual List<JobCondition> JobConditions { get; set; } = [];

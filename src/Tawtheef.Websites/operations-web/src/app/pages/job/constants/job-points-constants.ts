@@ -1,13 +1,7 @@
 import { DetailItem } from '../models/detail-Item';
 
 // ================= Applicant Category =================
-export const APPLICANT_CATEGORY_ITEMS: DetailItem[] = [
-  { key: 'qatari', label: 'JOB_POINTS.APPLICANT_CATEGORY.QATARI' },
-  { key: 'qatarMother', label: 'JOB_POINTS.APPLICANT_CATEGORY.QATAR_MOTHER' },
-  { key: 'gcc', label: 'JOB_POINTS.APPLICANT_CATEGORY.GCC' },
-  { key: 'qatarGraduate', label: 'JOB_POINTS.APPLICANT_CATEGORY.QATAR_GRADUATE' },
-  { key: 'qatarGraduatePrev', label: 'JOB_POINTS.APPLICANT_CATEGORY.QATAR_GRADUATE_PREV' },
-];
+export const APPLICANT_CATEGORY_ITEMS: DetailItem[] = [];
 
 // ================= Education =================
 export const EDUCATION_ITEMS: DetailItem[] = []; 

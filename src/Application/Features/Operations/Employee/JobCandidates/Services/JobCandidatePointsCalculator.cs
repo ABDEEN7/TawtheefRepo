@@ -1,7 +1,6 @@
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
-using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
 
@@ -21,14 +20,6 @@ internal sealed class JobCandidatePointsCalculator
     private const string ReadingMaxCode = "reading.max";
     private const string ConversationMaxCode = "conversation.max";
     private const string NativeCode = "native";
-
-    private static readonly IReadOnlyDictionary<string, string> CandidateTypeCodeMap =
-        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            [nameof(CandidateTypeIds.Qatari)] = "qatari",
-            [nameof(CandidateTypeIds.GCC)] = "gcc",
-            [nameof(CandidateTypeIds.SonOfQatariMother)] = "qatarMother"
-        };
 
     public int Calculate(JobCandidateRecord candidate, JobPointsMain? jobPoints)
     {
@@ -59,35 +50,19 @@ internal sealed class JobCandidatePointsCalculator
         var details = jobPoints.Details
             .Where(detail => detail.Type == JobPointRuleType.ApplicantCategory && !detail.IsDeleted)
             .ToList();
+
         if (details.Count == 0)
         {
             return 0;
         }
 
         var matchingCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var candidateType = profile.CandidateType?.BackendName;
-        if (!string.IsNullOrWhiteSpace(candidateType))
+
+        // Candidate type code is now unified -> match directly
+        var candidateTypeCode = profile.CandidateType?.BackendName;
+        if (!string.IsNullOrWhiteSpace(candidateTypeCode))
         {
-            if (CandidateTypeCodeMap.TryGetValue(candidateType, out var mappedCode))
-            {
-                matchingCodes.Add(mappedCode);
-            }
-
-            matchingCodes.Add(candidateType);
-        }
-
-        var qatarQualifications = profile.Qualifications?
-            .Where(q => IsQatarUniversity(q.University))
-            .ToList() ?? [];
-
-        if (qatarQualifications.Count > 0)
-        {
-            matchingCodes.Add("qatarGraduate");
-        }
-
-        if (qatarQualifications.Count > 1)
-        {
-            matchingCodes.Add("qatarGraduatePrev");
+            matchingCodes.Add(candidateTypeCode);
         }
 
         var points = details
@@ -96,7 +71,6 @@ internal sealed class JobCandidatePointsCalculator
 
         return Clamp(points, jobPoints.ApplicantCategory);
     }
-
     private static int CalculateEducationPoints(UserProfile profile, JobPointsMain jobPoints)
     {
         var details = jobPoints.Details
@@ -354,29 +328,6 @@ internal sealed class JobCandidatePointsCalculator
             .Where(detail => string.Equals(detail.Code, code, StringComparison.OrdinalIgnoreCase))
             .Select(detail => detail.Points)
             .FirstOrDefault();
-    }
-
-    private static bool IsQatarUniversity(University? university)
-    {
-        if (university == null)
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(university.BackendName) &&
-            string.Equals(university.BackendName, "qatarUniversity", StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        if (!string.IsNullOrWhiteSpace(university.NameEn) &&
-            university.NameEn.Contains("Qatar University", StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        return !string.IsNullOrWhiteSpace(university.NameAr) &&
-               university.NameAr.Contains("جامعة قطر", StringComparison.OrdinalIgnoreCase);
     }
 
     private static int Clamp(int value, int max)

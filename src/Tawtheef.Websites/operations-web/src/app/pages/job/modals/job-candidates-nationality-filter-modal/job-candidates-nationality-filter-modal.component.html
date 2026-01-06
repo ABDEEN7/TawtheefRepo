@@ -1,95 +1,65 @@
-<div class="nf-modal">
-  <!-- Subtitle -->
-  <div class="nf-subtitle">
-    {{ 'JOB_CANDIDATE_FILTERS_HELPER_TEXT' | translate }}
-  </div>
-
-  <!-- Card -->
-  <div class="nf-card">
-    <div class="nf-card-header">
-      {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_PREFERENCES' | translate }}
-      <button
-        pButton
-        type="button"
-        class="p-button-outlined nf-add"
-        (click)="addRow()"
-        icon="pi pi-plus"
+<section i18nNamespace="pages/job-candidates" class="jc-dialog jc-dialog--lg">
+  <form [formGroup]="form" class="jc-dialog__body">
+    <div formArrayName="percentages" class="vstack gap-3">
+      <div
+        *ngFor="let group of percentageControls.controls; let i = index"
+        [formGroupName]="i"
+        class="card jc-card"
       >
-        {{ 'JOB_CANDIDATE_FILTERS_ADD_NATIONALITY' | translate }}
-      </button>
-    </div>
+        <div class="card-body">
+          <div class="row g-3 align-items-center">
+            <!-- Label -->
+            <div class="col-12 col-lg-5">
+              <div class="fw-semibold">
+                {{ getCandidateTypeName(group.get('candidateTypeId')?.value) }}
+              </div>
+            </div>
 
-    <form [formGroup]="form" class="nf-form">
-      <div formArrayName="rows">
-        @for (row of rows.controls; track row; let i = $index) {
-        <div class="nf-row" [formGroupName]="i">
-          <button
-            class="btn d-flex gap-1 align-items-center"
-            type="button"
-            (click)="removeRow(i)"
-            tooltipPosition="top"
-            [attr.aria-label]="'common_delete' | translate"
-          >
-            <i class="hgi hgi-stroke hgi-delete-02"></i>
-          </button>
-
-          <div class="nf-field nf-percentage">
-            <label>
-              {{ 'JOB_CANDIDATE_FILTERS_PERCENTAGE' | translate }}
-              <span class="req">*</span>
-            </label>
-
-            <div class="nf-percentage-wrap">
+            <!-- Percentage -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <label class="form-label mb-1 small text-muted">
+                {{ 'JOB_CANDIDATE_FILTERS_PERCENTAGE_VALUE' | translate }}
+              </label>
               <p-inputNumber
                 formControlName="percentage"
                 [min]="0"
                 [max]="100"
                 [showButtons]="true"
-                [useGrouping]="false"
-                inputStyleClass="nf-percentage-input"
+                [placeholder]="'JOB_CANDIDATE_FILTERS_PERCENTAGE_VALUE' | translate"
+                class="w-100"
               ></p-inputNumber>
+            </div>
 
-              <div class="nf-max-badge">100 ≥</div>
+            <!-- Breakdown button -->
+            <div class="col-12 col-sm-6 col-lg-4 d-flex justify-content-lg-end">
+              @if (hasNationalityBreakdown(group.get('candidateTypeId')?.value)) {
+              <button
+                class="btn btn-sm btn-outline-secondary w-100 w-sm-auto"
+                type="button"
+                (click)="openNationalityBreakdown(group.get('candidateTypeId')?.value)"
+              >
+                {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_BREAKDOWN' | translate }}
+                <span class="text-muted">
+                  ({{ getNationalityBreakdownCount(group.get('candidateTypeId')?.value) }})
+                </span>
+              </button>
+              }
             </div>
           </div>
-
-          <!-- Nationality -->
-          <div class="nf-field nf-nationality">
-            <label>
-              {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_LIST' | translate }}
-              <span class="req">*</span>
-            </label>
-
-            <p-select
-              formControlName="nationalityId"
-              [options]="lookupsService.nationalities()"
-              optionLabel="name"
-              optionValue="id"
-              [placeholder]="'JOB_CANDIDATE_FILTERS_SELECT_NATIONALITY' | translate"
-              [showClear]="true"
-              class="nf-dropdown"
-            ></p-select>
-          </div>
         </div>
-        }
       </div>
-    </form>
-  </div>
+    </div>
+  </form>
 
-  <!-- Footer -->
-  <div class="nf-footer">
-    <button
-      pButton
-      type="button"
-      class="p-button-text nf-cancel"
-      icon="pi pi-times"
-      (click)="close()"
-    >
-      {{ 'common.cancel' | translate }}
-    </button>
-
-    <button pButton type="button" class="nf-save" icon="pi pi-save" (click)="save()">
-      {{ 'JOB_CANDIDATE_FILTERS_SAVE' | translate }}
-    </button>
+  <!-- Sticky footer actions -->
+  <div class="jc-dialog__footer border-top bg-body">
+    <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
+      <button class="btn btn-outline-primary w-100 w-sm-auto" type="button" (click)="close()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button class="btn btn-primary w-100 w-sm-auto" type="button" (click)="save()">
+        {{ 'common.save' | translate }}
+      </button>
+    </div>
   </div>
-</div>
+</section>
