@@ -2,6 +2,7 @@ using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Commands;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
@@ -13,7 +14,10 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handlers.Commands;
 
-public sealed class SendJobCandidateInvitationsCommandHandler(IUnitOfWork unitOfWork)
+public sealed class SendJobCandidateInvitationsCommandHandler(
+    IUnitOfWork unitOfWork,
+    IEmailSender emailSender,
+    ISmsSender smsSender)
     : ICommandHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
     private readonly JobCandidatePointsCalculator _pointsCalculator = new();
@@ -33,7 +37,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(IUnitOfWork unitOf
         if (job is null)
             return Result.Fail<SendJobCandidateInvitationsResult>(JobMessages.JobNotFound);
 
-        var jobTitle = job.TitleEn ?? job.TitleAr ?? string.Empty;
+        var jobTitle = job.TitleEn;
         var targetCount = GetTargetCount(job);
 
         var req = await JobRequirementsService.GetAsync(unitOfWork, job, cancellationToken);
