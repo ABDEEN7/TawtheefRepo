@@ -11,6 +11,4 @@ public static class RatingGradeIds
     public static Guid Acceptable = Guid.Parse("08e6f782-458e-4334-9bf1-f599c53b437a");
 }
 [Table(nameof(RatingGrade), Schema = Schemas.Lookup)]
-public class RatingGrade : LookupBase
-{
-}
+public class RatingGrade : LookupBase;

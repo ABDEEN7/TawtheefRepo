@@ -12,7 +12,4 @@ public static class TargetEntityIds
 /// هي الجهة التي يرغب المرشح العمل فيها
 /// </summary>
 [Table(nameof(TargetEntity), Schema = Schemas.Lookup)]
-public class TargetEntity: LookupBase
-{
-    
-}
+public class TargetEntity: LookupBase;
