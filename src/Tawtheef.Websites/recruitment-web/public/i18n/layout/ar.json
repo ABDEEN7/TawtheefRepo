@@ -22,6 +22,15 @@
   "internal.nav.userSettings": "الإعدادات",
   "internal.nav.logout": "تسجيل خروج",
 
+  "internal.termsDialog.title": "الشروط والأحكام",
+  "internal.termsDialog.description": "يرجى مراجعة والموافقة على الشروط والأحكام لمواصلة استخدام خدمات التوظيف.",
+  "internal.termsDialog.points.review": "أتعهد بالالتزام بشروط التوظيف وسياسات البيانات.",
+  "internal.termsDialog.points.updates": "أدرك أنه قد يتم إرسال تحديثات مهمة حول طلباتي.",
+  "internal.termsDialog.accept": "أوافق",
+  "internal.termsDialog.later": "لاحقاً",
+  "internal.termsDialog.accepted.summary": "تمت الموافقة على الشروط",
+  "internal.termsDialog.accepted.detail": "شكرًا لتأكيدك الشروط والأحكام.",
+
   "public.nav.about": "عن المنصة",
   "public.nav.tracks": "مسارات التوظيف",
   "public.nav.why": "لماذا معنا",

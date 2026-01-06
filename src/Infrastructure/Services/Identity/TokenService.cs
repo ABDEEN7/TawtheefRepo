@@ -74,7 +74,7 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
         var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "");
         return Result.Ok(new AuthResponse(
             !data.IsComplete,
-            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, providerName,prefill),
+            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, user.AgreedToTerms, providerName, prefill),
             new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
         ));
     }
