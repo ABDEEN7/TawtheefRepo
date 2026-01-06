@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -7,6 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Operations.Admin.Universities.Commands;
 using Tawtheef.Application.Features.Resources.Commands;
+using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -17,7 +19,7 @@ public sealed class CreateUniversityCommandHandler(
     TimeProvider timeProvider,
     ICurrentUserService currentUserService,
     IMediator mediator)
-    : IRequestHandler<CreateUniversityCommand, IResult<Guid>>
+    : ICommandHandler<CreateUniversityCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateUniversityCommand request, CancellationToken cancellationToken)
     {
@@ -113,7 +115,7 @@ public sealed class CreateUniversityCommandHandler(
 
         var uploadPath = await UniversityLogoUploadPathFactory.CreateAsync(universityId, logoType, file, false, ct);
 
-        var uploadResult = await mediator.Send(
+        var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
             new UploadAttachmentCommand(
                 Guid.TryParse(currentUserService.UserId, out var userId) ? userId : Guid.Empty,
                 uploadPath.FileId,

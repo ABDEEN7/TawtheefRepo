@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿
+using Cortex.Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Tawtheef.Domain.Common;
@@ -38,6 +39,6 @@ public class DispatchDomainEventsInterceptor(IMediator mediator) : SaveChangesIn
         entities.ToList().ForEach(e => e.ClearDomainEvents());
 
         foreach (var domainEvent in domainEvents)
-            await mediator.Publish(domainEvent);
+            await mediator.PublishAsync(domainEvent);
     }
 }

@@ -1,14 +1,16 @@
 using System.Text.Json;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Resources.Commands;
+using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -21,7 +23,7 @@ public sealed class RequestProfileExperienceChangeHandler(
     IMediator mediator,
     IProfileStepValidationService validationService,
     IProfileReviewService reviewService
-) : IRequestHandler<RequestProfileExperienceChangeCommand, IResult<Unit>>
+) : ICommandHandler<RequestProfileExperienceChangeCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -157,7 +159,7 @@ public sealed class RequestProfileExperienceChangeHandler(
                 return Result.Fail<Guid?>(fileTooLargeError);
 
             var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, category, file, false, cancellationToken);
-            var uploadResult = await mediator.Send(
+            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
             if (uploadResult.IsFailed)

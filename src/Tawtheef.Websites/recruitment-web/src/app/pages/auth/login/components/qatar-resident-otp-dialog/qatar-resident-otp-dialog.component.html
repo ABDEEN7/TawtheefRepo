@@ -48,14 +48,31 @@
         *ngIf="
           form.controls.phoneNumber.touched &&
           !form.controls.phoneNumber.hasError('required') &&
-          form.controls.phoneNumber.hasError('validatePhoneNumber')
-        "
-      >
+          form.controls.phoneNumber.hasError('validatePhoneNumber')">
         {{ 'validation.phoneInvalid' | translate }}
       </small>
 
       <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('nonQatar')">
         {{ 'auth.login.qatarResidentDialog.qatarPhoneOnly' | translate }}
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="qidExpiry">{{ 'auth.login.qatarResidentDialog.qidExpiry' | translate }}</label>
+
+      <p-date-picker
+        inputId="qidExpiry"
+        formControlName="qidExpiry"
+        [minDate]="today"
+        [showOnFocus]="true"
+        dateFormat="yy-mm-dd"
+        [dataType]="'string'"
+        [disabled]="form.disabled"
+        [appendTo]="'body'"
+        fluid>
+      </p-date-picker>
+
+      <small class="text-danger" *ngIf="form.controls.qidExpiry.touched && form.controls.qidExpiry.hasError('required')">
+        {{ 'validation.required' | translate }}
       </small>
     </div>
 

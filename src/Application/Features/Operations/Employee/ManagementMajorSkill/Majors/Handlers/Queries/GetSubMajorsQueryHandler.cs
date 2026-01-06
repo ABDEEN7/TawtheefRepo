@@ -1,9 +1,8 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.DTOs;
@@ -12,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Handlers.Queries;
 
-public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IRequestHandler<GetSubMajorsQuery, IResult<PaginatedResult<MajorDetailsDto>>>
+public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IQueryHandler<GetSubMajorsQuery, IResult<PaginatedResult<MajorDetailsDto>>>
 {
     public async Task<IResult<PaginatedResult<MajorDetailsDto>>> Handle(GetSubMajorsQuery request, CancellationToken cancellationToken)
     {

@@ -18,6 +18,7 @@ import { JobStatus } from '../../../core/enums/lookups.enum';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 import { JobTabStatus } from '../enums/job-tab-status';
 import { JobReviewResponse } from '../models/job-review-response';
+import { JobCopyTemplate } from '../models/job-copy-template.model';
 
 @Injectable({
   providedIn: 'root',
@@ -208,6 +209,20 @@ export class JobService {
       isValid: errors.length === 0,
       errors,
     };
+  }
+
+  getCopyTemplate(jobId: GUID): Observable<JobCopyTemplate> {
+    return this.httpService.get<JobCopyTemplate>(this.endpoints.job.copyTemplate(jobId));
+  }
+
+  createFromPrevious(
+    jobId: GUID,
+    payload: JobCopyTemplate
+  ): Observable<GUID> {
+    return this.httpService.post<GUID>(
+      this.endpoints.job.copyFromPrevious(jobId),
+      payload
+    );
   }
 
   saveJobDraft(jobData: Job): Observable<GUID> {

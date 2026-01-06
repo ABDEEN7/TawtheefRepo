@@ -1,5 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
@@ -7,7 +8,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Queries;
 
 public class GetPersonalInformationByQidQueryHandler(IMoiClient client) :
-    IRequestHandler<GetPersonalInformationByQidQuery, IResult<MOEPersonalInfo>>
+    IQueryHandler<GetPersonalInformationByQidQuery, IResult<MOEPersonalInfo>>
 {
     public async Task<IResult<MOEPersonalInfo>> Handle(GetPersonalInformationByQidQuery query,
         CancellationToken cancellationToken)

@@ -64,10 +64,10 @@ export class ReviewItemEditDialogComponent {
   }
 
   statusLabelKey(status: ReviewStatusEnum): string {
-    if (status === ReviewStatusEnum.NeedsCorrection) return 'profileView.reviewStatus.needsCorrection';
-    if (status === ReviewStatusEnum.Rejected) return 'profileView.reviewStatus.rejected';
-    if (status === ReviewStatusEnum.Approved) return 'profileView.reviewStatus.approved';
-    return 'profileView.reviewStatus.other';
+    if (status === ReviewStatusEnum.NeedsCorrection) return 'profileOverview.reviewStatus.needsCorrection';
+    if (status === ReviewStatusEnum.Rejected) return 'profileOverview.reviewStatus.rejected';
+    if (status === ReviewStatusEnum.Approved) return 'profileOverview.reviewStatus.approved';
+    return 'profileOverview.reviewStatus.other';
   }
 
   close(): void {
@@ -86,11 +86,11 @@ export class ReviewItemEditDialogComponent {
 
   targetHintKey(targetType?: ReviewTargetTypeEnum): string {
     if (targetType === ReviewTargetTypeEnum.Attachment) {
-      return 'profileView.reviewItemDialog.fileHint';
+      return 'profileOverview.reviewItemDialog.fileHint';
     }
     if (targetType === ReviewTargetTypeEnum.Row) {
-      return 'profileView.reviewItemDialog.rowHint';
+      return 'profileOverview.reviewItemDialog.rowHint';
     }
-    return 'profileView.reviewItemDialog.genericHint';
+    return 'profileOverview.reviewItemDialog.genericHint';
   }
 }

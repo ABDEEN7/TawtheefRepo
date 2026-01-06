@@ -1,48 +1,89 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Lookups.Queries;
+using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
-public sealed class GetCandidateTypesByProviderQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetCandidateTypesByProviderQuery, IResult<List<DropdownOptions>>>
+public sealed class GetCandidateTypesByProviderQueryHandler(
+    IUnitOfWork unitOfWork,
+    IMapper mapper)
+    : IQueryHandler<GetCandidateTypesByProviderQuery, IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(
         GetCandidateTypesByProviderQuery request,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var candidateTypes = await unitOfWork.GetEntityRepository<ProviderLogin>()
-            .DbSet
-            .Where(s => s.IsActive)
-            .Where(pl => pl.BackendName.ToLower() == request.Provider.ToLower())
-            .SelectMany(cl => cl.CandidateTypeProviderLogins)
-            .Select(ct => ct.CandidateType!)
-            .ToListAsync(cancellationToken);
+        var userQid = await GetUserQidAsync(request.UserId, ct);
 
-        if (IsQatarPassOrResidentOtp(request.Provider))
+        var candidateTypes = new List<CandidateType>();
+        // If user doesn't have a QID, treat as non-Kawader and return provider mapping (or empty list).
+        if (string.IsNullOrWhiteSpace(userQid))
         {
-            //TODO: should be check if user is from KwaderQIDs
-            var qatari = await unitOfWork.GetEntityRepository<CandidateType>()
-                .DbSet
-                .FirstOrDefaultAsync(x => x.Id == CandidateTypeIds.Qatari, cancellationToken);
-
-            if (qatari is not null && candidateTypes.All(ct => ct.Id != qatari.Id))
-            {
-                candidateTypes.Add(qatari);
-            }
+            candidateTypes = await GetProviderCandidateTypesAsync(request.Provider, ct);
+        }
+        else
+        {
+            var isKawaderUser = await IsKawaderUserAsync(userQid, ct);
+            candidateTypes = isKawaderUser
+                ? await GetQatariCandidateTypeAsync(ct)
+                : await GetProviderCandidateTypesAsync(request.Provider, ct);
         }
 
         return Result.Ok(mapper.Map<List<DropdownOptions>>(candidateTypes));
     }
 
-    private static bool IsQatarPassOrResidentOtp(string provider)
+    private async Task<string?> GetUserQidAsync(Guid userId, CancellationToken ct)
     {
-        return provider.Equals("QatarPass", StringComparison.OrdinalIgnoreCase)
-            || provider.Equals("QatarResidentOtp", StringComparison.OrdinalIgnoreCase);
+        return await unitOfWork.GetEntityRepository<UserProfile>()
+            .DbSet
+            .AsNoTracking()
+            .Where(x => x.UserId == userId)
+            .Select(x => x.NationalNumber)
+            .FirstOrDefaultAsync(ct);
     }
+
+    private async Task<bool> IsKawaderUserAsync(string qid, CancellationToken ct)
+    {
+        return await unitOfWork.GetEntityRepository<KawaderQid>()
+            .DbSet
+            .AsNoTracking()
+            .AnyAsync(x => x.Qid == qid, ct);
+    }
+
+    private async Task<List<CandidateType>> GetQatariCandidateTypeAsync(CancellationToken ct)
+    {
+        var qatari = await unitOfWork.GetEntityRepository<CandidateType>()
+            .DbSet
+            .AsNoTracking()
+            .Where(x => x.Id == CandidateTypeIds.Qatari)
+            .SingleOrDefaultAsync(ct);
+
+        return qatari is null ? [] : [qatari];
+    }
+
+    private async Task<List<CandidateType>> GetProviderCandidateTypesAsync(string provider, CancellationToken ct)
+    {
+        var normalizedProvider = Normalize(provider);
+
+        // Distinct avoids duplicates if provider mappings join to the same CandidateType multiple times.
+        return await unitOfWork.GetEntityRepository<ProviderLogin>()
+            .DbSet
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .Where(x => x.BackendName.ToLower() == normalizedProvider)
+            .SelectMany(x => x.CandidateTypeProviderLogins)
+            .Where(x => x.CandidateType != null)
+            .Select(x => x.CandidateType!)
+            .Distinct()
+            .ToListAsync(ct);
+    }
+
+    private static string Normalize(string value) => value .Trim().ToLowerInvariant();
 }

@@ -1,7 +1,7 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
 
-public sealed record ListRoleLookupsQuery : IRequest<IResult<IReadOnlyCollection<RoleLookupDto>>>;
+public sealed record ListRoleLookupsQuery : IQuery<IResult<IReadOnlyCollection<RoleLookupDto>>>;

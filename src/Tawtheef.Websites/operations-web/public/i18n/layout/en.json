@@ -20,6 +20,11 @@
 "internal.nav.jobsApplications": "My Applications",
 
 "internal.nav.notifications": "Notifications",
+"internal.nav.notifications.title": "Notifications",
+"internal.nav.notifications.refresh": "Refresh",
+"internal.nav.notifications.defaultSubject": "System notification",
+"internal.nav.notifications.empty": "You're all caught up!",
+"internal.nav.notifications.loadError": "Couldn't load notifications. Please try again.",
 
 "internal.nav.login": "Login",
 "internal.nav.userAvatarAlt": "User Avatar",
@@ -40,6 +45,7 @@
   "internal.sidebar.approve-job": "Approve Facilities",
   "internal.sidebar.job": "Create Job",
   "internal.sidebar.kawader": "Kawader",
+  "internal.sidebar.organization-structures": "Organization Structures",
   "internal.sidebar.major-skill": "Manage Majors and Skills",
   "internal.sidebar.invitation-summary": "Job Invitation Summary",
   "internal.sidebar.transfer": "Nominations",
@@ -52,6 +58,9 @@
 "admin.sidebar.countries": "Countries Management",
 "admin.sidebar.languages": "Languages Management",
 "admin.sidebar.universities": "Universities Management",
+"admin.sidebar.profileLogs": "Profile logs",
+"admin.sidebar.targetEntities": "Target Entities Management",
+"admin.sidebar.religions": "Religions Management",
 
 "common.sidebar.settings": "Settings",
 "common.sidebar.logout": "Logout",

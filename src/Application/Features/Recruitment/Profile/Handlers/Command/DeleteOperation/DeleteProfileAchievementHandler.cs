@@ -1,5 +1,7 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperation;
 using Tawtheef.Domain.Constants;
@@ -8,7 +10,7 @@ using Tawtheef.Domain.Entities.Applicant;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.DeleteOperation;
 
 public sealed class DeleteProfileAchievementHandler(IUnitOfWork uow)
-    : IRequestHandler<DeleteProfileAchievementCommand, IResult<Unit>>
+    : ICommandHandler<DeleteProfileAchievementCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(DeleteProfileAchievementCommand request, CancellationToken cancellationToken)
     {

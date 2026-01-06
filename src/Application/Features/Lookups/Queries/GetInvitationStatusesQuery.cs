@@ -1,7 +1,7 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetInvitationStatusesQuery : BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;
+public sealed record GetInvitationStatusesQuery : BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>;

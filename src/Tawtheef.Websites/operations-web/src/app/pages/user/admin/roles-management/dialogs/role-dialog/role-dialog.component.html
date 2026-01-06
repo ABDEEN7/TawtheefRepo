@@ -1,0 +1,83 @@
+<div class="role-dialog" i18nNamespace="pages/admin/roles-management" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div class="dialog-body">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ 'ROLES.NAME_AR' | translate }}</label>
+        <input class="form-control" [ngModel]="formModel().nameAr" (ngModelChange)="updateField('nameAr', $event)" />
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ 'ROLES.NAME_EN' | translate }}</label>
+        <input class="form-control" [ngModel]="formModel().nameEn" (ngModelChange)="updateField('nameEn', $event)" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ 'ROLES.DESCRIPTION_AR' | translate }}</label>
+        <textarea
+          class="form-control"
+          rows="3"
+          [ngModel]="formModel().descriptionAr"
+          (ngModelChange)="updateField('descriptionAr', $event)"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ 'ROLES.DESCRIPTION_EN' | translate }}</label>
+        <textarea
+          class="form-control"
+          rows="3"
+          [ngModel]="formModel().descriptionEn"
+          (ngModelChange)="updateField('descriptionEn', $event)"></textarea>
+      </div>
+    </div>
+
+    <div class="permissions-box mt-2">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <label class="fw-bold mb-0">{{ 'ROLES.PERMISSIONS_LIST' | translate }}</label>
+
+        <div class="search-bar input-group w-50">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+          <input
+            type="text"
+            class="form-control border-start-0"
+            [placeholder]="'SEARCH' | translate"
+            [ngModel]="permissionSearch()"
+            (ngModelChange)="permissionSearch.set($event)" />
+        </div>
+      </div>
+
+      @if (groupedPermissions().length === 0) {
+        <div class="text-muted small">{{ 'NO_RECORDS' | translate }}</div>
+      } @else {
+        @for (group of groupedPermissions(); track group.module) {
+          <div class="permission-group">
+            <div class="group-title">{{ group.module }}</div>
+
+            <div class="perm-list">
+              @for (perm of group.permissions; track perm.id) {
+                <label class="perm-item">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedPermissions().includes(perm.id)"
+                    (change)="togglePermission(perm.id)" />
+                  <span>{{ perm.name }}</span>
+                </label>
+              }
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end mt-4 gap-2">
+    <button type="button" class="btn btn-secondary" (click)="cancel()">
+      {{ 'ROLES.CANCEL' | translate }}
+    </button>
+
+    <button type="button" class="btn btn-maroon shadow-sm" [disabled]="isSaving()" (click)="save()">
+      {{ 'ROLES.SAVE' | translate }}
+    </button>
+  </div>
+</div>

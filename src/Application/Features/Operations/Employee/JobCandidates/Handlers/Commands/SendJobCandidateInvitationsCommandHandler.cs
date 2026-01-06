@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Commands;
@@ -11,8 +11,10 @@ using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handlers.Commands;
 
 public sealed class SendJobCandidateInvitationsCommandHandler(
-    IUnitOfWork unitOfWork)
-    : IRequestHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
+    IUnitOfWork unitOfWork,
+    IEmailSender emailSender,
+    ISmsSender smsSender)
+    : ICommandHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
     public async Task<IResult<SendJobCandidateInvitationsResult>> Handle(
         SendJobCandidateInvitationsCommand request,

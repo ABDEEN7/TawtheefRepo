@@ -1,15 +1,17 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Resources.Commands;
+using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -22,7 +24,7 @@ public sealed class RequestProfilePersonalChangeHandler(
     UserManager<User> userManager,
     IProfileStepValidationService validationService,
     IProfileReviewService reviewService
-) : IRequestHandler<RequestProfilePersonalChangeCommand, IResult<Unit>>
+) : ICommandHandler<RequestProfilePersonalChangeCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestProfilePersonalChangeCommand cmd, CancellationToken ct)
     {
@@ -60,7 +62,7 @@ public sealed class RequestProfilePersonalChangeHandler(
                 return Result.Ok(existingId);
 
             var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "sponsor-card", file, false, ct);
-            var uploadResult = await mediator.Send(
+            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
             if (uploadResult.IsFailed)

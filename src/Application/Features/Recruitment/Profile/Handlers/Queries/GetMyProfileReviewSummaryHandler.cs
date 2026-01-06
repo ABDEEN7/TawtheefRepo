@@ -1,5 +1,6 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator.Queries;
+using FluentResults;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
@@ -12,7 +13,7 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Queries;
 
 
 public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
-    : IRequestHandler<GetMyProfileReviewSummaryQuery, IResult<MyProfileReviewSummaryDto>>
+    : IQueryHandler<GetMyProfileReviewSummaryQuery, IResult<MyProfileReviewSummaryDto>>
 {
     public async Task<IResult<MyProfileReviewSummaryDto>> Handle(
         GetMyProfileReviewSummaryQuery request, CancellationToken ct)
@@ -59,7 +60,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
                 ReviewItemId = x.Id,
                 TargetType   = x.TargetType,
                 Status       = x.Status,
-                Title        = x.AttachmentTitle ?? x.FieldPath ?? x.EntityName ?? "—",
+                Title        = x.AttachmentTitle ?? x.FieldPath ?? x.EntityName ?? "?",
                 Note         = x.ReviewerNote,
                 FieldPath    = x.FieldPath,
                 EntityId     = x.EntityId,

@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Universities.Commands;
@@ -20,4 +20,4 @@ public sealed record UpdateUniversityCommand(
     bool IsActive,
     int? LogoArFileIndex,
     int? LogoEnFileIndex,
-    List<IFormFile> Files) : IRequest<IResult<Guid>>;
+    List<IFormFile> Files) : ICommand<IResult<Guid>>;

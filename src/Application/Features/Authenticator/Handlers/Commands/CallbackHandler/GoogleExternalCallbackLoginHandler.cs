@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -21,7 +21,7 @@ public class GoogleExternalCallbackLoginHandler(
     IUnitOfWork uow,
     ILoginAuditService loginAudit
 ) : BaseExternalCallbackLoginHandler(loginAudit),
-    IRequestHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
+    ICommandHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     protected override string Provider => "Google";
     protected override Guid? DefaultUserType => null;

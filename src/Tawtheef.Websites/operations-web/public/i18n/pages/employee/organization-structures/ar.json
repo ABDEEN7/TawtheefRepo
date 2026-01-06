@@ -1,0 +1,67 @@
+{
+  "ORG_STRUCTURES.BADGE": "العمليات",
+  "ORG_STRUCTURES.TITLE": "إدارة الهيكل التنظيمي",
+  "ORG_STRUCTURES.SUBTITLE": "إدارة القطاعات والإدارات والأقسام.",
+
+  "ORG_STRUCTURES.SECTORS_TAB": "القطاعات",
+  "ORG_STRUCTURES.MANAGEMENTS_TAB": "الإدارات",
+  "ORG_STRUCTURES.DEPARTMENTS_TAB": "الأقسام",
+
+  "ORG_STRUCTURES.SECTORS_BADGE": "القطاعات",
+  "ORG_STRUCTURES.SECTORS_TITLE": "قائمة القطاعات",
+  "ORG_STRUCTURES.SECTORS_HINT": "إنشاء وإدارة القطاعات.",
+
+  "ORG_STRUCTURES.MANAGEMENTS_BADGE": "الإدارات",
+  "ORG_STRUCTURES.MANAGEMENTS_TITLE": "قائمة الإدارات",
+  "ORG_STRUCTURES.MANAGEMENTS_HINT": "ربط الإدارات بالقطاع التابع لها.",
+
+  "ORG_STRUCTURES.DEPARTMENTS_BADGE": "الأقسام",
+  "ORG_STRUCTURES.DEPARTMENTS_TITLE": "قائمة الأقسام",
+  "ORG_STRUCTURES.DEPARTMENTS_HINT": "ربط الأقسام بالإدارة التابعة لها.",
+
+  "ORG_STRUCTURES.CREATE_SECTOR": "إضافة قطاع",
+  "ORG_STRUCTURES.CREATE_MANAGEMENT": "إضافة إدارة",
+  "ORG_STRUCTURES.CREATE_DEPARTMENT": "إضافة قسم",
+  "ORG_STRUCTURES.EDIT_SECTOR": "تعديل القطاع",
+  "ORG_STRUCTURES.EDIT_MANAGEMENT": "تعديل الإدارة",
+  "ORG_STRUCTURES.EDIT_DEPARTMENT": "تعديل القسم",
+
+  "ORG_STRUCTURES.SEARCH_LABEL": "بحث",
+  "ORG_STRUCTURES.SEARCH_SECTORS": "ابحث في القطاعات",
+  "ORG_STRUCTURES.SEARCH_MANAGEMENTS": "ابحث في الإدارات",
+  "ORG_STRUCTURES.SEARCH_DEPARTMENTS": "ابحث في الأقسام",
+
+  "ORG_STRUCTURES.STATUS_FILTER": "الحالة",
+  "ORG_STRUCTURES.STATUS_ALL": "جميع الحالات",
+  "ORG_STRUCTURES.STATUS": "الحالة",
+
+  "ORG_STRUCTURES.SECTOR_COLUMN": "القطاع",
+  "ORG_STRUCTURES.MANAGEMENT_COLUMN": "الإدارة",
+  "ORG_STRUCTURES.DEPARTMENT_COLUMN": "القسم",
+  "ORG_STRUCTURES.ORDER_COLUMN": "ترتيب العرض",
+  "ORG_STRUCTURES.ACTIONS": "العمليات",
+  "ORG_STRUCTURES.NO_RECORDS": "لا توجد بيانات",
+
+  "ORG_STRUCTURES.FIELD_SECTOR": "القطاع",
+  "ORG_STRUCTURES.FIELD_MANAGEMENT": "الإدارة",
+  "ORG_STRUCTURES.FIELD_NAME_EN": "الاسم (إنجليزي)",
+  "ORG_STRUCTURES.FIELD_NAME_AR": "الاسم (عربي)",
+  "ORG_STRUCTURES.FIELD_DESCRIPTION_EN": "الوصف (إنجليزي)",
+  "ORG_STRUCTURES.FIELD_DESCRIPTION_AR": "الوصف (عربي)",
+  "ORG_STRUCTURES.FIELD_DISPLAY_ORDER": "ترتيب العرض",
+  "ORG_STRUCTURES.FIELD_ACTIVE": "مفعل",
+
+  "ORG_STRUCTURES.ACTIVE": "فعال",
+  "ORG_STRUCTURES.INACTIVE": "غير فعال",
+  "ORG_STRUCTURES.ACTIVATE": "تفعيل",
+  "ORG_STRUCTURES.DEACTIVATE": "إلغاء التفعيل",
+  "ORG_STRUCTURES.SAVE": "حفظ",
+  "ORG_STRUCTURES.CANCEL": "إلغاء",
+  "ORG_STRUCTURES.VALIDATION_REQUIRED": "حقل مطلوب",
+
+  "ORG_STRUCTURES.SUCCESS_SAVE": "تم حفظ السجل بنجاح.",
+  "ORG_STRUCTURES.ERROR_SAVE": "تعذر حفظ السجل.",
+  "ORG_STRUCTURES.STATUS_UPDATED": "تم تحديث الحالة بنجاح.",
+  "ORG_STRUCTURES.STATUS_UPDATE_FAILED": "تعذر تحديث الحالة.",
+  "ORG_STRUCTURES.ERROR_LOAD": "فشل في تحميل البيانات."
+}

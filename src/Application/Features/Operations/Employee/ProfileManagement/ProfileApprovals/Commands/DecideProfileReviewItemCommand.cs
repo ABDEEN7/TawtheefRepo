@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
@@ -9,5 +10,5 @@ public sealed record DecideProfileReviewItemCommand(
     Guid ReviewItemId,
     ReviewStatus Status,
     string? Note
-) : IRequest<IResult<Unit>>;
+) : ICommand<IResult<Unit>>;
 

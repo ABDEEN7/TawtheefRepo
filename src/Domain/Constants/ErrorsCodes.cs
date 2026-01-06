@@ -39,6 +39,7 @@ public class ErrorsCodes
     public const string ExternalLoginOfficeUserOfficeDeletedOrNotFound = "EXTERNAL_LOGIN_OFFICE_USER_OFFICE_DELETED_OR_NOT_FOUND";
     public const string QatarPassQidNotAllowed = "QATAR_PASS_QID_NOT_ALLOWED";
     public const string QatarResidentInvalidQid = "QATAR_RESIDENT_INVALID_QID";
+    public const string QatarResidentPhoneInvalid = "QATAR_RESIDENT_PHONE_INVALID";
     public const string QatarResidentPhoneMismatch = "QATAR_RESIDENT_PHONE_MISMATCH";
     public const string QatarResidentVerificationFailed = "QATAR_RESIDENT_VERIFICATION_FAILED";
     public const string ExternalLoginUserTypeNotAllowed = "EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED";
@@ -235,6 +236,16 @@ public class ErrorsCodes
     public const string NoteRequired = "NOTE_REQUIRED";
     #endregion
 
+    #region Organization Structures
+    public const string SectorNotFound = "SECTOR_NOT_FOUND";
+    public const string SectorNameAlreadyExists = "SECTOR_NAME_ALREADY_EXISTS";
+    public const string ManagementNotFound = "MANAGEMENT_NOT_FOUND";
+    public const string ManagementNameAlreadyExists = "MANAGEMENT_NAME_ALREADY_EXISTS";
+    public const string DepartmentNotFound = "DEPARTMENT_NOT_FOUND";
+    public const string DepartmentNameAlreadyExists = "DEPARTMENT_NAME_ALREADY_EXISTS";
+    public const string ParentRequired = "PARENT_REQUIRED";
+    #endregion
+
     #region MOI Service
 
     public const string MOIDataNotFound = "MOI_DATA_NOT_FOUND";
@@ -255,6 +266,16 @@ public class ErrorsCodes
     public const string UniversityNotFound = "UNIVERSITY_NOT_FOUND";
     public const string UniversityNameExists = "UNIVERSITY_NAME_EXISTS";
     public const string CityNotFound = "CITY_NOT_FOUND";
+    #endregion
+
+    #region Religions
+    public const string ReligionNotFound = "RELIGION_NOT_FOUND";
+    public const string ReligionNameExists = "RELIGION_NAME_EXISTS";
+    #endregion
+
+    #region Target Entities
+    public const string TargetEntityNotFound = "TARGET_ENTITY_NOT_FOUND";
+    public const string TargetEntityNameExists = "TARGET_ENTITY_NAME_EXISTS";
     #endregion
 
     #region Offices
@@ -298,5 +319,6 @@ public class ErrorsCodes
     public const string ExternalLoginEmailDomainNotAllowed = "EXTERNAL_LOGIN_EMAIL_DOMAIN_NOT_ALLOWED";
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
     public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
+    public const string QatariPeopleNotAllowedLoginBeforeRegisterOnKawader = "QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER";
     public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
 }

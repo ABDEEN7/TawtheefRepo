@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
@@ -15,7 +15,7 @@ public sealed class GetUserRolesQueryHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager,
     IMapper mapper)
-    : IRequestHandler<GetUserRolesQuery, IResult<UserRoleAssignmentDto>>
+    : IQueryHandler<GetUserRolesQuery, IResult<UserRoleAssignmentDto>>
 {
     public async Task<IResult<UserRoleAssignmentDto>> Handle(
         GetUserRolesQuery request,

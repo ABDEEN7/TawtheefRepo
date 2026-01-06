@@ -1,4 +1,3 @@
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 

@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Constants;
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
 public class GetJobByIdQueryHandler(IJobRepository jobRepository, IMapper mapper)
-    : IRequestHandler<GetJobByIdQuery, IResult<JobResponseDto>>
+    : IQueryHandler<GetJobByIdQuery, IResult<JobResponseDto>>
 {
     public async Task<IResult<JobResponseDto>> Handle(GetJobByIdQuery request, CancellationToken cancellationToken)
     {

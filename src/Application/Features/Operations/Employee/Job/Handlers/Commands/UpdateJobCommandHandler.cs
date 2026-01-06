@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
@@ -20,7 +21,7 @@ public class UpdateJobCommandHandler(
     IJobResponsibilityRepository jobResponsibilityRepository,
     IJobRequiredAttachmentRepository jobRequiredAttachmentRepository,
     IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateJobCommand, IResult<Unit>>
+    : ICommandHandler<UpdateJobCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {

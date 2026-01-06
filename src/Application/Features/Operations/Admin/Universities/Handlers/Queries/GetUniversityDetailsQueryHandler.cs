@@ -1,7 +1,7 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -14,7 +14,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Operations.Admin.Universities.Handlers.Queries;
 
 public sealed class GetUniversityDetailsQueryHandler(IUnitOfWork unitOfWork, IMediaUrlResolver media, IMapper mapper)
-    : IRequestHandler<GetUniversityDetailsQuery, IResult<UniversityAdminDto>>
+    : IQueryHandler<GetUniversityDetailsQuery, IResult<UniversityAdminDto>>
 {
     public async Task<IResult<UniversityAdminDto>> Handle(
         GetUniversityDetailsQuery request,

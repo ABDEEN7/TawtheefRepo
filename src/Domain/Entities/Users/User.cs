@@ -7,6 +7,7 @@ using Tawtheef.Domain.Common.Interfaces;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Events.User;
 using Tawtheef.Domain.ValueObjects.User;
 
@@ -19,6 +20,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     [Required, StringLength(100)]
     public required string FullNameAr { get; set; }
     public bool IsBlocked { get; set; }
+    public bool AgreedToTerms { get; set; }
     public DateTime? LastLoginDate { get; set; }
     
     [StringLength(2048)]
@@ -36,6 +38,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     
     public virtual ICollection<Notification.Notification> Notifications { get; init; } = [];
     public virtual ICollection<RefreshToken> RefreshTokens { get; init; } = [];
+    public ICollection<UserProfileLogger> UserProfileLoggers { get; set; } = [];
     
     [MaxLength(450)]
     public string? CurrentAuthToken { get; set; }

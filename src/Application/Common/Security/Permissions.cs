@@ -114,6 +114,27 @@ public static class Permissions
                 9);
     }
 
+    public static class Religions
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.Religions.View,
+                nameof(PermissionKeys.Religions),
+                PermissionAction.View,
+                "Religions - View",
+                "الديانات - عرض",
+                10);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.Religions.Manage,
+                nameof(PermissionKeys.Religions),
+                PermissionAction.Manage,
+                "Religions - Manage",
+                "الديانات - إدارة",
+                11);
+    }
+
     public static class Countries
     {
         public static readonly PermissionDefinition View =
@@ -123,7 +144,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Countries - View",
                 "الدول - عرض",
-                10);
+                12);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -132,7 +153,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Countries - Manage",
                 "الدول - إدارة",
-                11);
+                13);
     }
 
     public static class Universities
@@ -144,7 +165,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Universities - View",
                 "الجامعات - عرض",
-                12);
+                14);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -153,7 +174,40 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Universities - Manage",
                 "الجامعات - إدارة",
-                13);
+                15);
+    }
+
+    public static class TargetEntities
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.TargetEntities.View,
+                nameof(PermissionKeys.TargetEntities),
+                PermissionAction.View,
+                "Target Entities - View",
+                "الجهات المستهدفة - عرض",
+                16);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.TargetEntities.Manage,
+                nameof(PermissionKeys.TargetEntities),
+                PermissionAction.Manage,
+                "Target Entities - Manage",
+                "الجهات المستهدفة - إدارة",
+                17);
+    }
+
+    public static class ProfileLogs
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.ProfileLogs.View,
+                nameof(PermissionKeys.ProfileLogs),
+                PermissionAction.View,
+                "Profile Logs - View",
+                "سجل الملفات - عرض",
+                14);
     }
 
     // =========================
@@ -350,5 +404,17 @@ public static class Permissions
                 "Major Skills - Manage",
                 "مهارات التخصص - إدارة",
                 70);
+    }
+
+    public static class OrganizationStructures
+    {
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.OrganizationStructures.Manage,
+                nameof(PermissionKeys.OrganizationStructures),
+                PermissionAction.Manage,
+                "Organization Structures - Manage",
+                "الهياكل التنظيمية - إدارة",
+                80);
     }
 }

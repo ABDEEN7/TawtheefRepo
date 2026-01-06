@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
@@ -11,9 +11,9 @@ using Tawtheef.Domain.Common;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public abstract class BaseLookupQueryHandler<TLookup, TRequest>(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<TRequest, IResult<List<DropdownOptions>>>
+    : IQueryHandler<TRequest, IResult<List<DropdownOptions>>>
     where TLookup : LookupBase
-    where TRequest : BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>
+    where TRequest : BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(TRequest request, CancellationToken cancellationToken)
     {

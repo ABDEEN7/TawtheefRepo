@@ -37,6 +37,7 @@ import { JobReviewResponse } from '../../models/job-review-response';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { JobStatus } from '../../../../core/enums/lookups.enum';
 import { DialogHelperService } from '../../../../core/services/dialog-helper.service';
+import { JobCopyTemplate } from '../../models/job-copy-template.model';
 
 @Component({
   selector: 'app-wizard',
@@ -67,6 +68,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   hasBasicData = false;
   stepsLoaded = false;
   showContainer = false;
+  copySourceId: GUID | null = null;
 
   stepClasses: Type<WizardStepComponent>[] = [
     OverviewStepComponent,
@@ -108,12 +110,19 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    const copyFrom = this.route.snapshot.queryParamMap.get('copyFrom');
     if (id) {
       this.isEditMode = true;
       this.jobId = GuidUtils.asGuid(id);
     }
 
     this.lookupsService.loadAll();
+
+     if (!this.isEditMode && copyFrom) {
+      this.copySourceId = GuidUtils.asGuid(copyFrom);
+      this.openCopyBasicDataPopup(this.copySourceId);
+      return;
+    }
 
     if (!this.isEditMode) {
       this.jobService.createNewDraft();
@@ -167,6 +176,43 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
       }
 
       this.router.navigate([routes.employee.JobList]);
+    });
+  }
+
+   private openCopyBasicDataPopup(sourceJobId: GUID): void {
+    this.isLoading = true;
+    this.jobService.getCopyTemplate(sourceJobId).subscribe({
+      next: (template: JobCopyTemplate) => {
+        this.isLoading = false;
+        this.dialogService.open(JobBasicModalComponent, {
+          width: 'min(920px, 96vw)',
+          modal: true,
+          header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
+          styleClass: 'custom-bootstrap-dialog',
+          data: {
+            isCreateMode: true,
+            showInWizard: true,
+            copyTemplate: template,
+            copySourceId: sourceJobId,
+          },
+        })?.onClose.subscribe((result) => {
+          if (result?.success && result?.jobId) {
+            this.hasBasicData = true;
+            this.jobId = result.jobId;
+            this.isEditMode = true;
+            this.loadJobForWizard();
+            return;
+          }
+          this.router.navigate([routes.employee.JobList]);
+        });
+      },
+      error: () => {
+        this.isLoading = false;
+        this.notificationService.error(
+          this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')
+        );
+        this.router.navigate([routes.employee.JobList]);
+      },
     });
   }
 

@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -16,7 +17,7 @@ public class RequestEmailVerificationCommandHandler(
     IUnitOfWork unitOfWork,
     IEmailSender emailSender,
     UserManager<User> userManager)
-    : IRequestHandler<RequestEmailVerificationCommand, IResult<Unit>>
+    : ICommandHandler<RequestEmailVerificationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestEmailVerificationCommand request, CancellationToken cancellationToken)
     {

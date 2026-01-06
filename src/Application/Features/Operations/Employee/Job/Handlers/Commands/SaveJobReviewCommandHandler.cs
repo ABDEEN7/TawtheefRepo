@@ -1,13 +1,13 @@
-﻿using System.Text.Json;
+using System.Text.Json;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
 using Mapster;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
-using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
@@ -20,7 +20,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Command
 public sealed class SaveJobReviewCommandHandler(
     IUnitOfWork uow,
     IMediator mediator
-) : IRequestHandler<SaveJobReviewCommand, IResult<Unit>>
+) : ICommandHandler<SaveJobReviewCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
@@ -89,7 +89,7 @@ public sealed class SaveJobReviewCommandHandler(
 
         var uploadPath = await JobReviewUploadPathFactory.CreateAsync(jobId, file, false, ct);
 
-        var result = await mediator.Send(new UploadAttachmentCommand(
+        var result = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(new UploadAttachmentCommand(
             Guid.Empty, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file), ct);
 
         return result.IsFailed

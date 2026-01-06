@@ -1,34 +1,57 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
 using Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
+using Tawtheef.Domain.Entities.Security;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
-public sealed class ListRolesQueryHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
-    : IRequestHandler<GetListRolesQuery, IResult<PaginatedResult<RoleDto>>>
+public sealed class ListRolesQueryHandler(
+    RoleManager<ApplicationRole> roleManager,
+    IMapper mapper,
+    IUnitOfWork uow,
+    ILocalizationService localizationService)
+    : IQueryHandler<GetListRolesQuery, IResult<PaginatedResult<RoleDto>>>
 {
     public async Task<IResult<PaginatedResult<RoleDto>>> Handle(GetListRolesQuery request, CancellationToken cancellationToken)
     {
-        var roles = await roleManager.Roles.AsNoTracking().ToListAsync(cancellationToken);
+        var rolesPage = await roleManager.Roles
+            .AsNoTracking()
+            .ToPaginatedListAsync(request, cancellationToken);
 
-        var mapped = new List<RoleDto>(roles.Count);
-        foreach (var role in roles)
+        var permissionLookup = await uow.GetEntityRepository<Permission>().DbSet
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .ToDictionaryAsync(p => p.BackendName, p => localizationService.GetLocalizedName(p), cancellationToken);
+
+        var mapped = new List<RoleDto>(rolesPage.Items.Count);
+        foreach (var role in rolesPage.Items)
         {
             var claims = await roleManager.GetClaimsAsync(role);
-            mapped.Add(mapper.Map<RoleDto>(new RoleWithClaims(role, claims)));
+            var roleDto = mapper.Map<RoleDto>(new RoleWithClaims(role, claims));
+
+            if (roleDto.Permissions.Count > 0)
+            {
+                roleDto = roleDto with
+                {
+                    PermissionNames = roleDto.Permissions
+                        .Select(p => permissionLookup.TryGetValue(p, out var name) ? name : p)
+                        .ToArray()
+                };
+            }
+
+            mapped.Add(roleDto);
         }
 
-        var pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;
-        var pageSize = request.PageSize <= 0 ? mapped.Count : request.PageSize;
-        var skip = (pageNumber - 1) * pageSize;
-        var items = mapped.Skip(skip).Take(pageSize).ToList();
-
-        return Result.Ok(new PaginatedResult<RoleDto>(items, mapped.Count, pageNumber, pageSize));
+        var metadata = rolesPage.Metadata;
+        return Result.Ok(new PaginatedResult<RoleDto>(mapped, metadata.TotalCount, metadata.CurrentPage, metadata.PageSize));
     }
 }

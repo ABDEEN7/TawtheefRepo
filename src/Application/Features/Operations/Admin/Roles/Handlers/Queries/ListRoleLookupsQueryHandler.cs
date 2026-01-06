@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Roles.DTOs;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
 public sealed class ListRoleLookupsQueryHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
-    : IRequestHandler<ListRoleLookupsQuery, IResult<IReadOnlyCollection<RoleLookupDto>>>
+    : IQueryHandler<ListRoleLookupsQuery, IResult<IReadOnlyCollection<RoleLookupDto>>>
 {
     public async Task<IResult<IReadOnlyCollection<RoleLookupDto>>> Handle(
         ListRoleLookupsQuery request,

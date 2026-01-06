@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {UserService} from "./user.service";
 import {AuthStateService} from "./auth-state.service";
-import {catchError, map} from "rxjs/operators";
+import {catchError, map, tap} from "rxjs/operators";
 import {MessageService} from "primeng/api";
 import {EndpointsService} from '../http/endpoints.service';
 import {LoggerService} from '../services/logger.service';
@@ -13,6 +13,7 @@ import {AuthResponse} from '../models/auth-response.model';
 import {UserInfoModel} from '../../shared/models/user-info.model';
 import {TokenModel} from '../models/token.model';
 import {SystemRoles} from '../constants/systemRoles';
+import {InAppNotificationService} from '../services/in-app-notification.service';
 
 @Injectable({providedIn: 'root'})
 export class AuthCoreService {
@@ -24,7 +25,8 @@ export class AuthCoreService {
     private tokenService: TokenService,
     private userService: UserService,
     private authState: AuthStateService,
-    private navigation: NavigationService
+    private navigation: NavigationService,
+    private inAppNotifications: InAppNotificationService
   ) {
   }
 
@@ -91,6 +93,11 @@ export class AuthCoreService {
             return response.accessToken;
           }
           return null;
+        }),
+        tap(token => {
+          if (token) {
+            this.inAppNotifications.refreshAfterToken();
+          }
         }),
         catchError(() => {
           this.authState.logout();

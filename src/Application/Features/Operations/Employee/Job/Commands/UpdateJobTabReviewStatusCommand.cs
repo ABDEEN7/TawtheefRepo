@@ -1,8 +1,9 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 
 public sealed record UpdateJobTabReviewStatusCommand(
     Guid JobId
-) : IRequest<IResult<Unit>>;
+) : ICommand<IResult<Unit>>;

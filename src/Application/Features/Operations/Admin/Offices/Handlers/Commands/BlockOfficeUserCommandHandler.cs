@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Commands;
@@ -9,7 +10,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Commands;
 
 public sealed class BlockOfficeUserCommandHandler(UserManager<User> userManager)
-    : IRequestHandler<BlockOfficeUserCommand, IResult<Unit>>
+    : ICommandHandler<BlockOfficeUserCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(BlockOfficeUserCommand request, CancellationToken cancellationToken)
     {

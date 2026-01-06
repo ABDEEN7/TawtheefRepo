@@ -1,6 +1,6 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator.Commands;
+using FluentResults;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 
-public record ApproveJobPointsCommand(Guid JobId) : IRequest<IResult<bool>>;
+public record ApproveJobPointsCommand(Guid JobId) : ICommand<IResult<bool>>;

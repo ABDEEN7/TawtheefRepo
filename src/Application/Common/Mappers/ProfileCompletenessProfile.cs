@@ -44,11 +44,12 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest, src => src.Profile)
             .Map(dest => dest.IsComplete,
                 src => src.Profile.IsCompleted() && src.Profile.Status != UserProfileStatus.InCreation)
+            .Map(dest => dest.AgreedToTerms, src => src.User.AgreedToTerms)
             .Map(dest => dest.Status, src => src.Profile.Status)
             .Map(dest => dest.Avatar, src => src.User.Avatar ?? src.Prefill.Avatar)
             .Map(dest => dest.AvailableForRecruitment, src => src.Profile.AvailableForRecruitment)
             
-            .Map(dest => dest.QIDExpiry, src => src.Profile.QIDExpiry)
+            .Map(dest => dest.QIDExpiry, src => src.Profile.QIDExpiry ?? src.Prefill.QidExpiry)
             .Map(dest => dest.OfficeId, src => src.Profile.OfficeId)
             .Map(dest => dest.Office, src => src.Profile.Office)
             .Map(dest => dest.ResumeAttachment, src => src.Profile.ResumeAttachment)

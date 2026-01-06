@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
@@ -9,7 +10,7 @@ using Tawtheef.Domain.Events.Operation.Employee.Job;
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
 
 public class DeleteJobCommandHandler(IJobRepository jobRepository, IUnitOfWork unitOfWork)
-    : IRequestHandler<DeleteJobCommand, IResult<Unit>>
+    : ICommandHandler<DeleteJobCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(DeleteJobCommand request, CancellationToken cancellationToken)
     {

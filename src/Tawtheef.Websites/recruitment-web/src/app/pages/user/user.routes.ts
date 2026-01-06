@@ -16,7 +16,7 @@ export const userRoutes: Routes = [
   {
     path: 'profile-overview',
     loadComponent: () =>
-      import('./profile/overview/profile-overview.page').then(m => m.ProfileOverviewPage)
+      import('./profile/view/profile-view.page').then(m => m.ProfileViewPage)
   },
   {
     path: 'profile/edit',

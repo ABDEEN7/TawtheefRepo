@@ -1,6 +1,6 @@
 using System.Security.Claims;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
@@ -21,7 +21,7 @@ public sealed class AzureExternalCallbackLoginHandler(
     IEmployeeProfileService employeeProfileService,
     ILoginAuditService loginAudit
 ) : BaseExternalCallbackLoginHandler(loginAudit),
-    IRequestHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
+    ICommandHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     private const string ProviderName = "Azure";
     private const string ProviderDisplayName = "Azure AD";

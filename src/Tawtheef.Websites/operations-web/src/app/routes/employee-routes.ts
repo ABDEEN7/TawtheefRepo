@@ -17,14 +17,8 @@ export const employeeRoutes = {
   get approvalProfile(){
     return this.employee + '/approval-profile';
   },
-  approvalProfileDetail(id: string){
-    return this.approvalProfile + `/${id}`;
-  },
-  approvalProfileWizard(id: string) {
-    return this.approvalProfile + `/${id}/wizard`;
-  },
   approvalProfileReview(id: string) {
-    return this.approvalProfile + `/${id}/review`;
+    return this.approvalProfile + `/${id}/wizard`;
   },
   approvalProfileChanges (id: string){
     return this.approvalProfile + `/${id}/changes`;
@@ -50,11 +44,14 @@ export const employeeRoutes = {
   get nominations(){
     return this.employee + '/nominations';
   },
-   get jobPoints(){
+  get jobPoints(){
     return this.employee + '/jobs/job-points';
   },
   get majorsSkillsManagement(){
     return this.employee + '/majors-skills-management'
+  },
+  get organizationStructures(){
+    return this.employee + '/organization-structures'
   },
   get kawader(){
     return this.employee + '/kawader';

@@ -1,6 +1,7 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 
 namespace Tawtheef.Application.Features.Authenticator.Commands;
 
-public record LogoutCommand(Guid UserId) : IRequest<IResult<Unit>>;
+public record LogoutCommand(Guid UserId) : ICommand<IResult<Unit>>;

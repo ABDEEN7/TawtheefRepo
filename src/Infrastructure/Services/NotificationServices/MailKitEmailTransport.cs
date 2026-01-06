@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Net;
 using System.Net.Sockets;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -37,17 +36,8 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         _resiliencePolicy = BuildResiliencePolicy();
     }
 
-    #region Public API
-
     public Task SendAsync(EmailEnvelope envelope, CancellationToken ct = default) =>
-        _resiliencePolicy.ExecuteAsync(
-            token => ExecuteSendAsync(envelope, token),
-            ct
-        );
-
-    #endregion
-
-    #region Core Send Logic
+        _resiliencePolicy.ExecuteAsync(token => ExecuteSendAsync(envelope, token), ct);
 
     private async Task ExecuteSendAsync(EmailEnvelope envelope, CancellationToken ct)
     {
@@ -67,7 +57,6 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         }
         catch (SmtpCommandException sce) when (IsPermanent(sce))
         {
-            // Permanent protocol-level error: do not reuse client
             keepClient = false;
             _log.Error(
                 sce,
@@ -75,14 +64,11 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
                 sce.StatusCode,
                 Truncate(envelope.Subject, 100)
             );
-
             throw;
         }
         catch (Exception ex)
         {
-            // Transient / unknown: also drop client instance
             keepClient = false;
-
             _log.Error(
                 ex,
                 "SMTP send failed (subject={Subject}, to={ToCount})",
@@ -96,19 +82,11 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         finally
         {
             if (keepClient)
-            {
                 ReturnClient(client);
-            }
             else
-            {
                 await TryDisconnectClientAsync(client, ct);
-            }
         }
     }
-
-    #endregion
-
-    #region SMTP Client Pooling
 
     private async Task<SmtpClient> GetClientAsync(CancellationToken ct)
     {
@@ -116,35 +94,17 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
             return pooledClient;
 
         var client = CreateSmtpClient();
-        var ipAddresses = await ResolveSmtpHostAsync(ct);
-        var orderedIps = OrderIpAddresses(ipAddresses);
 
-        Exception? lastException = null;
-
-        foreach (var ip in orderedIps)
+        try
         {
-            try
-            {
-                await ConnectAndAuthenticateAsync(client, ip, ct);
-                return client;
-            }
-            catch (Exception ex)
-            {
-                lastException = ex;
-
-                _log.Warning(
-                    ex,
-                    "SMTP connect/authentication failed via {Ip}:{Port}",
-                    ip,
-                    _settings.SmtpPort
-                );
-
-                await TryDisconnectClientAsync(client, ct);
-            }
+            await ConnectAsync(client, ct);
+            return client;
         }
-
-        client.Dispose();
-        throw lastException ?? new TimeoutException("SMTP connect/authentication failed for all IPs");
+        catch
+        {
+            client.Dispose();
+            throw;
+        }
     }
 
     private SmtpClient CreateSmtpClient()
@@ -154,60 +114,35 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
             Timeout = DefaultTimeoutMs
         };
 
-#if DEBUG
-        client.CheckCertificateRevocation = false; // dev only
-#endif
+        // IMPORTANT:
+        // We are intentionally doing "plain SMTP" like System.Net.Mail on port 25.
+        // No TLS => no certificate validation issues.
 
         return client;
     }
 
-    private async Task<IPAddress[]> ResolveSmtpHostAsync(CancellationToken ct) =>
-        await Dns.GetHostAddressesAsync(_settings.SmtpHost, ct);
-
-    private static IEnumerable<IPAddress> OrderIpAddresses(IEnumerable<IPAddress> ips) =>
-        ips.OrderBy(ip => ip.AddressFamily == AddressFamily.InterNetwork ? 0 : 1);
-
-    private async Task ConnectAndAuthenticateAsync(SmtpClient client, IPAddress ip, CancellationToken ct)
+    private async Task ConnectAsync(SmtpClient client, CancellationToken ct)
     {
-        var socketOptions = GetSocketOptions();
+        // Force the same behavior as:
+        // new SmtpClient("smtp.edu.gov.qa", 25) with no SSL
+        var socketOptions = SecureSocketOptions.None;
 
-        await client.ConnectAsync(
-            _settings.SmtpHost,       // keep hostname for SNI/validation
-            _settings.SmtpPort,
-            socketOptions,
-            ct
-        );
+        await client.ConnectAsync(_settings.SmtpHost, 25, socketOptions, ct);
 
-        await client.AuthenticateAsync(_settings.EmailUser, _settings.EmailPass, ct);
+        // Do NOT authenticate (matches your working example).
+        // If your SMTP later requires auth, enable it conditionally.
+        // await client.AuthenticateAsync(_settings.EmailUser, _settings.EmailPass, ct);
 
-        _log.Information(
-            "SMTP connected and authenticated to {Host}:{Port} ({Ip})",
-            _settings.SmtpHost,
-            _settings.SmtpPort,
-            ip
-        );
-    }
-
-    private SecureSocketOptions GetSocketOptions()
-    {
-        if (!_settings.EnableSsl)
-            return SecureSocketOptions.None;
-
-        return _settings.SmtpPort == 465
-            ? SecureSocketOptions.SslOnConnect
-            : SecureSocketOptions.StartTls;
+        _log.Information("SMTP connected (host={Host}, port={Port}, ssl={Ssl})",
+            _settings.SmtpHost, 25, socketOptions);
     }
 
     private void ReturnClient(SmtpClient client)
     {
         if (_clientPool.Count < _poolSize && client.IsConnected)
-        {
             _clientPool.Add(client);
-        }
         else
-        {
             client.Dispose();
-        }
     }
 
     private static async Task TryDisconnectClientAsync(SmtpClient client, CancellationToken ct)
@@ -225,19 +160,8 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
 
     private static void TryDisposeClient(SmtpClient client)
     {
-        try
-        {
-            client.Dispose();
-        }
-        catch
-        {
-            // ignored
-        }
+        try { client.Dispose(); } catch { /* ignored */ }
     }
-
-    #endregion
-
-    #region Polly Resilience Policies
 
     private AsyncPolicy BuildResiliencePolicy()
     {
@@ -245,7 +169,6 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         var circuitBreakerPolicy = BuildCircuitBreakerPolicy();
         var timeoutPolicy = Policy.TimeoutAsync(OperationTimeout);
 
-        // Order matters: timeout inside, then breaker, then retry
         return Policy.WrapAsync(retryPolicy, circuitBreakerPolicy, timeoutPolicy);
     }
 
@@ -281,31 +204,16 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
                 durationOfBreak: CircuitBreakerDuration,
                 onBreak: (exception, duration) =>
                 {
-                    _log.Error(
-                        exception,
-                        "SMTP circuit opened for {Duration}s",
-                        duration.TotalSeconds
-                    );
+                    _log.Error(exception, "SMTP circuit opened for {Duration}s", duration.TotalSeconds);
                 },
-                onReset: () =>
-                {
-                    _log.Information("SMTP circuit closed, sending resumes");
-                },
-                onHalfOpen: () =>
-                {
-                    _log.Information("SMTP circuit half-open, next call is a trial");
-                });
+                onReset: () => _log.Information("SMTP circuit closed, sending resumes"),
+                onHalfOpen: () => _log.Information("SMTP circuit half-open, next call is a trial"));
     }
-
-    #endregion
-
-    #region Message Building
 
     private MimeMessage BuildMimeMessage(EmailEnvelope envelope)
     {
         var message = new MimeMessage();
 
-        // From / To / Cc
         message.From.Add(new MailboxAddress("Tawtheef", _settings.EmailUser));
 
         foreach (var recipient in envelope.To)
@@ -327,7 +235,6 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
 
         AttachInlineLogoIfConfigured(bodyBuilder);
 
-        // Deliverability hints (optional)
         message.Headers.Add("X-Mailer", "Tawtheef");
         message.Headers.Add("X-Priority", "3");
 
@@ -350,24 +257,14 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
             ContentDisposition = new ContentDisposition(ContentDisposition.Inline)
         };
 
-        // Remove filename to reduce appearance as an attachment
         logo.ContentType.Name = null;
         logo.ContentDisposition.FileName = null;
 
         bodyBuilder.LinkedResources.Add(logo);
 
         if (!string.IsNullOrEmpty(bodyBuilder.HtmlBody))
-        {
-            bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace(
-                "logo@tawtheef",
-                $"cid:{logoCid}"
-            );
-        }
+            bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@tawtheef", $"cid:{logoCid}");
     }
-
-    #endregion
-
-    #region Helpers & IDisposable
 
     private static bool IsTransient(Exception ex) =>
         ex is IOException or SocketException or SmtpProtocolException or TaskCanceledException;
@@ -380,18 +277,12 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         if (string.IsNullOrEmpty(value))
             return string.Empty;
 
-        return value.Length <= maxLength
-            ? value
-            : value[..maxLength] + "…";
+        return value.Length <= maxLength ? value : value[..maxLength] + "…";
     }
 
     public void Dispose()
     {
         while (_clientPool.TryTake(out var client))
-        {
             TryDisposeClient(client);
-        }
     }
-
-    #endregion
 }

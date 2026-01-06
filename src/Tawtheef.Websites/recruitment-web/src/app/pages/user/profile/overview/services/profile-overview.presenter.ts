@@ -75,129 +75,129 @@ export function createProfileOverviewCardsSignal(
     const cards: SectionCardVm[] = [
       {
         id: 'prerequisites',
-        titleKey: 'profileView.sections.prerequisites',
+        titleKey: 'profileOverview.sections.prerequisites',
         icon: 'pi pi-file',
         missingCount: missingCountOf(v.basic),
         missing: toMissingItems(v.basic.errors),
         highlights: [
-          { labelKey: 'profileView.fields.candidateType', value: safeText(s.candidateType?.name) },
-          { labelKey: 'profileView.fields.targetEntity', value: safeText(s.targetEntity?.name) },
-          ...(isResident ? [{ labelKey: 'profileView.fields.qidExpiry', value: safeText(s.qidExpiry) }] : []),
+          { labelKey: 'profileOverview.fields.candidateType', value: safeText(s.candidateType?.name) },
+          { labelKey: 'profileOverview.fields.targetEntity', value: safeText(s.targetEntity?.name) },
+          ...(isResident ? [{ labelKey: 'profileOverview.fields.qidExpiry', value: safeText(s.qidExpiry) }] : []),
         ],
         requiredFiles: [
-          { labelKey: 'profileView.files.resume', fileName: s.cvName ?? null },
-          { labelKey: 'profileView.files.nationalCard', fileName: s.idName ?? null },
-          ...(needsMarriage ? [{ labelKey: 'profileView.files.marriageCertificate', fileName: s.marriageCertificateName ?? null }] : []),
-          ...(needsBirth ? [{ labelKey: 'profileView.files.birthdayCertificate', fileName: s.birthCertificateName ?? null }] : []),
+          { labelKey: 'profileOverview.files.resume', fileName: s.cvName ?? null },
+          { labelKey: 'profileOverview.files.nationalCard', fileName: s.idName ?? null },
+          ...(needsMarriage ? [{ labelKey: 'profileOverview.files.marriageCertificate', fileName: s.marriageCertificateName ?? null }] : []),
+          ...(needsBirth ? [{ labelKey: 'profileOverview.files.birthdayCertificate', fileName: s.birthCertificateName ?? null }] : []),
         ],
       },
 
       {
         id: 'personal',
-        titleKey: 'profileView.sections.personal',
+        titleKey: 'profileOverview.sections.personal',
         icon: 'pi pi-id-card',
         missingCount: missingCountOf(v.personal),
         missing: toMissingItems(v.personal.errors),
         highlights: [
-          { labelKey: 'profileView.fields.fullNameAr', value: safeText(s.fullNameAr) },
-          { labelKey: 'profileView.fields.fullNameEn', value: safeText(s.fullNameEn) },
-          { labelKey: 'profileView.fields.nationalNumber', value: safeText(s.qid) },
-          { labelKey: 'profileView.fields.birthDate', value: safeText(s.dob) },
+          { labelKey: 'profileOverview.fields.fullNameAr', value: safeText(s.fullNameAr) },
+          { labelKey: 'profileOverview.fields.fullNameEn', value: safeText(s.fullNameEn) },
+          { labelKey: 'profileOverview.fields.nationalNumber', value: safeText(s.qid) },
+          { labelKey: 'profileOverview.fields.birthDate', value: safeText(s.dob) },
         ],
         requiredFiles: [
-          ...(needsSponsor ? [{ labelKey: 'profileView.files.sponsorCard', fileName: s.sponsorCardName ?? null }] : []),
+          ...(needsSponsor ? [{ labelKey: 'profileOverview.files.sponsorCard', fileName: s.sponsorCardName ?? null }] : []),
         ],
       },
 
       {
         id: 'contact',
-        titleKey: 'profileView.sections.contact',
+        titleKey: 'profileOverview.sections.contact',
         icon: 'pi pi-map-marker',
         missingCount: missingCountOf(v.contact),
         missing: toMissingItems(v.contact.errors),
         highlights: [
-          { labelKey: 'profileView.fields.residenceCountry', value: safeText(s.country?.name) },
-          { labelKey: 'profileView.fields.interviewLocation', value: safeText(s.interviewPlace?.name) },
-          { labelKey: 'profileView.fields.email', value: safeText(s.email) },
-          { labelKey: 'profileView.fields.phone', value: safeText(s.phone) },
+          { labelKey: 'profileOverview.fields.residenceCountry', value: safeText(s.country?.name) },
+          { labelKey: 'profileOverview.fields.interviewLocation', value: safeText(s.interviewPlace?.name) },
+          { labelKey: 'profileOverview.fields.email', value: safeText(s.email) },
+          { labelKey: 'profileOverview.fields.phone', value: safeText(s.phone) },
           ...(isResident
             ? [
-              { labelKey: 'profileView.fields.naZone', value: safeText(s.naZone) },
-              { labelKey: 'profileView.fields.naStreet', value: safeText(s.naStreet) },
+              { labelKey: 'profileOverview.fields.naZone', value: safeText(s.naZone) },
+              { labelKey: 'profileOverview.fields.naStreet', value: safeText(s.naStreet) },
             ]
             : [
-              { labelKey: 'profileView.fields.address', value: safeText(s.address) },
+              { labelKey: 'profileOverview.fields.address', value: safeText(s.address) },
             ]),
         ],
         requiredFiles: isResident
-          ? [{ labelKey: 'profileView.files.residenceAddressCertificate', fileName: s.naFileName ?? null }]
+          ? [{ labelKey: 'profileOverview.files.residenceAddressCertificate', fileName: s.naFileName ?? null }]
           : [],
       },
 
       {
         id: 'degrees',
-        titleKey: 'profileView.sections.qualifications',
+        titleKey: 'profileOverview.sections.qualifications',
         icon: 'pi pi-graduation-cap',
         missingCount: missingCountOf(v.degrees),
         missing: toMissingItems(v.degrees.errors),
         highlights: [
-          { labelKey: 'profileView.summary.count', value: safeText(s.degrees?.length ?? 0) },
+          { labelKey: 'profileOverview.summary.count', value: safeText(s.degrees?.length ?? 0) },
         ],
       },
 
       {
         id: 'experience',
-        titleKey: 'profileView.sections.experiences',
+        titleKey: 'profileOverview.sections.experiences',
         icon: 'pi pi-briefcase',
         missingCount: missingCountOf(v.experience),
         missing: toMissingItems(v.experience.errors),
         highlights: [
-          { labelKey: 'profileView.summary.count', value: safeText(s.experiences?.length ?? 0) },
-          { labelKey: 'profileView.summary.trainingCount', value: safeText(s.courses?.length ?? 0) },
+          { labelKey: 'profileOverview.summary.count', value: safeText(s.experiences?.length ?? 0) },
+          { labelKey: 'profileOverview.summary.trainingCount', value: safeText(s.courses?.length ?? 0) },
         ],
       },
 
       {
         id: 'achievements',
-        titleKey: 'profileView.sections.certificatesAndAwards',
+        titleKey: 'profileOverview.sections.certificatesAndAwards',
         icon: 'pi pi-star',
         missingCount: missingCountOf(v.achievements),
         missing: toMissingItems(v.achievements.errors),
         highlights: [
-          { labelKey: 'profileView.summary.count', value: safeText(s.achievements?.length ?? 0) },
+          { labelKey: 'profileOverview.summary.count', value: safeText(s.achievements?.length ?? 0) },
         ],
       },
 
       {
         id: 'skills',
-        titleKey: 'profileView.sections.skills',
+        titleKey: 'profileOverview.sections.skills',
         icon: 'pi pi-bolt',
         missingCount: missingCountOf(v.skills),
         missing: toMissingItems(v.skills.errors),
         highlights: [
-          { labelKey: 'profileView.summary.count', value: safeText(s.skills?.length ?? 0) },
+          { labelKey: 'profileOverview.summary.count', value: safeText(s.skills?.length ?? 0) },
         ],
       },
 
       {
         id: 'languages',
-        titleKey: 'profileView.sections.languages',
+        titleKey: 'profileOverview.sections.languages',
         icon: 'pi pi-language',
         missingCount: missingCountOf(v.languages),
         missing: toMissingItems(v.languages.errors),
         highlights: [
-          { labelKey: 'profileView.summary.count', value: safeText(s.languages?.length ?? 0) },
+          { labelKey: 'profileOverview.summary.count', value: safeText(s.languages?.length ?? 0) },
         ],
       },
 
       {
         id: 'attachments',
-        titleKey: 'profileView.sections.attachments',
+        titleKey: 'profileOverview.sections.attachments',
         icon: 'pi pi-paperclip',
         missingCount: missingCountOf(v.attachments),
         missing: toMissingItems(v.attachments.errors),
         highlights: [
-          { labelKey: 'profileView.summary.count', value: safeText(s.attachments?.length ?? 0) },
+          { labelKey: 'profileOverview.summary.count', value: safeText(s.attachments?.length ?? 0) },
         ],
       },
     ];

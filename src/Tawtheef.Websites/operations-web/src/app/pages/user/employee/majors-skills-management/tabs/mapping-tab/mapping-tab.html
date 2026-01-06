@@ -1,12 +1,11 @@
-<div class="card shadow-sm p-4 mb-4">
-  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
-    <div>
+  <div class="row mb-3 align-items-center">
+    <div class="col-md-6">
       <div class="badge text-bg-light mb-2 px-3 py-2 title-badge">{{ 'MAJORS_SKILLS.MAPPING_BADGE' | translate }}</div>
       <h4 class="mb-1">{{ 'MAJORS_SKILLS.MAPPING_TITLE' | translate }}</h4>
       <p class="text-muted mb-0 small">{{ 'MAJORS_SKILLS.MAPPING_HINT' | translate }}</p>
     </div>
 
-    <div class="d-flex gap-2 align-items-center">
+    <div class="col-md-6 text-end">
       @if (store.showParentMajorInfoButton()) {
         <button
           pButton
@@ -30,163 +29,147 @@
         </button>
       </div>
   </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card card-table mb-3">
+        <div class="card-body">
+          <div class="row align-items-end">
+            <div class="col-lg-3 col-md-6">
+              <label class="form-label">{{ 'MAJORS_SKILLS.SEARCH_LABEL' | translate }}</label>
+              <input class="form-control"
+                     [ngModel]="store.majorSkillFilters().search"
+                     (ngModelChange)="service.setMajorSkillSearch($event)"
+                     [placeholder]="'MAJORS_SKILLS.SEARCH_PLACEHOLDER' | translate" />
+            </div>
 
-  <div class="filters card p-3 mb-3">
-    <div class="row g-3 align-items-end">
-      <div class="col-lg-3 col-md-6">
-        <label class="form-label">{{ 'MAJORS_SKILLS.SEARCH_LABEL' | translate }}</label>
-        <input class="form-control"
-               [ngModel]="store.majorSkillFilters().search"
-               (ngModelChange)="service.setMajorSkillSearch($event)"
-               [ngModelOptions]="{ standalone: true }"
-               [placeholder]="'MAJORS_SKILLS.SEARCH_PLACEHOLDER' | translate" />
-      </div>
+            <div class="col-lg-3 col-md-6">
+              <label class="form-label">{{ 'MAJORS_SKILLS.MAJOR_LABEL' | translate }}</label>
+              <app-remote-select
+                [searchUrl]="store.endpoints.majorSkillsManagement.lookups.majors"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [minChars]="1"
+                [ngModel]="store.majorSkillFilters().parentMajorId"
+                (ngModelChange)="service.setMajorSkillParent($event)"
+                [appendTo]="'body'">
+              </app-remote-select>
+            </div>
 
-      <div class="col-lg-3 col-md-6">
-        <label class="form-label">{{ 'MAJORS_SKILLS.MAJOR_LABEL' | translate }}</label>
-        <app-remote-select
-          [searchUrl]="store.endpoints.majorSkillsManagement.lookups.majors"
-          optionLabel="name"
-          optionValue="id"
-          [showClear]="true"
-          [minChars]="1"
-          [ngModelOptions]="{ standalone: true }"
-          [ngModel]="store.majorSkillFilters().parentMajorId"
-          (ngModelChange)="service.setMajorSkillParent($event)"
-          [appendTo]="'body'">
-        </app-remote-select>
-      </div>
+            <div class="col-lg-3 col-md-6">
+              <label class="form-label">{{ 'MAJORS_SKILLS.SUB_MAJOR_LABEL' | translate }}</label>
+              <app-remote-select
+                [searchUrl]="store.endpoints.majorSkillsManagement.lookups.subMajors"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [requireParent]="true"
+                [parentId]="store.majorSkillFilters().parentMajorId"
+                parentParamName="parentId"
+                [minChars]="1"
+                [ngModel]="store.majorSkillFilters().subMajorId"
+                (ngModelChange)="service.setMajorSkillSubMajor($event)"
+                [appendTo]="'body'">
+              </app-remote-select>
+            </div>
 
-      <div class="col-lg-3 col-md-6">
-        <label class="form-label">{{ 'MAJORS_SKILLS.SUB_MAJOR_LABEL' | translate }}</label>
-        <app-remote-select
-          [searchUrl]="store.endpoints.majorSkillsManagement.lookups.subMajors"
-          optionLabel="name"
-          optionValue="id"
-          [showClear]="true"
-          [requireParent]="true"
-          [parentId]="store.majorSkillFilters().parentMajorId"
-          parentParamName="parentId"
-          [minChars]="1"
-          [ngModelOptions]="{ standalone: true }"
-          [ngModel]="store.majorSkillFilters().subMajorId"
-          (ngModelChange)="service.setMajorSkillSubMajor($event)"
-          [appendTo]="'body'">
-        </app-remote-select>
-      </div>
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label">{{ 'MAJORS_SKILLS.SKILL_TYPE' | translate }}</label>
+              <p-select
+                [options]="store.skillTypes() ?? []"
+                optionLabel="name"
+                optionValue="id"
+                filter="true"
+                [showClear]="true"
+                class="w-100"
+                [ngModel]="store.majorSkillFilters().skillTypeId"
+                (ngModelChange)="service.setMajorSkillType($event)"
+                [placeholder]="'MAJORS_SKILLS.SKILL_TYPE_PLACEHOLDER' | translate">
+              </p-select>
+            </div>
 
-      <div class="col-lg-2 col-md-6">
-        <label class="form-label">{{ 'MAJORS_SKILLS.SKILL_TYPE' | translate }}</label>
-        <p-select
-          [options]="store.skillTypes() ?? []"
-          optionLabel="name"
-          optionValue="id"
-          filter="true"
-          [showClear]="true"
-          class="w-100"
-          [ngModelOptions]="{ standalone: true }"
-          [ngModel]="store.majorSkillFilters().skillTypeId"
-          (ngModelChange)="service.setMajorSkillType($event)"
-          [placeholder]="'MAJORS_SKILLS.SKILL_TYPE_PLACEHOLDER' | translate">
-        </p-select>
-      </div>
-
-      <div class="col-lg-1 col-md-3 text-center">
-        <label class="form-label">{{ 'MAJORS_SKILLS.ACTIVE_FILTER' | translate }}</label>
-        <div class="d-flex align-items-center justify-content-center gap-2">
-          <p-checkbox
-            [binary]="true"
-            [ngModel]="store.majorSkillFilters().isActive === true"
-            (ngModelChange)="setMajorSkillActiveOnly($event)"
-            [ngModelOptions]="{ standalone: true }">
-          </p-checkbox>
+            <div class="col-lg-1 col-md-3">
+              <label class="form-label">{{ 'MAJORS_SKILLS.ACTIVE_FILTER' | translate }}</label>
+              <div class="form-control">
+                <p-check-box
+                  [binary]="true"
+                  [ngModel]="store.majorSkillFilters().isActive === true"
+                  (ngModelChange)="setMajorSkillActiveOnly($event)">
+                </p-check-box>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="table-card rounded overflow-hidden">
+    <div class=><p-table
+      [value]="store.majorSkillsItems()"
+      [rowHover]="true"
+      responsiveLayout="scroll">
 
-  <p-table
-    [value]="store.majorSkills()"
-    [rowHover]="true"
-    responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'MAJORS_SKILLS.MAJOR_COLUMN' | translate }}</th>
+          <th>{{ 'MAJORS_SKILLS.SUB_MAJOR_COLUMN' | translate }}</th>
+          <th>{{ 'MAJORS_SKILLS.SKILL_REQUIRED' | translate }}</th>
+          <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
+          <th>{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
 
-    <ng-template pTemplate="header">
-      <tr>
-        <th>{{ 'MAJORS_SKILLS.MAJOR_COLUMN' | translate }}</th>
-        <th>{{ 'MAJORS_SKILLS.SKILL_COLUMN' | translate }}</th>
-        <th>{{ 'MAJORS_SKILLS.SKILL_REQUIRED' | translate }}</th>
-        <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
-        <th class="text-end">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
-      </tr>
-    </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.major?.name ?? '-' }}</td>
+          <td>{{ item.skill?.name ?? '-' }}</td>
 
-    <ng-template pTemplate="body" let-item>
-      <tr>
-        <td>
-          <div class="d-flex align-items-center gap-2 flex-wrap">
-            <!-- Major Name -->
-            <span class="fw-semibold">{{ item.major?.name ?? '-' }}</span>
+          <td>
+            <p-toggle-switch
+              [ngModel]="item.isSkillRequired"
+              (ngModelChange)="service.changeMajorSkillRequirement(item.id, $event, item.isActive)">
+            </p-toggle-switch>
+          </td>
 
-            <!-- Parent / Sub tag -->
-            @if (item.major?.parentId) {
-              <!-- Parent info tooltip for sub-major -->
-              <button
-                type="button"
-                class="btn btn-link p-0 major-parent-info-btn"
-                pTooltip="{{ ('MAJORS_SKILLS.SUB_MAJOR_OF' | translate) + ': ' + (item.major?.parent?.name ?? '-') }}"
-                tooltipPosition="top"
-                [appendTo]="'body'">
-                <i class="pi pi-info-circle"></i>
-              </button>
-            }
-          </div>
-        </td>
-        <td>{{ item.skill?.name ?? '-' }}</td>
-
-        <td>
-          <p-toggle-switch
-            [ngModel]="item.isSkillRequired"
-            (ngModelChange)="service.changeMajorSkillRequirement(item.id, $event, item.isActive)">
-          </p-toggle-switch>
-        </td>
-
-        <td>
+          <td>
           <span class="badge" [class.bg-success-subtle]="item.isActive" [class.bg-danger-subtle]="!item.isActive">
             {{ item.isActive ? ('MAJORS_SKILLS.ACTIVE' | translate) : ('MAJORS_SKILLS.INACTIVE' | translate) }}
           </span>
-        </td>
+          </td>
 
-        <td class="text-end d-flex justify-content-end gap-2">
-          <button
-            pButton
-            type="button"
-            class="p-button-outlined p-button-sm"
-            (click)="service.openEditMajorSkill(item.id)">
-            <i class="pi pi-pencil" pButtonIcon></i>
-            <span pButtonLabel>{{'common.edit' |translate}}</span>
-          </button>
+          <td class="d-flex justify-content-start gap-2">
+            <button
+              pButton
+              type="button"
+              class="p-button-outlined p-button-sm"
+              (click)="service.openEditMajorSkill(item.id)">
+              <i class="pi pi-pencil" pButtonIcon></i>
+              <span pButtonLabel>{{'common.edit' |translate}}</span>
+            </button>
 
-          <p-toggle-switch
-            [ngModel]="item.isActive"
-            (ngModelChange)="service.toggleMajorSkillActive(item.id, $event)">
-          </p-toggle-switch>
-        </td>
-      </tr>
-    </ng-template>
+            <p-toggle-switch
+              [ngModel]="item.isActive"
+              (ngModelChange)="service.toggleMajorSkillActive(item.id, $event)">
+            </p-toggle-switch>
+          </td>
+        </tr>
+      </ng-template>
 
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="5" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
+        </tr>
+      </ng-template>
+    </p-table></div>
+  </div>
+
+
 
   <!-- Keep your existing pagination component -->
   <app-pagination
-    [currentPage]="store.majorSkillFilters().pageNumber ?? 1"
-    [totalItems]="store.majorSkillsMeta()?.totalCount ?? 0"
-    [itemsPerPage]="store.majorSkillFilters().pageSize ?? 10"
+    [currentPage]="store.majorSkillFilters().pageNumber"
+    [totalItems]="store.majorSkillsMeta().totalCount"
+    [itemsPerPage]="store.majorSkillFilters().pageSize"
     (pageChanged)="service.onMajorSkillPageChange($event)"
-    (pageSizeChanged)="service.onMajorSkillPageSizeChange($event)">
+    (pageSizeChanged)="service.onMajorSkillPageSizeChange($event)"  class="mt-4">
   </app-pagination>
-</div>

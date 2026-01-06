@@ -1,11 +1,12 @@
 ﻿using System.Security.Claims;
+using Cortex.Mediator;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.Queries;
@@ -53,7 +54,17 @@ public class UserController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetMyProfileReviewSummaryQuery(UserId.Value), ct);
         return result.ToActionResult();
     }
-        
+
+    [HttpPost("agree-terms")]
+    public async Task<IActionResult> AgreeToTerms(CancellationToken ct)
+    {
+        if (UserId.IsFailed)
+            return Unauthorized(UserId.Errors);
+
+        var result = await mediator.Send(new AgreeToTermsCommand(UserId.Value), ct);
+        return result.ToActionResult();
+    }
+
     [HttpGet("/api/me/bootstrap")]
     public async Task<IActionResult> Bootstrap(
         [FromServices] UserManager<User> userManager,

@@ -1,9 +1,8 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.DTOs;
@@ -14,7 +13,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill
 
 
 public sealed class GetSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
-    : IRequestHandler<GetSkillsQuery, IResult<PaginatedResult<SkillDetailsDto>>>
+    : IQueryHandler<GetSkillsQuery, IResult<PaginatedResult<SkillDetailsDto>>>
 {
     public async Task<IResult<PaginatedResult<SkillDetailsDto>>> Handle(GetSkillsQuery request, CancellationToken ct)
     {

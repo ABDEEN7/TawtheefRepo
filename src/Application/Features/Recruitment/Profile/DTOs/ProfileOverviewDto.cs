@@ -9,6 +9,6 @@ public record ProfileOverviewDto
     public UserProfileStatus Status { get; init; }
     public ProfileApprovalDataDto? ApprovedProfile { get; init; }
     public ProfileRequestProgressDto RequestProgress { get; init; } = new();
-    public IReadOnlyList<ProfileOverviewSectionDto> Sections { get; init; } = Array.Empty<ProfileOverviewSectionDto>();
+    public IReadOnlyList<ProfileOverviewSectionDto> Sections { get; init; } = [];
     public bool HasPendingChanges => Sections.Any(s => s.HasPendingChanges);
 }
