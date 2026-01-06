@@ -14,8 +14,7 @@ import {I18nNamespaceDirective} from '../../directives/i18n-namespace.directive'
   imports: [
     ButtonDirective,
     TranslatePipe,
-    I18nNamespaceDirective,
-    NgIf
+    I18nNamespaceDirective
   ],
   templateUrl: './terms-agreement-dialog.component.html',
   styleUrl: './terms-agreement-dialog.component.scss'

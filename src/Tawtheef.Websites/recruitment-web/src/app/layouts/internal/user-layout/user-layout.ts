@@ -49,18 +49,14 @@ export class UserLayout implements OnInit, OnDestroy {
 
   private openTermsDialog(): void {
     if (this.termsDialogOpen) return;
-
     this.termsDialogOpen = true;
-
-    const ref = this.dialog.open(TermsAgreementDialogComponent, {
+    this.dialog.open(TermsAgreementDialogComponent, {
       header: this.translate.instant('layout.internal.termsDialog.title'),
       width: '520px',
       contentStyle: { 'border-radius': '12px' },
       dismissableMask: false,
       closable: false
-    });
-
-    ref.onClose
+    })?.onClose
       .pipe(take(1))
       .subscribe(() => {
         this.termsDialogOpen = false;
