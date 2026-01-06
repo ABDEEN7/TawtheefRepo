@@ -24,12 +24,9 @@ import {
 } from '../models/job-candidates-filter-settings.model';
 import {Permissions} from '../../../core/constants/permissions';
 import { AuthService } from '../../../core/auth/auth.service';
-import { AuthService } from '../../../core/auth/auth.service';
-import { Permissions } from '../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-candidates.component',
-  standalone: false,
   standalone: false,
   templateUrl: './job-candidates.component.html',
   styleUrl: './job-candidates.component.scss',
@@ -43,7 +40,6 @@ export class JobCandidatesComponent implements OnInit {
   private dialogHelperService = inject(DialogHelperService);
   private fileUtilsService = inject(FileUtilsService);
   private dialogService = inject(DialogService);
-  private authService = inject(AuthService);
   private authService = inject(AuthService);
   lookupsService = inject(JobLookupService);
 
@@ -59,7 +55,6 @@ export class JobCandidatesComponent implements OnInit {
   currentPage = signal(1);
   itemsPerPage = 10;
 
-  candidates: PaginatedResult<JobCandidateListItem> | undefined;
   candidates: PaginatedResult<JobCandidateListItem> | undefined;
   selectedCandidates: JobCandidateListItem[] = [];
   searchQuery = signal<string>('');
@@ -122,7 +117,6 @@ export class JobCandidatesComponent implements OnInit {
     forkJoin({
       overview: this.jobCandidatesService.getOverview(this.jobId, filter),
       list: this.jobCandidatesService.search(this.jobId, pagination as PaginatedRequest, filter),
-      list: this.jobCandidatesService.search(this.jobId, pagination as PaginatedRequest, filter),
     }).subscribe({
       next: ({ overview, list }) => {
         this.totalCandidatesCount = overview.totalCandidatesCount;
@@ -179,7 +173,6 @@ export class JobCandidatesComponent implements OnInit {
       .export({
         jobId: this.jobId,
         filter: this.buildFilter(),
-        applicantIds,
       })
       .subscribe({
         next: (response) => {

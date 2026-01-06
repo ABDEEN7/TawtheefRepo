@@ -155,15 +155,16 @@
         <span>{{ 'JOB_CANDIDATE_BUTTONS_EXPORT_TO_EXCEL' | translate }}</span>
       </button>
 
-  <button
-    class="btn btn-primary"
-    type="button"
-    (click)="sendInvitations()"
-    [disabled]="selectedCandidates.length === 0"
-  >
-    <i class="hgi hgi-stroke hgi-sent"></i>
-    <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>
-  </button>
-</div>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="sendInvitations()"
+        [disabled]="availableCandidatesCount === 0"
+      >
+        <i class="hgi hgi-stroke hgi-sent"></i>
+        <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>
+      </button>
+    }
+    </div>
   </div>
 </section>
