@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,7 +12,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Commands;
 
 public sealed class DeleteOfficeCommandHandler(UserManager<User> userManager, IUnitOfWork unitOfWork, TimeProvider time)
-    : IRequestHandler<DeleteOfficeCommand, IResult<Unit>>
+    : ICommandHandler<DeleteOfficeCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         DeleteOfficeCommand request,

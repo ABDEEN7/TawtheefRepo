@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Features.Operations.Admin.Offices.Commands;
@@ -10,7 +11,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Comman
 
 public sealed class ChangeOfficeAdminCommandHandler(
     UserManager<User> userManager)
-    : IRequestHandler<ChangeOfficeAdminCommand, IResult<Unit>>
+    : ICommandHandler<ChangeOfficeAdminCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         ChangeOfficeAdminCommand request,

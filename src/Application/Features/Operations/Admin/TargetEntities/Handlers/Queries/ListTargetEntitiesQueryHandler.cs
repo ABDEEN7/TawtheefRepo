@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Operations.Admin.TargetEntities.Handlers.Queries;
 
 public sealed class ListTargetEntitiesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetListTargetEntitiesQuery, IResult<PaginatedResult<TargetEntityAdminDto>>>
+    : IQueryHandler<GetListTargetEntitiesQuery, IResult<PaginatedResult<TargetEntityAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<TargetEntityAdminDto>>> Handle(
         GetListTargetEntitiesQuery request,

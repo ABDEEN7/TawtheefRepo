@@ -1,5 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.DTOs;
@@ -9,7 +10,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Handlers.Queries;
 
 public sealed class GetDistributionProfilesHandler(IUnitOfWork uow, UserManager<User> userManager)
-    : IRequestHandler<GetDistributionProfilesQuery, Result<IReadOnlyList<DistributionProfileDto>>>
+    : IQueryHandler<GetDistributionProfilesQuery, Result<IReadOnlyList<DistributionProfileDto>>>
 {
     public async Task<Result<IReadOnlyList<DistributionProfileDto>>> Handle(
         GetDistributionProfilesQuery request,

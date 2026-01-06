@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿
+using Cortex.Mediator;
+using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -29,7 +31,7 @@ namespace Tawtheef.Infrastructure.Services.BackgroundJobs
 
                     foreach (var job in jobsToClose)
                     {
-                        await mediator.Send(new ChangeJobStatusCommand(job.Id, JobStatusIds.Closed), stoppingToken);
+                        await mediator.SendCommandAsync<ChangeJobStatusCommand, IResult<Unit>>(new ChangeJobStatusCommand(job.Id, JobStatusIds.Closed), stoppingToken);
                     }
 
                     logger.LogInformation("Job auto-closure completed. {Count} jobs closed.", jobsToClose.Count);

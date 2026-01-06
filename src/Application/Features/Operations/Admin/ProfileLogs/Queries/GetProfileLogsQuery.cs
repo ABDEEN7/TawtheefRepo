@@ -1,12 +1,12 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Admin.ProfileLogs.DTOs;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Application.Features.Operations.Admin.ProfileLogs.Queries;
 
-public sealed record GetProfileLogsQuery : PaginatedRequest, IRequest<IResult<PaginatedResult<ProfileLogDto>>>
+public sealed record GetProfileLogsQuery : PaginatedRequest, IQuery<IResult<PaginatedResult<ProfileLogDto>>>
 {
     public Guid? UserProfileId { get; init; }
     public Guid? UserId { get; init; }

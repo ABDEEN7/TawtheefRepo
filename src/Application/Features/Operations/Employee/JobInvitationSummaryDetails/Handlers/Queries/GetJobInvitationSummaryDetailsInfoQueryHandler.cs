@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -14,7 +14,7 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     ILocalizationService localizationService)
-    : IRequestHandler<GetJobInvitationSummaryDetailsInfoQuery, IResult<JobInvitationSummaryDetailsInfoDto>>
+    : IQueryHandler<GetJobInvitationSummaryDetailsInfoQuery, IResult<JobInvitationSummaryDetailsInfoDto>>
 {
     public async Task<IResult<JobInvitationSummaryDetailsInfoDto>> Handle(
         GetJobInvitationSummaryDetailsInfoQuery query,

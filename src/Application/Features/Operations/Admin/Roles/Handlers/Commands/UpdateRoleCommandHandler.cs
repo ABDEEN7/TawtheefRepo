@@ -1,6 +1,6 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Security;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Commands;
 
 public sealed class UpdateRoleCommandHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
-    : IRequestHandler<UpdateRoleCommand, IResult<RoleDto>>
+    : ICommandHandler<UpdateRoleCommand, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
     {

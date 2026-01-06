@@ -1,7 +1,8 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -20,7 +21,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Pr
 
 public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, 
     IMediaUrlResolver media, ILocalizationService localization)
-    : IRequestHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
+    : IQueryHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
 {
     public async Task<Result<GetProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request,
         CancellationToken ct)

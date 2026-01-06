@@ -1,7 +1,8 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -14,7 +15,7 @@ using Tawtheef.Domain.Constants;
 namespace Tawtheef.Application.Features.Resources.Handlers.Queries;
 
 public class GetSignedBlobHandler(IFileStorageService storage, ILogger logger, IOptions<AppConfigSettings> cfg)
-    : IRequestHandler<GetSignedBlobQuery, Result<FileResponse>>
+    : IQueryHandler<GetSignedBlobQuery, Result<FileResponse>>
 {
     public Task<Result<FileResponse>> Handle(GetSignedBlobQuery request, CancellationToken cancellationToken)
     {
@@ -100,7 +101,7 @@ public class GetSignedBlobHandler(IFileStorageService storage, ILogger logger, I
 
     private static string Decode(string input)
     {
-        // original Decode implementation — replace with your actual decoding logic if different
+        // original Decode implementation ? replace with your actual decoding logic if different
         // assuming URL-safe base64 that was used to encode the blob key
         try
         {

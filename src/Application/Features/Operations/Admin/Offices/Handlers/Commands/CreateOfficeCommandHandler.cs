@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +14,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.Offices.Handlers.Comman
 public sealed class CreateOfficeCommandHandler(
     IUnitOfWork unitOfWork,
     UserManager<User> userManager)
-    : IRequestHandler<CreateOfficeCommand, IResult<Guid>>
+    : ICommandHandler<CreateOfficeCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         CreateOfficeCommand request,

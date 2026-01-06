@@ -1,7 +1,8 @@
-﻿using FluentResults;
+using Cortex.Mediator.Queries;
+using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
+
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
@@ -13,7 +14,7 @@ using Tawtheef.Domain.Constants;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Queries;
 
 public sealed class GetMyUserProfileHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
-    : IRequestHandler<GetMyUserProfileQuery, Result<UserProfileViewDto>>
+    : IQueryHandler<GetMyUserProfileQuery, Result<UserProfileViewDto>>
 {
     public async Task<Result<UserProfileViewDto>> Handle(GetMyUserProfileQuery request, CancellationToken ct)
     {

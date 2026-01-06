@@ -1,8 +1,9 @@
 using System.Text.Json;
+using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -27,7 +28,7 @@ public sealed class GetProfilePartialChangesHandler(
         IMapper mapper,
         IMediaUrlResolver media,
         ILocalizationService localization)
-    : IRequestHandler<GetProfilePartialChangesQuery, Result<GetProfilePartialChangesDetailDto>>
+    : IQueryHandler<GetProfilePartialChangesQuery, Result<GetProfilePartialChangesDetailDto>>
 {
     private sealed record FileDisplay(string FileName, string Url);
 

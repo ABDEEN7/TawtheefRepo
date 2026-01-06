@@ -1,5 +1,6 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,7 +14,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Handlers.Commands;
 
 public sealed class ManualAssignProfilesHandler(IUnitOfWork uow, UserManager<User> userManager)
-    : IRequestHandler<ManualAssignProfilesCommand, Result<DistributionResultDto>>
+    : ICommandHandler<ManualAssignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ManualAssignProfilesCommand request, CancellationToken ct)
     {

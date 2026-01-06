@@ -1,5 +1,7 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
@@ -11,7 +13,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 
 public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
-    : IRequestHandler<FinalizeUserProfileReviewCommand, IResult<Unit>>
+    : ICommandHandler<FinalizeUserProfileReviewCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(FinalizeUserProfileReviewCommand cmd, CancellationToken ct)
     {

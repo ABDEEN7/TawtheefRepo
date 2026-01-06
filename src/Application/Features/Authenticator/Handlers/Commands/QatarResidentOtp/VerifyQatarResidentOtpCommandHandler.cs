@@ -1,7 +1,8 @@
 using System.Globalization;
 using System.Security.Claims;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -9,6 +10,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Utilities;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
@@ -22,7 +24,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
     UserManager<User> userManager,
     ITokenService tokenService,
     TimeProvider timeProvider)
-    : IRequestHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
+    : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
     public async Task<IResult<AuthResponse>> Handle(VerifyQatarResidentOtpCommand request, CancellationToken cancellationToken)
     {
@@ -62,7 +64,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
 
     private async Task<IResult<Unit>> CheckIfQatarUsingKawaderAsync(Guid userId, string qid, DateOnly expiryDate, CancellationToken cancellationToken)
     {
-        var request = await mediator.Send(new GetPersonalInformationByQidQuery(userId, new CheckProfileMOI(qid, expiryDate)), cancellationToken);
+        var request = await mediator.SendQueryAsync<GetPersonalInformationByQidQuery,IResult<MOEPersonalInfo>>(new GetPersonalInformationByQidQuery(userId, new CheckProfileMOI(qid, expiryDate)), cancellationToken);
         if(request.IsFailed) return Result.Fail<Unit>(request.Errors);
         if(request.Value.NationalityCode != 634) return Result.Ok(Unit.Value);
         var allowLogin = await CheckIfAllowLoginAsync();

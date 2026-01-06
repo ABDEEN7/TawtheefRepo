@@ -1,5 +1,6 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +15,7 @@ public class LogoutHandler(
     IUnitOfWork uow,
     ITokenService tokenService,
     UserManager<User> userManager,
-    SignInManager<User> signInManager) : IRequestHandler<LogoutCommand, IResult<Unit>>
+    SignInManager<User> signInManager) : ICommandHandler<LogoutCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {

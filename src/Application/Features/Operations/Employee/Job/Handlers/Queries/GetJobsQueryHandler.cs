@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
@@ -9,7 +9,7 @@ using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Queries;
 
 public class GetJobsQueryHandler(IJobRepository jobRepository,IMapper mapper)
-    : IRequestHandler<GetJobsQuery, IResult<PaginatedResult<JobResponseDto>>>
+    : IQueryHandler<GetJobsQuery, IResult<PaginatedResult<JobResponseDto>>>
 {
     public async Task<IResult<PaginatedResult<JobResponseDto>>> Handle(
     GetJobsQuery request, CancellationToken cancellationToken)

@@ -98,6 +98,7 @@ public class UserProfile : EventEntity
     public ICollection<ProfileAdditionalAttachment>? AdditionalAttachments { get; set; } = [];
     public ICollection<ProfileAssignment> ProfileAssignments { get; set; } = [];
     public ICollection<ReviewItem> ReviewItems { get; set; } = [];
+    public ICollection<UserProfileLogger> UserProfileLoggers { get; set; } = [];
 
     public UserProfileStatus Status { get; set; } = UserProfileStatus.InCreation;
 

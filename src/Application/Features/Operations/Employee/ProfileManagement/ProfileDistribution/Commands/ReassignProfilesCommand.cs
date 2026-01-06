@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Commands;
@@ -11,4 +12,4 @@ public sealed record ReassignProfilesCommand(
     Guid? EmployeeId,
     IReadOnlyCollection<Guid> EmployeeIds,
     IReadOnlyCollection<Guid> ProfileIds,
-    int? PerEmployeeCount) : IRequest<Result<DistributionResultDto>>;
+    int? PerEmployeeCount) : ICommand<Result<DistributionResultDto>>;

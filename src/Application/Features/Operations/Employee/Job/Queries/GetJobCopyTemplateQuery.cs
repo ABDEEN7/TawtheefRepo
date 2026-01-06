@@ -1,7 +1,7 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 
-public record GetJobCopyTemplateQuery(Guid JobId) : IRequest<IResult<JobCopyTemplateDto>>;
+public record GetJobCopyTemplateQuery(Guid JobId) : IQuery<IResult<JobCopyTemplateDto>>;

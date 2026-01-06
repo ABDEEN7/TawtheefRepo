@@ -1,7 +1,7 @@
 using System.Text;
+using Cortex.Mediator.Commands;
 using ExcelDataReader;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +14,7 @@ using Tawtheef.Domain.Entities.Kawader;
 namespace Tawtheef.Application.Features.Operations.Employee.Kawader.Handlers;
 
 public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
-    : IRequestHandler<UploadKawaderQidsCommand, IResult<KawaderUploadResultDto>>
+    : ICommandHandler<UploadKawaderQidsCommand, IResult<KawaderUploadResultDto>>
 {
     private static readonly HashSet<string> AllowedExtensions =
         new(StringComparer.OrdinalIgnoreCase) { ".xlsx", ".xls" };

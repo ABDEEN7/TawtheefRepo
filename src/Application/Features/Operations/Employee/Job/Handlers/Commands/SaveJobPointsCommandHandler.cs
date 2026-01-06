@@ -1,5 +1,6 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
@@ -11,7 +12,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Command
 
 public sealed class SaveJobPointsCommandHandler(
     IUnitOfWork uow
-) : IRequestHandler<SaveJobPointsCommand, IResult<Unit>>
+) : ICommandHandler<SaveJobPointsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveJobPointsCommand cmd, CancellationToken ct)
     {

@@ -1,5 +1,7 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
@@ -8,7 +10,7 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 
 public sealed class SaveProfileAvailabilityHandler(
     IUnitOfWork uow
-) : IRequestHandler<SaveProfileAvailabilityCommand, IResult<Unit>>
+) : ICommandHandler<SaveProfileAvailabilityCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileAvailabilityCommand cmd, CancellationToken ct)
     {

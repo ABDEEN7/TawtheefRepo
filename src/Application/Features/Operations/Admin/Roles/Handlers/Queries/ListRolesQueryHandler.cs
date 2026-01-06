@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -19,7 +19,7 @@ public sealed class ListRolesQueryHandler(
     IMapper mapper,
     IUnitOfWork uow,
     ILocalizationService localizationService)
-    : IRequestHandler<GetListRolesQuery, IResult<PaginatedResult<RoleDto>>>
+    : IQueryHandler<GetListRolesQuery, IResult<PaginatedResult<RoleDto>>>
 {
     public async Task<IResult<PaginatedResult<RoleDto>>> Handle(GetListRolesQuery request, CancellationToken cancellationToken)
     {

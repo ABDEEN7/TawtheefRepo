@@ -1,20 +1,20 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using Cortex.Mediator.Commands;
+using FluentValidation;
 
 namespace Tawtheef.Application.Common.Behaviours;
 
-public class ValidationBehaviour<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+public class ValidationBehaviour<TCommand, TResponse>(IEnumerable<IValidator<TCommand>> validators)
+    : ICommandPipelineBehavior<TCommand, TResponse>
+    where TCommand : ICommand<TResponse>
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+    public async Task<TResponse> Handle(TCommand request, CommandHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
         if (validators.Any())
         {
             var validationResults = await Task.WhenAll(
                 validators.Select(v =>
-                    v.ValidateAsync(new ValidationContext<TRequest>(request), cancellationToken)));
+                    v.ValidateAsync(new ValidationContext<TCommand>(request), cancellationToken)));
 
             var failures = validationResults
                 .Where(r => r.Errors.Any())

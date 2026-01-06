@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Admin.TargetEntities.DTOs;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Operations.Admin.TargetEntities.Handlers.Queries;
 
 public sealed class GetTargetEntityDetailsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetTargetEntityDetailsQuery, IResult<TargetEntityAdminDto>>
+    : IQueryHandler<GetTargetEntityDetailsQuery, IResult<TargetEntityAdminDto>>
 {
     public async Task<IResult<TargetEntityAdminDto>> Handle(
         GetTargetEntityDetailsQuery request,

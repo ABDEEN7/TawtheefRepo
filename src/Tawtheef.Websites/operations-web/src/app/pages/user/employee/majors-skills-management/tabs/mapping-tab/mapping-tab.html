@@ -104,8 +104,8 @@
     </div>
   </div>
   <div class="table-card rounded overflow-hidden">
-    <div class="table-responsive"><p-table
-      [value]="store.majorSkills()"
+    <div class=><p-table
+      [value]="store.majorSkillsItems()"
       [rowHover]="true"
       responsiveLayout="scroll">
 
@@ -167,9 +167,9 @@
 
   <!-- Keep your existing pagination component -->
   <app-pagination
-    [currentPage]="store.majorSkillFilters().pageNumber ?? 1"
-    [totalItems]="store.majorSkillsMeta()?.totalCount ?? 0"
-    [itemsPerPage]="store.majorSkillFilters().pageSize ?? 10"
+    [currentPage]="store.majorSkillFilters().pageNumber"
+    [totalItems]="store.majorSkillsMeta().totalCount"
+    [itemsPerPage]="store.majorSkillFilters().pageSize"
     (pageChanged)="service.onMajorSkillPageChange($event)"
     (pageSizeChanged)="service.onMajorSkillPageSizeChange($event)"  class="mt-4">
   </app-pagination>

@@ -1,5 +1,5 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -15,7 +15,7 @@ namespace Tawtheef.Application.Features.Operations.Admin.ProfileLogs.Handlers.Qu
 public sealed class GetProfileLogsQueryHandler(
     IUnitOfWork uow,
     UserManager<User> userManager)
-    : IRequestHandler<GetProfileLogsQuery, IResult<PaginatedResult<ProfileLogDto>>>
+    : IQueryHandler<GetProfileLogsQuery, IResult<PaginatedResult<ProfileLogDto>>>
 {
     public async Task<IResult<PaginatedResult<ProfileLogDto>>> Handle(
         GetProfileLogsQuery request,

@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetGendersQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) 
-    : IRequestHandler<GetGendersQuery, IResult<List<DropdownOptions>>>
+    : IQueryHandler<GetGendersQuery, IResult<List<DropdownOptions>>>
 {
     
     public async Task<IResult<List<DropdownOptions>>> Handle(GetGendersQuery request, CancellationToken cancellationToken)

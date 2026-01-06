@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Operations.Employee.OrganizationStructures.Handlers.Queries;
 
 public sealed class GetDepartmentsPagedQueryHandler(IUnitOfWork uow, IMapper mapper)
-    : IRequestHandler<GetDepartmentsPagedQuery, IResult<PaginatedResult<DepartmentDto>>>
+    : IQueryHandler<GetDepartmentsPagedQuery, IResult<PaginatedResult<DepartmentDto>>>
 {
     public async Task<IResult<PaginatedResult<DepartmentDto>>> Handle(GetDepartmentsPagedQuery request, CancellationToken cancellationToken)
     {

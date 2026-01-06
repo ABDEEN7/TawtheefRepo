@@ -1,10 +1,12 @@
 using System.Security.Claims;
+using Cortex.Mediator;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
@@ -352,11 +354,11 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     
     [HttpPost("check-profile")]
     [EnableRateLimiting(LimitsPolicyKeys.MoiCheckProfilePolicy)]
-    public async Task<IActionResult> CheckProfile([FromBody] CheckProfileMOI query, CancellationToken ct)
+    public async Task<IActionResult> CheckProfile([FromBody] CheckProfileMOI request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var cmd = new GetPersonalInformationByQidQuery(UserId.Value, query);
-        var result = await mediator.Send(cmd, ct);
+        var query = new GetPersonalInformationByQidQuery(UserId.Value, request);
+        var result = await mediator.Send(query, ct);
         return result.ToActionResult();
     }
     

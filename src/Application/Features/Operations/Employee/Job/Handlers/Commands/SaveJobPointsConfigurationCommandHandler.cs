@@ -1,6 +1,6 @@
-﻿using FluentResults;
+using Cortex.Mediator.Commands;
+using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
@@ -14,7 +14,7 @@ public class SaveJobPointsConfigurationCommandHandler(
     IJobPointsConfigurationsRepository jobPointsRepository,
     IUnitOfWork uow,
     IMapper mapper
-) : IRequestHandler<SaveJobPointsConfigurationCommand, IResult<JobPointConfigurationResponseDto>>
+) : ICommandHandler<SaveJobPointsConfigurationCommand, IResult<JobPointConfigurationResponseDto>>
 {
    public async Task<IResult<JobPointConfigurationResponseDto>> Handle(
        SaveJobPointsConfigurationCommand request,

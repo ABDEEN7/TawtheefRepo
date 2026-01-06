@@ -1,7 +1,8 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -14,7 +15,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Queries;
 
 public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
-    : IRequestHandler<GetMyProfileStatusQuery, Result<ProfileStatusDto>>
+    : IQueryHandler<GetMyProfileStatusQuery, Result<ProfileStatusDto>>
 {
     public async Task<Result<ProfileStatusDto>> Handle(GetMyProfileStatusQuery request, CancellationToken ct)
     {

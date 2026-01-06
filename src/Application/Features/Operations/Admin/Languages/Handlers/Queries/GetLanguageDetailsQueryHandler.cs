@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Admin.Languages.DTOs;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Operations.Admin.Languages.Handlers.Queries;
 
 public sealed class GetLanguageDetailsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetLanguageDetailsQuery, IResult<LanguageAdminDto>>
+    : IQueryHandler<GetLanguageDetailsQuery, IResult<LanguageAdminDto>>
 {
     public async Task<IResult<LanguageAdminDto>> Handle(
         GetLanguageDetailsQuery request,

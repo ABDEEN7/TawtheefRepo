@@ -1,6 +1,6 @@
 using System.Security.Claims;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -29,7 +29,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     IQatarPassClient qatarPassClient,
     ILoginAuditService loginAudit,
     IUnitOfWork uow
-) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<QatarPassExternalCallbackLoginCommand, IResult<AuthResponse>>
+) : BaseExternalCallbackLoginHandler(loginAudit), ICommandHandler<QatarPassExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     protected override string Provider => ConstantQatarPass.Provider;
     protected override Guid? DefaultUserType => UserTypeIds.Applicant;

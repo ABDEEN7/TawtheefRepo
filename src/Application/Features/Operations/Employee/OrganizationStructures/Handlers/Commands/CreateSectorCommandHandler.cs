@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.OrganizationStructures.Commands;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Operations.Employee.OrganizationStructures.Handlers.Commands;
 
 public sealed class CreateSectorCommandHandler(IUnitOfWork uow)
-    : IRequestHandler<CreateSectorCommand, IResult<Guid>>
+    : ICommandHandler<CreateSectorCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateSectorCommand request, CancellationToken cancellationToken)
     {

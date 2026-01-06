@@ -1,5 +1,5 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Notifications.DTOs;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Entities.Notification;
 namespace Tawtheef.Application.Features.Notifications.Handlers.Queries;
 
 public sealed class GetUserNotificationsQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetUserNotificationsQuery, IResult<IReadOnlyList<UserNotificationDto>>>
+    : IQueryHandler<GetUserNotificationsQuery, IResult<IReadOnlyList<UserNotificationDto>>>
 {
     private const int DefaultLimit = 10;
     private const int MaxLimit = 50;

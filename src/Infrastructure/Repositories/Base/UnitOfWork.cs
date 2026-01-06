@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using MediatR;
+using Cortex.Mediator;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

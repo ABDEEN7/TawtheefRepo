@@ -145,8 +145,8 @@
                 </p-table>
                 <app-pagination
                   class="mt-3 d-block"
-                  [currentPage]="currentPage() ?? 1"
-                  [itemsPerPage]="pageSize() ?? 10"
+                  [currentPage]="currentPage()"
+                  [itemsPerPage]="pageSize()"
                   [totalItems]="totalItems()"
                   (pageChanged)="onPageChanged($event)"
                 ></app-pagination>

@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Handlers.Queries;
 
 public sealed class GetMajorSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
-    : IRequestHandler<GetMajorSkillsQuery, IResult<PaginatedResult<MajorSkillListItemDto>>>
+    : IQueryHandler<GetMajorSkillsQuery, IResult<PaginatedResult<MajorSkillListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<MajorSkillListItemDto>>> Handle(GetMajorSkillsQuery request, CancellationToken ct)
     {
