@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonDirective } from 'primeng/button';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { MyProfileReviewNoteDto } from '../../../overview/models/profile-overview.model';
 
 @Component({
   selector: 'app-profile-prerequisites-section',
@@ -17,8 +18,10 @@ export class ProfilePrerequisitesSectionComponent {
   private readonly fileUtils = inject(FileUtilsService);
 
   @Input() profile: ProfileStatusDto | null = null;
-  showEditMode = false;
-  fieldUnderReview = false;
+  @Input() canEdit = false;
+  @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Output() edit = new EventEmitter<void>();
+  fieldUnderReview = computed(() => (this.notes?.length ?? 0) > 0);
   attachments = computed(() => {
     const p = this.profile;
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
@@ -38,6 +41,6 @@ export class ProfilePrerequisitesSectionComponent {
   }
 
   protected onEdit() {
-
+    this.edit.emit();
   }
 }

@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
+import { MyProfileReviewNoteDto } from '../../../overview/models/profile-overview.model';
 
 @Component({
   selector: 'app-profile-personal-section',
@@ -13,10 +14,13 @@ import { ProfileStatusDto } from '../../../../../../core/models/auth/auth-respon
 })
 export class ProfilePersonalSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
-  fieldUnderReview = false;
-  showEditMode=false;
+  @Input() canEdit = false;
+  @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Output() edit = new EventEmitter<void>();
+
+  protected fieldUnderReview = computed(() => (this.notes?.length ?? 0) > 0);
 
   protected onEdit() {
-
+    this.edit.emit();
   }
 }

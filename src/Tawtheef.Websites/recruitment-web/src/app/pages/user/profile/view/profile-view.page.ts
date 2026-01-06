@@ -15,7 +15,9 @@ import {
   ProfileChangeRequestDto,
   ProfileChangeRequestStatusEnum,
   ReviewStatusEnum,
-  MyProfileReviewSummaryDto
+  MyProfileReviewSummaryDto,
+  UserProfileStatusEnum,
+  MyProfileReviewNoteDto
 } from '../overview/models/profile-overview.model';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { ProfileOverviewService } from '../overview/services/profile-overview.service';
@@ -143,6 +145,74 @@ export class ProfileViewPage {
     return { ...review, sectionIndex } as MyProfileReviewSummaryDto & { sectionIndex: Record<number, number> };
   });
 
+  readonly profileStatus = computed(() => (this.review.value() as MyProfileReviewSummaryDto | undefined)?.profileStatus ?? null);
+
+  readonly statusVm = computed(() => {
+    const status = this.profileStatus();
+    switch (status) {
+      case UserProfileStatusEnum.Approved:
+        return {
+          labelKey: 'profileOverview.status.approved',
+          hintKey: 'profileOverview.statusHint.approved',
+          severity: 'chip-ok'
+        };
+      case UserProfileStatusEnum.RequiresUpdate:
+        return {
+          labelKey: 'profileOverview.status.requiresUpdate',
+          hintKey: 'profileOverview.statusHint.requiresUpdate',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.Rejected:
+        return {
+          labelKey: 'profileOverview.status.rejected',
+          hintKey: 'profileOverview.statusHint.rejected',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.UnderReview:
+        return {
+          labelKey: 'profileOverview.status.underReview',
+          hintKey: 'profileOverview.statusHint.underReview',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.Submitted:
+        return {
+          labelKey: 'profileOverview.status.submitted',
+          hintKey: 'profileOverview.statusHint.submitted',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.InCreation:
+        return {
+          labelKey: 'profileOverview.status.inCreation',
+          hintKey: 'profileOverview.statusHint.inCreation',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.AdminCancelled:
+        return {
+          labelKey: 'profileOverview.status.adminCancelled',
+          hintKey: 'profileOverview.statusHint.adminCancelled',
+          severity: 'chip-warn'
+        };
+      default:
+        return {
+          labelKey: 'profileOverview.status.pending',
+          hintKey: 'profileOverview.statusDescriptions.pending',
+          severity: 'chip-warn'
+        };
+    }
+  });
+
+  readonly canEditSections = computed(() => {
+    const status = this.profileStatus();
+    return status === UserProfileStatusEnum.Approved || status === UserProfileStatusEnum.RequiresUpdate;
+  });
+
+  readonly activeNotes = computed(() => {
+    const active = this.expanded();
+    const review = this.review.value() as MyProfileReviewSummaryDto | undefined;
+    const notes = review?.sections?.find(s => s.section === active)?.notes ?? [];
+    return notes as MyProfileReviewNoteDto[];
+  });
+
   openCard(section: ProfileSectionEnum) {
     const res = this.sections.get(section);
     this.expanded.set(section);
@@ -255,6 +325,12 @@ export class ProfileViewPage {
     if (status === ReviewStatusEnum.NeedsCorrection) return 'warn';
     if (status === ReviewStatusEnum.Rejected) return 'danger';
     return 'secondary';
+  }
+
+  noteSeverityClass(status: number): string {
+    const sev = this.noteSeverity(status);
+    if (sev === 'warn' || sev === 'danger') return 'chip-warn';
+    return 'chip-ok';
   }
 
   noteStatusLabelKey(status: number): string {

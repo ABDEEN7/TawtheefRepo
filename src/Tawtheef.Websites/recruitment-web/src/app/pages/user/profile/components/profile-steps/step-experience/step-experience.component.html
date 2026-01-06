@@ -56,6 +56,9 @@
                     <ng-template #noExpFile>—</ng-template>
                   </td>
                   <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="editExperience(i)">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
                     <button class="btn btn-sm btn-outline-danger" (click)="removeExperience(i)">
                       <i class="fa-solid fa-trash"></i>
                     </button>
@@ -120,6 +123,9 @@
                      <ng-template #noCourseFile>—</ng-template>
                    </td>
                    <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="editCourse(i)">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
                      <button class="btn btn-sm btn-outline-danger" (click)="removeCourse(i)">
                        <i class="fa-solid fa-trash"></i>
                      </button>

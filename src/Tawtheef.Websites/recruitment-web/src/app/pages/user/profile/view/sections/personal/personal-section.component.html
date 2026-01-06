@@ -9,7 +9,7 @@
         <span>{{ 'profileOverview.sections.personalInfo' | translate }}</span>
       </div>
 
-      <button *ngIf="showEditMode"
+      <button *ngIf="canEdit"
               type="button"
               class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
               (click)="onEdit?.()">
@@ -27,7 +27,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.nationalNumber' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -48,7 +48,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.qidExpiry' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -69,7 +69,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.birthDate' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -93,7 +93,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.nationality' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -114,7 +114,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.gender' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -135,7 +135,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.religion' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -156,7 +156,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.maritalStatus' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -180,7 +180,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.sponsorType' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -201,7 +201,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.sponsorEmployerName' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -222,7 +222,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.hasDisability' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview">
+              <div class="align-self-center" *ngIf="fieldUnderReview()">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
