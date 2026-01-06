@@ -1,11 +1,33 @@
-<div class="section-body">
-  @if (profile?.skills?.length) {
-    <div class="d-flex flex-wrap gap-2">
-      @for (skill of profile?.skills; track skill.id) {
-        <span class="badge text-bg-light border">{{ skill.skill.name }} ({{ skill.level.name }})</span>
-      }
+<div class="card req-panel border-0 shadow-sm">
+  <div class="card-body p-3 p-sm-3">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <div class="d-inline-flex align-items-center gap-2 fw-bold req-title">
+        <i class="pi pi-sparkles" aria-hidden="true"></i>
+        <span>{{ 'profileOverview.sections.skills' | translate }}</span>
+      </div>
+
+      <button *ngIf="canEdit"
+              type="button"
+              class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
+              (click)="onEdit()">
+        <i class="pi pi-pencil" aria-hidden="true"></i>
+        <span>{{ 'common.edit' | translate }}</span>
+      </button>
     </div>
-  } @else {
-    <div class="text-muted">{{ 'common.none' | translate }}</div>
-  }
+
+    @if (profile?.skills?.length) {
+      <div class="d-flex flex-wrap gap-2">
+        @for (skill of profile?.skills; track skill.id) {
+          <span class="badge text-bg-light border d-inline-flex align-items-center gap-2">
+            <span>{{ skill.skill.name }} ({{ skill.level.name }})</span>
+            <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview()">
+              {{ 'profileOverview.status.pending' | translate }}
+            </span>
+          </span>
+        }
+      </div>
+    } @else {
+      <div class="text-muted">{{ 'common.none' | translate }}</div>
+    }
+  </div>
 </div>

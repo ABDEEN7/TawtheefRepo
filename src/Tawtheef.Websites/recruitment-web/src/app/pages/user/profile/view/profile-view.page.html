@@ -11,13 +11,13 @@
             <div class="text-start">
               <div class="d-flex align-items-center justify-content-end gap-2 flex-wrap">
                 <div class="fs-4 fw-bold">{{ header()?.fullNameAr || header()?.fullNameEn}}</div>
-                <span class="status-chip chip-warn">
-                  <i class="bi bi-x-circle"></i>
-                  {{ 'profileView.status.notMatched' | translate }}
+                <span class="status-chip" [ngClass]="statusVm()?.severity">
+                  <i class="bi" [ngClass]="statusVm()?.severity === 'chip-ok' ? 'bi-check-circle' : 'bi-hourglass-split'"></i>
+                  {{ statusVm()?.labelKey | translate }}
                 </span>
               </div>
               <div class="muted small">
-                {{ 'profileView.header.subtitleWaitingReview' | translate }}
+                {{ statusVm()?.hintKey | translate }}
               </div>
             </div>
 
@@ -104,7 +104,7 @@
 
   <section class="panel p-3 mt-3 p-md-4 shadow-sm">
     <!-- HR Notes -->
-    <div class="panel-inner mt-3" *ngIf="reviewNotes()?.sectionIndex?.[expanded()!]">
+    <div class="panel-inner mt-3" *ngIf="(activeNotes()?.length || 0) > 0">
       <div class="d-flex align-items-center justify-content-between mb-2">
         <div class="hr-title">
           <i class="bi bi-journal-text"></i>
@@ -116,7 +116,17 @@
         <div class="d-flex gap-3">
           <div class="text-start">
             <ol class="mb-0 small">
-              <li>{{ 'profileView.hrNotes.items.fullNameMustMatch' | translate }}</li>
+              @for (note of activeNotes(); track note.reviewItemId) {
+                <li class="mb-2">
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
+                      {{ noteStatusLabelKey(note.status) | translate }}
+                    </span>
+                    <span class="fw-semibold">{{ note.title }}</span>
+                  </div>
+                  <div class="text-muted" *ngIf="note.note">{{ note.note }}</div>
+                </li>
+              }
             </ol>
           </div>
         </div>
@@ -144,52 +154,82 @@
               <div [ngSwitch]="active">
                 <app-profile-prerequisites-section
                   *ngSwitchCase="ProfileSectionEnum.Prerequisites"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.Prerequisites)">
                 </app-profile-prerequisites-section>
 
                 <app-profile-personal-section
                   *ngSwitchCase="ProfileSectionEnum.Personal"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.Personal)">
                 </app-profile-personal-section>
 
                 <app-profile-contact-section
                   *ngSwitchCase="ProfileSectionEnum.Contact"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.Contact)">
                 </app-profile-contact-section>
 
                 <app-profile-qualifications-section
                   *ngSwitchCase="ProfileSectionEnum.Qualifications"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.Qualifications)">
                 </app-profile-qualifications-section>
 
                 <app-profile-experience-section
                   *ngSwitchCase="ProfileSectionEnum.Experience"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.Experience)">
                 </app-profile-experience-section>
 
                 <app-profile-training-section
                   *ngSwitchCase="ProfileSectionEnum.TrainingCourses"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.TrainingCourses)">
                 </app-profile-training-section>
 
                 <app-profile-achievements-section
                   *ngSwitchCase="ProfileSectionEnum.CertificatesAndAwards"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.CertificatesAndAwards)">
                 </app-profile-achievements-section>
 
                 <app-profile-skills-section
                   *ngSwitchCase="ProfileSectionEnum.Skills"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.Skills)">
                 </app-profile-skills-section>
 
                 <app-profile-languages-section
                   *ngSwitchCase="ProfileSectionEnum.Languages"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.Languages)">
                 </app-profile-languages-section>
 
                 <app-profile-attachments-section
                   *ngSwitchCase="ProfileSectionEnum.Attachments"
-                  [profile]="sectionValue(active)">
+                  [profile]="sectionValue(active)"
+                  [canEdit]="canEditSections()"
+                  [notes]="activeNotes()"
+                  (edit)="navigateToEditSection(ProfileSectionEnum.Attachments)">
                 </app-profile-attachments-section>
               </div>
             }
