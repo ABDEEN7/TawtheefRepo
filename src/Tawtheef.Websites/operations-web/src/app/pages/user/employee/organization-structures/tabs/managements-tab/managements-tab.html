@@ -95,26 +95,24 @@
           <td>{{ management.displayOrder ?? 0 }}</td>
           <td>
             <span class="badge"
-                  [class.bg-success-subtle]="management.isActive !== false"
-                  [class.text-success]="management.isActive !== false"
-                  [class.bg-danger-subtle]="management.isActive === false"
-                  [class.text-danger]="management.isActive === false">
+                  [class.success]="management.isActive !== false"
+                  [class.danger]="management.isActive === false">
               {{ management.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
             </span>
           </td>
-          <td
-            class="actions-cell text-nowrap"
-            [class.text-end]="!store.isRtl()"
-            [class.text-start]="store.isRtl()">
-            <button
+          <td>
+            <div class="action-buttons">
+                   <button
               type="button"
-              class="icon-btn"
+              class="btn"
               (click)="service.openEditManagement(management)"
               [pTooltip]="'common.edit' | translate"
               tooltipPosition="top"
               [attr.aria-label]="'common.edit' | translate">
-              <i class="bi bi-pencil-square"></i>
+              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
             </button>
+            
+           
 
             <button
               type="button"
@@ -125,6 +123,7 @@
               [attr.aria-label]="(management.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
               <i class="bi" [ngClass]="management.isActive !== false ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
             </button>
+</div>
           </td>
         </tr>
       </ng-template>

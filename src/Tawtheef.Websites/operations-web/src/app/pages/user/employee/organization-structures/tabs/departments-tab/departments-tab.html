@@ -111,20 +111,16 @@
           <td>{{ department.displayOrder ?? 0 }}</td>
           <td>
             <span class="badge"
-                  [class.bg-success-subtle]="department.isActive !== false"
-                  [class.text-success]="department.isActive !== false"
-                  [class.bg-danger-subtle]="department.isActive === false"
-                  [class.text-danger]="department.isActive === false">
+                  [class.success]="department.isActive !== false"
+                  [class.danger]="department.isActive === false">
               {{ department.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
             </span>
           </td>
-          <td
-            class="actions-cell text-nowrap"
-            [class.text-end]="!store.isRtl()"
-            [class.text-start]="store.isRtl()">
-            <button
+          <td>
+             <div class="action-buttons">
+                   <button
               type="button"
-              class="icon-btn"
+              class="btn"
               (click)="service.openEditDepartment(department)"
               [pTooltip]="'common.edit' | translate"
               tooltipPosition="top"
@@ -141,6 +137,7 @@
               [attr.aria-label]="(department.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
               <i class="bi" [ngClass]="department.isActive !== false ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
             </button>
+            </div>
           </td>
         </tr>
       </ng-template>
