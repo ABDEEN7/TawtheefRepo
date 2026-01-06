@@ -7,12 +7,14 @@
             {{ 'MAJORS_SKILLS.MAJOR_SKILL_TAB' | translate }}
           </button>
           <button class="nav-link" [class.active]="store.activeTab() === 'mainMajors'" (click)="service.switchTab('mainMajors')">
+            <i class="hgi hgi-stroke hgi-certificate-01 fs-18 fw-normal"></i>
             {{ 'MAJORS_SKILLS.MAIN_MAJORS_TAB' | translate }}
           </button>
           <button class="nav-link" [class.active]="store.activeTab() === 'subMajors'" (click)="service.switchTab('subMajors')">
             {{ 'MAJORS_SKILLS.SUB_MAJORS_TAB' | translate }}
           </button>
           <button class="nav-link" [class.active]="store.activeTab() === 'skills'" (click)="service.switchTab('skills')">
+            <i class="hgi hgi-stroke hgi-check-list  fs-18 fw-normal"></i>
             {{ 'MAJORS_SKILLS.SKILLS_TAB' | translate }}
           </button>
         </div>
