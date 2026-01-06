@@ -24,7 +24,14 @@ public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, IMapper mapper, I
         var profile = await query.FirstOrDefaultAsync(p => p.UserId == request.UserId, ct);
         if (profile is null)
         {
-            return Result.Ok(new ProfileStatusDto());
+            var user = await uow.GetEntityRepository<User>().DbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == request.UserId, ct);
+
+            return Result.Ok(new ProfileStatusDto
+            {
+                AgreedToTerms = user?.AgreedToTerms ?? false
+            });
         }
 
         using var scope = new MapContextScope();
