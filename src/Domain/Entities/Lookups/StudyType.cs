@@ -10,6 +10,4 @@ public static class StudyTypeIds
 }
 
 [Table(nameof(StudyType), Schema = Schemas.Lookup)]
-public class StudyType : LookupBase
-{
-}
+public class StudyType : LookupBase;

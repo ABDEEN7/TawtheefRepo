@@ -16,7 +16,4 @@ public static class DegreeIds
 }
 
 [Table(nameof(Degree), Schema = Schemas.Lookup)]
-public class Degree : LookupBase
-{
-    
-}
+public class Degree : LookupBase;

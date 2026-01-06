@@ -1,8 +1,5 @@
 export const environment = {
   production: true,
   apiBaseUrl: 'https://api.dev.example.com',
-  auth: {
-    clientId: 'YOUR_CLIENT_ID',
-    redirectUri: 'http://localhost:5029/auth-callback'
-  }
+  qatarPassLoginUrl: 'https://moeheqpservice-stage.edu.gov.qa/home/index?ApplicationID=E1F73743-66B5-F011-9D08-0050569F0091'
 };

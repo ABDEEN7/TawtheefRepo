@@ -9,6 +9,4 @@ public static class LanguageIds
 }
 
 [Table(nameof(Language), Schema = Schemas.Lookup)]
-public class Language : LookupBase
-{
-}
+public class Language : LookupBase;

@@ -12,8 +12,6 @@ public static class ReligionIds
     public static Guid Sikh      = Guid.Parse("6af60f76-d289-42d1-a3de-a3fa89056678");
     public static Guid Other     = Guid.Parse("185cbc18-2a59-40b0-a8d9-64b451f91ddf");
 }
+
 [Table(nameof(Religion), Schema = Schemas.Lookup)]
-public class Religion : LookupBase
-{
-    
-}
+public class Religion : LookupBase;

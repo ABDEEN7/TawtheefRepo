@@ -10,6 +10,4 @@ public static class AchievementTypeIds
 }
 
 [Table(nameof(AchievementType), Schema = Schemas.Lookup)]
-public class AchievementType : LookupBase
-{
-}
+public class AchievementType : LookupBase;
