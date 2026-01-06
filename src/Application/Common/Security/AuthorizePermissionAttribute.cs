@@ -8,8 +8,14 @@ public sealed class AuthorizePermissionAttribute : Microsoft.AspNetCore.Authoriz
     //
     // public AuthorizePermissionAttribute(PermissionKey permission)
     //     => Policy = PermissionPolicyProvider.PolicyPrefix + permission.Value;
-    public AuthorizePermissionAttribute(string permissionKey)
+    public AuthorizePermissionAttribute(params string[] permissionKeys)
     {
-        Policy = PermissionPolicyProvider.PolicyPrefix + permissionKey;
+        if (permissionKeys is null || permissionKeys.Length == 0)
+        {
+            throw new ArgumentException("At least one permission key must be provided.", nameof(permissionKeys));
+        }
+
+        var policyValue = string.Join('|', permissionKeys);
+        Policy = PermissionPolicyProvider.PolicyPrefix + policyValue;
     }
 }

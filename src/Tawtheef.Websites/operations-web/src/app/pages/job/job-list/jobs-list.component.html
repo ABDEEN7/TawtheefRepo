@@ -7,10 +7,12 @@
           <p class="text-muted mt-2 mb-0">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
         </div>
         <div class="col-md-2 text-end">
+          @if (canManageJobs()) {
           <button class="btn btn-primary d-flex" (click)="createNewJob()">
             <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
             <span>{{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}</span>
           </button>
+          }
         </div>
       </div>
       <div class="card card-table mb-4">
@@ -160,7 +162,7 @@
 
                     <td class="col-actions">
                       <div class="action-buttons">
-                        @if (job.jobStatus.backendName === jobStatus.Approved) {
+                        @if (job.jobStatus.backendName === jobStatus.Approved && canManageJobPoints()) {
                         <button
                           type="button"
                           class="btn"
@@ -172,7 +174,7 @@
                           <i class="hgi hgi-stroke hgi-settings-01"></i>
                         </button>
                         } @if(job.jobStatus.backendName !== jobStatus.Draft &&
-                        job.jobStatus.backendName !== jobStatus.NeedUpdate){
+                        job.jobStatus.backendName !== jobStatus.NeedUpdate && canViewJobs()){
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
@@ -183,8 +185,8 @@
                         >
                           <i class="hgi hgi-stroke hgi-view"></i>
                         </button>
-                        } @if (job.jobStatus.backendName === jobStatus.Draft ||
-                        job.jobStatus.backendName === jobStatus.NeedUpdate) {
+                        } @if ((job.jobStatus.backendName === jobStatus.Draft ||
+                        job.jobStatus.backendName === jobStatus.NeedUpdate) && canManageJobs()) {
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
@@ -195,7 +197,7 @@
                         >
                           <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
                         </button>
-                        } @if (job.jobStatus.backendName === jobStatus.PendingApproval) {
+                        } @if (job.jobStatus.backendName === jobStatus.PendingApproval && canApproveJobs()) {
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
@@ -217,7 +219,7 @@
                         >
                           <i class="hgi hgi-stroke hgi-cancel-01"></i>
                         </button>
-                        } @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement) {
+                        } @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement && canApproveJobs()) {
                         <button
                           class="btn"
                           type="button"
@@ -228,7 +230,7 @@
                         >
                           <i class="hgi hgi-stroke hgi-upload-01"></i>
                         </button>
-                        } @if (job.jobStatus.backendName === jobStatus.Published) {
+                        } @if (job.jobStatus.backendName === jobStatus.Published && canApproveJobs()) {
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
@@ -239,9 +241,9 @@
                         >
                           <i class="hgi hgi-stroke hgi-square-lock-01"></i>
                         </button>
-                        } @if ( job.jobStatus.backendName === jobStatus.Published ||
+                        } @if ((job.jobStatus.backendName === jobStatus.Published ||
                         job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName
-                        === jobStatus.ReadyForAnnouncement ) {
+                        === jobStatus.ReadyForAnnouncement) && canManageJobs()) {
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
@@ -252,7 +254,7 @@
                         >
                           <i class="hgi hgi-stroke hgi-unavailable"></i>
                         </button>
-                        } @if (job.jobStatus.backendName === jobStatus.Rejected) {
+                        } @if (job.jobStatus.backendName === jobStatus.Rejected && canApproveJobs()) {
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
@@ -264,7 +266,7 @@
                           <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
                         </button>
                         } @if (job.jobStatus.backendName !== jobStatus.Published &&
-                        job.jobStatus.backendName !== jobStatus.Approved) {
+                        job.jobStatus.backendName !== jobStatus.Approved && canManageJobs()) {
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
@@ -276,6 +278,7 @@
                           <i class="hgi hgi-stroke hgi-delete-02"></i>
                         </button>
                         } @if(job.jobStatus.backendName === jobStatus.Published){
+                        @if (canManageJobs()) {
                         <button
                           class="btn d-flex gap-1 align-items-center btn-danger-outline"
                           type="button"
@@ -287,7 +290,8 @@
                         <i class="hgi hgi-stroke hgi-sent"></i>
                           
                         </button>
-
+                        }
+                        @if (canViewJobs()) {
                         <button
                           class="btn d-flex gap-1 align-items-center"
                           type="button"
@@ -299,6 +303,7 @@
                           <i class="hgi hgi-stroke hgi-user-multiple"></i>
                         </button>
                         }
+                        }
                       </div>
                     </td>
                   </tr>
@@ -309,10 +314,12 @@
                     <td colspan="8" class="empty">
                       <i class="hgi hgi-stroke hgi-briefcase-01 mb-3"></i>
                       <div class="empty__title">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</div>
+                      @if (canManageJobs()) {
                       <button class="btn btn-outline-primary mt-3" (click)="createNewJob()">
                         <i class="hgi hgi-stroke hgi-plus-sign me-1"></i
                         ><span>{{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}</span>
                       </button>
+                      }
                     </td>
                   </tr>
                 </ng-template>

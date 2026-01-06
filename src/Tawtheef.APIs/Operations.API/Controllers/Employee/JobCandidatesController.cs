@@ -17,7 +17,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
 {
     #region Lookups
     [HttpGet("lookups/candidate-types")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetCandidateTypes()
     {
         var result = await mediator.Send(new GetCandidateTypesQuery());
@@ -27,7 +27,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
 
     #region Job Candidates
     [HttpGet("overview")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetOverview([FromQuery] GetJobCandidatesOverviewQuery query)
     {
         var result = await mediator.Send(query);
@@ -35,7 +35,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("search")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> Search([FromBody] GetJobCandidatesQuery query)
     {
         var result = await mediator.Send(query);

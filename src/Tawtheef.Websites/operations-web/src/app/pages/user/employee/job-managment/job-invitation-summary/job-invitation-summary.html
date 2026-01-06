@@ -163,6 +163,7 @@
                   </td>
 
                   <td class="text-end">
+                    @if (canViewInvitations()) {
                     <a
                       [routerLink]="['../job-invitation-summary-details', summary.jobId]"
                       class="btn btn-sm btn-view"
@@ -170,6 +171,7 @@
                       <i class="fa fa-eye"></i>
                       {{ 'JOB_INVITATION_SUMMARY.VIEW_DETAILS' | translate }}
                     </a>
+                    }
                   </td>
                 </tr>
               }

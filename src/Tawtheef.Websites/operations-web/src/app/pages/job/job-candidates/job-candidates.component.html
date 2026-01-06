@@ -126,10 +126,12 @@
 
             <td class="col-actions">
               <div class="row-actions">
+                @if (canViewJobs()) {
                 <button class="btn-pill btn-pill--outline" type="button" (click)="viewDetails(candidate.candidateId)">
                   <i class="fa fa-eye"></i>
                   <span>{{ 'JOB_CANDIDATE_BUTTONS_VIEW' | translate }}</span>
                 </button>
+                }
               </div>
             </td>
           </tr>
@@ -149,20 +151,22 @@
     </div>
     }
     <div class="bottom-actions">
-  <button class="btn btn-outline-primary" type="button" (click)="exportToExcel()">
-    <i class="hgi hgi-stroke hgi-file-download"></i>
-    <span>{{ 'JOB_CANDIDATE_BUTTONS_EXPORT_TO_EXCEL' | translate }}</span>
-  </button>
+      @if (canManageJobs()) {
+      <button class="btn btn-outline-primary" type="button" (click)="exportToExcel()">
+        <i class="hgi hgi-stroke hgi-file-download"></i>
+        <span>{{ 'JOB_CANDIDATE_BUTTONS_EXPORT_TO_EXCEL' | translate }}</span>
+      </button>
 
-  <button
-    class="btn btn-primary"
-    type="button"
-    (click)="sendInvitations()"
-    [disabled]="availableCandidatesCount === 0"
-  >
-    <i class="hgi hgi-stroke hgi-sent"></i>
-    <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>
-  </button>
-</div>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="sendInvitations()"
+        [disabled]="availableCandidatesCount === 0"
+      >
+        <i class="hgi hgi-stroke hgi-sent"></i>
+        <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>
+      </button>
+      }
+    </div>
   </div>
 </section>
