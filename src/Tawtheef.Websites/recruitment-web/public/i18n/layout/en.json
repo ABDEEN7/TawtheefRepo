@@ -40,5 +40,14 @@
   "public.nav.login": "Login",
 
   "public.footer.rights": "All rights reserved © 2025",
-  "public.footer.ministry": "Ministry of Education and Higher Education — State of Qatar"
+  "public.footer.ministry": "Ministry of Education and Higher Education — State of Qatar",
+  "layout.internal.termsDialog.title": "Updated Terms and Conditions",
+  "layout.internal.termsDialog.description": "We have updated our Terms and Conditions to improve clarity, security, and your overall experience. Please review the changes below before continuing.",
+  "layout.internal.termsDialog.accepted.detail": "By accepting, you confirm that you have read, understood, and agreed to the updated Terms and Conditions.",
+  "layout.internal.termsDialog.accepted.summary": "You have successfully accepted the updated Terms and Conditions.",
+  "common.errorGeneric": "Something went wrong. Please try again later.",
+  "layout.internal.termsDialog.points.review": "Review the updated terms carefully to understand how they affect your use of the platform.",
+  "layout.internal.termsDialog.points.updates": "The updates may include changes to policies, features, or legal obligations.",
+  "layout.internal.termsDialog.later": "Review Later",
+  "layout.internal.termsDialog.accept": "Accept and Continue"
 }
