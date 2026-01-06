@@ -10,12 +10,8 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Migration;
 
-public sealed class SmartUserProfileSeeder
+public sealed class SmartUserProfileSeeder(DbContext db)
 {
-    private readonly DbContext _db;
-
-    public SmartUserProfileSeeder(DbContext db) => _db = db;
-
     public enum AttachmentMode
     {
         None,
@@ -52,10 +48,10 @@ public sealed class SmartUserProfileSeeder
         if (options.CompletionRate is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(options.CompletionRate));
 
         // Preload lookup IDs once
-        var lookups = await LookupCache.LoadAsync(_db, ct);
+        var lookups = await LookupCache.LoadAsync(db, ct);
 
         // Prepare attachment pools (optional)
-        var pools = await ResourcePools.BuildAsync(_db, createdById, options, ct);
+        var pools = await ResourcePools.BuildAsync(db, createdById, options, ct);
 
         // Weighted distributions
         var candidateTypeWeighted = new WeightedPicker<Guid>([
@@ -73,11 +69,11 @@ public sealed class SmartUserProfileSeeder
         var rnd = new SmartRandom(options.Seed);
 
         // Performance switches
-        var previousDetectChanges = _db.ChangeTracker.AutoDetectChangesEnabled;
-        var previousQueryTracking = _db.ChangeTracker.QueryTrackingBehavior;
+        var previousDetectChanges = db.ChangeTracker.AutoDetectChangesEnabled;
+        var previousQueryTracking = db.ChangeTracker.QueryTrackingBehavior;
 
-        _db.ChangeTracker.AutoDetectChangesEnabled = false;
-        _db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        db.ChangeTracker.AutoDetectChangesEnabled = false;
+        db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         try
         {
@@ -87,7 +83,7 @@ public sealed class SmartUserProfileSeeder
 
                 if (options.UseTransactionPerBatch)
                 {
-                    await using var tx = await _db.Database.BeginTransactionAsync(ct);
+                    await using var tx = await db.Database.BeginTransactionAsync(ct);
                     await SeedBatchAsync(offset, take, createdById, options, lookups, pools, candidateTypeWeighted, targetEntityWeighted, rnd, ct);
                     await tx.CommitAsync(ct);
                 }
@@ -96,13 +92,13 @@ public sealed class SmartUserProfileSeeder
                     await SeedBatchAsync(offset, take, createdById, options, lookups, pools, candidateTypeWeighted, targetEntityWeighted, rnd, ct);
                 }
 
-                _db.ChangeTracker.Clear();
+                db.ChangeTracker.Clear();
             }
         }
         finally
         {
-            _db.ChangeTracker.AutoDetectChangesEnabled = previousDetectChanges;
-            _db.ChangeTracker.QueryTrackingBehavior = previousQueryTracking;
+            db.ChangeTracker.AutoDetectChangesEnabled = previousDetectChanges;
+            db.ChangeTracker.QueryTrackingBehavior = previousQueryTracking;
         }
     }
 
@@ -164,8 +160,8 @@ public sealed class SmartUserProfileSeeder
         }
 
         // AddRange + single SaveChanges per batch
-        await _db.Set<ApplicantUser>().AddRangeAsync(users, ct);
-        await _db.SaveChangesAsync(ct);
+        await db.Set<ApplicantUser>().AddRangeAsync(users, ct);
+        await db.SaveChangesAsync(ct);
     }
 
     private async Task<UserProfile> BuildProfileAsync(
@@ -238,7 +234,7 @@ public sealed class SmartUserProfileSeeder
             sponsor = new SponsorProfile
             {
                 Id = Guid.NewGuid(),
-                SponsorTypeId = SponsorTypeIds.Individual, // If FK required, load SponsorTypeIds and pick
+                SponsorTypeId = SponsorTypeIds.Individual,
                 SponsorName = SponsorFactory.MakeSponsorName(rnd),
                 SponsorNumber = SponsorFactory.MakeSponsorNumber(rnd),
                 QIDExpiry = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(rnd.NextInt(1, 8))),
@@ -319,7 +315,6 @@ public sealed class SmartUserProfileSeeder
             DisabilityDetails = null,
 
             SponsorProfile = sponsor,
-            // DO NOT set SponsorProfileId from sponsor.Id manually unless your domain explicitly requires it.
 
             BirthdayCertificateId = birthCertId,
             MarriageCertificateId = marriageCertId,
@@ -364,16 +359,16 @@ public sealed class SmartUserProfileSeeder
 
             if (options.ProfileAttachmentMode == AttachmentMode.Pooled)
             {
-                pools._resumePool.AddRange(await CreatePoolAsync(db, createdById, "cv_pool", "application/pdf", poolSize: 50, ct));
-                pools._nationalPool.AddRange(await CreatePoolAsync(db, createdById, "national_pool", "image/jpeg", poolSize: 50, ct));
+                pools._resumePool.AddRange(await CreatePoolAsync(createdById, "cv_pool", "application/pdf", poolSize: 50));
+                pools._nationalPool.AddRange(await CreatePoolAsync(createdById, "national_pool", "image/jpeg", poolSize: 50));
             }
 
             if (options.CertificateAttachmentMode == AttachmentMode.Pooled)
             {
-                pools._certPools["residence-address-certificate.pdf"] = await CreatePoolAsync(db, createdById, "residence-cert_pool", "application/pdf", 30, ct);
-                pools._certPools["sponsor-card.jpg"] = await CreatePoolAsync(db, createdById, "sponsor-card_pool", "image/jpeg", 30, ct);
-                pools._certPools["birth-certificate.pdf"] = await CreatePoolAsync(db, createdById, "birth-cert_pool", "application/pdf", 30, ct);
-                pools._certPools["marriage-certificate.pdf"] = await CreatePoolAsync(db, createdById, "marriage-cert_pool", "application/pdf", 30, ct);
+                pools._certPools["residence-address-certificate.pdf"] = await CreatePoolAsync(createdById, "residence-cert_pool", "application/pdf", 30);
+                pools._certPools["sponsor-card.jpg"] = await CreatePoolAsync(createdById, "sponsor-card_pool", "image/jpeg", 30);
+                pools._certPools["birth-certificate.pdf"] = await CreatePoolAsync(createdById, "birth-cert_pool", "application/pdf", 30);
+                pools._certPools["marriage-certificate.pdf"] = await CreatePoolAsync(createdById, "marriage-cert_pool", "application/pdf", 30);
             }
 
             // Persist pooled resources once (fast)
@@ -409,7 +404,7 @@ public sealed class SmartUserProfileSeeder
 
                 // fallback to any cert pool if missing
                 var any = _certPools.Values.FirstOrDefault(x => x.Count > 0);
-                return any is null ? null : any[rnd.NextInt(0, any.Count)];
+                return any?[rnd.NextInt(0, any.Count)];
             }
 
             // UniquePerProfile
@@ -438,7 +433,7 @@ public sealed class SmartUserProfileSeeder
             return res;
         }
 
-        private static async Task<List<Resource>> CreatePoolAsync(DbContext db, Guid createdById, string prefix, string contentType, int poolSize, CancellationToken ct)
+        private static async Task<List<Resource>> CreatePoolAsync(Guid createdById, string prefix, string contentType, int poolSize)
         {
             var list = new List<Resource>(poolSize);
             for (var i = 0; i < poolSize; i++)
@@ -474,43 +469,43 @@ public sealed class SmartUserProfileSeeder
     // ==========================
     private sealed class LookupCache
     {
-        public List<Guid> CountryIds { get; private set; } = [];
-        public List<Guid> UniversityIds { get; private set; } = [];
-        public List<Guid> MajorIds { get; private set; } = [];
-        public List<Guid> OfficeIds { get; private set; } = [];
+        public List<Guid> CountryIds { get; private init; } = [];
+        public List<Guid> UniversityIds { get; private init; } = [];
+        public List<Guid> MajorIds { get; private init; } = [];
+        public List<Guid> OfficeIds { get; private init; } = [];
         public List<Guid> SkillTypeIds { get; private set; } = [];
 
         public static async Task<LookupCache> LoadAsync(DbContext db, CancellationToken ct)
         {
-            var cache = new LookupCache();
-
-            cache.CountryIds = await db.Set<Country>().AsNoTracking()
+            var cache = new LookupCache { 
+                CountryIds = await db.Set<Country>().AsNoTracking()
                 .Where(x => x.IsActive && !x.IsDeleted)
                 .OrderBy(x => x.DisplayOrder)
                 .Select(x => x.Id)
                 .Take(250)
-                .ToListAsync(ct);
-
-            cache.UniversityIds = await db.Set<University>().AsNoTracking()
-                .Where(x => x.IsActive && !x.IsDeleted)
-                .OrderBy(x => x.DisplayOrder)
-                .Select(x => x.Id)
-                .Take(250)
-                .ToListAsync(ct);
-
-            cache.MajorIds = await db.Set<Major>().AsNoTracking()
-                .Where(x => x.IsActive && !x.IsDeleted)
-                .OrderBy(x => x.DisplayOrder)
-                .Select(x => x.Id)
-                .Take(500)
-                .ToListAsync(ct);
-
-            cache.OfficeIds = await db.Set<Office>().AsNoTracking()
-                .Where(x => x.IsActive && !x.IsDeleted)
-                .OrderBy(x => x.DisplayOrder)
-                .Select(x => x.Id)
-                .Take(100)
-                .ToListAsync(ct);
+                .ToListAsync(ct),
+                
+                UniversityIds = await db.Set<University>().AsNoTracking()
+                    .Where(x => x.IsActive && !x.IsDeleted)
+                    .OrderBy(x => x.DisplayOrder)
+                    .Select(x => x.Id)
+                    .Take(250)
+                    .ToListAsync(ct),
+                
+                MajorIds = await db.Set<Major>().AsNoTracking()
+                    .Where(x => x.IsActive && !x.IsDeleted)
+                    .OrderBy(x => x.DisplayOrder)
+                    .Select(x => x.Id)
+                    .Take(500)
+                    .ToListAsync(ct),
+                
+                OfficeIds = await db.Set<Office>().AsNoTracking()
+                    .Where(x => x.IsActive && !x.IsDeleted)
+                    .OrderBy(x => x.DisplayOrder)
+                    .Select(x => x.Id)
+                    .Take(100)
+                    .ToListAsync(ct)
+            };
 
             try
             {
@@ -956,7 +951,7 @@ public sealed class SmartUserProfileSeeder
     {
         public static List<ProfileSkill> MakeSkills(SmartRandom rnd, IReadOnlyList<Guid> skillTypeIds)
         {
-            if (skillTypeIds == null || skillTypeIds.Count == 0) return [];
+            if (skillTypeIds.Count == 0) return [];
 
             var count = rnd.NextDouble() < 0.25 ? 0 : rnd.NextInt(3, 11);
 
