@@ -9,7 +9,16 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
-        if (context.User.HasClaim("permission", requirement.Permission))
+        if (string.IsNullOrWhiteSpace(requirement.Permission))
+        {
+            return Task.CompletedTask;
+        }
+
+        var permissions = requirement.Permission.Split(
+            '|',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        if (permissions.Any(permission => context.User.HasClaim("permission", permission)))
             context.Succeed(requirement);
         
         return Task.CompletedTask;

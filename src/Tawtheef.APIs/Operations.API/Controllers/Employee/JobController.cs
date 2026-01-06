@@ -1,4 +1,3 @@
-
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -20,14 +19,14 @@ public class JobController(IMediator mediator) : ControllerBase
 {
     #region Lookups
     [HttpGet("lookups/sectors")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetSectors()
     {
         var result = await mediator.Send(new GetSectorsQuery());
         return result.ToActionResult();
     }
     [HttpGet("lookups/managements")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetManagements([FromQuery] Guid sectorId)
     {
         var result = await mediator.Send(new GetManagementsBySectorQuery(sectorId));
@@ -35,7 +34,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/departments")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetDepartments([FromQuery] Guid managementId)
     {
         var result = await mediator.Send(new GetDepartmentsByManagementQuery(managementId));
@@ -43,7 +42,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/majors")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
    {
         var language = Request.Headers.AcceptLanguage.ToString();
@@ -52,7 +51,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/sub-majors")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetSubMajors([FromQuery] GetSubMajorsQuery query)
     {
         var result = await mediator.Send(query);
@@ -60,7 +59,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/skills")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetSkills([FromQuery] Guid majorId)
     {
         var result = await mediator.Send(new GetSkillByMajorQuery(majorId));
@@ -68,7 +67,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/degrees")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetDegrees()
     {
         var result = await mediator.Send(new GetDegreesQuery());
@@ -76,7 +75,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/work-types")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetWorkTypes()
     {
         var result = await mediator.Send(new GetWorkTypesQuery());
@@ -84,7 +83,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/job-categories")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetJobCategories()
     {
         var result = await mediator.Send(new GetJobCategoriesQuery());
@@ -92,7 +91,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/genders")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetGenders()
     {
         var result = await mediator.Send(new GetGendersWithAllQuery());
@@ -100,7 +99,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/target-entities")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetTargetEntities()
     {
         var result = await mediator.Send(new GetTargetEntitiesQuery());
@@ -108,7 +107,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/nationalities")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetNationalities()
     {
         var language = Request.Headers.AcceptLanguage.ToString();
@@ -117,7 +116,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/job-status")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetJobStatus()
     {
         var result = await mediator.Send(new GetJobStatusesQuery());
@@ -125,7 +124,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/invitation-statuses")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetInvitationStatuses()
     {
         var result = await mediator.Send(new GetInvitationStatusesQuery());
@@ -142,13 +141,13 @@ public class JobController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-     [HttpGet("{id:guid}")]
-     [AuthorizePermission(PermissionKeys.Jobs.View)]
-     public async Task<IActionResult> GetJob(Guid id)
-     {
-         var result = await mediator.Send(new GetJobByIdQuery(id));
-         return result.ToActionResult();
-     }
+    [HttpGet("{id:guid}")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> GetJob(Guid id)
+    {
+        var result = await mediator.Send(new GetJobByIdQuery(id));
+        return result.ToActionResult();
+    }
      
      [HttpPost("{id:guid}/copy")]
      [AuthorizePermission(PermissionKeys.Jobs.Manage)]
@@ -170,7 +169,7 @@ public class JobController(IMediator mediator) : ControllerBase
 
 
     [HttpPost("search")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetJobs([FromBody] GetJobsQuery query)
     {
         var result = await mediator.Send(query);
@@ -207,7 +206,7 @@ public class JobController(IMediator mediator) : ControllerBase
 
     #region Job Quireies
     [HttpGet("stats/count")]
-    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetJobCountByJobStats(
     [FromQuery] Guid jobStatusId)
     {

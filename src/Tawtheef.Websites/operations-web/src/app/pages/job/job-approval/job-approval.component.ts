@@ -15,10 +15,12 @@ import { JobTabType } from '../enums/job-tab-type';
 import { JobTabReviewNoteResponse } from '../models/job-tab-review-note-response';
 import { NotificationService } from '../../../core/services/notification.service';
 import { FileUtilsService } from '../../../core/utils/file-utils';
-import { DialogService } from 'primeng/dynamicdialog'; 
+import { DialogService } from 'primeng/dynamicdialog';
 import { JobReviewAttachment } from '../models/job-review-attachment';
 import { JobReviewAttachmentsModalComponent } from '../modals/job-review-attachments-modal/job-review-attachments-modal.component';
 import { JobReviewResponse } from '../models/job-review-response';
+import { AuthService } from '../../../core/auth/auth.service';
+import { Permissions } from '../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-approval.component',
@@ -38,6 +40,7 @@ export class JobApprovalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private dialogService = inject(DialogService);
   protected fileUtils = inject(FileUtilsService);
+  private authService = inject(AuthService);
 
   job!: JobResponse;
   id!: GUID;
@@ -247,6 +250,7 @@ export class JobApprovalComponent implements OnInit {
   }
 
   submitReview(): void {
+    if (!this.canManageJobs()) return;
     Object.keys(this.reviewForm.controls).forEach(key => {
       const control = this.reviewForm.get(key);
       control?.markAsTouched();
@@ -274,6 +278,7 @@ export class JobApprovalComponent implements OnInit {
   }
 
   confirm(): void {
+    if (!this.canManageJobs()) return;
     Object.keys(this.reviewForm.controls).forEach(key => {
       const control = this.reviewForm.get(key);
       control?.markAsTouched();
@@ -301,6 +306,7 @@ export class JobApprovalComponent implements OnInit {
   }
 
   reject(): void {
+    if (!this.canManageJobs()) return;
     const ref = this.dialogHelperService.openConfirmDialog({
       type: 'warning',
       title: 'JOB_APPROVAL.REJECT_CONFIRMATION',
@@ -316,6 +322,7 @@ export class JobApprovalComponent implements OnInit {
   }
 
   private openAttachmentModal(status: JobStatus): void {
+    if (!this.canManageJobs()) return;
     const dialogRef = this.dialogService.open(JobReviewAttachmentsModalComponent, {
       header: this.transaltionService.instant('JOB_APPROVAL.ADD_REVIEW_ATTACHMENT'),
       width: '900px',
@@ -333,19 +340,20 @@ export class JobApprovalComponent implements OnInit {
     });
   }
 
-  private submitTabReview(newStatusId : GUID): void {
-  const formData = this.buildFormData();
+  private submitTabReview(newStatusId: GUID): void {
+    if (!this.canManageJobs()) return;
+    const formData = this.buildFormData();
 
-  this.jobService.submitTabReview(formData).subscribe({
-    next: () => {
-      this.jobService.changeStatus(this.job.id, newStatusId).subscribe({
-        next: () => {
-          this.handleSuccess();
-        }
-      });
-    }
-  });
-}
+    this.jobService.submitTabReview(formData).subscribe({
+      next: () => {
+        this.jobService.changeStatus(this.job.id, newStatusId).subscribe({
+          next: () => {
+            this.handleSuccess();
+          },
+        });
+      },
+    });
+  }
 
   private buildFormData(): FormData {
     const formData = new FormData();
@@ -397,6 +405,14 @@ export class JobApprovalComponent implements OnInit {
       this.transaltionService.instant('JOB_APPROVAL.JOB_RETURNED_NEED_UPDATES')
     );
   }
+  }
+
+  canManageJobs(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.Manage);
+  }
+
+  canViewJobs(): boolean {
+    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.Jobs.View]);
   }
 
   isReviewComplete(): boolean {

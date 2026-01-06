@@ -9,6 +9,8 @@ import { Select } from 'primeng/select';
 import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
 import { JobInvitationSummaryService } from '../services/job-invitation-summary.service';
 import { routes } from '../../../../../routes/routes';
+import { AuthService } from '../../../../../core/auth/auth.service';
+import { Permissions } from '../../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-invitation-summary',
@@ -27,13 +29,13 @@ import { routes } from '../../../../../routes/routes';
 })
 export class JobInvitationSummary implements OnInit {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   jobInvitationSummaryService = inject(JobInvitationSummaryService);
-  
 
   // Signals
   currentPage = signal(1);
-  itemsPerPage = signal(7);  
+  itemsPerPage = signal(7);
   selectedCategory = signal<string>('');
   selectedDepartment = signal<string>('');
   selectedStatus = signal<string>('');
@@ -96,6 +98,10 @@ export class JobInvitationSummary implements OnInit {
   }
 
   navigateTo() {
-      this.router.navigate([routes.employee.dashboard]);
-    }
+    this.router.navigate([routes.employee.dashboard]);
+  }
+
+  canViewInvitations(): boolean {
+    return this.authService.hasPermission(Permissions.JobInvitations.View);
+  }
 }

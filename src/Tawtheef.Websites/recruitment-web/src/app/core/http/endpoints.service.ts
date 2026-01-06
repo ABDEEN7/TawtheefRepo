@@ -34,6 +34,7 @@ export class EndpointsService {
   };
   user= {
     bootstrap: this.getFullUrl(`/me/bootstrap`),
+    agreeToTerms: this.getFullUrl('/user/agree-terms'),
     profile: {
       reviewSummary: this.getFullUrl('/user/profile/review-summary'),
       basics: this.getFullUrl(`/profiles/basics`),

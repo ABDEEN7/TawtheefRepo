@@ -54,7 +54,17 @@ public class UserController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetMyProfileReviewSummaryQuery(UserId.Value), ct);
         return result.ToActionResult();
     }
-        
+
+    [HttpPost("agree-terms")]
+    public async Task<IActionResult> AgreeToTerms(CancellationToken ct)
+    {
+        if (UserId.IsFailed)
+            return Unauthorized(UserId.Errors);
+
+        var result = await mediator.Send(new AgreeToTermsCommand(UserId.Value), ct);
+        return result.ToActionResult();
+    }
+
     [HttpGet("/api/me/bootstrap")]
     public async Task<IActionResult> Bootstrap(
         [FromServices] UserManager<User> userManager,

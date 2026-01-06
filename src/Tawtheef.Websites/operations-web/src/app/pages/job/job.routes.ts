@@ -38,24 +38,24 @@ export const jobRoutes: Routes = [
     path: "approval-job/:id",
     component: JobApprovalComponent,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.Approve] },
+    data: { permissions: [Permissions.Jobs.Manage, Permissions.Jobs.View] },
   },
   {
     path: "job-points/:id",
     component: JobPointsConfigPageComponent,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.PointsManage] },
+    data: { permissions: [Permissions.Jobs.Manage, Permissions.Jobs.View] },
   },
   {
     path: "view/:id/candidates",
     component: JobCandidatesComponent,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.Manage] },
+    data: { permissions: [Permissions.Jobs.Manage, Permissions.Jobs.View] },
   },
   {
     path: "ready",
     component: JobsReadyApplicationComponent,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.Manage] },
+    data: { permissions: [Permissions.Jobs.Manage, Permissions.Jobs.View] },
   },
 ];

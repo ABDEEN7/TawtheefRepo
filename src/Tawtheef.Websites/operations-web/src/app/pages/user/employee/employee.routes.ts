@@ -50,9 +50,10 @@ export const employeeRoutes: Routes = [
     component: JobInvitationSummary
   },
   {
-  path: 'job-invitation-summary-details/:jobId',
-  canActivate: [permissionGuard],
-  component: JobInvitationSummaryDetailsComponent
+    path: 'job-invitation-summary-details/:jobId',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.JobInvitations.View] },
+    component: JobInvitationSummaryDetailsComponent
   },
   {
     path: 'organization-structures',

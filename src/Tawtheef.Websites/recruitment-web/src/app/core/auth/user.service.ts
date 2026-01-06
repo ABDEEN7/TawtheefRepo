@@ -23,6 +23,7 @@ export class UserService {
       email: user.email,
       fullName: user.fullName,
       profilePictureUrl: user.profilePictureUrl,
+      agreedToTerms: !!user.agreedToTerms,
       userType: this.tokenService.getRoleFromToken(accessToken),
       provider: user.provider || AUTH_PROVIDER.LOCAL,
       notifications : user.notifications || 0
@@ -42,5 +43,18 @@ export class UserService {
     localStorage.removeItem(PREFILL_DATA_KEY);
     localStorage.removeItem(VERIFIED_PHONE_KEY);
     this.currentUserSubject.next(null);
+  }
+
+  markTermsAsAgreed(): void {
+    const current = this.currentUserSubject.value;
+    if (!current) return;
+
+    const updatedUser: UserInfoModel = {
+      ...current,
+      agreedToTerms: true
+    };
+
+    localStorage.setItem(USER_DATA_KEY, JSON.stringify(updatedUser));
+    this.currentUserSubject.next(updatedUser);
   }
 }
