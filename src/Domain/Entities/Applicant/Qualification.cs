@@ -9,7 +9,7 @@ namespace Tawtheef.Domain.Entities.Applicant;
 [Table(nameof(Qualification), Schema = Schemas.Profile)]
 public class Qualification : EventEntity
 {
-    public required Guid UserProfileId { get; set; }
+    public Guid UserProfileId { get; set; }
     public UserProfile? UserProfile { get; set; }
     
     public required Guid DegreeId { get; set; }

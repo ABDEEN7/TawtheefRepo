@@ -26,13 +26,7 @@ export const employeeRoutes: Routes = [
     component: ProfileApprovalListPage
   },
   {
-    path: 'approval-profile/:profileId',
-    canActivate: [permissionGuard],
-    data: { permissions: [Permissions.ProfileApproval.View] },
-    component: ProfileApprovalDetailPage
-  },
-  {
-    path: 'approval-profile/:profileId/review',
+    path: 'approval-profile/:profileId/wizard',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileApproval.Review] },
     component: ProfileApprovalWizardPage

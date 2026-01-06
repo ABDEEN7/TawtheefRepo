@@ -320,6 +320,12 @@ internal static class ImportCatalog
         new ImportStep { Code = "SKTYPE",  Title = "Insert SkillTypes (Code)", RunAsync = (r, ct) => r.ImportSkillTypesAsync(ct) },
         new ImportStep { Code = "SKILL",   Title = "Insert Skills (Code)",   RunAsync = (r, ct) => r.ImportSkillsAsync(ct) },
         new ImportStep { Code = "MSLINK",  Title = "Insert Major-Skill Links (Code)", RunAsync = (r, ct) => r.ImportMajorSkillsAsync(ct) },
+        new ImportStep
+        {
+            Code = "APPLICANTS",
+            Title = "Seed 10k Applicant Users + Profiles (Smart)",
+            RunAsync = (r, ct) => r.SeedApplicantsAsync(ct)
+        },
     ];
 }
 
@@ -400,7 +406,29 @@ internal sealed class ImportRunner
         ImportMajorSkills(_db, _errors);
         return Task.CompletedTask;
     }
+    public async Task SeedApplicantsAsync(CancellationToken ct)
+    {
+        // Important: ensure required lookups are present before seeding
+        // (Countries, Universities, Majors, Offices, SkillTypes/Skills if needed)
 
+        var adminUserId = AdminUserIds.Admin1UserId;
+
+        var seeder = new SmartUserProfileSeeder(_db);
+
+        await seeder.SeedSmartApplicantsAsync(
+            createdById: adminUserId,
+            options: new SmartUserProfileSeeder.SeedOptions
+            {
+                Count = 10_000,
+                BatchSize = 1_000,
+                CompletionRate = 0.85,
+                ProfileAttachmentMode = SmartUserProfileSeeder.AttachmentMode.Pooled,
+                CertificateAttachmentMode = SmartUserProfileSeeder.AttachmentMode.Pooled,
+                UseTransactionPerBatch = true
+            },
+            ct: ct
+        );
+    }
     private void EnsurePreloadCountries()
     {
         if (_countryIds is not null) return;

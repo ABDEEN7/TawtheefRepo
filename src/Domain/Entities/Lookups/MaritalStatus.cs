@@ -11,7 +11,4 @@ public static class MaritalStatusIds
     public static Guid Widowed = Guid.Parse("8f22e74f-672b-47f4-8f32-93f9dbcb15da");
 }
 [Table(nameof(MaritalStatus), Schema = Schemas.Lookup)]
-public class MaritalStatus : LookupBase
-{
-    
-}
+public class MaritalStatus : LookupBase;

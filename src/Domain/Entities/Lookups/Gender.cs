@@ -10,7 +10,4 @@ public static class GenderIds
     public static Guid Female = Guid.Parse("03CBE4E3-DC47-4D0C-8A07-87917AF1D2DD");
 }
 [Table(nameof(Gender), Schema = Schemas.Lookup)]
-public class Gender : LookupBase
-{
-    
-}
+public class Gender : LookupBase;

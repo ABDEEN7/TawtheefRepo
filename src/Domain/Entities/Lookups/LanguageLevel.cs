@@ -10,10 +10,10 @@ public static class LanguageLevelIds
     public static Guid Expert = Guid.Parse("5161f23a-f501-414c-b4fe-81cde9ebcd5d");
     public static Guid Native = Guid.Parse("c7d8b159-c9dc-48a1-be6d-26493423f8a9");
 }
+
 [Table(nameof(LanguageLevel), Schema = Schemas.Lookup)]
-public class LanguageLevel : LookupBase
-{
-}
+public class LanguageLevel : LookupBase;
+
 public static class SkillLevelIds
 {
     public static Guid Expert = Guid.Parse("4dbd3381-f57a-4f6c-a718-432970d32276");
@@ -22,6 +22,4 @@ public static class SkillLevelIds
     public static Guid Basic = Guid.Parse("69c0943a-f04f-4b6c-9145-1fbfae4b5c2e");
 }
 [Table(nameof(SkillLevel), Schema = Schemas.Lookup)]
-public class SkillLevel : LookupBase
-{
-}
+public class SkillLevel : LookupBase;
