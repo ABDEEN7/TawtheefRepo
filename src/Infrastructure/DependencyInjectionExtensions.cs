@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using FluentValidation;
-using MediatR;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -75,7 +75,7 @@ namespace Tawtheef.Infrastructure
             ConfigureOptions(services, configuration);
 
             // Core frameworks & mediator
-            services.AddTransient<IMediator, Mediator>();
+            //services.AddTransient<IMediator, Mediator>();
 
             // App-specific services
             services.AddNotificationServices();

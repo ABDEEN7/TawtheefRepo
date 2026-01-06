@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Commands;
@@ -8,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.Handlers.Commands;
 
-public class CreateMajorCommandHandler(IUnitOfWork uow) : IRequestHandler<CreateMajorCommand, IResult<Unit>>
+public class CreateMajorCommandHandler(IUnitOfWork uow) : ICommandHandler<CreateMajorCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(CreateMajorCommand request, CancellationToken cancellationToken)
     {

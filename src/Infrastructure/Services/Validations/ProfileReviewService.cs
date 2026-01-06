@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Infrastructure.Services.Validations;
@@ -43,6 +44,9 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
     {
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
+        var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
+        var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
         var targetKey = ProfileChangeRequest.BuildTargetKey(section, targetType, fieldPath, entityName, entityId, resourceId);
         var change = await changeRepo.DbSet
@@ -52,17 +56,23 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
             .OrderByDescending(c => c.CreatedDate)
             .FirstOrDefaultAsync(ct);
 
+        var createdNewChange = false;
+
         if (change is null)
         {
-            change = ProfileChangeRequest.Create(userProfileId, section, targetType, requestedByUserId, targetKey, fieldPath, 
+            change = ProfileChangeRequest.Create(userProfileId, section, targetType, requestedByUserId, targetKey, fieldPath,
                 entityName, entityId, resourceId, attachmentTitle, oldValue, newValue);
             await changeRepo.AddAsync(change);
+            createdNewChange = true;
         }
         else
         {
             change.UpdateValues(oldValue, newValue);
             change.AttachmentTitle = attachmentTitle ?? change.AttachmentTitle;
         }
+
+        await DeactivateAssignmentsAsync(assignmentRepo, loggerRepo, userProfileId, requestedByUserId, ct,
+            UserProfileLogConstants.Notes.ReturnedToDistribution);
 
         var pending = await reviewRepo.DbSet
             .Where(r => r.UserProfileId == userProfileId
@@ -76,7 +86,11 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
             .FirstOrDefaultAsync(ct);
 
         if (pending is not null)
+        {
+            await AddAuditEntryAsync(auditRepo,loggerRepo, userProfileId, requestedByUserId, targetType, section, fieldPath, entityId,
+                resourceId, createdNewChange);
             return pending;
+        }
 
 
         var item = ReviewItem.Create(userProfileId, section, targetType, entityName: entityName, entityId: entityId, resourceId: resourceId);
@@ -86,6 +100,77 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         item.IsOutdated = true;
 
         await reviewRepo.AddAsync(item);
+        await AddAuditEntryAsync(auditRepo, loggerRepo, userProfileId, requestedByUserId, targetType, section, fieldPath, entityId,
+            resourceId, createdNewChange);
         return item;
+    }
+
+    private static async Task AddAuditEntryAsync(
+        IGenericRepository<AuditTrailEntry> auditRepo,
+        IGenericRepository<UserProfileLogger> loggerRepo,
+        Guid userProfileId,
+        Guid requestedByUserId,
+        ReviewTargetType targetType,
+        ProfileSection section,
+        string? fieldPath,
+        Guid? entityId,
+        Guid? resourceId,
+        bool createdNewChange)
+    {
+        var actionLabel = createdNewChange
+            ? UserProfileLogConstants.ActionTypes.ProfileChangeRequested
+            : UserProfileLogConstants.ActionTypes.ProfileChangeUpdated;
+        var targetLabel = fieldPath ?? entityId?.ToString() ?? section.ToString();
+
+        await auditRepo.AddAsync(new AuditTrailEntry
+        {
+            UserProfileId = userProfileId,
+            UserId = requestedByUserId,
+            ActionType = actionLabel,
+            Notes = $"{targetType} change for {targetLabel}",
+            Section = section.ToString(),
+            EntityId = entityId,
+            AttachmentId = resourceId
+        });
+
+        await loggerRepo.AddAsync(new UserProfileLogger
+        {
+            UserProfileId = userProfileId,
+            PerformedById = requestedByUserId,
+            ActionType = actionLabel,
+            Notes = $"{targetType} change for {targetLabel}",
+            Section = section.ToString(),
+            EntityId = entityId,
+            AttachmentId = resourceId,
+            ReviewStatus = ReviewStatus.Pending
+        });
+    }
+
+    private static async Task DeactivateAssignmentsAsync(
+        IGenericRepository<ProfileAssignment> assignmentRepo,
+        IGenericRepository<UserProfileLogger> loggerRepo,
+        Guid userProfileId,
+        Guid performedById,
+        CancellationToken ct,
+        string note)
+    {
+        var activeAssignments = await assignmentRepo.DbSet
+            .Where(a => a.UserProfileId == userProfileId && a.IsActive)
+            .ToListAsync(ct);
+
+        foreach (var assignment in activeAssignments)
+        {
+            assignment.Deactivate();
+
+            await loggerRepo.AddAsync(new UserProfileLogger
+            {
+                UserProfileId = assignment.UserProfileId,
+                PerformedById = performedById,
+                ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
+                Notes = note,
+                Section = "Assignment",
+                EntityId = assignment.Id
+            });
+        }
     }
 }

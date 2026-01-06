@@ -1,5 +1,3 @@
-using System;
-
 namespace Tawtheef.Application.Features.Operations.Admin.TargetEntities.DTOs;
 
 public sealed record TargetEntityAdminDto

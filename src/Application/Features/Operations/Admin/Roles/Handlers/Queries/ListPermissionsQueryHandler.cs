@@ -1,5 +1,5 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Security;
 namespace Tawtheef.Application.Features.Operations.Admin.Roles.Handlers.Queries;
 
 public sealed class ListPermissionsQueryHandler(IUnitOfWork uow, ILocalizationService localizationService)
-    : IRequestHandler<ListPermissionsQuery, IResult<List<PermissionDto>>>
+    : IQueryHandler<ListPermissionsQuery, IResult<List<PermissionDto>>>
 {
     public async Task<IResult<List<PermissionDto>>> Handle(ListPermissionsQuery request, CancellationToken cancellationToken)
     {

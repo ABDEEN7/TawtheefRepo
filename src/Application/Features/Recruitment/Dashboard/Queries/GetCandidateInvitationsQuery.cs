@@ -1,5 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Recruitment.Dashboard.DTOs;
 
@@ -10,4 +11,4 @@ public sealed record GetCandidateInvitationsQuery(
     Guid? JobCategoryId,
     Guid? DepartmentId,
     string? JobTitle)
-    : PaginatedRequest, IRequest<IResult<PaginatedResult<CandidateInvitationsDto>>>;
+    : PaginatedRequest, IQuery<IResult<PaginatedResult<CandidateInvitationsDto>>>;

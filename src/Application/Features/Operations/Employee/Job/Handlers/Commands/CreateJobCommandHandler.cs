@@ -1,6 +1,6 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
 using Mapster;
-using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
@@ -12,7 +12,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Command
 public class CreateJobCommandHandler(
     IJobRepository jobRepository,
     IUnitOfWork unitOfWork)
-    : IRequestHandler<CreateJobCommand, IResult<Guid>>
+    : ICommandHandler<CreateJobCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {

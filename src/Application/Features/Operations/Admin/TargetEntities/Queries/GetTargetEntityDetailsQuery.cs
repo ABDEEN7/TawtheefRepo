@@ -1,7 +1,7 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
 using Tawtheef.Application.Features.Operations.Admin.TargetEntities.DTOs;
 
 namespace Tawtheef.Application.Features.Operations.Admin.TargetEntities.Queries;
 
-public sealed record GetTargetEntityDetailsQuery(Guid Id) : IRequest<IResult<TargetEntityAdminDto>>;
+public sealed record GetTargetEntityDetailsQuery(Guid Id) : IQuery<IResult<TargetEntityAdminDto>>;

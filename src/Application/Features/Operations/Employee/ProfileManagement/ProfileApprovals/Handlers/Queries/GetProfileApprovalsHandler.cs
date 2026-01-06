@@ -1,5 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -14,7 +15,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
 public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationService localization)
-    : IRequestHandler<GetProfileApprovalsQuery, Result<PaginatedResult<ProfileApprovalListItemDto>>>
+    : IQueryHandler<GetProfileApprovalsQuery, Result<PaginatedResult<ProfileApprovalListItemDto>>>
 {
     public async Task<Result<PaginatedResult<ProfileApprovalListItemDto>>> Handle(GetProfileApprovalsQuery request, CancellationToken ct)
     {

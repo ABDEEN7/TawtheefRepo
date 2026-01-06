@@ -38,7 +38,7 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 
 // ----- Services -----
 builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
-builder.Services.AddApplicationLayer();
+builder.Services.AddApplicationLayer(builder.Configuration);
 // builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 builder.Services.AddAuthorization(options =>
 {

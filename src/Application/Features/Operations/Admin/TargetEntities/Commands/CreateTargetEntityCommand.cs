@@ -1,5 +1,5 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 
 namespace Tawtheef.Application.Features.Operations.Admin.TargetEntities.Commands;
 
@@ -8,4 +8,4 @@ public sealed record CreateTargetEntityCommand(
     string NameEn,
     string? DescriptionAr,
     string? DescriptionEn,
-    bool IsActive) : IRequest<IResult<Guid>>;
+    bool IsActive) : ICommand<IResult<Guid>>;

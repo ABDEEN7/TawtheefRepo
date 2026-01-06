@@ -1,9 +1,10 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
 
 public record StartUserProfileReviewCommand(
     Guid OfficerId,
     Guid UserProfileId
-) : IRequest<IResult<Unit>>;
+) : ICommand<IResult<Unit>>;

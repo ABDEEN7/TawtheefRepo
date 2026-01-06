@@ -1,6 +1,5 @@
-using System;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -14,7 +13,7 @@ public sealed class CreateTargetEntityCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : IRequestHandler<CreateTargetEntityCommand, IResult<Guid>>
+    : ICommandHandler<CreateTargetEntityCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateTargetEntityCommand request, CancellationToken cancellationToken)
     {

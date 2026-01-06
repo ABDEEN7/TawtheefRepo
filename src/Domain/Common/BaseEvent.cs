@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿
+using Cortex.Mediator.Notifications;
 
 namespace Tawtheef.Domain.Common;
 

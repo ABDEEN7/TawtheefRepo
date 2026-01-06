@@ -1,3 +1,4 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

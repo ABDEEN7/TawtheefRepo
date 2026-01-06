@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Operations.Admin.Religions.Handlers.Queries;
 
 public sealed class ListReligionsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetListReligionsQuery, IResult<PaginatedResult<ReligionAdminDto>>>
+    : IQueryHandler<GetListReligionsQuery, IResult<PaginatedResult<ReligionAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<ReligionAdminDto>>> Handle(
         GetListReligionsQuery request,

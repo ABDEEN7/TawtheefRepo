@@ -1,5 +1,6 @@
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
 
@@ -8,4 +9,4 @@ public sealed record FinalizeUserProfileReviewCommand(
     Guid UserProfileId,
     string? Notes,
     string? Summary
-) : IRequest<IResult<Unit>>;
+) : ICommand<IResult<Unit>>;

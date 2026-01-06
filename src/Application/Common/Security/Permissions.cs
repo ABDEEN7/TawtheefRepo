@@ -198,6 +198,18 @@ public static class Permissions
                 17);
     }
 
+    public static class ProfileLogs
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.ProfileLogs.View,
+                nameof(PermissionKeys.ProfileLogs),
+                PermissionAction.View,
+                "Profile Logs - View",
+                "سجل الملفات - عرض",
+                14);
+    }
+
     // =========================
     // Employee Console
     // =========================
@@ -392,5 +404,17 @@ public static class Permissions
                 "Major Skills - Manage",
                 "مهارات التخصص - إدارة",
                 70);
+    }
+
+    public static class OrganizationStructures
+    {
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.OrganizationStructures.Manage,
+                nameof(PermissionKeys.OrganizationStructures),
+                PermissionAction.Manage,
+                "Organization Structures - Manage",
+                "الهياكل التنظيمية - إدارة",
+                80);
     }
 }

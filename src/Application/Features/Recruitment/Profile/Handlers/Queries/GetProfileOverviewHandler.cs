@@ -1,6 +1,7 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -17,7 +18,7 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Queries;
 public class GetProfileOverviewHandler(
     IUnitOfWork uow,
     IMapper mapper,
-    IMediaUrlResolver media) : IRequestHandler<GetProfileOverviewQuery, Result<ProfileOverviewDto>>
+    IMediaUrlResolver media) : IQueryHandler<GetProfileOverviewQuery, Result<ProfileOverviewDto>>
 {
     public async Task<Result<ProfileOverviewDto>> Handle(GetProfileOverviewQuery request, CancellationToken ct)
     {

@@ -1,5 +1,6 @@
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Features.Resources.DTOs;
 
@@ -10,4 +11,4 @@ public sealed record UploadAttachmentCommand(
     Guid FileId,
     string BlobPath,
     string Hash,
-    IFormFile File) : IRequest<IResult<UploadAttachmentRequest>>;
+    IFormFile File) : ICommand<IResult<UploadAttachmentRequest>>;

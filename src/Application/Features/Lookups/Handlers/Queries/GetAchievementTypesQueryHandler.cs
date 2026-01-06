@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetAchievementTypesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetAchievementTypesQuery, IResult<List<DropdownOptions>>>
+    : IQueryHandler<GetAchievementTypesQuery, IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(GetAchievementTypesQuery request, CancellationToken cancellationToken)
     {

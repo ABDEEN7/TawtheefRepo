@@ -1,0 +1,88 @@
+.profile-view-shell {
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .insight-card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    background: #fff;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f7fb;
+      color: #0d6efd;
+      font-size: 1.1rem;
+    }
+
+    .label {
+      font-weight: 600;
+    }
+  }
+
+  .header-card {
+    .avatar {
+      width: 64px;
+      height: 64px;
+      font-size: 1.25rem;
+    }
+  }
+
+  .section-body {
+    .kv {
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+
+      .k {
+        font-size: 0.85rem;
+        color: #6c757d;
+      }
+
+      .v {
+        font-weight: 600;
+      }
+    }
+
+    .attach-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 0.75rem;
+
+      .attach-item {
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.75rem;
+
+        .attach-title {
+          font-weight: 600;
+          margin-bottom: 0.35rem;
+        }
+
+        .attach-body {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+}

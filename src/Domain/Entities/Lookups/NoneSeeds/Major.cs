@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Cortex.Mediator;
 using FluentResults;
-using MediatR;
+
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
 

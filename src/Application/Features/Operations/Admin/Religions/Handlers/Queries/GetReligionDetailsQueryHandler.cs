@@ -1,6 +1,6 @@
+using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Admin.Religions.DTOs;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Operations.Admin.Religions.Handlers.Queries;
 
 public sealed class GetReligionDetailsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IRequestHandler<GetReligionDetailsQuery, IResult<ReligionAdminDto>>
+    : IQueryHandler<GetReligionDetailsQuery, IResult<ReligionAdminDto>>
 {
     public async Task<IResult<ReligionAdminDto>> Handle(
         GetReligionDetailsQuery request,

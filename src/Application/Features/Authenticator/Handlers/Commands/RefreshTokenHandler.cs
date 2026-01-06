@@ -1,8 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Cortex.Mediator.Commands;
 using FluentResults;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,7 +21,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
         ITokenService tokenService,
         ISessionService sessions,
         IOptions<JwtSettings> jwtSettings)
-        : IRequestHandler<RefreshTokenCommand, IResult<TokenResponse>>
+        : ICommandHandler<RefreshTokenCommand, IResult<TokenResponse>>
     {
         public async Task<IResult<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
@@ -89,7 +89,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
                 ValidateAudience = true,         // ensure audience matches
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.SigningKey)),
-                ValidateLifetime = false,        // allow expired tokens (we’re just reading claims)
+                ValidateLifetime = false,        // allow expired tokens (we�re just reading claims)
                 ClockSkew = TimeSpan.FromMinutes(1)
             };
 

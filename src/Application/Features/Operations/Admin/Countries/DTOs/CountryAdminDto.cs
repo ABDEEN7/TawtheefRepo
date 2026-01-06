@@ -1,5 +1,3 @@
-using System;
-
 namespace Tawtheef.Application.Features.Operations.Admin.Countries.DTOs;
 
 public sealed record CountryAdminDto

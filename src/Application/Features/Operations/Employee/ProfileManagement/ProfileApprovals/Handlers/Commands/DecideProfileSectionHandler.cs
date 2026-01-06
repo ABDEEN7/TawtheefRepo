@@ -1,5 +1,7 @@
-﻿using FluentResults;
-using MediatR;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
+
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
@@ -10,11 +12,15 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 
 public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider time)
-    : IRequestHandler<DecideProfileSectionCommand, IResult<Unit>>
+    : ICommandHandler<DecideProfileSectionCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(DecideProfileSectionCommand cmd, CancellationToken ct)
     {
-        var profile = await uow.GetEntityRepository<UserProfile>().DbSet
+        var profileRepo = uow.GetEntityRepository<UserProfile>();
+        var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
+
+        var profile = await profileRepo.DbSet
             .FirstOrDefaultAsync(p => p.Id == cmd.UserProfileId, ct);
 
         if (profile is null)
@@ -44,6 +50,27 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
         item.ReviewedById = cmd.OfficerId;
         item.ReviewedAtUtc = time.GetUtcNow().UtcDateTime;
         item.IsOutdated = false;
+
+        await auditRepo.AddAsync(new AuditTrailEntry
+        {
+            UserProfileId = profile.Id,
+            UserId = cmd.OfficerId,
+            ActionType = "ReviewSectionDecision",
+            Notes = $"Section {cmd.Section} marked {cmd.Status}",
+            Section = cmd.Section.ToString(),
+            EntityId = item.Id
+        });
+
+        await loggerRepo.AddAsync(new UserProfileLogger
+        {
+            UserProfileId = profile.Id,
+            PerformedById = cmd.OfficerId,
+            ActionType = "ReviewSectionDecision",
+            Notes = $"Section {cmd.Section} marked {cmd.Status}",
+            Section = cmd.Section.ToString(),
+            EntityId = item.Id,
+            ReviewStatus = cmd.Status
+        });
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

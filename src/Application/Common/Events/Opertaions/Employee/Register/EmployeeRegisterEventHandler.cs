@@ -1,4 +1,4 @@
-using MediatR;
+using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Register;

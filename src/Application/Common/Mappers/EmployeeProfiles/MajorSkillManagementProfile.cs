@@ -1,7 +1,5 @@
 ﻿using Mapster;
-using MapsterMapper;
 using Tawtheef.Application.Common.Models;
-using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Majors.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.DTOs;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 

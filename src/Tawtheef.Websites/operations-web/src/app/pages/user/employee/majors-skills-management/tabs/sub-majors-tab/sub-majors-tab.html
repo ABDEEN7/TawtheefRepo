@@ -106,9 +106,9 @@
   </div>
   <!-- Keep your existing pagination component -->
   <app-pagination
-    [currentPage]="store.subMajorFilters().pageNumber ?? 1"
+    [currentPage]="store.subMajorFilters().pageNumber"
     [totalItems]="store.subMajorsMeta().totalCount"
-    [itemsPerPage]="store.subMajorFilters().pageSize ?? 10"
+    [itemsPerPage]="store.subMajorFilters().pageSize"
     (pageChanged)="service.onSubMajorsPageChange($event)"
     (pageSizeChanged)="service.onSubMajorsPageSizeChange($event)" class="mt-4">
   </app-pagination>

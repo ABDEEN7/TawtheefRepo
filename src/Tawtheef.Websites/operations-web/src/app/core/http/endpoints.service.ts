@@ -39,6 +39,10 @@ export class EndpointsService {
     },
   };
 
+  notifications = {
+    list: this.getFullUrl('/notifications'),
+  };
+
   files = {
     upload: this.getFullUrl(`/files/upload`),
     download: (id: string) => this.getFullUrl(`/files/${id}/download`),
@@ -176,6 +180,9 @@ export class EndpointsService {
       cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
     }
   };
+  profileLogs = {
+    list: this.getFullUrl('/profile-logs')
+  };
   targetEntities = {
     listTargetEntities: this.getFullUrl('/targetentities/list-target-entities'),
     targetEntityDetails: (id: string) => this.getFullUrl(`/targetentities/target-entity-details/${id}`),
@@ -207,6 +214,34 @@ export class EndpointsService {
       skillTypes: this.getFullUrl('/SkillsManagement/lookups/skill-types'),
       majors: this.getFullUrl('/MajorSkillsManagement/lookups/majors'),
       subMajors: this.getFullUrl('/MajorSkillsManagement/lookups/sub-majors'),
+    }
+  };
+
+  organizationStructures = {
+    sectors: {
+      list: this.getFullUrl('/OrganizationStructures/sectors'),
+      create: this.getFullUrl('/OrganizationStructures/sectors'),
+      update: (id: string) => this.getFullUrl(`/OrganizationStructures/sectors/${id}`),
+      changeActivation: this.getFullUrl('/OrganizationStructures/sectors/change-activation')
+    },
+    managements: {
+      list: this.getFullUrl('/OrganizationStructures/managements'),
+      create: this.getFullUrl('/OrganizationStructures/managements'),
+      update: (id: string) => this.getFullUrl(`/OrganizationStructures/managements/${id}`),
+      changeActivation: this.getFullUrl('/OrganizationStructures/managements/change-activation')
+    },
+    departments: {
+      list: this.getFullUrl('/OrganizationStructures/departments'),
+      create: this.getFullUrl('/OrganizationStructures/departments'),
+      update: (id: string) => this.getFullUrl(`/OrganizationStructures/departments/${id}`),
+      changeActivation: this.getFullUrl('/OrganizationStructures/departments/change-activation')
+    },
+    lookups: {
+      sectors: this.getFullUrl('/OrganizationStructures/lookups/sectors'),
+      managements: (sectorId: string) =>
+        this.getFullUrl(`/OrganizationStructures/lookups/managements?sectorId=${sectorId}`),
+      departments: (managementId: string) =>
+        this.getFullUrl(`/OrganizationStructures/lookups/departments?managementId=${managementId}`)
     }
   };
 
