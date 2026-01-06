@@ -2,18 +2,16 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Commands;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handlers.Commands;
 
 public sealed class SendJobCandidateInvitationsCommandHandler(
-    IUnitOfWork unitOfWork,
-    IEmailSender emailSender,
-    ISmsSender smsSender)
+    IUnitOfWork unitOfWork)
     : IRequestHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
     public async Task<IResult<SendJobCandidateInvitationsResult>> Handle(
@@ -39,43 +37,12 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
             });
         }
 
-        var sentEmailCount = 0;
-        var sentSmsCount = 0;
+        var sentEmailCount = candidates.Count(candidate =>
+            !string.IsNullOrWhiteSpace(candidate.Applicant?.Email));
+        var sentSmsCount = candidates.Count(candidate =>
+            !string.IsNullOrWhiteSpace(candidate.Applicant?.PhoneNumber));
 
-        foreach (var candidate in candidates)
-        {
-            var jobTitle = candidate.Job?.TitleEn ?? candidate.Job?.TitleAr ?? "";
-            var body = string.IsNullOrWhiteSpace(jobTitle)
-                ? "You have been invited to apply for a job on Tawtheef."
-                : $"You have been invited to apply for {jobTitle} on Tawtheef.";
-
-            if (!string.IsNullOrWhiteSpace(candidate.Applicant?.Email))
-            {
-                var emailResult = await emailSender.SendAsync(
-                    candidate.Applicant.Email,
-                    "Job Invitation",
-                    body,
-                    cancellationToken);
-
-                if (emailResult.ok)
-                {
-                    sentEmailCount++;
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(candidate.Applicant?.PhoneNumber))
-            {
-                var smsResult = await smsSender.SendAsync(
-                    candidate.Applicant.PhoneNumber,
-                    body,
-                    cancellationToken);
-
-                if (smsResult.ok)
-                {
-                    sentSmsCount++;
-                }
-            }
-        }
+        var candidatesByInvitationId = candidates.ToDictionary(candidate => candidate.InvitationId);
 
         var invitationIds = candidates.Select(candidate => candidate.InvitationId).Distinct().ToList();
         var invitations = await unitOfWork.GetEntityRepository<Invitation>().DbSet
@@ -84,7 +51,22 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
 
         foreach (var invitation in invitations)
         {
+            if (!candidatesByInvitationId.TryGetValue(invitation.Id, out var candidate))
+            {
+                continue;
+            }
+
+            var jobTitle = candidate.Job?.TitleEn ?? candidate.Job?.TitleAr ?? string.Empty;
+            var domainEvent = new JobCandidateInvitationSentDomainEvent(
+                invitation.Id,
+                candidate.ApplicantId,
+                candidate.Applicant?.Email,
+                candidate.Applicant?.PhoneNumber,
+                jobTitle,
+                DateTimeOffset.UtcNow);
+
             invitation.InvitationStatusId = InvitationStatusIds.NewInvitation;
+            invitation.AddDomainEvent(domainEvent);
         }
 
         var updatedCount = invitations.Count > 0

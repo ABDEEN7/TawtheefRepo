@@ -7,6 +7,7 @@ using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
+using Tawtheef.Domain.Events.Operation.Employee.Job;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
@@ -69,6 +70,7 @@ public class UpdateJobCommandHandler(
         existingJob.BenefitsEn = request.Job.BenefitsEn;
         existingJob.QualificationDescriptionAr = request.Job.QualificationsDescriptionAr;
         existingJob.QualificationDescriptionEn = request.Job.QualificationsDescriptionEn;
+        existingJob.AddDomainEvent(new JobUpdatedDomainEvent(existingJob, DateTimeOffset.UtcNow));
 
         await jobRepository.Repository.UpdateAsync(existingJob);
         await unitOfWork.SaveChangesAsync(cancellationToken);

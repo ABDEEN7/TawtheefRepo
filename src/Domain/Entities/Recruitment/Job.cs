@@ -98,6 +98,7 @@ public class Job : EventEntity
     public void ChangeStatus(Guid newStatusId)
     {
         this.JobStatusId = newStatusId;
+        AddDomainEvent(new JobStatusChangedDomainEvent(Id, newStatusId, DateTimeOffset.UtcNow));
         if(newStatusId == JobStatusIds.Draft)
         {
             AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this,DateTimeOffset.Now));

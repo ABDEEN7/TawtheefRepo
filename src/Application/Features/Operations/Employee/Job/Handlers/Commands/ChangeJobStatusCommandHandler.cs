@@ -11,7 +11,6 @@ namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Command
 public class ChangeJobStatusCommandHandler(
     IJobRepository jobRepository,
     IJobValidationService validationService,
-    IMediator mediator,
     IUnitOfWork unitOfWork)
     : IRequestHandler<ChangeJobStatusCommand, IResult<Unit>>
 {
@@ -33,10 +32,6 @@ public class ChangeJobStatusCommandHandler(
             return Result.Fail<Unit>(validationResult.Errors.Select(e => e.ErrorMessage));
 
         job.ChangeStatus(request.NewStatusId);
-
-        var jobReviewsStatus = await mediator.Send(
-            new UpdateJobTabReviewStatusCommand(job.Id),
-            cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);
