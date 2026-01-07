@@ -8,6 +8,9 @@ export interface LookupOption {
 export interface JobInfoVM {
   jobId: string;
   jobName: string;
+  departmentName: string;
+  jobStatus: StatusVM;
+  currentBatchNumber: number;
 }
 
 export interface StatusVM {
@@ -20,9 +23,15 @@ export interface InviteRowVM {
   inviteId: string;
   fullName: string;
   nationality: string;
+  personalNumber: string;
   phone: string;
   status: StatusVM;
+  batchNumber: number;
   sentDate: string;
+  readDate?: string | null;
+  appliedDate?: string | null;
+  declinedDate?: string | null;
+  expiredDate?: string | null;
 }
 
 export interface PaginationMetadata {
@@ -33,15 +42,20 @@ export interface PaginationMetadata {
 export interface JobInvitesStatsVM {
   total: number;
   new: number;
+  read: number;
   applied: number;
   declined: number;
   cancelled: number;
+  expired: number;
 }
 
 export interface JobInvitesRowsFilters {
   jobId: string;
   statusId: string | null;
   search: string;
+  candidateName?: string | null;
+  nationalNumber?: string | null;
+  batchNumber?: number | null;
   pageNumber: number;
   pageSize: number;
   sortBy: string;

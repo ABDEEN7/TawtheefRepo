@@ -114,6 +114,11 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
             return Result.Ok(EmptyResult());
 
         var invitationsRepo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
+        var lastBatchNumber = await invitationsRepo
+            .AsNoTracking()
+            .Where(invitation => invitation.JobId == request.JobId)
+            .MaxAsync(invitation => (int?)invitation.BatchNumber, cancellationToken) ?? 0;
+        var nextBatchNumber = lastBatchNumber + 1;
 
         var newInvitations = finalCandidates.Select(c => new Invitation
         {
@@ -121,6 +126,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
             JobId = request.JobId,
             ApplicantId = c.ApplicantId,
             InvitationStatusId = InvitationStatusIds.NewInvitation,
+            BatchNumber = nextBatchNumber,
             CreatedDate = DateTime.UtcNow
         }).ToList();
 
