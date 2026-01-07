@@ -11,6 +11,7 @@ import {KawaderPage} from './kawader/kawader.page';
 import { JobInvitationSummaryDetailsComponent } from './job-managment/job-invitation-summary-details/job-invitation-summary-details.component';
 import {ProfileApprovalWizardPage} from './profile-managment/approval-wizard/profile-approval-wizard.page';
 import {OrganizationStructuresPage} from './organization-structures/organization-structures.page';
+import {CandidateUsersManagementPage} from './candidate-users-management/candidate-users-management.page';
 
 export const employeeRoutes: Routes = [
   {
@@ -76,5 +77,11 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Kawader.Manage] },
     component: KawaderPage
+  },
+  {
+    path: 'candidate-users-management',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.CandidateUsers.View] },
+    component: CandidateUsersManagementPage
   },
 ];
