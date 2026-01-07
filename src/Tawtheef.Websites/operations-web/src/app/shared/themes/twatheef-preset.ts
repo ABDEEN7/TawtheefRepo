@@ -6,5 +6,5 @@ const brand = palette('#7b1e3a');
 export const TawtheefPreset = definePreset(Aura, {
   semantic: {
     primary: brand,
-  }
+  },
 });
