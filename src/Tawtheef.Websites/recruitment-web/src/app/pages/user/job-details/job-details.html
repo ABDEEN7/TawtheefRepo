@@ -16,11 +16,11 @@
                   pButton
                   type="button"
                   class="btn btn-primary btn-pill"
-                  [disabled]="detailsService.applying()"
-                  (click)="applyInvitation()"
+                  [disabled]="!canApply()"
+                  (click)="openApplyDialog()"
                 >
                   <i class="fa fa-paper-plane"></i>
-                  {{ 'JOB_DETAILS.APPLY' | translate }}
+                  {{ getApplyButtonLabel() }}
                 </button>
                 <a
                   [routerLink]="routes.user.dashboard"
@@ -31,6 +31,58 @@
                 </a>
                 <div class="status-tag" [ngClass]="getStatusClass()">
                   {{ job()!.jobStatus?.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <div class="card card-table">
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.JOB_TITLE' | translate }}</span>
+                        <span class="value">{{ job()!.titleAr }} / {{ job()!.titleEn }}</span>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.REQUESTING_ENTITY' | translate }}</span>
+                        <span class="value">
+                          {{ job()!.department?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.JOB_TYPE' | translate }}</span>
+                        <span class="value">
+                          {{ job()!.jobCategory?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.WORK_LOCATION' | translate }}</span>
+                        <span class="value">
+                          {{ job()!.workLocation?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.CLOSING_DATE' | translate }}</span>
+                        <span class="value">{{ job()!.closingDate | date : 'dd/MM/yyyy' }}</span>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.JOB_STATUS' | translate }}</span>
+                        <span class="value">{{ job()!.jobStatus?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,15 +1,18 @@
-import {Component, OnInit, inject, signal} from '@angular/core';
+import {Component, OnInit, inject, signal, computed} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ButtonModule} from 'primeng/button';
+import {DialogService} from 'primeng/dynamicdialog';
 
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 import {JobDetailsService} from './services/job-details.service';
 import {NotificationService} from '../../../core/services/notification.service';
 import {routes} from '../../../routes/routes';
 import {JobTabType} from './enums/job-tab-type';
+import {JobApplyConfirmationDialogComponent} from './dialogs/job-apply-confirmation.dialog.component';
+import {CandidateInvitationDetailsService} from './services/candidate-invitation-details.service';
 
 @Component({
   selector: 'app-job-details',
@@ -20,14 +23,23 @@ import {JobTabType} from './enums/job-tab-type';
 })
 export class JobDetails implements OnInit {
   detailsService = inject(JobDetailsService);
+  invitationDetailsService = inject(CandidateInvitationDetailsService);
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
   private notifier = inject(NotificationService);
+  private dialogService = inject(DialogService);
   job = this.detailsService.job;
   isLoading = this.detailsService.loading;
   activeTab: string = JobTabType.Overview;
   tabType = JobTabType;
 
+  appliedOverride = signal(false);
+  invitation = this.invitationDetailsService.invitation;
+  hasApplied = computed(() => {
+    if (this.appliedOverride()) return true;
+    const status = this.invitation()?.invitationStatus?.backendName?.toLowerCase() ?? '';
+    return status.includes('approved') || status.includes('applied') || status.includes('submitted');
+  });
 
   routes = routes;
 
@@ -39,14 +51,29 @@ export class JobDetails implements OnInit {
 
     this.invitationId.set(invitationId);
     this.detailsService.loadJobDetails(invitationId);
+    this.invitationDetailsService.loadInvitation(invitationId);
   }
 
-  applyInvitation(): void {
+  openApplyDialog(): void {
+    if (!this.canApply()) return;
+    this.dialogService.open(JobApplyConfirmationDialogComponent, {
+      header: this.translate.instant('JOB_DETAILS.APPLY_CONFIRM_TITLE'),
+      width: '520px',
+      contentStyle: { 'border-radius': '12px' }
+    })?.onClose.subscribe((confirmed) => {
+      if (!confirmed) return;
+      this.submitApplication();
+    });
+  }
+
+  submitApplication(): void {
     const invitationId = this.invitationId();
     if (!invitationId) return;
 
     this.detailsService.applyInvitation(invitationId).subscribe({
       next: () => {
+        this.appliedOverride.set(true);
+        this.invitationDetailsService.loadInvitation(invitationId);
         this.notifier.success(this.translate.instant('JOB_DETAILS.APPLY_SUCCESS'));
       },
       error: () => {
@@ -70,6 +97,10 @@ export class JobDetails implements OnInit {
     ];
 
     return tabsContent.find(tab => tab.id === this.activeTab) || tabsContent[0];
+  }
+
+  canApply(): boolean {
+    return this.isJobOpen() && !this.hasApplied() && !this.detailsService.applying();
   }
 
   getStatusClass(): string {
@@ -107,9 +138,23 @@ export class JobDetails implements OnInit {
   }
 
   isJobOpen(): boolean {
+    const status = this.job()?.jobStatus?.backendName?.toLowerCase() ?? '';
+    const isClosedStatus =
+      status.includes('closed') ||
+      status.includes('expired') ||
+      status.includes('cancel') ||
+      status.includes('suspend') ||
+      status.includes('end');
+    if (isClosedStatus) return false;
     if (!this.job()?.closingDate) return true;
     const closingDate = new Date(this.job()!.closingDate);
     const today = new Date();
     return closingDate >= today;
+  }
+
+  getApplyButtonLabel(): string {
+    if (this.hasApplied()) return this.translate.instant('JOB_DETAILS.APPLICATION_SUBMITTED');
+    if (!this.isJobOpen()) return this.translate.instant('JOB_DETAILS.APPLICATION_CLOSED');
+    return this.translate.instant('JOB_DETAILS.APPLY');
   }
 }

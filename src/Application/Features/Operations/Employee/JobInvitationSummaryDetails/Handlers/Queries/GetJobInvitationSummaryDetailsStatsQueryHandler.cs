@@ -29,11 +29,20 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
             New = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.NewInvitation,
                 cancellationToken),
+            Read = await invitations.CountAsync(
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.Readed,
+                cancellationToken),
+            Applied = await invitations.CountAsync(
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.Approved,
+                cancellationToken),
             Declined = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Rejected,
                 cancellationToken),
             Cancelled = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Cancelled,
+                cancellationToken),
+            Expired = await invitations.CountAsync(
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.Closed,
                 cancellationToken),
         };
 

@@ -19,6 +19,8 @@ public class Invitation : EventEntity
     
     public Guid InvitationStatusId { get; set; }
     public InvitationStatus? InvitationStatus { get; set; }
+
+    public int BatchNumber { get; set; }
     
     [NotMapped]
     public DateTimeOffset? InvitationAt => CreatedDate;
