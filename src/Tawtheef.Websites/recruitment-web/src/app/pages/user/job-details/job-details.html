@@ -1,88 +1,276 @@
-<div class="card card-table mb-4" i18nNamespace="pages/user/job-details">
-  <div class="card-body">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
-      <div>
-        <h4 class="mb-1 text-brand fw-bold">{{ 'job_details.title' | translate }}</h4>
-        <p class="m-0 text-muted">{{ 'job_details.subtitle' | translate }}</p>
-      </div>
-      <div class="d-flex flex-wrap gap-2">
-        <a
-          [routerLink]="routes.user.dashboard"
-          class="btn btn-outline-secondary btn-sm btn-pill"
-        >
-          <i class="fa fa-arrow-left"></i>
-          {{ 'job_details.back_to_dashboard' | translate }}
-        </a>
-        <button
-          pButton
-          type="button"
-          class="btn btn-primary btn-sm btn-pill"
-          [disabled]="!canApply() || isApplying()"
-          (click)="applyInvitation()"
-        >
-          <i class="fa fa-paper-plane"></i>
-          {{ 'job_details.apply_now' | translate }}
-        </button>
-      </div>
-    </div>
-
-    @if (detailsService.loading()) {
-      <div class="text-center text-muted py-5">
-        {{ 'job_details.loading' | translate }}
-      </div>
-    } @else if (!invitation()) {
-      <div class="text-center text-muted py-5">
-        {{ 'job_details.no_data' | translate }}
+<div class="page-wrapper">
+  <div class="main-container" i18nNamespace="pages/job-details">
+    @if (job()) {
+      <div class="card card-table">
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-md-9">
+              <h3 class="fw-bold mb-0">
+                {{ 'JOB_DETAILS.JOB_DETAILS' | translate }} - {{ job()!.titleAr }}/{{ job()!.titleEn }}
+              </h3>
+              <p class="text-muted mt-2 mb-0">{{ 'JOB_DETAILS.JOB_REVIEW_NOT' | translate }}</p>
+            </div>
+            <div class="col-md-3 text-end">
+              <div class="d-flex justify-content-end align-items-center gap-2 flex-wrap">
+                <button
+                  pButton
+                  type="button"
+                  class="btn btn-primary btn-pill"
+                  [disabled]="detailsService.applying()"
+                  (click)="applyInvitation()"
+                >
+                  <i class="fa fa-paper-plane"></i>
+                  {{ 'JOB_DETAILS.APPLY' | translate }}
+                </button>
+                <a
+                  [routerLink]="routes.user.dashboard"
+                  class="btn btn-outline-secondary btn-pill"
+                >
+                  <i class="fa fa-arrow-left"></i>
+                  {{ 'JOB_DETAILS.BACK_TO_DASHBOARD' | translate }}
+                </a>
+                <div class="status-tag" [ngClass]="getStatusClass()">
+                  {{ job()!.jobStatus?.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <div class="card card-table">
+                <div class="card-body">
+                  <div class="nav nav-pills flex-wrap stepper">
+                    <button
+                      class="nav-link"
+                      [class.active]="activeTab === tabType.Overview"
+                      (click)="setActiveTab(tabType.Overview)"
+                    >
+                      <i class="fa fa-file-alt"></i>
+                      <span>{{ 'JOB_DETAILS.OVERVIEW' | translate }}</span>
+                    </button>
+                    <button
+                      class="nav-link"
+                      [class.active]="activeTab === tabType.Responsibilities"
+                      (click)="setActiveTab(tabType.Responsibilities)"
+                    >
+                      <i class="fa fa-tasks"></i>
+                      <span>{{ 'JOB_DETAILS.RESPONSIBILITIES' | translate }}</span>
+                    </button>
+                    <button
+                      class="nav-link"
+                      [class.active]="activeTab === tabType.Conditions"
+                      (click)="setActiveTab(tabType.Conditions)"
+                    >
+                      <i class="fa fa-graduation-cap"></i>
+                      <span>{{ 'JOB_DETAILS.CONDITIONS_RESPONSIBILITIES' | translate }}</span>
+                    </button>
+                    <button
+                      class="nav-link"
+                      [class.active]="activeTab === tabType.Skills"
+                      (click)="setActiveTab(tabType.Skills)"
+                    >
+                      <i class="fa fa-tools"></i>
+                      <span>{{ 'JOB_DETAILS.SKILLS' | translate }}</span>
+                    </button>
+                    <button
+                      class="nav-link"
+                      [class.active]="activeTab === tabType.Benefits"
+                      (click)="setActiveTab(tabType.Benefits)"
+                    >
+                      <i class="fa fa-gift"></i>
+                      <span>{{ 'JOB_DETAILS.BENEFITS' | translate }}</span>
+                    </button>
+                    <button
+                      class="nav-link"
+                      [class.active]="activeTab === tabType.Attachments"
+                      (click)="setActiveTab(tabType.Attachments)"
+                    >
+                      <i class="fa fa-paperclip"></i>
+                      <span>{{ 'JOB_DETAILS.REQUIRED_ATTACHMENTS' | translate }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8">
+              <div class="card card-table">
+                <div class="card-body">
+                  <h5 class="mb-4 text-primary">
+                    <i class="fa" [ngClass]="getTabContent().icon"></i>
+                    {{ getTabContent().title | translate }}
+                  </h5>
+                  <div class="row">
+                    <div class="col-md-12">
+                      @if (activeTab === tabType.Overview) {
+                        @if (job()!.overViewAr || job()!.overViewEn) {
+                          <div class="dual-text-container m-0">
+                            <div class="text-area">
+                              <h6>{{ 'JOB_DETAILS.OVERVIEWAR' | translate }}</h6>
+                              <div [innerHTML]="job()!.overViewAr"></div>
+                            </div>
+                            <div class="text-area">
+                              <h6>{{ 'JOB_DETAILS.OVERVIEWEN' | translate }}</h6>
+                              <div [innerHTML]="job()!.overViewEn"></div>
+                            </div>
+                          </div>
+                        }
+                      }
+                      @if (activeTab === tabType.Responsibilities) {
+                        @if (getResponsibilities().length > 0) {
+                          <ul>
+                            @for (responsibility of getResponsibilities(); track $index) {
+                              <div class="dual-text-container">
+                                <div class="text-area">
+                                  <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                                  <div [innerHTML]="responsibility.textAr"></div>
+                                </div>
+                                <div class="text-area">
+                                  <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                                  <div [innerHTML]="responsibility.textEn"></div>
+                                </div>
+                              </div>
+                            }
+                          </ul>
+                        }
+                      }
+                      @if (activeTab === tabType.Conditions) {
+                        <h3>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
+                        <p>{{ getDegreeRequirements() }}</p>
+                        @if (job()!.qualificationDescriptionAr || job()!.qualificationDescriptionEn) {
+                          <h3>{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h3>
+                          <div class="dual-text-container">
+                            <div class="text-area">
+                              <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                              <div [innerHTML]="job()!.qualificationDescriptionAr"></div>
+                            </div>
+                            <div class="text-area">
+                              <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                              <div [innerHTML]="job()!.qualificationDescriptionEn"></div>
+                            </div>
+                          </div>
+                        }
+                        @if (getJobConditions().length > 0) {
+                          <div class="basic-requirements">
+                            <h3>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</h3>
+                            @for (condition of getJobConditions(); track $index) {
+                              <div class="dual-text-container">
+                                <div class="text-area">
+                                  <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                                  <div [innerHTML]="condition.textAr"></div>
+                                </div>
+                                <div class="text-area">
+                                  <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                                  <div [innerHTML]="condition.textEn"></div>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        }
+                      }
+                      @if (activeTab === tabType.Skills) {
+                        @if (getJobSkills().length > 0) {
+                          <ul>
+                            @for (skill of getJobSkills(); track $index) {
+                              <li>{{ skill }}</li>
+                            }
+                          </ul>
+                        }
+                      }
+                      @if (activeTab === tabType.Benefits) {
+                        @if (job()!.benefitsAr || job()!.benefitsEn) {
+                          <div class="dual-text-container">
+                            <div class="text-area">
+                              <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                              <div [innerHTML]="job()!.benefitsAr"></div>
+                            </div>
+                            <div class="text-area">
+                              <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                              <div [innerHTML]="job()!.benefitsEn"></div>
+                            </div>
+                          </div>
+                        }
+                      }
+                      @if (activeTab === tabType.Attachments) {
+                        @if (job()!.requiredAttachments && job()!.requiredAttachments!.length) {
+                          <ul>
+                            @for (attachment of job()!.requiredAttachments!; track $index) {
+                              <li>
+                                <div class="dual-text-container">
+                                  <div class="attachmentAr">
+                                    <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                                    <div [innerHTML]="attachment.titleAr"></div>
+                                  </div>
+                                  <div class="attachmentEn">
+                                    <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                                    <div [innerHTML]="attachment.titleEn"></div>
+                                  </div>
+                                  <div class="form-check form-switch m-0">
+                                    <input
+                                      class="form-check-input switch-lg"
+                                      disabled="true"
+                                      type="checkbox"
+                                      [(ngModel)]="attachment.isMandatory"
+                                    />
+                                  </div>
+                                </div>
+                              </li>
+                            }
+                          </ul>
+                        }
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card card-table">
+                <div class="card-body">
+                  <h5 class="mb-4 text-primary">
+                    <i class="fa fa-info-circle"></i> {{ 'JOB_DETAILS.JOB_INFO' | translate }}
+                  </h5>
+                  <div class="">
+                    <div class="info-list-container">
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.JOB_CATEGORY' | translate }}</span>
+                        <span class="value">
+                          {{ job()!.jobCategory?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
+                        </span>
+                      </div>
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.CLOSING_DATE' | translate }}</span>
+                        <span class="value">{{ job()!.closingDate | date : 'dd/MM/yyyy' }}</span>
+                      </div>
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.DEPARTMENT' | translate }}</span>
+                        <span class="value">
+                          {{ job()!.department?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
+                        </span>
+                      </div>
+                      <div class="info-list-item">
+                        <span class="label">{{ 'JOB_DETAILS.WORK_LOCATION' | translate }}</span>
+                        <span class="value">
+                          {{ job()!.workLocation?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     } @else {
-      <div class="row g-3">
-        <div class="col-md-6">
-          <div class="card card-table border-0 shadow-sm">
-            <div class="card-body">
-              <p class="text-muted small mb-1">{{ 'job_details.field_job_title' | translate }}</p>
-              <div class="fw-bold">{{ invitation()!.jobTitle }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card card-table border-0 shadow-sm">
-            <div class="card-body">
-              <p class="text-muted small mb-1">{{ 'job_details.field_department' | translate }}</p>
-              <div class="fw-bold">{{ invitation()!.departmentName }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card card-table border-0 shadow-sm">
-            <div class="card-body">
-              <p class="text-muted small mb-1">{{ 'job_details.field_category' | translate }}</p>
-              <span [ngClass]="getJobCategoryClass(invitation()!)">
-                {{ invitation()!.jobCategory }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card card-table border-0 shadow-sm">
-            <div class="card-body">
-              <p class="text-muted small mb-1">{{ 'job_details.field_status' | translate }}</p>
-              <span
-                class="status-pill"
-                [ngClass]="getStatusClass(invitation()!.invitationStatus.backendName)"
-              >
-                {{ invitation()!.invitationStatus.name }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card card-table border-0 shadow-sm">
-            <div class="card-body">
-              <p class="text-muted small mb-1">{{ 'job_details.field_date' | translate }}</p>
-              <div>{{ invitation()!.createDate }}</div>
-            </div>
-          </div>
-        </div>
+      <div class="text-center py-5 text-muted">
+        @if (isLoading()) {
+          <i class="fa-solid fa-spinner fa-spin" style="font-size: 48px; margin-bottom: 20px"></i>
+          <p style="font-size: 16px; font-weight: 500">{{ 'common.loading' | translate }}</p>
+        } @else {
+          <p style="font-size: 16px; font-weight: 500">{{ 'JOB_DETAILS.NOT_SPECIFIED' | translate }}</p>
+        }
       </div>
     }
   </div>

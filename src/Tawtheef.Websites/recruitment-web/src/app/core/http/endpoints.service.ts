@@ -126,6 +126,8 @@ export class EndpointsService {
     candidateInvitationStatistics: this.getFullUrl(`/dashboard/candidate-invitation-statistics`),
     candidateInvitationDetails: (invitationId: string) =>
       this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}`),
+    candidateInvitationJobDetails: (invitationId: string) =>
+      this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/job-details`),
     applyCandidateInvitation: (invitationId: string) =>
       this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/apply`),
     lookups: {

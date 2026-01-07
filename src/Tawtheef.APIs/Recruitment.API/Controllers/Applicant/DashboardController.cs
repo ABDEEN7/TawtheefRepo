@@ -9,6 +9,7 @@ using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Commands;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
+using Tawtheef.Application.Features.Recruitment.JobDetails.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -62,6 +63,15 @@ public class DashboardController(IMediator mediator) : ControllerBase
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
         var result = await mediator.Send(new GetCandidateInvitationDetailsQuery(invitationId, UserId.Value));
+        return result.ToActionResult();
+    }
+
+    [HttpGet("candidate-invitations/{invitationId:guid}/job-details")]
+    public async Task<IActionResult> GetCandidateJobDetails(Guid invitationId)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetCandidateJobDetailsQuery(invitationId, UserId.Value));
         return result.ToActionResult();
     }
 
