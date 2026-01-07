@@ -234,7 +234,11 @@
                     <div class="section-card p-3 bg-white rounded-4 shadow-sm">
                       <ng-container [ngSwitch]="sec.section">
                         <app-profile-approval-first-info-section
-                          *ngSwitchCase="1" [profile]="profile" (viewFile)="previewFile($event)">
+                          *ngSwitchCase="1"
+                          [profile]="profile"
+                          [reviewItems]="sec.items"
+                          (reviewItem)="onInlineReview($event)"
+                          (viewFile)="previewFile($event)">
                         </app-profile-approval-first-info-section>
 
                         <app-profile-approval-basic-info-section

@@ -27,7 +27,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.candidateType' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('candidateType')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -48,7 +48,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.targetEntity' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('targetEntity')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>

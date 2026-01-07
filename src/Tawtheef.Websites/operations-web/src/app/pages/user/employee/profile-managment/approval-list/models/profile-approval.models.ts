@@ -132,8 +132,8 @@ export interface ResidenceAddressDto {
   naStreet: number;
   naBuilding: number;
   naUnit: number;
-  certificateId?: string | null;
-  certificate?: FileRefDto | null;
+  residenceAddressCertificateId?: string | null;
+  residenceAddressCertificate?: FileRefDto | null;
 }
 
 export interface ProfileApprovalListItem {

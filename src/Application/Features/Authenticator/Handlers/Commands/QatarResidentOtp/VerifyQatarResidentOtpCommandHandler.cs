@@ -43,12 +43,18 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         var storedPhone = NormalizePhone(user.PhoneNumber ?? string.Empty);
         if (!string.Equals(storedPhone, normalizedPhone, StringComparison.Ordinal))
             return Result.Fail<AuthResponse>(ErrorsCodes.QatarResidentPhoneMismatch);
-
-        var otpCheck = user.ValidateOtp(request.Otp, timeProvider.GetUtcNow().UtcDateTime, QatarResidentOtpConstants.MaxOtpAttempts);
+        var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
+        var otpCheck = user.ValidateOtp(
+            request.Otp,
+            nowUtc,
+            QatarResidentOtpConstants.MaxOtpAttempts,
+            QatarResidentOtpConstants.OtpLockDuration);
 
         var persistOtp = await userManager.UpdateAsync(user);
         if (!persistOtp.Succeeded) return FailureFromIdentity<AuthResponse>(persistOtp);
-        if (otpCheck.IsFailed) return Result.Fail<AuthResponse>(otpCheck.Errors);
+        
+        if (otpCheck.IsFailed) 
+            return Result.Fail<AuthResponse>(otpCheck.Errors);
 
         user.PhoneNumberConfirmed = true;
         var update = await userManager.UpdateAsync(user);

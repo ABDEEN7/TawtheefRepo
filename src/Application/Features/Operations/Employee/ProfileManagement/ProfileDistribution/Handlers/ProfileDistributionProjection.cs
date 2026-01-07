@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -11,6 +13,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Pr
 internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager<User> userManager)
 {
     public async Task<IReadOnlyList<DistributionProfileDto>> LoadProfilesAsync(
+        PaginatedRequest paginatedRequest,
         UserProfileStatus? status,
         CancellationToken ct)
     {
@@ -23,23 +26,27 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
             .Where(p =>
-                // phase 1: normal distribution statuses (exclude start/final)
-                (!ProfileDistributionRules.StartStatuses.Contains(p.Status) &&
-                 !ProfileDistributionRules.FinalStatuses.Contains(p.Status))
-                // phase 2: approved profiles with pending change requests should be distributable
+                (
+                    !Enumerable.Contains(ProfileDistributionRules.StartStatuses, p.Status) &&
+                    !Enumerable.Contains(ProfileDistributionRules.FinalStatuses, p.Status)
+                )
                 || (p.Status == UserProfileStatus.Approved &&
                     changeRepo.DbSet.Any(c =>
                         c.UserProfileId == p.Id &&
                         (c.Status == ProfileChangeRequestStatus.Pending ||
-                         c.Status == ProfileChangeRequestStatus.UnderReview))));
+                         c.Status == ProfileChangeRequestStatus.UnderReview)
+                    )
+                )
+            );
 
         if (status is not null)
             profilesQuery = profilesQuery.Where(p => p.Status == status);
 
-        var profiles = await profilesQuery.ToListAsync(ct);
-        if (profiles.Count == 0) return [];
+        var profiles = await profilesQuery
+            .ToPaginatedListAsync(paginatedRequest, ct);
+        if (profiles.Metadata.TotalCount == 0) return [];
 
-        var profileIds = profiles.Select(p => p.Id).ToList();
+        var profileIds = profiles.Items.Select(p => p.Id).ToList();
         var assignments = await assignmentRepo.DbSet
             .Where(a => a.IsActive && profileIds.Contains(a.UserProfileId))
             .Include(a => a.Employee)
@@ -47,7 +54,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
 
         var assignmentLookup = assignments.ToDictionary(a => a.UserProfileId, a => a);
 
-        return profiles
+        return profiles.Items
             .Select(profile =>
             {
                 assignmentLookup.TryGetValue(profile.Id, out var assignment);
@@ -124,7 +131,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
     public async Task<DistributionResultDto> BuildResultAsync(int assignedCount, CancellationToken ct)
     {
         var employees = await LoadEmployeesAsync(ct);
-        var profiles = await LoadProfilesAsync(null, ct);
+        var profiles = await LoadProfilesAsync(new PaginatedRequest {PageSize = int.MaxValue},null, ct);
 
         return new DistributionResultDto
         {

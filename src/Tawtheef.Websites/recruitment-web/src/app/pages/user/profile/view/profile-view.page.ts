@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { ButtonDirective } from 'primeng/button';
+import {ButtonDirective, ButtonIcon, ButtonLabel} from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
@@ -17,7 +17,7 @@ import {
   ReviewStatusEnum,
   MyProfileReviewSummaryDto,
   UserProfileStatusEnum,
-  MyProfileReviewNoteDto
+  MyProfileReviewNoteDto, ProfileChangeActionEnum
 } from '../overview/models/profile-overview.model';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { ProfileOverviewService } from '../overview/services/profile-overview.service';
@@ -37,6 +37,9 @@ import { ProfileLanguagesSectionComponent } from './sections/languages/languages
 import { ProfileAttachmentsSectionComponent } from './sections/attachments/attachments-section.component';
 import { ProfileViewCqrs } from './profile-view.cqrs';
 import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.directive';
+import {max} from 'rxjs';
+import {changeRequestDto} from './dtos/change-request-dto';
+import {detectChangedFields, FieldChange} from './utils/detect-change-fields';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -66,7 +69,10 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
     ProfileSkillsSectionComponent,
     ProfileLanguagesSectionComponent,
     ProfileAttachmentsSectionComponent,
-    FaDirArrowDirective
+    FaDirArrowDirective,
+    ButtonIcon,
+    ButtonDirective,
+    ButtonLabel
   ],
   templateUrl: './profile-view.page.html',
   styleUrls: ['./profile-view.page.scss'],
@@ -94,6 +100,11 @@ export class ProfileViewPage {
     { section: ProfileSectionEnum.Languages, icon: 'pi pi-language', labelKey: 'profileOverview.sections.languages' },
     { section: ProfileSectionEnum.Attachments, icon: 'pi pi-paperclip', labelKey: 'profileOverview.sections.attachments' }
   ];
+  readonly pageLoading = computed(() =>
+    this.basics.status() === 'loading' ||
+    this.review.status() === 'loading' ||
+    this.changeRequests.status() === 'loading'
+  );
   get keyLabel(){
     return this.cards.find(c => c.section === this.expanded())?.labelKey;
   }
@@ -113,11 +124,23 @@ export class ProfileViewPage {
     stream: () => this.overviewService.getMyChangeRequests(),
   });
 
-  // FIX: correct rxResource typing inside Map.
-  // If loadSection returns a different DTO per section, make this RxRes<unknown> instead.
   private readonly sections = new Map<ProfileSectionEnum, RxRes<ProfileStatusDto>>();
-
   protected readonly expanded = signal<ProfileSectionEnum>(ProfileSectionEnum.Personal);
+
+  protected changes(section: ProfileSectionEnum) {
+    if(this.profileStatus() !== UserProfileStatusEnum.Approved) return [];
+    const sectionChanges = this.changeRequestsVm()
+      .filter(cr =>
+        cr.section === section &&
+        cr.action == ProfileChangeActionEnum.UpdateField);
+
+    let resultChanges: FieldChange[] = [];
+    sectionChanges.forEach((change)=>{
+      resultChanges = resultChanges.concat(detectChangedFields(change.oldValue ?? '', change.newValue ?? ''))
+    });
+
+    return resultChanges;
+  }
 
   constructor() {
     this.cards.forEach(card => {
@@ -201,10 +224,16 @@ export class ProfileViewPage {
     }
   });
 
-  readonly canEditSections = computed(() => {
+  canEditSections(section: ProfileSectionEnum){
     const status = this.profileStatus();
-    return status === UserProfileStatusEnum.Approved || status === UserProfileStatusEnum.RequiresUpdate;
-  });
+    if(status === UserProfileStatusEnum.Approved)
+      return true;
+    if(status === UserProfileStatusEnum.RequiresUpdate) {
+      const indexSection = Math.min(Math.max(section - 1,0), ((this.review.value()?.sections.length ?? 1) - 1));
+      return (this.review.value()?.sections[indexSection]?.notesCount ?? 0) > 0;
+    }
+    return false;
+  }
 
   readonly activeNotes = computed(() => {
     const active = this.expanded();
@@ -234,7 +263,7 @@ export class ProfileViewPage {
       statusLabelKey: this.changeStatusLabelKey(item.status),
       statusSeverity: this.changeStatusSeverity(item.status),
       sectionLabelKey: this.sectionLabelKey(item.section)
-    }));
+    })) as changeRequestDto[];
   });
 
   openReviewStep() {
@@ -369,4 +398,10 @@ export class ProfileViewPage {
         return 'secondary';
     }
   }
+
+  protected reSubmitProfile() {
+
+  }
+
+  protected readonly UserProfileStatusEnum = UserProfileStatusEnum;
 }

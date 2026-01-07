@@ -43,7 +43,7 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
                  invitation.Applicant.Profile.NationalNumber != null &&
                  invitation.Applicant.Profile.NationalNumber.Contains(searchTerm!)));
 
-        var pagedInvitations = await invitations.ToPaginationListAsync(query, cancellationToken);
+        var pagedInvitations = await invitations.ToPaginatedListAsync(query, cancellationToken);
         var items = mapper.Map<List<JobInvitationSummaryDetailsRowDto>>(pagedInvitations.Items);
 
         for (var index = 0; index < items.Count; index++)

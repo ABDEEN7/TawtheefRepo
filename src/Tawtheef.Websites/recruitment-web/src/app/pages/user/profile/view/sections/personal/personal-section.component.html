@@ -27,7 +27,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.nationalNumber' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('nationalNumber')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -48,7 +48,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.qidExpiry' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('qidExpiry')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -69,7 +69,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.birthDate' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('birthDate')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -93,7 +93,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.nationality' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('nationality')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -114,7 +114,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.gender' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('gender')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -135,7 +135,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.religion' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('religion')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -156,7 +156,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.maritalStatus' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('maritalStatus')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -180,7 +180,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.sponsorType' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('sponsorType')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -201,7 +201,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.sponsorEmployerName' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('sponsorEmployerName')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -222,7 +222,7 @@
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.hasDisability' | translate }}
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview()">
+              <div class="align-self-center" *ngIf="fieldUnderReview('hasDisability')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
@@ -237,5 +237,41 @@
       </div>
     </div>
 
+    <!-- Attachments -->
+    <div class="row g-3 mt-2">
+      @for (att of attachments(); track att.key) {
+        <div class="col-12 col-lg-6">
+          <div class="card h-100 attach-card">
+            <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
+              <div class="attach-icon border rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0">
+                <i class="pi pi-external-link" aria-hidden="true"></i>
+              </div>
+
+              <div class="flex-grow-1 min-w-0">
+                <div class="text-muted small fw-semibold mb-1">
+                  {{ att.titleKey | translate }}
+                </div>
+
+                <div class="min-w-0">
+                  @if (att.file) {
+                    <a class="d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-body min-w-0 attach-link"
+                       (click)="open(att.file)">
+                      <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
+                      <span class="text-truncate d-inline-block">
+                        {{ att.file.fileName }}
+                      </span>
+                    </a>
+                  } @else {
+                    <span class="text-muted">
+                      {{ 'common.none' | translate }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </div>

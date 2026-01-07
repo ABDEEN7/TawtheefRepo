@@ -5,6 +5,8 @@ import { ButtonDirective } from 'primeng/button';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import { MyProfileReviewNoteDto } from '../../../overview/models/profile-overview.model';
+import {changeRequestDto} from '../../dtos/change-request-dto';
+import {FieldChange} from '../../utils/detect-change-fields';
 
 @Component({
   selector: 'app-profile-prerequisites-section',
@@ -21,25 +23,23 @@ export class ProfilePrerequisitesSectionComponent {
   @Input() canEdit = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Output() edit = new EventEmitter<void>();
-  fieldUnderReview = computed(() => (this.notes?.length ?? 0) > 0);
   attachments = computed(() => {
     const p = this.profile;
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
     return [
-      { key: 'resumeAttachment', titleKey: 'profileOverview.attachments.resume', file: p.resumeAttachment ?? null },
-      { key: 'nationalCard', titleKey: 'profileOverview.attachments.nationalCard', file: p.nationalCard ?? null },
-      { key: 'residenceAddressCertificate', titleKey: 'profileOverview.attachments.residenceAddressCertificate', file: p.residenceAddressCertificate ?? null },
       { key: 'birthdayCertificate', titleKey: 'profileOverview.attachments.birthdayCertificate', file: p.birthdayCertificate ?? null },
       { key: 'marriageCertificate', titleKey: 'profileOverview.attachments.marriageCertificate', file: p.marriageCertificate ?? null },
-      { key: 'sponsorCard', titleKey: 'profileOverview.attachments.sponsorCard', file: p.sponsorCard ?? null }
     ].filter(p => p.file);
   });
+  @Input() changesRequest!: FieldChange[];
 
+  protected fieldUnderReview(fieldKey: string){
+    return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
+  }
   open(file: FileRefDto | null | undefined) {
     if (!file) return;
     this.fileUtils.previewUrl(file.url ?? '');
   }
-
   protected onEdit() {
     this.edit.emit();
   }

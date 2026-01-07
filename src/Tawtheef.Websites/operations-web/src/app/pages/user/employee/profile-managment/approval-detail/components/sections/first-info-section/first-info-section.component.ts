@@ -3,25 +3,31 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TranslateModule } from '@ngx-translate/core';
-import {ProfileApprovalData} from '../../../../approval-list/models/profile-approval.models';
+import {
+  ProfileApprovalData,
+  ProfileApprovalItem,
+  ReviewStatus
+} from '../../../../approval-list/models/profile-approval.models';
 import {Ripple} from 'primeng/ripple';
+import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-review';
 
 @Component({
   selector: 'app-profile-approval-first-info-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, Ripple],
+  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, Ripple, ItemInlineReviewComponent],
   templateUrl: './first-info-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class FirstInfoSectionComponent {
   @Input({ required: true }) profile!: ProfileApprovalData;
+  @Input() reviewItems: ProfileApprovalItem[] | null = null;
   @Output() viewFile = new EventEmitter<string>();
+  @Output() reviewItem = new EventEmitter<{ reviewItemId: string; status: ReviewStatus; note?: string }>();
 
   firstInfoFields(): { label: string; value: unknown }[] {
     const fields = [
       { label: 'profileApproval.detail.snapshot.candidateType', value: this.profile.basicInformation.candidateType },
       { label: 'profileApproval.detail.snapshot.targetEntity', value: this.profile.basicInformation.targetEntity },
-      { label: 'profileApproval.detail.snapshot.office', value: this.profile.basicInformation.office },
     ];
 
     return fields.filter(field => this.hasValue(field.value));
@@ -43,5 +49,10 @@ export class FirstInfoSectionComponent {
     if (url) {
       this.viewFile.emit(url);
     }
+  }
+
+  reviewItemFor(resourceId?: string | null): ProfileApprovalItem | null {
+    if (!resourceId) return null;
+    return (this.reviewItems ?? []).find(i => i.resourceId === resourceId) ?? null;
   }
 }

@@ -9,4 +9,5 @@ internal static class QatarResidentOtpConstants
     public const int OtpExpiryMinutes = 10;
     public const int MaxOtpAttempts = 5;
     public const int MaxOtpSends = 5;
+    public static readonly TimeSpan OtpLockDuration = TimeSpan.FromMinutes(10);
 }

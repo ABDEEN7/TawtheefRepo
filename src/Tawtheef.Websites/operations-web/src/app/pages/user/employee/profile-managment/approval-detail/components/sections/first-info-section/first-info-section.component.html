@@ -39,36 +39,57 @@
       </ng-template>
 
       <div class="file-stack">
-        <button
-          type="button"
-          class="file-chip"
-          *ngIf="profile.basicInformation.birthdayCertificate"
-          pButton
-          pRipple
-          [label]="
-            ('profileApproval.detail.snapshot.birthdayCertificate' | translate) +
-            ': ' +
-            (profile.basicInformation.birthdayCertificate.fileName || '-')
-          "
-          (click)="preview(profile.basicInformation.birthdayCertificate.url)"
-          icon="pi pi-external-link"
-          iconPos="right"
-        ></button>
-        <button
-          type="button"
-          class="file-chip"
-          *ngIf="profile.basicInformation.marriageCertificate"
-          pButton
-          pRipple
-          [label]="
-            ('profileApproval.detail.snapshot.marriageCertificate' | translate) +
-            ': ' +
-            (profile.basicInformation.marriageCertificate.fileName || '-')
-          "
-          (click)="preview(profile.basicInformation.marriageCertificate.url)"
-          icon="pi pi-external-link"
-          iconPos="right"
-        ></button>
+
+        <ng-container *ngIf="profile.basicInformation.birthdayCertificate as birthdayCertificate">
+          <div class="file-entry">
+            <button
+              type="button"
+              class="file-chip"
+              pButton
+              pRipple
+              [label]="
+                ('profileApproval.detail.snapshot.birthdayCertificate' | translate) +
+                ': ' +
+                (birthdayCertificate.fileName || '-')
+              "
+              (click)="preview(birthdayCertificate.url)"
+              icon="pi pi-external-link"
+              iconPos="right"
+            ></button>
+            <app-item-inline-review
+              *ngIf="reviewItemFor(birthdayCertificate.resourceId) as review"
+              [reviewItemId]="review.reviewItemId"
+              [status]="review.status"
+              [note]="review.note"
+              (review)="reviewItem.emit($event)"
+            ></app-item-inline-review>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="profile.basicInformation.marriageCertificate as marriageCertificate">
+          <div class="file-entry">
+            <button
+              type="button"
+              class="file-chip"
+              pButton
+              pRipple
+              [label]="
+                ('profileApproval.detail.snapshot.marriageCertificate' | translate) +
+                ': ' +
+                (marriageCertificate.fileName || '-')
+              "
+              (click)="preview(marriageCertificate.url)"
+              icon="pi pi-external-link"
+              iconPos="right"
+            ></button>
+            <app-item-inline-review
+              *ngIf="reviewItemFor(marriageCertificate.resourceId) as review"
+              [reviewItemId]="review.reviewItemId"
+              [status]="review.status"
+              [note]="review.note"
+              (review)="reviewItem.emit($event)"
+            ></app-item-inline-review>
+          </div>
+        </ng-container>
       </div>
     </p-card>
   </div>

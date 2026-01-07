@@ -20,7 +20,7 @@ public sealed class GetJobCandidatesQueryHandler(
     {
         var query = JobCandidatesQueryBuilder.Build(unitOfWork, request.JobId, request.Filter);
 
-        var paginated = await query.ToPaginationListAsync(request.Pagination, cancellationToken);
+        var paginated = await query.ToPaginatedListAsync(request.Pagination, cancellationToken);
 
         var items = paginated.Items.Select(candidate => new JobCandidateListItemDto
         {

@@ -4,6 +4,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import { MyProfileReviewNoteDto } from '../../../overview/models/profile-overview.model';
+import {changeRequestDto} from '../../dtos/change-request-dto';
+import {FieldChange} from '../../utils/detect-change-fields';
 
 @Component({
   selector: 'app-profile-attachments-section',
@@ -19,10 +21,12 @@ export class ProfileAttachmentsSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canEdit = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Input() changesRequest!: FieldChange[];
   @Output() edit = new EventEmitter<void>();
 
-  protected fieldUnderReview = computed(() => (this.notes?.length ?? 0) > 0);
-
+  protected fieldUnderReview(fieldKey: string = ''){
+    return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
+  }
   open(file: FileRefDto | null | undefined) {
     if (!file) return;
     this.fileUtils.previewUrl(file.url ?? '');

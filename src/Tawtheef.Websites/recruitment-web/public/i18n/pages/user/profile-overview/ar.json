@@ -275,7 +275,8 @@
   "profileView.fields.phone": "رقم الهاتف",
   "profileOverview.reviewStatus.approved": "معتمد",
   "profileView.fields.email": "البريد الإلكتروني",
-
+  "profileView.actions.reSubmitProfile": "إعادة إرسال",
+  "profileView.actions.reSubmitProfileHint": "قم بإجراء التعديلات المطلوبة ثم أعد الإرسال للمراجعة.",
   "profileOverview.reviewStatus.needsCorrection": "بحاجة لتصحيح",
   "profileOverview.reviewStatus.rejected": "مرفوض",
   "profileOverview.reviewStatus.other": "ملاحظة",
@@ -308,5 +309,7 @@
   "profileOverview.changeRequests.status.approved": "معتمد",
   "profileOverview.changeRequests.status.rejected": "مرفوض",
   "profileOverview.changeRequests.status.canceled": "ملغي",
-  "profileOverview.sections.personalInfo": "المعلومات الشخصية"
+  "profileOverview.sections.personalInfo": "المعلومات الشخصية",
+  "profileView.hrNotes.title": "ملاحظات الموارد البشرية",
+  "profileView.sections.openFirst": "اضغط لتنقل بين التبويبات"
 }
