@@ -87,15 +87,13 @@ export class UsersManagement implements OnInit {
             pageSize: response.metadata.pageSize
           }));
         }
-      },
-      error: () => this.notification.error(this.translate.instant('USERS.LOAD_FAILED'))
+      }
     });
   }
 
   loadRoleLookups() {
     this.usersService.getRoleLookups().subscribe({
-      next: roles => this.roleLookups.set(roles),
-      error: () => this.notification.error(this.translate.instant('USERS.LOAD_FAILED'))
+      next: roles => this.roleLookups.set(roles)
     });
   }
 
@@ -138,9 +136,6 @@ export class UsersManagement implements OnInit {
             users.map(u => u.id === user.id ? {...u, isBlocked: desiredState} : u)
           );
           this.notification.success(this.translate.instant(desiredState ? 'USERS.BLOCK_SUCCESS' : 'USERS.UNBLOCK_SUCCESS'));
-        },
-        error: () => {
-          this.notification.error(this.translate.instant(desiredState ? 'USERS.BLOCK_FAILED' : 'USERS.UNBLOCK_FAILED'));
         }
       });
   }

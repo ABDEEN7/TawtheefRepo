@@ -1,6 +1,5 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output, inject} from '@angular/core';
-import {MessageService} from 'primeng/api';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {Component, EventEmitter, inject, isDevMode, OnDestroy, OnInit, Output} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
@@ -71,10 +70,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       this.profile.deleteLanguage(lang.id).subscribe({
         next: () => {
           this.ds.delLang(index);
-        },
-        error: (err: any) => {
-          console.error(err);
-        },
+        }
       });
     } else {
       this.ds.delLang(index);
@@ -109,7 +105,8 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
         this.next.emit();
       },
       error: (err: any) => {
-        console.error(err);
+        if(isDevMode())
+          console.error(err);
         this.saving = false;
       },
     });

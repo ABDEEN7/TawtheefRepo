@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
+import {Component, EventEmitter, inject, isDevMode, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
@@ -199,7 +199,8 @@ export class StepAttachmentsComponent implements OnInit {
         this.next.emit();
       },
       error: (err: any) => {
-        console.error(err);
+        if(isDevMode())
+          console.error(err);
         this.saving = false;
       },
     });

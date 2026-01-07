@@ -77,8 +77,7 @@ export class CountriesManagement implements OnInit {
             pageSize: response.metadata.pageSize
           }));
         }
-      },
-      error: () => this.notification.error(this.translate.instant('COUNTRIES.LOAD_FAILED'))
+      }
     });
   }
 
@@ -123,9 +122,6 @@ export class CountriesManagement implements OnInit {
             items.map(c => c.id === country.id ? { ...c, isActive: desiredState } : c)
           );
           this.notification.success(this.translate.instant(desiredState ? 'COUNTRIES.ACTIVATE_SUCCESS' : 'COUNTRIES.DEACTIVATE_SUCCESS'));
-        },
-        error: () => {
-          this.notification.error(this.translate.instant(desiredState ? 'COUNTRIES.ACTIVATE_FAILED' : 'COUNTRIES.DEACTIVATE_FAILED'));
         }
       });
   }
