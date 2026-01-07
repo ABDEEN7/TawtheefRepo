@@ -14,6 +14,9 @@ public static class PermissionCatalog
         Permissions.Users.View,
         Permissions.Users.Manage,
 
+        Permissions.CandidateUsers.View,
+        Permissions.CandidateUsers.Manage,
+
         Permissions.Offices.View,
         Permissions.Offices.Manage,
 

@@ -81,7 +81,7 @@ export const employeeRoutes: Routes = [
   {
     path: 'candidate-users-management',
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Users.View] },
+    data: { permissions: [Permissions.CandidateUsers.View] },
     component: CandidateUsersManagementPage
   },
 ];

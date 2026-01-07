@@ -16,7 +16,7 @@ namespace Operations.API.Controllers.Employee;
 public class CandidateUsersController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    [AuthorizePermission(PermissionKeys.Users.View)]
+    [AuthorizePermission(PermissionKeys.CandidateUsers.View)]
     public async Task<IActionResult> ListUsers([FromQuery] GetCandidateUsersQuery query)
     {
         var result = await mediator.Send(query);
@@ -24,7 +24,7 @@ public class CandidateUsersController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}/block-status")]
-    [AuthorizePermission(PermissionKeys.Users.Manage)]
+    [AuthorizePermission(PermissionKeys.CandidateUsers.Manage)]
     public async Task<IActionResult> UpdateUserBlockStatus(
         Guid id,
         [FromBody] UpdateCandidateUserBlockStatusCommand command)
