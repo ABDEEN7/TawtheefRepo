@@ -10,5 +10,5 @@ public class CandidateInvitationsDto
     public required string JobCategory { get; set; }
     public required string JobCategoryBackendName { get; set; }
     public required DropdownOptions InvitationStatus { get; set; }
-    public DateTime CreateDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 }

@@ -180,7 +180,7 @@
                                  {{ record.invitationStatus.name }}
                                </span>
                              </td>
-                             <td>{{ record.createDate }}</td>
+                             <td>{{ record.createdDate | date :'dd/MM/yyyy'}}</td>
                              <td class="text-end">
                                @if (getActionButtons(record.invitationStatus); as actions) {
                                  @if (actions.showApply) {

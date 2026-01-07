@@ -34,43 +34,6 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DescriptionAr = "المرشح فتح الدعوة لأول مرة ولم يبدأ التقديم.",
                 DisplayOrder = 2
             },
-
-            // 3 — SUBMITTED
-            new InvitationStatus
-            {
-                Id = InvitationStatusIds.Submitted,
-                BackendName = nameof(InvitationStatusIds.Submitted),
-                NameEn = "Submitted",
-                NameAr = "تم التقديم",
-                DescriptionEn = "The candidate submitted the application with all required information completed.",
-                DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة.",
-                DisplayOrder = 3
-            },
-
-            // 4 — UNDER_REVIEW
-            new InvitationStatus
-            {
-                Id = InvitationStatusIds.UnderReview,
-                BackendName = nameof(InvitationStatusIds.UnderReview),
-                NameEn = "Under Review",
-                NameAr = "قيد المراجعة",
-                DescriptionEn = "The application is under initial review by the recruitment department.",
-                DescriptionAr = "الطلب تحت المراجعة المبدئية لقسم التوظيف.",
-                DisplayOrder = 4
-            },
-
-            // 5 — REQUIRES_UPDATE
-            new InvitationStatus
-            {
-                Id = InvitationStatusIds.RequiresUpdate,
-                BackendName = nameof(InvitationStatusIds.RequiresUpdate),
-                NameEn = "Requires Update",
-                NameAr = "مطلوب تعديل",
-                DescriptionEn = "The application was returned to the candidate to complete missing information.",
-                DescriptionAr = "الطلب تم إرجاعه للمرشح لإكمال نواقص محددة.",
-                DisplayOrder = 5
-            },
-
             // 6 — APPROVED
             new InvitationStatus
             {

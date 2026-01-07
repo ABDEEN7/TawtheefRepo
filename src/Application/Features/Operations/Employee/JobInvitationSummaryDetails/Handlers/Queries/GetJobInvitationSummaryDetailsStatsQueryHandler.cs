@@ -29,9 +29,6 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
             New = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.NewInvitation,
                 cancellationToken),
-            Applied = await invitations.CountAsync(
-                invitation => invitation.InvitationStatusId == InvitationStatusIds.Submitted,
-                cancellationToken),
             Declined = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Rejected,
                 cancellationToken),

@@ -19,15 +19,16 @@ import {JobTabType} from './enums/job-tab-type';
   styleUrls: ['./job-details.scss']
 })
 export class JobDetails implements OnInit {
+  detailsService = inject(JobDetailsService);
+  private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
+  private notifier = inject(NotificationService);
   job = this.detailsService.job;
   isLoading = this.detailsService.loading;
   activeTab: string = JobTabType.Overview;
   tabType = JobTabType;
 
-  private route = inject(ActivatedRoute);
-  private translate = inject(TranslateService);
-  private notifier = inject(NotificationService);
-  detailsService = inject(JobDetailsService);
+
   routes = routes;
 
   invitationId = signal<string | null>(null);
