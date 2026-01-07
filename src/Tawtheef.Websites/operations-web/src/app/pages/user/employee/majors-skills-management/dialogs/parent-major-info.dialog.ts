@@ -8,7 +8,7 @@ import {UpsertSkillDialogData} from './upsert-skill.dialog';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="p-2">
+    <div class="modal-body">
       <ng-container *ngIf="parentMajor; else noData">
         <div class="fw-semibold mb-2">{{ parentMajor.name }}</div>
         <div class="text-muted small">{{ parentMajor.description || '-' }}</div>
@@ -20,6 +20,7 @@ import {UpsertSkillDialogData} from './upsert-skill.dialog';
 
       <div class="d-flex justify-content-end mt-4">
         <button class="btn btn-outline-secondary" (click)="ref.close()">
+          <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i>
           Close
         </button>
       </div>

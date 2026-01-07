@@ -53,11 +53,11 @@ type Vm = {
     TranslatePipe,
   ],
   template: `
-    <div class="p-2">
+    <div class="modal-body">
       <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
 
-        <div class="row g-3">
-          <div class="col-12 col-md-6">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-3">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_PARENT_MAJOR' | translate }}</label>
 
             <app-remote-select
@@ -78,7 +78,7 @@ type Vm = {
             </small>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 mb-3">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SUB_MAJOR_OPTIONAL' | translate }}</label>
 
             <app-remote-select
@@ -98,7 +98,7 @@ type Vm = {
             </app-remote-select>
           </div>
 
-          <div class="col-12">
+          <div class="col-12 mb-3">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SKILL' | translate }}</label>
 
             <app-remote-select
@@ -140,12 +140,15 @@ type Vm = {
           </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-2 mt-2">
-          <button pButton type="button" class="p-button-outlined" (click)="cancel()">
-            {{ 'MAJORS_SKILLS.CANCEL' | translate }}
+        
+        <div class="modal-footer justify-content-end gap-3 border-0">
+          <button pButton type="button" class="p-button-outlined mw-200 text-center d-flex text-primary fs-16 gap-1" (click)="cancel()">
+            <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i>
+             {{ 'MAJORS_SKILLS.CANCEL' | translate }}
           </button>
-          <button pButton type="submit" class="p-button" [disabled]="!isValid()">
-            {{ 'MAJORS_SKILLS.SAVE' | translate }}
+          <button pButton type="submit" class="btn btn-primary mw-200 d-flex gap-2 justify-content-center" [disabled]="!isValid()">
+            <i class="hgi hgi-stroke hgi-floppy-disk fs-18"></i>
+             {{ 'MAJORS_SKILLS.SAVE' | translate }}
           </button>
         </div>
 
