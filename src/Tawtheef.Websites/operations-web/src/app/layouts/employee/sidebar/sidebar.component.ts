@@ -30,6 +30,7 @@ export class SidebarComponent implements OnInit {
     { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalProfile, permission: Permissions.ProfileApproval.View },
     { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: routes.employee.JobList, permission: Permissions.Jobs.View },
     { key: 'invitation-summary', label: 'internal.sidebar.invitation-summary', icon: 'assets/img/icons/add-to-list-stroke-rounded.svg', route: routes.employee.jobInvitationSummary, permission: Permissions.Nominations.View },
+    { key: 'candidate-users', label: 'internal.sidebar.candidate-users', icon: 'assets/img/icons/users.svg', route: routes.employee.candidateUsersManagement, permission: Permissions.Users.View },
     { key: 'organization-structures', label: 'internal.sidebar.organization-structures', icon: 'assets/img/icons/workflow-square-06-stroke-rounded.svg', route: routes.employee.organizationStructures, permission: Permissions.OrganizationStructures.Manage },
     { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'assets/img/icons/workflow-square-06-stroke-rounded.svg', route: routes.employee.majorsSkillsManagement, permission: Permissions.Nominations.View },
     { key: 'kawader', label: 'internal.sidebar.kawader', icon: 'assets/img/icons/users.svg', route: routes.employee.kawader, permission: Permissions.Kawader.Manage }
