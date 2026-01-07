@@ -132,12 +132,12 @@
           </td>
 
           <td>
-          <span class="badge" [class.bg-success-subtle]="item.isActive" [class.bg-danger-subtle]="!item.isActive">
+          <span class="pill" [class.success]="item.isActive" [class.danger]="!item.isActive">
             {{ item.isActive ? ('MAJORS_SKILLS.ACTIVE' | translate) : ('MAJORS_SKILLS.INACTIVE' | translate) }}
           </span>
           </td>
 
-          <td class="d-flex justify-content-start gap-2">
+          <td class="d-flex justify-content-start gap-2 align-items-center">
             <button
               pButton
               type="button"

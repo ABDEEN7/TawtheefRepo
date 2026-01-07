@@ -36,10 +36,10 @@ export interface UpsertDepartmentDialogData {
     Select,
   ],
   template: `
-    <div class="p-2">
+    <div class="modal-body">
       <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
-        <div class="d-flex gap-3 flex-wrap">
-          <div class="flex-grow-1 min-w-250">
+        <div class="row">
+          <div class="col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
             <p-select
               class="w-100"
@@ -55,7 +55,7 @@ export interface UpsertDepartmentDialogData {
             </p-select>
             <small class="text-muted" *ngIf="f.submitted && !vm.sectorId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
           </div>
-          <div class="flex-grow-1 min-w-250">
+          <div class="col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate }}</label>
             <p-select
               class="w-100"
@@ -72,10 +72,10 @@ export interface UpsertDepartmentDialogData {
           </div>
         </div>
 
-        <div class="d-flex gap-3 flex-wrap">
-          <div class="flex-grow-1 min-w-250">
+        <div class="row">
+          <div class="col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_NAME_EN' | translate }}</label>
-            <input pInputText class="w-100"
+            <input pInputText class="w-100  form-control"
                    name="nameEn"
                    [(ngModel)]="vm.nameEn"
                    required
@@ -83,9 +83,9 @@ export interface UpsertDepartmentDialogData {
                    [placeholder]="'ORG_STRUCTURES.FIELD_NAME_EN' | translate" />
             <small class="text-muted" *ngIf="f.submitted && !vm.nameEn">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
           </div>
-          <div class="flex-grow-1 min-w-250">
+          <div class="col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_NAME_AR' | translate }}</label>
-            <input pInputText class="w-100"
+            <input pInputText class="w-100  form-control"
                    name="nameAr"
                    [(ngModel)]="vm.nameAr"
                    required
@@ -95,8 +95,8 @@ export interface UpsertDepartmentDialogData {
           </div>
         </div>
 
-        <div class="d-flex gap-3 flex-wrap">
-          <div class="flex-grow-1 min-w-250">
+        <div class="row">
+          <div class="col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate }}</label>
             <textarea pInputTextarea rows="3" class="w-100"
                       name="descriptionEn"
@@ -105,7 +105,7 @@ export interface UpsertDepartmentDialogData {
                       [placeholder]="'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate"></textarea>
           </div>
 
-          <div class="flex-grow-1 min-w-250">
+          <div class="col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DESCRIPTION_AR' | translate }}</label>
             <textarea pInputTextarea rows="3" class="w-100"
                       name="descriptionAr"
@@ -115,19 +115,20 @@ export interface UpsertDepartmentDialogData {
           </div>
         </div>
 
-        <div class="d-flex gap-3 flex-wrap align-items-center">
-          <div class="d-flex align-items-center gap-2">
+        <div class="row">
+          <div class="col-md-6 d-flex align-items-center gap-2">
             <p-toggle-switch [(ngModel)]="vm.isActive" name="isActive"></p-toggle-switch>
             <span>{{ 'ORG_STRUCTURES.FIELD_ACTIVE' | translate }}</span>
           </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-2 mt-2">
-          <button pButton type="button" class="p-button-outlined" (click)="cancel()">
+        <div class="modal-footer justify-content-end gap-3 border-0">
+          <button pButton type="button" class="p-button-outlined mw-200 text-center d-flex text-primary fs-16 gap-1" (click)="cancel()">
+                  <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i>
             {{ 'ORG_STRUCTURES.CANCEL' | translate }}
           </button>
-          <button pButton type="submit" [disabled]="!isValid()">
-            {{ 'ORG_STRUCTURES.SAVE' | translate }}
+          <button pButton type="submit" class="btn btn-primary mw-200 d-flex gap-2 justify-content-center" [disabled]="!isValid()">
+            <i class="hgi hgi-stroke hgi-floppy-disk fs-18"></i> {{ 'ORG_STRUCTURES.SAVE' | translate }}
           </button>
         </div>
       </form>

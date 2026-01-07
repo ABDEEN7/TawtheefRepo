@@ -73,14 +73,14 @@
             <td>{{ skill.usedInMappingsCount || 0 }}</td>
 
             <td>
-          <span class="badge"
-                [class.bg-success-subtle]="skill.isActive !== false"
-                [class.bg-danger-subtle]="skill.isActive === false">
+          <span class="pill"
+                [class.success]="skill.isActive !== false"
+                [class.danger]="skill.isActive === false">
             {{ skill.isActive === false ? ('MAJORS_SKILLS.INACTIVE' | translate) : ('MAJORS_SKILLS.ACTIVE' | translate) }}
           </span>
             </td>
 
-            <td class=" d-flex gap-2 align-items-center">
+            <td class="d-flex gap-2 align-items-center">
               <button
                 pButton
                 type="button"
