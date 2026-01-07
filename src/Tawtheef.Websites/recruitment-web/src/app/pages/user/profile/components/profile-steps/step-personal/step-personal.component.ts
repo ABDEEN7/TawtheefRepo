@@ -24,6 +24,7 @@ import {normalizeMoiResponse} from '../../../wizard-profile/services/moi-respons
 import {mapPersonalSection} from '../../../wizard-profile/services/profile.mapper';
 import {SponsorType} from '../../../../../../core/enums/lookups.enum';
 import {dateToDateOnly} from '../../../../../../shared/types/dateOnly.type';
+import {MessageService} from 'primeng/api';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 
 
@@ -42,6 +43,7 @@ export class StepPersonalComponent implements OnInit {
   translate = inject(TranslateService);
   lookups = inject(ProfileLookupsService);
   profileService = inject(ProfileService);
+  messageService = inject(MessageService);
   notificationService = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
   protected readonly dateToDateOnly = dateToDateOnly;
@@ -89,7 +91,12 @@ export class StepPersonalComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           this.ds.applySponsorPersonalInfo(normalizeMoiResponse(res));
-          this.notificationService.error(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail: this.translate.instant('wizard.personal.verify.success'),
+            life: 3000,
+          });
         }
       });
   }

@@ -20,6 +20,7 @@ import {mapPrereqSection} from '../../../wizard-profile/services/profile.mapper'
 import {catchError, finalize, map, switchMap, tap} from 'rxjs/operators';
 import {normalizeMoiResponse} from '../../../wizard-profile/services/moi-response-normalizer';
 import {of} from 'rxjs';
+import {MessageService} from 'primeng/api';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 
 
@@ -36,6 +37,7 @@ export class StepPrereqComponent implements OnInit {
   translate = inject(TranslateService);
   lookups   = inject(ProfileLookupsService);
   profile   = inject(ProfileService);
+  messageService   = inject(MessageService);
   notificationService   = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
 
@@ -139,7 +141,12 @@ export class StepPrereqComponent implements OnInit {
         tap(res => {
           this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
           this.hasCheckedProfile = true;
-          this.notificationService.error(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('wizard.personal.verify.title'),
+            detail: this.translate.instant('wizard.personal.verify.success'),
+            life: 3000,
+          });
         }),
         map(() => true as const),
         catchError(err => {
