@@ -20,6 +20,10 @@ internal sealed class JobCandidatePointsCalculator
     private const string ReadingMaxCode = "reading.max";
     private const string ConversationMaxCode = "conversation.max";
     private const string NativeCode = "native";
+    private const string Excellent = "Excellent";
+    private const string VeryGood = "veryGood";
+    private const string Good = "good";
+
 
     public int Calculate(JobCandidateRecord candidate, JobPointsMain? jobPoints)
     {
@@ -301,25 +305,20 @@ internal sealed class JobCandidatePointsCalculator
     {
         if (levelId == LanguageLevelIds.Expert)
         {
-            return "excellent";
+            return Excellent;
         }
 
         if (levelId == LanguageLevelIds.Advanced)
         {
-            return "veryGood";
+            return VeryGood;
         }
 
         if (levelId == LanguageLevelIds.Intermediate || levelId == LanguageLevelIds.Basic)
         {
-            return "good";
+            return Good;
         }
 
-        if (levelId == LanguageLevelIds.Native)
-        {
-            return "excellent";
-        }
-
-        return null;
+        return levelId == LanguageLevelIds.Native ? Excellent : null;
     }
 
     private static int GetDetailPoints(IEnumerable<JobPointsDetail> details, string code)
