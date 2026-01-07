@@ -77,27 +77,28 @@
           </td>
           <td>{{ sector.displayOrder ?? 0 }}</td>
           <td>
-            <span class="badge"
-                  [class.bg-success-subtle]="sector.isActive !== false"
-                  [class.text-success]="sector.isActive !== false"
-                  [class.bg-danger-subtle]="sector.isActive === false"
-                  [class.text-danger]="sector.isActive === false">
+            <span class="pill"
+                  [class.success]="sector.isActive !== false"
+                  [class.warning]="sector.isActive === false">
               {{ sector.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
             </span>
           </td>
-          <td
-            class="actions-cell text-nowrap"
-            [class.text-end]="!store.isRtl()"
-            [class.text-start]="store.isRtl()">
-            <button
-              type="button"
-              class="icon-btn"
+          <td >
+             <div class="action-buttons">
+
+                  <button
+              
+          type="button"
+          class="btn"
               (click)="service.openEditSector(sector)"
               [pTooltip]="'common.edit' | translate"
               tooltipPosition="top"
               [attr.aria-label]="'common.edit' | translate">
-              <i class="bi bi-pencil-square"></i>
+              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
             </button>
+            
+
+
 
             <button
               type="button"
@@ -108,6 +109,8 @@
               [attr.aria-label]="(sector.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
               <i class="bi" [ngClass]="sector.isActive !== false ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
             </button>
+             </div>
+            
           </td>
         </tr>
       </ng-template>
