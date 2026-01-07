@@ -1,0 +1,15 @@
+{
+  "job_details.title": "Job Details",
+  "job_details.subtitle": "Review your invitation and apply when you are ready.",
+  "job_details.back_to_dashboard": "Back to Dashboard",
+  "job_details.apply_now": "Apply Now",
+  "job_details.loading": "Loading job details...",
+  "job_details.no_data": "No invitation details found.",
+  "job_details.field_job_title": "Job Title",
+  "job_details.field_department": "Department",
+  "job_details.field_category": "Category",
+  "job_details.field_status": "Status",
+  "job_details.field_date": "Invitation Date",
+  "job_details.apply_success": "Your application has been submitted.",
+  "job_details.apply_error": "Unable to apply right now. Please try again."
+}

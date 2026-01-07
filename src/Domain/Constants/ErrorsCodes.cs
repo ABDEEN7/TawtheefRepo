@@ -234,6 +234,7 @@ public class ErrorsCodes
     public const string JobCannotBeCancelled = "JOB_CANNOT_BE_CANCELLED";
     public const string JobClosingDateInvalid = "JOB_CLOSING_DATE_INVALID";
     public const string NoteRequired = "NOTE_REQUIRED";
+    public const string InvitationNotFound = "INVITATION_NOT_FOUND";
     #endregion
 
     #region Organization Structures

@@ -23,4 +23,7 @@ export const userRoutes = {
   profileEditSection(section: string){
     return this.profileEdit + '/' + section;
   },
+  jobDetails(invitationId: string){
+    return this.user + 'job-details/' + invitationId;
+  },
 };
