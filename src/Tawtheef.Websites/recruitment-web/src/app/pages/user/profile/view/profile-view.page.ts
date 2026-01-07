@@ -69,7 +69,6 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
     ProfileSkillsSectionComponent,
     ProfileLanguagesSectionComponent,
     ProfileAttachmentsSectionComponent,
-    FaDirArrowDirective,
     ButtonIcon,
     ButtonDirective,
     ButtonLabel

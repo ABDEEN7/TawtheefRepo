@@ -12,7 +12,7 @@ import { TooltipModule } from 'primeng/tooltip';
 @Component({
   selector: 'app-profile-prerequisites-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, ButtonDirective, TooltipModule],
+  imports: [CommonModule, TranslatePipe, TooltipModule],
   templateUrl: './prerequisites-section.component.html',
   styleUrls: ['./prerequisites-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

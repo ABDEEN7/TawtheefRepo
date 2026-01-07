@@ -178,12 +178,14 @@ export interface FileRefDto {
 }
 export interface AchievementDto{
   id: GUID;
-  achievementTypeId: string;
+  achievementTypeId: GUID;
+  achievementType?: dropdownOptionsModel | null;
   title: string;
   issuingAuthority: string;
-  countryId?: string | null;
+  countryId: GUID;
   country?: dropdownOptionsModel | null;
   issueDate: string;
   description: string;
+  relatedToSpecialization: boolean;
   attachment?: FileRefDto | null;
 }

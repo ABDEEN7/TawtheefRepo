@@ -60,13 +60,13 @@
             <div class="text-start">
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 <div class="fs-4 fw-bold">{{ header()?.fullNameAr || header()?.fullNameEn}}</div>
-                <span class="status-chip" [ngClass]="statusVm()?.severity">
-                  <i class="bi" [ngClass]="statusVm()?.severity === 'chip-ok' ? 'bi-check-circle' : 'bi-hourglass-split'"></i>
-                  {{ statusVm()?.labelKey | translate }}
+                <span class="status-chip" [ngClass]="statusVm().severity">
+                  <i class="bi" [ngClass]="statusVm().severity === 'chip-ok' ? 'bi-check-circle' : 'bi-hourglass-split'"></i>
+                  {{ statusVm().labelKey | translate }}
                 </span>
               </div>
               <div class="muted small">
-                {{ statusVm()?.hintKey | translate }}
+                {{ statusVm().hintKey | translate }}
               </div>
             </div>
 

@@ -13,6 +13,7 @@ import {Achievement} from '../../../../wizard-profile/models/achievement.model';
 import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
 import {dropdownOptionsModel} from '../../../../../../../shared/models/dropdown-options.model';
 import {EXPERIENCE_DIALOG_LIMITS} from '../../step-experience/dialogs/dialog-config';
+import {GUID} from '../../../../../../../shared/types/guid.type';
 
 export const ACHIEVEMENT_DIALOG_LIMITS = {
   descriptionMaxLength: 500,
@@ -49,8 +50,8 @@ export class AchievementModal implements OnInit {
   protected readonly disableFileUpload = !!this.config.data?.disableFileUpload;
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
-  private initialId: string | null = null;
-  private initialAttachmentId: string | null = null;
+  private initialId: GUID | null = null;
+  private initialAttachmentId: GUID | null = null;
   today = new Date();
 
   form: FormGroup = this.fb.group({
@@ -139,9 +140,11 @@ export class AchievementModal implements OnInit {
     const v = this.form.getRawValue();
     const payload: Achievement = {
       id: this.initialId ?? undefined,
+      achievementTypeId: v.achievementTypeId,
       achievementType: v.achievementType,
       title: v.title,
       issuingAuthority: v.issuingAuthority,
+      countryId: v.countryId,
       country: v.country,
       issueDate: dateToDateOnly(v.issueDate)!,
       description: v.description,

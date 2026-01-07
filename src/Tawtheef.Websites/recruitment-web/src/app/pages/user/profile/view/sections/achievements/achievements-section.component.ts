@@ -130,9 +130,11 @@ export class ProfileAchievementsSectionComponent {
 
     const payload: Achievement = {
       id: achievement.id,
-      achievementType: achievement.achievementTypeId ? { id: achievement.achievementTypeId } : null,
+      achievementTypeId: achievement.achievementTypeId,
+      achievementType: achievement.achievementType ?? null,
       title: achievement.title ?? '',
       issuingAuthority: achievement.issuingAuthority ?? '',
+      countryId: achievement.countryId,
       country: achievement.country ?? null,
       issueDate: achievement.issueDate ?? '',
       description: achievement.description ?? '',

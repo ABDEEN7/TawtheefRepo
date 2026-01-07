@@ -12,7 +12,7 @@
       <button *ngIf="canEdit"
               type="button"
               class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-              (click)="onEdit?.()">
+              (click)="onEdit()">
         <i class="pi pi-pencil" aria-hidden="true"></i>
         <span>{{ 'common.edit' | translate }}</span>
       </button>

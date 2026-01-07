@@ -86,11 +86,11 @@ export class ProfileExperienceSectionComponent {
       org: exp.employerName,
       name: exp.jobTitle,
       country: exp.country ?? null,
-      from: exp.startDate ?? exp.from ?? null,
-      to: exp.endDate ?? exp.to ?? null,
-      current: exp.isCurrent ?? exp.current ?? false,
+      from: exp.startDate ?? null,
+      to: exp.endDate ?? null,
+      current: exp.isCurrent ?? false,
       description: exp.description ?? '',
-      fileName: exp.attachment?.fileName ?? exp.fileName ?? '',
+      fileName: exp.attachment?.fileName ?? '',
       qualificationId: exp.qualificationId ?? null,
     };
 
@@ -134,8 +134,8 @@ export class ProfileExperienceSectionComponent {
       id: exp.id,
       employerName: exp.employerName ?? '',
       jobTitle: exp.jobTitle ?? '',
-      from: exp.startDate ?? null,
-      to: exp.endDate ?? null,
+      from: exp.startDate ?? undefined,
+      to: exp.endDate ?? undefined,
       current: exp.isCurrent ?? false,
       country: exp.country ?? null,
       description: exp.description ?? '',
@@ -143,7 +143,7 @@ export class ProfileExperienceSectionComponent {
       fileName: file.name,
       attachmentId: exp.attachment?.resourceId ?? null,
       qualificationId: exp.qualificationId ?? null,
-      qualificationName: exp.qualificationName ?? null,
+      qualificationName: exp.attachment?.fileName ?? null,
     };
 
     this.profileService.saveExperienceSection([payload], []).subscribe({
@@ -182,7 +182,7 @@ export class ProfileExperienceSectionComponent {
           }
         : null,
       attachmentId: q.attachment?.resourceId ?? null,
-      fileName: q.attachment?.fileName ?? null,
+      fileName: q.attachment?.fileName ?? undefined,
     }));
   }
 }
