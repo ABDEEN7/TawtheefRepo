@@ -24,14 +24,31 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetCandidateTypesQuery());
         return result.ToActionResult();
     }
+    
+    [HttpGet("lookups/nationalities")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> GetNationalitiesTypes()
+    {
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetCountriesQuery() with { Language = language });
+        return result.ToActionResult();
+    }
     #endregion
 
     #region Job Candidates
-    [HttpGet("overview")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
-    public async Task<IActionResult> GetOverview([FromQuery] GetJobCandidatesOverviewQuery query)
+    [HttpGet("filters")]
+    [AuthorizePermission(PermissionKeys.Jobs.View)]
+    public async Task<IActionResult> GetFilterSettings([FromQuery] GetJobCandidatesFilterSettingsQuery query)
     {
         var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("filters")]
+    [AuthorizePermission(PermissionKeys.Jobs.View,PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> SaveFilterSettings([FromBody] SaveJobCandidatesFilterSettingsCommand command)
+    {
+        var result = await mediator.Send(command);
         return result.ToActionResult();
     }
 
@@ -44,7 +61,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("export")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View,PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> Export([FromBody] ExportJobCandidatesQuery query)
     {
         var result = await mediator.Send(query);
@@ -58,7 +75,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("send-invitations")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View,PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> SendInvitations([FromBody] SendJobCandidateInvitationsCommand command)
     {
         var result = await mediator.Send(command);

@@ -1,8 +1,12 @@
 <section i18nNamespace="pages/job-candidates" class="page-shell">
   <div class="page-header">
-    <div class="page-header__title">
-      <h1 class="title">{{ 'JOB_CANDIDATE_AVAILABLE_JOBS' | translate }}</h1>
-      <p class="subtitle">{{ 'JOB_CANDIDATE_REVIEW_EDIT_JOBS' | translate }}</p>
+    <div class="hero-text">
+      <h2 class="page-title">
+        {{ 'JOB_CANDIDATE_TITLE' | translate }}
+        <span class="title-sep">-</span>
+        <span class="job-name">{{ jobInfo?.titleAr }}/{{ jobInfo?.titleEn }}</span>
+      </h2>
+      <p class="page-subtitle">{{ 'JOB_CANDIDATE_SUBTITLE' | translate }}</p>
     </div>
   </div>
 
@@ -13,23 +17,23 @@
 
     <div class="stats-row">
       <div class="stat-card stat-card--light">
-        <div class="stat-card__value">{{ abovePointsCandidatesCount }}</div>
+        <div class="stat-card__value">{{ totalCandidatesCount }}</div>
         <div class="stat-card__label">{{ 'JOB_CANDIDATE_JOB_CANDIDATE' | translate }}</div>
       </div>
 
       <div class="stat-card stat-card--warn">
-        <div class="stat-card__value">{{ totalCandidatesCount }}</div>
-        <div class="stat-card__label">{{ 'JOB_CANDIDATE_STATS_PENDING_APPROVAL' | translate }}</div>
+        <div class="stat-card__value">{{ abovePointsCandidatesCount }}</div>
+        <div class="stat-card__label">{{ 'JOB_CANDIDATE_STATS_ABOVE_800_POINT' | translate }}</div>
       </div>
 
       <div class="stat-card stat-card--ok">
         <div class="stat-card__value">{{ availableCandidatesCount }}</div>
-        <div class="stat-card__label">{{ 'JOB_CANDIDATE_STATS_APPROVED' | translate }}</div>
+        <div class="stat-card__label">{{ 'JOB_CANDIDATE_AVAILABLE_CANDIDATES' | translate }}</div>
       </div>
 
       <div class="stat-card stat-card--blue">
         <div class="stat-card__value">{{ pointsAverage }}</div>
-        <div class="stat-card__label">{{ 'JOB_CANDIDATE_STATS_DRAFTED' | translate }}</div>
+        <div class="stat-card__label">{{ 'JOB_CANDIDATE_POINTS_AVERAGE' | translate }}</div>
       </div>
     </div>
   </div>
@@ -44,44 +48,37 @@
         <input
           class="input"
           [ngModel]="searchQuery()"
-          (ngModelChange)="searchQuery.set($event); onFilterChange()"
+          (ngModelChange)="searchQuery.set($event)"
           [placeholder]="'JOB_CANDIDATE_FILTERS_SEARCH_PLACEHOLDER' | translate"
         />
 
-        <p-select
+        <p-inputNumber
           class="select"
-          [options]="minimumPointsOptions"
           [ngModel]="minimumPoints()"
-          (ngModelChange)="minimumPoints.set($event); onFilterChange()"
-          [showClear]="true"
+          (ngModelChange)="minimumPoints.set($event)"
+          [showButtons]="false"
+          [min]="0"
           [placeholder]="'JOB_CANDIDATE_FILTERS_MINIMUM_POINTS' | translate"
-        ></p-select>
+        ></p-inputNumber>
 
         <p-select
           class="select"
-          [options]="lookupsService.jobCategories()"
-          [ngModel]="filterJobCategory()"
-          (ngModelChange)="filterJobCategory.set($event); onFilterChange()"
+          [options]="lookupsService.genders()"
+          [ngModel]="filterGender()"
+          (ngModelChange)="filterGender.set($event)"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
-          [placeholder]="'JOB_CANDIDATE_FILTERS_JOB_CATEGORY' | translate"
-        ></p-select>
-
-        <p-select
-          class="select"
-          [options]="lookupsService.candidateTypes()"
-          [ngModel]="filterCandidateCategory()"
-          (ngModelChange)="filterCandidateCategory.set($event); onFilterChange()"
-          optionLabel="name"
-          optionValue="id"
-          [showClear]="true"
-          [placeholder]="'JOB_CANDIDATE_FILTERS_CANDIDATE_CATEGORY' | translate"
+          [placeholder]="'JOB_CANDIDATE_FILTERS_CANDIDATE_GENDER' | translate"
         ></p-select>
       </div>
-      <button class="chip" type="button" (click)="clearFilters()">
+      <button class="chip" type="button" (click)="openNationalityFilter()">
         <i class="fa fa-filter"></i>
-        <span>{{ 'JOB_CANDIDATE_BUTTONS_CLEAR_FILTERS' | translate }}</span>
+        <span>{{ 'JOB_CANDIDATE_BUTTONS_NATIONALITY_FILTERS' | translate }}</span>
+      </button>
+      <button class="chip chip--apply" type="button" (click)="applyFilters()">
+       <i class="fa fa-search"></i>
+       <span>{{ 'common.apply' | translate }}</span>
       </button>
     </div>
 
@@ -89,14 +86,16 @@
       <p-table
         class="ptable-reset"
         [value]="candidates?.items ?? []"
-        dataKey="invitationId"
+        dataKey="candidateId"
         [(selection)]="selectedCandidates"
       >
         <ng-template pTemplate="header">
           <tr>
+            @if (canSelectCandidates()) {
             <th class="col-select">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
+            }
             <th class="col-index">#</th>
             <th>{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_NAME' | translate }}</th>
             <th>{{ 'JOB_CANDIDATE_COLUMNS_DEPARTMENT' | translate }}</th>
@@ -111,9 +110,11 @@
 
         <ng-template pTemplate="body" let-candidate let-i="rowIndex">
           <tr>
+            @if (canSelectCandidates()) {
             <td class="col-select">
               <p-tableCheckbox [value]="candidate"></p-tableCheckbox>
             </td>
+            }
             <td class="cell-alt col-index">{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
 
             <td>{{ candidate.candidateName }}</td>
@@ -127,7 +128,11 @@
             <td class="col-actions">
               <div class="row-actions">
                 @if (canViewJobs()) {
-                <button class="btn-pill btn-pill--outline" type="button" (click)="viewDetails(candidate.candidateId)">
+                <button
+                  class="btn-pill btn-pill--outline"
+                  type="button"
+                  (click)="viewDetails(candidate.candidateId)"
+                >
                   <i class="fa fa-eye"></i>
                   <span>{{ 'JOB_CANDIDATE_BUTTONS_VIEW' | translate }}</span>
                 </button>
@@ -136,7 +141,6 @@
             </td>
           </tr>
         </ng-template>
-
       </p-table>
     </div>
 

@@ -60,4 +60,5 @@ public static class JobMessages
     public const string JobTabReviewNotFound = "JOB_TAB_REVIEW_NOT_FOUND";
     public const string JobPointsConfigurationNotFound = "JOB_POINTS_CONFIGURATION_NOT_FOUND";
     public const string JobCannotBeCopied = "JOB_CANNOT_BE_COPIED";
+    public const  string JobCategoryCandidateSettingsNotFound = "JOB_CATEGORY_CANDIDATE_SETTINGS_NOT_FOUND";
 }
