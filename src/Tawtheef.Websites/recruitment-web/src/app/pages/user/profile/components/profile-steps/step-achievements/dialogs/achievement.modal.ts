@@ -13,6 +13,7 @@ import {Achievement} from '../../../../wizard-profile/models/achievement.model';
 import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
 import {dropdownOptionsModel} from '../../../../../../../shared/models/dropdown-options.model';
 import {EXPERIENCE_DIALOG_LIMITS} from '../../step-experience/dialogs/dialog-config';
+import {GUID} from '../../../../../../../shared/types/guid.type';
 
 export const ACHIEVEMENT_DIALOG_LIMITS = {
   descriptionMaxLength: 500,
@@ -46,8 +47,11 @@ export class AchievementModal implements OnInit {
 
   readonly limits = ACHIEVEMENT_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  protected readonly disableFileUpload = !!this.config.data?.disableFileUpload;
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
+  private initialId: GUID | null = null;
+  private initialAttachmentId: GUID | null = null;
   today = new Date();
 
   form: FormGroup = this.fb.group({
@@ -76,13 +80,16 @@ export class AchievementModal implements OnInit {
         relatedToSpecialization: initial.relatedToSpecialization ?? null,
       });
       this.initialAttachmentUrl = initial.attachment?.url ?? null;
+      this.initialId = this.config.data?.initialId ?? initial.id ?? null;
+      this.initialAttachmentId =
+        this.config.data?.attachmentId ?? initial.attachmentId ?? initial.attachment?.resourceId ?? null;
 
-      if (!initial.file && initial.attachment) {
+      if (this.disableFileUpload || (!initial.file && initial.attachment)) {
         this.form.get('file')?.clearValidators();
       } else {
         this.form.get('file')?.addValidators(Validators.required);
       }
-    } else {
+    } else if (!this.disableFileUpload) {
       this.form.get('file')?.addValidators(Validators.required);
     }
     this.form.updateValueAndValidity({ emitEvent: false });
@@ -132,17 +139,19 @@ export class AchievementModal implements OnInit {
 
     const v = this.form.getRawValue();
     const payload: Achievement = {
+      id: this.initialId ?? undefined,
+      achievementTypeId: v.achievementTypeId,
       achievementType: v.achievementType,
       title: v.title,
       issuingAuthority: v.issuingAuthority,
+      countryId: v.countryId,
       country: v.country,
       issueDate: dateToDateOnly(v.issueDate)!,
       description: v.description,
       file: v.file,
       fileName: v.file?.name ?? v.fileName ?? null,
       attachment: this.config.data?.initialValue?.attachment,
-      attachmentId: this.config.data?.initialValue?.attachmentId,
-      id: this.config.data?.initialValue?.id,
+      attachmentId: this.initialAttachmentId ?? undefined,
       relatedToSpecialization: this.shouldShowSpecializationQuestion ? !!v.relatedToSpecialization : null,
     };
 

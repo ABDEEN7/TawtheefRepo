@@ -53,6 +53,7 @@
   "common.cancel": "Cancel",
   "common.close": "Close",
   "common.save": "Save",
+  "app.pagination.no_results": "No results to display.",
   "common.charactersRemaining": "{{count}} characters remaining",
 
   "auth.externalLogin.popupBlocked.summary": "Popup Blocked",

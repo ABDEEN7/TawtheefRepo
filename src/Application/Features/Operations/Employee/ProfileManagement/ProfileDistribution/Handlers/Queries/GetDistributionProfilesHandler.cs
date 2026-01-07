@@ -3,6 +3,7 @@ using FluentResults;
 
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Queries;
 using Tawtheef.Domain.Entities.Users;
@@ -17,7 +18,7 @@ public sealed class GetDistributionProfilesHandler(IUnitOfWork uow, UserManager<
         CancellationToken ct)
     {
         var projection = new ProfileDistributionProjection(uow, userManager);
-        var items = await projection.LoadProfilesAsync(request.Status, ct);
+        var items = await projection.LoadProfilesAsync(request,request.Status,ct);
         return Result.Ok(items);
     }
 }

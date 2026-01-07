@@ -15,6 +15,6 @@ export interface Degree {
   grade: dropdownOptionsModel | null | undefined;
   certificate?: UploadedFileRef | null;
   file?: File | null;
-  fileName?: string;
+  fileName?: string | null;
   attachmentId?: string | null;
 }

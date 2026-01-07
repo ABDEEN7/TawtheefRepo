@@ -50,6 +50,7 @@
   "common.cancel": "إلغاء",
   "common.close": "إغلاق",
   "common.save": "حفظ",
+  "app.pagination.no_results": "لا توجد نتائج للعرض.",
   "common.charactersRemaining": "{{count}} حرف متبقي",
 
   "auth.externalLogin.popupBlocked.summary": "تم حظر النافذة المنبثقة",

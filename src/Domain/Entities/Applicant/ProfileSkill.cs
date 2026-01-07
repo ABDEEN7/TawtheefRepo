@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
@@ -11,7 +12,7 @@ namespace Tawtheef.Domain.Entities.Applicant;
 public class ProfileSkill : EventEntity
 {
     public Guid SkillId { get; set; }
-    public SkillType? Skill { get; set; }
+    public Skill? Skill { get; set; }
 
     public Guid LevelId { get; set; }
     public SkillLevel? Level { get; set; }

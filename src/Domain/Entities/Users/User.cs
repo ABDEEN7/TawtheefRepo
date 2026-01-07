@@ -46,6 +46,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public string? OtpReference { get; private set; }
     public DateTime? OtpExpiry { get; private set; }
     public int OtpAttempts { get; set; }
+    public DateTime? OtpLockedUntilUtc { get; private set; }
     /// <summary>
     /// Number of OTPs sent to the user
     /// </summary>
@@ -58,27 +59,44 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
         OtpAttempts = 0;
         OtpSends++;
     }
-
-    public Result ValidateOtp(string otp, DateTime utcNow, int maxAttempts)
+    public Result ValidateOtp(string otp, DateTime utcNow, int maxAttempts, TimeSpan lockDuration)
     {
+        // If currently locked, reject but do NOT increment attempts
+        if (OtpLockedUntilUtc is not null && OtpLockedUntilUtc > utcNow)
+            return Result.Fail(ErrorsCodes.TooManyAttempts);
+
+        // Lock expired → reset
+        if (OtpLockedUntilUtc is not null && OtpLockedUntilUtc <= utcNow)
+        {
+            OtpLockedUntilUtc = null;
+            OtpAttempts = 0;
+        }
+
         if (OtpExpiry is null || string.IsNullOrWhiteSpace(OtpReference))
             return Result.Fail(ErrorsCodes.InvalidCode);
 
         if (OtpExpiry <= utcNow)
             return Result.Fail(ErrorsCodes.VerificationCodeExpired);
 
-        if (OtpAttempts >= maxAttempts)
-            return Result.Fail(ErrorsCodes.TooManyAttempts);
-
         if (!string.Equals(OtpReference, otp, StringComparison.Ordinal))
         {
             OtpAttempts++;
+
+            if (OtpAttempts >= maxAttempts)
+            {
+                OtpLockedUntilUtc = utcNow.Add(lockDuration);
+                OtpReference = null;
+                OtpExpiry = null;
+            }
+
             return Result.Fail(ErrorsCodes.InvalidCode);
         }
 
+        // success
         OtpReference = null;
         OtpExpiry = null;
         OtpAttempts = 0;
+        OtpLockedUntilUtc = null;
 
         return Result.Ok();
     }

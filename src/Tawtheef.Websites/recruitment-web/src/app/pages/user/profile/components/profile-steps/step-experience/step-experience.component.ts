@@ -60,6 +60,22 @@ export class StepExperienceComponent implements OnInit {
     });
   }
 
+  editExperience(index: number) {
+    const experience = this.ds.state().experiences[index];
+    this.dialog.open(ExperienceModal, {
+      header: this.translate.instant('wizard.experience.edit'),
+      width: '50%',
+      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+      baseZIndex: 10000,
+      closable: true,
+      data: { degrees: this.ds.state().degrees, initialValue: experience },
+    })?.onClose.subscribe(result => {
+      if (result) {
+        this.ds.updateExp(index, result);
+      }
+    });
+  }
+
   removeExperience(index: number) {
     var exp = this.ds.state().experiences[index];
     if(exp.id){
@@ -89,6 +105,22 @@ export class StepExperienceComponent implements OnInit {
     })?.onClose.subscribe(result => {
       if (result) {
         this.ds.addCourse(result);
+      }
+    });
+  }
+
+  editCourse(index: number) {
+    const course = this.ds.state().courses[index];
+    this.dialog.open(CourseModal, {
+      header: this.translate.instant('wizard.courses.edit'),
+      width: '50%',
+      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+      baseZIndex: 10000,
+      closable: true,
+      data: { initialValue: course },
+    })?.onClose.subscribe(result => {
+      if (result) {
+        this.ds.updateCourse(index, result);
       }
     });
   }

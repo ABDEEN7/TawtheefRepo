@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { ButtonDirective } from 'primeng/button';
+import {ButtonDirective, ButtonIcon, ButtonLabel} from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
@@ -15,7 +15,9 @@ import {
   ProfileChangeRequestDto,
   ProfileChangeRequestStatusEnum,
   ReviewStatusEnum,
-  MyProfileReviewSummaryDto
+  MyProfileReviewSummaryDto,
+  UserProfileStatusEnum,
+  MyProfileReviewNoteDto, ProfileChangeActionEnum, ReviewTargetTypeCode, ReviewTargetTypeEnum
 } from '../overview/models/profile-overview.model';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { ProfileOverviewService } from '../overview/services/profile-overview.service';
@@ -23,17 +25,21 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { ReviewStepsDialogComponent } from '../overview/dialogs/review-steps-dialog/review-steps-dialog.component';
 import { ReviewItemEditDialogComponent } from '../overview/dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
 import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
-import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites-section.component';
-import { ProfilePersonalSectionComponent } from './sections/personal-section.component';
-import { ProfileContactSectionComponent } from './sections/contact-section.component';
-import { ProfileQualificationsSectionComponent } from './sections/qualifications-section.component';
-import { ProfileExperienceSectionComponent } from './sections/experience-section.component';
-import { ProfileTrainingSectionComponent } from './sections/training-section.component';
-import { ProfileAchievementsSectionComponent } from './sections/achievements-section.component';
-import { ProfileSkillsSectionComponent } from './sections/skills-section.component';
-import { ProfileLanguagesSectionComponent } from './sections/languages-section.component';
-import { ProfileAttachmentsSectionComponent } from './sections/attachments-section.component';
+import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites/prerequisites-section.component';
+import { ProfilePersonalSectionComponent } from './sections/personal/personal-section.component';
+import { ProfileContactSectionComponent } from './sections/contact/contact-section.component';
+import { ProfileQualificationsSectionComponent } from './sections/qualifications/qualifications-section.component';
+import { ProfileExperienceSectionComponent } from './sections/experience/experience-section.component';
+import { ProfileTrainingSectionComponent } from './sections/training/training-section.component';
+import { ProfileAchievementsSectionComponent } from './sections/achievements/achievements-section.component';
+import { ProfileSkillsSectionComponent } from './sections/skills/skills-section.component';
+import { ProfileLanguagesSectionComponent } from './sections/languages/languages-section.component';
+import { ProfileAttachmentsSectionComponent } from './sections/attachments/attachments-section.component';
 import { ProfileViewCqrs } from './profile-view.cqrs';
+import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.directive';
+import {changeRequestDto} from './dtos/change-request-dto';
+import {detectChangedFields, FieldChange} from './utils/detect-change-fields';
+import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -50,8 +56,6 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
   imports: [
     CommonModule,
     TranslatePipe,
-    ButtonDirective,
-    Tag,
     Skeleton,
     TooltipModule,
     I18nNamespaceDirective,
@@ -64,12 +68,15 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
     ProfileAchievementsSectionComponent,
     ProfileSkillsSectionComponent,
     ProfileLanguagesSectionComponent,
-    ProfileAttachmentsSectionComponent
+    ProfileAttachmentsSectionComponent,
+    ButtonIcon,
+    ButtonDirective,
+    ButtonLabel
   ],
   templateUrl: './profile-view.page.html',
   styleUrls: ['./profile-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DialogService]
+  providers: [DialogService, { provide: PROFILE_WRITE_MODE, useValue: 'change-request' }]
 })
 export class ProfileViewPage {
   private readonly fileUtils = inject(FileUtilsService);
@@ -92,6 +99,11 @@ export class ProfileViewPage {
     { section: ProfileSectionEnum.Languages, icon: 'pi pi-language', labelKey: 'profileOverview.sections.languages' },
     { section: ProfileSectionEnum.Attachments, icon: 'pi pi-paperclip', labelKey: 'profileOverview.sections.attachments' }
   ];
+  readonly pageLoading = computed(() =>
+    this.basics.status() === 'loading' ||
+    this.review.status() === 'loading' ||
+    this.changeRequests.status() === 'loading'
+  );
   get keyLabel(){
     return this.cards.find(c => c.section === this.expanded())?.labelKey;
   }
@@ -111,11 +123,23 @@ export class ProfileViewPage {
     stream: () => this.overviewService.getMyChangeRequests(),
   });
 
-  // FIX: correct rxResource typing inside Map.
-  // If loadSection returns a different DTO per section, make this RxRes<unknown> instead.
   private readonly sections = new Map<ProfileSectionEnum, RxRes<ProfileStatusDto>>();
+  protected readonly expanded = signal<ProfileSectionEnum>(ProfileSectionEnum.Personal);
 
-  protected readonly expanded = signal<ProfileSectionEnum | null>(null);
+  protected changes(section: ProfileSectionEnum) {
+    if(this.profileStatus() !== UserProfileStatusEnum.Approved) return [];
+    const sectionChanges = this.changeRequestsVm()
+      .filter(cr =>
+        cr.section === section &&
+        cr.action == ProfileChangeActionEnum.UpdateField);
+
+    let resultChanges: FieldChange[] = [];
+    sectionChanges.forEach((change)=>{
+      resultChanges = resultChanges.concat(detectChangedFields(change.oldValue ?? '', change.newValue ?? ''))
+    });
+
+    return resultChanges;
+  }
 
   constructor() {
     this.cards.forEach(card => {
@@ -143,10 +167,93 @@ export class ProfileViewPage {
     return { ...review, sectionIndex } as MyProfileReviewSummaryDto & { sectionIndex: Record<number, number> };
   });
 
+  readonly profileStatus = computed(() => (this.review.value() as MyProfileReviewSummaryDto | undefined)?.profileStatus ?? null);
+
+  readonly statusVm = computed(() => {
+    const status = this.profileStatus();
+    switch (status) {
+      case UserProfileStatusEnum.Approved:
+        return {
+          labelKey: 'profileOverview.status.approved',
+          hintKey: 'profileOverview.statusHint.approved',
+          severity: 'chip-ok'
+        };
+      case UserProfileStatusEnum.RequiresUpdate:
+        return {
+          labelKey: 'profileOverview.status.requiresUpdate',
+          hintKey: 'profileOverview.statusHint.requiresUpdate',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.Rejected:
+        return {
+          labelKey: 'profileOverview.status.rejected',
+          hintKey: 'profileOverview.statusHint.rejected',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.UnderReview:
+        return {
+          labelKey: 'profileOverview.status.underReview',
+          hintKey: 'profileOverview.statusHint.underReview',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.Submitted:
+        return {
+          labelKey: 'profileOverview.status.submitted',
+          hintKey: 'profileOverview.statusHint.submitted',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.InCreation:
+        return {
+          labelKey: 'profileOverview.status.inCreation',
+          hintKey: 'profileOverview.statusHint.inCreation',
+          severity: 'chip-warn'
+        };
+      case UserProfileStatusEnum.AdminCancelled:
+        return {
+          labelKey: 'profileOverview.status.adminCancelled',
+          hintKey: 'profileOverview.statusHint.adminCancelled',
+          severity: 'chip-warn'
+        };
+      default:
+        return {
+          labelKey: 'profileOverview.status.pending',
+          hintKey: 'profileOverview.statusDescriptions.pending',
+          severity: 'chip-warn'
+        };
+    }
+  });
+
+  canEditSections(section: ProfileSectionEnum){
+    const status = this.profileStatus();
+    if(status === UserProfileStatusEnum.Approved)
+      return true;
+    if(status === UserProfileStatusEnum.RequiresUpdate) {
+      const indexSection = Math.min(Math.max(section - 1,0), ((this.review.value()?.sections.length ?? 1) - 1));
+      return (this.review.value()?.sections[indexSection]?.notesCount ?? 0) > 0;
+    }
+    return false;
+  }
+
+  readonly activeSectionNotes = computed(() => {
+    const active = this.expanded();
+    const review = this.review.value() as MyProfileReviewSummaryDto | undefined;
+    const notes = review?.sections?.find(s => s.section === active)?.notes ?? [];
+    return notes as MyProfileReviewNoteDto[];
+  });
+
+  readonly activeSectionReviewNotes = computed(() => {
+    const notes = this.activeSectionNotes();
+    return notes.filter(n => n.targetType === ReviewTargetTypeEnum.Section);
+  });
+
   openCard(section: ProfileSectionEnum) {
     const res = this.sections.get(section);
     this.expanded.set(section);
     res?.reload();
+  }
+
+  reloadSection(section: ProfileSectionEnum) {
+    this.sections.get(section)?.reload();
   }
 
   sectionStatus(section: ProfileSectionEnum) {
@@ -164,7 +271,7 @@ export class ProfileViewPage {
       statusLabelKey: this.changeStatusLabelKey(item.status),
       statusSeverity: this.changeStatusSeverity(item.status),
       sectionLabelKey: this.sectionLabelKey(item.section)
-    }));
+    })) as changeRequestDto[];
   });
 
   openReviewStep() {
@@ -257,6 +364,12 @@ export class ProfileViewPage {
     return 'secondary';
   }
 
+  noteSeverityClass(status: number): string {
+    const sev = this.noteSeverity(status);
+    if (sev === 'warn' || sev === 'danger') return 'chip-warn';
+    return 'chip-ok';
+  }
+
   noteStatusLabelKey(status: number): string {
     if (status === ReviewStatusEnum.NeedsCorrection) return 'profileOverview.reviewStatus.needsCorrection';
     if (status === ReviewStatusEnum.Rejected) return 'profileOverview.reviewStatus.rejected';
@@ -293,4 +406,10 @@ export class ProfileViewPage {
         return 'secondary';
     }
   }
+
+  protected reSubmitProfile() {
+
+  }
+
+  protected readonly UserProfileStatusEnum = UserProfileStatusEnum;
 }
