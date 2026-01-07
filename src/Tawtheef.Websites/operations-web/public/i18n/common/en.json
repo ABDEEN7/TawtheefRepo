@@ -1,19 +1,19 @@
 ﻿{
-  "app.pagination.showing": "Showing",
-  "app.pagination.of": "of",
-  "app.pagination.results": "results",
-  "app.pagination.no_results": "No results found",
-  "app.pagination.previous": "Previous",
-  "app.pagination.next": "Next",
-  "app.pagination.page_size": "Page size",
-
-  "validation.requiredEmail": "Email is required.",
-  "validation.invalidEmail": "Enter a valid email address.",
-  "validation.requiredPassword": "Password is required.",
-  "validation.minLengthPassword": "Password must be at least {{min}} characters.",
-  "validation.required_filed": "This field is required",
-  "validation.invalid_format": "Invalid format",
-
+  "common.next": "Next",
+  "common.previous": "Previous",
+  "common.finish": "Finish",
+  "common.upload": "Upload",
+  "common.download": "Download",
+  "common.view": "View",
+  "common.sections": "Sections",
+  "common.complete": "Complete",
+  "common.missing": "Missing",
+  "common.verified": "Verified",
+  "common.notVerified": "Not Verified",
+  "common.none": "None",
+  "common.loadFailed": "Failed to load data",
+  "common.success": "Success",
+  "common.error": "Error",
   "common.ar": "العربية",
   "common.en": "English",
   "common.refresh": "Refresh",
@@ -30,25 +30,42 @@
   "common.no": "No",
   "common.goBack": "Go Back",
   "common.charactersRemaining": "{{count}} characters remaining",
+
+  "app.pagination.page_size": "Page size",
+  "app.pagination.showing": "Showing",
+  "app.pagination.of": "of",
+  "app.pagination.results": "results",
+  "app.pagination.no_results": "No results found",
+  "app.pagination.previous": "Previous",
+  "app.pagination.next": "Next",
+  "app.pagination.items_per_page": "Items per page",
+
+  "validation.requiredEmail": "Email is required.",
+  "validation.invalidEmail": "Enter a valid email address.",
+  "validation.requiredPassword": "Password is required.",
+  "validation.minLengthPassword": "Password must be at least {{min}} characters.",
+  "validation.required_filed": "This field is required",
+  "validation.invalid_format": "Invalid format",
+
   "auth.externalLogin.popupBlocked.summary": "Popup Blocked",
   "auth.externalLogin.popupBlocked.detail": "Please allow popups for this site to continue with external login",
+  "auth.externalLogin.popupBlocked.detailShort": "The login popup was blocked by your browser.",
+  "auth.externalLogin.popupBlocked.detailContinue": "Please allow popups for this site and try again.",
 
   "auth.externalLogin.authError.summary": "Error",
   "auth.externalLogin.authError.detail": "An error occurred during authentication",
+  "auth.externalLogin.authError.detailLogin": "An error occurred during the external login process. Please try again.",
 
   "auth.externalLogin.loginFailed.summary": "Login Failed",
   "auth.externalLogin.loginFailed.detail": "Could not authenticate with external provider",
+  "auth.externalLogin.loginFailed.detailProvider": "Authentication with the selected external provider has failed.",
 
   "auth.externalLogin.externalAuthFailed.summary": "Login Failed",
   "auth.externalLogin.externalAuthFailed.detailFallback": "External authentication failed",
-  "remote-select.search-hint": "Type at least {{minChars}} characters to search",
-  "auth.externalLogin.popupBlocked.detailShort": "The login popup was blocked by your browser.",
-  "auth.externalLogin.popupBlocked.detailContinue": "Please allow popups for this site and try again.",
 
   "auth.externalLogin.loginSuccessful.summary": "Login Successful",
   "auth.externalLogin.loginSuccessful.detail": "You have been logged in successfully using the external provider.",
 
-  "auth.externalLogin.loginFailed.detailProvider": "Authentication with the selected external provider has failed.",
-
-  "auth.externalLogin.authError.detailLogin": "An error occurred during the external login process. Please try again."
+  "remote-select.search-hint": "Type at least {{minChars}} characters to search",
+  "remote-select.select-parent": "Select the parent field value first"
 }
