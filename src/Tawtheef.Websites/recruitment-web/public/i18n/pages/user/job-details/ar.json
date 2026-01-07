@@ -1,0 +1,15 @@
+{
+  "job_details.title": "تفاصيل الوظيفة",
+  "job_details.subtitle": "راجع الدعوة وقدّم عندما تكون جاهزًا.",
+  "job_details.back_to_dashboard": "العودة إلى اللوحة",
+  "job_details.apply_now": "قدّم الآن",
+  "job_details.loading": "جارٍ تحميل تفاصيل الوظيفة...",
+  "job_details.no_data": "لا توجد تفاصيل للدعوة.",
+  "job_details.field_job_title": "المسمى الوظيفي",
+  "job_details.field_department": "الإدارة",
+  "job_details.field_category": "التصنيف",
+  "job_details.field_status": "الحالة",
+  "job_details.field_date": "تاريخ الدعوة",
+  "job_details.apply_success": "تم تقديم طلبك بنجاح.",
+  "job_details.apply_error": "تعذر التقديم الآن. حاول مرة أخرى."
+}
