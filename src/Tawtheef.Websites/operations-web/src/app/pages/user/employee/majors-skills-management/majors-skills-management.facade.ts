@@ -1,23 +1,23 @@
-import { DestroyRef, Injectable, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
-import { DialogService } from 'primeng/dynamicdialog';
+import {DestroyRef, inject, Injectable} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {TranslateService} from '@ngx-translate/core';
+import {DialogService} from 'primeng/dynamicdialog';
 
-import { NotificationService } from '../../../../core/services/notification.service';
-import { LanguageService } from '../../../../core/services/language.service';
-import { ConfirmationService } from 'primeng/api';
+import {NotificationService} from '../../../../core/services/notification.service';
+import {LanguageService} from '../../../../core/services/language.service';
+import {ConfirmationService} from 'primeng/api';
 
-import { MajorsSkillsManagementService } from './services/majors-skills-management.service';
-import { MajorsSkillsManagementStore, MajorsSkillsTabKey } from './majors-skills-management.store';
+import {MajorsSkillsManagementService} from './services/majors-skills-management.service';
+import {MajorsSkillsManagementStore, MajorsSkillsTabKey} from './majors-skills-management.store';
 
-import { MajorSkillDetailsModel } from './models/major-skill-details.model';
-import { MajorListItemModel } from './models/major-list-item.model';
-import { SkillListItemModel } from './models/skill-list-item.model';
+import {MajorSkillDetailsModel} from './models/major-skill-details.model';
+import {MajorListItemModel} from './models/major-list-item.model';
+import {SkillListItemModel} from './models/skill-list-item.model';
 
-import { ParentMajorInfoDialogComponent } from './dialogs/parent-major-info.dialog';
-import { UpsertSkillDialogComponent } from './dialogs/upsert-skill.dialog';
-import { UpsertMajorDialogComponent } from './dialogs/upsert-major.dialog';
-import { UpsertMajorSkillDialogComponent } from './dialogs/upsert-major-skill.dialog';
+import {ParentMajorInfoDialogComponent} from './dialogs/parent-major-info.dialog';
+import {UpsertSkillDialogComponent} from './dialogs/upsert-skill.dialog';
+import {UpsertMajorDialogComponent} from './dialogs/upsert-major.dialog';
+import {UpsertMajorSkillDialogComponent} from './dialogs/upsert-major-skill.dialog';
 
 type ActivationHierarchyEntity = 'major' | 'subMajor' | 'skill';
 
@@ -102,8 +102,7 @@ export class MajorsSkillsManagementFacade {
         if (!selectedParent && firstParent) {
           this.store.updateMajorSkillFilters({ parentMajorId: firstParent, subMajorId: '', pageNumber: 1 });
         }
-      },
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+      }
     });
   }
   private loadMainMajorsForSubMajorsTab() {
@@ -118,21 +117,18 @@ export class MajorsSkillsManagementFacade {
           // ONLY update subMajors tab filters
           this.store.updateSubMajorFilters({ parentMajorId: firstParent, pageNumber: 1 });
         }
-      },
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+      }
     });
   }
 
   loadMajorSkills() {
     this.api.getMajorSkills(this.store.majorSkillFilters()).subscribe({
-      next: res => this.store.setMajorSkills(res),
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+      next: res => this.store.setMajorSkills(res)
     });
   }
   loadMainMajors() {
     this.api.getMainMajors(this.store.mainMajorFilters()).subscribe({
-      next: res => this.store.setMainMajorsResult(res),
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+      next: res => this.store.setMainMajorsResult(res)
     });
   }
 
@@ -144,37 +140,32 @@ export class MajorsSkillsManagementFacade {
     }
 
     this.api.getSubMajorsPaged({ ...this.store.subMajorFilters(), parentMajorId: parentId }).subscribe({
-      next: res => this.store.setSubMajorsResult(res),
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+      next: res => this.store.setSubMajorsResult(res)
     });
   }
 
   loadSkills() {
     this.api.getSkills(this.store.skillFilters()).subscribe({
-      next: res => this.store.setMappedSkills(res),
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+      next: res => this.store.setMappedSkills(res)
     });
   }
 
   loadSkillTypes() {
     this.api.getSkillsPageForTypes().subscribe({
-      next: res => this.store.setSkillTypes(res),
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+      next: res => this.store.setSkillTypes(res)
     });
   }
 
   // ===================== Mapping Actions =====================
   toggleMajorSkillActive(id: string, isActive: boolean) {
     this.api.changeMajorSkillActivation(id, isActive).subscribe({
-      next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadMajorSkills(); },
-      error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+      next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadMajorSkills(); }
     });
   }
 
   changeMajorSkillRequirement(id: string, isSkillRequired: boolean, isActive: boolean) {
     this.api.updateMajorSkill({ id, isSkillRequired, isActive }).subscribe({
-      next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMajorSkills(); },
-      error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+      next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMajorSkills(); }
     });
   }
 
@@ -196,8 +187,7 @@ export class MajorsSkillsManagementFacade {
           } else {
             // do nothing
           }
-        },
-        error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+        }
       });
     };
 
@@ -209,8 +199,7 @@ export class MajorsSkillsManagementFacade {
   toggleSkillActive(skill: SkillListItemModel, isActive: boolean) {
     const proceed = (applyOnHierarchy: boolean) => {
       this.api.changeSkillActivation(skill.id, isActive, applyOnHierarchy).subscribe({
-        next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadSkills(); this.loadMajorSkills(); },
-        error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+        next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadSkills(); this.loadMajorSkills(); }
       });
     };
 
@@ -250,8 +239,7 @@ export class MajorsSkillsManagementFacade {
     })?.onClose.subscribe((payload?: Partial<MajorSkillDetailsModel>) => {
       if (!payload) return;
       this.api.createMajorSkill(payload).subscribe({
-        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMajorSkills(); },
-        error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMajorSkills(); }
       });
     });
   }
@@ -272,12 +260,10 @@ export class MajorsSkillsManagementFacade {
         })?.onClose.subscribe((payload?: Partial<MajorSkillDetailsModel>) => {
           if (!payload) return;
           this.api.updateMajorSkill(payload).subscribe({
-            next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMajorSkills(); },
-            error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+            next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMajorSkills(); }
           });
         });
-      },
-      error: () => this.toast('MAJORS_SKILLS.LOAD_ERROR', true)
+      }
     });
   }
 
@@ -291,8 +277,7 @@ export class MajorsSkillsManagementFacade {
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
       this.api.createMajor(payload).subscribe({
-        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMainMajors(); this.loadSubMajors(); },
-        error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMainMajors(); this.loadSubMajors(); }
       });
     });
   }
@@ -307,8 +292,7 @@ export class MajorsSkillsManagementFacade {
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
       this.api.updateMajor(payload).subscribe({
-        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMainMajors(); this.loadSubMajors(); },
-        error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMainMajors(); this.loadSubMajors(); }
       });
     });
   }
@@ -323,8 +307,7 @@ export class MajorsSkillsManagementFacade {
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
       this.api.createSkill(payload).subscribe({
-        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadSkills(); },
-        error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadSkills(); }
       });
     });
   }
@@ -339,8 +322,7 @@ export class MajorsSkillsManagementFacade {
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
       this.api.updateSkill(payload).subscribe({
-        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadSkills(); },
-        error: () => this.toast('MAJORS_SKILLS.UPDATE_FAILED', true),
+        next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadSkills(); }
       });
     });
   }

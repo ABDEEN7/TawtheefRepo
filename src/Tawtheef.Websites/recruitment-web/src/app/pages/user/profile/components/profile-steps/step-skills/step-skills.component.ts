@@ -1,26 +1,7 @@
-import {
-  Component,
-  EventEmitter,
-  Output,
-  OnDestroy,
-  OnInit,
-  inject,
-} from '@angular/core';
-import {
-  AutoComplete,
-  AutoCompleteCompleteEvent,
-  AutoCompleteSelectEvent,
-} from 'primeng/autocomplete';
-import { Subject, Subscription, of } from 'rxjs';
-import {
-  debounceTime,
-  filter,
-  switchMap,
-  tap,
-  catchError,
-  map,
-  finalize,
-} from 'rxjs/operators';
+import {Component, EventEmitter, inject, isDevMode, OnDestroy, OnInit, Output,} from '@angular/core';
+import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent,} from 'primeng/autocomplete';
+import {of, Subject, Subscription} from 'rxjs';
+import {catchError, debounceTime, filter, finalize, map, switchMap, tap,} from 'rxjs/operators';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {MessageService} from 'primeng/api';
@@ -152,10 +133,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       this.profile.deleteSkill(skill.id).subscribe({
         next: () => {
           this.ds.delSkill(index);
-        },
-        error: (err: any) => {
-          console.error(err);
-        },
+        }
       });
     } else {
       this.ds.delSkill(index);
@@ -187,7 +165,8 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         this.next.emit();
       },
       error: (err: any) => {
-        console.error(err);
+        if(isDevMode())
+          console.error(err);
         this.saving = false;
       },
     });

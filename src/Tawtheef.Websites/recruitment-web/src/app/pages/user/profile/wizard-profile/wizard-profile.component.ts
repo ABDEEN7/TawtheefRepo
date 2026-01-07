@@ -119,8 +119,7 @@ export class WizardProfileComponent implements OnInit {
       .subscribe({
         next: () => {
           this.ds.up('available',available);
-        },
-        error: (err: any) => console.error(err)
+        }
       });
   }
 

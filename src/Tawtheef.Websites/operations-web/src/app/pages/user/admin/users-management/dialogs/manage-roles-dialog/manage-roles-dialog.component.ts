@@ -1,4 +1,4 @@
-import {Component, OnInit, inject, signal} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
@@ -65,7 +65,6 @@ export class ManageRolesDialogComponent implements OnInit {
           this.updateSelectedRoles(assignableRoles);
         },
         error: () => {
-          this.notification.error(this.translate.instant('USERS.LOAD_FAILED'));
           this.dialogRef.close(false);
         }
       });
@@ -84,8 +83,7 @@ export class ManageRolesDialogComponent implements OnInit {
         next: () => {
           this.notification.success(this.translate.instant('USERS.ROLES_UPDATE_SUCCESS'));
           this.dialogRef.close(true);
-        },
-        error: () => this.notification.error(this.translate.instant('USERS.ROLES_UPDATE_FAILED'))
+        }
       });
   }
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
@@ -7,8 +7,11 @@ import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
 import {
   createFileSlot,
-  FileSlot, fileSlotSignature,
-  fileToUpload, previewFileFromSlot, previewUrlFromSlot,
+  FileSlot,
+  fileSlotSignature,
+  fileToUpload,
+  previewFileFromSlot,
+  previewUrlFromSlot,
   setLocalFile,
   updateRemote
 } from '../../../wizard-profile/utils/file-slot';
@@ -186,8 +189,7 @@ export class StepPrereqComponent implements OnInit {
           if (canProceed) {
             this.next.emit();
           }
-        },
-        error: (err: any) => console.error(err),
+        }
       });
   }
 

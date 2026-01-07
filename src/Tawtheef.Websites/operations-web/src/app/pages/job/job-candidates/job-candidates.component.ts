@@ -1,20 +1,20 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
-import { PaginationMetadata } from '../../../core/models/pagination-metadata.model';
-import { NotificationService } from '../../../core/services/notification.service';
-import { DialogHelperService } from '../../../core/services/dialog-helper.service';
-import { FileUtilsService } from '../../../core/utils/file-utils';
-import { JobLookupService } from '../services/job-lookup.service';
-import { JobCandidatesService } from '../services/job-candidates.service';
-import { GUID } from '../../../shared/types/guid.type';
-import { PaginatedResult } from '../../../core/models/paginated-result.model';
-import { JobCandidateListItem } from '../models/job-candidate.model';
-import { JobCandidatesFilter } from '../models/job-candidates-filter.model';
-import { PaginatedRequest } from '../../../core/models/paginated-request.model';
-import { AuthService } from '../../../core/auth/auth.service';
-import { Permissions } from '../../../core/constants/permissions';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
+import {forkJoin} from 'rxjs';
+import {PaginationMetadata} from '../../../core/models/pagination-metadata.model';
+import {NotificationService} from '../../../core/services/notification.service';
+import {DialogHelperService} from '../../../core/services/dialog-helper.service';
+import {FileUtilsService} from '../../../core/utils/file-utils';
+import {JobLookupService} from '../services/job-lookup.service';
+import {JobCandidatesService} from '../services/job-candidates.service';
+import {GUID} from '../../../shared/types/guid.type';
+import {PaginatedResult} from '../../../core/models/paginated-result.model';
+import {JobCandidateListItem} from '../models/job-candidate.model';
+import {JobCandidatesFilter} from '../models/job-candidates-filter.model';
+import {PaginatedRequest} from '../../../core/models/paginated-request.model';
+import {AuthService} from '../../../core/auth/auth.service';
+import {Permissions} from '../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -139,12 +139,7 @@ export class JobCandidatesComponent implements OnInit {
           this.notificationService.success(
             this.translationService.instant('JOB_CANDIDATE_MESSAGES_EXPORT_SUCCESS')
           );
-        },
-        error: () => {
-          this.notificationService.error(
-            this.translationService.instant('JOB_CANDIDATE_MESSAGES_EXPORT_FAILED')
-          );
-        },
+        }
       });
   }
 
@@ -178,12 +173,7 @@ export class JobCandidatesComponent implements OnInit {
               this.translationService.instant('JOB_CANDIDATE_MESSAGES_INVITES_SENT')
             );
             this.loadCandidatesData();
-          },
-          error: () => {
-            this.notificationService.error(
-              this.translationService.instant('JOB_CANDIDATE_MESSAGES_INVITES_FAILED')
-            );
-          },
+          }
         });
     });
   }
