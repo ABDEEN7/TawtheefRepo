@@ -37,9 +37,9 @@ import { ProfileLanguagesSectionComponent } from './sections/languages/languages
 import { ProfileAttachmentsSectionComponent } from './sections/attachments/attachments-section.component';
 import { ProfileViewCqrs } from './profile-view.cqrs';
 import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.directive';
-import {max} from 'rxjs';
 import {changeRequestDto} from './dtos/change-request-dto';
 import {detectChangedFields, FieldChange} from './utils/detect-change-fields';
+import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -77,7 +77,7 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
   templateUrl: './profile-view.page.html',
   styleUrls: ['./profile-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DialogService]
+  providers: [DialogService, { provide: PROFILE_WRITE_MODE, useValue: 'change-request' }]
 })
 export class ProfileViewPage {
   private readonly fileUtils = inject(FileUtilsService);
@@ -235,19 +235,26 @@ export class ProfileViewPage {
     return false;
   }
 
-  readonly activeNotes = computed(() => {
+  readonly activeSectionNotes = computed(() => {
     const active = this.expanded();
     const review = this.review.value() as MyProfileReviewSummaryDto | undefined;
-    const notes = review?.
-    sections?.find(s => s.section === active)?.
-    notes?.filter(n=> n.targetType == ReviewTargetTypeEnum.Section) ?? [];
+    const notes = review?.sections?.find(s => s.section === active)?.notes ?? [];
     return notes as MyProfileReviewNoteDto[];
+  });
+
+  readonly activeSectionReviewNotes = computed(() => {
+    const notes = this.activeSectionNotes();
+    return notes.filter(n => n.targetType === ReviewTargetTypeEnum.Section);
   });
 
   openCard(section: ProfileSectionEnum) {
     const res = this.sections.get(section);
     this.expanded.set(section);
     res?.reload();
+  }
+
+  reloadSection(section: ProfileSectionEnum) {
+    this.sections.get(section)?.reload();
   }
 
   sectionStatus(section: ProfileSectionEnum) {

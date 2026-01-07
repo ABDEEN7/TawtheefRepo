@@ -291,6 +291,7 @@
   "profileOverview.fields.gradCountry": "Country of Graduation",
   "profileOverview.fields.graduationYear": "Graduation Year",
   "profileOverview.fields.studyType": "Study Type",
+  "profileOverview.table.actions": "Actions",
   "profileView.sections.status.ok": "Approved",
   "profileOverview.reviewStatus.pending": "Pending Review",
   "profileView.verification.verified": "Verified",
@@ -298,5 +299,17 @@
   "profileView.status.notMatched": "Not Matched",
   "profileView.status.matched": "Matched",
   "profileView.actions.edit": "Edit Profile",
-  "profileView.actions.view": "View Profile"
+  "profileView.actions.view": "View Profile",
+  "profileView.actions.addQualification": "Add Qualification",
+  "profileView.actions.editQualification": "Edit Qualification",
+  "profileView.actions.addExperience": "Add Experience",
+  "profileView.actions.editExperience": "Edit Experience",
+  "profileView.actions.addAchievement": "Add Achievement",
+  "profileView.actions.editAchievement": "Edit Achievement",
+  "profileView.actions.addAttachment": "Add Attachment",
+  "profileView.actions.replaceFile": "Replace File",
+  "profileView.attachments.titleLabel": "Attachment Title",
+  "profileView.attachments.fileLabel": "Attachment File",
+  "profileView.notifications.saved": "Changes saved successfully.",
+  "profileView.notifications.saveFailed": "Unable to save changes right now."
 }

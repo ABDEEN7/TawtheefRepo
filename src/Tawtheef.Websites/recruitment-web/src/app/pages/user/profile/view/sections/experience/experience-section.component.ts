@@ -1,30 +1,188 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
-import { MyProfileReviewNoteDto } from '../../../overview/models/profile-overview.model';
-import {changeRequestDto} from '../../dtos/change-request-dto';
-import {FieldChange} from '../../utils/detect-change-fields';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ExperienceDto, FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
+import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../../overview/models/profile-overview.model';
+import { FieldChange } from '../../utils/detect-change-fields';
+import { TooltipModule } from 'primeng/tooltip';
+import { DialogService } from 'primeng/dynamicdialog';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
+import { ExperienceModal } from '../../../components/profile-steps/step-experience/dialogs/experience.modal/experience.modal';
+import { Experience } from '../../../wizard-profile/models/experience.model';
+import { Degree } from '../../../wizard-profile/models/degree.model';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 
 @Component({
   selector: 'app-profile-experience-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, TooltipModule],
   templateUrl: './experience-section.component.html',
   styleUrls: ['./experience-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileExperienceSectionComponent {
+  private readonly dialogService = inject(DialogService);
+  private readonly translate = inject(TranslateService);
+  private readonly profileService = inject(ProfileService);
+  private readonly notify = inject(NotificationService);
+  private readonly lookups = inject(ProfileLookupsService);
+  private readonly fileUtils = inject(FileUtilsService);
+
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canEdit = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Output() edit = new EventEmitter<void>();
+  @Output() refresh = new EventEmitter<void>();
 
   protected fieldUnderReview(fieldKey: string = ''){
     return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
   }
   protected onEdit() {
     this.edit.emit();
+  }
+
+  protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!file?.resourceId) return null;
+    return (
+      this.notes.find(
+        note =>
+          note.targetType === ReviewTargetTypeEnum.Attachment &&
+          note.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+      ) ?? null
+    );
+  }
+
+  protected addExperience() {
+    this.lookups.loadAll().subscribe(() => {
+      this.dialogService
+        .open(ExperienceModal, {
+          header: this.translate.instant('profileView.actions.addExperience'),
+          width: '50%',
+          contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+          baseZIndex: 10000,
+          closable: true,
+          data: { degrees: this.mapDegrees() },
+        })
+        ?.onClose.subscribe((experience: Experience | null) => {
+          if (!experience) return;
+          this.profileService.saveExperienceSection([experience], []).subscribe({
+            next: () => {
+              this.notify.success(this.translate.instant('profileView.notifications.saved'));
+              this.refresh.emit();
+            },
+            error: () => {
+              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
+            }
+          });
+        });
+    });
+  }
+
+  protected editExperience(exp: ExperienceDto) {
+    const initialValue = {
+      org: exp.employerName,
+      name: exp.jobTitle,
+      country: exp.country ?? null,
+      from: exp.startDate ?? exp.from ?? null,
+      to: exp.endDate ?? exp.to ?? null,
+      current: exp.isCurrent ?? exp.current ?? false,
+      description: exp.description ?? '',
+      fileName: exp.attachment?.fileName ?? exp.fileName ?? '',
+      qualificationId: exp.qualificationId ?? null,
+    };
+
+    this.lookups.loadAll().subscribe(() => {
+      this.dialogService
+        .open(ExperienceModal, {
+          header: this.translate.instant('profileView.actions.editExperience'),
+          width: '50%',
+          contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+          baseZIndex: 10000,
+          closable: true,
+      data: {
+        degrees: this.mapDegrees(),
+        initialValue,
+        disableFileUpload: true,
+        initialId: exp.id,
+        attachmentId: exp.attachment?.resourceId ?? null
+      },
+        })
+        ?.onClose.subscribe((experience: Experience | null) => {
+          if (!experience) return;
+          this.profileService.saveExperienceSection([experience], []).subscribe({
+            next: () => {
+              this.notify.success(this.translate.instant('profileView.notifications.saved'));
+              this.refresh.emit();
+            },
+            error: () => {
+              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
+            }
+          });
+        });
+    });
+  }
+
+  protected replaceExperienceFile(exp: ExperienceDto, event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) return;
+
+    const payload: Experience = {
+      id: exp.id,
+      employerName: exp.employerName ?? '',
+      jobTitle: exp.jobTitle ?? '',
+      from: exp.startDate ?? null,
+      to: exp.endDate ?? null,
+      current: exp.isCurrent ?? false,
+      country: exp.country ?? null,
+      description: exp.description ?? '',
+      file,
+      fileName: file.name,
+      attachmentId: exp.attachment?.resourceId ?? null,
+      qualificationId: exp.qualificationId ?? null,
+      qualificationName: exp.qualificationName ?? null,
+    };
+
+    this.profileService.saveExperienceSection([payload], []).subscribe({
+      next: () => {
+        this.notify.success(this.translate.instant('profileView.notifications.saved'));
+        this.refresh.emit();
+      },
+      error: () => {
+        this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
+      }
+    });
+  }
+
+  protected open(file: FileRefDto | null | undefined) {
+    if (!file) return;
+    this.fileUtils.previewUrl(file.url ?? '');
+  }
+
+  private mapDegrees(): Degree[] {
+    return (this.profile?.qualifications ?? []).map(q => ({
+      id: q.id,
+      degree: q.degree ?? null,
+      gradCountry: q.gradCountry ?? null,
+      university: q.university ?? null,
+      major: q.major ?? null,
+      subMajor: q.subMajor ?? null,
+      gradYear: q.graduationYear ?? 0,
+      studySystem: q.studyType ?? null,
+      gpa: q.gpa ?? 0,
+      grade: q.grade ?? null,
+      certificate: q.attachment
+        ? {
+            resourceId: q.attachment.resourceId,
+            resourceName: q.attachment.fileName,
+            url: q.attachment.url ?? null,
+          }
+        : null,
+      attachmentId: q.attachment?.resourceId ?? null,
+      fileName: q.attachment?.fileName ?? null,
+    }));
   }
 }
