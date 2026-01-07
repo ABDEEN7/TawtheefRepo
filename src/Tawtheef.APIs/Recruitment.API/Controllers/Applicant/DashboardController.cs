@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
+using Tawtheef.Application.Features.Recruitment.Dashboard.Commands;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
+using Tawtheef.Application.Features.Recruitment.JobDetails.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -52,6 +54,33 @@ public class DashboardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetCandidateInvitations([FromQuery] GetCandidateInvitationsQuery query)
     {
         var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("candidate-invitations/{invitationId:guid}")]
+    public async Task<IActionResult> GetCandidateInvitationDetails(Guid invitationId)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetCandidateInvitationDetailsQuery(invitationId, UserId.Value));
+        return result.ToActionResult();
+    }
+
+    [HttpGet("candidate-invitations/{invitationId:guid}/job-details")]
+    public async Task<IActionResult> GetCandidateJobDetails(Guid invitationId)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new GetCandidateJobDetailsQuery(invitationId, UserId.Value));
+        return result.ToActionResult();
+    }
+
+    [HttpPost("candidate-invitations/{invitationId:guid}/apply")]
+    public async Task<IActionResult> ApplyCandidateInvitation(Guid invitationId)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new ApplyCandidateInvitationCommand(UserId.Value, invitationId));
         return result.ToActionResult();
     }
 

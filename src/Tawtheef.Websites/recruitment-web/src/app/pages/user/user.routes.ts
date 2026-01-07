@@ -22,5 +22,10 @@ export const userRoutes: Routes = [
     path: 'profile/edit',
     loadChildren: () =>
       import('./profile/edit/profile-edit-shell.module').then(m => m.ProfileEditShellModule),
+  },
+  {
+    path: 'job-details/:invitationId',
+    loadComponent: () =>
+      import('./job-details/job-details').then(m => m.JobDetails)
   }
 ];

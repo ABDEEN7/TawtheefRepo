@@ -149,107 +149,111 @@
              <div class="row mt-4">
                   <div class="col-12">
                        <!-- Table -->
-                       <div class="table-card rounded overflow-hidden">
-                         <div class="table-responsive">
-                           <table class="table table-bordered table-hover align-middle w-100">
-                             <thead class="table-light">
-                             <tr>
-                               <th>#</th>
-                               <th>{{ 'candidate_dashboard.column_job' | translate }}</th>
-                               <th>{{ 'candidate_dashboard.column_entity' | translate }}</th>
-                               <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
-                               <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
-                               <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
-                               <th class="text-end">{{ 'candidate_dashboard.column_actions' | translate }}</th>
-                             </tr>
-                             </thead>
-                             <tbody>
-                               @if (this.candidateInvitations().length === 0) {
-                                 <tr>
-                                   <td colspan="7" class="text-center text-muted py-4">
-                                     {{ 'candidate_dashboard.no_results' | translate }}
-                                   </td>
-                                 </tr>
-                               } @else {
-                                 @for (record of this.candidateInvitations(); track record.invitationId; let i = $index) {
-                                   <tr>
-                                     <td>{{ (this.currentPage() - 1) * this.itemsPerPage() + i + 1 }}</td>
-                                     <td class="fw-bold">{{ record.jobTitle }}</td>
-                                     <td>{{ record.departmentName }}</td>
-                                     <td>
-                    <span [class]="'badge-soft ' + record.jobCategory">
-                      {{ record.jobCategory }}
-                    </span>
-                                     </td>
-                                     <td>
-                    <span [ngClass]="getStatusClasses(record.invitationStatus.backendName)">
-                      {{ record.invitationStatus.name }}
-                    </span>
-                                     </td>
-                                     <td>{{ record.createDate }}</td>
-                                     <td class="text-end">
+                       <p-table
+                         [value]="this.candidateInvitations()"
+                         responsiveLayout="scroll"
+                         class="table table-hover"
+                       >
+                         <ng-template pTemplate="header">
+                           <tr>
+                             <th>#</th>
+                             <th>{{ 'candidate_dashboard.column_job' | translate }}</th>
+                             <th>{{ 'candidate_dashboard.column_entity' | translate }}</th>
+                             <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
+                             <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
+                             <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
+                             <th class="text-end">{{ 'candidate_dashboard.column_actions' | translate }}</th>
+                           </tr>
+                         </ng-template>
+                         <ng-template pTemplate="body" let-record let-i="rowIndex">
+                           <tr>
+                             <td>{{ (this.currentPage() - 1) * this.itemsPerPage() + i + 1 }}</td>
+                             <td class="fw-bold">{{ record.jobTitle }}</td>
+                             <td>{{ record.departmentName }}</td>
+                             <td>
+                               <span [ngClass]="getJobCategoryClass(record)">
+                                 {{ record.jobCategory }}
+                               </span>
+                             </td>
+                             <td>
+                               <span class="status-pill" [ngClass]="getStatusClass(record.invitationStatus.backendName)">
+                                 {{ record.invitationStatus.name }}
+                               </span>
+                             </td>
+                             <td>{{ record.createDate }}</td>
+                             <td class="text-end">
+                               @if (getActionButtons(record.invitationStatus); as actions) {
+                                 @if (actions.showApply) {
+                                   <a
+                                     [routerLink]="routes.user.jobDetails(record.invitationId)"
+                                     class="btn btn-sm btn-primary btn-pill"
+                                   >
+                                     <i class="fa fa-paper-plane"></i>
+                                     {{ 'candidate_dashboard.action_apply_now' | translate }}
+                                   </a>
+                                 }
 
-                                       @if (getActionButtons(record.invitationStatus); as actions) {
+                                 @if (actions.showView) {
+                                   <a
+                                     [routerLink]="routes.user.jobDetails(record.invitationId)"
+                                     class="btn btn-sm btn-outline-secondary btn-pill"
+                                   >
+                                     <i class="fa fa-eye"></i>
+                                     {{ 'candidate_dashboard.action_view_request' | translate }}
+                                   </a>
+                                 }
 
-                                         @if (actions.showApply) {
-                                           <a [href]="'job-details.html?jobId=' + record.invitationId"
-                                              class="btn btn-sm btn-primary btn-pill">
-                                             <i class="fa fa-paper-plane"></i>
-                                             {{ 'candidate_dashboard.action_apply_now' | translate }}
-                                           </a>
-                                         }
+                                 @if (actions.showTrack) {
+                                   <a
+                                     [routerLink]="routes.user.jobDetails(record.invitationId)"
+                                     class="btn btn-sm btn-outline-secondary btn-pill"
+                                   >
+                                     <i class="fa fa-hourglass-half"></i>
+                                     {{ 'candidate_dashboard.action_track_status' | translate }}
+                                   </a>
+                                 }
 
-                                         @if (actions.showView) {
-                                           <a [href]="'my-applications.html?jobId=' + record.invitationId"
-                                              class="btn btn-sm btn-outline-secondary btn-pill">
-                                             <i class="fa fa-eye"></i>
-                                             {{ 'candidate_dashboard.action_view_request' | translate }}
-                                           </a>
-                                         }
+                                 @if (actions.showDetails) {
+                                   <a
+                                     [routerLink]="routes.user.jobDetails(record.invitationId)"
+                                     class="btn btn-sm btn-outline-secondary btn-pill"
+                                   >
+                                     <i class="fa fa-eye"></i>
+                                     {{ 'candidate_dashboard.action_view_details' | translate }}
+                                   </a>
+                                 }
 
-                                         @if (actions.showTrack) {
-                                           <a [href]="'my-applications.html?jobId=' + record.invitationId"
-                                              class="btn btn-sm btn-outline-secondary btn-pill">
-                                             <i class="fa fa-hourglass-half"></i>
-                                             {{ 'candidate_dashboard.action_track_status' | translate }}
-                                           </a>
-                                         }
-
-                                         @if (actions.showDetails) {
-                                           <a [href]="'job-details.html?jobId=' + record.invitationId"
-                                              class="btn btn-sm btn-outline-secondary btn-pill">
-                                             <i class="fa fa-eye"></i>
-                                             {{ 'candidate_dashboard.action_view_details' | translate }}
-                                           </a>
-                                         }
-
-                                         @if (actions.showWithdraw) {
-                                           <button (click)="withdrawApplication(record.invitationId)"
-                                                   class="btn btn-sm btn-outline-danger btn-pill"
-                                                   [disabled]="isWithdrawing() === record.invitationId">
-                                             <i class="fa"
-                                                [class.fa-ban]="isWithdrawing() !== record.invitationId"
-                                                [class.fa-spinner]="isWithdrawing() === record.invitationId"
-                                                [class.fa-spin]="isWithdrawing() === record.invitationId"></i>
-
-                                             {{
-                                               isWithdrawing() === record.invitationId
-                                                 ? 'جاري الإلغاء...'
-                                                 : ('candidate_dashboard.action_withdraw_request' | translate)
-                                             }}
-                                           </button>
-                                         }
-
-                                       }
-
-                                     </td>
-                                   </tr>
+                                 @if (actions.showWithdraw) {
+                                   <button
+                                     (click)="withdrawApplication(record.invitationId)"
+                                     class="btn btn-sm btn-outline-danger btn-pill"
+                                     [disabled]="isWithdrawing() === record.invitationId"
+                                   >
+                                     <i
+                                       class="fa"
+                                       [class.fa-ban]="isWithdrawing() !== record.invitationId"
+                                       [class.fa-spinner]="isWithdrawing() === record.invitationId"
+                                       [class.fa-spin]="isWithdrawing() === record.invitationId"
+                                     ></i>
+                                     {{
+                                       isWithdrawing() === record.invitationId
+                                         ? ('candidate_dashboard.action_withdraw_in_progress' | translate)
+                                         : ('candidate_dashboard.action_withdraw_request' | translate)
+                                     }}
+                                   </button>
                                  }
                                }
-                             </tbody>
-                           </table>
-                         </div>
-                       </div>
+                             </td>
+                           </tr>
+                         </ng-template>
+                         <ng-template pTemplate="emptymessage">
+                           <tr>
+                             <td colspan="7" class="text-center text-muted py-4">
+                               {{ 'candidate_dashboard.no_results' | translate }}
+                             </td>
+                           </tr>
+                         </ng-template>
+                       </p-table>
                         <!-- Pagination -->
                         <app-pagination [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"></app-pagination>
                   </div>
@@ -257,4 +261,3 @@
          </div>
      </div>
 </div>
-

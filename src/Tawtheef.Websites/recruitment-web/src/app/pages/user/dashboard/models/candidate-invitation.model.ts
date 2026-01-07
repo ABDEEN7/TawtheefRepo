@@ -5,6 +5,7 @@ export interface CandidateInvitationModel {
   jobTitle: string;
   departmentName: string;
   jobCategory: string;
+  jobCategoryBackendName: string;
   invitationStatus: dropdownOptionsModel;
   createDate: string;           // ISO date string
 }

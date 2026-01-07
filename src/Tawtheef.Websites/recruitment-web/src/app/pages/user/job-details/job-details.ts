@@ -1,0 +1,114 @@
+import {Component, OnInit, inject, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {ButtonModule} from 'primeng/button';
+
+import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
+import {JobDetailsService} from './services/job-details.service';
+import {NotificationService} from '../../../core/services/notification.service';
+import {routes} from '../../../routes/routes';
+import {JobTabType} from './enums/job-tab-type';
+
+@Component({
+  selector: 'app-job-details',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslatePipe, I18nNamespaceDirective, ButtonModule, RouterLink],
+  templateUrl: './job-details.html',
+  styleUrls: ['./job-details.scss']
+})
+export class JobDetails implements OnInit {
+  job = this.detailsService.job;
+  isLoading = this.detailsService.loading;
+  activeTab: string = JobTabType.Overview;
+  tabType = JobTabType;
+
+  private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
+  private notifier = inject(NotificationService);
+  detailsService = inject(JobDetailsService);
+  routes = routes;
+
+  invitationId = signal<string | null>(null);
+
+  ngOnInit() {
+    const invitationId = this.route.snapshot.paramMap.get('invitationId');
+    if (!invitationId) return;
+
+    this.invitationId.set(invitationId);
+    this.detailsService.loadJobDetails(invitationId);
+  }
+
+  applyInvitation(): void {
+    const invitationId = this.invitationId();
+    if (!invitationId) return;
+
+    this.detailsService.applyInvitation(invitationId).subscribe({
+      next: () => {
+        this.notifier.success(this.translate.instant('JOB_DETAILS.APPLY_SUCCESS'));
+      },
+      error: () => {
+        this.notifier.error(this.translate.instant('JOB_DETAILS.APPLY_ERROR'));
+      }
+    });
+  }
+
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+  }
+
+  getTabContent(): { id: string; title: string; icon: string } {
+    const tabsContent = [
+      { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
+      { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks' },
+      { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS_RESPONSIBILITIES', icon: 'fa-graduation-cap' },
+      { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
+      { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
+      { id: JobTabType.Attachments, title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-paperclip' }
+    ];
+
+    return tabsContent.find(tab => tab.id === this.activeTab) || tabsContent[0];
+  }
+
+  getStatusClass(): string {
+    const status = this.job()?.jobStatus?.backendName;
+    return status ?? 'Closed';
+  }
+
+  getResponsibilities(): { textAr: string; textEn: string }[] {
+    if (!this.job()?.responsibilities?.length) return [];
+    return this.job()!.responsibilities!.map((c) => ({
+      textAr: c.textAr,
+      textEn: c.textEn
+    }));
+  }
+
+  getJobConditions(): { textAr: string; textEn: string }[] {
+    if (!this.job()?.conditions?.length) return [];
+    return this.job()!.conditions!.map((c) => ({
+      textAr: c.textAr,
+      textEn: c.textEn
+    }));
+  }
+
+  getJobSkills(): string[] {
+    if (!this.job()?.skills?.length) return [];
+    return this.job()!.skills!
+      .filter(skill => skill.showToApplicants)
+      .map(skill => skill.skill.name);
+  }
+
+  getDegreeRequirements(): string {
+    if (!this.job()?.degrees?.length) return '';
+    const degreeNames = this.job()!.degrees!.map(degree => degree.degree.name);
+    return degreeNames.join(', ') || '';
+  }
+
+  isJobOpen(): boolean {
+    if (!this.job()?.closingDate) return true;
+    const closingDate = new Date(this.job()!.closingDate);
+    const today = new Date();
+    return closingDate >= today;
+  }
+}
