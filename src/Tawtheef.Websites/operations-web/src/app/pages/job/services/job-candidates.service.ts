@@ -14,28 +14,30 @@ import {
   SendJobCandidateInvitationsRequest,
   SendJobCandidateInvitationsResult,
 } from '../models/job-candidates-invitations.model';
+import { JobCandidatesFilterSettings } from '../models/job-candidates-filter-settings.model';
+import { JobCandidatesResponse } from '../models/job-candidates-response';
 
 @Injectable({ providedIn: 'root' })
 export class JobCandidatesService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
-  getOverview(jobId: GUID, filter?: JobCandidatesFilter): Observable<JobCandidatesOverview> {
-    return this.http.get<JobCandidatesOverview>(this.endpoints.jobCandidates.overview, {
-      jobId,
-      searchTerm: filter?.searchTerm,
-      jobCategoryId: filter?.jobCategoryId,
-      candidateTypeId: filter?.candidateTypeId,
-      minimumPoints: filter?.minimumPoints,
+  getFilterSettings(jobId: GUID): Observable<JobCandidatesFilterSettings> {
+    return this.http.get<JobCandidatesFilterSettings>(this.endpoints.jobCandidates.filters, { jobId });
+  }
+
+  saveFilterSettings(settings: JobCandidatesFilterSettings): Observable<JobCandidatesFilterSettings> {
+    return this.http.post<JobCandidatesFilterSettings>(this.endpoints.jobCandidates.filters, {
+      request: settings,
     });
   }
 
-  search(
+  getCandidates(
     jobId: GUID,
     pagination: PaginatedRequest,
     filter?: JobCandidatesFilter
-  ): Observable<PaginatedResult<JobCandidateListItem>> {
-    return this.http.post<PaginatedResult<JobCandidateListItem>>(
+  ): Observable<JobCandidatesResponse> {
+    return this.http.post<JobCandidatesResponse>(
       this.endpoints.jobCandidates.search,
       {
         jobId,
@@ -46,10 +48,15 @@ export class JobCandidatesService {
   }
 
   export(request: JobCandidatesExportRequest): Observable<HttpResponse<Blob>> {
-    return this.http.post<HttpResponse<Blob>>(this.endpoints.jobCandidates.export, request, undefined, {
-      observe: 'response',
-      responseType: 'blob',
-    });
+    return this.http.post<HttpResponse<Blob>>(
+      this.endpoints.jobCandidates.export,
+      request,
+      undefined,
+      {
+        observe: 'response',
+        responseType: 'blob',
+      }
+    );
   }
 
   sendInvitations(

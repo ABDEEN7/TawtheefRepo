@@ -4,5 +4,6 @@ export interface JobCandidatesFilter {
   searchTerm?: string;
   jobCategoryId?: GUID;
   candidateTypeId?: GUID;
+  genderId?: GUID;
   minimumPoints?: number;
 }

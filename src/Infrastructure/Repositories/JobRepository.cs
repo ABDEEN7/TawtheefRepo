@@ -85,4 +85,17 @@ public class JobRepository(IGenericRepository<Job> repository)
 
         return jobs;
     }
+    
+    public async Task<Job?> LoadJobWithPointsAsync(Guid jobId)
+    {
+        return await Repository.DbSet
+            .AsNoTracking()
+            .Include(j => j.JobPoints)
+                .ThenInclude(p => p!.Details)
+            .Include(j => j.Department)
+            .Include(j => j.JobCategory)
+            .Include(j => j.Major)
+            .Include(j => j.SubMajor)
+            .FirstOrDefaultAsync(j => j.Id == jobId);
+    }
 }

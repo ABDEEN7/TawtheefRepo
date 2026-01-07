@@ -1,0 +1,65 @@
+<section i18nNamespace="pages/job-candidates" class="jc-dialog jc-dialog--lg">
+  <form [formGroup]="form" class="jc-dialog__body">
+    <div formArrayName="percentages" class="vstack gap-3">
+      <div
+        *ngFor="let group of percentageControls.controls; let i = index"
+        [formGroupName]="i"
+        class="card jc-card"
+      >
+        <div class="card-body">
+          <div class="row g-3 align-items-center">
+            <!-- Label -->
+            <div class="col-12 col-lg-5">
+              <div class="fw-semibold">
+                {{ getCandidateTypeName(group.get('candidateTypeId')?.value) }}
+              </div>
+            </div>
+
+            <!-- Percentage -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <label class="form-label mb-1 small text-muted">
+                {{ 'JOB_CANDIDATE_FILTERS_PERCENTAGE_VALUE' | translate }}
+              </label>
+              <p-inputNumber
+                formControlName="percentage"
+                [min]="0"
+                [max]="100"
+                [showButtons]="true"
+                [placeholder]="'JOB_CANDIDATE_FILTERS_PERCENTAGE_VALUE' | translate"
+                class="w-100"
+              ></p-inputNumber>
+            </div>
+
+            <!-- Breakdown button -->
+            <div class="col-12 col-sm-6 col-lg-4 d-flex justify-content-lg-end">
+              @if (hasNationalityBreakdown(group.get('candidateTypeId')?.value)) {
+              <button
+                class="btn btn-sm btn-outline-secondary w-100 w-sm-auto"
+                type="button"
+                (click)="openNationalityBreakdown(group.get('candidateTypeId')?.value)"
+              >
+                {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_BREAKDOWN' | translate }}
+                <span class="text-muted">
+                  ({{ getNationalityBreakdownCount(group.get('candidateTypeId')?.value) }})
+                </span>
+              </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Sticky footer actions -->
+  <div class="jc-dialog__footer border-top bg-body">
+    <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
+      <button class="btn btn-outline-primary w-100 w-sm-auto" type="button" (click)="close()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button class="btn btn-primary w-100 w-sm-auto" type="button" (click)="save()">
+        {{ 'common.save' | translate }}
+      </button>
+    </div>
+  </div>
+</section>
