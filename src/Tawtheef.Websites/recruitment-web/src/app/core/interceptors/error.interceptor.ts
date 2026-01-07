@@ -79,8 +79,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   function tryLocalizedMessage(key: string): string {
-    if(translate.instant(key) !== key) {
-      return translate.instant(key);
+    const translateValue = translate.instant(`server-error.${key}`);
+    if(translateValue!== key) {
+      return translateValue;
     }
     return key;
   }
