@@ -1,16 +1,19 @@
 import {
   ApplicationConfig,
-  importProvidersFrom,
-  inject,
-  provideAppInitializer,
+  importProvidersFrom, inject, provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection
 } from '@angular/core';
-import {provideRouter} from '@angular/router';
-import {routes} from './app.routes';
-import {HttpBackend, provideHttpClient, withInterceptors,} from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
+import {
+  HttpBackend,
+  provideHttpClient,
+  withInterceptors,
+} from '@angular/common/http';
 import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {MessageService} from 'primeng/api';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {providePrimeNG} from 'primeng/config';
 import {TawtheefPreset} from './shared/themes/twatheef-preset';
@@ -21,8 +24,6 @@ import {loadingInterceptor} from './core/interceptors/loading.interceptor';
 import {refreshInterceptor} from './core/interceptors/refresh.interceptor';
 import {errorInterceptor} from './core/interceptors/error.interceptor';
 import {customHttpInterceptor} from './core/interceptors/http.interceptor';
-import {NotificationService} from './core/services/notification.service';
-
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   return new MultiTranslateHttpLoader(_httpBackend, [
     {prefix: '/i18n/primeng/', suffix: '.json'},
@@ -33,7 +34,7 @@ export function rootLoaderFactory(_httpBackend: HttpBackend) {
 }
 export const appConfig: ApplicationConfig = {
   providers: [
-    NotificationService,
+    MessageService,
     importProvidersFrom(NgbModule),
     provideBrowserGlobalErrorListeners(),
     provideAnimationsAsync(),

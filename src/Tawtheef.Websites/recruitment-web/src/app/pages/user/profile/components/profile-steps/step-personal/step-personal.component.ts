@@ -89,7 +89,7 @@ export class StepPersonalComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           this.ds.applySponsorPersonalInfo(normalizeMoiResponse(res));
-          this.notificationService.error(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
+          this.notificationService.success(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
         }
       });
   }
