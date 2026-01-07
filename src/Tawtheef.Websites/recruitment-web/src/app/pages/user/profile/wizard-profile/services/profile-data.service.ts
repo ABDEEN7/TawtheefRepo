@@ -1,4 +1,4 @@
-﻿import {Injectable, signal, computed, inject} from '@angular/core';
+﻿import {computed, inject, Injectable, signal} from '@angular/core';
 import {ProfileState} from '../models/profile-state.model';
 import {Language} from '../models/language.model';
 import {Degree} from '../models/degree.model';
@@ -8,7 +8,7 @@ import {Attachment} from '../models/attachment.model';
 import {Skill} from '../models/skill.model';
 import {PhoneMapperService} from './phone-mapper.service';
 import {ProfileLookupsService} from './profile-lookups.service';
-import {MoiPersonalInfo, buildArabicFullName, buildEnglishFullName} from '../models/moi-personal-info.model';
+import {buildArabicFullName, buildEnglishFullName, MoiPersonalInfo} from '../models/moi-personal-info.model';
 import {ProfileService} from './profile.service';
 import {normalizeMoiResponse} from './moi-response-normalizer';
 import {
@@ -275,8 +275,7 @@ export class ProfileDataService {
       .checkProfile(qid, qidExpiry)
       .pipe(take(1))
       .subscribe({
-        next: res => this.applyMoiPersonalInfo(normalizeMoiResponse(res)),
-        error: err => console.error(err),
+        next: res => this.applyMoiPersonalInfo(normalizeMoiResponse(res))
       });
   }
 
@@ -318,12 +317,21 @@ export class ProfileDataService {
   }
 
   addDegree(d: Degree){ this.state.update(s => ({...s, degrees:[...s.degrees, d]})); }
+  updateDegree(i: number, degree: Degree) {
+    this.state.update(s => ({ ...s, degrees: s.degrees.map((item, idx) => (idx === i ? degree : item)) }));
+  }
   delDegree(i:number){ this.state.update(s => ({...s, degrees: s.degrees.filter((_,x)=>x!==i)})); }
 
   addExp(e: Experience){ this.state.update(s => ({...s, experiences:[...s.experiences, e]})); }
+  updateExp(i: number, exp: Experience) {
+    this.state.update(s => ({ ...s, experiences: s.experiences.map((item, idx) => (idx === i ? exp : item)) }));
+  }
   delExp(i:number){ this.state.update(s => ({...s, experiences: s.experiences.filter((_,x)=>x!==i)})); }
 
   addCourse(e: TrainingCourse){ this.state.update(s => ({...s, courses:[...s.courses, e]})); }
+  updateCourse(i: number, course: TrainingCourse) {
+    this.state.update(s => ({ ...s, courses: s.courses.map((item, idx) => (idx === i ? course : item)) }));
+  }
   delCourse(i:number){ this.state.update(s => ({...s, courses: s.courses.filter((_,x)=>x!==i)})); }
 
   addAchievement(a: Achievement){ this.state.update(s => ({...s, achievements:[...s.achievements, a]})); }
@@ -342,6 +350,9 @@ export class ProfileDataService {
   delSkill(i: number){ this.state.update(s => ({...s, skills: s.skills.filter((_,x)=>x!==i)})); }
 
   addAttachment(a: Attachment){ this.state.update(s => ({...s, attachments:[...s.attachments, a]})); }
+  updateAttachment(i: number, attachment: Attachment) {
+    this.state.update(s => ({ ...s, attachments: s.attachments.map((item, idx) => (idx === i ? attachment : item)) }));
+  }
   delAttachment(i:number){ this.state.update(s => ({...s, attachments: s.attachments.filter((_,x)=>x!==i)})); }
 
   setState(next: ProfileState): void {

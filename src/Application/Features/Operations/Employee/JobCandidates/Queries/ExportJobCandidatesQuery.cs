@@ -9,5 +9,4 @@ public sealed record ExportJobCandidatesQuery(Guid JobId)
     : IQuery<IResult<JobCandidatesExportResult>>
 {
     public JobCandidatesFilter? Filter { get; init; }
-    public IReadOnlyCollection<Guid>? InvitationIds { get; init; }
 }

@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
+import {Component, EventEmitter, inject, isDevMode, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
-import {MessageService} from 'primeng/api';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
 import {UploadedFileRef} from '../../../wizard-profile/models/profile-state.model';
 import {Attachment} from '../../../wizard-profile/models/attachment.model';
+import {NotificationService} from '../../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-step-attachments',
@@ -22,7 +22,7 @@ export class StepAttachmentsComponent implements OnInit {
   ds = inject(ProfileDataService);
   private fb = inject(FormBuilder);
   translate = inject(TranslateService);
-  messageService = inject(MessageService);
+  notificationService = inject(NotificationService);
   profile = inject(ProfileService);
   fileUtils = inject(FileUtilsService);
 
@@ -159,12 +159,7 @@ export class StepAttachmentsComponent implements OnInit {
     });
 
     if (this.form.invalid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.attachments.empty'),
-        life: 5000,
-      });
+      this.notificationService.error(this.translate.instant('wizard.attachments.empty'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
@@ -199,7 +194,8 @@ export class StepAttachmentsComponent implements OnInit {
         this.next.emit();
       },
       error: (err: any) => {
-        console.error(err);
+        if(isDevMode())
+          console.error(err);
         this.saving = false;
       },
     });

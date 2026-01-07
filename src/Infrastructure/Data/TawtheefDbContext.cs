@@ -110,10 +110,13 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<JobCondition> JobConditions { get; set; }
     public DbSet<JobDegree> JobDegrees { get; set; }
     public DbSet<JobPointConfiguration> JobPointConfigurations { get; set; }
+    public DbSet<JobCategoryCandidateSettings> JobCategoryCandidateSettings { get; set; }
     public DbSet<JobSkill> JobSkills { get; set; }
     public DbSet<JobResponsibility> JobResponsibilities { get; set; }
     public DbSet<JobRequiredAttachment> JobRequiredAttachments { get; set; }
-
+    public DbSet<JobCandidateFilterSetting> JobCandidateFilterSettings { get; set; }
+    public DbSet<JobCandidateTypePercentage> JobCandidateTypePercentages { get; set; }
+    public DbSet<JobCandidateNationalityPercentage> JobCandidateNationalityPercentages { get; set; }
     // Notification Tables
     public DbSet<EmailQueue> EmailQueues { get; set; }
     public DbSet<EmailTemplate> EmailTemplates { get; set; }

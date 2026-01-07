@@ -1,13 +1,13 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { forkJoin, Observable, of, BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { EndpointsService } from '../../../core/http/endpoints.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { GUID } from '../../../shared/types/guid.type';
-import { HttpService } from '../../../core/http/http.service';
-import { dropdownOptionsModel } from '../../../shared/models/dropdown-options.model';
-import { Gender, JobCategory, JobStatus, WorkType } from '../../../core/enums/lookups.enum';
-import { TranslateService } from '@ngx-translate/core';
+import {inject, Injectable, signal} from '@angular/core';
+import {forkJoin, Observable, of} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
+import {EndpointsService} from '../../../core/http/endpoints.service';
+import {NotificationService} from '../../../core/services/notification.service';
+import {GUID} from '../../../shared/types/guid.type';
+import {HttpService} from '../../../core/http/http.service';
+import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
+import {Gender, JobCategory, JobStatus, WorkType} from '../../../core/enums/lookups.enum';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
 export class JobLookupService {
@@ -18,8 +18,6 @@ export class JobLookupService {
 
   private loading = signal<boolean>(false);
   public loaded = signal<boolean>(false);
-  private loadSubject = new BehaviorSubject<boolean>(false);
-
   departments = signal<dropdownOptionsModel[]>([]);
   majors = signal<dropdownOptionsModel[]>([]);
   subMajors = signal<dropdownOptionsModel[]>([]);
@@ -36,11 +34,9 @@ export class JobLookupService {
   sectors = signal<dropdownOptionsModel[]>([]);
   skills = signal<dropdownOptionsModel[]>([]);
 
-  loaded$ = this.loadSubject.asObservable();
-
   loadAll(): void {
     if (this.loaded() || this.loading()) return;
-    
+
     this.loading.set(true);
 
     forkJoin({
@@ -68,27 +64,14 @@ export class JobLookupService {
         this.jobStatus.set(res.jobStatus);
         this.jobInvitesStatus.set(res.jobInvitesStatus);
         this.candidateTypes.set(res.candidateTypes);
-        
+
         this.loaded.set(true);
         this.loading.set(false);
-        this.loadSubject.next(true);
       },
       error: (err) => {
         this.loading.set(false);
-        this.loadSubject.error(err);
       }
     });
-  }
-
-  loadAllAndWait(): Observable<boolean> {
-    if (this.loaded()) {
-      return of(true);
-    }
-    
-    this.loadAll();
-    return this.loaded$.pipe(
-      catchError(() => of(false))
-    );
   }
 
   getStatusIdByEnum(statusEnum: JobStatus): GUID  {
@@ -154,7 +137,7 @@ export class JobLookupService {
       this.resetSubMajors();
       return;
     }
-    
+
     this.http.get<dropdownOptionsModel[]>(
       `${this.endpoints.job.lookups.subMajors}?majorId=${majorId}`
     ).subscribe({
@@ -170,7 +153,7 @@ export class JobLookupService {
       this.resetSkills();
       return;
     }
-    
+
     this.http.get<dropdownOptionsModel[]>(
       `${this.endpoints.job.lookups.skills}?majorId=${majorId}`
     ).subscribe({
@@ -186,7 +169,7 @@ export class JobLookupService {
       this.resetManagements();
       return;
     }
-    
+
     this.http.get<dropdownOptionsModel[]>(
       `${this.endpoints.job.lookups.managements}?sectorId=${sectorId}`
     ).subscribe({
@@ -202,7 +185,7 @@ export class JobLookupService {
       this.resetDepartments();
       return;
     }
-    
+
     this.http.get<dropdownOptionsModel[]>(
       `${this.endpoints.job.lookups.departments}?managementId=${managementId}`
     ).subscribe({
@@ -225,30 +208,54 @@ export class JobLookupService {
   );
 }
 
-  loadJobCategories()
+  loadJobCategories(): Observable<dropdownOptionsModel[]>
   {
-    this.http.get<dropdownOptionsModel[]>(
-      `${this.endpoints.job.lookups.jobCategories}`
-    ).subscribe({
-      next: (cat) => this.jobCategories.set(cat),
-      error: (err) => {
-        this.jobCategories.set([]);
-      }
-    });
+    return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.job.lookups.jobCategories
+  ).pipe(
+    tap(jobCategories => this.jobCategories.set(jobCategories)),
+    catchError(() => {
+      this.jobCategories.set([]);
+      return of([]);
+    })
+  );
   }
 
-  loadCandidateTypes(): void {
-    this.http.get<dropdownOptionsModel[]>(
-      this.endpoints.jobCandidates.lookups.candidateTypes
-    ).subscribe({
-      next: (types) => this.candidateTypes.set(types),
-      error: () => {
-        this.candidateTypes.set([]);
-      },
-    });
+  loadCandidateTypes(): Observable<dropdownOptionsModel[]> {
+   return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.jobCandidates.lookups.candidateTypes
+  ).pipe(
+    tap(candidateTypes => this.candidateTypes.set(candidateTypes)),
+    catchError(() => {
+      this.candidateTypes.set([]);
+      return of([]);
+    })
+  );
   }
   
+  loadNationalities(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.job.lookups.nationalities
+  ).pipe(
+    tap(nationalities => this.nationalities.set(nationalities)),
+    catchError(() => {
+      this.nationalities.set([]);
+      return of([]);
+    })
+  );
+  }
 
+  loadGenders() : Observable<dropdownOptionsModel[]>{
+    return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.job.lookups.genders
+  ).pipe(
+    tap(genders => this.genders.set(genders)),
+    catchError(() => {
+      this.genders.set([]);
+      return of([]);
+    })
+  );
+  }
   getJobCategoryLabel(id: GUID): string {
     return this.jobCategories().find(jobcat => jobcat.id === id)?.name || '';
   }
@@ -279,7 +286,7 @@ export class JobLookupService {
 
   getDegreeNames(ids: GUID[]): string {
     if (!ids || ids.length === 0) return '';
-    
+
     const names: string[] = [];
     ids.forEach(id => {
       const name = this.degrees().find(degree => degree.id === id)?.name;
@@ -331,7 +338,6 @@ export class JobLookupService {
 
   clearCache(): void {
     this.loaded.set(false);
-    this.loadSubject.next(false);
     this.departments.set([]);
     this.majors.set([]);
     this.subMajors.set([]);

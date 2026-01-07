@@ -12,32 +12,34 @@ import {
   ViewContainerRef,
   ViewEncapsulation,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DialogService } from 'primeng/dynamicdialog';
-import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, map, of, Subject, switchMap, takeUntil, throwError } from 'rxjs';
-import { JobService } from '../../services/job.service';
-import { WizardStepComponent } from '../wizard-steps/base/wizard-step.component';
-import { ConditionsStepComponent } from '../wizard-steps/conditions-step.component/conditions-step.component';
-import { SkillsStepComponent } from '../wizard-steps/skills-step.component/skills-step.component';
-import { GUID } from '../../../../shared/types/guid.type';
-import { GuidUtils } from '../../../../core/utils/guid-utils';
-import { JobLookupService } from '../../services/job-lookup.service';
-import { QualificationsStepComponent } from '../wizard-steps/qualifications-step.component/qualifications-step.component';
-import { ResponsibilitiesStepComponent } from '../wizard-steps/responsibilities-step.component/responsibilities-step.component';
-import { OverviewStepComponent } from '../wizard-steps/overview-step.component.ts/overview-step.component';
-import { BenefitsStepComponent } from '../wizard-steps/benefits-step.component/benefits-step.component';
-import { AttachmentStepComponent } from '../wizard-steps/attachment-step.component/attachment-step.component';
-import { ReviewStepComponent } from '../wizard-steps/review-step.component/review-step.component';
-import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic-modal.component';
-import { routes } from '../../../../routes/routes';
-import { JobTabType } from '../../enums/job-tab-type';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { JobReviewResponse } from '../../models/job-review-response';
-import { FileUtilsService } from '../../../../core/utils/file-utils';
-import { JobStatus } from '../../../../core/enums/lookups.enum';
-import { DialogHelperService } from '../../../../core/services/dialog-helper.service';
-import { JobCopyTemplate } from '../../models/job-copy-template.model';
+import {ActivatedRoute, Router} from '@angular/router';
+import {DialogService} from 'primeng/dynamicdialog';
+import {TranslateService} from '@ngx-translate/core';
+import {EMPTY, map, of, Subject, switchMap, takeUntil} from 'rxjs';
+import {JobService} from '../../services/job.service';
+import {WizardStepComponent} from '../wizard-steps/base/wizard-step.component';
+import {ConditionsStepComponent} from '../wizard-steps/conditions-step.component/conditions-step.component';
+import {SkillsStepComponent} from '../wizard-steps/skills-step.component/skills-step.component';
+import {GUID} from '../../../../shared/types/guid.type';
+import {GuidUtils} from '../../../../core/utils/guid-utils';
+import {JobLookupService} from '../../services/job-lookup.service';
+import {QualificationsStepComponent} from '../wizard-steps/qualifications-step.component/qualifications-step.component';
+import {
+  ResponsibilitiesStepComponent
+} from '../wizard-steps/responsibilities-step.component/responsibilities-step.component';
+import {OverviewStepComponent} from '../wizard-steps/overview-step.component.ts/overview-step.component';
+import {BenefitsStepComponent} from '../wizard-steps/benefits-step.component/benefits-step.component';
+import {AttachmentStepComponent} from '../wizard-steps/attachment-step.component/attachment-step.component';
+import {ReviewStepComponent} from '../wizard-steps/review-step.component/review-step.component';
+import {JobBasicModalComponent} from '../../modals/basics-step-modal/job-basic-modal.component';
+import {routes} from '../../../../routes/routes';
+import {JobTabType} from '../../enums/job-tab-type';
+import {NotificationService} from '../../../../core/services/notification.service';
+import {JobReviewResponse} from '../../models/job-review-response';
+import {FileUtilsService} from '../../../../core/utils/file-utils';
+import {JobStatus} from '../../../../core/enums/lookups.enum';
+import {DialogHelperService} from '../../../../core/services/dialog-helper.service';
+import {JobCopyTemplate} from '../../models/job-copy-template.model';
 
 @Component({
   selector: 'app-wizard',
@@ -208,9 +210,6 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
       },
       error: () => {
         this.isLoading = false;
-        this.notificationService.error(
-          this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')
-        );
         this.router.navigate([routes.employee.JobList]);
       },
     });
@@ -464,10 +463,8 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
           this.showSuccessMessage('JOB_WIZARD.SUCCESS.JOB_SUBMITTED');
           this.router.navigate([routes.employee.JobList]);
         },
-        error: (err) => {
+        error: () => {
           this.isLoading = false;
-          const errorMessage = err.message || 'JOB_WIZARD.ERRORS.SUBMIT_JOB_FAILED';
-          this.showErrorMessage(errorMessage);
         },
       });
   }
@@ -495,11 +492,7 @@ private saveDraft(): void {
     this.jobService
       .update(this.jobId)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        error: () => {
-          this.showErrorMessage('JOB_WIZARD.ERRORS.SAVE_DRAFT_FAILED');
-        },
-      });
+      .subscribe();
   }
   private getTabByStepIndex(stepIndex: number): JobTabType | undefined {
     return (Object.keys(this.tabToStepIndex) as JobTabType[]).find(

@@ -1,11 +1,10 @@
-﻿import { Injectable, NgZone, OnDestroy, inject } from '@angular/core';
-import { AuthService } from './auth.service';
-import { MessageService } from 'primeng/api';
-import { EndpointsService } from '../http/endpoints.service';
-import { LoadingService } from '../services/loading.service';
-import { environment } from '../../../environments/environment';
-import { Subject, fromEvent, interval } from 'rxjs';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
+﻿import {inject, Injectable, NgZone, OnDestroy} from '@angular/core';
+import {AuthService} from './auth.service';
+import {EndpointsService} from '../http/endpoints.service';
+import {LoadingService} from '../services/loading.service';
+import {environment} from '../../../environments/environment';
+import {fromEvent, interval, Subject} from 'rxjs';
+import {filter, map, takeUntil, tap} from 'rxjs/operators';
 import {NotificationService} from '../services/notification.service';
 import {TranslateService} from '@ngx-translate/core';
 import {OAUTH_STATE_KEY} from '../constants/auth-tokens.const';
@@ -155,7 +154,6 @@ export class ExternalLoginService implements OnDestroy {
             success
               ? this.toastKey('success', this.i18n.loginSuccessfulSummary, this.i18n.loginSuccessfulDetail)
               : this.toastKey('error', this.i18n.loginFailedSummary, this.i18n.loginFailedDetailProvider),
-          error: () => this.toastKey('error', this.i18n.authErrorSummary, this.i18n.authErrorDetailLogin),
         });
         this.closePopup();
         break;

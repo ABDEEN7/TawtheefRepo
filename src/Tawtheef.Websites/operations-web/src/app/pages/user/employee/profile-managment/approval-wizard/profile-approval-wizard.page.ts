@@ -1,23 +1,23 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize, Subscription, combineLatest } from 'rxjs';
+import {CommonModule} from '@angular/common';
+import {Component, computed, inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {combineLatest, finalize, Subscription} from 'rxjs';
 
-import { AvatarModule } from 'primeng/avatar';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { Select } from 'primeng/select';
-import { Textarea } from 'primeng/textarea';
-import { DialogService } from 'primeng/dynamicdialog';
+import {AvatarModule} from 'primeng/avatar';
+import {ButtonModule} from 'primeng/button';
+import {DialogModule} from 'primeng/dialog';
+import {ProgressBarModule} from 'primeng/progressbar';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {ToggleSwitchModule} from 'primeng/toggleswitch';
+import {Select} from 'primeng/select';
+import {Textarea} from 'primeng/textarea';
+import {DialogService} from 'primeng/dynamicdialog';
 
-import { routes } from '../../../../../routes/routes';
-import { LanguageService } from '../../../../../core/services/language.service';
-import { ProfileApprovalService } from '../approval-list/services/profile-approval.service';
+import {routes} from '../../../../../routes/routes';
+import {LanguageService} from '../../../../../core/services/language.service';
+import {ProfileApprovalService} from '../approval-list/services/profile-approval.service';
 import {
   ProfileApprovalDetail,
   ProfileApprovalItem,
@@ -26,26 +26,47 @@ import {
   ReviewTargetType,
   SectionReviewSummary,
 } from '../approval-list/models/profile-approval.models';
-import { ProfileStatusNumber } from '../../../../../core/enums/lookups.enum';
-import { FileUtilsService } from '../../../../../core/utils/file-utils';
-import { NotificationService } from '../../../../../core/services/notification.service';
-import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
-import { AvatarUtils } from '../../../../../core/utils/avatar-utils';
-import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
+import {FileUtilsService} from '../../../../../core/utils/file-utils';
+import {NotificationService} from '../../../../../core/services/notification.service';
+import {FaDirArrowDirective} from '../../../../../shared/directives/dir-arrow.directive';
+import {AvatarUtils} from '../../../../../core/utils/avatar-utils';
+import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 
-import { FirstInfoSectionComponent } from '../approval-detail/components/sections/first-info-section/first-info-section.component';
-import { BasicInfoSectionComponent } from '../approval-detail/components/sections/basic-info-section/basic-info-section.component';
-import { ContactInfoSectionComponent } from '../approval-detail/components/sections/contact-info-section/contact-info-section.component';
-import { QualificationsSectionComponent } from '../approval-detail/components/sections/qualifications-section/qualifications-section.component';
-import { ExperiencesSectionComponent } from '../approval-detail/components/sections/experiences-section/experiences-section.component';
-import { TrainingSectionComponent } from '../approval-detail/components/sections/training-section/training-section.component';
-import { CertificatesSectionComponent } from '../approval-detail/components/sections/certificates-section/certificates-section.component';
-import { SkillsSectionComponent } from '../approval-detail/components/sections/skills-section/skills-section.component';
-import { LanguagesSectionComponent } from '../approval-detail/components/sections/languages-section/languages-section.component';
-import { AttachmentsSectionComponent } from '../approval-detail/components/sections/attachments-section/attachments-section.component';
+import {
+  FirstInfoSectionComponent
+} from '../approval-detail/components/sections/first-info-section/first-info-section.component';
+import {
+  BasicInfoSectionComponent
+} from '../approval-detail/components/sections/basic-info-section/basic-info-section.component';
+import {
+  ContactInfoSectionComponent
+} from '../approval-detail/components/sections/contact-info-section/contact-info-section.component';
+import {
+  QualificationsSectionComponent
+} from '../approval-detail/components/sections/qualifications-section/qualifications-section.component';
+import {
+  ExperiencesSectionComponent
+} from '../approval-detail/components/sections/experiences-section/experiences-section.component';
+import {
+  TrainingSectionComponent
+} from '../approval-detail/components/sections/training-section/training-section.component';
+import {
+  CertificatesSectionComponent
+} from '../approval-detail/components/sections/certificates-section/certificates-section.component';
+import {SkillsSectionComponent} from '../approval-detail/components/sections/skills-section/skills-section.component';
+import {
+  LanguagesSectionComponent
+} from '../approval-detail/components/sections/languages-section/languages-section.component';
+import {
+  AttachmentsSectionComponent
+} from '../approval-detail/components/sections/attachments-section/attachments-section.component';
 
-import { ReviewItemsComponent, ReviewAction } from '../approval-detail/components/review-items/review-items.component';
-import { ItemDialogResult, ItemReviewDialogComponent } from '../approval-list/dialogs/item-review-dialog/item-review-dialog';
+import {ReviewAction, ReviewItemsComponent} from '../approval-detail/components/review-items/review-items.component';
+import {
+  ItemDialogResult,
+  ItemReviewDialogComponent
+} from '../approval-list/dialogs/item-review-dialog/item-review-dialog';
 
 @Component({
   selector: 'app-profile-approval-wizard-page',
@@ -271,8 +292,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
           }
 
           this.ensureFinalizeDialog();
-        },
-        error: () => this.error.set(this.translate.instant('profileApproval.errors.loadDetail')),
+        }
       });
   }
 
@@ -456,11 +476,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
           if (current === section) {
             this.next();
           }
-        },
-        error: err => {
-          const msg = err?.error?.[0]?.message ?? this.translate.instant('profileApproval.detail.sectionSaveFailed');
-          this.notifications.error(msg);
-        },
+        }
       });
   }
 

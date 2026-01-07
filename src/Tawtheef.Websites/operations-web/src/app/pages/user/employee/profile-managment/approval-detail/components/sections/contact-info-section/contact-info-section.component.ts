@@ -43,7 +43,7 @@ export class ContactInfoSectionComponent {
   hasBasicFiles(): boolean {
     const b = this.profile?.basicInformation;
     return !!(
-      b?.residenceAddress?.certificate
+      b?.residenceAddress?.residenceAddressCertificate
     );
   }
 

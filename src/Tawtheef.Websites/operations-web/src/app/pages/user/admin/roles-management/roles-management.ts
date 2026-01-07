@@ -1,4 +1,4 @@
-import {Component, OnInit, inject, signal, computed} from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {RolesService} from './services/roles.service';
@@ -79,15 +79,13 @@ export class RolesManagement implements OnInit {
           this.currentPage.set(response.metadata.currentPage);
           this.itemsPerPage.set(response.metadata.pageSize);
         }
-      },
-      error: () => this.notification.error(this.translate.instant('ROLES.LOAD_FAILED'))
+      }
     });
   }
 
   loadPermissions() {
     this.rolesService.getPermissions().subscribe({
-      next: res => this.permissions.set(res),
-      error: () => this.notification.error(this.translate.instant('ROLES.LOAD_FAILED'))
+      next: res => this.permissions.set(res)
     });
   }
 
@@ -126,9 +124,6 @@ export class RolesManagement implements OnInit {
                 totalPages: Math.ceil(Math.max(0, metadata.totalCount - 1) / metadata.pageSize)
               };
             });
-          },
-          error: () => {
-            this.notification.error(this.translate.instant('ROLES.DELETE_FAILED'));
           }
         });
       }

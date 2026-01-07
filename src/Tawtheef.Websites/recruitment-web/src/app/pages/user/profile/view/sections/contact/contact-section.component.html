@@ -1,0 +1,185 @@
+<div class="card req-panel border-0 shadow-sm">
+  <div class="card-body p-3 p-sm-3">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <div class="d-inline-flex align-items-center gap-2 fw-bold req-title">
+        <i class="pi pi-at" aria-hidden="true"></i>
+        <span>{{ 'profileOverview.sections.contact' | translate }}</span>
+      </div>
+
+      <button *ngIf="canEdit"
+              type="button"
+              class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
+              (click)="onEdit()">
+        <i class="pi pi-pencil" aria-hidden="true"></i>
+        <span>{{ 'common.edit' | translate }}</span>
+      </button>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-12 col-lg-4">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.email' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('email')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+            <div class="fw-bold text-body text-break">{{ profile?.email || '-' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.phone' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('phone')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+            <div class="fw-bold text-body text-nowrap">{{ profile?.phone || '-' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.address' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('address')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+            <div class="fw-bold text-body text-break">{{ profile?.address || '-' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-2">
+      <div class="col-12 col-lg-3">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.naZone' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('naZone')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+            <div class="fw-bold text-body text-nowrap">{{ profile?.naZone || '-' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-3">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.naStreet' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('naStreet')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+            <div class="fw-bold text-body text-nowrap">{{ profile?.naStreet || '-' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-3">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.naBuilding' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('naBuilding')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+            <div class="fw-bold text-body text-nowrap">{{ profile?.naBuilding || '-' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-3">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.naUnit' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('naUnit')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+            <div class="fw-bold text-body text-nowrap">{{ profile?.naUnit || '-' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="row g-3 mt-2">
+      @for (att of attachments(); track att.key) {
+        <div class="col-12 col-lg-6">
+          <div class="card h-100 attach-card">
+            <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
+              <div class="attach-icon border rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0">
+                <i class="pi pi-external-link" aria-hidden="true"></i>
+              </div>
+
+              <div class="flex-grow-1 min-w-0">
+                <div class="text-muted small fw-semibold mb-1">
+                  {{ att.titleKey | translate }}
+                </div>
+
+                <div class="min-w-0">
+                  @if (att.file) {
+                    <a class="d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-body min-w-0 attach-link"
+                       (click)="open(att.file)">
+                      <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
+                      <span class="text-truncate d-inline-block">
+                        {{ att.file.fileName }}
+                      </span>
+                    </a>
+                  } @else {
+                    <span class="text-muted">
+                      {{ 'common.none' | translate }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

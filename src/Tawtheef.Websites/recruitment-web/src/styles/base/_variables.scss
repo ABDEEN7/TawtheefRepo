@@ -23,6 +23,21 @@ $colors: (
   bg-light: #F1E6E5,
   bg-dark: #F6F6F3,
 );
+$brand: #7b1e3a;
+$brand-2: #a9445f;
+
+$bg: #f7f7f8;
+$card: #ffffff;
+$stroke: #e9e9ee;
+
+$text: #1f2937;
+$muted: #6b7280;
+
+$ok: #1f9254;
+$warn: #c2410c;
+$danger: #b42318;
+
+$radius: 18px;
 // helpers
 @mixin brand-gradient { background: linear-gradient(135deg, $brand, $accent); }
 @mixin focus-ring { border-color: $brand; box-shadow: 0 0 0 .2rem rgba(123,30,58,.15); }

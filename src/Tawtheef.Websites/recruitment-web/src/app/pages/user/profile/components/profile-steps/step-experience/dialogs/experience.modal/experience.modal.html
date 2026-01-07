@@ -176,7 +176,7 @@
         </div>
       </div>
 
-      <div class="mt-3 d-flex flex-column">
+      <div class="mt-3 d-flex flex-column" *ngIf="!disableFileUpload; else filePreview">
         <label class="form-label required">
           {{ 'wizard.experience.attachment' | translate }}
         </label>
@@ -204,6 +204,16 @@
           {{ fileError }}
         </small>
       </div>
+      <ng-template #filePreview>
+        <div class="mt-3 d-flex flex-column">
+          <label class="form-label">
+            {{ 'wizard.experience.attachment' | translate }}
+          </label>
+          <div class="text-muted">
+            {{ f['fileName'].value || ('common.none' | translate) }}
+          </div>
+        </div>
+      </ng-template>
     </div>
   </div>
 

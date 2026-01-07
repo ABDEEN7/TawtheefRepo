@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {TranslateService} from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import {createStepValiditySignal} from '../../../wizard-profile/state/profile-st
 import {DegreeModal} from './dialogs/degree.modal/degree.modal';
 import {Degree} from '../../../wizard-profile/models/degree.model';
 import {finalize, switchMap} from 'rxjs/operators';
+import {ProfileState} from '../../../wizard-profile/models/profile-state.model';
 
 @Component({
   selector: 'app-step-degrees',
@@ -55,6 +56,24 @@ export class StepDegreeComponent implements OnInit {
     });
   }
 
+  edit(index: number) {
+    const degree = this.ds.state().degrees[index];
+    this.dialog.open(DegreeModal, {
+      header: this.translate.instant('wizard.degrees.edit'),
+      width: '80%',
+      contentStyle: { 'max-height': '80vh', 'overflow': 'auto' },
+      baseZIndex: 10000,
+      closable: true,
+      data: { initialValue: degree },
+    })?.onClose.subscribe((result: Degree | null) => {
+      if (result) {
+        this.ds.updateDegree(index, result);
+        const sortedDegrees = [...this.ds.state().degrees].sort((a, b) => a.gradYear - b.gradYear);
+        this.ds.patch({ degrees: sortedDegrees } as Partial<ProfileState>);
+      }
+    });
+  }
+
   del(i: number) {
     const degree = this.ds.state().degrees[i];
     if (degree?.id && this.ds.state().experiences?.some(exp => exp.qualificationId === degree.id)) {
@@ -67,10 +86,7 @@ export class StepDegreeComponent implements OnInit {
       this.profile.deleteEducation(degree.id).subscribe({
         next: () => {
           this.ds.delDegree(i);
-        },
-        error: (err: any) => {
-          console.error(err);
-        },
+        }
       });
     } else {
       this.ds.delDegree(i);
@@ -131,10 +147,7 @@ export class StepDegreeComponent implements OnInit {
         next: () => {
           this.lastSubmittedSignature = signature;
           this.next.emit();
-        },
-        error: (err: any) => {
-          console.error(err);
-        },
+        }
       });
   }
 

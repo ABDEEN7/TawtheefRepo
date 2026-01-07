@@ -1,14 +1,16 @@
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
 import {
   createFileSlot,
-  FileSlot, fileSlotSignature,
-  fileToUpload, previewFileFromSlot, previewUrlFromSlot,
+  FileSlot,
+  fileSlotSignature,
+  fileToUpload,
+  previewFileFromSlot,
+  previewUrlFromSlot,
   setLocalFile,
   updateRemote
 } from '../../../wizard-profile/utils/file-slot';
@@ -18,6 +20,7 @@ import {mapPrereqSection} from '../../../wizard-profile/services/profile.mapper'
 import {catchError, finalize, map, switchMap, tap} from 'rxjs/operators';
 import {normalizeMoiResponse} from '../../../wizard-profile/services/moi-response-normalizer';
 import {of} from 'rxjs';
+import {NotificationService} from '../../../../../../core/services/notification.service';
 
 
 @Component({
@@ -33,7 +36,7 @@ export class StepPrereqComponent implements OnInit {
   translate = inject(TranslateService);
   lookups   = inject(ProfileLookupsService);
   profile   = inject(ProfileService);
-  messageService   = inject(MessageService);
+  notificationService   = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
 
   private cvFile: FileSlot = createFileSlot();
@@ -103,12 +106,7 @@ export class StepPrereqComponent implements OnInit {
 
   onNext() {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
-        life: 5000,
-      });
+      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
@@ -130,12 +128,7 @@ export class StepPrereqComponent implements OnInit {
 
     // If we must check profile and data for the check is missing → block and show error
     if (needsCheckNow && (!qid || !qidExpiry)) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.personal.verify.title'),
-        detail: this.translate.instant('wizard.personal.verify.missingData'), // add this key
-        life: 5000,
-      });
+      this.notificationService.error(this.translate.instant('wizard.personal.verify.missingData'), this.translate.instant('wizard.personal.verify.title'));
       return;
     }
 
@@ -146,12 +139,7 @@ export class StepPrereqComponent implements OnInit {
         tap(res => {
           this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
           this.hasCheckedProfile = true;
-          this.messageService.add({
-            severity: 'success',
-            summary: this.translate.instant('wizard.personal.verify.title'),
-            detail: this.translate.instant('wizard.personal.verify.success'),
-            life: 3000,
-          });
+          this.notificationService.success(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
         }),
         map(() => true as const),
         catchError(err => {
@@ -186,8 +174,7 @@ export class StepPrereqComponent implements OnInit {
           if (canProceed) {
             this.next.emit();
           }
-        },
-        error: (err: any) => console.error(err),
+        }
       });
   }
 

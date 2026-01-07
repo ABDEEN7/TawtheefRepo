@@ -4,7 +4,7 @@ import { JobCandidatesFilter } from './job-candidates-filter.model';
 export interface SendJobCandidateInvitationsRequest {
   jobId: GUID;
   filter?: JobCandidatesFilter;
-  invitationIds?: GUID[];
+  applicantIds  ?: GUID[];
 }
 
 export interface SendJobCandidateInvitationsResult {

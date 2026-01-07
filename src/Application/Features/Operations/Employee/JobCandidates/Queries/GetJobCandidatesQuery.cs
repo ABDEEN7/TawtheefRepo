@@ -7,8 +7,7 @@ using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Queries;
 
 public sealed record GetJobCandidatesQuery(Guid JobId)
-    : IQuery<IResult<PaginatedResult<JobCandidateListItemDto>>>
+    : PaginatedRequest, IQuery<IResult<JobCandidatesCombinedDto>>
 {
     public JobCandidatesFilter? Filter { get; init; }
-    public PaginatedRequest Pagination { get; init; } = new();
 }

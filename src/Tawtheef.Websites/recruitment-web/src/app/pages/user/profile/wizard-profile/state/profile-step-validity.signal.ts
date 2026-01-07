@@ -47,7 +47,7 @@ export function candidateTypeFromState(state: ProfileState): CandidateType | und
 }
 
 export function candidateTypeNeedsSponsor(type: CandidateType | undefined): boolean {
-  return !!type && [CandidateType.ResidentQatar].includes(type);
+  return !!type && [CandidateType.ResidentQatar, CandidateType.WifeOfQatari].includes(type);
 }
 
 export function candidateTypeNeedsBirthCertificate(type: CandidateType | undefined): boolean {

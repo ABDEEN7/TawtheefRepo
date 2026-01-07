@@ -51,6 +51,9 @@
                   <ng-template #noDegreeFile>—</ng-template>
                 </td>
                 <td class="text-end">
+                  <button class="btn btn-sm btn-outline-secondary me-2" (click)="edit(i)">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
                   <button class="btn btn-sm btn-outline-danger" (click)="del(i)">
                     <i class="fa-solid fa-trash"></i>
                   </button>

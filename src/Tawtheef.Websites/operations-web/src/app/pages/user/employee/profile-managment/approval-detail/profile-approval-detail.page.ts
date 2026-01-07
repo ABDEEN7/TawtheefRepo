@@ -1,16 +1,21 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { finalize, Subscription, combineLatest } from 'rxjs';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {CommonModule} from '@angular/common';
+import {Component, computed, inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {combineLatest, finalize, Subscription} from 'rxjs';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {
   ProfileApprovalStepperComponent,
   ProfileApprovalStepperSection,
   StepUiStatus,
 } from './components/profile-approval-stepper/profile-approval-stepper.component';
 import {
-  ProfileApprovalDetail, ProfileApprovalItem, ProfileApprovalSection, ReviewStatus, ReviewTargetType, SectionReviewSummary
+  ProfileApprovalDetail,
+  ProfileApprovalItem,
+  ProfileApprovalSection,
+  ReviewStatus,
+  ReviewTargetType,
+  SectionReviewSummary
 } from '../approval-list/models/profile-approval.models';
 import {routes} from '../../../../../routes/routes';
 import {ProfileApprovalService} from '../approval-list/services/profile-approval.service';
@@ -162,8 +167,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
             const first = (merged.sections ?? [])[0]?.section ?? null;
             this.activeSection.set(first);
           }
-        },
-        error: () => this.error.set(this.translate.instant('profileApproval.errors.loadDetail')),
+        }
       });
   }
 

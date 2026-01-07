@@ -40,7 +40,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: TawtheefPreset
+        preset: TawtheefPreset,
+        options:{
+          darkModeSelector: false || 'none'
+        }
       }
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),

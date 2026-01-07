@@ -59,6 +59,9 @@ export class DegreeModal implements OnInit {
   fileError: string | null = null;
   allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   initialCertificate: UploadedFileRef | null = null;
+  private initialId: string | null = null;
+  private initialAttachmentId: string | null = null;
+  protected readonly disableFileUpload = !!this.config.data?.disableFileUpload;
 
   form: FormGroup = this.fb.group({
     degree: [null, Validators.required],
@@ -86,13 +89,21 @@ export class DegreeModal implements OnInit {
   ngOnInit() {
     if (this.config.data && this.config.data.initialValue) {
       this.form.patchValue(this.config.data.initialValue);
-      this.initialCertificate = (this.config.data.initialValue as Degree)?.certificate ?? null;
+      const initialValue = this.config.data.initialValue as Degree;
+      this.initialCertificate = initialValue?.certificate ?? null;
+      this.initialId = initialValue?.id ?? null;
+      this.initialAttachmentId = initialValue?.attachmentId ?? this.initialCertificate?.resourceId ?? null;
     }
 
     this.updateQualificationValidators();
     this.form.get('degree')?.valueChanges.subscribe(() => {
       this.updateQualificationValidators();
     });
+
+    if (this.disableFileUpload) {
+      this.form.get('degreeFileName')?.clearValidators();
+      this.form.get('degreeFileName')?.updateValueAndValidity({ emitEvent: false });
+    }
   }
   private updateQualificationValidators(): void {
     const need = this.isQualification;
@@ -152,7 +163,7 @@ export class DegreeModal implements OnInit {
   }
 
   onSave() {
-    if (this.form.invalid || this.yearError || !this.degreeFile) {
+    if (this.form.invalid || this.yearError || (!this.degreeFile && !this.disableFileUpload)) {
       this.form.markAllAsTouched();
       return;
     }
@@ -167,6 +178,7 @@ export class DegreeModal implements OnInit {
           : null;
 
     const payload = {
+      id: this.initialId ?? undefined,
       degree: raw.degree,
       gradCountry: raw.gradCountry,
       university: raw.university,
@@ -176,8 +188,9 @@ export class DegreeModal implements OnInit {
       studySystem: raw.studySystem,
       gpa: raw.gpa != null ? +raw.gpa : null,
       grade: raw.grade,
-      fileName: raw.degreeFileName,
-      file: this.degreeFile as File,
+      fileName: raw.degreeFileName ?? this.initialCertificate?.resourceName ?? null,
+      file: this.degreeFile as File | null,
+      attachmentId: this.initialAttachmentId,
     } as Degree;
 
     this.ref.close(payload);

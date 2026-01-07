@@ -12,8 +12,8 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Queries;
 
 public sealed record GetMyProfileChangeRequestsQuery(Guid UserId) : IQuery<Result<IReadOnlyList<ProfileChangeRequestDto>>>;
 
-public sealed class GetMyProfileChangeRequestsHandler(
-    IUnitOfWork uow) : IQueryHandler<GetMyProfileChangeRequestsQuery, Result<IReadOnlyList<ProfileChangeRequestDto>>>
+public sealed class GetMyProfileChangeRequestsHandler(IUnitOfWork uow) 
+    : IQueryHandler<GetMyProfileChangeRequestsQuery, Result<IReadOnlyList<ProfileChangeRequestDto>>>
 {
     public async Task<Result<IReadOnlyList<ProfileChangeRequestDto>>> Handle(GetMyProfileChangeRequestsQuery request, CancellationToken ct)
     {
@@ -26,10 +26,13 @@ public sealed class GetMyProfileChangeRequestsHandler(
         if (profile is null)
             return Result.Fail<IReadOnlyList<ProfileChangeRequestDto>>(ErrorsCodes.UserProfileNotFound);
 
+        if (profile.Status != UserProfileStatus.Approved)
+            return Result.Ok<IReadOnlyList<ProfileChangeRequestDto>>([]);
+
         var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
         var items = await changeRepo.DbSet
             .AsNoTracking()
-            .Where(c => c.UserProfileId == profile.Id)
+            .Where(c => c.UserProfileId == profile.Id && c.Status != ProfileChangeRequestStatus.UnderReview)
             .OrderByDescending(c => c.RequestedAtUtc)
             .Select(c => new ProfileChangeRequestDto
             {

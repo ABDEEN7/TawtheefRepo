@@ -1,25 +1,24 @@
-import {Observable, of, switchMap} from "rxjs";
+import {Observable, of} from "rxjs";
 import {Injectable} from "@angular/core";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {UserService} from "./user.service";
 import {AuthStateService} from "./auth-state.service";
 import {catchError, map, tap} from "rxjs/operators";
-import {MessageService} from "primeng/api";
 import {EndpointsService} from '../http/endpoints.service';
 import {LoggerService} from '../services/logger.service';
 import {NavigationService} from '../services/navigation.service';
 import {AuthResponse} from '../models/auth-response.model';
 import {UserInfoModel} from '../../shared/models/user-info.model';
 import {TokenModel} from '../models/token.model';
-import {SystemRoles} from '../constants/systemRoles';
 import {InAppNotificationService} from '../services/in-app-notification.service';
+import {NotificationService} from '../services/notification.service';
 
 @Injectable({providedIn: 'root'})
 export class AuthCoreService {
   constructor(
     private logger: LoggerService,
-    private messageService: MessageService,
+    private notificationService: NotificationService,
     private http: HttpClient,
     private endpoints: EndpointsService,
     private tokenService: TokenService,
@@ -51,7 +50,7 @@ export class AuthCoreService {
     });
     if (!stored) {
       this.logger.logError('Failed to store tokens', {err: res, email: res.user?.email || ''}).subscribe();
-      this.messageService.add({severity: 'error', summary: 'Storage blocked', detail: 'Your browser is blocking storage. Try normal browser (not in-app/private).'});
+      this.notificationService.error('Your browser is blocking storage. Try normal browser (not in-app/private)', 'Storage blocked');
     }
 
     const user$ = res.user ? of(res.user) : this.loadCurrentUser();

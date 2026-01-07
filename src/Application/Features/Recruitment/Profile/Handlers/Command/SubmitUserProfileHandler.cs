@@ -83,11 +83,28 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
     // -----------------------
     private static IEnumerable<ReviewItem> BuildProfileFiles(UserProfile profile)
     {
+
+        if (profile.BirthdayCertificateId is not null)
+            yield return NewFile(
+                profile.Id,
+                ProfileSection.Prerequisites,
+                nameof(profile.BirthdayCertificateId),
+                profile.BirthdayCertificateId.Value,
+                "Birth Certificate");
+
+        if (profile.MarriageCertificateId is not null)
+            yield return NewFile(
+                profile.Id,
+                ProfileSection.Prerequisites,
+                nameof(profile.MarriageCertificateId),
+                profile.MarriageCertificateId.Value,
+                "Marriage Certificate");
+        
         if (profile.ResumeAttachmentId is not null)
             yield return NewFile(
                 profile.Id,
                 ProfileSection.Personal,
-                "ResumeAttachmentId",
+                nameof(profile.ResumeAttachmentId),
                 profile.ResumeAttachmentId.Value,
                 "Resume");
 
@@ -95,7 +112,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
             yield return NewFile(
                 profile.Id,
                 ProfileSection.Personal,
-                "NationalCardId",
+                nameof(profile.NationalCardId),
                 profile.NationalCardId.Value,
                 "National Card");
 
@@ -106,7 +123,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
                 "SponsorCardResourceId",
                 profile.SponsorProfile.SponsorCardId.Value,
                 "Sponsor Card",
-                "SponsorProfile",
+               nameof(profile.SponsorProfile),
                 profile.SponsorProfile.Id);
 
         if (profile.ResidenceAddress?.CertificateId is not null)
@@ -116,24 +133,8 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
                 "NationalAddressCertificateId",
                 profile.ResidenceAddress.CertificateId,
                 "National Address Certificate",
-                "ResidenceAddress",
+                nameof(profile.ResidenceAddress),
                 profile.ResidenceAddress.Id);
-
-        if (profile.BirthdayCertificateId is not null)
-            yield return NewFile(
-                profile.Id,
-                ProfileSection.Attachments,
-                "BirthdayCertificateId",
-                profile.BirthdayCertificateId.Value,
-                "Birth Certificate");
-
-        if (profile.MarriageCertificateId is not null)
-            yield return NewFile(
-                profile.Id,
-                ProfileSection.Attachments,
-                "MarriageCertificateId",
-                profile.MarriageCertificateId.Value,
-                "Marriage Certificate");
 
         if (profile.AdditionalAttachments is not null)
         {
