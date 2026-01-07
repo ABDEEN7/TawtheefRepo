@@ -2,9 +2,9 @@
   "internal.footer.terms": "الشروط والأحكام",
   "internal.footer.privacy": "سياسة الخصوصية",
   "internal.footer.rights": "جميع الحقوق محفوظة © 2025",
-  "internal.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2025 —جميع الحقوق محفوظة",
+  "internal.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2025 — جميع الحقوق محفوظة",
 
-  "internal.nav.logoAlt": "وزارة التعليم والتعليم العالي",
+  "internal.nav.logoAlt": "وزارة التربية والتعليم والتعليم العالي",
   "internal.nav.home": "الرئيسية",
   "internal.nav.personalProfile": "الملف الشخصي",
   "internal.nav.jobs": "الوظائف",
@@ -29,7 +29,6 @@
   "public.nav.faq": "الأسئلة الشائعة",
   "public.nav.login": "تسجيل الدخول",
 
-
   "internal.sidebar.home": "الرئيسية",
   "internal.sidebar.distribution": "توزيع الملفات",
   "internal.sidebar.approve-profile": "اعتماد الملفات",
@@ -38,10 +37,8 @@
   "internal.sidebar.kawader": "كوادر",
   "internal.sidebar.transfer": "الترشيحات",
   "internal.sidebar.organization-structures": "إدارة القطاعات والإدارات والأقسام",
-  "internal.sidebar.major-skill": "أدارة التخصصات والمهارات",
-  "internal.sidebar.invitation-summary":"ملخص دعوات التوظيف",
-
-
+  "internal.sidebar.major-skill": "إدارة التخصصات والمهارات",
+  "internal.sidebar.invitation-summary": "ملخص دعوات التوظيف",
 
   "admin.sidebar.home": "الرئيسية",
   "admin.sidebar.roles": "إدارة الصلاحيات",
@@ -50,7 +47,7 @@
   "admin.sidebar.majors": "إدارة التخصصات والمهارات",
   "admin.sidebar.countries": "إدارة الدول",
   "admin.sidebar.languages": "إدارة اللغات",
-  "admin.sidebar.targetEntities": "إدارة الجهات المستهدفة",
+  "admin.sidebar.targetEntities": "الجهات المستهدفة",
   "admin.sidebar.religions": "إدارة الديانات",
   "admin.sidebar.universities": "إدارة الجامعات",
   "admin.sidebar.profileLogs": "سجل نشاط الملفات",
@@ -59,5 +56,5 @@
   "common.sidebar.logout": "الخروج",
 
   "public.footer.rights": "جميع الحقوق محفوظة © 2025",
-  "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2025 —جميع الحقوق محفوظة"
+  "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2025 — جميع الحقوق محفوظة"
 }

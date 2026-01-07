@@ -1,28 +1,23 @@
-import {
-  Component,
-  EventEmitter,
-  Output,
-  inject,
-  OnInit,
-  OnDestroy,
-  effect
-} from '@angular/core';
-import { finalize, switchMap } from 'rxjs/operators';
-import { PhoneNumberUtil } from 'google-libphonenumber';
+import {Component, effect, EventEmitter, inject, OnDestroy, OnInit, Output} from '@angular/core';
+import {finalize} from 'rxjs/operators';
+import {PhoneNumberUtil} from 'google-libphonenumber';
 import {CountryISO, SearchCountryField} from 'ngx-intl-tel-input';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
+import {CountryDto, ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {ContactVerificationService} from '../../../wizard-profile/services/contact-verification.service';
 import {TranslateService} from '@ngx-translate/core';
 import {GeoIpService} from '../../../../../../core/services/geo-ip.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
 import {
   canPreviewFile,
-  createFileSlot, displayedFileName,
-  FileSlot, fileSlotSignature,
-  fileToUpload, previewFileFromSlot, previewUrlFromSlot,
+  createFileSlot,
+  displayedFileName,
+  FileSlot,
+  fileSlotSignature,
+  fileToUpload,
+  previewFileFromSlot,
+  previewUrlFromSlot,
   setLocalFile,
   updateRemote
 } from '../../../wizard-profile/utils/file-slot';
@@ -30,7 +25,7 @@ import {createStepValiditySignal} from '../../../wizard-profile/state/profile-st
 import {mapContactSection} from '../../../wizard-profile/services/profile.mapper';
 import {PhoneNumber} from '../../../wizard-profile/models/phone-number.model';
 import {VERIFIED_PHONE_KEY} from '../../../../../../core/constants/wizard-keys.const';
-import {CountryDto} from '../../../wizard-profile/services/profile-lookups.service';
+import {NotificationService} from '../../../../../../core/services/notification.service';
 
 
 type VerificationStatus =
@@ -71,7 +66,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   translate = inject(TranslateService);
   geoIp = inject(GeoIpService);
   profileService = inject(ProfileService);
-  messageService = inject(MessageService);
+  notificationService = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
 
   naFileError: string | null = null;
@@ -457,12 +452,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     // Safety: Google must not submit +974 due to backend rule
     if (s.phone.e164Number.startsWith(this.QATAR_E164_PREFIX)) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.contact.googleProviderNonQatarOnly'),
-        life: 5000
-      });
+      this.notificationService.error(this.translate.instant('wizard.contact.googleProviderNonQatarOnly'), this.translate.instant('wizard.validationErrorTitle'));
       return Promise.resolve(false);
     }
 
@@ -478,12 +468,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
             resolve(true);
           },
           error: () => {
-            this.messageService.add({
-              severity: 'error',
-              summary: this.translate.instant('wizard.validationErrorTitle'),
-              detail: this.translate.instant('wizard.contact.phoneUpdateFailed'),
-              life: 5000
-            });
+            this.notificationService.error(this.translate.instant('wizard.contact.phoneUpdateFailed'), this.translate.instant('wizard.validationErrorTitle'));
             resolve(false);
           }
         });
@@ -597,12 +582,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   }
   async onNext(): Promise<void> {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
-        life: 5000,
-      });
+      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
@@ -627,8 +607,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
         next: () => {
           this.lastSubmittedSignature = signature;
           this.next.emit();
-        },
-        error: (err: any) => console.error(err)
+        }
       });
   }
 

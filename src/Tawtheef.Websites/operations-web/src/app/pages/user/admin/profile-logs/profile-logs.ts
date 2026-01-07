@@ -103,8 +103,7 @@ export class ProfileLogsComponent implements OnInit {
             pageSize: response.metadata.pageSize,
           }));
         }
-      },
-      error: () => this.notification.error(this.translate.instant('PROFILE_LOGS.LOAD_FAILED'))
+      }
     });
   }
 

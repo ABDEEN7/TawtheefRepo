@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import {Component, EventEmitter, inject, isDevMode, OnInit, Output} from '@angular/core';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {DialogService} from 'primeng/dynamicdialog';
@@ -82,10 +82,7 @@ export class StepExperienceComponent implements OnInit {
       this.profile.deleteExperience(exp.id).subscribe({
         next: () => {
           this.ds.delExp(index);
-        },
-        error: (err: any) => {
-          console.error(err);
-        },
+        }
       });
     } else {
       this.ds.delExp(index);
@@ -134,10 +131,7 @@ export class StepExperienceComponent implements OnInit {
       this.profile.deleteTrainingCourse(course.id).subscribe({
         next: () => {
           this.ds.delCourse(index);
-        },
-        error: (err: any) => {
-          console.error(err);
-        },
+        }
       });
     } else {
       this.ds.delCourse(index);
@@ -175,7 +169,8 @@ export class StepExperienceComponent implements OnInit {
         this.next.emit();
       },
       error: (err: any) => {
-        console.error(err);
+        if(isDevMode())
+          console.error(err);
         this.saving = false;
       },
     });

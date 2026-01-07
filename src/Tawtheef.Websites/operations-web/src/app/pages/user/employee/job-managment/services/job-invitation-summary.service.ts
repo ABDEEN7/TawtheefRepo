@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import {inject, Injectable, isDevMode, signal} from '@angular/core';
 import {HttpService} from '../../../../../core/http/http.service';
 import {EndpointsService} from '../../../../../core/http/endpoints.service';
 import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
@@ -49,7 +49,8 @@ export class JobInvitationSummaryService {
           this.loading.set(false);
         },
         error: (err) => {
-          console.error('Failed to load JobInvitationSummary lookups', err);
+          if(isDevMode())
+            console.error('Failed to load JobInvitationSummary lookups', err);
           this.loading.set(false);
         }
       });

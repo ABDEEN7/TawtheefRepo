@@ -1,5 +1,5 @@
-import {inject, Injectable, signal} from '@angular/core';
-import {Observable, of, delay, forkJoin, tap} from 'rxjs';
+import {inject, Injectable, isDevMode, signal} from '@angular/core';
+import {forkJoin, tap} from 'rxjs';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {HttpService} from '../../../../core/http/http.service';
@@ -204,7 +204,8 @@ export class CandidateDashboardService {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Failed to load profile lookups', err);
+        if(isDevMode())
+          console.error('Failed to load profile lookups', err);
         this.loading.set(false);
       }
     });

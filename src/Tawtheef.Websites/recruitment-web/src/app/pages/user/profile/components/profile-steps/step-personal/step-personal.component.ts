@@ -1,10 +1,14 @@
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {
   canPreviewFile,
-  createFileSlot, displayedFileName,
-  FileSlot, fileSlotSignature, fileToUpload, previewFileFromSlot,
+  createFileSlot,
+  displayedFileName,
+  FileSlot,
+  fileSlotSignature,
+  fileToUpload,
+  previewFileFromSlot,
   previewUrlFromSlot,
   setLocalFile,
   updateRemote
@@ -12,7 +16,6 @@ import {
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
 import {ProfileState} from '../../../wizard-profile/models/profile-state.model';
@@ -21,6 +24,7 @@ import {normalizeMoiResponse} from '../../../wizard-profile/services/moi-respons
 import {mapPersonalSection} from '../../../wizard-profile/services/profile.mapper';
 import {SponsorType} from '../../../../../../core/enums/lookups.enum';
 import {dateToDateOnly} from '../../../../../../shared/types/dateOnly.type';
+import {NotificationService} from '../../../../../../core/services/notification.service';
 
 
 @Component({
@@ -38,7 +42,7 @@ export class StepPersonalComponent implements OnInit {
   translate = inject(TranslateService);
   lookups = inject(ProfileLookupsService);
   profileService = inject(ProfileService);
-  messageService = inject(MessageService);
+  notificationService = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
   protected readonly dateToDateOnly = dateToDateOnly;
   protected readonly SponsorType = SponsorType;
@@ -69,22 +73,12 @@ export class StepPersonalComponent implements OnInit {
 
     if (state.sponsorType?.backendName !== SponsorType.Individual) return;
     if(state.sponsorEmployerNumber == state.qid){
-      this.messageService.add({
-        severity: 'warn',
-        summary: this.translate.instant('wizard.personal.verify.title'),
-        detail: this.translate.instant('wizard.personal.verify.selfSponsor'),
-        life: 4000,
-      });
+      this.notificationService.error(this.translate.instant('wizard.personal.verify.selfSponsor'), this.translate.instant('wizard.personal.verify.title'));
       return;
     }
 
     if (!state.sponsorEmployerNumber || !state.sponsorQidExpiry) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: this.translate.instant('wizard.personal.verify.title'),
-        detail: this.translate.instant('wizard.personal.verify.missing'),
-        life: 4000,
-      });
+      this.notificationService.error(this.translate.instant('wizard.personal.verify.missing'), this.translate.instant('wizard.personal.verify.title'));
       return;
     }
 
@@ -95,14 +89,8 @@ export class StepPersonalComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           this.ds.applySponsorPersonalInfo(normalizeMoiResponse(res));
-          this.messageService.add({
-            severity: 'success',
-            summary: this.translate.instant('wizard.personal.verify.title'),
-            detail: this.translate.instant('wizard.personal.verify.success'),
-            life: 3000,
-          });
-        },
-        error: (err: any) => console.log(err)
+          this.notificationService.error(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
+        }
       });
   }
 
@@ -151,12 +139,7 @@ export class StepPersonalComponent implements OnInit {
   }
   onNext() {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
-        life: 5000,
-      });
+      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
@@ -178,9 +161,6 @@ export class StepPersonalComponent implements OnInit {
         next: () => {
           this.lastSubmittedSignature = signature;
           this.next.emit();
-        },
-        error: (err: any) => {
-          console.error(err);
         }
       });
   }

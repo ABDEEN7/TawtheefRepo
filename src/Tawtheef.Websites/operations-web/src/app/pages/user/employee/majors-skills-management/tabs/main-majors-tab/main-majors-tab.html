@@ -60,14 +60,14 @@
           <td>{{ major.usedInMappingsCount || 0 }}</td>
 
           <td>
-          <span class="badge"
-                [class.bg-success-subtle]="major.isActive !== false"
-                [class.bg-danger-subtle]="major.isActive === false">
+          <span class="pill"
+                [class.success]="major.isActive !== false"
+                [class.danger]="major.isActive === false">
             {{ major.isActive === false ? ('MAJORS_SKILLS.INACTIVE' | translate) : ('MAJORS_SKILLS.ACTIVE' | translate) }}
           </span>
           </td>
 
-          <td class="d-flex justify-content-start gap-2">
+          <td class="d-flex justify-content-start gap-2 align-items-center">
             <button
               pButton
               type="button"

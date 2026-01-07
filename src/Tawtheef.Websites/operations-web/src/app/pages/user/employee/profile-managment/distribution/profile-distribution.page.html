@@ -41,7 +41,7 @@
                                <span class="p-input-icon-left w-100">
                                      <i class="pi pi-search ms-2"></i>
                                     <input
-                                      pInputText
+
                                       type="search"
                                       class="w-100 form-control"
                                       [placeholder]="'distribution.filters.searchPlaceholder' | translate"
@@ -70,9 +70,12 @@
                                  <button pButton class="btn btn-primary" type="button" (click)="selectAll()">
                                    {{ 'distribution.filters.selectAll' | translate }}
                                  </button>
-                                 <button pButton class="btn p-button-text" type="button" (click)="clearSelection()">
-                                   {{ 'distribution.filters.clearSelection' | translate }}
-                                 </button>
+                                 <div class="action-buttons">
+                                   <button pButton class="btn-text" type="button" (click)="clearSelection()">
+                                     {{ 'distribution.filters.clearSelection' | translate }}
+                                   </button>
+                                 </div>
+
                              </div>
                            </div>
                          </div>

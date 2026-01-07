@@ -1,17 +1,17 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs';
+import {CommonModule} from '@angular/common';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {finalize} from 'rxjs';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import { TableModule } from 'primeng/table';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { DialogModule } from 'primeng/dialog';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { AvatarModule } from 'primeng/avatar';
-import { BadgeModule } from 'primeng/badge';
-import { ProfileDistributionService } from './services/profile-distribution.service';
+import {TableModule} from 'primeng/table';
+import {InputTextModule} from 'primeng/inputtext';
+import {ButtonModule} from 'primeng/button';
+import {TagModule} from 'primeng/tag';
+import {DialogModule} from 'primeng/dialog';
+import {InputNumberModule} from 'primeng/inputnumber';
+import {AvatarModule} from 'primeng/avatar';
+import {BadgeModule} from 'primeng/badge';
+import {ProfileDistributionService} from './services/profile-distribution.service';
 import {
   AutoAssignRequest,
   DistributionEmployee,
@@ -68,8 +68,6 @@ export class ProfileDistributionPage implements OnInit {
   files = signal<DistributionFile[]>([]);
   employees = signal<DistributionEmployee[]>([]);
   loading = signal(false);
-  error = signal<string | null>(null);
-  successMessage = signal<string | null>(null);
 
   statusFilter = signal<ProfileStatusNumber | 'all'>('all');
   search = signal('');
@@ -117,19 +115,15 @@ export class ProfileDistributionPage implements OnInit {
 
   loadData(): void {
     this.loading.set(true);
-    this.error.set(null);
-    this.successMessage.set(null);
     this.api
       .getFiles()
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: files => this.files.set(files),
-        error: () => this.error.set(this.translate.instant('distribution.errors.loadFilesFailed')),
+        next: files => this.files.set(files)
       });
 
     this.api.getEmployees().subscribe({
-      next: employees => this.employees.set(employees),
-      error: () => this.error.set(this.translate.instant('distribution.errors.loadEmployeesFailed')),
+      next: employees => this.employees.set(employees)
     });
   }
 
@@ -170,7 +164,6 @@ export class ProfileDistributionPage implements OnInit {
     if (!this.canManageDistribution()) return;
     const ids = Array.from(this.selectedIds());
     if (ids.length === 0) {
-      this.error.set(this.translate.instant('distribution.errors.noProfilesSelected'));
       return;
     }
     this.dialogService.open(AutoAssignDialog, {
@@ -195,8 +188,7 @@ export class ProfileDistributionPage implements OnInit {
     this.api.assignManually(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: result => this.handleResult(result.assignedCount, result),
-        error: err => this.handleError(err, this.translate.instant('distribution.errors.assignFailed')),
+        next: result => this.handleResult(result.assignedCount, result)
       });
   }
 
@@ -206,8 +198,7 @@ export class ProfileDistributionPage implements OnInit {
     this.api.assignAutomatically(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: result => this.handleResult(result.assignedCount, result),
-        error: err => this.handleError(err, this.translate.instant('distribution.errors.assignFailed')),
+        next: result => this.handleResult(result.assignedCount, result)
       });
   }
 
@@ -227,8 +218,7 @@ export class ProfileDistributionPage implements OnInit {
     this.api.reassign(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: result => this.handleResult(result.assignedCount, result),
-        error: err => this.handleError(err, this.translate.instant('distribution.errors.reassignFailed')),
+        next: result => this.handleResult(result.assignedCount, result)
       });
   }
 
@@ -288,17 +278,9 @@ export class ProfileDistributionPage implements OnInit {
   }
 
   private handleResult(assigned: number, result: DistributionResult): void {
-    this.successMessage.set(`تم توزيع ${assigned} ملف بنجاح.`);
-    this.error.set(null);
     this.files.set(result.profiles);
     this.employees.set(result.employees);
     this.clearSelection();
-  }
-
-  private handleError(error: any, fallback: string): void {
-    const message = error?.error ?? fallback;
-    this.error.set(typeof message === 'string' ? message : fallback);
-    this.successMessage.set(null);
   }
 
   canManageDistribution(): boolean {

@@ -1,19 +1,15 @@
-import { CommonModule } from '@angular/common';
-import {Component, OnInit, inject, signal, computed} from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { SortEvent } from 'primeng/api';
-import { TableModule } from 'primeng/table';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ProfileApprovalService } from './services/profile-approval.service';
-import {
-  ProfileApprovalListFilter,
-  ProfileApprovalListItem,
-  ReviewStatus,
-} from './models/profile-approval.models';
-import { Select } from 'primeng/select';
-import { InputTextModule } from 'primeng/inputtext';
-import { finalize } from 'rxjs';
+import {CommonModule} from '@angular/common';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {Router, RouterModule} from '@angular/router';
+import {SortEvent} from 'primeng/api';
+import {TableModule} from 'primeng/table';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {ProfileApprovalService} from './services/profile-approval.service';
+import {ProfileApprovalListFilter, ProfileApprovalListItem, ReviewStatus,} from './models/profile-approval.models';
+import {Select} from 'primeng/select';
+import {InputTextModule} from 'primeng/inputtext';
+import {finalize} from 'rxjs';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {routes} from '../../../../../routes/routes';
 import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
@@ -95,10 +91,7 @@ export class ProfileApprovalListPage implements OnInit {
         next: res => {
           this.items.set(res.items ?? []);
           this.meta.set(res.metadata ?? this.meta());
-        },
-        error: () => {
-          this.notifications.error(this.translate.instant('profileApproval.errors.loadList'));
-        },
+        }
       });
   }
 

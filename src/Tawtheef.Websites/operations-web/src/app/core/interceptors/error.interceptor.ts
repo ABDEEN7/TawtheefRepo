@@ -1,15 +1,15 @@
 ﻿import {HttpErrorResponse, HttpInterceptorFn} from '@angular/common/http';
 import {HDR} from '../utils/headers.flags';
 import {inject, NgZone} from '@angular/core';
-import {MessageService} from 'primeng/api';
 import {catchError, switchMap} from 'rxjs/operators';
 import {from, throwError} from 'rxjs';
 import {TranslateService} from '@ngx-translate/core';
+import {NotificationService} from '../services/notification.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.headers.get(HDR.SkipError) === 'true') return next(req);
 
-  const msg  = inject(MessageService);
+  const msg  = inject(NotificationService);
   const zone = inject(NgZone);
   const translate = inject(TranslateService);
 
@@ -29,22 +29,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
             zone.run(() => {
               if (err.status === 0) {
-                msg.add({
-                  severity: 'error',
-                  summary: 'Network error',
-                  detail: 'Please check your connection and try again.',
-                  life: 6000
-                });
+                msg.error('Please check your connection and try again.', 'Network error');
                 return;
               }
 
               const html = buildErrorHtml(serverBody);
-              msg.add({
-                severity: 'error',
-                summary: translate.instant('common.error'),
-                detail: html,
-                life: 8000,
-              });
+              msg.error(html);
             });
 
             return throwError(() => err);
@@ -79,8 +69,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   function tryLocalizedMessage(key: string): string {
-    if(translate.instant(key) !== key) {
-      return translate.instant(key);
+    const translateValue = translate.instant(`server-error.${key}`);
+    if(translateValue!== key) {
+      return translateValue;
     }
     return key;
   }

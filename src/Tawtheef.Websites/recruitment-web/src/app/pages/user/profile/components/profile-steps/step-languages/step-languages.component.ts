@@ -1,6 +1,5 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output, inject} from '@angular/core';
-import {MessageService} from 'primeng/api';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {Component, EventEmitter, inject, isDevMode, OnDestroy, OnInit, Output} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
@@ -20,7 +19,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
 
   ds = inject(ProfileDataService);
   lookups = inject(ProfileLookupsService);
-  messageService = inject(NotificationService);
+  notificationService = inject(NotificationService);
   translate = inject(TranslateService);
   profile = inject(ProfileService);
 
@@ -47,7 +46,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   addLang(): void {
     if (this.newLanguage && this.newSpeakingLevel && this.newWritingLevel && this.newReadingLevel) {
       if(this.ds.state().languages.some(s=> s.lang?.backendName == this.newLanguage?.backendName)) {
-        this.messageService.error(this.translate.instant('wizard.profile.languages.duplicate'));
+        this.notificationService.error(this.translate.instant('wizard.profile.languages.duplicate'));
         return;
       }
 
@@ -71,10 +70,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       this.profile.deleteLanguage(lang.id).subscribe({
         next: () => {
           this.ds.delLang(index);
-        },
-        error: (err: any) => {
-          console.error(err);
-        },
+        }
       });
     } else {
       this.ds.delLang(index);
@@ -83,7 +79,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
 
   onNext() {
     if (!this.step.valid) {
-      this.messageService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'));
+      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'));
       return;
     }
 
@@ -97,7 +93,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     }
 
     if (!languages.length) {
-      this.messageService.error(this.translate.instant('wizard.profile.languages.required'));
+      this.notificationService.error(this.translate.instant('wizard.profile.languages.required'));
       return;
     }
 
@@ -109,7 +105,8 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
         this.next.emit();
       },
       error: (err: any) => {
-        console.error(err);
+        if(isDevMode())
+          console.error(err);
         this.saving = false;
       },
     });

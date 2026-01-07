@@ -86,15 +86,13 @@ export class UniversitiesManagement implements OnInit {
             pageSize: response.metadata.pageSize
           }));
         }
-      },
-      error: () => this.notification.error(this.translate.instant('UNIVERSITIES.LOAD_FAILED'))
+      }
     });
   }
 
   loadCountries() {
     this.universitiesService.getCountries().subscribe({
-      next: res => this.countries.set(res),
-      error: () => this.notification.error(this.translate.instant('UNIVERSITIES.LOAD_FAILED'))
+      next: res => this.countries.set(res)
     });
   }
 
@@ -147,8 +145,7 @@ export class UniversitiesManagement implements OnInit {
         next: uni => {
           this.editingUniversity.set(uni);
           this.isModalOpen.set(true);
-        },
-        error: () => this.notification.error(this.translate.instant('UNIVERSITIES.DETAILS_LOAD_FAILED'))
+        }
       });
   }
 
@@ -165,10 +162,7 @@ export class UniversitiesManagement implements OnInit {
         this.notification.success(
           this.translate.instant(desiredState ? 'UNIVERSITIES.ACTIVATE_SUCCESS' : 'UNIVERSITIES.DEACTIVATE_SUCCESS')
         );
-      },
-      error: () => this.notification.error(
-        this.translate.instant(desiredState ? 'UNIVERSITIES.ACTIVATE_FAILED' : 'UNIVERSITIES.DEACTIVATE_FAILED')
-      )
+      }
     });
   }
 
@@ -178,8 +172,7 @@ export class UniversitiesManagement implements OnInit {
         this.notification.success(this.translate.instant('UNIVERSITIES.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadUniversities();
-      },
-      error: () => this.notification.error(this.translate.instant('UNIVERSITIES.SAVE_FAILED'))
+      }
     });
   }
 
@@ -189,8 +182,7 @@ export class UniversitiesManagement implements OnInit {
         this.notification.success(this.translate.instant('UNIVERSITIES.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadUniversities();
-      },
-      error: () => this.notification.error(this.translate.instant('UNIVERSITIES.SAVE_FAILED'))
+      }
     });
   }
 

@@ -78,8 +78,7 @@ export class ReligionsManagement implements OnInit {
             pageSize: response.metadata.pageSize
           }));
         }
-      },
-      error: () => this.notification.error(this.translate.instant('RELIGIONS.LOAD_FAILED'))
+      }
     });
   }
 
@@ -126,8 +125,7 @@ export class ReligionsManagement implements OnInit {
         next: religion => {
           this.editingReligion.set(religion);
           this.isModalOpen.set(true);
-        },
-        error: () => this.notification.error(this.translate.instant('RELIGIONS.DETAILS_LOAD_FAILED'))
+        }
       });
   }
 
@@ -144,10 +142,7 @@ export class ReligionsManagement implements OnInit {
         this.notification.success(
           this.translate.instant(desiredState ? 'RELIGIONS.ACTIVATE_SUCCESS' : 'RELIGIONS.DEACTIVATE_SUCCESS')
         );
-      },
-      error: () => this.notification.error(
-        this.translate.instant(desiredState ? 'RELIGIONS.ACTIVATE_FAILED' : 'RELIGIONS.DEACTIVATE_FAILED')
-      )
+      }
     });
   }
 
@@ -157,8 +152,7 @@ export class ReligionsManagement implements OnInit {
         this.notification.success(this.translate.instant('RELIGIONS.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadReligions();
-      },
-      error: () => this.notification.error(this.translate.instant('RELIGIONS.SAVE_FAILED'))
+      }
     });
   }
 
@@ -168,8 +162,7 @@ export class ReligionsManagement implements OnInit {
         this.notification.success(this.translate.instant('RELIGIONS.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadReligions();
-      },
-      error: () => this.notification.error(this.translate.instant('RELIGIONS.SAVE_FAILED'))
+      }
     });
   }
 
