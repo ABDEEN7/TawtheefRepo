@@ -139,7 +139,7 @@ export class StepPrereqComponent implements OnInit {
         tap(res => {
           this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
           this.hasCheckedProfile = true;
-          this.notificationService.error(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
+          this.notificationService.success(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
         }),
         map(() => true as const),
         catchError(err => {
