@@ -278,14 +278,12 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   private hasActiveFilters(): boolean {
-    return Boolean(
-      (this.searchQuery() || '').trim() ||
-        this.filterGender() ||
-        this.minimumPoints() ||
-        this.candidateTypePercentages.some((item) => item.percentage > 0) ||
-        this.nationalityPercentages.some((item) => item.percentage > 0)
-    );
-  }
+  return Boolean(
+    (this.searchQuery() || '').trim() ||
+    this.filterGender() ||
+    this.minimumPoints()
+  );
+}
 
   onFilterSettingsChange() {
     this.currentPage.set(1);
