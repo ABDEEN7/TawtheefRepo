@@ -1,4 +1,4 @@
-﻿import {Injectable, signal, computed, inject} from '@angular/core';
+﻿import {computed, inject, Injectable, signal} from '@angular/core';
 import {ProfileState} from '../models/profile-state.model';
 import {Language} from '../models/language.model';
 import {Degree} from '../models/degree.model';
@@ -8,7 +8,7 @@ import {Attachment} from '../models/attachment.model';
 import {Skill} from '../models/skill.model';
 import {PhoneMapperService} from './phone-mapper.service';
 import {ProfileLookupsService} from './profile-lookups.service';
-import {MoiPersonalInfo, buildArabicFullName, buildEnglishFullName} from '../models/moi-personal-info.model';
+import {buildArabicFullName, buildEnglishFullName, MoiPersonalInfo} from '../models/moi-personal-info.model';
 import {ProfileService} from './profile.service';
 import {normalizeMoiResponse} from './moi-response-normalizer';
 import {
@@ -275,8 +275,7 @@ export class ProfileDataService {
       .checkProfile(qid, qidExpiry)
       .pipe(take(1))
       .subscribe({
-        next: res => this.applyMoiPersonalInfo(normalizeMoiResponse(res)),
-        error: err => console.error(err),
+        next: res => this.applyMoiPersonalInfo(normalizeMoiResponse(res))
       });
   }
 

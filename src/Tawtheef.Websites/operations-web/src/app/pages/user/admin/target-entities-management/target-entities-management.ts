@@ -78,8 +78,7 @@ export class TargetEntitiesManagement implements OnInit {
             pageSize: response.metadata.pageSize
           }));
         }
-      },
-      error: () => this.notification.error(this.translate.instant('TARGET_ENTITIES.LOAD_FAILED'))
+      }
     });
   }
 
@@ -126,8 +125,7 @@ export class TargetEntitiesManagement implements OnInit {
         next: entity => {
           this.editingTargetEntity.set(entity);
           this.isModalOpen.set(true);
-        },
-        error: () => this.notification.error(this.translate.instant('TARGET_ENTITIES.DETAILS_LOAD_FAILED'))
+        }
       });
   }
 
@@ -144,10 +142,7 @@ export class TargetEntitiesManagement implements OnInit {
         this.notification.success(
           this.translate.instant(desiredState ? 'TARGET_ENTITIES.ACTIVATE_SUCCESS' : 'TARGET_ENTITIES.DEACTIVATE_SUCCESS')
         );
-      },
-      error: () => this.notification.error(
-        this.translate.instant(desiredState ? 'TARGET_ENTITIES.ACTIVATE_FAILED' : 'TARGET_ENTITIES.DEACTIVATE_FAILED')
-      )
+      }
     });
   }
 
@@ -157,8 +152,7 @@ export class TargetEntitiesManagement implements OnInit {
         this.notification.success(this.translate.instant('TARGET_ENTITIES.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadTargetEntities();
-      },
-      error: () => this.notification.error(this.translate.instant('TARGET_ENTITIES.SAVE_FAILED'))
+      }
     });
   }
 
@@ -168,8 +162,7 @@ export class TargetEntitiesManagement implements OnInit {
         this.notification.success(this.translate.instant('TARGET_ENTITIES.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadTargetEntities();
-      },
-      error: () => this.notification.error(this.translate.instant('TARGET_ENTITIES.SAVE_FAILED'))
+      }
     });
   }
 

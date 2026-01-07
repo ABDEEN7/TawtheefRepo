@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnInit, Output, inject} from '@angular/core';
+import {Component, EventEmitter, inject, isDevMode, OnInit, Output} from '@angular/core';
 import {DialogService} from 'primeng/dynamicdialog';
 import {TranslateService} from '@ngx-translate/core';
-import {AchievementModal, ACHIEVEMENT_DIALOG_LIMITS} from './dialogs/achievement.modal';
+import {ACHIEVEMENT_DIALOG_LIMITS, AchievementModal} from './dialogs/achievement.modal';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
@@ -78,7 +78,8 @@ export class StepAchievementsComponent implements OnInit {
       this.profile.deleteAchievement(achievement.id).subscribe({
         next: () => this.ds.delAchievement(index),
         error: (err: any) => {
-          console.error(err);
+          if(isDevMode())
+            console.error(err);
         },
       });
     } else {
@@ -133,7 +134,8 @@ export class StepAchievementsComponent implements OnInit {
         this.next.emit();
       },
       error: (err: any) => {
-        console.error(err);
+        if(isDevMode())
+          console.error(err);
         this.saving = false;
       },
     });

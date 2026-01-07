@@ -1,29 +1,9 @@
-import {
-  Component,
-  EventEmitter,
-  Output,
-  OnDestroy,
-  OnInit,
-  inject,
-} from '@angular/core';
-import {
-  AutoComplete,
-  AutoCompleteCompleteEvent,
-  AutoCompleteSelectEvent,
-} from 'primeng/autocomplete';
-import { Subject, Subscription, of } from 'rxjs';
-import {
-  debounceTime,
-  filter,
-  switchMap,
-  tap,
-  catchError,
-  map,
-  finalize,
-} from 'rxjs/operators';
+import {Component, EventEmitter, inject, isDevMode, OnDestroy, OnInit, Output,} from '@angular/core';
+import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent,} from 'primeng/autocomplete';
+import {of, Subject, Subscription} from 'rxjs';
+import {catchError, debounceTime, filter, finalize, map, switchMap, tap,} from 'rxjs/operators';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {MessageService} from 'primeng/api';
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
@@ -44,7 +24,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   protected readonly ds = inject(ProfileDataService);
   protected readonly lookups = inject(ProfileLookupsService);
   private readonly notificationService = inject(NotificationService);
-  private readonly messageService = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly profile = inject(ProfileService);
 
@@ -152,10 +131,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       this.profile.deleteSkill(skill.id).subscribe({
         next: () => {
           this.ds.delSkill(index);
-        },
-        error: (err: any) => {
-          console.error(err);
-        },
+        }
       });
     } else {
       this.ds.delSkill(index);
@@ -187,7 +163,8 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         this.next.emit();
       },
       error: (err: any) => {
-        console.error(err);
+        if(isDevMode())
+          console.error(err);
         this.saving = false;
       },
     });

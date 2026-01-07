@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, OnInit, computed, inject, signal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
@@ -108,7 +108,6 @@ export class RoleDialogComponent implements OnInit {
       },
       error: () => {
         this.isSaving.set(false);
-        this.notification.error(this.translate.instant('ROLES.SAVE_FAILED'));
       }
     });
   }

@@ -76,8 +76,7 @@ export class LanguagesManagement implements OnInit {
             pageSize: response.metadata.pageSize
           }));
         }
-      },
-      error: () => this.notification.error(this.translate.instant('LANGUAGES.LOAD_FAILED'))
+      }
     });
   }
 
@@ -124,8 +123,7 @@ export class LanguagesManagement implements OnInit {
         next: lang => {
           this.editingLanguage.set(lang);
           this.isModalOpen.set(true);
-        },
-        error: () => this.notification.error(this.translate.instant('LANGUAGES.DETAILS_LOAD_FAILED'))
+        }
       });
   }
 
@@ -142,10 +140,7 @@ export class LanguagesManagement implements OnInit {
         this.notification.success(
           this.translate.instant(desiredState ? 'LANGUAGES.ACTIVATE_SUCCESS' : 'LANGUAGES.DEACTIVATE_SUCCESS')
         );
-      },
-      error: () => this.notification.error(
-        this.translate.instant(desiredState ? 'LANGUAGES.ACTIVATE_FAILED' : 'LANGUAGES.DEACTIVATE_FAILED')
-      )
+      }
     });
   }
 
@@ -155,8 +150,7 @@ export class LanguagesManagement implements OnInit {
         this.notification.success(this.translate.instant('LANGUAGES.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadLanguages();
-      },
-      error: () => this.notification.error(this.translate.instant('LANGUAGES.SAVE_FAILED'))
+      }
     });
   }
 
@@ -166,8 +160,7 @@ export class LanguagesManagement implements OnInit {
         this.notification.success(this.translate.instant('LANGUAGES.SAVE_SUCCESS'));
         this.isModalOpen.set(false);
         this.loadLanguages();
-      },
-      error: () => this.notification.error(this.translate.instant('LANGUAGES.SAVE_FAILED'))
+      }
     });
   }
 

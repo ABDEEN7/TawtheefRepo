@@ -21,7 +21,6 @@ export interface UpsertSectorDialogData {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, InputTextModule, Textarea, ToggleSwitchModule, ButtonModule],
   template: `
-    <div class="p-2">
       <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
         <div class="d-flex gap-3 flex-wrap">
           <div class="flex-grow-1 min-w-250">
@@ -82,7 +81,6 @@ export interface UpsertSectorDialogData {
           </button>
         </div>
       </form>
-    </div>
   `
 })
 export class UpsertSectorDialogComponent {

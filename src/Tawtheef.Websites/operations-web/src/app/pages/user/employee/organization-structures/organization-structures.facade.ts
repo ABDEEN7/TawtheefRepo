@@ -1,21 +1,21 @@
-import { DestroyRef, Injectable, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
-import { DialogService } from 'primeng/dynamicdialog';
+import {DestroyRef, inject, Injectable} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {TranslateService} from '@ngx-translate/core';
+import {DialogService} from 'primeng/dynamicdialog';
 
-import { NotificationService } from '../../../../core/services/notification.service';
-import { LanguageService } from '../../../../core/services/language.service';
-import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import {NotificationService} from '../../../../core/services/notification.service';
+import {LanguageService} from '../../../../core/services/language.service';
+import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 
-import { OrganizationStructuresStore, OrganizationTabKey } from './organization-structures.store';
-import { OrganizationStructuresService } from './services/organization-structures.service';
-import { SectorListItemModel } from './models/sector-list-item.model';
-import { ManagementListItemModel } from './models/management-list-item.model';
-import { DepartmentListItemModel } from './models/department-list-item.model';
+import {OrganizationStructuresStore, OrganizationTabKey} from './organization-structures.store';
+import {OrganizationStructuresService} from './services/organization-structures.service';
+import {SectorListItemModel} from './models/sector-list-item.model';
+import {ManagementListItemModel} from './models/management-list-item.model';
+import {DepartmentListItemModel} from './models/department-list-item.model';
 
-import { UpsertSectorDialogComponent } from './dialogs/upsert-sector.dialog';
-import { UpsertManagementDialogComponent } from './dialogs/upsert-management.dialog';
-import { UpsertDepartmentDialogComponent } from './dialogs/upsert-department.dialog';
+import {UpsertSectorDialogComponent} from './dialogs/upsert-sector.dialog';
+import {UpsertManagementDialogComponent} from './dialogs/upsert-management.dialog';
+import {UpsertDepartmentDialogComponent} from './dialogs/upsert-department.dialog';
 
 @Injectable()
 export class OrganizationStructuresFacade {
@@ -64,8 +64,7 @@ export class OrganizationStructuresFacade {
   // ======== Loaders ========
   loadSectors() {
     this.api.getSectors(this.store.sectorFilters()).subscribe({
-      next: res => this.store.setSectorsResult(res),
-      error: () => this.toast('ORG_STRUCTURES.ERROR_LOAD', true)
+      next: res => this.store.setSectorsResult(res)
     });
   }
 
@@ -77,8 +76,7 @@ export class OrganizationStructuresFacade {
     }
 
     this.api.getManagements(filters).subscribe({
-      next: res => this.store.setManagementsResult(res),
-      error: () => this.toast('ORG_STRUCTURES.ERROR_LOAD', true)
+      next: res => this.store.setManagementsResult(res)
     });
   }
 
@@ -90,8 +88,7 @@ export class OrganizationStructuresFacade {
     }
 
     this.api.getDepartments(filters).subscribe({
-      next: res => this.store.setDepartmentsResult(res),
-      error: () => this.toast('ORG_STRUCTURES.ERROR_LOAD', true)
+      next: res => this.store.setDepartmentsResult(res)
     });
   }
 
@@ -112,8 +109,7 @@ export class OrganizationStructuresFacade {
         if (this.store.departmentsInitialized()) {
           this.prepareDepartmentDefaults(true);
         }
-      },
-      error: () => this.toast('ORG_STRUCTURES.ERROR_LOAD', true)
+      }
     });
   }
 
@@ -142,8 +138,7 @@ export class OrganizationStructuresFacade {
         if (reloadDepartments) {
           this.loadDepartments();
         }
-      },
-      error: () => this.toast('ORG_STRUCTURES.ERROR_LOAD', true)
+      }
     });
   }
 
@@ -240,8 +235,7 @@ export class OrganizationStructuresFacade {
           this.toast('ORG_STRUCTURES.SUCCESS_SAVE');
           this.loadSectors();
           this.loadSectorLookups();
-        },
-        error: () => this.toast('ORG_STRUCTURES.ERROR_SAVE', true),
+        }
       });
     });
   }
@@ -258,8 +252,7 @@ export class OrganizationStructuresFacade {
           this.toast('ORG_STRUCTURES.SUCCESS_SAVE');
           this.loadSectors();
           this.loadSectorLookups();
-        },
-        error: () => this.toast('ORG_STRUCTURES.ERROR_SAVE', true),
+        }
       });
     });
   }
@@ -276,8 +269,7 @@ export class OrganizationStructuresFacade {
           this.toast('ORG_STRUCTURES.SUCCESS_SAVE');
           this.prepareManagementDefaults(true);
           this.loadSectorLookups();
-        },
-        error: () => this.toast('ORG_STRUCTURES.ERROR_SAVE', true),
+        }
       });
     });
   }
@@ -294,8 +286,7 @@ export class OrganizationStructuresFacade {
           this.toast('ORG_STRUCTURES.SUCCESS_SAVE');
           this.prepareManagementDefaults(true);
           this.loadSectorLookups();
-        },
-        error: () => this.toast('ORG_STRUCTURES.ERROR_SAVE', true),
+        }
       });
     });
   }
@@ -315,8 +306,7 @@ export class OrganizationStructuresFacade {
         next: () => {
           this.toast('ORG_STRUCTURES.SUCCESS_SAVE');
           this.prepareDepartmentDefaults(true);
-        },
-        error: () => this.toast('ORG_STRUCTURES.ERROR_SAVE', true),
+        }
       });
     });
   }
@@ -337,8 +327,7 @@ export class OrganizationStructuresFacade {
         next: () => {
           this.toast('ORG_STRUCTURES.SUCCESS_SAVE');
           this.prepareDepartmentDefaults(true);
-        },
-        error: () => this.toast('ORG_STRUCTURES.ERROR_SAVE', true),
+        }
       });
     });
   }
@@ -351,8 +340,7 @@ export class OrganizationStructuresFacade {
         this.loadSectors();
         if (this.store.managementsInitialized()) this.prepareManagementDefaults(true);
         if (this.store.departmentsInitialized()) this.prepareDepartmentDefaults(true);
-      },
-      error: () => this.toast('ORG_STRUCTURES.STATUS_UPDATE_FAILED', true)
+      }
     });
   }
 
@@ -362,8 +350,7 @@ export class OrganizationStructuresFacade {
         this.toast('ORG_STRUCTURES.STATUS_UPDATED');
         this.loadManagements();
         if (this.store.departmentsInitialized()) this.prepareDepartmentDefaults(true);
-      },
-      error: () => this.toast('ORG_STRUCTURES.STATUS_UPDATE_FAILED', true)
+      }
     });
   }
 
@@ -372,8 +359,7 @@ export class OrganizationStructuresFacade {
       next: () => {
         this.toast('ORG_STRUCTURES.STATUS_UPDATED');
         this.loadDepartments();
-      },
-      error: () => this.toast('ORG_STRUCTURES.STATUS_UPDATE_FAILED', true)
+      }
     });
   }
 
