@@ -523,7 +523,7 @@
                 <textarea
                   pInputTextarea
                   rows="4"
-                  class="w-100"
+                  class="w-100 form-control"
                   [(ngModel)]="finalizeSummary"
                   [placeholder]="'profileApproval.final.summaryPlaceholder' | translate"></textarea>
               </div>
@@ -533,7 +533,7 @@
                 <textarea
                   pInputTextarea
                   rows="4"
-                  class="w-100"
+                  class="w-100 form-control"
                   [(ngModel)]="finalizeNote"
                   [placeholder]="'profileApproval.final.actionNotePlaceholder' | translate"></textarea>
               </div>
@@ -544,18 +544,20 @@
                 {{ 'profileApproval.detail.finalizeHint' | translate }}
               </div>
 
-              <div class="ms-auto d-flex gap-2">
-                <button pButton type="button" class="p-button-outlined" (click)="closeFinalizeDialog()">
-                  <span pButtonLabel>{{ 'common.cancel' | translate }}</span>
-                </button>
-
-                <button pButton type="button" (click)="finalize()" [disabled]="loadingDetail() || !canFinalizeUi()">
-                  <i pButtonIcon class="pi pi-check"></i>
-                  <span pButtonLabel>{{ 'profileApproval.detail.finalize' | translate }}</span>
-                </button>
-              </div>
+             
+              
             </div>
+ <div class="modal-footer justify-content-end gap-3 border-0 mt-3">
+                  <button pButton type="button" class="p-button-outlined" (click)="closeFinalizeDialog()">
+                    <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i>
+                    <span pButtonLabel>{{ 'common.cancel' | translate }}</span>
+                  </button>
 
+                  <button pButton type="button" (click)="finalize()" [disabled]="loadingDetail() || !canFinalizeUi()">
+                    <i class="hgi hgi-stroke hgi-floppy-disk fs-18"></i>
+                    <span pButtonLabel>{{ 'profileApproval.detail.finalize' | translate }}</span>
+                  </button>
+              </div>
           </p-dialog>
 
         </ng-container>

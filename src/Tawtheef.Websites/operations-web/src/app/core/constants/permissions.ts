@@ -10,6 +10,10 @@ export const Permissions = {
     View: 'users.view',
     Manage: 'users.manage',
   },
+  CandidateUsers: {
+    View: 'candidate.users.view',
+    Manage: 'candidate.users.manage',
+  },
   Languages: {
     View: 'languages.view',
     Manage: 'languages.manage',

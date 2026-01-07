@@ -53,6 +53,9 @@ public static class RolePermissionCatalog
                 Permissions.OfficeUsers.View.Key,
                 Permissions.OfficeUsers.Manage.Key,
 
+                Permissions.CandidateUsers.View.Key,
+                Permissions.CandidateUsers.Manage.Key,
+
                 Permissions.OrganizationStructures.Manage.Key,
 
                 Permissions.MajorSkills.Manage.Key

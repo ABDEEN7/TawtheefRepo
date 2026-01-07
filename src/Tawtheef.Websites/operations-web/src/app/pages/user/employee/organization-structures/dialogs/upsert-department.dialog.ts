@@ -98,7 +98,7 @@ export interface UpsertDepartmentDialogData {
         <div class="row">
           <div class="col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate }}</label>
-            <textarea pInputTextarea rows="3" class="w-100"
+            <textarea pInputTextarea rows="3" class="w-100 form-control"
                       name="descriptionEn"
                       [(ngModel)]="vm.descriptionEn"
                       maxlength="500"
@@ -107,7 +107,7 @@ export interface UpsertDepartmentDialogData {
 
           <div class="col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DESCRIPTION_AR' | translate }}</label>
-            <textarea pInputTextarea rows="3" class="w-100"
+            <textarea pInputTextarea rows="3" class="w-100 form-control"
                       name="descriptionAr"
                       [(ngModel)]="vm.descriptionAr"
                       maxlength="500"

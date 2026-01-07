@@ -72,6 +72,27 @@ public static class Permissions
                 5);
     }
 
+    public static class CandidateUsers
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.CandidateUsers.View,
+                nameof(PermissionKeys.CandidateUsers),
+                PermissionAction.View,
+                "Candidate Users - View",
+                "مستخدمو المرشحين - عرض",
+                18);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.CandidateUsers.Manage,
+                nameof(PermissionKeys.CandidateUsers),
+                PermissionAction.Manage,
+                "Candidate Users - Manage",
+                "مستخدمو المرشحين - إدارة",
+                19);
+    }
+
     public static class Offices
     {
         public static readonly PermissionDefinition View =

@@ -23,6 +23,12 @@ public static class PermissionKeys
         public const string Manage = "users.manage";
     }
 
+    public static class CandidateUsers
+    {
+        public const string View = "candidate.users.view";
+        public const string Manage = "candidate.users.manage";
+    }
+
     public static class Offices
     {
         public const string View = "offices.view";

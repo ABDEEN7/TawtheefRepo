@@ -29,13 +29,13 @@ export interface UpsertMajorDialogData {
     Textarea,
     TranslatePipe
   ],template: `
-    <div class="p-2">
+    <div class="modal-body">
       <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
 
-        <div class="d-flex gap-3 flex-wrap">
-          <div class="flex-grow-1 min-w-250">
+        <div class="row">
+          <div class="col-md-6">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_EN' | translate }}</label>
-            <input pInputText class="w-100"
+            <input pInputText class="w-100 form-control"
                    name="nameEn"
                    [(ngModel)]="vm.nameEn"
                    required
@@ -46,9 +46,9 @@ export interface UpsertMajorDialogData {
             </small>
           </div>
 
-          <div class="flex-grow-1 min-w-250">
+          <div class="col-md-6">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_AR' | translate }}</label>
-            <input pInputText class="w-100"
+            <input pInputText class="w-100 form-control"
                    name="nameAr"
                    [(ngModel)]="vm.nameAr"
                    required
@@ -60,19 +60,19 @@ export interface UpsertMajorDialogData {
           </div>
         </div>
 
-        <div class="d-flex gap-3 flex-wrap">
-          <div class="flex-grow-1 min-w-250">
+        <div class="row">
+          <div class="col-md-6">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_DESCRIPTION_EN' | translate }}</label>
-            <textarea pInputTextarea rows="3" class="w-100"
+            <textarea pInputTextarea rows="3" class="w-100 form-control"
                       name="descriptionEn"
                       [(ngModel)]="vm.descriptionEn"
                       maxlength="500"
                       [placeholder]="'MAJORS_SKILLS.PLACEHOLDER_OPTIONAL' | translate"></textarea>
           </div>
 
-          <div class="flex-grow-1 min-w-250">
+          <div class="col-md-6">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_DESCRIPTION_AR' | translate }}</label>
-            <textarea pInputTextarea rows="3" class="w-100"
+            <textarea pInputTextarea rows="3" class="w-100 form-control"
                       name="descriptionAr"
                       [(ngModel)]="vm.descriptionAr"
                       maxlength="500"
@@ -80,8 +80,8 @@ export interface UpsertMajorDialogData {
           </div>
         </div>
 
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="d-flex align-items-center gap-2">
+        <div class="col-md-12">
+          <div class="d-flex align-items-center gap-2 mb-3">
             <p-toggle-switch [(ngModel)]="vm.isActive" name="isActive"></p-toggle-switch>
             <span>{{ 'MAJORS_SKILLS.FIELD_ACTIVE' | translate }}</span>
           </div>
@@ -91,11 +91,13 @@ export interface UpsertMajorDialogData {
           </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-2 mt-2">
-          <button pButton type="button" class="p-button-outlined" (click)="cancel()">
+         <div class="modal-footer justify-content-end gap-3 border-0">
+          <button pButton type="button" class="p-button-outlined mw-200 text-center d-flex text-primary fs-16 gap-1" (click)="cancel()">
+            <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i>
             {{ 'MAJORS_SKILLS.CANCEL' | translate }}
           </button>
-          <button pButton type="submit" [disabled]="!isValid()" class="p-button">
+          <button pButton type="submit" class="btn btn-primary mw-200 d-flex gap-2 justify-content-center" [disabled]="!isValid()">
+            <i class="hgi hgi-stroke hgi-floppy-disk fs-18"></i>
             {{ 'MAJORS_SKILLS.SAVE' | translate }}
           </button>
         </div>
