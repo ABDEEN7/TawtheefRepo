@@ -146,11 +146,12 @@ export class ProfileService {
   // ========== EDUCATION (Degrees) ==========
   // Policy: no updates -> only new items (no id)
   saveEducationSection(degrees: Degree[]) {
+    const allowUpdates = this.writeMode === 'change-request';
     const fileBucket: File[] = [];
     let cursor = 0;
 
     const payload = (degrees ?? [])
-      .filter(d => !d.id)
+      .filter(d => allowUpdates || !d.id)
       .map(d => {
         const fileIndex = d.file ? cursor++ : null;
         if (d.file) fileBucket.push(d.file);
@@ -189,13 +190,14 @@ export class ProfileService {
   // ========== EXPERIENCE + TRAINING COURSES ==========
   // Policy: no updates -> ONLY new items (no id)
   saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
+    const allowUpdates = this.writeMode === 'change-request';
     const experienceFiles: File[] = [];
     const trainingFiles: File[] = [];
 
     const experiencesDto = (experiences ?? [])
-      .filter(e => !e.id)
+      .filter(e => allowUpdates || !e.id)
       .map(e => ({
-        id: null,
+        id: allowUpdates ? e.id ?? null : null,
         employerName: e.employerName,
         jobTitle: e.jobTitle,
         startDate: e.from,
@@ -208,9 +210,9 @@ export class ProfileService {
       }));
 
     const coursesDto = (courses ?? [])
-      .filter(c => !c.id)
+      .filter(c => allowUpdates || !c.id)
       .map(c => ({
-        id: null,
+        id: allowUpdates ? c.id ?? null : null,
         title: c.title,
         provider: c.provider,
         startDate: c.from,
@@ -247,12 +249,13 @@ export class ProfileService {
   // ========== ACHIEVEMENTS ==========
   // Policy: no updates -> ONLY new items (no id)
   saveAchievementsSection(achievements: Achievement[]) {
+    const allowUpdates = this.writeMode === 'change-request';
     const files: File[] = [];
 
     const payload = (achievements ?? [])
-      .filter(a => !a.id)
+      .filter(a => allowUpdates || !a.id)
       .map(a => ({
-        id: null,
+        id: allowUpdates ? a.id ?? null : null,
         achievementTypeId: a.achievementType?.id,
         title: a.title,
         issuingAuthority: a.issuingAuthority,
@@ -314,14 +317,15 @@ export class ProfileService {
 
   // ========== ATTACHMENTS ==========
   saveAttachmentsSection(attachments: Attachment[]) {
+    const allowUpdates = this.writeMode === 'change-request';
     const files: File[] = [];
     let cursor = 0;
 
     const payload = (attachments ?? [])
-      .filter(a => !a.id)
+      .filter(a => allowUpdates || !a.id)
       .map(a => {
         const item: any = {
-          id: a.id ?? null,
+          id: allowUpdates ? a.id ?? null : a.id ?? null,
           title: a.title,
           fileName: a.fileName ?? a.title,
           attachmentId: a.attachmentId ?? null,

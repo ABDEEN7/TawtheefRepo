@@ -6,20 +6,30 @@
         <span>{{ 'profileOverview.sections.attachments' | translate }}</span>
       </div>
 
-      <button *ngIf="canEdit"
-              type="button"
-              class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-              (click)="onEdit()">
-        <i class="pi pi-pencil" aria-hidden="true"></i>
-        <span>{{ 'common.edit' | translate }}</span>
-      </button>
+      <div class="d-flex align-items-center gap-2" *ngIf="canEdit">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
+          (click)="addAttachment()">
+          <i class="pi pi-plus" aria-hidden="true"></i>
+          <span>{{ 'profileView.actions.addAttachment' | translate }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
+          (click)="onEdit()">
+          <i class="pi pi-pencil" aria-hidden="true"></i>
+          <span>{{ 'common.edit' | translate }}</span>
+        </button>
+      </div>
     </div>
 
     <div class="row g-3">
       @if (profile?.additionalAttachments?.length) {
         @for (att of profile?.additionalAttachments; track att.id) {
+          @let fileNote = noteForFile(att.file);
           <div class="col-12 col-lg-6">
-            <div class="card h-100 attach-card">
+            <div class="card h-100 attach-card" [ngClass]="{ 'attach-card--warn': fileNote }">
               <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
                 <div class="attach-icon border rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0">
                   <i class="pi pi-external-link" aria-hidden="true"></i>
@@ -39,12 +49,34 @@
                   <div class="min-w-0">
                     @if (att.file) {
                       <a class="d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-body min-w-0 attach-link"
+                         [ngClass]="{ 'attach-link--warn': fileNote }"
                          (click)="open(att.file)">
                         <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
                         <span class="text-truncate d-inline-block">
                           {{ att.file.fileName }}
                         </span>
+                        @if (fileNote) {
+                          <i
+                            class="pi pi-exclamation-triangle text-warning"
+                            [pTooltip]="fileNote.note || fileNote.title"
+                            tooltipPosition="top"
+                            aria-hidden="true"></i>
+                        }
                       </a>
+                      <div class="d-flex align-items-center gap-2 mt-2" *ngIf="canEdit">
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-secondary rounded-pill"
+                          (click)="replaceInput.click()">
+                          {{ 'profileView.actions.replaceFile' | translate }}
+                        </button>
+                        <input
+                          #replaceInput
+                          type="file"
+                          class="d-none"
+                          accept=".pdf,.png,.jpeg,.jpg,.webp"
+                          (change)="replaceAttachment(att, $event)" />
+                      </div>
                     } @else {
                       <span class="text-muted">
                         {{ 'common.none' | translate }}

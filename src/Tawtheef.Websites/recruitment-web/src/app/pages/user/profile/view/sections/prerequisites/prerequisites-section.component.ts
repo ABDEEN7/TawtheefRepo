@@ -4,14 +4,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonDirective } from 'primeng/button';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
-import { MyProfileReviewNoteDto } from '../../../overview/models/profile-overview.model';
+import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../../overview/models/profile-overview.model';
 import {changeRequestDto} from '../../dtos/change-request-dto';
 import {FieldChange} from '../../utils/detect-change-fields';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-profile-prerequisites-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, ButtonDirective],
+  imports: [CommonModule, TranslatePipe, ButtonDirective, TooltipModule],
   templateUrl: './prerequisites-section.component.html',
   styleUrls: ['./prerequisites-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -35,6 +36,17 @@ export class ProfilePrerequisitesSectionComponent {
 
   protected fieldUnderReview(fieldKey: string){
     return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
+  }
+
+  protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!file?.resourceId) return null;
+    return (
+      this.notes.find(
+        note =>
+          note.targetType === ReviewTargetTypeEnum.Attachment &&
+          note.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+      ) ?? null
+    );
   }
   open(file: FileRefDto | null | undefined) {
     if (!file) return;

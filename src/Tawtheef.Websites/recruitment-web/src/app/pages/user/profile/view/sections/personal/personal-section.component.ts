@@ -5,11 +5,13 @@ import {FileRefDto, ProfileStatusDto} from '../../../../../../core/models/auth/a
 import {
   MyProfileReviewNoteDto,
   ProfileChangeActionEnum,
-  ProfileSectionEnum
+  ProfileSectionEnum,
+  ReviewTargetTypeEnum
 } from '../../../overview/models/profile-overview.model';
 import {changeRequestDto} from '../../dtos/change-request-dto';
 import {detectChangedFields, FieldChange} from '../../utils/detect-change-fields';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
+import { TooltipModule } from 'primeng/tooltip';
 
 export function formatChanges(
   changes: FieldChange[],
@@ -24,7 +26,7 @@ export function formatChanges(
 @Component({
   selector: 'app-profile-personal-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, TooltipModule],
   templateUrl: './personal-section.component.html',
   styleUrls: ['./personal-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -49,6 +51,17 @@ export class ProfilePersonalSectionComponent {
 
   protected fieldUnderReview(fieldKey: string){
     return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
+  }
+
+  protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!file?.resourceId) return null;
+    return (
+      this.notes.find(
+        note =>
+          note.targetType === ReviewTargetTypeEnum.Attachment &&
+          note.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+      ) ?? null
+    );
   }
   open(file: FileRefDto | null | undefined) {
     if (!file) return;

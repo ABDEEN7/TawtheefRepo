@@ -93,7 +93,7 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="row" *ngIf="!disableFileUpload; else filePreview">
     <div class="col-md-6 mb-3">
       <label class="form-label required">
         {{ 'wizard.achievements.attachment' | translate }}
@@ -130,6 +130,18 @@
       </small>
     </div>
   </div>
+  <ng-template #filePreview>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">
+          {{ 'wizard.achievements.attachment' | translate }}
+        </label>
+        <div class="text-muted">
+          {{ f['fileName'].value || ('common.none' | translate) }}
+        </div>
+      </div>
+    </div>
+  </ng-template>
 
   <div class="text-end mt-3">
     <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">{{ 'wizard.buttons.cancel' | translate }}</button>

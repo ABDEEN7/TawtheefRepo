@@ -53,8 +53,11 @@ export class ExperienceModal implements OnInit {
 
   readonly limits = EXPERIENCE_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  protected readonly disableFileUpload = !!this.config.data?.disableFileUpload;
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
+  private initialId: string | null = null;
+  private initialAttachmentId: string | null = null;
 
   today = new Date();
 
@@ -87,12 +90,19 @@ export class ExperienceModal implements OnInit {
       this.form.patchValue(this.config.data.initialValue);
       const init = this.config.data.initialValue as any;
       this.initialAttachmentUrl = init?.attachment?.url ?? init?.attachmentUrl ?? null;
+      this.initialId = this.config.data?.initialId ?? init?.id ?? null;
+      this.initialAttachmentId = this.config.data?.attachmentId ?? init?.attachmentId ?? null;
       if (init?.qualificationId) {
         this.form.patchValue({ hasQualification: true });
       }
     }
     this.syncToDisabled();
     this.syncQualification();
+
+    if (this.disableFileUpload) {
+      this.f['file'].clearValidators();
+      this.f['file'].updateValueAndValidity({ emitEvent: false });
+    }
   }
 
   onCurrentToggle() {
@@ -160,6 +170,7 @@ export class ExperienceModal implements OnInit {
     }
 
     const payload = {
+      id: this.initialId ?? undefined,
       employerName: v.org,
       jobTitle: v.name,
       from: dateToDateOnly(v.from),
@@ -171,6 +182,7 @@ export class ExperienceModal implements OnInit {
       fileName: v.file?.name ?? v.fileName ?? null,
       qualificationId: v.hasQualification ? v.qualificationId : null,
       qualificationName: qualificationOption?.name ?? null,
+      attachmentId: this.initialAttachmentId ?? undefined,
     } as Experience;
 
     this.ref.close(payload);

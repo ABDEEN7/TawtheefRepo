@@ -188,7 +188,7 @@
             </small>
           </div>
           <!-- Upload block -->
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6 mb-3" *ngIf="!disableFileUpload">
 
             <label class="form-label required d-block">
               {{ 'wizard.degrees.degreeFile' | translate }}

@@ -167,7 +167,7 @@
 
   <section class="panel p-3 mt-3 p-md-4 shadow-sm">
     <!-- HR Notes -->
-    <div class="panel-inner mt-3" *ngIf="(activeNotes()?.length || 0) > 0">
+    <div class="panel-inner mt-3" *ngIf="(activeSectionReviewNotes()?.length || 0) > 0">
       <div class="d-flex align-items-center justify-content-between mb-2">
         <div class="hr-title">
           <i class="bi bi-journal-text"></i>
@@ -179,7 +179,7 @@
         <div class="d-flex gap-3">
           <div class="text-start">
             <ol class="mb-0 small" style="list-style-type: none;">
-              @for (note of activeNotes(); track note.reviewItemId) {
+              @for (note of activeSectionReviewNotes(); track note.reviewItemId) {
                 <li class="mb-2">
                   <div class="d-flex align-items-center gap-2 flex-wrap">
                     <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
@@ -219,7 +219,7 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.Prerequisites)"
                 [changesRequest]="changes(ProfileSectionEnum.Prerequisites)"
-                [notes]="activeNotes()"
+                [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.Prerequisites)">
               </app-profile-prerequisites-section>
 
@@ -228,7 +228,7 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.Personal)"
                 [changesRequest]="changes(ProfileSectionEnum.Personal)"
-                [notes]="activeNotes()"
+                [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.Personal)">
               </app-profile-personal-section>
 
@@ -237,7 +237,7 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.Contact)"
                 [changesRequest]="changes(ProfileSectionEnum.Contact)"
-                [notes]="activeNotes()"
+                [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.Contact)">
               </app-profile-contact-section>
 
@@ -246,8 +246,9 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.Qualifications)"
                 [changesRequest]="changes(ProfileSectionEnum.Qualifications)"
-                [notes]="activeNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Qualifications)">
+                [notes]="activeSectionNotes()"
+                (edit)="navigateToEditSection(ProfileSectionEnum.Qualifications)"
+                (refresh)="reloadSection(ProfileSectionEnum.Qualifications)">
               </app-profile-qualifications-section>
 
               <app-profile-experience-section
@@ -255,8 +256,9 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.Experience)"
                 [changesRequest]="changes(ProfileSectionEnum.Experience)"
-                [notes]="activeNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Experience)">
+                [notes]="activeSectionNotes()"
+                (edit)="navigateToEditSection(ProfileSectionEnum.Experience)"
+                (refresh)="reloadSection(ProfileSectionEnum.Experience)">
               </app-profile-experience-section>
 
               <app-profile-training-section
@@ -264,7 +266,7 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.TrainingCourses)"
                 [changesRequest]="changes(ProfileSectionEnum.TrainingCourses)"
-                [notes]="activeNotes()"
+                [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.TrainingCourses)">
               </app-profile-training-section>
 
@@ -273,8 +275,9 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.CertificatesAndAwards)"
                 [changesRequest]="changes(ProfileSectionEnum.CertificatesAndAwards)"
-                [notes]="activeNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.CertificatesAndAwards)">
+                [notes]="activeSectionNotes()"
+                (edit)="navigateToEditSection(ProfileSectionEnum.CertificatesAndAwards)"
+                (refresh)="reloadSection(ProfileSectionEnum.CertificatesAndAwards)">
               </app-profile-achievements-section>
 
               <app-profile-skills-section
@@ -282,7 +285,7 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.Skills)"
                 [changesRequest]="changes(ProfileSectionEnum.Skills)"
-                [notes]="activeNotes()"
+                [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.Skills)">
               </app-profile-skills-section>
 
@@ -291,7 +294,7 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.Languages)"
                 [changesRequest]="changes(ProfileSectionEnum.Languages)"
-                [notes]="activeNotes()"
+                [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.Languages)">
               </app-profile-languages-section>
 
@@ -300,8 +303,9 @@
                 [profile]="sectionValue(active)"
                 [canEdit]="canEditSections(ProfileSectionEnum.Attachments)"
                 [changesRequest]="changes(ProfileSectionEnum.Attachments)"
-                [notes]="activeNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Attachments)">
+                [notes]="activeSectionNotes()"
+                (edit)="navigateToEditSection(ProfileSectionEnum.Attachments)"
+                (refresh)="reloadSection(ProfileSectionEnum.Attachments)">
               </app-profile-attachments-section>
             </div>
           }

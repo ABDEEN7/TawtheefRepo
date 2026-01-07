@@ -6,20 +6,30 @@
         <span>{{ 'profileOverview.sections.experiences' | translate }}</span>
       </div>
 
-      <button *ngIf="canEdit"
-              type="button"
-              class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-              (click)="onEdit()">
-        <i class="pi pi-pencil" aria-hidden="true"></i>
-        <span>{{ 'common.edit' | translate }}</span>
-      </button>
+      <div class="d-flex align-items-center gap-2" *ngIf="canEdit">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
+          (click)="addExperience()">
+          <i class="pi pi-plus" aria-hidden="true"></i>
+          <span>{{ 'profileView.actions.addExperience' | translate }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
+          (click)="onEdit()">
+          <i class="pi pi-pencil" aria-hidden="true"></i>
+          <span>{{ 'common.edit' | translate }}</span>
+        </button>
+      </div>
     </div>
 
     <div class="row g-3">
       @if (profile?.experiences?.length) {
         @for (exp of profile?.experiences; track exp.id) {
+          @let fileNote = noteForFile(exp.attachment);
           <div class="col-12 col-lg-6">
-            <div class="card h-100 kv-card">
+            <div class="card h-100 kv-card" [ngClass]="{ 'attach-card--warn': fileNote }">
               <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
                 <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
                   <div class="fw-semibold text-body">{{ exp.jobTitle || '-' }}</div>
@@ -30,6 +40,48 @@
                 <div class="text-muted small">{{ exp.employerName }} · {{ exp.country?.name }}</div>
                 <div class="text-muted small">
                   {{ exp.startDate }} - {{ exp.endDate || ('profileOverview.fields.current' | translate) }}
+                </div>
+                <div class="mt-2">
+                  @if (exp.attachment) {
+                    <a
+                      class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
+                      [ngClass]="{ 'attach-link--warn': fileNote }"
+                      (click)="open(exp.attachment)">
+                      <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
+                      <span class="text-truncate d-inline-block">
+                        {{ exp.attachment.fileName }}
+                      </span>
+                      @if (fileNote) {
+                        <i
+                          class="pi pi-exclamation-triangle text-warning"
+                          [pTooltip]="fileNote.note || fileNote.title"
+                          tooltipPosition="top"
+                          aria-hidden="true"></i>
+                      }
+                    </a>
+                  } @else {
+                    <span class="text-muted">{{ 'common.none' | translate }}</span>
+                  }
+                </div>
+                <div class="d-flex align-items-center gap-2 mt-auto" *ngIf="canEdit">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary rounded-pill"
+                    (click)="editExperience(exp)">
+                    <i class="pi pi-pencil" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary rounded-pill"
+                    (click)="replaceInput.click()">
+                    {{ 'profileView.actions.replaceFile' | translate }}
+                  </button>
+                  <input
+                    #replaceInput
+                    type="file"
+                    class="d-none"
+                    accept=".pdf,.png,.jpeg,.jpg,.webp"
+                    (change)="replaceExperienceFile(exp, $event)" />
                 </div>
               </div>
             </div>
