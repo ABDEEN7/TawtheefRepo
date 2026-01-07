@@ -19,7 +19,7 @@ export class StepperComponent {
     {
       id: 2,
       label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS',
-      icon: 'fa fa-graduation-cap',
+      icon: 'hgi hgi-stroke hgi-school me-1 fw-normal',
     },
     {
       id: 3,
@@ -34,12 +34,12 @@ export class StepperComponent {
     {
       id: 5,
       label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS',
-      icon: 'fa fa-lightbulb',
+      icon: 'hgi hgi-stroke hgi-ai-user me-1 fw-normal',
     },
     {
       id: 6,
       label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS',
-      icon: 'fa fa-paperclip',
+      icon: 'hgi hgi-stroke hgi-file-upload me-1 fw-normal',
     },
     {
       id: 7,
