@@ -2,7 +2,7 @@ using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
+namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 
 internal static class JobCandidatesFilterUtility
 {

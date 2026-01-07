@@ -7,7 +7,6 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Queries;
-using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 using Tawtheef.Domain.Constants;
@@ -58,9 +57,8 @@ public sealed class GetJobCandidatesQueryHandler(
                 List = new PaginatedResult<JobCandidateListItemDto>([], 0, pageNumber, pageSize),
                 Overview = new JobCandidatesOverviewDto
                 {
-                    TotalCandidatesCount = await unitOfWork.GetEntityRepository<Invitation>().DbSet
-                        .CountAsync(i => i.JobId == job.Id, cancellationToken: ct),
-                    AvailableCandidatesCount = targetCount,
+                    TotalCandidatesCount = 0,
+                    AvailableCandidatesCount = 0,
                     AbovePointsCandidatesCount = 0,
                     PointsAverage = 0
                 }
