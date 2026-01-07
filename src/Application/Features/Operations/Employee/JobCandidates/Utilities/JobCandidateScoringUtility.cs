@@ -1,13 +1,13 @@
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
+namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 
-internal sealed class JobCandidateScoringService
+internal static class JobCandidateScoringUtility
 {
-    private readonly JobCandidatePointsCalculator _calculator = new();
 
-    public List<JobCandidateRecord> Score(
+    public static List<JobCandidateRecord> Score(
         List<JobCandidateRecord> window,
         List<UserProfile> profiles,
         Domain.Entities.Recruitment.Job job,
@@ -43,7 +43,7 @@ internal sealed class JobCandidateScoringService
                 Major = latestMajor
             };
 
-            var points = _calculator.Calculate(candidate, job.JobPoints);
+            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints);
             scored.Add(candidate with { Points = points });
         }
 

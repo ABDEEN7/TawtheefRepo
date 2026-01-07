@@ -8,6 +8,8 @@ using MapsterMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application.Common.Mappers;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
 using Tawtheef.Domain;
 
 namespace Tawtheef.Application
@@ -32,6 +34,9 @@ namespace Tawtheef.Application
 
             // Expose a time provider so services can rely on a testable time source.
             services.AddSingleton(TimeProvider.System);
+            services.AddScoped<IJobTargetCandidateCalculatorService, JobTargetCandidateCalculatorService>();
+            services.AddScoped<IJobRequirementsService, JobRequirementsService>();
+            services.AddScoped<IJobCandidatesQueryBuilderService, JobCandidatesQueryBuilderService>();
             // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
         }

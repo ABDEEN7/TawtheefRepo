@@ -1,21 +1,16 @@
-using Cortex.Mediator;
-using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 
-internal static class JobCandidatesQueryBuilder
+public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCandidatesQueryBuilderService
 {
-    public static IQueryable<JobCandidateRecord> BuildEligibleQuery(
-        IUnitOfWork unitOfWork,
-        Domain.Entities.Recruitment.Job job,
-        JobRequirements req,
-        JobCandidatesFilter? filter)
+    public IQueryable<JobCandidateRecord> BuildEligibleQuery(Guid jobId,Guid? jobGenderId,int jobMaximumAge,int jobMinimumAge,JobRequirements req,JobCandidatesFilter? filter)
     {
 
         filter ??= new JobCandidatesFilter(null, null, null);
@@ -23,7 +18,7 @@ internal static class JobCandidatesQueryBuilder
 
         var invitationsForJob = unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
-            .Where(i => i.JobId == job.Id);
+            .Where(i => i.JobId == jobId);
 
         var profiles = unitOfWork.GetEntityRepository<UserProfile>().DbSet
             .AsNoTracking()
@@ -31,8 +26,8 @@ internal static class JobCandidatesQueryBuilder
             .Where(p => !invitationsForJob.Any(i => i.ApplicantId == p.UserId));
 
         // Gender (job + filter)
-        if (job.GenderId is not null && job.GenderId.Value != GenderIds.All)
-            profiles = profiles.Where(p => p.GenderId == job.GenderId.Value);
+        if (jobGenderId is not null && jobGenderId != GenderIds.All)
+            profiles = profiles.Where(p => p.GenderId == jobGenderId);
 
         if (filter.GenderId.HasValue && filter.GenderId.Value != GenderIds.All)
             profiles = profiles.Where(p => p.GenderId == filter.GenderId.Value);
@@ -41,8 +36,8 @@ internal static class JobCandidatesQueryBuilder
         profiles = profiles.Where(p => p.BirthDate.HasValue);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var minBirthDate = today.AddYears(-job.MaximumAge);
-        var maxBirthDate = today.AddYears(-job.MinimumAge);
+        var minBirthDate = today.AddYears(-jobMaximumAge);
+        var maxBirthDate = today.AddYears(-jobMinimumAge);
 
         profiles = profiles.Where(p =>
             p.BirthDate!.Value >= minBirthDate &&
@@ -90,7 +85,7 @@ internal static class JobCandidatesQueryBuilder
             ApplicantId = p.UserId,
             Applicant = null,
             Profile = p, // light
-            JobId = job.Id,
+            JobId = jobId,
             Major = null,
             InvitationStatusId = null,
             Points = 0,

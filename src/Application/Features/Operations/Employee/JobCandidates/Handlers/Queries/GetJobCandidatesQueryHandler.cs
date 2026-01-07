@@ -1,14 +1,16 @@
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
@@ -16,27 +18,30 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handle
 
 public sealed class GetJobCandidatesQueryHandler(
     IUnitOfWork unitOfWork,
+    IUserProfileRepository userProfileRepository,
+    IJobRepository jobRepository,
+    IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
+    IJobRequirementsService  jobRequirementsService,
+    IJobCandidatesQueryBuilderService  jobCandidatesQueryBuilderService,
     ILocalizationService localizationService)
     : IQueryHandler<GetJobCandidatesQuery, IResult<JobCandidatesCombinedDto>>
 {
-    private readonly JobCandidateScoringService _scoring = new();
-
     public async Task<IResult<JobCandidatesCombinedDto>> Handle(
         GetJobCandidatesQuery request,
         CancellationToken ct)
     {
-        var job = await LoadJobAsync(request.JobId, ct);
+        var job = await jobRepository.LoadJobWithPointsAsync(request.JobId);
         if (job is null)
             return Result.Fail<JobCandidatesCombinedDto>(JobMessages.JobNotFound);
 
-        var targetCount = GetTargetCount(job);
-        var req = await JobRequirementsService.GetAsync(unitOfWork, job, ct);
+        var targetCount = await jobTargetCandidateCalculatorService.GetTargetCountAsync(job.JobCategoryId,job.NumberOfVacancies);
+        var req = await jobRequirementsService.GetAsync(job.MajorId,job.SubMajorId);
 
-        var baseQuery = JobCandidatesQueryBuilder.BuildEligibleQuery(
-            unitOfWork, job, req, request.Filter);
+        var baseQuery = jobCandidatesQueryBuilderService.BuildEligibleQuery(
+            job.Id,job.GenderId,job.MaximumAge,job.MinimumAge, req, request.Filter);
 
-        var pageNumber = request.Pagination.PageNumber;
-        var pageSize = request.Pagination.PageSize;
+        var pageNumber = request.PageNumber;
+        var pageSize = request.PageSize;
 
         // window = enough candidates to score and then apply filters before paging
         var windowSize = Math.Max(targetCount * 10, pageSize * 10);
@@ -64,10 +69,10 @@ public sealed class GetJobCandidatesQueryHandler(
 
         // Load heavy profiles once
         var ids = window.Select(x => x.ApplicantId).Distinct().ToList();
-        var profiles = await CandidateProfileLoader.LoadForScoringAsync(unitOfWork, ids, ct);
+        var profiles = await userProfileRepository.LoadForScoringAsync(ids);
 
         // Score once
-        var scored = _scoring.Score(window, profiles, job, req);
+        var scored = JobCandidateScoringUtility.Score(window, profiles, job, req);
 
         // Apply minimum points (common filter)
         if (request.Filter?.MinimumPoints is not null)
@@ -86,7 +91,7 @@ public sealed class GetJobCandidatesQueryHandler(
             .Include(s => s.NationalityPercentages)
             .FirstOrDefaultAsync(s => s.JobId == request.JobId, ct);
 
-        var finalList = JobCandidatesFilterProcessor.ApplyPercentageFilters(sorted, settings, targetCount);
+        var finalList = JobCandidatesFilterUtility.ApplyPercentageFilters(sorted, settings, targetCount);
 
         var totalInvited = await unitOfWork.GetEntityRepository<Invitation>().DbSet
             .CountAsync(i => i.JobId == job.Id, cancellationToken: ct);
@@ -129,23 +134,5 @@ public sealed class GetJobCandidatesQueryHandler(
             List = list,
             Overview = overview
         });
-    }
-
-    private async Task<Domain.Entities.Recruitment.Job?> LoadJobAsync(Guid jobId, CancellationToken ct)
-    {
-        return await unitOfWork.GetEntityRepository<Domain.Entities.Recruitment.Job>().DbSet
-            .AsNoTracking()
-            .Include(j => j.JobPoints).ThenInclude(p => p!.Details)
-            .Include(j => j.Department)
-            .Include(j => j.JobCategory)
-            .Include(j => j.Major)
-            .Include(j => j.SubMajor)
-            .FirstOrDefaultAsync(j => j.Id == jobId, ct);
-    }
-
-    private static int GetTargetCount(Domain.Entities.Recruitment.Job job)
-    {
-        var vacancies = Math.Max(1, job.NumberOfVacancies);
-        return job.JobCategoryId == JobCategoryIds.Academic ? vacancies * 5 : vacancies;
     }
 }

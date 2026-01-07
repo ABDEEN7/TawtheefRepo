@@ -4,7 +4,7 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 
-internal static class JobCandidatesFilterProcessor
+internal static class JobCandidatesFilterUtility
 {
     public static List<JobCandidateRecord> ApplyPercentageFilters(
         IReadOnlyCollection<JobCandidateRecord> candidates,

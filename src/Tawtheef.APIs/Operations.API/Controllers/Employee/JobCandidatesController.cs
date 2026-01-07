@@ -45,7 +45,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("filters")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View,PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> SaveFilterSettings([FromBody] SaveJobCandidatesFilterSettingsCommand command)
     {
         var result = await mediator.Send(command);
@@ -61,7 +61,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("export")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View,PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> Export([FromBody] ExportJobCandidatesQuery query)
     {
         var result = await mediator.Send(query);
@@ -75,7 +75,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("send-invitations")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View,PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> SendInvitations([FromBody] SendJobCandidateInvitationsCommand command)
     {
         var result = await mediator.Send(command);

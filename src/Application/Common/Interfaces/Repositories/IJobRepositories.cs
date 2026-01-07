@@ -9,7 +9,7 @@ namespace Tawtheef.Application.Common.Interfaces.Repositories;
 public interface IJobRepository : IBaseRepository<Job>
 {
     Task<IResult<Job>> GetByIdWithDetailsAsync(Guid id);
-
+    Task<Job?> LoadJobWithPointsAsync(Guid jobId);
     Task<IList<Job>> GetJobsToAutoCloseAsync(DateTime currentDate);
     Task<IResult<PaginatedResult<Job>>> GetFilteredJobsAsync(
         JobQueryFilter filter,

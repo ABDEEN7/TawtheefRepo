@@ -15,39 +15,36 @@ public sealed class GetJobCandidatesFilterSettingsQueryHandler(IUnitOfWork unitO
         GetJobCandidatesFilterSettingsQuery request,
         CancellationToken cancellationToken)
     {
-        var settings = await unitOfWork.GetEntityRepository<JobCandidateFilterSetting>().DbSet
+        var repo = unitOfWork.GetEntityRepository<JobCandidateFilterSetting>();
+
+        var dto = await repo.DbSet
             .AsNoTracking()
-            .Include(setting => setting.CandidateTypePercentages)
-            .Include(setting => setting.NationalityPercentages)
-            .FirstOrDefaultAsync(setting => setting.JobId == request.JobId, cancellationToken);
+            .Where(s => s.JobId == request.JobId)
+            .Select(s => new JobCandidateFilterSettingsDto
+            {
+                JobId = s.JobId,
+                GenderId = s.GenderId,
+                MinimumPoints = s.MinimumPoints,
 
-        if (settings is null)
-        {
-            return Result.Ok(new JobCandidateFilterSettingsDto { JobId = request.JobId });
-        }
+                CandidateTypePercentages = s.CandidateTypePercentages
+                    .Select(p => new JobCandidateTypePercentageDto
+                    {
+                        CandidateTypeId = p.CandidateTypeId,
+                        Percentage = p.Percentage
+                    })
+                    .ToList(),
 
-        var result = new JobCandidateFilterSettingsDto
-        {
-            JobId = settings.JobId,
-            GenderId = settings.GenderId,
-            MinimumPoints = settings.MinimumPoints,
-            CandidateTypePercentages = settings.CandidateTypePercentages
-                .Select(item => new JobCandidateTypePercentageDto
-                {
-                    CandidateTypeId = item.CandidateTypeId,
-                    Percentage = item.Percentage
-                })
-                .ToList(),
-            NationalityPercentages = settings.NationalityPercentages
-                .Select(item => new JobCandidateNationalityPercentageDto
-                {
-                    CandidateTypeId = item.CandidateTypeId,
-                    NationalityId = item.NationalityId,
-                    Percentage = item.Percentage
-                })
-                .ToList()
-        };
+                NationalityPercentages = s.NationalityPercentages
+                    .Select(p => new JobCandidateNationalityPercentageDto
+                    {
+                        CandidateTypeId = p.CandidateTypeId,
+                        NationalityId = p.NationalityId,
+                        Percentage = p.Percentage
+                    })
+                    .ToList()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        return Result.Ok(result);
+        return Result.Ok(dto ?? new JobCandidateFilterSettingsDto { JobId = request.JobId });
     }
 }

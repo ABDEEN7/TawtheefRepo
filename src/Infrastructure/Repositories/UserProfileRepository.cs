@@ -1,19 +1,19 @@
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Infrastructure.Repositories.Base;
 
-namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
+namespace Tawtheef.Infrastructure.Repositories;
 
-internal static class CandidateProfileLoader
+public class UserProfileRepository(IGenericRepository<UserProfile> repository)
+    : BaseRepository<UserProfile>(repository), IUserProfileRepository
 {
-    public static async Task<List<UserProfile>> LoadForScoringAsync(
-        IUnitOfWork unitOfWork,
-        IReadOnlyCollection<Guid> userIds,
-        CancellationToken ct)
+    public async Task<List<UserProfile>> LoadForScoringAsync(IReadOnlyCollection<Guid> userIds)
     {
         if (userIds.Count == 0) return [];
 
-        return await unitOfWork.GetEntityRepository<UserProfile>().DbSet
+        return await Repository.DbSet   
             .AsNoTracking()
             .Where(p => userIds.Contains(p.UserId))
             .Include(p => p.User)
@@ -28,6 +28,6 @@ internal static class CandidateProfileLoader
             .Include(p => p.Achievements)
             .Include(p => p.Skills)
             .Include(p => p.Languages)
-            .ToListAsync(ct);
+            .ToListAsync();
     }
 }

@@ -1,22 +1,23 @@
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 
-internal static class JobRequirementsService
+public class JobRequirementsService(IUnitOfWork unitOfWork) : IJobRequirementsService
 {
-    public static async Task<JobRequirements> GetAsync(
-        IUnitOfWork unitOfWork,
-        Domain.Entities.Recruitment.Job job,
-        CancellationToken ct)
+    public async Task<JobRequirements> GetAsync(Guid mainMajorId,Guid? subMajorId)
     {
-        var jobMajorId = job.MajorId;
-        var jobSubMajorId = job.SubMajorId ?? job.SubMajor?.Id;
-
-        var majorIds = new List<Guid>();
-        majorIds.Add(jobMajorId);
-        if (jobSubMajorId.HasValue) majorIds.Add(jobSubMajorId.Value);
+        var majorIds = new List<Guid>()
+        {
+            mainMajorId
+        };
+        
+        if(subMajorId != null)
+            majorIds.Add(subMajorId.Value);
+        
 
         List<Guid> requiredSkillIds = [];
 
@@ -27,9 +28,9 @@ internal static class JobRequirementsService
                 .Where(ms => majorIds.Contains(ms.MajorId) && ms.IsActive && ms.IsSkillRequired)
                 .Select(ms => ms.SkillId)
                 .Distinct()
-                .ToListAsync(ct);
+                .ToListAsync();
         }
 
-        return new JobRequirements(jobMajorId, jobSubMajorId, requiredSkillIds);
+        return new JobRequirements(mainMajorId, subMajorId, requiredSkillIds);
     }
 }

@@ -2,49 +2,43 @@ using System.Text;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Queries;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handlers.Queries;
 
 public sealed class ExportJobCandidatesQueryHandler(
     IUnitOfWork unitOfWork,
+    IUserProfileRepository  userProfileRepository,
+    IJobRepository jobRepository,
+    IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
+    IJobRequirementsService  jobRequirementsService,
+    IJobCandidatesQueryBuilderService  jobCandidatesQueryBuilderService,
     ILocalizationService localizationService)
     : IQueryHandler<ExportJobCandidatesQuery, IResult<JobCandidatesExportResult>>
 {
-    private readonly JobCandidatePointsCalculator _pointsCalculator = new();
-
     public async Task<IResult<JobCandidatesExportResult>> Handle(
         ExportJobCandidatesQuery request,
         CancellationToken cancellationToken)
     {
-        var job = await unitOfWork.GetEntityRepository<Domain.Entities.Recruitment.Job>().DbSet
-            .AsNoTracking()
-            .Include(j => j.Department)
-            .Include(j => j.JobCategory)
-            .Include(j => j.JobPoints).ThenInclude(p => p!.Details)
-            .Include(j => j.Major)
-            .Include(j => j.SubMajor)
-            .FirstOrDefaultAsync(j => j.Id == request.JobId, cancellationToken);
-
+        var job = await jobRepository.LoadJobWithPointsAsync(request.JobId);
         if (job is null)
             return Result.Fail<JobCandidatesExportResult>(JobMessages.JobNotFound);
 
-        var targetCount = GetTargetCount(job);
-        var req = await JobRequirementsService.GetAsync(unitOfWork, job, cancellationToken);
+        var targetCount = await jobTargetCandidateCalculatorService.GetTargetCountAsync(job.JobCategoryId,job.NumberOfVacancies);
+        var req = await jobRequirementsService.GetAsync(job.MajorId,job.SubMajorId);
 
-        var baseQuery = JobCandidatesQueryBuilder.BuildEligibleQuery(
-            unitOfWork,
-            job,
-            req,
-            request.Filter);
+        var baseQuery = jobCandidatesQueryBuilderService.BuildEligibleQuery(
+            job.Id,job.GenderId,job.MaximumAge,job.MinimumAge, req, request.Filter);
 
         var windowSize = Math.Max(targetCount * 10, 1000);
 
@@ -57,7 +51,7 @@ public sealed class ExportJobCandidatesQueryHandler(
             return Result.Ok(EmptyCsvResult(request.JobId));
 
         var ids = window.Select(x => x.ApplicantId).Distinct().ToList();
-        var profiles = await CandidateProfileLoader.LoadForScoringAsync(unitOfWork, ids, cancellationToken);
+        var profiles = await userProfileRepository.LoadForScoringAsync(ids);
         var profileMap = profiles.ToDictionary(p => p.UserId);
 
         var scored = new List<JobCandidateRecord>(window.Count);
@@ -72,7 +66,7 @@ public sealed class ExportJobCandidatesQueryHandler(
                 .FirstOrDefault();
 
             var candidate = c with { Applicant = p.User, Profile = p, Major = major };
-            var points = _pointsCalculator.Calculate(candidate, job.JobPoints);
+            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints);
 
             scored.Add(candidate with { Points = points });
         }
@@ -91,7 +85,7 @@ public sealed class ExportJobCandidatesQueryHandler(
             .Include(s => s.NationalityPercentages)
             .FirstOrDefaultAsync(s => s.JobId == request.JobId, cancellationToken);
 
-        var finalList = JobCandidatesFilterProcessor.ApplyPercentageFilters(sorted, settings, targetCount);
+        var finalList = JobCandidatesFilterUtility.ApplyPercentageFilters(sorted, settings, targetCount);
 
         // Export CSV
         var csv = new StringBuilder();
@@ -136,11 +130,5 @@ public sealed class ExportJobCandidatesQueryHandler(
         if (string.IsNullOrWhiteSpace(value)) return string.Empty;
         var escaped = value.Replace("\"", "\"\"");
         return $"\"{escaped}\"";
-    }
-
-    private static int GetTargetCount(Domain.Entities.Recruitment.Job job)
-    {
-        var vacancies = Math.Max(1, job.NumberOfVacancies);
-        return job.JobCategoryId == JobCategoryIds.Academic ? vacancies * 5 : vacancies;
     }
 }
