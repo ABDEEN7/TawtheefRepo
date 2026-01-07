@@ -1,6 +1,5 @@
 ﻿import {ApplicationRef, inject, Injectable, NgZone} from '@angular/core';
 import {MessageService} from 'primeng/api';
-import {Subject} from 'rxjs';
 import {TranslateService} from '@ngx-translate/core';
 
 

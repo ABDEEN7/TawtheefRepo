@@ -4,7 +4,6 @@ import {of, Subject, Subscription} from 'rxjs';
 import {catchError, debounceTime, filter, finalize, map, switchMap, tap,} from 'rxjs/operators';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {MessageService} from 'primeng/api';
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
@@ -25,7 +24,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   protected readonly ds = inject(ProfileDataService);
   protected readonly lookups = inject(ProfileLookupsService);
   private readonly notificationService = inject(NotificationService);
-  private readonly messageService = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly profile = inject(ProfileService);
 

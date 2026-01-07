@@ -8,7 +8,6 @@ import {ContactVerificationService} from '../../../wizard-profile/services/conta
 import {TranslateService} from '@ngx-translate/core';
 import {GeoIpService} from '../../../../../../core/services/geo-ip.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {MessageService} from 'primeng/api';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
 import {
   canPreviewFile,
@@ -26,6 +25,7 @@ import {createStepValiditySignal} from '../../../wizard-profile/state/profile-st
 import {mapContactSection} from '../../../wizard-profile/services/profile.mapper';
 import {PhoneNumber} from '../../../wizard-profile/models/phone-number.model';
 import {VERIFIED_PHONE_KEY} from '../../../../../../core/constants/wizard-keys.const';
+import {NotificationService} from '../../../../../../core/services/notification.service';
 
 
 type VerificationStatus =
@@ -66,7 +66,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   translate = inject(TranslateService);
   geoIp = inject(GeoIpService);
   profileService = inject(ProfileService);
-  messageService = inject(MessageService);
+  notificationService = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
 
   naFileError: string | null = null;
@@ -452,12 +452,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     // Safety: Google must not submit +974 due to backend rule
     if (s.phone.e164Number.startsWith(this.QATAR_E164_PREFIX)) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.translate.instant('wizard.contact.googleProviderNonQatarOnly'),
-        life: 5000
-      });
+      this.notificationService.error(this.translate.instant('wizard.contact.googleProviderNonQatarOnly'), this.translate.instant('wizard.validationErrorTitle'));
       return Promise.resolve(false);
     }
 
@@ -473,12 +468,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
             resolve(true);
           },
           error: () => {
-            this.messageService.add({
-              severity: 'error',
-              summary: this.translate.instant('wizard.validationErrorTitle'),
-              detail: this.translate.instant('wizard.contact.phoneUpdateFailed'),
-              life: 5000
-            });
+            this.notificationService.error(this.translate.instant('wizard.contact.phoneUpdateFailed'), this.translate.instant('wizard.validationErrorTitle'));
             resolve(false);
           }
         });
@@ -592,12 +582,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   }
   async onNext(): Promise<void> {
     if (!this.step.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translate.instant('wizard.validationErrorTitle'),
-        detail: this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'),
-        life: 5000,
-      });
+      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
