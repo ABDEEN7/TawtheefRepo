@@ -17,7 +17,7 @@ import {
   ReviewStatusEnum,
   MyProfileReviewSummaryDto,
   UserProfileStatusEnum,
-  MyProfileReviewNoteDto, ProfileChangeActionEnum
+  MyProfileReviewNoteDto, ProfileChangeActionEnum, ReviewTargetTypeCode, ReviewTargetTypeEnum
 } from '../overview/models/profile-overview.model';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { ProfileOverviewService } from '../overview/services/profile-overview.service';
@@ -238,7 +238,9 @@ export class ProfileViewPage {
   readonly activeNotes = computed(() => {
     const active = this.expanded();
     const review = this.review.value() as MyProfileReviewSummaryDto | undefined;
-    const notes = review?.sections?.find(s => s.section === active)?.notes ?? [];
+    const notes = review?.
+    sections?.find(s => s.section === active)?.
+    notes?.filter(n=> n.targetType == ReviewTargetTypeEnum.Section) ?? [];
     return notes as MyProfileReviewNoteDto[];
   });
 
