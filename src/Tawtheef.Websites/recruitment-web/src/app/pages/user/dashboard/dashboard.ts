@@ -2,11 +2,15 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 
 import {
   CandidateDashboardService,
   JOB_INVITATION_STATUSES,
-  ACTION_CONFIGS, InvitationStatus,
+  ACTION_CONFIGS,
+  InvitationStatus,
+  STATUS_PILL_CLASSES,
+  TYPE_BADGE_CLASSES,
 } from './services/candidate-dashboard.service';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 import {Select} from 'primeng/select';
@@ -14,6 +18,8 @@ import {CandidateInvitationFilters} from './models/candidate-invitation-filters'
 import {CandidateInvitationModel} from './models/candidate-invitation.model';
 import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
+import {TableModule} from 'primeng/table';
+import {routes} from '../../../routes/routes';
 
 type ActionConfig = {
   showApply: boolean;
@@ -33,14 +39,15 @@ type ActionConfig = {
     I18nNamespaceDirective,
     Select,
     PaginationComponent,
-    Select,
-    TranslatePipe
+    TableModule,
+    RouterLink
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
   candidateService = inject(CandidateDashboardService);
+  routes = routes;
 
   // Loading states
   isWithdrawing = signal<string | null>(null);
@@ -117,20 +124,12 @@ export class Dashboard implements OnInit {
   }
 
   // Helper methods for templates
-  getStatusClasses(status: string): string[] {
-    const map: Record<string, string[]> = {
-      NewInvitation: ['bg-info-subtle', 'text-info'],             // new item = info
-      Closed: ['bg-secondary-subtle', 'text-secondary'],          // closed = grey
-      UnderReview: ['bg-warning-subtle', 'text-warning'],         // pending review
-      Approved: ['bg-success-subtle', 'text-success'],            // approved = success
-      Readed: ['bg-primary-subtle', 'text-primary'],              // read = primary
-      Rejected: ['bg-danger-subtle', 'text-danger'],              // rejected = danger
-      Cancelled: ['bg-dark-subtle', 'text-dark'],                 // cancelled = dark
-      RequiresUpdate: ['bg-warning-subtle', 'text-warning'],      // needs update = warning
-      Submitted: ['bg-info-subtle', 'text-info'],                 // submitted = info
-    };
+  getStatusClass(status: string): string {
+    return STATUS_PILL_CLASSES[status as InvitationStatus] ?? 'status-closed';
+  }
 
-    return map[status] || ['bg-secondary-subtle', 'text-secondary']; // fallback style
+  getJobCategoryClass(record: CandidateInvitationModel): string {
+    return TYPE_BADGE_CLASSES[record.jobCategoryBackendName as keyof typeof TYPE_BADGE_CLASSES] ?? '';
   }
 
   getActionButtons(invitationStatus: dropdownOptionsModel): ActionConfig {

@@ -1,0 +1,89 @@
+<div class="card card-table mb-4" i18nNamespace="pages/user/job-details">
+  <div class="card-body">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+      <div>
+        <h4 class="mb-1 text-brand fw-bold">{{ 'job_details.title' | translate }}</h4>
+        <p class="m-0 text-muted">{{ 'job_details.subtitle' | translate }}</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a
+          [routerLink]="routes.user.dashboard"
+          class="btn btn-outline-secondary btn-sm btn-pill"
+        >
+          <i class="fa fa-arrow-left"></i>
+          {{ 'job_details.back_to_dashboard' | translate }}
+        </a>
+        <button
+          pButton
+          type="button"
+          class="btn btn-primary btn-sm btn-pill"
+          [disabled]="!canApply() || isApplying()"
+          (click)="applyInvitation()"
+        >
+          <i class="fa fa-paper-plane"></i>
+          {{ 'job_details.apply_now' | translate }}
+        </button>
+      </div>
+    </div>
+
+    @if (detailsService.loading()) {
+      <div class="text-center text-muted py-5">
+        {{ 'job_details.loading' | translate }}
+      </div>
+    } @else if (!invitation()) {
+      <div class="text-center text-muted py-5">
+        {{ 'job_details.no_data' | translate }}
+      </div>
+    } @else {
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="card card-table border-0 shadow-sm">
+            <div class="card-body">
+              <p class="text-muted small mb-1">{{ 'job_details.field_job_title' | translate }}</p>
+              <div class="fw-bold">{{ invitation()!.jobTitle }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-table border-0 shadow-sm">
+            <div class="card-body">
+              <p class="text-muted small mb-1">{{ 'job_details.field_department' | translate }}</p>
+              <div class="fw-bold">{{ invitation()!.departmentName }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-table border-0 shadow-sm">
+            <div class="card-body">
+              <p class="text-muted small mb-1">{{ 'job_details.field_category' | translate }}</p>
+              <span [ngClass]="getJobCategoryClass(invitation()!)">
+                {{ invitation()!.jobCategory }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-table border-0 shadow-sm">
+            <div class="card-body">
+              <p class="text-muted small mb-1">{{ 'job_details.field_status' | translate }}</p>
+              <span
+                class="status-pill"
+                [ngClass]="getStatusClass(invitation()!.invitationStatus.backendName)"
+              >
+                {{ invitation()!.invitationStatus.name }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-table border-0 shadow-sm">
+            <div class="card-body">
+              <p class="text-muted small mb-1">{{ 'job_details.field_date' | translate }}</p>
+              <div>{{ invitation()!.createDate }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

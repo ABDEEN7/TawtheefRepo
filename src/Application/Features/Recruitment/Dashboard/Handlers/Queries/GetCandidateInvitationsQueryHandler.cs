@@ -25,8 +25,8 @@ public sealed class GetCandidateInvitationsQueryHandler(IUnitOfWork unitOfWork, 
             .WhereIf(query.InvitationStatusId is not null, i => i.InvitationStatusId == query.InvitationStatusId)
             .WhereIf(query.JobCategoryId is not null, i => i.Job!.JobCategoryId == query.JobCategoryId)
             .WhereIf(query.DepartmentId is not null, i => i.Job!.DepartmentId == query.DepartmentId)
-            .WhereIf(!string.IsNullOrWhiteSpace(query.JobTitle), i => i.Job!.TitleAr.Contains(query.JobTitle!))
-            .WhereIf(!string.IsNullOrWhiteSpace(query.JobTitle), i => i.Job!.TitleEn.Contains(query.JobTitle!))
+            .WhereIf(!string.IsNullOrWhiteSpace(query.JobTitle),
+                i => i.Job!.TitleAr.Contains(query.JobTitle!) || i.Job!.TitleEn.Contains(query.JobTitle!))
             .ToPaginatedListAsync<Invitation, CandidateInvitationsDto>(mapper, query, cancellationToken);
 
         return Result.Ok(invitations);
