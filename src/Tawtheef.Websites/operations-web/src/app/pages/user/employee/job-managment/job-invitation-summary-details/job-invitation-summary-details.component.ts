@@ -18,6 +18,7 @@ import { JobInvitationSummaryDetailsService } from '../services/job-invitation-s
 import { GUID } from '../../../../../shared/types/guid.type';
 import { GuidUtils } from '../../../../../core/utils/guid-utils';
 import { routes } from '../../../../../routes/routes';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-job-invitation-summary-details',
@@ -30,6 +31,7 @@ import { routes } from '../../../../../routes/routes';
     I18nNamespaceDirective,
     Select,
     PaginationComponent,
+    TableModule
   ],
   templateUrl: './job-invitation-summary-details.component.html',
   styleUrl: './job-invitation-summary-details.component.scss',

@@ -208,30 +208,54 @@ export class JobLookupService {
   );
 }
 
-  loadJobCategories()
+  loadJobCategories(): Observable<dropdownOptionsModel[]>
   {
-    this.http.get<dropdownOptionsModel[]>(
-      `${this.endpoints.job.lookups.jobCategories}`
-    ).subscribe({
-      next: (cat) => this.jobCategories.set(cat),
-      error: () => {
-        this.jobCategories.set([]);
-      }
-    });
+    return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.job.lookups.jobCategories
+  ).pipe(
+    tap(jobCategories => this.jobCategories.set(jobCategories)),
+    catchError(() => {
+      this.jobCategories.set([]);
+      return of([]);
+    })
+  );
   }
 
-  loadCandidateTypes(): void {
-    this.http.get<dropdownOptionsModel[]>(
-      this.endpoints.jobCandidates.lookups.candidateTypes
-    ).subscribe({
-      next: (types) => this.candidateTypes.set(types),
-      error: () => {
-        this.candidateTypes.set([]);
-      },
-    });
+  loadCandidateTypes(): Observable<dropdownOptionsModel[]> {
+   return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.jobCandidates.lookups.candidateTypes
+  ).pipe(
+    tap(candidateTypes => this.candidateTypes.set(candidateTypes)),
+    catchError(() => {
+      this.candidateTypes.set([]);
+      return of([]);
+    })
+  );
+  }
+  
+  loadNationalities(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.job.lookups.nationalities
+  ).pipe(
+    tap(nationalities => this.nationalities.set(nationalities)),
+    catchError(() => {
+      this.nationalities.set([]);
+      return of([]);
+    })
+  );
   }
 
-
+  loadGenders() : Observable<dropdownOptionsModel[]>{
+    return this.http.get<dropdownOptionsModel[]>(
+    this.endpoints.job.lookups.genders
+  ).pipe(
+    tap(genders => this.genders.set(genders)),
+    catchError(() => {
+      this.genders.set([]);
+      return of([]);
+    })
+  );
+  }
   getJobCategoryLabel(id: GUID): string {
     return this.jobCategories().find(jobcat => jobcat.id === id)?.name || '';
   }

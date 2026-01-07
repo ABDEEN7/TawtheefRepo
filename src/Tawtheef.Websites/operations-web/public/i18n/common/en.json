@@ -21,6 +21,7 @@
   "common.loading": "Loading",
   "common.save": "Save",
   "common.cancel": "Cancel",
+  "common.apply" : "Apply",
   "common.back": "Back",
   "common.submit": "Submit",
   "common.edit": "Edit",

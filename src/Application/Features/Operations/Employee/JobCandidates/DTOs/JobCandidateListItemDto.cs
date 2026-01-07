@@ -2,7 +2,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 
 public sealed class JobCandidateListItemDto
 {
-    public Guid InvitationId { get; init; }
+    public Guid? InvitationId { get; init; }
     public Guid CandidateId { get; init; }
     public string CandidateName { get; init; } = string.Empty;
     public string Department { get; init; } = string.Empty;
