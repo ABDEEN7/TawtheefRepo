@@ -1,9 +1,9 @@
 .header-section {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 16px;
+  flex-wrap: wrap;
   margin-bottom: 24px;
 
   .job-details-title-group {
@@ -28,40 +28,77 @@
   }
 }
 
-.status-favorite-wrapper {
+.header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1 1 520px;
+  min-width: 280px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  cursor: pointer;
+
+  i {
+    font-size: 28px; // instead of relying on fs-32
+    line-height: 1;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.job-details-title-group {
+  min-width: 0; // important so long titles truncate nicely
+}
+
+.job-title {
+  margin: 0 0 6px 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #333;
+
+  // optional: keep single line with ellipsis (remove if you want wrapping)
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.job-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #999;
+  font-weight: 500;
+}
+
+.header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 0 1 auto;
   flex-wrap: wrap;
 }
 
-.reject-btn {
-  .reject-button {
-    padding: 10px 20px;
-    height: 40px;
-    border-radius: 50px;
-    background: #d9534f;
-    border: none;
-    color: #fff;
-    font-weight: 600;
-    font-size: 14px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    transition: all 0.3s;
-    cursor: pointer;
+/* Make right side full width & left-aligned on small screens */
+@media (max-width: 768px) {
+  .header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
 
-    i {
-      font-size: 14px;
-    }
-
-    &:hover {
-      background: #c9302c;
-      box-shadow: 0 4px 12px rgba(217, 83, 79, 0.3);
-    }
-
-    &:active {
-      transform: scale(0.98);
-    }
+  .job-title {
+    white-space: normal; // allow wrap on mobile
   }
 }

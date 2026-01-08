@@ -7,6 +7,7 @@ using Tawtheef.Application.Features.Recruitment.Dashboard.DTOs;
 namespace Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
 
 public sealed record GetCandidateInvitationsQuery(
+    Guid UserId,
     Guid? InvitationStatusId,
     Guid? JobCategoryId,
     Guid? DepartmentId,

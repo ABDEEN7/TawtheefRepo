@@ -1,7 +1,7 @@
 import {Component, OnInit, inject, signal, computed} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ButtonModule} from 'primeng/button';
 import {DialogService} from 'primeng/dynamicdialog';
@@ -17,7 +17,7 @@ import {CandidateInvitationDetailsService} from './services/candidate-invitation
 @Component({
   selector: 'app-job-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, I18nNamespaceDirective, ButtonModule, RouterLink],
+  imports: [CommonModule, FormsModule, TranslatePipe, I18nNamespaceDirective, ButtonModule],
   templateUrl: './job-details.html',
   styleUrls: ['./job-details.scss']
 })
@@ -28,6 +28,8 @@ export class JobDetails implements OnInit {
   private translate = inject(TranslateService);
   private notifier = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private router = inject(Router);
+
   job = this.detailsService.job;
   isLoading = this.detailsService.loading;
   activeTab: string = JobTabType.Overview;
@@ -156,5 +158,9 @@ export class JobDetails implements OnInit {
     if (this.hasApplied()) return this.translate.instant('JOB_DETAILS.APPLICATION_SUBMITTED');
     if (!this.isJobOpen()) return this.translate.instant('JOB_DETAILS.APPLICATION_CLOSED');
     return this.translate.instant('JOB_DETAILS.APPLY');
+  }
+
+  navigateTo() {
+    this.router.navigate([routes.user.dashboard]);
   }
 }

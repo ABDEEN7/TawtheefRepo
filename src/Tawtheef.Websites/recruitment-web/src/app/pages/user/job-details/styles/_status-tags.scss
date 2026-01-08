@@ -9,13 +9,9 @@
   font-weight: 700;
   font-size: 13px;
   text-align: center;
+  line-height: 1;
 
-  &.Approved {
-    background: #D1E7DD;
-    color: #0F5132;
-  }
-
-  &.Active {
+  &.Published {
     background: #D1E7DD;
     color: #0F5132;
   }
@@ -25,58 +21,7 @@
     color: #721C24;
   }
 
-  &.PendingApproval {
-    background: #FFF3CD;
-    color: #856404;
-  }
-
-  &.Draft {
-    background: #D1ECF1;
-    color: #0C5460;
-  }
-
   &.Cancelled {
-    background: #F8D7DA;
-    color: #721C24;
-  }
-}
-
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-
-  &.Approved {
-    background: #D1E7DD;
-    color: #0F5132;
-  }
-
-  &.Returned {
-    background: #FFF3CD;
-    color: #B45309;
-  }
-
-  &.Rejected {
-    background: #F8D7DA;
-    color: #721C24;
-  }
-}
-
-.resolved-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-
-  &.resolved {
-    background: #D1E7DD;
-    color: #0F5132;
-  }
-
-  &.unresolved {
     background: #F8D7DA;
     color: #721C24;
   }

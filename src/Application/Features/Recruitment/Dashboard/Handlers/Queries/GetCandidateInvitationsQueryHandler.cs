@@ -17,11 +17,12 @@ public sealed class GetCandidateInvitationsQueryHandler(IUnitOfWork unitOfWork, 
 {
     public async Task<IResult<PaginatedResult<CandidateInvitationsDto>>> Handle(GetCandidateInvitationsQuery query, CancellationToken cancellationToken)
     {
-        var invitations =  await unitOfWork.GetEntityRepository<Invitation>().DbSet
+        var invitations = await unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
             .Include(i => i.InvitationStatus)
             .Include(i => i.Job).ThenInclude(j => j!.JobCategory)
             .Include(i => i.Job).ThenInclude(j => j!.Department)
+            .WhereIf(query.UserId != Guid.Empty , i => i.ApplicantId == query.UserId) // <-- add this
             .WhereIf(query.InvitationStatusId is not null, i => i.InvitationStatusId == query.InvitationStatusId)
             .WhereIf(query.JobCategoryId is not null, i => i.Job!.JobCategoryId == query.JobCategoryId)
             .WhereIf(query.DepartmentId is not null, i => i.Job!.DepartmentId == query.DepartmentId)

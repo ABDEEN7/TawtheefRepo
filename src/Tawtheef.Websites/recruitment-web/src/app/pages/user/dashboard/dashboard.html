@@ -193,16 +193,6 @@
                                    </a>
                                  }
 
-                                 @if (actions.showView) {
-                                   <a
-                                     [routerLink]="routes.user.jobDetails(record.invitationId)"
-                                     class="btn btn-sm btn-outline-secondary btn-pill"
-                                   >
-                                     <i class="fa fa-eye"></i>
-                                     {{ 'candidate_dashboard.action_view_request' | translate }}
-                                   </a>
-                                 }
-
                                  @if (actions.showTrack) {
                                    <a
                                      [routerLink]="routes.user.jobDetails(record.invitationId)"

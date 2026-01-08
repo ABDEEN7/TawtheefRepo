@@ -20,6 +20,8 @@ import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.mode
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
 import {TableModule} from 'primeng/table';
 import {routes} from '../../../routes/routes';
+import { AuthService } from '../../../core/auth/auth.service';
+import { GUID } from '../../../shared/types/guid.type';
 
 type ActionConfig = {
   showApply: boolean;
@@ -47,6 +49,7 @@ type ActionConfig = {
 })
 export class Dashboard implements OnInit {
   candidateService = inject(CandidateDashboardService);
+  authService = inject(AuthService);
   routes = routes;
 
   // Loading states
@@ -83,6 +86,7 @@ export class Dashboard implements OnInit {
 
   loadCandidateInvitations() {
     const searchFilters: CandidateInvitationFilters =  {
+      userId : this.authService.getCurrentUser()?.userId as GUID,
       jobCategoryId: this.selectedCategory() || '',
       departmentId: this.selectedDepartment() || '',
       invitationStatusId: this.selectedInvitationStatus() || '',
