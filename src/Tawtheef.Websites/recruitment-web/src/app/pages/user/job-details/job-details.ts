@@ -55,7 +55,7 @@ export class JobDetails implements OnInit {
     this.detailsService.loadJobDetails(invitationId).subscribe(resp=>{
       if(resp)
       {
-        this.detailsService.changeInvitationStatus(invitationId).subscribe();
+        this.detailsService.changeInvitationStatus(invitationId, 'Read').subscribe();
       }
     });
     this.invitationDetailsService.loadInvitation(invitationId);
@@ -108,7 +108,12 @@ export class JobDetails implements OnInit {
   }
 
   canApply(): boolean {
-    return this.isJobOpen() && !this.hasApplied() && !this.detailsService.applying();
+    const status = this.invitation()?.invitationStatus?.backendName?.toLowerCase() ?? '';
+    const isRejected = status.includes('reject');
+    const isClosed = status.includes('closed') || status.includes('cancel');
+    return this.isJobOpen() && !this.hasApplied() && !this.detailsService.applying()
+      && !isRejected
+      && !isClosed;
   }
 
   getStatusClass(): string {
@@ -116,20 +121,14 @@ export class JobDetails implements OnInit {
     return status ?? 'Closed';
   }
 
-  getResponsibilities(): { textAr: string; textEn: string }[] {
+  getResponsibilities(): string[] {
     if (!this.job()?.responsibilities?.length) return [];
-    return this.job()!.responsibilities!.map((c) => ({
-      textAr: c.textAr,
-      textEn: c.textEn
-    }));
+    return this.job()!.responsibilities!.map((c) => c.text);
   }
 
-  getJobConditions(): { textAr: string; textEn: string }[] {
+  getJobConditions(): string[] {
     if (!this.job()?.conditions?.length) return [];
-    return this.job()!.conditions!.map((c) => ({
-      textAr: c.textAr,
-      textEn: c.textEn
-    }));
+    return this.job()!.conditions!.map((c) => c.text);
   }
 
   getJobSkills(): string[] {
@@ -164,6 +163,30 @@ export class JobDetails implements OnInit {
     if (this.hasApplied()) return this.translate.instant('JOB_DETAILS.APPLICATION_SUBMITTED');
     if (!this.isJobOpen()) return this.translate.instant('JOB_DETAILS.APPLICATION_CLOSED');
     return this.translate.instant('JOB_DETAILS.APPLY');
+  }
+
+  canRejectInvitation(): boolean {
+    if (this.hasApplied()) return false;
+    const status = this.invitation()?.invitationStatus?.backendName?.toLowerCase() ?? '';
+    const isPending = status.includes('new') || status.includes('read');
+    return isPending;
+  }
+
+  rejectInvitation(): void {
+    if (!this.canRejectInvitation()) return;
+    const invitationId = this.invitationId();
+    if (!invitationId) return;
+
+    this.detailsService.changeInvitationStatus(invitationId, 'Rejected').subscribe({
+      next: () => {
+        this.invitationDetailsService.loadInvitation(invitationId);
+        this.notifier.success(this.translate.instant('JOB_DETAILS.REJECT_SUCCESS'));
+        this.navigateTo();
+      },
+      error: () => {
+        this.notifier.error(this.translate.instant('JOB_DETAILS.REJECT_ERROR'));
+      }
+    });
   }
 
   navigateTo() {

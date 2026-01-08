@@ -53,5 +53,8 @@
   "JOB_DETAILS.APPLY_CONFIRM_SUBMIT": "تأكيد التقديم",
   "JOB_DETAILS.BACK_TO_DASHBOARD": "العودة إلى اللوحة",
   "JOB_DETAILS.APPLY_SUCCESS": "تم تقديم طلبك بنجاح.",
-  "JOB_DETAILS.APPLY_ERROR": "تعذر التقديم الآن. حاول مرة أخرى."
+  "JOB_DETAILS.APPLY_ERROR": "تعذر التقديم الآن. حاول مرة أخرى.",
+  "JOB_DETAILS.REJECT": "رفض الدعوة",
+  "JOB_DETAILS.REJECT_SUCCESS": "تم رفض الدعوة.",
+  "JOB_DETAILS.REJECT_ERROR": "تعذر رفض الدعوة. حاول مرة أخرى."
 }

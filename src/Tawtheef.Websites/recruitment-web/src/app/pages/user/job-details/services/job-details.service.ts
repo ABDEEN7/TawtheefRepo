@@ -34,10 +34,10 @@ export class JobDetailsService {
       );
   }
 
-  changeInvitationStatus(invitationId: string) {
+  changeInvitationStatus(invitationId: string, statusCode: string) {
     this.applying.set(true);
     return this.http
-      .post<void>(this.endpoints.dashboard.changeStatusCandidateInvitation(invitationId), {})
+      .post<void>(this.endpoints.dashboard.changeStatusCandidateInvitation(invitationId), {statusCode})
       .pipe(
         finalize(() => this.applying.set(false))
       );

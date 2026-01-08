@@ -11,7 +11,7 @@
 
     <div class="job-details-title-group">
       <h3 class="job-title">
-        {{ 'JOB_DETAILS.JOB_DETAILS' | translate }} - {{ job()!.titleAr }}/{{ job()!.titleEn }}
+        {{ 'JOB_DETAILS.JOB_DETAILS' | translate }} - {{ job()!.title }}
       </h3>
       <p class="job-subtitle">{{ 'JOB_DETAILS.JOB_REVIEW_NOT' | translate }}</p>
     </div>
@@ -27,6 +27,16 @@
     >
       <i class="fa fa-paper-plane"></i>
       {{ getApplyButtonLabel() }}
+    </button>
+    <button
+      pButton
+      type="button"
+      class="btn btn-outline-danger btn-pill"
+      [disabled]="!canRejectInvitation()"
+      (click)="rejectInvitation()"
+    >
+      <i class="fa fa-xmark"></i>
+      {{ 'JOB_DETAILS.REJECT' | translate }}
     </button>
 
     <div class="status-tag" [ngClass]="getStatusClass()">
@@ -102,62 +112,33 @@
                 </h5>
                 <div class="row">
                   <div class="col-md-12">
-                    @if (activeTab === tabType.Overview) { @if (job()!.overViewAr ||
-                    job()!.overViewEn) {
-                    <div class="dual-text-container m-0">
-                      <div class="text-area">
-                        <h6>{{ 'JOB_DETAILS.OVERVIEWAR' | translate }}</h6>
-                        <div [innerHTML]="job()!.overViewAr"></div>
-                      </div>
-                      <div class="text-area">
-                        <h6>{{ 'JOB_DETAILS.OVERVIEWEN' | translate }}</h6>
-                        <div [innerHTML]="job()!.overViewEn"></div>
-                      </div>
+                    @if (activeTab === tabType.Overview) { @if (job()!.overView) {
+                    <div class="text-area">
+                      <div [innerHTML]="job()!.overView"></div>
                     </div>
                     } } @if (activeTab === tabType.Responsibilities) { @if
                     (getResponsibilities().length > 0) {
                     <ul>
                       @for (responsibility of getResponsibilities(); track $index) {
-                      <div class="dual-text-container">
-                        <div class="text-area">
-                          <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                          <div [innerHTML]="responsibility.textAr"></div>
-                        </div>
-                        <div class="text-area">
-                          <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                          <div [innerHTML]="responsibility.textEn"></div>
-                        </div>
+                      <div class="text-area">
+                        <div [innerHTML]="responsibility"></div>
                       </div>
                       }
                     </ul>
                     } } @if (activeTab === tabType.Conditions) {
                     <h3>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
                     <p>{{ getDegreeRequirements() }}</p>
-                    @if (job()!.qualificationDescriptionAr || job()!.qualificationDescriptionEn) {
+                    @if (job()!.qualificationDescription) {
                     <h3>{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h3>
-                    <div class="dual-text-container">
-                      <div class="text-area">
-                        <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                        <div [innerHTML]="job()!.qualificationDescriptionAr"></div>
-                      </div>
-                      <div class="text-area">
-                        <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                        <div [innerHTML]="job()!.qualificationDescriptionEn"></div>
-                      </div>
+                    <div class="text-area">
+                      <div [innerHTML]="job()!.qualificationDescription"></div>
                     </div>
                     } @if (getJobConditions().length > 0) {
                     <div class="basic-requirements">
                       <h3>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</h3>
                       @for (condition of getJobConditions(); track $index) {
-                      <div class="dual-text-container">
-                        <div class="text-area">
-                          <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                          <div [innerHTML]="condition.textAr"></div>
-                        </div>
-                        <div class="text-area">
-                          <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                          <div [innerHTML]="condition.textEn"></div>
-                        </div>
+                      <div class="text-area">
+                        <div [innerHTML]="condition"></div>
                       </div>
                       }
                     </div>
@@ -167,17 +148,9 @@
                       <li>{{ skill }}</li>
                       }
                     </ul>
-                    } } @if (activeTab === tabType.Benefits) { @if (job()!.benefitsAr ||
-                    job()!.benefitsEn) {
-                    <div class="dual-text-container">
-                      <div class="text-area">
-                        <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                        <div [innerHTML]="job()!.benefitsAr"></div>
-                      </div>
-                      <div class="text-area">
-                        <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                        <div [innerHTML]="job()!.benefitsEn"></div>
-                      </div>
+                    } } @if (activeTab === tabType.Benefits) { @if (job()!.benefits) {
+                    <div class="text-area">
+                      <div [innerHTML]="job()!.benefits"></div>
                     </div>
                     } } @if (activeTab === tabType.Attachments) { @if (job()!.requiredAttachments &&
                     job()!.requiredAttachments!.length) {
@@ -185,13 +158,8 @@
                       @for (attachment of job()!.requiredAttachments!; track $index) {
                       <li>
                         <div class="dual-text-container">
-                          <div class="attachmentAr">
-                            <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                            <div [innerHTML]="attachment.titleAr"></div>
-                          </div>
-                          <div class="attachmentEn">
-                            <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                            <div [innerHTML]="attachment.titleEn"></div>
+                          <div class="text-area">
+                            <div [innerHTML]="attachment.title"></div>
                           </div>
                           <div class="form-check form-switch m-0">
                             <input
