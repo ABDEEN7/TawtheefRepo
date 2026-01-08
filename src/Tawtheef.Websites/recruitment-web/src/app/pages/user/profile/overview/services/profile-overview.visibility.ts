@@ -9,6 +9,18 @@ import {
 import {ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
 import {ProfileState} from '../../wizard-profile/models/profile-state.model';
 
+export type ProfileOverviewVisibility = {
+  type: CandidateType | undefined;
+  isResident: boolean;
+  needsSponsor: boolean;
+  needsBirth: boolean;
+  needsMarriage: boolean;
+  showQidExpiry: boolean;
+  showNationalAddress: boolean;
+  showForeignAddress: boolean;
+  showSponsorSection: boolean;
+};
+
 export function createProfileOverviewVisibility(p: ProfileStatusDto) {
   return computed(() => {
     const s = {
@@ -31,6 +43,6 @@ export function createProfileOverviewVisibility(p: ProfileStatusDto) {
       showNationalAddress: isResident,
       showForeignAddress: !isResident,
       showSponsorSection: candidateTypeNeedsSponsor(type)
-    };
+    } as ProfileOverviewVisibility;
   });
 }

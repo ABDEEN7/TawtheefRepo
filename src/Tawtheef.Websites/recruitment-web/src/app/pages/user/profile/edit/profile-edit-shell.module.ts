@@ -33,7 +33,7 @@ import {ProfileDataService} from '../wizard-profile/services/profile-data.servic
     DialogService,
     ProfileDataService,
     ProfileService,
-    { provide: PROFILE_WRITE_MODE, useValue: 'change-request' },
+    { provide: PROFILE_WRITE_MODE, useValue: 'create' },
   ],
   imports: [
     RouterModule.forChild(profileEditShellRoutes),

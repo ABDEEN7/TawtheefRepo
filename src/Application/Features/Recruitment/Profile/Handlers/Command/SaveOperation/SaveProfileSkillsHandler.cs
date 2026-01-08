@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -33,7 +34,11 @@ public sealed class SaveProfileSkillsHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         if(cmd.Request.Skills.Count == 0)
+        {
+            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Skills, ct);
+            await uow.SaveChangesAsync(ct);
             return Result.Ok(Unit.Value);
+        }
         
         // Skills
         if (profile.Skills is not null && profile.Skills.Count > 0)
@@ -51,6 +56,7 @@ public sealed class SaveProfileSkillsHandler(
 
         await skillRepo.AddRangeAsync(skills);
         
+        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Skills, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

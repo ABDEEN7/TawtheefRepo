@@ -42,6 +42,10 @@ import { ProfileService } from '../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.service';
+import {
+  createProfileOverviewVisibility,
+  ProfileOverviewVisibility
+} from '../overview/services/profile-overview.visibility';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -91,6 +95,17 @@ export class ProfileViewPage {
   private readonly lookups = inject(ProfileLookupsService);
   private readonly auth = inject(AuthService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
+  private readonly emptyVisibility: ProfileOverviewVisibility = {
+    type: undefined,
+    isResident: false,
+    needsSponsor: false,
+    needsBirth: false,
+    needsMarriage: false,
+    showQidExpiry: false,
+    showNationalAddress: false,
+    showForeignAddress: true,
+    showSponsorSection: false
+  };
 
   protected readonly cards: SectionCard[] = [
     { section: ProfileSectionEnum.Prerequisites, icon: 'pi pi-file', labelKey: 'profileOverview.sections.prerequisites' },
@@ -184,6 +199,11 @@ export class ProfileViewPage {
 
   readonly header = computed(() => this.basics.value());
   readonly loadingBasics = computed(() => this.basics.status() === 'loading');
+  readonly visibility = computed<ProfileOverviewVisibility>(() => {
+    const profile = this.basics.value();
+    if (!profile) return this.emptyVisibility;
+    return createProfileOverviewVisibility(profile)();
+  });
 
   readonly reviewNotes = computed(() => {
     const review = this.review.value() as MyProfileReviewSummaryDto | undefined;

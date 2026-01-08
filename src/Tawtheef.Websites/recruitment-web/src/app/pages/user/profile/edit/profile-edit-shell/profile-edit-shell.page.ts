@@ -12,6 +12,8 @@ import {ProfileComponentsModule} from '../../components/profile-components.modul
 import {NgSwitch, NgSwitchCase} from '@angular/common';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import { routes } from '../../../../../routes/routes';
+import {UserProfileStatusEnum} from '../../overview/models/profile-overview.model';
+import {ProfileWriteMode} from '../../wizard-profile/services/profile-write-mode.token';
 
 type EditSection =
   | 'prerequisites' | 'personal' | 'contact' | 'qualifications'
@@ -61,6 +63,9 @@ export class ProfileEditShellPage {
       const res = this.data.value();
       if (!res?.status) return;
 
+      const resolvedMode = this.resolveWriteMode(res.status.status);
+      this.profile.setWriteMode(resolvedMode);
+
       const prefill = this.userService.getPrefill?.() ?? null;
       untracked(() => {
         const state = mapProfileStatusToState(
@@ -77,5 +82,9 @@ export class ProfileEditShellPage {
 
   backToOverview() {
     this.router.navigate([routes.user.profileOverview]);
+  }
+
+  private resolveWriteMode(status: number | null | undefined): ProfileWriteMode {
+    return status === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
   }
 }
