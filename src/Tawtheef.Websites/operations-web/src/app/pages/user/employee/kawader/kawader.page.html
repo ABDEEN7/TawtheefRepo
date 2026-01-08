@@ -7,6 +7,16 @@
                 <h3 class="fw-bold m-0">{{ 'kawader.header.title' | translate }}</h3>
                 <p class="fs-16 m-0">{{ 'kawader.header.subtitle' | translate }}</p>
              </div>
+            <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
+              <button
+                pButton
+                type="button"
+                class="btn-text"
+                (click)="downloadTemplate()"
+                [disabled]="isUploading()">
+                <span pButtonLabel>{{ 'kawader.template.download' | translate }}</span>
+              </button>
+            </div>
         </div>
         <div class="card card-table mb-4">
             <div class="card-body">

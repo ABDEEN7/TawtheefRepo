@@ -6,7 +6,7 @@
         <span>{{ 'profileOverview.sections.qualifications' | translate }}</span>
       </div>
 
-      <div class="d-flex align-items-center gap-2" *ngIf="canEdit">
+      <div class="d-flex align-items-center gap-2" *ngIf="canAddAttachment">
         <button
           type="button"
           class="btn btn-sm btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
@@ -14,17 +14,10 @@
           <i class="pi pi-plus" aria-hidden="true"></i>
           <span>{{ 'profileView.actions.addQualification' | translate }}</span>
         </button>
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-          (click)="onEdit()">
-          <i class="pi pi-pencil" aria-hidden="true"></i>
-          <span>{{ 'common.edit' | translate }}</span>
-        </button>
       </div>
     </div>
 
-    @if (profile?.qualifications?.length) {
+    @if (profile?.qualifications?.length || qualificationsUnderReview().length) {
       <div class="table-responsive">
         <table class="table align-middle">
           <thead>
@@ -35,70 +28,15 @@
               <th>{{ 'profileOverview.fields.graduationYear' | translate }}</th>
               <th>{{ 'profileOverview.fields.studyType' | translate }}</th>
               <th>{{ 'profileOverview.table.attachment' | translate }}</th>
-              <th *ngIf="canEdit">{{ 'profileOverview.table.actions' | translate }}</th>
+              <th *ngIf="notes?.length">{{ 'profileOverview.table.actions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
             @for (q of profile?.qualifications; track q.id) {
-              @let fileNote = noteForFile(q.attachment);
-              <tr>
-                <td>
-                  <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-                    <span>{{ q.degree?.name || '-' }}</span>
-                    <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview()">
-                      {{ 'profileOverview.status.pending' | translate }}
-                    </span>
-                  </div>
-                </td>
-                <td>{{ q.university?.name || '-' }}</td>
-                <td>{{ q.gradCountry?.name || '-' }}</td>
-                <td>{{ q.graduationYear || '-' }}</td>
-                <td>{{ q.studyType?.name || '-' }}</td>
-                <td>
-                  @if (q.attachment) {
-                    <a
-                      class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
-                      [ngClass]="{ 'attach-link--warn': fileNote }"
-                      (click)="open(q.attachment)">
-                      <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
-                      <span class="text-truncate d-inline-block">
-                        {{ q.attachment.fileName }}
-                      </span>
-                      @if (fileNote) {
-                        <i
-                          class="pi pi-exclamation-triangle text-warning"
-                          [pTooltip]="fileNote.note || fileNote.title"
-                          tooltipPosition="top"
-                          aria-hidden="true"></i>
-                      }
-                    </a>
-                    <div class="mt-2" *ngIf="canEdit">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary rounded-pill"
-                        (click)="replaceInput.click()">
-                        {{ 'profileView.actions.replaceFile' | translate }}
-                      </button>
-                      <input
-                        #replaceInput
-                        type="file"
-                        class="d-none"
-                        accept=".pdf,.png,.jpeg,.jpg,.webp"
-                        (change)="replaceQualificationFile(q, $event)" />
-                    </div>
-                  } @else {
-                    <span class="text-muted">{{ 'common.none' | translate }}</span>
-                  }
-                </td>
-                <td *ngIf="canEdit">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary rounded-pill"
-                    (click)="editQualification(q)">
-                    <i class="pi pi-pencil" aria-hidden="true"></i>
-                  </button>
-                </td>
-              </tr>
+              <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
+            }
+            @for (q of qualificationsUnderReview(); track q.id) {
+              <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
             }
           </tbody>
         </table>
@@ -108,3 +46,50 @@
     }
   </div>
 </div>
+<ng-template #qualificationTemplate let-q>
+  @let noteRecord = noteForRaw(q);
+  <tr>
+    <td>
+      <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+        <span>{{ q.degree?.name || '-' }}</span>
+        <span class="badge status-pill status-pill--info" *ngIf="!q.id">
+          {{ 'profileOverview.status.pending' | translate }}
+        </span>
+      </div>
+    </td>
+    <td>{{ q.university?.name || '-' }}</td>
+    <td>{{ q.gradCountry?.name || '-' }}</td>
+    <td>{{ q.graduationYear || '-' }}</td>
+    <td>{{ q.studyType?.name || '-' }}</td>
+    <td>
+      @if (q.attachment) {
+        <a
+          class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
+          [ngClass]="{ 'attach-link--warn': noteRecord }"
+          (click)="open(q.attachment)">
+          <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
+          <span class="text-truncate d-inline-block">
+                        {{ q.attachment.fileName }}
+                      </span>
+          @if (noteRecord) {
+            <i
+              class="pi pi-exclamation-triangle text-warning"
+              [pTooltip]="noteRecord.note || noteRecord.title"
+              tooltipPosition="top"
+              aria-hidden="true"></i>
+          }
+        </a>
+      } @else {
+        <span class="text-muted">{{ 'common.none' | translate }}</span>
+      }
+    </td>
+    <td *ngIf="noteRecord?.note">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary rounded-pill"
+        (click)="editQualification(q)">
+        <i class="pi pi-pencil" aria-hidden="true"></i>
+      </button>
+    </td>
+  </tr>
+</ng-template>

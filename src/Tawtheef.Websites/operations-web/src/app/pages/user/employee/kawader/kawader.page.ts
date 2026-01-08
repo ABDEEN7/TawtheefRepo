@@ -8,6 +8,7 @@ import {NotificationService} from '../../../../core/services/notification.servic
 import {KawaderService} from './services/kawader.service';
 import {KawaderUploadResult} from './models/kawader-upload.model';
 import {finalize} from 'rxjs/operators';
+import {HttpService} from '../../../../core/http/http.service';
 
 @Component({
   selector: 'app-kawader-page',
@@ -20,6 +21,7 @@ export class KawaderPage {
   private service = inject(KawaderService);
   private notifications = inject(NotificationService);
   private translate = inject(TranslateService);
+  private http = inject(HttpService);
 
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
@@ -44,6 +46,65 @@ export class KawaderPage {
     if (this.fileInput?.nativeElement) {
       this.fileInput.nativeElement.value = '';
     }
+  }
+
+  downloadTemplate(): void {
+    const baseUrl = 'assets/templates/MOE_Qatar_Kawader_QID_Upload_Template.xlsx';
+
+    // Cache-buster: forces a fresh fetch every time (browser treats it as a new URL)
+    const cacheBuster = Date.now();
+    const assetUrl = `${baseUrl}?v=${cacheBuster}`;
+
+    const fileName = buildSmartFileNameWithUser();
+
+    this.http.get<Blob>(assetUrl, null, {
+      responseType: 'blob',
+      headers: {
+        // Helpful hints (server/CDN may still override)
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    }).subscribe({
+      next: (blob) => this.saveBlob(blob, fileName),
+    });
+
+    function buildSmartFileNameWithUser(): string {
+      const now = new Date();
+
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+
+      return `MOE_Qatar_Kawader_QID_Template_${yyyy}-${mm}-${dd}_${hh}-${min}.xlsx`;
+    }
+  }
+
+
+  private sanitizeForFileName(value: string): string {
+    return value
+      .trim()
+      .replace(/\s+/g, '_')
+      .replace(/[\\/:*?"<>|]+/g, '')
+      .replace(/_+/g, '_');
+  }
+
+  private saveBlob(blob: Blob, fileName: string): void {
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
   }
 
   onSubmit() {

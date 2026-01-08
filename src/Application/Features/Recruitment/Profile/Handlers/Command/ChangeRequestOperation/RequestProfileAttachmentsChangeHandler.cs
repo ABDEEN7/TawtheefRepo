@@ -71,6 +71,7 @@ public sealed class RequestProfileAttachmentsChangeHandler(
             var pending = new PendingAttachmentSnapshot
             {
                 AttachmentResourceId = resource?.ResourceId ?? dto.AttachmentId,
+                Title = dto.Title,
                 FileName = resource?.ResourceName ?? dto.FileName
             };
 
@@ -125,6 +126,7 @@ public sealed class RequestProfileAttachmentsChangeHandler(
 file sealed record PendingAttachmentSnapshot
 {
     public Guid? AttachmentResourceId { get; init; }
+    public string? Title { get; init; }
     public string? FileName { get; init; }
 }
 

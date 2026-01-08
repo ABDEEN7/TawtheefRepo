@@ -16,26 +16,12 @@
     </div>
 
     <div class="row g-3">
-      @if (profile?.languages?.length) {
+      @if (profile?.languages?.length || languageUnderReview().length) {
         @for (lang of profile?.languages; track lang.id) {
-          <div class="col-12 col-lg-6">
-            <div class="card h-100 kv-card">
-              <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
-                <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-                  <div class="fw-semibold text-body">{{ lang.language.name }}</div>
-                  <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview()">
-                    {{ 'profileOverview.status.pending' | translate }}
-                  </span>
-                </div>
-                <div class="text-muted small">
-                  {{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}
-                </div>
-                <div class="text-muted small">
-                  {{ lang.readingLevel.name }} / {{ lang.writingLevel.name }}
-                </div>
-              </div>
-            </div>
-          </div>
+          <ng-container *ngTemplateOutlet="languageTemplate; context: { $implicit: lang }"></ng-container>
+        }
+        @for (lang of languageUnderReview(); track lang.id) {
+          <ng-container *ngTemplateOutlet="languageTemplate; context: { $implicit: lang }"></ng-container>
         }
       } @else {
         <div class="col-12">
@@ -45,3 +31,24 @@
     </div>
   </div>
 </div>
+
+<ng-template #languageTemplate let-lang>
+  <div class="col-12 col-lg-6">
+    <div class="card h-100 kv-card">
+      <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
+        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+          <div class="fw-semibold text-body">{{ lang.language.name }}</div>
+          <span class="badge status-pill status-pill--info" *ngIf="!lang.id">
+                    {{ 'profileOverview.status.pending' | translate }}
+                  </span>
+        </div>
+        <div class="text-muted small">
+          {{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}
+        </div>
+        <div class="text-muted small">
+          {{ lang.readingLevel.name }} / {{ lang.writingLevel.name }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

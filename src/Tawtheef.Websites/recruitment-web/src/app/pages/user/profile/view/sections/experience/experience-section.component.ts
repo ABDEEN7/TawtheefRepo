@@ -1,7 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { ExperienceDto, FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
+import {
+  AchievementDto,
+  ExperienceDto,
+  FileRefDto,
+  ProfileStatusDto
+} from '../../../../../../core/models/auth/auth-response.model';
 import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../../overview/models/profile-overview.model';
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
@@ -31,53 +36,58 @@ export class ProfileExperienceSectionComponent {
   private readonly fileUtils = inject(FileUtilsService);
 
   @Input() profile: ProfileStatusDto | null = null;
-  @Input() canEdit = false;
+  @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
+  @Input() isProfileApproved!: boolean;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
-  protected fieldUnderReview(fieldKey: string = ''){
-    return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
-  }
-  protected onEdit() {
-    this.edit.emit();
+  protected experiencesUnderReview() {
+    return this.changesRequest.map(i => i.newValue).map((cr, index) => {
+      return {
+        employerName: cr.EmployerName,
+        jobTitle: cr.JobTitle,
+        countryId: cr.CountryId,
+        country: this.lookups.countries().find(c => c.id === cr.CountryId) ?? null,
+        startDate: cr.StartDate,
+        endDate: cr.EndDate,
+        isCurrent: cr.IsCurrent,
+        description: cr.Description,
+        qualificationId: cr.QualificationId,
+        qualification: this.profile?.qualifications?.find(q => q.id === cr.QualificationId) ?? null,
+        attachment: { resourceId: cr.AttachmentResourceId, fileName: cr.FileName } as FileRefDto,
+      } as ExperienceDto;
+    });
   }
 
-  protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {
-    if (!file?.resourceId) return null;
+  protected noteForRaw(exp: ExperienceDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!exp?.id) return null;
     return (
       this.notes.find(
         note =>
-          note.targetType === ReviewTargetTypeEnum.Attachment &&
-          note.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+          note.targetType === ReviewTargetTypeEnum.Row &&
+          note.entityId?.toLowerCase() === exp.id.toLowerCase()
       ) ?? null
     );
   }
 
-  protected addExperience() {
-    this.lookups.loadAll().subscribe(() => {
-      this.dialogService
-        .open(ExperienceModal, {
-          header: this.translate.instant('profileView.actions.addExperience'),
-          width: '50%',
-          contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-          baseZIndex: 10000,
-          closable: true,
-          data: { degrees: this.mapDegrees() },
-        })
-        ?.onClose.subscribe((experience: Experience | null) => {
-          if (!experience) return;
-          this.profileService.saveExperienceSection([experience], []).subscribe({
-            next: () => {
-              this.notify.success(this.translate.instant('profileView.notifications.saved'));
-              this.refresh.emit();
-            },
-            error: () => {
-              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
-            }
-          });
-        });
+  protected addExperience() {this.dialogService
+    .open(ExperienceModal, {
+      header: this.translate.instant('profileView.actions.addExperience'),
+      width: '50%',
+      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+      baseZIndex: 10000,
+      closable: true,
+      data: { degrees: this.mapDegrees() },
+    })?.onClose.subscribe((experience: Experience | null) => {
+      if (!experience) return;
+      this.profileService.saveExperienceSection([experience], []).subscribe({
+        next: () => {
+          this.notify.success(this.translate.instant('profileView.notifications.saved'));
+          this.refresh.emit();
+        }
+      });
     });
   }
 
@@ -92,69 +102,33 @@ export class ProfileExperienceSectionComponent {
       description: exp.description ?? '',
       fileName: exp.attachment?.fileName ?? '',
       qualificationId: exp.qualificationId ?? null,
-    };
-
-    this.lookups.loadAll().subscribe(() => {
-      this.dialogService
-        .open(ExperienceModal, {
-          header: this.translate.instant('profileView.actions.editExperience'),
-          width: '50%',
-          contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-          baseZIndex: 10000,
-          closable: true,
-      data: {
-        degrees: this.mapDegrees(),
-        initialValue,
-        disableFileUpload: true,
-        initialId: exp.id,
-        attachmentId: exp.attachment?.resourceId ?? null
-      },
-        })
-        ?.onClose.subscribe((experience: Experience | null) => {
-          if (!experience) return;
-          this.profileService.saveExperienceSection([experience], []).subscribe({
-            next: () => {
-              this.notify.success(this.translate.instant('profileView.notifications.saved'));
-              this.refresh.emit();
-            },
-            error: () => {
-              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
-            }
-          });
+    };this.dialogService
+      .open(ExperienceModal, {
+        header: this.translate.instant('profileView.actions.editExperience'),
+        width: '50%',
+        contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+        baseZIndex: 10000,
+        closable: true,
+        data: {
+          degrees: this.mapDegrees(),
+          initialValue,
+          disableFileUpload: true,
+          initialId: exp.id,
+          attachmentId: exp.attachment?.resourceId ?? null
+        },
+      })
+      ?.onClose.subscribe((experience: Experience | null) => {
+        if (!experience) return;
+        this.profileService.saveExperienceSection([experience], []).subscribe({
+          next: () => {
+            this.notify.success(this.translate.instant('profileView.notifications.saved'));
+            this.refresh.emit();
+          },
+          error: () => {
+            this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
+          }
         });
-    });
-  }
-
-  protected replaceExperienceFile(exp: ExperienceDto, event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-    if (!file) return;
-
-    const payload: Experience = {
-      id: exp.id,
-      employerName: exp.employerName ?? '',
-      jobTitle: exp.jobTitle ?? '',
-      from: exp.startDate ?? undefined,
-      to: exp.endDate ?? undefined,
-      current: exp.isCurrent ?? false,
-      country: exp.country ?? null,
-      description: exp.description ?? '',
-      file,
-      fileName: file.name,
-      attachmentId: exp.attachment?.resourceId ?? null,
-      qualificationId: exp.qualificationId ?? null,
-      qualificationName: exp.attachment?.fileName ?? null,
-    };
-
-    this.profileService.saveExperienceSection([payload], []).subscribe({
-      next: () => {
-        this.notify.success(this.translate.instant('profileView.notifications.saved'));
-        this.refresh.emit();
-      },
-      error: () => {
-        this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
-      }
-    });
+      });
   }
 
   protected open(file: FileRefDto | null | undefined) {

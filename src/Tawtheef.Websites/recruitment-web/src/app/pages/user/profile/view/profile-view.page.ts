@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import {ButtonDirective, ButtonIcon, ButtonLabel} from 'primeng/button';
-import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
+import { finalize, switchMap } from 'rxjs/operators';
 
-import { routes } from '../../../../routes/routes';
 import {
   ProfileSectionEnum,
   ProfileChangeRequestDto,
@@ -24,6 +22,7 @@ import { ProfileOverviewService } from '../overview/services/profile-overview.se
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { ReviewStepsDialogComponent } from '../overview/dialogs/review-steps-dialog/review-steps-dialog.component';
 import { ReviewItemEditDialogComponent } from '../overview/dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
+import { ProfileEditDialogComponent } from './dialogs/profile-edit-dialog/profile-edit-dialog.component';
 import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
 import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites/prerequisites-section.component';
 import { ProfilePersonalSectionComponent } from './sections/personal/personal-section.component';
@@ -36,10 +35,13 @@ import { ProfileSkillsSectionComponent } from './sections/skills/skills-section.
 import { ProfileLanguagesSectionComponent } from './sections/languages/languages-section.component';
 import { ProfileAttachmentsSectionComponent } from './sections/attachments/attachments-section.component';
 import { ProfileViewCqrs } from './profile-view.cqrs';
-import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.directive';
 import {changeRequestDto} from './dtos/change-request-dto';
-import {detectChangedFields, FieldChange} from './utils/detect-change-fields';
-import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
+import {applyFieldChanges, detectChangedFields, FieldChange} from './utils/detect-change-fields';
+import {AvatarUtils} from '../../../../core/utils/avatar-utils';
+import { ProfileService } from '../wizard-profile/services/profile.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.service';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -76,15 +78,18 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
   templateUrl: './profile-view.page.html',
   styleUrls: ['./profile-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DialogService, { provide: PROFILE_WRITE_MODE, useValue: 'change-request' }]
+  providers: [DialogService]
 })
 export class ProfileViewPage {
   private readonly fileUtils = inject(FileUtilsService);
-  private readonly router = inject(Router);
   private readonly i18n = inject(TranslateService);
   private readonly overviewService = inject(ProfileOverviewService);
   private readonly profileCqrs = inject(ProfileViewCqrs);
   private readonly dialogService = inject(DialogService);
+  private readonly profileService = inject(ProfileService);
+  private readonly notify = inject(NotificationService);
+  private readonly lookups = inject(ProfileLookupsService);
+  private readonly auth = inject(AuthService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
 
   protected readonly cards: SectionCard[] = [
@@ -107,6 +112,12 @@ export class ProfileViewPage {
   get keyLabel(){
     return this.cards.find(c => c.section === this.expanded())?.labelKey;
   }
+  get avatar(){
+    return this.header()?.avatar || AvatarUtils.build(this.header()?.fullNameEn ?? null);
+  }
+  get isProfileApproved(){
+    return this.profileStatus() === UserProfileStatusEnum.Approved;
+  }
 
   private readonly basics = rxResource({
     params: () => true,
@@ -125,17 +136,34 @@ export class ProfileViewPage {
 
   private readonly sections = new Map<ProfileSectionEnum, RxRes<ProfileStatusDto>>();
   protected readonly expanded = signal<ProfileSectionEnum>(ProfileSectionEnum.Personal);
+  protected readonly resubmitting = signal(false);
 
   protected changes(section: ProfileSectionEnum) {
     if(this.profileStatus() !== UserProfileStatusEnum.Approved) return [];
     const sectionChanges = this.changeRequestsVm()
-      .filter(cr =>
-        cr.section === section &&
-        cr.action == ProfileChangeActionEnum.UpdateField);
+      .filter(cr => cr.section === section);
 
     let resultChanges: FieldChange[] = [];
-    sectionChanges.forEach((change)=>{
-      resultChanges = resultChanges.concat(detectChangedFields(change.oldValue ?? '', change.newValue ?? ''))
+    sectionChanges.forEach((change) => {
+      if (change.action === ProfileChangeActionEnum.UpdateField) {
+        resultChanges = resultChanges.concat(
+          detectChangedFields(change.oldValue ?? '', change.newValue ?? '')
+        );
+        return;
+      }
+
+      if (
+        change.action === ProfileChangeActionEnum.AddListItem ||
+        change.action === ProfileChangeActionEnum.ReplaceAttachment
+      ) {
+        const field = change.fieldPath ?? change.targetKey ?? '';
+        if (!field) return;
+        resultChanges.push({
+          field,
+          oldValue: parseJsonValue(change.oldValue),
+          newValue: parseJsonValue(change.newValue)
+        });
+      }
     });
 
     return resultChanges;
@@ -150,6 +178,8 @@ export class ProfileViewPage {
         })
       );
     });
+
+    this.lookups.loadAll().subscribe(() => {});
   }
 
   readonly header = computed(() => this.basics.value());
@@ -223,6 +253,10 @@ export class ProfileViewPage {
     }
   });
 
+  get canAddAttachments(){
+    const status = this.profileStatus();
+    return status === UserProfileStatusEnum.Approved;
+  }
   canEditSections(section: ProfileSectionEnum){
     const status = this.profileStatus();
     if(status === UserProfileStatusEnum.Approved)
@@ -261,7 +295,8 @@ export class ProfileViewPage {
   }
 
   sectionValue(section: ProfileSectionEnum) {
-    return this.sections.get(section)?.value() ?? null;
+    const value = this.sections.get(section)?.value() ?? null;
+    return applyFieldChanges(value, this.changes(section));
   }
 
   readonly changeRequestsVm = computed(() => {
@@ -285,7 +320,7 @@ export class ProfileViewPage {
       })
       ?.onClose.subscribe(result => {
       if (result?.section) {
-        this.navigateToEditSection(result.section as ProfileSectionEnum);
+        this.openEditDialog(result.section as ProfileSectionEnum);
       }
     });
   }
@@ -298,33 +333,18 @@ export class ProfileViewPage {
     });
   }
 
-  navigateToEditSection(section: ProfileSectionEnum) {
-    this.router.navigate([routes.user.profileEditSection(this.sectionSegment(section))]);
-  }
-
-  private sectionSegment(section: ProfileSectionEnum): string {
-    switch (section) {
-      case ProfileSectionEnum.Prerequisites:
-        return 'prerequisites';
-      case ProfileSectionEnum.Personal:
-        return 'personal';
-      case ProfileSectionEnum.Contact:
-        return 'contact';
-      case ProfileSectionEnum.Qualifications:
-        return 'qualifications';
-      case ProfileSectionEnum.Experience:
-      case ProfileSectionEnum.TrainingCourses:
-        return 'experience';
-      case ProfileSectionEnum.CertificatesAndAwards:
-        return 'achievements';
-      case ProfileSectionEnum.Skills:
-        return 'skills';
-      case ProfileSectionEnum.Languages:
-        return 'languages';
-      case ProfileSectionEnum.Attachments:
-      default:
-        return 'attachments';
-    }
+  openEditDialog(section: ProfileSectionEnum) {
+    const mode = this.profileStatus() === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
+    this.dialogService.open(ProfileEditDialogComponent, {
+      header: this.i18n.instant('profileView.editDialog.title'),
+      data: { section, mode },
+      styleClass: 'w-100 w-md-75'
+    })?.onClose.subscribe(result => {
+      if (!result) return;
+      this.sections.get(section)?.reload();
+      this.review.reload();
+      this.changeRequests.reload();
+    });
   }
 
   openFile(url: string | null | undefined) {
@@ -408,8 +428,35 @@ export class ProfileViewPage {
   }
 
   protected reSubmitProfile() {
-
+    if (this.profileStatus() !== UserProfileStatusEnum.RequiresUpdate || this.resubmitting()) return;
+    this.resubmitting.set(true);
+    this.profileService
+      .finalizeProfile()
+      .pipe(
+        switchMap(() => this.auth.refreshToken()),
+        finalize(() => this.resubmitting.set(false))
+      )
+      .subscribe({
+        next: () => {
+          this.notify.success(this.i18n.instant('profileView.notifications.resubmitted'));
+          this.basics.reload();
+          this.review.reload();
+          this.changeRequests.reload();
+        },
+        error: () => {
+          this.notify.error(this.i18n.instant('profileView.notifications.resubmitFailed'));
+        }
+      });
   }
 
   protected readonly UserProfileStatusEnum = UserProfileStatusEnum;
+}
+
+function parseJsonValue(value?: string | null) {
+  if (!value) return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
 }

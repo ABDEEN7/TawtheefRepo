@@ -24,6 +24,7 @@ import {Degree} from '../../../../../wizard-profile/models/degree.model';
 import {Textarea} from 'primeng/textarea';
 import {FieldError} from '../../../../../wizard-profile/models/profile-validation.model';
 import {NotificationService} from '../../../../../../../../core/services/notification.service';
+import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-experience',
@@ -37,7 +38,8 @@ import {NotificationService} from '../../../../../../../../core/services/notific
     InputText,
     NgClass,
     Select,
-    Textarea
+    Textarea,
+    I18nNamespaceDirective
   ],
   templateUrl: './experience.modal.html',
   styleUrl: './experience.modal.scss',
@@ -53,7 +55,6 @@ export class ExperienceModal implements OnInit {
 
   readonly limits = EXPERIENCE_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
-  protected readonly disableFileUpload = !!this.config.data?.disableFileUpload;
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
   private initialId: string | null = null;
@@ -98,11 +99,6 @@ export class ExperienceModal implements OnInit {
     }
     this.syncToDisabled();
     this.syncQualification();
-
-    if (this.disableFileUpload) {
-      this.f['file'].clearValidators();
-      this.f['file'].updateValueAndValidity({ emitEvent: false });
-    }
   }
 
   onCurrentToggle() {

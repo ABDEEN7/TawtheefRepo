@@ -23,6 +23,7 @@ import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
 import {UploadedFileRef} from '../../../../../wizard-profile/models/profile-state.model';
 import {Degree} from '../../../../../wizard-profile/models/degree.model';
 import * as Lookups from '../../../../../../../../core/enums/lookups.enum';
+import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-qualification',
@@ -36,13 +37,14 @@ import * as Lookups from '../../../../../../../../core/enums/lookups.enum';
     NgClass,
     NgIf,
     RemoteSelectComponent,
+    I18nNamespaceDirective,
   ],
   templateUrl: './degree.modal.html',
   styleUrl: './degree.modal.scss',
 })
 export class DegreeModal implements OnInit {
   private fb = inject(FormBuilder);
-  private config = inject(DynamicDialogConfig);
+  private config = inject(DynamicDialogConfig<Degree>);
   private translate = inject(TranslateService);
   protected lookups = inject(ProfileLookupsService);
   protected ref = inject(DynamicDialogRef);
@@ -61,7 +63,6 @@ export class DegreeModal implements OnInit {
   initialCertificate: UploadedFileRef | null = null;
   private initialId: string | null = null;
   private initialAttachmentId: string | null = null;
-  protected readonly disableFileUpload = !!this.config.data?.disableFileUpload;
 
   form: FormGroup = this.fb.group({
     degree: [null, Validators.required],
@@ -99,11 +100,6 @@ export class DegreeModal implements OnInit {
     this.form.get('degree')?.valueChanges.subscribe(() => {
       this.updateQualificationValidators();
     });
-
-    if (this.disableFileUpload) {
-      this.form.get('degreeFileName')?.clearValidators();
-      this.form.get('degreeFileName')?.updateValueAndValidity({ emitEvent: false });
-    }
   }
   private updateQualificationValidators(): void {
     const need = this.isQualification;
@@ -163,7 +159,7 @@ export class DegreeModal implements OnInit {
   }
 
   onSave() {
-    if (this.form.invalid || this.yearError || (!this.degreeFile && !this.disableFileUpload)) {
+    if (this.form.invalid || this.yearError || (!this.degreeFile)) {
       this.form.markAllAsTouched();
       return;
     }

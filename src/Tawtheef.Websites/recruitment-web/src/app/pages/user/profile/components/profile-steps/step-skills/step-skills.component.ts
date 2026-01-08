@@ -160,6 +160,9 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       next: () => {
         this.saving = false;
         this.lastSubmittedSignature = signature;
+        if (this.profile.isChangeRequestMode()) {
+          this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
+        }
         this.next.emit();
       },
       error: (err: any) => {

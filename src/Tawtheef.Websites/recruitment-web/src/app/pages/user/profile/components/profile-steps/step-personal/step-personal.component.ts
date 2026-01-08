@@ -160,6 +160,9 @@ export class StepPersonalComponent implements OnInit {
       .subscribe({
         next: () => {
           this.lastSubmittedSignature = signature;
+          if (this.profileService.isChangeRequestMode()) {
+            this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
+          }
           this.next.emit();
         }
       });

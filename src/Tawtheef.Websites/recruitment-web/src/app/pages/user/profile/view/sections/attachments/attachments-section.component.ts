@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject, computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
@@ -29,14 +29,28 @@ export class ProfileAttachmentsSectionComponent {
   private readonly notify = inject(NotificationService);
 
   @Input() profile: ProfileStatusDto | null = null;
-  @Input() canEdit = false;
+  @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
+  @Input() isProfileApproved!: boolean;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
-  protected fieldUnderReview(fieldKey: string = ''){
-    return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
+  attachments = computed(() => {
+    const p = this.profile;
+    if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
+    const approvedItems = p.additionalAttachments?.map((a,index)=> {
+      return { key: `additionalAttachments[${index}]`, titleKey: a.title, file: a.file ?? null }
+    }) || [];
+
+    const underReview = this.changesRequest.map(i=>i.newValue).map((cr,index)=>{
+      return { key: `additionalAttachmentsNew[${index}]`, titleKey: cr.Title, file: {resourceId: cr.AttachmentResourceId, fileName: cr.FileName} as FileRefDto };
+    })
+    return approvedItems.concat(underReview) ;
+  });
+  protected fieldUnderReview(fieldKey: string | null | undefined): boolean {
+    if (!fieldKey) return (this.changesRequest ?? []).length > 0;
+    return this.changesRequest.find(cr=> cr.newValue.AttachmentResourceId?.toLowerCase() === fieldKey.toLowerCase()) !== undefined;
   }
 
   protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {
@@ -71,24 +85,21 @@ export class ProfileAttachmentsSectionComponent {
           next: () => {
             this.notify.success(this.translate.instant('profileView.notifications.saved'));
             this.refresh.emit();
-          },
-          error: () => {
-            this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
           }
         });
       });
   }
 
-  protected replaceAttachment(att: { id: string; title?: string | null; file: FileRefDto }, event: Event) {
+  protected replaceAttachment(att: { key: string; title?: string | null; file: FileRefDto | null }, event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (!file) return;
 
     const payload: Attachment = {
-      id: att.id,
+      id: att.file?.resourceId,
       title: att.title ?? '',
       fileName: file.name,
-      attachmentId: att.file.resourceId,
+      attachmentId: att.file?.resourceId,
       file,
     };
 
@@ -96,9 +107,6 @@ export class ProfileAttachmentsSectionComponent {
       next: () => {
         this.notify.success(this.translate.instant('profileView.notifications.saved'));
         this.refresh.emit();
-      },
-      error: () => {
-        this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
       }
     });
   }

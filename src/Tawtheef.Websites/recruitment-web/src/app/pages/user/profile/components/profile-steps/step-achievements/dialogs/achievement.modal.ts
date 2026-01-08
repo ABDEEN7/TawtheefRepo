@@ -14,6 +14,7 @@ import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
 import {dropdownOptionsModel} from '../../../../../../../shared/models/dropdown-options.model';
 import {EXPERIENCE_DIALOG_LIMITS} from '../../step-experience/dialogs/dialog-config';
 import {GUID} from '../../../../../../../shared/types/guid.type';
+import {I18nNamespaceDirective} from '../../../../../../../shared/directives/i18n-namespace.directive';
 
 export const ACHIEVEMENT_DIALOG_LIMITS = {
   descriptionMaxLength: 500,
@@ -33,6 +34,7 @@ export const ACHIEVEMENT_DIALOG_LIMITS = {
     TextareaModule,
     NgIf,
     NgClass,
+    I18nNamespaceDirective,
   ],
   templateUrl: './achievement.modal.html',
   styleUrl: './achievement.modal.scss',
@@ -47,7 +49,6 @@ export class AchievementModal implements OnInit {
 
   readonly limits = ACHIEVEMENT_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
-  protected readonly disableFileUpload = !!this.config.data?.disableFileUpload;
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
   private initialId: GUID | null = null;
@@ -84,12 +85,12 @@ export class AchievementModal implements OnInit {
       this.initialAttachmentId =
         this.config.data?.attachmentId ?? initial.attachmentId ?? initial.attachment?.resourceId ?? null;
 
-      if (this.disableFileUpload || (!initial.file && initial.attachment)) {
+      if (!initial.file && initial.attachment) {
         this.form.get('file')?.clearValidators();
       } else {
         this.form.get('file')?.addValidators(Validators.required);
       }
-    } else if (!this.disableFileUpload) {
+    } else {
       this.form.get('file')?.addValidators(Validators.required);
     }
     this.form.updateValueAndValidity({ emitEvent: false });

@@ -263,7 +263,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
         var courses = await TrainingFactory.MakeCoursesAsync(rnd, lookups, createdById, pools, options, ct);
         var achievements = await AchievementFactory.MakeAchievementsAsync(rnd, lookups, createdById, pools, options, ct);
         var langs = LanguageFactory.MakeLanguages(rnd);
-        var skills = SkillFactory.MakeSkills(rnd, lookups.SkillTypeIds);
+        var skills = SkillFactory.MakeSkills(rnd, lookups.SkillIds);
 
         // Completion shaping
         if (!makeComplete)
@@ -473,7 +473,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
         public List<Guid> UniversityIds { get; private init; } = [];
         public List<Guid> MajorIds { get; private init; } = [];
         public List<Guid> OfficeIds { get; private init; } = [];
-        public List<Guid> SkillTypeIds { get; private set; } = [];
+        public List<Guid> SkillIds { get; private set; } = [];
 
         public static async Task<LookupCache> LoadAsync(DbContext db, CancellationToken ct)
         {
@@ -504,21 +504,15 @@ public sealed class SmartUserProfileSeeder(DbContext db)
                     .OrderBy(x => x.DisplayOrder)
                     .Select(x => x.Id)
                     .Take(100)
-                    .ToListAsync(ct)
-            };
-
-            try
-            {
-                cache.SkillTypeIds = await db.Set<SkillType>().AsNoTracking()
+                    .ToListAsync(ct),
+                
+                
+                SkillIds = await db.Set<Skill>().AsNoTracking()
                     .Select(x => x.Id)
                     .Take(500)
-                    .ToListAsync(ct);
-            }
-            catch
-            {
-                cache.SkillTypeIds = [];
-            }
-
+                    .ToListAsync(ct)
+            };
+            
             if (cache.CountryIds.Count == 0)
                 throw new InvalidOperationException("No Countries found. Seed lookups first.");
 
@@ -949,18 +943,18 @@ public sealed class SmartUserProfileSeeder(DbContext db)
 
     private static class SkillFactory
     {
-        public static List<ProfileSkill> MakeSkills(SmartRandom rnd, IReadOnlyList<Guid> skillTypeIds)
+        public static List<ProfileSkill> MakeSkills(SmartRandom rnd, IReadOnlyList<Guid> skillIds)
         {
-            if (skillTypeIds.Count == 0) return [];
+            if (skillIds.Count == 0) return [];
 
             var count = rnd.NextDouble() < 0.25 ? 0 : rnd.NextInt(3, 11);
 
             var picked = new HashSet<Guid>();
             var list = new List<ProfileSkill>(count);
 
-            while (list.Count < count && picked.Count < skillTypeIds.Count)
+            while (list.Count < count && picked.Count < skillIds.Count)
             {
-                var id = skillTypeIds[rnd.NextInt(0, skillTypeIds.Count)];
+                var id = skillIds[rnd.NextInt(0, skillIds.Count)];
                 if (!picked.Add(id)) continue;
 
                 list.Add(new ProfileSkill

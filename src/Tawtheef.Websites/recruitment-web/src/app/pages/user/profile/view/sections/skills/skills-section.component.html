@@ -15,15 +15,13 @@
       </button>
     </div>
 
-    @if (profile?.skills?.length) {
+    @if (profile?.skills?.length || skillsUnderReview().length) {
       <div class="d-flex flex-wrap gap-2">
         @for (skill of profile?.skills; track skill.id) {
-          <span class="badge text-bg-light border d-inline-flex align-items-center gap-2">
-            <span>{{ skill.skill.name }} ({{ skill.level.name }})</span>
-            <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview()">
-              {{ 'profileOverview.status.pending' | translate }}
-            </span>
-          </span>
+          <ng-container *ngTemplateOutlet="skillTemplate; context: { $implicit: skill }"></ng-container>
+        }
+        @for (skill of skillsUnderReview(); track skill.id) {
+          <ng-container *ngTemplateOutlet="skillTemplate; context: { $implicit: skill }"></ng-container>
         }
       </div>
     } @else {
@@ -31,3 +29,11 @@
     }
   </div>
 </div>
+<ng-template #skillTemplate let-skill>
+  <span class="badge text-bg-light border d-inline-flex align-items-center gap-2">
+    <span>{{ skill.skill.name }} ({{ skill.level.name }})</span>
+    <span class="badge status-pill status-pill--info" *ngIf="!skill.id">
+      {{ 'profileOverview.status.pending' | translate }}
+    </span>
+  </span>
+</ng-template>

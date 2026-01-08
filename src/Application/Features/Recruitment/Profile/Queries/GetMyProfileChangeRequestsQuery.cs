@@ -32,7 +32,7 @@ public sealed class GetMyProfileChangeRequestsHandler(IUnitOfWork uow)
         var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
         var items = await changeRepo.DbSet
             .AsNoTracking()
-            .Where(c => c.UserProfileId == profile.Id && c.Status != ProfileChangeRequestStatus.UnderReview)
+            .Where(c => c.UserProfileId == profile.Id && c.Status == ProfileChangeRequestStatus.Pending)
             .OrderByDescending(c => c.RequestedAtUtc)
             .Select(c => new ProfileChangeRequestDto
             {

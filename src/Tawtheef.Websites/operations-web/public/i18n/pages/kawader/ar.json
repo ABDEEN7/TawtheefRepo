@@ -2,7 +2,7 @@
   "kawader.header.eyebrow": "خدمة كوادر",
   "kawader.header.title": "رفع أرقام البطاقات الشخصية",
   "kawader.header.subtitle": "أرسل ملف إكسل يحتوي على عمود واحد لأرقام البطاقات للتحكم في دخول قطر باس.",
-
+  "kawader.template.download": "تحميل قالب الملف",
   "kawader.upload.label": "ملف إكسل (.xlsx)",
   "kawader.upload.helper": "يجب أن يكون الملف مكونًا من عمود واحد يحتوي على أرقام البطاقات القطرية فقط.",
   "kawader.upload.required": "يرجى اختيار ملف للرفع.",

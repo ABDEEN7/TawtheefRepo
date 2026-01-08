@@ -35,6 +35,7 @@ import {
 import {createProfileOverviewVisibility} from './services/profile-overview.visibility';
 import { ReviewStepsDialogComponent } from './dialogs/review-steps-dialog/review-steps-dialog.component';
 import { ReviewItemEditDialogComponent } from './dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
+import { ProfileEditDialogComponent } from '../view/dialogs/profile-edit-dialog/profile-edit-dialog.component';
 
 type ProfileEditSection =
   | 'prerequisites'
@@ -459,8 +460,16 @@ export class ProfileOverviewPage {
   }
 
   private navigateToEditSection(section: ProfileSectionEnum) {
-    const segment = SECTION_EDIT_SEGMENT_MAP[section] ?? 'personal';
-    this.router.navigate([routes.user.profileEditSection(segment)]);
+    const status = this.vm()?.status.value;
+    const mode = status === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
+    this.dialogService.open(ProfileEditDialogComponent, {
+      header: this.i18n.instant('profileView.editDialog.title'),
+      data: { section, mode },
+      styleClass: 'w-100 w-md-75'
+    })?.onClose.subscribe(result => {
+      if (!result) return;
+      this.reload();
+    });
   }
 
   noteSeverity(status: number): 'warn' | 'danger' | 'secondary' {
