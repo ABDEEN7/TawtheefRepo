@@ -35,7 +35,7 @@ public class ChangeJobStatusCommandHandler(
 
         job.ChangeStatus(request.NewStatusId);
 
-        if (request.NewStatusId is JobStatusIds.Closed or JobStatusIds.Cancelled)
+        if (request.NewStatusId == JobStatusIds.Closed || request.NewStatusId == JobStatusIds.Cancelled)
         {
             foreach (var invitation in job.Invitations)
                 invitation.ChangeInvitationStatus(InvitationStatusIds.Closed);

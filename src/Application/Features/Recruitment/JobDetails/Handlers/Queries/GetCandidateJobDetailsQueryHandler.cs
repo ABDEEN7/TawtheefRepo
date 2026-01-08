@@ -46,7 +46,7 @@ public sealed class GetCandidateJobDetailsQueryHandler(
         var jobDto = new CandidateJobDetailsDto
         {
             Id = job.Id,
-            Title = localizationService.GetLocalizedValue(job.TitleAr ?? string.Empty, job.TitleEn ?? string.Empty),
+            Title = localizationService.GetLocalizedValue(job.TitleAr, job.TitleEn),
             NumberOfVacancies = job.NumberOfVacancies,
             ClosingDate = job.ClosingDate,
             Benefits = localizationService.GetLocalizedValue(job.BenefitsAr ?? string.Empty, job.BenefitsEn ?? string.Empty),
@@ -71,39 +71,33 @@ public sealed class GetCandidateJobDetailsQueryHandler(
             SubMajor = job.SubMajor is null ? null : mapper.Map<DropdownOptions>(job.SubMajor),
             WorkType = job.WorkType is null ? null : mapper.Map<DropdownOptions>(job.WorkType),
             JobStatus = job.JobStatus is null ? null : mapper.Map<DropdownOptions>(job.JobStatus),
-            Degrees = job.JobDegrees is null ? [] : mapper.Map<List<JobDegreeResponseDto>>(job.JobDegrees),
-            Conditions = job.JobConditions is null
-                ? []
-                : job.JobConditions.Select(condition => new CandidateJobConditionDto
-                {
-                    Id = condition.Id,
-                    JobId = condition.JobId,
-                    Text = localizationService.GetLocalizedValue(condition.TextAr, condition.TextEn),
-                    CreatedDate = condition.CreatedDate,
-                    LastModifiedDate = condition.UpdatedDate
-                }).ToList(),
-            Skills = job.JobSkills is null ? [] : mapper.Map<List<JobSkillResponseDto>>(job.JobSkills),
-            Responsibilities = job.JobResponsibilities is null
-                ? []
-                : job.JobResponsibilities.Select(responsibility => new CandidateJobResponsibilityDto
-                {
-                    Id = responsibility.Id,
-                    JobId = responsibility.JobId,
-                    Text = localizationService.GetLocalizedValue(responsibility.TextAr, responsibility.TextEn),
-                    CreatedDate = responsibility.CreatedDate,
-                    LastModifiedDate = responsibility.UpdatedDate
-                }).ToList(),
-            RequiredAttachments = job.JobRequiredAttachments is null
-                ? []
-                : job.JobRequiredAttachments.Select(attachment => new CandidateJobRequiredAttachmentDto
-                {
-                    Id = attachment.Id,
-                    JobId = attachment.JobId,
-                    Title = localizationService.GetLocalizedValue(attachment.TitleAr, attachment.TitleEn),
-                    IsMandatory = attachment.IsMandatory,
-                    CreatedDate = attachment.CreatedDate,
-                    LastModifiedDate = attachment.UpdatedDate
-                }).ToList()
+            Degrees = mapper.Map<List<JobDegreeResponseDto>>(job.JobDegrees),
+            Conditions = job.JobConditions.Select(condition => new CandidateJobConditionDto
+            {
+                Id = condition.Id,
+                JobId = condition.JobId,
+                Text = localizationService.GetLocalizedValue(condition.TextAr, condition.TextEn),
+                CreatedDate = condition.CreatedDate,
+                LastModifiedDate = condition.UpdatedDate
+            }).ToList(),
+            Skills = mapper.Map<List<JobSkillResponseDto>>(job.JobSkills),
+            Responsibilities = job.JobResponsibilities.Select(responsibility => new CandidateJobResponsibilityDto
+            {
+                Id = responsibility.Id,
+                JobId = responsibility.JobId,
+                Text = localizationService.GetLocalizedValue(responsibility.TextAr, responsibility.TextEn),
+                CreatedDate = responsibility.CreatedDate,
+                LastModifiedDate = responsibility.UpdatedDate
+            }).ToList(),
+            RequiredAttachments = job.JobRequiredAttachments.Select(attachment => new CandidateJobRequiredAttachmentDto
+            {
+                Id = attachment.Id,
+                JobId = attachment.JobId,
+                Title = localizationService.GetLocalizedValue(attachment.TitleAr, attachment.TitleEn),
+                IsMandatory = attachment.IsMandatory,
+                CreatedDate = attachment.CreatedDate,
+                LastModifiedDate = attachment.UpdatedDate
+            }).ToList()
         };
 
         return Result.Ok(jobDto);

@@ -8,7 +8,7 @@ public sealed class CandidateJobDetailsDto
     public Guid Id { get; set; }
     public string? Title { get; set; }
     public int NumberOfVacancies { get; set; }
-    public DateTime ClosingDate { get; set; }
+    public DateTimeOffset ClosingDate { get; set; }
     public string? Benefits { get; set; }
     public string? OverView { get; set; }
     public string? QualificationDescription { get; set; }
