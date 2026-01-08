@@ -23,6 +23,14 @@ public class JobApprovalController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPut]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateReviewJob([FromForm] UpdateJobReviewCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
     [HttpGet("{jobId:guid}")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetJobTabReviews(Guid jobId)

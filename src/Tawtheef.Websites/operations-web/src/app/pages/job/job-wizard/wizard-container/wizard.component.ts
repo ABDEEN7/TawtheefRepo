@@ -83,7 +83,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     ReviewStepComponent,
   ];
 
-  private tabToStepIndex: Record<JobTabType, number> = {
+  private tabToStepIndex: Partial<Record<JobTabType, number>> = {
     [JobTabType.Overview]: 0,
     [JobTabType.Qualifications]: 1,
     [JobTabType.Responsibilities]: 2,

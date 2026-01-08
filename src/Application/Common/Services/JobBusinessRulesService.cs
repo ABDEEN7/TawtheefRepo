@@ -86,10 +86,21 @@ public static class JobBusinessRules
     }
 
     public static bool AreAllTabsCompleted(
-        bool hasDegrees, bool hasConditions,
-        bool hasResponsibilities, bool hasOverview, bool hasBenefits)
+        bool hasDegrees,
+        bool hasConditions,
+        bool hasResponsibilities,
+        bool hasSkills,
+        bool hasQualifications,
+        bool hasOverview,
+        bool hasBenefits)
     {
-        return hasDegrees && hasConditions && hasResponsibilities && hasOverview && hasBenefits;
+        return hasDegrees
+               && hasConditions
+               && hasResponsibilities
+               && hasSkills
+               && hasQualifications
+               && hasOverview
+               && hasBenefits;
     }
 
     public static bool IsInApprovalProcess(Guid jobStatusId)
