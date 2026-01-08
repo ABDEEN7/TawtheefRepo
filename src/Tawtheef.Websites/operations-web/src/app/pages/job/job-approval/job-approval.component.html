@@ -12,6 +12,15 @@
         <div class="info-item">
           <span>{{ 'JOB_APPROVAL.JOB_REVIEW_NOT' | translate }}</span>
         </div>
+        <div class="review-progress">
+          <div class="progress-header">
+            <span>{{ 'JOB_APPROVAL.REVIEW_PROGRESS' | translate }}</span>
+            <span class="progress-count">{{ reviewedTabsCount }}/{{ tabNotes.length }}</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" [style.width.%]="reviewProgressPercent"></div>
+          </div>
+        </div>
       </div>
 
       <div class="status-favorite-wrapper">
@@ -32,68 +41,19 @@
 
     <div class="tabs-card">
       <div class="tabs-card-switch">
-        <button
-          class="tab-button"
-          [class.active]="activeTab === tabType.Overview"
-          (click)="setActiveTab(tabType.Overview)"
-        >
-          <i class="fa fa-file-alt"></i>
-          <span>{{ 'JOB_APPROVAL.OVERVIEW' | translate }}</span>
+        @for (tab of tabsContent; track tab.id) {
+        <button class="tab-button" [class.active]="activeTab === tab.id" (click)="setActiveTab(tab.id)">
+          <span class="tab-label">
+            <i class="fa" [ngClass]="tab.icon"></i>
+            <span>{{ tab.title | translate }}</span>
+          </span>
+          @if (!isReviewTab(tab.id)) {
+          <span class="tab-indicator" [ngClass]="getTabIndicatorClass($any(tab.id))">
+            {{ getTabIndicatorLabel($any(tab.id)) | translate }}
+          </span>
+          }
         </button>
-
-        <button
-          class="tab-button"
-          [class.active]="activeTab === tabType.Responsibilities"
-          (click)="setActiveTab(tabType.Responsibilities)"
-        >
-          <i class="fa fa-tasks"></i>
-          <span>{{ 'JOB_APPROVAL.RESPONSIBILITIES' | translate }}</span>
-        </button>
-
-        <button
-          class="tab-button"
-          [class.active]="activeTab === tabType.Conditions"
-          (click)="setActiveTab(tabType.Conditions)"
-        >
-          <i class="fa fa-graduation-cap"></i>
-          <span>{{ 'JOB_APPROVAL.CONDITIONS_RESPONSIBILITIES' | translate }}</span>
-        </button>
-
-        <button
-          class="tab-button"
-          [class.active]="activeTab === tabType.Skills"
-          (click)="setActiveTab(tabType.Skills)"
-        >
-          <i class="fa fa-tools"></i>
-          <span>{{ 'JOB_APPROVAL.SKILLS' | translate }}</span>
-        </button>
-
-        <button
-          class="tab-button"
-          [class.active]="activeTab === tabType.Benefits"
-          (click)="setActiveTab(tabType.Benefits)"
-        >
-          <i class="fa fa-gift"></i>
-          <span>{{ 'JOB_APPROVAL.BENEFITS' | translate }}</span>
-        </button>
-
-        <button
-          class="tab-button"
-          [class.active]="activeTab === tabType.Attachments"
-          (click)="setActiveTab(tabType.Attachments)"
-        >
-          <i class="fa fa-paperclip"></i>
-          <span>{{ 'JOB_APPROVAL.REQUIRED_ATTACHMENTS' | translate }}</span>
-        </button>
-
-        <button
-          class="tab-button"
-          [class.active]="activeTab === 'Review'"
-          (click)="setActiveTab('Review')"
-        >
-          <i class="fa fa-eye"></i>
-          <span>{{ 'JOB_APPROVAL.REVIEW' | translate }}</span>
-        </button>
+        }
       </div>
     </div>
 
@@ -107,7 +67,31 @@
             </h2>
 
             <div class="article-summary">
-              @if (activeTab === tabType.Overview) { @if (job.overViewAr || job.overViewEn) {
+              @if (activeTab === tabType.BasicData) {
+              <div class="basic-data-grid">
+                @for (item of getBasicDataItems(); track item.label) {
+                <div class="basic-data-item">
+                  <span class="label">{{ item.label | translate }}</span>
+                  <span class="value">
+                    @if (item.value) {
+                      @if (item.isDate) {
+                        {{ item.value | date : 'dd/MM/yyyy' }}
+                      } @else if (item.translateValue) {
+                        {{ item.value | translate }}
+                      } @else {
+                        {{ item.value }}
+                      }
+                    } @else {
+                      {{ 'JOB_APPROVAL.NOT_SPECIFIED' | translate }}
+                    }
+                  </span>
+                </div>
+                }
+              </div>
+              }
+
+              @if (activeTab === tabType.Overview) {
+              @if (job.overViewAr || job.overViewEn) {
               <div class="dual-text-container">
                 <div class="text-area">
                   <h6>{{ 'JOB_APPROVAL.OVERVIEWAR' | translate }}</h6>
@@ -118,25 +102,15 @@
                   <div [innerHTML]="job.overViewEn"></div>
                 </div>
               </div>
-              } } @if (activeTab === tabType.Responsibilities) { @if (getResponsibilities().length >
-              0) {
-              <ul>
-                @for (responsibility of getResponsibilities(); track $index) {
-                <div class="dual-text-container">
-                  <div class="text-area">
-                    <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
-                    <div [innerHTML]="responsibility.textAr"></div>
-                  </div>
-                  <div class="text-area">
-                    <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
-                    <div [innerHTML]="responsibility.textEn"></div>
-                  </div>
-                </div>
               }
-              </ul>
-              } } @if (activeTab === tabType.Conditions) {
+              }
+
+              @if (activeTab === tabType.Qualifications) {
+              @if (getDegreeRequirements() || job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
+              @if (getDegreeRequirements()) {
               <h3>{{ 'JOB_APPROVAL.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
               <p>{{ getDegreeRequirements() }}</p>
+              }
               @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
               <h3>{{ 'JOB_APPROVAL.QUALIFICATIONS' | translate }}</h3>
               <div class="dual-text-container">
@@ -149,9 +123,40 @@
                   <div [innerHTML]="job.qualificationDescriptionEn"></div>
                 </div>
               </div>
-              } @if (getJobConditions().length > 0) {
+              }
+              } @else {
+              <div class="empty-state">
+                <p>{{ 'JOB_APPROVAL.NO_QUALIFICATIONS' | translate }}</p>
+              </div>
+              }
+              }
+
+              @if (activeTab === tabType.Responsibilities) {
+              @if (getResponsibilities().length > 0) {
+              <ul>
+                @for (responsibility of getResponsibilities(); track $index) {
+                <div class="dual-text-container">
+                  <div class="text-area">
+                    <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
+                    <div [innerHTML]="responsibility.textAr"></div>
+                  </div>
+                  <div class="text-area">
+                    <h6>{{ 'JOB_APPROVAL.ENGLISH' | translate }}</h6>
+                    <div [innerHTML]="responsibility.textEn"></div>
+                  </div>
+                </div>
+                }
+              </ul>
+              } @else {
+              <div class="empty-state">
+                <p>{{ 'JOB_APPROVAL.NO_RESPONSIBILITIES' | translate }}</p>
+              </div>
+              }
+              }
+
+              @if (activeTab === tabType.Conditions) {
+              @if (getJobConditions().length > 0) {
               <div class="basic-requirements">
-                <h3>{{ 'JOB_APPROVAL.CONDITIONS' | translate }}</h3>
                 @for (condition of getJobConditions(); track $index) {
                 <div class="dual-text-container">
                   <div class="text-area">
@@ -165,13 +170,29 @@
                 </div>
                 }
               </div>
-              } } @if (activeTab === tabType.Skills) { @if (getJobSkills().length > 0) {
+              } @else {
+              <div class="empty-state">
+                <p>{{ 'JOB_APPROVAL.NO_CONDITIONS' | translate }}</p>
+              </div>
+              }
+              }
+
+              @if (activeTab === tabType.Skills) {
+              @if (getJobSkills().length > 0) {
               <ul>
                 @for (skill of getJobSkills(); track $index) {
                 <li>{{ skill }}</li>
                 }
               </ul>
-              } } @if (activeTab === tabType.Benefits) { @if (job.benefitsAr || job.benefitsEn) {
+              } @else {
+              <div class="empty-state">
+                <p>{{ 'JOB_APPROVAL.NO_SKILLS' | translate }}</p>
+              </div>
+              }
+              }
+
+              @if (activeTab === tabType.Benefits) {
+              @if (job.benefitsAr || job.benefitsEn) {
               <div class="dual-text-container">
                 <div class="text-area">
                   <h6>{{ 'JOB_APPROVAL.ARABIC' | translate }}</h6>
@@ -182,8 +203,15 @@
                   <div [innerHTML]="job.benefitsEn"></div>
                 </div>
               </div>
-              } } @if (activeTab === tabType.Attachments) { @if (job.requiredAttachments &&
-              job.requiredAttachments.length) {
+              } @else {
+              <div class="empty-state">
+                <p>{{ 'JOB_APPROVAL.NO_BENEFITS' | translate }}</p>
+              </div>
+              }
+              }
+
+              @if (activeTab === tabType.Attachments) {
+              @if (job.requiredAttachments && job.requiredAttachments.length) {
               <ul>
                 @for (attachment of job.requiredAttachments; track $index) {
                 <li>
@@ -208,14 +236,21 @@
                 </li>
                 }
               </ul>
-              } } @if (activeTab === 'Review') {
+              } @else {
+              <div class="empty-state">
+                <p>{{ 'JOB_APPROVAL.NO_ATTACHMENTS_REQUIRED' | translate }}</p>
+              </div>
+              }
+              }
+
+              @if (activeTab === reviewTabId) {
               <div class="review-wrapper">
                 @for (item of tabNotes; track $index) {
                 <div class="review-card">
                   <div class="review-header">
-                    <h4>{{ item?.tab | translate }}</h4>
+                    <h4>{{ getTabTitle(item?.tab) | translate }}</h4>
                     <span class="status-badge" [ngClass]="item?.tabStatus || 'pending'">
-                      {{ item?.tabStatus || '—' }}
+                      {{ getTabStatusLabel(item?.tabStatus) | translate }}
                     </span>
                   </div>
                   <div class="review-note">
@@ -289,7 +324,7 @@
     </div>
 
     <!-- Notes section for all tabs except Review -->
-    @if(activeTab !== 'Review') {
+    @if(activeTab !== reviewTabId) {
     <div class="job-note-card">
       @let tabControls = getCurrentTabControls(); @if (tabControls) {
       <div class="note-section">
@@ -334,7 +369,7 @@
     }
 
     <!-- Action buttons for Review tab -->
-    @if (activeTab === "Review") {
+    @if (activeTab === reviewTabId) {
     <div class="actions-bar">
       @if(!isAllTabsApproved() && canManageJobs()) {
       <div class="job-btns">
@@ -384,11 +419,11 @@
         <tbody>
           @for (h of reviewHistory; track $index) {
           <tr>
-            <td>{{ h.tab | translate }}</td>
+            <td>{{ getTabTitle(h.tab) | translate }}</td>
             <td>{{ h.note || '—' }}</td>
             <td>
               <span class="status-badge" [ngClass]="h.tabStatus">
-                {{'JOB_TAB_STATUS.'+ h.tabStatus | translate}}
+                {{ getTabStatusLabel(h.tabStatus) | translate }}
               </span>
             </td>
             <td>
