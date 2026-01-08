@@ -22,8 +22,8 @@ public sealed class JobInvitationSummaryDetailsProfile : IRegister
             .Ignore(dest => dest.FullName)
             .Ignore(dest => dest.Nationality)
             .Ignore(dest => dest.PersonalNumber)
-            .Ignore(dest => dest.ReadDate)
-            .Ignore(dest => dest.DeclinedDate)
-            .Ignore(dest => dest.ExpiredDate);
+            .Ignore(dest => dest.ReadDate!)
+            .Ignore(dest => dest.DeclinedDate!)
+            .Ignore(dest => dest.ExpiredDate!);
     }
 }

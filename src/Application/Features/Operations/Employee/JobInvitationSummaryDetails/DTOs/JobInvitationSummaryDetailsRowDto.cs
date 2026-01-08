@@ -12,8 +12,8 @@ public sealed class JobInvitationSummaryDetailsRowDto
     public DropdownOptions Status { get; set; } = new();
     public int BatchNumber { get; init; }
     public DateTimeOffset SentDate { get; init; }
-    public DateTimeOffset? ReadDate { get; init; }
+    public DateTimeOffset? ReadDate { get; set; }
     public DateTimeOffset? AppliedDate { get; init; }
-    public DateTimeOffset? DeclinedDate { get; init; }
-    public DateTimeOffset? ExpiredDate { get; init; }
+    public DateTimeOffset? DeclinedDate { get; set; }
+    public DateTimeOffset? ExpiredDate { get; set; }
 }
