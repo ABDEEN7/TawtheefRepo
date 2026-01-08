@@ -99,7 +99,10 @@ a {
 
 .text-blue { color: $color-blue !important; }
 .text-light { color: $bs-light !important; }
-
+.border {
+    border-color: rgb(203, 203, 203) !important;
+    }
+    .br-2{border-radius: 2rem !important;}
 /*--------------------------------------------------------------
 # Buttons & Forms
 --------------------------------------------------------------*/
@@ -764,4 +767,16 @@ body.ltr
   }
 
 
+}
+.grey-div{
+    border-radius: 2rem;
+    border: 1px solid rgba(203, 203, 203, 1);
+    background-color: rgba(251, 251, 251, 1);
+    padding: 0.500rem 1rem;
+    display: flex;
+    align-items: center;
+}
+.grey-div .form-check-input:checked {
+    background-color:var(--color-primary);
+    border-color:var(--color-primary);
 }

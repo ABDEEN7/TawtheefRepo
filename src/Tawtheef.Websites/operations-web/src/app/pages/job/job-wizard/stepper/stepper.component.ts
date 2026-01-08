@@ -44,7 +44,7 @@ export class StepperComponent {
     {
       id: 7,
       label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS',
-      icon: 'hgi hgi-stroke hgi-checkmark-badge-04',
+      icon: 'hgi hgi-stroke hgi-checkmark-badge-01',
     },
   ];
 }
