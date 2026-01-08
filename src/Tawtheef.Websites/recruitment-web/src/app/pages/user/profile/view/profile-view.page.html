@@ -116,6 +116,7 @@
           </label>
           <button pButton class="btn btn-sm btn-outline-secondary"
                   pTooltip="{{ 'profileView.actions.reSubmitProfileHint' | translate }}"
+                  [disabled]="resubmitting()"
                   (click)="reSubmitProfile()">
             <i pButtonIcon class="fa fa-edit"></i>
             <span pButtonLabel>{{ 'profileView.actions.reSubmitProfile' | translate }}</span>
@@ -220,7 +221,7 @@
                 [canEdit]="canEditSections(ProfileSectionEnum.Prerequisites)"
                 [changesRequest]="changes(ProfileSectionEnum.Prerequisites)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Prerequisites)">
+                (edit)="openEditDialog(ProfileSectionEnum.Prerequisites)">
               </app-profile-prerequisites-section>
 
               <app-profile-personal-section
@@ -229,7 +230,7 @@
                 [canEdit]="canEditSections(ProfileSectionEnum.Personal)"
                 [changesRequest]="changes(ProfileSectionEnum.Personal)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Personal)">
+                (edit)="openEditDialog(ProfileSectionEnum.Personal)">
               </app-profile-personal-section>
 
               <app-profile-contact-section
@@ -238,7 +239,7 @@
                 [canEdit]="canEditSections(ProfileSectionEnum.Contact)"
                 [changesRequest]="changes(ProfileSectionEnum.Contact)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Contact)">
+                (edit)="openEditDialog(ProfileSectionEnum.Contact)">
               </app-profile-contact-section>
 
               <app-profile-qualifications-section
@@ -247,7 +248,7 @@
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Qualifications)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Qualifications)"
+                (edit)="openEditDialog(ProfileSectionEnum.Qualifications)"
                 (refresh)="reloadSection(ProfileSectionEnum.Qualifications)">
               </app-profile-qualifications-section>
 
@@ -257,7 +258,7 @@
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Experience)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Experience)"
+                (edit)="openEditDialog(ProfileSectionEnum.Experience)"
                 (refresh)="reloadSection(ProfileSectionEnum.Experience)">
               </app-profile-experience-section>
 
@@ -267,7 +268,7 @@
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.TrainingCourses)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.TrainingCourses)">
+                (edit)="openEditDialog(ProfileSectionEnum.TrainingCourses)">
               </app-profile-training-section>
 
               <app-profile-achievements-section
@@ -276,7 +277,7 @@
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.CertificatesAndAwards)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.CertificatesAndAwards)"
+                (edit)="openEditDialog(ProfileSectionEnum.CertificatesAndAwards)"
                 (refresh)="reloadSection(ProfileSectionEnum.CertificatesAndAwards)">
               </app-profile-achievements-section>
 
@@ -286,7 +287,7 @@
                 [canEdit]="canEditSections(ProfileSectionEnum.Skills)"
                 [changesRequest]="changes(ProfileSectionEnum.Skills)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Skills)">
+                (edit)="openEditDialog(ProfileSectionEnum.Skills)">
               </app-profile-skills-section>
 
               <app-profile-languages-section
@@ -295,7 +296,7 @@
                 [canEdit]="canEditSections(ProfileSectionEnum.Languages)"
                 [changesRequest]="changes(ProfileSectionEnum.Languages)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Languages)">
+                (edit)="openEditDialog(ProfileSectionEnum.Languages)">
               </app-profile-languages-section>
 
               <app-profile-attachments-section
@@ -304,7 +305,7 @@
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Attachments)"
                 [notes]="activeSectionNotes()"
-                (edit)="navigateToEditSection(ProfileSectionEnum.Attachments)"
+                (edit)="openEditDialog(ProfileSectionEnum.Attachments)"
                 (refresh)="reloadSection(ProfileSectionEnum.Attachments)">
               </app-profile-attachments-section>
             </div>

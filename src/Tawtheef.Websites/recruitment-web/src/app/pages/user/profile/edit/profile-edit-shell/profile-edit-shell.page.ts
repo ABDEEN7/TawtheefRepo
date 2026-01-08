@@ -55,6 +55,8 @@ export class ProfileEditShellPage {
   });
 
   constructor() {
+    const mode = this.route.snapshot.queryParamMap.get('mode');
+    this.profile.setWriteMode(mode === 'change-request' ? 'change-request' : 'create');
     effect(() => {
       const res = this.data.value();
       if (!res?.status) return;

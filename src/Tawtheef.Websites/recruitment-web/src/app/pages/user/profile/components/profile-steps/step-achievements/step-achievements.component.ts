@@ -131,6 +131,9 @@ export class StepAchievementsComponent implements OnInit {
       next: () => {
         this.saving = false;
         this.lastSubmittedSignature = signature;
+        if (this.profile.isChangeRequestMode()) {
+          this.notify.success(this.translate.instant('profileView.notifications.changeRequestSent'));
+        }
         this.next.emit();
       },
       error: (err: any) => {

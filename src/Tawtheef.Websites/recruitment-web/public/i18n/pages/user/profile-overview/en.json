@@ -308,8 +308,13 @@
   "profileView.actions.editAchievement": "Edit Achievement",
   "profileView.actions.addAttachment": "Add Attachment",
   "profileView.actions.replaceFile": "Replace File",
+  "profileView.editDialog.title": "Edit Profile Section",
+  "profileView.editDialog.close": "Close",
   "profileView.attachments.titleLabel": "Attachment Title",
   "profileView.attachments.fileLabel": "Attachment File",
   "profileView.notifications.saved": "Changes saved successfully.",
-  "profileView.notifications.saveFailed": "Unable to save changes right now."
+  "profileView.notifications.saveFailed": "Unable to save changes right now.",
+  "profileView.notifications.changeRequestSent": "Your change request has been sent for review.",
+  "profileView.notifications.resubmitted": "Your profile has been resubmitted successfully.",
+  "profileView.notifications.resubmitFailed": "Unable to resubmit your profile right now."
 }
