@@ -9,6 +9,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.Queries;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.Handlers.Queries;
@@ -28,16 +29,18 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
         var invitations = unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
             .Include(invitation => invitation.InvitationStatus)
-            .Include(invitation => invitation.Applicant)!.ThenInclude(applicant => applicant!.Profile)!
+            .Include(invitation => invitation.Applicant).ThenInclude(applicant => applicant!.Profile)
             .ThenInclude(profile => profile!.Nationality)
             .Where(invitation => invitation.JobId == query.JobId)
             .WhereIf(query.StatusId.HasValue, invitation => invitation.InvitationStatusId == query.StatusId!.Value)
+            .WhereIf(query.BatchNumber.HasValue, invitation => invitation.BatchNumber == query.BatchNumber!.Value)
             .WhereIf(!string.IsNullOrWhiteSpace(searchTerm), invitation =>
                 (invitation.Applicant != null &&
                  (invitation.Applicant.FullNameAr.Contains(searchTerm!) ||
                   invitation.Applicant.FullNameEn.Contains(searchTerm!) ||
                   (invitation.Applicant.PhoneNumber != null &&
-                   invitation.Applicant.PhoneNumber.Contains(searchTerm!)))) ||
+                   invitation.Applicant.PhoneNumber.Contains(searchTerm!))
+                  )) ||
                 (invitation.Applicant != null &&
                  invitation.Applicant.Profile != null &&
                  invitation.Applicant.Profile.NationalNumber != null &&
@@ -52,6 +55,7 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
             var item = items[index];
             item.FullName = localizationService.GetLocalizedFullName(invitation.Applicant);
             item.Nationality = localizationService.GetLocalizedName(invitation.Applicant?.Profile?.Nationality);
+            item.PersonalNumber = invitation.Applicant?.Profile?.NationalNumber ?? string.Empty;
             item.Status = invitation.InvitationStatus == null
                 ? new DropdownOptions()
                 : new DropdownOptions
@@ -62,6 +66,15 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
                     Description = localizationService.GetLocalizedDescription(invitation.InvitationStatus),
                     AdditionalData = invitation.InvitationStatus.DisplayOrder
                 };
+            item.ReadDate = invitation.InvitationStatusId == InvitationStatusIds.Read
+                ? invitation.UpdatedDate
+                : null;
+            item.DeclinedDate = invitation.InvitationStatusId == InvitationStatusIds.Rejected
+                ? invitation.UpdatedDate
+                : null;
+            item.ExpiredDate = invitation.InvitationStatusId == InvitationStatusIds.Closed
+                ? invitation.UpdatedDate
+                : null;
         }
 
         var result = new PaginatedResult<JobInvitationSummaryDetailsRowDto>(

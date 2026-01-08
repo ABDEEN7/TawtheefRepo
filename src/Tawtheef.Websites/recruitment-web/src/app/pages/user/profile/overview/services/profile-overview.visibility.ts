@@ -8,6 +8,7 @@ import {
 } from '../../wizard-profile/state/profile-step-validity.signal';
 import {ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
 import {ProfileState} from '../../wizard-profile/models/profile-state.model';
+import {CandidateType} from '../../../../../core/enums/lookups.enum';
 
 export type ProfileOverviewVisibility = {
   type: CandidateType | undefined;

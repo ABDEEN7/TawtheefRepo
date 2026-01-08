@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -23,7 +25,8 @@ internal static class ReviewItemSaveHelper
 
         if (items.Count == 0)
         {
-            profile.Status = UserProfileStatus.Submitted;
+            var handler = new SubmitUserProfileHandler(uow);
+            await handler.Handle(new SubmitUserProfileCommand(profile.UserId, new SubmitUserProfileRequest()), ct);
             return;
         }
 
@@ -35,7 +38,8 @@ internal static class ReviewItemSaveHelper
 
         if (items.All(item => item.Status == ReviewStatus.Solved))
         {
-            profile.Status = UserProfileStatus.Submitted;
+            var handler = new SubmitUserProfileHandler(uow);
+            await handler.Handle(new SubmitUserProfileCommand(profile.UserId, new SubmitUserProfileRequest()), ct);
         }
     }
 }

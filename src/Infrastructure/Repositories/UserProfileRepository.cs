@@ -15,6 +15,7 @@ public class UserProfileRepository(IGenericRepository<UserProfile> repository)
 
         return await Repository.DbSet   
             .AsNoTracking()
+            .AsSplitQuery()
             .Where(p => userIds.Contains(p.UserId))
             .Include(p => p.User)
             .Include(p => p.CandidateType)

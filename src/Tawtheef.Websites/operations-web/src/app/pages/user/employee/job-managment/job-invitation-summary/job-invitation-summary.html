@@ -4,7 +4,7 @@
           <div class="row align-items-center mb-3">
                 <div class="col-md-12">
                      <div class="d-flex gap-2">
-                         <a (click)="navigateTo()" aria-label="Back"><i class="hgi hgi-stroke hgi-arrow-left-01 fs-32"></i></a>
+                         <a (click)="navigateTo()" aria-label="Back"><i class="hgi hgi-stroke hgi-arrow-right-01" faDirArrow="start"></i></a>
                          <div>
                              <h3 class="fw-bold m-0">
                                {{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}
@@ -120,6 +120,11 @@
                   <th>{{ 'JOB_INVITATION_SUMMARY.APPLICANTS' | translate }}</th>
                   <th>{{ 'JOB_INVITATION_SUMMARY.DECLINED' | translate }}</th>
                   <th>{{ 'JOB_INVITATION_SUMMARY.UNSEEN' | translate }}</th>
+                  <th>{{ 'JOB_INVITATION_SUMMARY.READ' | translate }}</th>
+                  <th>{{ 'JOB_INVITATION_SUMMARY.EXPIRED' | translate }}</th>
+                  <th>{{ 'JOB_INVITATION_SUMMARY.CANCELLED' | translate }}</th>
+                  <th>{{ 'JOB_INVITATION_SUMMARY.PREVIOUS_BATCHES' | translate }}</th>
+                  <th>{{ 'JOB_INVITATION_SUMMARY.LAST_BATCH' | translate }}</th>
                   <th>{{ 'JOB_INVITATION_SUMMARY.ACTION' | translate }}</th>
                 </tr>
                 </thead>
@@ -157,6 +162,21 @@
                       </td>
                       <td class="text-center">
                         <span class="pill pill-unseen">{{ summary.notSeenCount }}</span>
+                      </td>
+                      <td class="text-center">
+                        <span class="pill pill-total">{{ summary.readCount }}</span>
+                      </td>
+                      <td class="text-center">
+                        <span class="pill pill-declined">{{ summary.expiredCount }}</span>
+                      </td>
+                      <td class="text-center">
+                        <span class="pill pill-declined">{{ summary.cancelledCount }}</span>
+                      </td>
+                      <td class="text-center">
+                        <span class="pill pill-total">{{ summary.previousBatchInvitations }}</span>
+                      </td>
+                      <td class="text-center">
+                        <span class="pill pill-total">{{ summary.lastBatchNumber ?? '-' }}</span>
                       </td>
 
                       <td>

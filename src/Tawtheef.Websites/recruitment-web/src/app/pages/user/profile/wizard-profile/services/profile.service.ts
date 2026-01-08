@@ -280,8 +280,8 @@ export class ProfileService {
     const dto = {
       submit: false,
       skills: (skills ?? []).map((s: any) => ({
-        skillId: s.skillId ?? s.id ?? s,
-        levelId: s.levelId ?? s.level?.id,
+        skillId: s.skillId,
+        levelId: s.levelId,
       })),
     };
 

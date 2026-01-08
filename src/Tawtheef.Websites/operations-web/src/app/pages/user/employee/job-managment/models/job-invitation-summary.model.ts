@@ -11,6 +11,11 @@ export interface JobInvitationSummary {
   applicantsCount: number;
   refusedCount: number;
   notSeenCount: number;
+  readCount: number;
+  expiredCount: number;
+  cancelledCount: number;
+  previousBatchInvitations: number;
+  lastBatchNumber: string | null;
   createDate: string;           // ISO date string
 }
 

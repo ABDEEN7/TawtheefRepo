@@ -29,6 +29,9 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
             New = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.NewInvitation,
                 cancellationToken),
+            Read = await invitations.CountAsync(
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.Read,
+                cancellationToken),
             Applied = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Submitted,
                 cancellationToken),
@@ -37,6 +40,9 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
                 cancellationToken),
             Cancelled = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Cancelled,
+                cancellationToken),
+            Expired = await invitations.CountAsync(
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.Closed,
                 cancellationToken),
         };
 

@@ -75,9 +75,7 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
     ProfileSkillsSectionComponent,
     ProfileLanguagesSectionComponent,
     ProfileAttachmentsSectionComponent,
-    ButtonIcon,
     ButtonDirective,
-    ButtonLabel
   ],
   templateUrl: './profile-view.page.html',
   styleUrls: ['./profile-view.page.scss'],

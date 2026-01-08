@@ -24,9 +24,7 @@ public sealed class GetCandidateInvitationStatisticsQueryHandler(IUnitOfWork uni
             .Select(g => new CandidateInvitationStatisticsDto
             {
                 NewInvitations = g.Count(i => i.InvitationStatusId == InvitationStatusIds.NewInvitation),
-                UnderReview = g.Count(i => i.InvitationStatusId == InvitationStatusIds.UnderReview),
                 Withdrawn = g.Count(i => i.InvitationStatusId == InvitationStatusIds.Cancelled),
-                Applied = g.Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted)
             })
             .FirstOrDefaultAsync(cancellationToken) ?? new CandidateInvitationStatisticsDto();
 

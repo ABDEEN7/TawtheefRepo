@@ -1,4 +1,13 @@
-import {Component, EventEmitter, inject, isDevMode, OnDestroy, OnInit, Output,} from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  isDevMode,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent,} from 'primeng/autocomplete';
 import {of, Subject, Subscription} from 'rxjs';
 import {catchError, debounceTime, filter, finalize, map, switchMap, tap,} from 'rxjs/operators';
@@ -26,6 +35,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly translate = inject(TranslateService);
   private readonly profile = inject(ProfileService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   saving = false;
   private lastSubmittedSignature: string | null = null;
@@ -83,6 +93,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       )
       .subscribe(res => {
         this.skillOptions = res;
+        this.cdr.detectChanges();
       });
   }
 
@@ -166,8 +177,6 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         this.next.emit();
       },
       error: (err: any) => {
-        if(isDevMode())
-          console.error(err);
         this.saving = false;
       },
     });

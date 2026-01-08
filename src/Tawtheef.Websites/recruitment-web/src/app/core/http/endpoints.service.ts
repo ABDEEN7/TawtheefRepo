@@ -124,6 +124,16 @@ export class EndpointsService {
   dashboard = {
     candidateInvitations: this.getFullUrl(`/dashboard/get-candidate-invitations`),
     candidateInvitationStatistics: this.getFullUrl(`/dashboard/candidate-invitation-statistics`),
+    candidateInvitationDetails: (invitationId: string) =>
+      this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}`),
+    candidateInvitationJobDetails: (invitationId: string) =>
+      this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/job-details`),
+    applyCandidateInvitation: (invitationId: string) =>
+      this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/apply`),
+    changeStatusCandidateInvitationRead: (invitationId: string) =>
+      this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/read`),
+    changeStatusCandidateInvitationReject: (invitationId: string) =>
+      this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/reject`),
     lookups: {
       invitationStatuses: this.getFullUrl(`/dashboard/lookups/invitation-statuses`),
       jobCategories: this.getFullUrl(`/dashboard/lookups/job-categories`),

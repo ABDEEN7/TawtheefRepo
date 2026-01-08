@@ -1,0 +1,28 @@
+.status-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 50px;
+  min-width: 120px;
+  height: 40px;
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+  line-height: 1;
+
+  &.Published {
+    background: #D1E7DD;
+    color: #0F5132;
+  }
+
+  &.Closed {
+    background: #F8D7DA;
+    color: #721C24;
+  }
+
+  &.Cancelled {
+    background: #F8D7DA;
+    color: #721C24;
+  }
+}

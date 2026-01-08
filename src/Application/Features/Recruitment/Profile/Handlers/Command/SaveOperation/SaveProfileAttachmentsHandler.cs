@@ -2,7 +2,6 @@ using System.Text.Json;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
@@ -18,7 +17,6 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-
 public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
@@ -32,13 +30,14 @@ public sealed class SaveProfileAttachmentsHandler(
 
     public async Task<IResult<Unit>> Handle(SaveProfileAttachmentsCommand cmd, CancellationToken ct)
     {
-        var attachRepo  = uow.GetEntityRepository<ProfileAdditionalAttachment>();
+        var attachRepo = uow.GetEntityRepository<ProfileAdditionalAttachment>();
 
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status is not UserProfileStatus.InCreation &&
+            profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateAttachments(profile);
@@ -49,18 +48,35 @@ public sealed class SaveProfileAttachmentsHandler(
         if (attachmentsResult.IsFailed)
             return Result.Fail<Unit>(attachmentsResult.Errors);
 
-        var attachments = attachmentsResult.Value;
+        var incoming = attachmentsResult.Value;
         var files = cmd.Request.AttachmentFiles;
 
-        if (profile.AdditionalAttachments is not null && profile.AdditionalAttachments.Count > 0)
+        // Ensure non-null collection
+        profile.AdditionalAttachments ??= new List<ProfileAdditionalAttachment>();
+
+        // If user removed everything => delete all existing (edit mode clear)
+        if (incoming.Count == 0)
         {
-            attachRepo.DbSet.RemoveRange(profile.AdditionalAttachments);
+            if (profile.AdditionalAttachments.Count > 0)
+                attachRepo.DbSet.RemoveRange(profile.AdditionalAttachments);
+
+            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Attachments, ct);
+            await uow.SaveChangesAsync(ct);
+            return Result.Ok(Unit.Value);
         }
 
-        profile.AdditionalAttachments = [];
+        // Build lookup of existing by AttachmentId (resource id). This assumes AttachmentId is stable identity.
+        // If your row has its own PK Id and AttachmentId is not unique, tell me and I’ll adjust.
+        var existingByAttachmentId = profile.AdditionalAttachments
+            .Where(x => x.AttachmentId != Guid.Empty)
+            .ToDictionary(x => x.AttachmentId);
 
-        foreach (var dto in attachments)
+        // Track incoming ids to know what to delete
+        var incomingAttachmentIds = new HashSet<Guid>();
+
+        foreach (var dto in incoming)
         {
+            // Upload new file only if FileIndex is provided
             var uploadResult = await UploadIfNeededAsync(
                 dto.FileIndex,
                 files,
@@ -71,19 +87,47 @@ public sealed class SaveProfileAttachmentsHandler(
             if (uploadResult.IsFailed)
                 return Result.Fail<Unit>(uploadResult.Errors);
 
-            var attachmentId = uploadResult.Value?.ResourceId ?? dto.AttachmentId;
-            if (attachmentId is null || attachmentId == Guid.Empty)
+            var finalAttachmentId = uploadResult.Value?.ResourceId ?? dto.AttachmentId;
+
+            if (finalAttachmentId is null || finalAttachmentId == Guid.Empty)
                 return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
 
-            var attachment = new ProfileAdditionalAttachment
-            {
-                FileName      = dto.Title,
-                AttachmentId  = attachmentId.Value,
-                UserProfileId = profile.Id
-            };
+            incomingAttachmentIds.Add(finalAttachmentId.Value);
 
-            profile.AdditionalAttachments.Add(attachment);
+            // Upsert
+            if (existingByAttachmentId.TryGetValue(finalAttachmentId.Value, out var row))
+            {
+                // Update editable fields (e.g., title / file name)
+                // Note: your entity uses FileName to store dto.Title
+                if (!string.Equals(row.FileName, dto.Title, StringComparison.Ordinal))
+                    row.FileName = dto.Title;
+            }
+            else
+            {
+                var newRow = new ProfileAdditionalAttachment
+                {
+                    FileName      = dto.Title,
+                    AttachmentId  = finalAttachmentId.Value,
+                    UserProfileId = profile.Id
+                };
+
+                // Option A (recommended): EF Core supports CT
+                await attachRepo.DbSet.AddAsync(newRow, ct);
+
+                // Option B (if you prefer sync add):
+                // attachRepo.DbSet.Add(newRow);
+
+                profile.AdditionalAttachments.Add(newRow);
+            }
         }
+
+        // Delete removed attachments (existing not in incoming)
+        var toRemove = profile.AdditionalAttachments
+            .Where(x => !incomingAttachmentIds.Contains(x.AttachmentId))
+            .ToList();
+
+        if (toRemove.Count > 0)
+            attachRepo.DbSet.RemoveRange(toRemove);
 
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Attachments, ct);
         await uow.SaveChangesAsync(ct);
@@ -119,10 +163,13 @@ public sealed class SaveProfileAttachmentsHandler(
             if (file is not { Length: > 0 })
                 return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
 
-            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "additional", file, false, cancellationToken);
+            var uploadPath = await UserProfileUploadPathFactory.CreateAsync(
+                cmd.UserId, "additional", file, false, cancellationToken);
+
             var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
+
             if (uploadResult.IsFailed)
                 return Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors);
 
