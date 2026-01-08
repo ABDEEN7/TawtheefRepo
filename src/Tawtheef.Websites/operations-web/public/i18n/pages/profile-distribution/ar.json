@@ -6,6 +6,11 @@
   "distribution.availableEmployees": "موظفين متاحين",
   "distribution.incoming.title": "قائمة الملفات الواردة",
   "distribution.incoming.subtitle": "طلبات متقدمة بانتظار التوزيع",
+  "distribution.kpi.total": "إجمالي الملفات",
+  "distribution.kpi.filtered": "الملفات المطابقة",
+  "distribution.kpi.submitted": "تم التقديم",
+  "distribution.kpi.underReview": "قيد المراجعة",
+  "distribution.kpi.needsChanges": "مطلوب تعديل",
 
   "distribution.actions.refresh": "تحديث البيانات",
   "distribution.actions.assignTo": "توزيع على موظف",
