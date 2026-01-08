@@ -84,7 +84,7 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
             InvitationId = null,
             ApplicantId = p.UserId,
             Applicant = null,
-            Profile = p, // light
+            Profile = null,
             JobId = jobId,
             Major = null,
             InvitationStatusId = null,
