@@ -26,9 +26,7 @@ import { GUID } from '../../../shared/types/guid.type';
 type ActionConfig = {
   showApply: boolean;
   showView: boolean;
-  showTrack: boolean;
   showDetails: boolean;
-  showWithdraw: boolean;
 };
 
 @Component({
@@ -53,7 +51,6 @@ export class Dashboard implements OnInit {
   routes = routes;
 
   // Loading states
-  isWithdrawing = signal<string | null>(null);
   isRefreshing = signal(false);
 
   // Reactive signals
@@ -109,25 +106,6 @@ export class Dashboard implements OnInit {
     this.currentPage.set(1);
   }
 
-  // Action methods
-  withdrawApplication(recordId: string): void {
-    // this.isWithdrawing.set(recordId);
-    //
-    // this.candidateService.withdrawApplication(recordId)
-    //   .subscribe(response => {
-    //     this.isWithdrawing.set(null);
-    //     if (response.success) {
-    //       this.allRecords.update(records =>
-    //         records.map(record =>
-    //           record.id === recordId ? { ...record, status: JOB_INVITATION_STATUSES.REJECTED } : record
-    //         )
-    //       );
-    //       this.currentPage.set(1);
-    //     }
-    //   });
-  }
-
-  // Helper methods for templates
   getStatusClass(status: string): string {
     return STATUS_PILL_CLASSES[status as InvitationStatus] ?? 'status-closed';
   }

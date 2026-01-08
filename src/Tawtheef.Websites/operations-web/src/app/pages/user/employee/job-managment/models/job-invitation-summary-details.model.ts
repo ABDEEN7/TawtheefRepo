@@ -53,8 +53,6 @@ export interface JobInvitesRowsFilters {
   jobId: string;
   statusId: string | null;
   search: string;
-  candidateName?: string | null;
-  nationalNumber?: string | null;
   batchNumber?: number | null;
   pageNumber: number;
   pageSize: number;

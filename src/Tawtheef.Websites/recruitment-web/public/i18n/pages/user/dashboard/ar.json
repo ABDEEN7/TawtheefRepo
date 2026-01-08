@@ -35,8 +35,6 @@
   "candidate_dashboard.action_view_request": "عرض الطلب",
   "candidate_dashboard.action_track_status": "متابعة الحالة",
   "candidate_dashboard.action_view_details": "عرض التفاصيل",
-  "candidate_dashboard.action_withdraw_request": "إلغاء الطلب",
-  "candidate_dashboard.action_withdraw_in_progress": "جاري الإلغاء...",
   "candidate_dashboard.showing_results": "عرض {{start}}–{{end}} من {{total}} سجل",
   "candidate_dashboard.pagination_previous": "السابق",
   "candidate_dashboard.pagination_next": "التالي"

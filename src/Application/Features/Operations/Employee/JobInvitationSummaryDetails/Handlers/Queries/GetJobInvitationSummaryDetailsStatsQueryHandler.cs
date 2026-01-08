@@ -30,10 +30,10 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.NewInvitation,
                 cancellationToken),
             Read = await invitations.CountAsync(
-                invitation => invitation.InvitationStatusId == InvitationStatusIds.Readed,
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.Read,
                 cancellationToken),
             Applied = await invitations.CountAsync(
-                invitation => invitation.InvitationStatusId == InvitationStatusIds.Approved,
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.Submitted,
                 cancellationToken),
             Declined = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Rejected,

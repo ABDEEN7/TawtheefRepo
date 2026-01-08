@@ -23,6 +23,8 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
     {
         var job = await unitOfWork.GetEntityRepository<Domain.Entities.Recruitment.Job>().DbSet
             .AsNoTracking()
+            .Include(job => job.Department)
+            .Include(job => job.JobStatus)  
             .FirstOrDefaultAsync(j => j.Id == query.JobId, cancellationToken);
 
         if (job is null)

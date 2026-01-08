@@ -148,10 +148,8 @@
              </div>
              <div class="row mt-4">
                   <div class="col-12">
-                       <!-- Table -->
                        <p-table
                          [value]="this.candidateInvitations()"
-                         responsiveLayout="scroll"
                          class="table table-hover"
                        >
                          <ng-template pTemplate="header">
@@ -192,17 +190,6 @@
                                      {{ 'candidate_dashboard.action_apply_now' | translate }}
                                    </a>
                                  }
-
-                                 @if (actions.showTrack) {
-                                   <a
-                                     [routerLink]="routes.user.jobDetails(record.invitationId)"
-                                     class="btn btn-sm btn-outline-secondary btn-pill"
-                                   >
-                                     <i class="fa fa-hourglass-half"></i>
-                                     {{ 'candidate_dashboard.action_track_status' | translate }}
-                                   </a>
-                                 }
-
                                  @if (actions.showDetails) {
                                    <a
                                      [routerLink]="routes.user.jobDetails(record.invitationId)"
@@ -211,26 +198,6 @@
                                      <i class="fa fa-eye"></i>
                                      {{ 'candidate_dashboard.action_view_details' | translate }}
                                    </a>
-                                 }
-
-                                 @if (actions.showWithdraw) {
-                                   <button
-                                     (click)="withdrawApplication(record.invitationId)"
-                                     class="btn btn-sm btn-outline-danger btn-pill"
-                                     [disabled]="isWithdrawing() === record.invitationId"
-                                   >
-                                     <i
-                                       class="fa"
-                                       [class.fa-ban]="isWithdrawing() !== record.invitationId"
-                                       [class.fa-spinner]="isWithdrawing() === record.invitationId"
-                                       [class.fa-spin]="isWithdrawing() === record.invitationId"
-                                     ></i>
-                                     {{
-                                       isWithdrawing() === record.invitationId
-                                         ? ('candidate_dashboard.action_withdraw_in_progress' | translate)
-                                         : ('candidate_dashboard.action_withdraw_request' | translate)
-                                     }}
-                                   </button>
                                  }
                                }
                              </td>
@@ -244,7 +211,6 @@
                            </tr>
                          </ng-template>
                        </p-table>
-                        <!-- Pagination -->
                         <app-pagination [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"></app-pagination>
                   </div>
              </div>

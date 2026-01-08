@@ -1,5 +1,5 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {finalize, tap} from 'rxjs';
+import {finalize, Observable, tap} from 'rxjs';
 
 import {HttpService} from '../../../../core/http/http.service';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
@@ -14,26 +14,30 @@ export class JobDetailsService {
   loading = signal(false);
   applying = signal(false);
 
-  loadJobDetails(invitationId: string): void {
-    this.loading.set(true);
+  loadJobDetails(invitationId: string): Observable<JobDetailsModel> {
+  this.loading.set(true);
 
-    this.http
-      .get<JobDetailsModel>(this.endpoints.dashboard.candidateInvitationJobDetails(invitationId))
-      .pipe(
-        tap((response) => {
-          this.job.set(response);
-          this.loading.set(false);
-        })
-      )
-      .subscribe({
-        error: () => this.loading.set(false)
-      });
-  }
+  return this.http
+    .get<JobDetailsModel>(this.endpoints.dashboard.candidateInvitationJobDetails(invitationId))
+    .pipe(
+      tap((response) => this.job.set(response)),
+      finalize(() => this.loading.set(false))
+    );
+}
 
   applyInvitation(invitationId: string) {
     this.applying.set(true);
     return this.http
       .post<void>(this.endpoints.dashboard.applyCandidateInvitation(invitationId), {})
+      .pipe(
+        finalize(() => this.applying.set(false))
+      );
+  }
+
+  changeInvitationStatus(invitationId: string) {
+    this.applying.set(true);
+    return this.http
+      .post<void>(this.endpoints.dashboard.changeStatusCandidateInvitation(invitationId), {})
       .pipe(
         finalize(() => this.applying.set(false))
       );

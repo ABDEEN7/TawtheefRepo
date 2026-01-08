@@ -134,24 +134,6 @@
                      (ngModelChange)="selectedStatus.set($event); onFilterChange()"
                    ></p-select>
                  </div>
-                 <div class="col-md-3">
-                   <input
-                     class="form-control"
-                     type="text"
-                     [ngModel]="candidateName()"
-                     [placeholder]="'JOB_INVITES_DETAILS_FILTER_NAME' | translate"
-                     (ngModelChange)="candidateName.set($event); onFilterChange()"
-                   />
-                 </div>
-                 <div class="col-md-3 mt-2">
-                   <input
-                     class="form-control"
-                     type="text"
-                     [ngModel]="nationalNumber()"
-                     [placeholder]="'JOB_INVITES_DETAILS_FILTER_NATIONAL_ID' | translate"
-                     (ngModelChange)="nationalNumber.set($event); onFilterChange()"
-                   />
-                 </div>
                  <div class="col-md-3 mt-2">
                    <input
                      class="form-control"
@@ -168,9 +150,6 @@
                        {{ 'JOB_INVITES_DETAILS_CLEAR_FILTERS' | translate }}
                      </button>
                  </div><!-- Status dropdown -->
-
-
-
                </div>
            </div>
       </div>
@@ -237,12 +216,5 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Header / Title -->
-  <div class="container">
-
-
-
   </div>
 </section>

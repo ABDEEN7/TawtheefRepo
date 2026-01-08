@@ -10,8 +10,8 @@ public static class InvitationStatusIds
     //by employee
     public static readonly Guid Cancelled = Guid.Parse("BCED01D8-3784-4E2C-9312-930951CC59D8");
     //by user
-    public static readonly Guid Approved = Guid.Parse("22EF7E86-28CB-4A30-98BC-7D45F9B44DE3");
-    public static readonly Guid Readed = Guid.Parse("64236C6A-167A-4213-B1D6-80C2C8C86DDE");
+    public static readonly Guid Submitted = Guid.Parse("22EF7E86-28CB-4A30-98BC-7D45F9B44DE3");
+    public static readonly Guid Read = Guid.Parse("64236C6A-167A-4213-B1D6-80C2C8C86DDE");
     public static readonly Guid Rejected = Guid.Parse("7103BA49-AD43-4751-B1A5-9084ACA69676");
 }
 [Table(nameof(InvitationStatus), Schema = Schemas.Lookup)]

@@ -25,8 +25,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 2 — READED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.Readed,
-                BackendName = nameof(InvitationStatusIds.Readed),
+                Id = InvitationStatusIds.Read,
+                BackendName = nameof(InvitationStatusIds.Read),
                 NameEn = "Read",
                 NameAr = "تمت القراءة",
                 DescriptionEn =
@@ -34,19 +34,19 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DescriptionAr = "المرشح فتح الدعوة لأول مرة ولم يبدأ التقديم.",
                 DisplayOrder = 2
             },
-            // 6 — APPROVED
+            // 3 — SUBMITTED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.Approved,
-                BackendName = nameof(InvitationStatusIds.Approved),
-                NameEn = "Approved",
-                NameAr = "معتمد",
-                DescriptionEn = "The application has been approved and moved to a later stage.",
-                DescriptionAr = "تمت الموافقة على الطلب وانتقل لمرحلة لاحقة.",
-                DisplayOrder = 6
+                Id = InvitationStatusIds.Submitted,
+                BackendName = nameof(InvitationStatusIds.Submitted),
+                NameEn = "Submitted",
+                NameAr = "تم التقديم",
+                DescriptionEn = "The candidate submitted the application with all required information completed.",
+                DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة.",
+                DisplayOrder = 3
             },
 
-            // 7 — REJECTED
+            // 4 — REJECTED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Rejected,
@@ -58,7 +58,7 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DisplayOrder = 7
             },
 
-            // 8 — CANCELLED
+            // 5 — CANCELLED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Cancelled,
@@ -70,7 +70,7 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DisplayOrder = 8
             },
 
-            // 9 — CLOSED
+            // 6 — CLOSED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Closed,

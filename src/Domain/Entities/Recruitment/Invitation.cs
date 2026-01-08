@@ -26,4 +26,9 @@ public class Invitation : EventEntity
     public DateTimeOffset? InvitationAt => CreatedDate;
     
     public ICollection<HistoryInvitation> History { get; init; } = [];
+
+    public void ChangeInvitationStatus(Guid newInvitationStatusId) 
+    {
+        this.InvitationStatusId = newInvitationStatusId;
+    }
 }

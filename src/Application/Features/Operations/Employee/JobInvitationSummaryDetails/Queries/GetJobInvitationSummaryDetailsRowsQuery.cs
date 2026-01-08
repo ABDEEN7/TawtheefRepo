@@ -9,7 +9,5 @@ public sealed record GetJobInvitationSummaryDetailsRowsQuery(
     Guid JobId,
     Guid? StatusId,
     string? Search,
-    string? CandidateName,
-    string? NationalNumber,
     int? BatchNumber)
     : PaginatedRequest, IQuery<IResult<PaginatedResult<JobInvitationSummaryDetailsRowDto>>>;

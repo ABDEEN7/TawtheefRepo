@@ -25,32 +25,22 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
         CancellationToken cancellationToken)
     {
         var searchTerm = query.Search?.Trim();
-        var candidateName = query.CandidateName?.Trim();
-        var nationalNumber = query.NationalNumber?.Trim();
 
         var invitations = unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
             .Include(invitation => invitation.InvitationStatus)
-            .Include(invitation => invitation.Applicant)!.ThenInclude(applicant => applicant!.Profile)!
+            .Include(invitation => invitation.Applicant).ThenInclude(applicant => applicant!.Profile)
             .ThenInclude(profile => profile!.Nationality)
             .Where(invitation => invitation.JobId == query.JobId)
             .WhereIf(query.StatusId.HasValue, invitation => invitation.InvitationStatusId == query.StatusId!.Value)
             .WhereIf(query.BatchNumber.HasValue, invitation => invitation.BatchNumber == query.BatchNumber!.Value)
-            .WhereIf(!string.IsNullOrWhiteSpace(candidateName), invitation =>
-                invitation.Applicant != null &&
-                (invitation.Applicant.FullNameAr.Contains(candidateName!) ||
-                 invitation.Applicant.FullNameEn.Contains(candidateName!)))
-            .WhereIf(!string.IsNullOrWhiteSpace(nationalNumber), invitation =>
-                invitation.Applicant != null &&
-                invitation.Applicant.Profile != null &&
-                invitation.Applicant.Profile.NationalNumber != null &&
-                invitation.Applicant.Profile.NationalNumber.Contains(nationalNumber!))
             .WhereIf(!string.IsNullOrWhiteSpace(searchTerm), invitation =>
                 (invitation.Applicant != null &&
                  (invitation.Applicant.FullNameAr.Contains(searchTerm!) ||
                   invitation.Applicant.FullNameEn.Contains(searchTerm!) ||
                   (invitation.Applicant.PhoneNumber != null &&
-                   invitation.Applicant.PhoneNumber.Contains(searchTerm!)))) ||
+                   invitation.Applicant.PhoneNumber.Contains(searchTerm!))
+                  )) ||
                 (invitation.Applicant != null &&
                  invitation.Applicant.Profile != null &&
                  invitation.Applicant.Profile.NationalNumber != null &&
@@ -76,7 +66,7 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
                     Description = localizationService.GetLocalizedDescription(invitation.InvitationStatus),
                     AdditionalData = invitation.InvitationStatus.DisplayOrder
                 };
-            item.ReadDate = invitation.InvitationStatusId == InvitationStatusIds.Readed
+            item.ReadDate = invitation.InvitationStatusId == InvitationStatusIds.Read
                 ? invitation.UpdatedDate
                 : null;
             item.DeclinedDate = invitation.InvitationStatusId == InvitationStatusIds.Rejected

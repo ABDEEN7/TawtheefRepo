@@ -83,6 +83,15 @@ public class DashboardController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new ApplyCandidateInvitationCommand(UserId.Value, invitationId));
         return result.ToActionResult();
     }
+    
+    [HttpPost("candidate-invitations/{invitationId:guid}/changeStatus")]
+    public async Task<IActionResult> ChangeStatusCandidateInvitation(Guid invitationId)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new ChangeStatusCandidateInvitationCommand(UserId.Value, invitationId));
+        return result.ToActionResult();
+    }
 
     [HttpGet("candidate-invitation-statistics")]
     public async Task<IActionResult> GetCandidateInvitationStatistics()

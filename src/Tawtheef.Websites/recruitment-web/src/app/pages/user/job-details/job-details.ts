@@ -52,7 +52,12 @@ export class JobDetails implements OnInit {
     if (!invitationId) return;
 
     this.invitationId.set(invitationId);
-    this.detailsService.loadJobDetails(invitationId);
+    this.detailsService.loadJobDetails(invitationId).subscribe(resp=>{
+      if(resp)
+      {
+        this.detailsService.changeInvitationStatus(invitationId).subscribe();
+      }
+    });
     this.invitationDetailsService.loadInvitation(invitationId);
   }
 
@@ -77,6 +82,7 @@ export class JobDetails implements OnInit {
         this.appliedOverride.set(true);
         this.invitationDetailsService.loadInvitation(invitationId);
         this.notifier.success(this.translate.instant('JOB_DETAILS.APPLY_SUCCESS'));
+        this.navigateTo();
       },
       error: () => {
         this.notifier.error(this.translate.instant('JOB_DETAILS.APPLY_ERROR'));

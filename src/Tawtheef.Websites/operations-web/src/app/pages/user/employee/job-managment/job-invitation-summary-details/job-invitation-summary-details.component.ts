@@ -45,8 +45,6 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
 
   selectedStatus = signal<string | null>(null);
   searchText = signal<string>('');
-  candidateName = signal<string>('');
-  nationalNumber = signal<string>('');
   batchNumber = signal<number | null>(null);
 
   currentPage = signal(1);
@@ -85,8 +83,6 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
       jobId: this.jobId(),
       statusId: this.selectedStatus() || null,
       search: this.searchText() || '',
-      candidateName: this.candidateName() || '',
-      nationalNumber: this.nationalNumber() || '',
       batchNumber: this.batchNumber(),
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage(),
@@ -106,8 +102,6 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
   clearFilters(): void {
     this.selectedStatus.set(null);
     this.searchText.set('');
-    this.candidateName.set('');
-    this.nationalNumber.set('');
     this.batchNumber.set(null);
     this.currentPage.set(1);
     this.loadAll();

@@ -35,8 +35,6 @@
   "candidate_dashboard.action_view_request": "View Request",
   "candidate_dashboard.action_track_status": "Track Status",
   "candidate_dashboard.action_view_details": "View Details",
-  "candidate_dashboard.action_withdraw_request": "Cancel Request",
-  "candidate_dashboard.action_withdraw_in_progress": "Cancelling...",
   "candidate_dashboard.showing_results": "Showing {{start}}–{{end}} of {{total}} records",
   "candidate_dashboard.pagination_previous": "Previous",
   "candidate_dashboard.pagination_next": "Next"

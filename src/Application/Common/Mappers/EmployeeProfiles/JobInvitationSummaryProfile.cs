@@ -17,13 +17,13 @@ public class JobInvitationSummaryProfile: IRegister
             .Map(dest => dest.JobStatus, src => src.JobStatus!)
             .Map(dest => dest.InvitationCount, src => src.Invitations.Count)
             .Map(dest => dest.ApplicantsCount,
-                src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Approved))
+                src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted))
             .Map(dest => dest.RefusedCount,
                 src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Rejected))
             .Map(dest => dest.NotSeenCount,
                 src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.NewInvitation))
             .Map(dest => dest.ReadCount,
-                src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Readed))
+                src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted))
             .Map(dest => dest.ExpiredCount,
                 src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Closed))
             .Map(dest => dest.CancelledCount,
