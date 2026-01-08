@@ -152,15 +152,12 @@ export class ProfileService {
   }
 
   // ========== EDUCATION (Degrees) ==========
-  // Policy: no updates -> only new items (no id)
   saveEducationSection(degrees: Degree[]) {
     const fileBucket: File[] = [];
-    let cursor = 0;
 
     const payload = (degrees ?? [])
       .map(d => {
-        const fileIndex = d.file ? cursor++ : null;
-        if (d.file) fileBucket.push(d.file);
+        const fileIndex = this.fileIndex(fileBucket, d.file);
 
         return {
           id: d.id ?? null,
@@ -194,14 +191,13 @@ export class ProfileService {
   }
 
   // ========== EXPERIENCE + TRAINING COURSES ==========
-  // Policy: no updates -> ONLY new items (no id)
   saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
     const experienceFiles: File[] = [];
     const trainingFiles: File[] = [];
 
     const experiencesDto = (experiences ?? [])
       .map(e => ({
-        id: e.id,
+        id: e.id ?? null,
         employerName: e.employerName,
         jobTitle: e.jobTitle,
         startDate: e.from,
@@ -215,7 +211,7 @@ export class ProfileService {
 
     const coursesDto = (courses ?? [])
       .map(c => ({
-        id: c.id,
+        id: c.id ?? null,
         title: c.title,
         provider: c.provider,
         startDate: c.from,
@@ -250,13 +246,12 @@ export class ProfileService {
   }
 
   // ========== ACHIEVEMENTS ==========
-  // Policy: no updates -> ONLY new items (no id)
   saveAchievementsSection(achievements: Achievement[]) {
     const files: File[] = [];
 
     const payload = (achievements ?? [])
       .map(a => ({
-        id: a.id,
+        id: a.id ?? null,
         achievementTypeId: a.achievementType?.id,
         title: a.title,
         issuingAuthority: a.issuingAuthority,
@@ -319,7 +314,6 @@ export class ProfileService {
   // ========== ATTACHMENTS ==========
   saveAttachmentsSection(attachments: Attachment[]) {
     const files: File[] = [];
-    let cursor = 0;
 
     const payload = (attachments ?? [])
       .map(a => {
@@ -330,10 +324,7 @@ export class ProfileService {
           attachmentId: a.attachmentId ?? null,
         };
 
-        if (a?.file) {
-          item.fileIndex = cursor++;
-          files.push(a.file);
-        }
+        item.fileIndex = this.fileIndex(files, a.file);
 
         return item;
       });

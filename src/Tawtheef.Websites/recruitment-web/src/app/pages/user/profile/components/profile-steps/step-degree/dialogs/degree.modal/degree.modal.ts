@@ -94,6 +94,9 @@ export class DegreeModal implements OnInit {
       this.initialCertificate = initialValue?.certificate ?? null;
       this.initialId = initialValue?.id ?? null;
       this.initialAttachmentId = initialValue?.attachmentId ?? this.initialCertificate?.resourceId ?? null;
+      this.form.patchValue({
+        degreeFileName: initialValue?.fileName ?? this.initialCertificate?.resourceName ?? null,
+      });
     }
 
     this.updateQualificationValidators();
@@ -159,7 +162,7 @@ export class DegreeModal implements OnInit {
   }
 
   onSave() {
-    if (this.form.invalid || this.yearError || (!this.degreeFile)) {
+    if (this.form.invalid || this.yearError || (!this.degreeFile && !this.initialCertificate)) {
       this.form.markAllAsTouched();
       return;
     }
