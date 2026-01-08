@@ -29,7 +29,7 @@ export class StepperComponent {
     {
       id: 4,
       label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS',
-      icon: 'fa fa-list-check',
+      icon: 'hgi hgi-stroke hgi-briefcase-05',
     },
     {
       id: 5,
@@ -44,7 +44,7 @@ export class StepperComponent {
     {
       id: 7,
       label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS',
-      icon: 'fa fa-gift',
+      icon: 'hgi hgi-stroke hgi-checkmark-badge-01',
     },
   ];
 }
