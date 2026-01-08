@@ -1,4 +1,10 @@
 ﻿{
+  "wizard.files.maxSize1mb": "حجم الملف يجب ألا يتجاوز 1 ميجابايت.",
+  "wizard.files.invalidFormat": "صيغة ملف غير صحيحة. المسموح: {{formats}}.",
+  "wizard.files.formats.cv": "الصيغ المسموحة: PDF, DOC, DOCX",
+  "wizard.files.formats.id": "الصيغ المسموحة: JPG, PNG, PDF",
+  "wizard.files.formats.birth": "الصيغ المسموحة: JPG, PNG, PDF",
+  "wizard.files.formats.marriage": "الصيغ المسموحة: JPG, PNG, PDF",
   "wizard.warningTitle": "تنبيه",
   "wizard.validationErrorTitle": "خطأ في التحقق من صحة البيانات",
   "wizard.errorTitle": "حدث خطأ",
