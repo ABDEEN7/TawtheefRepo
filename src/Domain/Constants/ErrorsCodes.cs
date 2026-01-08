@@ -235,6 +235,7 @@ public class ErrorsCodes
     public const string JobClosingDateInvalid = "JOB_CLOSING_DATE_INVALID";
     public const string NoteRequired = "NOTE_REQUIRED";
     public const string InvitationNotFound = "INVITATION_NOT_FOUND";
+    public const string InvitationStatusChangeNotAllowed = "INVITATION_STATUS_CHANGE_NOT_ALLOWED";
     #endregion
 
     #region Organization Structures

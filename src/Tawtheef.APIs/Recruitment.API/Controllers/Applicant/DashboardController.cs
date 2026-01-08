@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Commands;
+using Tawtheef.Application.Features.Recruitment.Dashboard.DTOs;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
 using Tawtheef.Application.Features.Recruitment.JobDetails.Queries;
 using Tawtheef.Domain.Constants;
@@ -85,11 +86,16 @@ public class DashboardController(IMediator mediator) : ControllerBase
     }
     
     [HttpPost("candidate-invitations/{invitationId:guid}/changeStatus")]
-    public async Task<IActionResult> ChangeStatusCandidateInvitation(Guid invitationId)
+    public async Task<IActionResult> ChangeStatusCandidateInvitation(
+        Guid invitationId,
+        [FromBody] ChangeCandidateInvitationStatusRequest request)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
-        var result = await mediator.Send(new ChangeStatusCandidateInvitationCommand(UserId.Value, invitationId));
+        var result = await mediator.Send(new ChangeStatusCandidateInvitationCommand(
+            UserId.Value,
+            invitationId,
+            request.StatusCode));
         return result.ToActionResult();
     }
 

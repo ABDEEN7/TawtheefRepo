@@ -24,6 +24,12 @@ public sealed class ApplyCandidateInvitationCommandHandler(IUnitOfWork unitOfWor
         if (invitation is null)
             return Result.Fail<Unit>(ErrorsCodes.InvitationNotFound);
 
+        var canSubmit = invitation.InvitationStatusId == InvitationStatusIds.NewInvitation
+            || invitation.InvitationStatusId == InvitationStatusIds.Read;
+
+        if (!canSubmit)
+            return Result.Fail<Unit>(ErrorsCodes.InvitationStatusChangeNotAllowed);
+
         invitation.ChangeInvitationStatus(InvitationStatusIds.Submitted);
         invitation.IsAccepted = true;
         invitation.AcceptedAt = DateTimeOffset.UtcNow;

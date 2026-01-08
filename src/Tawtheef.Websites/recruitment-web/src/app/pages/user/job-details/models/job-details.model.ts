@@ -8,8 +8,7 @@ import {JobSkillResponse} from './job-skill-response.model';
 
 export interface JobDetailsModel {
   id: GUID;
-  titleAr?: string;
-  titleEn?: string;
+  title?: string;
   numberOfVacancies: number;
   closingDate: Date;
   minimumAge: number;
@@ -19,12 +18,9 @@ export interface JobDetailsModel {
   modifiedDate?: Date;
   publishAt?: Date;
   cancelledAt?: Date;
-  overViewAr?: string;
-  overViewEn?: string;
-  benefitsAr?: string;
-  benefitsEn?: string;
-  qualificationDescriptionAr?: string;
-  qualificationDescriptionEn?: string;
+  overView?: string;
+  benefits?: string;
+  qualificationDescription?: string;
   sector?: dropdownOptionsModel;
   management?: dropdownOptionsModel;
   department?: dropdownOptionsModel;

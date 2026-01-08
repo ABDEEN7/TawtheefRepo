@@ -6,5 +6,6 @@ namespace Tawtheef.Application.Features.Recruitment.Dashboard.Commands;
 
 public sealed record ChangeStatusCandidateInvitationCommand(
     Guid UserId,
-    Guid InvitationId
+    Guid InvitationId,
+    string StatusCode
 ) : ICommand<IResult<Unit>>;

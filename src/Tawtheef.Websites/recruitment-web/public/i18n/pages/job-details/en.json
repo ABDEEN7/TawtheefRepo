@@ -53,5 +53,8 @@
   "JOB_DETAILS.APPLY_CONFIRM_SUBMIT": "Confirm application",
   "JOB_DETAILS.BACK_TO_DASHBOARD": "Back to Dashboard",
   "JOB_DETAILS.APPLY_SUCCESS": "Your application has been submitted.",
-  "JOB_DETAILS.APPLY_ERROR": "Unable to apply right now. Please try again."
+  "JOB_DETAILS.APPLY_ERROR": "Unable to apply right now. Please try again.",
+  "JOB_DETAILS.REJECT": "Reject invitation",
+  "JOB_DETAILS.REJECT_SUCCESS": "Invitation rejected.",
+  "JOB_DETAILS.REJECT_ERROR": "Unable to reject the invitation. Please try again."
 }

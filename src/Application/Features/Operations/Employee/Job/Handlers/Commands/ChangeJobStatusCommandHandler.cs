@@ -6,6 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Application.Features.Operations.Employee.Job.Handlers.Commands;
 
@@ -33,6 +34,13 @@ public class ChangeJobStatusCommandHandler(
             return Result.Fail<Unit>(validationResult.Errors.Select(e => e.ErrorMessage));
 
         job.ChangeStatus(request.NewStatusId);
+
+        if (request.NewStatusId is JobStatusIds.Closed or JobStatusIds.Cancelled)
+        {
+            foreach (var invitation in job.Invitations)
+                invitation.ChangeInvitationStatus(InvitationStatusIds.Closed);
+        }
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);
