@@ -67,22 +67,21 @@ export class JobPointsCalculationService {
     const mainValue = mainForm.get(sectionKey)?.value || 0;
 
     if (sectionKey === 'experience') {
-      return this.experienceTotal(detailsForm.get('experience') as FormGroup) === mainValue;
-    }
+      return this.experienceTotal(detailsForm.get('experience') as FormGroup) <= mainValue;    }
 
     if (sectionKey === 'languages') {
-      return this.sumLanguagesCategory(detailsForm.get('languages') as FormGroup) === mainValue;
+      return this.sumLanguagesCategory(detailsForm.get('languages') as FormGroup) <= mainValue;
     }
 
-    return this.sumCategory(detailsForm.get(sectionKey) as FormGroup) === mainValue;
-  }
+    return this.sumCategory(detailsForm.get(sectionKey) as FormGroup) <= mainValue;
+    }
 
   areAllCategoriesValid(mainForm: FormGroup, detailsForm: FormGroup, sections: string[]): boolean {
     return sections.every((section) => {
       if (section === 'experience') {
         const expTotal = this.experienceTotal(detailsForm.get('experience') as FormGroup);
         const mainValue = mainForm.get(section)?.value || 0;
-        return expTotal === mainValue;
+        return expTotal <= mainValue;
       }
 
       if (section === 'languages') {
@@ -96,7 +95,7 @@ export class JobPointsCalculationService {
   validateDetailSection(sectionKey: string, mainForm: FormGroup, detailsForm: FormGroup): boolean {
     const mainValue = mainForm.get(sectionKey)?.value || 0;
     const detailSum = this.sumCategory(detailsForm.get(sectionKey) as FormGroup);
-    return detailSum === mainValue;
+    return detailSum <= mainValue;
   }
 
   validateLanguagesSection(mainForm: FormGroup, detailsForm: FormGroup): boolean {
@@ -106,7 +105,7 @@ export class JobPointsCalculationService {
     if (!languagesGroup) return true;
 
     const totalSum = this.sumLanguagesCategory(languagesGroup);
-    if (totalSum !== mainLanguagesValue) return false;
+    if (totalSum > mainLanguagesValue) return false;
 
     const abilities = ['speaking', 'reading', 'conversation'];
     return abilities.every((ability) => {
