@@ -6,13 +6,15 @@
         <span>{{ 'profileOverview.sections.trainingCourses' | translate }}</span>
       </div>
 
-      <button *ngIf="canAddAttachment"
-              type="button"
-              class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-              (click)="onEdit()">
-        <i class="pi pi-pencil" aria-hidden="true"></i>
-        <span>{{ 'common.edit' | translate }}</span>
-      </button>
+      <div class="d-flex align-items-center gap-2" *ngIf="canAddAttachment">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
+          (click)="addCourseTraining()">
+          <i class="pi pi-plus" aria-hidden="true"></i>
+          <span>{{ 'profileView.actions.addCourseTraining' | translate }}</span>
+        </button>
+      </div>
     </div>
 
     <div class="row g-3">

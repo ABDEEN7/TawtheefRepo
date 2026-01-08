@@ -65,9 +65,6 @@ export class AuthService {
     return this.state.checkAuthState(false);
   }
 
-  deleteAccount(): void {
-    this.state.logout(false);
-  }
   private getPermissionsFromToken(): Set<string> {
     if (this.permissionsCache) {
       return this.permissionsCache;

@@ -65,16 +65,12 @@ export class ProfileExperienceSectionComponent {
           baseZIndex: 10000,
           closable: true,
           data: { degrees: this.mapDegrees() },
-        })
-        ?.onClose.subscribe((experience: Experience | null) => {
+        })?.onClose.subscribe((experience: Experience | null) => {
           if (!experience) return;
           this.profileService.saveExperienceSection([experience], []).subscribe({
             next: () => {
               this.notify.success(this.translate.instant('profileView.notifications.saved'));
               this.refresh.emit();
-            },
-            error: () => {
-              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
             }
           });
         });

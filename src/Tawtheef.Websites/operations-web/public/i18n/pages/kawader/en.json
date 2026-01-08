@@ -2,7 +2,7 @@
   "kawader.header.eyebrow": "Kawader service",
   "kawader.header.title": "Upload Qatar ID list",
   "kawader.header.subtitle": "Send a single-column Excel file with Qatar ID numbers to control Qatar Pass access.",
-
+  "kawader.template.download": "Download file template",
   "kawader.upload.label": "Excel file (.xlsx)",
   "kawader.upload.helper": "Only one column is required and each cell should contain a Qatar ID number.",
   "kawader.upload.required": "Please choose a file to upload.",

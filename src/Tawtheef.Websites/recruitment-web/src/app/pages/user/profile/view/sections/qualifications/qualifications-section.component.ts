@@ -39,9 +39,6 @@ export class ProfileQualificationsSectionComponent {
   protected fieldUnderReview(fieldKey: string = ''){
     return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
   }
-  protected onEdit() {
-    this.edit.emit();
-  }
 
   protected noteForRecord(record: QualificationDto | null | undefined): MyProfileReviewNoteDto | null {
     if (!record?.id) return null;
@@ -70,9 +67,6 @@ export class ProfileQualificationsSectionComponent {
             next: () => {
               this.notify.success(this.translate.instant('profileView.notifications.saved'));
               this.refresh.emit();
-            },
-            error: () => {
-              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
             }
           });
         });
@@ -90,16 +84,12 @@ export class ProfileQualificationsSectionComponent {
           baseZIndex: 10000,
           closable: true,
           data: { initialValue: mapped, disableFileUpload: true },
-        })
-        ?.onClose.subscribe((degree: Degree | null) => {
+        })?.onClose.subscribe((degree: Degree | null) => {
           if (!degree) return;
           this.profileService.saveEducationSection([degree]).subscribe({
             next: () => {
               this.notify.success(this.translate.instant('profileView.notifications.saved'));
               this.refresh.emit();
-            },
-            error: () => {
-              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
             }
           });
         });

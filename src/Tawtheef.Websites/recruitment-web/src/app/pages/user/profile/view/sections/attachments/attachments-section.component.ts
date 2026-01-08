@@ -78,9 +78,6 @@ export class ProfileAttachmentsSectionComponent {
           next: () => {
             this.notify.success(this.translate.instant('profileView.notifications.saved'));
             this.refresh.emit();
-          },
-          error: () => {
-            this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
           }
         });
       });

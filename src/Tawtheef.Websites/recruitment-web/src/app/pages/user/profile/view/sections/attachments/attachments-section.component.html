@@ -18,7 +18,7 @@
     </div>
 
     <div class="row g-3">
-      @if (attachments()?.length) {
+      @if (attachments().length) {
       @for (att of attachments(); track att.key) {
           @let fileNote = noteForFile(att.file);
           <div class="col-12 col-lg-6">

@@ -10,11 +10,11 @@ import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {PhoneMapperService} from '../../../wizard-profile/services/phone-mapper.service';
 import {mapProfileStatusToState} from '../../../wizard-profile/services/profile.mapper';
-import {UserService} from '../../../../../core/auth/user.service';
 import {ProfileComponentsModule} from '../../../components/profile-components.module';
-import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {ProfileSectionEnum} from '../../../overview/models/profile-overview.model';
 import {PROFILE_WRITE_MODE, ProfileWriteMode} from '../../../wizard-profile/services/profile-write-mode.token';
+import {UserService} from '../../../../../../core/auth/user.service';
+import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
 
 type EditSection =
   | 'prerequisites' | 'personal' | 'contact' | 'qualifications'

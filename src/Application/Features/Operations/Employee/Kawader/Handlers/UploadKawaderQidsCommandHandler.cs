@@ -33,13 +33,12 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
         if (!AllowedExtensions.Contains(extension))
             return Result.Fail<KawaderUploadResultDto>(ErrorsCodes.InvalidRequest);
 
-        var rows = await ReadRowsAsync(request.File, ct);
-        var processedRows = rows.Count(r => !string.IsNullOrWhiteSpace(r.RawValue));
+        // Reads ONLY sheet 2 + skips header rows
+        var rows = await ReadRowsFromSecondSheetAsync(request.File, ct);
 
+        var processedRows = rows.Count(r => !string.IsNullOrWhiteSpace(r.RawValue));
         if (processedRows == 0)
-        {
             return Result.Fail<KawaderUploadResultDto>(ErrorsCodes.EmptyFile);
-        }
 
         var errors = new List<KawaderUploadErrorDto>();
         var uniqueRows = new List<RowEntry>();
@@ -47,7 +46,8 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
 
         foreach (var row in rows)
         {
-            if (string.IsNullOrWhiteSpace(row.RawValue)) continue;
+            if (string.IsNullOrWhiteSpace(row.RawValue))
+                continue;
 
             if (!QidUtilities.IsValid(row.Normalized))
             {
@@ -66,14 +66,12 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
 
         if (uniqueRows.Count == 0)
         {
-            var result = new KawaderUploadResultDto
+            return Result.Ok(new KawaderUploadResultDto
             {
                 ImportedCount = 0,
                 ProcessedRows = processedRows,
                 Errors = errors
-            };
-
-            return Result.Ok(result);
+            });
         }
 
         var normalizedValues = uniqueRows.Select(r => r.Normalized).ToHashSet(StringComparer.Ordinal);
@@ -105,39 +103,71 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
             await uow.SaveChangesAsync(ct);
         }
 
-        var response = new KawaderUploadResultDto
+        return Result.Ok(new KawaderUploadResultDto
         {
             ImportedCount = toInsert.Count,
             ProcessedRows = processedRows,
             Errors = errors
-        };
-
-        return Result.Ok(response);
+        });
     }
 
-    private static async Task<List<RowEntry>> ReadRowsAsync(IFormFile file, CancellationToken ct)
+    /// <summary>
+    /// Reads ONLY the second worksheet (sheet index 1), and starts after the row whose first cell equals "QID".
+    /// If "QID" header is not found, it reads from the first row (no header skip).
+    /// </summary>
+    private static async Task<List<RowEntry>> ReadRowsFromSecondSheetAsync(IFormFile file, CancellationToken ct)
     {
-        var rows = new List<RowEntry>();
-
         await using var memory = new MemoryStream();
         await file.CopyToAsync(memory, ct);
         memory.Position = 0;
 
         using var reader = ExcelReaderFactory.CreateReader(memory);
 
-        var rowNumber = 0;
+        // Move to sheet #2 (index 1)
+        // If there is no second sheet, return empty list (so caller will treat as EmptyFile).
+        var movedToSecond = reader.NextResult();
+        if (!movedToSecond)
+            return new List<RowEntry>();
 
-        do
+        // First pass: find header row index (where col A == "QID")
+        var excelRow = 0;
+        var headerRowIndex = -1;
+
+        while (reader.Read())
         {
-            while (reader.Read())
+            excelRow++;
+            var a = reader.GetValue(0)?.ToString()?.Trim() ?? string.Empty;
+            if (a.Equals("QID", StringComparison.OrdinalIgnoreCase))
             {
-                rowNumber++;
-                var rawValue = reader.GetValue(0)?.ToString()?.Trim() ?? string.Empty;
-                var normalized = QidUtilities.Normalize(rawValue);
-
-                rows.Add(new RowEntry(rowNumber, rawValue, normalized));
+                headerRowIndex = excelRow;
+                break;
             }
-        } while (reader.NextResult());
+        }
+
+        // Reset back to beginning of sheet #2 by recreating the reader (ExcelDataReader is forward-only).
+        memory.Position = 0;
+        using var reader2 = ExcelReaderFactory.CreateReader(memory);
+
+        // Move again to sheet #2
+        if (!reader2.NextResult())
+            return new List<RowEntry>();
+
+        var rows = new List<RowEntry>();
+        excelRow = 0;
+
+        while (reader2.Read())
+        {
+            excelRow++;
+
+            // Skip until after header row if found
+            if (headerRowIndex > 0 && excelRow <= headerRowIndex)
+                continue;
+
+            var rawValue = reader2.GetValue(0)?.ToString()?.Trim() ?? string.Empty;
+            var normalized = QidUtilities.Normalize(rawValue);
+
+            rows.Add(new RowEntry(excelRow, rawValue, normalized));
+        }
 
         return rows;
     }

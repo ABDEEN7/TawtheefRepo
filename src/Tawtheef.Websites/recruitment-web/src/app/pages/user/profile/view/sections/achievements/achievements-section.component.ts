@@ -39,9 +39,6 @@ export class ProfileAchievementsSectionComponent {
   protected fieldUnderReview(fieldKey: string = ''){
     return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
   }
-  protected onEdit() {
-    this.edit.emit();
-  }
 
   protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {
     if (!file?.resourceId) return null;
@@ -70,9 +67,6 @@ export class ProfileAchievementsSectionComponent {
             next: () => {
               this.notify.success(this.translate.instant('profileView.notifications.saved'));
               this.refresh.emit();
-            },
-            error: () => {
-              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
             }
           });
         });
