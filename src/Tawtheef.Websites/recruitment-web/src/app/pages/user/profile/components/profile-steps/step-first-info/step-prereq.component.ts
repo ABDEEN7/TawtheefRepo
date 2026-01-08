@@ -172,6 +172,9 @@ export class StepPrereqComponent implements OnInit {
         next: (canProceed: any) => {
           this.lastSubmittedSignature = signature;
           if (canProceed) {
+            if (this.profile.isChangeRequestMode()) {
+              this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
+            }
             this.next.emit();
           }
         }

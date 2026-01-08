@@ -1,0 +1,58 @@
+<div class="p-3" i18nNamespace="pages/user/profile-overview">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="fw-semibold">{{ 'profileView.editDialog.title' | translate }}</div>
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="close()">
+      {{ 'profileView.editDialog.close' | translate }}
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="card p-4">{{ 'common.loading' | translate }}</div>
+  } @else if (vmReady()) {
+    <ng-container [ngSwitch]="sectionKey()">
+      <app-step-prereq *ngSwitchCase="'prerequisites'"
+                       (next)="close()">
+      </app-step-prereq>
+
+      <app-step-personal *ngSwitchCase="'personal'"
+                         (back)="close()"
+                         (next)="close()">
+      </app-step-personal>
+
+      <app-step-contact *ngSwitchCase="'contact'"
+                        (back)="close()"
+                        (next)="close()">
+      </app-step-contact>
+
+      <app-step-degrees *ngSwitchCase="'qualifications'"
+                        (back)="close()"
+                        (next)="close()">
+      </app-step-degrees>
+
+      <app-step-experience *ngSwitchCase="'experience'"
+                           (back)="close()"
+                           (next)="close()">
+      </app-step-experience>
+
+      <app-step-achievements *ngSwitchCase="'achievements'"
+                             (back)="close()"
+                             (next)="close()">
+      </app-step-achievements>
+
+      <app-step-skills *ngSwitchCase="'skills'"
+                       (back)="close()"
+                       (next)="close()">
+      </app-step-skills>
+
+      <app-step-languages *ngSwitchCase="'languages'"
+                          (back)="close()"
+                          (next)="close()">
+      </app-step-languages>
+
+      <app-step-attachments *ngSwitchCase="'attachments'"
+                            (back)="close()"
+                            (next)="close()">
+      </app-step-attachments>
+    </ng-container>
+  }
+</div>

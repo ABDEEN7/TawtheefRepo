@@ -38,6 +38,14 @@ export class ProfileService {
   private writeMode: ProfileWriteMode =
     inject(PROFILE_WRITE_MODE, { optional: true }) ?? 'create';
 
+  setWriteMode(mode: ProfileWriteMode) {
+    this.writeMode = mode;
+  }
+
+  isChangeRequestMode(): boolean {
+    return this.writeMode === 'change-request';
+  }
+
   // ========== PREREQ ==========
   savePrereq(
     dto: SaveProfilePrereqRequestModel,
