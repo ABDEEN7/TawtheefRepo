@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {finalize} from 'rxjs';
-import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {TranslateModule} from '@ngx-translate/core';
 import {TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
@@ -16,6 +16,7 @@ import {
   AutoAssignRequest,
   DistributionEmployee,
   DistributionFile,
+  DistributionProfilesFilters,
   DistributionResult,
   EmployeeAvailability,
   ManualAssignRequest,
@@ -33,6 +34,9 @@ import {AutoAssignDialog} from './dialogs/auto-assign-dialog/auto-assign-dialog'
 import {DialogService} from 'primeng/dynamicdialog';
 import {AuthService} from '../../../../../core/auth/auth.service';
 import {Permissions} from '../../../../../core/constants/permissions';
+import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
+import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
+import {PaginationComponent} from '../../../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -49,6 +53,7 @@ import {Permissions} from '../../../../../core/constants/permissions';
     InputNumberModule,
     AvatarModule,
     BadgeModule,
+    PaginationComponent,
     I18nNamespaceDirective,
     Select,
     Ripple,
@@ -61,17 +66,19 @@ import {Permissions} from '../../../../../core/constants/permissions';
 })
 export class ProfileDistributionPage implements OnInit {
   private api = inject(ProfileDistributionService);
-  private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);
 
   files = signal<DistributionFile[]>([]);
   employees = signal<DistributionEmployee[]>([]);
   loading = signal(false);
+  paginationMetadata = signal<PaginationMetadata | null>(null);
 
   statusFilter = signal<ProfileStatusNumber | 'all'>('all');
   search = signal('');
   selectedIds = signal<Set<string>>(new Set());
+  pageNumber = signal(1);
+  pageSize = signal(10);
 
   manualEmployeeId = signal<string>('');
   autoEmployeeIds = signal<Set<string>>(new Set());
@@ -96,6 +103,19 @@ export class ProfileDistributionPage implements OnInit {
     });
   });
 
+  readonly kpis = computed(() => {
+    const filteredFiles = this.filteredFiles();
+
+    return {
+      total: this.paginationMetadata()?.totalCount ?? this.files().length,
+      filtered: filteredFiles.length,
+      submitted: filteredFiles.filter(file => file.status === ProfileStatusNumber.Submitted).length,
+      underReview: filteredFiles.filter(file => file.status === ProfileStatusNumber.UnderReview).length,
+      needsChanges: filteredFiles.filter(file => file.status === ProfileStatusNumber.RequiresUpdate)
+        .length,
+    };
+  });
+
   readonly availableEmployees = computed(() =>
     this.employees().filter(e => e.isActive && e.availability === EmployeeAvailability.Available)
   );
@@ -107,6 +127,8 @@ export class ProfileDistributionPage implements OnInit {
     { value: ProfileStatusNumber.RequiresUpdate, label: 'distribution.filters.statusNeedsChanges' },
   ];
 
+  readonly rowsPerPageOptions = [10, 20, 50];
+
   protected readonly EmployeeAvailability = EmployeeAvailability;
 
   ngOnInit(): void {
@@ -115,16 +137,45 @@ export class ProfileDistributionPage implements OnInit {
 
   loadData(): void {
     this.loading.set(true);
+    const filters: DistributionProfilesFilters = {
+      pageNumber: this.pageNumber(),
+      pageSize: this.pageSize(),
+    };
+    const status = this.statusFilter();
+    if (status !== 'all') filters.status = status;
+
     this.api
-      .getFiles()
+      .getFiles(filters)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: files => this.files.set(files)
+        next: (response: PaginatedResult<DistributionFile>) => {
+          this.files.set(response.items);
+          this.paginationMetadata.set(response.metadata);
+          this.pageNumber.set(response.metadata.currentPage);
+          this.pageSize.set(response.metadata.pageSize);
+        }
       });
 
     this.api.getEmployees().subscribe({
       next: employees => this.employees.set(employees)
     });
+  }
+
+  onPageChange(page: number): void {
+    this.pageNumber.set(page);
+    this.loadData();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize.set(size);
+    this.pageNumber.set(1);
+    this.loadData();
+  }
+
+  onStatusChange(value: ProfileStatusNumber | 'all'): void {
+    this.statusFilter.set(value);
+    this.pageNumber.set(1);
+    this.loadData();
   }
 
   onSelectionChange(selection: DistributionFile[]): void {
@@ -278,9 +329,9 @@ export class ProfileDistributionPage implements OnInit {
   }
 
   private handleResult(assigned: number, result: DistributionResult): void {
-    this.files.set(result.profiles);
     this.employees.set(result.employees);
     this.clearSelection();
+    this.loadData();
   }
 
   canManageDistribution(): boolean {

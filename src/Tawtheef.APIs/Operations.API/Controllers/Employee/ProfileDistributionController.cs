@@ -19,9 +19,9 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
 {
     [HttpGet("profiles")]
     [AuthorizePermission(PermissionKeys.Profile.View)]
-    public async Task<IActionResult> GetFiles([FromQuery] UserProfileStatus? status, CancellationToken ct)
+    public async Task<IActionResult> GetFiles([FromQuery] GetDistributionProfilesQuery query, CancellationToken ct)
     {
-        var result = await mediator.Send(new GetDistributionProfilesQuery(status), ct);
+        var result = await mediator.Send(query, ct);
         return result.ToActionResult();
     }
 

@@ -57,7 +57,7 @@
                                    [options]="statusOptions"
                                    optionValue="value"
                                    [ngModel]="statusFilter()"
-                                   (onChange)="statusFilter.set($event.value)">
+                                   (onChange)="onStatusChange($event.value)">
                                    <ng-template pTemplate="selectedItem" let-item>
                                      <span>{{ item?.label | translate }}</span>
                                    </ng-template>
@@ -90,13 +90,51 @@
                                         <h5 class="mb-0">{{ 'distribution.incoming.title' | translate }}</h5>
                                         <p class="mb-0">{{ 'distribution.incoming.subtitle' | translate }}</p>
                                    </div>
+                                   <div class="row g-3 mb-3">
+                                     <div class="col-md-4 col-lg-3">
+                                       <div class="kpi-card">
+                                         <div class="kpi-label">{{ 'distribution.kpi.total' | translate }}</div>
+                                         <div class="kpi-value">{{ kpis().total }}</div>
+                                       </div>
+                                     </div>
+                                     <div class="col-md-4 col-lg-3">
+                                       <div class="kpi-card">
+                                         <div class="kpi-label">{{ 'distribution.kpi.filtered' | translate }}</div>
+                                         <div class="kpi-value">{{ kpis().filtered }}</div>
+                                       </div>
+                                     </div>
+                                     <div class="col-md-4 col-lg-2">
+                                       <div class="kpi-card">
+                                         <div class="kpi-label">{{ 'distribution.kpi.submitted' | translate }}</div>
+                                         <div class="kpi-value">{{ kpis().submitted }}</div>
+                                       </div>
+                                     </div>
+                                     <div class="col-md-6 col-lg-2">
+                                       <div class="kpi-card">
+                                         <div class="kpi-label">{{ 'distribution.kpi.underReview' | translate }}</div>
+                                         <div class="kpi-value">{{ kpis().underReview }}</div>
+                                       </div>
+                                     </div>
+                                     <div class="col-md-6 col-lg-2">
+                                       <div class="kpi-card">
+                                         <div class="kpi-label">{{ 'distribution.kpi.needsChanges' | translate }}</div>
+                                         <div class="kpi-value">{{ kpis().needsChanges }}</div>
+                                       </div>
+                                     </div>
+                                   </div>
                                     <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
 
                                    <div class="small text-muted" *ngIf="loading()">{{ 'distribution.loading' | translate }}</div>
                                  </div>
                                          <div class="table-card rounded overflow-hidden">
                                               <div class="table-responsive">
-                                                  <p-table  [value]="filteredFiles()" dataKey="profileId" [scrollable]="true" scrollHeight="520px" [selection]="selectedFiles()" (selectionChange)="onSelectionChange($event)" selectionMode="multiple" class="distribution-table">
+                                                  <p-table
+                                                    [value]="filteredFiles()"
+                                                    dataKey="profileId"
+                                                    [selection]="selectedFiles()"
+                                                    (selectionChange)="onSelectionChange($event)"
+                                                    selectionMode="multiple"
+                                                    class="distribution-table">
                                          <ng-template pTemplate="header">
                                            <tr>
                                              <th>
@@ -189,6 +227,18 @@
                                        </p-table>
                                              </div>
                                         </div>
+                                        @if (paginationMetadata()?.totalCount) {
+                                          <div class="pagination-box mt-3">
+                                            <app-pagination
+                                              [currentPage]="pageNumber()"
+                                              [itemsPerPage]="pageSize()"
+                                              [totalItems]="paginationMetadata()?.totalCount || 0"
+                                              [pageSizeOptions]="rowsPerPageOptions"
+                                              (pageChanged)="onPageChange($event)"
+                                              (pageSizeChanged)="onPageSizeChange($event)">
+                                            </app-pagination>
+                                          </div>
+                                        }
                                      </div>
                          </div>
                      </div>

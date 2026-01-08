@@ -6,6 +6,11 @@
   "distribution.availableEmployees": "Available Employees",
   "distribution.incoming.title": "Incoming Profiles List",
   "distribution.incoming.subtitle": "Submitted applications awaiting distribution",
+  "distribution.kpi.total": "Total Profiles",
+  "distribution.kpi.filtered": "Matching Profiles",
+  "distribution.kpi.submitted": "Submitted",
+  "distribution.kpi.underReview": "Under Review",
+  "distribution.kpi.needsChanges": "Needs Changes",
 
   "distribution.actions.refresh": "Refresh Data",
   "distribution.actions.assignTo": "Assign to Employee",
