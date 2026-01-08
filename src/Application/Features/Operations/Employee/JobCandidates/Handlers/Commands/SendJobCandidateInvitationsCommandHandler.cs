@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Commands;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
+using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 using Tawtheef.Domain.Constants;
