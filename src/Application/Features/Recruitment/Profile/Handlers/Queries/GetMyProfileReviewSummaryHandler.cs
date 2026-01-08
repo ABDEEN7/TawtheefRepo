@@ -1,6 +1,5 @@
 using Cortex.Mediator.Queries;
 using FluentResults;
-
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
@@ -28,7 +27,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
 
         var items = await uow.GetEntityRepository<ReviewItem>()
             .DbSet.AsNoTracking()
-            .Where(x => x.UserProfileId == profile.Id)
+            .Where(x => x.UserProfileId == profile.Id && x.Status != ReviewStatus.Solved)
             .ToListAsync(ct);
 
         var changed = items.Where(IsUserChanged).ToList();

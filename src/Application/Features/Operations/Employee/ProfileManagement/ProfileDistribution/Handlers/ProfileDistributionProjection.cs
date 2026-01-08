@@ -12,7 +12,7 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Pr
 
 internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager<User> userManager)
 {
-    public async Task<IReadOnlyList<DistributionProfileDto>> LoadProfilesAsync(
+    public async Task<PaginatedResult<DistributionProfileDto>> LoadProfilesAsync(
         PaginatedRequest paginatedRequest,
         UserProfileStatus? status,
         CancellationToken ct)
@@ -44,7 +44,12 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
 
         var profiles = await profilesQuery
             .ToPaginatedListAsync(paginatedRequest, ct);
-        if (profiles.Metadata.TotalCount == 0) return [];
+        if (profiles.Metadata.TotalCount == 0)
+            return new PaginatedResult<DistributionProfileDto>(
+                [],
+                profiles.Metadata.TotalCount,
+                profiles.Metadata.CurrentPage,
+                profiles.Metadata.PageSize);
 
         var profileIds = profiles.Items.Select(p => p.Id).ToList();
         var assignments = await assignmentRepo.DbSet
@@ -54,7 +59,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
 
         var assignmentLookup = assignments.ToDictionary(a => a.UserProfileId, a => a);
 
-        return profiles.Items
+        var items = profiles.Items
             .Select(profile =>
             {
                 assignmentLookup.TryGetValue(profile.Id, out var assignment);
@@ -77,6 +82,12 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
             })
             .OrderByDescending(p => p.SubmittedAtUtc)
             .ToList();
+
+        return new PaginatedResult<DistributionProfileDto>(
+            items,
+            profiles.Metadata.TotalCount,
+            profiles.Metadata.CurrentPage,
+            profiles.Metadata.PageSize);
     }
 
     public async Task<IReadOnlyList<DistributionEmployeeDto>> LoadEmployeesAsync(CancellationToken ct)
@@ -131,13 +142,13 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
     public async Task<DistributionResultDto> BuildResultAsync(int assignedCount, CancellationToken ct)
     {
         var employees = await LoadEmployeesAsync(ct);
-        var profiles = await LoadProfilesAsync(new PaginatedRequest {PageSize = int.MaxValue},null, ct);
+        var profiles = await LoadProfilesAsync(new PaginatedRequest {PageSize = int.MaxValue}, null, ct);
 
         return new DistributionResultDto
         {
             AssignedCount = assignedCount,
             Employees = employees,
-            Profiles = profiles
+            Profiles = profiles.Items
         };
     }
 

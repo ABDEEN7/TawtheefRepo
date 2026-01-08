@@ -4,20 +4,22 @@ import {
   AutoAssignRequest,
   DistributionEmployee,
   DistributionFile,
+  DistributionProfilesFilters,
   DistributionResult,
   ManualAssignRequest,
   ReassignRequest,
 } from '../models/profile-distribution.models';
 import {HttpService} from '../../../../../../core/http/http.service';
 import {EndpointsService} from '../../../../../../core/http/endpoints.service';
+import {PaginatedResult} from '../../../../../../core/models/paginated-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileDistributionService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
-  getFiles(): Observable<DistributionFile[]> {
-    return this.http.get<DistributionFile[]>(this.endpoints.distribution.files);
+  getFiles(filters: DistributionProfilesFilters): Observable<PaginatedResult<DistributionFile>> {
+    return this.http.get<PaginatedResult<DistributionFile>>(this.endpoints.distribution.files, filters);
   }
 
   getEmployees(): Observable<DistributionEmployee[]> {

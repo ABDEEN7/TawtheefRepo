@@ -1,4 +1,5 @@
 import {ProfileStatusNumber} from '../../../../../../core/enums/lookups.enum';
+import {PaginatedRequest} from '../../../../../../core/models/paginated-request.model';
 
 export enum EmployeeAvailability {
   Available = 1,
@@ -51,4 +52,8 @@ export interface DistributionResult {
   assignedCount: number;
   employees: DistributionEmployee[];
   profiles: DistributionFile[];
+}
+
+export interface DistributionProfilesFilters extends PaginatedRequest {
+  status?: ProfileStatusNumber;
 }

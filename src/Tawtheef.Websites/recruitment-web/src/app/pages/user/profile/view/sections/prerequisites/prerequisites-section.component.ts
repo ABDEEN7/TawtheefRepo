@@ -11,6 +11,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import {Attachment} from '../../../wizard-profile/models/attachment.model';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {NotificationService} from '../../../../../../core/services/notification.service';
+import {ProfileOverviewVisibility} from '../../../overview/services/profile-overview.visibility';
 
 @Component({
   selector: 'app-profile-prerequisites-section',
@@ -32,13 +33,22 @@ export class ProfilePrerequisitesSectionComponent {
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
   @Input() isProfileApproved!: boolean;
+  @Input() visibility: ProfileOverviewVisibility | null = null;
   attachments = computed(() => {
     const p = this.profile;
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
+    const needsBirth = this.visibility?.needsBirth ?? true;
+    const needsMarriage = this.visibility?.needsMarriage ?? true;
     return [
-      { key: 'birthdayCertificate', titleKey: 'profileOverview.attachments.birthdayCertificate', file: p.birthdayCertificate ?? null },
-      { key: 'marriageCertificate', titleKey: 'profileOverview.attachments.marriageCertificate', file: p.marriageCertificate ?? null },
-    ].filter(p => p.file);
+      needsBirth
+        ? { key: 'birthdayCertificate', titleKey: 'profileOverview.attachments.birthdayCertificate', file: p.birthdayCertificate ?? null }
+        : null,
+      needsMarriage
+        ? { key: 'marriageCertificate', titleKey: 'profileOverview.attachments.marriageCertificate', file: p.marriageCertificate ?? null }
+        : null,
+    ]
+      .filter((item): item is { key: string; titleKey: string; file: FileRefDto | null } => !!item)
+      .filter(item => item.file);
   });
   @Input() changesRequest!: FieldChange[];
 

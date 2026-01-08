@@ -48,6 +48,12 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
+        var hadPendingChanges = await changeRepo.DbSet
+            .AsNoTracking()
+            .AnyAsync(c => c.UserProfileId == userProfileId
+                           && (c.Status == ProfileChangeRequestStatus.Pending
+                               || c.Status == ProfileChangeRequestStatus.UnderReview), ct);
+
         var targetKey = ProfileChangeRequest.BuildTargetKey(section, targetType, fieldPath, entityName, entityId, resourceId);
         var change = await changeRepo.DbSet
             .Where(c => c.UserProfileId == userProfileId
@@ -71,8 +77,11 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
             change.AttachmentTitle = attachmentTitle ?? change.AttachmentTitle;
         }
 
-        await DeactivateAssignmentsAsync(assignmentRepo, loggerRepo, userProfileId, requestedByUserId, ct,
-            UserProfileLogConstants.Notes.ReturnedToDistribution);
+        if (!hadPendingChanges)
+        {
+            await DeactivateAssignmentsAsync(assignmentRepo, loggerRepo, userProfileId, requestedByUserId, ct,
+                UserProfileLogConstants.Notes.ReturnedToDistribution);
+        }
 
         var pending = await reviewRepo.DbSet
             .Where(r => r.UserProfileId == userProfileId

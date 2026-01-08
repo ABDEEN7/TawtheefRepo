@@ -13,6 +13,7 @@ using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
 
@@ -84,6 +85,7 @@ public sealed class SaveProfileContactHandler(
 
         }
         
+        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         

@@ -11,6 +11,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
 
@@ -99,6 +100,7 @@ public sealed class SaveProfilePrereqHandler(
 
         CleanCandidateTypeDependents();
 
+        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Prerequisites, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
 

@@ -38,6 +38,33 @@
   font-size: 14px;
 }
 
+.kpi-card {
+  border: 1px solid #f1e5ea;
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #fff7fb;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 88px;
+}
+
+.kpi-label {
+  color: #6b6b6b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.kpi-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #3a103b;
+}
+
+.pagination-box {
+  display: flex;
+  justify-content: flex-end;
+}
 
 
 .count {
@@ -142,6 +169,4 @@
     overflow-x: auto;
   }
 }
-
-
 

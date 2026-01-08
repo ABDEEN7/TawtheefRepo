@@ -8,6 +8,19 @@ import {
 } from '../../wizard-profile/state/profile-step-validity.signal';
 import {ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
 import {ProfileState} from '../../wizard-profile/models/profile-state.model';
+import {CandidateType} from '../../../../../core/enums/lookups.enum';
+
+export type ProfileOverviewVisibility = {
+  type: CandidateType | undefined;
+  isResident: boolean;
+  needsSponsor: boolean;
+  needsBirth: boolean;
+  needsMarriage: boolean;
+  showQidExpiry: boolean;
+  showNationalAddress: boolean;
+  showForeignAddress: boolean;
+  showSponsorSection: boolean;
+};
 
 export function createProfileOverviewVisibility(p: ProfileStatusDto) {
   return computed(() => {
@@ -31,6 +44,6 @@ export function createProfileOverviewVisibility(p: ProfileStatusDto) {
       showNationalAddress: isResident,
       showForeignAddress: !isResident,
       showSponsorSection: candidateTypeNeedsSponsor(type)
-    };
+    } as ProfileOverviewVisibility;
   });
 }

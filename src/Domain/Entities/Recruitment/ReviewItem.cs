@@ -28,6 +28,7 @@ public enum ReviewStatus
     Approved = 2,
     Rejected = 3,
     NeedsCorrection = 4,
+    Solved = 5,
     ChangesRequested = NeedsCorrection
 }
 public enum ReviewTargetType {

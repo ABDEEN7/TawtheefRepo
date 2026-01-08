@@ -13,6 +13,7 @@ using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -85,6 +86,7 @@ public sealed class SaveProfileAchievementHandler(
             newAchievements.Add(entity);
         }
 
+        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.CertificatesAndAwards, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
 

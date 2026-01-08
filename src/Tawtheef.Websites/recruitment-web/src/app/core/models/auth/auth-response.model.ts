@@ -34,6 +34,7 @@ export interface PrefillData
 export interface ProfileStatusDto {
   isComplete: boolean;
   agreedToTerms: boolean;
+  status: number;
   missing: string[];
   isDraft: boolean;
   avatar?: string | null;
