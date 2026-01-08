@@ -36,7 +36,7 @@ import { ProfileLanguagesSectionComponent } from './sections/languages/languages
 import { ProfileAttachmentsSectionComponent } from './sections/attachments/attachments-section.component';
 import { ProfileViewCqrs } from './profile-view.cqrs';
 import {changeRequestDto} from './dtos/change-request-dto';
-import {detectChangedFields, FieldChange} from './utils/detect-change-fields';
+import {applyFieldChanges, detectChangedFields, FieldChange} from './utils/detect-change-fields';
 import {AvatarUtils} from '../../../../core/utils/avatar-utils';
 import { ProfileService } from '../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -136,13 +136,29 @@ export class ProfileViewPage {
   protected changes(section: ProfileSectionEnum) {
     if(this.profileStatus() !== UserProfileStatusEnum.Approved) return [];
     const sectionChanges = this.changeRequestsVm()
-      .filter(cr =>
-        cr.section === section &&
-        cr.action == ProfileChangeActionEnum.UpdateField);
+      .filter(cr => cr.section === section);
 
     let resultChanges: FieldChange[] = [];
-    sectionChanges.forEach((change)=>{
-      resultChanges = resultChanges.concat(detectChangedFields(change.oldValue ?? '', change.newValue ?? ''))
+    sectionChanges.forEach((change) => {
+      if (change.action === ProfileChangeActionEnum.UpdateField) {
+        resultChanges = resultChanges.concat(
+          detectChangedFields(change.oldValue ?? '', change.newValue ?? '')
+        );
+        return;
+      }
+
+      if (
+        change.action === ProfileChangeActionEnum.AddListItem ||
+        change.action === ProfileChangeActionEnum.ReplaceAttachment
+      ) {
+        const field = change.fieldPath ?? change.targetKey ?? '';
+        if (!field) return;
+        resultChanges.push({
+          field,
+          oldValue: parseJsonValue(change.oldValue),
+          newValue: parseJsonValue(change.newValue)
+        });
+      }
     });
 
     return resultChanges;
@@ -272,7 +288,8 @@ export class ProfileViewPage {
   }
 
   sectionValue(section: ProfileSectionEnum) {
-    return this.sections.get(section)?.value() ?? null;
+    const value = this.sections.get(section)?.value() ?? null;
+    return applyFieldChanges(value, this.changes(section));
   }
 
   readonly changeRequestsVm = computed(() => {
@@ -426,4 +443,13 @@ export class ProfileViewPage {
   }
 
   protected readonly UserProfileStatusEnum = UserProfileStatusEnum;
+}
+
+function parseJsonValue(value?: string | null) {
+  if (!value) return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
 }

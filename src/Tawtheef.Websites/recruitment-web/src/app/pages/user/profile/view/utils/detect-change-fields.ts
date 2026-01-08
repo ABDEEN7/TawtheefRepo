@@ -3,6 +3,43 @@
   oldValue: any;
   newValue: any;
 }
+export function applyFieldChanges<T extends Record<string, any>>(
+  value: T | null,
+  changes: FieldChange[]
+): T | null {
+  if (!value || !changes.length) return value;
+
+  const updated: Record<string, any> = { ...value };
+
+  for (const change of changes) {
+    if (!change.field) continue;
+    const indexedMatch = change.field.match(/^(\w+)\[(\d+)]$/);
+    if (indexedMatch) {
+      const baseKey = indexedMatch[1];
+      const index = Number(indexedMatch[2]);
+      const current = Array.isArray(updated[baseKey]) ? [...updated[baseKey]] : [];
+      current[index] = change.newValue;
+      updated[baseKey] = current;
+      continue;
+    }
+
+    const current = updated[change.field];
+    if (Array.isArray(current)) {
+      if (Array.isArray(change.newValue)) {
+        updated[change.field] = change.newValue;
+      } else if (change.newValue != null) {
+        updated[change.field] = [...current, change.newValue];
+      } else {
+        updated[change.field] = change.newValue;
+      }
+      continue;
+    }
+
+    updated[change.field] = change.newValue;
+  }
+
+  return updated as T;
+}
 export function detectChangedFields(
   oldValueJson: string | null,
   newValueJson: string | null
