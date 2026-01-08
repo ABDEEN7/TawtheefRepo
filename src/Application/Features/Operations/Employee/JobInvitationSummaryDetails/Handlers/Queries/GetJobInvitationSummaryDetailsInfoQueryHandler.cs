@@ -47,8 +47,9 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
         dto.CurrentBatchNumber = await unitOfWork.GetEntityRepository<Domain.Entities.Recruitment.Invitation>().DbSet
             .AsNoTracking()
             .Where(invitation => invitation.JobId == query.JobId)
-            .MaxAsync(invitation => (int?)invitation.BatchNumber, cancellationToken) ?? 0;
-
+            .OrderByDescending(invitation => invitation.CreatedDate)
+            .Select(invitation => (Guid?)invitation.BatchNumber)
+            .FirstOrDefaultAsync(cancellationToken);
         return Result.Ok(dto);
     }
 }

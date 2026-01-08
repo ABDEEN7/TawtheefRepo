@@ -31,7 +31,7 @@
               {{ 'JOB_INVITES_DETAILS_JOB_STATUS' | translate }}: {{ jobInfo()?.jobStatus?.name || '-' }}
             </span>
             <span class="pill soft">
-              {{ 'JOB_INVITES_DETAILS_JOB_BATCH' | translate }}: {{ jobInfo()?.currentBatchNumber ?? 0 }}
+              {{ 'JOB_INVITES_DETAILS_JOB_BATCH' | translate }}: {{ jobInfo()?.currentBatchNumber ?? '-' }}
             </span>
           </div>
         </div>
@@ -137,10 +137,10 @@
                  <div class="col-md-3 mt-2">
                    <input
                      class="form-control"
-                     type="number"
+                     type="text"
                      [ngModel]="batchNumber()"
                      [placeholder]="'JOB_INVITES_DETAILS_FILTER_BATCH' | translate"
-                     (ngModelChange)="batchNumber.set($event ? +$event : null); onFilterChange()"
+                     (ngModelChange)="batchNumber.set($event ?? ''); onFilterChange()"
                    />
                  </div>
                  <div class="col-md-2 mt-2">

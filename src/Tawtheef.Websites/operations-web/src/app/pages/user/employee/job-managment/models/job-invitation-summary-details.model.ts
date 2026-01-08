@@ -10,7 +10,7 @@ export interface JobInfoVM {
   jobName: string;
   departmentName: string;
   jobStatus: StatusVM;
-  currentBatchNumber: number;
+  currentBatchNumber: string | null;
 }
 
 export interface StatusVM {
@@ -26,7 +26,7 @@ export interface InviteRowVM {
   personalNumber: string;
   phone: string;
   status: StatusVM;
-  batchNumber: number;
+  batchNumber: string;
   sentDate: string;
   readDate?: string | null;
   appliedDate?: string | null;
@@ -53,7 +53,7 @@ export interface JobInvitesRowsFilters {
   jobId: string;
   statusId: string | null;
   search: string;
-  batchNumber?: number | null;
+  batchNumber?: string | null;
   pageNumber: number;
   pageSize: number;
   sortBy: string;

@@ -15,7 +15,7 @@ export interface JobInvitationSummary {
   expiredCount: number;
   cancelledCount: number;
   previousBatchInvitations: number;
-  lastBatchNumber: number;
+  lastBatchNumber: string | null;
   createDate: string;           // ISO date string
 }
 

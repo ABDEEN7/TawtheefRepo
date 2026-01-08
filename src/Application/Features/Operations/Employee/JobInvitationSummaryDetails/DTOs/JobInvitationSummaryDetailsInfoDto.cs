@@ -8,5 +8,5 @@ public sealed class JobInvitationSummaryDetailsInfoDto
     public string JobName { get; set; } = string.Empty;
     public string DepartmentName { get; set; } = string.Empty;
     public DropdownOptions JobStatus { get; set; } = new();
-    public int CurrentBatchNumber { get; set; }
+    public Guid? CurrentBatchNumber { get; set; }
 }

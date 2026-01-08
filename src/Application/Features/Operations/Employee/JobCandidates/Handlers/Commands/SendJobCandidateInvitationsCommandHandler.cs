@@ -7,7 +7,6 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Commands;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
-using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 using Tawtheef.Domain.Constants;
@@ -148,11 +147,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
             return Result.Ok(EmptyResult());
 
         // Keep batch numbering logic
-        var lastBatchNumber = await invitationsRepo
-            .AsNoTracking()
-            .Where(invitation => invitation.JobId == request.JobId)
-            .MaxAsync(invitation => (int?)invitation.BatchNumber, cancellationToken) ?? 0;
-        var nextBatchNumber = lastBatchNumber + 1;
+        var batchNumber = Guid.NewGuid();
 
         var newInvitations = finalCandidates.Select(c => new Invitation
         {
@@ -160,7 +155,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
             JobId = request.JobId,
             ApplicantId = c.ApplicantId,
             InvitationStatusId = InvitationStatusIds.NewInvitation,
-            BatchNumber = nextBatchNumber,
+            BatchNumber = batchNumber,
             CreatedDate = DateTime.UtcNow
         }).ToList();
 

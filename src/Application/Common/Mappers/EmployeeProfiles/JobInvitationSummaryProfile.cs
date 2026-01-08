@@ -34,13 +34,14 @@ public class JobInvitationSummaryProfile: IRegister
                 var localized = MapContext.Current!.GetService<ILocalizationService>();
                 dest.DepartmentName = localized.GetLocalizedName(src.Department);
                 dest.JobCategory = localized.GetLocalizedName(src.JobCategory);
-                var lastBatch = src.Invitations.Count == 0
-                    ? 0
-                    : src.Invitations.Max(invitation => (int?)invitation.BatchNumber) ?? 0;
+                var lastBatch = src.Invitations
+                    .OrderByDescending(invitation => invitation.CreatedDate)
+                    .Select(invitation => (Guid?)invitation.BatchNumber)
+                    .FirstOrDefault();
                 dest.LastBatchNumber = lastBatch;
-                dest.PreviousBatchInvitations = lastBatch == 0
-                    ? 0
-                    : src.Invitations.Count(invitation => invitation.BatchNumber < lastBatch);
+                dest.PreviousBatchInvitations = lastBatch is null
+                        ? 0
+                    : src.Invitations.Count(invitation => invitation.BatchNumber != lastBatch.Value);
             });
     }
 }
