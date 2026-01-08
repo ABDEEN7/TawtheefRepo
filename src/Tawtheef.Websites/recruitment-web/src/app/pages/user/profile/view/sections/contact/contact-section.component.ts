@@ -10,6 +10,7 @@ import {Tooltip} from 'primeng/tooltip';
 import {Attachment} from '../../../wizard-profile/models/attachment.model';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {NotificationService} from '../../../../../../core/services/notification.service';
+import {ProfileOverviewVisibility} from '../../../overview/services/profile-overview.visibility';
 
 @Component({
   selector: 'app-profile-contact-section',
@@ -29,15 +30,21 @@ export class ProfileContactSectionComponent {
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Input() isProfileApproved!: boolean;
+  @Input() visibility: ProfileOverviewVisibility | null = null;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
   attachments = computed(() => {
     const p = this.profile;
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
+    const showNationalAddress = this.visibility?.showNationalAddress ?? true;
     return [
-      { key: 'residenceAddressCertificate', titleKey: 'profileOverview.attachments.residenceAddressCertificate', file: p.residenceAddressCertificate ?? null },
-    ].filter(p => p.file);
+      showNationalAddress
+        ? { key: 'residenceAddressCertificate', titleKey: 'profileOverview.attachments.residenceAddressCertificate', file: p.residenceAddressCertificate ?? null }
+        : null,
+    ]
+      .filter((item): item is { key: string; titleKey: string; file: FileRefDto | null } => !!item)
+      .filter(item => item.file);
   });
   protected fieldUnderReview(fieldKey: string = ''){
     return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;

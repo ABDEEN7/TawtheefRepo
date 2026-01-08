@@ -11,7 +11,7 @@ import {ProfileDataService} from '../../../wizard-profile/services/profile-data.
 import {PhoneMapperService} from '../../../wizard-profile/services/phone-mapper.service';
 import {mapProfileStatusToState} from '../../../wizard-profile/services/profile.mapper';
 import {ProfileComponentsModule} from '../../../components/profile-components.module';
-import {ProfileSectionEnum} from '../../../overview/models/profile-overview.model';
+import {ProfileSectionEnum, UserProfileStatusEnum} from '../../../overview/models/profile-overview.model';
 import {PROFILE_WRITE_MODE, ProfileWriteMode} from '../../../wizard-profile/services/profile-write-mode.token';
 import {UserService} from '../../../../../../core/auth/user.service';
 import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
@@ -76,6 +76,10 @@ export class ProfileEditDialogComponent {
       const res = this.data.value();
       if (!res?.status) return;
 
+      const resolvedMode = this.resolveWriteMode(res.status.status);
+      this.mode.set(resolvedMode);
+      this.profile.setWriteMode(resolvedMode);
+
       const prefill = this.userService.getPrefill?.() ?? null;
       untracked(() => {
         const state = mapProfileStatusToState(
@@ -122,5 +126,9 @@ export class ProfileEditDialogComponent {
       default:
         return 'attachments';
     }
+  }
+
+  private resolveWriteMode(status: number | null | undefined): ProfileWriteMode {
+    return status === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
   }
 }

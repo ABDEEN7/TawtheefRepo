@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
@@ -33,7 +34,11 @@ public sealed class SaveProfileLanguagesHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         if(cmd.Request.Languages.Count == 0)
+        {
+            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Languages, ct);
+            await uow.SaveChangesAsync(ct);
             return Result.Ok(Unit.Value);
+        }
         
         if (profile.Languages is not null && profile.Languages.Count > 0)
         {
@@ -51,6 +56,7 @@ public sealed class SaveProfileLanguagesHandler(
 
         await langRepo.AddRangeAsync(languages);
 
+        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Languages, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

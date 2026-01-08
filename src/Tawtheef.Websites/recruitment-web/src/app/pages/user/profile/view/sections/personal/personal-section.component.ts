@@ -15,6 +15,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import {Attachment} from '../../../wizard-profile/models/attachment.model';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {NotificationService} from '../../../../../../core/services/notification.service';
+import {ProfileOverviewVisibility} from '../../../overview/services/profile-overview.visibility';
 
 export function formatChanges(
   changes: FieldChange[],
@@ -44,17 +45,23 @@ export class ProfilePersonalSectionComponent {
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Input() isProfileApproved!: boolean;
+  @Input() visibility: ProfileOverviewVisibility | null = null;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
   attachments = computed(() => {
     const p = this.profile;
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
+    const showSponsor = this.visibility?.showSponsorSection ?? true;
     return [
       { key: 'resumeAttachment', titleKey: 'profileOverview.attachments.resume', file: p.resumeAttachment ?? null },
       { key: 'nationalCard', titleKey: 'profileOverview.attachments.nationalCard', file: p.nationalCard ?? null },
-      { key: 'sponsorCard', titleKey: 'profileOverview.attachments.sponsorCard', file: p.sponsorCard ?? null }
-    ].filter(p => p.file);
+      showSponsor
+        ? { key: 'sponsorCard', titleKey: 'profileOverview.attachments.sponsorCard', file: p.sponsorCard ?? null }
+        : null
+    ]
+      .filter((item): item is { key: string; titleKey: string; file: FileRefDto | null } => !!item)
+      .filter(item => item.file);
   });
 
   protected fieldUnderReview(fieldKey: string){
