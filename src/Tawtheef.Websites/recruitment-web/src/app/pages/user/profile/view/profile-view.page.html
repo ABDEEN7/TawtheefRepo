@@ -1,4 +1,4 @@
-<main class="py-4" i18nNamespace="pages/user/profile-overview">
+<main class="py-4" [i18nNamespace]="['pages/user/profile-overview','pages/user/wizard-profile']">
 
   @if (pageLoading()) {
     <!-- FULL PAGE SKELETON -->
@@ -108,20 +108,6 @@
             </div>
           </div>
         </div>
-
-        <div class="panel-inner my-3 d-flex justify-content-between align-items-center flex-wrap"
-          *ngIf="profileStatus() == UserProfileStatusEnum.RequiresUpdate">
-          <label class="form-label fw-semibold">
-            {{'profileView.actions.reSubmitProfileHint' | translate}}
-          </label>
-          <button pButton class="btn btn-sm btn-outline-secondary"
-                  pTooltip="{{ 'profileView.actions.reSubmitProfileHint' | translate }}"
-                  [disabled]="resubmitting()"
-                  (click)="reSubmitProfile()">
-            <i pButtonIcon class="fa fa-edit"></i>
-            <span pButtonLabel>{{ 'profileView.actions.reSubmitProfile' | translate }}</span>
-          </button>
-        </div>
         <!-- Section tiles -->
         <div class="row g-3 mt-1 tiles-row row-cols-1 row-cols-sm-2 row-cols-lg-5">
           @for (card of cards; track card.section) {
@@ -150,7 +136,12 @@
                     <span class="tile-badge badge-done"
                           *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
                       <i class="bi bi-check2"></i>
-                      {{ 'profileView.sections.status.ok' | translate }}
+                      @if(profileStatus() == UserProfileStatusEnum.Approved){
+                        {{ 'profileView.sections.status.ok' | translate }}
+                      }
+                      @else{
+                        {{ 'profileOverview.reviewStatus.pending' | translate }}
+                      }
                     </span>
                   </div>
                 </div>

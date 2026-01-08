@@ -291,9 +291,9 @@ export class ProfileService {
   saveSkillsSection(skills: Skill[]) {
     const dto = {
       submit: false,
-      skills: (skills ?? []).map((s: any) => ({
-        skillId: s.skillId ?? s.id ?? s,
-        levelId: s.levelId ?? s.level?.id,
+      skills: (skills ?? []).filter(s=> !s.id).map((s: any) => ({
+        skillId: s.skillId,
+        levelId: s.levelId,
       })),
     };
 
