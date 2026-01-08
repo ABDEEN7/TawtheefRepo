@@ -41,6 +41,7 @@ import {AvatarUtils} from '../../../../core/utils/avatar-utils';
 import { ProfileService } from '../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.service';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -87,6 +88,7 @@ export class ProfileViewPage {
   private readonly dialogService = inject(DialogService);
   private readonly profileService = inject(ProfileService);
   private readonly notify = inject(NotificationService);
+  private readonly lookups = inject(ProfileLookupsService);
   private readonly auth = inject(AuthService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
 
@@ -112,6 +114,9 @@ export class ProfileViewPage {
   }
   get avatar(){
     return this.header()?.avatar || AvatarUtils.build(this.header()?.fullNameEn ?? null);
+  }
+  get isProfileApproved(){
+    return this.profileStatus() === UserProfileStatusEnum.Approved;
   }
 
   private readonly basics = rxResource({
@@ -173,6 +178,8 @@ export class ProfileViewPage {
         })
       );
     });
+
+    this.lookups.loadAll().subscribe(() => {});
   }
 
   readonly header = computed(() => this.basics.value());

@@ -31,6 +31,7 @@ export class ProfilePrerequisitesSectionComponent {
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
+  @Input() isProfileApproved!: boolean;
   attachments = computed(() => {
     const p = this.profile;
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];

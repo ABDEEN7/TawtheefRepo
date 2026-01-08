@@ -31,7 +31,6 @@ export class ReviewItemsComponent {
 
   @Input() items: ProfileApprovalItem[] | null = [];
   @Input() titleKey = '';
-  @Input() allowEdit = true;
   @Output() review = new EventEmitter<{ item: ProfileApprovalItem; action: ReviewAction }>();
   @Output() viewFile = new EventEmitter<string>();
 

@@ -13,7 +13,8 @@ export function applyFieldChanges<T extends Record<string, any>>(
 
   for (const change of changes) {
     if (!change.field) continue;
-    const indexedMatch = change.field.match(/^(\w+)\[(\d+)]$/);
+    const key = updated[change.field] ? change.field : updated[change.field.toLowerCase()] ? change.field.toLowerCase() : change.field;
+    const indexedMatch = key.match(/^(\w+)\[(\d+)]$/);
     if (indexedMatch) {
       const baseKey = indexedMatch[1];
       const index = Number(indexedMatch[2]);
@@ -23,19 +24,19 @@ export function applyFieldChanges<T extends Record<string, any>>(
       continue;
     }
 
-    const current = updated[change.field];
+    const current = updated[key];
     if (Array.isArray(current)) {
       if (Array.isArray(change.newValue)) {
-        updated[change.field] = change.newValue;
+        updated[key] = change.newValue;
       } else if (change.newValue != null) {
-        updated[change.field] = [...current, change.newValue];
+        updated[key] = [...current, change.newValue];
       } else {
-        updated[change.field] = change.newValue;
+        updated[key] = change.newValue;
       }
       continue;
     }
 
-    updated[change.field] = change.newValue;
+    updated[key] = change.newValue;
   }
 
   return updated as T;

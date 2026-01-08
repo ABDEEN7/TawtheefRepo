@@ -18,22 +18,12 @@
     </div>
 
     <div class="row g-3">
-      @if (profile?.trainingCourses?.length) {
+      @if (profile?.trainingCourses?.length || coursesUnderReview().length) {
         @for (course of profile?.trainingCourses; track course.id) {
-          <div class="col-12 col-lg-6">
-            <div class="card h-100 kv-card">
-              <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
-                <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-                  <div class="fw-semibold text-body">{{ course.title || '-' }}</div>
-                  <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview()">
-                    {{ 'profileOverview.status.pending' | translate }}
-                  </span>
-                </div>
-                <div class="text-muted small">{{ course.provider }} · {{ course.country?.name }}</div>
-                <div class="text-muted small">{{ course.startDate }} - {{ course.endDate }}</div>
-              </div>
-            </div>
-          </div>
+          <ng-container *ngTemplateOutlet="courseTemplate; context: { $implicit: course }"></ng-container>
+        }
+        @for (course of coursesUnderReview(); track course.id) {
+          <ng-container *ngTemplateOutlet="courseTemplate; context: { $implicit: course }"></ng-container>
         }
       } @else {
         <div class="col-12">
@@ -43,3 +33,27 @@
     </div>
   </div>
 </div>
+
+<ng-template #courseTemplate let-course>
+  @let fileNote = noteForRaw(course.attachment);
+  <div class="col-12 col-lg-6">
+    <div class="card h-100 kv-card">
+      <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
+        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+          <div class="fw-semibold text-body">{{ course.title || '-' }}</div>
+          <span class="badge status-pill status-pill--info" *ngIf="!course.id">
+            {{ 'profileOverview.status.pending' | translate }}
+          </span>
+        </div>
+        <div class="text-muted small">{{ course.provider }} · {{ course.country?.name }}</div>
+        <div class="text-muted small">{{ course.startDate }} - {{ course.endDate }}</div>
+        <button *ngIf="fileNote?.note"
+          type="button"
+          class="btn btn-sm btn-outline-secondary rounded-pill"
+          (click)="editCourseTraining(course)">
+          <i class="pi pi-pencil" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

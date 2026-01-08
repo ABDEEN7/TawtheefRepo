@@ -218,6 +218,7 @@
               <app-profile-prerequisites-section
                 *ngSwitchCase="ProfileSectionEnum.Prerequisites"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canEdit]="canEditSections(ProfileSectionEnum.Prerequisites)"
                 [changesRequest]="changes(ProfileSectionEnum.Prerequisites)"
                 [notes]="activeSectionNotes()"
@@ -227,6 +228,7 @@
               <app-profile-personal-section
                 *ngSwitchCase="ProfileSectionEnum.Personal"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canEdit]="canEditSections(ProfileSectionEnum.Personal)"
                 [changesRequest]="changes(ProfileSectionEnum.Personal)"
                 [notes]="activeSectionNotes()"
@@ -236,6 +238,7 @@
               <app-profile-contact-section
                 *ngSwitchCase="ProfileSectionEnum.Contact"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canEdit]="canEditSections(ProfileSectionEnum.Contact)"
                 [changesRequest]="changes(ProfileSectionEnum.Contact)"
                 [notes]="activeSectionNotes()"
@@ -245,6 +248,7 @@
               <app-profile-qualifications-section
                 *ngSwitchCase="ProfileSectionEnum.Qualifications"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Qualifications)"
                 [notes]="activeSectionNotes()"
@@ -255,6 +259,7 @@
               <app-profile-experience-section
                 *ngSwitchCase="ProfileSectionEnum.Experience"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Experience)"
                 [notes]="activeSectionNotes()"
@@ -265,6 +270,7 @@
               <app-profile-training-section
                 *ngSwitchCase="ProfileSectionEnum.TrainingCourses"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.TrainingCourses)"
                 [notes]="activeSectionNotes()"
@@ -274,6 +280,7 @@
               <app-profile-achievements-section
                 *ngSwitchCase="ProfileSectionEnum.CertificatesAndAwards"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.CertificatesAndAwards)"
                 [notes]="activeSectionNotes()"
@@ -284,6 +291,7 @@
               <app-profile-skills-section
                 *ngSwitchCase="ProfileSectionEnum.Skills"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canEdit]="canEditSections(ProfileSectionEnum.Skills)"
                 [changesRequest]="changes(ProfileSectionEnum.Skills)"
                 [notes]="activeSectionNotes()"
@@ -293,6 +301,7 @@
               <app-profile-languages-section
                 *ngSwitchCase="ProfileSectionEnum.Languages"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canEdit]="canEditSections(ProfileSectionEnum.Languages)"
                 [changesRequest]="changes(ProfileSectionEnum.Languages)"
                 [notes]="activeSectionNotes()"
@@ -302,6 +311,7 @@
               <app-profile-attachments-section
                 *ngSwitchCase="ProfileSectionEnum.Attachments"
                 [profile]="sectionValue(active)"
+                [isProfileApproved]="isProfileApproved"
                 [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Attachments)"
                 [notes]="activeSectionNotes()"

@@ -142,8 +142,8 @@ public class ProfileChangeRequest : EventEntity
         {
             ReviewTargetType.Section => ProfileChangeAction.UpdateField,
             ReviewTargetType.Field => ProfileChangeAction.UpdateField,
-            ReviewTargetType.Row => ProfileChangeAction.UpdateField,
-            ReviewTargetType.Attachment => ProfileChangeAction.ReplaceAttachment,
+            ReviewTargetType.Row => ProfileChangeAction.AddListItem,
+            ReviewTargetType.Attachment => ProfileChangeAction.AddListItem,
             _ => throw new ArgumentOutOfRangeException(nameof(targetType), "Invalid target type for profile change request")
         };
 

@@ -32,19 +32,25 @@ export class ProfileAttachmentsSectionComponent {
   @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
+  @Input() isProfileApproved!: boolean;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
   attachments = computed(() => {
     const p = this.profile;
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
-    return p.additionalAttachments?.map((a,index)=> {
+    const approvedItems = p.additionalAttachments?.map((a,index)=> {
       return { key: `additionalAttachments[${index}]`, titleKey: a.title, file: a.file ?? null }
     }) || [];
+
+    const underReview = this.changesRequest.map(i=>i.newValue).map((cr,index)=>{
+      return { key: `additionalAttachmentsNew[${index}]`, titleKey: cr.Title, file: {resourceId: cr.AttachmentResourceId, fileName: cr.FileName} as FileRefDto };
+    })
+    return approvedItems.concat(underReview) ;
   });
-  protected fieldUnderReview(fieldKey: string = '') {
+  protected fieldUnderReview(fieldKey: string | null | undefined): boolean {
     if (!fieldKey) return (this.changesRequest ?? []).length > 0;
-    return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
+    return this.changesRequest.find(cr=> cr.newValue.AttachmentResourceId?.toLowerCase() === fieldKey.toLowerCase()) !== undefined;
   }
 
   protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {

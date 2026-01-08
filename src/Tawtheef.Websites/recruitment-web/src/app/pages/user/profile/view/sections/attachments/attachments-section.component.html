@@ -34,7 +34,7 @@
                       {{ att.titleKey || ('profileOverview.fields.attachment' | translate) }}
                     </div>
 
-                    <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview()">
+                    <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview(att.file?.resourceId)">
                       {{ 'profileOverview.status.pending' | translate }}
                     </span>
                   </div>

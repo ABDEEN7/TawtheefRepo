@@ -1,7 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { FileRefDto, ProfileStatusDto, QualificationDto } from '../../../../../../core/models/auth/auth-response.model';
+import {
+  ExperienceDto,
+  FileRefDto,
+  ProfileStatusDto,
+  QualificationDto
+} from '../../../../../../core/models/auth/auth-response.model';
 import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../../overview/models/profile-overview.model';
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
@@ -33,87 +38,84 @@ export class ProfileQualificationsSectionComponent {
   @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
+  @Input() isProfileApproved!: boolean;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
-  protected fieldUnderReview(fieldKey: string = '') {
-    if (!fieldKey) return (this.changesRequest ?? []).length > 0;
-    return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
+  protected qualificationsUnderReview() {
+    return this.changesRequest.map(i => i.newValue).map((cr, index) => {
+      return {
+        id: cr.Id,
+        degreeId: cr.DegreeId,
+        degree: this.lookups.degrees().find(d => d.id === cr.DegreeId) ?? null,
+        universityId: cr.UniversityId,
+        //university: this.lookups.universities().find(u => u.id === cr.UniversityId) ?? null,
+        majorId: cr.MajorId,
+        //major: this.lookups.majors().find(m => m.id === cr.MajorId) ?? null,
+        subMajorId: cr.SubMajorId,
+        //subMajor: this.lookups.subMajors().find(sm => sm.id === cr.SubMajorId) ?? null,
+        graduationYear: cr.GradYear,
+        studyTypeId: cr.StudyTypeId,
+        studyType: this.lookups.studyTypes().find(st => st.id === cr.StudyTypeId) ?? null,
+        gpa: cr.GPA,
+        gradeId: cr.GradeId,
+        grade: this.lookups.ratingGrades().find(g => g.id === cr.GradeId) ?? null,
+        gradCountryId: cr.GradCountryId,
+        gradCountry: this.lookups.countries().find(c => c.id === cr.GradCountryId) ?? null,
+        attachment: { resourceId: cr.AttachmentResourceId, fileName: cr.FileName } as FileRefDto,
+      } as QualificationDto;
+    });
   }
 
-  protected noteForRecord(record: QualificationDto | null | undefined): MyProfileReviewNoteDto | null {
-    if (!record?.id) return null;
+  protected noteForRaw(qua: QualificationDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!qua?.id) return null;
     return (
       this.notes.find(
         note =>
           note.targetType === ReviewTargetTypeEnum.Row &&
-          note.entityId?.toLowerCase() === record.id.toLowerCase()
+          note.entityId?.toLowerCase() === qua.id.toLowerCase()
       ) ?? null
     );
   }
 
   protected addQualification() {
-    this.lookups.loadAll().subscribe(() => {
-      this.dialogService
-        .open(DegreeModal, {
-          header: this.translate.instant('profileView.actions.addQualification'),
-          width: '80%',
-          contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-          baseZIndex: 10000,
-          closable: true,
-        })
-        ?.onClose.subscribe((degree: Degree | null) => {
-          if (!degree) return;
-          this.profileService.saveEducationSection([degree]).subscribe({
-            next: () => {
-              this.notify.success(this.translate.instant('profileView.notifications.saved'));
-              this.refresh.emit();
-            }
-          });
-        });
+    this.dialogService
+      .open(DegreeModal, {
+        header: this.translate.instant('profileView.actions.addQualification'),
+        width: '80%',
+        contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+        baseZIndex: 10000,
+        closable: true,
+      })
+      ?.onClose.subscribe((degree: Degree | null) => {
+      if (!degree) return;
+      this.profileService.saveEducationSection([degree]).subscribe({
+        next: () => {
+          this.notify.success(this.translate.instant('profileView.notifications.saved'));
+          this.refresh.emit();
+        }
+      });
     });
   }
 
   protected editQualification(qualification: QualificationDto) {
     const mapped = this.mapQualificationToDegree(qualification);
-    this.lookups.loadAll().subscribe(() => {
-      this.dialogService
-        .open(DegreeModal, {
-          header: this.translate.instant('profileView.actions.editQualification'),
-          width: '80%',
-          contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-          baseZIndex: 10000,
-          closable: true,
-          data: { initialValue: mapped, disableFileUpload: true },
-        })?.onClose.subscribe((degree: Degree | null) => {
-          if (!degree) return;
-          this.profileService.saveEducationSection([degree]).subscribe({
-            next: () => {
-              this.notify.success(this.translate.instant('profileView.notifications.saved'));
-              this.refresh.emit();
-            }
-          });
-        });
-    });
-  }
-
-  protected replaceQualificationFile(qualification: QualificationDto, event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-    if (!file) return;
-
-    const payload = this.mapQualificationToDegree(qualification);
-    payload.file = file;
-    payload.fileName = file.name;
-
-    this.profileService.saveEducationSection([payload]).subscribe({
-      next: () => {
-        this.notify.success(this.translate.instant('profileView.notifications.saved'));
-        this.refresh.emit();
-      },
-      error: () => {
-        this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
-      }
+    this.dialogService
+      .open(DegreeModal, {
+        header: this.translate.instant('profileView.actions.editQualification'),
+        width: '80%',
+        contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+        baseZIndex: 10000,
+        closable: true,
+        data: { initialValue: mapped, disableFileUpload: true },
+      })?.onClose.subscribe((degree: Degree | null) => {
+      if (!degree) return;
+      this.profileService.saveEducationSection([degree]).subscribe({
+        next: () => {
+          this.notify.success(this.translate.instant('profileView.notifications.saved'));
+          this.refresh.emit();
+        }
+      });
     });
   }
 

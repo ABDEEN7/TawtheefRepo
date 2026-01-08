@@ -33,120 +33,96 @@ export class ProfileAchievementsSectionComponent {
   @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
+  @Input() isProfileApproved!: boolean;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
-  protected fieldUnderReview(fieldKey: string = '') {
-    if (!fieldKey) return (this.changesRequest ?? []).length > 0;
-    return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
+  protected achievementsUnderReview(){
+    return this.changesRequest.map(i=>i.newValue).map((cr,index)=>{
+      return {
+        id: cr.Id,
+        achievementTypeId: cr.AchievementTypeId,
+        achievementType: this.lookups.achievementTypes().find(type => type.id === cr.AchievementTypeId),
+        title: cr.Title,
+        issuingAuthority: cr.IssuingAuthority,
+        countryId: cr.CountryId,
+        country: this.lookups.countries().find(c => c.id === cr.CountryId) ?? null,
+        issueDate: cr.IssueDate,
+        description: cr.Description,
+        attachment: { resourceId: cr.AttachmentResourceId, fileName: cr.FileName } as FileRefDto,
+        relatedToSpecialization: cr.RelatedToSpecialization,
+      } as AchievementDto;
+    })
   }
 
-  protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {
-    if (!file?.resourceId) return null;
+  protected noteForRaw(achievement: AchievementDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!achievement?.id) return null;
     return (
       this.notes.find(
         note =>
-          note.targetType === ReviewTargetTypeEnum.Attachment &&
-          note.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+          note.targetType === ReviewTargetTypeEnum.Row &&
+          note.entityId?.toLowerCase() === achievement.id.toLowerCase()
       ) ?? null
     );
   }
 
-  protected addAchievement() {
-    this.lookups.loadAll().subscribe(() => {
-      this.dialogService
-        .open(AchievementModal, {
-          header: this.translate.instant('profileView.actions.addAchievement'),
-          width: '50%',
-          contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-          baseZIndex: 10000,
-          closable: true,
-        })
-        ?.onClose.subscribe((achievement: Achievement | null) => {
-          if (!achievement) return;
-          this.profileService.saveAchievementsSection([achievement]).subscribe({
-            next: () => {
-              this.notify.success(this.translate.instant('profileView.notifications.saved'));
-              this.refresh.emit();
-            }
-          });
-        });
+  protected addAchievement() {this.dialogService
+    .open(AchievementModal, {
+      header: this.translate.instant('profileView.actions.addAchievement'),
+      width: '50%',
+      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+      baseZIndex: 10000,
+      closable: true,
+    })
+    ?.onClose.subscribe((achievement: Achievement | null) => {
+      if (!achievement) return;
+      this.profileService.saveAchievementsSection([achievement]).subscribe({
+        next: () => {
+          this.notify.success(this.translate.instant('profileView.notifications.saved'));
+          this.refresh.emit();
+        }
+      });
     });
   }
 
-  protected editAchievement(achievement: AchievementDto) {
-    this.lookups.loadAll().subscribe(() => {
-      const achievementType =
-        this.lookups.achievementTypes().find(type => type.id === achievement.achievementTypeId) ?? null;
-      const initialValue = {
-        achievementType,
-        title: achievement.title ?? '',
-        issuingAuthority: achievement.issuingAuthority ?? '',
-        country: achievement.country ?? null,
-        issueDate: achievement.issueDate ? new Date(achievement.issueDate) : null,
-        description: achievement.description ?? '',
-        fileName: achievement.attachment?.fileName ?? '',
-        relatedToSpecialization: achievement.relatedToSpecialization ?? null,
-      };
-
-      this.dialogService
-        .open(AchievementModal, {
-          header: this.translate.instant('profileView.actions.editAchievement'),
-          width: '50%',
-          contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-          baseZIndex: 10000,
-          closable: true,
-          data: {
-            initialValue,
-            disableFileUpload: true,
-            initialId: achievement.id,
-            attachmentId: achievement.attachment?.resourceId ?? null,
-          },
-        })
-        ?.onClose.subscribe((result: Achievement | null) => {
-          if (!result) return;
-          this.profileService.saveAchievementsSection([result]).subscribe({
-            next: () => {
-              this.notify.success(this.translate.instant('profileView.notifications.saved'));
-              this.refresh.emit();
-            },
-            error: () => {
-              this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
-            }
-          });
-        });
-    });
-  }
-
-  protected replaceAchievementFile(achievement: AchievementDto, event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-    if (!file) return;
-
-    const payload: Achievement = {
-      id: achievement.id,
-      achievementTypeId: achievement.achievementTypeId,
-      achievementType: achievement.achievementType ?? null,
+  protected editAchievement(achievement: AchievementDto) {const achievementType =
+    this.lookups.achievementTypes().find(type => type.id === achievement.achievementTypeId) ?? null;
+    const initialValue = {
+      achievementType,
       title: achievement.title ?? '',
       issuingAuthority: achievement.issuingAuthority ?? '',
-      countryId: achievement.countryId,
       country: achievement.country ?? null,
-      issueDate: achievement.issueDate ?? '',
+      issueDate: achievement.issueDate ? new Date(achievement.issueDate) : null,
       description: achievement.description ?? '',
+      fileName: achievement.attachment?.fileName ?? '',
       relatedToSpecialization: achievement.relatedToSpecialization ?? null,
-      file,
-      fileName: file.name,
-      attachmentId: achievement.attachment?.resourceId ?? null,
     };
 
-    this.profileService.saveAchievementsSection([payload]).subscribe({
-      next: () => {
-        this.notify.success(this.translate.instant('profileView.notifications.saved'));
-        this.refresh.emit();
-      },
-      error: () => {
-        this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
-      }
+    this.dialogService
+      .open(AchievementModal, {
+        header: this.translate.instant('profileView.actions.editAchievement'),
+        width: '50%',
+        contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+        baseZIndex: 10000,
+        closable: true,
+        data: {
+          initialValue,
+          disableFileUpload: true,
+          initialId: achievement.id,
+          attachmentId: achievement.attachment?.resourceId ?? null,
+        },
+      })
+      ?.onClose.subscribe((result: Achievement | null) => {
+      if (!result) return;
+      this.profileService.saveAchievementsSection([result]).subscribe({
+        next: () => {
+          this.notify.success(this.translate.instant('profileView.notifications.saved'));
+          this.refresh.emit();
+        },
+        error: () => {
+          this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
+        }
+      });
     });
   }
 

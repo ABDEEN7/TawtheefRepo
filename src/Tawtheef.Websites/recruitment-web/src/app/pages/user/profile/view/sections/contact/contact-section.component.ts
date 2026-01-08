@@ -28,6 +28,7 @@ export class ProfileContactSectionComponent {
   @Input() canEdit = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
+  @Input() isProfileApproved!: boolean;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
