@@ -8,5 +8,6 @@ namespace Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary
 public sealed record GetJobInvitationSummaryDetailsRowsQuery(
     Guid JobId,
     Guid? StatusId,
-    string? Search)
+    string? Search,
+    Guid? BatchNumber)
     : PaginatedRequest, IQuery<IResult<PaginatedResult<JobInvitationSummaryDetailsRowDto>>>;

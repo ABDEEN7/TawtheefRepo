@@ -2,11 +2,15 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 
 import {
   CandidateDashboardService,
   JOB_INVITATION_STATUSES,
-  ACTION_CONFIGS, InvitationStatus,
+  ACTION_CONFIGS,
+  InvitationStatus,
+  STATUS_PILL_CLASSES,
+  TYPE_BADGE_CLASSES,
 } from './services/candidate-dashboard.service';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 import {Select} from 'primeng/select';
@@ -14,13 +18,15 @@ import {CandidateInvitationFilters} from './models/candidate-invitation-filters'
 import {CandidateInvitationModel} from './models/candidate-invitation.model';
 import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
+import {TableModule} from 'primeng/table';
+import {routes} from '../../../routes/routes';
+import { AuthService } from '../../../core/auth/auth.service';
+import { GUID } from '../../../shared/types/guid.type';
 
 type ActionConfig = {
   showApply: boolean;
   showView: boolean;
-  showTrack: boolean;
   showDetails: boolean;
-  showWithdraw: boolean;
 };
 
 @Component({
@@ -33,17 +39,18 @@ type ActionConfig = {
     I18nNamespaceDirective,
     Select,
     PaginationComponent,
-    Select,
-    TranslatePipe
+    TableModule,
+    RouterLink
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
   candidateService = inject(CandidateDashboardService);
+  authService = inject(AuthService);
+  routes = routes;
 
   // Loading states
-  isWithdrawing = signal<string | null>(null);
   isRefreshing = signal(false);
 
   // Reactive signals
@@ -76,6 +83,7 @@ export class Dashboard implements OnInit {
 
   loadCandidateInvitations() {
     const searchFilters: CandidateInvitationFilters =  {
+      userId : this.authService.getCurrentUser()?.userId as GUID,
       jobCategoryId: this.selectedCategory() || '',
       departmentId: this.selectedDepartment() || '',
       invitationStatusId: this.selectedInvitationStatus() || '',
@@ -98,39 +106,12 @@ export class Dashboard implements OnInit {
     this.currentPage.set(1);
   }
 
-  // Action methods
-  withdrawApplication(recordId: string): void {
-    // this.isWithdrawing.set(recordId);
-    //
-    // this.candidateService.withdrawApplication(recordId)
-    //   .subscribe(response => {
-    //     this.isWithdrawing.set(null);
-    //     if (response.success) {
-    //       this.allRecords.update(records =>
-    //         records.map(record =>
-    //           record.id === recordId ? { ...record, status: JOB_INVITATION_STATUSES.REJECTED } : record
-    //         )
-    //       );
-    //       this.currentPage.set(1);
-    //     }
-    //   });
+  getStatusClass(status: string): string {
+    return STATUS_PILL_CLASSES[status as InvitationStatus] ?? 'status-closed';
   }
 
-  // Helper methods for templates
-  getStatusClasses(status: string): string[] {
-    const map: Record<string, string[]> = {
-      NewInvitation: ['bg-info-subtle', 'text-info'],             // new item = info
-      Closed: ['bg-secondary-subtle', 'text-secondary'],          // closed = grey
-      UnderReview: ['bg-warning-subtle', 'text-warning'],         // pending review
-      Approved: ['bg-success-subtle', 'text-success'],            // approved = success
-      Readed: ['bg-primary-subtle', 'text-primary'],              // read = primary
-      Rejected: ['bg-danger-subtle', 'text-danger'],              // rejected = danger
-      Cancelled: ['bg-dark-subtle', 'text-dark'],                 // cancelled = dark
-      RequiresUpdate: ['bg-warning-subtle', 'text-warning'],      // needs update = warning
-      Submitted: ['bg-info-subtle', 'text-info'],                 // submitted = info
-    };
-
-    return map[status] || ['bg-secondary-subtle', 'text-secondary']; // fallback style
+  getJobCategoryClass(record: CandidateInvitationModel): string {
+    return TYPE_BADGE_CLASSES[record.jobCategoryBackendName as keyof typeof TYPE_BADGE_CLASSES] ?? '';
   }
 
   getActionButtons(invitationStatus: dropdownOptionsModel): ActionConfig {

@@ -88,14 +88,14 @@ export const ACTION_CONFIGS: Record<InvitationStatus, ActionConfig> = {
     showApply: false,
     showView: false,
     showTrack: false,
-    showDetails: true,
+    showDetails: false,
     showWithdraw: false
   },
   [JOB_INVITATION_STATUSES.CLOSED]: {
     showApply: false,
     showView: false,
     showTrack: false,
-    showDetails: true,
+    showDetails: false,
     showWithdraw: false
   },
   [JOB_INVITATION_STATUSES.APPROVED]: {

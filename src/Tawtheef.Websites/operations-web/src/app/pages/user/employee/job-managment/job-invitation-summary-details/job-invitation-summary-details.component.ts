@@ -45,7 +45,7 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
 
   selectedStatus = signal<string | null>(null);
   searchText = signal<string>('');
-
+  batchNumber = signal<string>('');
   currentPage = signal(1);
   itemsPerPage = signal(7);
 
@@ -82,6 +82,7 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
       jobId: this.jobId(),
       statusId: this.selectedStatus() || null,
       search: this.searchText() || '',
+      batchNumber: this.getValidBatchNumber(),
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage(),
       sortBy: 'createdDate',
@@ -98,8 +99,9 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
   }
 
   clearFilters(): void {
-    this.selectedStatus.set('');
+    this.selectedStatus.set(null);
     this.searchText.set('');
+    this.batchNumber.set('');
     this.currentPage.set(1);
     this.loadAll();
   }
@@ -124,5 +126,10 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
 
   navigateTo() {
     this.router.navigate([routes.employee.jobInvitationSummary]);
+  }
+
+  private getValidBatchNumber(): string | null {
+    const value = this.batchNumber().trim();
+    return value && GuidUtils.isValid(value) ? value : null;
   }
 }

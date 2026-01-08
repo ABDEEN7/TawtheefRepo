@@ -1,0 +1,24 @@
+<div class="dialog-body">
+  <p class="mb-3">{{ 'JOB_DETAILS.APPLY_CONFIRM_DESCRIPTION' | translate }}</p>
+
+  <div class="form-check mb-4">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      id="apply-consent"
+      [(ngModel)]="agreed"
+    />
+    <label class="form-check-label" for="apply-consent">
+      {{ 'JOB_DETAILS.APPLY_CONFIRM_CONSENT' | translate }}
+    </label>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+      {{ 'JOB_DETAILS.APPLY_CONFIRM_CANCEL' | translate }}
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="!agreed" (click)="confirm()">
+      {{ 'JOB_DETAILS.APPLY_CONFIRM_SUBMIT' | translate }}
+    </button>
+  </div>
+</div>
