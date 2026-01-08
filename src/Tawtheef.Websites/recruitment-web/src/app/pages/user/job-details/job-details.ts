@@ -55,7 +55,7 @@ export class JobDetails implements OnInit {
     this.detailsService.loadJobDetails(invitationId).subscribe(resp=>{
       if(resp)
       {
-        this.detailsService.changeInvitationStatus(invitationId, 'Read').subscribe();
+        this.detailsService.changeInvitationStatusRead(invitationId).subscribe();
       }
     });
     this.invitationDetailsService.loadInvitation(invitationId);
@@ -177,7 +177,7 @@ export class JobDetails implements OnInit {
     const invitationId = this.invitationId();
     if (!invitationId) return;
 
-    this.detailsService.changeInvitationStatus(invitationId, 'Rejected').subscribe({
+    this.detailsService.changeInvitationStatusReject(invitationId).subscribe({
       next: () => {
         this.invitationDetailsService.loadInvitation(invitationId);
         this.notifier.success(this.translate.instant('JOB_DETAILS.REJECT_SUCCESS'));

@@ -34,10 +34,19 @@ export class JobDetailsService {
       );
   }
 
-  changeInvitationStatus(invitationId: string, statusCode: string) {
+  changeInvitationStatusRead(invitationId: string) {
     this.applying.set(true);
     return this.http
-      .post<void>(this.endpoints.dashboard.changeStatusCandidateInvitation(invitationId), {statusCode})
+      .post<void>(this.endpoints.dashboard.changeStatusCandidateInvitationRead(invitationId),null)
+      .pipe(
+        finalize(() => this.applying.set(false))
+      );
+  }
+
+  changeInvitationStatusReject(invitationId: string) {
+    this.applying.set(true);
+    return this.http
+      .post<void>(this.endpoints.dashboard.changeStatusCandidateInvitationReject(invitationId),null)
       .pipe(
         finalize(() => this.applying.set(false))
       );

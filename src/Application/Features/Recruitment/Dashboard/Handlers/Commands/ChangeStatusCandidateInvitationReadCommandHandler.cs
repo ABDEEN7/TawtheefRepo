@@ -10,10 +10,10 @@ using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Application.Features.Recruitment.Dashboard.Handlers.Commands;
 
-public sealed class ChangeStatusCandidateInvitationRejectedCommandHandler(IUnitOfWork unitOfWork)
-    : ICommandHandler<ChangeStatusCandidateInvitationRejectedCommand, IResult<Unit>>
+public sealed class ChangeStatusCandidateInvitationReadCommandHandler(IUnitOfWork unitOfWork)
+    : ICommandHandler<ChangeStatusCandidateInvitationReadCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(ChangeStatusCandidateInvitationRejectedCommand command, CancellationToken cancellationToken)
+    public async Task<IResult<Unit>> Handle(ChangeStatusCandidateInvitationReadCommand command, CancellationToken cancellationToken)
     {
         var invitation = await unitOfWork.GetEntityRepository<Invitation>().DbSet
             .FirstOrDefaultAsync(
@@ -29,7 +29,7 @@ public sealed class ChangeStatusCandidateInvitationRejectedCommandHandler(IUnitO
         if (!isPending)
             return Result.Fail<Unit>(ErrorsCodes.InvitationStatusChangeNotAllowed);
 
-        invitation.ChangeInvitationStatus(InvitationStatusIds.Rejected);
+        invitation.ChangeInvitationStatus(InvitationStatusIds.Read);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);
     }

@@ -1,14 +1,12 @@
 using System.Security.Claims;
 using Cortex.Mediator;
 using FluentResults;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Commands;
-using Tawtheef.Application.Features.Recruitment.Dashboard.DTOs;
 using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
 using Tawtheef.Application.Features.Recruitment.JobDetails.Queries;
 using Tawtheef.Domain.Constants;
@@ -85,17 +83,27 @@ public class DashboardController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     
-    [HttpPost("candidate-invitations/{invitationId:guid}/changeStatus")]
-    public async Task<IActionResult> ChangeStatusCandidateInvitation(
-        Guid invitationId,
-        [FromBody] ChangeCandidateInvitationStatusRequest request)
+    [HttpPost("candidate-invitations/{invitationId:guid}/read")]
+    public async Task<IActionResult> ChangeStatusCandidateInvitationRead(
+        Guid invitationId)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
-        var result = await mediator.Send(new ChangeStatusCandidateInvitationCommand(
+        var result = await mediator.Send(new ChangeStatusCandidateInvitationReadCommand(
             UserId.Value,
-            invitationId,
-            request.StatusCode));
+            invitationId));
+        return result.ToActionResult();
+    }
+    
+    [HttpPost("candidate-invitations/{invitationId:guid}/reject")]
+    public async Task<IActionResult> ChangeStatusCandidateInvitationReject(
+        Guid invitationId)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new ChangeStatusCandidateInvitationRejectedCommand(
+            UserId.Value,
+            invitationId));
         return result.ToActionResult();
     }
 
