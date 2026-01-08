@@ -44,7 +44,7 @@ import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/
 })
 export class DegreeModal implements OnInit {
   private fb = inject(FormBuilder);
-  private config = inject(DynamicDialogConfig);
+  private config = inject(DynamicDialogConfig<Degree>);
   private translate = inject(TranslateService);
   protected lookups = inject(ProfileLookupsService);
   protected ref = inject(DynamicDialogRef);

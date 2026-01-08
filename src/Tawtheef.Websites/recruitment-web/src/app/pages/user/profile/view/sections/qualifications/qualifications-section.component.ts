@@ -122,14 +122,21 @@ export class ProfileQualificationsSectionComponent {
   private mapQualificationToDegree(qualification: QualificationDto): Degree {
     return {
       id: qualification.id,
+      degreeId: qualification.degreeId,
       degree: qualification.degree ?? null,
+      gradCountryId: qualification.gradCountryId,
       gradCountry: qualification.gradCountry ?? null,
+      universityId: qualification.universityId,
       university: qualification.university ?? null,
+      majorId: qualification.majorId,
       major: qualification.major ?? null,
+      subMajorId: qualification.subMajorId,
       subMajor: qualification.subMajor ?? null,
       gradYear: qualification.graduationYear ?? 0,
+      studyTypeId: qualification.studyTypeId,
       studySystem: qualification.studyType ?? null,
       gpa: qualification.gpa ?? 0,
+      gradeId: qualification.gradeId,
       grade: qualification.grade ?? null,
       certificate: qualification.attachment
         ? {
@@ -140,7 +147,7 @@ export class ProfileQualificationsSectionComponent {
         : null,
       attachmentId: qualification.attachment?.resourceId ?? null,
       fileName: qualification.attachment?.fileName ?? null,
-    };
+    } as Degree;
   }
 
   protected open(file: FileRefDto | null | undefined) {
