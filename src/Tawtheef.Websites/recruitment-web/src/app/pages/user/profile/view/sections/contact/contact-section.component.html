@@ -148,6 +148,7 @@
     <!-- Attachments -->
     <div class="row g-3 mt-2">
       @for (att of attachments(); track att.key) {
+        @let fileNote = noteForFile(att.file);
         <div class="col-12 col-lg-6">
           <div class="card h-100 attach-card">
             <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
@@ -163,12 +164,34 @@
                 <div class="min-w-0">
                   @if (att.file) {
                     <a class="d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-body min-w-0 attach-link"
+                       [ngClass]="{ 'attach-link--warn': fileNote }"
                        (click)="open(att.file)">
                       <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
                       <span class="text-truncate d-inline-block">
                         {{ att.file.fileName }}
                       </span>
+                      @if (fileNote) {
+                        <i
+                          class="pi pi-exclamation-triangle text-warning"
+                          [pTooltip]="fileNote.note || fileNote.title"
+                          tooltipPosition="top"
+                          aria-hidden="true"></i>
+                      }
                     </a>
+                    <div class="d-flex align-items-center gap-2 mt-2" *ngIf="fileNote">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary rounded-pill"
+                        (click)="replaceInput.click()">
+                        {{ 'profileView.actions.replaceFile' | translate }}
+                      </button>
+                      <input
+                        #replaceInput
+                        type="file"
+                        class="d-none"
+                        accept=".pdf,.png,.jpeg,.jpg,.webp"
+                        (change)="replaceAttachment(att, $event)" />
+                    </div>
                   } @else {
                     <span class="text-muted">
                       {{ 'common.none' | translate }}

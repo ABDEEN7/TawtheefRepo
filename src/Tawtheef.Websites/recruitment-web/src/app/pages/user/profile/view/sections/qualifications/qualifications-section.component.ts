@@ -30,7 +30,7 @@ export class ProfileQualificationsSectionComponent {
   private readonly fileUtils = inject(FileUtilsService);
 
   @Input() profile: ProfileStatusDto | null = null;
-  @Input() canEdit = false;
+  @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Output() edit = new EventEmitter<void>();
@@ -43,13 +43,13 @@ export class ProfileQualificationsSectionComponent {
     this.edit.emit();
   }
 
-  protected noteForFile(file: FileRefDto | null | undefined): MyProfileReviewNoteDto | null {
-    if (!file?.resourceId) return null;
+  protected noteForRecord(record: QualificationDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!record?.id) return null;
     return (
       this.notes.find(
         note =>
-          note.targetType === ReviewTargetTypeEnum.Attachment &&
-          note.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+          note.targetType === ReviewTargetTypeEnum.Row &&
+          note.entityId?.toLowerCase() === record.id.toLowerCase()
       ) ?? null
     );
   }

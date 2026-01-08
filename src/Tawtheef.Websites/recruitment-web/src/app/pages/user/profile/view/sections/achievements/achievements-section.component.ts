@@ -30,7 +30,7 @@ export class ProfileAchievementsSectionComponent {
   private readonly fileUtils = inject(FileUtilsService);
 
   @Input() profile: ProfileStatusDto | null = null;
-  @Input() canEdit = false;
+  @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Output() edit = new EventEmitter<void>();

@@ -55,7 +55,7 @@
       <div class="d-flex flex-column gap-3">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 header-row">
           <div class="d-flex align-items-center gap-3">
-            <img class="avatar shadow-sm" [src]="header()?.avatar || 'https://via.placeholder.com/88x88.png?text=AV'" alt="Avatar" />
+            <img class="avatar shadow-sm" [src]="avatar" alt="Avatar" />
 
             <div class="text-start">
               <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -244,7 +244,7 @@
               <app-profile-qualifications-section
                 *ngSwitchCase="ProfileSectionEnum.Qualifications"
                 [profile]="sectionValue(active)"
-                [canEdit]="canEditSections(ProfileSectionEnum.Qualifications)"
+                [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Qualifications)"
                 [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.Qualifications)"
@@ -254,7 +254,7 @@
               <app-profile-experience-section
                 *ngSwitchCase="ProfileSectionEnum.Experience"
                 [profile]="sectionValue(active)"
-                [canEdit]="canEditSections(ProfileSectionEnum.Experience)"
+                [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Experience)"
                 [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.Experience)"
@@ -264,7 +264,7 @@
               <app-profile-training-section
                 *ngSwitchCase="ProfileSectionEnum.TrainingCourses"
                 [profile]="sectionValue(active)"
-                [canEdit]="canEditSections(ProfileSectionEnum.TrainingCourses)"
+                [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.TrainingCourses)"
                 [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.TrainingCourses)">
@@ -273,7 +273,7 @@
               <app-profile-achievements-section
                 *ngSwitchCase="ProfileSectionEnum.CertificatesAndAwards"
                 [profile]="sectionValue(active)"
-                [canEdit]="canEditSections(ProfileSectionEnum.CertificatesAndAwards)"
+                [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.CertificatesAndAwards)"
                 [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.CertificatesAndAwards)"
@@ -301,7 +301,7 @@
               <app-profile-attachments-section
                 *ngSwitchCase="ProfileSectionEnum.Attachments"
                 [profile]="sectionValue(active)"
-                [canEdit]="canEditSections(ProfileSectionEnum.Attachments)"
+                [canAddAttachment]="canAddAttachments"
                 [changesRequest]="changes(ProfileSectionEnum.Attachments)"
                 [notes]="activeSectionNotes()"
                 (edit)="navigateToEditSection(ProfileSectionEnum.Attachments)"

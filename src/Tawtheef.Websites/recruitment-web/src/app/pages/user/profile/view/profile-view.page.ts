@@ -40,6 +40,7 @@ import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.direc
 import {changeRequestDto} from './dtos/change-request-dto';
 import {detectChangedFields, FieldChange} from './utils/detect-change-fields';
 import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
+import {AvatarUtils} from '../../../../core/utils/avatar-utils';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -106,6 +107,9 @@ export class ProfileViewPage {
   );
   get keyLabel(){
     return this.cards.find(c => c.section === this.expanded())?.labelKey;
+  }
+  get avatar(){
+    return this.header()?.avatar || AvatarUtils.build(this.header()?.fullNameEn ?? null);
   }
 
   private readonly basics = rxResource({
@@ -223,6 +227,10 @@ export class ProfileViewPage {
     }
   });
 
+  get canAddAttachments(){
+    const status = this.profileStatus();
+    return status === UserProfileStatusEnum.Approved;
+  }
   canEditSections(section: ProfileSectionEnum){
     const status = this.profileStatus();
     if(status === UserProfileStatusEnum.Approved)

@@ -1,0 +1,18 @@
+﻿{
+  "wizard.courses.title": "الدورات / التدريب",
+  "wizard.courses.provider": "الجهة المانحة",
+  "wizard.courses.courseName": "اسم الدورة",
+  "wizard.courses.period": "الفترة",
+  "wizard.courses.notes": "شرح الدورة",
+  "wizard.courses.certificate": "شهادة الدورة (PDF/صورة)",
+  "wizard.courses.country": "بلد الدورة",
+  "wizard.courses.choiceCountry": "اختر بلد الدورة",
+  "wizard.courses.table.provider": "الجهة",
+  "wizard.courses.table.courseName": "الدورة",
+  "wizard.courses.table.country": "الدولة",
+  "wizard.courses.table.period": "الفترة",
+  "wizard.courses.table.file": "الملف",
+  "wizard.courses.add": "إضافة دورة",
+  "wizard.buttons.cancel": "إلغاء",
+  "wizard.buttons.delete": "حذف"
+}

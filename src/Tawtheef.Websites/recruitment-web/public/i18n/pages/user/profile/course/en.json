@@ -1,0 +1,18 @@
+﻿{
+  "wizard.courses.title": "Courses / Training",
+  "wizard.courses.provider": "Provider",
+  "wizard.courses.courseName": "Course Name",
+  "wizard.courses.period": "Period",
+  "wizard.courses.notes": "Course Description",
+  "wizard.courses.certificate": "Course Certificate (PDF/Image)",
+  "wizard.courses.country": "Course Country",
+  "wizard.courses.choiceCountry": "Select Course Country",
+  "wizard.courses.table.provider": "Provider",
+  "wizard.courses.table.courseName": "Course",
+  "wizard.courses.table.country": "Country",
+  "wizard.courses.table.period": "Period",
+  "wizard.courses.table.file": "File",
+  "wizard.courses.add": "Add Course",
+  "wizard.buttons.cancel": "Cancel",
+  "wizard.buttons.delete": "Delete"
+}

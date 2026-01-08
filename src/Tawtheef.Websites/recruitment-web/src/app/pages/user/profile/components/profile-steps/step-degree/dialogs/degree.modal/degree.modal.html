@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="onSave()" novalidate>
+<form [formGroup]="form" (ngSubmit)="onSave()" novalidate i18nNamespace="pages/user/profile/degree">
   <div class="p-fluid">
     <div class="deg-panel border-0 shadow-none">
       <div class="py-3">
@@ -188,7 +188,7 @@
             </small>
           </div>
           <!-- Upload block -->
-          <div class="col-md-6 mb-3" *ngIf="!disableFileUpload">
+          <div class="col-md-6 mb-3">
 
             <label class="form-label required d-block">
               {{ 'wizard.degrees.degreeFile' | translate }}

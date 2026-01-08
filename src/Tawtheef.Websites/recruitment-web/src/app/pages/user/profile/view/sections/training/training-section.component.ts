@@ -16,7 +16,7 @@ import {FieldChange} from '../../utils/detect-change-fields';
 })
 export class ProfileTrainingSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
-  @Input() canEdit = false;
+  @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Output() edit = new EventEmitter<void>();

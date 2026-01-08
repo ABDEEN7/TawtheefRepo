@@ -14,6 +14,7 @@ import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
 import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
 import {TrainingCourse} from '../../../../../wizard-profile/models/experience.model';
 import {Textarea} from 'primeng/textarea';
+import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-course',
@@ -28,6 +29,7 @@ import {Textarea} from 'primeng/textarea';
     NgIf,
     Select,
     Textarea,
+    I18nNamespaceDirective,
   ],
   templateUrl: './course.modal.html',
   styleUrl: './course.modal.scss',

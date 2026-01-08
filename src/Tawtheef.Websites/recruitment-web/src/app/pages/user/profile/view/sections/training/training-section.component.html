@@ -6,7 +6,7 @@
         <span>{{ 'profileOverview.sections.trainingCourses' | translate }}</span>
       </div>
 
-      <button *ngIf="canEdit"
+      <button *ngIf="canAddAttachment"
               type="button"
               class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
               (click)="onEdit()">
