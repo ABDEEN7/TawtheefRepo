@@ -56,4 +56,7 @@ export const employeeRoutes = {
   get kawader(){
     return this.employee + '/kawader';
   },
+  get candidateUsersManagement(){
+    return this.employee + '/candidate-users-management';
+  },
 }
