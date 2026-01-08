@@ -37,7 +37,8 @@ export class ProfileExperienceSectionComponent {
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
-  protected fieldUnderReview(fieldKey: string = ''){
+  protected fieldUnderReview(fieldKey: string = '') {
+    if (!fieldKey) return (this.changesRequest ?? []).length > 0;
     return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
   }
   protected onEdit() {
