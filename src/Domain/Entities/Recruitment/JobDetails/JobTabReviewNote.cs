@@ -35,6 +35,7 @@ public class JobTabReviewNote : EventEntity
 
 public enum TabType
 {
+    BasicData,
     Overview,
     Responsibilities,
     Qualifications,
