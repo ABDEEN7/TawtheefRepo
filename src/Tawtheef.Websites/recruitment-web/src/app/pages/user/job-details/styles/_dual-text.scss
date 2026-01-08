@@ -1,0 +1,34 @@
+.dual-text-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 16px 0;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
+  .text-area,
+  .attachmentAr,
+  .attachmentEn {
+    padding: 16px;
+    background: #F9F9F9;
+    border-radius: 12px;
+    border: 1px solid #E6E6E6;
+
+    h6 {
+      font-size: 12px;
+      font-weight: 700;
+      color: #89153D;
+      text-transform: uppercase;
+      margin: 0 0 10px 0;
+      letter-spacing: 0.5px;
+    }
+
+    div {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+    }
+  }
+}

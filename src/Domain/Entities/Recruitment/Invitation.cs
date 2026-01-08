@@ -19,9 +19,16 @@ public class Invitation : EventEntity
     
     public Guid InvitationStatusId { get; set; }
     public InvitationStatus? InvitationStatus { get; set; }
+
+    public Guid BatchNumber { get; set; }
     
     [NotMapped]
     public DateTimeOffset? InvitationAt => CreatedDate;
     
     public ICollection<HistoryInvitation> History { get; init; } = [];
+
+    public void ChangeInvitationStatus(Guid newInvitationStatusId) 
+    {
+        this.InvitationStatusId = newInvitationStatusId;
+    }
 }

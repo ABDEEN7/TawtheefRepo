@@ -56,6 +56,9 @@ public static class JobMessages
     public const string CannotCancelFinalState = "CANNOT_CANCEL_FINAL_STATE";
     public const string ReviewNoteFound = "REVIEW_NOTE_FOUND";
     public const string JobPointsTotalNotValid = "JOB_POINTS_TOTAL_NOT_VALID";
+    public const string JobPointsDetailsNotValid = "JOB_POINTS_DETAILS_NOT_VALID";
+    public const string JobPointsAlreadyApproved = "JOB_POINTS_ALREADY_APPROVED";
+    public const string JobPointsJobNotApproved = "JOB_POINTS_JOB_NOT_APPROVED";
     public const string JobPointsNotFound = "JOB_POINTS_NOT_FOUND";
     public const string JobTabReviewNotFound = "JOB_TAB_REVIEW_NOT_FOUND";
     public const string JobPointsConfigurationNotFound = "JOB_POINTS_CONFIGURATION_NOT_FOUND";

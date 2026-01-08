@@ -25,8 +25,8 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 2 — READED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.Readed,
-                BackendName = nameof(InvitationStatusIds.Readed),
+                Id = InvitationStatusIds.Read,
+                BackendName = nameof(InvitationStatusIds.Read),
                 NameEn = "Read",
                 NameAr = "تمت القراءة",
                 DescriptionEn =
@@ -34,7 +34,6 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DescriptionAr = "المرشح فتح الدعوة لأول مرة ولم يبدأ التقديم.",
                 DisplayOrder = 2
             },
-
             // 3 — SUBMITTED
             new InvitationStatus
             {
@@ -47,43 +46,7 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DisplayOrder = 3
             },
 
-            // 4 — UNDER_REVIEW
-            new InvitationStatus
-            {
-                Id = InvitationStatusIds.UnderReview,
-                BackendName = nameof(InvitationStatusIds.UnderReview),
-                NameEn = "Under Review",
-                NameAr = "قيد المراجعة",
-                DescriptionEn = "The application is under initial review by the recruitment department.",
-                DescriptionAr = "الطلب تحت المراجعة المبدئية لقسم التوظيف.",
-                DisplayOrder = 4
-            },
-
-            // 5 — REQUIRES_UPDATE
-            new InvitationStatus
-            {
-                Id = InvitationStatusIds.RequiresUpdate,
-                BackendName = nameof(InvitationStatusIds.RequiresUpdate),
-                NameEn = "Requires Update",
-                NameAr = "مطلوب تعديل",
-                DescriptionEn = "The application was returned to the candidate to complete missing information.",
-                DescriptionAr = "الطلب تم إرجاعه للمرشح لإكمال نواقص محددة.",
-                DisplayOrder = 5
-            },
-
-            // 6 — APPROVED
-            new InvitationStatus
-            {
-                Id = InvitationStatusIds.Approved,
-                BackendName = nameof(InvitationStatusIds.Approved),
-                NameEn = "Approved",
-                NameAr = "معتمد",
-                DescriptionEn = "The application has been approved and moved to a later stage.",
-                DescriptionAr = "تمت الموافقة على الطلب وانتقل لمرحلة لاحقة.",
-                DisplayOrder = 6
-            },
-
-            // 7 — REJECTED
+            // 4 — REJECTED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Rejected,
@@ -95,7 +58,7 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DisplayOrder = 7
             },
 
-            // 8 — CANCELLED
+            // 5 — CANCELLED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Cancelled,
@@ -107,7 +70,7 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DisplayOrder = 8
             },
 
-            // 9 — CLOSED
+            // 6 — CLOSED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Closed,
