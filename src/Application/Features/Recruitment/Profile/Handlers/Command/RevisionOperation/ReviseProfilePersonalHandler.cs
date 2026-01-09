@@ -8,23 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
 
-public sealed class SaveProfilePersonalHandler(
+public sealed class ReviseProfilePersonalHandler(
     IUnitOfWork uow,
     IMediator mediator,
     UserManager<User> userManager,
     IProfileStepValidationService validationService
-    ) : ICommandHandler<SaveProfilePersonalCommand, IResult<Unit>>
+    ) : ICommandHandler<ReviseProfilePersonalCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(SaveProfilePersonalCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(ReviseProfilePersonalCommand cmd, CancellationToken ct)
     {
         var user = await userManager.Users.FirstOrDefaultAsync(p => p.Id == cmd.UserId, ct);
         if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
@@ -33,7 +34,7 @@ public sealed class SaveProfilePersonalHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
         
         var validationResult = validationService.ValidatePersonal(profile, cmd.Request);

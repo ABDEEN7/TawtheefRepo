@@ -129,6 +129,8 @@ export class ProfileEditDialogComponent {
   }
 
   private resolveWriteMode(status: number | null | undefined): ProfileWriteMode {
-    return status === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
+    if (status === UserProfileStatusEnum.Approved) return 'change-request';
+    if (status === UserProfileStatusEnum.RequiresUpdate) return 'review-edit';
+    return 'create';
   }
 }

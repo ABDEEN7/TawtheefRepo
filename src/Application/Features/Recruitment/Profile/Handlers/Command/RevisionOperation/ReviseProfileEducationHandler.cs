@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Validators;
 using Tawtheef.Application.Features.Resources.Commands;
@@ -17,14 +17,15 @@ using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
 
-public sealed class SaveProfileEducationHandler(
+public sealed class ReviseProfileEducationHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService)
-    : ICommandHandler<SaveProfileEducationCommand, IResult<Unit>>
+    : ICommandHandler<ReviseProfileEducationCommand, IResult<Unit>>
 {
     // JSON options مرة واحدة بدل ما نعيد إنشائها
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -39,7 +40,7 @@ public sealed class SaveProfileEducationHandler(
         DegreeIds.Secondary
     ];
 
-    public async Task<IResult<Unit>> Handle(SaveProfileEducationCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(ReviseProfileEducationCommand cmd, CancellationToken ct)
     {
         var educationRepo = uow.GetEntityRepository<Qualification>();
 
@@ -47,7 +48,7 @@ public sealed class SaveProfileEducationHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateEducation(profile);
@@ -158,22 +159,22 @@ public sealed class SaveProfileEducationHandler(
 
     // ===== Helpers =====
 
-    private static Result<List<SaveProfileEducationDegreeDto>> DeserializeDegrees(string json)
+    private static Result<List<ReviseProfileEducationDegreeDto>> DeserializeDegrees(string json)
     {
         try
         {
-            var degrees = JsonSerializer.Deserialize<List<SaveProfileEducationDegreeDto>>(json, JsonOptions) 
-                          ?? new List<SaveProfileEducationDegreeDto>();
+            var degrees = JsonSerializer.Deserialize<List<ReviseProfileEducationDegreeDto>>(json, JsonOptions) 
+                          ?? new List<ReviseProfileEducationDegreeDto>();
 
             return Result.Ok(degrees);
         }
         catch (JsonException)
         {
-            return Result.Fail<List<SaveProfileEducationDegreeDto>>(ErrorsCodes.InvalidDegreesJson);
+            return Result.Fail<List<ReviseProfileEducationDegreeDto>>(ErrorsCodes.InvalidDegreesJson);
         }
     }
 
-    private static Result ValidateDegrees(IReadOnlyList<SaveProfileEducationDegreeDto> degrees)
+    private static Result ValidateDegrees(IReadOnlyList<ReviseProfileEducationDegreeDto> degrees)
     {
         const int minYear = 1970;
         var maxYear = DateTime.UtcNow.Year;
@@ -218,7 +219,7 @@ public sealed class SaveProfileEducationHandler(
         return Result.Ok();
     }
 
-    private static IFormFile? ResolveFile(SaveProfileEducationDegreeDto dto, IReadOnlyList<IFormFile?> files)
+    private static IFormFile? ResolveFile(ReviseProfileEducationDegreeDto dto, IReadOnlyList<IFormFile?> files)
     {
         if (dto.FileIndex is null)
             return null;
@@ -229,7 +230,7 @@ public sealed class SaveProfileEducationHandler(
     }
 
     private static Result ValidateDegreeFiles(
-        IReadOnlyList<SaveProfileEducationDegreeDto> degrees,
+        IReadOnlyList<ReviseProfileEducationDegreeDto> degrees,
         IReadOnlyList<IFormFile?> degreeFiles)
     {
         foreach (var degree in degrees)
@@ -249,7 +250,7 @@ public sealed class SaveProfileEducationHandler(
     }
 
     private async Task<Result<Guid?>> UploadIfNeededAsync(
-        SaveProfileEducationCommand cmd,
+        ReviseProfileEducationCommand cmd,
         IFormFile? file,
         CancellationToken ct)
     {

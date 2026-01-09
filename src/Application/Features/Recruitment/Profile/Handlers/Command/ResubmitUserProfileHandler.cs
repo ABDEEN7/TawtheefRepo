@@ -13,16 +13,16 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
-    : ICommandHandler<SubmitUserProfileCommand, IResult<Unit>>
+public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
+    : ICommandHandler<ResubmitUserProfileCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(SubmitUserProfileCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(ResubmitUserProfileCommand cmd, CancellationToken ct)
     {
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         if (!profile.IsCompleted())

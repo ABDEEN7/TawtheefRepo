@@ -11,6 +11,7 @@ using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Queries;
@@ -189,6 +190,165 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new RequestProfileAttachmentsChangeCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    #endregion
+
+    #region Profile revision operations
+
+    [HttpPost("revisions/prereq")]
+    public async Task<IActionResult> RevisePrereq([FromForm] SaveProfilePrereqRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfilePrereqCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/personal")]
+    public async Task<IActionResult> RevisePersonal([FromForm] SaveProfilePersonalRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfilePersonalCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/contact")]
+    public async Task<IActionResult> ReviseContact([FromForm] SaveProfileContactRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileContactCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/availability")]
+    public async Task<IActionResult> ReviseAvailability([FromBody] SaveProfileAvailabilityRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileAvailabilityCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/education")]
+    public async Task<IActionResult> ReviseEducation([FromForm] SaveProfileEducationRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileEducationCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("revisions/education/{degreeId:guid}/delete")]
+    public async Task<IActionResult> ReviseDeleteEducation([FromRoute] Guid degreeId, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new ReviseProfileEducationDeleteCommand(UserId.Value, degreeId), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/experience")]
+    public async Task<IActionResult> ReviseExperience([FromForm] SaveProfileExperienceRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileExperienceCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("revisions/experience/{experienceId:guid}/delete")]
+    public async Task<IActionResult> ReviseDeleteExperience([FromRoute] Guid experienceId, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new ReviseProfileExperienceDeleteCommand(UserId.Value, experienceId), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("revisions/training/{trainingId:guid}/delete")]
+    public async Task<IActionResult> ReviseDeleteTraining([FromRoute] Guid trainingId, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new ReviseProfileTrainingDeleteCommand(UserId.Value, trainingId), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/achievements")]
+    public async Task<IActionResult> ReviseAchievements([FromForm] SaveProfileAchievementRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileAchievementCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("revisions/achievement/{achievementId:guid}/delete")]
+    public async Task<IActionResult> ReviseDeleteAchievement([FromRoute] Guid achievementId, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new ReviseProfileAchievementDeleteCommand(UserId.Value, achievementId), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/skills")]
+    public async Task<IActionResult> ReviseSkills([FromBody] SaveProfileSkillsRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileSkillsCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("revisions/skill/{skillId:guid}/delete")]
+    public async Task<IActionResult> ReviseDeleteSkill([FromRoute] Guid skillId, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new ReviseProfileSkillDeleteCommand(UserId.Value, skillId), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/languages")]
+    public async Task<IActionResult> ReviseLanguages([FromBody] SaveProfileLanguagesRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileLanguagesCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("revisions/language/{languageId:guid}/delete")]
+    public async Task<IActionResult> ReviseDeleteLanguage([FromRoute] Guid languageId, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new ReviseProfileLanguageDeleteCommand(UserId.Value, languageId), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/references")]
+    public async Task<IActionResult> ReviseAttachments([FromForm] SaveProfileAttachmentsRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileAttachmentsCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("revisions/references/{attachmentId:guid}/delete")]
+    public async Task<IActionResult> ReviseDeleteAttachment([FromRoute] Guid attachmentId, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new ReviseProfileAttachmentDeleteCommand(UserId.Value, attachmentId), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("revisions/submit")]
+    public async Task<IActionResult> ResubmitProfile([FromBody] SubmitUserProfileRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ResubmitUserProfileCommand(UserId.Value, request);
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
