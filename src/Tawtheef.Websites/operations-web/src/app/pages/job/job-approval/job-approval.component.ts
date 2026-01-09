@@ -22,6 +22,7 @@ import { JobReviewResponse } from '../models/job-review-response';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Permissions } from '../../../core/constants/permissions';
 import { catchError, debounceTime, EMPTY, filter, Subject, switchMap, takeUntil } from 'rxjs';
+type JobApprovalTab = JobTabType | 'Review';
 
 @Component({
   selector: 'app-job-approval.component',
@@ -29,7 +30,6 @@ import { catchError, debounceTime, EMPTY, filter, Subject, switchMap, takeUntil 
   templateUrl: './job-approval.component.html',
   styleUrls: ['./job-approval.component.scss'],
 })
-type JobApprovalTab = JobTabType | 'Review';
 
 export class JobApprovalComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);

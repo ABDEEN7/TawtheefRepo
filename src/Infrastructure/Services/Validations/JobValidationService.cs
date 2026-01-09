@@ -176,7 +176,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
     }
 
-    public Task<ValidationResult> ValidateStatusChange(JobEntity job, Guid newStatusId)
+    public async Task<ValidationResult> ValidateStatusChange(JobEntity job, Guid newStatusId)
     {
         var failures = new List<ValidationFailure>();
 
@@ -272,7 +272,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                 JobMessages.InvalidStatusTransition));
         }
 
-        return Task.FromResult(failures.Count != 0
+        return await Task.FromResult(failures.Count != 0
             ? new ValidationResult(failures)
             : new ValidationResult());
     }
