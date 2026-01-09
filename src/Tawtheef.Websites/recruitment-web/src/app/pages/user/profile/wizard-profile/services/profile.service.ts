@@ -31,7 +31,7 @@ type SectionKey =
 
 type UrlSet = { create: string; changeRequest: string; revision: string };
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ProfileService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);

@@ -25,22 +25,19 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
 
         // 1) Resolve allowed country for current user (EmployeeUser => Qatar, OfficeUser => Office.CountryId)
         var allowedCountryId = await ResolveAllowedCountryIdAsync(userId, ct);
-        if (allowedCountryId is null)
-        {
-            return new PaginatedResult<DistributionProfileDto>(
-                [],
-                0,
-                paginatedRequest.PageNumber,
-                paginatedRequest.PageSize);
-        }
+        if (allowedCountryId is null)            
+            return new PaginatedResult<DistributionProfileDto>([], 0, paginatedRequest.PageNumber, paginatedRequest.PageSize);
+
 
         // 2) Base profiles query with eligibility rules + country filter
         var profilesQuery = profileRepo.DbSet
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
+            #if !DEBUG
+            .Where(p=> p.ResidenceCountryId == allowedCountryId.Value)
+            #endif
             .Where(p =>
-                p.ResidenceCountryId == allowedCountryId.Value &&
                 (
                     Enumerable.Contains(ProfileDistributionRules.AssignableStatuses, p.Status) ||
                  (p.Status == UserProfileStatus.Approved &&

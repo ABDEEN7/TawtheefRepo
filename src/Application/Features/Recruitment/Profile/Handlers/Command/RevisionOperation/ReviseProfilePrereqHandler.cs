@@ -12,6 +12,7 @@ using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
