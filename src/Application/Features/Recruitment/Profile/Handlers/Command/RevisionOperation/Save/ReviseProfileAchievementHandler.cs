@@ -9,15 +9,15 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
-using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation.Save;
 
 public sealed class ReviseProfileAchievementHandler(
     IUnitOfWork uow,

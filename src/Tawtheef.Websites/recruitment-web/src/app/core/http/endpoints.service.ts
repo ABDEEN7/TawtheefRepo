@@ -71,8 +71,11 @@ export class EndpointsService {
       },
       revisions: {
         prereq: this.getFullUrl(`/profiles/revisions/prereq`),
+        prereqAttachment: this.getFullUrl(`/profiles/revisions/prereq/Attachment`),
         personal: this.getFullUrl(`/profiles/revisions/personal`),
+        personalAttachment: this.getFullUrl(`/profiles/revisions/personal/Attachment`),
         contact: this.getFullUrl(`/profiles/revisions/contact`),
+        contactAttachment: this.getFullUrl(`/profiles/revisions/contact/Attachment`),
         availability: this.getFullUrl(`/profiles/revisions/availability`),
         education: this.getFullUrl(`/profiles/revisions/education`),
         deleteEducation: (id: string) => this.getFullUrl(`/profiles/revisions/education/${id}/delete`),

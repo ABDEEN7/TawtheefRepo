@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -53,7 +54,10 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
 
         // 1️⃣ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)
-            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec));
+        {
+            var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(profile, sec); // shared helper
+            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec, snapshot));
+        }
 
         // 2️⃣ Profile-level attachments
         foreach (var item in BuildProfileFiles(profile))
@@ -71,9 +75,9 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
     // -----------------------
     // Section
     // -----------------------
-    private static ReviewItem NewPendingSection(Guid profileId, ProfileSection sec)
+    private static ReviewItem NewPendingSection(Guid profileId, ProfileSection sec, object? snapshot)
     {
-        var item = ReviewItem.Create(profileId, sec, ReviewTargetType.Section);
+        var item = ReviewItem.Create(profileId, sec, ReviewTargetType.Section, currentValue: snapshot);
         Normalize(item);
         return item;
     }

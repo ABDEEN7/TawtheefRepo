@@ -29,7 +29,7 @@ type SectionKey =
   | 'languages'
   | 'attachments';
 
-type UrlSet = { create: string; changeRequest: string; revision: string };
+type UrlSet = { create: string; changeRequest: string; revision: string, attachment?: string };
 
 @Injectable()
 export class ProfileService {
@@ -70,6 +70,25 @@ export class ProfileService {
 
     return this.http.post(this.url('prereq'), fd);
   }
+  savePereqAttachmentsSection(info:{birth:{id: string, title: string}, marriage:{id: string, title: string} },
+                                    files: { birth?: FileLike,
+                                      marriage?: FileLike,
+                                    }) {
+    const b = this.fd();
+    // keep your original field name
+    if (files.birth) {
+      b.rawAppend('BirthdayCertificate', files.birth);
+      b.scalar('Birth.Id', info.birth.id);
+      b.scalar('Birth.Title', info.birth.title);
+    }
+    if (files.marriage) {
+      b.rawAppend('MarriageCertificate', files.marriage);
+      b.scalar('Marriage.Id', info.marriage.id);
+      b.scalar('Marriage.Title', info.marriage.title);
+    }
+
+    return this.http.post(this.url('prereq')+'/attachment', b.build());
+  }
 
   // ========== PERSONAL ==========
   savePersonalSection(dto: SaveProfilePersonalRequestDto, files?: { sponsorCard?: FileLike }) {
@@ -79,6 +98,31 @@ export class ProfileService {
       .build();
 
     return this.http.post(this.url('personal'), fd);
+  }
+  savePersonalAttachmentsSection(info:{sponsorCard:{id: string, title: string}, resume:{id: string, title: string} ,nationalCard:{id: string, title: string}},
+                                files: { sponsorCard?: FileLike,
+                                resume?: FileLike,
+                                  nationalCard?: FileLike,
+                                }) {
+    const b = this.fd();
+    // keep your original field name
+    if (files.sponsorCard) {
+      b.rawAppend('SponsorCardAttachment', files.sponsorCard);
+      b.scalar('SponsorCard.Id', info.sponsorCard.id);
+      b.scalar('SponsorCard.Title', info.sponsorCard.title);
+    }
+    if (files.resume) {
+      b.rawAppend('ResumeAttachment', files.resume);
+      b.scalar('Resume.Id', info.resume.id);
+      b.scalar('Resume.Title', info.resume.title);
+    }
+    if (files.nationalCard) {
+      b.rawAppend('NationalCardAttachment', files.nationalCard);
+      b.scalar('NationalCard.Id', info.nationalCard.id);
+      b.scalar('NationalCard.Title', info.nationalCard.title);
+    }
+
+    return this.http.post(this.url('personal')+'/attachment', b.build());
   }
 
   checkProfile(qid: string, expiryDate: string) {
@@ -113,6 +157,19 @@ export class ProfileService {
     }
 
     return this.http.post(this.url('contact'), b.build());
+  }
+  saveContactAttachmentsSection(info:{nationalAddress:{id: string, title: string}},
+    files: { nationalAddress?: FileLike }) {
+    const b = this.fd();
+    // keep your original field name
+    if (files.nationalAddress) {
+      b.rawAppend('ResidenceAddressCertificate', files.nationalAddress);
+      // send ResidenceAddress as object of properties not like json
+      b.scalar('ResidenceAddress.Id', info.nationalAddress.id);
+      b.scalar('ResidenceAddress.Title', info.nationalAddress.title);
+    }
+
+    return this.http.post(this.url('contact')+'/attachment', b.build());
   }
 
   getProfileBasics() {
@@ -344,6 +401,31 @@ export class ProfileService {
   }
 
   // ========== ATTACHMENTS ==========
+  saveSectionAttachmentsSection(attachments: Attachment[]) {
+    const files: File[] = [];
+
+    const payload = (attachments ?? [])
+      .map(a => {
+        const item: any = {
+          id: a.id ?? null,
+          title: a.title,
+          fileName: a.fileName ?? a.title,
+          attachmentId: a.attachmentId ?? null,
+        };
+
+        item.fileIndex = this.fileIndex(files, a.file);
+
+        return item;
+      });
+
+    const fd = this.fd()
+      .scalar('submit', false)
+      .scalar('attachmentsJson', JSON.stringify(payload))
+      .files('AttachmentFiles', files)
+      .build();
+
+    return this.http.post(this.url('attachments'), fd);
+  }
   saveAttachmentsSection(attachments: Attachment[]) {
     const files: File[] = [];
 

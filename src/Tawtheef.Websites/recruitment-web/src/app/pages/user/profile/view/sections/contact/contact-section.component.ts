@@ -75,13 +75,18 @@ export class ProfileContactSectionComponent {
 
     const payload: Attachment = {
       id: att.file?.resourceId,
-      title: att.title ?? '',
-      fileName: file.name,
-      attachmentId: att.file?.resourceId,
-      file,
+      title: file.name
     };
+    const info: any = {}
+    const files: any = {}
+    switch (att.key) {
+      case 'residenceAddressCertificate':
+        info['nationalAddress'] = payload;
+        files['nationalAddress'] = file;
+        break;
+    }
 
-    this.profileService.saveAttachmentsSection([payload]).subscribe({
+    this.profileService.saveContactAttachmentsSection(info, files).subscribe({
       next: () => {
         this.notify.success(this.translate.instant('profileView.notifications.saved'));
         this.refresh.emit();

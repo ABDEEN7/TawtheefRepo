@@ -8,7 +8,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Domain.Entities.Applicant;
 
 [Table(nameof(ProfileSkill), Schema = Schemas.Profile)]
-[Index(nameof(SkillId), nameof(UserProfileId), IsUnique = true)]
+//[Index(nameof(SkillId), nameof(UserProfileId), IsUnique = true)]
 public class ProfileSkill : EventEntity
 {
     public Guid SkillId { get; set; }

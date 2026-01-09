@@ -3,20 +3,21 @@ using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
-using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation.Save;
 
 public sealed class ReviseProfileAttachmentsHandler(
     IUnitOfWork uow,
@@ -32,6 +33,8 @@ public sealed class ReviseProfileAttachmentsHandler(
     public async Task<IResult<Unit>> Handle(ReviseProfileAttachmentsCommand cmd, CancellationToken ct)
     {
         var attachRepo = uow.GetEntityRepository<ProfileAdditionalAttachment>();
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+        var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
 
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
@@ -51,21 +54,38 @@ public sealed class ReviseProfileAttachmentsHandler(
         var incoming = attachmentsResult.Value;
         var files = cmd.Request.AttachmentFiles;
 
-        // Ensure non-null collection
         profile.AdditionalAttachments ??= new List<ProfileAdditionalAttachment>();
 
-        // Build lookup of existing by AttachmentId (resource id). This assumes AttachmentId is stable identity.
-        // If your row has its own PK Id and AttachmentId is not unique, tell me and I’ll adjust.
-        var existingByAttachmentId = profile.AdditionalAttachments
+        // Existing rows keyed by current resource id (AttachmentId)
+        var existingByResourceId = profile.AdditionalAttachments
             .Where(x => x.AttachmentId != Guid.Empty)
             .ToDictionary(x => x.AttachmentId);
 
-        // Track incoming ids to know what to delete
-        var incomingAttachmentIds = new HashSet<Guid>();
+        // Only attachments with ReviewItem.Status == NeedsCorrection are editable in revision
+        var allowedResourceIds = await reviewRepo.DbSet
+            .AsNoTracking()
+            .Where(r =>
+                r.UserProfileId == profile.Id &&
+                r.Section == ProfileSection.Attachments &&
+                r.TargetType == ReviewTargetType.Attachment &&
+                r.Status == ReviewStatus.NeedsCorrection &&
+                r.ResourceId != null)
+            .Select(r => r.ResourceId!.Value)
+            .ToHashSetAsync(ct);
 
+        // Only process items that are allowed; reject any attempt to touch other attachments
         foreach (var dto in incoming)
         {
-            // Upload new file only if FileIndex is provided
+            if (dto.AttachmentId is null || dto.AttachmentId == Guid.Empty)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentId);
+
+            if (!allowedResourceIds.Contains(dto.AttachmentId.Value))
+                return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
+            if (!existingByResourceId.TryGetValue(dto.AttachmentId.Value, out var row))
+                return Result.Fail<Unit>(ErrorsCodes.AttachmentNotFound);
+
+            // Upload new file only if FileIndex provided (replacement)
             var uploadResult = await UploadIfNeededAsync(
                 dto.FileIndex,
                 files,
@@ -76,43 +96,55 @@ public sealed class ReviseProfileAttachmentsHandler(
             if (uploadResult.IsFailed)
                 return Result.Fail<Unit>(uploadResult.Errors);
 
-            var finalAttachmentId = uploadResult.Value?.ResourceId ?? dto.AttachmentId;
+            var newResourceId = uploadResult.Value?.ResourceId;
 
-            if (finalAttachmentId is null || finalAttachmentId == Guid.Empty)
-                return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
+            // Title update allowed only for corrected items
+            if (!string.Equals(row.FileName, dto.Title, StringComparison.Ordinal))
+                row.FileName = dto.Title;
 
-            incomingAttachmentIds.Add(finalAttachmentId.Value);
-
-            // Upsert
-            if (existingByAttachmentId.TryGetValue(finalAttachmentId.Value, out var row))
+            // Replace resource if new file uploaded
+            if (newResourceId is not null && newResourceId != Guid.Empty && newResourceId != row.AttachmentId)
             {
-                // Update editable fields (e.g., title / file name)
-                // Note: your entity uses FileName to store dto.Title
-                if (!string.Equals(row.FileName, dto.Title, StringComparison.Ordinal))
-                    row.FileName = dto.Title;
+                var oldResourceId = row.AttachmentId;
+
+                // Prevent duplicate resource id collisions with other rows
+                if (existingByResourceId.ContainsKey(newResourceId.Value))
+                    return Result.Fail<Unit>(ErrorsCodes.DuplicateAttachmentResource);
+
+                // Update row
+                row.AttachmentId = newResourceId.Value;
+
+                // Keep dictionary consistent
+                existingByResourceId.Remove(oldResourceId);
+                existingByResourceId[row.AttachmentId] = row;
+
+                // Mark the corresponding ReviewItem as solved and move it to the new resource id
+                await SolveReviewItemAsync(
+                    reviewRepo,
+                    changeRepo,
+                    profile.Id,
+                    oldResourceId,
+                    newResourceId.Value,
+                    ct);
             }
             else
             {
-                var newRow = new ProfileAdditionalAttachment
-                {
-                    FileName      = dto.Title,
-                    AttachmentId  = finalAttachmentId.Value,
-                    UserProfileId = profile.Id
-                };
-
-                // Option A (recommended): EF Core supports CT
-                await attachRepo.DbSet.AddAsync(newRow, ct);
-
-                // Option B (if you prefer sync add):
-                // attachRepo.DbSet.Add(newRow);
-
-                profile.AdditionalAttachments.Add(newRow);
+                // No replacement: still mark as solved if user updated allowed fields (e.g., title)
+                await SolveReviewItemAsync(
+                    reviewRepo,
+                    changeRepo,
+                    profile.Id,
+                    row.AttachmentId,
+                    row.AttachmentId,
+                    ct);
             }
         }
 
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Attachments, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
+
+        // ----------------- local helpers -----------------
 
         static Result<List<AdditionalAttachmentUpsertDto>> Deserialize(string json)
         {
@@ -155,6 +187,35 @@ public sealed class ReviseProfileAttachmentsHandler(
                 return Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors);
 
             return Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
+        }
+
+        static async Task SolveReviewItemAsync(
+            IGenericRepository<ReviewItem> reviewRepo,
+            IGenericRepository<ProfileChangeRequest> changeRepo,
+            Guid userProfileId,
+            Guid oldResourceId,
+            Guid newResourceId,
+            CancellationToken cancellationToken)
+        {
+            // Solve the NeedsCorrection item for the old resource id
+            var item = await reviewRepo.DbSet
+                .FirstOrDefaultAsync(r =>
+                        r.UserProfileId == userProfileId &&
+                        r.Section == ProfileSection.Attachments &&
+                        r.TargetType == ReviewTargetType.Attachment &&
+                        r.Status == ReviewStatus.NeedsCorrection &&
+                        r.ResourceId == oldResourceId,
+                    cancellationToken);
+
+            if (item is null)
+                return;
+
+            item.Status = ReviewStatus.Solved;
+            item.IsOutdated = false;
+
+            // If file replaced, move linkage to new resource id for audit/trace consistency
+            if (newResourceId != Guid.Empty && newResourceId != oldResourceId)
+                item.ResourceId = newResourceId;
         }
     }
 }

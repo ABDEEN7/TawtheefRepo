@@ -206,6 +206,14 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
+    [HttpPost("revisions/prereq/attachment")]
+    public async Task<IActionResult> RevisePrereq([FromForm] ReviseProfilePrereqAttachmentRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfilePrereqAttachmentsCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
 
     [HttpPost("revisions/personal")]
     public async Task<IActionResult> RevisePersonal([FromForm] SaveProfilePersonalRequest request, CancellationToken ct)
@@ -215,12 +223,28 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
+    [HttpPost("revisions/personal/attachment")]
+    public async Task<IActionResult> RevisePersonalAttachment([FromForm] ReviseProfilePersonalAttachmentRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfilePersonalAttachmentsCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
 
     [HttpPost("revisions/contact")]
     public async Task<IActionResult> ReviseContact([FromForm] SaveProfileContactRequest request, CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new ReviseProfileContactCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+    [HttpPost("revisions/contact/attachment")]
+    public async Task<IActionResult> ReviseContact([FromForm] ReviseProfileContactAttachmentRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var cmd = new ReviseProfileContactAttachmentsCommand(UserId.Value, request);
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }

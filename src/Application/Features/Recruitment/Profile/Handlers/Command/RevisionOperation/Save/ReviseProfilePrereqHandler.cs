@@ -1,7 +1,6 @@
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
@@ -15,7 +14,7 @@ using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation.Save;
 
 public sealed class ReviseProfilePrereqHandler(
     IUnitOfWork uow,
