@@ -34,13 +34,25 @@ internal static class ReviewItemSaveHelper
 
         foreach (var item in items.Where(item => item.Section == section))
         {
+            var previousHash = item.CurrentHash;
+            var previousStatus = item.Status;
+            var previousOutdated = item.IsOutdated;
+            var wasReviewerIssue = item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected;
             var currentValue = GetCurrentValue(profile, item);
             item.UpdateHash(currentValue);
 
+            var valueChanged = previousHash != item.CurrentHash;
             var attachmentReplaced = item.TargetType != ReviewTargetType.Attachment
                 || IsAttachmentReplaced(profile, item);
 
-            if (item.CurrentHash == item.ApprovedHash && !item.NeedsReview() && attachmentReplaced)
+            if (!valueChanged)
+            {
+                item.Status = previousStatus;
+                item.IsOutdated = previousOutdated;
+                continue;
+            }
+
+            if (wasReviewerIssue && attachmentReplaced)
             {
                 item.Status = ReviewStatus.Solved;
                 item.IsOutdated = false;
