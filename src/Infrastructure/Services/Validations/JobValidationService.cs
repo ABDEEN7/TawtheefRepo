@@ -197,12 +197,43 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                 job.JobDegrees.Any(),
                 job.JobConditions.Any(),
                 job.JobResponsibilities.Any(),
-                !string.IsNullOrWhiteSpace(job.OverViewAr) && !string.IsNullOrWhiteSpace(job.OverViewEn),
-                !string.IsNullOrWhiteSpace(job.BenefitsAr) && !string.IsNullOrWhiteSpace(job.BenefitsEn)
+                job.JobSkills.Any(),
+                HasQualificationDescriptions(job),
+                HasOverview(job),
+                HasBenefits(job)
             );
 
             if (!allTabsCompleted)
                 failures.Add(new ValidationFailure("TabsCompletion", JobMessages.AllTabsRequired));
+        }
+
+        if (newStatusId == JobStatusIds.Approved)
+        {
+            if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
+                    job.TitleAr, job.TitleEn,
+                    job.SectorId, job.ManagementId, job.DepartmentId,
+                    job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
+                    job.MajorId, job.NumberOfVacancies, job.ClosingDate,
+                    job.MinimumAge, job.MaximumAge, job.YearsOfExperience))
+            {
+                failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
+            }
+
+            var allTabsCompleted = JobBusinessRules.AreAllTabsCompleted(
+                job.JobDegrees.Any(),
+                job.JobConditions.Any(),
+                job.JobResponsibilities.Any(),
+                job.JobSkills.Any(),
+                HasQualificationDescriptions(job),
+                HasOverview(job),
+                HasBenefits(job)
+            );
+
+            if (!allTabsCompleted)
+                failures.Add(new ValidationFailure("TabsCompletion", JobMessages.AllTabsRequired));
+
+            if (await HasDuplicateApprovedJob(job))
+                failures.Add(new ValidationFailure("Duplicate", JobMessages.DuplicateJob));
         }
 
         if (newStatusId == JobStatusIds.Published &&
@@ -244,6 +275,42 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         return Task.FromResult(failures.Count != 0
             ? new ValidationResult(failures)
             : new ValidationResult());
+    }
+
+    private static bool HasOverview(JobEntity job)
+    {
+        return !string.IsNullOrWhiteSpace(job.OverViewAr) &&
+               !string.IsNullOrWhiteSpace(job.OverViewEn);
+    }
+
+    private static bool HasBenefits(JobEntity job)
+    {
+        return !string.IsNullOrWhiteSpace(job.BenefitsAr) &&
+               !string.IsNullOrWhiteSpace(job.BenefitsEn);
+    }
+
+    private static bool HasQualificationDescriptions(JobEntity job)
+    {
+        return !string.IsNullOrWhiteSpace(job.QualificationDescriptionAr) &&
+               !string.IsNullOrWhiteSpace(job.QualificationDescriptionEn);
+    }
+
+    private async Task<bool> HasDuplicateApprovedJob(JobEntity job)
+    {
+        var jobRepo = unitOfWork.GetEntityRepository<JobEntity>();
+        return await jobRepo.DbSet
+            .AsNoTracking()
+            .AnyAsync(existing =>
+                existing.Id != job.Id &&
+                existing.TitleAr == job.TitleAr &&
+                existing.DepartmentId == job.DepartmentId &&
+                existing.JobCategoryId == job.JobCategoryId &&
+                existing.MajorId == job.MajorId &&
+                existing.SubMajorId == job.SubMajorId &&
+                !existing.IsDeleted &&
+                (existing.JobStatusId == JobStatusIds.Approved ||
+                 existing.JobStatusId == JobStatusIds.ReadyForAnnouncement ||
+                 existing.JobStatusId == JobStatusIds.Published));
     }
 
     private bool HasDuplicates<T>(IEnumerable<T> items, Func<T, string> selector)

@@ -12,6 +12,11 @@ import { routes } from '../../../../routes/routes';
 import { EndpointsService } from '../../../../core/http/endpoints.service';
 import { DialogHelperService } from '../../../../core/services/dialog-helper.service';
 import { JobCopyTemplate } from '../../models/job-copy-template.model';
+import { JobTabReviewNoteResponse } from '../../models/job-tab-review-note-response';
+import { JobTabType } from '../../enums/job-tab-type';
+import { JobStatus } from '../../../../core/enums/lookups.enum';
+import { JobReviewResponse } from '../../models/job-review-response';
+import { JobResponse } from '../../models/job-response-model';
 
 @Component({
   selector: 'app-job-basic-modal',
@@ -43,6 +48,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   isCopyMode = false;
   copyTemplate: JobCopyTemplate | null = null;
   copySourceId: GUID | null = null;
+  reviewNote: JobTabReviewNoteResponse | null = null;
 
   form = this.fb.nonNullable.group({
     sectorId: ['', Validators.required],
@@ -178,6 +184,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           this.lookupsService.loadSubMajorsByMajor(jobResponse.major.id as GUID);
         }
 
+        this.loadReviewNote(jobResponse);
         this.isLoading = false;
       },
       error: () => {
@@ -189,6 +196,23 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
 
   onDateSelect(): void {
     this.form.controls.closingDate.markAsDirty();
+  }
+
+  private loadReviewNote(jobResponse: JobResponse): void {
+    if (jobResponse.jobStatus?.backendName !== JobStatus.NeedUpdate) {
+      this.reviewNote = null;
+      return;
+    }
+
+    this.jobService.getLatestReview(jobResponse.id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (review: JobReviewResponse) => {
+        this.reviewNote =
+          review.tabNoteReviews.find((note) => note.tab === JobTabType.BasicData) ?? null;
+      },
+      error: () => {
+        this.reviewNote = null;
+      },
+    });
   }
 
   startJobCreation(): void {
