@@ -80,8 +80,6 @@ public class JobProfile : IRegister
         config.NewConfig<JobTabReviewNote, JobTabReviewNoteResponseDto>();
         config.NewConfig<JobTabReviewNote, JobTabReviewUpsertDto>()
             .Map(dest => dest.Status, src => src.TabStatus);
-        config.NewConfig<JobTabReviewUpsertDto, JobTabReviewNote>()
-            .Map(dest => dest.TabStatus, src => src.Status);
         config.NewConfig<JobReviewAttachment, FileRefDto>()
             .Map(dest => dest.ResourceId, src => src.AttachmentId)
             .Map(dest => dest.FileName, src => src.FileName)

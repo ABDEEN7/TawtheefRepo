@@ -2,7 +2,6 @@ using System.Text.Json;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -44,7 +43,11 @@ public sealed class UpdateJobReviewCommandHandler(
             .Where(x => x.JobId == cmd.JobId && x.ReviewCycleId == reviewCycleId)
             .ToListAsync(ct);
 
-        foreach (var noteDto in cmd.Request.Tabs.Adapt<List<JobTabReviewNote>>())
+        var incomingTabs = cmd.Request.Tabs.Where(t => t.Status.HasValue).ToList();
+        if (incomingTabs.Count == 0)
+            return Result.Ok(Unit.Value);
+
+        foreach (var noteDto in MapTabNotes(cmd.JobId, reviewCycleId, incomingTabs))
         {
             var existingNote = existingNotes.FirstOrDefault(n => n.Tab == noteDto.Tab);
             if (existingNote != null)
@@ -55,10 +58,6 @@ public sealed class UpdateJobReviewCommandHandler(
                 continue;
             }
 
-            noteDto.JobId = cmd.JobId;
-            noteDto.ReviewCycleId = reviewCycleId;
-            noteDto.IsResolved = noteDto.TabStatus == TabStatus.Approved;
-            noteDto.CreatedDate = DateTimeOffset.UtcNow;
             await tabReviewRepo.AddAsync(noteDto);
         }
 
@@ -140,5 +139,25 @@ public sealed class UpdateJobReviewCommandHandler(
         return result.IsFailed
             ? Result.Fail<UploadAttachmentRequest?>(result.Errors)
             : Result.Ok<UploadAttachmentRequest?>(result.Value);
+    }
+
+    private static List<JobTabReviewNote> MapTabNotes(
+        Guid jobId,
+        Guid reviewCycleId,
+        IEnumerable<JobTabReviewUpsertDto> tabs)
+    {
+        var createdAt = DateTimeOffset.UtcNow;
+        return tabs
+            .Where(t => t.Status.HasValue)
+            .Select(t => new JobTabReviewNote
+            {
+                JobId = jobId,
+                ReviewCycleId = reviewCycleId,
+                Tab = t.Tab,
+                Note = t.Note,
+                TabStatus = t.Status!.Value,
+                IsResolved = t.Status == TabStatus.Approved,
+                CreatedDate = createdAt
+            }).ToList();
     }
 }
