@@ -3,55 +3,37 @@ using Cortex.Mediator.Commands;
 using FluentResults;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
-using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
 
-public sealed class SaveProfilePrereqHandler(
+public sealed class ReviseProfilePrereqHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    UserManager<User> userManager,
     IProfileStepValidationService validationService)
-    : ICommandHandler<SaveProfilePrereqCommand, IResult<Unit>>
+    : ICommandHandler<ReviseProfilePrereqCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(SaveProfilePrereqCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(ReviseProfilePrereqCommand cmd, CancellationToken ct)
     {
-        var profileResult = await UserProfileLoader.GetSummaryAsync(uow, cmd.UserId, ct);
-        if (profileResult.IsFailed) return Result.Fail<Unit>(profileResult.Errors);
-        var profile = profileResult.Value;
+        var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
-        {
-            var user = await userManager.FindByIdAsync($"{cmd.UserId}");
-            if(user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
-            var logins = await userManager.GetLoginsAsync(user);
-            var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "") ?? "Unknown";
-            profile = new UserProfile
-            {
-                UserId = cmd.UserId,
-                Provider = providerName,
-                Status = UserProfileStatus.InCreation,
-                CandidateTypeId = cmd.Request.CandidateTypeId,
-                TargetEntityId = cmd.Request.TargetEntityId
-            };
-            await uow.GetEntityRepository<UserProfile>().AddAsync(profile);
-        }
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
         
         var validationResult = validationService.ValidatePrerequisites(profile, cmd.Request);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         profile.CandidateTypeId = r.CandidateTypeId;

@@ -29,7 +29,7 @@ type SectionKey =
   | 'languages'
   | 'attachments';
 
-type UrlPair = { normal: string; change: string };
+type UrlSet = { create: string; changeRequest: string; revision: string };
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -44,6 +44,10 @@ export class ProfileService {
 
   isChangeRequestMode(): boolean {
     return this.writeMode === 'change-request';
+  }
+
+  isRevisionMode(): boolean {
+    return this.writeMode === 'review-edit';
   }
 
   // ========== PREREQ ==========
@@ -83,7 +87,11 @@ export class ProfileService {
 
   // ========== CONTACT ==========
   saveRecruitmentAvailability(available: boolean) {
-    return this.http.post(this.endpoints.user.profile.saveAvailability, { availableForRecruitment: available });
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.availability
+      : this.endpoints.user.profile.saveAvailability;
+
+    return this.http.post(endpoint, { availableForRecruitment: available });
   }
 
   saveContactSection(dto: SaveProfileContactRequestDto, files?: { nationalAddressFile?: FileLike }) {
@@ -187,7 +195,11 @@ export class ProfileService {
   }
 
   deleteEducation(degreeId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteEducation(degreeId));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteEducation(degreeId)
+      : this.endpoints.user.profile.deleteEducation(degreeId);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== EXPERIENCE + TRAINING COURSES ==========
@@ -238,11 +250,19 @@ export class ProfileService {
   }
 
   deleteExperience(experienceId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteExperience(experienceId));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteExperience(experienceId)
+      : this.endpoints.user.profile.deleteExperience(experienceId);
+
+    return this.http.delete(endpoint);
   }
 
   deleteTrainingCourse(courseId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteTrainingCourse(courseId));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteTrainingCourse(courseId)
+      : this.endpoints.user.profile.deleteTrainingCourse(courseId);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== ACHIEVEMENTS ==========
@@ -272,7 +292,11 @@ export class ProfileService {
   }
 
   deleteAchievement(id: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteAchievement(id));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteAchievement(id)
+      : this.endpoints.user.profile.deleteAchievement(id);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== SKILLS ==========
@@ -289,7 +313,11 @@ export class ProfileService {
   }
 
   deleteSkill(id: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteSkill(id));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteSkill(id)
+      : this.endpoints.user.profile.deleteSkill(id);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== LANGUAGES ==========
@@ -308,7 +336,11 @@ export class ProfileService {
   }
 
   deleteLanguage(languageId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteLanguage(languageId));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteLanguage(languageId)
+      : this.endpoints.user.profile.deleteLanguage(languageId);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== ATTACHMENTS ==========
@@ -343,50 +375,65 @@ export class ProfileService {
     return this.http.post(this.endpoints.user.profile.submit, {});
   }
 
+  resubmitProfile() {
+    return this.http.post(this.endpoints.user.profile.resubmit, {});
+  }
+
   // ================= URL RESOLUTION =================
 
   private url(section: SectionKey): string {
-    const map: Record<SectionKey, UrlPair> = {
+    const map: Record<SectionKey, UrlSet> = {
       prereq: {
-        normal: this.endpoints.user.profile.savePrereq,
-        change: this.endpoints.user.profile.requestChanges.prereq,
+        create: this.endpoints.user.profile.savePrereq,
+        changeRequest: this.endpoints.user.profile.requestChanges.prereq,
+        revision: this.endpoints.user.profile.revisions.prereq,
       },
       personal: {
-        normal: this.endpoints.user.profile.savePersonal,
-        change: this.endpoints.user.profile.requestChanges.personal,
+        create: this.endpoints.user.profile.savePersonal,
+        changeRequest: this.endpoints.user.profile.requestChanges.personal,
+        revision: this.endpoints.user.profile.revisions.personal,
       },
       contact: {
-        normal: this.endpoints.user.profile.saveContact,
-        change: this.endpoints.user.profile.requestChanges.contact,
+        create: this.endpoints.user.profile.saveContact,
+        changeRequest: this.endpoints.user.profile.requestChanges.contact,
+        revision: this.endpoints.user.profile.revisions.contact,
       },
       education: {
-        normal: this.endpoints.user.profile.saveEducation,
-        change: this.endpoints.user.profile.requestChanges.education,
+        create: this.endpoints.user.profile.saveEducation,
+        changeRequest: this.endpoints.user.profile.requestChanges.education,
+        revision: this.endpoints.user.profile.revisions.education,
       },
       experience: {
-        normal: this.endpoints.user.profile.saveExperience,
-        change: this.endpoints.user.profile.requestChanges.experience,
+        create: this.endpoints.user.profile.saveExperience,
+        changeRequest: this.endpoints.user.profile.requestChanges.experience,
+        revision: this.endpoints.user.profile.revisions.experience,
       },
       achievements: {
-        normal: this.endpoints.user.profile.saveAchievements,
-        change: this.endpoints.user.profile.requestChanges.achievements,
+        create: this.endpoints.user.profile.saveAchievements,
+        changeRequest: this.endpoints.user.profile.requestChanges.achievements,
+        revision: this.endpoints.user.profile.revisions.achievements,
       },
       skills: {
-        normal: this.endpoints.user.profile.saveSkills,
-        change: this.endpoints.user.profile.requestChanges.skills,
+        create: this.endpoints.user.profile.saveSkills,
+        changeRequest: this.endpoints.user.profile.requestChanges.skills,
+        revision: this.endpoints.user.profile.revisions.skills,
       },
       languages: {
-        normal: this.endpoints.user.profile.saveLanguages,
-        change: this.endpoints.user.profile.requestChanges.languages,
+        create: this.endpoints.user.profile.saveLanguages,
+        changeRequest: this.endpoints.user.profile.requestChanges.languages,
+        revision: this.endpoints.user.profile.revisions.languages,
       },
       attachments: {
-        normal: this.endpoints.user.profile.saveReferences,
-        change: this.endpoints.user.profile.requestChanges.references,
+        create: this.endpoints.user.profile.saveReferences,
+        changeRequest: this.endpoints.user.profile.requestChanges.references,
+        revision: this.endpoints.user.profile.revisions.references,
       },
     };
 
-    const pair = map[section];
-    return this.writeMode === 'change-request' ? pair.change : pair.normal;
+    const urls = map[section];
+    if (this.writeMode === 'change-request') return urls.changeRequest;
+    if (this.writeMode === 'review-edit') return urls.revision;
+    return urls.create;
   }
 
   // ================= FORM DATA BUILDER =================

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -16,16 +16,17 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
 
-public sealed class SaveProfileContactHandler(
+public sealed class ReviseProfileContactHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService
-) : ICommandHandler<SaveProfileContactCommand, IResult<Unit>>
+) : ICommandHandler<ReviseProfileContactCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(SaveProfileContactCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(ReviseProfileContactCommand cmd, CancellationToken ct)
     {
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
@@ -37,7 +38,7 @@ public sealed class SaveProfileContactHandler(
 
         var r = cmd.Request;
 
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var needsOffice = ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider);

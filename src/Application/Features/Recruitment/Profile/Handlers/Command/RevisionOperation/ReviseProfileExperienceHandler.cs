@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
@@ -15,18 +15,19 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
 
-public sealed class SaveProfileExperienceHandler(
+public sealed class ReviseProfileExperienceHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService
-) : ICommandHandler<SaveProfileExperienceCommand, IResult<Unit>>
+) : ICommandHandler<ReviseProfileExperienceCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
-    public async Task<IResult<Unit>> Handle(SaveProfileExperienceCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(ReviseProfileExperienceCommand cmd, CancellationToken ct)
     {
         var experienceRepo = uow.GetEntityRepository<Experience>();
         var trainingRepo = uow.GetEntityRepository<TrainingCourse>();
@@ -35,7 +36,7 @@ public sealed class SaveProfileExperienceHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateExperience(profile);

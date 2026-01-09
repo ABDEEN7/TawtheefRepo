@@ -3,21 +3,22 @@ using Cortex.Mediator.Commands;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
 
 
-public sealed class SaveProfileLanguagesHandler(
+public sealed class ReviseProfileLanguagesHandler(
     IUnitOfWork uow,
     IProfileStepValidationService validationService
-) : ICommandHandler<SaveProfileLanguagesCommand, IResult<Unit>>
+) : ICommandHandler<ReviseProfileLanguagesCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(SaveProfileLanguagesCommand cmd, CancellationToken ct)
+    public async Task<IResult<Unit>> Handle(ReviseProfileLanguagesCommand cmd, CancellationToken ct)
     {
         var langRepo = uow.GetEntityRepository<ProfileLanguage>();
 
@@ -25,7 +26,7 @@ public sealed class SaveProfileLanguagesHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateLanguages(profile);

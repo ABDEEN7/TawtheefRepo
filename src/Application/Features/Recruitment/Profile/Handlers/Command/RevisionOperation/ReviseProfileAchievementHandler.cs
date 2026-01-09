@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
@@ -15,20 +15,21 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
-namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.RevisionOperation;
 
-public sealed class SaveProfileAchievementHandler(
+public sealed class ReviseProfileAchievementHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService
-) : ICommandHandler<SaveProfileAchievementCommand, IResult<Unit>>
+) : ICommandHandler<ReviseProfileAchievementCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
-public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, CancellationToken ct)
+public async Task<IResult<Unit>> Handle(ReviseProfileAchievementCommand cmd, CancellationToken ct)
 {
     var achievementRepo = uow.GetEntityRepository<Achievement>();
 
@@ -36,7 +37,7 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
     if (profile is null)
         return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.InCreation)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
     var validationResult = validationService.ValidateAchievements(profile);

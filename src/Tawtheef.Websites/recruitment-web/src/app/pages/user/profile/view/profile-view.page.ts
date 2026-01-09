@@ -352,7 +352,12 @@ export class ProfileViewPage {
   }
 
   openEditDialog(section: ProfileSectionEnum) {
-    const mode = this.profileStatus() === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
+    const status = this.profileStatus();
+    const mode = status === UserProfileStatusEnum.Approved
+      ? 'change-request'
+      : status === UserProfileStatusEnum.RequiresUpdate
+        ? 'review-edit'
+        : 'create';
     this.dialogService.open(ProfileEditDialogComponent, {
       header: this.i18n.instant('profileView.editDialog.title'),
       data: { section, mode },
@@ -449,7 +454,7 @@ export class ProfileViewPage {
     if (this.profileStatus() !== UserProfileStatusEnum.RequiresUpdate || this.resubmitting()) return;
     this.resubmitting.set(true);
     this.profileService
-      .finalizeProfile()
+      .resubmitProfile()
       .pipe(
         switchMap(() => this.auth.refreshToken()),
         finalize(() => this.resubmitting.set(false))
