@@ -242,11 +242,11 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpDelete("education/{degreeId}/delete")]
-    public async Task<IActionResult> DeleteEducation([FromRoute] DeleteProfileEducationCommand command, CancellationToken ct)
+    [HttpDelete("education/{degreeId:guid}/delete")]
+    public async Task<IActionResult> DeleteEducation([FromRoute] Guid degreeId, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(new DeleteProfileEducationCommand(UserId.Value, degreeId), ct);
         return result.ToActionResult();
     }
 
@@ -268,27 +268,27 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpDelete("experience/{experienceId}/delete")]
-    public async Task<IActionResult> DeleteExperience([FromRoute] DeleteProfileExperienceCommand command, CancellationToken ct)
+    [HttpDelete("experience/{experienceId:guid}/delete")]
+    public async Task<IActionResult> DeleteExperience([FromRoute] Guid experienceId, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(new DeleteProfileExperienceCommand(UserId.Value, experienceId), ct);
         return result.ToActionResult();
     }
 
-    [HttpDelete("training/{trainingId}/delete")]
-    public async Task<IActionResult> DeleteTraining([FromRoute] DeleteProfileTrainingCommand command, CancellationToken ct)
+    [HttpDelete("training/{trainingId:guid}/delete")]
+    public async Task<IActionResult> DeleteTraining([FromRoute] Guid trainingId, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(new DeleteProfileTrainingCommand(UserId.Value, trainingId), ct);
         return result.ToActionResult();
     }
 
-    [HttpDelete("achievement/{achievementId}/delete")]
-    public async Task<IActionResult> DeleteAchievement([FromRoute] DeleteProfileAchievementCommand command, CancellationToken ct)
+    [HttpDelete("achievement/{achievementId:guid}/delete")]
+    public async Task<IActionResult> DeleteAchievement([FromRoute] Guid achievementId, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(new DeleteProfileAchievementCommand(UserId.Value, achievementId), ct);
         return result.ToActionResult();
     }
 
@@ -301,11 +301,11 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpDelete("skill/{skillId}/delete")]
-    public async Task<IActionResult> DeleteSkill([FromRoute] DeleteProfileSkillCommand command, CancellationToken ct)
+    [HttpDelete("skill/{skillId:guid}/delete")]
+    public async Task<IActionResult> DeleteSkill([FromRoute] Guid skillId, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(new DeleteProfileSkillCommand(UserId.Value, skillId), ct);
         return result.ToActionResult();
     }
 
@@ -318,11 +318,11 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
     
-    [HttpDelete("language/{languageId}/delete")]
-    public async Task<IActionResult> DeleteLanguage([FromRoute] DeleteProfileLanguageCommand command, CancellationToken ct)
+    [HttpDelete("language/{languageId:guid}/delete")]
+    public async Task<IActionResult> DeleteLanguage([FromRoute] Guid languageId, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(new DeleteProfileLanguageCommand(UserId.Value, languageId), ct);
         return result.ToActionResult();
     }
 
@@ -335,11 +335,11 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpDelete("references/{attachmentId}/delete")]
-    public async Task<IActionResult> DeleteAttachment([FromRoute] DeleteProfileAttachmentCommand command, CancellationToken ct)
+    [HttpDelete("references/{attachmentId:guid}/delete")]
+    public async Task<IActionResult> DeleteAttachment([FromRoute] Guid attachmentId, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(new DeleteProfileAttachmentCommand(UserId.Value, attachmentId), ct);
         return result.ToActionResult();
     }
 

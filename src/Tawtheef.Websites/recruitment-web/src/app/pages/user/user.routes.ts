@@ -5,7 +5,7 @@ import {profileCompleteGuard} from '../../core/guards/profile-complete.guard';
 export const userRoutes: Routes = [
   {
     path: 'dashboard',
-    canMatch: [profileCompleteGuard],
+    canActivate: [profileCompleteGuard],
     loadComponent: () => Dashboard
   },
   {
@@ -17,11 +17,6 @@ export const userRoutes: Routes = [
     path: 'profile-overview',
     loadComponent: () =>
       import('./profile/view/profile-view.page').then(m => m.ProfileViewPage)
-  },
-  {
-    path: 'profile/edit',
-    loadChildren: () =>
-      import('./profile/edit/profile-edit-shell.module').then(m => m.ProfileEditShellModule),
   },
   {
     path: 'job-details/:invitationId',

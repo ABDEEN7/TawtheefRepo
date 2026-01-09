@@ -101,7 +101,7 @@ export class ExperienceModal implements OnInit {
         hasQualification: !!init.qualificationId,
         qualificationId: init.qualificationId ?? null,
       });
-      this.initialAttachmentUrl = init?.attachment?.url ?? init?.attachmentUrl ?? null;
+      this.initialAttachmentUrl = init?.attachment?.url ?? null;
       this.initialId = this.config.data?.initialId ?? init?.id ?? null;
       this.initialAttachmentId = this.config.data?.attachmentId ?? init?.attachmentId ?? null;
     }

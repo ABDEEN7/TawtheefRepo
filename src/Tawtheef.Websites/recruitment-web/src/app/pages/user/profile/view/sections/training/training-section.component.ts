@@ -18,11 +18,13 @@ import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lo
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
 import {CourseModal} from '../../../components/profile-steps/step-experience/dialogs/course.modal/course.modal';
 import {TrainingCourse} from '../../../wizard-profile/models/experience.model';
+import {Tooltip} from 'primeng/tooltip';
+import {UploadedFileRef} from '../../../wizard-profile/models/profile-state.model';
 
 @Component({
   selector: 'app-profile-training-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, Tooltip],
   templateUrl: './training-section.component.html',
   styleUrls: ['./training-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -122,10 +124,13 @@ export class ProfileTrainingSectionComponent {
       title: qualification.title ?? '',
       provider: qualification.provider ?? '',
       country: qualification.country ?? null,
-      startDate: qualification.startDate ?? null,
-      endDate: qualification.endDate ?? null,
+      from: qualification.startDate ?? null,
+      to: qualification.endDate ?? null,
       description: qualification.description ?? '',
-      attachment: qualification.attachment ?? null,
+      attachment: qualification.attachment == null ? null : {
+          resourceId: qualification.attachment.resourceId,
+          resourceName: qualification.attachment.fileName
+        } as UploadedFileRef
     } as TrainingCourse;
   }
 

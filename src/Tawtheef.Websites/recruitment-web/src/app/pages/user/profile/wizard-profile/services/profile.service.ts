@@ -288,8 +288,8 @@ export class ProfileService {
     return this.http.post(this.url('skills'), dto);
   }
 
-  deleteSkill(skillId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteSkill(skillId));
+  deleteSkill(id: GUID) {
+    return this.http.delete(this.endpoints.user.profile.deleteSkill(id));
   }
 
   // ========== LANGUAGES ==========

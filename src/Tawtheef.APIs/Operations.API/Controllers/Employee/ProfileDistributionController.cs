@@ -1,5 +1,7 @@
 
+using System.Security.Claims;
 using Cortex.Mediator;
+using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -7,6 +9,7 @@ using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Queries;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -17,11 +20,18 @@ namespace Operations.API.Controllers.Employee;
 [Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileDistributionController(IMediator mediator) : ControllerBase
 {
+    private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
+    {
+        null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
+        var id => Result.Ok(Guid.Parse(id))
+    };
+
     [HttpGet("profiles")]
     [AuthorizePermission(PermissionKeys.Profile.View)]
     public async Task<IActionResult> GetFiles([FromQuery] GetDistributionProfilesQuery query, CancellationToken ct)
     {
-        var result = await mediator.Send(query, ct);
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(query with {UserId = UserId.Value} , ct);
         return result.ToActionResult();
     }
 
@@ -37,7 +47,8 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Profile.Manage)]
     public async Task<IActionResult> AssignManually([FromBody] ManualAssignRequest request, CancellationToken ct)
     {
-        var command = new ManualAssignProfilesCommand(request.EmployeeId, request.ProfileIds);
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var command = new ManualAssignProfilesCommand(UserId.Value, request.EmployeeId, request.ProfileIds);
         var result = await mediator.Send(command, ct);
         return result.ToActionResult();
     }
@@ -46,7 +57,8 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Profile.Manage)]
     public async Task<IActionResult> AssignAutomatically([FromBody] AutoAssignRequest request, CancellationToken ct)
     {
-        var command = new AutoAssignProfilesCommand(request.EmployeeIds, request.ProfileIds, request.PerEmployeeCount);
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var command = new AutoAssignProfilesCommand(UserId.Value, request.EmployeeIds, request.ProfileIds, request.PerEmployeeCount);
         var result = await mediator.Send(command, ct);
         return result.ToActionResult();
     }
@@ -55,7 +67,9 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Profile.Manage)]
     public async Task<IActionResult> Reassign([FromBody] ReassignRequest request, CancellationToken ct)
     {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
         var command = new ReassignProfilesCommand(
+            UserId.Value,
             request.Mode,
             request.EmployeeId,
             request.EmployeeIds,

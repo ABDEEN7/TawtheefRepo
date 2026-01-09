@@ -152,17 +152,6 @@ public sealed class SaveProfileEducationHandler(
             }
         }
 
-        // DELETE removed qualifications in edit mode
-        // Only delete if the client is actually sending Ids for existing rows
-        // (otherwise, you can't safely distinguish “new list” vs “no ids sent”).
-        var deletable = existingQualifications
-            .Where(q => incomingIds.Count > 0) // guard: only when edit IDs are provided
-            .Where(q => !incomingIds.Contains(q.Id))
-            .ToList();
-
-        if (deletable.Count > 0)
-            educationRepo.DbSet.RemoveRange(deletable);
-
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Qualifications, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

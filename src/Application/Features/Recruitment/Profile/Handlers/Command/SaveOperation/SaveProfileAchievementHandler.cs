@@ -128,17 +128,6 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
         }
     }
 
-    // Delete removed (only if client actually sends ids for existing rows)
-    if (incomingIds.Count > 0)
-    {
-        var toRemove = existing
-            .Where(x => !incomingIds.Contains(x.Id))
-            .ToList();
-
-        if (toRemove.Count > 0)
-            achievementRepo.DbSet.RemoveRange(toRemove);
-    }
-
     await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.CertificatesAndAwards, ct);
     await uow.SaveChangesAsync(ct);
 

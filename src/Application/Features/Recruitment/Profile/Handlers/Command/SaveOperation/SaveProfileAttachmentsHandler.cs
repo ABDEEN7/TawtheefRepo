@@ -54,17 +54,6 @@ public sealed class SaveProfileAttachmentsHandler(
         // Ensure non-null collection
         profile.AdditionalAttachments ??= new List<ProfileAdditionalAttachment>();
 
-        // If user removed everything => delete all existing (edit mode clear)
-        if (incoming.Count == 0)
-        {
-            if (profile.AdditionalAttachments.Count > 0)
-                attachRepo.DbSet.RemoveRange(profile.AdditionalAttachments);
-
-            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Attachments, ct);
-            await uow.SaveChangesAsync(ct);
-            return Result.Ok(Unit.Value);
-        }
-
         // Build lookup of existing by AttachmentId (resource id). This assumes AttachmentId is stable identity.
         // If your row has its own PK Id and AttachmentId is not unique, tell me and I’ll adjust.
         var existingByAttachmentId = profile.AdditionalAttachments
@@ -120,14 +109,6 @@ public sealed class SaveProfileAttachmentsHandler(
                 profile.AdditionalAttachments.Add(newRow);
             }
         }
-
-        // Delete removed attachments (existing not in incoming)
-        var toRemove = profile.AdditionalAttachments
-            .Where(x => !incomingAttachmentIds.Contains(x.AttachmentId))
-            .ToList();
-
-        if (toRemove.Count > 0)
-            attachRepo.DbSet.RemoveRange(toRemove);
 
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Attachments, ct);
         await uow.SaveChangesAsync(ct);

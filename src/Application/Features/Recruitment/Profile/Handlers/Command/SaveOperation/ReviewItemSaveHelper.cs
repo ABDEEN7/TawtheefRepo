@@ -3,6 +3,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -308,7 +309,7 @@ internal static class ReviewItemSaveHelper
 
     private static object? SnapshotRow<T>(
         IEnumerable<T>? items,
-        Guid entityId,
+        Guid? entityId,
         Func<T, object> snapshot)
         where T : EventEntity
     {

@@ -5,6 +5,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Configurations.Rules;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -13,45 +14,61 @@ namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Pr
 internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager<User> userManager)
 {
     public async Task<PaginatedResult<DistributionProfileDto>> LoadProfilesAsync(
+        Guid userId,
         PaginatedRequest paginatedRequest,
         UserProfileStatus? status,
         CancellationToken ct)
     {
-        var profileRepo = uow.GetEntityRepository<UserProfile>();
+        var profileRepo    = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
-        var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
+        var changeRepo     = uow.GetEntityRepository<ProfileChangeRequest>();
 
+        // 1) Resolve allowed country for current user (EmployeeUser => Qatar, OfficeUser => Office.CountryId)
+        var allowedCountryId = await ResolveAllowedCountryIdAsync(userId, ct);
+        if (allowedCountryId is null)
+        {
+            return new PaginatedResult<DistributionProfileDto>(
+                [],
+                0,
+                paginatedRequest.PageNumber,
+                paginatedRequest.PageSize);
+        }
+
+        // 2) Base profiles query with eligibility rules + country filter
         var profilesQuery = profileRepo.DbSet
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
             .Where(p =>
+                p.ResidenceCountryId == allowedCountryId.Value &&
                 (
-                    !Enumerable.Contains(ProfileDistributionRules.StartStatuses, p.Status) &&
-                    !Enumerable.Contains(ProfileDistributionRules.FinalStatuses, p.Status)
-                )
-                || (p.Status == UserProfileStatus.Approved &&
-                    changeRepo.DbSet.Any(c =>
-                        c.UserProfileId == p.Id &&
-                        (c.Status == ProfileChangeRequestStatus.Pending ||
-                         c.Status == ProfileChangeRequestStatus.UnderReview)
-                    )
+                    Enumerable.Contains(ProfileDistributionRules.AssignableStatuses, p.Status) ||
+                 (p.Status == UserProfileStatus.Approved &&
+                  changeRepo.DbSet.Any(c =>
+                      c.UserProfileId == p.Id &&
+                      (c.Status == ProfileChangeRequestStatus.Pending ||
+                       c.Status == ProfileChangeRequestStatus.UnderReview)))
                 )
             );
 
+        // 3) Optional status filter
         if (status is not null)
             profilesQuery = profilesQuery.Where(p => p.Status == status);
 
-        var profiles = await profilesQuery
-            .ToPaginatedListAsync(paginatedRequest, ct);
+        // 4) Paginate
+        var profiles = await profilesQuery.ToPaginatedListAsync(paginatedRequest, ct);
         if (profiles.Metadata.TotalCount == 0)
+        {
             return new PaginatedResult<DistributionProfileDto>(
                 [],
                 profiles.Metadata.TotalCount,
                 profiles.Metadata.CurrentPage,
                 profiles.Metadata.PageSize);
+        }
 
+        // 5) Load active assignments for returned profile IDs (batched)
         var profileIds = profiles.Items.Select(p => p.Id).ToList();
+
         var assignments = await assignmentRepo.DbSet
             .Where(a => a.IsActive && profileIds.Contains(a.UserProfileId))
             .Include(a => a.Employee)
@@ -59,14 +76,16 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
 
         var assignmentLookup = assignments.ToDictionary(a => a.UserProfileId, a => a);
 
+        // 6) Map DTOs
         var items = profiles.Items
             .Select(profile =>
             {
                 assignmentLookup.TryGetValue(profile.Id, out var assignment);
-                var submittedAt = profile.CreatedDate;
-                var candidateName = profile.User?.FullNameAr ?? profile.User?.FullNameEn ?? string.Empty;
-                var specialization = profile.CandidateType?.NameAr ?? profile.CandidateType?.NameEn ?? string.Empty;
-                var target = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn ?? string.Empty;
+
+                var submittedAt     = profile.CreatedDate;
+                var candidateName   = profile.User?.FullNameAr ?? profile.User?.FullNameEn ?? string.Empty;
+                var specialization  = profile.CandidateType?.NameAr ?? profile.CandidateType?.NameEn ?? string.Empty;
+                var target          = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn ?? string.Empty;
 
                 return new DistributionProfileDto
                 {
@@ -131,7 +150,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
                     TotalAssigned = load?.Total ?? 0,
                     Completed = load?.Completed ?? 0,
                     InReview = load?.InReview ?? 0,
-                    IsActive = !emp.IsBlocked && !emp.IsDeleted,
+                    IsActive = emp is { IsBlocked: false, IsDeleted: false },
                     Availability = availability
                 };
             })
@@ -139,16 +158,44 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
             .ToList();
     }
 
-    public async Task<DistributionResultDto> BuildResultAsync(int assignedCount, CancellationToken ct)
+    public async Task<DistributionResultDto> BuildResultAsync(Guid userId, int assignedCount, CancellationToken ct)
     {
         var employees = await LoadEmployeesAsync(ct);
-        var profiles = await LoadProfilesAsync(new PaginatedRequest {PageSize = int.MaxValue}, null, ct);
+
+        // Note: this overload must exist in your codebase; keeping your original intent.
+        var profiles = await LoadProfilesAsync(
+            userId: userId, // replace with actual current userId if needed by your workflow
+            paginatedRequest: new PaginatedRequest { PageSize = int.MaxValue },
+            status: null,
+            ct: ct);
 
         return new DistributionResultDto
         {
             AssignedCount = assignedCount,
             Employees = employees,
             Profiles = profiles.Items
+        };
+    }
+
+    private async Task<Guid?> ResolveAllowedCountryIdAsync(Guid userId, CancellationToken ct)
+    {
+        // Load user + Office navigation safely for OfficeUser
+        var user = await userManager.Users
+            .Include(u => (u as OfficeUser)!.Office)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+
+        if (user is null)
+            return null;
+
+        return user switch
+        {
+            // EmployeeUser => Qatar only
+            EmployeeUser => CountryIds.Qatar,
+
+            // OfficeUser => Office.CountryId
+            OfficeUser officeUser when officeUser.Office is not null => officeUser.Office.CountryId,
+
+            _ => null
         };
     }
 
