@@ -7,7 +7,7 @@ namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.Sav
 
 internal static class ReviewItemSnapshotBuilder
 {
-    public static object? GetSectionSnapshot(UserProfile profile, ProfileSection section)
+    public static object? GetSectionSnapshot(User user, UserProfile profile, ProfileSection section)
     {
         return section switch
         {
@@ -47,7 +47,9 @@ internal static class ReviewItemSnapshotBuilder
                 Zone = profile.ResidenceAddress?.ZoneNo,
                 Street = profile.ResidenceAddress?.StreetNo,
                 Building = profile.ResidenceAddress?.BuildingNo,
-                Unit = profile.ResidenceAddress?.UnitNo
+                Unit = profile.ResidenceAddress?.UnitNo,
+                profile.User!.PhoneNumber,
+                profile.User!.Email
             },
             ProfileSection.Qualifications => profile.Qualifications?
                 .OrderBy(q => q.Id)

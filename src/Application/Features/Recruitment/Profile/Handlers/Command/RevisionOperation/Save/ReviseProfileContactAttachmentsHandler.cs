@@ -4,6 +4,7 @@ using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -22,7 +23,8 @@ public sealed class ReviseProfileContactAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not (UserProfileStatus.InCreation or UserProfileStatus.RequiresUpdate))
+
+        if (profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var vr = validationService.ValidateAttachments(profile);
@@ -48,6 +50,8 @@ public sealed class ReviseProfileContactAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.ResidenceAddress.CertificateId = newId.Value;
+            if (profile.Status == UserProfileStatus.RequiresUpdate)
+                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Contact, ct);
         }
 
         await uow.SaveChangesAsync(ct);

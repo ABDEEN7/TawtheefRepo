@@ -69,7 +69,7 @@ internal static class ReviewItemSaveHelper
     {
         return item.TargetType switch
         {
-            ReviewTargetType.Section => ReviewItemSnapshotBuilder.GetSectionSnapshot(profile, item.Section),
+            ReviewTargetType.Section => ReviewItemSnapshotBuilder.GetSectionSnapshot(profile.User!, profile, item.Section),
             ReviewTargetType.Field => ReviewItemSnapshotBuilder.GetFieldValue(profile, item.FieldPath),
             ReviewTargetType.Row => ReviewItemSnapshotBuilder.GetRowSnapshot(profile, item.Section, item.EntityId, item),
             ReviewTargetType.Attachment => ReviewItemSnapshotBuilder.GetAttachmentSnapshot(profile, item),

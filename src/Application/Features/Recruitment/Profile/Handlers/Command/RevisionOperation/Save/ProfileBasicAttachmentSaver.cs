@@ -66,10 +66,6 @@ public sealed class ProfileBasicAttachmentSaver(IUnitOfWork uow, IMediator media
 
         var newId = uploadResult.Value.ResourceId;
 
-        // Mark review item solved (only meaningful in RequiresUpdate)
-        if (profile.Status == UserProfileStatus.RequiresUpdate)
-            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, section, ct);
-
         return Result.Ok(newId);
     }
 

@@ -1,7 +1,7 @@
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
@@ -14,11 +14,14 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
+public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> userManager)
     : ICommandHandler<SubmitUserProfileCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SubmitUserProfileCommand cmd, CancellationToken ct)
     {
+        var user = await userManager.FindByIdAsync(cmd.UserId.ToString());
+        if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
+        
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
@@ -55,7 +58,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
         // 1️⃣ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)
         {
-            var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(profile, sec); // shared helper
+            var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(user, profile, sec); // shared helper
             await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec, snapshot));
         }
 
