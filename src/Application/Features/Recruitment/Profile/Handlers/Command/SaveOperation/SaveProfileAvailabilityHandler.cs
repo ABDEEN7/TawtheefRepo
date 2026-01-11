@@ -1,11 +1,9 @@
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 
@@ -18,9 +16,6 @@ public sealed class SaveProfileAvailabilityHandler(
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
-
-        if (profile.Status != UserProfileStatus.InCreation)
-            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         profile.AvailableForRecruitment = cmd.Request.AvailableForRecruitment;
 

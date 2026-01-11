@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using Cortex.Mediator;
 using FluentResults;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -245,15 +244,6 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
         var cmd = new ReviseProfileContactAttachmentsCommand(UserId.Value, request);
-        var result = await mediator.Send(cmd, ct);
-        return result.ToActionResult();
-    }
-
-    [HttpPost("revisions/availability")]
-    public async Task<IActionResult> ReviseAvailability([FromBody] SaveProfileAvailabilityRequest request, CancellationToken ct)
-    {
-        if (UserId.IsFailed) return BadRequest(UserId.Errors);
-        var cmd = new ReviseProfileAvailabilityCommand(UserId.Value, request);
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }

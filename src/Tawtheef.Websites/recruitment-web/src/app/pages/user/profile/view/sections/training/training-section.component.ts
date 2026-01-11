@@ -6,7 +6,7 @@ import {
   ProfileStatusDto,
   QualificationDto, TrainingCourseDto
 } from '../../../../../../core/models/auth/auth-response.model';
-import {MyProfileReviewNoteDto, ReviewTargetTypeEnum} from '../../../overview/models/profile-overview.model';
+import {MyProfileReviewNoteDto, ReviewTargetTypeEnum} from '../../models/profile-overview.model';
 import {changeRequestDto} from '../../dtos/change-request-dto';
 import {FieldChange} from '../../utils/detect-change-fields';
 import {DegreeModal} from '../../../components/profile-steps/step-degree/dialogs/degree.modal/degree.modal';

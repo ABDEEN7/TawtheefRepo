@@ -7,7 +7,7 @@ import {
   ProfileChangeActionEnum,
   ProfileSectionEnum,
   ReviewTargetTypeEnum
-} from '../../../overview/models/profile-overview.model';
+} from '../../models/profile-overview.model';
 import {changeRequestDto} from '../../dtos/change-request-dto';
 import {detectChangedFields, FieldChange} from '../../utils/detect-change-fields';
 import {FileUtilsService} from '../../../../../../core/utils/file-utils';
@@ -15,7 +15,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import {Attachment} from '../../../wizard-profile/models/attachment.model';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {NotificationService} from '../../../../../../core/services/notification.service';
-import {ProfileOverviewVisibility} from '../../../overview/services/profile-overview.visibility';
+import {ProfileOverviewVisibility} from '../../services/profile-overview.visibility';
 
 export function formatChanges(
   changes: FieldChange[],

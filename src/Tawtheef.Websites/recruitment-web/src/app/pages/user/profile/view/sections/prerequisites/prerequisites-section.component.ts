@@ -4,14 +4,14 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import { ButtonDirective } from 'primeng/button';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
-import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../../overview/models/profile-overview.model';
+import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
 import {changeRequestDto} from '../../dtos/change-request-dto';
 import {FieldChange} from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import {Attachment} from '../../../wizard-profile/models/attachment.model';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {NotificationService} from '../../../../../../core/services/notification.service';
-import {ProfileOverviewVisibility} from '../../../overview/services/profile-overview.visibility';
+import {ProfileOverviewVisibility} from '../../services/profile-overview.visibility';
 
 @Component({
   selector: 'app-profile-prerequisites-section',
