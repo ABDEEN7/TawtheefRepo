@@ -31,7 +31,6 @@ import {NotificationService} from '../../../../../../core/services/notification.
 })
 export class StepPrereqComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
-
   ds        = inject(ProfileDataService);
   translate = inject(TranslateService);
   lookups   = inject(ProfileLookupsService);
@@ -46,6 +45,7 @@ export class StepPrereqComponent implements OnInit {
   private lastSubmittedSignature: string | null = null;
   private hasCheckedProfile = false;
   today = new Date();
+
   get step(){
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
@@ -53,7 +53,40 @@ export class StepPrereqComponent implements OnInit {
   }
 
   saving = false;
+  private static readonly MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 
+  private readonly FILE_RULES: Record<
+    'cv' | 'id' | 'birth' | 'marriage',
+    { exts: string[]; mimes: string[]; labelKey: string }
+  > = {
+    // CV: typically PDF / DOC / DOCX
+    cv: {
+      exts: ['.pdf', '.doc', '.docx'],
+      mimes: [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ],
+      labelKey: 'wizard.files.formats.cv'
+    },
+
+    // ID / Certificates: images + PDF
+    id: {
+      exts: ['.jpg', '.jpeg', '.png', '.pdf'],
+      mimes: ['image/jpeg', 'image/png', 'application/pdf'],
+      labelKey: 'wizard.files.formats.id'
+    },
+    birth: {
+      exts: ['.jpg', '.jpeg', '.png', '.pdf'],
+      mimes: ['image/jpeg', 'image/png', 'application/pdf'],
+      labelKey: 'wizard.files.formats.birth'
+    },
+    marriage: {
+      exts: ['.jpg', '.jpeg', '.png', '.pdf'],
+      mimes: ['image/jpeg', 'image/png', 'application/pdf'],
+      labelKey: 'wizard.files.formats.marriage'
+    }
+  };
   ngOnInit(): void {
     const state = this.ds.state();
     updateRemote(this.cvFile, state.cvFile);
@@ -75,34 +108,91 @@ export class StepPrereqComponent implements OnInit {
     this.hasCheckedProfile = false;
   }
 
+  private getFileExt(name: string): string {
+    const i = name.lastIndexOf('.');
+    return i >= 0 ? name.slice(i).toLowerCase() : '';
+  }
+
+  acceptFor(kind: 'cv' | 'id' | 'birth' | 'marriage'): string {
+    // For the file picker UI
+    return this.FILE_RULES[kind].exts.join(',');
+  }
+
+  formatsLabel(kind: 'cv' | 'id' | 'birth' | 'marriage'): string {
+    // For showing user-friendly hint text
+    return this.translate.instant(this.FILE_RULES[kind].labelKey);
+  }
+
+  private validateFile(kind: 'cv' | 'id' | 'birth' | 'marriage', file: File): boolean {
+    // size
+    if (file.size > StepPrereqComponent.MAX_FILE_SIZE) {
+      this.notificationService.error(
+        this.translate.instant('wizard.files.maxSize1mb'),
+        this.translate.instant('wizard.validationErrorTitle')
+      );
+      return false;
+    }
+
+    // type
+    const rule = this.FILE_RULES[kind];
+    const ext = this.getFileExt(file.name);
+
+    const extOk = rule.exts.includes(ext);
+
+    // Some browsers may give empty file.type, so we allow ext check as primary
+    const mimeOk = !file.type || rule.mimes.includes(file.type);
+
+    if (!extOk || !mimeOk) {
+      this.notificationService.error(
+        this.translate.instant('wizard.files.invalidFormat', {
+          formats: rule.exts.join(', ')
+        }),
+        this.translate.instant('wizard.validationErrorTitle')
+      );
+      return false;
+    }
+
+    return true;
+  }
   onFileSelected(kind: 'cv' | 'id' | 'birth' | 'marriage', event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (!file) return;
+
+    if (!this.validateFile(kind, file)) {
+      input.value = '';
+      return;
+    }
+
     switch (kind) {
       case 'cv':
         setLocalFile(this.cvFile, file);
-        this.ds.up('cvFile', { resourceId: 'local', resourceName: file.name, file: file });
+        this.ds.up('cvFile', { resourceId: 'local', resourceName: file.name, file });
         this.ds.up('cvName', file.name);
         break;
+
       case 'id':
         setLocalFile(this.idFile, file);
-        this.ds.up('idFile', { resourceId: 'local', resourceName: file.name, file: file });
+        this.ds.up('idFile', { resourceId: 'local', resourceName: file.name, file });
         this.ds.up('idName', file.name);
         break;
+
       case 'birth':
         setLocalFile(this.birthCertificateFile, file);
-        this.ds.up('birthCertificateFile', { resourceId: 'local', resourceName: file.name, file: file });
+        this.ds.up('birthCertificateFile', { resourceId: 'local', resourceName: file.name, file });
         this.ds.up('birthCertificateName', file.name);
         break;
+
       case 'marriage':
         setLocalFile(this.marriageCertificateFile, file);
-        this.ds.up('marriageCertificateFile', {resourceId: 'local', resourceName: file.name, file: file });
+        this.ds.up('marriageCertificateFile', { resourceId: 'local', resourceName: file.name, file });
         this.ds.up('marriageCertificateName', file.name);
         break;
     }
+
     input.value = '';
   }
+
 
   onNext() {
     if (!this.step.valid) {

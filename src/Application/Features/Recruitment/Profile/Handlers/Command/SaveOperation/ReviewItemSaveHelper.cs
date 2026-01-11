@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -23,19 +26,63 @@ internal static class ReviewItemSaveHelper
 
         if (items.Count == 0)
         {
-            profile.Status = UserProfileStatus.Submitted;
+            var handler = new ResubmitUserProfileHandler(uow);
+            await handler.Handle(new ResubmitUserProfileCommand(profile.UserId, new SubmitUserProfileRequest()), ct);
             return;
         }
 
         foreach (var item in items.Where(item => item.Section == section))
         {
-            item.Status = ReviewStatus.Solved;
-            item.IsOutdated = false;
+            var previousHash = item.CurrentHash;
+            var previousStatus = item.Status;
+            var previousOutdated = item.IsOutdated;
+            var wasReviewerIssue = item.Status is ReviewStatus.NeedsCorrection;
+            var currentValue = GetCurrentValue(profile, item);
+            item.UpdateHash(currentValue);
+
+            var valueChanged = previousHash != item.CurrentHash;
+            var attachmentReplaced = item.TargetType != ReviewTargetType.Attachment
+                || IsAttachmentReplaced(profile, item);
+
+            if (!valueChanged)
+            {
+                item.Status = previousStatus;
+                item.IsOutdated = previousOutdated;
+                continue;
+            }
+
+            if (wasReviewerIssue && attachmentReplaced)
+            {
+                item.Status = ReviewStatus.Solved;
+                item.IsOutdated = false;
+            }
         }
 
-        if (items.All(item => item.Status == ReviewStatus.Solved))
+        if (items.All(item => item.Status != ReviewStatus.NeedsCorrection))
         {
-            profile.Status = UserProfileStatus.Submitted;
+            var handler = new ResubmitUserProfileHandler(uow);
+            await handler.Handle(new ResubmitUserProfileCommand(profile.UserId, new SubmitUserProfileRequest()), ct);
         }
+    }
+
+    private static object? GetCurrentValue(UserProfile profile, ReviewItem item)
+    {
+        return item.TargetType switch
+        {
+            ReviewTargetType.Section => ReviewItemSnapshotBuilder.GetSectionSnapshot(profile.User!, profile, item.Section),
+            ReviewTargetType.Field => ReviewItemSnapshotBuilder.GetFieldValue(profile, item.FieldPath),
+            ReviewTargetType.Row => ReviewItemSnapshotBuilder.GetRowSnapshot(profile, item.Section, item.EntityId, item),
+            ReviewTargetType.Attachment => ReviewItemSnapshotBuilder.GetAttachmentSnapshot(profile, item),
+            _ => null
+        };
+    }
+
+    private static bool IsAttachmentReplaced(UserProfile profile, ReviewItem item)
+    {
+        var currentResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
+        if (item.ResourceId is null || currentResourceId is null)
+            return false;
+
+        return currentResourceId.Value != item.ResourceId.Value;
     }
 }

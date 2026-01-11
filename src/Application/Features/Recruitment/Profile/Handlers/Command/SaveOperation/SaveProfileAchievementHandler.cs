@@ -2,13 +2,14 @@ using System.Text.Json;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -28,68 +29,112 @@ public sealed class SaveProfileAchievementHandler(
     {
         PropertyNameCaseInsensitive = true
     };
+public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, CancellationToken ct)
+{
+    var achievementRepo = uow.GetEntityRepository<Achievement>();
 
-    public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, CancellationToken ct)
-    {
-        var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
-        if (profile is null)
-            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+    var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
+    if (profile is null)
+        return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
-        var validationResult = validationService.ValidateAchievements(profile);
-        if (validationResult.IsFailed)
-            return Result.Fail<Unit>(validationResult.Errors);
+    var validationResult = validationService.ValidateAchievements(profile);
+    if (validationResult.IsFailed)
+        return Result.Fail<Unit>(validationResult.Errors);
 
-        var achievementsResult = DeserializeAchievements(cmd.Request.AchievementsJson);
-        if (achievementsResult.IsFailed)
-            return Result.Fail<Unit>(achievementsResult.Errors);
+    var achievementsResult = DeserializeAchievements(cmd.Request.AchievementsJson);
+    if (achievementsResult.IsFailed)
+        return Result.Fail<Unit>(achievementsResult.Errors);
 
-        var lengthValidation = ValidateTextLengths(achievementsResult.Value);
-        if (lengthValidation.IsFailed)
-            return Result.Fail<Unit>(lengthValidation.Errors);
+    var dtos = achievementsResult.Value;
 
-        var achievementFiles = cmd.Request.AchievementFiles;
+    var lengthValidation = ValidateTextLengths(dtos);
+    if (lengthValidation.IsFailed)
+        return Result.Fail<Unit>(lengthValidation.Errors);
 
-        profile.Achievements ??= [];
-        var newAchievements = new List<Achievement>();
-        foreach (var dto in achievementsResult.Value)
+    var files = cmd.Request.AchievementFiles;
+
+    // Load existing from DB
+    var existing = await achievementRepo.DbSet
+        .Where(x => x.UserProfileId == profile.Id)
+        .ToListAsync(ct);
+
+    // Incoming ids for delete detection
+    var incomingIds = dtos
+        .Where(x => x.Id.HasValue && x.Id.Value != Guid.Empty)
+        .Select(x => x.Id!.Value)
+        .ToHashSet();
+
+    // Upsert
+    foreach (var dto in dtos)
+    {
+        var certResult = await UploadIfNeededAsync(
+            cmd.UserId,
+            dto.CertificateFileIndex,
+            files,
+            ErrorsCodes.InvalidAchievementFileIndex,
+            ErrorsCodes.InvalidAchievementFile,
+            ErrorsCodes.AchievementFileTooLarge,
+            ProfileLimits.MaxAchievementFileSizeBytes,
+            ProfileFileCategories.Achievement,
+            ct);
+
+        if (certResult.IsFailed)
+            return Result.Fail<Unit>(certResult.Errors);
+
+        var row = dto.Id.HasValue && dto.Id.Value != Guid.Empty
+            ? existing.FirstOrDefault(x => x.Id == dto.Id.Value)
+            : null;
+
+        var finalAttachmentId = certResult.Value ?? dto.AttachmentId;
+
+        if (row is null)
         {
-            var certResult = await UploadIfNeededAsync(
-                dto.CertificateFileIndex,
-                achievementFiles,
-                ErrorsCodes.InvalidAchievementFileIndex,
-                ErrorsCodes.InvalidAchievementFile,
-                ErrorsCodes.AchievementFileTooLarge,
-                ProfileLimits.MaxAchievementFileSizeBytes,
-                "achievement",
-                ct);
-
-            if (certResult.IsFailed)
-                return Result.Fail<Unit>(certResult.Errors);
-
+            // INSERT
             var entity = new Achievement
             {
-                AchievementTypeId = dto.AchievementTypeId,
-                Title = dto.Title,
-                IssuingAuthority = dto.IssuingAuthority,
-                CountryId = dto.CountryId,
-                IssueDate = dto.IssueDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
-                Description = dto.Description,
-                RelatedToSpecialization = dto.RelatedToSpecialization,
-                AttachmentId = certResult.Value ?? dto.AttachmentId ?? Guid.Empty,
-                UserProfileId = profile.Id
+                UserProfileId = profile.Id,
+
+                AchievementTypeId        = dto.AchievementTypeId,
+                Title                    = dto.Title,
+                IssuingAuthority         = dto.IssuingAuthority,
+                CountryId                = dto.CountryId,
+                IssueDate                = dto.IssueDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
+                Description              = dto.Description,
+                RelatedToSpecialization  = dto.RelatedToSpecialization,
+                AttachmentId             = finalAttachmentId ?? Guid.Empty // or null if your column is nullable
             };
 
-            profile.Achievements.Add(entity);
-            newAchievements.Add(entity);
+            await achievementRepo.DbSet.AddAsync(entity, ct);
         }
+        else
+        {
+            // UPDATE
+            row.AchievementTypeId       = dto.AchievementTypeId;
+            row.Title                   = dto.Title;
+            row.IssuingAuthority        = dto.IssuingAuthority;
+            row.CountryId               = dto.CountryId;
+            row.IssueDate               = dto.IssueDate ?? row.IssueDate; // keep existing if not provided
+            row.Description             = dto.Description;
+            row.RelatedToSpecialization = dto.RelatedToSpecialization;
 
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.CertificatesAndAwards, ct);
-        await uow.SaveChangesAsync(ct);
-        return Result.Ok(Unit.Value);
+            // Only overwrite attachment if a new upload happened OR dto sends a new attachment id
+            if (certResult.Value is not null)
+                row.AttachmentId = certResult.Value.Value;
+            else if (dto.AttachmentId is not null && dto.AttachmentId != Guid.Empty)
+                row.AttachmentId = dto.AttachmentId.Value;
+        }
+    }
 
+    await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.CertificatesAndAwards, ct);
+    await uow.SaveChangesAsync(ct);
+
+    return Result.Ok(Unit.Value);
+}
+
+    
         static Result<List<AchievementUpsertDto>> DeserializeAchievements(string json)
         {
             try
@@ -104,6 +149,7 @@ public sealed class SaveProfileAchievementHandler(
         }
 
         async Task<Result<Guid?>> UploadIfNeededAsync(
+            Guid userId,
             int? fileIndex,
             IReadOnlyList<IFormFile> files,
             string invalidIndexError,
@@ -126,9 +172,9 @@ public sealed class SaveProfileAchievementHandler(
             if (file.Length > maxFileSizeBytes)
                 return Result.Fail<Guid?>(fileTooLargeError);
 
-            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, category, file, false, cancellationToken);
+            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
             var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
-                new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+                new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
             if (uploadResult.IsFailed)
                 return Result.Fail<Guid?>(uploadResult.Errors);
@@ -148,5 +194,4 @@ public sealed class SaveProfileAchievementHandler(
 
             return Result.Ok();
         }
-    }
 }

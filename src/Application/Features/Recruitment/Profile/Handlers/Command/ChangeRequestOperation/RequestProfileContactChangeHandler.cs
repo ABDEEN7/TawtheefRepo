@@ -8,6 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -58,7 +59,7 @@ public sealed class RequestProfileContactChangeHandler(
             if (file is null || file.Length == 0)
                 return Result.Ok(existingId);
 
-            var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "national-address", file, false, ct);
+            var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.NationalAddress, file, false, ct);
             var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
@@ -117,4 +118,3 @@ file sealed record ContactSectionSnapshot
         return snapshot;
     }
 }
-

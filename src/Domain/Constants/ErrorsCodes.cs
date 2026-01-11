@@ -11,6 +11,8 @@ public class ErrorsCodes
     public const string ConcurrencyFailure = "CONCURRENCY_FAILURE";
     public const string LoginFailed = "LOGIN_FAILED";
     public const string UploadFailed = "UPLOAD_FAILED";
+    public const string ResidenceAddressNotFound = "RESIDENCE_ADDRESS_NOT_FOUND";
+    public const string SponsorProfileNotFound = "SPONSOR_PROFILE_NOT_FOUND";
     #endregion
 
     #region Validation Token Errors
@@ -183,6 +185,7 @@ public class ErrorsCodes
     public const string TrainingCourseFileTooLarge = "TRAINING_COURSE_FILE_TOO_LARGE";
     public const string AchievementFileTooLarge = "ACHIEVEMENT_FILE_TOO_LARGE";
     public const string InvalidAttachmentsJson = "INVALID_ATTACHMENTS_JSON";
+    public const string BasicResourcesJson = "BASIC_RESOURCES_JSON";
     public const string InvalidAttachmentFileIndex = "INVALID_ATTACHMENT_FILE_INDEX";
     public const string InvalidAttachmentFile = "INVALID_ATTACHMENT_FILE";
     public const string CvFileRequired = "CV_FILE_REQUIRED";
@@ -207,6 +210,8 @@ public class ErrorsCodes
     public const string InvalidAttachmentType = "INVALID_ATTACHMENT_TYPE";
     public const string InvalidAttachmentSize = "INVALID_ATTACHMENT_SIZE";
     public const string AttachmentNotFound = "ATTACHMENT_NOT_FOUND";
+    public const string AttachmentNotEditableInRevision = "ATTACHMENT_NOT_EDITABLE_IN_REVISION";
+    public const string InvalidAttachmentId = "INVALID_ATTACHMENT_ID";
 
     public const string PreviousProfileStepIncomplete = "PREVIOUS_PROFILE_STEP_INCOMPLETE";
     public const string CandidateTypeChangeNotAllowed = "CANDIDATE_TYPE_CHANGE_NOT_ALLOWED";
@@ -323,4 +328,5 @@ public class ErrorsCodes
     public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
     public const string QatariPeopleNotAllowedLoginBeforeRegisterOnKawader = "QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER";
     public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
+    public const string DuplicateAttachmentResource = "DUPLICATE_ATTACHMENT_RESOURCE";
 }

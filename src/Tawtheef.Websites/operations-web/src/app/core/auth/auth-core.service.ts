@@ -78,7 +78,7 @@ export class AuthCoreService {
   }
 
   refreshToken(): Observable<string | null> {
-    if(this.authState.isAuthenticated(true)) {
+    if(this.authState.isAuthenticated()) {
       return this.http.post<TokenModel>(this.endpoints.auth.refresh, {
         accessToken: this.tokenService.getToken(),
         refreshToken: this.tokenService.getRefreshToken()

@@ -1,11 +1,12 @@
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -13,16 +14,19 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
+public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> userManager)
     : ICommandHandler<SubmitUserProfileCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SubmitUserProfileCommand cmd, CancellationToken ct)
     {
+        var user = await userManager.FindByIdAsync(cmd.UserId.ToString());
+        if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
+        
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         if (!profile.IsCompleted())
@@ -45,15 +49,18 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
                 UserProfileId = profile.Id,
                 PerformedById = cmd.UserId,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = "Profile resubmitted and returned to distribution",
-                Section = "Assignment",
+                Notes = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution,
+                Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
             });
         }
 
         // 1️⃣ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)
-            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec));
+        {
+            var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(user, profile, sec); // shared helper
+            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec, snapshot));
+        }
 
         // 2️⃣ Profile-level attachments
         foreach (var item in BuildProfileFiles(profile))
@@ -71,9 +78,9 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
     // -----------------------
     // Section
     // -----------------------
-    private static ReviewItem NewPendingSection(Guid profileId, ProfileSection sec)
+    private static ReviewItem NewPendingSection(Guid profileId, ProfileSection sec, object? snapshot)
     {
-        var item = ReviewItem.Create(profileId, sec, ReviewTargetType.Section);
+        var item = ReviewItem.Create(profileId, sec, ReviewTargetType.Section, currentValue: snapshot);
         Normalize(item);
         return item;
     }
@@ -90,7 +97,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
                 ProfileSection.Prerequisites,
                 nameof(profile.BirthdayCertificateId),
                 profile.BirthdayCertificateId.Value,
-                "Birth Certificate");
+                ProfileReviewConstants.AttachmentTitles.BirthCertificate);
 
         if (profile.MarriageCertificateId is not null)
             yield return NewFile(
@@ -98,7 +105,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
                 ProfileSection.Prerequisites,
                 nameof(profile.MarriageCertificateId),
                 profile.MarriageCertificateId.Value,
-                "Marriage Certificate");
+                ProfileReviewConstants.AttachmentTitles.MarriageCertificate);
         
         if (profile.ResumeAttachmentId is not null)
             yield return NewFile(
@@ -106,7 +113,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
                 ProfileSection.Personal,
                 nameof(profile.ResumeAttachmentId),
                 profile.ResumeAttachmentId.Value,
-                "Resume");
+                ProfileReviewConstants.AttachmentTitles.Resume);
 
         if (profile.NationalCardId is not null)
             yield return NewFile(
@@ -114,15 +121,15 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
                 ProfileSection.Personal,
                 nameof(profile.NationalCardId),
                 profile.NationalCardId.Value,
-                "National Card");
+                ProfileReviewConstants.AttachmentTitles.NationalCard);
 
         if (profile.SponsorProfile?.SponsorCardId is not null)
             yield return NewFile(
                 profile.Id,
                 ProfileSection.Personal,
-                "SponsorCardResourceId",
+                ProfileReviewConstants.FieldPaths.SponsorCardResourceId,
                 profile.SponsorProfile.SponsorCardId.Value,
-                "Sponsor Card",
+                ProfileReviewConstants.AttachmentTitles.SponsorCard,
                nameof(profile.SponsorProfile),
                 profile.SponsorProfile.Id);
 
@@ -130,9 +137,9 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
             yield return NewFile(
                 profile.Id,
                 ProfileSection.Contact,
-                "NationalAddressCertificateId",
+                ProfileReviewConstants.FieldPaths.NationalAddressCertificateId,
                 profile.ResidenceAddress.CertificateId,
-                "National Address Certificate",
+                ProfileReviewConstants.AttachmentTitles.NationalAddressCertificate,
                 nameof(profile.ResidenceAddress),
                 profile.ResidenceAddress.Id);
 
@@ -143,10 +150,10 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
                 yield return NewFile(
                     profile.Id,
                     ProfileSection.Attachments,
-                    "AdditionalAttachments",
+                    ProfileReviewConstants.FieldPaths.AdditionalAttachments,
                     a.AttachmentId,
                     a.FileName,
-                    entityName: "ProfileAdditionalAttachment",
+                    entityName: ProfileReviewConstants.EntityNames.ProfileAdditionalAttachment,
                     entityId: a.Id
                 );
             }
@@ -184,19 +191,19 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
     {
         if (profile.Qualifications is not null)
             foreach (var q in profile.Qualifications)
-                repo.AddAsync(NewRow(profile.Id, ProfileSection.Qualifications, "Qualification", q.Id, Snapshot(q)));
+                repo.AddAsync(NewRow(profile.Id, ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification, q.Id, Snapshot(q)));
 
         if (profile.Experiences is not null)
             foreach (var e in profile.Experiences)
-                repo.AddAsync(NewRow(profile.Id, ProfileSection.Experience, "Experience", e.Id, Snapshot(e)));
+                repo.AddAsync(NewRow(profile.Id, ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience, e.Id, Snapshot(e)));
 
         if (profile.TrainingCourses is not null)
             foreach (var t in profile.TrainingCourses)
-                repo.AddAsync(NewRow(profile.Id, ProfileSection.TrainingCourses, "TrainingCourse", t.Id, Snapshot(t)));
+                repo.AddAsync(NewRow(profile.Id, ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse, t.Id, Snapshot(t)));
 
         if (profile.Achievements is not null)
             foreach (var a in profile.Achievements)
-                repo.AddAsync(NewRow(profile.Id, ProfileSection.CertificatesAndAwards, "Achievement", a.Id, Snapshot(a)));
+                repo.AddAsync(NewRow(profile.Id, ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement, a.Id, Snapshot(a)));
     }
 
     private static ReviewItem NewRow(
@@ -279,4 +286,3 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
         a.RelatedToSpecialization
     };
 }
-

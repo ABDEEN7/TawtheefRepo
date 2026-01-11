@@ -18,7 +18,7 @@ public sealed class GetDistributionProfilesHandler(IUnitOfWork uow, UserManager<
         CancellationToken ct)
     {
         var projection = new ProfileDistributionProjection(uow, userManager);
-        var items = await projection.LoadProfilesAsync(request, request.Status, ct);
+        var items = await projection.LoadProfilesAsync(request.UserId!.Value, request, request.Status, ct);
         return Result.Ok(items);
     }
 }

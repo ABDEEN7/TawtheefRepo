@@ -46,6 +46,8 @@ export class CourseModal implements OnInit {
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
+  private initialId: string | null = null;
+  private initialAttachmentId: string | null = null;
   today = new Date();
 
   form: FormGroup = this.fb.group({
@@ -59,11 +61,28 @@ export class CourseModal implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.config.data?.initialValue) {
-      this.form.patchValue(this.config.data.initialValue);
-      const init = this.config.data.initialValue as any;
-      this.initialAttachmentUrl = init?.attachment?.url ?? init?.attachmentUrl ?? null;
+    const init = this.config.data?.initialValue as TrainingCourse | undefined;
+    if (init) {
+      const period = init.from || init.to ? [init.from, init.to].map(d => d ? new Date(d) : null) : null;
+      this.form.patchValue({
+        org: init.provider,
+        name: init.title,
+        country: init.country ?? null,
+        period: period?.some(p => p) ? (period as Date[]) : null,
+        description: init.description ?? '',
+        fileName: init.fileName ?? init.attachment?.resourceName ?? '',
+      });
+      this.initialAttachmentUrl = init?.attachment?.url ?? null;
+      this.initialId = this.config.data?.initialId ?? init?.id ?? null;
+      this.initialAttachmentId = this.config.data?.attachmentId ?? init?.attachmentId ?? null;
     }
+
+    if (init?.file || init?.attachment || this.initialAttachmentId) {
+      this.form.get('file')?.clearValidators();
+    } else {
+      this.form.get('file')?.setValidators([Validators.required]);
+    }
+    this.form.get('file')?.updateValueAndValidity({ emitEvent: false });
   }
 
   onUpload(evt: any) {
@@ -102,6 +121,7 @@ export class CourseModal implements OnInit {
     const to   = period && period.length > 1 ? dateToDateOnly(period[1]) : null;
 
     const payload = {
+      id: this.initialId ?? undefined,
       title: v.name,
       provider: v.org,
       from,
@@ -109,7 +129,9 @@ export class CourseModal implements OnInit {
       country: v.country,
       description: v.description,
       file: v.file,
-      fileName: v.file?.name ?? v.fileName ?? null
+      fileName: v.file?.name ?? v.fileName ?? null,
+      attachmentId: this.initialAttachmentId ?? undefined,
+      attachment: this.config.data?.initialValue?.attachment ?? null
     } as TrainingCourse;
 
     this.ref.close(payload);
