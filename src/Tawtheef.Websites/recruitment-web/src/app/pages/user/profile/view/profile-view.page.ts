@@ -343,7 +343,7 @@ export class ProfileViewPage {
       .open(ReviewStepsDialogComponent, {
         header: this.i18n.instant('profileOverview.reviewSteps.dialogTitle'),
         data: { sections: review?.sections ?? [] },
-        styleClass: 'w-100 w-md-75'
+        styleClass: 'modal-dialog  modal-xl'
       })
       ?.onClose.subscribe(result => {
       if (result?.section) {
@@ -356,7 +356,7 @@ export class ProfileViewPage {
     this.dialogService.open(ReviewItemEditDialogComponent, {
       header: this.i18n.instant('profileOverview.reviewItemDialog.title'),
       data: { note, section, sectionLabel: note?.title ?? '', canEdit: true, fileUrl: null },
-      styleClass: 'w-100 w-md-50'
+      styleClass: 'modal-dialog  modal-xl'
     });
   }
 
@@ -370,7 +370,7 @@ export class ProfileViewPage {
     this.dialogService.open(ProfileEditDialogComponent, {
       header: this.i18n.instant('profileView.editDialog.title'),
       data: { section, mode },
-      styleClass: 'w-100 w-md-75'
+      styleClass: 'modal-dialog  modal-xl'
     })?.onClose.subscribe(result => {
       if (!result) return;
       this.reloadSection(section);
