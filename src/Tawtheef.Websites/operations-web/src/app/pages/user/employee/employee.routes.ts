@@ -2,12 +2,12 @@
 import {Dashboard} from './dashboard/dashboard';
 import {ProfileApprovalListPage} from './profile-managment/approval-list/profile-approval-list.page';
 import {ProfileDistributionPage} from './profile-managment/distribution/profile-distribution.page';
-import {JobInvitationSummary} from './job-managment/job-invitation-summary/job-invitation-summary';
+import {JobInvitationSummary} from './job-management/job-invitation-summary/job-invitation-summary';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {MajorsSkillsManagementPage} from './majors-skills-management/majors-skills-management';
 import {Permissions} from '../../../core/constants/permissions';
 import {KawaderPage} from './kawader/kawader.page';
-import { JobInvitationSummaryDetailsComponent } from './job-managment/job-invitation-summary-details/job-invitation-summary-details.component';
+import { JobInvitationSummaryDetailsComponent } from './job-management/job-invitation-summary-details/job-invitation-summary-details.component';
 import {ProfileApprovalWizardPage} from './profile-managment/approval-wizard/profile-approval-wizard.page';
 import {OrganizationStructuresPage} from './organization-structures/organization-structures.page';
 import {ProfileApprovalDetailPage} from './profile-managment/approval-detail/profile-approval-detail.page';
@@ -65,7 +65,7 @@ export const employeeRoutes: Routes = [
   {
     path: 'jobs',
     canActivate: [permissionGuard],
-    loadChildren: () => import('../../job/jobs.module').then(m => m.JobsModule),
+    loadChildren: () => import('./job-management/jobs.module').then(m => m.JobsModule),
   },
   { path: 'majors-skills-management',
     canActivate: [permissionGuard],
