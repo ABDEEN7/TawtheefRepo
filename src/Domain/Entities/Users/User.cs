@@ -71,12 +71,11 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     {
         OtpSendsInWindow++;
     }
-    public void SetOtp(string otpReference, DateTime expiryUtc)
+    public void SetOtpReference(string otpReference, DateTime expiryUtc)
     {
         OtpReference = otpReference;
         OtpExpiry = expiryUtc;
         OtpAttempts = 0;
-        MarkOtpSent();
     }
     public Result ValidateOtp(string otp, DateTime utcNow, int maxAttempts, TimeSpan lockDuration)
     {

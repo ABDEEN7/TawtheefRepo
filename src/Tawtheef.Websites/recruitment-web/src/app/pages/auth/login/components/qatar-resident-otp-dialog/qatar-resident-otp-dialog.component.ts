@@ -9,7 +9,7 @@ import {
   Validators
 } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { interval, Subject } from 'rxjs';
+import {interval, merge, Subject} from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -75,6 +75,7 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
   // ---- Resend Timer ----
   resendCooldown = 0; // seconds
   private destroy$ = new Subject<void>();
+  private cooldownStop$ = new Subject<void>();
 
   // Form
   readonly form = this.fb.group({
@@ -91,10 +92,11 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
   });
 
   ngOnDestroy(): void {
+    this.cooldownStop$.next();
+    this.cooldownStop$.complete();
     this.destroy$.next();
     this.destroy$.complete();
   }
-
   // -------------------------
   // Submit Identify
   // -------------------------
@@ -177,10 +179,8 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
               }
             },
             error: () => {
-              this.notifier.error(
-                this.translate.instant('auth.login.qatarResidentDialog.errorDescription'),
-                this.translate.instant('auth.login.qatarResidentDialog.errorTitle')
-              );
+              this.form.controls.otp.reset('', { emitEvent: false });
+              this.form.controls.otp.enable({ emitEvent: false });
             }
           });
         }
@@ -251,9 +251,11 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
   private startResendCooldown(seconds: number): void {
     this.resendCooldown = seconds;
 
-    // stop any previous running timer by recreating stream logic with takeUntil
+    // stop previous cooldown stream
+    this.cooldownStop$.next();
+
     interval(1000)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(merge(this.destroy$, this.cooldownStop$)))
       .subscribe(() => {
         if (this.resendCooldown > 0) this.resendCooldown--;
       });
