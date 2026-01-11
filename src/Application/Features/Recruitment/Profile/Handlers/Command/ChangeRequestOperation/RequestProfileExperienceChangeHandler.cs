@@ -9,6 +9,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -77,14 +78,22 @@ public sealed class RequestProfileExperienceChangeHandler(
                 ErrorsCodes.InvalidExperienceFile,
                 ErrorsCodes.ExperienceFileTooLarge,
                 ProfileLimits.MaxExperienceFileSizeBytes,
-                "experience",
+                ProfileFileCategories.Experience,
                 ct);
 
             if (certResult.IsFailed)
                 return Result.Fail<Unit>(certResult.Errors);
 
             var pending = PendingExperienceSnapshot.From(dto, certResult.Value ?? dto.CertificateId);
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Experience, "Experience", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            await reviewService.TouchRowAsync(
+                profile.Id,
+                ProfileSection.Experience,
+                ProfileReviewConstants.EntityNames.Experience,
+                Guid.NewGuid(),
+                cmd.UserId,
+                ct,
+                null,
+                pending);
         }
 
         foreach (var dto in trainings)
@@ -96,14 +105,22 @@ public sealed class RequestProfileExperienceChangeHandler(
                 ErrorsCodes.InvalidTrainingCourseFile,
                 ErrorsCodes.TrainingCourseFileTooLarge,
                 ProfileLimits.MaxTrainingFileSizeBytes,
-                "training",
+                ProfileFileCategories.Training,
                 ct);
 
             if (certResult.IsFailed)
                 return Result.Fail<Unit>(certResult.Errors);
 
             var pending = PendingTrainingSnapshot.From(dto, certResult.Value ?? dto.CertificateId);
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.TrainingCourses, "TrainingCourse", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            await reviewService.TouchRowAsync(
+                profile.Id,
+                ProfileSection.TrainingCourses,
+                ProfileReviewConstants.EntityNames.TrainingCourse,
+                Guid.NewGuid(),
+                cmd.UserId,
+                ct,
+                null,
+                pending);
         }
 
         await uow.SaveChangesAsync(ct);

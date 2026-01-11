@@ -5,6 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -41,7 +42,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
                 meta: cmd.Request.Resume,
                 file: cmd.Request.ResumeAttachment,
                 currentProfileResourceId: profile.ResumeAttachmentId,
-                folder: "resume",
+                folder: ProfileFileCategories.Resume,
                 ct);
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
@@ -60,7 +61,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
                 meta: cmd.Request.NationalCard,
                 file: cmd.Request.NationalCardAttachment,
                 currentProfileResourceId: profile.NationalCardId,
-                folder: "national-card",
+                folder: ProfileFileCategories.NationalCard,
                 ct);
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
@@ -84,7 +85,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
                 meta: cmd.Request.SponsorCard,
                 file: cmd.Request.SponsorCardAttachment,
                 currentProfileResourceId: current,
-                folder: "sponsor-card",
+                folder: ProfileFileCategories.SponsorCard,
                 ct);
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);

@@ -1,4 +1,5 @@
 ﻿using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -172,20 +173,21 @@ internal static class ReviewItemSnapshotBuilder
         if (item.FieldPath == nameof(UserProfile.MarriageCertificateId))
             return profile.MarriageCertificateId;
 
-        if (item.FieldPath == "SponsorCardResourceId")
+        if (item.FieldPath == ProfileReviewConstants.FieldPaths.SponsorCardResourceId)
             return profile.SponsorProfile?.SponsorCardId;
 
-        if (item.FieldPath == "NationalAddressCertificateId")
+        if (item.FieldPath == ProfileReviewConstants.FieldPaths.NationalAddressCertificateId)
             return profile.ResidenceAddress?.CertificateId;
 
-        if (item.FieldPath == "AdditionalAttachments" || item.EntityName == "ProfileAdditionalAttachment")
+        if (item.FieldPath == ProfileReviewConstants.FieldPaths.AdditionalAttachments ||
+            item.EntityName == ProfileReviewConstants.EntityNames.ProfileAdditionalAttachment)
         {
             return profile.AdditionalAttachments?
                 .FirstOrDefault(a => a.Id == item.EntityId)
                 ?.AttachmentId;
         }
 
-        return item.EntityName == "Attachment"
+        return item.EntityName == ProfileReviewConstants.EntityNames.Attachment
             ? profile.AdditionalAttachments?.FirstOrDefault(a => a.Id == item.EntityId)?.AttachmentId
             : item.ResourceId;
     }
