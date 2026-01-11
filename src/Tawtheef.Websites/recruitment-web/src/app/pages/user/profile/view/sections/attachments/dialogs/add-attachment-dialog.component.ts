@@ -60,13 +60,6 @@ import { I18nNamespaceDirective } from '../../../../../../../shared/directives/i
       </div>
     </section>
   `,
-  // styles: [
-  //   `
-  //     .attachment-dialog {
-  //       min-width: 280px;
-  //     }
-  //   `,
-  // ],
 })
 export class AddAttachmentDialogComponent {
   private readonly ref = inject(DynamicDialogRef);
