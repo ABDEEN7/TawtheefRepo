@@ -35,11 +35,10 @@ public sealed class RequestProfileSkillsChangeHandler(
 
         foreach (var skill in cmd.Request.Skills)
         {
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Skills, "Skill", Guid.NewGuid(), cmd.UserId, ct, null, skill);
+            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Skills, ProfileReviewConstants.EntityNames.Skill, Guid.NewGuid(), cmd.UserId, ct, null, skill);
         }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }
 }
-

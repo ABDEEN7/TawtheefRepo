@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -177,7 +178,7 @@ public sealed class ReviseProfileAttachmentsHandler(
                 return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
 
             var uploadPath = await UserProfileUploadPathFactory.CreateAsync(
-                cmd.UserId, "additional", file, false, cancellationToken);
+                cmd.UserId, ProfileFileCategories.Additional, file, false, cancellationToken);
 
             var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),

@@ -91,17 +91,17 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
             {
                 UserProfileId = profile.Id,
                 UserId = assignmentResult.Value.EmployeeId,
-                ActionType = "ProfileAssigned",
-                Notes = "Profile automatically assigned to reviewer",
-                Section = "Assignment"
+                ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
+                Notes = UserProfileLogConstants.Notes.ProfileAssignedAutomatically,
+                Section = UserProfileLogConstants.Sections.Assignment
             });
             await loggerRepo.AddAsync(new UserProfileLogger
             {
                 UserProfileId = profile.Id,
                 PerformedById = assignmentResult.Value.EmployeeId,
-                ActionType = "ProfileAssigned",
-                Notes = "Profile automatically assigned to reviewer",
-                Section = "Assignment",
+                ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
+                Notes = UserProfileLogConstants.Notes.ProfileAssignedAutomatically,
+                Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignmentResult.Value.Id
             });
             newlyAssigned[chosen.Employee.Id]++;

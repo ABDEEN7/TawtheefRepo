@@ -35,11 +35,10 @@ public sealed class RequestProfileLanguagesChangeHandler(
 
         foreach (var language in cmd.Request.Languages)
         {
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Languages, "Language", Guid.NewGuid(), cmd.UserId, ct, null, language);
+            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Languages, ProfileReviewConstants.EntityNames.Language, Guid.NewGuid(), cmd.UserId, ct, null, language);
         }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }
 }
-

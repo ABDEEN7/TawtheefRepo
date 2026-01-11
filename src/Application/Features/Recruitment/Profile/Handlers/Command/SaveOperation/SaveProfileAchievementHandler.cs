@@ -9,6 +9,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -77,7 +78,7 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
             ErrorsCodes.InvalidAchievementFile,
             ErrorsCodes.AchievementFileTooLarge,
             ProfileLimits.MaxAchievementFileSizeBytes,
-            "achievement",
+            ProfileFileCategories.Achievement,
             ct);
 
         if (certResult.IsFailed)

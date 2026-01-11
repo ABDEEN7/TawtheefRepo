@@ -46,8 +46,8 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
                 UserProfileId  = profile.Id,
                 PerformedById  = cmd.UserId,
                 ActionType     = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes          = "Profile resubmitted and returned to distribution",
-                Section        = "Assignment",
+                Notes          = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution,
+                Section        = UserProfileLogConstants.Sections.Assignment,
                 EntityId       = assignment.Id
             });
         }
@@ -279,20 +279,21 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
         if (item.FieldPath == nameof(UserProfile.MarriageCertificateId))
             return profile.MarriageCertificateId;
 
-        if (item.FieldPath == "SponsorCardResourceId")
+        if (item.FieldPath == ProfileReviewConstants.FieldPaths.SponsorCardResourceId)
             return profile.SponsorProfile?.SponsorCardId;
 
-        if (item.FieldPath == "NationalAddressCertificateId")
+        if (item.FieldPath == ProfileReviewConstants.FieldPaths.NationalAddressCertificateId)
             return profile.ResidenceAddress?.CertificateId;
 
-        if (item.FieldPath == "AdditionalAttachments" || item.EntityName == "ProfileAdditionalAttachment")
+        if (item.FieldPath == ProfileReviewConstants.FieldPaths.AdditionalAttachments ||
+            item.EntityName == ProfileReviewConstants.EntityNames.ProfileAdditionalAttachment)
         {
             return profile.AdditionalAttachments?
                 .FirstOrDefault(a => a.Id == item.EntityId)
                 ?.AttachmentId;
         }
 
-        return item.EntityName == "Attachment"
+        return item.EntityName == ProfileReviewConstants.EntityNames.Attachment
             ? profile.AdditionalAttachments?.FirstOrDefault(a => a.Id == item.EntityId)?.AttachmentId
             : item.ResourceId;
     }

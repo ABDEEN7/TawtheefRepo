@@ -71,8 +71,8 @@ public sealed class ManualAssignProfilesHandler(IUnitOfWork uow, UserManager<Use
                 UserProfileId = assignment.UserProfileId,
                 PerformedById = null,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = "Existing assignment deactivated before manual reassignment",
-                Section = "Assignment",
+                Notes = UserProfileLogConstants.Notes.AssignmentDeactivatedBeforeManualReassignment,
+                Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
             });
         }
@@ -88,17 +88,17 @@ public sealed class ManualAssignProfilesHandler(IUnitOfWork uow, UserManager<Use
             {
                 UserProfileId = profile.Id,
                 UserId = employee.Id,
-                ActionType = "ProfileAssigned",
-                Notes = "Profile manually assigned to reviewer",
-                Section = "Assignment"
+                ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
+                Notes = UserProfileLogConstants.Notes.ProfileAssignedManually,
+                Section = UserProfileLogConstants.Sections.Assignment
             });
             await loggerRepo.AddAsync(new UserProfileLogger
             {
                 UserProfileId = profile.Id,
                 PerformedById = employee.Id,
-                ActionType = "ProfileAssigned",
-                Notes = "Profile manually assigned to reviewer",
-                Section = "Assignment"
+                ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
+                Notes = UserProfileLogConstants.Notes.ProfileAssignedManually,
+                Section = UserProfileLogConstants.Sections.Assignment
             });
         }
 

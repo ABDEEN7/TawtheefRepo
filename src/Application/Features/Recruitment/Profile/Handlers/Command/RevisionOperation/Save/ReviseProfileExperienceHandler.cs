@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -96,7 +97,7 @@ public sealed class ReviseProfileExperienceHandler(
                 ErrorsCodes.InvalidExperienceFile,
                 ErrorsCodes.ExperienceFileTooLarge,
                 ProfileLimits.MaxExperienceFileSizeBytes,
-                "experience",
+                ProfileFileCategories.Experience,
                 ct);
 
             if (certResult.IsFailed)
@@ -156,7 +157,7 @@ public sealed class ReviseProfileExperienceHandler(
                 ErrorsCodes.InvalidTrainingCourseFile,
                 ErrorsCodes.TrainingCourseFileTooLarge,
                 ProfileLimits.MaxTrainingFileSizeBytes,
-                "training",
+                ProfileFileCategories.Training,
                 ct);
 
             if (certResult.IsFailed)
