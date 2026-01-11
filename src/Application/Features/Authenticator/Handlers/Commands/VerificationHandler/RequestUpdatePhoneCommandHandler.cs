@@ -22,7 +22,7 @@ public class RequestUpdatePhoneCommandHandler(
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
 
         if (request.PhoneE164.StartsWith("+974"))
-            return Result.Fail<Unit>(ErrorsCodes.ShouldVerifiyQatarPhoneNumberBeforeAssignIt);
+            return Result.Fail<Unit>(ErrorsCodes.ShouldVerifyQatarPhoneNumberBeforeAssignIt);
         
         user.PhoneNumber = request.PhoneE164;
         user.PhoneNumberConfirmed = true;

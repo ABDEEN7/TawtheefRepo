@@ -171,12 +171,6 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
           this.auth.externalLogin(res).subscribe({
             next: success => {
               if (success) this.ref.close(true);
-              else {
-                this.notifier.error(
-                  this.translate.instant('auth.login.qatarResidentDialog.errorDescription'),
-                  this.translate.instant('auth.login.qatarResidentDialog.errorTitle')
-                );
-              }
             },
             error: () => {
               this.form.controls.otp.reset('', { emitEvent: false });
