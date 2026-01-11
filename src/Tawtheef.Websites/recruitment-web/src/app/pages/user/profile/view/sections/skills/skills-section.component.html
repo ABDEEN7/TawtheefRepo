@@ -46,18 +46,18 @@
 </div>
 
 <!-- Skill Card Template -->
-<ng-template #skillCardTemplate let-skill>
+<ng-template #skillCardTemplate let-option>
   <div class="skill-card h-100">
     <div class="skill-card__header">
-      <span class="skill-name">{{ skill.skill.name }}</span>
+      <span class="skill-name">{{ option.skill?.name }}</span>
 
-      <span class="status-pill status-pill--info" *ngIf="!skill.id">
+      <span class="status-pill status-pill--info" *ngIf="!option.id">
         {{ 'profileOverview.status.pending' | translate }}
       </span>
     </div>
 
     <div class="skill-card__level">
-      {{ skill.level.name }}
+      {{ option.level.name }}
     </div>
   </div>
 </ng-template>
