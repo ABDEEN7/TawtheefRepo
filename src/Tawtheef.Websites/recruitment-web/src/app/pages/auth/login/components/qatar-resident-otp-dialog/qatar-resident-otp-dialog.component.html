@@ -110,11 +110,13 @@
 
       <!-- OTP input + resend -->
       <div class="field mt-3">
-        <label class="form-label required" for="otp">{{ 'auth.login.qatarResidentDialog.otp' | translate }}</label>
+        <label class="form-label required" for="otp">
+          <i class="pi pi-shield"></i>
+          {{ 'auth.login.qatarResidentDialog.otp' | translate }}
+        </label>
 
         <div class="otp-row">
           <span class="p-input-icon-left flex-1">
-            <i class="pi pi-shield"></i>
             <input
               id="otp"
               type="text"

@@ -86,7 +86,7 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
     qidExpiry: this.fb.nonNullable.control<string | Date>('', [Validators.required]),
     otp: this.fb.nonNullable.control({ value: '', disabled: true }, [
       Validators.required,
-      Validators.minLength(4)
+      Validators.minLength(6)
     ])
   });
 
