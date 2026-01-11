@@ -83,6 +83,7 @@ a {
 /*--------------------------------------------------------------
 # Colors & Backgrounds
 --------------------------------------------------------------*/
+.bg-primary-light{background-color: #f1e5e4 !important; }
 .bg-danger { background-color: rgba(180, 4, 30, 1) !important; }
 .bg-success { background-color: rgba(6, 118, 71, 1) !important; }
 .bg-success-light {background-color:#f2f8f6 !important;color: rgba(6, 118, 71, 1);}
@@ -94,7 +95,6 @@ a {
 .bg-info-light {background-color:#ecf5fe !important;color: #1f3a8b}
 
 .bg-light { background-color: $grey-100 !important; }
-
 .bg-alert-light {background-color: #fff8e6 !important;}
 
 .text-blue { color: $color-blue !important; }
@@ -781,15 +781,13 @@ body.ltr
     border-color:var(--color-primary);
 }
 
-
-
 :dir(rtl) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
   right: 0 !important;
     left: auto !IMPORTANT;
    
 }
-:dir(rtl) .qatar-otp-dialog  .form-control{direction: ltr;}
-:dir(ltr) .qatar-otp-dialog  .form-control{direction: rtl;}
+:dir(rtl) .qatar-otp-dialog .phone-wrap .form-control{direction: ltr;}
+:dir(ltr) .qatar-otp-dialog .phone-wrap .form-control{direction: rtl;}
 :dir(ltr) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
       right: auto;
     left: 0;

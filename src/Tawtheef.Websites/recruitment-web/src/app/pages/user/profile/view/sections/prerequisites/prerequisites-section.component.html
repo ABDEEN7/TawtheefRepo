@@ -1,62 +1,36 @@
-<div class="card req-panel border-0 shadow-sm">
-  <div class="card-body p-3 p-sm-3">
 
-    <!-- Header -->
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <div class="d-inline-flex align-items-center gap-2 fw-bold req-title">
-        <i class="pi pi-info-circle" aria-hidden="true"></i>
-        <span>{{ 'profileOverview.sections.basicRequirements' | translate }}</span>
-      </div>
-
-      <button *ngIf="canEdit"
-        type="button"
-        class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-        (click)="onEdit()">
-        <i class="pi pi-pencil" aria-hidden="true"></i>
-        <span>{{ 'common.edit' | translate }}</span>
-      </button>
+        <h5 class="mb-4 text-primary d-flex gap-2 align-items-center ">
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
+          <span>{{ 'profileOverview.sections.basicRequirements' | translate }}</span>
+        </h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
     </div>
 
     <!-- Top row: 3 KV cards -->
     <div class="row g-3">
       <!-- Candidate type -->
       <div class="col-12 col-lg-4">
-        <div class="card h-100 kv-card">
-          <div class="card-body py-3 px-3">
+        <div class="card h-100 card-table">
+          <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
-                {{ 'profileOverview.fields.candidateType' | translate }}
-              </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview('candidateTypeId')">
-                <span class="badge status-pill status-pill--info">
-                  {{ 'profileOverview.status.pending' | translate }}
-                </span>
-              </div>
+                 <label class="text-light w-100">{{ 'profileOverview.fields.candidateType' | translate }}</label>
+                 <div class="align-self-center" *ngIf="fieldUnderReview('candidateTypeId')"><span class="badge status-pill status-pill--info"> {{ 'profileOverview.status.pending' | translate }}</span></div>
             </div>
-            <div class="fw-bold text-body text-nowrap">
-              {{ profile?.candidateType?.name || '-' }}
-            </div>
+            <label class="fw-semibold text-dark text-nowrap">{{ profile?.candidateType?.name || '-' }}</label>
           </div>
         </div>
       </div>
 
       <!-- Target entity -->
       <div class="col-12 col-lg-4">
-        <div class="card h-100 kv-card">
-          <div class="card-body py-3 px-3">
-            <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
-                {{ 'profileOverview.fields.targetEntity' | translate }}
+        <div class="card h-100 card-table">
+          <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between gap-3">
+                  <label class="text-light w-100">{{ 'profileOverview.fields.targetEntity' | translate }}</label>
+                  <div class="align-self-center" *ngIf="fieldUnderReview('targetEntityId')"><span class="badge status-pill status-pill--info"> {{ 'profileOverview.status.pending' | translate }}</span></div>
               </div>
-              <div class="align-self-center" *ngIf="fieldUnderReview('targetEntityId')">
-                <span class="badge status-pill status-pill--info">
-                  {{ 'profileOverview.status.pending' | translate }}
-                </span>
-              </div>
-            </div>
-            <div class="fw-bold text-body text-nowrap">
-              {{ profile?.targetEntity?.name || '-' }}
-            </div>
+              <label class="fw-semibold text-dark text-nowrap">{{ profile?.targetEntity?.name || '-' }}</label>
           </div>
         </div>
       </div>
@@ -121,6 +95,3 @@
         </div>
       }
     </div>
-
-  </div>
-</div>

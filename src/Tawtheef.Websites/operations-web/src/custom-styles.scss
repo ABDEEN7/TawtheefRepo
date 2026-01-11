@@ -786,8 +786,8 @@ body.ltr
     left: auto !IMPORTANT;
    
 }
-:dir(rtl) .qatar-otp-dialog  .form-control{direction: ltr;}
-:dir(ltr) .qatar-otp-dialog  .form-control{direction: rtl;}
+:dir(rtl) .qatar-otp-dialog .phone-wrap .form-control{direction: ltr;}
+:dir(ltr) .qatar-otp-dialog .phone-wrap .form-control{direction: rtl;}
 :dir(ltr) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
       right: auto;
     left: 0;
