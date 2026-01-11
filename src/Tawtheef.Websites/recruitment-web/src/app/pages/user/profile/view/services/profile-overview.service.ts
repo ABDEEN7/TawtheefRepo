@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {MyProfileReviewSummaryDto, ProfileChangeRequestDto, ProfileOverview} from '../models/profile-overview.model';
-import {HttpService} from '../../../../../core/http/http.service';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
+import {HttpService} from '../../../../core/http/http.service';
+import {EndpointsService} from '../../../../core/http/endpoints.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileOverviewService {

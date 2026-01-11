@@ -1,10 +1,10 @@
 ﻿import { inject, Injectable, signal } from '@angular/core';
 import {forkJoin, Observable} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
+import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
-import {HttpService} from '../../../../../core/http/http.service';
-import {UserService} from '../../../../../core/auth/user.service';
+import {HttpService} from '../../../../core/http/http.service';
+import {UserService} from '../../../../core/auth/user.service';
 
 export interface CountryDto extends dropdownOptionsModel {
   code: string;

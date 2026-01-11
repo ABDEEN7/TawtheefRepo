@@ -1,8 +1,8 @@
 ﻿import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
-import {HttpService} from '../../../../../core/http/http.service';
+import {EndpointsService} from '../../../../core/http/endpoints.service';
+import {HttpService} from '../../../../core/http/http.service';
 
 @Injectable({ providedIn: 'root' })
 export class ContactVerificationService {

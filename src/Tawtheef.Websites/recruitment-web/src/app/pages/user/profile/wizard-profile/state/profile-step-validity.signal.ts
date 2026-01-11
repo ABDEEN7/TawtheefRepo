@@ -6,7 +6,7 @@ import {
 } from '../models/profile-validation.model';
 import {ProfileState} from '../models/profile-state.model';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
-import {CandidateType, SponsorType} from '../../../../../core/enums/lookups.enum';
+import {CandidateType, SponsorType} from '../../../../core/enums/lookups.enum';
 
 function parseDate(value?: string | null): Date | null {
   if (!value) return null;

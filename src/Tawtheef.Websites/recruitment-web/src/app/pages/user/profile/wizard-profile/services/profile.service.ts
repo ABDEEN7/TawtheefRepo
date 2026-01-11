@@ -1,13 +1,13 @@
 ﻿import { Injectable, inject } from '@angular/core';
 import { of } from 'rxjs';
-import {HttpService} from '../../../../../core/http/http.service';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
+import {HttpService} from '../../../../core/http/http.service';
+import {EndpointsService} from '../../../../core/http/endpoints.service';
 import {PROFILE_WRITE_MODE, ProfileWriteMode} from './profile-write-mode.token';
 import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
 import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
 import {MoiPersonalInfo} from '../models/moi-personal-info.model';
 import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.model';
-import {ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
+import {ProfileStatusDto} from '../../../../core/models/auth/auth-response.model';
 import {GUID} from '../../../../../shared/types/guid.type';
 import {Experience, TrainingCourse} from '../models/experience.model';
 import {Achievement} from '../models/achievement.model';

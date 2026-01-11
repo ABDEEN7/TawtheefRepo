@@ -22,8 +22,8 @@ import {
 import {NationalityMapperService} from './nationality-mapper.service';
 import {take, tap} from 'rxjs';
 import {mapProfileStatusToState} from './profile.mapper';
-import {UserService} from '../../../../../core/auth/user.service';
-import {CandidateType, SponsorType} from '../../../../../core/enums/lookups.enum';
+import {UserService} from '../../../../core/auth/user.service';
+import {CandidateType, SponsorType} from '../../../../core/enums/lookups.enum';
 
 @Injectable()
 export class ProfileDataService {
