@@ -19,7 +19,7 @@ export class ProgressBarComponent {
   private readonly cdr = inject(ChangeDetectorRef);
 
   progressValue = 0;
-  visible = false;
+  visible = true;
   private timer?: number;
 
   constructor() {
@@ -49,8 +49,8 @@ export class ProgressBarComponent {
     this.cdr.markForCheck();
 
     setTimeout(() => {
-      this.visible = false;
-      this.progressValue = 0;
+      // this.visible = false;
+      this.progressValue = 30;
       this.cdr.markForCheck();
     }, 250);
   }
