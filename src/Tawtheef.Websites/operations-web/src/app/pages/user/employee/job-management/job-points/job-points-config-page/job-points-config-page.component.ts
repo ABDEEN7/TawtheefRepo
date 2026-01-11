@@ -369,7 +369,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
                   this.isFinalApprovalAvailable = false;
                   this.isLoading = false;
 
-                  this.router.navigate([routes.employee.JobList]);
+                  this.router.navigate([routes.employee.JobDetails]);
                   this.cdr.detectChanges();
                 },
                 error: () => {
