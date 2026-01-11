@@ -104,7 +104,7 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         {
             UserProfileId = item.UserProfileId,
             UserId = cmd.OfficerId,
-            ActionType = "ReviewItemDecision",
+            ActionType = UserProfileLogConstants.ActionTypes.ReviewItemDecision,
             Notes = $"Review item {item.Id} marked {cmd.Status}",
             Section = item.Section.ToString(),
             EntityId = item.EntityId ?? item.Id,
@@ -115,7 +115,7 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         {
             UserProfileId = item.UserProfileId,
             PerformedById = cmd.OfficerId,
-            ActionType = "ReviewItemDecision",
+            ActionType = UserProfileLogConstants.ActionTypes.ReviewItemDecision,
             Notes = $"Review item {item.Id} marked {cmd.Status}",
             Section = item.Section.ToString(),
             EntityId = item.EntityId ?? item.Id,
@@ -163,13 +163,13 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
 
         return (section, entityName) switch
         {
-            (ProfileSection.Qualifications, "Qualification") => AddQualification(profile, entityId.Value, newValueJson),
-            (ProfileSection.Experience, "Experience") => AddExperience(profile, entityId.Value, newValueJson),
-            (ProfileSection.TrainingCourses, "TrainingCourse") => AddTrainingCourse(profile, entityId.Value, newValueJson),
-            (ProfileSection.CertificatesAndAwards, "Achievement") => AddAchievement(profile, entityId.Value, newValueJson),
-            (ProfileSection.Skills, "Skill") => AddSkill(profile, entityId.Value, newValueJson),
-            (ProfileSection.Languages, "Language") => AddLanguage(profile, entityId.Value, newValueJson),
-            (ProfileSection.Attachments, "Attachment") => AddAdditionalAttachment(profile, entityId.Value, newValueJson),
+            (ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification) => AddQualification(profile, entityId.Value, newValueJson),
+            (ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience) => AddExperience(profile, entityId.Value, newValueJson),
+            (ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse) => AddTrainingCourse(profile, entityId.Value, newValueJson),
+            (ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement) => AddAchievement(profile, entityId.Value, newValueJson),
+            (ProfileSection.Skills, ProfileReviewConstants.EntityNames.Skill) => AddSkill(profile, entityId.Value, newValueJson),
+            (ProfileSection.Languages, ProfileReviewConstants.EntityNames.Language) => AddLanguage(profile, entityId.Value, newValueJson),
+            (ProfileSection.Attachments, ProfileReviewConstants.EntityNames.Attachment) => AddAdditionalAttachment(profile, entityId.Value, newValueJson),
             _ => Result.Fail(ErrorsCodes.UnExpectedError)
         };
     }

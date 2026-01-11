@@ -79,7 +79,6 @@ export class Login implements OnInit, OnDestroy{
       case 'qatar_resident':
         this.dialog.open(QatarResidentOtpDialogComponent, {
           header: this.translate.instant('auth.login.qatarResidentDialog.title'),
-          width: '520px',
           contentStyle: { 'border-radius': '12px' },
           dismissableMask: false,
           closable: false

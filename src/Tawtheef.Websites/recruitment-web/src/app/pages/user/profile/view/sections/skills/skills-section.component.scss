@@ -1,1 +1,47 @@
 @use '../shared/section-theme';
+.skill-card {
+  background: #ffffff;
+  border: 1px solid var(--stroke, #e9e9ee);
+  border-radius: 14px;
+  padding: 0.75rem 0.85rem;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .skill-name {
+    font-weight: 600;
+    color: var(--text, #1f2937);
+    font-size: 0.95rem;
+  }
+
+  &__level {
+    font-size: 0.85rem;
+    color: var(--muted, #6b7280);
+  }
+}
+
+/* Pending status pill (reuse your existing system if needed) */
+.status-pill {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  font-weight: 600;
+
+  &--info {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+}

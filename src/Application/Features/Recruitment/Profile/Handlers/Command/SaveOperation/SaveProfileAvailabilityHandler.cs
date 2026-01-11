@@ -1,7 +1,6 @@
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Domain.Constants;

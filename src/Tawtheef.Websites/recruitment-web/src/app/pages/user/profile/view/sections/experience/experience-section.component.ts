@@ -7,7 +7,7 @@ import {
   FileRefDto,
   ProfileStatusDto
 } from '../../../../../../core/models/auth/auth-response.model';
-import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../../overview/models/profile-overview.model';
+import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';

@@ -8,6 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -51,7 +52,7 @@ public sealed class SaveProfilePrereqHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
-        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         profile.CandidateTypeId = r.CandidateTypeId;
@@ -65,19 +66,19 @@ public sealed class SaveProfilePrereqHandler(
         profile.QIDExpiry = requiresNationalAddress ? r.QIDExpiry ?? profile.QIDExpiry : null;
 
         // CV
-        var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, "cv");
+        var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, ProfileFileCategories.Cv);
         if (cvResult.IsFailed)  return Result.Fail<Unit>(cvResult.Errors);
         profile.ResumeAttachmentId = cvResult.Value;
 
         // ID
-        var idResult = await UploadIfNeededAsync(r.IdFile, profile.NationalCardId, "national-id");
+        var idResult = await UploadIfNeededAsync(r.IdFile, profile.NationalCardId, ProfileFileCategories.NationalId);
         if (idResult.IsFailed) return Result.Fail<Unit>(idResult.Errors);
         profile.NationalCardId = idResult.Value;
 
         // Birth Certificate
         if (needsBirthCertificate)
         {
-            var birthResult = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId, "birth-certificate");
+            var birthResult = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId, ProfileFileCategories.BirthCertificate);
             if (birthResult.IsFailed) return Result.Fail<Unit>(birthResult.Errors);
             profile.BirthdayCertificateId = birthResult.Value;
         }
@@ -89,7 +90,7 @@ public sealed class SaveProfilePrereqHandler(
         // Marriage Certificate
         if (needsMarriageCertificate)
         {
-            var marriageResult = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, "marriage-certificate");
+            var marriageResult = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, ProfileFileCategories.MarriageCertificate);
             if (marriageResult.IsFailed) return Result.Fail<Unit>(marriageResult.Errors);
             profile.MarriageCertificateId = marriageResult.Value;
         }

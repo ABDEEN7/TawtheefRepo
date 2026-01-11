@@ -1,34 +1,23 @@
 <!-- Personal Information (same design idea as req-panel / kv-card) -->
-<div class="card req-panel border-0 shadow-sm">
-  <div class="card-body p-3 p-sm-3">
+
 
     <!-- Header (optional – keep if you have a section title) -->
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <div class="d-inline-flex align-items-center gap-2 fw-bold req-title">
-        <i class="pi pi-info-circle" aria-hidden="true"></i>
-        <span>{{ 'profileOverview.sections.personalInfo' | translate }}</span>
-      </div>
-
-      <button *ngIf="canEdit"
-              type="button"
-              class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-              (click)="onEdit()">
-        <i class="pi pi-pencil" aria-hidden="true"></i>
-        <span>{{ 'common.edit' | translate }}</span>
-      </button>
+        <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-alert-circle"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.personalInfo' | translate }}</span></h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
     </div>
 
     <!-- Row 1 -->
     <div class="row g-3">
-      <div class="col-12 col-lg-4">
-        <div class="card h-100 kv-card">
-          <div class="card-body py-3 px-3">
+      <div class="col-12 col-lg-3">
+        <div class="card h-100 card-table">
+          <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.nationalNumber' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('nationalNumber')">
-                <span class="badge status-pill status-pill--info">
+                <span class=" pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -41,15 +30,15 @@
         </div>
       </div>
 
-      <div class="col-12 col-lg-4" *ngIf="visibility?.showQidExpiry">
-        <div class="card h-100 kv-card">
-          <div class="card-body py-3 px-3">
+      <div class="col-12 col-lg-3" *ngIf="visibility?.showQidExpiry">
+        <div class="card h-100 card-table">
+          <div class="card-body ">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.qidExpiry' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('qidExpiry')">
-                <span class="badge status-pill status-pill--info">
+                <span class="-pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -62,15 +51,15 @@
         </div>
       </div>
 
-      <div class="col-12 col-lg-4">
-        <div class="card h-100 kv-card">
-          <div class="card-body py-3 px-3">
+      <div class="col-12 col-lg-3">
+        <div class="card h-100 card-table">
+          <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.birthDate' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('birthDate')">
-                <span class="badge status-pill status-pill--info">
+                <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -82,19 +71,16 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Row 2 -->
-    <div class="row g-3 mt-2">
+  
       <div class="col-12 col-lg-3">
-        <div class="card h-100 kv-card">
-          <div class="card-body py-3 px-3">
+        <div class="card h-100 card-table">
+          <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.nationality' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('nationalityId')">
-                <span class="badge status-pill status-pill--info">
+                <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -108,14 +94,14 @@
       </div>
 
       <div class="col-12 col-lg-3">
-        <div class="card h-100 kv-card">
+        <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.gender' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('genderId')">
-                <span class="badge status-pill status-pill--info">
+                <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -129,14 +115,14 @@
       </div>
 
       <div class="col-12 col-lg-3">
-        <div class="card h-100 kv-card">
+        <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.religion' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('religionId')">
-                <span class="badge status-pill status-pill--info">
+                <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -150,14 +136,14 @@
       </div>
 
       <div class="col-12 col-lg-3">
-        <div class="card h-100 kv-card">
+        <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.maritalStatus' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('maritalStatusId')">
-                <span class="badge status-pill status-pill--info">
+                <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -169,19 +155,16 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Row 3 -->
-    <div class="row g-3 mt-2">
-      <div class="col-12 col-lg-4" *ngIf="visibility?.showSponsorSection">
-        <div class="card h-100 kv-card">
+      <div class="col-12 col-lg-3" *ngIf="visibility?.showSponsorSection">
+        <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.sponsorType' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('sponsorTypeId')">
-                <span class="badge status-pill status-pill--info">
+                <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -194,15 +177,15 @@
         </div>
       </div>
 
-      <div class="col-12 col-lg-4" *ngIf="visibility?.showSponsorSection">
-        <div class="card h-100 kv-card">
+      <div class="col-12 col-lg-3" *ngIf="visibility?.showSponsorSection">
+        <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.sponsorEmployerName' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('sponsorEmployerName')">
-                <span class="badge status-pill status-pill--info">
+                <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -214,16 +197,56 @@
           </div>
         </div>
       </div>
+      <div class="col-12 col-lg-3" *ngIf="visibility?.showSponsorSection">
+        <div class="card h-100 card-table">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.sponsorEmployerNumber' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('sponsorEmployerNumber')">
+                <span class="pill info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
 
-      <div class="col-12 col-lg-4">
-        <div class="card h-100 kv-card">
+            <div class="fw-bold text-body text-nowrap">
+              {{ profile?.sponsorEmployerNumber || '-' }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-3" *ngIf="visibility?.showSponsorSection">
+        <div class="card h-100 card-table">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.sponsorQidExpiry' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('sponsorQidExpiry')">
+                <span class="pill info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+
+            <div class="fw-bold text-body text-nowrap">
+              {{ profile?.sponsorQidExpiry || '-' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-3">
+        <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-muted small fw-semibold text-nowrap">
                 {{ 'profileOverview.fields.hasDisability' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('hasDisability')">
-                <span class="badge status-pill status-pill--info">
+                <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
@@ -242,7 +265,7 @@
       @for (att of attachments(); track att.key) {
         @let fileNote = noteForFile(att.file);
         <div class="col-12 col-lg-6">
-          <div class="card h-100 attach-card"  [ngClass]="{ 'attach-card--warn': fileNote }">
+          <div class="card h-100 card-table"  [ngClass]="{ 'attach-card--warn': fileNote }">
             <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
               <div class="attach-icon border rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0">
                 <i class="pi pi-external-link" aria-hidden="true"></i>
@@ -296,5 +319,4 @@
         </div>
       }
     </div>
-  </div>
-</div>
+

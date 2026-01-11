@@ -5,7 +5,7 @@ import { shareReplay } from 'rxjs/operators';
 import { HttpService } from '../../../../core/http/http.service';
 import { EndpointsService } from '../../../../core/http/endpoints.service';
 import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
-import { ProfileSectionEnum } from '../overview/models/profile-overview.model';
+import { ProfileSectionEnum } from './models/profile-overview.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileViewActionApi {

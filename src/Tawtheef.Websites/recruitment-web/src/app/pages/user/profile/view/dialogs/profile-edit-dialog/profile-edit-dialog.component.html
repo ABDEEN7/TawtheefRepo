@@ -34,6 +34,11 @@
                            (next)="close()">
       </app-step-experience>
 
+      <app-step-experience *ngSwitchCase="'training'"
+                           (back)="close()"
+                           (next)="close()">
+      </app-step-experience>
+
       <app-step-achievements *ngSwitchCase="'achievements'"
                              (back)="close()"
                              (next)="close()">

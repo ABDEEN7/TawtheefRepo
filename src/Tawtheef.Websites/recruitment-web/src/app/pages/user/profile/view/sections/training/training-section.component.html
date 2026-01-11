@@ -1,19 +1,9 @@
-<div class="card req-panel border-0 shadow-sm">
-  <div class="card-body p-3 p-sm-3">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <div class="d-inline-flex align-items-center gap-2 fw-bold req-title">
-        <i class="pi pi-verified" aria-hidden="true"></i>
-        <span>{{ 'profileOverview.sections.trainingCourses' | translate }}</span>
-      </div>
 
-      <div class="d-flex align-items-center gap-2" *ngIf="canAddAttachment">
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-          (click)="addCourseTraining()">
-          <i class="pi pi-plus" aria-hidden="true"></i>
-          <span>{{ 'profileView.actions.addCourseTraining' | translate }}</span>
-        </button>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+     
+      <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="pi pi-verified"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.trainingCourses' | translate }}</span></h5>
+      <div *ngIf="canAddAttachment">
+         <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"  (click)="addCourseTraining()"><i class="hgi hgi-stroke hgi-plus-sign me-1" aria-hidden="true"></i><span>{{ 'profileView.actions.addCourseTraining' | translate }}</span></button>
       </div>
     </div>
 
@@ -31,14 +21,12 @@
         </div>
       }
     </div>
-  </div>
-</div>
 
 <ng-template #courseTemplate let-course>
-  @let fileNote = noteForRaw(course.attachment);
+  @let fileNote = noteForRaw(course);
   <div class="col-12 col-lg-6">
-    <div class="card h-100 kv-card">
-      <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
+    <div class="card h-100 card-table"  [ngClass]="{ 'attach-card--warn': fileNote }">
+      <div class="card-body  d-flex flex-column gap-2 h-100">
         <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
           <div class="fw-semibold text-body">{{ course.title || '-' }}</div>
           <span class="badge status-pill status-pill--info" *ngIf="!course.id">
@@ -47,7 +35,29 @@
         </div>
         <div class="text-muted small">{{ course.provider }} · {{ course.country?.name }}</div>
         <div class="text-muted small">{{ course.startDate }} - {{ course.endDate }}</div>
-        <button *ngIf="fileNote?.note"
+        <div class="mt-2">
+          @if (course.attachment) {
+            <a
+              class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
+              [ngClass]="{ 'attach-link--warn': fileNote }"
+              (click)="open(course.attachment)">
+              <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
+              <span class="text-truncate d-inline-block">
+                        {{ course.attachment.fileName }}
+                      </span>
+              @if (fileNote) {
+                <i
+                  class="pi pi-exclamation-triangle text-warning"
+                  [pTooltip]="fileNote.note || fileNote.title"
+                  tooltipPosition="top"
+                  aria-hidden="true"></i>
+              }
+            </a>
+          } @else {
+            <span class="text-muted">{{ 'common.none' | translate }}</span>
+          }
+        </div>
+        <button *ngIf="fileNote"
           type="button"
           class="btn btn-sm btn-outline-secondary rounded-pill"
           (click)="editCourseTraining(course)">

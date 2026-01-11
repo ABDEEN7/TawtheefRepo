@@ -7,6 +7,7 @@ public sealed class SaveProfileAttachmentsRequest
 {
     public bool Submit { get; set; }
 
+    public string BasicResourcesJson { get; set; } = string.Empty;
     public string AttachmentsJson { get; set; } = string.Empty;
 
     [JsonIgnore]

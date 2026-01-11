@@ -1,19 +1,10 @@
-<div class="card req-panel border-0 shadow-sm">
-  <div class="card-body p-3 p-sm-3">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <div class="d-inline-flex align-items-center gap-2 fw-bold req-title">
-        <i class="pi pi-language" aria-hidden="true"></i>
-        <span>{{ 'profileOverview.sections.languages' | translate }}</span>
-      </div>
+<div class="d-flex align-items-center justify-content-between mb-3">
+      <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-language-square" aria-hidden="true"></i> <span>{{ 'profileOverview.sections.languages' | translate }}</span></h5>
+      <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
+</div>
 
-      <button *ngIf="canEdit"
-              type="button"
-              class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-              (click)="onEdit()">
-        <i class="pi pi-pencil" aria-hidden="true"></i>
-        <span>{{ 'common.edit' | translate }}</span>
-      </button>
-    </div>
+
+
 
     <div class="row g-3">
       @if (profile?.languages?.length || languageUnderReview().length) {
@@ -29,25 +20,18 @@
         </div>
       }
     </div>
-  </div>
-</div>
+
 
 <ng-template #languageTemplate let-lang>
   <div class="col-12 col-lg-6">
-    <div class="card h-100 kv-card">
+    <div class="card h-100 card-table">
       <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
-        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-          <div class="fw-semibold text-body">{{ lang.language.name }}</div>
-          <span class="badge status-pill status-pill--info" *ngIf="!lang.id">
-                    {{ 'profileOverview.status.pending' | translate }}
-                  </span>
-        </div>
-        <div class="text-muted small">
-          {{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}
-        </div>
-        <div class="text-muted small">
-          {{ lang.readingLevel.name }} / {{ lang.writingLevel.name }}
-        </div>
+          <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+              <label class="text-light">{{ lang.language.name }}</label>
+              <span class="pill info" *ngIf="!lang.id"> {{ 'profileOverview.status.pending' | translate }}</span>
+          </div>
+        <label class="fw-semibold text-dark text-nowrap">{{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}</label>
+        <label class="fw-semibold text-dark text-nowrap">{{ lang.readingLevel.name }} / {{ lang.writingLevel.name }}</label>
       </div>
     </div>
   </div>

@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import {ButtonDirective, ButtonIcon, ButtonLabel} from 'primeng/button';
+import {ButtonDirective} from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
 import { finalize, switchMap } from 'rxjs/operators';
@@ -15,13 +16,12 @@ import {
   ReviewStatusEnum,
   MyProfileReviewSummaryDto,
   UserProfileStatusEnum,
-  MyProfileReviewNoteDto, ProfileChangeActionEnum, ReviewTargetTypeCode, ReviewTargetTypeEnum
-} from '../overview/models/profile-overview.model';
+  MyProfileReviewNoteDto, ProfileChangeActionEnum, ReviewTargetTypeEnum
+} from './models/profile-overview.model';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
-import { ProfileOverviewService } from '../overview/services/profile-overview.service';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { ReviewStepsDialogComponent } from '../overview/dialogs/review-steps-dialog/review-steps-dialog.component';
-import { ReviewItemEditDialogComponent } from '../overview/dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
+import { ReviewStepsDialogComponent } from './dialogs/review-steps-dialog/review-steps-dialog.component';
+import { ReviewItemEditDialogComponent } from './dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
 import { ProfileEditDialogComponent } from './dialogs/profile-edit-dialog/profile-edit-dialog.component';
 import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
 import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites/prerequisites-section.component';
@@ -42,10 +42,9 @@ import { ProfileService } from '../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.service';
-import {
-  createProfileOverviewVisibility,
-  ProfileOverviewVisibility
-} from '../overview/services/profile-overview.visibility';
+import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
+import {ProfileOverviewService} from './services/profile-overview.service';
+import {createProfileOverviewVisibility, ProfileOverviewVisibility} from './services/profile-overview.visibility';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -59,6 +58,11 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
 @Component({
   selector: 'app-profile-view-page',
   standalone: true,
+  providers:[
+    DialogService,
+    ProfileService,
+    { provide: PROFILE_WRITE_MODE, useValue: 'review-edit' },
+  ],
   imports: [
     CommonModule,
     TranslatePipe,
@@ -75,14 +79,12 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
     ProfileSkillsSectionComponent,
     ProfileLanguagesSectionComponent,
     ProfileAttachmentsSectionComponent,
-    ButtonIcon,
     ButtonDirective,
-    ButtonLabel
+    ProgressSpinner,
   ],
   templateUrl: './profile-view.page.html',
   styleUrls: ['./profile-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DialogService]
 })
 export class ProfileViewPage {
   private readonly fileUtils = inject(FileUtilsService);
@@ -124,6 +126,9 @@ export class ProfileViewPage {
     this.review.status() === 'loading' ||
     this.changeRequests.status() === 'loading'
   );
+  readonly reviewLoading = computed(() => this.review.status() === 'loading');
+  readonly changeRequestsLoading = computed(() => this.changeRequests.status() === 'loading');
+  readonly summaryLoading = computed(() => this.reviewLoading() || this.changeRequestsLoading());
   get keyLabel(){
     return this.cards.find(c => c.section === this.expanded())?.labelKey;
   }
@@ -308,6 +313,8 @@ export class ProfileViewPage {
 
   reloadSection(section: ProfileSectionEnum) {
     this.sections.get(section)?.reload();
+    this.review.reload();
+    this.changeRequests.reload();
   }
 
   sectionStatus(section: ProfileSectionEnum) {
@@ -354,16 +361,19 @@ export class ProfileViewPage {
   }
 
   openEditDialog(section: ProfileSectionEnum) {
-    const mode = this.profileStatus() === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
+    const status = this.profileStatus();
+    const mode = status === UserProfileStatusEnum.Approved
+      ? 'change-request'
+      : status === UserProfileStatusEnum.RequiresUpdate
+        ? 'review-edit'
+        : 'create';
     this.dialogService.open(ProfileEditDialogComponent, {
       header: this.i18n.instant('profileView.editDialog.title'),
       data: { section, mode },
       styleClass: 'w-100 w-md-75'
     })?.onClose.subscribe(result => {
       if (!result) return;
-      this.sections.get(section)?.reload();
-      this.review.reload();
-      this.changeRequests.reload();
+      this.reloadSection(section);
     });
   }
 
@@ -451,7 +461,7 @@ export class ProfileViewPage {
     if (this.profileStatus() !== UserProfileStatusEnum.RequiresUpdate || this.resubmitting()) return;
     this.resubmitting.set(true);
     this.profileService
-      .finalizeProfile()
+      .resubmitProfile()
       .pipe(
         switchMap(() => this.auth.refreshToken()),
         finalize(() => this.resubmitting.set(false))

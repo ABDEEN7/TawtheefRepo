@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Commands;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
@@ -65,8 +66,8 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
                 UserProfileId = assignment.UserProfileId,
                 PerformedById = null,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = "Existing assignment deactivated before reassignment",
-                Section = "Assignment",
+                Notes = UserProfileLogConstants.Notes.AssignmentDeactivatedBeforeReassignment,
+                Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
             });
         }
@@ -79,8 +80,8 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
 
         await uow.SaveChangesAsync(ct);
 
-        var mode = request.Mode.Trim().ToLowerInvariant();
-        if (mode == "manual")
+        var mode = ProfileDistributionModes.Normalize(request.Mode);
+        if (mode == ProfileDistributionModes.ManualNormalized)
         {
             var employee = await userManager.Users.OfType<EmployeeUser>()
                 .FirstOrDefaultAsync(e => e.Id == request.EmployeeId && !e.IsDeleted && !e.IsBlocked, ct);
@@ -99,29 +100,30 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
                 {
                     UserProfileId = profile.Id,
                     UserId = employee.Id,
-                    ActionType = "ProfileAssigned",
-                    Notes = "Profile reassigned to reviewer (manual)",
-                    Section = "Assignment"
+                    ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
+                    Notes = UserProfileLogConstants.Notes.ProfileReassignedManually,
+                    Section = UserProfileLogConstants.Sections.Assignment
                 });
                 await loggerRepo.AddAsync(new UserProfileLogger
                 {
                     UserProfileId = profile.Id,
                     PerformedById = employee.Id,
-                    ActionType = "ProfileAssigned",
-                    Notes = "Profile reassigned to reviewer (manual)",
-                    Section = "Assignment"
+                    ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
+                    Notes = UserProfileLogConstants.Notes.ProfileReassignedManually,
+                    Section = UserProfileLogConstants.Sections.Assignment
                 });
             }
 
             await uow.SaveChangesAsync(ct);
             var projection = new ProfileDistributionProjection(uow,userManager);
-            var manualResult = await projection.BuildResultAsync(profiles.Count, ct);
+            var manualResult = await projection.BuildResultAsync(request.UserId,profiles.Count, ct);
             return Result.Ok(manualResult);
         }
 
-        if (mode == "auto")
+        if (mode == ProfileDistributionModes.AutoNormalized)
         {
             var autoRequest = new AutoAssignProfilesCommand(
+                request.UserId,
                 request.EmployeeIds,
                 request.ProfileIds,
                 request.PerEmployeeCount);

@@ -50,14 +50,32 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     /// <summary>
     /// Number of OTPs sent to the user
     /// </summary>
-    public int OtpSends { get; private set; }
+    public DateTime? OtpSendWindowStartUtc { get; private set; }
+    public int OtpSendsInWindow { get; private set; }
+    
+    public Result CanSendOtp(DateTime utcNow, int maxSends, TimeSpan window)
+    {
+        if (OtpSendWindowStartUtc is null || utcNow - OtpSendWindowStartUtc >= window)
+        {
+            OtpSendWindowStartUtc = utcNow;
+            OtpSendsInWindow = 0;
+        }
 
-    public void SetOtp(string otpReference, DateTime expiryUtc)
+        if (OtpSendsInWindow >= maxSends)
+            return Result.Fail(ErrorsCodes.SendOtpLimitReached);
+
+        return Result.Ok();
+    }
+
+    public void MarkOtpSent()
+    {
+        OtpSendsInWindow++;
+    }
+    public void SetOtpReference(string otpReference, DateTime expiryUtc)
     {
         OtpReference = otpReference;
         OtpExpiry = expiryUtc;
         OtpAttempts = 0;
-        OtpSends++;
     }
     public Result ValidateOtp(string otp, DateTime utcNow, int maxAttempts, TimeSpan lockDuration)
     {

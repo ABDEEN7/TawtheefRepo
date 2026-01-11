@@ -8,6 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -41,16 +42,16 @@ public sealed class RequestProfilePrereqChangeHandler(
 
         var currentSnapshot = PrereqSectionSnapshot.From(profile);
 
-        var cvUpload = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, "cv");
+        var cvUpload = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, ProfileFileCategories.Cv);
         if (cvUpload.IsFailed) return Result.Fail<Unit>(cvUpload.Errors);
 
-        var idUpload = await UploadIfNeededAsync(r.IdFile, profile.NationalCardId, "national-id");
+        var idUpload = await UploadIfNeededAsync(r.IdFile, profile.NationalCardId, ProfileFileCategories.NationalId);
         if (idUpload.IsFailed) return Result.Fail<Unit>(idUpload.Errors);
 
-        var birthUpload = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId, "birth-certificate");
+        var birthUpload = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId, ProfileFileCategories.BirthCertificate);
         if (birthUpload.IsFailed) return Result.Fail<Unit>(birthUpload.Errors);
 
-        var marriageUpload = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, "marriage-certificate");
+        var marriageUpload = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, ProfileFileCategories.MarriageCertificate);
         if (marriageUpload.IsFailed) return Result.Fail<Unit>(marriageUpload.Errors);
 
         var nextSnapshot = currentSnapshot.ApplyRequest(
@@ -172,4 +173,3 @@ file sealed record PrereqSectionSnapshot
     public static bool RequiresNationalAddress(Guid? candidateTypeId) =>
         candidateTypeId != CandidateTypeIds.NonQatari && candidateTypeId != CandidateTypeIds.GCC;
 }
-

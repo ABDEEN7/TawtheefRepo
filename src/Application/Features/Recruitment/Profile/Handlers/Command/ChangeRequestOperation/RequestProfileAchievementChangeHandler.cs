@@ -9,6 +9,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -64,7 +65,7 @@ public sealed class RequestProfileAchievementChangeHandler(
                 ErrorsCodes.InvalidAchievementFile,
                 ErrorsCodes.AchievementFileTooLarge,
                 ProfileLimits.MaxAchievementFileSizeBytes,
-                "achievement",
+                ProfileFileCategories.Achievement,
                 ct);
 
             if (certResult.IsFailed)
@@ -82,7 +83,15 @@ public sealed class RequestProfileAchievementChangeHandler(
                 AttachmentResourceId = certResult.Value ?? dto.AttachmentId
             };
 
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.CertificatesAndAwards, "Achievement", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            await reviewService.TouchRowAsync(
+                profile.Id,
+                ProfileSection.CertificatesAndAwards,
+                ProfileReviewConstants.EntityNames.Achievement,
+                Guid.NewGuid(),
+                cmd.UserId,
+                ct,
+                null,
+                pending);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -161,4 +170,3 @@ file sealed record PendingAchievementSnapshot
     public bool? RelatedToSpecialization { get; init; }
     public Guid? AttachmentResourceId { get; init; }
 }
-
