@@ -95,16 +95,6 @@ export class JobCandidatesComponent implements OnInit {
   private loadCandidatesData(): void {
     if (!this.filterSettingsLoaded) return;
 
-    if (!this.hasActiveFilters()) {
-      this.candidates = undefined;
-      this.paginationMetadata = undefined;
-      this.totalCandidatesCount = 0;
-      this.availableCandidatesCount = 0;
-      this.abovePointsCandidatesCount = 0;
-      this.pointsAverage = 0;
-      return;
-    }
-
     const filter = this.buildFilter();
     const pagination = {
       pageNumber: this.currentPage(),
@@ -154,6 +144,7 @@ export class JobCandidatesComponent implements OnInit {
     this.minimumPoints.set(null);
     this.currentPage.set(1);
     this.resetSelection();
+    this.loadCandidatesData();
   }
 
   viewDetails(candidateId: GUID) {
@@ -276,14 +267,6 @@ export class JobCandidatesComponent implements OnInit {
       nationalityPercentages: this.nationalityPercentages.filter((item) => item.percentage > 0),
     };
   }
-
-  private hasActiveFilters(): boolean {
-  return Boolean(
-    (this.searchQuery() || '').trim() ||
-    this.filterGender() ||
-    this.minimumPoints()
-  );
-}
 
   onFilterSettingsChange() {
     this.currentPage.set(1);

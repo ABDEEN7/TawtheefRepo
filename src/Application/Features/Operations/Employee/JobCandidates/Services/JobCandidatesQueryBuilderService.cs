@@ -16,9 +16,16 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
         filter ??= new JobCandidatesFilter(null, null, null);
         var searchTerm = filter.SearchTerm?.Trim();
 
+        var activeInvitationStatuses = new[]
+        {
+            InvitationStatusIds.NewInvitation,
+            InvitationStatusIds.Read,
+            InvitationStatusIds.Submitted
+        };
+
         var invitationsForJob = unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
-            .Where(i => i.JobId == jobId);
+            .Where(i => i.JobId == jobId && activeInvitationStatuses.Contains(i.InvitationStatusId));
 
         var profiles = unitOfWork.GetEntityRepository<UserProfile>().DbSet
             .AsNoTracking()

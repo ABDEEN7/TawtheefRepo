@@ -18,23 +18,16 @@ internal static class TrainingPointsCalculator
         if (details.Count == 0 || trainingCourses == null)
             return 0;
 
-        var points = 0;
-
-        foreach (var training in trainingCourses)
-        {
-            var detailCode = training.SpecializationRelation switch
+        var points = trainingCourses.Select(training => training.SpecializationRelation switch
             {
+                //TODO : Must be checked later
                 SpecializationRelationLevel.Strong => TrainingHighCode,
                 SpecializationRelationLevel.Medium => TrainingMediumCode,
                 SpecializationRelationLevel.Weak => TrainingLowCode,
                 _ => null
-            };
-
-            if (detailCode == null)
-                continue;
-
-            points += JobPointsHelpers.GetDetailPoints(details, detailCode);
-        }
+            })
+            .OfType<string>()
+            .Sum(detailCode => JobPointsHelpers.GetDetailPoints(details, detailCode));
 
         return JobPointsHelpers.Clamp(points, jobPoints.Training);
     }

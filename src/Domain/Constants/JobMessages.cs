@@ -64,4 +64,6 @@ public static class JobMessages
     public const string JobPointsConfigurationNotFound = "JOB_POINTS_CONFIGURATION_NOT_FOUND";
     public const string JobCannotBeCopied = "JOB_CANNOT_BE_COPIED";
     public const  string JobCategoryCandidateSettingsNotFound = "JOB_CATEGORY_CANDIDATE_SETTINGS_NOT_FOUND";
+    public const string JobCandidatesFilterPercentagesInvalid = "JOB_CANDIDATE_FILTER_PERCENTAGES_INVALID";
+    public const string JobCandidatesNationalityBreakdownInvalid = "JOB_CANDIDATE_NATIONALITY_BREAKDOWN_INVALID";
 }
