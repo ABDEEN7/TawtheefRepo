@@ -321,5 +321,9 @@
   "server-error.EMPLOYEE_DIRECTORY_INVALID_PAYLOAD": "بيانات دليل الموظفين غير صالحة.",
   "server-error.QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER": "يجب التسجيل في كوادِر قبل تسجيل الدخول.",
   "server-error.EMPLOYEE_DIRECTORY_USER_NOT_FOUND": "المستخدم غير موجود في دليل الموظفين.",
-  "server-error.DUPLICATE_ATTACHMENT_RESOURCE": "تم إدخال نفس المرفق مسبقاً."
+  "server-error.DUPLICATE_ATTACHMENT_RESOURCE": "تم إدخال نفس المرفق مسبقاً.",
+
+  "server-error.EXTERNAL_LOGIN_INVALID_TOKEN": "رمز مزود الدخول الخارجي غير صالح.",
+  "server-error.EXTERNAL_LOGIN_MISSING_PROVIDER_KEY": "مفتاح المزود مفقود.",
+  "server-error.INVALID_REQUEST": "طلب غير صالح."
 }

@@ -321,5 +321,9 @@
   "server-error.EMPLOYEE_DIRECTORY_INVALID_PAYLOAD": "Employee directory payload is invalid.",
   "server-error.QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER": "Qatari users must register on Kawader before logging in.",
   "server-error.EMPLOYEE_DIRECTORY_USER_NOT_FOUND": "User not found in the employee directory.",
-  "server-error.DUPLICATE_ATTACHMENT_RESOURCE": "The same attachment has already been added."
+  "server-error.DUPLICATE_ATTACHMENT_RESOURCE": "The same attachment has already been added.",
+
+  "server-error.EXTERNAL_LOGIN_INVALID_TOKEN": "External login token is invalid.",
+  "server-error.EXTERNAL_LOGIN_MISSING_PROVIDER_KEY": "External login provider key is missing.",
+  "server-error.INVALID_REQUEST": "Invalid request."
 }
