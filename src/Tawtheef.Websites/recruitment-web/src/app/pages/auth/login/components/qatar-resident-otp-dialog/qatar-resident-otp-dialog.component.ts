@@ -1,19 +1,33 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnDestroy, inject } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
+import { finalize } from 'rxjs/operators';
+import { interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ButtonDirective } from 'primeng/button';
+import { InputText } from 'primeng/inputtext';
+import { DatePicker } from 'primeng/datepicker';
+
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { CountryISO, NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+
+import { SharedModule } from '../../../../../shared/shared.module';
+import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+
 import { QatarResidentOtpService } from '../../../../../core/auth/qatar-resident-otp.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { AuthService } from '../../../../../core/auth/auth.service';
-import { finalize } from 'rxjs/operators';
-import { CountryISO, NgxIntlTelInputModule } from 'ngx-intl-tel-input';
-import { ButtonDirective } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
-import { SharedModule } from '../../../../../shared/shared.module';
-import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
-import {MultiSelect} from 'primeng/multiselect';
-import {DatePicker} from 'primeng/datepicker';
-import {toDateOnly} from '../../../../../shared/types/dateOnly.type';
+
+import { toDateOnly } from '../../../../../shared/types/dateOnly.type';
 
 type QatarPhoneNumber = {
   number: string;
@@ -26,19 +40,24 @@ type QatarPhoneNumber = {
 
 @Component({
   selector: 'app-qatar-resident-otp-dialog',
+  standalone: true,
   templateUrl: './qatar-resident-otp-dialog.component.html',
-  styleUrl: './qatar-resident-otp-dialog.component.scss',
+  styleUrls: ['./qatar-resident-otp-dialog.component.scss'],
   imports: [
+    CommonModule,
+    ReactiveFormsModule,
+
     TranslatePipe,
     ButtonDirective,
     InputText,
+    DatePicker,
+
     SharedModule,
     I18nNamespaceDirective,
-    NgxIntlTelInputModule,
-    DatePicker
+    NgxIntlTelInputModule
   ]
 })
-export class QatarResidentOtpDialogComponent {
+export class QatarResidentOtpDialogComponent implements OnDestroy {
   private fb = inject(FormBuilder);
   private otpService = inject(QatarResidentOtpService);
   private notifier = inject(NotificationService);
@@ -53,76 +72,114 @@ export class QatarResidentOtpDialogComponent {
   step: 'identify' | 'otp' = 'identify';
   loading = false;
 
-  // Form واحد لكل الحقول
+  // ---- Resend Timer ----
+  resendCooldown = 0; // seconds
+  private destroy$ = new Subject<void>();
+
+  // Form
   readonly form = this.fb.group({
     qid: this.fb.nonNullable.control('', [Validators.required]),
-    phoneNumber: this.fb.control<QatarPhoneNumber | null>(
-      null,
-      [Validators.required, this.qatarPhoneValidator]
-    ),
-    qidExpiry: this.fb.nonNullable.control('', [Validators.required]),
-    otp: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(4)])
+    phoneNumber: this.fb.control<QatarPhoneNumber | null>(null, [
+      Validators.required,
+      qatarPhoneValidator()
+    ]),
+    qidExpiry: this.fb.nonNullable.control<string | Date>('', [Validators.required]),
+    otp: this.fb.nonNullable.control({ value: '', disabled: true }, [
+      Validators.required,
+      Validators.minLength(4)
+    ])
   });
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // -------------------------
+  // Submit Identify
+  // -------------------------
   submitIdentification(): void {
-    // نتحقق فقط من حقول identify
     this.form.controls.qid.markAsTouched();
     this.form.controls.phoneNumber.markAsTouched();
     this.form.controls.qidExpiry.markAsTouched();
 
-    if (this.form.controls.qid.invalid ||
+    if (
+      this.form.controls.qid.invalid ||
       this.form.controls.phoneNumber.invalid ||
-      this.form.controls.qidExpiry.invalid) return;
+      this.form.controls.qidExpiry.invalid
+    ) return;
 
-    const raw = this.form.getRawValue();
-    const qid = raw.qid;
+    const qid = this.form.controls.qid.value;
     const phone = this.getPhoneE164();
-    const qidExpiry = raw.qidExpiry;
+    const qidExpiry = this.getExpiryAsDateOnly();
     if (!qid || !phone || !qidExpiry) return;
 
     this.loading = true;
-    this.otpService.requestOtp(qid, phone, toDateOnly(qidExpiry))
-      .pipe(finalize(() => {
-        this.loading = false;
-        this.form.controls.qid.enable();
-        this.form.controls.phoneNumber.enable();
-        this.form.controls.qidExpiry.enable();
-      }))
+
+    // disable identify inputs while calling API
+    this.setIdentifyDisabled(true);
+
+    this.otpService
+      .requestOtp(qid, phone, qidExpiry)
+      .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: () => {
           this.step = 'otp';
-          this.form.controls.qid.disable();
-          this.form.controls.phoneNumber.disable();
-          this.form.controls.qidExpiry.disable();
+
+          // keep identify fields disabled, enable otp input
+          this.form.controls.otp.enable({ emitEvent: false });
+          this.form.controls.otp.reset('', { emitEvent: false });
+
+          // start cooldown (example 152 sec)
+          this.startResendCooldown(152);
+
           this.notifier.success(
-            this.translate.instant('auth.login.qatarResidentDialog.sent', {phone: this.getPhoneDisplay()}),
-            this.translate.instant('auth.login.qatarResidentDialog.success'));
+            this.translate.instant('auth.login.qatarResidentDialog.sent', { phone: this.getPhoneDisplay() }),
+            this.translate.instant('auth.login.qatarResidentDialog.success')
+          );
+        },
+        error: () => {
+          // if API fails, allow editing again
+          this.setIdentifyDisabled(false);
         }
       });
   }
 
+  // -------------------------
+  // Submit OTP
+  // -------------------------
   submitOtp(): void {
     this.form.controls.otp.markAsTouched();
     if (this.form.controls.otp.invalid) return;
 
-    const raw = this.form.getRawValue();
-    const qid = raw.qid;
-    const otp = raw.otp;
+    const qid = this.form.controls.qid.value;
+    const otp = this.form.controls.otp.value;
     const phone = this.getPhoneE164();
-    const qidExpiry = raw.qidExpiry;
-    if (!qid || !phone || !otp) return;
+    const qidExpiry = this.getExpiryAsDateOnly();
+
+    if (!qid || !phone || !otp || !qidExpiry) return;
 
     this.loading = true;
-    this.otpService.verifyOtp(qid, phone, otp, toDateOnly(qidExpiry))
+
+    this.otpService
+      .verifyOtp(qid, phone, otp, qidExpiry)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: res => {
-          this.auth.externalLogin(res).subscribe(success => {
-            if (success) this.ref.close(true);
-            else {
+          this.auth.externalLogin(res).subscribe({
+            next: success => {
+              if (success) this.ref.close(true);
+              else {
+                this.notifier.error(
+                  this.translate.instant('auth.login.qatarResidentDialog.errorDescription'),
+                  this.translate.instant('auth.login.qatarResidentDialog.errorTitle')
+                );
+              }
+            },
+            error: () => {
               this.notifier.error(
                 this.translate.instant('auth.login.qatarResidentDialog.errorDescription'),
-                this.translate.instant('auth.login.qatarResidentDialog.errorTitle'),
+                this.translate.instant('auth.login.qatarResidentDialog.errorTitle')
               );
             }
           });
@@ -130,18 +187,89 @@ export class QatarResidentOtpDialogComponent {
       });
   }
 
+  // -------------------------
+  // Resend OTP (called from HTML)
+  // -------------------------
+  resendOtp(): void {
+    if (this.resendCooldown > 0) return;
+
+    const qid = this.form.controls.qid.value;
+    const phone = this.getPhoneE164();
+    const qidExpiry = this.getExpiryAsDateOnly();
+    if (!qid || !phone || !qidExpiry) return;
+
+    this.loading = true;
+
+    this.otpService
+      .requestOtp(qid, phone, qidExpiry)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: () => {
+          this.startResendCooldown(152);
+
+          this.notifier.success(
+            this.translate.instant('auth.login.qatarResidentDialog.resent', { phone: this.getPhoneDisplay() }),
+            this.translate.instant('auth.login.qatarResidentDialog.success')
+          );
+        }
+      });
+  }
+
+  // -------------------------
+  // Close (called from HTML)
+  // -------------------------
   close(): void {
     this.ref.close(this.config.data?.returnValue ?? null);
   }
 
-  private qatarPhoneValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value as QatarPhoneNumber | null;
-    if (!value) return null;
+  // -------------------------
+  // Template Helpers (called from HTML)
+  // -------------------------
+  maskQid(qid: string | null | undefined): string {
+    if (!qid) return '';
+    const s = String(qid);
+    if (s.length <= 4) return s;
+    // 29478801376 -> 2947******76
+    return `${s.slice(0, 4)}******${s.slice(-2)}`;
+  }
 
-    const countryCode = value.countryCode?.toUpperCase?.();
-    const isQatarDialCode = value.dialCode === '+974' || value.e164Number?.startsWith('+974');
+  formatCooldown(totalSeconds: number): string {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
 
-    return countryCode === CountryISO.Qatar.toUpperCase() || isQatarDialCode ? null : { nonQatar: true };
+  // IMPORTANT: must be public because template calls it
+  getPhoneDisplay(): string | null {
+    const value = this.form.controls.phoneNumber.value as QatarPhoneNumber | null;
+    return value?.internationalNumber ?? value?.e164Number ?? null;
+  }
+
+  // -------------------------
+  // Internal Helpers
+  // -------------------------
+  private startResendCooldown(seconds: number): void {
+    this.resendCooldown = seconds;
+
+    // stop any previous running timer by recreating stream logic with takeUntil
+    interval(1000)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.resendCooldown > 0) this.resendCooldown--;
+      });
+  }
+
+  private setIdentifyDisabled(disabled: boolean): void {
+    const opt = { emitEvent: false };
+    if (disabled) {
+      this.form.controls.qid.disable(opt);
+      this.form.controls.phoneNumber.disable(opt);
+      this.form.controls.qidExpiry.disable(opt);
+    } else {
+      this.form.controls.qid.enable(opt);
+      this.form.controls.phoneNumber.enable(opt);
+      this.form.controls.qidExpiry.enable(opt);
+    }
   }
 
   private getPhoneE164(): string | null {
@@ -149,8 +277,26 @@ export class QatarResidentOtpDialogComponent {
     return value?.e164Number ?? null;
   }
 
-  private getPhoneDisplay(): string | null {
-    const value = this.form.controls.phoneNumber.value as QatarPhoneNumber | null;
-    return value?.internationalNumber ?? value?.e164Number ?? null;
+  private getExpiryAsDateOnly(): any | null {
+    const raw = this.form.controls.qidExpiry.value;
+    if (!raw) return null;
+    return toDateOnly(raw as any);
   }
+}
+
+/**
+ * Standalone validator (no `this` binding issues)
+ */
+function qatarPhoneValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value as QatarPhoneNumber | null;
+    if (!value) return null;
+
+    const countryCode = value.countryCode?.toUpperCase?.();
+    const isQatarDialCode = value.dialCode === '+974' || value.e164Number?.startsWith('+974');
+
+    return (countryCode === CountryISO.Qatar.toUpperCase() || isQatarDialCode)
+      ? null
+      : { nonQatar: true };
+  };
 }

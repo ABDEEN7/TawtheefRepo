@@ -1,106 +1,162 @@
 <div i18nNamespace="pages/auth" class="qatar-otp-dialog">
-  <p class="text-muted mb-3">{{ 'auth.login.qatarResidentDialog.subtitle' | translate }}</p>
 
   <form [formGroup]="form" (ngSubmit)="step === 'identify' ? submitIdentification() : submitOtp()">
 
-    <div class="mb-3">
-      <label class="form-label required" for="qid">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</label>
-      <input
-        id="qid"
-        type="text"
-        class="form-control"
-        pInputText
-        formControlName="qid"
-        [readonly]="form.disabled"
-        autocomplete="off" />
+    <!-- Identify Step -->
+    <div class="dialog-body" *ngIf="step === 'identify'">
+      <div class="grid2">
+        <!-- QID -->
+        <div class="field">
+          <label class="form-label required" for="qid">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</label>
 
-      <small class="text-danger" *ngIf="form.controls.qid.touched && form.controls.qid.invalid">
-        {{ 'validation.required' | translate }}
-      </small>
+          <span class="p-input-icon-left w-100">
+            <i class="pi pi-id-card"></i>
+            <input
+              id="qid"
+              type="text"
+              class="form-control w-100"
+              pInputText
+              formControlName="qid"
+              [readonly]="form.disabled"
+              inputmode="numeric"
+              autocomplete="off" />
+          </span>
+
+          <small class="text-danger" *ngIf="form.controls.qid.touched && form.controls.qid.invalid">
+            {{ 'validation.required' | translate }}
+          </small>
+        </div>
+
+        <!-- QID Expiry -->
+        <div class="field">
+          <label class="form-label required" for="qidExpiry">{{ 'auth.login.qatarResidentDialog.qidExpiry' | translate }}</label>
+
+          <span class="p-input-icon-left w-100">
+            <i class="pi pi-calendar"></i>
+            <p-date-picker
+              inputId="qidExpiry"
+              formControlName="qidExpiry"
+              [minDate]="today"
+              [showOnFocus]="true"
+              dateFormat="yy-mm-dd"
+              [dataType]="'string'"
+              [disabled]="form.disabled"
+              [appendTo]="'body'"
+              fluid>
+            </p-date-picker>
+          </span>
+
+          <small class="text-danger" *ngIf="form.controls.qidExpiry.touched && form.controls.qidExpiry.hasError('required')">
+            {{ 'validation.required' | translate }}
+          </small>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="field mt-2">
+        <label class="form-label required" for="phoneNumber">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</label>
+
+        <div class="phone-wrap">
+          <ngx-intl-tel-input
+            inputId="phoneNumber"
+            class="prime-tel-input w-100"
+            [selectFirstCountry]="true"
+            [onlyCountries]="qatarOnly"
+            [enableAutoCountrySelect]="false"
+            [enablePlaceholder]="true"
+            [searchCountryFlag]="false"
+            [searchCountryField]="[]"
+            [phoneValidation]="true"
+            [separateDialCode]="true"
+            formControlName="phoneNumber"
+            [disabled]="form.disabled">
+          </ngx-intl-tel-input>
+        </div>
+
+        <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('required')">
+          {{ 'validation.required' | translate }}
+        </small>
+
+        <small
+          class="text-danger"
+          *ngIf="
+            form.controls.phoneNumber.touched &&
+            !form.controls.phoneNumber.hasError('required') &&
+            form.controls.phoneNumber.hasError('validatePhoneNumber')
+          ">
+          {{ 'validation.phoneInvalid' | translate }}
+        </small>
+
+        <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('nonQatar')">
+          {{ 'auth.login.qatarResidentDialog.qatarPhoneOnly' | translate }}
+        </small>
+      </div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label required" for="phoneNumber">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</label>
+    <!-- OTP Step -->
+    <div class="dialog-body" *ngIf="step === 'otp'">
 
-      <ngx-intl-tel-input
-        inputId="phoneNumber"
-        class="prime-tel-input"
-        [selectFirstCountry]="true"
-        [onlyCountries]="qatarOnly"
+      <!-- Summary row (readonly) -->
+      <div class="summary-row">
+        <div class="summary-item">
+          <span class="k">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</span>
+          <span class="v">{{ maskQid(form.controls.qid.value) }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="k">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</span>
+          <span class="v">{{ getPhoneDisplay() }}</span>
+        </div>
+      </div>
 
-        [enableAutoCountrySelect]="false"
-        [enablePlaceholder]="true"
-        [searchCountryFlag]="false"
-        [searchCountryField]="[]"
+      <!-- OTP input + resend -->
+      <div class="field mt-3">
+        <label class="form-label required" for="otp">{{ 'auth.login.qatarResidentDialog.otp' | translate }}</label>
 
-        [phoneValidation]="true"
-        [separateDialCode]="true"
-        formControlName="phoneNumber"
-        [disabled]="form.disabled"
-      ></ngx-intl-tel-input>
+        <div class="otp-row">
+          <span class="p-input-icon-left flex-1">
+            <i class="pi pi-shield"></i>
+            <input
+              id="otp"
+              type="text"
+              class="form-control w-100"
+              pInputText
+              formControlName="otp"
+              inputmode="numeric"
+              autocomplete="one-time-code" />
+          </span>
 
-      <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('required')">
-        {{ 'validation.required' | translate }}
-      </small>
+          <button
+            pButton
+            type="button"
+            class="p-button-text resend-btn"
+            (click)="resendOtp()"
+            [disabled]="loading || resendCooldown > 0">
+            <span *ngIf="resendCooldown === 0">{{ 'auth.login.qatarResidentDialog.resend' | translate }}</span>
+            <span *ngIf="resendCooldown > 0">{{ formatCooldown(resendCooldown) }}</span>
+          </button>
+        </div>
 
-      <small
-        class="text-danger"
-        *ngIf="
-          form.controls.phoneNumber.touched &&
-          !form.controls.phoneNumber.hasError('required') &&
-          form.controls.phoneNumber.hasError('validatePhoneNumber')">
-        {{ 'validation.phoneInvalid' | translate }}
-      </small>
+        <small class="text-danger" *ngIf="form.controls.otp.touched && form.controls.otp.invalid">
+          {{
+            form.controls.otp.errors?.['minlength']
+              ? ('validation.minLength' | translate:{ min: 4 })
+              : ('validation.required' | translate)
+          }}
+        </small>
+      </div>
 
-      <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('nonQatar')">
-        {{ 'auth.login.qatarResidentDialog.qatarPhoneOnly' | translate }}
-      </small>
-    </div>
-    <div class="mb-3">
-      <label class="form-label required" for="qidExpiry">{{ 'auth.login.qatarResidentDialog.qidExpiry' | translate }}</label>
-
-      <p-date-picker
-        inputId="qidExpiry"
-        formControlName="qidExpiry"
-        [minDate]="today"
-        [showOnFocus]="true"
-        dateFormat="yy-mm-dd"
-        [dataType]="'string'"
-        [disabled]="form.disabled"
-        [appendTo]="'body'"
-        fluid>
-      </p-date-picker>
-
-      <small class="text-danger" *ngIf="form.controls.qidExpiry.touched && form.controls.qidExpiry.hasError('required')">
-        {{ 'validation.required' | translate }}
-      </small>
-    </div>
-
-    <div class="mb-3" *ngIf="step === 'otp'">
-      <label class="form-label required" for="otp">{{ 'auth.login.qatarResidentDialog.otp' | translate }}</label>
-      <input
-        id="otp"
-        type="text"
-        class="form-control"
-        pInputText
-        formControlName="otp"
-        autocomplete="one-time-code" />
-
-      <small class="text-danger" *ngIf="form.controls.otp.touched && form.controls.otp.invalid">
-        {{
-          form.controls.otp.errors?.['minlength']
-            ? ('validation.minLength' | translate:{ min: 4 })
-            : ('validation.required' | translate)
-        }}
-      </small>
+      <p class="hint mt-2">
+        {{ 'auth.login.qatarResidentDialog.otpHint' | translate:{ phone: (getPhoneDisplay() || '') } }}
+      </p>
     </div>
 
-    <div class="d-flex justify-content-end gap-2 mt-4">
+    <!-- Footer -->
+    <div class="dialog-footer">
       <button pButton type="button" class="p-button-text" (click)="close()" [disabled]="loading">
         {{ 'common.cancel' | translate }}
       </button>
 
-      <button pButton type="submit" [loading]="loading" [disabled]="loading">
+      <button pButton type="submit" class="primary-btn" [loading]="loading" [disabled]="loading">
         {{
           step === 'identify'
             ? ('auth.login.qatarResidentDialog.requestCta' | translate)

@@ -1,5 +1,5 @@
 using Tawtheef.Domain.Entities.Applicant;
-using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Constants;
 
