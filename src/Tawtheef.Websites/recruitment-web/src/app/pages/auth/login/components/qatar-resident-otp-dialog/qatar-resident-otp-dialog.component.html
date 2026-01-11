@@ -3,18 +3,18 @@
   <form [formGroup]="form" (ngSubmit)="step === 'identify' ? submitIdentification() : submitOtp()">
 
     <!-- Identify Step -->
-    <div class="dialog-body" *ngIf="step === 'identify'">
-      <div class="grid2">
+    <div class="modal-body" *ngIf="step === 'identify'">
+      <div class="row">
         <!-- QID -->
-        <div class="field">
+        <div class="col-md-6 mb-3">
           <label class="form-label required" for="qid">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</label>
 
           <span class="p-input-icon-left w-100">
-            <i class="pi pi-id-card"></i>
+           
             <input
               id="qid"
               type="text"
-              class="form-control w-100"
+              class="form-control"
               pInputText
               formControlName="qid"
               [readonly]="form.disabled"
@@ -28,12 +28,12 @@
         </div>
 
         <!-- QID Expiry -->
-        <div class="field">
+        <div class="col-md-6 mb-3">
           <label class="form-label required" for="qidExpiry">{{ 'auth.login.qatarResidentDialog.qidExpiry' | translate }}</label>
 
           <span class="p-input-icon-left w-100">
-            <i class="pi pi-calendar"></i>
             <p-date-picker
+            class="prime-tel-input w-100"
               inputId="qidExpiry"
               formControlName="qidExpiry"
               [minDate]="today"
@@ -41,7 +41,7 @@
               dateFormat="yy-mm-dd"
               [dataType]="'string'"
               [disabled]="form.disabled"
-              [appendTo]="'body'"
+              [appendTo]="'body'" showIcon
               fluid>
             </p-date-picker>
           </span>
@@ -50,47 +50,50 @@
             {{ 'validation.required' | translate }}
           </small>
         </div>
-      </div>
+         <!-- Phone -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label required" for="phoneNumber">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</label>
 
-      <!-- Phone -->
-      <div class="field mt-2">
-        <label class="form-label required" for="phoneNumber">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</label>
+          <div class="phone-wrap w-100">
+            <ngx-intl-tel-input
+              inputId="phoneNumber"
+              class="prime-tel-input w-100"
+              [selectFirstCountry]="true"
+              [onlyCountries]="qatarOnly"
+              [enableAutoCountrySelect]="false"
+              [enablePlaceholder]="true"
+              [searchCountryFlag]="false"
+              [searchCountryField]="[]"
+              [phoneValidation]="true"
+              [separateDialCode]="true"
+              formControlName="phoneNumber"
+              [disabled]="form.disabled">
+            </ngx-intl-tel-input>
+          </div>
 
-        <div class="phone-wrap">
-          <ngx-intl-tel-input
-            inputId="phoneNumber"
-            class="prime-tel-input w-100"
-            [selectFirstCountry]="true"
-            [onlyCountries]="qatarOnly"
-            [enableAutoCountrySelect]="false"
-            [enablePlaceholder]="true"
-            [searchCountryFlag]="false"
-            [searchCountryField]="[]"
-            [phoneValidation]="true"
-            [separateDialCode]="true"
-            formControlName="phoneNumber"
-            [disabled]="form.disabled">
-          </ngx-intl-tel-input>
+          <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('required')">
+            {{ 'validation.required' | translate }}
+          </small>
+
+          <small
+            class="text-danger"
+            *ngIf="
+              form.controls.phoneNumber.touched &&
+              !form.controls.phoneNumber.hasError('required') &&
+              form.controls.phoneNumber.hasError('validatePhoneNumber')
+            ">
+            {{ 'validation.phoneInvalid' | translate }}
+          </small>
+
+          <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('nonQatar')">
+            {{ 'auth.login.qatarResidentDialog.qatarPhoneOnly' | translate }}
+          </small>
         </div>
 
-        <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('required')">
-          {{ 'validation.required' | translate }}
-        </small>
 
-        <small
-          class="text-danger"
-          *ngIf="
-            form.controls.phoneNumber.touched &&
-            !form.controls.phoneNumber.hasError('required') &&
-            form.controls.phoneNumber.hasError('validatePhoneNumber')
-          ">
-          {{ 'validation.phoneInvalid' | translate }}
-        </small>
-
-        <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('nonQatar')">
-          {{ 'auth.login.qatarResidentDialog.qatarPhoneOnly' | translate }}
-        </small>
       </div>
+
+     
     </div>
 
     <!-- OTP Step -->
@@ -153,18 +156,21 @@
     </div>
 
     <!-- Footer -->
-    <div class="dialog-footer">
+    <div class="modal-footer mt-3 justify-content-start">
+          <button pButton type="submit" class="btn btn-primary" [loading]="loading" [disabled]="loading">
+              <i class="hgi hgi-stroke hgi-sent"></i>
+              {{
+                step === 'identify'
+                  ? ('auth.login.qatarResidentDialog.requestCta' | translate)
+                  : ('auth.login.qatarResidentDialog.verifyCta' | translate)
+              }}
+          </button>
       <button pButton type="button" class="p-button-text" (click)="close()" [disabled]="loading">
+        <i class="hgi hgi-stroke hgi-cancel-01"></i>
         {{ 'common.cancel' | translate }}
       </button>
 
-      <button pButton type="submit" class="primary-btn" [loading]="loading" [disabled]="loading">
-        {{
-          step === 'identify'
-            ? ('auth.login.qatarResidentDialog.requestCta' | translate)
-            : ('auth.login.qatarResidentDialog.verifyCta' | translate)
-        }}
-      </button>
+      
     </div>
 
   </form>
