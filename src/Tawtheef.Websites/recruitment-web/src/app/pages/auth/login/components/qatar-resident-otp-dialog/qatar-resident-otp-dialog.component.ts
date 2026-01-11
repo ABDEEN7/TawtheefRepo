@@ -23,9 +23,9 @@ import { CountryISO, NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { SharedModule } from '../../../../../shared/shared.module';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 
-import { QatarResidentOtpService } from '../../../../core/auth/qatar-resident-otp.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { QatarResidentOtpService } from '../../../../../core/auth/qatar-resident-otp.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 import { toDateOnly } from '../../../../../shared/types/dateOnly.type';
 
