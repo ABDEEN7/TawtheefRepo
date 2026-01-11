@@ -55,7 +55,7 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
         {
             UserProfileId = profile.Id,
             UserId = cmd.OfficerId,
-            ActionType = "ReviewSectionDecision",
+            ActionType = UserProfileLogConstants.ActionTypes.ReviewSectionDecision,
             Notes = $"Section {cmd.Section} marked {cmd.Status}",
             Section = cmd.Section.ToString(),
             EntityId = item.Id
@@ -65,7 +65,7 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
         {
             UserProfileId = profile.Id,
             PerformedById = cmd.OfficerId,
-            ActionType = "ReviewSectionDecision",
+            ActionType = UserProfileLogConstants.ActionTypes.ReviewSectionDecision,
             Notes = $"Section {cmd.Section} marked {cmd.Status}",
             Section = cmd.Section.ToString(),
             EntityId = item.Id,

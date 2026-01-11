@@ -9,6 +9,7 @@ using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -75,7 +76,15 @@ public sealed class RequestProfileAttachmentsChangeHandler(
                 FileName = resource?.ResourceName ?? dto.FileName
             };
 
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Attachments, "Attachment", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            await reviewService.TouchRowAsync(
+                profile.Id,
+                ProfileSection.Attachments,
+                ProfileReviewConstants.EntityNames.Attachment,
+                Guid.NewGuid(),
+                cmd.UserId,
+                ct,
+                null,
+                pending);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -111,7 +120,7 @@ public sealed class RequestProfileAttachmentsChangeHandler(
             if (file is not { Length: > 0 })
                 return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
 
-            var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "additional", file, false, cancellationToken);
+            var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Additional, file, false, cancellationToken);
             var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
@@ -129,4 +138,3 @@ file sealed record PendingAttachmentSnapshot
     public string? Title { get; init; }
     public string? FileName { get; init; }
 }
-

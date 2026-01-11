@@ -35,8 +35,8 @@ public sealed class StartUserProfileReviewHandler(IUnitOfWork uow)
         {
             UserProfileId = profile.Id,
             UserId = cmd.OfficerId,
-            ActionType = "ProfileReviewStarted",
-            Notes = "Profile moved to under review",
+            ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewStarted,
+            Notes = UserProfileLogConstants.Notes.ProfileReviewStarted,
             Section = nameof(ProfileSection.Personal)
         });
 
@@ -44,8 +44,8 @@ public sealed class StartUserProfileReviewHandler(IUnitOfWork uow)
         {
             UserProfileId = profile.Id,
             PerformedById = cmd.OfficerId,
-            ActionType = "ProfileReviewStarted",
-            Notes = "Profile moved to under review",
+            ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewStarted,
+            Notes = UserProfileLogConstants.Notes.ProfileReviewStarted,
             Section = nameof(ProfileSection.Personal),
             ReviewStatus = ReviewStatus.Pending
         });

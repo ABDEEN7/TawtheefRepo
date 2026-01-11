@@ -34,17 +34,17 @@ public sealed class GetProfilePartialChangesHandler(
 
     private static readonly HashSet<string> ResourceFieldNames = new(StringComparer.OrdinalIgnoreCase)
     {
-        "ResumeAttachmentId",
-        "NationalCardId",
-        "BirthdayCertificateId",
-        "MarriageCertificateId",
-        "SponsorCardResourceId",
-        "SponsorCardId",
-        "NationalAddressCertificateId",
-        "ResidenceAddressCertificateId",
-        "CertificateId",
-        "AttachmentResourceId",
-        "AttachmentId"
+        ProfileReviewConstants.FieldPaths.ResumeAttachmentId,
+        ProfileReviewConstants.FieldPaths.NationalCardId,
+        ProfileReviewConstants.FieldPaths.BirthdayCertificateId,
+        ProfileReviewConstants.FieldPaths.MarriageCertificateId,
+        ProfileReviewConstants.FieldPaths.SponsorCardResourceId,
+        ProfileReviewConstants.FieldPaths.SponsorCardId,
+        ProfileReviewConstants.FieldPaths.NationalAddressCertificateId,
+        ProfileReviewConstants.FieldPaths.ResidenceAddressCertificateId,
+        ProfileReviewConstants.FieldPaths.CertificateId,
+        ProfileReviewConstants.FieldPaths.AttachmentResourceId,
+        ProfileReviewConstants.FieldPaths.AttachmentId
     };
 
     public async Task<Result<GetProfilePartialChangesDetailDto>> Handle(GetProfilePartialChangesQuery request, CancellationToken ct)
@@ -162,16 +162,16 @@ public sealed class GetProfilePartialChangesHandler(
         {
             UserProfileId = profile.Id,
             UserId = request.OfficerId,
-            ActionType = "OpenProfileChangeReview",
-            Notes = "Profile opened for change requests review",
+            ActionType = UserProfileLogConstants.ActionTypes.OpenProfileChangeReview,
+            Notes = UserProfileLogConstants.Notes.ProfileOpenedForChangeReview,
             Section = nameof(ProfileSection.Personal)
         });
         await loggerRepo.AddAsync(new UserProfileLogger
         {
             UserProfileId = profile.Id,
             PerformedById = request.OfficerId,
-            ActionType = "OpenProfileChangeReview",
-            Notes = "Profile opened for change requests review",
+            ActionType = UserProfileLogConstants.ActionTypes.OpenProfileChangeReview,
+            Notes = UserProfileLogConstants.Notes.ProfileOpenedForChangeReview,
             Section = nameof(ProfileSection.Personal)
         });
         await uow.SaveChangesAsync(ct);

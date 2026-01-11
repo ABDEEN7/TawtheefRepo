@@ -4,6 +4,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import {ButtonDirective, ButtonIcon, ButtonLabel} from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
 import { finalize, switchMap } from 'rxjs/operators';
@@ -82,6 +83,7 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
     ProfileLanguagesSectionComponent,
     ProfileAttachmentsSectionComponent,
     ButtonDirective,
+    ProgressSpinner,
   ],
   templateUrl: './profile-view.page.html',
   styleUrls: ['./profile-view.page.scss'],
@@ -127,6 +129,9 @@ export class ProfileViewPage {
     this.review.status() === 'loading' ||
     this.changeRequests.status() === 'loading'
   );
+  readonly reviewLoading = computed(() => this.review.status() === 'loading');
+  readonly changeRequestsLoading = computed(() => this.changeRequests.status() === 'loading');
+  readonly summaryLoading = computed(() => this.reviewLoading() || this.changeRequestsLoading());
   get keyLabel(){
     return this.cards.find(c => c.section === this.expanded())?.labelKey;
   }
@@ -311,6 +316,8 @@ export class ProfileViewPage {
 
   reloadSection(section: ProfileSectionEnum) {
     this.sections.get(section)?.reload();
+    this.review.reload();
+    this.changeRequests.reload();
   }
 
   sectionStatus(section: ProfileSectionEnum) {
@@ -369,9 +376,7 @@ export class ProfileViewPage {
       styleClass: 'w-100 w-md-75'
     })?.onClose.subscribe(result => {
       if (!result) return;
-      this.sections.get(section)?.reload();
-      this.review.reload();
-      this.changeRequests.reload();
+      this.reloadSection(section);
     });
   }
 

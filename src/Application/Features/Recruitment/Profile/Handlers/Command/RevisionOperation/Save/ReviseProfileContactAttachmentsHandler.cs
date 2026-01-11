@@ -5,6 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -45,7 +46,7 @@ public sealed class ReviseProfileContactAttachmentsHandler(
                 meta: cmd.Request.ResidenceAddress,
                 file: cmd.Request.ResidenceAddressCertificate,
                 currentProfileResourceId: current,
-                folder: "residence-certificate",
+                folder: ProfileFileCategories.ResidenceCertificate,
                 ct);
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);

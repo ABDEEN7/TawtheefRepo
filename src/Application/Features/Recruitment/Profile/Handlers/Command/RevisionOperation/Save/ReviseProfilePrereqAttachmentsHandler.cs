@@ -5,6 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -40,7 +41,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
                 meta: cmd.Request.Birthday,
                 file: cmd.Request.BirthdayCertificate,
                 currentProfileResourceId: profile.BirthdayCertificateId,
-                folder: "birth-certificate",
+                folder: ProfileFileCategories.BirthCertificate,
                 ct);
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
@@ -58,7 +59,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
                 meta: cmd.Request.Marriage,
                 file: cmd.Request.MarriageCertificate,
                 currentProfileResourceId: profile.MarriageCertificateId,
-                folder: "marriage-certificate",
+                folder: ProfileFileCategories.MarriageCertificate,
                 ct);
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);

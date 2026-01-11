@@ -11,6 +11,7 @@ using Tawtheef.Application.Features.Recruitment.Profile.Command.RevisionOperatio
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.Validators;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -257,7 +258,7 @@ public sealed class ReviseProfileEducationHandler(
         if (!FileValidationHelpers.HasFile(file))
             return Result.Ok<Guid?>(null);
 
-        var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "education", file!, false, ct);
+        var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Education, file!, false, ct);
         var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
             new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
             ct);
