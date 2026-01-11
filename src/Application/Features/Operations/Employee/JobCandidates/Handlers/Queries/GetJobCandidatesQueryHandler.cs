@@ -91,17 +91,14 @@ public sealed class GetJobCandidatesQueryHandler(
 
         var finalList = JobCandidatesFilterUtility.ApplyPercentageFilters(sorted, settings, targetCount);
 
-        var totalInvited = await unitOfWork.GetEntityRepository<Invitation>().DbSet
-            .CountAsync(i => i.JobId == job.Id, cancellationToken: ct);
-
-        var totalEligible = finalList.Count;
-        var abovePoints = finalList.Count(x => x.Points >= 800);
-        var avg = totalEligible == 0 ? 0 : finalList.Average(x => x.Points);
+        var totalEligible = scored.Count;
+        var abovePoints = scored.Count(x => x.Points >= 800);
+        var avg = totalEligible == 0 ? 0 : scored.Average(x => x.Points);
 
         var overview = new JobCandidatesOverviewDto
         {
-            TotalCandidatesCount = totalInvited,
-            AvailableCandidatesCount = totalEligible,
+            TotalCandidatesCount = totalEligible,
+            AvailableCandidatesCount = finalList.Count,
             AbovePointsCandidatesCount = abovePoints,
             PointsAverage = Math.Round(avg, 2)
         };
