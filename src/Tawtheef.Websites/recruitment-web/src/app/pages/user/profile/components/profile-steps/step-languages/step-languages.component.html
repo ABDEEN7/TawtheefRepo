@@ -54,7 +54,7 @@
                 <th>{{ 'wizard.skills.speaking' | translate }}</th>
                 <th>{{ 'wizard.skills.writing' | translate }}</th>
                 <th>{{ 'wizard.skills.reading' | translate }}</th>
-                <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+                <th>{{ 'wizard.table.actions' | translate }}</th>
               </tr>
             </ng-template>
 
@@ -64,7 +64,7 @@
                 <td><span class="badge rounded-pill bg-soft">{{ r.speakingLevel.name }}</span></td>
                 <td><span class="badge rounded-pill bg-soft">{{ r.writingLevel.name }}</span></td>
                 <td><span class="badge rounded-pill bg-soft">{{ r.readingLevel.name }}</span></td>
-                <td class="text-end">
+                <td >
                   <button class="btn btn-sm btn-outline-danger rounded-pill"
                           (click)="removeLang(i)"
                           pTooltip="{{ 'wizard.buttons.delete' | translate }}">
