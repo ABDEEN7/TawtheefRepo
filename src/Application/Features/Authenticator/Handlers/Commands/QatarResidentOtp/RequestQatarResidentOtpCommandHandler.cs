@@ -69,11 +69,11 @@ public sealed class RequestQatarResidentOtpCommandHandler(
 
         var now = timeProvider.GetUtcNow().UtcDateTime;
 
-        var canSend = user.CanSendOtp(now, QatarResidentOtpConstants.MaxOtpSends, TimeSpan.FromMinutes(15));
+        var canSend = user.CanSendOtp(now, QatarResidentOtpConstants.MaxOtpSends, QatarResidentOtpConstants.OtpSendWindow);
         if (canSend.IsFailed) return Result.Fail<Unit>(canSend.Errors);
 
         var otp = GenerateCode(QatarResidentOtpConstants.OtpLength);
-        user.SetOtp(otp, now.AddMinutes(QatarResidentOtpConstants.OtpExpiryMinutes));
+        user.SetOtpReference(otp, now.AddMinutes(QatarResidentOtpConstants.OtpExpiryMinutes));
 
         var update = await userManager.UpdateAsync(user);
         if (!update.Succeeded) return FailureFromIdentity<Unit>(update);
@@ -81,6 +81,10 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         _ = await smsSender.SendAsync(normalizedPhone,
             $"Your verification code is: {otp}", cancellationToken);
 
+        user.MarkOtpSent();
+        update = await userManager.UpdateAsync(user);
+        if (!update.Succeeded) return FailureFromIdentity<Unit>(update);
+        
         return Result.Ok(Unit.Value);
     }
     
