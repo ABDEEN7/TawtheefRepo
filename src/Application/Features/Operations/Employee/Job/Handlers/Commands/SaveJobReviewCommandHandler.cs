@@ -2,12 +2,12 @@ using System.Text.Json;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
+using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
@@ -32,16 +32,11 @@ public sealed class SaveJobReviewCommandHandler(
 
         var reviewCycleId = Guid.NewGuid();
 
-        var tabNotes = cmd.Request.Tabs
-            .Adapt<List<JobTabReviewNote>>()
-            .Select(note =>
-            {
-                note.JobId = cmd.JobId;
-                note.ReviewCycleId = reviewCycleId;
-                note.IsResolved = note.TabStatus == TabStatus.Approved;
-                note.CreatedDate = DateTime.UtcNow;
-                return note;
-            }).ToList();
+        if (cmd.Request.Tabs.Any(t => !t.Status.HasValue))
+            return Result.Fail<Unit>(JobMessages.FieldRequired);
+
+        var createdAt = DateTimeOffset.UtcNow;
+        var tabNotes = MapTabNotes(cmd.JobId, reviewCycleId, cmd.Request.Tabs, createdAt);
 
         var tabReviewRepo = uow.GetEntityRepository<JobTabReviewNote>();
         await tabReviewRepo.AddRangeAsync(tabNotes);
@@ -74,6 +69,26 @@ public sealed class SaveJobReviewCommandHandler(
         }
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
+    }
+
+    private static List<JobTabReviewNote> MapTabNotes(
+        Guid jobId,
+        Guid reviewCycleId,
+        IEnumerable<JobTabReviewUpsertDto> tabs,
+        DateTimeOffset createdAt)
+    {
+        return tabs
+            .Where(t => t.Status.HasValue)
+            .Select(t => new JobTabReviewNote
+            {
+                JobId = jobId,
+                ReviewCycleId = reviewCycleId,
+                Tab = t.Tab,
+                Note = t.Note,
+                TabStatus = t.Status!.Value,
+                IsResolved = t.Status == TabStatus.Approved,
+                CreatedDate = createdAt
+            }).ToList();
     }
     private async Task<Result<UploadAttachmentRequest?>> UploadAttachmentAsync(
         Guid jobId,

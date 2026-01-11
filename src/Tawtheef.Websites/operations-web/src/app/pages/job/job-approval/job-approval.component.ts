@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { JobService } from '../services/job.service';
@@ -21,6 +21,8 @@ import { JobReviewAttachmentsModalComponent } from '../modals/job-review-attachm
 import { JobReviewResponse } from '../models/job-review-response';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Permissions } from '../../../core/constants/permissions';
+import { catchError, debounceTime, EMPTY, filter, Subject, switchMap, takeUntil } from 'rxjs';
+type JobApprovalTab = JobTabType | 'Review';
 
 @Component({
   selector: 'app-job-approval.component',
@@ -28,7 +30,8 @@ import { Permissions } from '../../../core/constants/permissions';
   templateUrl: './job-approval.component.html',
   styleUrls: ['./job-approval.component.scss'],
 })
-export class JobApprovalComponent implements OnInit {
+
+export class JobApprovalComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
   private route = inject(ActivatedRoute);
@@ -41,6 +44,9 @@ export class JobApprovalComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected fileUtils = inject(FileUtilsService);
   private authService = inject(AuthService);
+  private destroy$ = new Subject<void>();
+  private reviewDraft$ = new Subject<JobTabReviewNote>();
+  private suspendDraftSave = false;
 
   job!: JobResponse;
   id!: GUID;
@@ -52,24 +58,31 @@ export class JobApprovalComponent implements OnInit {
 
   tabNotes: JobTabReviewNote[] = [];
   reviewHistory: JobTabReviewNoteResponse[] = [];
-  activeTab: string = JobTabType.Overview;
-  hasApplied: boolean = false;
-  isFavorite: boolean = false;
-
+  reviewTabId: JobApprovalTab = 'Review';
+  activeTab: JobApprovalTab = JobTabType.BasicData;
   reviewForm!: FormGroup;
 
-  private tabsContent: { id: string; title: string; icon: string }[] = [
+  tabsContent: { id: JobApprovalTab; title: string; icon: string }[] = [
+    { id: JobTabType.BasicData, title: 'JOB_APPROVAL.BASIC_DATA', icon: 'fa-clipboard-list' },
     { id: JobTabType.Overview, title: 'JOB_APPROVAL.OVERVIEW', icon: 'fa-file-alt' },
+    { id: JobTabType.Qualifications, title: 'JOB_APPROVAL.QUALIFICATIONS', icon: 'fa-graduation-cap' },
+    { id: JobTabType.Conditions, title: 'JOB_APPROVAL.CONDITIONS', icon: 'fa-clipboard-check' },
+    { id: JobTabType.Responsibilities, title: 'JOB_APPROVAL.RESPONSIBILITIES', icon: 'fa-info-circle' },
     { id: JobTabType.Skills, title: 'JOB_APPROVAL.SKILLS', icon: 'fa-tools' },
-    { id: JobTabType.Conditions, title: 'JOB_APPROVAL.CONDITIONS', icon: 'fa-graduation-cap' },
     { id: JobTabType.Benefits, title: 'JOB_APPROVAL.BENEFITS', icon: 'fa-gift' },
-    {
-      id: JobTabType.Responsibilities,
-      title: 'JOB_APPROVAL.RESPONSIBILITIES',
-      icon: 'fa-info-circle',
-    },
     { id: JobTabType.Attachments, title: 'JOB_APPROVAL.JOB_ATTACHMENTS', icon: 'fa-solid fa-file' },
-    { id: 'Review', title: 'JOB_APPROVAL.JOB_REVIEW', icon: 'fa-eye' },
+    { id: this.reviewTabId, title: 'JOB_APPROVAL.JOB_REVIEW', icon: 'fa-eye' },
+  ];
+
+  private reviewTabs: JobTabType[] = [
+    JobTabType.BasicData,
+    JobTabType.Overview,
+    JobTabType.Qualifications,
+    JobTabType.Conditions,
+    JobTabType.Responsibilities,
+    JobTabType.Skills,
+    JobTabType.Benefits,
+    JobTabType.Attachments,
   ];
 
   ngOnInit() {
@@ -78,6 +91,12 @@ export class JobApprovalComponent implements OnInit {
     this.id = this.route.snapshot.paramMap.get('id') as GUID;
     this.loadJobById();
     this.lookupsService.loadJobStatus().subscribe();
+    this.setupReviewDraftAutoSave();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initializeForm(): void {
@@ -85,14 +104,7 @@ export class JobApprovalComponent implements OnInit {
   }
 
   private initializeTabNotes(): void {
-    this.tabNotes = [
-      { tab: JobTabType.Overview, tabStatus: null, note: '' },
-      { tab: JobTabType.Responsibilities, tabStatus: null, note: '' },
-      { tab: JobTabType.Conditions, tabStatus: null, note: '' },
-      { tab: JobTabType.Skills, tabStatus: null, note: '' },
-      { tab: JobTabType.Benefits, tabStatus: null, note: '' },
-      { tab: JobTabType.Attachments, tabStatus: null, note: '' },
-    ];
+    this.tabNotes = this.reviewTabs.map((tab) => ({ tab, tabStatus: null, note: '' }));
 
     this.tabNotes.forEach((tabNote, index) => {
       const tabControl = new FormControl(tabNote.tabStatus);
@@ -101,12 +113,14 @@ export class JobApprovalComponent implements OnInit {
       this.reviewForm.addControl(`tabStatus_${index}`, tabControl);
       this.reviewForm.addControl(`note_${index}`, noteControl);
 
-      tabControl.valueChanges.subscribe((status) => {
+      tabControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((status) => {
         this.onTabStatusChange(index, status);
+        this.queueDraftSave(index);
       });
 
-      noteControl.valueChanges.subscribe((note) => {
+      noteControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((note) => {
         this.tabNotes[index].note = note || '';
+        this.queueDraftSave(index);
       });
     });
   }
@@ -131,11 +145,6 @@ export class JobApprovalComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  getCurrentTabNote(): JobTabReviewNote | undefined {
-    const currentNote = this.tabNotes.find((t) => t.tab === this.activeTab);
-    return currentNote;
-  }
-
   getCurrentTabControls(): { tabControl: FormControl; noteControl: FormControl } | null {
     const index = this.tabNotes.findIndex(t => t.tab === this.activeTab);
     if (index === -1) return null;
@@ -154,22 +163,21 @@ export class JobApprovalComponent implements OnInit {
   }
 
   private loadReviewIntoForm(review: JobReviewResponse): void {
+    this.suspendDraftSave = true;
     review.tabNoteReviews.forEach((tabReview) => {
       const index = this.tabNotes.findIndex(t => t.tab === tabReview.tab);
       if (index !== -1) {
         const tabControl = this.reviewForm.get(`tabStatus_${index}`) as FormControl;
         const noteControl = this.reviewForm.get(`note_${index}`) as FormControl;
         
-        tabControl.setValue(tabReview.tabStatus);
-        noteControl.setValue(tabReview.note || '');
+        tabControl.setValue(tabReview.tabStatus, { emitEvent: false });
+        noteControl.setValue(tabReview.note || '', { emitEvent: false });
         
         this.tabNotes[index].tabStatus = tabReview.tabStatus;
         this.tabNotes[index].note = tabReview.note || '';
-        
-        tabControl.markAsTouched();
-        noteControl.markAsTouched();
       }
     });
+    this.suspendDraftSave = false;
   }
 
   private loadJobById(): void {
@@ -188,13 +196,18 @@ export class JobApprovalComponent implements OnInit {
     });
   }
 
-  setActiveTab(tab: string): void {
+  setActiveTab(tab: JobApprovalTab): void {
     this.activeTab = tab;
     this.cdr.detectChanges();
   }
 
-  getTabContent(): { id: string; title: string; icon: string } {
+  getTabContent(): { id: JobApprovalTab; title: string; icon: string } {
     return this.tabsContent.find((tab) => tab.id === this.activeTab) || this.tabsContent[0];
+  }
+
+  getTabTitle(tab?: JobApprovalTab | null): string {
+    if (!tab) return 'JOB_APPROVAL.OVERVIEW';
+    return this.tabsContent.find((t) => t.id === tab)?.title || 'JOB_APPROVAL.OVERVIEW';
   }
 
   getStatusClass(): string {
@@ -249,6 +262,95 @@ export class JobApprovalComponent implements OnInit {
     return degreeNames.join(',') || '';
   }
 
+  get reviewedTabsCount(): number {
+    return this.tabNotes.filter((note) => note.tabStatus !== null).length;
+  }
+
+  get reviewProgressPercent(): number {
+    if (!this.tabNotes.length) return 0;
+    return Math.round((this.reviewedTabsCount / this.tabNotes.length) * 100);
+  }
+
+  getTabIndicatorStatus(tab: JobTabType): JobTabStatus | null {
+    return this.tabNotes.find((note) => note.tab === tab)?.tabStatus ?? null;
+  }
+
+  getTabIndicatorLabel(tab: JobTabType): string {
+    const status = this.getTabIndicatorStatus(tab);
+    if (!status) return 'JOB_APPROVAL.REVIEW_PENDING';
+    if (status === JobTabStatus.Returned) return 'JOB_APPROVAL.NEEDS_CHANGES';
+    return 'JOB_APPROVAL.REVIEWED';
+  }
+
+  getTabIndicatorClass(tab: JobTabType): string {
+    const status = this.getTabIndicatorStatus(tab);
+    if (!status) return 'pending';
+    return status === JobTabStatus.Returned ? 'returned' : 'approved';
+  }
+
+  isReviewTab(tab: JobApprovalTab): boolean {
+    return tab === this.reviewTabId;
+  }
+
+  getTabStatusLabel(tabStatus: JobTabStatus | null | undefined): string {
+    if (!tabStatus) return 'JOB_APPROVAL.REVIEW_PENDING';
+    return `JOB_TAB_STATUS.${tabStatus}`;
+  }
+
+  getBasicDataItems(): {
+    label: string;
+    value: string | null;
+    translateValue?: boolean;
+    isDate?: boolean;
+  }[] {
+    if (!this.job) return [];
+    return [
+      {
+        label: 'JOB_APPROVAL.JOB_TITLE',
+        value: [this.job.titleAr, this.job.titleEn].filter(Boolean).join(' / '),
+      },
+      { label: 'JOB_APPROVAL.SECTOR', value: this.job.sector?.name ?? null },
+      { label: 'JOB_APPROVAL.MANAGEMENT', value: this.job.management?.name ?? null },
+      { label: 'JOB_APPROVAL.DEPARTMENT', value: this.job.department?.name ?? null },
+      { label: 'JOB_APPROVAL.JOB_CATEGORY', value: this.job.jobCategory?.name ?? null },
+      {
+        label: 'JOB_APPROVAL.WORK_LOCATION',
+        value: this.job.workLocation?.name ?? null,
+        translateValue: true,
+      },
+      { label: 'JOB_APPROVAL.WORK_TYPE', value: this.job.workType?.name ?? null },
+      { label: 'JOB_APPROVAL.GENDER', value: this.job.gender?.name ?? null },
+      { label: 'JOB_APPROVAL.MAJOR', value: this.job.major?.name ?? null },
+      { label: 'JOB_APPROVAL.SUB_MAJOR', value: this.job.subMajor?.name ?? null },
+      {
+        label: 'JOB_APPROVAL.YEARS_OF_EXPERIENCE',
+        value:
+          this.job.yearsOfExperience !== null && this.job.yearsOfExperience !== undefined
+            ? `${this.job.yearsOfExperience}`
+            : null,
+      },
+      {
+        label: 'JOB_APPROVAL.VACANCIES',
+        value:
+          this.job.numberOfVacancies !== null && this.job.numberOfVacancies !== undefined
+            ? `${this.job.numberOfVacancies}`
+            : null,
+      },
+      {
+        label: 'JOB_APPROVAL.CLOSING_DATE',
+        value: this.job.closingDate ? new Date(this.job.closingDate).toISOString() : null,
+        isDate: true,
+      },
+      {
+        label: 'JOB_APPROVAL.AGE_RANGE',
+        value:
+          this.job.minimumAge && this.job.maximumAge
+            ? `${this.job.minimumAge} - ${this.job.maximumAge}`
+            : null,
+      },
+    ];
+  }
+
   submitReview(): void {
     if (!this.canManageJobs()) return;
     Object.keys(this.reviewForm.controls).forEach(key => {
@@ -279,6 +381,7 @@ export class JobApprovalComponent implements OnInit {
 
   confirm(): void {
     if (!this.canManageJobs()) return;
+    if (!this.validateApprovalData()) return;
     Object.keys(this.reviewForm.controls).forEach(key => {
       const control = this.reviewForm.get(key);
       control?.markAsTouched();
@@ -342,7 +445,7 @@ export class JobApprovalComponent implements OnInit {
 
   private submitTabReview(newStatusId: GUID): void {
     if (!this.canManageJobs()) return;
-    const formData = this.buildFormData();
+    const formData = this.buildFormData(true);
 
     this.jobService.submitTabReview(formData).subscribe({
       next: () => {
@@ -355,11 +458,13 @@ export class JobApprovalComponent implements OnInit {
     });
   }
 
-  private buildFormData(): FormData {
+  private buildFormData(includeAttachments: boolean): FormData {
     const formData = new FormData();
     formData.append('JobId', this.job.id);
 
-    const tabsPayload = this.tabNotes.map((t) => ({
+    const tabsPayload = this.tabNotes
+      .filter((t) => t.tabStatus)
+      .map((t) => ({
       Tab: t.tab,
       Status: t.tabStatus,
       Note: t.note || '',
@@ -371,48 +476,81 @@ export class JobApprovalComponent implements OnInit {
       formData.append(`Request.Tabs[${index}].Note`, tab.Note);
     });
 
-    const attachmentsJson = JSON.stringify(
-      this.jobReviewAttachments.map((a, idx) => ({
-        id: a.id || null,
-        fileName: a.fileName,
-        fileIndex: a.file instanceof File ? idx : null,
-      }))
-    );
-    formData.append('Request.AttachmentsJson', attachmentsJson);
+    if (includeAttachments) {
+      const attachmentsJson = JSON.stringify(
+        this.jobReviewAttachments.map((a, idx) => ({
+          id: a.id || null,
+          fileName: a.fileName,
+          fileIndex: a.file instanceof File ? idx : null,
+        }))
+      );
+      formData.append('Request.AttachmentsJson', attachmentsJson);
 
-    this.jobReviewAttachments.forEach((attachment) => {
-      if (attachment.file && attachment.file instanceof File) {
-        formData.append(
-          'Request.Files',
-          attachment.file,
-          attachment.fileName || attachment.file.name
-        );
-      }
-    });
+      this.jobReviewAttachments.forEach((attachment) => {
+        if (attachment.file && attachment.file instanceof File) {
+          formData.append(
+            'Request.Files',
+            attachment.file,
+            attachment.fileName || attachment.file.name
+          );
+        }
+      });
+    }
+
+    return formData;
+  }
+
+  private buildSingleTabFormData(
+    tabNote: JobTabReviewNote,
+    includeAttachments: boolean
+  ): FormData | null {
+    if (!tabNote.tabStatus) return null;
+
+    const formData = new FormData();
+    formData.append('JobId', this.job.id);
+    formData.append('Request.Tabs[0].Tab', tabNote.tab);
+    formData.append('Request.Tabs[0].Status', tabNote.tabStatus.toString());
+    formData.append('Request.Tabs[0].Note', tabNote.note || '');
+
+    if (includeAttachments) {
+      const attachmentsJson = JSON.stringify(
+        this.jobReviewAttachments.map((a, idx) => ({
+          id: a.id || null,
+          fileName: a.fileName,
+          fileIndex: a.file instanceof File ? idx : null,
+        }))
+      );
+      formData.append('Request.AttachmentsJson', attachmentsJson);
+
+      this.jobReviewAttachments.forEach((attachment) => {
+        if (attachment.file && attachment.file instanceof File) {
+          formData.append(
+            'Request.Files',
+            attachment.file,
+            attachment.fileName || attachment.file.name
+          );
+        }
+      });
+    }
 
     return formData;
   }
 
   private handleSuccess(): void {
     this.router.navigate([routes.employee.JobList]);
-    if(this.isAllTabsApproved())
-    {
-    this.notificationService.success(
-      this.transaltionService.instant('JOB_APPROVAL.SUBMIT_REVIEW_SUCCESS')
-    );
-  }else{
-  this.notificationService.warn(
-      this.transaltionService.instant('JOB_APPROVAL.JOB_RETURNED_NEED_UPDATES')
-    );
-  }
+    if (this.isAllTabsApproved()) {
+      this.notificationService.success(
+        this.transaltionService.instant('JOB_APPROVAL.SUBMIT_REVIEW_SUCCESS')
+      );
+    } else {
+      this.notificationService.warn(
+        this.transaltionService.instant('JOB_APPROVAL.JOB_RETURNED_NEED_UPDATES')
+      );
+    }
   }
 
   canManageJobs(): boolean {
     return this.authService.hasPermission(Permissions.Jobs.Manage);
-  }
-
-  canViewJobs(): boolean {
-    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.Jobs.View]);
   }
 
   isReviewComplete(): boolean {
@@ -428,12 +566,78 @@ export class JobApprovalComponent implements OnInit {
     return this.tabNotes.every((t) => t.tabStatus === JobTabStatus.Approved);
   }
 
-  preview(file: any): void {
-    this.fileUtils.previewUrl(file.url).then(() => {});
+  private validateApprovalData(): boolean {
+    if (!this.job) return false;
+    const hasBasicInfo =
+      !!this.job.titleAr?.trim() &&
+      !!this.job.titleEn?.trim() &&
+      !!this.job.sector?.id &&
+      !!this.job.management?.id &&
+      !!this.job.department?.id &&
+      !!this.job.jobCategory?.id &&
+      !!this.job.workLocation?.id &&
+      !!this.job.major?.id &&
+      !!this.job.workType?.id &&
+      this.job.numberOfVacancies > 0 &&
+      !!this.job.closingDate &&
+      this.job.minimumAge > 0 &&
+      this.job.maximumAge > this.job.minimumAge &&
+      this.job.yearsOfExperience >= 0;
+
+    const hasOverview =
+      !!this.job.overViewAr?.trim() && !!this.job.overViewEn?.trim();
+    const hasQualifications =
+      !!this.job.qualificationDescriptionAr?.trim() &&
+      !!this.job.qualificationDescriptionEn?.trim() &&
+      (this.job.degrees?.length || 0) > 0;
+    const hasResponsibilities = (this.job.responsibilities?.length || 0) > 0;
+    const hasConditions = (this.job.conditions?.length || 0) > 0;
+    const hasSkills = (this.job.skills?.length || 0) > 0;
+
+    if (
+      !hasBasicInfo ||
+      !hasOverview ||
+      !hasQualifications ||
+      !hasResponsibilities ||
+      !hasConditions ||
+      !hasSkills
+    ) {
+      this.notificationService.error(
+        this.transaltionService.instant('JOB_APPROVAL.MISSING_REQUIRED_DATA')
+      );
+      return false;
+    }
+
+    return true;
   }
 
-  getJobReviewAttachments(): JobReviewAttachment[] {
-    return this.jobReviewAttachments;
+  private setupReviewDraftAutoSave(): void {
+    this.reviewDraft$
+      .pipe(
+        debounceTime(800),
+        filter(() => !this.suspendDraftSave),
+        filter(() => this.canManageJobs() && !!this.job),
+        switchMap((tabNote) => {
+          const formData = this.buildSingleTabFormData(tabNote, false);
+          if (!formData) return EMPTY;
+          return this.jobService.updateTabReview(formData).pipe(
+            catchError(() => EMPTY)
+          );
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
+  }
+
+  private queueDraftSave(index: number): void {
+    if (this.suspendDraftSave || !this.job) return;
+    const note = this.tabNotes[index];
+    if (!note?.tabStatus) return;
+    this.reviewDraft$.next(note);
+  }
+
+  preview(file: any): void {
+    this.fileUtils.previewUrl(file.url).then(() => {});
   }
 
   previewAttachment(attachment: JobReviewAttachment): void {

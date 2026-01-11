@@ -40,7 +40,6 @@ import { JobPointsConfigPageComponent } from './job-points/job-points-config-pag
 import { JobPointsMainElementsComponent } from './job-points/job-points-main-elements/job-points-main-elements.component';
 import { JobPointsTabComponent } from './job-points/job-points-points-tab/job-points-tab.component';
 import { TabsModule } from 'primeng/tabs';
-import { ProgressSpinner } from "primeng/progressspinner";
 import { RemoteSelectComponent } from '../../shared/components/remote-select/remote-select';
 import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
 import { TableModule } from 'primeng/table';
@@ -98,7 +97,6 @@ import { JobCandidatesNationalityBreakdownDialogComponent } from './modals/job-c
     ConfirmDialog,
     FaDirArrowDirective,
     TabsModule,
-    ProgressSpinner,
     RemoteSelectComponent,
     TableModule,
     RadioButtonModule,

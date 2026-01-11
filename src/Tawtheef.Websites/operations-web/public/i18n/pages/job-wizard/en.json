@@ -38,7 +38,6 @@
 
   "JOB_WIZARD.HEADER.PROGRESS": "Progress",
   "JOB_WIZARD.SHARED.BUTTONS.CANCEL": "Cancel",
-  "JOB_WIZARD.LOADING.ACCESSIBILITY_LABEL": "Loading...",
   "JOB_WIZARD.LOADING.TITLE": "Preparing Job Creation Form",
   "JOB_WIZARD.LOADING.SUBTITLE": "Please wait...",
   "JOB_WIZARD.LOADING.CREATE_HINT": "A window will open to enter the basic job information",
@@ -49,9 +48,6 @@
   "JOB_BASIC_MODAL.START_CREATION_BUTTON": "Start Creation",
   "JOB_BASIC_MODAL.UPDATE_BUTTON": "Update",
   "JOB_BASIC_MODAL.CANCEL_CONFIRM": "Do you want to cancel the process? All unsaved changes will be lost.",
-  "JOB_BASIC_MODAL.LOADING": "Loading...",
-  "JOB_WIZARD.LOADING_STEPS": "Loading steps...",
-  "JOB_WIZARD.LOADING_STEPS_FORM": "Preparing job creation form...",
 
   "JOB_BASIC_MODAL.ERROR.LOAD_FAILED": "Failed to load job data",
   "JOB_BASIC_MODAL.ERROR.DUPLICATE_JOB": "A duplicate job exists with the same title, entity, and major",

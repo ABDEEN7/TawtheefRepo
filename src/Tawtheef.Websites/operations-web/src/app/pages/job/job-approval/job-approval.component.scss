@@ -15,6 +15,61 @@
 padding-bottom: 25px;
 }
 
+.review-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #6c757d;
+  }
+
+  .progress-bar-wrap {
+    background: #e9ecef;
+    border-radius: 999px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    background: #89153D;
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+}
+
+.basic-data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.basic-data-item {
+  background: #fff;
+  border: 1px solid #E6E6E6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .label {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 600;
+  }
+
+  .value {
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+  }
+}
+
 .note-textarea.is-invalid {
   border-color: #dc3545 !important;
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
