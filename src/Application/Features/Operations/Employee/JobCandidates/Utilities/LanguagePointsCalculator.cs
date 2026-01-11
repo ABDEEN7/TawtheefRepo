@@ -76,6 +76,9 @@ internal static class LanguagePointsCalculator
 
     private static string? MapLanguageLevel(Guid levelId)
     {
+        if (levelId == LanguageLevelIds.Native)
+            return null;
+
         if (levelId == LanguageLevelIds.Expert)
             return Excellent;
 
@@ -85,6 +88,6 @@ internal static class LanguagePointsCalculator
         if (levelId == LanguageLevelIds.Intermediate || levelId == LanguageLevelIds.Basic)
             return Good;
 
-        return levelId == LanguageLevelIds.Native ? Excellent : null;
+        return null;
     }
 }

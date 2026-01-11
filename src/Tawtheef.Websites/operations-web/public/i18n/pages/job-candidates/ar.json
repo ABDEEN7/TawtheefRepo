@@ -46,5 +46,7 @@
   "JOB_CANDIDATE_FILTERS_NATIONALITY": "الجنسية",
   "JOB_CANDIDATE_FILTERS_NATIONALITY_BREAKDOWN": "تفاصيل الجنسيات",
   "JOB_CANDIDATE_FILTERS_ADD_NATIONALITY": "إضافة جنسية",
-  "JOB_CANDIDATE_MESSAGES_FILTER_SAVE_FAILED":"تعذر حفظ فلاتر المرشحين."
+  "JOB_CANDIDATE_MESSAGES_FILTER_SAVE_FAILED":"تعذر حفظ فلاتر المرشحين.",
+  "JOB_CANDIDATE_FILTERS_PERCENTAGE_TOTAL_EXCEEDED": "لا يمكن أن يتجاوز مجموع النِّسَب 100٪.",
+  "JOB_CANDIDATE_FILTERS_NATIONALITY_PERCENTAGE_MISMATCH": "يجب أن يساوي مجموع نسب الجنسيات نسبة فئة المقدم المحددة."
 }

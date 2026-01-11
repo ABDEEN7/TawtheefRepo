@@ -53,12 +53,18 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         // NEW: Do not invite again (exclude applicants who already have invitations for this job)
         // --------------------------------------------------------------------
         var invitationsRepo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
+        var activeInvitationStatuses = new[]
+        {
+            InvitationStatusIds.NewInvitation,
+            InvitationStatusIds.Read,
+            InvitationStatusIds.Submitted
+        };
 
         // Any invitation for the job blocks re-inviting (all statuses & batches).
         // If you want to block only certain statuses, add a predicate on InvitationStatusId here.
         var alreadyInvitedApplicantIds = await invitationsRepo
             .AsNoTracking()
-            .Where(i => i.JobId == request.JobId)
+            .Where(i => i.JobId == request.JobId && activeInvitationStatuses.Contains(i.InvitationStatusId))
             .Select(i => i.ApplicantId)
             .Distinct()
             .ToListAsync(cancellationToken);
@@ -122,7 +128,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
 
         if (request.ApplicantIds is { Count: > 0 })
         {
-            finalCandidates = sorted;
+            finalCandidates = sorted.Take(targetCount).ToList();
         }
         else
         {

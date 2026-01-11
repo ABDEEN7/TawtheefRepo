@@ -9,6 +9,8 @@ import {
 } from '../../models/job-candidates-filter-settings.model';
 import { JobCandidatesNationalityBreakdownDialogComponent } from '../job-candidates-nationality-breakdown/job-candidates-nationality-breakdown.dialog.component';
 import { GUID } from '../../../../shared/types/guid.type';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-job-candidates-nationality-filter-dialog',
@@ -22,6 +24,8 @@ export class JobCandidatesNationalityFilterModalComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private dialogService = inject(DialogService);
   private lookupsService = inject(JobLookupService);
+  private notificationService = inject(NotificationService);
+  private translateService = inject(TranslateService);
 
   candidateTypePercentages: JobCandidateTypePercentage[] = [];
   nationalityPercentages: JobCandidateNationalityPercentage[] = [];
@@ -116,6 +120,25 @@ export class JobCandidatesNationalityFilterModalComponent implements OnInit {
       })
     );
 
+    const totalPercentage = candidateTypePercentages.reduce(
+      (sum, item) => sum + (item.percentage || 0),
+      0
+    );
+
+    if (totalPercentage > 100) {
+      this.notificationService.warn(
+        this.translateService.instant('JOB_CANDIDATE_FILTERS_PERCENTAGE_TOTAL_EXCEEDED')
+      );
+      return;
+    }
+
+    if (!this.isNationalityBreakdownValid(candidateTypePercentages, this.nationalityPercentages)) {
+      this.notificationService.warn(
+        this.translateService.instant('JOB_CANDIDATE_FILTERS_NATIONALITY_PERCENTAGE_MISMATCH')
+      );
+      return;
+    }
+
     this.dialogRef.close({
       candidateTypePercentages,
       nationalityPercentages: this.nationalityPercentages,
@@ -124,5 +147,27 @@ export class JobCandidatesNationalityFilterModalComponent implements OnInit {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  private isNationalityBreakdownValid(
+    candidateTypePercentages: JobCandidateTypePercentage[],
+    nationalityPercentages: JobCandidateNationalityPercentage[]
+  ): boolean {
+    if (nationalityPercentages.length === 0) return true;
+
+    const percentageMap = new Map(
+      candidateTypePercentages.map((item) => [item.candidateTypeId, item.percentage])
+    );
+
+    const totals = nationalityPercentages.reduce<Record<string, number>>((acc, item) => {
+      acc[item.candidateTypeId] = (acc[item.candidateTypeId] ?? 0) + item.percentage;
+      return acc;
+    }, {});
+
+    return Object.entries(totals).every(([candidateTypeId, total]) => {
+      if (total <= 0) return true;
+      const typePercentage = percentageMap.get(candidateTypeId as GUID) ?? 0;
+      return typePercentage > 0 && total === typePercentage;
+    });
   }
 }
