@@ -29,7 +29,7 @@ export class ProfileContactSectionComponent {
   @Input() canEdit = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
-  @Input() isProfileApproved!: boolean;
+  @Input() canReplaceAttachment!: boolean;
   @Input() visibility: ProfileOverviewVisibility | null = null;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();

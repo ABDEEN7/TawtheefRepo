@@ -135,10 +135,17 @@ export class ProfileViewPage {
   get avatar(){
     return this.header()?.avatar || AvatarUtils.build(this.header()?.fullNameEn ?? null);
   }
-  get isProfileApproved(){
-    return this.profileStatus() === UserProfileStatusEnum.Approved;
+  get canReplaceAttachment(){
+    return this.enableChangeMode;
   }
-
+  get enableChangeMode(){
+    if(this.profileStatus() === UserProfileStatusEnum.Approved) {
+      //TODO: for this moment the user can not edit his profile after approval
+      // we need to change it in Phase. 2
+      return false;
+    }
+    return false;
+  }
   private readonly basics = rxResource({
     params: () => true,
     stream: () => this.profileCqrs.basics()
@@ -279,12 +286,11 @@ export class ProfileViewPage {
   });
 
   get canAddAttachments(){
-    const status = this.profileStatus();
-    return status === UserProfileStatusEnum.Approved;
+    return this.enableChangeMode;
   }
   canEditSections(section: ProfileSectionEnum){
     const status = this.profileStatus();
-    if(status === UserProfileStatusEnum.Approved)
+    if(this.enableChangeMode)
       return true;
     if(status === UserProfileStatusEnum.RequiresUpdate) {
       const indexSection = Math.min(Math.max(section - 1,0), ((this.review.value()?.sections.length ?? 1) - 1));
