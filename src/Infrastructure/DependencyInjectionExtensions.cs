@@ -96,12 +96,23 @@ namespace Tawtheef.Infrastructure
 
         private static void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
-            services.Configure<AppConfigSettings>(configuration.GetSection(AppConfigSettings.SectionName));
-            services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
-            services.Configure<StorageSettings>(configuration.GetSection(StorageSettings.SectionName));
+            AddValidatedOptions<JwtSettings>(services, configuration, JwtSettings.SectionName);
+            AddValidatedOptions<AppConfigSettings>(services, configuration, AppConfigSettings.SectionName);
+            AddValidatedOptions<EmailSettings>(services, configuration, EmailSettings.SectionName);
+            AddValidatedOptions<StorageSettings>(services, configuration, StorageSettings.SectionName);
             services.Configure<EmailDispatcherSettings>(configuration.GetSection(EmailDispatcherSettings.SectionName));
             services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
+        }
+
+        private static void AddValidatedOptions<T>(
+            IServiceCollection services,
+            IConfiguration configuration,
+            string sectionName) where T : class
+        {
+            services.AddOptions<T>()
+                .Bind(configuration.GetSection(sectionName))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
         }
 
         #endregion
@@ -384,7 +395,7 @@ namespace Tawtheef.Infrastructure
         private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
         {
             // ===== reCAPTCHA =====
-            services.Configure<RecaptchaSettings>(configuration.GetSection(RecaptchaSettings.SectionName));
+            AddValidatedOptions<RecaptchaSettings>(services, configuration, RecaptchaSettings.SectionName);
             services.AddHttpClient<IRecaptchaService, RecaptchaService>((sp, client) =>
             {
                 var opt = sp.GetRequiredService<IOptions<RecaptchaSettings>>().Value;
@@ -393,7 +404,7 @@ namespace Tawtheef.Infrastructure
             });
 
             // ===== Qatar Pass =====
-            services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
+            AddValidatedOptions<QatarPassAuthSettings>(services, configuration, QatarPassAuthSettings.SectionName);
             services.AddHttpClient<IQatarPassClient, QatarPassClient>((sp, client) =>
             {
                 var opt = sp.GetRequiredService<IOptions<QatarPassAuthSettings>>().Value;
@@ -402,7 +413,7 @@ namespace Tawtheef.Infrastructure
             });
 
             // ===== Qatar Resident OTP Verification =====
-            services.Configure<QatarResidentOtpSettings>(configuration.GetSection(QatarResidentOtpSettings.SectionName));
+            AddValidatedOptions<QatarResidentOtpSettings>(services, configuration, QatarResidentOtpSettings.SectionName);
             services.AddHttpClient<IQatarResidentVerificationClient, QatarResidentVerificationClient>((sp, client) =>
             {
                 var opt = sp.GetRequiredService<IOptions<QatarResidentOtpSettings>>().Value;
@@ -411,7 +422,7 @@ namespace Tawtheef.Infrastructure
             });
 
             // ===== Hodhod SMS =====
-            services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
+            AddValidatedOptions<HodhodSmsSettings>(services, configuration, HodhodSmsSettings.SectionName);
             services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>((sp, client) =>
             {
                 var opt = sp.GetRequiredService<IOptions<HodhodSmsSettings>>().Value;
@@ -420,7 +431,7 @@ namespace Tawtheef.Infrastructure
             });
 
             // ===== MOI Client =====
-            services.Configure<MoiSettings>(configuration.GetSection(MoiSettings.SectionName));
+            AddValidatedOptions<MoiSettings>(services, configuration, MoiSettings.SectionName);
             services.AddHttpClient<IMoiClient, MoiClient>((sp, client) =>
                 {
                     var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;

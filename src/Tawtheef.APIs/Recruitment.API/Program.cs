@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Azure.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -21,6 +22,17 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
+
+if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
+{
+    var keyVaultUri = builder.Configuration["KeyVault:Uri"];
+    if (string.IsNullOrWhiteSpace(keyVaultUri))
+    {
+        throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
+    }
+
+    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), new DefaultAzureCredential());
+}
 
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 builder.Host.UseSerilog((ctx, services, lc) => lc
