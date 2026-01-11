@@ -631,7 +631,7 @@ body.ltr
 .p-select-fluid ,
 .p-inputtext,
 .p-select-label,
-.p-select,
+.p-select
 {
   padding-top: 0.24rem !important;
   padding-bottom: 0.24rem !important;
@@ -782,15 +782,16 @@ body.ltr
 }
 
 
-:dir(ltr) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
-      right: 0;
-    left: auto;
-   
-}
+
 :dir(rtl) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
-  right: auto !important;
-    left: 0 !IMPORTANT;
+  right: 0 !important;
+    left: auto !IMPORTANT;
    
 }
-:dir(rtl) .qatar-otp-dialog  .form-control{direction: rtl;}
-    
+:dir(rtl) .qatar-otp-dialog  .form-control{direction: ltr;}
+:dir(ltr) .qatar-otp-dialog  .form-control{direction: rtl;}
+:dir(ltr) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
+      right: auto;
+    left: 0;
+   
+}
