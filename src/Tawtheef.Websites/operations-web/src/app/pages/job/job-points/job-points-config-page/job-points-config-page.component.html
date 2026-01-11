@@ -11,13 +11,6 @@
     </div>
   </div>
 
-  @if (isLoading) {
-    <div class="loading-overlay">
-      <p-progressSpinner [style]="{width: '50px', height: '50px'}" strokeWidth="4"></p-progressSpinner>
-      <p class="loading-text">{{ 'common.loading' | translate }}</p>
-    </div>
-  }
-
   @if (!isLoading) {
     <p-tabs [(value)]="activeTab" class="tabs-shell">
       <p-tablist>

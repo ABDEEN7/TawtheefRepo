@@ -38,7 +38,6 @@
 
   "JOB_WIZARD.HEADER.PROGRESS": "التقدم",
   "JOB_WIZARD.SHARED.BUTTONS.CANCEL": "إلغاء",
-  "JOB_WIZARD.LOADING.ACCESSIBILITY_LABEL": "جاري التحميل...",
   "JOB_WIZARD.LOADING.TITLE": "جاري تحضير نموذج إنشاء الوظيفة",
   "JOB_WIZARD.LOADING.SUBTITLE": "يرجى الانتظار...",
   "JOB_WIZARD.LOADING.CREATE_HINT": "سيتم فتح نافذة لإدخال البيانات الأساسية للوظيفة",
@@ -49,9 +48,6 @@
   "JOB_BASIC_MODAL.START_CREATION_BUTTON": "بدء الإنشاء",
   "JOB_BASIC_MODAL.UPDATE_BUTTON": "تحديث",
   "JOB_BASIC_MODAL.CANCEL_CONFIRM": "هل تريد إلغاء العملية؟ سيتم فقدان جميع التغييرات غير المحفوظة.",
-  "JOB_BASIC_MODAL.LOADING": "جاري التحميل...",
-  "JOB_WIZARD.LOADING_STEPS" : "جاري تحميل الخطوات...",
-  "JOB_WIZARD.LOADING_STEPS_FORM":"جاري تحضير نموذج إنشاء الوظيفة...",
 
   "JOB_BASIC_MODAL.ERROR.LOAD_FAILED": "فشل في تحميل بيانات الوظيفة",
   "JOB_BASIC_MODAL.ERROR.DUPLICATE_JOB": "توجد وظيفة مكررة بنفس المسمى والجهة والتخصص",
