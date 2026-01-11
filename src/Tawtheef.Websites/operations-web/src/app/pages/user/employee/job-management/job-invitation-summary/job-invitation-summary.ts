@@ -104,4 +104,6 @@ export class JobInvitationSummary implements OnInit {
   canViewInvitations(): boolean {
     return this.authService.hasPermission(Permissions.JobInvitations.View);
   }
+
+  protected readonly routes = routes;
 }

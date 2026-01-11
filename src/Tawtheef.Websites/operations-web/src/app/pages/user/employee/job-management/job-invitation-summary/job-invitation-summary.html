@@ -183,7 +183,7 @@
                         @if (canViewInvitations()) {
                          <div class="action-buttons">
                            <a
-                             [routerLink]="['../job-invitation-summary-details', summary.jobId]"
+                             [routerLink]="routes.employee.jobInvitationSummaryDetails(summary.jobId)"
                              class="btn-text d-flex gap-1 align-items-center "
                            >
                              <i class="hgi hgi-stroke hgi-view"></i>
