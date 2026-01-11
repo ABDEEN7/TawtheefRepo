@@ -2,7 +2,7 @@
   ProfileChangeActionEnum,
   ProfileChangeRequestStatusEnum,
   ProfileSectionCode
-} from '../../overview/models/profile-overview.model';
+} from '../models/profile-overview.model';
 import {GUID} from '../../../../../shared/types/guid.type';
 
 export interface changeRequestDto {

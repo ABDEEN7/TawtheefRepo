@@ -104,6 +104,13 @@ public class UserProfile : EventEntity
 
     public bool AvailableForRecruitment { get; set; } = true;
 
+    /// <summary>
+    /// Total experience years across all experiences, merging overlapping date ranges.
+    /// Rounded to 1 decimal (e.g., 3.4).
+    /// </summary>
+    [NotMapped]
+    public double CalculatedExperienceYears => ExperienceCalculator.CalculateYears(Experiences);
+
     public bool IsCompleted()
     {
         if (CandidateTypeId == Guid.Empty)
@@ -177,5 +184,87 @@ public class UserProfile : EventEntity
             return false;
 
         return true;
+    }
+}
+
+/// <summary>
+/// Utility to calculate merged experience duration.
+/// Keep it in Domain/Utils (or similar) so it is testable.
+/// </summary>
+public static class ExperienceCalculator
+{
+    private const double DaysPerYear = 365.25;
+
+    public static double CalculateYears(ICollection<Experience>? experiences)
+    {
+        if (experiences is null || experiences.Count == 0)
+            return 0d;
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        // Build valid ranges (inclusive day boundaries handled via day counts)
+        var ranges = experiences
+            .Select(exp =>
+            {
+                var start = exp.StartDate;
+                var end = exp.EndDate ?? today;
+
+                if (end < start)
+                    return (valid: false, start: default(DateOnly), end: default(DateOnly));
+
+                return (valid: true, start, end);
+            })
+            .Where(x => x.valid)
+            .Select(x => (x.start, x.end))
+            .OrderBy(x => x.start)
+            .ToList();
+
+        if (ranges.Count == 0)
+            return 0d;
+
+        // Merge overlaps
+        var mergedStart = ranges[0].start;
+        var mergedEnd = ranges[0].end;
+
+        long totalDays = 0;
+
+        for (var i = 1; i < ranges.Count; i++)
+        {
+            var current = ranges[i];
+
+            // Overlap/adjacent check:
+            // TS used: current.start <= mergedEnd (same-day overlap)
+            // With DateOnly, "adjacent" (next day) is NOT overlap in your TS.
+            // So we keep the same rule: current.start <= mergedEnd.
+            if (current.start <= mergedEnd)
+            {
+                if (current.end > mergedEnd)
+                    mergedEnd = current.end;
+            }
+            else
+            {
+                totalDays += DaysBetweenExclusiveEnd(mergedStart, mergedEnd);
+                mergedStart = current.start;
+                mergedEnd = current.end;
+            }
+        }
+
+        totalDays += DaysBetweenExclusiveEnd(mergedStart, mergedEnd);
+
+        var years = totalDays / DaysPerYear;
+
+        // Round to 1 decimal like: Math.round(years * 10) / 10
+        return Math.Round(years, 1, MidpointRounding.AwayFromZero);
+    }
+
+    /// <summary>
+    /// Matches JS: (endMs - startMs) where both are at 00:00.
+    /// That effectively counts whole days between the two dates, excluding the end date's day boundary.
+    /// Example: start=2026-01-01, end=2026-01-02 => 1 day.
+    /// </summary>
+    private static int DaysBetweenExclusiveEnd(DateOnly start, DateOnly end)
+    {
+        // DateOnly.DayNumber difference matches midnight-to-midnight day boundaries.
+        return end.DayNumber - start.DayNumber;
     }
 }
