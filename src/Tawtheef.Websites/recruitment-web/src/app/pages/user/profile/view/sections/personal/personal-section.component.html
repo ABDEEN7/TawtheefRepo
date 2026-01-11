@@ -3,7 +3,7 @@
 
     <!-- Header (optional – keep if you have a section title) -->
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-alert-circle"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.personalInfo' | translate }}</span></h5>
+        <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-alert-circle"  aria-hidden="true"></i> <span>{{ 'profile.section.personal' | translate }}</span></h5>
         <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
     </div>
 
@@ -71,7 +71,7 @@
           </div>
         </div>
       </div>
-  
+
       <div class="col-12 col-lg-3">
         <div class="card h-100 card-table">
           <div class="card-body">
