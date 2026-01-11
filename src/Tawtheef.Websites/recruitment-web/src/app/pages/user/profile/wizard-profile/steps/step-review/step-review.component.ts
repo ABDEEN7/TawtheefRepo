@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, computed, inject, signal } from '@angular/core';
 import { ProfileDataService } from '../../services/profile-data.service';
 import { TranslateService } from '@ngx-translate/core';
-import {finalize, switchMap} from 'rxjs/operators';
+import {catchError, concatMap, finalize, switchMap, tap} from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
 import {Skill} from '../../models/skill.model';
 import {CandidateType} from '../../../../../../core/enums/lookups.enum';
@@ -11,6 +11,7 @@ import {UploadedFileRef} from '../../models/profile-state.model';
 import {Router} from '@angular/router';
 import {routes} from '../../../../../../routes/routes';
 import {AuthService} from '../../../../../../core/auth/auth.service';
+import {from, of} from 'rxjs';
 
 @Component({
   selector: 'app-step-review',
@@ -59,8 +60,8 @@ export class StepReviewComponent {
 
   // UI flags
   submitting = signal(false);
-  submitted  = signal(false);
-  errorText  = signal<string | null>(null);
+  submitted = signal(false);
+  errorText = signal<string | null>(null);
 
   trackSkill = (_: number, v: Skill) => v.skillId;
 
@@ -76,28 +77,27 @@ export class StepReviewComponent {
     }
   }
 
+
   submit() {
     if (!this.canSubmit()) return;
+
     this.submitting.set(true);
     this.submitted.set(false);
     this.errorText.set(null);
-    this.profile
-      .finalizeProfile()
-      .pipe(
-        switchMap(() => this.auth.refreshToken()),
-        finalize(() => this.submitting.set(false))
-      )
-      .subscribe({
-        next: () => {
-          this.submitted.set(true);
-          this.router.navigateByUrl(routes.user.dashboard);
-        },
-        error: (err) => {
-          this.errorText.set(
-            this.i18n.instant('wizard.review.submitError') +
-            (err?.error?.message ? `: ${err.error.message}` : '')
-          );
-        }
-      });
+
+    this.profile.finalizeProfile().pipe(
+      concatMap(() =>
+        this.auth.refreshToken().pipe(
+          catchError(err => {
+            // log it, but don't block dashboard navigation
+            console.warn('[submit] refreshToken failed, continue to dashboard', err);
+            return of(null);
+          })
+        )
+      ),
+      tap(() => this.submitted.set(true)),
+      concatMap(() => from(this.router.navigateByUrl(routes.user.dashboard))),
+      finalize(() => this.submitting.set(false))
+    ).subscribe();
   }
 }

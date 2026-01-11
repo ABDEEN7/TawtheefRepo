@@ -30,11 +30,10 @@ export class AuthStateService {
   }
 
   /** quick sync check (no redirects). safe for guards. */
-  isAuthenticated(ignoreExpired = false): boolean {
+  isAuthenticated(): boolean {
     const token = this.tokenService.getToken();
     const data = localStorage.getItem('user_data');
-    if (!token || !data ||
-      (!ignoreExpired && this.tokenService.isTokenExpired(token))) {
+    if (!token || !data) {
       this.isAuthenticatedSubject.next(false);
       return false;
     }
@@ -54,7 +53,7 @@ export class AuthStateService {
    * use inside canMatch/canActivateChild
    */
   ensureAuth(returnUrl?: string): true | UrlTree {
-    if (this.isAuthenticated(true)) return true;
+    if (this.isAuthenticated()) return true;
     return this.router.createUrlTree(
       [this.routes.auth.login], // e.g. '/auth/login'
       returnUrl ? { queryParams: { returnUrl } } : undefined
@@ -62,9 +61,8 @@ export class AuthStateService {
   }
 
   /** full check that may redirect to logout (use in app init flows) */
-  checkAuthState(allowRedirectLogout: boolean): boolean {
+  checkAuthState(): boolean {
     const ok = this.isAuthenticated();
-    if (!ok && allowRedirectLogout) this.logout(false); // local clear only
     return ok;
   }
 

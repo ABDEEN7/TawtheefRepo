@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Authenticator.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;

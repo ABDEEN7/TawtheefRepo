@@ -16,7 +16,7 @@ export class AuthService {
     protected user: UserService,
     protected http: HttpClient,
   ) {
-    this.state.checkAuthState(false);
+    this.state.checkAuthState();
     this.state.isAuthenticated$.subscribe(isAuth => {
       if (!isAuth) {
         this.permissionsCache = null;
@@ -29,7 +29,7 @@ export class AuthService {
     return this.state.isAuthenticated$;
   }
    get isAuthenticated(): boolean {
-    return this.state.isAuthenticated(true);
+    return this.state.isAuthenticated();
    }
 
   get token(): string | null {
@@ -57,7 +57,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return this.state.checkAuthState(false);
+    return this.state.checkAuthState();
   }
 
   private getPermissionsFromToken(): Set<string> {

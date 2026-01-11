@@ -35,9 +35,9 @@
 </div>
 
 <ng-template #courseTemplate let-course>
-  @let fileNote = noteForRaw(course.attachment);
+  @let fileNote = noteForRaw(course);
   <div class="col-12 col-lg-6">
-    <div class="card h-100 kv-card">
+    <div class="card h-100 kv-card"  [ngClass]="{ 'attach-card--warn': fileNote }">
       <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
         <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
           <div class="fw-semibold text-body">{{ course.title || '-' }}</div>
@@ -47,7 +47,29 @@
         </div>
         <div class="text-muted small">{{ course.provider }} · {{ course.country?.name }}</div>
         <div class="text-muted small">{{ course.startDate }} - {{ course.endDate }}</div>
-        <button *ngIf="fileNote?.note"
+        <div class="mt-2">
+          @if (course.attachment) {
+            <a
+              class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
+              [ngClass]="{ 'attach-link--warn': fileNote }"
+              (click)="open(course.attachment)">
+              <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
+              <span class="text-truncate d-inline-block">
+                        {{ course.attachment.fileName }}
+                      </span>
+              @if (fileNote) {
+                <i
+                  class="pi pi-exclamation-triangle text-warning"
+                  [pTooltip]="fileNote.note || fileNote.title"
+                  tooltipPosition="top"
+                  aria-hidden="true"></i>
+              }
+            </a>
+          } @else {
+            <span class="text-muted">{{ 'common.none' | translate }}</span>
+          }
+        </div>
+        <button *ngIf="fileNote"
           type="button"
           class="btn btn-sm btn-outline-secondary rounded-pill"
           (click)="editCourseTraining(course)">

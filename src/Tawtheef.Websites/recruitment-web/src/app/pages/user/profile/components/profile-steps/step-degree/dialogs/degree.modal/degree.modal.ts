@@ -41,6 +41,7 @@ import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/
   ],
   templateUrl: './degree.modal.html',
   styleUrl: './degree.modal.scss',
+  standalone: true
 })
 export class DegreeModal implements OnInit {
   private fb = inject(FormBuilder);
@@ -89,17 +90,47 @@ export class DegreeModal implements OnInit {
   }
   ngOnInit() {
     if (this.config.data && this.config.data.initialValue) {
-      this.form.patchValue(this.config.data.initialValue);
       const initialValue = this.config.data.initialValue as Degree;
+      this.form.patchValue({
+        ...initialValue,
+        gradYear: this.toYearDate((initialValue as any)?.gradYear),
+      });
       this.initialCertificate = initialValue?.certificate ?? null;
       this.initialId = initialValue?.id ?? null;
       this.initialAttachmentId = initialValue?.attachmentId ?? this.initialCertificate?.resourceId ?? null;
+      this.form.patchValue({
+        degreeFileName: initialValue?.fileName ?? this.initialCertificate?.resourceName ?? null,
+      });
     }
 
     this.updateQualificationValidators();
     this.form.get('degree')?.valueChanges.subscribe(() => {
       this.updateQualificationValidators();
     });
+  }
+  private toYearDate(value: unknown): Date | null {
+    if (value == null) return null;
+
+    // already a Date
+    if (value instanceof Date && !isNaN(value.getTime())) return value;
+
+    // number year: 2020
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      // treat as year if it's in a reasonable range
+      if (value >= 1900 && value <= 2100) return new Date(value, 0, 1);
+      return null;
+    }
+
+    // string: "2020" or ISO
+    if (typeof value === 'string') {
+      const s = value.trim();
+      if (/^\d{4}$/.test(s)) return new Date(+s, 0, 1);
+
+      const dt = new Date(s);
+      if (!isNaN(dt.getTime())) return dt;
+    }
+
+    return null;
   }
   private updateQualificationValidators(): void {
     const need = this.isQualification;
@@ -137,29 +168,33 @@ export class DegreeModal implements OnInit {
       c?.updateValueAndValidity({ emitEvent: false });
     });
   }
-
   validateYear(): void {
     if (!this.isQualification) {
       this.yearError = false;
       return;
     }
 
-    const d = this.form.value.gradYear;
-    if (!d) {
+    const v = this.form.value.gradYear;
+    if (!v) {
       this.yearError = false;
       return;
     }
 
-    const y =
-      d instanceof Date
-        ? d.getFullYear()
-        : new Date(d as any).getFullYear();
+    let y: number | null = null;
 
-    this.yearError = !(y >= this.minYear && y <= this.maxYear);
+    if (v instanceof Date) y = v.getFullYear();
+    else if (typeof v === 'number') y = v;
+    else if (typeof v === 'string' && /^\d{4}$/.test(v.trim())) y = +v.trim();
+    else {
+      const dt = new Date(v as any);
+      y = isNaN(dt.getTime()) ? null : dt.getFullYear();
+    }
+
+    this.yearError = y == null ? true : !(y >= this.minYear && y <= this.maxYear);
   }
 
   onSave() {
-    if (this.form.invalid || this.yearError || (!this.degreeFile)) {
+    if (this.form.invalid || this.yearError || (!this.degreeFile && !this.initialCertificate)) {
       this.form.markAllAsTouched();
       return;
     }
@@ -169,9 +204,13 @@ export class DegreeModal implements OnInit {
     const gradYear =
       raw.gradYear instanceof Date
         ? raw.gradYear.getFullYear()
-        : raw.gradYear
-          ? new Date(raw.gradYear as any).getFullYear()
-          : null;
+        : typeof raw.gradYear === 'number'
+          ? raw.gradYear
+          : typeof raw.gradYear === 'string' && /^\d{4}$/.test(raw.gradYear.trim())
+            ? +raw.gradYear.trim()
+            : raw.gradYear
+              ? new Date(raw.gradYear as any).getFullYear()
+              : null;
 
     const payload = {
       id: this.initialId ?? undefined,

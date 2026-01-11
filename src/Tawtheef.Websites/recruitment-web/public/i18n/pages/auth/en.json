@@ -1,4 +1,6 @@
 ﻿{
+  "auth.login.qatarResidentDialog.resend": "Resend",
+  "auth.login.qatarResidentDialog.otpHint": "Please enter the 6-digit code",
   "auth.login.ministry_name": "Ministry of Education and Higher Education",
   "auth.login.tawtheef": "Tawtheef",
   "auth.login.choose_residency": "Please select your status:",

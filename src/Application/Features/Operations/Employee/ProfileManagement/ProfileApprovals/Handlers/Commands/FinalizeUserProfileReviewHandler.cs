@@ -57,10 +57,10 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
         {
             UserProfileId = profile.Id,
             UserId = cmd.OfficerId,
-            ActionType = "ProfileReviewFinalized",
+            ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewFinalized,
             Notes = hasCorrections
-                ? "Profile review finalized with corrections requested"
-                : "Profile review finalized as approved",
+                ? UserProfileLogConstants.Notes.ProfileReviewFinalizedWithCorrections
+                : UserProfileLogConstants.Notes.ProfileReviewFinalizedApproved,
             Section = nameof(ProfileSection.Personal)
         });
 
@@ -68,10 +68,10 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
         {
             UserProfileId = profile.Id,
             PerformedById = cmd.OfficerId,
-            ActionType = "ProfileReviewFinalized",
+            ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewFinalized,
             Notes = hasCorrections
-                ? "Profile review finalized with corrections requested"
-                : "Profile review finalized as approved",
+                ? UserProfileLogConstants.Notes.ProfileReviewFinalizedWithCorrections
+                : UserProfileLogConstants.Notes.ProfileReviewFinalizedApproved,
             Section = nameof(ProfileSection.Personal),
             ReviewStatus = hasCorrections ? ReviewStatus.NeedsCorrection : ReviewStatus.Approved
         });
@@ -89,8 +89,8 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
                 UserProfileId = assignment.UserProfileId,
                 PerformedById = cmd.OfficerId,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = "Assignment closed when review finalized",
-                Section = "Assignment",
+                Notes = UserProfileLogConstants.Notes.AssignmentClosed,
+                Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
             });
         }

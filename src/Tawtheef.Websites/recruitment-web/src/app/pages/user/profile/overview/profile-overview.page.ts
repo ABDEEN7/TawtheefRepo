@@ -461,7 +461,11 @@ export class ProfileOverviewPage {
 
   private navigateToEditSection(section: ProfileSectionEnum) {
     const status = this.vm()?.status.value;
-    const mode = status === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
+    const mode = status === UserProfileStatusEnum.Approved
+      ? 'change-request'
+      : status === UserProfileStatusEnum.RequiresUpdate
+        ? 'review-edit'
+        : 'create';
     this.dialogService.open(ProfileEditDialogComponent, {
       header: this.i18n.instant('profileView.editDialog.title'),
       data: { section, mode },

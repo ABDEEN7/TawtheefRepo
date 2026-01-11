@@ -1,4 +1,6 @@
 ﻿{
+  "auth.login.qatarResidentDialog.resend": "إعادة إرسال الرمز",
+  "auth.login.qatarResidentDialog.otpHint":"يرجى إدخال الرمز المكون من 6 أرقام",
   "auth.login.ministry_name": "وزارة التربية والتعليم والتعليم العالي",
   "auth.login.tawtheef": "توظيف",
   "auth.login.choose_residency": "يرجى تحديد حالتك:",

@@ -6,6 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
+using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Domain.Constants;
@@ -267,18 +268,18 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
 
     private static IReadOnlyList<string> ResolveAllowedOperations(UserProfileStatus status)
     {
-        var ops = new List<string> { "view" };
+        var ops = new List<string> { ProfileApprovalOperations.View };
 
         // Phase 1: reviewer can review/finalize
         if (status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
         {
-            ops.Add("review");
-            ops.Add("finalize");
+            ops.Add(ProfileApprovalOperations.Review);
+            ops.Add(ProfileApprovalOperations.Finalize);
         }
 
         // Phase 2: view only (optional marker)
         if (status == UserProfileStatus.Approved)
-            ops.Add("view-only");
+            ops.Add(ProfileApprovalOperations.ViewOnly);
 
         return ops;
     }

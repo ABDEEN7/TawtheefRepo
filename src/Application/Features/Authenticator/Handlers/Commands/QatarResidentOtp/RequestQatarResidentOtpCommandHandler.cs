@@ -15,9 +15,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.QatarRes
 
 public sealed class RequestQatarResidentOtpCommandHandler(
     IQatarResidentVerificationClient verificationClient,
-    UserManager<User> userManager,
-    ISmsSender smsSender,
-    TimeProvider timeProvider)
+    UserManager<User> userManager, ISmsSender smsSender, TimeProvider timeProvider)
     : ICommandHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestQatarResidentOtpCommand request, CancellationToken cancellationToken)
@@ -69,10 +67,11 @@ public sealed class RequestQatarResidentOtpCommandHandler(
             user.PhoneNumberConfirmed = false;
         }
 
-        if (user.OtpSends >= QatarResidentOtpConstants.MaxOtpSends)
-            return Result.Fail<Unit>(ErrorsCodes.SendOtpLimitReached);
-
         var now = timeProvider.GetUtcNow().UtcDateTime;
+
+        var canSend = user.CanSendOtp(now, QatarResidentOtpConstants.MaxOtpSends, TimeSpan.FromMinutes(15));
+        if (canSend.IsFailed) return Result.Fail<Unit>(canSend.Errors);
+
         var otp = GenerateCode(QatarResidentOtpConstants.OtpLength);
         user.SetOtp(otp, now.AddMinutes(QatarResidentOtpConstants.OtpExpiryMinutes));
 

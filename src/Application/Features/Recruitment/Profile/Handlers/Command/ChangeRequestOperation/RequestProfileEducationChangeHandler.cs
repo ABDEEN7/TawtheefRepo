@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.ChangeRequestOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Validators;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -83,7 +84,15 @@ public sealed class RequestProfileEducationChangeHandler(
                 return Result.Fail<Unit>(attachmentIdResult.Errors);
 
             var pending = PendingQualificationSnapshot.From(dto, attachmentIdResult.Value);
-            await reviewService.TouchRowAsync(profile.Id, ProfileSection.Qualifications, "Qualification", Guid.NewGuid(), cmd.UserId, ct, null, pending);
+            await reviewService.TouchRowAsync(
+                profile.Id,
+                ProfileSection.Qualifications,
+                ProfileReviewConstants.EntityNames.Qualification,
+                Guid.NewGuid(),
+                cmd.UserId,
+                ct,
+                null,
+                pending);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -184,7 +193,7 @@ public sealed class RequestProfileEducationChangeHandler(
         if (!FileValidationHelpers.HasFile(file))
             return Result.Ok<Guid?>(null);
 
-        var uploadPath = await UserProfileUploadPathFactory.CreateAsync(userId, "education", file!, false, ct);
+        var uploadPath = await UserProfileUploadPathFactory.CreateAsync(userId, ProfileFileCategories.Education, file!, false, ct);
         var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
             new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
             ct);
