@@ -2,13 +2,13 @@ using System.Text;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Queries;
-using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 using Tawtheef.Domain.Constants;
@@ -23,7 +23,8 @@ public sealed class ExportJobCandidatesQueryHandler(
     IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
     IJobRequirementsService  jobRequirementsService,
     IJobCandidatesQueryBuilderService  jobCandidatesQueryBuilderService,
-    ILocalizationService localizationService)
+    ILocalizationService localizationService,
+    ILogger logger)
     : IQueryHandler<ExportJobCandidatesQuery, IResult<JobCandidatesExportResult>>
 {
     public async Task<IResult<JobCandidatesExportResult>> Handle(
@@ -66,7 +67,9 @@ public sealed class ExportJobCandidatesQueryHandler(
                 .FirstOrDefault();
 
             var candidate = c with { Applicant = p.User, Profile = p, Major = major };
-            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints);
+            if (job.JobPoints == null) 
+                return Result.Fail<JobCandidatesExportResult>(JobMessages.JobPointsNotFound);
+            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints,job.JobDegrees,job.MajorId,job.SubMajorId,logger);
 
             scored.Add(candidate with { Points = points });
         }

@@ -233,7 +233,7 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
-  // IMPORTANT: must be public because template calls it
+  // IMPORTANT: must be public because the template calls it
   getPhoneDisplay(): string | null {
     const value = this.form.controls.phoneNumber.value as QatarPhoneNumber | null;
     return value?.internationalNumber ?? value?.e164Number ?? null;

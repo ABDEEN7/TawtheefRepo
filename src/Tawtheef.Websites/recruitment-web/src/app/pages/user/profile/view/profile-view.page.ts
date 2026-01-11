@@ -7,7 +7,6 @@ import { Skeleton } from 'primeng/skeleton';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
-import { finalize, switchMap } from 'rxjs/operators';
 
 import {
   ProfileSectionEnum,
@@ -18,10 +17,7 @@ import {
   UserProfileStatusEnum,
   MyProfileReviewNoteDto, ProfileChangeActionEnum, ReviewTargetTypeEnum
 } from './models/profile-overview.model';
-import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { ReviewStepsDialogComponent } from './dialogs/review-steps-dialog/review-steps-dialog.component';
-import { ReviewItemEditDialogComponent } from './dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
 import { ProfileEditDialogComponent } from './dialogs/profile-edit-dialog/profile-edit-dialog.component';
 import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
 import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites/prerequisites-section.component';
@@ -39,8 +35,6 @@ import {changeRequestDto} from './dtos/change-request-dto';
 import {applyFieldChanges, detectChangedFields, FieldChange} from './utils/detect-change-fields';
 import {AvatarUtils} from '../../../../core/utils/avatar-utils';
 import { ProfileService } from '../wizard-profile/services/profile.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { AuthService } from '../../../../core/auth/auth.service';
 import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.service';
 import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
 import {ProfileOverviewService} from './services/profile-overview.service';
@@ -87,15 +81,11 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileViewPage {
-  private readonly fileUtils = inject(FileUtilsService);
   private readonly i18n = inject(TranslateService);
   private readonly overviewService = inject(ProfileOverviewService);
   private readonly profileCqrs = inject(ProfileViewCqrs);
   private readonly dialogService = inject(DialogService);
-  private readonly profileService = inject(ProfileService);
-  private readonly notify = inject(NotificationService);
   private readonly lookups = inject(ProfileLookupsService);
-  private readonly auth = inject(AuthService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
   private readonly emptyVisibility: ProfileOverviewVisibility = {
     type: undefined,
@@ -135,10 +125,17 @@ export class ProfileViewPage {
   get avatar(){
     return this.header()?.avatar || AvatarUtils.build(this.header()?.fullNameEn ?? null);
   }
-  get isProfileApproved(){
-    return this.profileStatus() === UserProfileStatusEnum.Approved;
+  get canReplaceAttachment(){
+    return this.enableChangeMode;
   }
-
+  get enableChangeMode(){
+    if(this.profileStatus() === UserProfileStatusEnum.Approved) {
+      //TODO: for this moment the user can not edit his profile after approval
+      // we need to change it in Phase. 2
+      return false;
+    }
+    return false;
+  }
   private readonly basics = rxResource({
     params: () => true,
     stream: () => this.profileCqrs.basics()
@@ -156,7 +153,6 @@ export class ProfileViewPage {
 
   private readonly sections = new Map<ProfileSectionEnum, RxRes<ProfileStatusDto>>();
   protected readonly expanded = signal<ProfileSectionEnum>(ProfileSectionEnum.Personal);
-  protected readonly resubmitting = signal(false);
 
   protected changes(section: ProfileSectionEnum) {
     if(this.profileStatus() !== UserProfileStatusEnum.Approved) return [];
@@ -203,7 +199,6 @@ export class ProfileViewPage {
   }
 
   readonly header = computed(() => this.basics.value());
-  readonly loadingBasics = computed(() => this.basics.status() === 'loading');
   readonly visibility = computed<ProfileOverviewVisibility>(() => {
     const profile = this.basics.value();
     if (!profile) return this.emptyVisibility;
@@ -279,12 +274,11 @@ export class ProfileViewPage {
   });
 
   get canAddAttachments(){
-    const status = this.profileStatus();
-    return status === UserProfileStatusEnum.Approved;
+    return this.enableChangeMode;
   }
   canEditSections(section: ProfileSectionEnum){
     const status = this.profileStatus();
-    if(status === UserProfileStatusEnum.Approved)
+    if(this.enableChangeMode)
       return true;
     if(status === UserProfileStatusEnum.RequiresUpdate) {
       const indexSection = Math.min(Math.max(section - 1,0), ((this.review.value()?.sections.length ?? 1) - 1));
@@ -336,30 +330,6 @@ export class ProfileViewPage {
     })) as changeRequestDto[];
   });
 
-  openReviewStep() {
-    const review = this.review.value() as MyProfileReviewSummaryDto | undefined;
-
-    this.dialogService
-      .open(ReviewStepsDialogComponent, {
-        header: this.i18n.instant('profileOverview.reviewSteps.dialogTitle'),
-        data: { sections: review?.sections ?? [] },
-        styleClass: 'modal-dialog  modal-xl'
-      })
-      ?.onClose.subscribe(result => {
-      if (result?.section) {
-        this.openEditDialog(result.section as ProfileSectionEnum);
-      }
-    });
-  }
-
-  openReviewItem(note: any, section: ProfileSectionEnum) {
-    this.dialogService.open(ReviewItemEditDialogComponent, {
-      header: this.i18n.instant('profileOverview.reviewItemDialog.title'),
-      data: { note, section, sectionLabel: note?.title ?? '', canEdit: true, fileUrl: null },
-      styleClass: 'modal-dialog  modal-xl'
-    });
-  }
-
   openEditDialog(section: ProfileSectionEnum) {
     const status = this.profileStatus();
     const mode = status === UserProfileStatusEnum.Approved
@@ -375,11 +345,6 @@ export class ProfileViewPage {
       if (!result) return;
       this.reloadSection(section);
     });
-  }
-
-  openFile(url: string | null | undefined) {
-    if (!url) return;
-    this.fileUtils.previewUrl(url);
   }
 
   sectionLabelKey(section: number): string {
@@ -455,28 +420,6 @@ export class ProfileViewPage {
       default:
         return 'secondary';
     }
-  }
-
-  protected reSubmitProfile() {
-    if (this.profileStatus() !== UserProfileStatusEnum.RequiresUpdate || this.resubmitting()) return;
-    this.resubmitting.set(true);
-    this.profileService
-      .resubmitProfile()
-      .pipe(
-        switchMap(() => this.auth.refreshToken()),
-        finalize(() => this.resubmitting.set(false))
-      )
-      .subscribe({
-        next: () => {
-          this.notify.success(this.i18n.instant('profileView.notifications.resubmitted'));
-          this.basics.reload();
-          this.review.reload();
-          this.changeRequests.reload();
-        },
-        error: () => {
-          this.notify.error(this.i18n.instant('profileView.notifications.resubmitFailed'));
-        }
-      });
   }
 
   protected readonly UserProfileStatusEnum = UserProfileStatusEnum;

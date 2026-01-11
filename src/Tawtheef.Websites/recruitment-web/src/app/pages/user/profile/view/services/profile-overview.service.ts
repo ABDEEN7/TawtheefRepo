@@ -9,9 +9,6 @@ export class ProfileOverviewService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
 
-  getOverview(): Observable<ProfileOverview> {
-    return this.http.get<ProfileOverview>(this.endpoints.profile.overview);
-  }
   getMyProfileReviewSummary() {
     return this.http.get<MyProfileReviewSummaryDto>(this.endpoints.user.profile.reviewSummary);
   }

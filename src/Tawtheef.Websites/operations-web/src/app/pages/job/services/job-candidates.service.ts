@@ -1,18 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HttpService } from '../../../../../core/http/http.service';
-import { EndpointsService } from '../../../../../core/http/endpoints.service';
-import { GUID } from '../../../../../shared/types/guid.type';
-import { PaginatedRequest } from '../../../../../core/models/paginated-request.model';
-import { JobCandidatesFilter } from '../models/job-candidates-filter.model';
-import { JobCandidatesExportRequest } from '../models/job-candidates-export-request.model';
-import {
-  SendJobCandidateInvitationsRequest,
-  SendJobCandidateInvitationsResult,
-} from '../models/job-candidates-invitations.model';
-import { JobCandidatesFilterSettings } from '../models/job-candidates-filter-settings.model';
-import { JobCandidatesResponse } from '../models/job-candidates-response';
+import { HttpService } from '../../../core/http/http.service';
+import { EndpointsService } from '../../../core/http/endpoints.service';
+import { GUID } from '../../../shared/types/guid.type';
+import { PaginatedRequest } from '../../../core/models/paginated-request.model';
+import { JobCandidatesExportRequest } from '../../user/employee/job-management/models/job-candidates-export-request.model';
+import { JobCandidatesFilterSettings } from '../../user/employee/job-management/models/job-candidates-filter-settings.model';
+import { JobCandidatesFilter } from '../../user/employee/job-management/models/job-candidates-filter.model';
+import { SendJobCandidateInvitationsRequest, SendJobCandidateInvitationsResult } from '../../user/employee/job-management/models/job-candidates-invitations.model';
+import { JobCandidatesResponse } from '../../user/employee/job-management/models/job-candidates-response';
+
+
 
 @Injectable({ providedIn: 'root' })
 export class JobCandidatesService {
@@ -30,19 +29,20 @@ export class JobCandidatesService {
   }
 
   getCandidates(
-    jobId: GUID,
-    pagination: PaginatedRequest,
-    filter?: JobCandidatesFilter
-  ): Observable<JobCandidatesResponse> {
-    return this.http.post<JobCandidatesResponse>(
-      this.endpoints.jobCandidates.search,
-      {
-        jobId,
-        ...pagination,
-        filter,
-      }
-    );
-  }
+  jobId: GUID,
+  pagination: PaginatedRequest,
+  filter?: JobCandidatesFilter
+): Observable<JobCandidatesResponse> {
+
+  return this.http.post<JobCandidatesResponse>(
+    this.endpoints.jobCandidates.search,
+    {
+      jobId,
+      ...pagination,
+      filter,
+    }
+  );
+}
 
   export(request: JobCandidatesExportRequest): Observable<HttpResponse<Blob>> {
     return this.http.post<HttpResponse<Blob>>(

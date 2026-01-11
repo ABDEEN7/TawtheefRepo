@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Commands;
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.DTOs;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Handlers.Commands;
@@ -16,6 +17,16 @@ public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork un
         CancellationToken cancellationToken)
     {
         var dto = request.Request;
+        var typePercentages = dto.CandidateTypePercentages
+            .Where(item => item.Percentage > 0)
+            .ToList();
+
+        if (typePercentages.Sum(item => item.Percentage) > 100)
+            return Result.Fail<JobCandidateFilterSettingsDto>(JobMessages.JobCandidatesFilterPercentagesInvalid);
+
+        if (!AreNationalityBreakdownsValid(typePercentages, dto.NationalityPercentages))
+            return Result.Fail<JobCandidateFilterSettingsDto>(JobMessages.JobCandidatesNationalityBreakdownInvalid);
+
         var repo = unitOfWork.GetEntityRepository<JobCandidateFilterSetting>();
 
         var settings = await repo.DbSet
@@ -89,5 +100,30 @@ public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork un
         };
 
         return Result.Ok(result);
+    }
+
+    private static bool AreNationalityBreakdownsValid(
+        IReadOnlyCollection<JobCandidateTypePercentageDto> typePercentages,
+        IReadOnlyCollection<JobCandidateNationalityPercentageDto> nationalityPercentages)
+    {
+        if (nationalityPercentages.Count == 0)
+            return true;
+
+        var typePercentageMap = typePercentages.ToDictionary(item => item.CandidateTypeId, item => item.Percentage);
+
+        foreach (var group in nationalityPercentages.GroupBy(item => item.CandidateTypeId))
+        {
+            var total = group.Sum(item => item.Percentage);
+            if (total <= 0)
+                continue;
+
+            if (!typePercentageMap.TryGetValue(group.Key, out var typePercentage))
+                return false;
+
+            if (typePercentage <= 0 || total != typePercentage)
+                return false;
+        }
+
+        return true;
     }
 }
