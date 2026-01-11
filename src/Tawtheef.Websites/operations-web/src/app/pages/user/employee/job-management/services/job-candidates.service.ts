@@ -38,7 +38,7 @@ export class JobCandidatesService {
       this.endpoints.jobCandidates.search,
       {
         jobId,
-        pagination,
+        ...pagination,
         filter,
       }
     );

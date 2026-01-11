@@ -29,20 +29,20 @@ export class JobCandidatesService {
   }
 
   getCandidates(
-    jobId: GUID,
-    pagination: PaginatedRequest,
-    filter?: JobCandidatesFilter
-  ): Observable<JobCandidatesResponse> {
-    
-    return this.http.post<JobCandidatesResponse>(
-      this.endpoints.jobCandidates.search,
-      {
-        jobId,
-        pagination,
-        filter,
-      }
-    );
-  }
+  jobId: GUID,
+  pagination: PaginatedRequest,
+  filter?: JobCandidatesFilter
+): Observable<JobCandidatesResponse> {
+
+  return this.http.post<JobCandidatesResponse>(
+    this.endpoints.jobCandidates.search,
+    {
+      jobId,
+      ...pagination,
+      filter,
+    }
+  );
+}
 
   export(request: JobCandidatesExportRequest): Observable<HttpResponse<Blob>> {
     return this.http.post<HttpResponse<Blob>>(
