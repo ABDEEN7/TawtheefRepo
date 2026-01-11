@@ -47,8 +47,7 @@ public sealed class SaveProfileEducationHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation &&
-            profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateEducation(profile);
@@ -151,17 +150,6 @@ public sealed class SaveProfileEducationHandler(
                 existingQualification.CertificateId = certificateId;
             }
         }
-
-        // DELETE removed qualifications in edit mode
-        // Only delete if the client is actually sending Ids for existing rows
-        // (otherwise, you can't safely distinguish “new list” vs “no ids sent”).
-        var deletable = existingQualifications
-            .Where(q => incomingIds.Count > 0) // guard: only when edit IDs are provided
-            .Where(q => !incomingIds.Contains(q.Id))
-            .ToList();
-
-        if (deletable.Count > 0)
-            educationRepo.DbSet.RemoveRange(deletable);
 
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Qualifications, ct);
         await uow.SaveChangesAsync(ct);

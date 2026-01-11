@@ -7,6 +7,7 @@ using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Profil
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Commands;
 
 public sealed record ReassignProfilesCommand(
+    Guid UserId,
     [AllowedValues("Auto", "Manual")]
     string Mode,
     Guid? EmployeeId,

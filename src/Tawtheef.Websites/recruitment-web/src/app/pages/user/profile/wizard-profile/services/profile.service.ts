@@ -29,9 +29,9 @@ type SectionKey =
   | 'languages'
   | 'attachments';
 
-type UrlPair = { normal: string; change: string };
+type UrlSet = { create: string; changeRequest: string; revision: string, attachment?: string };
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ProfileService {
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
@@ -44,6 +44,10 @@ export class ProfileService {
 
   isChangeRequestMode(): boolean {
     return this.writeMode === 'change-request';
+  }
+
+  isRevisionMode(): boolean {
+    return this.writeMode === 'review-edit';
   }
 
   // ========== PREREQ ==========
@@ -66,6 +70,25 @@ export class ProfileService {
 
     return this.http.post(this.url('prereq'), fd);
   }
+  savePereqAttachmentsSection(info:{birth:{id: string, title: string}, marriage:{id: string, title: string} },
+                                    files: { birth?: FileLike,
+                                      marriage?: FileLike,
+                                    }) {
+    const b = this.fd();
+    // keep your original field name
+    if (files.birth) {
+      b.rawAppend('BirthdayCertificate', files.birth);
+      b.scalar('Birth.Id', info.birth.id);
+      b.scalar('Birth.Title', info.birth.title);
+    }
+    if (files.marriage) {
+      b.rawAppend('MarriageCertificate', files.marriage);
+      b.scalar('Marriage.Id', info.marriage.id);
+      b.scalar('Marriage.Title', info.marriage.title);
+    }
+
+    return this.http.post(this.url('prereq')+'/attachment', b.build());
+  }
 
   // ========== PERSONAL ==========
   savePersonalSection(dto: SaveProfilePersonalRequestDto, files?: { sponsorCard?: FileLike }) {
@@ -76,6 +99,31 @@ export class ProfileService {
 
     return this.http.post(this.url('personal'), fd);
   }
+  savePersonalAttachmentsSection(info:{sponsorCard:{id: string, title: string}, resume:{id: string, title: string} ,nationalCard:{id: string, title: string}},
+                                files: { sponsorCard?: FileLike,
+                                resume?: FileLike,
+                                  nationalCard?: FileLike,
+                                }) {
+    const b = this.fd();
+    // keep your original field name
+    if (files.sponsorCard) {
+      b.rawAppend('SponsorCardAttachment', files.sponsorCard);
+      b.scalar('SponsorCard.Id', info.sponsorCard.id);
+      b.scalar('SponsorCard.Title', info.sponsorCard.title);
+    }
+    if (files.resume) {
+      b.rawAppend('ResumeAttachment', files.resume);
+      b.scalar('Resume.Id', info.resume.id);
+      b.scalar('Resume.Title', info.resume.title);
+    }
+    if (files.nationalCard) {
+      b.rawAppend('NationalCardAttachment', files.nationalCard);
+      b.scalar('NationalCard.Id', info.nationalCard.id);
+      b.scalar('NationalCard.Title', info.nationalCard.title);
+    }
+
+    return this.http.post(this.url('personal')+'/attachment', b.build());
+  }
 
   checkProfile(qid: string, expiryDate: string) {
     return this.http.post<MoiPersonalInfo>(this.endpoints.user.profile.checkProfile, { qid, expiryDate });
@@ -83,7 +131,11 @@ export class ProfileService {
 
   // ========== CONTACT ==========
   saveRecruitmentAvailability(available: boolean) {
-    return this.http.post(this.endpoints.user.profile.saveAvailability, { availableForRecruitment: available });
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.availability
+      : this.endpoints.user.profile.saveAvailability;
+
+    return this.http.post(endpoint, { availableForRecruitment: available });
   }
 
   saveContactSection(dto: SaveProfileContactRequestDto, files?: { nationalAddressFile?: FileLike }) {
@@ -105,6 +157,19 @@ export class ProfileService {
     }
 
     return this.http.post(this.url('contact'), b.build());
+  }
+  saveContactAttachmentsSection(info:{nationalAddress:{id: string, title: string}},
+    files: { nationalAddress?: FileLike }) {
+    const b = this.fd();
+    // keep your original field name
+    if (files.nationalAddress) {
+      b.rawAppend('ResidenceAddressCertificate', files.nationalAddress);
+      // send ResidenceAddress as object of properties not like json
+      b.scalar('ResidenceAddress.Id', info.nationalAddress.id);
+      b.scalar('ResidenceAddress.Title', info.nationalAddress.title);
+    }
+
+    return this.http.post(this.url('contact')+'/attachment', b.build());
   }
 
   getProfileBasics() {
@@ -152,15 +217,12 @@ export class ProfileService {
   }
 
   // ========== EDUCATION (Degrees) ==========
-  // Policy: no updates -> only new items (no id)
   saveEducationSection(degrees: Degree[]) {
     const fileBucket: File[] = [];
-    let cursor = 0;
 
     const payload = (degrees ?? [])
       .map(d => {
-        const fileIndex = d.file ? cursor++ : null;
-        if (d.file) fileBucket.push(d.file);
+        const fileIndex = this.fileIndex(fileBucket, d.file);
 
         return {
           id: d.id ?? null,
@@ -190,18 +252,21 @@ export class ProfileService {
   }
 
   deleteEducation(degreeId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteEducation(degreeId));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteEducation(degreeId)
+      : this.endpoints.user.profile.deleteEducation(degreeId);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== EXPERIENCE + TRAINING COURSES ==========
-  // Policy: no updates -> ONLY new items (no id)
   saveExperienceSection(experiences: Experience[], courses: TrainingCourse[]) {
     const experienceFiles: File[] = [];
     const trainingFiles: File[] = [];
 
     const experiencesDto = (experiences ?? [])
       .map(e => ({
-        id: e.id,
+        id: e.id ?? null,
         employerName: e.employerName,
         jobTitle: e.jobTitle,
         startDate: e.from,
@@ -215,7 +280,7 @@ export class ProfileService {
 
     const coursesDto = (courses ?? [])
       .map(c => ({
-        id: c.id,
+        id: c.id ?? null,
         title: c.title,
         provider: c.provider,
         startDate: c.from,
@@ -242,21 +307,28 @@ export class ProfileService {
   }
 
   deleteExperience(experienceId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteExperience(experienceId));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteExperience(experienceId)
+      : this.endpoints.user.profile.deleteExperience(experienceId);
+
+    return this.http.delete(endpoint);
   }
 
   deleteTrainingCourse(courseId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteTrainingCourse(courseId));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteTrainingCourse(courseId)
+      : this.endpoints.user.profile.deleteTrainingCourse(courseId);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== ACHIEVEMENTS ==========
-  // Policy: no updates -> ONLY new items (no id)
   saveAchievementsSection(achievements: Achievement[]) {
     const files: File[] = [];
 
     const payload = (achievements ?? [])
       .map(a => ({
-        id: a.id,
+        id: a.id ?? null,
         achievementTypeId: a.achievementType?.id,
         title: a.title,
         issuingAuthority: a.issuingAuthority,
@@ -277,7 +349,11 @@ export class ProfileService {
   }
 
   deleteAchievement(id: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteAchievement(id));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteAchievement(id)
+      : this.endpoints.user.profile.deleteAchievement(id);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== SKILLS ==========
@@ -293,8 +369,12 @@ export class ProfileService {
     return this.http.post(this.url('skills'), dto);
   }
 
-  deleteSkill(skillId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteSkill(skillId));
+  deleteSkill(id: GUID) {
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteSkill(id)
+      : this.endpoints.user.profile.deleteSkill(id);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== LANGUAGES ==========
@@ -313,13 +393,16 @@ export class ProfileService {
   }
 
   deleteLanguage(languageId: GUID) {
-    return this.http.delete(this.endpoints.user.profile.deleteLanguage(languageId));
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteLanguage(languageId)
+      : this.endpoints.user.profile.deleteLanguage(languageId);
+
+    return this.http.delete(endpoint);
   }
 
   // ========== ATTACHMENTS ==========
-  saveAttachmentsSection(attachments: Attachment[]) {
+  saveSectionAttachmentsSection(attachments: Attachment[]) {
     const files: File[] = [];
-    let cursor = 0;
 
     const payload = (attachments ?? [])
       .map(a => {
@@ -330,10 +413,32 @@ export class ProfileService {
           attachmentId: a.attachmentId ?? null,
         };
 
-        if (a?.file) {
-          item.fileIndex = cursor++;
-          files.push(a.file);
-        }
+        item.fileIndex = this.fileIndex(files, a.file);
+
+        return item;
+      });
+
+    const fd = this.fd()
+      .scalar('submit', false)
+      .scalar('attachmentsJson', JSON.stringify(payload))
+      .files('AttachmentFiles', files)
+      .build();
+
+    return this.http.post(this.url('attachments'), fd);
+  }
+  saveAttachmentsSection(attachments: Attachment[]) {
+    const files: File[] = [];
+
+    const payload = (attachments ?? [])
+      .map(a => {
+        const item: any = {
+          id: a.id ?? null,
+          title: a.title,
+          fileName: a.fileName ?? a.title,
+          attachmentId: a.attachmentId ?? null,
+        };
+
+        item.fileIndex = this.fileIndex(files, a.file);
 
         return item;
       });
@@ -352,50 +457,65 @@ export class ProfileService {
     return this.http.post(this.endpoints.user.profile.submit, {});
   }
 
+  resubmitProfile() {
+    return this.http.post(this.endpoints.user.profile.resubmit, {});
+  }
+
   // ================= URL RESOLUTION =================
 
   private url(section: SectionKey): string {
-    const map: Record<SectionKey, UrlPair> = {
+    const map: Record<SectionKey, UrlSet> = {
       prereq: {
-        normal: this.endpoints.user.profile.savePrereq,
-        change: this.endpoints.user.profile.requestChanges.prereq,
+        create: this.endpoints.user.profile.savePrereq,
+        changeRequest: this.endpoints.user.profile.requestChanges.prereq,
+        revision: this.endpoints.user.profile.revisions.prereq,
       },
       personal: {
-        normal: this.endpoints.user.profile.savePersonal,
-        change: this.endpoints.user.profile.requestChanges.personal,
+        create: this.endpoints.user.profile.savePersonal,
+        changeRequest: this.endpoints.user.profile.requestChanges.personal,
+        revision: this.endpoints.user.profile.revisions.personal,
       },
       contact: {
-        normal: this.endpoints.user.profile.saveContact,
-        change: this.endpoints.user.profile.requestChanges.contact,
+        create: this.endpoints.user.profile.saveContact,
+        changeRequest: this.endpoints.user.profile.requestChanges.contact,
+        revision: this.endpoints.user.profile.revisions.contact,
       },
       education: {
-        normal: this.endpoints.user.profile.saveEducation,
-        change: this.endpoints.user.profile.requestChanges.education,
+        create: this.endpoints.user.profile.saveEducation,
+        changeRequest: this.endpoints.user.profile.requestChanges.education,
+        revision: this.endpoints.user.profile.revisions.education,
       },
       experience: {
-        normal: this.endpoints.user.profile.saveExperience,
-        change: this.endpoints.user.profile.requestChanges.experience,
+        create: this.endpoints.user.profile.saveExperience,
+        changeRequest: this.endpoints.user.profile.requestChanges.experience,
+        revision: this.endpoints.user.profile.revisions.experience,
       },
       achievements: {
-        normal: this.endpoints.user.profile.saveAchievements,
-        change: this.endpoints.user.profile.requestChanges.achievements,
+        create: this.endpoints.user.profile.saveAchievements,
+        changeRequest: this.endpoints.user.profile.requestChanges.achievements,
+        revision: this.endpoints.user.profile.revisions.achievements,
       },
       skills: {
-        normal: this.endpoints.user.profile.saveSkills,
-        change: this.endpoints.user.profile.requestChanges.skills,
+        create: this.endpoints.user.profile.saveSkills,
+        changeRequest: this.endpoints.user.profile.requestChanges.skills,
+        revision: this.endpoints.user.profile.revisions.skills,
       },
       languages: {
-        normal: this.endpoints.user.profile.saveLanguages,
-        change: this.endpoints.user.profile.requestChanges.languages,
+        create: this.endpoints.user.profile.saveLanguages,
+        changeRequest: this.endpoints.user.profile.requestChanges.languages,
+        revision: this.endpoints.user.profile.revisions.languages,
       },
       attachments: {
-        normal: this.endpoints.user.profile.saveReferences,
-        change: this.endpoints.user.profile.requestChanges.references,
+        create: this.endpoints.user.profile.saveReferences,
+        changeRequest: this.endpoints.user.profile.requestChanges.references,
+        revision: this.endpoints.user.profile.revisions.references,
       },
     };
 
-    const pair = map[section];
-    return this.writeMode === 'change-request' ? pair.change : pair.normal;
+    const urls = map[section];
+    if (this.writeMode === 'change-request') return urls.changeRequest;
+    if (this.writeMode === 'review-edit') return urls.revision;
+    return urls.create;
   }
 
   // ================= FORM DATA BUILDER =================

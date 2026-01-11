@@ -150,7 +150,7 @@ public class ReviewItem : EventEntity
         if (ApprovedHash == null)
         {
             // لم يُعتمد بعد — يظل Pending
-            Status = ReviewStatus.Pending;
+            //Status = ReviewStatus.Pending;
             IsOutdated = true;
             return;
         }
@@ -158,7 +158,7 @@ public class ReviewItem : EventEntity
         if (ApprovedHash != CurrentHash)
         {
             // تغيّرت القيمة
-            Status = ReviewStatus.Pending;
+            //Status = ReviewStatus.Pending;
             IsOutdated = true;
         }
         else

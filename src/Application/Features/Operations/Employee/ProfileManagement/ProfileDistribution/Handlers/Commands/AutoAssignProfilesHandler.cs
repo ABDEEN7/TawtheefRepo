@@ -111,7 +111,7 @@ public sealed class AutoAssignProfilesHandler(IUnitOfWork uow, UserManager<User>
         await uow.SaveChangesAsync(ct);
 
         var projection = new ProfileDistributionProjection(uow,userManager);
-        var result = await projection.BuildResultAsync(assignedCount, ct);
+        var result = await projection.BuildResultAsync(request.UserId, assignedCount, ct);
 
         return Result.Ok(result);
     }

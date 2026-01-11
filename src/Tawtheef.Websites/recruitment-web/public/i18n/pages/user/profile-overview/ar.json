@@ -125,6 +125,7 @@
   "profileOverview.profileStatusDescriptions.adminCancelled": "تم إلغاء الملف من جهة الإدارة. تواصل مع الدعم للمزيد من التفاصيل.",
   "profileOverview.status.notReviewed": "بانتظار الإكمال",
   "profileOverview.status.pending": "قيد المراجعة",
+  "profileView.actions.editTrainingCourse": "تعديل الدورة التدريبية",
   "profileView.actions.addCourseTraining": "إضافة دورة تدريبية",
   "profileOverview.status.needsCorrection": "بحاجة لتصحيح",
   "profileOverview.statusDescriptions.notReviewed": "لم يتم إرسال ملفك بعد أو ما يزال يحتاج لإكمال البيانات المطلوبة.",

@@ -35,8 +35,7 @@ public sealed class SaveProfileExperienceHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation &&
-            profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateExperience(profile);
@@ -145,17 +144,6 @@ public sealed class SaveProfileExperienceHandler(
             }
         }
 
-        // ===== Experiences DELETE removed =====
-        if (incomingExperienceIds.Count > 0) // only if client sends ids for existing items
-        {
-            var toRemove = existingExperiences
-                .Where(x => !incomingExperienceIds.Contains(x.Id))
-                .ToList();
-
-            if (toRemove.Count > 0)
-                experienceRepo.DbSet.RemoveRange(toRemove);
-        }
-
         // ===== Trainings UPSERT =====
         foreach (var dto in trainings)
         {
@@ -209,17 +197,6 @@ public sealed class SaveProfileExperienceHandler(
                 else if (dto.CertificateId is not null && dto.CertificateId != Guid.Empty)
                     existing.CertificateId = dto.CertificateId.Value;
             }
-        }
-
-        // ===== Trainings DELETE removed =====
-        if (incomingTrainingIds.Count > 0)
-        {
-            var toRemove = existingTrainings
-                .Where(x => !incomingTrainingIds.Contains(x.Id))
-                .ToList();
-
-            if (toRemove.Count > 0)
-                trainingRepo.DbSet.RemoveRange(toRemove);
         }
 
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Experience, ct);

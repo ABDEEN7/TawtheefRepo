@@ -115,13 +115,14 @@ public sealed class ReassignProfilesHandler(IUnitOfWork uow, UserManager<User> u
 
             await uow.SaveChangesAsync(ct);
             var projection = new ProfileDistributionProjection(uow,userManager);
-            var manualResult = await projection.BuildResultAsync(profiles.Count, ct);
+            var manualResult = await projection.BuildResultAsync(request.UserId,profiles.Count, ct);
             return Result.Ok(manualResult);
         }
 
         if (mode == "auto")
         {
             var autoRequest = new AutoAssignProfilesCommand(
+                request.UserId,
                 request.EmployeeIds,
                 request.ProfileIds,
                 request.PerEmployeeCount);

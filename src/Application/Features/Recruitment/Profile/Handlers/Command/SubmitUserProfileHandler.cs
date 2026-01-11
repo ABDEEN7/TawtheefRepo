@@ -1,11 +1,12 @@
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Command;
+using Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.SaveOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -13,16 +14,19 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command;
 
-public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
+public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> userManager)
     : ICommandHandler<SubmitUserProfileCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SubmitUserProfileCommand cmd, CancellationToken ct)
     {
+        var user = await userManager.FindByIdAsync(cmd.UserId.ToString());
+        if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
+        
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         if (!profile.IsCompleted())
@@ -53,7 +57,10 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
 
         // 1️⃣ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)
-            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec));
+        {
+            var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(user, profile, sec); // shared helper
+            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec, snapshot));
+        }
 
         // 2️⃣ Profile-level attachments
         foreach (var item in BuildProfileFiles(profile))
@@ -71,9 +78,9 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow)
     // -----------------------
     // Section
     // -----------------------
-    private static ReviewItem NewPendingSection(Guid profileId, ProfileSection sec)
+    private static ReviewItem NewPendingSection(Guid profileId, ProfileSection sec, object? snapshot)
     {
-        var item = ReviewItem.Create(profileId, sec, ReviewTargetType.Section);
+        var item = ReviewItem.Create(profileId, sec, ReviewTargetType.Section, currentValue: snapshot);
         Normalize(item);
         return item;
     }

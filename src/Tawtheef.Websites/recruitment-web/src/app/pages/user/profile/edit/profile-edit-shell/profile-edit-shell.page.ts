@@ -58,7 +58,9 @@ export class ProfileEditShellPage {
 
   constructor() {
     const mode = this.route.snapshot.queryParamMap.get('mode');
-    this.profile.setWriteMode(mode === 'change-request' ? 'change-request' : 'create');
+    this.profile.setWriteMode(
+      mode === 'change-request' || mode === 'review-edit' ? mode : 'create'
+    );
     effect(() => {
       const res = this.data.value();
       if (!res?.status) return;
@@ -85,6 +87,8 @@ export class ProfileEditShellPage {
   }
 
   private resolveWriteMode(status: number | null | undefined): ProfileWriteMode {
-    return status === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
+    if (status === UserProfileStatusEnum.Approved) return 'change-request';
+    if (status === UserProfileStatusEnum.RequiresUpdate) return 'review-edit';
+    return 'create';
   }
 }

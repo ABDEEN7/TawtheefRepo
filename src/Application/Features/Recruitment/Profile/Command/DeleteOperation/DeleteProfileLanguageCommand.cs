@@ -5,4 +5,4 @@ using FluentResults;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperation;
 
-public sealed record DeleteProfileLanguageCommand(Guid LanguageId): ICommand<IResult<Unit>>;
+public sealed record DeleteProfileLanguageCommand(Guid UserId,Guid Id): ICommand<IResult<Unit>>;

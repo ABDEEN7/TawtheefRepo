@@ -6,6 +6,7 @@ using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.Profil
 namespace Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Commands;
 
 public sealed record AutoAssignProfilesCommand(
+    Guid UserId,
     IReadOnlyCollection<Guid> EmployeeIds,
     IReadOnlyCollection<Guid>? ProfileIds,
     int? PerEmployeeCount) : ICommand<Result<DistributionResultDto>>;

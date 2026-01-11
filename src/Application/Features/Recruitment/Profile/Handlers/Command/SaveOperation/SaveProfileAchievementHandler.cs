@@ -36,9 +36,8 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
     if (profile is null)
         return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-    if (profile.Status is not UserProfileStatus.InCreation &&
-        profile.Status is not UserProfileStatus.RequiresUpdate)
-        return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+        if (profile.Status != UserProfileStatus.InCreation)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
     var validationResult = validationService.ValidateAchievements(profile);
     if (validationResult.IsFailed)
@@ -126,17 +125,6 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
             else if (dto.AttachmentId is not null && dto.AttachmentId != Guid.Empty)
                 row.AttachmentId = dto.AttachmentId.Value;
         }
-    }
-
-    // Delete removed (only if client actually sends ids for existing rows)
-    if (incomingIds.Count > 0)
-    {
-        var toRemove = existing
-            .Where(x => !incomingIds.Contains(x.Id))
-            .ToList();
-
-        if (toRemove.Count > 0)
-            achievementRepo.DbSet.RemoveRange(toRemove);
     }
 
     await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.CertificatesAndAwards, ct);

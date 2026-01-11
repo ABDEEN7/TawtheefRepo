@@ -18,8 +18,8 @@ public static class UserProfileLoader
     {
         var query = GenerateUserProfileQuery(uow);
         
-        if (tracking)
-            query = query.AsTracking();
+        if (!tracking)
+            query = query.AsNoTracking();
         
         var profile =  await query.FirstOrDefaultAsync(p => p.UserId == userId, ct);
         return profile;

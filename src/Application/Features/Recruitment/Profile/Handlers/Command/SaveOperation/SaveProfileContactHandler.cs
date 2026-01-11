@@ -37,7 +37,7 @@ public sealed class SaveProfileContactHandler(
 
         var r = cmd.Request;
 
-        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var needsOffice = ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider);

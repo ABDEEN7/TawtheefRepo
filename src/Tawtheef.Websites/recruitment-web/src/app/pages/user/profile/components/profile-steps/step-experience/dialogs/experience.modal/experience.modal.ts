@@ -87,16 +87,32 @@ export class ExperienceModal implements OnInit {
   );
 
   ngOnInit(): void {
-    if (this.config.data?.initialValue) {
-      this.form.patchValue(this.config.data.initialValue);
-      const init = this.config.data.initialValue as any;
-      this.initialAttachmentUrl = init?.attachment?.url ?? init?.attachmentUrl ?? null;
+    const init = this.config.data?.initialValue as Experience | undefined;
+    if (init) {
+      this.form.patchValue({
+        org: init.employerName,
+        name: init.jobTitle,
+        country: init.country ?? null,
+        from: init.from ? new Date(init.from) : null,
+        to: init.to ? new Date(init.to) : null,
+        current: !!init.current,
+        description: init.description ?? '',
+        fileName: init.fileName ?? init.attachment?.resourceName ?? '',
+        hasQualification: !!init.qualificationId,
+        qualificationId: init.qualificationId ?? null,
+      });
+      this.initialAttachmentUrl = init?.attachment?.url ?? null;
       this.initialId = this.config.data?.initialId ?? init?.id ?? null;
       this.initialAttachmentId = this.config.data?.attachmentId ?? init?.attachmentId ?? null;
-      if (init?.qualificationId) {
-        this.form.patchValue({ hasQualification: true });
-      }
     }
+
+    if (init?.file || init?.attachment || this.initialAttachmentId) {
+      this.form.get('file')?.clearValidators();
+    } else {
+      this.form.get('file')?.setValidators([Validators.required]);
+    }
+    this.form.get('file')?.updateValueAndValidity({ emitEvent: false });
+
     this.syncToDisabled();
     this.syncQualification();
   }

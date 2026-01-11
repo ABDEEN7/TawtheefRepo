@@ -214,6 +214,46 @@
           </div>
         </div>
       </div>
+      <div class="col-12 col-lg-4" *ngIf="visibility?.showSponsorSection">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.sponsorEmployerNumber' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('sponsorEmployerNumber')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+
+            <div class="fw-bold text-body text-nowrap">
+              {{ profile?.sponsorEmployerNumber || '-' }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4" *ngIf="visibility?.showSponsorSection">
+        <div class="card h-100 kv-card">
+          <div class="card-body py-3 px-3">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <div class="text-muted small fw-semibold text-nowrap">
+                {{ 'profileOverview.fields.sponsorQidExpiry' | translate }}
+              </div>
+              <div class="align-self-center" *ngIf="fieldUnderReview('sponsorQidExpiry')">
+                <span class="badge status-pill status-pill--info">
+                  {{ 'profileOverview.status.pending' | translate }}
+                </span>
+              </div>
+            </div>
+
+            <div class="fw-bold text-body text-nowrap">
+              {{ profile?.sponsorQidExpiry || '-' }}
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="col-12 col-lg-4">
         <div class="card h-100 kv-card">
