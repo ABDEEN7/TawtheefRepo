@@ -340,7 +340,7 @@ export class ProfileViewPage {
     this.dialogService.open(ProfileEditDialogComponent, {
       header: this.i18n.instant('profileView.editDialog.title'),
       data: { section, mode },
-      styleClass: 'w-100 w-md-75'
+      styleClass: 'modal-dialog  modal-xl'
     })?.onClose.subscribe(result => {
       if (!result) return;
       this.reloadSection(section);

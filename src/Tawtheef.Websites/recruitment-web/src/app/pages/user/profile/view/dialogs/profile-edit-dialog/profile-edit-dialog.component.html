@@ -1,13 +1,13 @@
-<div class="p-3" i18nNamespace="pages/user/profile-overview">
+<div  i18nNamespace="pages/user/profile-overview">
   <div class="d-flex align-items-center justify-content-between mb-3">
-    <div class="fw-semibold">{{ 'profileView.editDialog.title' | translate }}</div>
+     <div class="p-dialog-title">{{ 'profileView.editDialog.title' | translate }}</div>
     <button class="btn btn-sm btn-outline-secondary" type="button" (click)="close()">
       {{ 'profileView.editDialog.close' | translate }}
     </button>
   </div>
 
   @if (loading()) {
-    <div class="card p-4">{{ 'common.loading' | translate }}</div>
+    <div class="">{{ 'common.loading' | translate }}</div>
   } @else if (vmReady()) {
     <ng-container [ngSwitch]="sectionKey()">
       <app-step-prereq *ngSwitchCase="'prerequisites'"

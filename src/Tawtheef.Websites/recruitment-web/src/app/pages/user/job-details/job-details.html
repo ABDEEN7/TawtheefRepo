@@ -125,24 +125,38 @@
                       </div>
                       }
                     </ul>
-                    } } @if (activeTab === tabType.Conditions) {
-                    <h3>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h3>
-                    <p>{{ getDegreeRequirements() }}</p>
-                    @if (job()!.qualificationDescription) {
-                    <h3>{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h3>
-                    <div class="text-area">
-                      <div [innerHTML]="job()!.qualificationDescription"></div>
-                    </div>
-                    } @if (getJobConditions().length > 0) {
-                    <div class="basic-requirements">
-                      <h3>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</h3>
+                    } } 
+                    <div class="row">
+                          @if (activeTab === tabType.Conditions) {
+                        <div class="col-md-4">
+                             <h5>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h5>
+                             <p>{{ getDegreeRequirements() }}</p>
+                        </div>
+                            @if (job()!.qualificationDescription) {
+
+                              <div class="col-md-4">
+                                   <h5>{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h5>
+                                  <div class="text-area">
+                                    <div [innerHTML]="job()!.qualificationDescription"></div>
+                                  </div>
+                              </div>
+                              
+                            } 
+                       
+                    
+                    @if (getJobConditions().length > 0) {
+                    <div class="basic-requirements col-md-4">
+                      <h5>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</h5>
                       @for (condition of getJobConditions(); track $index) {
                       <div class="text-area">
                         <div [innerHTML]="condition"></div>
                       </div>
                       }
                     </div>
-                    } } @if (activeTab === tabType.Skills) { @if (getJobSkills().length > 0) {
+                    } } 
+                    </div>
+                   
+                    @if (activeTab === tabType.Skills) { @if (getJobSkills().length > 0) {
                     <ul>
                       @for (skill of getJobSkills(); track $index) {
                       <li>{{ skill }}</li>
