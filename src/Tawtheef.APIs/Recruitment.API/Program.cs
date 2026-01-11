@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,10 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
         throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
     }
 
-    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), new DefaultAzureCredential());
+    builder.Configuration.AddAzureKeyVault(
+        new Uri(keyVaultUri),
+        new DefaultAzureCredential(),
+        new KeyVaultSecretManager());
 }
 
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
