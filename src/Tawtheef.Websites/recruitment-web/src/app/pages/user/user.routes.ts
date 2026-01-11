@@ -9,18 +9,20 @@ export const userRoutes: Routes = [
     loadComponent: () => Dashboard
   },
   {
-    path: 'wizard-profile',
-    loadChildren: () =>
-      import('./profile//wizard-profile/wizard-profile.module').then(m => m.WizardProfileModule),
-  },
-  {
     path: 'profile-overview',
+    canActivate: [profileCompleteGuard],
     loadComponent: () =>
       import('./profile/view/profile-view.page').then(m => m.ProfileViewPage)
   },
   {
     path: 'job-details/:invitationId',
+    canActivate: [profileCompleteGuard],
     loadComponent: () =>
       import('./job-details/job-details').then(m => m.JobDetails)
+  },
+  {
+    path: 'wizard-profile',
+    loadChildren: () =>
+      import('./profile//wizard-profile/wizard-profile.module').then(m => m.WizardProfileModule),
   }
 ];

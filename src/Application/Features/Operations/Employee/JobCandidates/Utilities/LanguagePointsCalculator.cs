@@ -60,16 +60,7 @@ internal static class LanguagePointsCalculator
         string maxCode)
     {
         var maxPoints = JobPointsHelpers.GetDetailPoints(details, maxCode);
-        var sum = 0;
-
-        foreach (var language in languages)
-        {
-            var levelCode = MapLanguageLevel(levelSelector(language));
-            if (levelCode == null)
-                continue;
-
-            sum += JobPointsHelpers.GetDetailPoints(details, $"{abilityKey}.{levelCode}");
-        }
+        var sum = languages.Select(language => MapLanguageLevel(levelSelector(language))).OfType<string>().Sum(levelCode => JobPointsHelpers.GetDetailPoints(details, $"{abilityKey}.{levelCode}"));
 
         return maxPoints > 0 ? Math.Min(sum, maxPoints) : sum;
     }

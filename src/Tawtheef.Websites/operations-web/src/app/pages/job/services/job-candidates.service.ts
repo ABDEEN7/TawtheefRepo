@@ -5,17 +5,13 @@ import { HttpService } from '../../../core/http/http.service';
 import { EndpointsService } from '../../../core/http/endpoints.service';
 import { GUID } from '../../../shared/types/guid.type';
 import { PaginatedRequest } from '../../../core/models/paginated-request.model';
-import { PaginatedResult } from '../../../core/models/paginated-result.model';
-import { JobCandidateListItem } from '../models/job-candidate.model';
-import { JobCandidatesFilter } from '../models/job-candidates-filter.model';
-import { JobCandidatesOverview } from '../models/job-candidates-overview.model';
-import { JobCandidatesExportRequest } from '../models/job-candidates-export-request.model';
-import {
-  SendJobCandidateInvitationsRequest,
-  SendJobCandidateInvitationsResult,
-} from '../models/job-candidates-invitations.model';
-import { JobCandidatesFilterSettings } from '../models/job-candidates-filter-settings.model';
-import { JobCandidatesResponse } from '../models/job-candidates-response';
+import { JobCandidatesExportRequest } from '../../user/employee/job-management/models/job-candidates-export-request.model';
+import { JobCandidatesFilterSettings } from '../../user/employee/job-management/models/job-candidates-filter-settings.model';
+import { JobCandidatesFilter } from '../../user/employee/job-management/models/job-candidates-filter.model';
+import { SendJobCandidateInvitationsRequest, SendJobCandidateInvitationsResult } from '../../user/employee/job-management/models/job-candidates-invitations.model';
+import { JobCandidatesResponse } from '../../user/employee/job-management/models/job-candidates-response';
+
+
 
 @Injectable({ providedIn: 'root' })
 export class JobCandidatesService {
@@ -37,6 +33,7 @@ export class JobCandidatesService {
     pagination: PaginatedRequest,
     filter?: JobCandidatesFilter
   ): Observable<JobCandidatesResponse> {
+    
     return this.http.post<JobCandidatesResponse>(
       this.endpoints.jobCandidates.search,
       {

@@ -15,7 +15,6 @@ import {Skill} from '../models/skill.model';
 import {Attachment} from '../models/attachment.model';
 import {Degree} from '../models/degree.model';
 import {Language} from '../models/language.model';
-
 type FileLike = File | null | undefined;
 
 type SectionKey =

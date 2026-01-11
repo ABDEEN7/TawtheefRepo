@@ -1,24 +1,80 @@
 using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
-using Tawtheef.Domain.Entities.Users;
+using ILogger = Serilog.ILogger;
 
 namespace Tawtheef.Application.Features.Operations.Employee.JobCandidates.Utilities;
 
 internal static class JobCandidatePointsCalculator
 {
-    public static int Calculate(JobCandidateRecord candidate, JobPointsMain? jobPoints)
+    public static int Calculate(
+        JobCandidateRecord candidate,
+        JobPointsMain jobPointsMain,
+        List<JobDegree> jobDegrees,
+        Guid jobMajorId,
+        Guid? jobSubMajorId,
+        ILogger logger
+        )
     {
-        if (jobPoints == null || candidate.Profile == null)
+        if (candidate.Profile == null)
+        {
+            logger.Warning("Candidate {CandidateId} has no profile.", candidate.ApplicantId);
             return 0;
+        }
 
-        UserProfile profile = candidate.Profile;
+        var profile = candidate.Profile;
 
-        return ApplicantCategoryPointsCalculator.Calculate(profile.CandidateType, jobPoints)
-               + EducationPointsCalculator.Calculate(profile.Qualifications, jobPoints)
-               + ExperiencePointsCalculator.Calculate(profile.Experiences, jobPoints)
-               + TrainingPointsCalculator.Calculate(profile.TrainingCourses, jobPoints)
-               + SkillPointsCalculator.Calculate(profile.Skills, jobPoints)
-               + LanguagePointsCalculator.Calculate(profile.Languages, jobPoints)
-               + CertificatesPointsCalculator.Calculate(profile.Achievements, jobPoints);
+        var categoryPoints =
+            ApplicantCategoryPointsCalculator.Calculate(profile.CandidateType, jobPointsMain);
+
+        var educationPoints =
+            EducationPointsCalculator.Calculate(
+                profile.Qualifications,
+                jobPointsMain,
+                jobDegrees,
+                jobMajorId,
+                jobSubMajorId);
+
+        var experiencePoints =
+            ExperiencePointsCalculator.Calculate(profile.Experiences, jobPointsMain);
+
+        var trainingPoints =
+            TrainingPointsCalculator.Calculate(profile.TrainingCourses, jobPointsMain);
+
+        var skillPoints =
+            SkillPointsCalculator.Calculate(profile.Skills, jobPointsMain);
+
+        var languagePoints =
+            LanguagePointsCalculator.Calculate(profile.Languages, jobPointsMain);
+
+        var certificatePoints =
+            CertificatesPointsCalculator.Calculate(profile.Achievements, jobPointsMain);
+
+        logger.Information(
+            """
+            Points breakdown for Candidate {CandidateId}:
+            - Category: {CategoryPoints}
+            - Education: {EducationPoints}
+            - Experience: {ExperiencePoints}
+            - Training: {TrainingPoints}
+            - Skills: {SkillPoints}
+            - Languages: {LanguagePoints}
+            - Certificates: {CertificatePoints}
+            """,
+            candidate.ApplicantId,
+            categoryPoints,
+            educationPoints,
+            experiencePoints,
+            trainingPoints,
+            skillPoints,
+            languagePoints,
+            certificatePoints);
+
+        return categoryPoints
+               + educationPoints
+               + experiencePoints
+               + trainingPoints
+               + skillPoints
+               + languagePoints
+               + certificatePoints;
     }
 }
