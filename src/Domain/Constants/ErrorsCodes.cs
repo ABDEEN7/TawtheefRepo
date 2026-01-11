@@ -1,52 +1,52 @@
 ﻿namespace Tawtheef.Domain.Constants;
+
 public class ErrorsCodes
 {
+    // =========================================================
+    // COMMON / GENERIC
+    // =========================================================
     #region Common Errors
     public const string UnauthorizedAction = "UNAUTHORIZED_ACTION";
-    public const string InvalidRecaptcha = "INVALID_RECAPTCHA";
-    public const string InvalidDeviceId = "INVALID_DEVICE_ID";
     public const string EmailRequired = "EMAIL_REQUIRED";
     public const string UserNameRequired = "USER_NAME_REQUIRED";
     public const string PhoneNumberRequired = "PHONE_NUMBER_REQUIRED";
-    public const string ConcurrencyFailure = "CONCURRENCY_FAILURE";
-    public const string LoginFailed = "LOGIN_FAILED";
     public const string UploadFailed = "UPLOAD_FAILED";
     public const string ResidenceAddressNotFound = "RESIDENCE_ADDRESS_NOT_FOUND";
     public const string SponsorProfileNotFound = "SPONSOR_PROFILE_NOT_FOUND";
     #endregion
 
+    // =========================================================
+    // TOKEN / CRYPTO
+    // =========================================================
     #region Validation Token Errors
-    public const string InvalidToken = "INVALID_TOKEN";
-    public const string InvalidTokenType = "INVALID_TOKEN_TYPE";
-    public const string TokenExpired = "TOKEN_EXPIRED";
     public const string InvalidAlgorithm = "INVALID_ALGORITHM";
     #endregion
 
-    #region Application Configuration Errors
-    public const string SiteUrlNotConfigured = "SITE_URL_NOT_CONFIGURED";
-    #endregion
-
+    // =========================================================
+    // LOGIN / AUTH
+    // =========================================================
     #region Login Errors
     public const string ProfileNotFound = "PROFILE_NOT_FOUND";
-    public const string InvalidCredentials = "INVALID_CREDENTIALS_PROVICED";
     public const string UserNotFound = "USER_NOT_FOUND";
     public const string EmailAlreadyInUse = "EMAIL_ALREADY_IN_USE";
     public const string PhoneAlreadyInUse = "PHONE_ALREADY_IN_USE";
-    public const string SessionExpired = "SESSION_EXPIRED";
-    public const string EmailNotVerified = "EMAIL_NOT_VERIFIED";
     public const string AccountStatusNotAllowedForLogin = "ACCOUNT_STATUS_NOT_ALLOWED_FOR_LOGIN";
+
     public const string ExternalLoginNotLinkedOfficeUser = "EXTERNAL_LOGIN_NOT_LINKED_OFFICE_USER";
     public const string ExternalLoginOfficeUserInvalidType = "EXTERNAL_LOGIN_OFFICE_USER_INVALID_TYPE";
     public const string ExternalLoginOfficeUserNotLinkedToOffice = "EXTERNAL_LOGIN_OFFICE_USER_NOT_LINKED_TO_OFFICE";
     public const string ExternalLoginOfficeUserOfficeDeletedOrNotFound = "EXTERNAL_LOGIN_OFFICE_USER_OFFICE_DELETED_OR_NOT_FOUND";
+
     public const string QatarPassQidNotAllowed = "QATAR_PASS_QID_NOT_ALLOWED";
     public const string QatarResidentInvalidQid = "QATAR_RESIDENT_INVALID_QID";
     public const string QatarResidentPhoneInvalid = "QATAR_RESIDENT_PHONE_INVALID";
     public const string QatarResidentPhoneMismatch = "QATAR_RESIDENT_PHONE_MISMATCH";
     public const string QatarResidentVerificationFailed = "QATAR_RESIDENT_VERIFICATION_FAILED";
-    public const string ExternalLoginUserTypeNotAllowed = "EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED";
     #endregion
 
+    // =========================================================
+    // ROLES / SECURITY
+    // =========================================================
     #region Role Management Errors
     public const string RoleNotFound = "ROLE_NOT_FOUND";
     public const string RoleNameExists = "ROLE_NAME_EXISTS";
@@ -54,14 +54,12 @@ public class ErrorsCodes
     public const string SystemRoleModificationNotAllowed = "SYSTEM_ROLE_MODIFICATION_NOT_ALLOWED";
     public const string MultipleSystemRolesNotAllowed = "MULTIPLE_SYSTEM_ROLES_NOT_ALLOWED";
     public const string SystemAdminAssignmentNotAllowed = "SYSTEM_ADMIN_ASSIGNMENT_NOT_ALLOWED";
-    public const string ProtectedUserDeletionNotAllowed = "PROTECTED_USER_DELETION_NOT_ALLOWED";
     public const string SystemAdminBlockNotAllowed = "SYSTEM_ADMIN_BLOCK_NOT_ALLOWED";
     #endregion
 
-    #region Registration Errors
-    public const string EmailIsAlreadyTaken = "EMAIL_IS_ALREADY_TAKEN";
-    #endregion
-
+    // =========================================================
+    // SESSION / REFRESH TOKEN
+    // =========================================================
     #region Refresh Token Errors
     public const string AccessTokenRequired = "ACCESS_TOKEN_REQUIRED";
     public const string RefreshTokenRequired = "REFRESH_TOKEN_REQUIRED";
@@ -72,48 +70,45 @@ public class ErrorsCodes
     public const string SessionRevoked = "SESSION_REVOKED";
     #endregion
 
+    // =========================================================
+    // OTP / VERIFICATION
+    // =========================================================
     #region Verification Errors
     public const string VerificationCodeExpired = "VERIFICATION_CODE_EXPIRED";
-    public const string InvalidTokenOrEmail = "INVALID_TOKEN_OR_EMAIL";
     public const string TooManyAttempts = "TOO_MANY_ATTEMPTS";
     public const string InvalidVerificationCode = "INVALID_VERIFICATION_CODE";
-    public const string ShouldVerifiyQatarPhoneNumberBeforeAssignIt = "SHOULD_VERIFIY_QATAR_PHONE_NUMBER_BEFORE_ASSIGN_IT";
-    public const string ResendCooldownActive = "RESEND_COOLDOWN_ACTIVE";
-    public const string EmailAlreadyVerified = "EMAIL_ALREADY_VERIFIED";
+    public const string InvalidCode = "INVALID_CODE";
     public const string SendOtpLimitReached = "SEND_OTP_LIMIT_REACHED";
     public const string UserPhoneRequired = "USER_PHONE_REQUIRED";
-    public const string InvalidCode = "INVALID_CODE";
     public const string PhoneVerificationRateLimited = "PHONE_VERIFICATION_RATE_LIMITED";
+    public const string ShouldVerifyQatarPhoneNumberBeforeAssignIt = "SHOULD_VERIFIY_QATAR_PHONE_NUMBER_BEFORE_ASSIGN_IT";
     #endregion
 
+    // =========================================================
+    // PROFILE CORE
+    // =========================================================
     #region Update Profile Errors
     public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
     public const string ProfileNotUnderReview = "PROFILE_NOT_UNDER_REVIEW";
     public const string ProfileNotReadyForReview = "PROFILE_NOT_READY_FOR_REVIEW";
-    public const string InvalidGender = "INVALID_GENDER";
+    public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
+    public const string NotSubmitted = "NOT_SUBMITTED";
+
     public const string InvalidName = "INVALID_NAME";
-    public const string InvalidPassword = "INVALID_PASSWORD";
-    public const string IncorrectOldPassword = "INCORRECT_OLD_PASSWORD";
-    public const string PasswordChangeFailed = "PASSWORD_CHANGE_FAILED";
+
     public const string DegreeNotFound = "DEGREE_NOT_FOUND";
     public const string ReviewItemNotFound = "REVIEW_ITEM_NOT_FOUND";
     public const string ExperienceNotFound = "EXPERIENCE_NOT_FOUND";
     public const string LanguageProfileNotFound = "LANGUAGE_PROFILE_NOT_FOUND";
     public const string TrainingNotFound = "TRAINING_NOT_FOUND";
-    public const string AchievementNotFound = "ACHIEVEMENT_NOT_FOUND";
-    public const string SectionMustBeApprovedFirst = "SECTION_MUST_BE_APPROVED_FIRST";
-    public const string SectionHasUnapprovedAttachments = "SECTION_HAS_UNAPPROVED_ATTACHMENTS";
-    public const string NotSubmitted = "NOT_SUBMITTED";
+    
     public const string CanNotModifiedApprovedDocument = "CAN_NOT_MODIFIED_APPROVED_DOCUMENT";
-    public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
+
     public const string DuplicateNationalNumber = "DUPLICATE_NATIONAL_NUMBER";
     public const string NotesRequiredForCorrection = "NOTES_REQUIRED_FOR_CORRECTION";
-    public const string MandatoryFieldsIncomplete = "MANDATORY_FIELDS_INCOMPLETE";
     public const string UnapprovedItemsExist = "UNAPPROVED_ITEMS_EXIST";
-    public const string RejectionDocumentRequired = "REJECTION_DOCUMENT_REQUIRED";
-    public const string ExceptionalFileRequired = "EXCEPTIONAL_FILE_REQUIRED";
-    public const string NeedsCorrectionTargetsRequired = "NEEDS_CORRECTION_TARGETS_REQUIRED";
+
     public const string InvalidDegreeUniversityId = "INVALID_DEGREE_UNIVERSITY_ID";
     public const string InvalidDegreeMajorId = "INVALID_DEGREE_MAJOR_ID";
     public const string InvalidGpa = "INVALID_GPA";
@@ -129,6 +124,9 @@ public class ErrorsCodes
     public const string ExperienceBeforeGraduation = "EXPERIENCE_BEFORE_GRADUATION";
     #endregion
 
+    // =========================================================
+    // EXTERNAL AUTH
+    // =========================================================
     #region External Authentication Errors
     public static string ExternalLoginError(string error) => $"EXTERNAL_LOGIN_ERROR: {error}";
     public const string ExternalLoginInfoNotFound = "EXTERNAL_LOGIN_INFO_NOT_FOUND";
@@ -136,17 +134,15 @@ public class ErrorsCodes
     public const string ExternalLoginUserNotFound = "EXTERNAL_LOGIN_USER_NOT_FOUND";
     public const string ExternalLoginProviderRequired = "EXTERNAL_LOGIN_PROVIDER_REQUIRED";
     public const string ExternalLoginAlreadyLinked = "EXTERNAL_LOGIN_USER_ALREADY_LINKED";
-    public const string ExternalLoginProviderAlreadyLinked = "EXTERNAL_LOGIN_PROVIDER_ALREADY_LINKED";
-    public const string ExternalLoginProviderNotSupported = "";
-    public const string ExternalLoginInvalidToken = "";
-    public const string ExternalLoginMissingProviderKey = "";
-    public const string InvalidRequest = "";
+    public const string ExternalLoginEmailDomainNotAllowed = "EXTERNAL_LOGIN_EMAIL_DOMAIN_NOT_ALLOWED";
+    public const string ExternalLoginInvalidToken = "EXTERNAL_LOGIN_INVALID_TOKEN";
+    public const string ExternalLoginMissingProviderKey = "EXTERNAL_LOGIN_MISSING_PROVIDER_KEY";
+    public const string InvalidRequest = "INVALID_REQUEST";
     #endregion
 
-    #region Reset Password Errors
-    public const string PasswordResetFailed = "PASSWORD_RESET_FAILED";
-    #endregion
-
+    // =========================================================
+    // STORAGE
+    // =========================================================
     #region Storage Errors
     public const string ConfigMissing = "CONFIG_MISSING";
     public const string NotPublicResource = "NOT_PUBLIC_RESOURCE";
@@ -165,10 +161,11 @@ public class ErrorsCodes
     public const string UrlFileExpired = "URL_FILE_EXPIRED";
     #endregion
 
+    // =========================================================
+    // USER PROFILE FILES
+    // =========================================================
     #region User Profile
-    public const string ProfileAlreadyApproved = "PROFILE_ALREADY_APPROVED";
     public const string InvalidDegreesJson = "INVALID_DEGREES_JSON";
-    public const string InvalidDegreesCount = "INVALID_DEGREES_COUNT";
     public const string InvalidExperiencesJson = "INVALID_EXPERIENCES_JSON";
     public const string InvalidTrainingCoursesJson = "INVALID_TRAINING_COURSES_JSON";
     public const string InvalidAchievementsJson = "INVALID_ACHIEVEMENTS_JSON";
@@ -185,15 +182,14 @@ public class ErrorsCodes
     public const string TrainingCourseFileTooLarge = "TRAINING_COURSE_FILE_TOO_LARGE";
     public const string AchievementFileTooLarge = "ACHIEVEMENT_FILE_TOO_LARGE";
     public const string InvalidAttachmentsJson = "INVALID_ATTACHMENTS_JSON";
-    public const string BasicResourcesJson = "BASIC_RESOURCES_JSON";
     public const string InvalidAttachmentFileIndex = "INVALID_ATTACHMENT_FILE_INDEX";
+    public const string DuplicateAttachmentResource = "DUPLICATE_ATTACHMENT_RESOURCE";
     public const string InvalidAttachmentFile = "INVALID_ATTACHMENT_FILE";
     public const string CvFileRequired = "CV_FILE_REQUIRED";
     public const string IdFileRequired = "ID_FILE_REQUIRED";
     public const string MarriageCertificateFileRequired = "MARRIAGE_CERTIFICATE_FILE_REQUIRED";
     public const string BirthCertificateFileRequired = "BIRTH_CERTIFICATE_FILE_REQUIRED";
     public const string SponsorCardRequired = "SPONSOR_CARD_REQUIRED";
-    public const string SponsorCardFileRequired = "SPONSOR_CARD_FILE_REQUIRED";
     public const string OfficeRequired = "OFFICE_REQUIRED";
     public const string AddressRequired = "ADDRESS_REQUIRED";
     public const string InvalidNationalAddress = "INVALID_NATIONAL_ADDRESS";
@@ -205,21 +201,21 @@ public class ErrorsCodes
     public const string SkillOrLanguageRequired = "SKILL_OR_LANGUAGE_REQUIRED";
     #endregion
 
+    // =========================================================
+    // ATTACHMENT RULES
+    // =========================================================
     #region Attachments
-
-    public const string InvalidAttachmentType = "INVALID_ATTACHMENT_TYPE";
-    public const string InvalidAttachmentSize = "INVALID_ATTACHMENT_SIZE";
     public const string AttachmentNotFound = "ATTACHMENT_NOT_FOUND";
     public const string AttachmentNotEditableInRevision = "ATTACHMENT_NOT_EDITABLE_IN_REVISION";
     public const string InvalidAttachmentId = "INVALID_ATTACHMENT_ID";
-
     public const string PreviousProfileStepIncomplete = "PREVIOUS_PROFILE_STEP_INCOMPLETE";
     public const string CandidateTypeChangeNotAllowed = "CANDIDATE_TYPE_CHANGE_NOT_ALLOWED";
-    public const string SponsorNotAllowed = "SPONSOR_NOT_ALLOWED";
     public const string NationalAddressNotAllowed = "NATIONAL_ADDRESS_NOT_ALLOWED";
-
     #endregion
 
+    // =========================================================
+    // DISTRIBUTION
+    // =========================================================
     #region Profile Distribution
     public const string DistributionEmployeeNotActive = "DISTRIBUTION_EMPLOYEE_NOT_ACTIVE";
     public const string DistributionProfilesNotFound = "DISTRIBUTION_PROFILES_NOT_FOUND";
@@ -232,17 +228,17 @@ public class ErrorsCodes
     public const string ProfileNotAssignable = "PROFILE_NOT_ASSIGNABLE";
     #endregion
 
+    // =========================================================
+    // JOBS
+    // =========================================================
     #region Job Management
-    public const string JobNotFound = "JOB_NOT_FOUND";
-    public const string JobAlreadyPublished = "JOB_ALREADY_PUBLISHED";
-    public const string JobAlreadyCancelled = "JOB_ALREADY_CANCELLED";
-    public const string JobCannotBeCancelled = "JOB_CANNOT_BE_CANCELLED";
-    public const string JobClosingDateInvalid = "JOB_CLOSING_DATE_INVALID";
-    public const string NoteRequired = "NOTE_REQUIRED";
     public const string InvitationNotFound = "INVITATION_NOT_FOUND";
     public const string InvitationStatusChangeNotAllowed = "INVITATION_STATUS_CHANGE_NOT_ALLOWED";
     #endregion
 
+    // =========================================================
+    // ORGANIZATION
+    // =========================================================
     #region Organization Structures
     public const string SectorNotFound = "SECTOR_NOT_FOUND";
     public const string SectorNameAlreadyExists = "SECTOR_NAME_ALREADY_EXISTS";
@@ -250,16 +246,24 @@ public class ErrorsCodes
     public const string ManagementNameAlreadyExists = "MANAGEMENT_NAME_ALREADY_EXISTS";
     public const string DepartmentNotFound = "DEPARTMENT_NOT_FOUND";
     public const string DepartmentNameAlreadyExists = "DEPARTMENT_NAME_ALREADY_EXISTS";
-    public const string ParentRequired = "PARENT_REQUIRED";
     #endregion
 
+    // =========================================================
+    // EXTERNAL SERVICES
+    // =========================================================
     #region MOI Service
-
     public const string MOIDataNotFound = "MOI_DATA_NOT_FOUND";
     public const string MOIFailedRequest = "MOI_FAILED_REQUEST";
-
     #endregion
 
+    public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
+    public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
+    public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
+    public const string QatariPeopleNotAllowedLoginBeforeRegisterOnKawader = "QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER";
+
+    // =========================================================
+    // LOOKUPS
+    // =========================================================
     #region Countries
     public const string CountryNotFound = "COUNTRY_NOT_FOUND";
     #endregion
@@ -287,8 +291,6 @@ public class ErrorsCodes
 
     #region Offices
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
-    public const string OfficeCountryNotFound = "OFFICE_COUNTRY_NOT_FOUND";
-    public const string OfficeSupportedCountryInvalid = "OFFICE_SUPPORTED_COUNTRY_INVALID";
     public const string OfficeAdminEmailInvalid = "OFFICE_ADMIN_EMAIL_INVALID";
     public const string OfficeAdminEmailExists = "OFFICE_ADMIN_EMAIL_EXISTS";
     public const string OfficeSupportedCountriesRequired = "OFFICE_SUPPORTED_COUNTRIES_REQUIRED";
@@ -296,12 +298,9 @@ public class ErrorsCodes
     public const string OfficeRoleAssignmentFailed = "OFFICE_ROLE_ASSIGNMENT_FAILED";
     public const string OfficeUserNotFound = "OFFICE_USER_NOT_FOUND";
     public const string OfficeAdminNotFound = "OFFICE_ADMIN_NOT_FOUND";
-    public const string OfficeAdminRoleNotFound = "OFFICE_ADMIN_ROLE_NOT_FOUND";
-    public const string OfficeUserRoleNotFound = "OFFICE_USER_ROLE_NOT_FOUND";
     #endregion
 
     #region Major Managements
-    
     public const string MajorNotFound = "MAJOR_NOT_FOUND";
     public const string MajorAlreadyUsed = "MAJOR_ALREADY_USED";
     public const string ChangingHierarchyTypeNotAllowed = "CHANGING_HIERARCHY_TYPE_NOT_ALLOWED";
@@ -312,21 +311,10 @@ public class ErrorsCodes
     public const string CannotActivateMajorSkillLinkBecauseParentMajorIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_PARENT_MAJOR_IS_INACTIVE";
     public const string CannotActivateMajorSkillLinkBecauseMajorIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_MAJOR_IS_INACTIVE";
     public const string CannotActivateMajorSkillLinkBecauseSkillIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE";
-    
-
     #endregion
+
     #region Skill Managements
-    
     public const string SkillNotFound = "SKILL_NOT_FOUND";
     public const string SkillAlreadyUsed = "SKILL_ALREADY_USED";
-    public const string SkillNameAlreadyExists = "SKILL_NAME_ALREADY_EXISTS";
-    
-
     #endregion
-    public const string ExternalLoginEmailDomainNotAllowed = "EXTERNAL_LOGIN_EMAIL_DOMAIN_NOT_ALLOWED";
-    public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
-    public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
-    public const string QatariPeopleNotAllowedLoginBeforeRegisterOnKawader = "QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER";
-    public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
-    public const string DuplicateAttachmentResource = "DUPLICATE_ATTACHMENT_RESOURCE";
 }
