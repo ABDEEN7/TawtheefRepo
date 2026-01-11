@@ -34,7 +34,7 @@ export const JOB_INVITATION_STATUSES = {
   CLOSED: 'Closed',
   UNDER_REVIEW: 'UnderReview',
   APPROVED: 'Approved',
-  READED: 'Readed',
+  READ: 'Read',
   REJECTED: 'Rejected',
   CANCELLED: 'Cancelled',
   REQUIRES_UPDATE: 'RequiresUpdate',
@@ -47,7 +47,7 @@ export const STATUS_PILL_CLASSES: Record<JobStatus, string> = {
   [JOB_INVITATION_STATUSES.CLOSED]: 'status-closed',
   [JOB_INVITATION_STATUSES.UNDER_REVIEW]: 'status-underreview',
   [JOB_INVITATION_STATUSES.APPROVED]: 'status-applied',
-  [JOB_INVITATION_STATUSES.READED]: 'status-withdrawn',
+  [JOB_INVITATION_STATUSES.READ]: 'status-withdrawn',
   [JOB_INVITATION_STATUSES.REJECTED]: 'status-closed',
   [JOB_INVITATION_STATUSES.CANCELLED]: 'status-closed',
   [JOB_INVITATION_STATUSES.REQUIRES_UPDATE]: 'status-withdrawn',
@@ -119,9 +119,9 @@ export const ACTION_CONFIGS: Record<InvitationStatus, ActionConfig> = {
     showDetails: false,
     showWithdraw: false
   },
-  [JOB_INVITATION_STATUSES.READED]: {
-    showApply: false,
-    showView: true,
+  [JOB_INVITATION_STATUSES.READ]: {
+    showApply: true,
+    showView: false,
     showTrack: false,
     showDetails: false,
     showWithdraw: false
