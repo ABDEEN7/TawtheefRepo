@@ -5,14 +5,9 @@
         <i class="pi pi-at" aria-hidden="true"></i>
         <span>{{ 'profileOverview.sections.contact' | translate }}</span>
       </div>
+    <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
 
-      <button *ngIf="canEdit"
-              type="button"
-              class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-2 fw-semibold"
-              (click)="onEdit()">
-        <i class="pi pi-pencil" aria-hidden="true"></i>
-        <span>{{ 'common.edit' | translate }}</span>
-      </button>
+                
     </div>
 
     <div class="row g-3">
