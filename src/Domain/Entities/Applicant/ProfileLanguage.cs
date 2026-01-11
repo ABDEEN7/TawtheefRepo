@@ -7,7 +7,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Domain.Entities.Applicant;
 
 [Table(nameof(ProfileLanguage), Schema = Schemas.Profile)]
-[Index(nameof(LanguageId), nameof(UserProfileId), IsUnique = true)]
+// [Index(nameof(LanguageId), nameof(UserProfileId), IsUnique = true)]
 public class ProfileLanguage : EventEntity
 {
     public Guid LanguageId { get; set; }

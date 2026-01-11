@@ -11,7 +11,7 @@ import {ProfileDataService} from '../../../wizard-profile/services/profile-data.
 import {PhoneMapperService} from '../../../wizard-profile/services/phone-mapper.service';
 import {mapProfileStatusToState} from '../../../wizard-profile/services/profile.mapper';
 import {ProfileComponentsModule} from '../../../components/profile-components.module';
-import {ProfileSectionEnum, UserProfileStatusEnum} from '../../../overview/models/profile-overview.model';
+import {ProfileSectionEnum, UserProfileStatusEnum} from '../../models/profile-overview.model';
 import {PROFILE_WRITE_MODE, ProfileWriteMode} from '../../../wizard-profile/services/profile-write-mode.token';
 import {UserService} from '../../../../../../core/auth/user.service';
 import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
@@ -129,6 +129,8 @@ export class ProfileEditDialogComponent {
   }
 
   private resolveWriteMode(status: number | null | undefined): ProfileWriteMode {
-    return status === UserProfileStatusEnum.Approved ? 'change-request' : 'create';
+    if (status === UserProfileStatusEnum.Approved) return 'change-request';
+    if (status === UserProfileStatusEnum.RequiresUpdate) return 'review-edit';
+    return 'create';
   }
 }

@@ -9,7 +9,7 @@
                       <p class="m-0">{{ 'candidate_dashboard.description' | translate }}</p>
                   </div>
                   <div class="col-md-3">
-                       <div class="d-flex justify-content-end align-items-center gap-3"><span class="btn btn-outline-primary btn-sm rounded-pill border">{{ 'candidate_dashboard.total_records' | translate }}: {{ totalItems() }}</span></div>
+                       <div class="d-flex justify-content-end align-items-center gap-3"><span class="btn btn-outline-primary btn-sm">{{ 'candidate_dashboard.total_records' | translate }}: {{ totalItems() }}</span></div>
                   </div>
              </div>
              <div class="row mt-4">
@@ -76,9 +76,9 @@
                  <div class="col-12">
                       <div class="card card-table">
                            <div class="card-body">
-                             <div class="row g-2">
+                             <div class="row align-items-center">
                                <div class="col-md-3">
-                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_status' | translate }}</label>
+                                 <label class="form-label">{{ 'candidate_dashboard.filter_status' | translate }}</label>
                                  <p-select
                                    [options]="candidateService.invitationStatuses()"
                                    [showClear]="true"
@@ -90,12 +90,11 @@
                                    filterBy="name"
                                    optionLabel="name"
                                    optionValue="id"
-                                   size="small"
-                                   class="form-select"
+                                   class="form-select p-select"
                                  ></p-select>
                                </div>
                                <div class="col-md-3">
-                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_type' | translate }}</label>
+                                 <label class="form-label">{{ 'candidate_dashboard.filter_type' | translate }}</label>
                                  <p-select
                                    [options]="candidateService.jobCategories()"
                                    [showClear]="true"
@@ -107,12 +106,11 @@
                                    filterBy="name"
                                    optionLabel="name"
                                    optionValue="backendName"
-                                   size="small"
                                    class="form-select"
                                  ></p-select>
                                </div>
                                <div class="col-md-3">
-                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
+                                 <label class="form-label">{{ 'candidate_dashboard.filter_entity' | translate }}</label>
                                  <p-select
                                    [options]="candidateService.departments()"
                                    [showClear]="true"
@@ -124,20 +122,19 @@
                                    filterBy="name"
                                    optionLabel="name"
                                    optionValue="id"
-                                   size="small"
-                                   class="form-select"
+                                   class="form-select p-select"
                                  ></p-select>
                                </div>
-                               <div class="col-md-3">
-                                 <label class="form-label fw-bold small mb-1">{{ 'candidate_dashboard.filter_search' | translate }}</label>
+                               <div class="col-md-2">
+                                 <label class="form-label ">{{ 'candidate_dashboard.filter_search' | translate }}</label>
                                  <input
                                    [(ngModel)]="jobTitle"
                                    (input)="this.onFilterChange()"
                                    class="form-control"
                                    [placeholder]="'candidate_dashboard.placeholder_search' | translate">
                                </div>
-                               <div class="text-end pt-2">
-                                 <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm btn-pill">
+                               <div class="col-md-1">
+                                 <button (click)="this.clearFilters()" class="btn btn-outline-secondary btn-sm mt-3">
                                    <i class="fa fa-rotate-left"></i> {{ 'candidate_dashboard.clear_filters' | translate }}
                                  </button>
                                </div>
@@ -148,7 +145,9 @@
              </div>
              <div class="row mt-4">
                   <div class="col-12">
-                       <p-table
+                       <div class="table-card rounded overflow-hidden">
+                          <div class="table-responsive">
+                               <p-table
                          [value]="this.candidateInvitations()"
                          class="table table-hover"
                        >
@@ -160,13 +159,13 @@
                              <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
                              <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
                              <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
-                             <th class="text-end">{{ 'candidate_dashboard.column_actions' | translate }}</th>
+                             <th>{{ 'candidate_dashboard.column_actions' | translate }}</th>
                            </tr>
                          </ng-template>
                          <ng-template pTemplate="body" let-record let-i="rowIndex">
                            <tr>
                              <td>{{ (this.currentPage() - 1) * this.itemsPerPage() + i + 1 }}</td>
-                             <td class="fw-bold">{{ record.jobTitle }}</td>
+                             <td>{{ record.jobTitle }}</td>
                              <td>{{ record.departmentName }}</td>
                              <td>
                                <span [ngClass]="getJobCategoryClass(record)">
@@ -179,23 +178,23 @@
                                </span>
                              </td>
                              <td>{{ record.createdDate | date :'dd/MM/yyyy'}}</td>
-                             <td class="text-end">
+                             <td>
                                @if (getActionButtons(record.invitationStatus); as actions) {
                                  @if (actions.showApply) {
                                    <a
                                      [routerLink]="routes.user.jobDetails(record.invitationId)"
-                                     class="btn btn-sm btn-primary btn-pill"
+                                     class="btn btn-sm btn-primary"
                                    >
-                                     <i class="fa fa-paper-plane"></i>
+                                     <i class="hgi hgi-stroke hgi-sent"></i>
                                      {{ 'candidate_dashboard.action_apply_now' | translate }}
                                    </a>
                                  }
                                  @if (actions.showDetails) {
                                    <a
                                      [routerLink]="routes.user.jobDetails(record.invitationId)"
-                                     class="btn btn-sm btn-outline-secondary btn-pill"
+                                     class="btn btn-sm btn-outline-secondary"
                                    >
-                                     <i class="fa fa-eye"></i>
+                                     <i class="hgi hgi-stroke hgi-view"></i>
                                      {{ 'candidate_dashboard.action_view_details' | translate }}
                                    </a>
                                  }
@@ -211,6 +210,9 @@
                            </tr>
                          </ng-template>
                        </p-table>
+                          </div>
+                       </div>
+                       
                         <app-pagination [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"></app-pagination>
                   </div>
              </div>

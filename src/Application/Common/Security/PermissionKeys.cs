@@ -1,4 +1,4 @@
-namespace Tawtheef.Application.Common.Security.Tawtheef.Application.Common.Security;
+namespace Tawtheef.Application.Common.Security;
 
 /// <summary>
 /// Attribute-safe permission keys (compile-time constants).

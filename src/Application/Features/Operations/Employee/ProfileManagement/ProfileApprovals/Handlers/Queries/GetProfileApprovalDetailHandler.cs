@@ -147,16 +147,16 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
         {
             UserProfileId = profile.Id,
             UserId = request.OfficerId,
-            ActionType = "OpenProfile",
-            Notes = "Profile opened for review",
+            ActionType = UserProfileLogConstants.ActionTypes.OpenProfile,
+            Notes = UserProfileLogConstants.Notes.ProfileOpenedForReview,
             Section = nameof(ProfileSection.Personal)
         });
         await loggerRepo.AddAsync(new UserProfileLogger
         {
             UserProfileId = profile.Id,
             PerformedById = request.OfficerId,
-            ActionType = "OpenProfile",
-            Notes = "Profile opened for review",
+            ActionType = UserProfileLogConstants.ActionTypes.OpenProfile,
+            Notes = UserProfileLogConstants.Notes.ProfileOpenedForReview,
             Section = nameof(ProfileSection.Personal)
         });
         await uow.SaveChangesAsync(ct);

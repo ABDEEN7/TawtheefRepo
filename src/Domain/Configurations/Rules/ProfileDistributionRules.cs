@@ -11,5 +11,5 @@ public static class ProfileDistributionRules
         [UserProfileStatus.Approved];
 
     public static readonly UserProfileStatus[] AssignableStatuses =
-        [UserProfileStatus.Submitted, UserProfileStatus.UnderReview, UserProfileStatus.RequiresUpdate];
+        [UserProfileStatus.Submitted, UserProfileStatus.UnderReview];
 }

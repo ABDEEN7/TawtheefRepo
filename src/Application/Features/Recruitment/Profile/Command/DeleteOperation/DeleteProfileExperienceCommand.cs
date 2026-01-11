@@ -5,4 +5,4 @@ using FluentResults;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperation;
 
-public sealed record DeleteProfileExperienceCommand(Guid ExperienceId): ICommand<IResult<Unit>>;
+public sealed record DeleteProfileExperienceCommand(Guid UserId,Guid Id): ICommand<IResult<Unit>>;

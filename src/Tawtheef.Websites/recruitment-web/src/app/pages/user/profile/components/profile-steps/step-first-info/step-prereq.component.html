@@ -57,8 +57,11 @@
         <input #cvInput
                type="file"
                class="d-none"
-               accept=".jpg,.jpeg,.png,.pdf"
+               [attr.accept]="acceptFor('cv')"
                (change)="onFileSelected('cv', $event)" />
+        <span class="text-muted fz-2xs">
+          {{ formatsLabel('cv') }} – Max 1MB
+        </span>
       </div>
     </div>
     <!-- ID -->
@@ -90,8 +93,11 @@
         <input #idInput
                type="file"
                class="d-none"
-               accept=".jpg,.jpeg,.png,.pdf"
+               [attr.accept]="acceptFor('id')"
                (change)="onFileSelected('id', $event)" />
+        <span class="text-muted fz-2xs">
+          {{ formatsLabel('id') }} – Max 1MB
+        </span>
       </div>
     </div>
     <!-- Birth Certificate -->
@@ -125,8 +131,11 @@
         <input #birthInput
                type="file"
                class="d-none"
-               accept=".jpg,.jpeg,.png,.pdf"
+               [attr.accept]="acceptFor('birth')"
                (change)="onFileSelected('birth', $event)" />
+        <span class="text-muted fz-2xs">
+          {{ formatsLabel('birth') }} – Max 1MB
+        </span>
       </div>
     </div>
 
@@ -161,8 +170,11 @@
         <input #marriageInput
                type="file"
                class="d-none"
-               accept=".jpg,.jpeg,.png,.pdf"
+               [attr.accept]="acceptFor('marriage')"
                (change)="onFileSelected('marriage', $event)" />
+        <span class="text-muted fz-2xs">
+          {{ formatsLabel('marriage') }} – Max 1MB
+        </span>
       </div>
     </div>
   </div>

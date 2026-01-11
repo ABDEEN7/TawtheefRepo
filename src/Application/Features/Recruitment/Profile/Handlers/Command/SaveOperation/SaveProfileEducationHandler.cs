@@ -2,7 +2,6 @@ using System.Text.Json;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,6 +10,7 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.SaveOperation;
 using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Application.Features.Recruitment.Profile.Validators;
+using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
@@ -48,7 +48,7 @@ public sealed class SaveProfileEducationHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateEducation(profile);
@@ -77,25 +77,31 @@ public sealed class SaveProfileEducationHandler(
         if (filesValidation.IsFailed)
             return Result.Fail<Unit>(filesValidation.Errors);
 
-        var newQualifications = new List<Qualification>();
-        var updatedQualifications = new List<Qualification>();
-
         var existingQualifications = await educationRepo.DbSet
             .Include(q => q.Certificate)
             .Where(q => q.UserProfileId == profile.Id)
             .ToListAsync(ct);
 
+        // For edit-mode delete detection: only rows with a valid Id in DTO are “kept”
+        var incomingIds = degrees
+            .Where(d => d.Id.HasValue && d.Id.Value != Guid.Empty)
+            .Select(d => d.Id!.Value)
+            .ToHashSet();
+
         foreach (var dto in degrees)
         {
             var file = ResolveFile(dto, files);
-            var existingQualification = dto.Id.HasValue
+
+            var existingQualification = dto.Id.HasValue && dto.Id.Value != Guid.Empty
                 ? existingQualifications.FirstOrDefault(q => q.Id == dto.Id.Value)
                 : null;
 
             var hasNewFile = FileValidationHelpers.HasFile(file);
-            var hasExistingFile = FileValidationHelpers.HasExisting(dto.ExistingFileName) ||
-                                  dto.CertificateId is not null ||
-                                  (existingQualification?.CertificateId is not null);
+
+            var hasExistingFile =
+                FileValidationHelpers.HasExisting(dto.ExistingFileName) ||
+                dto.CertificateId is not null ||
+                (existingQualification?.CertificateId is not null);
 
             if (!hasNewFile && !hasExistingFile)
                 return Result.Fail<Unit>(ErrorsCodes.DegreeFileRequired);
@@ -104,41 +110,45 @@ public sealed class SaveProfileEducationHandler(
             if (attachmentIdResult.IsFailed)
                 return Result.Fail<Unit>(attachmentIdResult.Errors);
 
-            var attachmentId = attachmentIdResult.Value ?? existingQualification?.CertificateId ?? dto.CertificateId;
+            var certificateId = attachmentIdResult.Value
+                                ?? existingQualification?.CertificateId
+                                ?? dto.CertificateId;
 
             if (existingQualification is null)
             {
+                // INSERT
                 var edu = new Qualification
                 {
-                    UserProfileId  = profile.Id,
-                    DegreeId       = dto.DegreeId,
-                    CountryId      = dto.GradCountryId,
-                    UniversityId   = dto.UniversityId,
-                    MajorId        = dto.MajorId,
-                    SubMajorId     = dto.SubMajorId,
-                    StudyTypeId    = dto.StudyTypeId,
-                    RatingId       = dto.GradeId,
+                    UserProfileId = profile.Id,
+                    DegreeId = dto.DegreeId,
+                    CountryId = dto.GradCountryId,
+                    UniversityId = dto.UniversityId,
+                    MajorId = dto.MajorId,
+                    SubMajorId = dto.SubMajorId,
+                    StudyTypeId = dto.StudyTypeId,
+                    RatingId = dto.GradeId,
                     GraduationYear = dto.GradYear,
-                    GPA            = dto.Gpa,
-                    CertificateId  = attachmentId,
+                    GPA = dto.Gpa,
+                    CertificateId = certificateId
                 };
 
-                newQualifications.Add(edu);
-                await educationRepo.AddAsync(edu);
+                // If repo AddAsync has no CT: use EF Core directly
+                await educationRepo.DbSet.AddAsync(edu, ct);
+                // or: educationRepo.DbSet.Add(edu);
             }
             else
             {
-                existingQualification.DegreeId       = dto.DegreeId;
-                existingQualification.CountryId      = dto.GradCountryId;
-                existingQualification.UniversityId   = dto.UniversityId;
-                existingQualification.MajorId        = dto.MajorId;
-                existingQualification.SubMajorId     = dto.SubMajorId;
-                existingQualification.StudyTypeId    = dto.StudyTypeId;
-                existingQualification.RatingId       = dto.GradeId;
+                // UPDATE
+                existingQualification.DegreeId = dto.DegreeId;
+                existingQualification.CountryId = dto.GradCountryId;
+                existingQualification.UniversityId = dto.UniversityId;
+                existingQualification.MajorId = dto.MajorId;
+                existingQualification.SubMajorId = dto.SubMajorId;
+                existingQualification.StudyTypeId = dto.StudyTypeId;
+                existingQualification.RatingId = dto.GradeId;
                 existingQualification.GraduationYear = dto.GradYear;
-                existingQualification.GPA            = dto.Gpa;
-                existingQualification.CertificateId  = attachmentId;
-                updatedQualifications.Add(existingQualification);
+                existingQualification.GPA = dto.Gpa;
+                existingQualification.CertificateId = certificateId;
             }
         }
 
@@ -247,7 +257,7 @@ public sealed class SaveProfileEducationHandler(
         if (!FileValidationHelpers.HasFile(file))
             return Result.Ok<Guid?>(null);
 
-        var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, "education", file!, false, ct);
+        var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Education, file!, false, ct);
         var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
             new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
             ct);

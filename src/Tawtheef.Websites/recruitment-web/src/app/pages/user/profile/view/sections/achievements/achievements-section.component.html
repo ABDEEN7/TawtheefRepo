@@ -34,7 +34,7 @@
   </div>
 </div>
 <ng-template #achievementTemplate let-ach>
-  @let fileNote = noteForRaw(ach.attachment);
+  @let fileNote = noteForRaw(ach);
   <div class="col-12 col-lg-6">
     <div class="card h-100 kv-card" [ngClass]="{ 'attach-card--warn': fileNote }">
       <div class="card-body py-3 px-3 h-100 d-flex flex-column gap-2">
@@ -68,14 +68,12 @@
             <span class="text-muted">{{ 'common.none' | translate }}</span>
           }
         </div>
-        <div class="d-flex align-items-center gap-2 mt-auto" *ngIf="fileNote">
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-secondary rounded-pill"
-            (click)="editAchievement(ach)">
-            <i class="pi pi-pencil" aria-hidden="true"></i>
-          </button>
-        </div>
+        <button *ngIf="fileNote"
+                type="button"
+                class="btn btn-sm btn-outline-secondary rounded-pill"
+                (click)="editAchievement(ach)">
+          <i class="pi pi-pencil" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
   </div>

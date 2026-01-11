@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Recruitment.Profile.Command.DeleteOperation;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Recruitment.Profile.Handlers.Command.DeleteOperation;
 
@@ -15,9 +16,16 @@ public sealed class DeleteProfileTrainingHandler(IUnitOfWork uow) :
 {
     public async Task<IResult<Unit>> Handle(DeleteProfileTrainingCommand cmd, CancellationToken ct)
     {
+        var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, false, ct);
+        if (profile is null)
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+        
+        if(profile.Status != UserProfileStatus.InCreation)
+            return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
         var repo = uow.GetEntityRepository<TrainingCourse>();
         var target = await repo.DbSet
-            .FirstOrDefaultAsync(x => x.Id == cmd.TrainingId, ct);
+            .FirstOrDefaultAsync(x => x.Id == cmd.Id && x.UserProfileId == profile.Id, ct);
 
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.TrainingNotFound);
