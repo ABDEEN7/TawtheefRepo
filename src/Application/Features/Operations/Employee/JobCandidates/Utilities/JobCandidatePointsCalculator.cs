@@ -35,7 +35,7 @@ internal static class JobCandidatePointsCalculator
                 jobSubMajorId);
 
         var experiencePoints =
-            ExperiencePointsCalculator.Calculate(profile.Experiences, jobPointsMain);
+            ExperiencePointsCalculator.Calculate(profile.CalculatedExperienceYears, jobPointsMain);
 
         var trainingPoints =
             TrainingPointsCalculator.Calculate(profile.TrainingCourses, jobPointsMain);
