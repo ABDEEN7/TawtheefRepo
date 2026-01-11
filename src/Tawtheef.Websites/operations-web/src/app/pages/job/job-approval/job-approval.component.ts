@@ -109,7 +109,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
     this.tabNotes.forEach((tabNote, index) => {
       const tabControl = new FormControl(tabNote.tabStatus);
       const noteControl = new FormControl(tabNote.note);
-      
+
       this.reviewForm.addControl(`tabStatus_${index}`, tabControl);
       this.reviewForm.addControl(`note_${index}`, noteControl);
 
@@ -127,20 +127,20 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
 
   private onTabStatusChange(index: number, status: JobTabStatus | null): void {
     const noteControl = this.reviewForm.get(`note_${index}`) as FormControl;
-    
+
     this.tabNotes[index].tabStatus = status;
-    
+
     if (status === JobTabStatus.Returned) {
       noteControl.setValidators([Validators.required]);
-      noteControl.markAsTouched(); 
+      noteControl.markAsTouched();
     } else {
       noteControl.clearValidators();
     }
-    
+
     if (noteControl.value !== null) {
       this.tabNotes[index].note = noteControl.value;
     }
-    
+
     noteControl.updateValueAndValidity();
     this.cdr.detectChanges();
   }
@@ -148,7 +148,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
   getCurrentTabControls(): { tabControl: FormControl; noteControl: FormControl } | null {
     const index = this.tabNotes.findIndex(t => t.tab === this.activeTab);
     if (index === -1) return null;
-    
+
     return {
       tabControl: this.reviewForm.get(`tabStatus_${index}`) as FormControl,
       noteControl: this.reviewForm.get(`note_${index}`) as FormControl
@@ -158,7 +158,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
   hasNoteError(): boolean {
     const controls = this.getCurrentTabControls();
     if (!controls) return false;
-    
+
     return controls.noteControl.invalid && controls.noteControl.touched;
   }
 
@@ -169,10 +169,10 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
       if (index !== -1) {
         const tabControl = this.reviewForm.get(`tabStatus_${index}`) as FormControl;
         const noteControl = this.reviewForm.get(`note_${index}`) as FormControl;
-        
+
         tabControl.setValue(tabReview.tabStatus, { emitEvent: false });
         noteControl.setValue(tabReview.note || '', { emitEvent: false });
-        
+
         this.tabNotes[index].tabStatus = tabReview.tabStatus;
         this.tabNotes[index].note = tabReview.note || '';
       }

@@ -85,8 +85,8 @@ export class JobInvitationSummary implements OnInit {
   getStatusPillClass(backendName: string): string {
     const key = (backendName || '').toLowerCase();
 
-    if (key.includes('appl') || key.includes('submitted')) return 'status-applied';    
-    if (key.includes('new') || key.includes('invite')) return 'status-new';           
+    if (key.includes('appl') || key.includes('submitted')) return 'status-applied';
+    if (key.includes('new') || key.includes('invite')) return 'status-new';
     if (key.includes('cancel') || key.includes('closed')) return 'status-cancelled';
 
     return 'status-default';
@@ -104,4 +104,6 @@ export class JobInvitationSummary implements OnInit {
   canViewInvitations(): boolean {
     return this.authService.hasPermission(Permissions.JobInvitations.View);
   }
+
+  protected readonly routes = routes;
 }

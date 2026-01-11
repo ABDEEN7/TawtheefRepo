@@ -167,7 +167,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         return;
       }
       if (isCreateMode) {
-        this.router.navigate([routes.employee.JobList]);
+        this.router.navigate([routes.employee.JobDetails]);
         return;
       }
 
@@ -177,7 +177,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         return;
       }
 
-      this.router.navigate([routes.employee.JobList]);
+      this.router.navigate([routes.employee.JobDetails]);
     });
   }
 
@@ -205,12 +205,12 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
             this.loadJobForWizard();
             return;
           }
-          this.router.navigate([routes.employee.JobList]);
+          this.router.navigate([routes.employee.JobDetails]);
         });
       },
       error: () => {
         this.isLoading = false;
-        this.router.navigate([routes.employee.JobList]);
+        this.router.navigate([routes.employee.JobDetails]);
       },
     });
   }
@@ -230,7 +230,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
             this.notificationService.error(
               this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')
             );
-            this.router.navigate([routes.employee.JobList]);
+            this.router.navigate([routes.employee.JobDetails]);
             return EMPTY;
           }
 
@@ -262,7 +262,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         },
         error: () => {
           this.isLoading = false;
-          this.router.navigate([routes.employee.JobList]);
+          this.router.navigate([routes.employee.JobDetails]);
         },
       });
   }
@@ -461,7 +461,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         next: () => {
           this.isLoading = false;
           this.showSuccessMessage('JOB_WIZARD.SUCCESS.JOB_SUBMITTED');
-          this.router.navigate([routes.employee.JobList]);
+          this.router.navigate([routes.employee.JobDetails]);
         },
         error: () => {
           this.isLoading = false;
@@ -480,7 +480,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ref?.onClose.subscribe((result) => {
     if (!result) return;
-    this.router.navigate([routes.employee.JobList]);
+    this.router.navigate([routes.employee.JobDetails]);
   });
 }
 

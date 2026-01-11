@@ -11,8 +11,8 @@ export const employeeRoutes = {
   get profileDistribution(){
     return this.employee + '/profile-distribution';
   },
-  get approvalJob(){
-    return this.employee + '/jobs/approval-job';
+  approvalJob(jobId: GUID){
+    return this.employee + '/jobs/approval-job/' + jobId;
   },
   get approvalProfile(){
     return this.employee + '/approval-profile';
@@ -26,26 +26,32 @@ export const employeeRoutes = {
   get jobInvitationSummary(){
     return this.employee + '/job-invitation-summary';
   },
+  jobInvitationSummaryDetails(id: string){
+    return this.employee + `/job-invitation-summary-details/${id}`;
+  },
   get jobCreate(){
     return this.employee + '/jobs/create';
   },
   get JobList(){
     return this.employee + '/jobs';
   },
-  get jobView(){
-    return this.employee + '/jobs/view';
+  JobDetails(jobId: GUID){
+    return this.employee + `/jobs/${jobId}/wizard`;
   },
-  jobcandidates(id: GUID){
+  jobView(jobId: GUID){
+    return this.employee + '/jobs/view/' + jobId;
+  },
+  jobCandidates(id: GUID){
     return this.employee + `/jobs/view/${id}/candidates`;
   },
-  get jobEdit(){
-    return this.employee + '/jobs/edit';
+  jobEdit(jobId: GUID){
+    return this.employee + '/jobs/edit/' + jobId;
   },
   get nominations(){
     return this.employee + '/nominations';
   },
-  get jobPoints(){
-    return this.employee + '/jobs/job-points';
+  jobPoints(jobId: GUID){
+    return this.employee + '/jobs/job-points/' + jobId;
   },
   get majorsSkillsManagement(){
     return this.employee + '/majors-skills-management'

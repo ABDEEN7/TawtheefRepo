@@ -116,12 +116,12 @@ readonly jobStatus = JobStatus;
 
   editJob(job: JobResponse) {
     if (!this.canManageJobs()) return;
-    this.router.navigate([routes.employee.jobEdit, job.id]).then();
+    this.router.navigate([routes.employee.jobEdit(job.id)]).then();
   }
 
   viewJob(job: JobResponse) {
     if (!this.canViewJobs()) return;
-    this.router.navigate([routes.employee.jobView, job.id]).then();
+    this.router.navigate([routes.employee.jobView(job.id)]).then();
   }
 
   createNewJob() {
@@ -131,7 +131,7 @@ readonly jobStatus = JobStatus;
 
   openPointsModal(job: JobResponse) {
     if (!this.canManageJobPoints()) return;
-    this.router.navigate([routes.employee.jobPoints,job.id]).then();
+    this.router.navigate([routes.employee.jobPoints(job.id)]).then();
   }
 
   canCopyJob(job: JobResponse): boolean {
@@ -155,7 +155,7 @@ readonly jobStatus = JobStatus;
 
   approveJob(job: JobResponse) {
     if (!this.canApproveJobs()) return;
-    this.router.navigate([routes.employee.approvalJob, job.id]).then();
+    this.router.navigate([routes.employee.approvalJob(job.id)]).then();
   }
 
   rejectJob(job: JobResponse) {
@@ -347,7 +347,7 @@ readonly jobStatus = JobStatus;
 
   viewJobCandidate(jobId: GUID) {
     if (!this.canViewJobs()) return;
-    const url = routes.employee.jobcandidates(jobId);
+    const url = routes.employee.jobCandidates(jobId);
     this.router.navigate([url]);
   }
   private loadStats(): void {

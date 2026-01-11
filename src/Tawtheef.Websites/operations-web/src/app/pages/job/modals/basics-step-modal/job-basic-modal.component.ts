@@ -295,7 +295,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
             });
           } else {
             this.ref.close({ success: true, jobId });
-            this.router.navigate([routes.employee.jobEdit, jobId]);
+            this.router.navigate([routes.employee.jobEdit(jobId)]);
           }
         },
         error: () => {
@@ -319,7 +319,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           });
         } else {
           this.ref.close({ success: true, jobId });
-          this.router.navigate([routes.employee.JobList, jobId, 'wizard']);
+          this.router.navigate([routes.employee.JobDetails(jobId)]);
         }
       },
       error: () => {
