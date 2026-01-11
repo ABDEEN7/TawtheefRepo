@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, compute
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import {FileRefDto, LanguageDto, ProfileStatusDto} from '../../../../../../core/models/auth/auth-response.model';
-import { MyProfileReviewNoteDto } from '../../../overview/models/profile-overview.model';
+import { MyProfileReviewNoteDto } from '../../models/profile-overview.model';
 import {changeRequestDto} from '../../dtos/change-request-dto';
 import {FieldChange} from '../../utils/detect-change-fields';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';

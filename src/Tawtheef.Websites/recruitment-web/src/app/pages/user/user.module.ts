@@ -7,7 +7,6 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {userRoutes} from './user.routes';
 import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
 import {WizardProfileModule} from './profile/wizard-profile/wizard-profile.module';
-import {ProfileEditShellModule} from './profile/edit/profile-edit-shell.module';
 
 @NgModule({
   imports: [
@@ -18,8 +17,7 @@ import {ProfileEditShellModule} from './profile/edit/profile-edit-shell.module';
     ReactiveFormsModule,
     NgbModalModule,
     TranslatePipe,
-    WizardProfileModule,
-    ProfileEditShellModule,
+    WizardProfileModule
   ]
 })
 export class UserModule {}

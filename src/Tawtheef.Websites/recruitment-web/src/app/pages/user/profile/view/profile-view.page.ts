@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import {ButtonDirective, ButtonIcon, ButtonLabel} from 'primeng/button';
+import {ButtonDirective} from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
@@ -16,13 +16,12 @@ import {
   ReviewStatusEnum,
   MyProfileReviewSummaryDto,
   UserProfileStatusEnum,
-  MyProfileReviewNoteDto, ProfileChangeActionEnum, ReviewTargetTypeCode, ReviewTargetTypeEnum
-} from '../overview/models/profile-overview.model';
+  MyProfileReviewNoteDto, ProfileChangeActionEnum, ReviewTargetTypeEnum
+} from './models/profile-overview.model';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
-import { ProfileOverviewService } from '../overview/services/profile-overview.service';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { ReviewStepsDialogComponent } from '../overview/dialogs/review-steps-dialog/review-steps-dialog.component';
-import { ReviewItemEditDialogComponent } from '../overview/dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
+import { ReviewStepsDialogComponent } from './dialogs/review-steps-dialog/review-steps-dialog.component';
+import { ReviewItemEditDialogComponent } from './dialogs/review-item-edit-dialog/review-item-edit-dialog.component';
 import { ProfileEditDialogComponent } from './dialogs/profile-edit-dialog/profile-edit-dialog.component';
 import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
 import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites/prerequisites-section.component';
@@ -43,11 +42,9 @@ import { ProfileService } from '../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.service';
-import {
-  createProfileOverviewVisibility,
-  ProfileOverviewVisibility
-} from '../overview/services/profile-overview.visibility';
 import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
+import {ProfileOverviewService} from './services/profile-overview.service';
+import {createProfileOverviewVisibility, ProfileOverviewVisibility} from './services/profile-overview.visibility';
 
 interface SectionCard {
   section: ProfileSectionEnum;
