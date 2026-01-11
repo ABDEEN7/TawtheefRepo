@@ -12,7 +12,6 @@ import {Language} from '../models/language.model';
 import {Attachment} from '../models/attachment.model';
 import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
-
 export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestModel {
   return {
     submit: false,
