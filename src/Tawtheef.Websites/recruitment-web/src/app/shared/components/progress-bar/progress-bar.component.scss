@@ -1,4 +1,4 @@
-/* Basic Progress Line */
+/* Progress line (keep as you have it) */
 .progress-container {
   position: fixed;
   top: 0;
@@ -11,74 +11,108 @@
   pointer-events: none;
   transition: opacity 0.2s ease;
 }
-
 .progress-line {
   height: 100%;
   background: linear-gradient(90deg, #FF4667 0%, #764ba2 100%);
   transition: width 0.3s ease;
   border-radius: 0 2px 2px 0;
 }
-
 .progress-container.is-visible {
   opacity: 1;
 }
 
-.loading-indicator {
+/* Full-screen blur overlay */
+.loading-overlay {
   position: fixed;
-  top: 12px;
-  right: 16px;
-  z-index: 9999;
+  inset: 0;
+  z-index: 9998; /* below progress bar, above page */
   opacity: 0;
-  transform: translateY(-6px) scale(0.98);
-  transition: opacity 0.2s ease, transform 0.2s ease;
   pointer-events: none;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.2s ease;
+
+  /* dim + blur (works on most modern browsers) */
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.loading-indicator img {
-  width: 180px;
-  height: auto;
-  display: block;
-  animation: loading-pulse 1.2s ease-in-out infinite;
-}
-
-.loading-indicator.is-visible {
+.loading-overlay.is-visible {
   opacity: 1;
+  pointer-events: auto; /* blocks clicks while loading */
+}
+
+/* Centered loader container */
+.loading-content {
+  transform: translateY(-6px) scale(0.98);
+  transition: transform 0.2s ease;
+}
+
+.loading-overlay.is-visible .loading-content {
   transform: translateY(0) scale(1);
 }
 
+/* Responsive image sizing */
+.loading-content img {
+  display: block;
+  width: min(70vw, 420px);
+  max-width: 90vw;
+  height: auto;
+
+  animation: loading-pulse 1.2s ease-in-out infinite;
+}
+
+/* Optional: make it a bit smaller on very short screens */
+@media (max-height: 520px) {
+  .loading-content img {
+    width: min(60vw, 320px);
+  }
+}
+
+@keyframes loading-pulse {
+  0%   { opacity: 0.55; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.55; }
+}
+
+/* Accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .loading-content img {
+    animation: none;
+  }
+  .progress-line,
+  .loading-overlay,
+  .loading-content {
+    transition: none;
+  }
+}
+.loading-content img {
+  display: block;
+  width: min(70vw, 420px);
+  max-width: 90vw;
+  height: auto;
+
+  animation: loading-pulse 1.4s ease-in-out infinite;
+  will-change: transform, opacity, filter;
+}
 @keyframes loading-pulse {
   0% {
-    opacity: 0.55;
+    transform: scale(0.94);
+    opacity: 0.65;
+    filter: drop-shadow(0 0 0 rgba(255, 70, 103, 0.0));
   }
+
   50% {
+    transform: scale(1);
     opacity: 1;
+    filter: drop-shadow(0 0 22px rgba(255, 70, 103, 0.55));
   }
+
   100% {
-    opacity: 0.55;
+    transform: scale(0.94);
+    opacity: 0.65;
+    filter: drop-shadow(0 0 0 rgba(255, 70, 103, 0.0));
   }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .step-progress-container {
-    padding: 10px 15px;
-  }
-
-  .step {
-    width: 30px;
-    height: 30px;
-    font-size: 12px;
-  }
-
-  .step-progress {
-    max-width: 100%;
-  }
-
-  .loading-indicator {
-    right: 12px;
-  }
-
-  .loading-indicator img {
-    width: 140px;
-  }
-}

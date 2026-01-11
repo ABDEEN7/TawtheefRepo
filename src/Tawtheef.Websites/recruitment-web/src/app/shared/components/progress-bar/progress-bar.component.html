@@ -1,6 +1,10 @@
 <div class="progress-container" [class.is-visible]="visible">
   <div class="progress-line" [style.width.%]="progressValue"></div>
 </div>
-<div class="loading-indicator" [class.is-visible]="visible" aria-hidden="true">
-  <img src="assets/images/loading-indicator.svg" alt="" />
+
+<!-- Full-screen overlay -->
+<div class="loading-overlay" [class.is-visible]="visible" aria-hidden="true">
+  <div class="loading-content">
+    <img src="assets/images/loading-indicator.svg" alt="" />
+  </div>
 </div>

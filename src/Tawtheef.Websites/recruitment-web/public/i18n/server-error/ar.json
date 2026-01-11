@@ -46,13 +46,13 @@
 
   "server-error.EMAIL_IS_ALREADY_TAKEN": "البريد الإلكتروني محجوز مسبقًا.",
 
-  "server-error.ACCESS_TOKEN_REQUIRED": "رمز الوصول مطلوب.",
-  "server-error.REFRESH_TOKEN_REQUIRED": "رمز التحديث مطلوب.",
-  "server-error.INVALID_ACCESS_TOKEN": "رمز الوصول غير صالح.",
+  "server-error.ACCESS_TOKEN_REQUIRED": "انتهت الجلسة, نحن بحاجة الى تجديد عملية تسجيل الدخول",
+  "server-error.REFRESH_TOKEN_REQUIRED": "انتهت الجلسة, نحن بحاجة الى تجديد عملية تسجيل الدخول",
+  "server-error.INVALID_ACCESS_TOKEN": "انتهت الجلسة, نحن بحاجة الى تجديد عملية تسجيل الدخول",
   "server-error.INVALID_USER_IDENTIFIER": "معرّف المستخدم غير صالح.",
-  "server-error.REFRESH_TOKEN_NOT_FOUND": "رمز التحديث غير موجود.",
-  "server-error.INACTIVE_REFRESH_TOKEN": "رمز التحديث غير نشط.",
-  "server-error.SESSION_REVOKED": "تم إلغاء الجلسة.",
+  "server-error.REFRESH_TOKEN_NOT_FOUND": "انتهت الجلسة, نحن بحاجة الى تجديد عملية تسجيل الدخول",
+  "server-error.INACTIVE_REFRESH_TOKEN": "انتهت الجلسة, نحن بحاجة الى تجديد عملية تسجيل الدخول",
+  "server-error.SESSION_REVOKED": "انتهت الجلسة, نحن بحاجة الى تجديد عملية تسجيل الدخول",
 
   "server-error.VERIFICATION_CODE_EXPIRED": "انتهت صلاحية رمز التحقق.",
   "server-error.INVALID_TOKEN_OR_EMAIL": "الرمز أو البريد الإلكتروني غير صالح.",

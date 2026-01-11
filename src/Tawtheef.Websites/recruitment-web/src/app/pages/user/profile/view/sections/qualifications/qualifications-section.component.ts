@@ -38,7 +38,7 @@ export class ProfileQualificationsSectionComponent {
   @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
-  @Input() isProfileApproved!: boolean;
+  @Input() canReplaceAttachment!: boolean;
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 

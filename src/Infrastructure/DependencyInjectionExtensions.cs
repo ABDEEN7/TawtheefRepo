@@ -383,15 +383,6 @@ namespace Tawtheef.Infrastructure
         #region Notification Services & App Services
         private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
         {
-            // ===== reCAPTCHA =====
-            services.Configure<RecaptchaSettings>(configuration.GetSection(RecaptchaSettings.SectionName));
-            services.AddHttpClient<IRecaptchaService, RecaptchaService>((sp, client) =>
-            {
-                var opt = sp.GetRequiredService<IOptions<RecaptchaSettings>>().Value;
-                client.BaseAddress = new Uri(opt.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-            });
-
             // ===== Qatar Pass =====
             services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
             services.AddHttpClient<IQatarPassClient, QatarPassClient>((sp, client) =>
