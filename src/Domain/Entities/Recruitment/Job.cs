@@ -100,9 +100,9 @@ public class Job : EventEntity
     {
         this.JobStatusId = newStatusId;
         AddDomainEvent(new JobStatusChangedDomainEvent(Id, newStatusId, DateTimeOffset.UtcNow));
-        if(newStatusId == JobStatusIds.Draft)
+        if (newStatusId == JobStatusIds.PendingApproval)
         {
-            AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this,DateTimeOffset.Now));
+            AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.UtcNow));
         }
     }
 }

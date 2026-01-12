@@ -4,6 +4,7 @@ using Cortex.Mediator.DependencyInjection;
 using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Tawtheef.Application;
 
 namespace Application.Operation
 {
@@ -35,6 +36,7 @@ namespace Application.Operation
                     configuration: configuration,
                     handlerAssemblyMarkerTypes:
                     [
+                        typeof(ApplicationAssemblyMarker),
                         typeof(OperationAssemblyMarker)
                     ],
                     configure: o => o.AddDefaultBehaviors()
