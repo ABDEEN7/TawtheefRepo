@@ -1,0 +1,9 @@
+﻿@model Tawtheef.Infrastructure.Services.NotificationServices.TemplateContext<Application.Operation.Templates.JobDeletedNotification.JobDeletedNotificationModel>
+Job Deleted
+
+The job (@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job" : Model.Model.JobTitle)) has been deleted.
+
+Please log in to the Tawtheef system to review the job changes.
+
+-- @Model.Branding.ProductName
+Support: @Model.Branding.SupportEmail

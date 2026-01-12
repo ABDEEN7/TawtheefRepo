@@ -5,6 +5,11 @@ using System.Threading.RateLimiting;
 using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
+using Application.Operation.Templates.ChangeJobStatusNotification;
+using Application.Operation.Templates.JobCandidateInvitationSent;
+using Application.Operation.Templates.JobCreatedNotification;
+using Application.Operation.Templates.JobDeletedNotification;
+using Application.Operation.Templates.JobUpdatedNotification;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Templates.ContactVerificationSent;
 using Azure.Storage.Blobs;
@@ -336,6 +341,11 @@ namespace Tawtheef.Infrastructure
 
             private void AddOperationNotification()
             {
+                NotificationTemplateRegistry.Register<JobCandidateInvitationSentModel>(nameof(JobCandidateInvitationSent));
+                NotificationTemplateRegistry.Register<JobCreatedNotificationModel>(nameof(JobCreatedNotification));
+                NotificationTemplateRegistry.Register<JobUpdatedNotificationModel>(nameof(JobUpdatedNotification));
+                NotificationTemplateRegistry.Register<JobDeletedNotificationModel>(nameof(JobDeletedNotification));
+                NotificationTemplateRegistry.Register<ChangeJobStatusNotificationModel>(nameof(ChangeJobStatusNotification));
             }
         }
 
