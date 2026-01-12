@@ -13,6 +13,7 @@
   "common.notVerified": "غير موثق",
   "common.none": "لا شيء",
   "common.loadFailed": "فشل تحميل البيانات",
+  "common.savedSuccessfully":"تم الحفظ بنجاح",
   "app.pagination.page_size": "حجم الصفحة",
   "app.pagination.showing": "عرض",
   "app.pagination.of": "من",

@@ -31,7 +31,7 @@
   "common.no": "No",
   "common.goBack": "Go Back",
   "common.charactersRemaining": "{{count}} characters remaining",
-
+  "common.savedSuccessfully":"Saved Successfully",
   "app.pagination.page_size": "Page size",
   "app.pagination.showing": "Showing",
   "app.pagination.of": "of",

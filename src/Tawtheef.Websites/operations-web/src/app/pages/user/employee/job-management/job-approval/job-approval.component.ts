@@ -115,15 +115,53 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
 
       tabControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((status) => {
         this.onTabStatusChange(index, status);
-        this.queueDraftSave(index);
       });
 
       noteControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((note) => {
         this.tabNotes[index].note = note || '';
-        this.queueDraftSave(index);
       });
     });
   }
+
+  saveCurrentTabReview(): void {
+  if (!this.canManageJobs() || !this.job) return;
+
+  const index = this.tabNotes.findIndex(t => t.tab === this.activeTab);
+  if (index === -1) return;
+
+  const tabControl = this.reviewForm.get(`tabStatus_${index}`) as FormControl;
+  const noteControl = this.reviewForm.get(`note_${index}`) as FormControl;
+
+  tabControl.markAsTouched();
+  noteControl.markAsTouched();
+
+  if (tabControl.value === JobTabStatus.Returned) {
+    noteControl.setValidators([Validators.required]);
+  } else {
+    noteControl.clearValidators();
+  }
+  noteControl.updateValueAndValidity();
+
+  if (tabControl.invalid || noteControl.invalid) {
+    this.notificationService.error(
+      this.transaltionService.instant('JOB_APPROVAL.VALIDATION_ERROR')
+    );
+    return;
+  }
+  this.tabNotes[index].tabStatus = tabControl.value;
+  this.tabNotes[index].note = noteControl.value || '';
+
+  const formData = this.buildSingleTabFormData(this.tabNotes[index], false);
+  if (!formData) return;
+
+  this.jobService.updateTabReview(formData).subscribe({
+    next: () => {
+      this.notificationService.success(
+        this.transaltionService.instant('common.savedSuccessfully') // replace with your key
+      );
+    }
+  });
+}
 
   private onTabStatusChange(index: number, status: JobTabStatus | null): void {
     const noteControl = this.reviewForm.get(`note_${index}`) as FormControl;
