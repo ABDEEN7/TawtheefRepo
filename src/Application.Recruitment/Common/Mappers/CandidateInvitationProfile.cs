@@ -15,6 +15,7 @@ public class CandidateInvitationProfile: IRegister
             .Map(dest => dest.DepartmentName,src => src.Job!.Department)
             .Map(dest => dest.JobCategory,src => src.Job!.JobCategory)
             .Map(dest => dest.JobCategoryBackendName,src => src.Job!.JobCategory!.BackendName)
+            .Map(dest => dest.CreatedDate , src => src.CreatedDate)
             .AfterMapping((src, dest) =>
             {
                 var localized = MapContext.Current!.GetService<ILocalizationService>();

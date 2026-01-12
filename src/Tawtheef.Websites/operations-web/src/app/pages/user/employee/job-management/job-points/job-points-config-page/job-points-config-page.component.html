@@ -50,7 +50,7 @@
     </p-tabs>
   }
 
-  @if (isFinalApprovalAvailable && !isLoading && canManageJobs()) {
+  @if (jobPoints?.id && isFinalApprovalAvailable && canApprovePoints()) {
     <div class="final-approval-section">
       <div class="approval-info">
         <i class="pi pi-check-circle mr-2"></i>
