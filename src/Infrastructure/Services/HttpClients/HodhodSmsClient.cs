@@ -28,6 +28,7 @@ public sealed class HodhodSmsClient(HttpClient http, IOptions<HodhodSmsSettings>
             ["Password"]        = _opt.Password,
             ["MobileNumber"]    = mobile,
             ["MessageText"]     = message,
+            ["DefaultOtpMinutes"]     = _opt.DefaultOtpMinutes.ToString(),
             ["ConfirmDelivery"] = _opt.ConfirmDelivery.ToString(),
             ["Priority"]        = _opt.Priority.ToString()
         };

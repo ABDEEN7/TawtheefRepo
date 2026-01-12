@@ -2,6 +2,11 @@
 
 namespace Tawtheef.Domain.Configurations.Settings;
 
+public enum StorageProvider
+{
+    Local,
+    AzureBlobStorage
+}
 public sealed class StorageSettings
 {
     public const string SectionName = "Storage";

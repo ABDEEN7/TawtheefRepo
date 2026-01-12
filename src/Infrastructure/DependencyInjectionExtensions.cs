@@ -184,18 +184,12 @@ namespace Tawtheef.Infrastructure
 
             private void AddStorageCommon(IConfiguration configuration)
             {
-                // You are reading AzureConnectionString and RootPath in your original code.
-                // This keeps the same behavior (Azure if connection string exists, else local).
-                var connectionString = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.AzureConnectionString)}"] ?? string.Empty;
-                var containerName = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.RootPath)}"] ?? string.Empty;
-
-                if (!string.IsNullOrWhiteSpace(connectionString))
-                {
-                    services.AddSingleton(_ => new BlobServiceClient(connectionString));
-                    services.AddScoped(sp =>
-                    {
+                var storageSettings = configuration.GetSection(StorageSettings.SectionName).Get<StorageSettings>()!;
+                if (storageSettings.Provider == nameof(StorageProvider.AzureBlobStorage)) {
+                    services.AddSingleton(_ => new BlobServiceClient(storageSettings.AzureConnectionString));
+                    services.AddScoped(sp => {
                         var serviceClient = sp.GetRequiredService<BlobServiceClient>();
-                        return serviceClient.GetBlobContainerClient(containerName);
+                        return serviceClient.GetBlobContainerClient(storageSettings.RootPath);
                     });
 
                     services.AddScoped<IFileStorageService, AzureBlobStorageService>();
@@ -290,7 +284,7 @@ namespace Tawtheef.Infrastructure
             private void AddInfrastructureOperation(IConfiguration configuration)
             {
                 // Operation-only settings + http clients
-                services.AddOperationHttpClients(configuration);
+                services.AddOperationHttpClients();
 
                 AddValidatedOptions<AzureAuthenticationSettings>(services, configuration, AzureAuthenticationSettings.SectionName);
                 
@@ -316,11 +310,8 @@ namespace Tawtheef.Infrastructure
                 services.AddHostedService<JobAutoClosureService>();
             }
 
-            private void AddOperationHttpClients(IConfiguration configuration)
+            private void AddOperationHttpClients()
             {
-                // HR settings
-                services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
-
                 // ===== Employee Directory =====
                 services.AddHttpClient<IEmployeeDirectoryClient, EmployeeDirectoryClient>((sp, client) =>
                 {
