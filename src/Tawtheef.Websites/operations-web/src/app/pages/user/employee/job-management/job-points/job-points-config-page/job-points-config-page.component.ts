@@ -257,7 +257,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-    if (!this.canManageJobs()) return;
+    if (!this.canManagePoints()) return;
     if (!this.areAllCategoriesValid()) {
       this.notificationService.warn(
         this.translationService.instant('JOB_POINTS.VALIDATION.DETAILS_EXCEED_MAIN')
@@ -313,7 +313,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   }
 
   approvePoints(): void {
-    if (!this.canManageJobs()) return;
+    if (!this.canApprovePoints()) return;
     if (!this.isFinalApprovalAvailable) {
       this.notificationService.warn(
         this.translationService.instant('JOB_POINTS.VALIDATION.CANNOT_APPROVE')
@@ -369,7 +369,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
                   this.isFinalApprovalAvailable = false;
                   this.isLoading = false;
 
-                  this.router.navigate([routes.employee.JobDetails]);
+                  this.router.navigate([routes.employee.JobList]);
                   this.cdr.detectChanges();
                 },
                 error: () => {
@@ -456,7 +456,11 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     this.activeTab = '0';
   }
 
-  canManageJobs(): boolean {
+  canApprovePoints(): boolean {
+    return this.authService.hasPermission(Permissions.Jobs.PointsApprove);
+  }
+
+  canManagePoints(): boolean {
     return this.authService.hasPermission(Permissions.Jobs.Manage);
   }
 }

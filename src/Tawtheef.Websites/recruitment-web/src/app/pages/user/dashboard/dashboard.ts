@@ -3,15 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
-
-import {
-  CandidateDashboardService,
-  JOB_INVITATION_STATUSES,
-  ACTION_CONFIGS,
-  InvitationStatus,
-  STATUS_PILL_CLASSES,
-  TYPE_BADGE_CLASSES,
-} from './services/candidate-dashboard.service';
 import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
 import {Select} from 'primeng/select';
 import {CandidateInvitationFilters} from './models/candidate-invitation-filters';
@@ -22,12 +13,10 @@ import {TableModule} from 'primeng/table';
 import {routes} from '../../../routes/routes';
 import { AuthService } from '../../../core/auth/auth.service';
 import { GUID } from '../../../shared/types/guid.type';
-
-type ActionConfig = {
-  showApply: boolean;
-  showView: boolean;
-  showDetails: boolean;
-};
+import { ActionConfig } from './types/action-config.type';
+import { STATUS_PILL_CLASSES, TYPE_BADGE_CLASSES, ACTION_CONFIGS, JOB_INVITATION_STATUSES } from './constants/constants';
+import { CandidateDashboardService } from './services/candidate-dashboard.service';
+import { InvitationStatus } from './types/invitation-status.type';
 
 @Component({
   selector: 'app-dashboard',
@@ -125,8 +114,8 @@ export class Dashboard implements OnInit {
     return this.candidateService.invitationStatistics()?.newInvitations || 0;
   }
 
-  getUnderReviewCount(): number {
-    return this.candidateService.invitationStatistics()?.underReview || 0;
+  getSubmittedCount(): number {
+    return this.candidateService.invitationStatistics()?.applied || 0;
   }
 
   getWithdrawnCount(): number {

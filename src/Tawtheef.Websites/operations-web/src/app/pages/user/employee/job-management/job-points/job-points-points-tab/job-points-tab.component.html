@@ -432,6 +432,7 @@
         <i class="fa fa-arrow-right" faDirArrow="start"></i>
         {{ 'JOB_POINTS.MAIN_ELEMENTS.PREVIOUS' | translate }}
       </button>
+      @if(!job?.jobPoints?.isApproved){
       <button
         type="button"
         class="primary-pill"
@@ -440,6 +441,7 @@
       >
         {{ 'JOB_POINTS.POINTS_TAB.SAVE_POINTS' | translate }}
       </button>
+    }
     </div>
   </form>
 </div>

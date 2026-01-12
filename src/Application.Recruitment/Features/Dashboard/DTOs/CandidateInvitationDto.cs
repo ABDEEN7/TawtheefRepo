@@ -10,5 +10,6 @@ public class CandidateInvitationsDto
     public required string JobCategory { get; set; }
     public required string JobCategoryBackendName { get; set; }
     public required DropdownOptions InvitationStatus { get; set; }
-    public DateOnly CreatedDate { get; set; }
+    
+    public DateTimeOffset CreatedDate { get; set; }
 }
