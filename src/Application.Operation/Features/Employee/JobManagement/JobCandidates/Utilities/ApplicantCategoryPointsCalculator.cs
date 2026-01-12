@@ -1,7 +1,7 @@
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Utilities;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 
 internal static class ApplicantCategoryPointsCalculator
 {

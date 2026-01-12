@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.Job.Queries;
+using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
@@ -7,7 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Queries;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetSkillByMajorQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IQueryHandler<GetSkillByMajorQuery, IResult<List<DropdownOptions>>>
 {

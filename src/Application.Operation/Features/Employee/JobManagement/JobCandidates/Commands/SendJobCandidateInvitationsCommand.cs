@@ -1,9 +1,9 @@
-using Application.Operation.Features.Employee.JobCandidates.DTOs;
-using Application.Operation.Features.Employee.JobCandidates.Models;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Cortex.Mediator.Commands;
 using FluentResults;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
 
 public sealed record SendJobCandidateInvitationsCommand(Guid JobId)
     : ICommand<IResult<SendJobCandidateInvitationsResult>>

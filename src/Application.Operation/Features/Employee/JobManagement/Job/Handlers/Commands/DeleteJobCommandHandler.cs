@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.Job.Commands;
+using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -7,7 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Commands;
 
 public class DeleteJobCommandHandler(IJobRepository jobRepository, IUnitOfWork unitOfWork)
     : ICommandHandler<DeleteJobCommand, IResult<Unit>>

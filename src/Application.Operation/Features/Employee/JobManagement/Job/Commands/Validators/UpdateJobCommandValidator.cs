@@ -3,7 +3,7 @@ using FluentValidation;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Domain.Constants;
 
-namespace Application.Operation.Features.Employee.Job.Commands.Validators;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Commands.Validators;
 
 public class UpdateJobCommandValidator : AbstractValidator<UpdateJobCommand>
 {

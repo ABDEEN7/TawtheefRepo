@@ -1,4 +1,4 @@
-﻿namespace Application.Operation.Features.Employee.Job.DTOs;
+﻿namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 
 public class JobPointConfigurationResponseDto
 {

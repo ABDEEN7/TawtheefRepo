@@ -1,5 +1,5 @@
 ﻿using Application.Operation.Common.Validations;
-using Application.Operation.Features.Employee.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;

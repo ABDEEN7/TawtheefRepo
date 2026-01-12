@@ -1,11 +1,11 @@
-using Application.Operation.Features.Employee.Job.DTOs;
-using Application.Operation.Features.Employee.Job.Queries;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using Cortex.Mediator;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Queries;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetLatestReviewQueryHnadler(IMediator mediator)
     : IQueryHandler<GetLatestReviewQuery, IResult<JobReviewResponseDto>>

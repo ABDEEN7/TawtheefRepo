@@ -1,8 +1,8 @@
 using Application.Operation.Common.Repositories;
-using Application.Operation.Features.Employee.JobCandidates.DTOs;
-using Application.Operation.Features.Employee.JobCandidates.Queries;
-using Application.Operation.Features.Employee.JobCandidates.Services.Interfaces;
-using Application.Operation.Features.Employee.JobCandidates.Utilities;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Handlers.Queries;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Handlers.Queries;
 
 public sealed class GetJobCandidatesQueryHandler(
     IUnitOfWork unitOfWork,

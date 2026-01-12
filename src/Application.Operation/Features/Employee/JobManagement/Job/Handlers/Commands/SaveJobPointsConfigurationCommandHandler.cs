@@ -1,6 +1,6 @@
 using Application.Operation.Common.Repositories;
-using Application.Operation.Features.Employee.Job.Commands;
-using Application.Operation.Features.Employee.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.Commands;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using MapsterMapper;
@@ -8,7 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Commands;
 
 public class SaveJobPointsConfigurationCommandHandler(
     IJobPointsConfigurationsRepository jobPointsRepository,

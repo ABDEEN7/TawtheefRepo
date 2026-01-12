@@ -1,4 +1,4 @@
-namespace Application.Operation.Features.Employee.JobInvitationSummaryDetails.DTOs;
+namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
 
 public sealed class JobInvitationSummaryDetailsStatsDto
 {

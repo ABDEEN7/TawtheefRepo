@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobInvitationSummary.Queries;
-using Application.Operation.Features.Employee.JobInvitationSummaryDetails.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;

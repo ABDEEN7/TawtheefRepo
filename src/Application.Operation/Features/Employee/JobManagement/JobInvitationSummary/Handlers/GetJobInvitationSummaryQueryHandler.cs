@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobInvitationSummary.DTOs;
-using Application.Operation.Features.Employee.JobInvitationSummary.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
@@ -8,7 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 
-namespace Application.Operation.Features.Employee.JobInvitationSummary.Handlers;
+namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Handlers;
 
 public sealed class GetJobInvitationSummaryQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
     : IQueryHandler<GetJobInvitationSummaryQuery, IResult<PaginatedResult<JobInvitationSummaryDto>>>

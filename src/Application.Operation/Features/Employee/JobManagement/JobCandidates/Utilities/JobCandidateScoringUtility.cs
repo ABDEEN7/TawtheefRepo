@@ -1,9 +1,9 @@
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Serilog;
-using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Models;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Utilities;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 
 internal static class JobCandidateScoringUtility
 {

@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Application.Operation.Features.Employee.Job.Commands;
-using Application.Operation.Features.Employee.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.Commands;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.SaveOperation;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
@@ -15,7 +15,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Commands;
 
 public sealed class SaveJobReviewCommandHandler(
     IUnitOfWork uow,

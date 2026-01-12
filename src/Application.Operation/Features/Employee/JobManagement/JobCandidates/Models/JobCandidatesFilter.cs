@@ -1,4 +1,4 @@
-namespace Application.Operation.Features.Employee.JobCandidates.Models;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 
 public sealed record JobCandidatesFilter(
     string? SearchTerm,

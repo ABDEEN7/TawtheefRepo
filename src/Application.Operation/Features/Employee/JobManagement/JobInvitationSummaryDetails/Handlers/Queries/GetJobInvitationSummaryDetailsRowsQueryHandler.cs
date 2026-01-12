@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobInvitationSummaryDetails.DTOs;
-using Application.Operation.Features.Employee.JobInvitationSummaryDetails.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
@@ -12,7 +12,7 @@ using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 
-namespace Application.Operation.Features.Employee.JobInvitationSummaryDetails.Handlers.Queries;
+namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Handlers.Queries;
 
 public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
     IUnitOfWork unitOfWork,

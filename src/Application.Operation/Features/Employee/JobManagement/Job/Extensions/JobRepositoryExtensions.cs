@@ -3,7 +3,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using jobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
-namespace Application.Operation.Features.Employee.Job.Extensions;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Extensions;
 
 public static class JobRepositoryExtensions
 {

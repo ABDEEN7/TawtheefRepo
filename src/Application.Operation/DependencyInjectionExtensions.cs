@@ -1,5 +1,5 @@
-﻿using Application.Operation.Features.Employee.JobCandidates.Services;
-using Application.Operation.Features.Employee.JobCandidates.Services.Interfaces;
+﻿using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Cortex.Mediator.DependencyInjection;
 using Mapster;
 using Microsoft.Extensions.Configuration;

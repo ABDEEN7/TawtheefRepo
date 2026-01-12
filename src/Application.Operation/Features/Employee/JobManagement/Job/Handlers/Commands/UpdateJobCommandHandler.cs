@@ -1,6 +1,6 @@
 using Application.Operation.Common.Repositories;
-using Application.Operation.Features.Employee.Job.Commands;
-using Application.Operation.Features.Employee.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.Commands;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Commands;
 
 public class UpdateJobCommandHandler(
     IJobRepository jobRepository,

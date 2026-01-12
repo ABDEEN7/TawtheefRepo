@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.JobInvitationSummary.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.DTOs;
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Lookups;

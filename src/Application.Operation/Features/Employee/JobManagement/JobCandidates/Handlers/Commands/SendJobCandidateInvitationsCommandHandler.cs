@@ -1,9 +1,9 @@
 using Application.Operation.Common.Repositories;
-using Application.Operation.Features.Employee.JobCandidates.Commands;
-using Application.Operation.Features.Employee.JobCandidates.DTOs;
-using Application.Operation.Features.Employee.JobCandidates.Models;
-using Application.Operation.Features.Employee.JobCandidates.Services.Interfaces;
-using Application.Operation.Features.Employee.JobCandidates.Utilities;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Handlers.Commands;
 
 public sealed class SendJobCandidateInvitationsCommandHandler(
     IUnitOfWork unitOfWork,

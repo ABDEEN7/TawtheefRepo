@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.Job.Queries;
+using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using Application.Operation.Features.Employee.OrganizationStructures.Commands;
 using Application.Operation.Features.Employee.OrganizationStructures.Queries;
 using Cortex.Mediator;

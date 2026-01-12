@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobCandidates.Commands;
-using Application.Operation.Features.Employee.JobCandidates.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;

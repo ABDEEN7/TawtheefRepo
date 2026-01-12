@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Application.Operation.Features.Employee.Job.DTOs;
+namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 
 public sealed class SaveJobReviewRequestDto
 {

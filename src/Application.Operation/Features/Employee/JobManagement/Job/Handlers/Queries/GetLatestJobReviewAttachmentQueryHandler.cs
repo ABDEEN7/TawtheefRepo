@@ -1,5 +1,5 @@
 using Application.Operation.Common.Repositories;
-using Application.Operation.Features.Employee.Job.Queries;
+using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
@@ -8,7 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Queries;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetLatestJobReviewAttachmentQueryHandler(IJobReviewAttachmentRepository jobReviewAttachmentRepository, IMediaUrlResolver media, IMapper mapper)
     : IQueryHandler<GetLatestJobReviewAttachmentQuery, IResult<FileRefDto?>>

@@ -1,9 +1,9 @@
-using Application.Operation.Features.Employee.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using FluentResults;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Application.Operation.Features.Employee.Job.Utilities;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Utilities;
 
 internal static class JobPointsValidationUtility
 {

@@ -1,12 +1,12 @@
-using Application.Operation.Features.Employee.JobCandidates.Models;
-using Application.Operation.Features.Employee.JobCandidates.Services.Interfaces;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Services;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 
 public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCandidatesQueryBuilderService
 {

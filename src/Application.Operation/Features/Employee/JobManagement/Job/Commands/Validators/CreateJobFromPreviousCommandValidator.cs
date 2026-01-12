@@ -2,7 +2,7 @@ using Application.Operation.Common.Validations;
 using FluentValidation;
 using Tawtheef.Domain.Constants;
 
-namespace Application.Operation.Features.Employee.Job.Commands.Validators;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Commands.Validators;
 
 public class CreateJobFromPreviousCommandValidator : AbstractValidator<CreateJobFromPreviousCommand>
 {

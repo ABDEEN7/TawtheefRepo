@@ -1,11 +1,11 @@
-using Application.Operation.Features.Employee.Job.Queries;
+using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Queries;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetJobCountByJobStatsQueryHandler(IUnitOfWork unitOfWork)
     : IQueryHandler<GetJobCountByJobStatsQuery, IResult<int>>

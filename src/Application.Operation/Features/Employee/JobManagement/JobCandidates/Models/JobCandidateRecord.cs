@@ -1,7 +1,7 @@
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Models;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 
 public record JobCandidateRecord
 {

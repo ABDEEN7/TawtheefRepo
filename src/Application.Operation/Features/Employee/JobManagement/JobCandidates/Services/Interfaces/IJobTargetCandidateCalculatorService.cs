@@ -1,4 +1,4 @@
-namespace Application.Operation.Features.Employee.JobCandidates.Services.Interfaces;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 
 public interface IJobTargetCandidateCalculatorService
 {

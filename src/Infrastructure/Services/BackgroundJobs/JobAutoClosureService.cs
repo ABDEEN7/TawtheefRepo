@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.Job.Commands;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Cortex.Mediator;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;

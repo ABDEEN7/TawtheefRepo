@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Tawtheef.Domain.Constants;
 
-namespace Application.Operation.Features.Employee.Job.DTOs;
+namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 
 public class JobConditionRequestDto
 {

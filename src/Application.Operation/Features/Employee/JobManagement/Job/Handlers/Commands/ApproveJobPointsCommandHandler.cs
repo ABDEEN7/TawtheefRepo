@@ -1,6 +1,6 @@
 using Application.Operation.Common.Repositories;
-using Application.Operation.Features.Employee.Job.Commands;
-using Application.Operation.Features.Employee.Job.Utilities;
+using Application.Operation.Features.Employee.JobManagement.Job.Commands;
+using Application.Operation.Features.Employee.JobManagement.Job.Utilities;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Commands;
 
 public class ApproveJobPointsCommandHandler(
     IJobPointsRepository jobPointsRepository,

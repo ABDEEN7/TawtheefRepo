@@ -1,6 +1,6 @@
 using Application.Operation.Common.Repositories;
-using Application.Operation.Features.Employee.Job.DTOs;
-using Application.Operation.Features.Employee.Job.Queries;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
@@ -8,7 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Domain.Constants;
 
-namespace Application.Operation.Features.Employee.Job.Handlers.Queries;
+namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetJobCopyTemplateQueryHandler(
     IJobRepository jobRepository,

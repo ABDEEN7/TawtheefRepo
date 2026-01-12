@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.Job.Commands;
-using Application.Operation.Features.Employee.Job.DTOs;
-using Application.Operation.Features.Employee.Job.Queries;
+using Application.Operation.Features.Employee.JobManagement.Job.Commands;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;

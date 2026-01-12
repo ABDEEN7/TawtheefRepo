@@ -1,6 +1,6 @@
 using Tawtheef.Application.Common.Models.Pagination;
 
-namespace Application.Operation.Features.Employee.JobCandidates.DTOs;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 
 public sealed class JobCandidatesCombinedDto
 {

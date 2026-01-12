@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.Operation.Features.Employee.Job.DTOs;
+namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 
 public class GetJobsQueryDto
 {

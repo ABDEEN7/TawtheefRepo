@@ -1,6 +1,6 @@
 using Tawtheef.Application.Common.Models;
 
-namespace Application.Operation.Features.Employee.JobInvitationSummary.DTOs;
+namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.DTOs;
 
 public class JobInvitationSummaryDto
 {

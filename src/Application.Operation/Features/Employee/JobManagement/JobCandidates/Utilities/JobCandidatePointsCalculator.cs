@@ -1,8 +1,8 @@
-using Application.Operation.Features.Employee.JobCandidates.Models;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using ILogger = Serilog.ILogger;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Utilities;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 
 internal static class JobCandidatePointsCalculator
 {

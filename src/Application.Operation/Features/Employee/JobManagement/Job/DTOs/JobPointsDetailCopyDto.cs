@@ -1,6 +1,6 @@
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Application.Operation.Features.Employee.Job.DTOs;
+namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 
 public class JobPointsDetailCopyDto
 {

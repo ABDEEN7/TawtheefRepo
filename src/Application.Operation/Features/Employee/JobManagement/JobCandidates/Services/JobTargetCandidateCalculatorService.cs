@@ -1,10 +1,10 @@
-using Application.Operation.Features.Employee.JobCandidates.Services.Interfaces;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
-namespace Application.Operation.Features.Employee.JobCandidates.Services;
+namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 
 public class JobTargetCandidateCalculatorService(IUnitOfWork unitOfWork) : IJobTargetCandidateCalculatorService
 {

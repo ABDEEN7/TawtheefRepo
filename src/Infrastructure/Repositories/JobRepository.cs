@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.Job.Extensions;
+using Application.Operation.Features.Employee.JobManagement.Job.Extensions;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
