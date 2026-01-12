@@ -7,29 +7,31 @@ namespace Tawtheef.Infrastructure.Data.Interceptors;
 
 public class DispatchDomainEventsInterceptor(IMediator mediator) : SaveChangesInterceptor
 {
-    public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+    public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
     {
         DispatchDomainEvents(eventData.Context).GetAwaiter().GetResult();
 
-        return base.SavingChanges(eventData, result);
+        return base.SavedChanges(eventData, result);
     }
 
-    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
-        InterceptionResult<int> result, CancellationToken cancellationToken = default)
+    public override async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result,
+        CancellationToken cancellationToken = default)
     {
-        await DispatchDomainEvents(eventData.Context);
+        await DispatchDomainEvents(eventData.Context, cancellationToken);
 
-        return await base.SavingChangesAsync(eventData, result, cancellationToken);
+        return await base.SavedChangesAsync(eventData, result, cancellationToken);
     }
 
-    private async Task DispatchDomainEvents(DbContext? context)
+    private async Task DispatchDomainEvents(DbContext? context, CancellationToken cancellationToken = default)
     {
         if (context == null) return;
 
         var entities = context.ChangeTracker
-            .Entries<EventEntity>()
-            .Where(e => e.Entity.DomainEvents.Any())
-            .Select(e => e.Entity).ToList();
+            .Entries()
+            .Select(e => e.Entity)
+            .OfType<IHasDomainEvents>()
+            .Where(e => e.DomainEvents.Any())
+            .ToList();
 
         var domainEvents = entities
             .SelectMany(e => e.DomainEvents)
@@ -38,6 +40,6 @@ public class DispatchDomainEventsInterceptor(IMediator mediator) : SaveChangesIn
         entities.ForEach(e => e.ClearDomainEvents());
 
         foreach (var domainEvent in domainEvents)
-            await mediator.PublishAsync(domainEvent);
+            await mediator.PublishAsync(domainEvent, cancellationToken);
     }
 }
