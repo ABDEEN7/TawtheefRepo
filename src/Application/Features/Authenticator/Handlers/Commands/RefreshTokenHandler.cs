@@ -1,13 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Validations;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Configurations.Settings;
@@ -17,6 +18,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
 {
     public class RefreshTokenHandler(
+        ILogger logger,
         UserManager<User> userManager,
         ITokenService tokenService,
         ISessionService sessions,
@@ -78,47 +80,28 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
         private Result<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
         {
             var settings = jwtSettings.Value;
-            if (string.IsNullOrWhiteSpace(settings.SigningKey))
-                return Result.Fail<ClaimsPrincipal>("JWT key is missing");
-
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidAudience = settings.Audience,
-                ValidIssuer = settings.Issuer,
-                ValidateIssuer = true,           // ensure issuer matches
-                ValidateAudience = true,         // ensure audience matches
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.SigningKey)),
-                ValidateLifetime = false,        // allow expired tokens (we�re just reading claims)
-                ClockSkew = TimeSpan.FromMinutes(1)
-            };
-
+            var parameters = settings.ToTokenValidationParameters();
+            parameters.ValidateLifetime = false; // allow expired
+            parameters.ClockSkew = TimeSpan.FromMinutes(1);
+            
             var tokenHandler = new JwtSecurityTokenHandler();
 
             try
             {
-                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+                var principal = tokenHandler.ValidateToken(token, parameters, out var securityToken);
 
-                if (securityToken is not JwtSecurityToken jwtSecurityToken)
+                if (securityToken is not JwtSecurityToken jwt)
                     return Result.Fail<ClaimsPrincipal>(ErrorsCodes.InvalidAccessToken);
 
-                // Accept common alg ids
-                var alg = jwtSecurityToken.Header.Alg;
-                var isAlgorithmValid =
-                    alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase) ||
-                    alg.Equals("http://www.w3.org/2001/04/xmldsig-more#hmac-sha256", StringComparison.OrdinalIgnoreCase);
+                if (!jwt.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase))
+                    return Result.Fail<ClaimsPrincipal>(ErrorsCodes.InvalidAlgorithm);
 
-                return !isAlgorithmValid
-                    ? Result.Fail<ClaimsPrincipal>(ErrorsCodes.InvalidAlgorithm)
-                    : principal;
-            }
-            catch (SecurityTokenException ex)
-            {
-                return Result.Fail<ClaimsPrincipal>($"Token validation failed: {ex.Message}");
+                return principal;
             }
             catch (Exception ex)
             {
-                return Result.Fail<ClaimsPrincipal>($"An error occurred while validating the token: {ex.Message}");
+                logger.Error(ex, "Failed to validate expired token");
+                return Result.Fail<ClaimsPrincipal>(ErrorsCodes.InvalidAccessToken);
             }
         }
     }
