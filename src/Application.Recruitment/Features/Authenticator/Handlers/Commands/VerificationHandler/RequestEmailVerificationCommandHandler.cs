@@ -6,7 +6,6 @@ using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Users;
@@ -15,7 +14,6 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Verif
 
 public class RequestEmailVerificationCommandHandler(
     IUnitOfWork unitOfWork,
-    IEmailSender emailSender,
     UserManager<User> userManager)
     : ICommandHandler<RequestEmailVerificationCommand, IResult<Unit>>
 {
@@ -41,13 +39,9 @@ public class RequestEmailVerificationCommandHandler(
             ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(30)
         };
 
+        entity.Send();
         await unitOfWork.GetEntityRepository<ContactVerification>().AddAsync(entity);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        var subject = "Email verification";
-        var body = $"Your verification code is: {code}";
-        _ = emailSender.SendAsync(request.Email, subject, body, cancellationToken);
-
         return Result.Ok(Unit.Value);
     }
 

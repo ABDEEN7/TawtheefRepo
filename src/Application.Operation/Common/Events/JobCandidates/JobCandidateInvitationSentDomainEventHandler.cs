@@ -1,12 +1,9 @@
 using Cortex.Mediator.Notifications;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
 
 namespace Application.Operation.Common.Events.JobCandidates;
 
-public sealed class JobCandidateInvitationSentDomainEventHandler(
-    IEmailSender emailSender,
-    ISmsSender smsSender)
+public sealed class JobCandidateInvitationSentDomainEventHandler
     : INotificationHandler<JobCandidateInvitationSentDomainEvent>
 {
     public async Task Handle(JobCandidateInvitationSentDomainEvent notification, CancellationToken ct)
@@ -18,6 +15,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(
 
         if (!string.IsNullOrWhiteSpace(notification.Email))
         {
+            //TODO: should be add to notification table
             await emailSender.SendAsync(
                 notification.Email,
                 "Job Invitation",
@@ -27,6 +25,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(
 
         if (!string.IsNullOrWhiteSpace(notification.PhoneNumber))
         {
+            //TODO: should be add to notification table
             await smsSender.SendAsync(
                 notification.PhoneNumber,
                 body,

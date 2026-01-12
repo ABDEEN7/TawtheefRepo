@@ -1,3 +1,0 @@
-﻿namespace Tawtheef.Infrastructure.Templates.EmailVerificationSuccess;
-
-public record EmailVerificationSuccessModel(string UserName);

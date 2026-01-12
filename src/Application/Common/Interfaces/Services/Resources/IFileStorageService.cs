@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace Tawtheef.Application.Common.Interfaces.Services;
+namespace Tawtheef.Application.Common.Interfaces.Services.Resources;
 
 
 public interface IFileStorageService

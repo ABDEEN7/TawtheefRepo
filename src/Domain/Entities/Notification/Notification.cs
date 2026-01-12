@@ -12,8 +12,16 @@ public enum NotificationStatus { Pending = 1, Queued = 2, Sent = 3, Failed = 4, 
 public class Notification : EventEntity
 {
     public Guid? UserId { get; private set; }
+    /// <summary>
+    /// Email address split by comma.
+    /// </summary>
     [MaxLength(200)]
     public string? ToAddress { get; private set; }
+    /// <summary>
+    /// Email address split by comma.
+    /// </summary>
+    [MaxLength(200)]
+    public string? CcAddress { get; private set; }
     public NotificationChannel Channel { get; private set; }
     [MaxLength(100)]
     public string TemplateKey { get; private set; } = string.Empty;
@@ -29,13 +37,17 @@ public class Notification : EventEntity
 
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,
-        string? toAddress, string? subject, string body, string? payloadJson)
+        string? toAddress, string? subject, string? body, string? payloadJson)
     {
         return new Notification
         {
-            Channel = channel, TemplateKey = templateKey,
-            UserId = userId, ToAddress = toAddress,
-            Subject = subject, Body = body, PayloadJson = payloadJson,
+            Channel = channel, 
+            TemplateKey = templateKey,
+            UserId = userId, 
+            ToAddress = toAddress,
+            Subject = subject, 
+            Body = body, 
+            PayloadJson = payloadJson,
             Status = NotificationStatus.Pending
         };
     }

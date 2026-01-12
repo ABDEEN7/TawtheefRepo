@@ -6,6 +6,7 @@ using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
+using Application.Recruitment.Templates.ContactVerificationSent;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
@@ -30,6 +31,9 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
+using Tawtheef.Application.Common.Interfaces.Services.Notifications;
+using Tawtheef.Application.Common.Interfaces.Services.Resources;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Configurations.Settings;
@@ -46,6 +50,7 @@ using Tawtheef.Infrastructure.Services.Localization;
 using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.StorageServices;
 using Tawtheef.Infrastructure.Services.Validations;
+using Tawtheef.Infrastructure.Utils;
 
 namespace Tawtheef.Infrastructure
 {
@@ -176,10 +181,10 @@ namespace Tawtheef.Infrastructure
                 services.AddSingleton<IEmailQueue, EmailQueue>();
                 services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
                 services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
-                services.AddScoped<IEmailService, EmailService>();
 
                 services.AddScoped<ISmsSender, HodhodSmsSender>();
                 services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
+                services.AddScoped<IEmailService, EmailService>();
             }
 
             private void AddStorageCommon(IConfiguration configuration)
@@ -223,6 +228,7 @@ namespace Tawtheef.Infrastructure
             {
                 // Recruitment-only options + http clients
                 services.AddRecruitmentHttpClients(configuration);
+                services.AddRecruitmentNotification();
 
                 // Recruitment-only domain services
                 services.AddScoped<IVerificationService, VerificationService>();
@@ -273,6 +279,12 @@ namespace Tawtheef.Infrastructure
                         };
                     });
             }
+            
+            private void AddRecruitmentNotification()
+            {
+                //TODO: registeration all template model here
+                NotificationTemplateRegistry.Register<ContactVerificationSentModel>(nameof(ContactVerificationSent));
+            }
         }
 
         #endregion
@@ -285,6 +297,7 @@ namespace Tawtheef.Infrastructure
             {
                 // Operation-only settings + http clients
                 services.AddOperationHttpClients();
+                services.AddOperationNotification();
 
                 AddValidatedOptions<AzureAuthenticationSettings>(services, configuration, AzureAuthenticationSettings.SectionName);
                 
@@ -319,6 +332,10 @@ namespace Tawtheef.Infrastructure
                     client.BaseAddress = new Uri(opt.BaseUrl);
                     client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
                 });
+            }
+
+            private void AddOperationNotification()
+            {
             }
         }
 

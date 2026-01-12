@@ -1,9 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Models.Notification;
-using Tawtheef.Infrastructure.Templates.EmailConfirmation;
-using Tawtheef.Infrastructure.Templates.EmailVerificationSuccess;
-using Tawtheef.Infrastructure.Templates.ResetPassword;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
@@ -22,37 +19,12 @@ public partial class EmailService(
         var env = new EmailEnvelope(to, cc, subject, html, plainText);
         await emailQueue.EnqueueAsync(env, ct);
     }
-    private async Task EnqueueUsingHtml(
-        string html, string subject,
-        List<string> to, List<string>? cc = null,
-        CancellationToken ct = default)
-    {
-        var plainText = HtmlAgilityPackRegex().Replace(html, string.Empty);
-        var env = new EmailEnvelope(to, cc, subject, html, plainText);
-        await emailQueue.EnqueueAsync(env, ct);
-    }
-    
-    public Task SendConfirmationLinkEmailAsync(string email, string? recipientName, string link)
-        => EnqueueUsingTemplate("EmailConfirmation", "Please Confirm Your Email Address",
-            [email], new EmailConfirmationModel(link,recipientName));
-
-    public Task SendEmailVerificationEmailSuccessAsync(string email, string userName)
-        => EnqueueUsingTemplate("EmailVerificationSuccess", "✅ Email Verification Successful",
-            [email], new EmailVerificationSuccessModel(userName));
-
-    public Task SendResetPassword(string email, string link)
-        => EnqueueUsingTemplate("ResetPassword", "🔐 Reset Your Password",
-            [email], new ResetPasswordModel(link));
     
     public Task SendTemplateAsync(
         string templateKey, string subject, List<string> to, object model,
         List<string>? cc = null, CancellationToken ct = default)
         => EnqueueUsingTemplate(templateKey, subject, to, model, cc, ct);
 
-    public Task SendHtmlAsync(
-        string subject, List<string> to, string html,
-        List<string>? cc = null, CancellationToken ct = default)
-        => EnqueueUsingHtml(html, subject, to, cc, ct);
     
     [GeneratedRegex("<.*?>")]
     private static partial Regex HtmlAgilityPackRegex();

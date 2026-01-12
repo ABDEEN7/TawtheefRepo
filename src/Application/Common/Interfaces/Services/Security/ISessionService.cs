@@ -1,4 +1,4 @@
-namespace Tawtheef.Application.Common.Interfaces.Services;
+namespace Tawtheef.Application.Common.Interfaces.Services.Security;
 public sealed record DeviceInfo(string? Ip, string? UserAgent, string? Platform, string? AppVersion);
 
 public interface ISessionService

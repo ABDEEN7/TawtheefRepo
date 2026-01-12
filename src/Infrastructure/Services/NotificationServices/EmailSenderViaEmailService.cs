@@ -1,16 +1,34 @@
-using FluentResults;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Notifications;
+using Tawtheef.Application.Common.Models.Notification;
+using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Infrastructure.Utils;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
 public sealed class EmailSenderViaEmailService(IEmailService emailService) : IEmailSender
 {
-    public async Task<(bool ok, string? providerId, IReadOnlyList<IError>? error)>
-        SendAsync(string to, string? subject, string bodyHtml, CancellationToken ct)
+    public async Task<NotificationResponse> SendAsync(Notification notification, CancellationToken ct)
     {
-        await emailService.SendHtmlAsync(
-            subject ?? "Notification", [to], bodyHtml, null, ct);
-        return (true, Guid.NewGuid().ToString("N"), null);
+        
+        if (string.IsNullOrWhiteSpace(notification.ToAddress))
+            return NotificationResponse.Failure("TO_ADDRESS_REQUIRED");
+
+        var to = notification.ToAddress
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+
+        var cc = (notification.CcAddress ?? string.Empty)
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+
+        // Body is JSON → model depends on TemplateKey
+        var model = NotificationBodyDeserializer.DeserializeBody(notification.TemplateKey, notification.PayloadJson);
+
+        await emailService.SendTemplateAsync(
+            notification.TemplateKey, notification.Subject ?? "Tawtheef",
+            notification.ToAddress!.Split(';').ToList(), model, notification.CcAddress!.Split(';').ToList(), ct);
+
+        return NotificationResponse.Success(notification.Id.ToString());
     }
 }

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Events.User;
 
 namespace Tawtheef.Domain.Entities.Auth;
 
@@ -30,4 +31,9 @@ public class ContactVerification : EventEntity
 
     public bool IsUsed => UsedAt.HasValue;
     public bool IsExpired => DateTimeOffset.UtcNow > ExpiresAt;
+
+    public void Send()
+    {
+        AddDomainEvent(new ContactVerificationSentEvent(UserId, Type, Destination, Code));
+    }
 }

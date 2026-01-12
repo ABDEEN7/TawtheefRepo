@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
@@ -20,13 +20,11 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Ha
 
 public sealed class SendJobCandidateInvitationsCommandHandler(
     IUnitOfWork unitOfWork,
-    IEmailSender emailSender,
     IJobRepository jobRepository,
     IUserProfileRepository userProfileRepository,
     IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
     IJobRequirementsService jobRequirementsService,
     IJobCandidatesQueryBuilderService jobCandidatesQueryBuilderService,
-    ISmsSender smsSender,
     ILogger logger)
     : ICommandHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
@@ -181,10 +179,12 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
                 : $"You have been invited to apply for {jobTitle} on Tawtheef.";
 
             var email = candidate.Applicant?.Email;
+            
+            //TODO: should be used Event
             if (!string.IsNullOrWhiteSpace(email))
             {
-                var emailResult = await emailSender.SendAsync(email, "Job Invitation", body, cancellationToken);
-                if (emailResult.ok) sentEmailCount++;
+                var emailResult = await emailSender.SendAsync(new Notification(), cancellationToken);
+                if (emailResult.Ok) sentEmailCount++;
             }
 
             var phone = candidate.Applicant?.PhoneNumber;
@@ -192,7 +192,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
                 continue;
 
             var smsResult = await smsSender.SendAsync(phone, body, cancellationToken);
-            if (smsResult.ok) sentSmsCount++;
+            if (smsResult.Ok) sentSmsCount++;
         }
 
         var updatedCount = await unitOfWork.SaveChangesAsync(cancellationToken);

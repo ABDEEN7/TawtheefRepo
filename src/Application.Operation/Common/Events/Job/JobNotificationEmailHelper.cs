@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Common.Events.Job;
@@ -7,13 +6,12 @@ namespace Application.Operation.Common.Events.Job;
 internal static class JobNotificationEmailHelper
 {
     internal static async Task SendToHrAdminsAsync(
-        IEmailSender emailSender,
         UserManager<User> userManager,
         string subject,
         string body,
         CancellationToken ct)
     {
-        var users = await userManager.GetUsersInRoleAsync("HRAdmin");
+        var users = await userManager.GetUsersInRoleAsync(nameof(SystemRoleIds.Employee));
         if (users.Count == 0)
             return;
 
@@ -24,6 +22,7 @@ internal static class JobNotificationEmailHelper
                 continue;
             }
 
+            //TODO: should be used Event
             await emailSender.SendAsync(user.Email, subject, body, ct);
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Infrastructure.Services.Identity;

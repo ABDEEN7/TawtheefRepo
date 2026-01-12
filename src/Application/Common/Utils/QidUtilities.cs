@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Tawtheef.Application.Common.Utilities;
+namespace Tawtheef.Application.Common.Utils;
 
 public static class QidUtilities
 {

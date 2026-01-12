@@ -1,6 +1,6 @@
 ﻿using Tawtheef.Domain.Entities.Users;
 
-namespace Tawtheef.Application.Common.Interfaces.Services;
+namespace Tawtheef.Application.Common.Interfaces.Services.Security;
 
 public interface IPasswordVerifier
 {

@@ -1,13 +1,11 @@
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
 
 namespace Application.Operation.Common.Events.Job;
 
 public sealed class JobCreatedDomainEventHandler(
-    IEmailSender emailSender,
     UserManager<User> userManager)
     : INotificationHandler<JobCreatedDomainEvent>
 {
@@ -21,6 +19,7 @@ public sealed class JobCreatedDomainEventHandler(
             Please log in to the Tawtheef system to review the job details.
             """;
 
+        //TODO: should be add to notification table
         await JobNotificationEmailHelper.SendToHrAdminsAsync(
             emailSender,
             userManager,

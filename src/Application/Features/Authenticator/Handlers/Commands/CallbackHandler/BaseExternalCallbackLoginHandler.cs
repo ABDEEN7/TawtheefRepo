@@ -1,5 +1,5 @@
 using FluentResults;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;

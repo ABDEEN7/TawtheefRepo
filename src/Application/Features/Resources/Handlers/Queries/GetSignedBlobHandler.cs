@@ -2,11 +2,10 @@ using System.Security.Cryptography;
 using System.Text;
 using Cortex.Mediator.Queries;
 using FluentResults;
-
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Application.Features.Resources.Queries;
 using Tawtheef.Domain.Configurations.Settings;

@@ -7,7 +7,6 @@ using Tawtheef.Domain.Events.Operation.Employee.Job;
 namespace Application.Operation.Common.Events.Job;
 
 public sealed class JobUpdatedDomainEventHandler(
-    IEmailSender emailSender,
     ILocalizationService localizationService,
     UserManager<User> userManager)
     : INotificationHandler<JobUpdatedDomainEvent>
@@ -21,6 +20,7 @@ public sealed class JobUpdatedDomainEventHandler(
             Please log in to the Tawtheef system to review the updated details.
             """;
 
+        //TODO: should be add to notification table
         await JobNotificationEmailHelper.SendToHrAdminsAsync(
             emailSender,
             userManager,

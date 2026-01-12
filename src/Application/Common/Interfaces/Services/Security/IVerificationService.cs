@@ -1,4 +1,4 @@
-﻿namespace Tawtheef.Application.Common.Interfaces.Services;
+﻿namespace Tawtheef.Application.Common.Interfaces.Services.Security;
 
 public interface IVerificationService
 {

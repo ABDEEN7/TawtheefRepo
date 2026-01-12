@@ -1,6 +1,6 @@
 ﻿using Tawtheef.Application.Common.Models;
 
-namespace Tawtheef.Application.Common.Interfaces.Services;
+namespace Tawtheef.Application.Common.Interfaces.Services.Security;
 
 public interface IRecaptchaService
 {
