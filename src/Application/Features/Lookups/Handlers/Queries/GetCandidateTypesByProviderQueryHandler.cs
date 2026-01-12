@@ -22,7 +22,7 @@ public sealed class GetCandidateTypesByProviderQueryHandler(
     {
         var userQid = await GetUserQidAsync(request.UserId, ct);
 
-        var candidateTypes = new List<CandidateType>();
+        List<CandidateType> candidateTypes;
         // If user doesn't have a QID, treat as non-Kawader and return provider mapping (or empty list).
         if (string.IsNullOrWhiteSpace(userQid))
         {

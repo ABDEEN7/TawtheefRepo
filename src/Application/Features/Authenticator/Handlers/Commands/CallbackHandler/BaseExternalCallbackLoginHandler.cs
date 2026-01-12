@@ -18,8 +18,9 @@ public abstract class BaseExternalCallbackLoginHandler(ILoginAuditService loginA
     protected async Task<IResult<AuthResponse>> LogFailureAsync(IEnumerable<IError> errors, 
         Guid? userId = null, Guid? userTypeId = null, CancellationToken ct = default)
     {
-        var reason = string.Join(", ", errors.Select(e => e.Message));
+        var errorList = errors.ToList();
+        var reason = string.Join(", ", errorList.Select(e => e.Message));
         await loginAudit.LogAsync(new LoginAttemptEntry(userId, userTypeId ?? DefaultUserType, Provider, false, reason), ct);
-        return Result.Fail<AuthResponse>(errors);
+        return Result.Fail<AuthResponse>(errorList);
     }
 }

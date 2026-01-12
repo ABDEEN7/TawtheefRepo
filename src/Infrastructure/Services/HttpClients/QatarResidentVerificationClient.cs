@@ -1,11 +1,11 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Application.Recruitment.Common.Interfaces.Services.HttpClients;
+using Application.Recruitment.Features.Authenticator.DTOs;
 using FluentResults;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
-using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 
@@ -28,7 +28,7 @@ public sealed class QatarResidentVerificationClient(HttpClient httpClient, ILogg
         
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Value.AccessToken);
         httpClient.DefaultRequestHeaders.Add("UserName", _settings.GiveUserName);
-        var response = await httpClient.GetAsync(BuildCustomerValidationUri(qid, phoneNumber), ct);
+        var response = await httpClient.GetAsync(BuildCustomerValidationUri(), ct);
         if (!response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync(ct);
@@ -45,36 +45,36 @@ public sealed class QatarResidentVerificationClient(HttpClient httpClient, ILogg
 
         return Result.Ok(true);
         
-        Uri BuildCustomerValidationUri(string qid, string mobileNo)
+        Uri BuildCustomerValidationUri()
         {
-            var query = $"QID={WebUtility.UrlEncode(qid)}&MobileNo={WebUtility.UrlEncode(NormalizeMobileNo(mobileNo))}";
+            var query = $"QID={WebUtility.UrlEncode(qid)}&MobileNo={WebUtility.UrlEncode(NormalizeMobileNo())}";
             return new Uri($"{_settings.VerificationPath}?{query}", UriKind.Relative);
             
-            string NormalizeMobileNo(string mobileNo) => mobileNo.StartsWith("+974") ? mobileNo[4..] : mobileNo;
+            string NormalizeMobileNo() => phoneNumber.StartsWith("+974") ? phoneNumber[4..] : phoneNumber;
         }
     }
     
     private async Task<IResult<MOIAuthResponse?>> AuthenticateAsync(CancellationToken ct = default)
     {
+        var contentResponse = string.Empty;
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post,_settings.AuthenticationPath) {
-                Content = new FormUrlEncodedContent(new Dictionary<string, string>
-                {
-                    ["grant_type"] = "password",
-                    ["username"]   = _settings.Username,
-                    ["password"]   = _settings.Password
-                })
-            };
+            using var request = new HttpRequestMessage(HttpMethod.Post,_settings.AuthenticationPath);
+            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["grant_type"] = "password",
+                ["username"]   = _settings.Username,
+                ["password"]   = _settings.Password
+            });
             using var response = await httpClient.SendAsync(request, ct);
             response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync(ct);
+            contentResponse = await response.Content.ReadAsStringAsync(ct);
             var payload = await response.Content.ReadFromJsonAsync<MOIAuthResponse>(cancellationToken: ct);
             return Result.Ok(payload);
         }
         catch(Exception ex)
         {
-            logger.Error(ex, "QatarResidentVerificationClient: Authentication failed.");
+            logger.Error("QatarResidentVerificationClient: Authentication failed. Body: {Body}", contentResponse);
             return Result.Fail<MOIAuthResponse?>(new Error("QatarResidentVerificationClient: Authentication failed.").CausedBy(ex));
         }
     }

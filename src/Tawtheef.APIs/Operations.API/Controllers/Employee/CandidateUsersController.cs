@@ -1,10 +1,10 @@
+using Application.Operation.Features.Employee.CandidateUsers.Commands;
+using Application.Operation.Features.Employee.CandidateUsers.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Application.Features.Operations.Employee.CandidateUsers.Commands;
-using Tawtheef.Application.Features.Operations.Employee.CandidateUsers.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Employee;

@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Json;
 using Cortex.Mediator;
 using FluentResults;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +17,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
+using AzureExternalCallbackLoginCommand = Application.Operation.Features.Authenticator.Commands.AzureExternalCallbackLoginCommand;
 
 namespace Operations.API.Controllers
 {

@@ -1,6 +1,5 @@
 using FluentResults;
-using Tawtheef.Application.Common.Interfaces.Validations;
-using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
+using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
@@ -35,23 +34,27 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         ProfileStep.Attachments
     ];
 
-    public Result ValidatePrerequisites(UserProfile profile, SaveProfilePrereqRequest request)
+    public Result ValidatePrerequisites(UserProfile profile, Guid candidateTypeId)
     {
-        var candidateTypeIntegrity = EnsureCandidateTypeIntegrity(profile.CandidateTypeId, request.CandidateTypeId);
+        var candidateTypeIntegrity = EnsureCandidateTypeIntegrity(profile.CandidateTypeId, candidateTypeId);
         if (candidateTypeIntegrity.IsFailed)
             return candidateTypeIntegrity;
 
         return Result.Ok();
     }
 
-    public Result ValidatePersonal(UserProfile profile, SaveProfilePersonalRequest request)
+    public Result ValidatePersonal(UserProfile profile, 
+        (string? SponsorEmployerName, string? SponsorEmployerNumber, string? SponsorCardFileName, object? SponsorCard) request)
     {
         var previousSteps = EnsurePreviousStepsCompleted(profile, ProfileStep.Personal);
         if (previousSteps.IsFailed)
             return previousSteps;
 
         var requiresSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
-        var hasSponsorInput = HasSponsorPayload(request) || profile.SponsorProfileId is not null;
+        var hasSponsorPayload = !string.IsNullOrWhiteSpace(request.SponsorEmployerName) ||
+                                !string.IsNullOrWhiteSpace(request.SponsorEmployerNumber) ||
+                                request.SponsorCard is not null || request.SponsorCardFileName is not null;
+        var hasSponsorInput = hasSponsorPayload || profile.SponsorProfileId is not null;
 
         if (requiresSponsor && !hasSponsorInput)
             return Result.Fail(ErrorsCodes.SponsorCardRequired);
@@ -59,31 +62,32 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         return Result.Ok();
     }
 
-    public Result ValidateContact(UserProfile profile, SaveProfileContactRequest request)
+    public Result ValidateContact(UserProfile profile, string? address,
+        (int Zone, int Street, int Building, int Unit, string? NationalAddressFileName)? nationalAddress)
     {
         var previousSteps = EnsurePreviousStepsCompleted(profile, ProfileStep.Contact);
         if (previousSteps.IsFailed)
             return previousSteps;
 
         var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
-        var hasNationalAddress = request.NationalAddress is not null || profile.ResidenceAddress is not null;
+        var hasNationalAddress = nationalAddress is not null || profile.ResidenceAddress is not null;
 
-        if (!requiresNationalAddress && (request.NationalAddress is not null || profile.ResidenceAddress is not null))
+        if (!requiresNationalAddress && (nationalAddress is not null || profile.ResidenceAddress is not null))
             return Result.Fail(ErrorsCodes.NationalAddressNotAllowed);
 
         if (requiresNationalAddress && !hasNationalAddress)
             return Result.Fail(ErrorsCodes.NationalAddressRequired);
         
-        if (!requiresNationalAddress && string.IsNullOrWhiteSpace(request.Address))
+        if (!requiresNationalAddress && string.IsNullOrWhiteSpace(address))
             return Result.Fail(ErrorsCodes.AddressRequired);
 
         if (requiresNationalAddress)
         {
-            if (request.NationalAddress is not null)
+            if (nationalAddress is not null)
             {
-                if (request.NationalAddress.Zone <= 0 || request.NationalAddress.Street <= 0 || request.NationalAddress.Building <= 0 || request.NationalAddress.Unit < 0)
+                if (nationalAddress.Value.Zone <= 0 || nationalAddress.Value.Street <= 0 || nationalAddress.Value.Building <= 0 || nationalAddress.Value.Unit < 0)
                     return Result.Fail(ErrorsCodes.InvalidNationalAddress);
-                if(string.IsNullOrEmpty(request.NationalAddress.NationalAddressFileName) && profile.ResidenceAddress!.CertificateId == Guid.Empty)
+                if(string.IsNullOrEmpty(nationalAddress.Value.NationalAddressFileName) && profile.ResidenceAddress!.CertificateId == Guid.Empty)
                     return Result.Fail(ErrorsCodes.NationalAddressCertificateRequired);
             }
         }
@@ -226,10 +230,4 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
 
         return !string.IsNullOrWhiteSpace(profile.Address);
     }
-    
-    private static bool HasSponsorPayload(SaveProfilePersonalRequest request) =>
-        !string.IsNullOrWhiteSpace(request.SponsorEmployerName) ||
-        !string.IsNullOrWhiteSpace(request.SponsorEmployerNumber) ||
-        request.SponsorCard is not null ||
-        request.SponsorCardFileName is not null;
 }

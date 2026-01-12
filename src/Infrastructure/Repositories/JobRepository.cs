@@ -1,11 +1,10 @@
+using Application.Operation.Features.Employee.JobManagement.Job.Extensions;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
-using Tawtheef.Application.Features.Operations.Employee.Job.Extensions;
-using Tawtheef.Application.Features.Operations.Employee.Job.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Repositories.Base;
@@ -76,7 +75,7 @@ public class JobRepository(IGenericRepository<Job> repository)
             : Result.Ok(job);
     }
 
-    public async Task<IList<Job>> GetJobsToAutoCloseAsync(DateTime currentDate)
+    public async Task<IList<Job>> GetJobsToAutoCloseAsync(DateTimeOffset currentDate)
     {
          var jobs = await Repository.DbSet
         .AsNoTracking()

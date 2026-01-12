@@ -1,15 +1,13 @@
-
 using System.Security.Claims;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Queries;
 using Cortex.Mediator;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Commands;
-using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileDistribution.Queries;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Employee;

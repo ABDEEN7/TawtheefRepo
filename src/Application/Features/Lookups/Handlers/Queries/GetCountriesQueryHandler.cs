@@ -16,7 +16,7 @@ public sealed class GetCountriesQueryHandler(IUnitOfWork unitOfWork)
         CancellationToken cancellationToken)
     {
         //get language from the header request
-        var language = request.Language ?? "en";
+        var language = request.Language;
         
         var countries = await unitOfWork.GetEntityRepository<Country>()
             .DbSet

@@ -1,12 +1,11 @@
 ﻿using System.Security.Claims;
+using Application.Operation.Features.Authenticator.Queries;
 using Cortex.Mediator;
 using FluentResults;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Application.Features.Authenticator.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -29,7 +28,7 @@ public class UserController(IMediator mediator) : ControllerBase
     {
         if(UserId.IsFailed)
             return Unauthorized(UserId.Errors);
-        var result = await mediator.Send(new GetUserProfileQuery{ UserId = UserId.Value});
+        var result = await mediator.Send(new GetOperationProfileQuery { UserId = UserId.Value});
         return result.ToActionResult();
     }
 }

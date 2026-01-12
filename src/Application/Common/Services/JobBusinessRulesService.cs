@@ -167,20 +167,20 @@ public static class JobBusinessRules
         return job.JobStatusId == JobStatusIds.Approved;
     }
 
-    public static bool ShouldAutoClose(DateTime closingDate)
+    public static bool ShouldAutoClose(DateTimeOffset closingDate)
     {
-        return closingDate < DateTime.Now;
+        return closingDate < DateTimeOffset.Now;
     }
 
     public static bool CanApply(Job job)
     {
-        return job.ClosingDate >= DateTime.Now && job.JobStatusId == JobStatusIds.Published;
+        return job.ClosingDate >= DateTimeOffset.Now && job.JobStatusId == JobStatusIds.Published;
     }
 
     public static bool CanCancel(Job job)
     {
         var finalStates = new[] { JobStatusIds.Closed, JobStatusIds.Cancelled };
-        return job.ClosingDate > DateTime.Now && !finalStates.Contains(job.JobStatusId);
+        return job.ClosingDate > DateTimeOffset.Now && !finalStates.Contains(job.JobStatusId);
     }
 
     public static bool CanModifyTitle(Guid jobStatusId)

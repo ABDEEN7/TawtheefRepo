@@ -1,3 +1,5 @@
+using Application.Recruitment.Features.Authenticator.Handlers.Commands.CallbackHandler;
+using Application.Recruitment.Features.Profile;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -5,8 +7,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
-using Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
-using Tawtheef.Application.Features.Recruitment.Profile;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Infrastructure.Services.Authorization;

@@ -1,14 +1,13 @@
 using System.Security.Claims;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Cortex.Mediator;
 using FluentResults;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Commands;
-using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.DTOs;
-using Tawtheef.Application.Features.Operations.Employee.ProfileManagement.ProfileApprovals.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Extensions;

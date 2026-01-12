@@ -8,7 +8,6 @@ public interface IUnitOfWork : IDisposable
     void Remove<T>(T? entity) where T : EventEntity;
     void RemoveRange<T>(IList<T>? entities) where T : EventEntity;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-    Task<int> SaveAndRemoveCache(CancellationToken cancellationToken, params string[] cacheKeys);
     Task Rollback();
     
     

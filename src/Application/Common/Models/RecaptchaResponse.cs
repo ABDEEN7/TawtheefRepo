@@ -6,7 +6,7 @@ public record RecaptchaResponse
 {
     public bool Success { get; init; }
     [JsonPropertyName("challenge_ts")]
-    public DateTime ChallengeTs { get; init; }
+    public DateTimeOffset ChallengeTs { get; init; }
     public string? Hostname { get; init; }
     public double? Score { get; init; }
     public string? Action { get; init; }

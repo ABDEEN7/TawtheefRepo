@@ -4,78 +4,65 @@ using Cortex.Mediator.DependencyInjection;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Tawtheef.Application.Common.Mappers;
-using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services;
-using Tawtheef.Application.Features.Operations.Employee.JobCandidates.Services.Interfaces;
-using Tawtheef.Domain;
+using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Application
 {
-    /// <summary>
-    /// Extension methods to register Application layer services (AutoMapper, MediatR, Validators, etc).
-    /// Kept minimal and easy to extend (pipeline behaviors, logging, etc).
+     /// <summary>
+    /// Extension methods to register Application layer services (Mapster, Mediator, Validators, etc).
+    /// Split by App:Module (Recruitment / Operation / Both).
     /// </summary>
     public static class DependencyInjectionExtensions
     {
-        /// <summary>
-        /// Registers application-level services into DI.
-        /// </summary>
         public static void AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
         {
+            // Keep runtime settings available in DI (same shape as Infrastructure).
+            services.AddOptions<AppRuntimeSettings>()
+                .Bind(configuration.GetSection(AppRuntimeSettings.SectionName))
+                .Validate(s => s.Module != 0, "App:Module is required. Allowed: Recruitment | Operation | Both.")
+                .ValidateOnStart();
+
+            // ===== Common (always) =====
             RegisterMapster(services);
             RegisterMediator(services, configuration);
             RegisterValidators(services);
 
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
-
-            // Expose a time provider so services can rely on a testable time source.
             services.AddSingleton(TimeProvider.System);
-            services.AddScoped<IJobTargetCandidateCalculatorService, JobTargetCandidateCalculatorService>();
-            services.AddScoped<IJobRequirementsService, JobRequirementsService>();
-            services.AddScoped<IJobCandidatesQueryBuilderService, JobCandidatesQueryBuilderService>();
-            // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-            // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
         }
 
-        #region Private registrations 
+        #region Private registrations
+
         private static void RegisterMapster(IServiceCollection services)
         {
             var config = TypeAdapterConfig.GlobalSettings;
-            config.Scan(Assembly.GetExecutingAssembly());
-            config.Scan(typeof(ResourceMapper).Assembly);
+            config.Scan(typeof(ApplicationAssemblyMarker).Assembly);
+
             services.AddSingleton(config);
             services.AddScoped<IMapper>(sp => new ServiceMapper(sp, config));
-            #if DEBUG
+
+#if DEBUG
             TypeAdapterConfig.GlobalSettings.Compiler = exp => exp.CompileWithDebugInfo();
-            #endif
+#endif
         }
 
         private static void RegisterMediator(IServiceCollection services, IConfiguration configuration)
         {
-            // Registers MediatR handlers from the current assembly.
-            // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-            
             services.AddCortexMediator(
-                configuration: configuration,
-                handlerAssemblyMarkerTypes: [
-                    typeof(ApplicationAssemblyMarker),
-                    typeof(DomainAssemblyMarker)
-                ],
-                configure: options =>
-                {
-                    // This enables built-in logging, validation, and transaction behaviors
-                    options.AddDefaultBehaviors();
-                }
-            );
+                    configuration: configuration,
+                    handlerAssemblyMarkerTypes:
+                    [
+                        typeof(ApplicationAssemblyMarker)
+                    ],
+                    configure: o => o.AddDefaultBehaviors()
+                );
         }
 
         private static void RegisterValidators(IServiceCollection services)
         {
-            // Registers FluentValidation validators from the current assembly.
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         }
 

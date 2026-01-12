@@ -17,6 +17,7 @@ import { JobStatus } from '../../../../../../core/enums/lookups.enum';
 import { JobReviewResponse } from '../../models/job-review-response';
 import { JobResponse } from '../../models/job-response-model';
 import {routes} from '../../../../../../routes/routes';
+import { JobTabStatus } from '../../enums/job-tab-status';
 
 @Component({
   selector: 'app-job-basic-modal',
@@ -208,6 +209,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       next: (review: JobReviewResponse) => {
         this.reviewNote =
           review.tabNoteReviews.find((note) => note.tab === JobTabType.BasicData) ?? null;
+          if (this.reviewNote?.tabStatus === JobTabStatus.Approved) {
+              this.form.disable();
+          }
       },
       error: () => {
         this.reviewNote = null;

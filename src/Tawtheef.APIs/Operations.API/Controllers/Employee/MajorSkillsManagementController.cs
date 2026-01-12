@@ -1,12 +1,11 @@
-
+using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Commands;
+using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
-using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Commands;
-using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Mapping.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Employee;

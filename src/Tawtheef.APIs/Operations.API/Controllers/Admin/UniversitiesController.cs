@@ -1,12 +1,11 @@
-
+using Application.Operation.Features.Admin.Universities.Commands;
+using Application.Operation.Features.Admin.Universities.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
-using Tawtheef.Application.Features.Operations.Admin.Universities.Commands;
-using Tawtheef.Application.Features.Operations.Admin.Universities.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Admin;
