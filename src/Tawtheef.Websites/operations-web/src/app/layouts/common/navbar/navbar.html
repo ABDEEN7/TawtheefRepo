@@ -27,7 +27,7 @@
                 <div class="notification-menu__header">
                   <span class="notification-menu__title">{{ 'internal.nav.notifications.title' | translate }}</span>
                   <button type="button"
-                          class="btn btn-link btn-sm notification-menu__refresh"
+                          class="btn btn-outline-primary btn-sm notification-menu__refresh"
                           (click)="refreshNotifications()"
                           [disabled]="isLoadingNotifications">
                     <i class="hgi hgi-stroke hgi-refresh-cw-02" [class.spin]="isLoadingNotifications"></i>

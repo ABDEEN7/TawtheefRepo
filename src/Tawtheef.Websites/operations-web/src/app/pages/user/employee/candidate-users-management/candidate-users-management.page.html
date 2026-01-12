@@ -57,7 +57,7 @@
         <th>{{ 'CANDIDATE_USERS.QID' | translate }}</th>
         <th>{{ 'CANDIDATE_USERS.MOBILE' | translate }}</th>
         <th>{{ 'CANDIDATE_USERS.STATUS' | translate }}</th>
-        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+        <th>
           {{ 'CANDIDATE_USERS.ACTIONS' | translate }}
         </th>
       </tr>
@@ -71,19 +71,17 @@
         <td>{{ user.mobileNumber }}</td>
         <td>
           <span
-            class="badge"
-            [class.bg-danger-subtle]="user.isBlocked"
-            [class.text-danger]="user.isBlocked"
-            [class.bg-success-subtle]="!user.isBlocked"
-            [class.text-success]="!user.isBlocked">
+            class="pill"
+            [class.soft]="user.isBlocked"
+            [class.success]="!user.isBlocked">
             {{ user.isBlocked ? ('CANDIDATE_USERS.BLOCKED' | translate) : ('CANDIDATE_USERS.ACTIVE' | translate) }}
           </span>
         </td>
-        <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+        <td>
           <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
             <button
               type="button"
-              pButton
+              
               class="btn btn-sm"
               [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
               (click)="toggleBlock(user)">

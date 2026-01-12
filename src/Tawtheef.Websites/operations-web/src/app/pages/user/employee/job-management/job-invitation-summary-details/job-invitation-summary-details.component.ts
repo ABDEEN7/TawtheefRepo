@@ -19,6 +19,8 @@ import { GuidUtils } from '../../../../../core/utils/guid-utils';
 import { routes } from '../../../../../routes/routes';
 import { TableModule } from 'primeng/table';
 import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive'; 
+
 
 @Component({
   selector: 'app-job-invitation-summary-details',
@@ -31,7 +33,8 @@ import {PaginationMetadata} from '../../../../../core/models/pagination-metadata
     I18nNamespaceDirective,
     Select,
     PaginationComponent,
-    TableModule
+    TableModule,
+    FaDirArrowDirective
   ],
   templateUrl: './job-invitation-summary-details.component.html',
   styleUrl: './job-invitation-summary-details.component.scss',
@@ -114,14 +117,14 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
   // status pills classes (adjust backend names to your API)
   getStatusPillClass(backendName: string): string {
     const map: Record<string, string> = {
-      Applied: 'status-pill status-applied',
-      New: 'status-pill status-new',
-      Cancelled: 'status-pill status-cancelled',
-      Declined: 'status-pill status-declined',
-      Refused: 'status-pill status-declined',
+      Applied: 'pill success',
+      New: 'pill info',
+      Cancelled: 'pill danger',
+      Declined: 'pill warning',
+      Refused: 'pill warning',
     };
 
-    return map[backendName] ?? 'status-pill status-default';
+    return map[backendName] ?? 'pill neutral';
   }
 
   navigateTo() {
