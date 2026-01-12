@@ -12,9 +12,9 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
-using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
+using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Handlers.Commands;
 
@@ -158,42 +158,33 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         // Keep batch numbering logic
         var batchNumber = Guid.NewGuid();
 
-        var newInvitations = finalCandidates.Select(c => new Invitation
+        var newInvitations = new List<Invitation>();
+        foreach (var candidate in finalCandidates)
         {
-            Id = Guid.NewGuid(),
-            JobId = request.JobId,
-            ApplicantId = c.ApplicantId,
-            InvitationStatusId = InvitationStatusIds.NewInvitation,
-            BatchNumber = batchNumber
-        }).ToList();
+            var invitation = new Invitation
+            {
+                Id = Guid.NewGuid(),
+                JobId = request.JobId,
+                ApplicantId = candidate.ApplicantId,
+                InvitationStatusId = InvitationStatusIds.NewInvitation,
+                BatchNumber = batchNumber
+            };
+
+            invitation.AddDomainEvent(new JobCandidateInvitationSentDomainEvent(
+                invitation.Id,
+                candidate.ApplicantId,
+                candidate.Applicant?.Email,
+                candidate.Applicant?.PhoneNumber,
+                jobTitle ?? string.Empty,
+                DateTimeOffset.UtcNow));
+
+            newInvitations.Add(invitation);
+        }
 
         await invitationsRepo.AddRangeAsync(newInvitations, cancellationToken);
 
-        var sentEmailCount = 0;
-        var sentSmsCount = 0;
-
-        foreach (var candidate in finalCandidates)
-        {
-            var body = string.IsNullOrWhiteSpace(jobTitle)
-                ? "You have been invited to apply for a job on Tawtheef."
-                : $"You have been invited to apply for {jobTitle} on Tawtheef.";
-
-            var email = candidate.Applicant?.Email;
-            
-            //TODO: should be used Event
-            if (!string.IsNullOrWhiteSpace(email))
-            {
-                var emailResult = await emailSender.SendAsync(new Notification(), cancellationToken);
-                if (emailResult.Ok) sentEmailCount++;
-            }
-
-            var phone = candidate.Applicant?.PhoneNumber;
-            if (string.IsNullOrWhiteSpace(phone))
-                continue;
-
-            var smsResult = await smsSender.SendAsync(phone, body, cancellationToken);
-            if (smsResult.Ok) sentSmsCount++;
-        }
+        var sentEmailCount = finalCandidates.Count(c => !string.IsNullOrWhiteSpace(c.Applicant?.Email));
+        var sentSmsCount = finalCandidates.Count(c => !string.IsNullOrWhiteSpace(c.Applicant?.PhoneNumber));
 
         var updatedCount = await unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -1,0 +1,9 @@
+﻿@model Tawtheef.Infrastructure.Services.NotificationServices.TemplateContext<Application.Operation.Templates.JobCreatedNotification.JobCreatedNotificationModel>
+New Job Created
+
+A new job (@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "a job" : Model.Model.JobTitle)) has been created and is ready for review.
+
+Please log in to the Tawtheef system to review the job details.
+
+-- @Model.Branding.ProductName
+Support: @Model.Branding.SupportEmail

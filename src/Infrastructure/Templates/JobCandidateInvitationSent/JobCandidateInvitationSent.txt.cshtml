@@ -1,0 +1,9 @@
+﻿@model Tawtheef.Infrastructure.Services.NotificationServices.TemplateContext<Application.Operation.Templates.JobCandidateInvitationSent.JobCandidateInvitationSentModel>
+Job Invitation
+
+You have been invited to apply for @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "a job" : Model.Model.JobTitle) on Tawtheef.
+
+Please log in to the Tawtheef system to view the details and submit your application.
+
+-- @Model.Branding.ProductName
+Support: @Model.Branding.SupportEmail
