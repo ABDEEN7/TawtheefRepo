@@ -209,7 +209,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       next: (review: JobReviewResponse) => {
         this.reviewNote =
           review.tabNoteReviews.find((note) => note.tab === JobTabType.BasicData) ?? null;
-          if (this.reviewNote?.tabStatus !== JobTabStatus.Returned) {
+          if (this.reviewNote?.tabStatus === JobTabStatus.Approved) {
               this.form.disable();
           }
       },
