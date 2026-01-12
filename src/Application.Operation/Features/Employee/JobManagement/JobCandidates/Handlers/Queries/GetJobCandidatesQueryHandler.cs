@@ -6,12 +6,12 @@ using Application.Operation.Features.Employee.JobCandidates.Utilities;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 namespace Application.Operation.Features.Employee.JobCandidates.Handlers.Queries;
@@ -23,7 +23,8 @@ public sealed class GetJobCandidatesQueryHandler(
     IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
     IJobRequirementsService  jobRequirementsService,
     IJobCandidatesQueryBuilderService  jobCandidatesQueryBuilderService,
-    ILocalizationService localizationService)
+    ILocalizationService localizationService,
+    ILogger logger)
     : IQueryHandler<GetJobCandidatesQuery, IResult<JobCandidatesCombinedDto>>
 {
     public async Task<IResult<JobCandidatesCombinedDto>> Handle(
@@ -71,7 +72,10 @@ public sealed class GetJobCandidatesQueryHandler(
         var profiles = await userProfileRepository.LoadForScoringAsync(ids);
 
         // Score once
-        var scored = JobCandidateScoringUtility.Score(window, profiles, job, req);
+        if (job.JobPoints == null) 
+            return Result.Fail<JobCandidatesCombinedDto>(JobMessages.JobPointsNotFound);
+        
+        var scored = JobCandidateScoringUtility.Score(window, profiles, job.JobPoints,job.MajorId,job.SubMajorId,job.JobDegrees,logger);
 
         // Apply minimum points (common filter)
         if (request.Filter?.MinimumPoints is not null)
@@ -80,7 +84,6 @@ public sealed class GetJobCandidatesQueryHandler(
         // Sort by points
         var sorted = scored
             .OrderByDescending(x => x.Points)
-            .ThenByDescending(x => x.CreatedDate)
             .ToList();
 
         // Load percentage filter settings (used for the list)
@@ -92,17 +95,14 @@ public sealed class GetJobCandidatesQueryHandler(
 
         var finalList = JobCandidatesFilterUtility.ApplyPercentageFilters(sorted, settings, targetCount);
 
-        var totalInvited = await unitOfWork.GetEntityRepository<Invitation>().DbSet
-            .CountAsync(i => i.JobId == job.Id, cancellationToken: ct);
-
-        var totalEligible = finalList.Count;
-        var abovePoints = finalList.Count(x => x.Points >= 800);
-        var avg = totalEligible == 0 ? 0 : finalList.Average(x => x.Points);
+        var totalEligible = scored.Count;
+        var abovePoints = scored.Count(x => x.Points >= 800);
+        var avg = totalEligible == 0 ? 0 : scored.Average(x => x.Points);
 
         var overview = new JobCandidatesOverviewDto
         {
-            TotalCandidatesCount = totalInvited,
-            AvailableCandidatesCount = totalEligible,
+            TotalCandidatesCount = totalEligible,
+            AvailableCandidatesCount = finalList.Count,
             AbovePointsCandidatesCount = abovePoints,
             PointsAverage = Math.Round(avg, 2)
         };
@@ -134,4 +134,5 @@ public sealed class GetJobCandidatesQueryHandler(
             Overview = overview
         });
     }
+
 }

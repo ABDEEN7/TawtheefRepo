@@ -77,6 +77,9 @@ internal static class JobPointsValidationUtility
         if (detailsList.Any(detail => detail.Points < 0))
             return Result.Fail(JobMessages.JobPointsDetailsNotValid);
 
+        if (!HasRequiredDetails(detailsList, totals))
+            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
+
         if (!IsSectionValid(detailsList, JobPointRuleType.ApplicantCategory, totals.ApplicantCategory))
             return Result.Fail(JobMessages.JobPointsDetailsNotValid);
 
@@ -146,6 +149,57 @@ internal static class JobPointsValidationUtility
             .Sum(detail => detail.Points);
 
         return total <= mainValue;
+    }
+
+    private static bool HasRequiredDetails(
+        IReadOnlyCollection<JobPointsDetailSnapshot> details,
+        JobPointsTotals totals)
+    {
+        if (totals.ApplicantCategory > 0 && !HasSectionPoints(details, JobPointRuleType.ApplicantCategory))
+            return false;
+
+        if (totals.Education > 0 && !HasSectionPoints(details, JobPointRuleType.Education))
+            return false;
+
+        if (totals.Training > 0 && !HasSectionPoints(details, JobPointRuleType.Training))
+            return false;
+
+        if (totals.Skills > 0 && !HasSectionPoints(details, JobPointRuleType.Skill))
+            return false;
+
+        if (totals.Certificates > 0 && !HasSectionPoints(details, JobPointRuleType.Certificate))
+            return false;
+
+        if (totals.Experience > 0 && !HasExperienceDetails(details))
+            return false;
+
+        if (totals.Languages > 0 && !HasLanguageDetails(details))
+            return false;
+
+        return true;
+    }
+
+    private static bool HasSectionPoints(
+        IReadOnlyCollection<JobPointsDetailSnapshot> details,
+        JobPointRuleType type)
+        => details.Any(detail => detail.Type == type && detail.Points > 0);
+
+    private static bool HasExperienceDetails(IReadOnlyCollection<JobPointsDetailSnapshot> details)
+    {
+        var pointsPerYear = GetDetailPoints(details, JobPointRuleType.Experience, "pointsPerYear");
+        var maxYears = GetDetailPoints(details, JobPointRuleType.Experience, "maxYears");
+        return pointsPerYear > 0 && maxYears > 0;
+    }
+
+    private static bool HasLanguageDetails(IReadOnlyCollection<JobPointsDetailSnapshot> details)
+    {
+        var languageDetails = details
+            .Where(detail => detail.Type == JobPointRuleType.Language && detail.Points > 0)
+            .ToList();
+
+        return languageDetails.Any(detail =>
+            detail.Code != null &&
+            !detail.Code.EndsWith(".max", StringComparison.OrdinalIgnoreCase));
     }
 
     private static bool IsExperienceValid(

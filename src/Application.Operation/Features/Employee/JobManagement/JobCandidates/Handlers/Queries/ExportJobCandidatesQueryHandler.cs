@@ -8,6 +8,7 @@ using Application.Operation.Features.Employee.JobCandidates.Utilities;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -23,7 +24,8 @@ public sealed class ExportJobCandidatesQueryHandler(
     IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
     IJobRequirementsService  jobRequirementsService,
     IJobCandidatesQueryBuilderService  jobCandidatesQueryBuilderService,
-    ILocalizationService localizationService)
+    ILocalizationService localizationService,
+    ILogger logger)
     : IQueryHandler<ExportJobCandidatesQuery, IResult<JobCandidatesExportResult>>
 {
     public async Task<IResult<JobCandidatesExportResult>> Handle(
@@ -66,7 +68,9 @@ public sealed class ExportJobCandidatesQueryHandler(
                 .FirstOrDefault();
 
             var candidate = c with { Applicant = p.User, Profile = p, Major = major };
-            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints);
+            if (job.JobPoints == null) 
+                return Result.Fail<JobCandidatesExportResult>(JobMessages.JobPointsNotFound);
+            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints,job.JobDegrees,job.MajorId,job.SubMajorId,logger);
 
             scored.Add(candidate with { Points = points });
         }

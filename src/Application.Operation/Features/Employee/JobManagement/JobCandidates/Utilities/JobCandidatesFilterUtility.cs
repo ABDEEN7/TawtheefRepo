@@ -64,39 +64,23 @@ internal static class JobCandidatesFilterUtility
             .ToList();
 
         // BRD: fill remainder from best remaining
-        if (filtered.Count < targetCount)
-        {
-            var remaining = candidates
-                .Where(c => filtered.All(x => x.ApplicantId != c.ApplicantId))
-                .OrderByDescending(c => c.Points);
+        if (filtered.Count >= targetCount)
+            return filtered
+                .DistinctBy(c => c.ApplicantId)
+                .Take(targetCount)
+                .ToList();
+        
+        var remaining = candidates
+            .Where(c => filtered.All(x => x.ApplicantId != c.ApplicantId))
+            .OrderByDescending(c => c.Points);
 
-            filtered.AddRange(remaining.Take(targetCount - filtered.Count));
-        }
+        filtered.AddRange(remaining.Take(targetCount - filtered.Count));
+        
 
         return filtered
             .DistinctBy(c => c.ApplicantId)
             .Take(targetCount)
             .ToList();
-    }
-
-    public static IEnumerable<JobCandidateRecord> ApplySorting(
-        IEnumerable<JobCandidateRecord> candidates,
-        string? sortBy,
-        string? sortDirection)
-    {
-        var descending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
-        return sortBy?.ToLowerInvariant() switch
-        {
-            "points" => descending
-                ? candidates.OrderByDescending(candidate => candidate.Points)
-                : candidates.OrderBy(candidate => candidate.Points),
-            "createddate" or null or "" => descending
-                ? candidates.OrderByDescending(candidate => candidate.CreatedDate)
-                : candidates.OrderBy(candidate => candidate.CreatedDate),
-            _ => descending
-                ? candidates.OrderByDescending(candidate => candidate.CreatedDate)
-                : candidates.OrderBy(candidate => candidate.CreatedDate)
-        };
     }
 
     private static bool IsNationalityBreakdownType(Guid candidateTypeId)

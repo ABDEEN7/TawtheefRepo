@@ -4,7 +4,7 @@
           <div class="row align-items-center mb-3">
                 <div class="col-md-12">
                      <div class="d-flex gap-2">
-                         <a (click)="navigateTo()" aria-label="Back"><i class="hgi hgi-stroke hgi-arrow-right-01" faDirArrow="start"></i></a>
+                         <a (click)="navigateTo()" aria-label="Back"><i class="hgi fs-32 " faDirArrow="start" ></i></a>
                          <div>
                              <h3 class="fw-bold m-0">
                                {{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}
@@ -95,7 +95,7 @@
                       (ngModelChange)="selectedStatus.set($event); onFilterChange()"
                     ></p-select>
 
-                    <button (click)="clearFilters()" class="btn btn-outline-secondary btn-sm rounded-pill flex-shrink-0">
+                    <button (click)="clearFilters()" class="btn btn-outline-secondary btn-sm flex-shrink-0">
                       <i class="fa fa-rotate-left"></i>
                       {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
                     </button>
@@ -183,7 +183,7 @@
                         @if (canViewInvitations()) {
                          <div class="action-buttons">
                            <a
-                             [routerLink]="['../job-invitation-summary-details', summary.jobId]"
+                             [routerLink]="routes.employee.jobInvitationSummaryDetails(summary.jobId)"
                              class="btn-text d-flex gap-1 align-items-center "
                            >
                              <i class="hgi hgi-stroke hgi-view"></i>

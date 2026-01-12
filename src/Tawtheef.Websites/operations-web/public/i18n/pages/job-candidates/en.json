@@ -44,5 +44,7 @@
   "JOB_CANDIDATE_FILTERS_NATIONALITY": "Nationality",
   "JOB_CANDIDATE_FILTERS_NATIONALITY_BREAKDOWN": "Nationality breakdown",
   "JOB_CANDIDATE_FILTERS_ADD_NATIONALITY": "Add nationality",
-  "JOB_CANDIDATE_MESSAGES_FILTER_SAVE_FAILED": "Failed to save candidate filters."
+  "JOB_CANDIDATE_MESSAGES_FILTER_SAVE_FAILED": "Failed to save candidate filters.",
+  "JOB_CANDIDATE_FILTERS_PERCENTAGE_TOTAL_EXCEEDED": "Total percentages cannot exceed 100%.",
+  "JOB_CANDIDATE_FILTERS_NATIONALITY_PERCENTAGE_MISMATCH": "Nationality percentages must match the selected candidate type percentage."
 }

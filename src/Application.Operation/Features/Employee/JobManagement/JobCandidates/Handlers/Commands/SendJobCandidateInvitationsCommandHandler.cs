@@ -7,6 +7,7 @@ using Application.Operation.Features.Employee.JobCandidates.Utilities;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -25,7 +26,8 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
     IJobRequirementsService jobRequirementsService,
     IJobCandidatesQueryBuilderService jobCandidatesQueryBuilderService,
-    ISmsSender smsSender)
+    ISmsSender smsSender,
+    ILogger logger)
     : ICommandHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
     public async Task<IResult<SendJobCandidateInvitationsResult>> Handle(
@@ -54,12 +56,18 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         // NEW: Do not invite again (exclude applicants who already have invitations for this job)
         // --------------------------------------------------------------------
         var invitationsRepo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
+        var activeInvitationStatuses = new[]
+        {
+            InvitationStatusIds.NewInvitation,
+            InvitationStatusIds.Read,
+            InvitationStatusIds.Submitted
+        };
 
         // Any invitation for the job blocks re-inviting (all statuses & batches).
         // If you want to block only certain statuses, add a predicate on InvitationStatusId here.
         var alreadyInvitedApplicantIds = await invitationsRepo
             .AsNoTracking()
-            .Where(i => i.JobId == request.JobId)
+            .Where(i => i.JobId == request.JobId && activeInvitationStatuses.AsEnumerable().Contains(i.InvitationStatusId))
             .Select(i => i.ApplicantId)
             .Distinct()
             .ToListAsync(cancellationToken);
@@ -103,7 +111,9 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
                 .FirstOrDefault();
 
             var candidate = c with { Applicant = p.User, Profile = p, Major = major };
-            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints);
+            if (job.JobPoints == null) 
+                return Result.Fail<SendJobCandidateInvitationsResult>(JobMessages.JobPointsNotFound);
+            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints,job.JobDegrees,job.MajorId,job.SubMajorId,logger);
 
             scored.Add(candidate with { Points = points });
         }
@@ -123,7 +133,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
 
         if (request.ApplicantIds is { Count: > 0 })
         {
-            finalCandidates = sorted;
+            finalCandidates = sorted.Take(targetCount).ToList();
         }
         else
         {

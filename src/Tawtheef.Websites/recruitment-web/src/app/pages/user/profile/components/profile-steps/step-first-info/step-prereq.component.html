@@ -40,15 +40,9 @@
         </span>
       </label>
 
-      <div class="upload-field"
-           (click)="cvInput.click()">
+      <div class="upload-field" (click)="cvInput.click()">
 
-        <div class="upload-field__icon">
-          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().cvName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().cvName"
-               class="cursor-pointer"
-               (click)="previewFile('cv', $event)"/>
-        </div>
+        
 
         <div class="upload-field__text">
           {{ ds.state().cvName || ('wizard.prereq.cvLabel' | translate) }}
@@ -62,6 +56,10 @@
         <span class="text-muted fz-2xs">
           {{ formatsLabel('cv') }} – Max 1MB
         </span>
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().cvName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().cvName" class="cursor-pointer" (click)="previewFile('cv', $event)"/>
+        </div>
       </div>
     </div>
     <!-- ID -->
@@ -76,15 +74,9 @@
         </span>
       </label>
 
-      <div class="upload-field"
-           (click)="idInput.click()">
+      <div class="upload-field" (click)="idInput.click()">
 
-        <div class="upload-field__icon">
-          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().idName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().idName"
-               class="cursor-pointer"
-               (click)="previewFile('id', $event)"/>
-        </div>
+        
 
         <div class="upload-field__text">
           {{ ds.state().idName || ('wizard.prereq.idLabel' | translate) }}
@@ -98,6 +90,10 @@
         <span class="text-muted fz-2xs">
           {{ formatsLabel('id') }} – Max 1MB
         </span>
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().idName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().idName" class="cursor-pointer" (click)="previewFile('id', $event)"/>
+        </div>
       </div>
     </div>
     <!-- Birth Certificate -->
@@ -117,12 +113,7 @@
       <div class="upload-field"
            (click)="birthInput.click()">
 
-        <div class="upload-field__icon">
-          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().birthCertificateName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().birthCertificateName"
-               class="cursor-pointer"
-               (click)="previewFile('birth', $event)"/>
-        </div>
+        
 
         <div class="upload-field__text">
           {{ ds.state().birthCertificateName || ('wizard.prereq.birthCertificate' | translate) }}
@@ -136,6 +127,12 @@
         <span class="text-muted fz-2xs">
           {{ formatsLabel('birth') }} – Max 1MB
         </span>
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().birthCertificateName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().birthCertificateName"
+               class="cursor-pointer"
+               (click)="previewFile('birth', $event)"/>
+        </div>
       </div>
     </div>
 
@@ -156,12 +153,7 @@
       <div class="upload-field"
            (click)="marriageInput.click()">
 
-        <div class="upload-field__icon">
-          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().marriageCertificateName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().marriageCertificateName"
-               class="cursor-pointer"
-               (click)="previewFile('marriage', $event)"/>
-        </div>
+        
 
         <div class="upload-field__text">
           {{ ds.state().marriageCertificateName || ('wizard.prereq.marriageCertificate' | translate) }}
@@ -175,6 +167,12 @@
         <span class="text-muted fz-2xs">
           {{ formatsLabel('marriage') }} – Max 1MB
         </span>
+        <div class="upload-field__icon">
+          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().marriageCertificateName"/>
+          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().marriageCertificateName"
+               class="cursor-pointer"
+               (click)="previewFile('marriage', $event)"/>
+        </div>
       </div>
     </div>
   </div>

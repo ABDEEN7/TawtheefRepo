@@ -117,12 +117,12 @@ export class JobListComponent implements OnInit {
 
   editJob(job: JobResponse) {
     if (!this.canManageJobs()) return;
-    this.router.navigate([routes.employee.jobEdit, job.id]).then();
+    this.router.navigate([routes.employee.jobEdit(job.id)]).then();
   }
 
   viewJob(job: JobResponse) {
     if (!this.canViewJobs()) return;
-    this.router.navigate([routes.employee.jobView, job.id]).then();
+    this.router.navigate([routes.employee.jobView(job.id)]).then();
   }
 
   createNewJob() {
@@ -132,7 +132,7 @@ export class JobListComponent implements OnInit {
 
   openPointsModal(job: JobResponse) {
     if (!this.canManageJobPoints()) return;
-    this.router.navigate([routes.employee.jobPoints,job.id]).then();
+    this.router.navigate([routes.employee.jobPoints(job.id)]).then();
   }
 
   canCopyJob(job: JobResponse): boolean {
@@ -156,7 +156,7 @@ export class JobListComponent implements OnInit {
 
   approveJob(job: JobResponse) {
     if (!this.canApproveJobs()) return;
-    this.router.navigate([routes.employee.approvalJob, job.id]).then();
+    this.router.navigate([routes.employee.approvalJob(job.id)]).then();
   }
 
   rejectJob(job: JobResponse) {
@@ -317,16 +317,16 @@ export class JobListComponent implements OnInit {
 
   getStatusBadgeClass(statusName: string): string {
     const STATUS_BADGE_MAP: Record<string, string> = {
-      [JobStatus.Draft]: 'pill secondary',
+      [JobStatus.Draft]: 'pill neutral',
       [JobStatus.PendingApproval]: 'pill warning',
       [JobStatus.Approved]: 'pill success',
       [JobStatus.Published]: 'pill info',
       [JobStatus.Closed]: 'pill danger',
       [JobStatus.Rejected]: 'pill danger',
       [JobStatus.Cancelled]: 'pill secondary',
-      [JobStatus.ReadyForAnnouncement]: 'bg-warning text-dark',
+      [JobStatus.ReadyForAnnouncement]: 'pill neutral',
     };
-    return STATUS_BADGE_MAP[statusName] || 'bg-light text-dark';
+    return STATUS_BADGE_MAP[statusName] || 'pill neutral';
   }
 
   getJobCategoryBadgeClass(categoryName: string): string {
@@ -348,7 +348,7 @@ export class JobListComponent implements OnInit {
 
   viewJobCandidate(jobId: GUID) {
     if (!this.canViewJobs()) return;
-    const url = routes.employee.jobcandidates(jobId);
+    const url = routes.employee.jobCandidates(jobId);
     this.router.navigate([url]);
   }
   private loadStats(): void {

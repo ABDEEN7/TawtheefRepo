@@ -23,7 +23,7 @@ public class JobInvitationSummaryProfile: IRegister
             .Map(dest => dest.NotSeenCount,
                 src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.NewInvitation))
             .Map(dest => dest.ReadCount,
-                src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted))
+                src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Read))
             .Map(dest => dest.ExpiredCount,
                 src => src.Invitations.Count(i => i.InvitationStatusId == InvitationStatusIds.Closed))
             .Map(dest => dest.CancelledCount,
