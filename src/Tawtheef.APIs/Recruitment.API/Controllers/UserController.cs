@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using Application.Recruitment.Features.Authenticator.Queries;
+using Application.Recruitment.Features.Profile.Queries;
 using Cortex.Mediator;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,8 +11,6 @@ using Microsoft.AspNetCore.RateLimiting;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.Commands;
-using Tawtheef.Application.Features.Authenticator.Queries;
-using Tawtheef.Application.Features.Recruitment.Profile.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure;
@@ -34,7 +34,7 @@ public class UserController(IMediator mediator) : ControllerBase
     {
         if(UserId.IsFailed)
             return Unauthorized(UserId.Errors);
-        var result = await mediator.Send(new GetUserProfileQuery{ UserId = UserId.Value});
+        var result = await mediator.Send(new GetRecruitmentProfileQuery { UserId = UserId.Value});
         return result.ToActionResult();
     }
     [HttpGet("profile/detail")]

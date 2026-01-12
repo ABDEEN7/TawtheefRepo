@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
-using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 

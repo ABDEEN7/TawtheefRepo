@@ -44,11 +44,6 @@ public class UnitOfWork(TawtheefDbContext dbContext, IMediator mediator) : IUnit
         _dbContext.RemoveRange(entities);
     }
 
-    public Task<int> SaveAndRemoveCache(CancellationToken cancellationToken, params string[] cacheKeys)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task Rollback()
     {
         _dbContext.ChangeTracker.Entries().ToList().ForEach(x => x.Reload());

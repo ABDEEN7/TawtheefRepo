@@ -1,11 +1,10 @@
-﻿
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Cortex.Mediator;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories;
-using Tawtheef.Application.Features.Operations.Employee.Job.Commands;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Infrastructure.Services.BackgroundJobs
@@ -27,7 +26,7 @@ namespace Tawtheef.Infrastructure.Services.BackgroundJobs
                     var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                    var jobsToClose = await jobRepository.GetJobsToAutoCloseAsync(DateTime.UtcNow);
+                    var jobsToClose = await jobRepository.GetJobsToAutoCloseAsync(DateTimeOffset.UtcNow);
 
                     foreach (var job in jobsToClose)
                     {

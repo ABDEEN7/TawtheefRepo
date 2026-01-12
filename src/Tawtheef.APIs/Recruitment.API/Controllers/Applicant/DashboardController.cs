@@ -1,4 +1,7 @@
 using System.Security.Claims;
+using Application.Recruitment.Features.Dashboard.Commands;
+using Application.Recruitment.Features.Dashboard.Queries;
+using Application.Recruitment.Features.JobDetails.Queries;
 using Cortex.Mediator;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -6,9 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
-using Tawtheef.Application.Features.Recruitment.Dashboard.Commands;
-using Tawtheef.Application.Features.Recruitment.Dashboard.Queries;
-using Tawtheef.Application.Features.Recruitment.JobDetails.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 

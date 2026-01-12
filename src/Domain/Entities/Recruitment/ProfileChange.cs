@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
@@ -77,14 +78,14 @@ public class ProfileChangeRequest : EventEntity
     /// User who created the request.
     /// </summary>
     public Guid RequestedById { get; set; }
-    public DateTime RequestedAtUtc { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset RequestedAtUtc { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Reviewer decisions.
     /// Reject reason is required when status = Rejected.
     /// </summary>
     public Guid? ReviewedById { get; set; }
-    public DateTime? ReviewedAtUtc { get; set; }
+    public DateTimeOffset? ReviewedAtUtc { get; set; }
     [MaxLength(2000)]
     public string? ReviewerNote { get; set; }
 
@@ -155,8 +156,8 @@ public class ProfileChangeRequest : EventEntity
             TargetKey = targetKey,
             FieldPath = fieldPath,
             EntityName = entityName,
-            OldValue = oldValue != null ? System.Text.Json.JsonSerializer.Serialize(oldValue) : null,
-            NewValue = newValue != null ? System.Text.Json.JsonSerializer.Serialize(newValue) : null,
+            OldValue = oldValue != null ? JsonSerializer.Serialize(oldValue) : null,
+            NewValue = newValue != null ? JsonSerializer.Serialize(newValue) : null,
             OldResourceId = targetType == ReviewTargetType.Attachment ? resourceId : null,
             NewResourceId = targetType == ReviewTargetType.Attachment ? resourceId : null,
             AttachmentTitle = attachmentTitle,
@@ -169,8 +170,8 @@ public class ProfileChangeRequest : EventEntity
 
     public void UpdateValues(object? oldValue, object? newValue)
     {
-        OldValue = oldValue != null ? System.Text.Json.JsonSerializer.Serialize(oldValue) : null;
-        NewValue = newValue != null ? System.Text.Json.JsonSerializer.Serialize(newValue) : null;
+        OldValue = oldValue != null ? JsonSerializer.Serialize(oldValue) : null;
+        NewValue = newValue != null ? JsonSerializer.Serialize(newValue) : null;
         RequestedAtUtc = DateTime.UtcNow;
     }
 }

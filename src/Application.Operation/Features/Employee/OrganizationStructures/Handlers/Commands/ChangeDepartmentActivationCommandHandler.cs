@@ -1,0 +1,30 @@
+using Application.Operation.Features.Employee.OrganizationStructures.Commands;
+using Cortex.Mediator;
+using Cortex.Mediator.Commands;
+using FluentResults;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
+
+namespace Application.Operation.Features.Employee.OrganizationStructures.Handlers.Commands;
+
+public sealed class ChangeDepartmentActivationCommandHandler(IUnitOfWork uow)
+    : ICommandHandler<ChangeDepartmentActivationCommand, IResult<Unit>>
+{
+    public async Task<IResult<Unit>> Handle(ChangeDepartmentActivationCommand request, CancellationToken cancellationToken)
+    {
+        var repo = uow.GetEntityRepository<Department>().DbSet;
+        var department = await repo.FirstOrDefaultAsync(d => d.Id == request.Id, cancellationToken);
+
+        if (department is null)
+        {
+            return Result.Fail<Unit>(new Error(ErrorsCodes.DepartmentNotFound));
+        }
+
+        department.IsActive = request.IsActive;
+
+        await uow.SaveChangesAsync(cancellationToken);
+        return Result.Ok(Unit.Value);
+    }
+}

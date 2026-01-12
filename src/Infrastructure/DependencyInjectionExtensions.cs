@@ -1,12 +1,14 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
+﻿using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
+using Application.Operation.Common.Interfaces.Services.HttpClients;
+using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Validations;
+using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Azure.Storage.Blobs;
 using FluentValidation;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -29,8 +31,8 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
-using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
@@ -65,69 +67,293 @@ namespace Tawtheef.Infrastructure
     {
         /// <summary>
         /// Registers all infrastructure services (DB, repos, auth, notifications, storage, etc).
+        /// Split by App:Module (Recruitment / Operation / Both).
         /// </summary>
-        public static void AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
+        public static void AddInfrastructureLayer(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            IHostEnvironment env)
         {
-            // Feature flags
-            services.AddFeatureManagement(configuration.GetSection("FeatureFlags"));
+            // App mode
+            var runtime = configuration.GetSection(AppRuntimeSettings.SectionName).Get<AppRuntimeSettings>()
+                ?? throw new InvalidOperationException($"Configuration section '{AppRuntimeSettings.SectionName}' is missing.");
 
-            // Configuration objects (IOptions<T>)
-            ConfigureOptions(services, configuration);
+            // Always register runtime settings for DI usage
+            services.AddOptions<AppRuntimeSettings>()
+                .Bind(configuration.GetSection(AppRuntimeSettings.SectionName))
+                .Validate(s => s.Module != 0, "App:Module is required. Allowed: Recruitment | Operation | Both.")
+                .ValidateOnStart();
 
-            // Core frameworks & mediator
-            //services.AddTransient<IMediator, Mediator>();
+            // ===== Common (always) =====
+            services.AddInfrastructureCommon(configuration, env);
 
-            // App-specific services
-            services.AddNotificationServices();
-            services.AddServices(configuration);
-            services.AddBackgroundServices(configuration);
+            // ===== Recruitment-only =====
+            if (runtime.Module is AppModule.Recruitment)
+                services.AddInfrastructureRecruitment(configuration);
 
-            // Data & Repositories
-            services.AddDbContext(configuration, env);
-            services.AddRepositories();
-
-            // Authentication & Authorization
-            services.AddAuthorizationAndAuthentication(configuration);
-            
-            RegisterHttpClients(services, configuration);
+            // ===== Operation-only =====
+            if (runtime.Module is AppModule.Operation)
+                services.AddInfrastructureOperation(configuration);
         }
 
-        #region Configuration Helpers
+        #region Common
 
-        private static void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
+        extension(IServiceCollection services)
         {
-            services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
-            services.Configure<AppConfigSettings>(configuration.GetSection(AppConfigSettings.SectionName));
-            services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
-            services.Configure<StorageSettings>(configuration.GetSection(StorageSettings.SectionName));
-            services.Configure<EmailDispatcherSettings>(configuration.GetSection(EmailDispatcherSettings.SectionName));
-            services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
+            private void AddInfrastructureCommon(IConfiguration configuration,
+                IHostEnvironment env)
+            {
+                // Feature flags (keep consistent with your json; using FeatureFlags here)
+                services.AddFeatureManagement(configuration.GetSection("FeatureFlags"));
+
+                // Options (Common)
+                AddValidatedOptions<JwtSettings>(services, configuration, JwtSettings.SectionName);
+                AddValidatedOptions<AppConfigSettings>(services, configuration, AppConfigSettings.SectionName);
+                AddValidatedOptions<EmailSettings>(services, configuration, EmailSettings.SectionName);
+                AddValidatedOptions<StorageSettings>(services, configuration, StorageSettings.SectionName);
+
+                // Optional settings that you may want in both apps (no ValidateOnStart here)
+                services.Configure<EmailDispatcherSettings>(configuration.GetSection(EmailDispatcherSettings.SectionName));
+
+                // Data + Identity
+                services.AddTawtheefDbContext(configuration, env);
+
+                // Repositories (Common)
+                services.AddCommonRepositories();
+
+                // Authentication & Authorization (Common)
+                services.AddAuthorizationAndAuthenticationCommon(configuration);
+
+                // Storage (Common)
+                services.AddStorageCommon(configuration);
+                
+                // HttpClients (Common)
+                services.AddInfrastructureHttpClients(configuration);
+
+                // Notification (Common)
+                services.AddNotificationServicesCommon();
+
+                // Validators
+                services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+                // Common services
+                services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
+                services.AddScoped<IPasswordVerifier, PasswordVerifier>();
+                services.AddScoped<ILoginAuditService, LoginAuditService>();
+                services.AddScoped<ITokenService, TokenService>();
+                services.AddScoped<ISessionService, EfSessionService>();
+
+                services.AddScoped<ICurrentUserService, CurrentUserService>();
+                services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
+                services.AddSingleton<ILocalizationService, LocalizationService>();
+
+                // Authorization handlers/policy provider (Common)
+                services.AddSingleton<IAuthorizationHandler, ProfileCompletedHandler>();
+                services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+                services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+                
+                //TODO: should be operated in Recruitment module and Operation module
+                services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
+                
+                // Background (Common) - keep only what truly runs in both
+                services.AddHostedService<EmailDispatcher>();
+                services.AddHostedService<NotificationDispatcher>();
+            }
+
+            private void AddCommonRepositories()
+            {
+                services.AddTransient<IUnitOfWork, UnitOfWork>()
+                    .AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>))
+                    .AddTransient<IUserRepository, UserRepository>();
+                // Recruitment-only repositories
+                services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+                
+    
+                //TODO: should be operated in Recruitment module and Operation module
+                services.AddScoped<IJobRepository, JobRepository>();
+            }
+
+            private void AddNotificationServicesCommon()
+            {
+                services.AddSingleton<IEmailBranding, DefaultBranding>();
+                services.AddSingleton<IEmailQueue, EmailQueue>();
+                services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
+                services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
+                services.AddScoped<IEmailService, EmailService>();
+
+                services.AddScoped<ISmsSender, HodhodSmsSender>();
+                services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
+            }
+
+            private void AddStorageCommon(IConfiguration configuration)
+            {
+                // You are reading AzureConnectionString and RootPath in your original code.
+                // This keeps the same behavior (Azure if connection string exists, else local).
+                var connectionString = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.AzureConnectionString)}"] ?? string.Empty;
+                var containerName = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.RootPath)}"] ?? string.Empty;
+
+                if (!string.IsNullOrWhiteSpace(connectionString))
+                {
+                    services.AddSingleton(_ => new BlobServiceClient(connectionString));
+                    services.AddScoped(sp =>
+                    {
+                        var serviceClient = sp.GetRequiredService<BlobServiceClient>();
+                        return serviceClient.GetBlobContainerClient(containerName);
+                    });
+
+                    services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+                }
+                else
+                {
+                    services.AddScoped<IFileStorageService, LocalStorageService>();
+                }
+            }
+            
+            private void AddInfrastructureHttpClients(IConfiguration configuration)
+            {
+                // ===== Hodhod SMS Gateway =====
+                AddValidatedOptions<HodhodSmsSettings>(services, configuration, HodhodSmsSettings.SectionName);
+                services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>((sp, client) =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<HodhodSmsSettings>>().Value;
+                    client.BaseAddress = new Uri(opt.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                });
+            }
+        }
+
+        #endregion
+
+        #region Recruitment
+
+        extension(IServiceCollection services)
+        {
+            private void AddInfrastructureRecruitment(IConfiguration configuration)
+            {
+                // Recruitment-only options + http clients
+                services.AddRecruitmentHttpClients(configuration);
+
+                // Recruitment-only domain services
+                services.AddScoped<IVerificationService, VerificationService>();
+                services.AddScoped<IProfileStepValidationService, ProfileStepValidationService>();
+                services.AddScoped<IProfileReviewService, ProfileReviewService>();
+
+            }
+
+            private void AddRecruitmentHttpClients(IConfiguration configuration)
+            {
+                // ===== Qatar Pass =====
+                AddValidatedOptions<QatarPassAuthSettings>(services, configuration, QatarPassAuthSettings.SectionName);
+                services.AddHttpClient<IQatarPassClient, QatarPassClient>((sp, client) =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<QatarPassAuthSettings>>().Value;
+                    client.BaseAddress = new Uri(opt.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                });
+
+                // ===== Qatar Resident OTP Verification =====
+                AddValidatedOptions<QatarResidentOtpSettings>(services, configuration, QatarResidentOtpSettings.SectionName);
+                services.AddHttpClient<IQatarResidentVerificationClient, QatarResidentVerificationClient>((sp, client) =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<QatarResidentOtpSettings>>().Value;
+                    client.BaseAddress = new Uri(opt.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                });
+
+                // ===== MOI Client =====
+                AddValidatedOptions<MoiSettings>(services, configuration, MoiSettings.SectionName);
+                services.AddHttpClient<IMoiClient, MoiClient>((sp, client) =>
+                    {
+                        var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+                        client.BaseAddress = new Uri(opt.BaseUrl);
+                        client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                    })
+                    .ConfigurePrimaryHttpMessageHandler(sp =>
+                    {
+                        var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+
+                        return new HttpClientHandler
+                        {
+                            Credentials = new NetworkCredential(opt.Username, opt.Password),
+                            UseCookies = true,
+                            CookieContainer = new CookieContainer(),
+                            PreAuthenticate = false,
+                            UseDefaultCredentials = false
+                        };
+                    });
+            }
+        }
+
+        #endregion
+
+        #region Operation
+
+        extension(IServiceCollection services)
+        {
+            private void AddInfrastructureOperation(IConfiguration configuration)
+            {
+                // Operation-only settings + http clients
+                services.AddOperationHttpClients(configuration);
+
+                // Operation-only options (do not ValidateOnStart unless always present in Operation appsettings)
+                services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
+
+                // Operation-only services
+                services.AddScoped<IEmployeeProfileService, EmployeeProfileService>();
+                
+                services.AddScoped<IJobPointsRepository, JobPointsRepository>();
+                services.AddScoped<IJobPointsConfigurationsRepository, JobPointsConfigurationsRepository>();
+                services.AddScoped<IJobReviewAttachmentRepository, JobReviewAttachmentRepository>();
+                services.AddScoped<IJobTabReviewNoteRepository, JobTabReviewNoteRepository>();
+                services.AddScoped<IJobConditionRepository, JobConditionRepository>();
+                services.AddScoped<IJobDegreeRepository, JobDegreeRepository>();
+                services.AddScoped<IJobSkillRepository, JobSkillRepository>();
+                services.AddScoped<IJobResponsibilityRepository, JobResponsibilityRepository>();
+                services.AddScoped<IJobRequiredAttachmentRepository, JobRequiredAttachmentRepository>();
+                
+                services.AddScoped<IJobValidationService, JobValidationService>();
+                
+                // Recruitment-only background jobs
+                services.AddHostedService<JobAutoClosureService>();
+            }
+
+            private void AddOperationHttpClients(IConfiguration configuration)
+            {
+                // HR settings
+                services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
+
+                // ===== Employee Directory =====
+                services.AddHttpClient<IEmployeeDirectoryClient, EmployeeDirectoryClient>((sp, client) =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<HrServiceSettings>>().Value;
+                    client.BaseAddress = new Uri(opt.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                });
+            }
         }
 
         #endregion
 
         #region DbContext & Identity
 
-        /// <summary>
-        /// Adds the TawtheefDbContext and Identity configuration.
-        /// </summary>
-        private static void AddDbContext(this IServiceCollection services, IConfiguration configuration,
+        private static void AddTawtheefDbContext(
+            this IServiceCollection services,
+            IConfiguration configuration,
             IHostEnvironment env)
         {
-            // Connection string kept for potential conditional logic later
             services.AddScoped<AuditableEntityInterceptor>();
 
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
             {
                 var cs = configuration.GetConnectionString(ConnectionStringSettings.SectionName);
 
-                // register interceptors or other options as needed
-                options.UseSqlServer(cs, sql => {
+                options.UseSqlServer(cs, sql =>
+                    {
                         sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
                         sql.EnableRetryOnFailure(5);
                     })
                     .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
-                
+
                 if (env.IsDevelopment())
                 {
                     options
@@ -138,383 +364,250 @@ namespace Tawtheef.Infrastructure
             });
 
             services.AddIdentity<User, ApplicationRole>()
-            .AddEntityFrameworkStores<TawtheefDbContext>()
-            .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<TawtheefDbContext>()
+                .AddDefaultTokenProviders();
         }
 
         #endregion
 
-        #region Repositories
+        #region Authentication / Authorization / RateLimit
 
-        private static void AddRepositories(this IServiceCollection services)
-        {
-            services
-                .AddTransient<IUnitOfWork, UnitOfWork>()
-                .AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>))
-                .AddTransient<IUserRepository, UserRepository>()
-                .AddScoped<IUserProfileRepository, UserProfileRepository>()
-                .AddScoped<IJobRepository, JobRepository>()
-                .AddScoped<IJobPointsRepository, JobPointsRepository>()
-                .AddScoped<IJobPointsConfigurationsRepository, JobPointsConfigurationsRepository>()
-                .AddScoped<IJobReviewAttachmentRepository, JobReviewAttachmentRepository>()
-                .AddScoped<IJobTabReviewNoteRepository, JobTabReviewNoteRepository>()
-                .AddScoped<IJobConditionRepository, JobConditionRepository>()
-                .AddScoped<IJobDegreeRepository, JobDegreeRepository>()
-                .AddScoped<IJobSkillRepository, JobSkillRepository>()
-                .AddScoped<IJobResponsibilityRepository, JobResponsibilityRepository>()
-                .AddScoped<IJobRequiredAttachmentRepository, JobRequiredAttachmentRepository>();
-        }
-
-        #endregion
-
-        #region Authentication & Authorization
-
-        /// <summary>
-        /// Registers authentication schemes (JWT, Azure AD OIDC fallback, external providers) and authorization policies.
-        /// </summary>
-        private static void AddAuthorizationAndAuthentication(this IServiceCollection services, IConfiguration configuration)
-        {
-            ConfigureAuthentication(services, configuration);
-            ConfigureRateLimitingPolicies(services);
-            ConfigureAuthorizationPolicies(services);
-        }
-
-        private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<CookiePolicyOptions>(options => {
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-                options.OnAppendCookie = ctx =>
-                {
-                    if (ctx.CookieOptions.SameSite == SameSiteMode.Lax)
-                        ctx.CookieOptions.SameSite = SameSiteMode.None;
-                    ctx.CookieOptions.Secure = true;
-                };
-                options.OnDeleteCookie = ctx =>
-                {
-                    if (ctx.CookieOptions.SameSite == SameSiteMode.Lax)
-                        ctx.CookieOptions.SameSite = SameSiteMode.None;
-                    ctx.CookieOptions.Secure = true;
-                };
-            });
-
-            var jwtSection = configuration.GetSection(JwtSettings.SectionName);
-            var issuer = jwtSection[nameof(JwtSettings.Issuer)]!;
-            var audience = jwtSection[nameof(JwtSettings.Audience)]!;
-            var signingKeyRaw = jwtSection[nameof(JwtSettings.SigningKey)]!;
-            
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyRaw));
-
-            services.AddAuthentication(options => {
-                    options.DefaultScheme = AuthSchemes.Smart;
-                    options.DefaultAuthenticateScheme = AuthSchemes.Smart;
-                    options.DefaultChallengeScheme = AuthSchemes.Smart;
-                })
-                .AddPolicyScheme(AuthSchemes.Smart, "Cookie or Bearer", o => {
-                    o.ForwardDefaultSelector = ctx =>
-                        ctx.Request.Headers.TryGetValue("Authorization", out var h) &&
-                        h.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
-                            ? JwtBearerDefaults.AuthenticationScheme : AuthSchemes.AppCookieScheme;
-                })
-                .AddCookie(AuthSchemes.AppCookieScheme,o => {
-                    o.Cookie.Name = AuthSchemes.AppCookieName;
-                    o.Cookie.SameSite = SameSiteMode.None;
-                    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                    o.SlidingExpiration = true;
-                })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => {
-                    options.RequireHttpsMetadata = true;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = issuer,
-                        ValidateAudience = true,
-                        ValidAudience = audience,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = signingKey,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.FromMinutes(1)
-                    };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = async ctx =>
-                        {
-                            var sidFromToken = ctx.Principal?.FindFirst("sid")?.Value
-                                               ?? ctx.Principal?.FindFirst(JwtRegisteredClaimNames.Sid)?.Value;
-
-                            var userId = ctx.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                            if (string.IsNullOrEmpty(sidFromToken) || string.IsNullOrEmpty(userId))
-                            {
-                                ctx.Fail("Missing sid or user id.");
-                                return;
-                            }
-
-                            var sessionService = ctx.HttpContext.RequestServices.GetRequiredService<ISessionService>();
-                            var currentSid = await sessionService.GetCurrentAsync(Guid.Parse(userId), ctx.HttpContext.RequestAborted);
-
-                            if (string.IsNullOrEmpty(currentSid) || !string.Equals(currentSid, sidFromToken, StringComparison.Ordinal))
-                            {
-                                ctx.Fail("Session changed. Please sign in again.");
-                            }
-                        }
-                    };
-                });
-
-            var google = configuration.GetSection(GoogleAuthenticationSettings.SectionName);
-            var googleClientId = google[nameof(GoogleAuthenticationSettings.ClientId)];
-            var googleClientSecret = google[nameof(GoogleAuthenticationSettings.ClientSecret)];
-            var googleEnabled = !string.IsNullOrWhiteSpace(googleClientId) &&
-                                !string.IsNullOrWhiteSpace(googleClientSecret);
-
-            if (googleEnabled)
-            {
-                services.AddAuthentication().AddGoogle(options => {
-                    options.ClientId = googleClientId!;
-                    options.ClientSecret = googleClientSecret!;
-                    options.SignInScheme = IdentityConstants.ExternalScheme;
-                    options.SaveTokens = true;
-                    options.Scope.Add("email");
-                    options.Scope.Add("profile");
-                    options.ClaimActions.MapJsonKey("picture", "picture"); 
-                });
-            }
-
-            var azure = configuration.GetSection(AzureAuthenticationSettings.SectionName);
-            var azureClientId = azure[nameof(AzureAuthenticationSettings.ClientId)];
-            var azureTenantId = azure[nameof(AzureAuthenticationSettings.TenantId)];
-            var azureInstance = azure[nameof(AzureAuthenticationSettings.Instance)];
-
-            var azureEnabled =
-                !string.IsNullOrWhiteSpace(azureClientId) &&
-                !string.IsNullOrWhiteSpace(azureTenantId) &&
-                !string.IsNullOrWhiteSpace(azureInstance);
-
-            if (azureEnabled)
-            {
-                services.AddAuthentication()
-                    .AddMicrosoftIdentityWebApp(configuration, AzureAuthenticationSettings.SectionName,
-                        openIdConnectScheme: AuthSchemes.AzureOidc);
-
-                services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o => {
-                    o.SignInScheme = IdentityConstants.ExternalScheme;
-                    o.ResponseType = OpenIdConnectResponseType.Code;
-                    o.SaveTokens = true;
-                    o.Scope.Add("openid");
-                    o.Scope.Add("profile");
-                    o.Scope.Add("email");
-                });
-            }
-        }
-
-        /// <summary>
-        /// Configure rate limiting policies used by the application.
-        /// </summary>
-        private static void ConfigureRateLimitingPolicies(IServiceCollection services)
-        {
-            services.AddRateLimiter(options =>
-            {
-                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-                options.AddPolicy(LimitsPolicyKeys.VerificationRequestPolicy, context => {
-                    // Prefer authenticated user id (you are already reading ClaimTypes.NameIdentifier in JWT validation)
-                    var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                    // If somehow unauthenticated, fallback to IP to avoid "all share same bucket"
-                    var key = !string.IsNullOrWhiteSpace(userId)
-                        ? $"user:{userId}"
-                        : $"ip:{context.Connection.RemoteIpAddress}";
-
-                    // Choose limiter type. Fixed window is simple and predictable.
-                    return RateLimitPartition.GetFixedWindowLimiter(
-                        partitionKey: key,
-                        factory: _ => new FixedWindowRateLimiterOptions
-                        {
-                            PermitLimit = 5,
-                            Window = TimeSpan.FromMinutes(10),
-                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                            QueueLimit = 0
-                        });
-                });
-                options.AddPolicy(LimitsPolicyKeys.VerificationConfirmationPolicy, context => {
-                    // Prefer authenticated user id (you are already reading ClaimTypes.NameIdentifier in JWT validation)
-                    var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                    // If somehow unauthenticated, fallback to IP to avoid "all share same bucket"
-                    var key = !string.IsNullOrWhiteSpace(userId)
-                        ? $"user:{userId}"
-                        : $"ip:{context.Connection.RemoteIpAddress}";
-
-                    // Choose limiter type. Fixed window is simple and predictable.
-                    return RateLimitPartition.GetFixedWindowLimiter(
-                        partitionKey: key,
-                        factory: _ => new FixedWindowRateLimiterOptions
-                        {
-                            PermitLimit = 10, 
-                            Window = TimeSpan.FromMinutes(10), 
-                            QueueLimit = 0
-                        });
-                });
-                options.AddPolicy(LimitsPolicyKeys.MoiCheckProfilePolicy, context => {
-                    // Prefer authenticated user id (you are already reading ClaimTypes.NameIdentifier in JWT validation)
-                    var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                    // If somehow unauthenticated, fallback to IP to avoid "all share same bucket"
-                    var key = !string.IsNullOrWhiteSpace(userId)
-                        ? $"user:{userId}"
-                        : $"ip:{context.Connection.RemoteIpAddress}";
-
-                    // Choose limiter type. Fixed window is simple and predictable.
-                    return RateLimitPartition.GetFixedWindowLimiter(
-                        partitionKey: key,
-                        factory: _ => new FixedWindowRateLimiterOptions
-                        {
-                            PermitLimit = 6,
-                            Window = TimeSpan.FromMinutes(5),
-                            QueueLimit = 0,
-                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst
-                        });
-                });
-            });
-        }
-
-        #endregion
-
-        #region Notification Services & App Services
-        private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
-        {
-            // ===== Qatar Pass =====
-            services.Configure<QatarPassAuthSettings>(configuration.GetSection(QatarPassAuthSettings.SectionName));
-            services.AddHttpClient<IQatarPassClient, QatarPassClient>((sp, client) =>
-            {
-                var opt = sp.GetRequiredService<IOptions<QatarPassAuthSettings>>().Value;
-                client.BaseAddress = new Uri(opt.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-            });
-
-            // ===== Qatar Resident OTP Verification =====
-            services.Configure<QatarResidentOtpSettings>(configuration.GetSection(QatarResidentOtpSettings.SectionName));
-            services.AddHttpClient<IQatarResidentVerificationClient, QatarResidentVerificationClient>((sp, client) =>
-            {
-                var opt = sp.GetRequiredService<IOptions<QatarResidentOtpSettings>>().Value;
-                client.BaseAddress = new Uri(opt.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-            });
-
-            // ===== Hodhod SMS =====
-            services.Configure<HodhodSmsSettings>(configuration.GetSection(HodhodSmsSettings.SectionName));
-            services.AddHttpClient<ISmsGatewayClient, HodhodSmsClient>((sp, client) =>
-            {
-                var opt = sp.GetRequiredService<IOptions<HodhodSmsSettings>>().Value;
-                client.BaseAddress = new Uri(opt.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-            });
-
-            // ===== MOI Client =====
-            services.Configure<MoiSettings>(configuration.GetSection(MoiSettings.SectionName));
-            services.AddHttpClient<IMoiClient, MoiClient>((sp, client) =>
-                {
-                    var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
-                    client.BaseAddress = new Uri(opt.BaseUrl);
-                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-                })
-                .ConfigurePrimaryHttpMessageHandler(sp =>
-                {
-                    var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
-
-                    return new HttpClientHandler
-                    {
-                        Credentials = new NetworkCredential(opt.Username, opt.Password),
-                        UseCookies = true,
-                        CookieContainer = new CookieContainer(),
-                        PreAuthenticate = false,
-                        UseDefaultCredentials = false
-                    };
-                });
-            // ===== Employee Directory =====
-            services.AddHttpClient<IEmployeeDirectoryClient, EmployeeDirectoryClient>((sp, client) =>
-            {
-                var opt = sp.GetRequiredService<IOptions<HrServiceSettings>>().Value;
-                client.BaseAddress = new Uri(opt.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-            });
-        }
         extension(IServiceCollection services)
         {
-            /// <summary>
-            /// Registers notification-related services (email queue, templates, dispatcher...).
-            /// </summary>
-            private void AddNotificationServices()
-            {
-                services.AddSingleton<IEmailBranding, DefaultBranding>();
-                services.AddSingleton<IEmailQueue, EmailQueue>();
-                services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
-                services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
-                services.AddScoped<IEmailService, EmailService>();
             
-                services.AddScoped<ISmsSender, HodhodSmsSender>();
-                services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
-            }
-
-            /// <summary>
-            /// Registers general application services (storage clients, token services, etc).
-            /// </summary>
-            private void AddServices(IConfiguration configuration)
+            //TODO: should be operated in Recruitment module and Operation module
+            private void AddAuthorizationAndAuthenticationCommon(IConfiguration configuration)
             {
-                var connectionString = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.AzureConnectionString)}"] ?? string.Empty;
-                var containerName = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.RootPath)}"] ?? string.Empty;
-                if (!string.IsNullOrEmpty(connectionString))
+                services.Configure<CookiePolicyOptions>(options =>
                 {
-                    services.AddSingleton(_ => new BlobServiceClient(connectionString));
-                    services.AddScoped(sp =>
+                    options.MinimumSameSitePolicy = SameSiteMode.None;
+
+                    options.OnAppendCookie = ctx =>
                     {
-                        var serviceClient = sp.GetRequiredService<BlobServiceClient>();
-                        var containerClient = serviceClient.GetBlobContainerClient(containerName);
-                        return containerClient;
+                        if (ctx.CookieOptions.SameSite == SameSiteMode.Lax)
+                            ctx.CookieOptions.SameSite = SameSiteMode.None;
+                        ctx.CookieOptions.Secure = true;
+                    };
+
+                    options.OnDeleteCookie = ctx =>
+                    {
+                        if (ctx.CookieOptions.SameSite == SameSiteMode.Lax)
+                            ctx.CookieOptions.SameSite = SameSiteMode.None;
+                        ctx.CookieOptions.Secure = true;
+                    };
+                });
+
+                var jwtSection = configuration.GetSection(JwtSettings.SectionName);
+                var issuer = jwtSection[nameof(JwtSettings.Issuer)]!;
+                var audience = jwtSection[nameof(JwtSettings.Audience)]!;
+                var signingKeyRaw = jwtSection[nameof(JwtSettings.SigningKey)]!;
+
+                var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyRaw));
+
+                services.AddAuthentication(options =>
+                    {
+                        options.DefaultScheme = AuthSchemes.Smart;
+                        options.DefaultAuthenticateScheme = AuthSchemes.Smart;
+                        options.DefaultChallengeScheme = AuthSchemes.Smart;
+                    })
+                    .AddPolicyScheme(AuthSchemes.Smart, "Cookie or Bearer", o =>
+                    {
+                        o.ForwardDefaultSelector = ctx =>
+                            ctx.Request.Headers.TryGetValue("Authorization", out var h) &&
+                            h.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                                ? JwtBearerDefaults.AuthenticationScheme
+                                : AuthSchemes.AppCookieScheme;
+                    })
+                    .AddCookie(AuthSchemes.AppCookieScheme, o =>
+                    {
+                        o.Cookie.Name = AuthSchemes.AppCookieName;
+                        o.Cookie.SameSite = SameSiteMode.None;
+                        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                        o.SlidingExpiration = true;
+                    })
+                    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                    {
+                        options.RequireHttpsMetadata = true;
+                        options.SaveToken = true;
+
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidIssuer = issuer,
+                            ValidateAudience = true,
+                            ValidAudience = audience,
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = signingKey,
+                            ValidateLifetime = true,
+                            ClockSkew = TimeSpan.FromMinutes(1)
+                        };
+
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnTokenValidated = async ctx =>
+                            {
+                                var sidFromToken =
+                                    ctx.Principal?.FindFirst("sid")?.Value ??
+                                    ctx.Principal?.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/sid")?.Value;
+
+                                var userId = ctx.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                                if (string.IsNullOrWhiteSpace(sidFromToken) || string.IsNullOrWhiteSpace(userId))
+                                {
+                                    ctx.Fail("Missing sid or user id.");
+                                    return;
+                                }
+
+                                var sessionService = ctx.HttpContext.RequestServices.GetRequiredService<ISessionService>();
+                                var currentSid = await sessionService.GetCurrentAsync(
+                                    Guid.Parse(userId),
+                                    ctx.HttpContext.RequestAborted);
+
+                                if (string.IsNullOrWhiteSpace(currentSid) ||
+                                    !string.Equals(currentSid, sidFromToken, StringComparison.Ordinal))
+                                {
+                                    ctx.Fail("Session changed. Please sign in again.");
+                                }
+                            }
+                        };
                     });
-                    services.AddScoped<IFileStorageService, AzureBlobStorageService>();
-                }
-                else
+
+                // ===== Google external login (optional) =====
+                var google = configuration.GetSection(GoogleAuthenticationSettings.SectionName);
+                var googleClientId = google[nameof(GoogleAuthenticationSettings.ClientId)];
+                var googleClientSecret = google[nameof(GoogleAuthenticationSettings.ClientSecret)];
+                var googleEnabled = !string.IsNullOrWhiteSpace(googleClientId) &&
+                                    !string.IsNullOrWhiteSpace(googleClientSecret);
+
+                if (googleEnabled)
                 {
-                    services.AddScoped<IFileStorageService, LocalStorageService>();
+                    services.AddAuthentication().AddGoogle(options =>
+                    {
+                        options.ClientId = googleClientId!;
+                        options.ClientSecret = googleClientSecret!;
+                        options.SignInScheme = IdentityConstants.ExternalScheme;
+                        options.SaveTokens = true;
+                        options.Scope.Add("email");
+                        options.Scope.Add("profile");
+                        options.ClaimActions.MapJsonKey("picture", "picture");
+                    });
                 }
 
-                services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-                
-                services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
-                services.AddScoped<IPasswordVerifier, PasswordVerifier>();
-                services.AddScoped<ILoginAuditService, LoginAuditService>();
-                services.AddScoped<IEmployeeProfileService, EmployeeProfileService>();
-                services.AddScoped<ITokenService, TokenService>();
-                services.AddScoped<ISessionService, EfSessionService>();
-                
-                services.AddScoped<IVerificationService, VerificationService>();
-                services.AddScoped<ICurrentUserService, CurrentUserService>();
-                
-                services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
-                services.AddSingleton<ILocalizationService, LocalizationService>();
+                // ===== Azure OIDC (optional) =====
+                var azure = configuration.GetSection(AzureAuthenticationSettings.SectionName);
+                var azureClientId = azure[nameof(AzureAuthenticationSettings.ClientId)];
+                var azureTenantId = azure[nameof(AzureAuthenticationSettings.TenantId)];
+                var azureInstance = azure[nameof(AzureAuthenticationSettings.Instance)];
 
-                services.AddScoped<IProfileStepValidationService, ProfileStepValidationService>();
-                services.AddScoped<IJobValidationService, JobValidationService>();
-                services.AddScoped<IProfileReviewService, ProfileReviewService>();
-                services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
+                var azureEnabled =
+                    !string.IsNullOrWhiteSpace(azureClientId) &&
+                    !string.IsNullOrWhiteSpace(azureTenantId) &&
+                    !string.IsNullOrWhiteSpace(azureInstance);
+
+                if (azureEnabled)
+                {
+                    services.AddAuthentication()
+                        .AddMicrosoftIdentityWebApp(configuration, AzureAuthenticationSettings.SectionName,
+                            openIdConnectScheme: AuthSchemes.AzureOidc);
+
+                    services.PostConfigure<OpenIdConnectOptions>(AuthSchemes.AzureOidc, o =>
+                    {
+                        o.SignInScheme = IdentityConstants.ExternalScheme;
+                        o.ResponseType = OpenIdConnectResponseType.Code;
+                        o.SaveTokens = true;
+                        o.Scope.Add("openid");
+                        o.Scope.Add("profile");
+                        o.Scope.Add("email");
+                    });
+                }
+
+                // Rate limiting + authorization policies
+                services.AddRateLimitingPoliciesCommon();
+                services.AddAuthorizationPoliciesCommon();
+            }
+
+            private void AddRateLimitingPoliciesCommon()
+            {
+                services.AddRateLimiter(options =>
+                {
+                    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                    options.AddPolicy(LimitsPolicyKeys.VerificationRequestPolicy, context =>
+                    {
+                        var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                        var key = !string.IsNullOrWhiteSpace(userId)
+                            ? $"user:{userId}"
+                            : $"ip:{context.Connection.RemoteIpAddress}";
+
+                        return RateLimitPartition.GetFixedWindowLimiter(
+                            partitionKey: key,
+                            factory: _ => new FixedWindowRateLimiterOptions
+                            {
+                                PermitLimit = 5,
+                                Window = TimeSpan.FromMinutes(10),
+                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                                QueueLimit = 0
+                            });
+                    });
+
+                    options.AddPolicy(LimitsPolicyKeys.VerificationConfirmationPolicy, context =>
+                    {
+                        var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                        var key = !string.IsNullOrWhiteSpace(userId)
+                            ? $"user:{userId}"
+                            : $"ip:{context.Connection.RemoteIpAddress}";
+
+                        return RateLimitPartition.GetFixedWindowLimiter(
+                            partitionKey: key,
+                            factory: _ => new FixedWindowRateLimiterOptions
+                            {
+                                PermitLimit = 10,
+                                Window = TimeSpan.FromMinutes(10),
+                                QueueLimit = 0
+                            });
+                    });
+
+                    options.AddPolicy(LimitsPolicyKeys.MoiCheckProfilePolicy, context =>
+                    {
+                        var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                        var key = !string.IsNullOrWhiteSpace(userId)
+                            ? $"user:{userId}"
+                            : $"ip:{context.Connection.RemoteIpAddress}";
+
+                        return RateLimitPartition.GetFixedWindowLimiter(
+                            partitionKey: key,
+                            factory: _ => new FixedWindowRateLimiterOptions
+                            {
+                                PermitLimit = 6,
+                                Window = TimeSpan.FromMinutes(5),
+                                QueueLimit = 0,
+                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                            });
+                    });
+                });
+            }
+
+            private void AddAuthorizationPoliciesCommon()
+            {
+                services.AddAuthorization();
             }
         }
-        
-        public static void AddBackgroundServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddHostedService<EmailDispatcher>();
-            services.AddHostedService<NotificationDispatcher>();
-            services.AddHostedService<JobAutoClosureService>();
-        }
-        
+
         #endregion
-        
-        private static void ConfigureAuthorizationPolicies(IServiceCollection services)
+
+        #region Options Helper
+
+        private static void AddValidatedOptions<T>(
+            IServiceCollection services,
+            IConfiguration configuration,
+            string sectionName) where T : class
         {
-            services.AddSingleton<IAuthorizationHandler, ProfileCompletedHandler>();
-            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
-            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddOptions<T>()
+                .Bind(configuration.GetSection(sectionName))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
         }
+
+        #endregion
     }
 }
