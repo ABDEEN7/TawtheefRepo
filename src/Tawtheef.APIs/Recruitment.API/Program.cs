@@ -2,11 +2,13 @@ using System.Security.Claims;
 using Application.Recruitment;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Tawtheef.Application;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure;
@@ -38,19 +40,23 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
         new DefaultAzureCredential(),
         new KeyVaultSecretManager());
 }
-
+builder.Services.AddApplicationInsightsTelemetry();
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
-builder.Host.UseSerilog((ctx, services, lc) => lc
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .Enrich.WithMachineName()
-    .Enrich.WithExceptionDetails()
-    .ReadFrom.Configuration(ctx.Configuration) // uses Seq:Url and Seq:ApiKey
-    .ReadFrom.Services(services)
-    .WriteTo.Console()
-    .WriteTo.Seq(
-        serverUrl: ctx.Configuration["Seq:Url"] ?? "http://127.0.0.1:5341",
-        apiKey: ctx.Configuration["Seq:ApiKey"])
+builder.Host.UseSerilog((ctx, services, lc) => {
+        var telemetryConfiguration = services.GetRequiredService<TelemetryConfiguration>();
+
+        lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithExceptionDetails()
+            .ReadFrom.Configuration(ctx.Configuration) // uses Seq:Url and Seq:ApiKey
+            .ReadFrom.Services(services)
+            .WriteTo.Console()
+            .WriteTo.Seq(
+                serverUrl: ctx.Configuration["Seq:Url"] ?? "http://127.0.0.1:5341",
+                apiKey: ctx.Configuration["Seq:ApiKey"])
+            .WriteTo.ApplicationInsights(telemetryConfiguration, new TraceTelemetryConverter());
+    }
 );
 
 // ----- Services -----
