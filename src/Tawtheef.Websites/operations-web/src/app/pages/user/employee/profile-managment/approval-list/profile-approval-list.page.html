@@ -3,7 +3,7 @@
     <div class="card-body">
       <div class="row align-items-center mb-3">
         <div class="col-md-6">
-          <p class="eyebrow">{{ 'profileApproval.list.eyebrow' | translate }}</p>
+          <p class="text-primary mb-0">{{ 'profileApproval.list.eyebrow' | translate }}</p>
           <h3 class="fw-bold m-0">{{ 'profileApproval.list.title' | translate }}</h3>
           <p class="fs-16 m-0">{{ 'profileApproval.list.subtitle' | translate }}</p>
         </div>
@@ -14,81 +14,86 @@
           </button>
         </div>
       </div>
-      <form class="row gx-2 mb-3 align-items-end" (ngSubmit)="applyFilters()">
-        <div class="col-md-2 mb-3">
-          <label class="form-label">{{ 'profileApproval.list.searchPlaceholder' | translate }}</label>
-          <input
-            pInputText
-            type="search" class="w-100  form-control"
-            [placeholder]="'profileApproval.list.searchPlaceholder' | translate"
-            [ngModel]="filters().search"
-            (ngModelChange)="updateFilter('search', $event)"
-            name="search"
-          />
-        </div>
-        <div class="col-md-2 mb-3">
-          <label class="form-label">{{ 'profileApproval.list.filter.specialization' | translate }}</label>
-          <input
-            pInputText
-            type="text" class="w-100 form-control"
-            [placeholder]="'profileApproval.list.filter.specializationPlaceholder' | translate"
-            [ngModel]="filters().specialization"
-            (ngModelChange)="updateFilter('specialization', $event)"
-            name="specialization"
-          />
-        </div>
-        <div class="col-md-2 mb-3">
-          <label class="form-label">{{ 'profileApproval.list.filter.targetEntity' | translate }}</label>
-          <input
-            pInputText
-            type="text" class="w-100 form-control"
-            [placeholder]="'profileApproval.list.filter.targetEntityPlaceholder' | translate"
-            [ngModel]="filters().targetEntity"
-            (ngModelChange)="updateFilter('targetEntity', $event)"
-            name="targetEntity"
-          />
-        </div>
-        <div class="col-md-2 mb-3">
-          <label class="form-label">{{ 'profileApproval.list.filter.candidateType' | translate }}</label>
-          <input
-            pInputText
-            type="text" class="w-100 form-control"
-            [placeholder]="'profileApproval.list.filter.candidateTypePlaceholder' | translate"
-            [ngModel]="filters().candidateType"
-            (ngModelChange)="updateFilter('candidateType', $event)"
-            name="candidateType"
-          />
-        </div>
-        <div class="col-md-2 mb-3">
-          <label class="form-label">{{ 'profileApproval.list.filter.status' | translate }}</label>
-          <p-select
-            [options]="statusOptions"
-            [optionValue]="'value'"
-            [ngModel]="filters().status"
-            [showClear]="true" class="w-100"
-            (onChange)="updateFilter('status', $event.value ?? '')"
-            name="status"
-          >
-            <ng-template pTemplate="selectedItem" let-item>
-              <span *ngIf="item">{{ item.label | translate }}</span>
-            </ng-template>
-            <ng-template pTemplate="item" let-item>
-              {{ item.label | translate }}
-            </ng-template>
-          </p-select>
-        </div>
-        <div class="col-md-2 mb-3">
-          <div class=" d-flex gap-2">
-            <button class="btn btn-primary" type="submit" [disabled]="loading()">
-              {{ 'profileApproval.list.filter.apply' | translate }}
-            </button>
-            <button class="btn ghost" type="button" (click)="resetFilters()">
-              {{ 'profileApproval.list.filter.reset' | translate }}
-            </button>
-          </div>
+       <div class="card card-table mb-3">
+             <div class="card-body">
+                  <form class="row gx-2 align-items-end" (ngSubmit)="applyFilters()">
+                        <div class="col-md-2">
+                          <label class="form-label">{{ 'profileApproval.list.searchPlaceholder' | translate }}</label>
+                          <input
+                            pInputText
+                            type="search" class="w-100  form-control"
+                            [placeholder]="'profileApproval.list.searchPlaceholder' | translate"
+                            [ngModel]="filters().search"
+                            (ngModelChange)="updateFilter('search', $event)"
+                            name="search"
+                          />
+                        </div>
+                        <div class="col-md-2">
+                          <label class="form-label">{{ 'profileApproval.list.filter.specialization' | translate }}</label>
+                          <input
+                            pInputText
+                            type="text" class="w-100 form-control"
+                            [placeholder]="'profileApproval.list.filter.specializationPlaceholder' | translate"
+                            [ngModel]="filters().specialization"
+                            (ngModelChange)="updateFilter('specialization', $event)"
+                            name="specialization"
+                          />
+                        </div>
+                        <div class="col-md-2">
+                          <label class="form-label">{{ 'profileApproval.list.filter.targetEntity' | translate }}</label>
+                          <input
+                            pInputText
+                            type="text" class="w-100 form-control"
+                            [placeholder]="'profileApproval.list.filter.targetEntityPlaceholder' | translate"
+                            [ngModel]="filters().targetEntity"
+                            (ngModelChange)="updateFilter('targetEntity', $event)"
+                            name="targetEntity"
+                          />
+                        </div>
+                        <div class="col-md-2">
+                          <label class="form-label">{{ 'profileApproval.list.filter.candidateType' | translate }}</label>
+                          <input
+                            pInputText
+                            type="text" class="w-100 form-control"
+                            [placeholder]="'profileApproval.list.filter.candidateTypePlaceholder' | translate"
+                            [ngModel]="filters().candidateType"
+                            (ngModelChange)="updateFilter('candidateType', $event)"
+                            name="candidateType"
+                          />
+                        </div>
+                        <div class="col-md-2">
+                          <label class="form-label">{{ 'profileApproval.list.filter.status' | translate }}</label>
+                          <p-select
+                            [options]="statusOptions"
+                            [optionValue]="'value'"
+                            [ngModel]="filters().status"
+                            [showClear]="true" class="w-100"
+                            (onChange)="updateFilter('status', $event.value ?? '')"
+                            name="status"
+                          >
+                            <ng-template pTemplate="selectedItem" let-item>
+                              <span *ngIf="item">{{ item.label | translate }}</span>
+                            </ng-template>
+                            <ng-template pTemplate="item" let-item>
+                              {{ item.label | translate }}
+                            </ng-template>
+                          </p-select>
+                        </div>
+                        <div class="col-md-2">
+                          <div class=" d-flex gap-2">
+                            <button class="btn btn-primary" type="submit" [disabled]="loading()">
+                              {{ 'profileApproval.list.filter.apply' | translate }}
+                            </button>
+                            <button class="btn ghost" type="button" (click)="resetFilters()">
+                              {{ 'profileApproval.list.filter.reset' | translate }}
+                            </button>
+                          </div>
 
-        </div>
-      </form>
+                        </div>
+                  </form>
+             </div>
+       </div>
+      
       <div class="row">
         <div class="col-md-12">
           <div class="list-body" *ngIf="!loading(); else loadingListTpl">
@@ -132,11 +137,11 @@
                         <div class="muted small">{{ row.candidateType || ('profileApproval.list.typeUnknown' | translate) }}</div>
                       </td>
                       <td>
-                  <span class="pill"
-                        [ngClass]="statusClass(row.overallStatus)">{{ statusLabel(row.overallStatus) | translate }}</span>
-                        <span class="pill warning" *ngIf="row.pendingCount > 0">
-                    {{ row.pendingCount }} {{ 'profileApproval.list.pending' | translate }}
-                  </span>
+                          <div class="d-flex gap-2">
+                                 <span class="pill neutral" [ngClass]="statusClass(row.overallStatus)">{{ statusLabel(row.overallStatus) | translate }}</span>
+                                 <span class="pill warning" *ngIf="row.pendingCount > 0"> {{ row.pendingCount }} {{ 'profileApproval.list.pending' | translate }} </span>
+                          </div>
+                 
                       </td>
                       <td>{{ row.targetEntity || ('profileApproval.list.entityUnknown' | translate) }}</td>
                       <td>{{ row.submittedAtUtc | date: 'dd/MM/yyyy' }}</td>

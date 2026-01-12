@@ -7,7 +7,7 @@
   "candidate_dashboard.kpi_new_invites": "New Invitations",
   "candidate_dashboard.kpi_under_review": "Requests Under Review",
   "candidate_dashboard.kpi_withdrawn": "Pending/Cancelled Requests",
-  "candidate_dashboard.kpi_applied": "Accepted/Completed Requests",
+  "candidate_dashboard.kpi_applied": "Accepted",
   "candidate_dashboard.filter_status": "Status",
   "candidate_dashboard.filter_type": "Type",
   "candidate_dashboard.filter_entity": "Requesting Entity",
