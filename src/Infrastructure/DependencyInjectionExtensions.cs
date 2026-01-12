@@ -189,6 +189,7 @@ namespace Tawtheef.Infrastructure
 
                 services.AddScoped<ISmsSender, HodhodSmsSender>();
                 services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
+                services.AddScoped<IPushSender, NullPushSender>();
                 services.AddScoped<IEmailService, EmailService>();
             }
 
