@@ -13,27 +13,15 @@ public sealed class JwtSettings
     public required string Audience { get; init; }
     public int? ExpiryMinutes { get; set; }
     public int? RefreshTokenExpirationDays { get; set; }
-    public int TokenLifetimeMinutes { get; init; }
-    public int? RefreshTokenRetentionCount { get; init; }
+    public JwtValidationSettings TokenValidationParameters { get; init; } = new();
 }
 
-public sealed class GoogleAuthenticationSettings
+public sealed class JwtValidationSettings
 {
-    public const string SectionName = "Authentication:Google";
-    [Required]
-    public required string ClientId { get; init; }
-    [Required]
-    public required string ClientSecret { get; init; }
-}
-
-
-public sealed class AzureAuthenticationSettings
-{
-    public const string SectionName = "Authentication:Azure";
-    [Required]
-    public required string ClientId { get; init; }
-    [Required]
-    public required string TenantId { get; init; }
-    [Required]
-    public required string Instance { get; init; }
+    public bool ValidateIssuer { get; init; } = true;
+    public bool ValidateAudience { get; init; } = true;
+    public bool ValidateLifetime { get; init; } = true;
+    public bool ValidateIssuerSigningKey { get; init; } = true;
+    public bool RequireExpirationTime { get; init; } = true;
+    public TimeSpan ClockSkew { get; init; } = TimeSpan.FromMinutes(1);
 }
