@@ -29,7 +29,7 @@ export class JobDetailsComponent implements OnInit {
     { id: 'Conditions', title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-graduation-cap' },
     { id: 'Benefits', title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
     { id: 'Responsibilities', title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-info-circle' },
-    { id: 'RequiredAttachments', title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-info-circle' }
+    { id: 'RequiredAttachments', title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa fa-paperclip' }
   ];
 
   private cdr = inject(ChangeDetectorRef);
