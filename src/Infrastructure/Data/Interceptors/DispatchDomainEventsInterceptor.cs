@@ -1,5 +1,4 @@
-﻿
-using Cortex.Mediator;
+﻿using Cortex.Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Tawtheef.Domain.Common;
@@ -23,20 +22,20 @@ public class DispatchDomainEventsInterceptor(IMediator mediator) : SaveChangesIn
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    public async Task DispatchDomainEvents(DbContext? context)
+    private async Task DispatchDomainEvents(DbContext? context)
     {
         if (context == null) return;
 
         var entities = context.ChangeTracker
             .Entries<EventEntity>()
             .Where(e => e.Entity.DomainEvents.Any())
-            .Select(e => e.Entity);
+            .Select(e => e.Entity).ToList();
 
         var domainEvents = entities
             .SelectMany(e => e.DomainEvents)
             .ToList();
 
-        entities.ToList().ForEach(e => e.ClearDomainEvents());
+        entities.ForEach(e => e.ClearDomainEvents());
 
         foreach (var domainEvent in domainEvents)
             await mediator.PublishAsync(domainEvent);

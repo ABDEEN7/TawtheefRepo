@@ -1,11 +1,10 @@
-
+using Application.Operation.Features.Admin.Religions.Commands;
+using Application.Operation.Features.Admin.Religions.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Application.Features.Operations.Admin.Religions.Commands;
-using Tawtheef.Application.Features.Operations.Admin.Religions.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Admin;

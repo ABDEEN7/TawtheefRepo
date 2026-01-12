@@ -1,11 +1,10 @@
-﻿
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
-using Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.Commands;
 using Tawtheef.Infrastructure.Extensions;
-using GetSkillsQuery = Tawtheef.Application.Features.Operations.Employee.ManagementMajorSkill.Skills.Queries.GetSkillsQuery;
+using GetSkillsQuery = Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Queries.GetSkillsQuery;
 
 namespace Operations.API.Controllers.Employee;
 

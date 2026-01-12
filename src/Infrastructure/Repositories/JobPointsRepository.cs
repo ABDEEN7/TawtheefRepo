@@ -1,7 +1,7 @@
-﻿using FluentResults;
+﻿using Application.Operation.Common.Repositories;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;

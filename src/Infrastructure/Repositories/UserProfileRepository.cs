@@ -1,5 +1,5 @@
+using Application.Operation.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Repositories.Base;

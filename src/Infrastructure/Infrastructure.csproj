@@ -42,6 +42,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Application.Operation\Application.Operation.csproj" />
+        <ProjectReference Include="..\Application.Recruitment\Application.Recruitment.csproj" />
         <ProjectReference Include="..\Application\Application.csproj" />
     </ItemGroup>
 

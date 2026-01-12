@@ -1,9 +1,9 @@
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
+using Application.Recruitment.Common.Interfaces.Services.HttpClients;
+using Application.Recruitment.Features.Profile.DTOs;
 using FluentResults;
 using Serilog;
-using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
-using Tawtheef.Application.Features.Recruitment.Profile.DTOs;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;

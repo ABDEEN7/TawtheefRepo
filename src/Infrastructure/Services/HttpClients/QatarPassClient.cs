@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
+using Application.Recruitment.Common.Interfaces.Services.HttpClients;
+using Application.Recruitment.Features.Authenticator.DTOs;
 using FluentResults;
-using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
-using Tawtheef.Application.Features.Authenticator.DTOs;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 

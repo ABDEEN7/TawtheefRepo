@@ -1,4 +1,7 @@
 using System.Security.Claims;
+using Application.Recruitment;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -22,6 +25,20 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
+{
+    var keyVaultUri = builder.Configuration["KeyVault:Uri"];
+    if (string.IsNullOrWhiteSpace(keyVaultUri))
+    {
+        throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
+    }
+
+    builder.Configuration.AddAzureKeyVault(
+        new Uri(keyVaultUri),
+        new DefaultAzureCredential(),
+        new KeyVaultSecretManager());
+}
+
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 builder.Host.UseSerilog((ctx, services, lc) => lc
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -39,6 +56,7 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 // ----- Services -----
 builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationLayer(builder.Configuration);
+builder.Services.AddApplicationRecruitment(builder.Configuration);
 // builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 builder.Services.AddAuthorization(options =>
 {

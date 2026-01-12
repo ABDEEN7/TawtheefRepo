@@ -1,9 +1,9 @@
-﻿using FluentValidation.Results;
+﻿using Application.Operation.Common.Validations;
+using Application.Operation.Features.Employee.Job.DTOs;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Validations;
 using Tawtheef.Application.Common.Services;
-using Tawtheef.Application.Features.Operations.Employee.Job.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
@@ -246,7 +246,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
 
         if (newStatusId == JobStatusIds.Closed)
         {
-            if (job.ClosingDate > DateTime.UtcNow)
+            if (job.ClosingDate > DateTimeOffset.UtcNow)
             {
                 failures.Add(new ValidationFailure(
                     nameof(job.ClosingDate),

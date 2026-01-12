@@ -1,12 +1,11 @@
-
+using Application.Operation.Features.Employee.JobInvitationSummary.Queries;
+using Application.Operation.Features.Employee.JobInvitationSummaryDetails.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
-using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummary.Queries;
-using Tawtheef.Application.Features.Operations.Employee.JobInvitationSummaryDetails.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Employee;

@@ -1,8 +1,5 @@
-﻿using System.Security.Claims;
-using System.Text;
+﻿using System.Text;
 using Cortex.Mediator;
-using FluentResults;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +8,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Resources.Queries;
-using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Recruitment.API.Controllers;
@@ -22,12 +18,6 @@ namespace Recruitment.API.Controllers;
 public class ResourcesController(IMediator mediator, IFileStorageService storage) : ControllerBase
 {
     private static readonly FileExtensionContentTypeProvider Mime = new();
-    private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
-    {
-        null => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier),
-        var id => Result.Ok(Guid.Parse(id))
-    };
-    
     [HttpGet("{encoded}")]
     public IActionResult Get(string encoded)
     {

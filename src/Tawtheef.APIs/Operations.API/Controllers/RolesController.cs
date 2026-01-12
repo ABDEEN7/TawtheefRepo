@@ -1,11 +1,10 @@
-
+using Application.Operation.Features.Admin.Roles.Commands;
+using Application.Operation.Features.Admin.Roles.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Application.Features.Operations.Admin.Roles.Commands;
-using Tawtheef.Application.Features.Operations.Admin.Roles.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers;

@@ -21,7 +21,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public required string FullNameAr { get; set; }
     public bool IsBlocked { get; set; }
     public bool AgreedToTerms { get; set; }
-    public DateTime? LastLoginDate { get; set; }
+    public DateTimeOffset? LastLoginDate { get; set; }
     
     [StringLength(2048)]
     public string? Avatar { get; set; }
@@ -44,16 +44,16 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public string? CurrentAuthToken { get; set; }
     [MaxLength(6)]
     public string? OtpReference { get; private set; }
-    public DateTime? OtpExpiry { get; private set; }
+    public DateTimeOffset? OtpExpiry { get; private set; }
     public int OtpAttempts { get; set; }
-    public DateTime? OtpLockedUntilUtc { get; private set; }
+    public DateTimeOffset? OtpLockedUntilUtc { get; private set; }
     /// <summary>
     /// Number of OTPs sent to the user
     /// </summary>
-    public DateTime? OtpSendWindowStartUtc { get; private set; }
+    public DateTimeOffset? OtpSendWindowStartUtc { get; private set; }
     public int OtpSendsInWindow { get; private set; }
     
-    public Result CanSendOtp(DateTime utcNow, int maxSends, TimeSpan window)
+    public Result CanSendOtp(DateTimeOffset utcNow, int maxSends, TimeSpan window)
     {
         if (OtpSendWindowStartUtc is null || utcNow - OtpSendWindowStartUtc >= window)
         {
@@ -71,13 +71,13 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     {
         OtpSendsInWindow++;
     }
-    public void SetOtpReference(string otpReference, DateTime expiryUtc)
+    public void SetOtpReference(string otpReference, DateTimeOffset expiryUtc)
     {
         OtpReference = otpReference;
         OtpExpiry = expiryUtc;
         OtpAttempts = 0;
     }
-    public Result ValidateOtp(string otp, DateTime utcNow, int maxAttempts, TimeSpan lockDuration)
+    public Result ValidateOtp(string otp, DateTimeOffset utcNow, int maxAttempts, TimeSpan lockDuration)
     {
         // If currently locked, reject but do NOT increment attempts
         if (OtpLockedUntilUtc is not null && OtpLockedUntilUtc > utcNow)
