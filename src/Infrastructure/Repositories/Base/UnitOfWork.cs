@@ -1,16 +1,14 @@
 ﻿using System.Collections;
-using Cortex.Mediator;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Common;
 using Tawtheef.Infrastructure.Data;
 
 namespace Tawtheef.Infrastructure.Repositories.Base;
 
-public class UnitOfWork(TawtheefDbContext dbContext, IMediator mediator) : IUnitOfWork, IAsyncDisposable
+public class UnitOfWork(TawtheefDbContext dbContext) : IUnitOfWork, IAsyncDisposable
 {
     private readonly TawtheefDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     private Hashtable? _repositories;
@@ -52,9 +50,7 @@ public class UnitOfWork(TawtheefDbContext dbContext, IMediator mediator) : IUnit
  
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var result = await _dbContext.SaveChangesAsync(cancellationToken);
-        await DomainEventsDispatcher.DispatchAsync(mediator, _dbContext, cancellationToken);
-        return result;
+        return await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
