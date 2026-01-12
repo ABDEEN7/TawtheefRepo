@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
-using Cortex.Mediator.DependencyInjection;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
@@ -26,7 +25,6 @@ namespace Tawtheef.Application
 
             // ===== Common (always) =====
             RegisterMapster(services);
-            RegisterMediator(services, configuration);
             RegisterValidators(services);
 
             services.AddHttpContextAccessor();
@@ -47,18 +45,6 @@ namespace Tawtheef.Application
 #if DEBUG
             TypeAdapterConfig.GlobalSettings.Compiler = exp => exp.CompileWithDebugInfo();
 #endif
-        }
-
-        private static void RegisterMediator(IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddCortexMediator(
-                    configuration: configuration,
-                    handlerAssemblyMarkerTypes:
-                    [
-                        typeof(ApplicationAssemblyMarker)
-                    ],
-                    configure: o => o.AddDefaultBehaviors()
-                );
         }
 
         private static void RegisterValidators(IServiceCollection services)
