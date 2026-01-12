@@ -14,12 +14,17 @@ public class JobPointsDetail : EventEntity
 
     public JobPointRuleType Type { get; set; }
 
+    // Rule code: e.g. AGE_25_30, DEGREE_BACHELOR, EXPERIENCE_5_PLUS
     [Required]
+    [MaxLength(50)]
     public required string Code { get; set; }
 
+    // Display name (optional, localized elsewhere or generic)
+    [MaxLength(200)]
     public string? Name { get; set; }
 
-    [Required, Range(0, 100)]
+    [Required]
+    [Range(0, 100)]
     public int Points { get; set; }
 
     public Guid? ReferenceId { get; set; }

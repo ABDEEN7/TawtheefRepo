@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
@@ -11,12 +12,15 @@ public class TrainingCourse : EventEntity
     public Guid UserProfileId { get; set; }
     public UserProfile? UserProfile { get; set; }
     
+    [MaxLength(128)]
     public required string Title { get; set; }
+    [MaxLength(128)]
     public required string Provider { get; set; }
     public required Guid CountryId { get; set; }
     public Country? Country { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
+    [MaxLength(256)]
     public string? Description { get; set; }
 
     public SpecializationRelationLevel? SpecializationRelation { get; set; }

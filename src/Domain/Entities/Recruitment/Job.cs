@@ -12,7 +12,6 @@ namespace Tawtheef.Domain.Entities.Recruitment;
 [Table(nameof(Job), Schema = Schemas.Hr)]
 public class Job : EventEntity
 {
-
     [Required(ErrorMessage = JobMessages.JobTitleArRequired)]
     [MaxLength(500, ErrorMessage = JobMessages.JobTitleArMaxLength)]
     public required string TitleAr { get; set; }
@@ -28,7 +27,7 @@ public class Job : EventEntity
     public Guid ManagementId { get; set; }
 
     [Required(ErrorMessage = JobMessages.DepartmentRequired)]
-    public Guid DepartmentId { get; set; } 
+    public Guid DepartmentId { get; set; }
 
     [Required(ErrorMessage = JobMessages.YearsExperienceRequired)]
     [Range(0, 100, ErrorMessage = JobMessages.YearsExperienceRange)]
@@ -45,7 +44,7 @@ public class Job : EventEntity
     [Required(ErrorMessage = JobMessages.MajorRequired)]
     public Guid MajorId { get; set; }
 
-    public Guid? SubMajorId { get; set; } 
+    public Guid? SubMajorId { get; set; }
 
     [Required(ErrorMessage = JobMessages.WorkTypeRequired)]
     public Guid WorkTypeId { get; set; }
@@ -57,7 +56,7 @@ public class Job : EventEntity
     [Required(ErrorMessage = JobMessages.ClosingDateRequired)]
     public DateTimeOffset ClosingDate { get; set; }
 
-    public DateTimeOffset? PublishAt { get; set; }  
+    public DateTimeOffset? PublishAt { get; set; }
     public DateTimeOffset? CancelledAt { get; set; }
 
     [Required(ErrorMessage = JobMessages.MinimumAgeRequired)]
@@ -68,12 +67,32 @@ public class Job : EventEntity
 
     [Required(ErrorMessage = JobMessages.JobStatusRequired)]
     public Guid JobStatusId { get; set; }
+
+    // =========================
+    // Textual Descriptions
+    // =========================
+
+    [MaxLength(4000)]
     public string? OverViewAr { get; set; }
-    public string? OverViewEn { get; set; } 
-    public string? BenefitsAr { get; set; } 
-    public string? BenefitsEn { get; set; } 
+
+    [MaxLength(4000)]
+    public string? OverViewEn { get; set; }
+
+    [MaxLength(2000)]
+    public string? BenefitsAr { get; set; }
+
+    [MaxLength(2000)]
+    public string? BenefitsEn { get; set; }
+
+    [MaxLength(3000)]
     public string? QualificationDescriptionAr { get; set; }
+
+    [MaxLength(3000)]
     public string? QualificationDescriptionEn { get; set; }
+
+    // =========================
+    // Navigation Properties
+    // =========================
 
     public virtual Sector? Sector { get; set; }
     public virtual Management? Management { get; set; }
@@ -88,6 +107,7 @@ public class Job : EventEntity
     public virtual JobPointsMain? JobPoints { get; set; }
     public virtual JobCandidateFilterSetting? CandidateFilterSetting { get; set; }
     public virtual JobReviewAttachment? ReviewAttachment { get; set; }
+
     public virtual List<JobDegree> JobDegrees { get; set; } = [];
     public virtual List<JobCondition> JobConditions { get; set; } = [];
     public virtual List<JobSkill> JobSkills { get; set; } = [];
@@ -98,11 +118,18 @@ public class Job : EventEntity
 
     public void ChangeStatus(Guid newStatusId)
     {
-        this.JobStatusId = newStatusId;
-        AddDomainEvent(new JobStatusChangedDomainEvent(Id, newStatusId, DateTimeOffset.UtcNow));
-        if(newStatusId == JobStatusIds.Draft)
+        JobStatusId = newStatusId;
+
+        AddDomainEvent(
+            new JobStatusChangedDomainEvent(Id, newStatusId, DateTimeOffset.UtcNow)
+        );
+
+        if (newStatusId == JobStatusIds.Draft)
         {
-            AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this,DateTimeOffset.Now));
+            AddDomainEvent(
+                new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now)
+            );
         }
     }
 }
+
