@@ -96,7 +96,7 @@
           <th>{{ 'ORG_STRUCTURES.SECTOR_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.ORDER_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.STATUS' | translate }}</th>
-          <th [class.text-end]="!store.isRtl()" [class.text-start]="store.isRtl()">{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
+          <th>{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
 
@@ -125,7 +125,7 @@
               [pTooltip]="'common.edit' | translate"
               tooltipPosition="top"
               [attr.aria-label]="'common.edit' | translate">
-              <i class="bi bi-pencil-square"></i>
+              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
             </button>
 
             <button

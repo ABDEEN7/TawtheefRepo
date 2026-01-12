@@ -11,7 +11,7 @@ import { JobInvitationSummaryService } from '../services/job-invitation-summary.
 import { routes } from '../../../../../routes/routes';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../core/constants/permissions';
-
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive'; 
 @Component({
   selector: 'app-job-invitation-summary',
   templateUrl: './job-invitation-summary.html',
@@ -24,7 +24,8 @@ import { Permissions } from '../../../../../core/constants/permissions';
     TranslatePipe,
     I18nNamespaceDirective,
     Select,
-    PaginationComponent
+    PaginationComponent,
+    FaDirArrowDirective
   ]
 })
 export class JobInvitationSummary implements OnInit {

@@ -98,7 +98,7 @@ type Vm = {
             </app-remote-select>
           </div>
 
-          <div class="col-12 mb-3">
+          <div class="col-12 mb-4">
             <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SKILL' | translate }}</label>
 
             <app-remote-select
@@ -142,11 +142,11 @@ type Vm = {
 
         
         <div class="modal-footer justify-content-end gap-3 border-0">
-          <button pButton type="button" class="p-button-outlined mw-200 text-center d-flex text-primary fs-16 gap-1" (click)="cancel()">
+          <button  type="button" class="btn btn-primary-outline d-flex text-primary gap-1 align-items-center" (click)="cancel()">
             <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i>
              {{ 'MAJORS_SKILLS.CANCEL' | translate }}
           </button>
-          <button pButton type="submit" class="btn btn-primary mw-200 d-flex gap-2 justify-content-center" [disabled]="!isValid()">
+          <button  type="submit" class="btn btn-primary d-flex gap-2 justify-content-center align-items-center" [disabled]="!isValid()">
             <i class="hgi hgi-stroke hgi-floppy-disk fs-18"></i>
              {{ 'MAJORS_SKILLS.SAVE' | translate }}
           </button>
