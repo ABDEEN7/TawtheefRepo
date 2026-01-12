@@ -14,7 +14,7 @@ export class StepperComponent {
     {
       id: 1,
       label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW',
-      icon: 'fa fa-info-circle',
+      icon: 'hgi hgi-stroke hgi-briefcase-03 me-1',
     },
     {
       id: 2,

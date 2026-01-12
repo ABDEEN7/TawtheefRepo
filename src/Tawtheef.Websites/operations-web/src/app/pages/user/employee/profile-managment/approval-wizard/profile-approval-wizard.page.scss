@@ -57,7 +57,7 @@
       align-items: center;
       gap: 10px;
       border-radius: 999px;
-      padding: 8px 12px;
+      padding: 4px 8px;
       background: rgba(255, 255, 255, 0.7);
       border: 1px solid rgba(0, 0, 0, 0.06);
       transition: transform .08s ease, box-shadow .08s ease, background .08s ease;
@@ -66,6 +66,9 @@
       &.active {
         background: #fff;
         box-shadow: 0 6px 18px rgba(0,0,0,.06);
+        border-color: #8a1538;
+        color: #8a1538;
+
       }
 
       &:not(.disabled):hover {
