@@ -121,7 +121,6 @@ public sealed class GetJobCandidatesQueryHandler(
             Department = localizationService.GetLocalizedName(job.Department),
             JobCategory = localizationService.GetLocalizedName(job.JobCategory),
             CandidateCategory = localizationService.GetLocalizedName(candidate.Profile?.CandidateType),
-            CandidateMajor = localizationService.GetLocalizedName(candidate.Major),
             CandidateGender = localizationService.GetLocalizedName(candidate.Profile?.Gender),
             Points = candidate.Points
         }).ToList();

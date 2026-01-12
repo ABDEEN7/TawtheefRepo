@@ -7,7 +7,6 @@ export interface JobCandidateListItem {
   department: string;
   jobCategory: string;
   candidateCategory: string;
-  candidateMajor: string;
   candidateGender: string;
   points: number;
 }
