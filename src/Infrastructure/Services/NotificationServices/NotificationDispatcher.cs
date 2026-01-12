@@ -11,12 +11,8 @@ using Tawtheef.Domain.Entities.Notification;
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
 public sealed class NotificationDispatcher(
-    IServiceProvider sp,
+    IServiceScopeFactory scopeFactory,
     TimeProvider time,
-    IUnitOfWork uow,
-    ISmsSender smsSender,
-    IEmailSender emailSender,
-    IPushSender pushSender,
     ILogger<NotificationDispatcher> logger)
     : BackgroundService
 {
@@ -36,16 +32,19 @@ public sealed class NotificationDispatcher(
     {
         try
         {
-            using var scope = sp.CreateScope();
-            var repo = uow.GetEntityRepository<Notification>();
+            using var scope = scopeFactory.CreateScope();
 
-            var handlers = BuildHandlers();
+            var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var smsSender = scope.ServiceProvider.GetRequiredService<ISmsSender>();
+            var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+            var pushSender = scope.ServiceProvider.GetRequiredService<IPushSender>();
+
+            var repo = uow.GetEntityRepository<Notification>();
+            var handlers = BuildHandlers(emailSender, smsSender, pushSender);
 
             var batch = await FetchPendingBatch(repo, ct);
             foreach (var n in batch)
-            {
                 await ProcessOne(n, handlers, ct);
-            }
 
             if (batch.Count > 0)
                 await uow.SaveChangesAsync(ct);
@@ -76,7 +75,7 @@ public sealed class NotificationDispatcher(
         {
             if (!handlers.TryGetValue(n.Channel, out var handler))
             {
-                MarkFailed(n, "UNSUPPORTED_NOTIFICATION_CHANNEL");
+                n.MarkFailed("UNSUPPORTED_NOTIFICATION_CHANNEL");
                 return;
             }
 
@@ -105,17 +104,14 @@ public sealed class NotificationDispatcher(
         n.MarkFailed(msg);
     }
 
-    private static void MarkFailed(Notification n, string errorCode)
-        => n.MarkFailed(errorCode);
-
-    private IReadOnlyDictionary<NotificationChannel, Func<Notification, CancellationToken, Task<NotificationResponse>>> BuildHandlers()
+    private static IReadOnlyDictionary<NotificationChannel, Func<Notification, CancellationToken, Task<NotificationResponse>>> BuildHandlers(
+        IEmailSender emailSender,
+        ISmsSender smsSender,
+        IPushSender pushSender)
     {
         return new Dictionary<NotificationChannel, Func<Notification, CancellationToken, Task<NotificationResponse>>>
         {
-            [NotificationChannel.Email] = async (n, ct) =>
-            {
-                return await emailSender.SendAsync(n, ct);
-            },
+            [NotificationChannel.Email] = (n, ct) => emailSender.SendAsync(n, ct),
 
             [NotificationChannel.Sms] = async (n, ct) =>
             {
