@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Reflection;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.RateLimiting;
 using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Repositories;
@@ -24,8 +23,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -136,8 +135,6 @@ namespace Tawtheef.Infrastructure
                 // Validators
                 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-                // Common services
-                services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
                 services.AddScoped<ILoginAuditService, LoginAuditService>();
                 services.AddScoped<ITokenService, TokenService>();
@@ -295,6 +292,8 @@ namespace Tawtheef.Infrastructure
                 // Operation-only settings + http clients
                 services.AddOperationHttpClients(configuration);
 
+                AddValidatedOptions<AzureAuthenticationSettings>(services, configuration, AzureAuthenticationSettings.SectionName);
+                
                 // Operation-only options (do not ValidateOnStart unless always present in Operation appsettings)
                 services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
 
@@ -397,13 +396,7 @@ namespace Tawtheef.Infrastructure
                     };
                 });
 
-                var jwtSection = configuration.GetSection(JwtSettings.SectionName);
-                var issuer = jwtSection[nameof(JwtSettings.Issuer)]!;
-                var audience = jwtSection[nameof(JwtSettings.Audience)]!;
-                var signingKeyRaw = jwtSection[nameof(JwtSettings.SigningKey)]!;
-
-                var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyRaw));
-
+                var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;
                 services.AddAuthentication(options =>
                     {
                         options.DefaultScheme = AuthSchemes.Smart;
@@ -429,18 +422,7 @@ namespace Tawtheef.Infrastructure
                     {
                         options.RequireHttpsMetadata = true;
                         options.SaveToken = true;
-
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidIssuer = issuer,
-                            ValidateAudience = true,
-                            ValidAudience = audience,
-                            ValidateIssuerSigningKey = true,
-                            IssuerSigningKey = signingKey,
-                            ValidateLifetime = true,
-                            ClockSkew = TimeSpan.FromMinutes(1)
-                        };
+                        options.TokenValidationParameters = jwtSettings.ToTokenValidationParameters();
 
                         options.Events = new JwtBearerEvents
                         {
@@ -473,18 +455,13 @@ namespace Tawtheef.Infrastructure
                     });
 
                 // ===== Google external login (optional) =====
-                var google = configuration.GetSection(GoogleAuthenticationSettings.SectionName);
-                var googleClientId = google[nameof(GoogleAuthenticationSettings.ClientId)];
-                var googleClientSecret = google[nameof(GoogleAuthenticationSettings.ClientSecret)];
-                var googleEnabled = !string.IsNullOrWhiteSpace(googleClientId) &&
-                                    !string.IsNullOrWhiteSpace(googleClientSecret);
-
-                if (googleEnabled)
+                var googleSettings = configuration.GetSection(GoogleAuthenticationSettings.SectionName).Get<GoogleAuthenticationSettings>();
+                if (googleSettings is not null)
                 {
                     services.AddAuthentication().AddGoogle(options =>
                     {
-                        options.ClientId = googleClientId!;
-                        options.ClientSecret = googleClientSecret!;
+                        options.ClientId = googleSettings.ClientId;
+                        options.ClientSecret = googleSettings.ClientSecret;
                         options.SignInScheme = IdentityConstants.ExternalScheme;
                         options.SaveTokens = true;
                         options.Scope.Add("email");
@@ -494,17 +471,8 @@ namespace Tawtheef.Infrastructure
                 }
 
                 // ===== Azure OIDC (optional) =====
-                var azure = configuration.GetSection(AzureAuthenticationSettings.SectionName);
-                var azureClientId = azure[nameof(AzureAuthenticationSettings.ClientId)];
-                var azureTenantId = azure[nameof(AzureAuthenticationSettings.TenantId)];
-                var azureInstance = azure[nameof(AzureAuthenticationSettings.Instance)];
-
-                var azureEnabled =
-                    !string.IsNullOrWhiteSpace(azureClientId) &&
-                    !string.IsNullOrWhiteSpace(azureTenantId) &&
-                    !string.IsNullOrWhiteSpace(azureInstance);
-
-                if (azureEnabled)
+                var azureSettings = configuration.GetSection(AzureAuthenticationSettings.SectionName).Get<AzureAuthenticationSettings>();
+                if (azureSettings is not null)
                 {
                     services.AddAuthentication()
                         .AddMicrosoftIdentityWebApp(configuration, AzureAuthenticationSettings.SectionName,
@@ -519,6 +487,21 @@ namespace Tawtheef.Infrastructure
                         o.Scope.Add("profile");
                         o.Scope.Add("email");
                     });
+                    
+                    services.AddSingleton<IConfigurationManager<OpenIdConnectConfiguration>>(sp => {
+                        var tenant = string.IsNullOrWhiteSpace(azureSettings.TenantId) ? "common" : azureSettings.TenantId;
+                        var authority = $"{azureSettings.Instance}{tenant}/v2.0";
+                        var metadataAddress = $"{authority}/.well-known/openid-configuration";
+
+                        var retriever = new HttpDocumentRetriever { RequireHttps = true };
+
+                        return new ConfigurationManager<OpenIdConnectConfiguration>(
+                            metadataAddress,
+                            new OpenIdConnectConfigurationRetriever(),
+                            retriever);
+                    });
+                    // Common services
+                    services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
                 }
 
                 // Rate limiting + authorization policies
