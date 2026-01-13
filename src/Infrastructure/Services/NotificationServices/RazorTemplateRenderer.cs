@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using RazorLight;
+﻿using RazorLight;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
@@ -35,14 +33,12 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
         var match = _resourceNames.FirstOrDefault(resource => resource.EndsWith(suffix, StringComparison.OrdinalIgnoreCase));
 
         var candidates = new List<string> { defaultKey, relativeKey };
-        if (!string.IsNullOrWhiteSpace(match))
-        {
-            candidates.Add(match);
-            var withoutRoot = match.StartsWith($"{_root}.", StringComparison.OrdinalIgnoreCase)
-                ? match[_root.Length + 1..]
-                : match;
-            candidates.Add(withoutRoot);
-        }
+        if (string.IsNullOrWhiteSpace(match)) return candidates.Distinct(StringComparer.OrdinalIgnoreCase);
+        candidates.Add(match);
+        var withoutRoot = match.StartsWith($"{_root}.", StringComparison.OrdinalIgnoreCase)
+            ? match[(_root.Length + 1)..]
+            : match;
+        candidates.Add(withoutRoot);
 
         return candidates.Distinct(StringComparer.OrdinalIgnoreCase);
     }
