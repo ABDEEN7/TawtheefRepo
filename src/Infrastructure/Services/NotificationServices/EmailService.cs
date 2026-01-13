@@ -13,20 +13,11 @@ public partial class EmailService(
         List<string> to, T model, List<string>? cc = null,
         CancellationToken ct = default)
     {
-        try
-        {
             var html = await renderer.RenderHtmlAsync(templateKey, model);
             var text = await renderer.RenderTextAsync(templateKey, model);
             var plainText = string.IsNullOrWhiteSpace(text) ? HtmlAgilityPackRegex().Replace(html, string.Empty) : text;
             var env = new EmailEnvelope(to, cc, subject, html, plainText);
             await emailQueue.EnqueueAsync(env, ct);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-        
     }
     
     public Task SendTemplateAsync<T>(
