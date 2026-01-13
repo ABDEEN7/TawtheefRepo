@@ -7,13 +7,11 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
 {
     private readonly RazorLightEngine _engine;
     private readonly IEmailBranding _branding;
-    private readonly string _root;
     private readonly HashSet<string> _resourceNames;
     public RazorTemplateRenderer(IEmailBranding branding)
     {
         _branding = branding;
         var asm = typeof(RazorTemplateRenderer).Assembly;
-        _root = asm.GetName().Name!;
         _resourceNames = asm.GetManifestResourceNames()
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         
@@ -25,42 +23,29 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
             .Build();
     }
 
-    private IEnumerable<string> KeyCandidates(string name, string kind)
-    {
-        var suffix = $".Templates.{name}.{name}.{kind}.cshtml";
-        var defaultKey = $"{_root}{suffix}";
-        var relativeKey = $"Templates.{name}.{name}.{kind}.cshtml";
-        var match = _resourceNames.FirstOrDefault(resource => resource.EndsWith(suffix, StringComparison.OrdinalIgnoreCase));
-
-        var candidates = new List<string> { defaultKey, relativeKey };
-        if (string.IsNullOrWhiteSpace(match)) return candidates.Distinct(StringComparer.OrdinalIgnoreCase);
-        candidates.Add(match);
-        var withoutRoot = match.StartsWith($"{_root}.", StringComparison.OrdinalIgnoreCase)
-            ? match[(_root.Length + 1)..]
-            : match;
-        candidates.Add(withoutRoot);
-
-        return candidates.Distinct(StringComparer.OrdinalIgnoreCase);
-    }
-
     private async Task<string> RenderAsync<T>(string templateKey, string kind, T model)
     {
-        Exception? lastException = null;
-        foreach (var candidate in KeyCandidates(templateKey, kind))
+        var key = $"Templates/{templateKey}/{templateKey}.{kind}.cshtml";
+        var normalizedResources = _resourceNames.ToDictionary(
+            resource => resource.Replace('\\', '/'),
+            resource => resource,
+            StringComparer.OrdinalIgnoreCase);
+        var resolvedKey = normalizedResources.TryGetValue(key, out var actualKey)
+            ? actualKey
+            : null;
+        try
         {
-            try
-            {
-                return await _engine.CompileRenderAsync(
-                    candidate,
-                    new TemplateContext<T> { Branding = _branding, Model = model });
-            }
-            catch (TemplateNotFoundException ex)
-            {
-                lastException = ex;
-            }
+            return await _engine.CompileRenderAsync(
+                resolvedKey ?? key,
+                new TemplateContext<T> { Branding = _branding, Model = model });
         }
-
-        throw lastException ?? new TemplateNotFoundException(templateKey);
+        catch (TemplateNotFoundException ex)
+        {
+            var available = string.Join(", ", _resourceNames.OrderBy(name => name));
+            throw new InvalidOperationException(
+                $"Template '{key}' not found. Available templates: {available}.",
+                ex);
+        }
     }
 
     public Task<string> RenderHtmlAsync<T>(string templateKey, T model)
