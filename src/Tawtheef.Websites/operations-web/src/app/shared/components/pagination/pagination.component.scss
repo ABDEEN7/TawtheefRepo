@@ -44,9 +44,9 @@
 
     &.active {
       .pagination-number {
-        background-color: #0d6efd;
+        background-color: #8a1538;
         color: white;
-        border-color: #0d6efd;
+        border-color: #8a1538;
         font-weight: 600;
         pointer-events: none;
       }
@@ -86,7 +86,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid #0d6efd;
+    outline: 2px solid #8a1538;
     outline-offset: 2px;
     z-index: 2;
   }
@@ -97,9 +97,9 @@
   }
 
   &.active {
-    background-color: #0d6efd;
+    background-color: #8a1538;
     color: white;
-    border-color: #0d6efd;
+    border-color: #8a1538;
     cursor: default;
     font-weight: 600;
   }
@@ -112,7 +112,7 @@
 
 .pagination-prev,
 .pagination-next {
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 1rem;
   font-weight: 500;
 }
 
