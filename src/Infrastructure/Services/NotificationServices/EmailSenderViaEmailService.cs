@@ -24,9 +24,19 @@ public sealed class EmailSenderViaEmailService(IEmailService emailService) : IEm
 
         // Body is JSON → model depends on TemplateKey
         var model = NotificationBodyDeserializer.DeserializeBody(notification.TemplateKey, notification.PayloadJson);
-        await emailService.SendTemplateAsync(
-            notification.TemplateKey, notification.Subject ?? "Tawtheef",
-            to, model, cc, ct);
+        var modelType = model.GetType();
+        var sendMethod = typeof(IEmailService).GetMethod(nameof(IEmailService.SendTemplateAsync));
+        if (sendMethod is null)
+            throw new InvalidOperationException("SendTemplateAsync method not found on IEmailService.");
+
+        var genericMethod = sendMethod.MakeGenericMethod(modelType);
+        var task = (Task?)genericMethod.Invoke(
+            emailService,
+            [notification.TemplateKey, notification.Subject ?? "Tawtheef", to, model, cc, ct]);
+        if (task is null)
+            throw new InvalidOperationException("Failed to invoke SendTemplateAsync.");
+
+        await task;
 
         return NotificationResponse.Success(notification.Id.ToString());
     }
