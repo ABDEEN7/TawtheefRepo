@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 import { OrganizationStructuresStore } from '../../organization-structures.store';
 import { OrganizationStructuresFacade } from '../../organization-structures.facade';
@@ -27,6 +28,7 @@ import {Tooltip} from 'primeng/tooltip';
     InputTextModule,
     PaginationComponent,
     Select,
+    ToggleSwitchModule,
     Tooltip
   ]
 })

@@ -3,6 +3,7 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Select} from 'primeng/select';
+import {ToggleSwitchModule} from 'primeng/toggleswitch';
 import {Tooltip} from 'primeng/tooltip';
 import {Lang, LanguageService} from '../../../../core/services/language.service';
 import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
@@ -30,6 +31,7 @@ import {UniversityFormPayload} from './models/university-form.payload';
     PaginationComponent,
     I18nNamespaceDirective,
     Select,
+    ToggleSwitchModule,
     Tooltip,
     UniversityModalComponent
   ]
