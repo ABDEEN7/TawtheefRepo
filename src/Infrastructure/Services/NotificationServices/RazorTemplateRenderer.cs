@@ -26,10 +26,17 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
     private async Task<string> RenderAsync<T>(string templateKey, string kind, T model)
     {
         var key = $"Templates/{templateKey}/{templateKey}.{kind}.cshtml";
+        var normalizedResources = _resourceNames.ToDictionary(
+            resource => resource.Replace('\\', '/'),
+            resource => resource,
+            StringComparer.OrdinalIgnoreCase);
+        var resolvedKey = normalizedResources.TryGetValue(key, out var actualKey)
+            ? actualKey
+            : null;
         try
         {
             return await _engine.CompileRenderAsync(
-                key,
+                resolvedKey ?? key,
                 new TemplateContext<T> { Branding = _branding, Model = model });
         }
         catch (TemplateNotFoundException ex)
