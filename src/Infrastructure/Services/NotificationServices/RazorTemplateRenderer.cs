@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using RazorLight;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 
@@ -26,20 +27,49 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
             .Build();
     }
 
-    private string Key(string name, string kind)
+    private IEnumerable<string> KeyCandidates(string name, string kind)
     {
         var suffix = $".Templates.{name}.{name}.{kind}.cshtml";
+        var defaultKey = $"{_root}{suffix}";
+        var relativeKey = $"Templates.{name}.{name}.{kind}.cshtml";
         var match = _resourceNames.FirstOrDefault(resource => resource.EndsWith(suffix, StringComparison.OrdinalIgnoreCase));
-        return match ?? $"{_root}{suffix}";
+
+        var candidates = new List<string> { defaultKey, relativeKey };
+        if (!string.IsNullOrWhiteSpace(match))
+        {
+            candidates.Add(match);
+            var withoutRoot = match.StartsWith($"{_root}.", StringComparison.OrdinalIgnoreCase)
+                ? match[_root.Length + 1..]
+                : match;
+            candidates.Add(withoutRoot);
+        }
+
+        return candidates.Distinct(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private async Task<string> RenderAsync<T>(string templateKey, string kind, T model)
+    {
+        Exception? lastException = null;
+        foreach (var candidate in KeyCandidates(templateKey, kind))
+        {
+            try
+            {
+                return await _engine.CompileRenderAsync(
+                    candidate,
+                    new TemplateContext<T> { Branding = _branding, Model = model });
+            }
+            catch (TemplateNotFoundException ex)
+            {
+                lastException = ex;
+            }
+        }
+
+        throw lastException ?? new TemplateNotFoundException(templateKey);
     }
 
     public Task<string> RenderHtmlAsync<T>(string templateKey, T model)
-        => _engine.CompileRenderAsync(
-            Key(templateKey, "html"),
-            new TemplateContext<T> { Branding = _branding, Model = model });
+        => RenderAsync(templateKey, "html", model);
 
     public Task<string> RenderTextAsync<T>(string templateKey, T model)
-        => _engine.CompileRenderAsync(
-            Key(templateKey, "txt"),
-            new TemplateContext<T> { Branding = _branding, Model = model });
+        => RenderAsync(templateKey, "txt", model);
 }
