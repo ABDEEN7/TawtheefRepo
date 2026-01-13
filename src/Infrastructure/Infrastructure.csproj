@@ -13,7 +13,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Templates\**\*.cshtml" />
+        <EmbeddedResource Include="Templates\**\*.cshtml">
+            <LogicalName>Templates/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
     
     <ItemGroup>
