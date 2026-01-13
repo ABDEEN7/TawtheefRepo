@@ -137,14 +137,14 @@
             <td>{{ candidate.points }}</td>
 
             <td class="col-actions">
-              <div class="row-actions">
+              <div class="action-buttons">
                 @if (canViewJobs()) {
                 <button
-                  class="btn-pill btn-pill--outline"
+                  class=" btn-text"
                   type="button"
                   (click)="viewDetails(candidate.candidateId)"
                 >
-                  <i class="fa fa-eye"></i>
+                  <i class="hgi hgi-stroke hgi-view mx-1 fs-18"></i>
                   <span>{{ 'JOB_CANDIDATE_BUTTONS_VIEW' | translate }}</span>
                 </button>
                 }
