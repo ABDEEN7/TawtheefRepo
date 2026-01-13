@@ -2,6 +2,7 @@
 using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Tawtheef.Application;
 
 namespace Application.Recruitment
 {
@@ -31,6 +32,7 @@ namespace Application.Recruitment
                     configuration: configuration,
                     handlerAssemblyMarkerTypes:
                     [
+                        typeof(ApplicationAssemblyMarker),
                         typeof(RecruitmentAssemblyMarker)
                     ],
                     configure: o => o.AddDefaultBehaviors()

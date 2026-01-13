@@ -372,9 +372,10 @@ namespace Tawtheef.Infrastructure
                         sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
                         sql.EnableRetryOnFailure(5);
                     })
-                    .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>(),
+                    .AddInterceptors(
+                        sp.GetRequiredService<AuditableEntityInterceptor>(),
                         sp.GetRequiredService<DispatchDomainEventsInterceptor>());
-
+                    
                 if (env.IsDevelopment())
                 {
                     options
