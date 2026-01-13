@@ -235,6 +235,7 @@ namespace Tawtheef.Infrastructure
                 // Recruitment-only options + http clients
                 services.AddRecruitmentHttpClients(configuration);
                 services.AddRecruitmentNotification();
+                services.AddOperationNotification();
 
                 // Recruitment-only domain services
                 services.AddScoped<IVerificationService, VerificationService>();
@@ -360,6 +361,7 @@ namespace Tawtheef.Infrastructure
             IHostEnvironment env)
         {
             services.AddScoped<AuditableEntityInterceptor>();
+            services.AddScoped<DispatchDomainEventsInterceptor>();
 
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
             {
@@ -370,7 +372,8 @@ namespace Tawtheef.Infrastructure
                         sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
                         sql.EnableRetryOnFailure(5);
                     })
-                    .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
+                    .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>(),
+                        sp.GetRequiredService<DispatchDomainEventsInterceptor>());
 
                 if (env.IsDevelopment())
                 {

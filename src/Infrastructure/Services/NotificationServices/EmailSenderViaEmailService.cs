@@ -24,10 +24,9 @@ public sealed class EmailSenderViaEmailService(IEmailService emailService) : IEm
 
         // Body is JSON → model depends on TemplateKey
         var model = NotificationBodyDeserializer.DeserializeBody(notification.TemplateKey, notification.PayloadJson);
-
         await emailService.SendTemplateAsync(
             notification.TemplateKey, notification.Subject ?? "Tawtheef",
-            notification.ToAddress!.Split(';').ToList(), model, notification.CcAddress!.Split(';').ToList(), ct);
+            to, model, cc, ct);
 
         return NotificationResponse.Success(notification.Id.ToString());
     }

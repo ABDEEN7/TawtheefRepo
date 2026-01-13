@@ -16,7 +16,7 @@ public sealed class ContactVerificationSentEventHandler(IUnitOfWork uow)
         var channel = @event.Type == ContactVerificationType.Email ? NotificationChannel.Email : NotificationChannel.Sms;
         var notification = Notification.Create(channel, "ContactVerificationSent", 
             @event.UserId, @event.Destination,"Tawtheef-Verification Code", null, null);
-        var payload = JsonSerializer.Serialize(new ContactVerificationSentModel(@event.Code));
+        JsonSerializer.Serialize(new ContactVerificationSentModel(@event.Code));
         await uow.GetEntityRepository<Notification>().AddAsync(notification);
         await uow.SaveChangesAsync(cancellationToken);
     }

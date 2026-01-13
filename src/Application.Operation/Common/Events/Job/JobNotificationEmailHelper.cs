@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 
@@ -38,7 +37,5 @@ internal static class JobNotificationEmailHelper
 
             await repo.AddAsync(notification);
         }
-
-        await unitOfWork.SaveChangesAsync(ct);
     }
 }
