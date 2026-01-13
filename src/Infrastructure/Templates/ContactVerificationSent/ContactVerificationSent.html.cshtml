@@ -9,7 +9,7 @@
     var support = b.SupportEmail;
     var website = b.WebsiteUrl;
 
-    var code = m.Code;
+    var verficationCode = m.Code;
     var logo = b.LogoUrl;          // must be a real https URL for email clients
 }
 
@@ -103,19 +103,6 @@
       font-weight:700;
     }
 
-    /* Button */
-    .btn {
-      display:inline-block;
-      padding:12px 22px;
-      background:@primary;
-      color:#ffffff !important;
-      border-radius:10px;
-      font-family: Arial, sans-serif;
-      font-size:16px;
-      line-height:20px;
-      font-weight:800;
-    }
-
     /* Preheader */
     .preheader { display:none; visibility:hidden; opacity:0; color:transparent; height:0; width:0; max-height:0; max-width:0; overflow:hidden; mso-hide:all; }
 
@@ -144,13 +131,13 @@
 <body class="email-wrap" style="background:#f7f4f6; margin:0; padding:20px;">
   <!-- Preheader text -->
   <div class="preheader">
-    Your verification code is: @code
+    Your verification code is: @verficationCode
   </div>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f4f6;">
+  <table role="presentation"  style="background:#f7f4f6;">
     <tr>
-      <td align="center" style="padding:20px;">
-        <table role="presentation" class="container" cellpadding="0" cellspacing="0" width="100%">
+      <td  style="padding:20px;">
+        <table role="presentation" class="container"  >
 
           <!-- Brand bar -->
           <tr>
@@ -160,9 +147,9 @@
           <!-- Header -->
           <tr>
             <td class="px" style="padding-top:18px; padding-bottom:12px;">
-              <table role="presentation" width="100%">
+              <table role="presentation" >
                 <tr>
-                  <td align="left" style="vertical-align:middle;">
+                  <td  style="vertical-align:middle;">
                     @if (!string.IsNullOrWhiteSpace(logo))
                     {
                       <a href="@website" style="display:inline-block;">
@@ -196,7 +183,7 @@
                 Use the following code to confirm your email address:
               </p>
 
-              <div class="code-box">@code</div>
+              <div class="code-box">@verficationCode</div>
 
               <p class="text" style="margin-top:16px; margin-bottom:0;">
                 If you didn’t request this, you can safely ignore this email.

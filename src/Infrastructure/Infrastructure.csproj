@@ -13,6 +13,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="Templates\**\*.cshtml" />
+    </ItemGroup>
+    
+    <ItemGroup>
         <PackageReference Include="Azure.Identity" />
         <PackageReference Include="Azure.Storage.Blobs" />
         <PackageReference Include="MailKit" />
