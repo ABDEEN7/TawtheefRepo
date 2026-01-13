@@ -26,7 +26,7 @@
                               </span>
                              <button pButton type="button"  class="p-button-outlined" (click)="loadData()" [disabled]="loading()">
                                  <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
-                                 <i class="pi pi-refresh" pButtonIcon></i>
+                                 <i class="hgi hgi-stroke hgi-refresh" pButtonIcon></i>
                              </button>
                        </div>
                      </div>
@@ -67,11 +67,11 @@
                                  </p-select>
                              </div>
                              <div class="col-lg-4 col-md-12 d-flex gap-2  flex-wrap">
-                                 <button pButton class="btn btn-primary" type="button" (click)="selectAll()">
+                                 <button  class="btn btn-primary" type="button" (click)="selectAll()">
                                    {{ 'distribution.filters.selectAll' | translate }}
                                  </button>
                                  <div class="action-buttons">
-                                   <button pButton class="btn-text" type="button" (click)="clearSelection()">
+                                   <button  class="btn-text" type="button" (click)="clearSelection()">
                                      {{ 'distribution.filters.clearSelection' | translate }}
                                    </button>
                                  </div>
