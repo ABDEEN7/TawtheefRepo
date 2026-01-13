@@ -16,7 +16,7 @@ public static class DomainEventsDispatcher
 
         var events = entities.SelectMany(e => e.DomainEvents).ToList();
         foreach (var domainEvent in events)
-            await mediator.PublishAsync(domainEvent, ct);
+            await mediator.PublishAsync((dynamic)domainEvent, ct);
 
         entities.ForEach(e => e.ClearDomainEvents());
     }
