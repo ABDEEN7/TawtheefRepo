@@ -7,6 +7,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="page-title mb-0">{{ 'LANGUAGES.TITLE' | translate }}</h3>
     <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
+      <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
       {{ 'LANGUAGES.ADD_LANGUAGE' | translate }}
     </button>
   </div>
@@ -71,15 +72,13 @@
                   <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
                 </button>
 
-                <button
-                  type="button"
-                  class="icon-btn"
-                  (click)="toggleStatus(language)"
+                <p-toggle-switch
+                  [ngModel]="language.isActive"
+                  (ngModelChange)="toggleStatus(language)"
                   [pTooltip]="language.isActive ? ('LANGUAGES.DEACTIVATE' | translate) : ('LANGUAGES.ACTIVATE' | translate)"
                   tooltipPosition="top"
-                  aria-label="{{ language.isActive ? ('LANGUAGES.DEACTIVATE' | translate) : ('LANGUAGES.ACTIVATE' | translate) }}">
-                  <i class="bi" [ngClass]="language.isActive ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
-                </button>
+                  [attr.aria-label]="language.isActive ? ('LANGUAGES.DEACTIVATE' | translate) : ('LANGUAGES.ACTIVATE' | translate)">
+                </p-toggle-switch>
               </td>
             </tr>
           }

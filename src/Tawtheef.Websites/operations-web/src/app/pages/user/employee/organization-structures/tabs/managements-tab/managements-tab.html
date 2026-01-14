@@ -102,28 +102,24 @@
           </td>
           <td>
             <div class="action-buttons">
-                   <button
-              type="button"
-              class="btn"
-              (click)="service.openEditManagement(management)"
-              [pTooltip]="'common.edit' | translate"
-              tooltipPosition="top"
-              [attr.aria-label]="'common.edit' | translate">
-              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-            </button>
-            
-           
+              <button
+                type="button"
+                class="btn"
+                (click)="service.openEditManagement(management)"
+                [pTooltip]="'common.edit' | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="'common.edit' | translate">
+                <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+              </button>
 
-            <button
-              type="button"
-              class="icon-btn"
-              (click)="service.toggleManagementActive(management, !(management.isActive !== false))"
-              [pTooltip]="(management.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
-              tooltipPosition="top"
-              [attr.aria-label]="(management.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
-              <i class="bi" [ngClass]="management.isActive !== false ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
-            </button>
-</div>
+              <p-toggle-switch
+                [ngModel]="management.isActive !== false"
+                (ngModelChange)="service.toggleManagementActive(management, $event)"
+                [pTooltip]="(management.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="(management.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
+              </p-toggle-switch>
+            </div>
           </td>
         </tr>
       </ng-template>

@@ -7,6 +7,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="page-title mb-0">{{ 'UNIVERSITIES.TITLE' | translate }}</h3>
     <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
+      <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
       {{ 'UNIVERSITIES.ADD_UNIVERSITY' | translate }}
     </button>
   </div>
@@ -95,15 +96,13 @@
                   <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
                 </button>
 
-                <button
-                  type="button"
-                  class="icon-btn"
-                  (click)="toggleStatus(university)"
+                <p-toggle-switch
+                  [ngModel]="university.isActive"
+                  (ngModelChange)="toggleStatus(university)"
                   [pTooltip]="university.isActive ? ('UNIVERSITIES.DEACTIVATE' | translate) : ('UNIVERSITIES.ACTIVATE' | translate)"
                   tooltipPosition="top"
-                  aria-label="{{ university.isActive ? ('UNIVERSITIES.DEACTIVATE' | translate) : ('UNIVERSITIES.ACTIVATE' | translate) }}">
-                  <i class="bi" [ngClass]="university.isActive ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
-                </button>
+                  [attr.aria-label]="university.isActive ? ('UNIVERSITIES.DEACTIVATE' | translate) : ('UNIVERSITIES.ACTIVATE' | translate)">
+                </p-toggle-switch>
               </td>
             </tr>
           }

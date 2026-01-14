@@ -12,10 +12,9 @@
          'isax-trash text-danger': config.data.type === 'delete',
          'isax-document-upload text-primary': config.data.type === 'submit',
          'isax-danger text-warning': config.data.type === 'warning'
-       }"></i>
+      }"></i>
   </span>
       <div>
-        <h4 class="mb-2">{{ config.data.title | translate }}</h4>
         <p class="mb-3">{{ config.data.description | translate }}</p>
 
         <div class="form-group text-start mb-3" *ngIf="config.data.showInputField">
