@@ -4,7 +4,7 @@
       <div class="row mb-4">
         <div class="col-md-10">
           <h3 class="fw-bold mb-0">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h3>
-          <p class="text-muted mt-2 mb-0">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
+          <p class="fs-16 m-0">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
         </div>
         <div class="col-md-2 text-end">
           @if (canManageJobs()) {
@@ -107,10 +107,8 @@
               ></p-select>
             </div>
             <div class="col-md-3">
-              <button class="btn btn-primary" type="button" (click)="clearFilters()">
-                <i class="hgi hgi-stroke hgi-filter"></i
-                ><span>{{ 'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}</span>
-              </button>
+                 <div class="action-buttons"><button class="btn-text" type="button" (click)="clearFilters()"><i class="hgi hgi-stroke hgi-filter mx-1"></i><span>{{ 'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}</span></button></div>
+              
             </div>
           </div>
           <div class="table-card rounded overflow-hidden">

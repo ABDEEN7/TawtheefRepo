@@ -729,8 +729,8 @@ body.ltr
 /*--------------------------------------------------------------
 # Action Buttons Section
 --------------------------------------------------------------*/
-.action-buttons{ display: flex;gap:10px}
 .action-buttons {
+  display: flex;gap:10px;
   .btn{
     border-color: rgb(203, 203, 203);
     color: #8a1538;
@@ -751,7 +751,7 @@ body.ltr
     border:1px solid rgb(203, 203, 203);
     color: #8a1538;
     background-color: #fff;
-    min-width: 35px;
+    min-width: 90px;
     min-height: 35px;
     align-items: center;
     display: flex;
