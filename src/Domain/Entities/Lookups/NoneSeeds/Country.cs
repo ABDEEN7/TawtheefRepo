@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 
@@ -11,7 +12,9 @@ public static class CountryIds
 public class Country : LookupBase
 {
     public int Code { get; init; }
+    [MaxLength(3)]
     public required string ISOCode { get; init; }
+    [MaxLength(3)]
     public required string CodeAlpha { get; init; }
     
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 
@@ -10,6 +11,6 @@ public class HistoryInvitation : EventEntity
     
     public Guid InvitationStatusId { get; set; }
     public InvitationStatus? InvitationStatus { get; set; }
-    
+    [MaxLength(2000)]
     public string? Note { get; set; }
 }
