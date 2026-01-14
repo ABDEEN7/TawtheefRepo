@@ -20,7 +20,7 @@ public sealed class LoginAttempt : EventEntity
     public bool Succeeded { get; set; }
 
     // Short, controlled failure messages (e.g. "InvalidPassword", "UserLocked")
-    [MaxLength(256)]
+    [MaxLength(4000)]
     public string? FailureReason { get; set; }
 
     // Session identifiers / correlation IDs
