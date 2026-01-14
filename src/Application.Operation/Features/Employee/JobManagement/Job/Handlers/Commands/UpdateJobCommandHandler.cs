@@ -9,7 +9,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
-using Tawtheef.Domain.Events.Operation.Employee.Job;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Commands;
@@ -72,8 +71,6 @@ public class UpdateJobCommandHandler(
         existingJob.BenefitsEn = request.Job.BenefitsEn;
         existingJob.QualificationDescriptionAr = request.Job.QualificationsDescriptionAr;
         existingJob.QualificationDescriptionEn = request.Job.QualificationsDescriptionEn;
-        existingJob.AddDomainEvent(new JobUpdatedDomainEvent(existingJob, DateTimeOffset.UtcNow));
-
         await jobRepository.Repository.UpdateAsync(existingJob);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);
@@ -84,7 +81,7 @@ public class UpdateJobCommandHandler(
         var existingSkills = job.JobSkills.ToList();
 
         var toRemove = existingSkills
-            .Where(s => !newSkills.Any(ns => ns.SkillId == s.SkillId))
+            .Where(s => newSkills.All(ns => ns.SkillId != s.SkillId))
             .ToList();
 
         var existingIds = existingSkills.Select(s => s.SkillId).ToHashSet();
@@ -118,7 +115,7 @@ public class UpdateJobCommandHandler(
         var existing = job.JobConditions.ToList();
 
         var toRemove = existing
-            .Where(c => !newConditions.Any(n => n.TextAr == c.TextAr))
+            .Where(c => newConditions.All(n => n.TextAr != c.TextAr))
             .ToList();
 
         var existingTexts = existing.Select(c => c.TextAr).ToHashSet();
@@ -184,7 +181,7 @@ public class UpdateJobCommandHandler(
         var existing = job.JobResponsibilities.ToList();
 
         var toRemove = existing
-            .Where(r => !newResponsibilities.Any(nr => nr.TextAr == r.TextAr))
+            .Where(r => newResponsibilities.All(nr => nr.TextAr != r.TextAr))
             .ToList();
 
         var existingTitles = existing.Select(r => r.TextAr).ToHashSet();

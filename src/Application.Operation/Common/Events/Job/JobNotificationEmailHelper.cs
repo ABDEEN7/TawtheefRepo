@@ -15,6 +15,7 @@ internal static class JobNotificationEmailHelper
         string payloadJson,
         CancellationToken ct)
     {
+        //TODO :: Must Only Get Departments Managers not employee 
         var users = await userManager.GetUsersInRoleAsync(nameof(SystemRoleIds.Employee));
         if (users.Count == 0)
             return;
@@ -37,5 +38,33 @@ internal static class JobNotificationEmailHelper
 
             await repo.AddAsync(notification);
         }
+    }
+    
+    internal static async Task QueueForEmployeeAsync(
+        IUnitOfWork unitOfWork,
+        UserManager<User> userManager,
+        string userId,
+        string templateKey,
+        string subject,
+        string payloadJson,
+        CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+
+        if (user == null || string.IsNullOrWhiteSpace(user.Email))
+            return;
+
+        var repo = unitOfWork.GetEntityRepository<Notification>();
+
+        var notification = Notification.Create(
+            NotificationChannel.Email,
+            templateKey,
+            user.Id,
+            user.Email,
+            subject,
+            null,
+            payloadJson);
+
+        await repo.AddAsync(notification);
     }
 }
