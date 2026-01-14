@@ -2,13 +2,15 @@ import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FormsModule} from '@angular/forms';
+import { FaDirArrowDirective } from '../../directives/dir-arrow.directive';
+
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, FormsModule],
+  imports: [CommonModule, TranslatePipe, FormsModule, FaDirArrowDirective],
   templateUrl: './pagination.component.html',
-  styleUrls: ['./pagination.component.scss']
+  styleUrls: ['./pagination.component.scss'],
 })
 export class PaginationComponent {
   // Inputs

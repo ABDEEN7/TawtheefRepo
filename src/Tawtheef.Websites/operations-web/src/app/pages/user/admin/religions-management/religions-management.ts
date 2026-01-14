@@ -2,6 +2,7 @@ import {CommonModule} from '@angular/common';
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {ToggleSwitchModule} from 'primeng/toggleswitch';
 import {Tooltip} from 'primeng/tooltip';
 import {TableModule} from 'primeng/table';
 import {Lang, LanguageService} from '../../../../core/services/language.service';
@@ -27,6 +28,7 @@ import {finalize} from 'rxjs/operators';
     TranslatePipe,
     PaginationComponent,
     I18nNamespaceDirective,
+    ToggleSwitchModule,
     Tooltip,
     TableModule,
     ReligionModalComponent

@@ -7,6 +7,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="page-title mb-0">{{ 'TARGET_ENTITIES.TITLE' | translate }}</h3>
     <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
+      <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
       {{ 'TARGET_ENTITIES.ADD_TARGET_ENTITY' | translate }}
     </button>
   </div>
@@ -53,25 +54,25 @@
             </span>
           </td>
           <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-            <button
-              type="button"
-              class="icon-btn"
-              (click)="openEdit(targetEntity)"
-              [pTooltip]="'TARGET_ENTITIES.EDIT' | translate"
-              tooltipPosition="top"
-              aria-label="{{ 'TARGET_ENTITIES.EDIT' | translate }}">
-              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-            </button>
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="btn"
+                (click)="openEdit(targetEntity)"
+                [pTooltip]="'TARGET_ENTITIES.EDIT' | translate"
+                tooltipPosition="top"
+                aria-label="{{ 'TARGET_ENTITIES.EDIT' | translate }}">
+                <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+              </button>
 
-            <button
-              type="button"
-              class="icon-btn"
-              (click)="toggleStatus(targetEntity)"
-              [pTooltip]="targetEntity.isActive ? ('TARGET_ENTITIES.DEACTIVATE' | translate) : ('TARGET_ENTITIES.ACTIVATE' | translate)"
-              tooltipPosition="top"
-              aria-label="{{ targetEntity.isActive ? ('TARGET_ENTITIES.DEACTIVATE' | translate) : ('TARGET_ENTITIES.ACTIVATE' | translate) }}">
-              <i class="bi" [ngClass]="targetEntity.isActive ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
-            </button>
+              <p-toggle-switch
+                [ngModel]="targetEntity.isActive"
+                (ngModelChange)="toggleStatus(targetEntity)"
+                [pTooltip]="targetEntity.isActive ? ('TARGET_ENTITIES.DEACTIVATE' | translate) : ('TARGET_ENTITIES.ACTIVATE' | translate)"
+                tooltipPosition="top"
+                [attr.aria-label]="targetEntity.isActive ? ('TARGET_ENTITIES.DEACTIVATE' | translate) : ('TARGET_ENTITIES.ACTIVATE' | translate)">
+              </p-toggle-switch>
+            </div>
           </td>
         </tr>
       </ng-template>

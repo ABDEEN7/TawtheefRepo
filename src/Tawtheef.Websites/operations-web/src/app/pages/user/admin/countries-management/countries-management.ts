@@ -3,6 +3,7 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Select} from 'primeng/select';
+import {ToggleSwitchModule} from 'primeng/toggleswitch';
 import {Tooltip} from 'primeng/tooltip';
 import {CountriesService} from './services/countries.service';
 import {CountryDto} from './models/country.dto';
@@ -26,6 +27,7 @@ import {PaginationMetadata} from '../../../../core/models/pagination-metadata.mo
     PaginationComponent,
     I18nNamespaceDirective,
     Select,
+    ToggleSwitchModule,
     Tooltip,
   ],
 })

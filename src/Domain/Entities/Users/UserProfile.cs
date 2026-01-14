@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
@@ -13,7 +14,7 @@ public class UserProfile : EventEntity
 {
     public Guid UserId { get; set; }
     public ApplicantUser? User { get; set; }
-
+    [MaxLength(50)]
     public string Provider { get; set; } = default!;
     public Guid CandidateTypeId { get; set; }
     public CandidateType? CandidateType { get; set; }
@@ -33,6 +34,7 @@ public class UserProfile : EventEntity
     /// <summary>
     /// National ID number (e.g. QID)
     /// </summary>
+    [MaxLength(50)]
     public string? NationalNumber { get; set; }
     public DateOnly? QIDExpiry { get; set; }
 
@@ -71,13 +73,14 @@ public class UserProfile : EventEntity
 
     public Guid? InterviewLocationId { get; set; }
     public Country? InterviewLocation { get; set; }
-
+    [MaxLength(500)]
     public string? Address { get; set; }
 
     public Guid? ResidenceAddressId { get; set; }
     public ResidenceAddress? ResidenceAddress { get; set; }
 
     public bool HasDisability { get; set; }
+    [MaxLength(1000)]
     public string? DisabilityDetails { get; set; }
 
     public Guid? SponsorProfileId { get; set; }

@@ -117,26 +117,24 @@
             </span>
           </td>
           <td>
-             <div class="action-buttons">
-                   <button
-              type="button"
-              class="btn"
-              (click)="service.openEditDepartment(department)"
-              [pTooltip]="'common.edit' | translate"
-              tooltipPosition="top"
-              [attr.aria-label]="'common.edit' | translate">
-              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-            </button>
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="btn"
+                (click)="service.openEditDepartment(department)"
+                [pTooltip]="'common.edit' | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="'common.edit' | translate">
+                <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+              </button>
 
-            <button
-              type="button"
-              class="icon-btn"
-              (click)="service.toggleDepartmentActive(department, !(department.isActive !== false))"
-              [pTooltip]="(department.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
-              tooltipPosition="top"
-              [attr.aria-label]="(department.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
-              <i class="bi" [ngClass]="department.isActive !== false ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
-            </button>
+              <p-toggle-switch
+                [ngModel]="department.isActive !== false"
+                (ngModelChange)="service.toggleDepartmentActive(department, $event)"
+                [pTooltip]="(department.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="(department.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
+              </p-toggle-switch>
             </div>
           </td>
         </tr>

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
@@ -14,14 +15,16 @@ public class Achievement : EventEntity
 
     public required Guid AchievementTypeId { get; set; }
     public AchievementType? AchievementType { get; set; }
-
+    [MaxLength(64)]
     public required string Title { get; set; }
+    [MaxLength(128)]
     public required string IssuingAuthority { get; set; }
 
     public required Guid CountryId { get; set; }
     public Country? Country { get; set; }
 
     public DateOnly IssueDate { get; set; }
+    [MaxLength(256)]
     public string? Description { get; set; }
 
     public bool? RelatedToSpecialization { get; set; }
