@@ -77,15 +77,13 @@
                 </span>
               </td>
               <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-                <button
-                  type="button"
-                  class="icon-btn"
-                  (click)="toggleStatus(country)"
+                <p-toggle-switch
+                  [ngModel]="country.isActive"
+                  (ngModelChange)="toggleStatus(country)"
                   [pTooltip]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)"
                   tooltipPosition="top"
-                  aria-label="{{ country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate) }}">
-                  <i class="bi" [ngClass]="country.isActive ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
-                </button>
+                  [attr.aria-label]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)">
+                </p-toggle-switch>
               </td>
             </tr>
           }

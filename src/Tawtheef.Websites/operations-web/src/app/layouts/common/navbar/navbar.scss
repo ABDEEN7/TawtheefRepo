@@ -320,3 +320,7 @@
     }
   }
 }
+
+:dir(ltr) .user-menu .user-dropdown{right:0}
+:dir(rtl) .user-menu .user-dropdown,
+:dir(rtl) .notification .notification-menu{left:0;right: auto;}

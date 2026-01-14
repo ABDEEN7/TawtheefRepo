@@ -124,7 +124,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
         var name = FullName.TryParse(displayName);
         if (name.IsFailed) return Result.Fail<User>(name.Errors);
         
-        var userResult = Result.Fail<User>("User type not handled");
+        Result<User> userResult;
         if (userTypeId == UserTypeIds.Applicant)
             userResult = ApplicantUser.Register(email, displayName);
         else if (userTypeId == UserTypeIds.Employee)

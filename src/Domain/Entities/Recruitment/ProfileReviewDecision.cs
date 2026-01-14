@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
@@ -11,7 +12,13 @@ public class ProfileReviewDecision : EventEntity
     public UserProfile? UserProfile { get; set; }
 
     public FinalApprovalAction Action { get; set; }
+
+    // Detailed reviewer notes / justification
+    [MaxLength(2000)]
     public string? Notes { get; set; }
+
+    // Short decision summary (shown in lists / dashboards)
+    [MaxLength(500)]
     public string? Summary { get; set; }
 
     public Guid? AttachmentResourceId { get; set; }
@@ -19,3 +26,4 @@ public class ProfileReviewDecision : EventEntity
 
     public bool ExceptionalFlag { get; set; }
 }
+

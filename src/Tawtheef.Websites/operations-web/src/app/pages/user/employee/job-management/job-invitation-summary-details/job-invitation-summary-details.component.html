@@ -129,7 +129,7 @@
                      [ngModel]="selectedStatus()"
                      optionLabel="name"
                      optionValue="id"
-                     class="form-select"
+                     class="form-select p-0"
                      [placeholder]="'JOB_INVITES_DETAILS_SEARCH_STATE' | translate"
                      (ngModelChange)="selectedStatus.set($event); onFilterChange()"
                    ></p-select>
@@ -145,10 +145,10 @@
                  </div>
                  <div class="col-md-1">
                      <!-- Clear filters -->
-                     <button class="btn btn-outline-secondary flex-shrink-0" (click)="clearFilters()">
-                       <i class="fa fa-rotate-left"></i>
-                       {{ 'JOB_INVITES_DETAILS_CLEAR_FILTERS' | translate }}
-                     </button>
+                      <div class="action-buttons"><button class="btn-text" (click)="clearFilters()"><i class="fa fa-rotate-left mx-1"></i> {{ 'JOB_INVITES_DETAILS_CLEAR_FILTERS' | translate }}</button>
+
+                      </div>
+                     
                  </div><!-- Status dropdown -->
                </div>
            </div>

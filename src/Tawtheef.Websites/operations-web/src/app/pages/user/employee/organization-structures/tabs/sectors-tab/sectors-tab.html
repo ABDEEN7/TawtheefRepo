@@ -83,34 +83,26 @@
               {{ sector.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
             </span>
           </td>
-          <td >
-             <div class="action-buttons">
+          <td>
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="btn"
+                (click)="service.openEditSector(sector)"
+                [pTooltip]="'common.edit' | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="'common.edit' | translate">
+                <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+              </button>
 
-                  <button
-              
-          type="button"
-          class="btn"
-              (click)="service.openEditSector(sector)"
-              [pTooltip]="'common.edit' | translate"
-              tooltipPosition="top"
-              [attr.aria-label]="'common.edit' | translate">
-              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-            </button>
-            
-
-
-
-            <button
-              type="button"
-              class="icon-btn"
-              (click)="service.toggleSectorActive(sector, !(sector.isActive !== false))"
-              [pTooltip]="(sector.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
-              tooltipPosition="top"
-              [attr.aria-label]="(sector.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
-              <i class="bi" [ngClass]="sector.isActive !== false ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
-            </button>
-             </div>
-            
+              <p-toggle-switch
+                [ngModel]="sector.isActive !== false"
+                (ngModelChange)="service.toggleSectorActive(sector, $event)"
+                [pTooltip]="(sector.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="(sector.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate">
+              </p-toggle-switch>
+            </div>
           </td>
         </tr>
       </ng-template>
