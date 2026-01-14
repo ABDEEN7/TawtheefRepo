@@ -19,7 +19,6 @@ padding-bottom: 25px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 12px;
 
   .progress-header {
     display: flex;
@@ -30,9 +29,9 @@ padding-bottom: 25px;
 
   .progress-bar-wrap {
     background: #e9ecef;
-    border-radius: 999px;
-    height: 6px;
+    height: 20px;
     overflow: hidden;
+    border-radius: 6px;
   }
 
   .progress-bar-fill {
