@@ -23,7 +23,7 @@ public sealed class JobCreatedDomainEventHandler(
             unitOfWork,
             userManager,
             nameof(JobCreatedNotification),
-            "New Job Created",
+            "New Job Posting Created",
             payload,
             ct);
     }

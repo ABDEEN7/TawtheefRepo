@@ -1,4 +1,4 @@
-@model Tawtheef.Infrastructure.Services.NotificationServices.TemplateContext<Application.Operation.Templates.JobDeletedNotification.JobDeletedNotificationModel>
+@model Tawtheef.Infrastructure.Services.NotificationServices.TemplateContext<Application.Operation.Templates.ChangeJobStatusRejectedNotification.ChangeJobStatusRejectedNotificationModel>
 
 @{
     var b = Model.Branding;
@@ -18,7 +18,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@product - Job Posting Removed</title>
+  <title>@product - Job Posting Rejected</title>
   <style>
     body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
     .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
@@ -44,16 +44,16 @@
           <img class="logo" src="@logo" alt="@product">
         </a>
       }
-      <p class="badge">Job posting removed</p>
-      <h1 class="title">A job posting has been removed</h1>
+      <p class="badge">Rejected</p>
+      <h1 class="title">Your job posting was not approved</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        The job posting <strong>@jobTitle</strong> has been removed from the system.
+        The request for <strong>@jobTitle</strong> has been rejected.
       </p>
       <p class="text">
-        Please sign in to @product if you need to review historical details or take follow-up actions.
+        Please review the feedback in @product, update the posting as needed, and resubmit.
       </p>
-      <a class="cta" href="@website">View in @product</a>
+      <a class="cta" href="@website">Review feedback in @product</a>
       <div class="divider"></div>
       <p class="muted">
         If the button does not work, copy and paste this link into your browser: @website

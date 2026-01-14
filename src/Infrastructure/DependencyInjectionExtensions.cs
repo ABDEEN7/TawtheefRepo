@@ -5,7 +5,10 @@ using System.Threading.RateLimiting;
 using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
+using Application.Operation.Templates.ChangeJobStatusApprovedNotification;
+using Application.Operation.Templates.ChangeJobStatusNeedUpdateNotification;
 using Application.Operation.Templates.ChangeJobStatusNotification;
+using Application.Operation.Templates.ChangeJobStatusRejectedNotification;
 using Application.Operation.Templates.JobCandidateInvitationSent;
 using Application.Operation.Templates.JobCreatedNotification;
 using Application.Operation.Templates.JobDeletedNotification;
@@ -348,6 +351,9 @@ namespace Tawtheef.Infrastructure
                 NotificationTemplateRegistry.Register<JobUpdatedNotificationModel>(nameof(JobUpdatedNotification));
                 NotificationTemplateRegistry.Register<JobDeletedNotificationModel>(nameof(JobDeletedNotification));
                 NotificationTemplateRegistry.Register<ChangeJobStatusNotificationModel>(nameof(ChangeJobStatusNotification));
+                NotificationTemplateRegistry.Register<ChangeJobStatusApprovedNotificationModel>(nameof(ChangeJobStatusApprovedNotification));
+                NotificationTemplateRegistry.Register<ChangeJobStatusRejectedNotificationModel>(nameof(ChangeJobStatusRejectedNotification));
+                NotificationTemplateRegistry.Register<ChangeJobStatusNeedUpdateNotificationModel>(nameof(ChangeJobStatusNeedUpdateNotification));
             }
         }
 

@@ -23,7 +23,7 @@ public sealed class JobUpdatedDomainEventHandler(
             unitOfWork,
             userManager,
             nameof(JobUpdatedNotification),
-            "Job Updated",
+            "Job Posting Updated",
             payload,
             ct);
     }

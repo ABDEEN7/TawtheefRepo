@@ -23,7 +23,7 @@ public sealed class JobDeletedDomainEventHandler(
             unitOfWork,
             userManager,
             nameof(JobDeletedNotification),
-            "Job Deleted",
+            "Job Posting Removed",
             payload,
             ct);
     }

@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Operation.Templates.ChangeJobStatusNotification;
+using Application.Operation.Templates.ChangeJobStatusRejectedNotification;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,18 +13,18 @@ public sealed class ChangeJobStatusRejectedNotificationDomainEventHandler(
     UserManager<User> userManager,
     ILocalizationService localizationService,
     IUnitOfWork unitOfWork)
-    : INotificationHandler<ChangeJobStatusNeedUpdateNotificationDomainEvent>
+    : INotificationHandler<ChangeJobStatusRejectedNotificationDomainEvent>
 {
-    public async Task Handle(ChangeJobStatusNeedUpdateNotificationDomainEvent notification, CancellationToken ct)
+    public async Task Handle(ChangeJobStatusRejectedNotificationDomainEvent notification, CancellationToken ct)
     {
         var jobTitle = localizationService.GetLocalizedValue(notification.Job.TitleAr, notification.Job.TitleEn);
-        var payload = JsonSerializer.Serialize(new ChangeJobStatusNotificationModel(jobTitle));
+        var payload = JsonSerializer.Serialize(new ChangeJobStatusRejectedNotificationModel(jobTitle));
         await JobNotificationEmailHelper.QueueForEmployeeAsync(
             unitOfWork,
             userManager,
             notification.Job.CreatedById.ToString()!,
-            nameof(ChangeJobStatusNotification),
-            "Job Rejected",
+            nameof(ChangeJobStatusRejectedNotification),
+            "Job Request Rejected",
             payload,
             ct);
     }
