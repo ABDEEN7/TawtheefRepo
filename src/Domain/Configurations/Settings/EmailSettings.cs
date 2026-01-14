@@ -8,8 +8,10 @@ public sealed class EmailSettings
     [Required]
     public required string SmtpHost { get; init; }
     public int SmtpPort { get; init; } = 587;
-    public string? EmailUser { get; init; }
-    public string? EmailPass { get; init; }
+    [Required]
+    public required string EmailUser { get; init; }
+    [Required]
+    public required string EmailPass { get; init; }
     public bool EnableSsl { get; init; } = true;
 
     public string ProductName { get; init; } = "Tawtheef";
@@ -18,8 +20,10 @@ public sealed class EmailSettings
     public string? UnsubscribeHttpUrl { get; init; } // e.g. https://.../unsubscribe
     public string? UnsubscribeMailto { get; init; }  // e.g. mailto:unsubscribe@yourdomain
     public bool UseBccForMultiRecipient { get; init; } = true;
-    public  string? ManagerEmails { get; init; }
-    public string? ContactUsEmail { get; init; }
+    [Required]
+    public required string ManagerEmails { get; init; }
+    [Required]
+    public required string ContactUsEmail { get; init; }
     public string? LogoPath { get; init; }
     public int MaxSmtpClients { get; init; } = 3;
 }
