@@ -23,7 +23,7 @@ public sealed class ChangeJobStatusNotificationDomainEventHandler(
             unitOfWork,
             userManager,
             nameof(ChangeJobStatusNotification),
-            "Job Requires Review",
+            "Job Status Review Required",
             payload,
             ct);
     }

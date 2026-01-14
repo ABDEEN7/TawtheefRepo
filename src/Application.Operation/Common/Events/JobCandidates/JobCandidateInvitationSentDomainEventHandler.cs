@@ -23,7 +23,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 nameof(JobCandidateInvitationSent),
                 notification.ApplicantId,
                 notification.Email,
-                "Job Invitation",
+                "Tawtheef Job Invitation",
                 null,
                 payload);
             await repo.AddAsync(emailNotification);
@@ -32,15 +32,15 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
         if (!string.IsNullOrWhiteSpace(notification.PhoneNumber))
         {
             var body = string.IsNullOrWhiteSpace(jobTitle)
-                ? "You have been invited to apply for a job on Tawtheef."
-                : $"You have been invited to apply for {jobTitle} on Tawtheef.";
+                ? "You have been invited to apply for a role on Tawtheef. Please sign in to review the details."
+                : $"You have been invited to apply for {jobTitle} on Tawtheef. Please sign in to review the details.";
 
             var smsNotification = Notification.Create(
                 NotificationChannel.Sms,
                 nameof(JobCandidateInvitationSent),
                 notification.ApplicantId,
                 notification.PhoneNumber,
-                "Job Invitation",
+                "Tawtheef Job Invitation",
                 body,
                 null);
             await repo.AddAsync(smsNotification);

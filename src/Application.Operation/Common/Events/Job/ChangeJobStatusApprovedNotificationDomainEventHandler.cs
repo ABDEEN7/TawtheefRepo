@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Operation.Templates.ChangeJobStatusNotification;
+using Application.Operation.Templates.ChangeJobStatusApprovedNotification;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -18,13 +18,13 @@ public sealed class ChangeJobStatusApprovedNotificationDomainEventHandler(
     public async Task Handle(ChangeJobStatusApprovedNotificationDomainEvent notification, CancellationToken ct)
     {
         var jobTitle = localizationService.GetLocalizedValue(notification.Job.TitleAr, notification.Job.TitleEn);
-        var payload = JsonSerializer.Serialize(new ChangeJobStatusNotificationModel(jobTitle));
+        var payload = JsonSerializer.Serialize(new ChangeJobStatusApprovedNotificationModel(jobTitle));
         await JobNotificationEmailHelper.QueueForEmployeeAsync(
             unitOfWork,
             userManager,
             notification.Job.CreatedById.ToString()!,
-            nameof(ChangeJobStatusNotification),
-            "Job Approved",
+            nameof(ChangeJobStatusApprovedNotification),
+            "Job Approval Confirmed",
             payload,
             ct);
     }

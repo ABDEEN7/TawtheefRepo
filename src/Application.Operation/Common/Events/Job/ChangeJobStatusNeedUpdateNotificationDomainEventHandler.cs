@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Operation.Templates.ChangeJobStatusNotification;
+using Application.Operation.Templates.ChangeJobStatusNeedUpdateNotification;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -18,13 +18,13 @@ public sealed class ChangeJobStatusNeedUpdateNotificationDomainEventHandler(
     public async Task Handle(ChangeJobStatusNeedUpdateNotificationDomainEvent notification, CancellationToken ct)
     {
         var jobTitle = localizationService.GetLocalizedValue(notification.Job.TitleAr, notification.Job.TitleEn);
-        var payload = JsonSerializer.Serialize(new ChangeJobStatusNotificationModel(jobTitle));
+        var payload = JsonSerializer.Serialize(new ChangeJobStatusNeedUpdateNotificationModel(jobTitle));
         await JobNotificationEmailHelper.QueueForEmployeeAsync(
             unitOfWork,
             userManager,
             notification.Job.CreatedById.ToString()!,
-            nameof(ChangeJobStatusNotification),
-            "Job Need Update",
+            nameof(ChangeJobStatusNeedUpdateNotification),
+            "Job Update Required",
             payload,
             ct);
     }
