@@ -19,7 +19,7 @@
           </div>
           <div class="card card-table mb-3">
             <div class="card-body">
-              <div class="row g-2 align-items-end">
+              <div class="row align-items-end">
 
                 <!-- Search -->
                 <div class="col-md-3">
@@ -47,7 +47,6 @@
                     filterBy="name"
                     optionLabel="name"
                     optionValue="id"
-                    size="small"
                     class="w-100"
                     [ngModel]="selectedCategory()"
                     (ngModelChange)="selectedCategory.set($event); onFilterChange()"
@@ -55,7 +54,7 @@
                 </div>
 
                 <!-- Department -->
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <label class="form-label">
                     {{ 'JOB_INVITATION_SUMMARY.REQUESTING_ENTITY' | translate }}
                   </label>
@@ -67,7 +66,6 @@
                     filterBy="name"
                     optionLabel="name"
                     optionValue="id"
-                    size="small"
                     class="w-100"
                     [ngModel]="selectedDepartment()"
                     (ngModelChange)="selectedDepartment.set($event); onFilterChange()"
@@ -75,12 +73,11 @@
                 </div>
 
                 <!-- Status -->
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <label class="form-label">
                     {{ 'JOB_INVITATION_SUMMARY.STATUS' | translate }}
                   </label>
 
-                  <div class="d-flex gap-2">
                     <p-select
                       [options]="jobInvitationSummaryService.jobStatuses()"
                       [showClear]="true"
@@ -89,17 +86,20 @@
                       filterBy="name"
                       optionLabel="name"
                       optionValue="id"
-                      size="small"
                       class="w-100"
                       [ngModel]="selectedStatus()"
                       (ngModelChange)="selectedStatus.set($event); onFilterChange()"
                     ></p-select>
-
-                    <button (click)="clearFilters()" class="btn btn-outline-secondary btn-sm flex-shrink-0">
-                      <i class="fa fa-rotate-left"></i>
+                    
+                    
+                </div>
+                <div class="col-md-2">
+                    <div class="action-buttons">
+                          <button (click)="clearFilters()" class="btn-text ">
+                      <i class="fa fa-rotate-left mx-1"></i>
                       {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
                     </button>
-                  </div>
+                    </div>
                 </div>
 
               </div>

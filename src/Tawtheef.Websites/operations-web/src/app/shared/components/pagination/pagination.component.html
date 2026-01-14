@@ -39,7 +39,7 @@
             [disabled]="isDisabled('prev')"
             [attr.aria-label]="translationPrefix() + '.previous' | translate"
           >
-            <i class="fas fa-chevron-right"></i>
+            <i class="hgi  fs-18" [faDirArrow]="'start'"></i>
             <span>{{ translationPrefix() + '.previous' | translate }}</span>
           </button>
         </li>
@@ -75,7 +75,7 @@
             [attr.aria-label]="translationPrefix() + '.next' | translate"
           >
             <span>{{ translationPrefix() + '.next' | translate }}</span>
-            <i class="fas fa-chevron-left"></i>
+            <i class="hgi fs-18" [faDirArrow]="'end'"></i>
           </button>
         </li>
       </ul>
