@@ -7,6 +7,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="page-title mb-0">{{ 'RELIGIONS.TITLE' | translate }}</h3>
     <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
+      <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
       {{ 'RELIGIONS.ADD_RELIGION' | translate }}
     </button>
   </div>
@@ -53,25 +54,25 @@
             </span>
           </td>
           <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-            <button
-              type="button"
-              class="icon-btn"
-              (click)="openEdit(religion)"
-              [pTooltip]="'RELIGIONS.EDIT' | translate"
-              tooltipPosition="top"
-              aria-label="{{ 'RELIGIONS.EDIT' | translate }}">
-              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-            </button>
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="btn"
+                (click)="openEdit(religion)"
+                [pTooltip]="'RELIGIONS.EDIT' | translate"
+                tooltipPosition="top"
+                aria-label="{{ 'RELIGIONS.EDIT' | translate }}">
+                <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+              </button>
 
-            <button
-              type="button"
-              class="icon-btn"
-              (click)="toggleStatus(religion)"
-              [pTooltip]="religion.isActive ? ('RELIGIONS.DEACTIVATE' | translate) : ('RELIGIONS.ACTIVATE' | translate)"
-              tooltipPosition="top"
-              aria-label="{{ religion.isActive ? ('RELIGIONS.DEACTIVATE' | translate) : ('RELIGIONS.ACTIVATE' | translate) }}">
-              <i class="bi" [ngClass]="religion.isActive ? 'bi-toggle2-off' : 'bi-toggle2-on'"></i>
-            </button>
+              <p-toggle-switch
+                [ngModel]="religion.isActive"
+                (ngModelChange)="toggleStatus(religion)"
+                [pTooltip]="religion.isActive ? ('RELIGIONS.DEACTIVATE' | translate) : ('RELIGIONS.ACTIVATE' | translate)"
+                tooltipPosition="top"
+                [attr.aria-label]="religion.isActive ? ('RELIGIONS.DEACTIVATE' | translate) : ('RELIGIONS.ACTIVATE' | translate)">
+              </p-toggle-switch>
+            </div>
           </td>
         </tr>
       </ng-template>
