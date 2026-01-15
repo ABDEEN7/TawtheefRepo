@@ -39,10 +39,9 @@ public class JobPointsController(IMediator mediator) : ControllerBase
     }
 
     #region Points Configurations
-
-    [HttpGet("config")]
+    [HttpGet("configurations")]
     [AuthorizePermission(PermissionKeys.JobsPoints.View, PermissionKeys.JobsPoints.Manage)]
-    public async Task<IActionResult> GetJobPointsConfigurations()
+    public async Task<IActionResult> GetJobPointsConfiguration()
     {
         var result = await mediator.Send(new GetJobPointsConfigurationsQuery());
         return result.ToActionResult();

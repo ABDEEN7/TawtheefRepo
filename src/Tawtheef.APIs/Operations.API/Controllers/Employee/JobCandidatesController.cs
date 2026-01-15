@@ -51,6 +51,14 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPost("category-settings")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> SaveCategorySettings([FromBody] SaveJobCategoryCandidateSettingsCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
     [HttpPost("search")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> Search([FromBody] GetJobCandidatesQuery query)

@@ -1,4 +1,5 @@
 ﻿using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Mapster;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
@@ -20,6 +21,9 @@ public class JobPointsMappingProfile : IRegister
 
         config.NewConfig<JobPointConfigurationResponseDto, JobPointConfiguration>();
         config.NewConfig<JobPointConfigurationRequestDto, JobPointConfiguration>();
+
+        config.NewConfig<JobCategoryCandidateSettings, JobCategoryCandidateSettingsResponseDto>();
+        config.NewConfig<JobCategoryCandidateSettingsRequestDto, JobCategoryCandidateSettings>();
         
         config.NewConfig<JobPointsMain, JobPointsCopyDto>()
             .Map(dest => dest.Details, src => src.Details);
