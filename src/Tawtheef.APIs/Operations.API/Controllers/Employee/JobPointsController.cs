@@ -48,6 +48,14 @@ public class JobPointsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("configurations")]
+    [AuthorizePermission(PermissionKeys.JobsPoints.View, PermissionKeys.JobsPoints.Manage)]
+    public async Task<IActionResult> GetJobPointsConfiguration()
+    {
+        var result = await mediator.Send(new GetJobPointsConfigurationsQuery());
+        return result.ToActionResult();
+    }
+
     [HttpPost("configurations/save")]
     [AuthorizePermission(PermissionKeys.JobsPoints.Manage)]
     public async Task<IActionResult> SaveJobPointsConfiguration([FromBody] SaveJobPointsConfigurationCommand command)
