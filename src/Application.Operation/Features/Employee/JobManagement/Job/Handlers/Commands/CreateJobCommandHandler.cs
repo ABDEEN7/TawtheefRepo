@@ -1,6 +1,7 @@
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Cortex.Mediator.Commands;
 using FluentResults;
+using FluentValidation;
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -12,12 +13,20 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Com
 
 public class CreateJobCommandHandler(
     IJobRepository jobRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IValidator<CreateJobCommand> validator)
     : ICommandHandler<CreateJobCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
-        
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail<Guid>(
+                validationResult.Errors.Select(e => e.ErrorMessage)
+            );
+        }
         var job = request.Job.Adapt<JobEntity>();
         job.ChangeStatus(JobStatusIds.Draft);
         job.AddDomainEvent(new JobCreatedDomainEvent(job, DateTimeOffset.UtcNow));

@@ -4,6 +4,7 @@ using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
+using FluentValidation;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
@@ -21,11 +22,21 @@ public class UpdateJobCommandHandler(
     IJobDegreeRepository jobDegreeRepository,
     IJobResponsibilityRepository jobResponsibilityRepository,
     IJobRequiredAttachmentRepository jobRequiredAttachmentRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IValidator<UpdateJobCommand> validator
+    )
     : ICommandHandler<UpdateJobCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail<Unit>(
+                validationResult.Errors.Select(e => e.ErrorMessage)
+            );
+        }
         var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
         if (existingJobResult.IsFailed || existingJobResult.Value == null)
             return Result.Fail<Unit>(JobMessages.JobNotFound);
