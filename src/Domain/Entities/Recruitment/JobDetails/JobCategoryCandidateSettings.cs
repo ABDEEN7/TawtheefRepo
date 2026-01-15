@@ -8,9 +8,9 @@ namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 public class JobCategoryCandidateSettings : EventEntity
 {
     [Required]
-    public int AcademicJobVacancies { get; init; }
+    public int AcademicJobVacancies { get; set; }
     [Required]
-    public int LaborJobVacancies { get; init; }
+    public int LaborJobVacancies { get; set; }
     [Required]
-    public int AdministrativeJobVacancies { get; init; }
+    public int AdministrativeJobVacancies { get; set; }
 }
