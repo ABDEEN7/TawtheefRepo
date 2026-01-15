@@ -54,7 +54,7 @@ export class EndpointsService {
     getLatestReview : (jobId : GUID) => this.getFullUrl(`/jobApproval/${jobId}/latest`),
     jobPoints : this.getFullUrl('/jobPoints'),
     getJobPoints :(jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}`),
-    getJobPointsConfig : this.getFullUrl(`/jobPoints/config`),
+    getJobPointsConfig : this.getFullUrl(`/jobPoints/configurations`),
     approveJobPoints : (jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}/approve`),
     searchJob : this.getFullUrl('/job/search'),
     CountByStatus : (jobStatusId : GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
