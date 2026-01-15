@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 

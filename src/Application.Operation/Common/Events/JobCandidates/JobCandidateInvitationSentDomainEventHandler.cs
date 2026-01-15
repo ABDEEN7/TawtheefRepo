@@ -1,36 +1,51 @@
+using System.Text.Json;
+using Application.Operation.Templates.JobCandidateInvitationSent;
 using Cortex.Mediator.Notifications;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
 
 namespace Application.Operation.Common.Events.JobCandidates;
 
-public sealed class JobCandidateInvitationSentDomainEventHandler(
-    IEmailSender emailSender,
-    ISmsSender smsSender)
+public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork unitOfWork)
     : INotificationHandler<JobCandidateInvitationSentDomainEvent>
 {
     public async Task Handle(JobCandidateInvitationSentDomainEvent notification, CancellationToken ct)
     {
+        var repo = unitOfWork.GetEntityRepository<Notification>();
         var jobTitle = notification.JobTitle;
-        var body = string.IsNullOrWhiteSpace(jobTitle)
-            ? "You have been invited to apply for a job on Tawtheef."
-            : $"You have been invited to apply for {jobTitle} on Tawtheef.";
 
         if (!string.IsNullOrWhiteSpace(notification.Email))
         {
-            await emailSender.SendAsync(
+            var payload = JsonSerializer.Serialize(new JobCandidateInvitationSentModel(jobTitle));
+            var emailNotification = Notification.Create(
+                NotificationChannel.Email,
+                nameof(JobCandidateInvitationSent),
+                notification.ApplicantId,
                 notification.Email,
-                "Job Invitation",
-                body,
-                ct);
+                "Tawtheef Job Invitation",
+                null,
+                payload);
+            await repo.AddAsync(emailNotification);
         }
 
         if (!string.IsNullOrWhiteSpace(notification.PhoneNumber))
         {
-            await smsSender.SendAsync(
+            var body = string.IsNullOrWhiteSpace(jobTitle)
+                ? "You have been invited to apply for a role on Tawtheef. Please sign in to review the details."
+                : $"You have been invited to apply for {jobTitle} on Tawtheef. Please sign in to review the details.";
+
+            var smsNotification = Notification.Create(
+                NotificationChannel.Sms,
+                nameof(JobCandidateInvitationSent),
+                notification.ApplicantId,
                 notification.PhoneNumber,
+                "Tawtheef Job Invitation",
                 body,
-                ct);
+                null);
+            await repo.AddAsync(smsNotification);
         }
+
+        await unitOfWork.SaveChangesAsync(ct);
     }
 }

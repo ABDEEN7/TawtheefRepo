@@ -10,7 +10,7 @@ using Tawtheef.Domain.Events.Operation.Employee.Job;
 namespace Tawtheef.Domain.Entities.Recruitment;
 
 [Table(nameof(Job), Schema = Schemas.Hr)]
-public class Job : EventEntity
+public sealed class Job : EventEntity
 {
     [Required(ErrorMessage = JobMessages.JobTitleArRequired)]
     [MaxLength(500, ErrorMessage = JobMessages.JobTitleArMaxLength)]
@@ -94,41 +94,44 @@ public class Job : EventEntity
     // Navigation Properties
     // =========================
 
-    public virtual Sector? Sector { get; set; }
-    public virtual Management? Management { get; set; }
-    public virtual Department? Department { get; set; }
-    public virtual JobCategory? JobCategory { get; set; }
-    public virtual TargetEntity? WorkLocation { get; set; }
-    public virtual Gender? Gender { get; set; }
-    public virtual Major? Major { get; set; }
-    public virtual Major? SubMajor { get; set; }
-    public virtual WorkType? WorkType { get; set; }
-    public virtual JobStatus? JobStatus { get; set; }
-    public virtual JobPointsMain? JobPoints { get; set; }
-    public virtual JobCandidateFilterSetting? CandidateFilterSetting { get; set; }
-    public virtual JobReviewAttachment? ReviewAttachment { get; set; }
+    public Sector? Sector { get; set; }
+    public Management? Management { get; set; }
+    public Department? Department { get; set; }
+    public JobCategory? JobCategory { get; set; }
+    public TargetEntity? WorkLocation { get; set; }
+    public Gender? Gender { get; set; }
+    public Major? Major { get; set; }
+    public Major? SubMajor { get; set; }
+    public WorkType? WorkType { get; set; }
+    public JobStatus? JobStatus { get; set; }
+    public JobPointsMain? JobPoints { get; set; }
+    public JobCandidateFilterSetting? CandidateFilterSetting { get; set; }
+    public JobReviewAttachment? ReviewAttachment { get; set; }
 
-    public virtual List<JobDegree> JobDegrees { get; set; } = [];
-    public virtual List<JobCondition> JobConditions { get; set; } = [];
-    public virtual List<JobSkill> JobSkills { get; set; } = [];
-    public virtual List<JobResponsibility> JobResponsibilities { get; set; } = [];
-    public virtual List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = [];
-    public virtual List<Invitation> Invitations { get; set; } = [];
-    public virtual List<JobTabReviewNote> TabReviewNotes { get; set; } = [];
+    public List<JobDegree> JobDegrees { get; set; } = [];
+    public List<JobCondition> JobConditions { get; set; } = [];
+    public List<JobSkill> JobSkills { get; set; } = [];
+    public List<JobResponsibility> JobResponsibilities { get; set; } = [];
+    public List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = [];
+    public List<Invitation> Invitations { get; set; } = [];
+    public List<JobTabReviewNote> TabReviewNotes { get; set; } = [];
 
     public void ChangeStatus(Guid newStatusId)
     {
         JobStatusId = newStatusId;
-
-        AddDomainEvent(
-            new JobStatusChangedDomainEvent(Id, newStatusId, DateTimeOffset.UtcNow)
-        );
-
-        if (newStatusId == JobStatusIds.Draft)
+        if (newStatusId == JobStatusIds.PendingApproval)
         {
-            AddDomainEvent(
-                new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now)
-            );
+            AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.UtcNow));
+        }else if (newStatusId == JobStatusIds.Approved )
+        {
+            AddDomainEvent(new ChangeJobStatusApprovedNotificationDomainEvent(this, DateTimeOffset.UtcNow));
+        }
+        else if (newStatusId == JobStatusIds.Rejected)
+        {
+            AddDomainEvent(new ChangeJobStatusRejectedNotificationDomainEvent(this, DateTimeOffset.UtcNow));
+        }else if (newStatusId == JobStatusIds.NeedUpdate)
+        {
+            AddDomainEvent(new ChangeJobStatusNeedUpdateNotificationDomainEvent(this, DateTimeOffset.UtcNow));
         }
     }
 }

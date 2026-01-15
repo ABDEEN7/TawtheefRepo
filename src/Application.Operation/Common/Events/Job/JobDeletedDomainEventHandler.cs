@@ -1,5 +1,8 @@
+using System.Text.Json;
+using Application.Operation.Templates.JobDeletedNotification;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
@@ -7,25 +10,21 @@ using Tawtheef.Domain.Events.Operation.Employee.Job;
 namespace Application.Operation.Common.Events.Job;
 
 public sealed class JobDeletedDomainEventHandler(
-    IEmailSender emailSender,
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    ILocalizationService localizationService,
+    IUnitOfWork unitOfWork)
     : INotificationHandler<JobDeletedDomainEvent>
 {
     public async Task Handle(JobDeletedDomainEvent notification, CancellationToken ct)
     {
-        //TODO: should be add Localization for Title property
-        var jobTitle = notification.Job.TitleEn;
-        var body = $"""
-            The job ({jobTitle}) has been deleted.
-
-            Please log in to the Tawtheef system to review the job changes.
-            """;
-
-        await JobNotificationEmailHelper.SendToHrAdminsAsync(
-            emailSender,
+        var jobTitle = localizationService.GetLocalizedValue(notification.Job.TitleAr, notification.Job.TitleEn);
+        var payload = JsonSerializer.Serialize(new JobDeletedNotificationModel(jobTitle));
+        await JobNotificationEmailHelper.QueueForHrAdminsAsync(
+            unitOfWork,
             userManager,
-            "Job Deleted",
-            body,
+            nameof(JobDeletedNotification),
+            "Job Posting Removed",
+            payload,
             ct);
     }
 }

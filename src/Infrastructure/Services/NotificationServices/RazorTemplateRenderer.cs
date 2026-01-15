@@ -7,7 +7,7 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
 {
     private readonly RazorLightEngine _engine;
     private readonly IEmailBranding _branding;
-    private readonly Dictionary<string, string> _manifest; // normalized -> real
+    private readonly Dictionary<string, string> _keyMap; // normalized -> actual
 
     public RazorTemplateRenderer(IEmailBranding branding)
     {
@@ -15,36 +15,45 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
 
         var asm = typeof(RazorTemplateRenderer).Assembly;
 
-        // Build a lookup that ignores slash direction
-        _manifest = asm.GetManifestResourceNames()
-            .ToDictionary(n => n.Replace('\\','/'),
-                n => n,
-                StringComparer.OrdinalIgnoreCase);
+        _keyMap = asm.GetManifestResourceNames()
+            .ToDictionary(Normalize, k => k, StringComparer.OrdinalIgnoreCase);
 
-        _engine = new RazorLightEngineBuilder()
+        var builder = new RazorLightEngineBuilder()
             .UseEmbeddedResourcesProject(asm)
             .SetOperatingAssembly(asm)
-            .UseMemoryCachingProvider()
-            .Build();
+            .UseMemoryCachingProvider();
+
+        #if DEBUG
+        builder = builder.EnableDebugMode();
+        #endif
+
+        _engine = builder.Build();
     }
 
+    private static string Normalize(string k) => k.Replace('\\', '/');
 
-    private static string Desired(string name, string kind)
-        => $"Templates/{name}/{name}.{kind}.cshtml"; // forward-slash logical key
-
-    private string Resolve(string logicalKey)
+    private Task<string> RenderAsync<T>(string templateKey, string kind, T model)
     {
-        var k = logicalKey.Replace('\\','/');
-        return _manifest.TryGetValue(k, out var real) ? real : logicalKey;
+        if (string.IsNullOrWhiteSpace(templateKey))
+            throw new ArgumentException("Template key is required.", nameof(templateKey));
+
+        var logical = Normalize($"Templates/{templateKey}/{templateKey}.{kind}.cshtml");
+
+        if (!_keyMap.TryGetValue(logical, out var actual))
+        {
+            var available = string.Join("\n", _keyMap.Keys.OrderBy(x => x));
+            throw new InvalidOperationException(
+                $"Template '{logical}' not found. Embedded templates:\n{available}");
+        }
+
+        return _engine.CompileRenderAsync(
+            actual,
+            new TemplateContext<T> { Branding = _branding, Model = model });
     }
 
-    public async Task<string> RenderHtmlAsync<T>(string templateKey, T model)
-        => await _engine.CompileRenderAsync(
-                Resolve(Desired(templateKey, "html")),
-                new TemplateContext<T> { Branding = _branding, Model = model });
+    public Task<string> RenderHtmlAsync<T>(string templateKey, T model)
+        => RenderAsync(templateKey, "html", model);
 
-    public async Task<string> RenderTextAsync<T>(string templateKey, T model)
-        => await _engine.CompileRenderAsync(
-                Resolve(Desired(templateKey, "txt")),
-                new TemplateContext<T> { Branding = _branding, Model = model });
+    public Task<string> RenderTextAsync<T>(string templateKey, T model)
+        => RenderAsync(templateKey, "txt", model);
 }

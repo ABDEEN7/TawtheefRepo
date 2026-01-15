@@ -1,0 +1,14 @@
+@model Tawtheef.Infrastructure.Services.NotificationServices.TemplateContext<Application.Operation.Templates.JobCreatedNotification.JobCreatedNotificationModel>
+New Job Posting Created
+
+Dear Colleague,
+
+The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the new job posting" : Model.Model.JobTitle)" has been created and is ready for review.
+
+Please sign in to @Model.Branding.ProductName to review the details and proceed with the approval process.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail

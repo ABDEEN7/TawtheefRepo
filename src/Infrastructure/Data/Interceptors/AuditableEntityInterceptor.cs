@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Infrastructure.Data.Interceptors;

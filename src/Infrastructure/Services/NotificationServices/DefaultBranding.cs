@@ -4,13 +4,22 @@ using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
-public sealed class DefaultBranding(IOptions<EmailSettings> emailConfiguration, IOptions<AppConfigSettings> appConfiguration) : IEmailBranding
+public sealed class DefaultBranding(
+    IOptions<EmailSettings> emailConfiguration,
+    IOptions<AppConfigSettings> appConfiguration) : IEmailBranding
 {
     private readonly EmailSettings _emailConfig = emailConfiguration.Value;
     private readonly AppConfigSettings _appConfig = appConfiguration.Value;
+
     public string ProductName => _emailConfig.ProductName;
-    public string PrimaryHex => "#667eea";
+
+    // From the logo dominant color
+    public string PrimaryHex => "#881038";
+
     public string SupportEmail => _emailConfig.DefaultReplyTo ?? _emailConfig.EmailUser;
+
+    // Ensure this is a real URL reachable by email clients (https://...)
     public string LogoUrl => "logo@tawtheef";
+
     public string WebsiteUrl => _appConfig.FrontendUrl;
 }

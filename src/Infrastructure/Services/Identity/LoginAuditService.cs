@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Infrastructure.Extensions;
 

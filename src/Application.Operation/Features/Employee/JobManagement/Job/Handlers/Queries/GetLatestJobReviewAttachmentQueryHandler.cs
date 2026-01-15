@@ -4,7 +4,7 @@ using Cortex.Mediator.Queries;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 

@@ -7,7 +7,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Utilities;
+using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
 

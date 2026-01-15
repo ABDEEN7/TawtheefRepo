@@ -6,7 +6,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Common.Mappers;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;

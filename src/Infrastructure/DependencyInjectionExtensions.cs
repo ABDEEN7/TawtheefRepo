@@ -5,7 +5,16 @@ using System.Threading.RateLimiting;
 using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
+using Application.Operation.Templates.ChangeJobStatusApprovedNotification;
+using Application.Operation.Templates.ChangeJobStatusNeedUpdateNotification;
+using Application.Operation.Templates.ChangeJobStatusNotification;
+using Application.Operation.Templates.ChangeJobStatusRejectedNotification;
+using Application.Operation.Templates.JobCandidateInvitationSent;
+using Application.Operation.Templates.JobCreatedNotification;
+using Application.Operation.Templates.JobDeletedNotification;
+using Application.Operation.Templates.JobUpdatedNotification;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
+using Application.Recruitment.Templates.ContactVerificationSent;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
@@ -30,6 +39,9 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
+using Tawtheef.Application.Common.Interfaces.Services.Notifications;
+using Tawtheef.Application.Common.Interfaces.Services.Resources;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Configurations.Settings;
@@ -46,6 +58,7 @@ using Tawtheef.Infrastructure.Services.Localization;
 using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.StorageServices;
 using Tawtheef.Infrastructure.Services.Validations;
+using Tawtheef.Infrastructure.Utils;
 
 namespace Tawtheef.Infrastructure
 {
@@ -176,26 +189,21 @@ namespace Tawtheef.Infrastructure
                 services.AddSingleton<IEmailQueue, EmailQueue>();
                 services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
                 services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
-                services.AddScoped<IEmailService, EmailService>();
 
                 services.AddScoped<ISmsSender, HodhodSmsSender>();
                 services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
+                services.AddScoped<IPushSender, NullPushSender>();
+                services.AddScoped<IEmailService, EmailService>();
             }
 
             private void AddStorageCommon(IConfiguration configuration)
             {
-                // You are reading AzureConnectionString and RootPath in your original code.
-                // This keeps the same behavior (Azure if connection string exists, else local).
-                var connectionString = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.AzureConnectionString)}"] ?? string.Empty;
-                var containerName = configuration[$"{StorageSettings.SectionName}:{nameof(StorageSettings.RootPath)}"] ?? string.Empty;
-
-                if (!string.IsNullOrWhiteSpace(connectionString))
-                {
-                    services.AddSingleton(_ => new BlobServiceClient(connectionString));
-                    services.AddScoped(sp =>
-                    {
+                var storageSettings = configuration.GetSection(StorageSettings.SectionName).Get<StorageSettings>()!;
+                if (storageSettings.Provider == nameof(StorageProvider.AzureBlobStorage)) {
+                    services.AddSingleton(_ => new BlobServiceClient(storageSettings.AzureConnectionString));
+                    services.AddScoped(sp => {
                         var serviceClient = sp.GetRequiredService<BlobServiceClient>();
-                        return serviceClient.GetBlobContainerClient(containerName);
+                        return serviceClient.GetBlobContainerClient(storageSettings.RootPath);
                     });
 
                     services.AddScoped<IFileStorageService, AzureBlobStorageService>();
@@ -229,6 +237,8 @@ namespace Tawtheef.Infrastructure
             {
                 // Recruitment-only options + http clients
                 services.AddRecruitmentHttpClients(configuration);
+                services.AddRecruitmentNotification();
+                services.AddOperationNotification();
 
                 // Recruitment-only domain services
                 services.AddScoped<IVerificationService, VerificationService>();
@@ -279,6 +289,12 @@ namespace Tawtheef.Infrastructure
                         };
                     });
             }
+            
+            private void AddRecruitmentNotification()
+            {
+                //TODO: registeration all template model here
+                NotificationTemplateRegistry.Register<ContactVerificationSentModel>(nameof(ContactVerificationSent));
+            }
         }
 
         #endregion
@@ -290,7 +306,8 @@ namespace Tawtheef.Infrastructure
             private void AddInfrastructureOperation(IConfiguration configuration)
             {
                 // Operation-only settings + http clients
-                services.AddOperationHttpClients(configuration);
+                services.AddOperationHttpClients();
+                services.AddOperationNotification();
 
                 AddValidatedOptions<AzureAuthenticationSettings>(services, configuration, AzureAuthenticationSettings.SectionName);
                 
@@ -316,11 +333,8 @@ namespace Tawtheef.Infrastructure
                 services.AddHostedService<JobAutoClosureService>();
             }
 
-            private void AddOperationHttpClients(IConfiguration configuration)
+            private void AddOperationHttpClients()
             {
-                // HR settings
-                services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
-
                 // ===== Employee Directory =====
                 services.AddHttpClient<IEmployeeDirectoryClient, EmployeeDirectoryClient>((sp, client) =>
                 {
@@ -328,6 +342,18 @@ namespace Tawtheef.Infrastructure
                     client.BaseAddress = new Uri(opt.BaseUrl);
                     client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
                 });
+            }
+
+            private void AddOperationNotification()
+            {
+                NotificationTemplateRegistry.Register<JobCandidateInvitationSentModel>(nameof(JobCandidateInvitationSent));
+                NotificationTemplateRegistry.Register<JobCreatedNotificationModel>(nameof(JobCreatedNotification));
+                NotificationTemplateRegistry.Register<JobUpdatedNotificationModel>(nameof(JobUpdatedNotification));
+                NotificationTemplateRegistry.Register<JobDeletedNotificationModel>(nameof(JobDeletedNotification));
+                NotificationTemplateRegistry.Register<ChangeJobStatusNotificationModel>(nameof(ChangeJobStatusNotification));
+                NotificationTemplateRegistry.Register<ChangeJobStatusApprovedNotificationModel>(nameof(ChangeJobStatusApprovedNotification));
+                NotificationTemplateRegistry.Register<ChangeJobStatusRejectedNotificationModel>(nameof(ChangeJobStatusRejectedNotification));
+                NotificationTemplateRegistry.Register<ChangeJobStatusNeedUpdateNotificationModel>(nameof(ChangeJobStatusNeedUpdateNotification));
             }
         }
 
@@ -341,6 +367,7 @@ namespace Tawtheef.Infrastructure
             IHostEnvironment env)
         {
             services.AddScoped<AuditableEntityInterceptor>();
+            services.AddScoped<DispatchDomainEventsInterceptor>();
 
             services.AddDbContext<TawtheefDbContext>((sp, options) =>
             {
@@ -351,8 +378,10 @@ namespace Tawtheef.Infrastructure
                         sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
                         sql.EnableRetryOnFailure(5);
                     })
-                    .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>());
-
+                    .AddInterceptors(
+                        sp.GetRequiredService<AuditableEntityInterceptor>(),
+                        sp.GetRequiredService<DispatchDomainEventsInterceptor>());
+                    
                 if (env.IsDevelopment())
                 {
                     options

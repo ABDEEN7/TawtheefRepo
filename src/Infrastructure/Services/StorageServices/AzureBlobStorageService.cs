@@ -3,7 +3,7 @@ using Azure.Storage.Blobs;
 using FluentResults;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 

@@ -3,7 +3,7 @@ using Application.Operation.Features.Authenticator.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories;
-using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Authenticator.Handlers.Queries;
