@@ -21,6 +21,7 @@ public class JobRepository(IGenericRepository<Job> repository)
     {
         var baseQuery = Repository.DbSet
             .AsNoTracking()
+            .AsSplitQuery()
             .Where(job => !job.IsDeleted)
             .Include(j => j.Department)
             .Include(j => j.JobCategory)
@@ -47,6 +48,7 @@ public class JobRepository(IGenericRepository<Job> repository)
     {
         var job = await Repository.DbSet
             .Where(job=> !job.IsDeleted)
+            .AsSplitQuery()
             .Include(j => j.JobDegrees)
                 .ThenInclude(d => d.Degree)
             .Include(j => j.Department)
@@ -74,6 +76,40 @@ public class JobRepository(IGenericRepository<Job> repository)
             ? Result.Fail<Job>(JobMessages.JobNotFound)
             : Result.Ok(job);
     }
+    public async Task<IResult<Job>> GetByIdWithDetailsUnTrackingAsync(Guid id)
+    {
+        var job = await Repository.DbSet
+            .Where(job=> !job.IsDeleted)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(j => j.JobDegrees)
+            .ThenInclude(d => d.Degree)
+            .Include(j => j.Department)
+            .Include(j => j.JobCategory)
+            .Include(j => j.WorkType)
+            .Include(j => j.JobStatus)
+            .Include(j => j.Gender)
+            .Include(j => j.Major)
+            .Include(j => j.SubMajor)
+            .Include(j => j.Sector)
+            .Include(j => j.Management)
+            .Include(j => j.WorkLocation)
+            .Include(j => j.JobConditions)
+            .Include(j => j.JobPoints)
+            .Include(j => j.JobSkills)
+            .ThenInclude(s=>s.Skill)
+            .Include(j => j.JobResponsibilities)
+            .Include(j => j.JobRequiredAttachments)
+            .Include(j => j.Invitations)
+            .Include(j => j.TabReviewNotes)
+            .Include(j => j.ReviewAttachment)
+            .FirstOrDefaultAsync(j => j.Id == id);
+
+        return job is null
+            ? Result.Fail<Job>(JobMessages.JobNotFound)
+            : Result.Ok(job);
+    }
+    
 
     public async Task<IList<Job>> GetJobsToAutoCloseAsync(DateTimeOffset currentDate)
     {
@@ -89,6 +125,7 @@ public class JobRepository(IGenericRepository<Job> repository)
     {
         return await Repository.DbSet
             .AsNoTracking()
+            .AsSplitQuery()
             .Include(j => j.JobPoints)
                 .ThenInclude(p => p!.Details)
             .Include(j => j.Department)
