@@ -457,10 +457,10 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   }
 
   canApprovePoints(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.PointsApprove);
+    return this.authService.hasPermission(Permissions.JobPoints.Approve);
   }
 
   canManagePoints(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.Manage);
+    return this.authService.hasPermission(Permissions.JobPoints.Manage);
   }
 }

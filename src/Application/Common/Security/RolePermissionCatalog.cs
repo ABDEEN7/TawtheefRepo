@@ -43,6 +43,9 @@ public static class RolePermissionCatalog
                 Permissions.Jobs.Manage.Key,
                 Permissions.Jobs.Approve.Key,
                 Permissions.JobsPoints.Manage.Key,
+                Permissions.JobsPoints.View.Key,
+                Permissions.JobsPoints.Approve.Key,
+
                 Permissions.JobsInvitations.View.Key,
 
                 Permissions.Nominations.View.Key,
