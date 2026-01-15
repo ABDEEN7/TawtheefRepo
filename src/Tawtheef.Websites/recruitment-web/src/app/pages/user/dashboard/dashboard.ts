@@ -96,7 +96,7 @@ export class Dashboard implements OnInit {
   }
 
   getStatusClass(status: string): string {
-    return STATUS_PILL_CLASSES[status as InvitationStatus] ?? 'status-closed';
+    return STATUS_PILL_CLASSES[status as InvitationStatus] ?? 'neutral';
   }
 
   getJobCategoryClass(record: CandidateInvitationModel): string {
