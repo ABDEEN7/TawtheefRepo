@@ -3,7 +3,7 @@
     <div class="inner container container-narrow text-center">
       <div class="kicker mb-2">{{ 'home.hero.kicker' | translate }}</div>
       <h1 class="display-5 fw-bold mb-3">{{ 'home.hero.title' | translate }}</h1>
-      <p class="lead mb-4">{{ 'home.hero.subtitle' | translate }}</p>
+      <p class="lead mb-4 text-white">{{ 'home.hero.subtitle' | translate }}</p>
       <div class="d-flex flex-wrap justify-content-center gap-2">
         <a class="btn btn-brand btn-lg px-4" href="#tracks">
           {{ 'home.hero.cta1' | translate }}
@@ -64,11 +64,12 @@
       <div class="row g-3">
         <div class="col-12 col-md-6 col-lg-3" *ngFor="let w of whyItems; index as i" data-aos="fade-up" [attr.data-aos-delay]="i*60">
           <div class="card-ghost h-100 p-3">
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="icon-circle"><i class="fa-solid" [ngClass]="w.icon"></i></span>
+            <div class="d-flex align-items-center gap-2 mb-2 flex-column text-center">
+              <span class="icon-circle"><i class="fs-22 fa" [ngClass]="w.icon"></i></span>
               <h6 class="m-0">{{ ('home.why.items.' + w.key + '.title') | translate }}</h6>
+              <p class="text-muted m-0">{{ ('home.why.items.' + w.key + '.desc') | translate }}</p>
             </div>
-            <p class="text-muted m-0">{{ ('home.why.items.' + w.key + '.desc') | translate }}</p>
+            
           </div>
         </div>
       </div>

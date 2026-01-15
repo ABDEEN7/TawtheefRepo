@@ -5,8 +5,8 @@
          <div class="container-fluid">
              <div class="row">
                   <div class="col-md-9">
-                      <h4 class="mb-1 text-brand fw-bold">{{ 'candidate_dashboard.subtitle' | translate }}</h4>
-                      <p class="m-0">{{ 'candidate_dashboard.description' | translate }}</p>
+                      <h4 class="mb-1 fw-bold">{{ 'candidate_dashboard.subtitle' | translate }}</h4>
+                      <p class="fs-16 m-0">{{ 'candidate_dashboard.description' | translate }}</p>
                   </div>
                   <div class="col-md-3">
                        <div class="d-flex justify-content-end align-items-center gap-3"><span class="btn btn-outline-primary btn-sm">{{ 'candidate_dashboard.total_records' | translate }}: {{ totalItems() }}</span></div>
@@ -161,7 +161,7 @@
                                </span>
                              </td>
                              <td>
-                               <span class="status-pill" [ngClass]="getStatusClass(record.invitationStatus.backendName)">
+                               <span class="pill" [ngClass]="getStatusClass(record.invitationStatus.backendName)">
                                  {{ record.invitationStatus.name }}
                                </span>
                              </td>

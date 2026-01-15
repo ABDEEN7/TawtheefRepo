@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-language-square" aria-hidden="true"></i> <span>{{ 'profileOverview.sections.languages' | translate }}</span></h5>
+      <h5 class="text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-language-square" aria-hidden="true"></i> <span>{{ 'profileOverview.sections.languages' | translate }}</span></h5>
       <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
 </div>
 
@@ -27,11 +27,11 @@
     <div class="card h-100 card-table">
       <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
           <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-              <label class="text-light">{{ lang.language.name }}</label>
+              <label class="text-light w-100 fs-16">{{ lang.language.name }}</label>
               <span class="pill info" *ngIf="!lang.id"> {{ 'profileOverview.status.pending' | translate }}</span>
           </div>
-        <label class="fw-semibold text-dark text-nowrap">{{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}</label>
-        <label class="fw-semibold text-dark text-nowrap">{{ lang.readingLevel.name }} / {{ lang.writingLevel.name }}</label>
+        <label class="fw-semibold text-dark text-nowrap fs-16">{{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}</label>
+        <label class="fw-semibold text-dark text-nowrap fs-16">{{ lang.readingLevel.name }} / {{ lang.writingLevel.name }}</label>
       </div>
     </div>
   </div>

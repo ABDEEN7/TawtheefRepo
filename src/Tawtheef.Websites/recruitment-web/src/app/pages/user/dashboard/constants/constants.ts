@@ -25,15 +25,15 @@ export const JOB_INVITATION_STATUSES = {
 
 // Constants for status pill classes
 export const STATUS_PILL_CLASSES: Record<JobStatus, string> = {
-  [JOB_INVITATION_STATUSES.NEW_INVITATION]: 'status-invited',
-  [JOB_INVITATION_STATUSES.CLOSED]: 'status-closed',
-  [JOB_INVITATION_STATUSES.UNDER_REVIEW]: 'status-underreview',
-  [JOB_INVITATION_STATUSES.APPROVED]: 'status-applied',
-  [JOB_INVITATION_STATUSES.READ]: 'status-withdrawn',
-  [JOB_INVITATION_STATUSES.REJECTED]: 'status-closed',
-  [JOB_INVITATION_STATUSES.CANCELLED]: 'status-closed',
-  [JOB_INVITATION_STATUSES.REQUIRES_UPDATE]: 'status-withdrawn',
-  [JOB_INVITATION_STATUSES.SUBMITTED]: 'status-applied'
+  [JOB_INVITATION_STATUSES.NEW_INVITATION]: 'info',
+  [JOB_INVITATION_STATUSES.CLOSED]: 'neutral',
+  [JOB_INVITATION_STATUSES.UNDER_REVIEW]: 'soft',
+  [JOB_INVITATION_STATUSES.APPROVED]: 'success',
+  [JOB_INVITATION_STATUSES.READ]: 'soft',
+  [JOB_INVITATION_STATUSES.REJECTED]: 'neutral',
+  [JOB_INVITATION_STATUSES.CANCELLED]: 'neutral',
+  [JOB_INVITATION_STATUSES.REQUIRES_UPDATE]: 'soft',
+  [JOB_INVITATION_STATUSES.SUBMITTED]: 'success'
 } as const;
 
 // Constants for type badge classes
