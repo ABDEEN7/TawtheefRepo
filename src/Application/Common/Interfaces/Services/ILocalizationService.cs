@@ -8,4 +8,5 @@ public interface ILocalizationService
     string GetLocalizedFullName(ILocalizedFullName? source);
     string? GetLocalizedDescription(ILocalizedDescription? source);
     string GetLocalizedValue(string valueAr, string valueEn);
+    string GetLocalizedValue(string value);
 }

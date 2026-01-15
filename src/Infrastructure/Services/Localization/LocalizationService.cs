@@ -33,4 +33,6 @@ public class LocalizationService(IHttpContextAccessor httpContextAccessor) : ILo
             ? valueAr
             : valueEn;
     }
+
+    public string GetLocalizedValue(string value) => value ?? string.Empty;
 }

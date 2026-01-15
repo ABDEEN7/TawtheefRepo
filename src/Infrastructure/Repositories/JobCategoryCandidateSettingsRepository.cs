@@ -16,7 +16,7 @@ public class JobCategoryCandidateSettingsRepository(IGenericRepository<JobCatego
         var settings = await Repository.DbSet.FirstOrDefaultAsync();
 
         return settings == null
-            ? Result.Fail<JobCategoryCandidateSettings>(JobMessages.JobCategoryCandidateSettingsNotFound)
+            ? Result.Fail<JobCategoryCandidateSettings>(JobCandidatesMessages.JobCategoryCandidateSettingsNotFound)
             : Result.Ok(settings);
     }
 }
