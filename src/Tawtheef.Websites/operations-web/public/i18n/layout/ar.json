@@ -52,6 +52,8 @@
   "admin.sidebar.religions": "إدارة الديانات",
   "admin.sidebar.universities": "إدارة الجامعات",
   "admin.sidebar.profileLogs": "سجل نشاط الملفات",
+  "admin.sidebar.jobPointsConfig": "تهيئة نقاط الوظائف",
+  "admin.sidebar.jobCategoryCandidateSettings": "إعدادات فئة المرشحين",
 
   "common.sidebar.settings": "الإعدادات",
   "common.sidebar.logout": "الخروج",

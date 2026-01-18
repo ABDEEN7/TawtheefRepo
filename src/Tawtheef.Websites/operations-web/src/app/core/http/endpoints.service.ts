@@ -55,6 +55,7 @@ export class EndpointsService {
     jobPoints : this.getFullUrl('/jobPoints'),
     getJobPoints :(jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}`),
     getJobPointsConfig : this.getFullUrl(`/jobPoints/configurations`),
+    saveJobPointsConfig : this.getFullUrl(`/jobPoints/configurations/save`),
     approveJobPoints : (jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}/approve`),
     searchJob : this.getFullUrl('/job/search'),
     CountByStatus : (jobStatusId : GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
@@ -84,6 +85,7 @@ export class EndpointsService {
     export: this.getFullUrl('/jobCandidates/export'),
     sendInvitations: this.getFullUrl('/jobCandidates/send-invitations'),
     filters: this.getFullUrl('/jobCandidates/filters'),
+    categorySettings: this.getFullUrl('/jobCandidates/category-settings'),
     lookups: {
       candidateTypes: this.getFullUrl('/jobCandidates/lookups/candidate-types'),
       nationalities : this.getFullUrl('/jobCandidates/lookups/nationalities'),

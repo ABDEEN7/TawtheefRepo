@@ -1,0 +1,69 @@
+<div
+  class="job-category-candidate-settings card shadow-sm p-4"
+  i18nNamespace="pages/admin/job-category-candidate-settings"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.form-rtl]="isRtl()"
+>
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="page-title mb-0">{{ 'JOB_CATEGORY_SETTINGS.TITLE' | translate }}</h3>
+  </div>
+
+  <form [formGroup]="form" class="row g-4">
+    <div class="col-md-4">
+      <label class="form-label" for="academicJobVacancies">
+        {{ 'JOB_CATEGORY_SETTINGS.ACADEMIC_VACANCIES' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="academicJobVacancies"
+        formControlName="academicJobVacancies"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="administrativeJobVacancies">
+        {{ 'JOB_CATEGORY_SETTINGS.ADMINISTRATIVE_VACANCIES' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="administrativeJobVacancies"
+        formControlName="administrativeJobVacancies"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="laborJobVacancies">
+        {{ 'JOB_CATEGORY_SETTINGS.LABOR_VACANCIES' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="laborJobVacancies"
+        formControlName="laborJobVacancies"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+  </form>
+
+  <div class="d-flex justify-content-end mt-4">
+    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="save()">
+      {{ 'common.save' | translate }}
+    </button>
+  </div>
+</div>
