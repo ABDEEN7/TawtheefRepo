@@ -73,9 +73,9 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.TabReviewNotes)
             .Include(j => j.ReviewAttachment)
             .Include(j => j.CandidateFilterSetting)
-                .ThenInclude(c => c.CandidateTypePercentages)
+                .ThenInclude(c => c!.CandidateTypePercentages)
             .Include(j => j.CandidateFilterSetting)
-                .ThenInclude(c => c.NationalityPercentages)
+                .ThenInclude(c => c!.NationalityPercentages)
             .FirstOrDefaultAsync(j => j.Id == id);
 
         return job is null
@@ -112,9 +112,9 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.TabReviewNotes)
             .Include(j => j.ReviewAttachment)
             .Include(j => j.CandidateFilterSetting)
-                .ThenInclude(c => c.CandidateTypePercentages)
+                .ThenInclude(c => c!.CandidateTypePercentages)
             .Include(j => j.CandidateFilterSetting)
-                .ThenInclude(c => c.NationalityPercentages)
+                .ThenInclude(c => c!.NationalityPercentages)
             .FirstOrDefaultAsync(j => j.Id == id);
 
         return job is null
