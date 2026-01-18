@@ -22,10 +22,10 @@ public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork un
             .ToList();
 
         if (typePercentages.Sum(item => item.Percentage) > 100)
-            return Result.Fail<JobCandidateFilterSettingsDto>(JobMessages.JobCandidatesFilterPercentagesInvalid);
+            return Result.Fail<JobCandidateFilterSettingsDto>(JobCandidatesMessages.JobCandidatesFilterPercentagesInvalid);
 
         if (!AreNationalityBreakdownsValid(typePercentages, dto.NationalityPercentages))
-            return Result.Fail<JobCandidateFilterSettingsDto>(JobMessages.JobCandidatesNationalityBreakdownInvalid);
+            return Result.Fail<JobCandidateFilterSettingsDto>(JobCandidatesMessages.JobCandidatesNationalityBreakdownInvalid);
 
         var repo = unitOfWork.GetEntityRepository<JobCandidateFilterSetting>();
 

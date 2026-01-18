@@ -1,4 +1,3 @@
-using System.Text;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
@@ -14,6 +13,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
+using ClosedXML.Excel;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Handlers.Queries;
 
@@ -50,7 +50,7 @@ public sealed class ExportJobCandidatesQueryHandler(
             .ToListAsync(cancellationToken);
 
         if (window.Count == 0)
-            return Result.Ok(EmptyCsvResult(request.JobId));
+            return Result.Ok(EmptyXlsxResult(request.JobId));
 
         var ids = window.Select(x => x.ApplicantId).Distinct().ToList();
         var profiles = await userProfileRepository.LoadForScoringAsync(ids);
@@ -91,48 +91,78 @@ public sealed class ExportJobCandidatesQueryHandler(
 
         var finalList = JobCandidatesFilterUtility.ApplyPercentageFilters(sorted, settings, targetCount);
 
-        // Export CSV
-        var csv = new StringBuilder();
-        csv.AppendLine("Candidate Name,Department,Job Category,Candidate Category,Major,Gender,Points");
+        // Export XLSX (ClosedXML)
+        using var workbook = new XLWorkbook();
+        var ws = workbook.Worksheets.Add(JobCandidatesMessages.Candidate);
 
+        ws.RightToLeft = true;
+
+        ws.Cell(1, 1).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.CandidateName);
+        ws.Cell(1, 2).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.Department);
+        ws.Cell(1, 3).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.JobCategory);
+        ws.Cell(1, 4).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.CandidateCategory);
+        ws.Cell(1, 5).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.Major);
+        ws.Cell(1, 6).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.Gender);
+        ws.Cell(1, 7).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.Points);
+
+        var header = ws.Range(1, 1, 1, 7);
+        header.Style.Font.Bold = true;
+        header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+        var row = 2;
         foreach (var candidate in finalList)
         {
-            var name = EscapeCsv(localizationService.GetLocalizedFullName(candidate.Applicant));
-            var department = EscapeCsv(localizationService.GetLocalizedName(job.Department));
-            var jobCategory = EscapeCsv(localizationService.GetLocalizedName(job.JobCategory));
-            var category = EscapeCsv(localizationService.GetLocalizedName(candidate.Profile?.CandidateType));
-            var major = EscapeCsv(localizationService.GetLocalizedName(candidate.Major));
-            var gender = EscapeCsv(localizationService.GetLocalizedName(candidate.Profile?.Gender));
+            ws.Cell(row, 1).Value = localizationService.GetLocalizedFullName(candidate.Applicant);
+            ws.Cell(row, 2).Value = localizationService.GetLocalizedName(job.Department);
+            ws.Cell(row, 3).Value = localizationService.GetLocalizedName(job.JobCategory);
+            ws.Cell(row, 4).Value = localizationService.GetLocalizedName(candidate.Profile?.CandidateType);
+            ws.Cell(row, 5).Value = localizationService.GetLocalizedName(candidate.Major);
+            ws.Cell(row, 6).Value = localizationService.GetLocalizedName(candidate.Profile?.Gender);
+            ws.Cell(row, 7).Value = candidate.Points;
 
-            csv.AppendLine(string.Join(',', new[]
-            {
-                name, department, jobCategory, category, major, gender, candidate.Points.ToString()
-            }));
+            row++;
         }
+
+        ws.SheetView.FreezeRows(1);
+        ws.Columns().AdjustToContents();
+
+        using var ms = new MemoryStream();
+        workbook.SaveAs(ms);
 
         return Result.Ok(new JobCandidatesExportResult
         {
-            Content = Encoding.UTF8.GetBytes(csv.ToString()),
-            FileName = $"job-candidates-{request.JobId:N}.csv",
-            ContentType = "text/csv"
+            Content = ms.ToArray(),
+            FileName = $"job-candidates-{request.JobId:N}.xlsx",
+            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         });
     }
 
-    private static JobCandidatesExportResult EmptyCsvResult(Guid jobId)
+    private JobCandidatesExportResult EmptyXlsxResult(Guid jobId)
     {
-        var csv = "Candidate Name,Department,Job Category,Candidate Category,Major,Gender,Points\n";
+        using var workbook = new XLWorkbook();
+        var ws = workbook.Worksheets.Add(JobCandidatesMessages.Candidate);
+        ws.RightToLeft = true;
+
+        ws.Cell(1, 1).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.CandidateName);
+        ws.Cell(1, 2).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.Department);
+        ws.Cell(1, 3).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.JobCategory);
+        ws.Cell(1, 4).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.CandidateCategory);
+        ws.Cell(1, 5).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.Major);
+        ws.Cell(1, 6).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.Gender);
+        ws.Cell(1, 7).Value = localizationService.GetLocalizedValue(JobCandidatesMessages.Points);
+
+        ws.Range(1, 1, 1, 7).Style.Font.Bold = true;
+        ws.SheetView.FreezeRows(1);
+        ws.Columns().AdjustToContents();
+
+        using var ms = new MemoryStream();
+        workbook.SaveAs(ms);
+
         return new JobCandidatesExportResult
         {
-            Content = Encoding.UTF8.GetBytes(csv),
-            FileName = $"job-candidates-{jobId:N}.csv",
-            ContentType = "text/csv"
+            Content = ms.ToArray(),
+            FileName = $"job-candidates-{jobId:N}.xlsx",
+            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         };
-    }
-
-    private static string EscapeCsv(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
-        var escaped = value.Replace("\"", "\"\"");
-        return $"\"{escaped}\"";
     }
 }
