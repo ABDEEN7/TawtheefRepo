@@ -1,0 +1,12 @@
+{
+  "JOB_POINTS_CONFIG.TITLE": "Job Points Configuration",
+  "JOB_POINTS_CONFIG.APPLICANT_CATEGORY_MAX": "Applicant category max points",
+  "JOB_POINTS_CONFIG.EDUCATION_MAX": "Education max points",
+  "JOB_POINTS_CONFIG.EXPERIENCE_MAX": "Experience max points",
+  "JOB_POINTS_CONFIG.TRAINING_MAX": "Training max points",
+  "JOB_POINTS_CONFIG.CERTIFICATES_MAX": "Certificates max points",
+  "JOB_POINTS_CONFIG.SKILLS_MAX": "Skills max points",
+  "JOB_POINTS_CONFIG.LANGUAGES_MAX": "Languages max points",
+  "JOB_POINTS_CONFIG.MAX_POINTS": "Total max points",
+  "JOB_POINTS_CONFIG.MAX_POINTS_HELP": "Total max points are calculated automatically."
+}

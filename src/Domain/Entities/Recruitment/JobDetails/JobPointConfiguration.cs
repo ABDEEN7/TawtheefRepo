@@ -4,6 +4,11 @@ using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
+public static class JobPointConfigurationIds
+{
+    public static Guid Default = Guid.Parse("4b39e8ae-991a-4a59-b0a6-0fc17a59faf8");
+}
+
 [Table(nameof(JobPointConfiguration), Schema = Schemas.Hr)]
 public class JobPointConfiguration : EventEntity
 {
