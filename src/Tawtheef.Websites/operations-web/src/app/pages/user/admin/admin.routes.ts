@@ -9,6 +9,10 @@ import {TargetEntitiesManagement} from './target-entities-management/target-enti
 import {ReligionsManagement} from './religions-management/religions-management';
 import {UniversitiesManagement} from './universities-management/universities-management';
 import {ProfileLogsComponent} from './profile-logs/profile-logs';
+import {JobPointsConfigurationComponent} from './job-points-configuration/job-points-configuration.component';
+import {
+  JobCategoryCandidateSettingsComponent
+} from './job-category-candidate-settings/job-category-candidate-settings.component';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../../core/constants/permissions';
 
@@ -72,5 +76,17 @@ export const adminRoutes: Routes = [
     component: UniversitiesManagement,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Universities.Manage] },
+  },
+  {
+    path: "job-points-configuration",
+    component: JobPointsConfigurationComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.JobPoints.Manage] },
+  },
+  {
+    path: "job-category-candidate-settings",
+    component: JobCategoryCandidateSettingsComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Jobs.Manage] },
   },
 ];
