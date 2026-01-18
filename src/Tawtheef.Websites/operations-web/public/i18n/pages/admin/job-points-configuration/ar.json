@@ -1,0 +1,12 @@
+{
+  "JOB_POINTS_CONFIG.TITLE": "تهيئة نقاط الوظائف",
+  "JOB_POINTS_CONFIG.APPLICANT_CATEGORY_MAX": "الحد الأقصى لنقاط فئة المتقدم",
+  "JOB_POINTS_CONFIG.EDUCATION_MAX": "الحد الأقصى لنقاط التعليم",
+  "JOB_POINTS_CONFIG.EXPERIENCE_MAX": "الحد الأقصى لنقاط الخبرة",
+  "JOB_POINTS_CONFIG.TRAINING_MAX": "الحد الأقصى لنقاط التدريب",
+  "JOB_POINTS_CONFIG.CERTIFICATES_MAX": "الحد الأقصى لنقاط الشهادات",
+  "JOB_POINTS_CONFIG.SKILLS_MAX": "الحد الأقصى لنقاط المهارات",
+  "JOB_POINTS_CONFIG.LANGUAGES_MAX": "الحد الأقصى لنقاط اللغات",
+  "JOB_POINTS_CONFIG.MAX_POINTS": "إجمالي الحد الأقصى للنقاط",
+  "JOB_POINTS_CONFIG.MAX_POINTS_HELP": "يتم احتساب إجمالي الحد الأقصى للنقاط تلقائياً."
+}

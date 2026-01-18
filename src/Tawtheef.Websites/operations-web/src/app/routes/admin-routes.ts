@@ -33,4 +33,10 @@
   get universitiesManagement(){
     return this.admin + '/universities-management'
   },
+  get jobPointsConfiguration(){
+    return this.admin + '/job-points-configuration'
+  },
+  get jobCategoryCandidateSettings(){
+    return this.admin + '/job-category-candidate-settings'
+  },
 }
