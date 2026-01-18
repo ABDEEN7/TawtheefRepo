@@ -1,0 +1,157 @@
+<div
+  class="job-points-config card shadow-sm p-4"
+  i18nNamespace="pages/admin/job-points-configuration"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.form-rtl]="isRtl()"
+>
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="page-title mb-0">{{ 'JOB_POINTS_CONFIG.TITLE' | translate }}</h3>
+  </div>
+
+  <form [formGroup]="form" class="row g-4">
+    <div class="col-md-4">
+      <label class="form-label" for="applicantCategoryMaxPoints">
+        {{ 'JOB_POINTS_CONFIG.APPLICANT_CATEGORY_MAX' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="applicantCategoryMaxPoints"
+        formControlName="applicantCategoryMaxPoints"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="educationMaxPoints">
+        {{ 'JOB_POINTS_CONFIG.EDUCATION_MAX' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="educationMaxPoints"
+        formControlName="educationMaxPoints"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="experienceMaxPoints">
+        {{ 'JOB_POINTS_CONFIG.EXPERIENCE_MAX' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="experienceMaxPoints"
+        formControlName="experienceMaxPoints"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="trainingMaxPoints">
+        {{ 'JOB_POINTS_CONFIG.TRAINING_MAX' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="trainingMaxPoints"
+        formControlName="trainingMaxPoints"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="certificatesMaxPoints">
+        {{ 'JOB_POINTS_CONFIG.CERTIFICATES_MAX' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="certificatesMaxPoints"
+        formControlName="certificatesMaxPoints"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="skillsMaxPoints">
+        {{ 'JOB_POINTS_CONFIG.SKILLS_MAX' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="skillsMaxPoints"
+        formControlName="skillsMaxPoints"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="languagesMaxPoints">
+        {{ 'JOB_POINTS_CONFIG.LANGUAGES_MAX' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="languagesMaxPoints"
+        formControlName="languagesMaxPoints"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label" for="maxPoints">
+        {{ 'JOB_POINTS_CONFIG.MAX_POINTS' | translate }}
+      </label>
+      <p-inputNumber
+        inputId="maxPoints"
+        formControlName="maxPoints"
+        [min]="0"
+        [useGrouping]="false"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="0"
+        [inputStyleClass]="'w-100'"
+        class="w-100"
+        (paste)="preventPaste($event)"
+      ></p-inputNumber>
+      <small class="text-muted d-block mt-2">
+        {{ 'JOB_POINTS_CONFIG.MAX_POINTS_HELP' | translate }}
+      </small>
+    </div>
+  </form>
+
+  <div class="d-flex justify-content-end mt-4">
+    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="save()">
+      {{ 'common.save' | translate }}
+    </button>
+  </div>
+</div>
