@@ -74,31 +74,15 @@ internal static class JobPointsValidationUtility
             return Result.Fail(JobMessages.JobPointsTotalNotValid);
 
         var detailsList = details.ToList();
-        if (detailsList.Any(detail => detail.Points < 0))
-            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
-
-        if (!HasRequiredDetails(detailsList, totals))
-            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
-
-        if (!IsSectionValid(detailsList, JobPointRuleType.ApplicantCategory, totals.ApplicantCategory))
-            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
-
-        if (!IsSectionValid(detailsList, JobPointRuleType.Education, totals.Education))
-            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
-
-        if (!IsExperienceValid(detailsList, totals.Experience))
-            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
-
-        if (!IsSectionValid(detailsList, JobPointRuleType.Training, totals.Training))
-            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
-
-        if (!IsSectionValid(detailsList, JobPointRuleType.Skill, totals.Skills))
-            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
-
-        if (!IsLanguagesValid(detailsList, totals.Languages))
-            return Result.Fail(JobMessages.JobPointsDetailsNotValid);
-
-        if (!IsSectionValid(detailsList, JobPointRuleType.Certificate, totals.Certificates))
+        if (detailsList.Any(detail => detail.Points < 0) ||
+            !HasRequiredDetails(detailsList, totals) ||
+            !IsSectionValid(detailsList, JobPointRuleType.ApplicantCategory, totals.ApplicantCategory) ||
+            !IsSectionValid(detailsList, JobPointRuleType.Education, totals.Education) ||
+            !IsExperienceValid(detailsList, totals.Experience) ||
+            !IsSectionValid(detailsList, JobPointRuleType.Training, totals.Training) ||
+            !IsSectionValid(detailsList, JobPointRuleType.Skill, totals.Skills) ||
+            !IsLanguagesValid(detailsList, totals.Languages) ||
+            !IsSectionValid(detailsList, JobPointRuleType.Certificate, totals.Certificates))
             return Result.Fail(JobMessages.JobPointsDetailsNotValid);
 
         return Result.Ok();
@@ -117,27 +101,12 @@ internal static class JobPointsValidationUtility
         if (sum != totals.Total)
             return false;
 
-        if (totals.Total != config.MaxPoints)
-            return false;
-
-        return totals.ApplicantCategory <= config.ApplicantCategoryMaxPoints &&
-               totals.Education <= config.EducationMaxPoints &&
-               totals.Experience <= config.ExperienceMaxPoints &&
-               totals.Training <= config.TrainingMaxPoints &&
-               totals.Skills <= config.SkillsMaxPoints &&
-               totals.Languages <= config.LanguagesMaxPoints &&
-               totals.Certificates <= config.CertificatesMaxPoints;
+        return totals.Total == config.MaxPoints;
     }
 
     private static bool AreTotalsNonNegative(JobPointsTotals totals) =>
         totals.ApplicantCategory >= 0 &&
-        totals.Education >= 0 &&
-        totals.Experience >= 0 &&
-        totals.Training >= 0 &&
-        totals.Skills >= 0 &&
-        totals.Languages >= 0 &&
-        totals.Certificates >= 0 &&
-        totals.Total >= 0;
+        totals is { Education: >= 0, Experience: >= 0, Training: >= 0, Skills: >= 0, Languages: >= 0, Certificates: >= 0, Total: >= 0 };
 
     private static bool IsSectionValid(
         IReadOnlyCollection<JobPointsDetailSnapshot> details,
@@ -194,7 +163,7 @@ internal static class JobPointsValidationUtility
     private static bool HasLanguageDetails(IReadOnlyCollection<JobPointsDetailSnapshot> details)
     {
         var languageDetails = details
-            .Where(detail => detail.Type == JobPointRuleType.Language && detail.Points > 0)
+            .Where(detail => detail is { Type: JobPointRuleType.Language, Points: > 0 })
             .ToList();
 
         return languageDetails.Any(detail =>
