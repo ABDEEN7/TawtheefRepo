@@ -71,7 +71,12 @@
 
                                       @if(form.controls['benefitsEn'].touched && form.controls['benefitsEn'].invalid){
                                           <div class="text-danger small mt-1">
-                                            @if(form.controls['benefitsEn'].errors?.['maxlength']){ {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate:{max:2000} }} }
+                                            @if(form.controls['benefitsEn'].errors?.['required']){
+                                            {{ 'JOB_WIZARD.VALIDATION.BENEFITS_EN_REQUIRED' | translate }}
+                                          }
+                                          @if(form.controls['benefitsEn'].errors?.['maxlength']){
+                                            {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate:{max:2000} }}
+                                          }
                                           </div>
                                       }
 

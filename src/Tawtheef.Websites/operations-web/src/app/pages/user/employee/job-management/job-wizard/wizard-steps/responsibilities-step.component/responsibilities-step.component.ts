@@ -110,7 +110,7 @@ addResponsibility(): void {
   private addResponsibilityToForm(textAr: string, textEn: string = ''): void {
     const responsibilityGroup = this.fb.group({
       textAr: [textAr, [Validators.required, Validators.maxLength(500)]],
-      textEn: [textEn, [Validators.maxLength(500)]]
+      textEn: [textEn, [Validators.required,Validators.maxLength(500)]]
     });
 
     this.responsibilitiesArray.push(responsibilityGroup);
