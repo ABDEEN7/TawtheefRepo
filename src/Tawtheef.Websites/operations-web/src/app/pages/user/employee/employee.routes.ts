@@ -12,6 +12,7 @@ import {ProfileApprovalWizardPage} from './profile-managment/approval-wizard/pro
 import {OrganizationStructuresPage} from './organization-structures/organization-structures.page';
 import {ProfileApprovalDetailPage} from './profile-managment/approval-detail/profile-approval-detail.page';
 import {CandidateUsersManagementPage} from './candidate-users-management/candidate-users-management.page';
+import {OfficeUsersManagementPage} from './office-users-management/office-users-management.page';
 
 export const employeeRoutes: Routes = [
   {
@@ -83,5 +84,11 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.CandidateUsers.View] },
     component: CandidateUsersManagementPage
+  },
+  {
+    path: 'office-users-management',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.OfficeUsers.View] },
+    component: OfficeUsersManagementPage
   },
 ];

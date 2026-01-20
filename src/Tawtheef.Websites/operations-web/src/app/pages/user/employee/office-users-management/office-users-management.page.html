@@ -1,0 +1,111 @@
+<div
+  class="office-users-container card shadow-sm p-4"
+  i18nNamespace="pages/employee/office-users-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.table-rtl]="isRtl()">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="page-title mb-0">{{ 'OFFICE_USERS.TITLE' | translate }}</h3>
+    <ng-container *hasPermission="Permissions.OfficeUsers.Manage">
+      <button type="button" class="btn btn-primary" (click)="openAddDialog()">
+        <i class="fa fa-plus me-2"></i>
+        {{ 'OFFICE_USERS.ADD_USER' | translate }}
+      </button>
+    </ng-container>
+  </div>
+
+  <div class="office-details card p-3 mb-3">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="detail-label">{{ 'OFFICE_USERS.OFFICE_NAME' | translate }}</div>
+        <div class="detail-value">{{ officeName() }}</div>
+      </div>
+      <div class="col-md-4">
+        <div class="detail-label">{{ 'OFFICE_USERS.OFFICE_PHONE' | translate }}</div>
+        <div class="detail-value">{{ officePhone() }}</div>
+      </div>
+      <div class="col-md-4">
+        <div class="detail-label">{{ 'OFFICE_USERS.OFFICE_COUNTRY' | translate }}</div>
+        <div class="detail-value">{{ officeCountry() }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters card p-3 mb-3">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label">{{ 'OFFICE_USERS.SEARCH_NAME' | translate }}</label>
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          [(ngModel)]="nameFilter"
+          (input)="onSearchChange()"
+          [placeholder]="'OFFICE_USERS.SEARCH_NAME_PLACEHOLDER' | translate" />
+      </div>
+    </div>
+  </div>
+
+  <p-table class="custom-table" [value]="users()" [rowHover]="true" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'OFFICE_USERS.NAME_EN' | translate }}</th>
+        <th>{{ 'OFFICE_USERS.NAME_AR' | translate }}</th>
+        <th>{{ 'OFFICE_USERS.EMAIL' | translate }}</th>
+        <th>{{ 'OFFICE_USERS.STATUS' | translate }}</th>
+        <th>{{ 'OFFICE_USERS.ACTIONS' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.fullNameEn }}</td>
+        <td>{{ user.fullNameAr }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          <span
+            class="pill"
+            [class.soft]="user.isBlocked"
+            [class.success]="!user.isBlocked">
+            {{ user.isBlocked ? ('OFFICE_USERS.BLOCKED' | translate) : ('OFFICE_USERS.ACTIVE' | translate) }}
+          </span>
+        </td>
+        <td>
+          <ng-container *hasPermission="Permissions.OfficeUsers.Manage">
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="openEditDialog(user)">
+                <i class="fa fa-edit"></i>
+                <span class="ms-1">{{ 'OFFICE_USERS.EDIT' | translate }}</span>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm"
+                [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
+                (click)="toggleBlock(user)">
+                <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
+                <span class="ms-1">
+                  {{
+                    user.isBlocked
+                      ? ('OFFICE_USERS.UNBLOCK_USER' | translate)
+                      : ('OFFICE_USERS.BLOCK_USER' | translate)
+                  }}
+                </span>
+              </button>
+            </div>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+          {{ 'NO_RECORDS' | translate }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<app-pagination
+  [currentPage]="filters().pageNumber"
+  [totalItems]="totalItems()"
+  [itemsPerPage]="filters().pageSize"
+  (pageChanged)="onPageChange($event)"
+></app-pagination>
