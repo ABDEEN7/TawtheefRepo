@@ -7,16 +7,10 @@ namespace Application.Operation.Common.Events.Job;
 
 internal static class JobNotificationEmailHelper
 {
-    internal static async Task QueueForHrAdminsAsync(
-        IUnitOfWork unitOfWork,
-        UserManager<User> userManager,
-        string templateKey,
-        string subject,
-        string payloadJson,
-        CancellationToken ct)
+    internal static async Task QueueForHrAdminsAsync(IUnitOfWork unitOfWork, UserManager<User> userManager, 
+        string templateKey, string subject, string payloadJson, CancellationToken ct)
     {
-        //TODO :: Must Only Get Departments Managers not employee 
-        var users = await userManager.GetUsersInRoleAsync(nameof(SystemRoleIds.Employee));
+        var users = await userManager.GetUsersInRoleAsync(nameof(SystemRoleIds.HrManager));
         if (users.Count == 0)
             return;
 
@@ -27,27 +21,14 @@ internal static class JobNotificationEmailHelper
             if (string.IsNullOrWhiteSpace(user.Email))
                 continue;
 
-            var notification = Notification.Create(
-                NotificationChannel.Email,
-                templateKey,
-                user.Id,
-                user.Email,
-                subject,
-                null,
-                payloadJson);
-
-            await repo.AddAsync(notification);
+            var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
+                user.Email, subject, null, payloadJson);
+            await repo.AddAsync(notification, ct);
         }
     }
     
-    internal static async Task QueueForEmployeeAsync(
-        IUnitOfWork unitOfWork,
-        UserManager<User> userManager,
-        string userId,
-        string templateKey,
-        string subject,
-        string payloadJson,
-        CancellationToken ct)
+    internal static async Task QueueForEmployeeAsync(IUnitOfWork unitOfWork, UserManager<User> userManager, 
+        string userId, string templateKey, string subject, string payloadJson, CancellationToken ct)
     {
         var user = await userManager.FindByIdAsync(userId);
 
@@ -55,16 +36,8 @@ internal static class JobNotificationEmailHelper
             return;
 
         var repo = unitOfWork.GetEntityRepository<Notification>();
-
-        var notification = Notification.Create(
-            NotificationChannel.Email,
-            templateKey,
-            user.Id,
-            user.Email,
-            subject,
-            null,
-            payloadJson);
-
-        await repo.AddAsync(notification);
+        var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
+            user.Email, subject, null, payloadJson);
+        await repo.AddAsync(notification, ct);
     }
 }
