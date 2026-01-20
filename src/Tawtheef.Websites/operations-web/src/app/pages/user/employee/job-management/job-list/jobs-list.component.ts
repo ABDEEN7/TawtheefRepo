@@ -112,7 +112,7 @@ export class JobListComponent implements OnInit {
   }
 
   canManageJobPoints(): boolean {
-    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.Jobs.PointsManage]);
+    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.JobPoints.Manage]);
   }
 
   editJob(job: JobResponse) {

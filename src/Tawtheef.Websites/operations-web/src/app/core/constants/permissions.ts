@@ -58,9 +58,12 @@ export const Permissions = {
     View: 'jobs.view',
     Manage: 'jobs.manage',
     Approve: 'jobs.approve',
-    PointsManage: 'jobs.points.manage',
-    PointsApprove:'jobs.points.approve'
-  },
+  }, 
+    JobPoints:{
+      View: 'jobs.points.view', 
+        Manage: 'jobs.points.manage',
+        Approve: 'jobs.points.approve',
+    },
   JobInvitations: {
     View: 'jobs.invitations.view',
   },

@@ -3,7 +3,7 @@
 
     <!-- Header (optional – keep if you have a section title) -->
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-alert-circle"  aria-hidden="true"></i> <span>{{ 'profile.section.personal' | translate }}</span></h5>
+        <h5 class="text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-alert-circle"  aria-hidden="true"></i> <span>{{ 'profile.section.personal' | translate }}</span></h5>
         <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
     </div>
 
@@ -13,9 +13,9 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.nationalNumber' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('nationalNumber')">
                 <span class=" pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -23,9 +23,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.nationalNumber || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -34,9 +34,9 @@
         <div class="card h-100 card-table">
           <div class="card-body ">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.qidExpiry' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('qidExpiry')">
                 <span class="-pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -44,9 +44,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.qidExpiry || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -55,9 +55,9 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.birthDate' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('birthDate')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -65,9 +65,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.birthDate || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -76,9 +76,9 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.nationality' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('nationalityId')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -86,9 +86,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.nationality?.name || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -97,9 +97,9 @@
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.gender' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('genderId')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -107,9 +107,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.gender?.name || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -118,9 +118,9 @@
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.religion' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('religionId')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -128,9 +128,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.religion?.name || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -139,9 +139,9 @@
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.maritalStatus' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('maritalStatusId')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -149,9 +149,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.maritalStatus?.name || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -160,9 +160,9 @@
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.sponsorType' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('sponsorTypeId')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -170,9 +170,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.sponsorType?.name || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -181,9 +181,9 @@
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.sponsorEmployerName' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('sponsorEmployerName')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -191,9 +191,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.sponsorEmployerName || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -201,7 +201,7 @@
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <div class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.sponsorEmployerNumber' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('sponsorEmployerNumber')">
@@ -211,7 +211,7 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <div class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.sponsorEmployerNumber || '-' }}
             </div>
           </div>
@@ -221,9 +221,9 @@
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.sponsorQidExpiry' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('sponsorQidExpiry')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -231,9 +231,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.sponsorQidExpiry || '-' }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -242,9 +242,9 @@
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.hasDisability' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('hasDisability')">
                 <span class="pill info">
                   {{ 'profileOverview.status.pending' | translate }}
@@ -252,9 +252,9 @@
               </div>
             </div>
 
-            <div class="fw-bold text-body text-nowrap">
+            <label class="fw-semibold text-dark text-nowrap fs-16">
               {{ profile?.hasDisability ? ('common.yes' | translate) : ('common.no' | translate) }}
-            </div>
+            </label>
           </div>
         </div>
       </div>
@@ -272,9 +272,9 @@
               </div>
 
               <div class="flex-grow-1 min-w-0">
-                <div class="text-muted small fw-semibold mb-1">
+                <label class="text-light w-100 fs-16">
                   {{ att.titleKey | translate }}
-                </div>
+                </label>
 
                 <div class="min-w-0">
                   @if (att.file) {

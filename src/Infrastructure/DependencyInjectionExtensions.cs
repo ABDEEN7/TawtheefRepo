@@ -319,6 +319,7 @@ namespace Tawtheef.Infrastructure
                 
                 services.AddScoped<IJobPointsRepository, JobPointsRepository>();
                 services.AddScoped<IJobPointsConfigurationsRepository, JobPointsConfigurationsRepository>();
+                services.AddScoped<IJobCategoryCandidateSettingsRepository, JobCategoryCandidateSettingsRepository>();
                 services.AddScoped<IJobReviewAttachmentRepository, JobReviewAttachmentRepository>();
                 services.AddScoped<IJobTabReviewNoteRepository, JobTabReviewNoteRepository>();
                 services.AddScoped<IJobConditionRepository, JobConditionRepository>();

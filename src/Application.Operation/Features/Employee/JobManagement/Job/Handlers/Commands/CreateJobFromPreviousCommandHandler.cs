@@ -3,6 +3,7 @@ using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Cortex.Mediator.Commands;
 using FluentResults;
+using FluentValidation;
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -17,13 +18,22 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Com
 public class CreateJobFromPreviousCommandHandler(
     IJobRepository jobRepository,
     IJobPointsRepository jobPointsRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IValidator<CreateJobFromPreviousCommand> validator)
     : ICommandHandler<CreateJobFromPreviousCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         CreateJobFromPreviousCommand request,
         CancellationToken cancellationToken)
     {
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail<Guid>(
+                validationResult.Errors.Select(e => e.ErrorMessage)
+            );
+        }
         var sourceJobResult = await jobRepository.GetByIdWithDetailsAsync(request.SourceJobId);
         if (sourceJobResult.IsFailed || sourceJobResult.Value == null)
             return Result.Fail<Guid>(JobMessages.JobNotFound);

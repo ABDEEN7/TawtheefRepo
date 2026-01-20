@@ -37,6 +37,8 @@ export class SidebarComponent implements OnInit {
     { key: 'target-entities', label: 'admin.sidebar.targetEntities', icon: 'assets/img/icons/transfer.svg', route: routes.admin.targetEntitiesManagement, permission: Permissions.TargetEntities.Manage },
     { key: 'religions', label: 'admin.sidebar.religions', icon: 'assets/img/icons/workflow-square-06-stroke-rounded.svg', route: routes.admin.religionsManagement, permission: Permissions.Religions.Manage },
     { key: 'universities', label: 'admin.sidebar.universities', icon: 'assets/img/icons/university.svg', route: routes.admin.universitiesManagement, permission: Permissions.Universities.Manage },
+    { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'assets/img/icons/job.svg', route: routes.admin.jobPointsConfiguration, permission: Permissions.JobPoints.Manage },
+    { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'assets/img/icons/settings-icon.svg', route: routes.admin.jobCategoryCandidateSettings, permission: Permissions.Jobs.Manage },
   ];
 
   constructor(private router: Router) {}

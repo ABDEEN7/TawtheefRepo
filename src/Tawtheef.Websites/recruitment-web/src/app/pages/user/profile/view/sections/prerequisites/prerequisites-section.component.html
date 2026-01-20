@@ -1,6 +1,6 @@
 
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <h5 class="mb-4 text-primary d-flex gap-2 align-items-center ">
+        <h5 class="text-primary d-flex gap-2 align-items-center ">
           <i class="pi pi-info-circle" aria-hidden="true"></i>
           <span>{{ 'profileOverview.sections.basicRequirements' | translate }}</span>
         </h5>
@@ -14,10 +14,10 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-                 <label class="text-light w-100">{{ 'profileOverview.fields.candidateType' | translate }}</label>
+                 <label class="text-light w-100 fs-16">{{ 'profileOverview.fields.candidateType' | translate }}</label>
                  <div class="align-self-center" *ngIf="fieldUnderReview('candidateTypeId')"><span class="badge status-pill status-pill--info"> {{ 'profileOverview.status.pending' | translate }}</span></div>
             </div>
-            <label class="fw-semibold text-dark text-nowrap">{{ profile?.candidateType?.name || '-' }}</label>
+            <label class="fw-semibold text-dark text-nowrap fs-16">{{ profile?.candidateType?.name || '-' }}</label>
           </div>
         </div>
       </div>
@@ -27,10 +27,10 @@
         <div class="card h-100 card-table">
           <div class="card-body">
               <div class="d-flex align-items-center justify-content-between gap-3">
-                  <label class="text-light w-100">{{ 'profileOverview.fields.targetEntity' | translate }}</label>
+                  <label class="text-light w-100 fs-16">{{ 'profileOverview.fields.targetEntity' | translate }}</label>
                   <div class="align-self-center" *ngIf="fieldUnderReview('targetEntityId')"><span class="badge status-pill status-pill--info"> {{ 'profileOverview.status.pending' | translate }}</span></div>
               </div>
-              <label class="fw-semibold text-dark text-nowrap">{{ profile?.targetEntity?.name || '-' }}</label>
+              <label class="fw-semibold text-dark text-nowrap fs-16">{{ profile?.targetEntity?.name || '-' }}</label>
           </div>
         </div>
       </div>

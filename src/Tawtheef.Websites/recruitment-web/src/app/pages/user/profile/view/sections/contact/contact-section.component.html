@@ -1,7 +1,7 @@
 
     <div class="d-flex align-items-center justify-content-between mb-3">
      
-     <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="pi pi-at"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.contact' | translate }}</span></h5>
+     <h5 class="text-primary d-flex gap-2 align-items-center "><i class="pi pi-at"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.contact' | translate }}</span></h5>
     <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
 
                 
@@ -12,16 +12,16 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.email' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('email')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
             </div>
-            <div class="fw-bold text-body text-break">{{ profile?.email || '-' }}</div>
+            <label class="fw-semibold text-dark text-nowrap fs-16">{{ profile?.email || '-' }}</label>
           </div>
         </div>
       </div>
@@ -30,16 +30,16 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.phone' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('phone')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
             </div>
-            <div class="fw-bold text-body text-nowrap">{{ profile?.phone || '-' }}</div>
+            <label class="fw-bold text-body text-nowrap">{{ profile?.phone || '-' }}</label>
           </div>
         </div>
       </div>
@@ -48,16 +48,16 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.address' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('address')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
             </div>
-            <div class="fw-bold text-body text-break">{{ profile?.address || '-' }}</div>
+            <label class="fw-semibold text-dark text-nowrap fs-16">{{ profile?.address || '-' }}</label>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <div class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.naZone' | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('naZone')">
@@ -86,16 +86,16 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.naStreet' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('naStreet')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
             </div>
-            <div class="fw-bold text-body text-nowrap">{{ profile?.naStreet || '-' }}</div>
+            <label class="fw-bold text-body text-nowrap">{{ profile?.naStreet || '-' }}</label>
           </div>
         </div>
       </div>
@@ -104,16 +104,16 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.naBuilding' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('naBuilding')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
             </div>
-            <div class="fw-bold text-body text-nowrap">{{ profile?.naBuilding || '-' }}</div>
+            <label class="fw-bold text-body text-nowrap">{{ profile?.naBuilding || '-' }}</label>
           </div>
         </div>
       </div>
@@ -122,16 +122,16 @@
         <div class="card h-100 card-table">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between gap-3">
-              <div class="text-muted small fw-semibold text-nowrap">
+              <label class="text-light w-100 fs-16">
                 {{ 'profileOverview.fields.naUnit' | translate }}
-              </div>
+              </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('naUnit')">
                 <span class="badge status-pill status-pill--info">
                   {{ 'profileOverview.status.pending' | translate }}
                 </span>
               </div>
             </div>
-            <div class="fw-bold text-body text-nowrap">{{ profile?.naUnit || '-' }}</div>
+            <label class="fw-bold text-body text-nowrap">{{ profile?.naUnit || '-' }}</label>
           </div>
         </div>
       </div>

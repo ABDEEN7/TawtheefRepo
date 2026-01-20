@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 class="mb-4 text-primary d-flex gap-2 align-items-center "><i class="pi pi-sparkles" aria-hidden="true"></i> <span>{{ 'profileOverview.sections.skills' | translate }}</span></h5>
+      <h5 class="text-primary d-flex gap-2 align-items-center "><i class="pi pi-sparkles" aria-hidden="true"></i> <span>{{ 'profileOverview.sections.skills' | translate }}</span></h5>
        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
 </div>
 
@@ -35,10 +35,10 @@
   <div class="card card-table">
     <div class="card-body">
          <div class="d-flex align-items-center justify-content-between">
-              <label class="text-muted small fw-semibold text-nowrap">{{ option.skill?.name }}</label>
+              <label class="text-light w-100 fs-16">{{ option.skill?.name }}</label>
               <span class="pill info" *ngIf="!option.id">{{ 'profileOverview.status.pending' | translate }}</span>
          </div>
-      <div class="fw-semibold text-dark text-nowrap">{{ option.level.name }}</div>
+      <label class="fw-semibold text-dark text-nowrap fs-16">{{ option.level.name }}</label>
     </div>
   </div>
 </ng-template>

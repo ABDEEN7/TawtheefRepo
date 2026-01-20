@@ -20,7 +20,7 @@ public class GetJobCopyTemplateQueryHandler(
         GetJobCopyTemplateQuery request,
         CancellationToken cancellationToken)
     {
-        var jobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
+        var jobResult = await jobRepository.GetByIdWithDetailsUnTrackingAsync(request.JobId);
         if (jobResult.IsFailed || jobResult.Value == null)
             return Result.Fail<JobCopyTemplateDto>(JobMessages.JobNotFound);
 
@@ -32,13 +32,11 @@ public class GetJobCopyTemplateQueryHandler(
         template.NumberOfVacancies = null;
         template.ClosingDate = null;
 
-        if (job.JobPoints != null)
+        if (job.JobPoints == null) return Result.Ok(template);
+        var jobPointsResult = await jobPointsRepository.GetByJobIdAsync(job.Id);
+        if (jobPointsResult.IsSuccess)
         {
-            var jobPointsResult = await jobPointsRepository.GetByJobIdAsync(job.Id);
-            if (jobPointsResult.IsSuccess)
-            {
-                template.JobPoints = mapper.Map<JobPointsCopyDto>(jobPointsResult.Value);
-            }
+            template.JobPoints = mapper.Map<JobPointsCopyDto>(jobPointsResult.Value);
         }
 
         return Result.Ok(template);

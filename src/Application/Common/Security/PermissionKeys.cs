@@ -98,6 +98,7 @@ public static class PermissionKeys
 
     public static class JobsPoints
     {
+        public const string View = "jobs.points.view";
         public const string Manage = "jobs.points.manage";
         public const string Approve = "jobs.points.approve";
     }

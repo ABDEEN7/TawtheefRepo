@@ -346,6 +346,24 @@ public static class Permissions
                 "Jobs Points - Manage",
                 "نقاط الوظائف - إدارة",
                 33);
+        
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.JobsPoints.View,
+                nameof(PermissionKeys.JobsPoints),
+                PermissionAction.View,
+                "Jobs Points - View",
+                "نقاط الوظائف - عرض",
+                33);
+        
+        public static readonly PermissionDefinition Approve =
+            Def(
+                PermissionKeys.JobsPoints.Approve,
+                nameof(PermissionKeys.JobsPoints),
+                PermissionAction.Approve,
+                "Jobs Points - Approve",
+                "نقاط الوظائف - إعتماد",
+                33);
     }
 
     public static class JobsInvitations

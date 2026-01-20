@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Common.Interfaces;
 
@@ -32,5 +33,10 @@ public class LocalizationService(IHttpContextAccessor httpContextAccessor) : ILo
         return string.Equals(GetCurrentLanguage(), "ar", StringComparison.OrdinalIgnoreCase)
             ? valueAr
             : valueEn;
+    }
+
+    public string GetLocalizedValue(string key)
+    {
+        return Translations.Get(key, GetCurrentLanguage());
     }
 }

@@ -8,6 +8,7 @@
     <MicrosoftExtensionsVersion>9.0.0</MicrosoftExtensionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="ClosedXML" Version="0.105.0" />
     <PackageVersion Include="Cortex.Mediator" Version="2.1.0" />
     <PackageVersion Include="CsvHelper" Version="33.1.0" />
     <PackageVersion Include="ExpressionDebugger" Version="2.2.1" />
