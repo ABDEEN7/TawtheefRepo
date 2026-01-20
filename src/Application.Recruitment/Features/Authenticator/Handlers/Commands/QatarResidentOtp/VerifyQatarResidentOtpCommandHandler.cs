@@ -27,6 +27,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
     TimeProvider timeProvider)
     : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
+    const int QatarNationalityCode = 634;
     public async Task<IResult<AuthResponse>> Handle(VerifyQatarResidentOtpCommand request, CancellationToken cancellationToken)
     {
         var normalizedQid = QidUtilities.Normalize(request.Qid);
@@ -75,7 +76,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             <GetPersonalInformationByQidQuery,IResult<MOEPersonalInfo>>
             (new GetPersonalInformationByQidQuery(userId, new CheckProfileMOI(qid, expiryDate)), cancellationToken);
         if(request.IsFailed) return Result.Fail<Unit>(request.Errors);
-        if(request.Value.NationalityCode != 634) return Result.Ok(Unit.Value);
+        if(request.Value.NationalityCode != QatarNationalityCode) return Result.Ok(Unit.Value);
         var allowLogin = await CheckIfAllowLoginAsync();
         return allowLogin ? Result.Ok(Unit.Value) : Result.Fail<Unit>(ErrorsCodes.QatariPeopleNotAllowedLoginBeforeRegisterOnKawader);
         
