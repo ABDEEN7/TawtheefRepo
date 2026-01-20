@@ -2,6 +2,6 @@ using Cortex.Mediator.Commands;
 using FluentResults;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 
-namespace Tawtheef.Application.Features.Authenticator.Commands;
+namespace Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 
 public record QatarPassExternalCallbackLoginCommand(string Authtoken,string? ReturnUrl = null, string? RemoteError = null) : ICommand<IResult<AuthResponse>>;

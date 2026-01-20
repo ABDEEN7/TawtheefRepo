@@ -1,8 +1,8 @@
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
-using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
+using Tawtheef.Application.Features.Authenticator.DTOs;
 
 namespace Application.Recruitment.Features.Profile.Handlers.Queries;
 
@@ -13,7 +13,7 @@ public class GetPersonalInformationByQidQueryHandler(IMoiClient client) :
         CancellationToken cancellationToken)
     { 
         var result = await client.GetPersonalInfoAsync(query.Request.QID, query.Request.ExpiryDate, cancellationToken);
-        if(result.IsFailed)
+        if (result.IsFailed)
             return Result.Fail<MOEPersonalInfo>(result.Errors);
         
         return Result.Ok(result.Value);

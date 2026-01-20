@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Application.Recruitment.Features.Authenticator.Commands;
+using Application.Recruitment.Features.Authenticator.Commands.Verification;
 using Application.Recruitment.Features.Authenticator.Queries;
 using Application.Recruitment.Features.Profile.Queries;
 using Cortex.Mediator;
@@ -15,11 +16,6 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
-using ConfirmEmailVerificationCommand = Tawtheef.Application.Features.Authenticator.Commands.ConfirmEmailVerificationCommand;
-using ConfirmPhoneVerificationCommand = Tawtheef.Application.Features.Authenticator.Commands.ConfirmPhoneVerificationCommand;
-using RequestEmailVerificationCommand = Tawtheef.Application.Features.Authenticator.Commands.RequestEmailVerificationCommand;
-using RequestPhoneVerificationCommand = Tawtheef.Application.Features.Authenticator.Commands.RequestPhoneVerificationCommand;
-using RequestUpdatePhoneCommand = Tawtheef.Application.Features.Authenticator.Commands.RequestUpdatePhoneCommand;
 
 namespace Recruitment.API.Controllers;
 

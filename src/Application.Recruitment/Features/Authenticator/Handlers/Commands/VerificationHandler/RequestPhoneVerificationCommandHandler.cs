@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using Application.Recruitment.Features.Authenticator.Commands;
+using Application.Recruitment.Features.Authenticator.Commands.Verification;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;

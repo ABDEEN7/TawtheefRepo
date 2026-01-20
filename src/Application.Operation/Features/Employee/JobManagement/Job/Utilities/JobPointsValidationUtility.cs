@@ -198,7 +198,6 @@ internal static class JobPointsValidationUtility
             .ToList();
 
         return languageDetails.Any(detail =>
-            detail.Code != null &&
             !detail.Code.EndsWith(".max", StringComparison.OrdinalIgnoreCase));
     }
 

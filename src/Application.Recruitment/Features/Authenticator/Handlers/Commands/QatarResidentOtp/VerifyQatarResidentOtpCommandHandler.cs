@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Security.Claims;
-using Application.Recruitment.Features.Authenticator.Commands;
-using Application.Recruitment.Features.Authenticator.DTOs;
+using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
+using Application.Recruitment.Features.Profile.Queries;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -10,10 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Utils;
+using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Users;
+using CheckProfileMOI = Application.Recruitment.Features.Authenticator.DTOs.CheckProfileMOI;
 
 namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.QatarResidentOtp;
 
@@ -25,6 +27,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
     TimeProvider timeProvider)
     : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
+    const int QatarNationalityCode = 634;
     public async Task<IResult<AuthResponse>> Handle(VerifyQatarResidentOtpCommand request, CancellationToken cancellationToken)
     {
         var normalizedQid = QidUtilities.Normalize(request.Qid);
@@ -69,9 +72,11 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
 
     private async Task<IResult<Unit>> CheckIfQatarUsingKawaderAsync(Guid userId, string qid, DateOnly expiryDate, CancellationToken cancellationToken)
     {
-        var request = await mediator.SendQueryAsync<GetPersonalInformationByQidQuery,IResult<MOEPersonalInfo>>(new GetPersonalInformationByQidQuery(userId, new CheckProfileMOI(qid, expiryDate)), cancellationToken);
+        var request = await mediator.SendQueryAsync
+            <GetPersonalInformationByQidQuery,IResult<MOEPersonalInfo>>
+            (new GetPersonalInformationByQidQuery(userId, new CheckProfileMOI(qid, expiryDate)), cancellationToken);
         if(request.IsFailed) return Result.Fail<Unit>(request.Errors);
-        if(request.Value.NationalityCode != 634) return Result.Ok(Unit.Value);
+        if(request.Value.NationalityCode != QatarNationalityCode) return Result.Ok(Unit.Value);
         var allowLogin = await CheckIfAllowLoginAsync();
         return allowLogin ? Result.Ok(Unit.Value) : Result.Fail<Unit>(ErrorsCodes.QatariPeopleNotAllowedLoginBeforeRegisterOnKawader);
         
