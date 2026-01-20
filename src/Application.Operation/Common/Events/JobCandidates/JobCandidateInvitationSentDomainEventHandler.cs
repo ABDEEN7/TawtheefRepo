@@ -27,7 +27,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 "Tawtheef Job Invitation",
                 null,
                 payload);
-            await repo.AddAsync(emailNotification);
+            await repo.AddAsync(emailNotification, ct);
         }
 
         if (!string.IsNullOrWhiteSpace(notification.PhoneNumber))
@@ -47,7 +47,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 body,
                 null);
 
-            await repo.AddAsync(smsNotification);
+            await repo.AddAsync(smsNotification, ct);
         }
 
         await unitOfWork.SaveChangesAsync(ct);

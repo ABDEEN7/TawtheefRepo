@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Application.Operation.Common.Interfaces.Services.HttpClients;
+using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
 using Application.Operation.Templates.ChangeJobStatusApprovedNotification;
@@ -56,6 +57,7 @@ using Tawtheef.Infrastructure.Services.HttpClients;
 using Tawtheef.Infrastructure.Services.Identity;
 using Tawtheef.Infrastructure.Services.Localization;
 using Tawtheef.Infrastructure.Services.NotificationServices;
+using Tawtheef.Infrastructure.Services.Office;
 using Tawtheef.Infrastructure.Services.StorageServices;
 using Tawtheef.Infrastructure.Services.Validations;
 using Tawtheef.Infrastructure.Utils;
@@ -328,6 +330,9 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IJobRequiredAttachmentRepository, JobRequiredAttachmentRepository>();
                 
                 services.AddScoped<IJobValidationService, JobValidationService>();
+                
+                services.AddScoped<IOfficeUniquenessChecker, OfficeUniquenessChecker>();
+                services.AddScoped<IOfficeAdminProvisioner, OfficeAdminProvisioner>();
                 
                 // Recruitment-only background jobs
                 services.AddHostedService<JobAutoClosureService>();
