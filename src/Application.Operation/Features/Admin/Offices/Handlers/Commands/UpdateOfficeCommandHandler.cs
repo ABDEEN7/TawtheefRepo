@@ -39,22 +39,38 @@ public sealed class UpdateOfficeCommandHandler(IUnitOfWork unitOfWork, UserManag
 
         office.NameAr = request.NameAr;
         office.NameEn = request.NameEn;
+        office.PhoneCountryCode = request.PhoneCountryCode;
+        office.PhoneNumber = request.PhoneNumber;
 
         if (!string.IsNullOrWhiteSpace(request.AdminEmail))
         {
-            var adminResult = await UpdateOfficeAdminAsync(office,request.AdminEmail);
+            var adminResult = await UpdateOfficeAdminAsync(
+                office,
+                request.AdminEmail,
+                request.AdminNameAr,
+                request.AdminNameEn);
             if (adminResult.IsFailed)
                 return Result.Fail<bool>(adminResult.Errors);
         }
 
-        SyncSupportedCountries(office, request.SupportedCountryIds);
+        var requestedCountries = request.SupportedCountryIds;
+        if (!requestedCountries.Any())
+        {
+            requestedCountries = new[] {office.CountryId};
+        }
+
+        SyncSupportedCountries(office, requestedCountries);
 
         await unitOfWork.SaveChangesAsync(ct);
 
         return Result.Ok(true);
     }
 
-    private async Task<Result> UpdateOfficeAdminAsync(Office office, string adminEmail)
+    private async Task<Result> UpdateOfficeAdminAsync(
+        Office office,
+        string adminEmail,
+        string adminNameAr,
+        string adminNameEn)
     {
         var email = adminEmail.Trim();
         var officeUserIds = office.OfficeUsers?
@@ -77,6 +93,8 @@ public sealed class UpdateOfficeCommandHandler(IUnitOfWork unitOfWork, UserManag
         officeAdmin.NormalizedEmail = userManager.NormalizeEmail(email);
         officeAdmin.UserName = email;
         officeAdmin.NormalizedUserName = userManager.NormalizeName(email);
+        officeAdmin.FullNameAr = adminNameAr;
+        officeAdmin.FullNameEn = adminNameEn;
 
         var updateResult = await userManager.UpdateAsync(officeAdmin);
 

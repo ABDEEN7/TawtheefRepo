@@ -11,12 +11,18 @@ public class OfficeUser : User
     
     public static Result<User> Register(string email, string fullName)
     {
-        var user = new OfficeUser() {
+        return Register(email, fullName, fullName);
+    }
+
+    public static Result<User> Register(string email, string fullNameAr, string fullNameEn)
+    {
+        var user = new OfficeUser
+        {
             Id = Guid.NewGuid(),
             Email = email,
             UserName = email,
-            FullNameEn = fullName,
-            FullNameAr = fullName,
+            FullNameEn = fullNameEn,
+            FullNameAr = fullNameAr,
             UserTypeId = UserTypeIds.OfficeUser
         };
 
