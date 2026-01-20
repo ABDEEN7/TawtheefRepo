@@ -292,7 +292,6 @@ namespace Tawtheef.Infrastructure
             
             private void AddRecruitmentNotification()
             {
-                //TODO: registeration all template model here
                 NotificationTemplateRegistry.Register<ContactVerificationSentModel>(nameof(ContactVerificationSent));
             }
         }
