@@ -13,7 +13,7 @@ public class JobCategoryCandidateSettingsConfiguration : IEntityTypeConfiguratio
             new JobCategoryCandidateSettings
             {
                 Id = JobCategoryCandidateSettingsIds.Default,
-                AcademicJobVacancies = 1,
+                AcademicJobVacancies = 5,
                 LaborJobVacancies = 1,
                 AdministrativeJobVacancies = 1,
                 CreatedDate = DefaultConfig.DefaultCreatedDate,
