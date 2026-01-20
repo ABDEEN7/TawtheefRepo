@@ -55,7 +55,8 @@ export class TokenService {
         : rawRoles.includes(SystemRoles.OfficeAdmin) ? SystemRoles.OfficeAdmin
           : rawRoles.includes(SystemRoles.OfficeUser) ? SystemRoles.OfficeUser
             : rawRoles.includes(SystemRoles.DepartmentManager) ? SystemRoles.DepartmentManager
-              : '';
+              : rawRoles.includes(SystemRoles.HrManager) ? SystemRoles.HrManager
+                : '';
   }
 
   getRolesFromToken(token: string): string[] {
