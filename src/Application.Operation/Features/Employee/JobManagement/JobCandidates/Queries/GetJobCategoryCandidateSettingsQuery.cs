@@ -4,5 +4,4 @@ using FluentResults;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
 
-public sealed record GetJobCategoryCandidateSettingsQuery()
-    : IQuery<IResult<JobCategoryCandidateSettingsResponseDto>>;
+public sealed record GetJobCategoryCandidateSettingsQuery : IQuery<IResult<JobCategoryCandidateSettingsResponseDto>>;

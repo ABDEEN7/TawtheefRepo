@@ -55,7 +55,7 @@ public sealed class UpdateUniversityCommandHandler(
 
         var now = timeProvider.GetUtcNow();
         _ = Guid.TryParse(currentUserService.UserId, out var userId);
-        var files = request.Files ?? [];
+        var files = request.Files;
 
         var logoArResult = await UploadLogoAsync(university.Id, "ar", request.LogoArFileIndex, files, cancellationToken);
         if (logoArResult.IsFailed)
