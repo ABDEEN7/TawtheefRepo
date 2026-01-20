@@ -17,10 +17,14 @@ internal static class TrainingPointsCalculator
 
         if (details.Count == 0 || trainingCourses == null)
             return 0;
-
         var points = trainingCourses.Select(training => training.SpecializationRelation switch
             {
-                //TODO : Must be checked later
+                // TODO: Implement automatic determination of SpecializationRelation level between training courses and job degrees.
+                // Current implementation relies on manually set SpecializationRelation values from TrainingCourse entities.
+                // Consider: 
+                // - Creating a service to match training course topics/titles with job degree specializations
+                // - Using a mapping table or algorithm to calculate relation strength
+                // - Implementing ML/NLP-based similarity scoring between course content and job requirements
                 SpecializationRelationLevel.Strong => TrainingHighCode,
                 SpecializationRelationLevel.Medium => TrainingMediumCode,
                 SpecializationRelationLevel.Weak => TrainingLowCode,

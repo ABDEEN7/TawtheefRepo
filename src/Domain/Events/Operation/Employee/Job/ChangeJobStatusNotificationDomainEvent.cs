@@ -2,4 +2,5 @@
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
 namespace Tawtheef.Domain.Events.Operation.Employee.Job;
-public sealed record ChangeJobStatusNotificationDomainEvent(JobEntity Job, DateTimeOffset DateOccurred) : BaseEvent(DateOccurred);
+public sealed record ChangeJobStatusNotificationDomainEvent(JobEntity Job, DateTimeOffset DateOccurred)
+    : BaseEvent(DateOccurred);

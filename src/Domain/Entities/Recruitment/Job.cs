@@ -120,19 +120,13 @@ public sealed class Job : EventEntity
     {
         JobStatusId = newStatusId;
         if (newStatusId == JobStatusIds.PendingApproval)
-        {
             AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.UtcNow));
-        }else if (newStatusId == JobStatusIds.Approved )
-        {
+        else if (newStatusId == JobStatusIds.Approved )
             AddDomainEvent(new ChangeJobStatusApprovedNotificationDomainEvent(this, DateTimeOffset.UtcNow));
-        }
         else if (newStatusId == JobStatusIds.Rejected)
-        {
             AddDomainEvent(new ChangeJobStatusRejectedNotificationDomainEvent(this, DateTimeOffset.UtcNow));
-        }else if (newStatusId == JobStatusIds.NeedUpdate)
-        {
+        else if (newStatusId == JobStatusIds.NeedUpdate)
             AddDomainEvent(new ChangeJobStatusNeedUpdateNotificationDomainEvent(this, DateTimeOffset.UtcNow));
-        }
     }
 }
 
