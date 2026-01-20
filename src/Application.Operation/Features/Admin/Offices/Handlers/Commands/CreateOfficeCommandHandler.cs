@@ -37,9 +37,13 @@ public sealed class CreateOfficeCommandHandler(
 
         var supportedCountries = CreateSupportedCountries(request.SupportedCountryIds);
         if (supportedCountries.Count == 0)
+        {
+            supportedCountries = CreateSupportedCountries(new[] {request.CountryId});
+        }
+        if (supportedCountries.Count == 0)
             return Result.Fail<Guid>(ErrorsCodes.OfficeSupportedCountriesRequired);
 
-        var adminResult = await CreateOfficeAdminAsync(adminEmail);
+        var adminResult = await CreateOfficeAdminAsync(adminEmail, request.AdminNameAr, request.AdminNameEn);
         if (adminResult.IsFailed)
             return Result.Fail<Guid>(adminResult.Errors);
         var user = adminResult.Value;
@@ -88,9 +92,9 @@ public sealed class CreateOfficeCommandHandler(
             .ToList();
     }
 
-    private async Task<Result<User>> CreateOfficeAdminAsync(string email)
+    private async Task<Result<User>> CreateOfficeAdminAsync(string email, string adminNameAr, string adminNameEn)
     {
-        var registerResult = OfficeUser.Register(email, "Office Admin");
+        var registerResult = OfficeUser.Register(email, adminNameAr, adminNameEn);
         if (registerResult.IsFailed)
             return Result.Fail<User>(registerResult.Errors);
 
@@ -124,8 +128,9 @@ public sealed class CreateOfficeCommandHandler(
             NameEn = request.NameEn,
             CountryId = request.CountryId,
             OfficeAdminId = adminId,
+            PhoneCountryCode = request.PhoneCountryCode,
+            PhoneNumber = request.PhoneNumber,
             SupportedCountries = supportedCountries
         };
     }
 }
-
