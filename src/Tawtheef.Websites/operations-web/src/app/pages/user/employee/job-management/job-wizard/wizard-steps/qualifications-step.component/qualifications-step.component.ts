@@ -100,4 +100,10 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       );
     }
   }
+
+  touchDegrees(): void {
+  const c = this.form.controls.degrees;
+  c.markAsTouched();
+  c.updateValueAndValidity({ onlySelf: true });
+}
 }

@@ -190,6 +190,7 @@
   "JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY": "Responsibility",
   "JOB_WIZARD.STEPS.RESPONSIBILITIES.REMOVE": "Remove Responsibility",
   "JOB_WIZARD.VALIDATION.RESPONSIBILITY_AR_REQUIRED": "Arabic responsibility description is required.",
+  "JOB_WIZARD.VALIDATION.RESPONSIBILITY_EN_REQUIRED": "English responsibility description is required.",
   "JOB_WIZARD.VALIDATION.MAX_LENGTH": "Maximum length is {{max}} characters.",
   "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_RESPONSIBILITY": "Please add at least one responsibility to proceed.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_RESPONSIBILITIES": "Please complete all responsibility fields before proceeding.",
@@ -224,6 +225,7 @@
   "JOB_WIZARD.STEPS.CONDITIONS.CONDITION": "Condition",
   "JOB_WIZARD.STEPS.CONDITIONS.REMOVE": "Remove Condition",
   "JOB_WIZARD.VALIDATION.CONDITION_AR_REQUIRED": "Arabic condition description is required.",
+  "JOB_WIZARD.VALIDATION.CONDITION_EN_REQUIRED": "English condition description is required.",
   "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_CONDITION": "Please add at least one condition to proceed.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_CONDITIONS": "Please complete all condition fields before proceeding.",
 
@@ -233,6 +235,7 @@
   "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_EN": "Benefits Description (English)",
   "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_EN_PLACEHOLDER": "Write benefits in English...",
   "JOB_WIZARD.VALIDATION.BENEFITS_AR_REQUIRED": "Arabic benefits description is required.",
+  "JOB_WIZARD.VALIDATION.BENEFITS_EN_REQUIRED": "English benefits description is required.",
   "JOB_WIZARD.STEPS.BENEFITS.AR_TIPS": "Provide a clear and detailed description of benefits in Arabic.",
   "JOB_WIZARD.STEPS.BENEFITS.EN_TIPS": "Provide a clear and detailed description of benefits in English.",
   "JOB_WIZARD.VALIDATION.COMPLETE_BENEFITS": "Please complete the benefits section before proceeding.",
