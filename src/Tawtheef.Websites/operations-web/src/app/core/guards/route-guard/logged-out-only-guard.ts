@@ -3,7 +3,6 @@ import {inject} from "@angular/core";
 import {AuthStateService} from "../../auth/auth-state.service";
 import {TokenService} from "../../auth/token.service";
 import {routes} from "../../../routes/routes";
-import {SystemRoles} from '../../constants/systemRoles';
 import {take} from 'rxjs';
 import {map} from 'rxjs/operators';
 

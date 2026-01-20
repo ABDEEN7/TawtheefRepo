@@ -2,6 +2,7 @@ using System.Text.Json;
 using Application.Operation.Templates.JobCandidateInvitationSent;
 using Cortex.Mediator.Notifications;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
 
@@ -32,8 +33,10 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
         if (!string.IsNullOrWhiteSpace(notification.PhoneNumber))
         {
             var body = string.IsNullOrWhiteSpace(jobTitle)
-                ? "You have been invited to apply for a role on Tawtheef. Please sign in to review the details."
-                : $"You have been invited to apply for {jobTitle} on Tawtheef. Please sign in to review the details.";
+                ? JobCandidatesMessages.JobInvitationWithoutTitle
+                : string.Format(
+                    JobCandidatesMessages.JobInvitationWithTitle,
+                    jobTitle);
 
             var smsNotification = Notification.Create(
                 NotificationChannel.Sms,
@@ -43,6 +46,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 "Tawtheef Job Invitation",
                 body,
                 null);
+
             await repo.AddAsync(smsNotification);
         }
 
