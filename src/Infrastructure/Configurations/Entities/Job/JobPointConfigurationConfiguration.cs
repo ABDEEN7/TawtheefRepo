@@ -13,14 +13,14 @@ public class JobPointConfigurationConfiguration : IEntityTypeConfiguration<JobPo
             new JobPointConfiguration
             {
                 Id = JobPointConfigurationIds.Default,
-                ApplicantCategoryMaxPoints = 0,
-                EducationMaxPoints = 0,
-                ExperienceMaxPoints = 0,
-                TrainingMaxPoints = 0,
-                CertificatesMaxPoints = 0,
-                SkillsMaxPoints = 0,
-                LanguagesMaxPoints = 0,
-                MaxPoints = 0,
+                ApplicantCategoryMaxPoints = 250,
+                EducationMaxPoints = 100,
+                ExperienceMaxPoints = 100,
+                TrainingMaxPoints = 100,
+                CertificatesMaxPoints = 100,
+                SkillsMaxPoints = 250,
+                LanguagesMaxPoints = 100,
+                MaxPoints = 1000,
                 CreatedDate = DefaultConfig.DefaultCreatedDate,
                 IsDeleted = false,
             }

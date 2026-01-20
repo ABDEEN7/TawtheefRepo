@@ -51,7 +51,7 @@ export class JobListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadJobsWithFilters();
-    this.lookupsService.loadJobCategories();
+    this.lookupsService.loadJobCategories().subscribe();
 
     this.lookupsService
       .loadJobStatus()
