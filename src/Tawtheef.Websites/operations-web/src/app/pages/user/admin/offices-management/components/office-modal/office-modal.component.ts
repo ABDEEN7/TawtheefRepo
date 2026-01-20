@@ -21,11 +21,15 @@ import {OfficeUserDto} from '../../models/office-user.dto';
 import {Select} from 'primeng/select';
 import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
 import {OfficeDetailsDto} from '../../models/office-details.dto';
+import {CountryISO, NgxIntlTelInputModule, SearchCountryField} from 'ngx-intl-tel-input';
 
-type PhoneCountryCodeOption = {
-  id: string;
-  name: string;
-  countryId: string;
+type PhoneNumberValue = {
+  number: string;
+  internationalNumber: string;
+  nationalNumber: string;
+  e164Number: string;
+  countryCode: string;
+  dialCode: string;
 };
 
 @Component({
@@ -33,7 +37,14 @@ type PhoneCountryCodeOption = {
   standalone: true,
   templateUrl: './office-modal.component.html',
   styleUrls: ['./office-modal.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, Select]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslatePipe,
+    I18nNamespaceDirective,
+    Select,
+    NgxIntlTelInputModule
+  ]
 })
 export class OfficeModalComponent implements OnInit, OnChanges {
   private fb = inject(FormBuilder);
@@ -47,7 +58,14 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   @Input() officeUsers: OfficeUserDto[] = [];
   @Input() loading = false;
 
-  phoneCountryOptions: PhoneCountryCodeOption[] = [];
+  searchCountryFields = [SearchCountryField.Iso2, SearchCountryField.Name];
+  selectedCountryIso = signal<CountryISO | undefined>(undefined);
+  phoneCountries = computed(() => {
+    const countries = this.countries
+      .map(country => this.getCountryIso(country))
+      .filter((country): country is CountryISO => Boolean(country));
+    return countries.length ? countries : undefined;
+  });
 
   @Output() cancel = new EventEmitter<void>();
   @Output() create = new EventEmitter<CreateOfficeRequest>();
@@ -72,8 +90,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     adminNameAr: ['', Validators.required],
     adminNameEn: ['', Validators.required],
     adminEmail: ['', [Validators.required, Validators.email]],
-    phoneCountryCode: ['', Validators.required],
-    phoneNumber: ['', Validators.required]
+    phoneNumber: this.fb.control<PhoneNumberValue | null>(null, Validators.required)
   });
 
   ngOnInit(): void {
@@ -84,9 +101,6 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['countries']) {
-      this.phoneCountryOptions = this.buildPhoneCountryOptions();
-    }
     if (this.visible && (changes['visible'] || changes['office'] || changes['officeUsers'] || changes['mode'])) {
       this.patchForm();
     }
@@ -103,8 +117,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
       adminNameAr: '',
       adminNameEn: '',
       adminEmail: this.resolveAdminEmail(),
-      phoneCountryCode: '',
-      phoneNumber: ''
+      phoneNumber: null
     });
 
     if (this.office) {
@@ -116,8 +129,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
         adminNameAr: this.office.adminNameAr || '',
         adminNameEn: this.office.adminNameEn || '',
         adminEmail: this.resolveAdminEmail(),
-        phoneCountryCode: this.office.phoneCountryCode || '',
-        phoneNumber: this.office.phoneNumber || ''
+        phoneNumber: this.buildPhoneValue()
       });
     }
 
@@ -182,41 +194,53 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   private syncCountryFields(countryId: string) {
     if (!countryId) {
       this.form.controls.supportedCountryIds.setValue([], {emitEvent: false});
-      this.form.controls.phoneCountryCode.setValue('', {emitEvent: false});
       return;
     }
 
     this.form.controls.supportedCountryIds.setValue([countryId], {emitEvent: false});
 
     const selectedCountry = this.countries.find(country => country.id === countryId);
-    const dialCode = this.formatDialCode(selectedCountry?.description);
-    if (dialCode) {
-      this.form.controls.phoneCountryCode.setValue(dialCode, {emitEvent: false});
-    }
+    this.selectedCountryIso.set(this.getCountryIso(selectedCountry));
   }
 
-  private buildPhoneCountryOptions() {
-    return this.countries
-      .map(country => {
-        const dialCode = this.formatDialCode(country.description);
-        if (!dialCode) {
-          return null;
-        }
-        return {
-          id: dialCode,
-          name: `${dialCode} - ${country.name}`,
-          countryId: country.id
-        };
-      })
-      .filter((option): option is PhoneCountryCodeOption => option !== null);
-  }
-
-  private formatDialCode(value?: string) {
-    const trimmed = value?.trim() || '';
-    if (!trimmed) {
+  private formatDialCode(value?: string | number) {
+    const rawValue = value?.toString().trim() || '';
+    if (!rawValue) {
       return '';
     }
-    return trimmed.startsWith('+') ? trimmed : `+${trimmed}`;
+    return rawValue.startsWith('+') ? rawValue : `+${rawValue}`;
+  }
+
+  private buildPhoneValue(): PhoneNumberValue | null {
+    if (!this.office?.phoneNumber || !this.office?.phoneCountryCode) {
+      return null;
+    }
+
+    const dialCode = this.formatDialCode(this.office.phoneCountryCode);
+    const country = this.countries.find(item => item.id === this.office?.countryId);
+    const countryCode = this.getCountryIso(country) ?? '';
+    const e164Number = `${dialCode}${this.office.phoneNumber}`;
+
+    return {
+      number: this.office.phoneNumber,
+      internationalNumber: e164Number,
+      nationalNumber: this.office.phoneNumber,
+      e164Number,
+      countryCode,
+      dialCode
+    };
+  }
+
+  private getCountryIso(country?: dropdownOptionsModel | null): CountryISO | undefined {
+    const iso = country?.additionalData?.isoCode || country?.additionalData?.codeAlpha;
+    if (!iso) {
+      return undefined;
+    }
+    const normalized = iso.trim().toUpperCase();
+    if (normalized.length !== 2) {
+      return undefined;
+    }
+    return normalized as CountryISO;
   }
 
   submit() {
@@ -237,9 +261,10 @@ export class OfficeModalComponent implements OnInit, OnChanges {
       adminNameAr,
       adminNameEn,
       adminEmail,
-      phoneCountryCode,
       phoneNumber
     } = this.form.getRawValue();
+    const phoneCountryCode = phoneNumber?.dialCode ? this.formatDialCode(phoneNumber.dialCode) : '';
+    const phoneValue = phoneNumber?.number ?? '';
     const supportedCountryIds = countryId ? [countryId] : [];
 
     if (this.isEditMode() && this.office) {
@@ -252,7 +277,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
           adminNameAr,
           adminNameEn,
           phoneCountryCode,
-          phoneNumber,
+          phoneNumber: phoneValue,
           supportedCountryIds
         }
       });
@@ -266,7 +291,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
         adminNameAr,
         adminNameEn,
         phoneCountryCode,
-        phoneNumber
+        phoneNumber: phoneValue
       });
     }
   }

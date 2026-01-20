@@ -26,7 +26,7 @@ public sealed class GetCountriesQueryHandler(IUnitOfWork unitOfWork)
                 Name = c.GetLocalizedName(language)!,
                 Description = c.GetLocalizedDescription(language)!,
                 BackendName = c.BackendName,
-                AdditionalData = new { c.Code }
+                AdditionalData = new { c.Code, c.ISOCode, c.CodeAlpha }
             })
             .ToListAsync(cancellationToken);
         return Result.Ok(countries);

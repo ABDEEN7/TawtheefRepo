@@ -42,8 +42,9 @@
   max-height: 180px;
 }
 
-.phone-code-select {
-  max-width: 200px;
+:host ::ng-deep .office-phone .prime-tel-input,
+:host ::ng-deep .office-phone .prime-tel-input .iti {
+  width: 100%;
 }
 
 .modal-form .form-control.is-invalid,
