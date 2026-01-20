@@ -42,7 +42,7 @@ export const routes: Routes = [
     path: 'employee',
     component: EmployeeLayout,
     canActivate: [authGuard],
-    data: { roles: [SystemRoles.Employee, SystemRoles.OfficeAdmin, SystemRoles.OfficeUser] },
+    data: { roles: [SystemRoles.Employee, SystemRoles.OfficeAdmin, SystemRoles.OfficeUser, SystemRoles.DepartmentManager] },
     children: [
       { path: '', loadChildren: () => import('./pages/user/employee/employee.module').then(m => m.EmployeeModule) }
     ]

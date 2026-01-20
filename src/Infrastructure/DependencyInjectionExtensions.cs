@@ -292,7 +292,6 @@ namespace Tawtheef.Infrastructure
             
             private void AddRecruitmentNotification()
             {
-                //TODO: registeration all template model here
                 NotificationTemplateRegistry.Register<ContactVerificationSentModel>(nameof(ContactVerificationSent));
             }
         }
@@ -518,7 +517,7 @@ namespace Tawtheef.Infrastructure
                         o.Scope.Add("email");
                     });
                     
-                    services.AddSingleton<IConfigurationManager<OpenIdConnectConfiguration>>(sp => {
+                    services.AddSingleton<IConfigurationManager<OpenIdConnectConfiguration>>(_ => {
                         var tenant = string.IsNullOrWhiteSpace(azureSettings.TenantId) ? "common" : azureSettings.TenantId;
                         var authority = $"{azureSettings.Instance}{tenant}/v2.0";
                         var metadataAddress = $"{authority}/.well-known/openid-configuration";

@@ -1,5 +1,5 @@
-using Application.Recruitment.Features.Profile.DTOs;
 using FluentResults;
+using Tawtheef.Application.Features.Authenticator.DTOs;
 
 namespace Application.Recruitment.Common.Interfaces.Services.HttpClients;
 

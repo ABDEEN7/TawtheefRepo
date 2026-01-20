@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Application.Recruitment.Features.Authenticator.DTOs;
 using Application.Recruitment.Features.Profile.Command;
 using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
 using Application.Recruitment.Features.Profile.Command.DeleteOperation;

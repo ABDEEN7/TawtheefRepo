@@ -10,7 +10,7 @@
           <label class="form-label required" for="qid">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</label>
 
           <span class="p-input-icon-left w-100">
-           
+
             <input
               id="qid"
               type="text"
@@ -93,7 +93,7 @@
 
       </div>
 
-     
+
     </div>
 
     <!-- OTP Step -->
@@ -102,12 +102,12 @@
       <!-- Summary row (readonly) -->
       <div class="summary-row">
         <div class="summary-item">
-          <span class="k">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</span>
-          <span class="v">{{ maskQid(form.controls.qid.value) }}</span>
+          <span class="k me-2">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</span>
+          <span class="v fw-bold">{{ maskQid(form.controls.qid.value) }}</span>
         </div>
         <div class="summary-item">
-          <span class="k">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</span>
-          <span class="v">{{ getPhoneDisplay() }}</span>
+          <span class="k me-2">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</span>
+          <span class="v fw-bold">{{ getPhoneDisplay() }}</span>
         </div>
       </div>
 
@@ -170,7 +170,7 @@
         {{ 'common.cancel' | translate }}
       </button>
 
-      
+
     </div>
 
   </form>

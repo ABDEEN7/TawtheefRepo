@@ -3,5 +3,9 @@ export interface CreateOfficeRequest {
   nameEn: string;
   countryId: string;
   supportedCountryIds: string[];
+  adminNameAr: string;
+  adminNameEn: string;
   adminEmail: string;
+  phoneCountryCode: string;
+  phoneNumber: string;
 }

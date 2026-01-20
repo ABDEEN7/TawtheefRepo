@@ -111,7 +111,7 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   private addConditionToForm(textAr: string, textEn: string = ''): void {
     const conditionGroup = this.fb.group({
       textAr: [textAr, [Validators.required, Validators.maxLength(500)]],
-      textEn: [textEn, [Validators.maxLength(500)]]
+      textEn: [textEn, [Validators.required,Validators.maxLength(500)]]
     });
 
     this.conditionsArray.push(conditionGroup);

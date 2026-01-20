@@ -60,9 +60,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     titleEn: ['', [Validators.required, Validators.maxLength(200)]],
     jobCategoryId: ['', Validators.required],
     workLocationId: ['', Validators.required],
-    genderId: [''],
+    genderId: ['',Validators.required],
     majorId: ['', Validators.required],
-    subMajorId: [''],
+    subMajorId: ['',Validators.required],
     workTypeId: ['', Validators.required],
     numberOfVacancies: [1, [Validators.required, Validators.min(1)]],
     closingDate: this.fb.control<Date | null>(null, [Validators.required]),
@@ -463,4 +463,10 @@ private applyTemplateToForm(template: JobCopyTemplate): void {
       this.lookupsService.loadSubMajorsByMajor(template.majorId);
     }
   }
+
+  touchGender(): void {
+  const c = this.form.controls.genderId;
+  c.markAsTouched();
+  c.updateValueAndValidity({ onlySelf: true });
+}
 }

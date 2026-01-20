@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using Application.Recruitment.Features.Authenticator.Commands;
+using Application.Recruitment.Features.Authenticator.Commands.Verification;
 using Application.Recruitment.Features.Authenticator.Queries;
 using Application.Recruitment.Features.Profile.Queries;
 using Cortex.Mediator;
@@ -10,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure;

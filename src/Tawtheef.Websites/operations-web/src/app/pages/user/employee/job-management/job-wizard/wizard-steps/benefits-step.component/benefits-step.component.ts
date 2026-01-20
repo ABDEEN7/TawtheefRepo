@@ -23,7 +23,7 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
 
   readonly form: FormGroup = this.fb.group({
     benefitsAr: ['', [Validators.required, Validators.maxLength(2000)]],
-    benefitsEn: ['', [Validators.maxLength(2000)]]
+    benefitsEn: ['', [Validators.required,Validators.maxLength(2000)]]
   });
 
   ngOnInit(): void {
