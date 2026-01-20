@@ -17,7 +17,7 @@ public sealed class OfficeProfile : IRegister
                 .OrderByDescending(sc => sc.CreatedDate));
 
         config.NewConfig<Office, OfficeDetailsDto>()
-            .Map(dest => dest.Users, src => (src.OfficeUsers ?? [])
+            .Map(dest => dest.Users, src => (src.OfficeUsers ?? Enumerable.Empty<OfficeUser>())
                 .Select(user => new OfficeUserDto
                 {
                     Id = user.Id,
