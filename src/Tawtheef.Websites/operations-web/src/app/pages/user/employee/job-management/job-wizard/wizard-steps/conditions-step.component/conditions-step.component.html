@@ -136,10 +136,14 @@
                                 ></textarea>
 
                                 @if (getConditionGroup(i).controls['textEn'].invalid && getConditionGroup(i).controls['textEn'].touched) {
-                                <div class="text-danger small mt-1">
+                                 @if (getConditionGroup(i).controls['textEn'].errors?.['required']) {
+                                  <i class="fa fa-exclamation-circle me-1"></i>
+                                  {{ 'JOB_WIZARD.VALIDATION.CONDITION_EN_REQUIRED' | translate }}
+                                  }
+                                  @if (getConditionGroup(i).controls['textEn'].errors?.['maxlength']) {
                                   <i class="fa fa-exclamation-circle me-1"></i>
                                   {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate : { max: 500 } }}
-                                </div>
+                                  }
                                 }
                               </div>
                         </div>

@@ -186,6 +186,7 @@
   "JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY": "مسؤولية",
   "JOB_WIZARD.STEPS.RESPONSIBILITIES.REMOVE": "حذف المسؤولية",
   "JOB_WIZARD.VALIDATION.RESPONSIBILITY_AR_REQUIRED": "وصف المسؤولية باللغة العربية مطلوب.",
+  "JOB_WIZARD.VALIDATION.RESPONSIBILITY_EN_REQUIRED": "وصف المسؤولية باللغة الإنجليزية مطلوب.",
   "JOB_WIZARD.VALIDATION.MAX_LENGTH": "الحد الأقصى للطول هو {{max}} حرفًا.",
   "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_RESPONSIBILITY": "يرجى إضافة مسؤولية واحدة على الأقل للمتابعة.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_RESPONSIBILITIES": "يرجى إكمال جميع حقول المسؤوليات قبل المتابعة.",
@@ -220,6 +221,7 @@
   "JOB_WIZARD.STEPS.CONDITIONS.CONDITION": "شرط",
   "JOB_WIZARD.STEPS.CONDITIONS.REMOVE": "حذف الشرط",
   "JOB_WIZARD.VALIDATION.CONDITION_AR_REQUIRED": "وصف الشرط باللغة العربية مطلوب.",
+  "JOB_WIZARD.VALIDATION.CONDITION_EN_REQUIRED": "وصف الشرط باللغة الإنجليزية مطلوب.",
   "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_CONDITION": "يرجى إضافة شرط واحد على الأقل للمتابعة.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_CONDITIONS": "يرجى إكمال جميع حقول الشروط قبل المتابعة.",
 
@@ -229,6 +231,7 @@
   "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_EN": "وصف المزايا (الإنجليزية)",
   "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_EN_PLACEHOLDER": "Write the advantages in English...",
   "JOB_WIZARD.VALIDATION.BENEFITS_AR_REQUIRED": "حقل وصف المزايا باللغة العربية مطلوب.",
+  "JOB_WIZARD.VALIDATION.BENEFITS_EN_REQUIRED": "حقل وصف المزايا باللغة الإنجليزية مطلوب.",
   "JOB_WIZARD.STEPS.BENEFITS.AR_TIPS": "قدّم وصفًا مفصلاً وواضحًا للمزايا باللغة العربية.",
   "JOB_WIZARD.STEPS.BENEFITS.EN_TIPS": "قدّم وصفًا مفصلاً وواضحًا للمزايا باللغة الإنجليزية.",
   "JOB_WIZARD.VALIDATION.COMPLETE_BENEFITS": "يرجى إكمال قسم المزايا قبل المتابعة.",

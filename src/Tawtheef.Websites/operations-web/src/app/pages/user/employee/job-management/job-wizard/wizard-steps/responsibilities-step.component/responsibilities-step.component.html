@@ -1,160 +1,193 @@
 <div class="step-content">
   <form [formGroup]="form">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-              <h5 class="text-primary d-flex">
-                  <i class="fa fa-clipboard-check"></i>
-                  {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
-              </h5>
-              <button class="btn btn-primary d-flex" [disabled]="this.form.disabled" (click)="addResponsibility()" type="button">
-                <i class="hgi hgi-stroke hgi-plus-sign mx-1"></i>
-                {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_RESPONSIBILITY' | translate }}
-              </button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h5 class="text-primary d-flex">
+        <i class="fa fa-clipboard-check"></i>
+        {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
+      </h5>
+      <button
+        class="btn btn-primary d-flex"
+        [disabled]="this.form.disabled"
+        (click)="addResponsibility()"
+        type="button"
+      >
+        <i class="hgi hgi-stroke hgi-plus-sign mx-1"></i>
+        {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_RESPONSIBILITY' | translate }}
+      </button>
+    </div>
+    <div class="card card-table mb-4">
+      <div class="card-body">
+        <h5 class="mb-3 text-primary">
+          {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_NEW' | translate }}
+        </h5>
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-label">
+              <span class="text-danger">*</span>
+              {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR' | translate }}
+            </label>
+            <textarea
+              [(ngModel)]="newResponsibilityAr"
+              [ngModelOptions]="{ standalone: true }"
+              class="form-control custom-input"
+              rows="3"
+              dir="rtl"
+              placeholder="{{
+                'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate
+              }}"
+              (keydown.enter)="$event.preventDefault(); addResponsibility()"
+            ></textarea>
           </div>
-          <div class="card card-table mb-4">
-               <div class="card-body">
-                     <h5 class="mb-3 text-primary">{{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_NEW' | translate }}</h5>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <label class="form-label">
-                          <span class="text-danger">*</span>
-                          {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR' | translate }}
-                        </label>
-                        <textarea
-                          [(ngModel)]="newResponsibilityAr"
-                          [ngModelOptions]="{ standalone: true }"
-                          class="form-control custom-input"
-                          rows="3"
-                          dir="rtl"
-                          placeholder="{{
-                            'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate
-                          }}"
-                          (keydown.enter)="$event.preventDefault(); addResponsibility()"
-                        ></textarea>
-                      </div>
 
-                      <div class="col-md-6">
-                        <label class="form-label">
-                          <span class="text-danger">*</span>
-                          {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN' | translate }}
-                        </label>
-                        <textarea
-                          [(ngModel)]="newResponsibilityEn"
-                          [ngModelOptions]="{ standalone: true }"
-                          class="form-control custom-input"
-                          rows="3"
-                          dir="ltr"
-                          placeholder="{{
-                            'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_EN_PLACEHOLDER' | translate
-                          }}"
-                          (keydown.enter)="$event.preventDefault(); addResponsibility()"
-                        ></textarea>
-                      </div>
-                    </div>
-                   
+          <div class="col-md-6">
+            <label class="form-label">
+              <span class="text-danger">*</span>
+              {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN' | translate }}
+            </label>
+            <textarea
+              [(ngModel)]="newResponsibilityEn"
+              [ngModelOptions]="{ standalone: true }"
+              class="form-control custom-input"
+              rows="3"
+              dir="ltr"
+              placeholder="{{
+                'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_EN_PLACEHOLDER' | translate
+              }}"
+              (keydown.enter)="$event.preventDefault(); addResponsibility()"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card card-table">
+      <div class="card-body">
+        <!-- Responsibilities List -->
+        <div formArrayName="responsibilities">
+          @if (responsibilitiesArray.length === 0) {
+            <div class="empty-card text-center py-5 border rounded">
+              <i class="fa fa-clipboard-check fa-3x text-muted mb-3"></i>
+              <h6 class="text-muted">
+                {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE_TITLE' | translate }}
+              </h6>
+              <p class="text-muted small">
+                {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE_DESC' | translate }}
+              </p>
+              <div class="alert alert-info mt-3">
+                <i class="fa fa-info-circle me-2"></i>
+                {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.AT_LEAST_ONE' | translate }}
               </div>
-          </div>
-          <div class="card card-table">
-            <div class="card-body">
-                  <!-- Responsibilities List -->
-                  <div formArrayName="responsibilities">
-                        @if (responsibilitiesArray.length === 0) {
-                        <div class="empty-card text-center py-5 border rounded">
-                          <i class="fa fa-clipboard-check fa-3x text-muted mb-3"></i>
-                          <h6 class="text-muted">
-                            {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE_TITLE' | translate }}
-                          </h6>
-                          <p class="text-muted small">
-                            {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE_DESC' | translate }}
-                          </p>
-                          <div class="alert alert-info mt-3">
-                            <i class="fa fa-info-circle me-2"></i>
-                            {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.AT_LEAST_ONE' | translate }}
-                          </div>
-                        </div>
-                    } 
-                    @else {
-                        <h5 class="mb-3 text-primary">
-                          {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.LIST_TITLE' | translate }}
-                          <span class="badge bg-brand ms-2">{{ responsibilitiesArray.length }}</span>
-                        </h5>
-
-                        @for (responsibility of responsibilitiesArray.controls; track $index; let i = $index) {
-
-                        <div class="row" [formGroupName]="i">
-                             <div class="col-md-6"><h6 class="text-primary">{{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY' | translate }} {{ i + 1 }}</h6></div>
-                             <div class="col-md-6 text-end">
-                                  @if (responsibilitiesArray.length > 0) {
-                                    <button class="btn btn-outline-primary btn-sm "  (click)="removeResponsibility(i)" type="button" [title]="'JOB_WIZARD.STEPS.RESPONSIBILITIES.REMOVE' | translate">
-                                      <i class="hgi hgi-stroke hgi-delete-02"></i>
-                                    </button>
-                                  }
-                             </div>
-                            <div class="row mb-3">
-                              <div class="col-md-6">
-                                <label class="form-label"><span class="text-danger">*</span> {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR' | translate }}</label>
-                                <textarea
-                                  formControlName="textAr"
-                                  class="form-control custom-input"
-                                  rows="3"
-                                  dir="rtl"
-                                  placeholder="{{
-                                    'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER' | translate
-                                  }}"
-                                ></textarea>
-
-                                @if (getResponsibilityGroup(i).controls['textAr'].invalid &&
-                                getResponsibilityGroup(i).controls['textAr'].touched) {
-                                <div class="text-danger small mt-1">
-                                  @if (getResponsibilityGroup(i).controls['textAr'].errors?.['required']) {
-                                  <i class="fa fa-exclamation-circle me-1"></i>
-                                  {{ 'JOB_WIZARD.VALIDATION.RESPONSIBILITY_AR_REQUIRED' | translate }}
-                                  }
-                                </div>
-                                }
-                              </div>
-
-                              <div class="col-md-6">
-                                <label class="form-label">
-                                  <span class="text-danger">*</span>
-                                  {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN' | translate }}
-                                </label>
-
-                                <textarea
-                                  formControlName="textEn"
-                                  class="form-control custom-input"
-                                  rows="3"
-                                  dir="ltr"
-                                  placeholder="{{
-                                    'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_EN_PLACEHOLDER' | translate
-                                  }}"
-                                ></textarea>
-
-                                @if (getResponsibilityGroup(i).controls['textEn'].invalid &&
-                                getResponsibilityGroup(i).controls['textEn'].touched) {
-                                <div class="text-danger small mt-1">
-                                  <i class="fa fa-exclamation-circle me-1"></i>
-                                  {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate : { max: 500 } }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-                        </div>
-                        } 
-                    }
-                  </div>
-
-                  @if (!isValid() && form.touched) {
-                  <div class="alert alert-warning mt-4">
-                    <i class="fa fa-exclamation-triangle me-2"></i>
-                    @if (responsibilitiesArray.length === 0) {
-                    {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_RESPONSIBILITY' | translate }}
-                    } @else {
-                    {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_RESPONSIBILITIES' | translate }}
-                    }
-                  </div>
-                  }
             </div>
+          } @else {
+            <h5 class="mb-3 text-primary">
+              {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.LIST_TITLE' | translate }}
+              <span class="badge bg-brand ms-2">{{ responsibilitiesArray.length }}</span>
+            </h5>
+
+            @for (responsibility of responsibilitiesArray.controls; track $index; let i = $index) {
+              <div class="row" [formGroupName]="i">
+                <div class="col-md-6">
+                  <h6 class="text-primary">
+                    {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.RESPONSIBILITY' | translate }} {{ i + 1 }}
+                  </h6>
+                </div>
+                <div class="col-md-6 text-end">
+                  @if (responsibilitiesArray.length > 0) {
+                    <button
+                      class="btn btn-outline-primary btn-sm"
+                      (click)="removeResponsibility(i)"
+                      type="button"
+                      [title]="'JOB_WIZARD.STEPS.RESPONSIBILITIES.REMOVE' | translate"
+                    >
+                      <i class="hgi hgi-stroke hgi-delete-02"></i>
+                    </button>
+                  }
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label"
+                      ><span class="text-danger">*</span>
+                      {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR' | translate }}</label
+                    >
+                    <textarea
+                      formControlName="textAr"
+                      class="form-control custom-input"
+                      rows="3"
+                      dir="rtl"
+                      placeholder="{{
+                        'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_AR_PLACEHOLDER'
+                          | translate
+                      }}"
+                    ></textarea>
+
+                    @if (
+                      getResponsibilityGroup(i).controls['textAr'].invalid &&
+                      getResponsibilityGroup(i).controls['textAr'].touched
+                    ) {
+                      <div class="text-danger small mt-1">
+                        @if (getResponsibilityGroup(i).controls['textAr'].errors?.['required']) {
+                          <i class="fa fa-exclamation-circle me-1"></i>
+                          {{ 'JOB_WIZARD.VALIDATION.RESPONSIBILITY_AR_REQUIRED' | translate }}
+                        }
+                        @if (getResponsibilityGroup(i).controls['textAr'].errors?.['maxlength']) {
+                        <i class="fa fa-exclamation-circle me-1"></i>
+                        {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate: { max: 500 } }}
+                      }
+                      </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label">
+                      <span class="text-danger">*</span>
+                      {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_EN' | translate }}
+                    </label>
+
+                    <textarea
+                      formControlName="textEn"
+                      class="form-control custom-input"
+                      rows="3"
+                      dir="ltr"
+                      placeholder="{{
+                        'JOB_WIZARD.STEPS.RESPONSIBILITIES.ITEM_DESCRIPTION_EN_PLACEHOLDER'
+                          | translate
+                      }}"
+                    ></textarea>
+
+                    @if (
+                      getResponsibilityGroup(i).controls['textEn'].invalid &&
+                      getResponsibilityGroup(i).controls['textEn'].touched
+                    ) {
+                       <div class="text-danger small mt-1">
+                      @if (getResponsibilityGroup(i).controls['textEn'].errors?.['required']) {
+                        <i class="fa fa-exclamation-circle me-1"></i>
+                        {{ 'JOB_WIZARD.VALIDATION.RESPONSIBILITY_EN_REQUIRED' | translate }}
+                      }
+
+                      @if (getResponsibilityGroup(i).controls['textEn'].errors?.['maxlength']) {
+                        <i class="fa fa-exclamation-circle me-1"></i>
+                        {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate: { max: 500 } }}
+                      }
+                    </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          }
+        </div>
+
+        @if (!isValid() && form.touched) {
+          <div class="alert alert-warning mt-4">
+            <i class="fa fa-exclamation-triangle me-2"></i>
+            @if (responsibilitiesArray.length === 0) {
+              {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_RESPONSIBILITY' | translate }}
+            } @else {
+              {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_RESPONSIBILITIES' | translate }}
+            }
           </div>
+        }
+      </div>
+    </div>
   </form>
   <app-review-note [note]="note"></app-review-note>
 </div>

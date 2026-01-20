@@ -218,6 +218,10 @@
           [preloadedOptions]="subMajorOptions"
           [appendTo]="'body'"
           [panelStyle]="{ maxHeight: '260px', overflow: 'auto', width: '100%' }"
+          [invalid]="
+            form.controls.subMajorId.invalid &&
+            (form.controls.subMajorId.dirty || form.controls.subMajorId.touched)
+          "
         ></app-remote-select>
         }
       </div>
@@ -227,7 +231,9 @@
           {{ 'JOB_WIZARD.STEPS.BASICS.GENDER' | translate }}
         </label>
 
-        <div class="form-control d-flex gap-3">
+        <div class="form-control d-flex gap-3"
+        (click)="touchGender()"
+        (focusin)="touchGender()">
           @for (g of lookupsService.genders(); track g.id) {
                  <label class="d-flex gap-1 align-items-center" >
                        <p-radioButton name="gender" class=""  [value]="g.id" formControlName="genderId" [inputId]="'gender_' + g.id" ></p-radioButton>
