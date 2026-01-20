@@ -19,16 +19,21 @@ import {CreateOfficeRequest} from '../../models/create-office-request.dto';
 import {UpdateOfficeRequest} from '../../models/update-office-request.dto';
 import {OfficeUserDto} from '../../models/office-user.dto';
 import {Select} from 'primeng/select';
-import {MultiSelectModule} from 'primeng/multiselect'
 import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
 import {OfficeDetailsDto} from '../../models/office-details.dto';
+
+type PhoneCountryCodeOption = {
+  id: string;
+  name: string;
+  countryId: string;
+};
 
 @Component({
   selector: 'app-office-modal',
   standalone: true,
   templateUrl: './office-modal.component.html',
   styleUrls: ['./office-modal.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, Select, MultiSelectModule]
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, Select]
 })
 export class OfficeModalComponent implements OnInit, OnChanges {
   private fb = inject(FormBuilder);
@@ -41,6 +46,8 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   @Input() office: OfficeDetailsDto | null = null;
   @Input() officeUsers: OfficeUserDto[] = [];
   @Input() loading = false;
+
+  phoneCountryOptions: PhoneCountryCodeOption[] = [];
 
   @Output() cancel = new EventEmitter<void>();
   @Output() create = new EventEmitter<CreateOfficeRequest>();
@@ -62,14 +69,24 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     nameEn: ['', Validators.required],
     countryId: ['', Validators.required],
     supportedCountryIds: this.fb.nonNullable.control<string[]>([], this.supportedRequiredValidator),
-    adminEmail: ['', [Validators.required, Validators.email]]
+    adminNameAr: ['', Validators.required],
+    adminNameEn: ['', Validators.required],
+    adminEmail: ['', [Validators.required, Validators.email]],
+    phoneCountryCode: ['', Validators.required],
+    phoneNumber: ['', Validators.required]
   });
 
   ngOnInit(): void {
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    this.form.controls.countryId.valueChanges.subscribe(countryId => {
+      this.syncCountryFields(countryId);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['countries']) {
+      this.phoneCountryOptions = this.buildPhoneCountryOptions();
+    }
     if (this.visible && (changes['visible'] || changes['office'] || changes['officeUsers'] || changes['mode'])) {
       this.patchForm();
     }
@@ -83,7 +100,11 @@ export class OfficeModalComponent implements OnInit, OnChanges {
       nameEn: '',
       countryId: '',
       supportedCountryIds: [],
-      adminEmail: this.resolveAdminEmail()
+      adminNameAr: '',
+      adminNameEn: '',
+      adminEmail: this.resolveAdminEmail(),
+      phoneCountryCode: '',
+      phoneNumber: ''
     });
 
     if (this.office) {
@@ -91,10 +112,16 @@ export class OfficeModalComponent implements OnInit, OnChanges {
         nameAr: this.office.nameAr,
         nameEn: this.office.nameEn,
         countryId: this.office.countryId,
-        supportedCountryIds: this.office.supportedCountries?.map(sc => sc.id) || [],
-        adminEmail: this.resolveAdminEmail()
+        supportedCountryIds: this.office.countryId ? [this.office.countryId] : [],
+        adminNameAr: this.office.adminNameAr || '',
+        adminNameEn: this.office.adminNameEn || '',
+        adminEmail: this.resolveAdminEmail(),
+        phoneCountryCode: this.office.phoneCountryCode || '',
+        phoneNumber: this.office.phoneNumber || ''
       });
     }
+
+    this.syncCountryFields(this.form.controls.countryId.value);
 
     if (this.mode !== 'create') {
       this.form.controls.countryId.disable({emitEvent: false});
@@ -115,6 +142,10 @@ export class OfficeModalComponent implements OnInit, OnChanges {
 
   isViewMode() {
     return this.mode === 'view';
+  }
+
+  isOfficeAdmin(user: OfficeUserDto) {
+    return user.isAdmin || user.email === this.office?.adminEmail;
   }
 
   private resolveAdminEmail() {
@@ -141,11 +172,51 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   }
 
   promoteToAdmin(user: OfficeUserDto) {
-    if (user.isAdmin) {
+    if (this.isOfficeAdmin(user)) {
       return;
     }
 
     this.makeAdmin.emit(user.id);
+  }
+
+  private syncCountryFields(countryId: string) {
+    if (!countryId) {
+      this.form.controls.supportedCountryIds.setValue([], {emitEvent: false});
+      this.form.controls.phoneCountryCode.setValue('', {emitEvent: false});
+      return;
+    }
+
+    this.form.controls.supportedCountryIds.setValue([countryId], {emitEvent: false});
+
+    const selectedCountry = this.countries.find(country => country.id === countryId);
+    const dialCode = this.formatDialCode(selectedCountry?.description);
+    if (dialCode) {
+      this.form.controls.phoneCountryCode.setValue(dialCode, {emitEvent: false});
+    }
+  }
+
+  private buildPhoneCountryOptions() {
+    return this.countries
+      .map(country => {
+        const dialCode = this.formatDialCode(country.description);
+        if (!dialCode) {
+          return null;
+        }
+        return {
+          id: dialCode,
+          name: `${dialCode} - ${country.name}`,
+          countryId: country.id
+        };
+      })
+      .filter((option): option is PhoneCountryCodeOption => option !== null);
+  }
+
+  private formatDialCode(value?: string) {
+    const trimmed = value?.trim() || '';
+    if (!trimmed) {
+      return '';
+    }
+    return trimmed.startsWith('+') ? trimmed : `+${trimmed}`;
   }
 
   submit() {
@@ -159,7 +230,17 @@ export class OfficeModalComponent implements OnInit, OnChanges {
       return;
     }
 
-    const {nameAr, nameEn, countryId, supportedCountryIds, adminEmail} = this.form.getRawValue();
+    const {
+      nameAr,
+      nameEn,
+      countryId,
+      adminNameAr,
+      adminNameEn,
+      adminEmail,
+      phoneCountryCode,
+      phoneNumber
+    } = this.form.getRawValue();
+    const supportedCountryIds = countryId ? [countryId] : [];
 
     if (this.isEditMode() && this.office) {
       this.update.emit({
@@ -168,6 +249,10 @@ export class OfficeModalComponent implements OnInit, OnChanges {
           nameAr,
           nameEn,
           adminEmail,
+          adminNameAr,
+          adminNameEn,
+          phoneCountryCode,
+          phoneNumber,
           supportedCountryIds
         }
       });
@@ -177,7 +262,11 @@ export class OfficeModalComponent implements OnInit, OnChanges {
         nameEn,
         countryId,
         supportedCountryIds,
-        adminEmail
+        adminEmail,
+        adminNameAr,
+        adminNameEn,
+        phoneCountryCode,
+        phoneNumber
       });
     }
   }

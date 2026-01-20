@@ -6,5 +6,9 @@ export interface OfficeDto {
   nameEn: string;
   country: dropdownOptionsModel;
   supportedCountries: dropdownOptionsModel[];
+  adminNameAr?: string;
+  adminNameEn?: string;
   adminEmail: string;
+  phoneCountryCode?: string;
+  phoneNumber?: string;
 }

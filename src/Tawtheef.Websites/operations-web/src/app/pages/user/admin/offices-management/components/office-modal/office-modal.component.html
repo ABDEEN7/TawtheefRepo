@@ -72,24 +72,26 @@
       </div>
 
       <div class="form-group mb-3">
-        <label>{{ 'OFFICES.SUPPORTED_COUNTRIES' | translate }}</label>
-        <p-multiSelect
-          formControlName="supportedCountryIds"
-          [options]="countries"
-          optionValue="id"
-          optionLabel="name"
-          display="chip"
-          [filter]="true"
-          filterBy="name"
-          [placeholder]="'OFFICES.SUPPORTED_COUNTRIES' | translate"
-          class="w-100 form-select form-select-sm"
-          [ngClass]="{'p-invalid': submitted && form.controls.supportedCountryIds.invalid}">
-          <ng-template #item let-country>
-            {{ country.name }}
-          </ng-template>
-        </p-multiSelect>
-        @if (submitted && form.controls.supportedCountryIds.invalid) {
-          <div class="invalid-feedback d-block">{{ 'OFFICES.SUPPORTED_REQUIRED' | translate }}</div>
+        <label>{{ 'OFFICES.ADMIN_NAME_AR' | translate }}</label>
+        <input
+          class="form-control"
+          formControlName="adminNameAr"
+          [readonly]="isViewMode()"
+          [class.is-invalid]="submitted && form.controls.adminNameAr.invalid" />
+        @if (submitted && form.controls.adminNameAr.invalid) {
+          <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+        }
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'OFFICES.ADMIN_NAME_EN' | translate }}</label>
+        <input
+          class="form-control"
+          formControlName="adminNameEn"
+          [readonly]="isViewMode()"
+          [class.is-invalid]="submitted && form.controls.adminNameEn.invalid" />
+        @if (submitted && form.controls.adminNameEn.invalid) {
+          <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
         }
       </div>
 
@@ -100,9 +102,33 @@
           formControlName="adminEmail"
           [readonly]="isViewMode()"
           [class.is-invalid]="submitted && form.controls.adminEmail.invalid" />
-        <small class="text-muted">{{ 'OFFICES.ADD_ADMIN_HINT' | translate }}</small>
         @if (submitted && form.controls.adminEmail.invalid) {
           <div class="invalid-feedback d-block">{{ emailError() }}</div>
+        }
+      </div>
+
+      <div class="form-group mb-3">
+        <label>{{ 'OFFICES.PHONE_NUMBER' | translate }}</label>
+        <div class="input-group">
+          <p-select
+            formControlName="phoneCountryCode"
+            [options]="phoneCountryOptions"
+            optionLabel="name"
+            optionValue="id"
+            [placeholder]="'OFFICES.PHONE_COUNTRY_CODE' | translate"
+            [disabled]="isViewMode()"
+            class="form-select form-select-sm phone-code-select"
+            [ngClass]="{'p-invalid': submitted && form.controls.phoneCountryCode.invalid}">
+          </p-select>
+          <input
+            class="form-control"
+            formControlName="phoneNumber"
+            [readonly]="isViewMode()"
+            [class.is-invalid]="submitted && form.controls.phoneNumber.invalid"
+            [placeholder]="'OFFICES.PHONE_NUMBER_PLACEHOLDER' | translate" />
+        </div>
+        @if (submitted && (form.controls.phoneCountryCode.invalid || form.controls.phoneNumber.invalid)) {
+          <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
         }
       </div>
 
@@ -143,7 +169,7 @@
                       </span>
                     </td>
                     <td>
-                      {{ user.isAdmin ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.ROLE_USER' | translate) }}
+                      {{ isOfficeAdmin(user) ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.ROLE_USER' | translate) }}
                     </td>
                     <td class="text-end">
                       <div class="d-flex gap-2 justify-content-end flex-wrap">
@@ -160,9 +186,9 @@
                           type="button"
                           class="btn btn-outline-primary btn-sm"
                           (click)="promoteToAdmin(user)"
-                          [disabled]="(user.email === office!.adminEmail) || loading"
+                          [disabled]="isOfficeAdmin(user) || loading"
                           aria-label="{{ 'OFFICES.MAKE_ADMIN' | translate }}">
-                          {{ user.isAdmin ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.MAKE_ADMIN' | translate) }}
+                          {{ isOfficeAdmin(user) ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.MAKE_ADMIN' | translate) }}
                         </button>
                       </div>
                     </td>
