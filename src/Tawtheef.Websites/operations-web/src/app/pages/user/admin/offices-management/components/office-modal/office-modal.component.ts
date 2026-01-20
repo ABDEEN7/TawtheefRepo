@@ -59,7 +59,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   @Input() loading = false;
 
   searchCountryFields = [SearchCountryField.Iso2, SearchCountryField.Name];
-  selectedCountryIso = signal<CountryISO | undefined>(undefined);
+  selectedCountryIso = signal<CountryISO>(CountryISO.Qatar);
   phoneCountries = computed(() => {
     const countries = this.countries
       .map(country => this.getCountryIso(country))
@@ -231,14 +231,14 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     };
   }
 
-  private getCountryIso(country?: dropdownOptionsModel | null): CountryISO | undefined {
+  private getCountryIso(country?: dropdownOptionsModel | null): CountryISO {
     const iso = country?.additionalData?.isoCode || country?.additionalData?.codeAlpha;
     if (!iso) {
-      return undefined;
+      return CountryISO.Qatar;
     }
     const normalized = iso.trim().toUpperCase();
     if (normalized.length !== 2) {
-      return undefined;
+      return CountryISO.Qatar;
     }
     return normalized as CountryISO;
   }
