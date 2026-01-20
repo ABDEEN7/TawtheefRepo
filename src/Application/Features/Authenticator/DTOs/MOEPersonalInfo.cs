@@ -74,11 +74,29 @@ public class MOEPersonalInfo
     [DataMember]
     public required string PersonType { get; set; }
 
-    [DataMember]
-    public DateOnly ResidencyExpiryDate { get; set; }
+    [DataMember(Name = "ResidencyExpiryDate")]
+    public string? ResidencyExpiryDateRaw { get; set; }
 
-    [DataMember]
-    public DateOnly ResidencyIssueDate { get; set; }
+    [DataMember(Name = "ResidencyIssueDate")]
+    public string? ResidencyIssueDateRaw { get; set; }
+
+    [IgnoreDataMember]
+    public DateOnly? ResidencyExpiryDate =>
+        TryParseDateOnly(ResidencyExpiryDateRaw);
+
+    [IgnoreDataMember]
+    public DateOnly? ResidencyIssueDate =>
+        TryParseDateOnly(ResidencyIssueDateRaw);
+
+    private static DateOnly? TryParseDateOnly(string? s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return null;
+        if (DateTime.TryParse(s, out var dt))
+            return DateOnly.FromDateTime(dt);
+        if (DateOnly.TryParse(s, out var d))
+            return d;
+        return null;
+    }
 
     [DataMember]
     [AllowedValues("MALE", "FEMALE", ErrorMessage = "Gender must be either 'MALE' or 'FEMALE'.")]

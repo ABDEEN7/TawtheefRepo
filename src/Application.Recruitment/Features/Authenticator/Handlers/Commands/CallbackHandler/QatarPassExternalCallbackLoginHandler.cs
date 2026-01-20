@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
-using Application.Recruitment.Features.Authenticator.Commands;
+using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using Application.Recruitment.Features.Authenticator.DTOs;
 using Cortex.Mediator.Commands;
 using FluentResults;

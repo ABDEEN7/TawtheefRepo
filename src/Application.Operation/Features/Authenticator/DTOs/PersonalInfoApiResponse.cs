@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using Tawtheef.Application.Features.Authenticator.DTOs;
 
 namespace Application.Operation.Features.Authenticator.DTOs;
 

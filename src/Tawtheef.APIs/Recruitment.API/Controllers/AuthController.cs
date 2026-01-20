@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using Cortex.Mediator;
 using FluentResults;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
