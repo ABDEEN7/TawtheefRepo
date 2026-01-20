@@ -793,3 +793,21 @@ body.ltr
     left: 0;
    
 }
+
+:dir(rtl) .office-phone .iti--allow-dropdown .iti__flag-container {
+  right: 0 !important;
+  left: auto !important;
+}
+
+:dir(rtl) .office-phone .form-control {
+  direction: ltr;
+}
+
+:dir(ltr) .office-phone .form-control {
+  direction: rtl;
+}
+
+:dir(ltr) .office-phone .iti--allow-dropdown .iti__flag-container {
+  right: auto;
+  left: 0;
+}

@@ -11,12 +11,25 @@ public sealed class OfficeProfile : IRegister
     {
         config.NewConfig<Office, OfficeDto>()
             .Map(dest => dest.AdminEmail, src => src.OfficeAdmin == null ? null : src.OfficeAdmin.Email ?? null)
+            .Map(dest => dest.AdminNameAr, src => src.OfficeAdmin == null ? string.Empty : src.OfficeAdmin.FullNameAr)
+            .Map(dest => dest.AdminNameEn, src => src.OfficeAdmin == null ? string.Empty : src.OfficeAdmin.FullNameEn)
             .Map(dest => dest.SupportedCountries,src => src.SupportedCountries.Select(sc=>sc.Country)
                 .OrderByDescending(sc => sc.CreatedDate));
 
         config.NewConfig<Office, OfficeDetailsDto>()
-            .Map(dest => dest.Users, src => src.OfficeUsers)
+            .Map(dest => dest.Users, src => (src.OfficeUsers ?? [])
+                .Select(user => new OfficeUserDto
+                {
+                    Id = user.Id,
+                    FullNameAr = user.FullNameAr,
+                    FullNameEn = user.FullNameEn,
+                    Email = user.Email ?? string.Empty,
+                    IsBlocked = user.IsBlocked,
+                    IsAdmin = user.Id == src.OfficeAdminId
+                }))
             .Map(dest => dest.AdminEmail, src => src.OfficeAdmin == null ? null : src.OfficeAdmin.Email ?? null)
+            .Map(dest => dest.AdminNameAr, src => src.OfficeAdmin == null ? string.Empty : src.OfficeAdmin.FullNameAr)
+            .Map(dest => dest.AdminNameEn, src => src.OfficeAdmin == null ? string.Empty : src.OfficeAdmin.FullNameEn)
             .Map(dest => dest.SupportedCountries,src => src.SupportedCountries.Select(sc=>sc.Country)
                     .OrderByDescending(sc => sc.CreatedDate));
         
