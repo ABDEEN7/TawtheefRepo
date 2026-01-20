@@ -4,6 +4,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Common;
 
+//TODO: check how re-order columns in table
 public abstract class BaseEntity : IBaseEntity
 {
     public Guid Id { get; set; }
