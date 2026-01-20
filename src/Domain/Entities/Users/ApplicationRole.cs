@@ -11,6 +11,8 @@ public static class SystemRoleIds
     
     public static Guid OfficeAdmin = Guid.Parse("98e20970-b6bc-4da9-a947-f75e9adae3ca");
     public static Guid OfficeUser = Guid.Parse("12f5805d-6970-4a9e-a275-2b7cf3db3bb8");
+    
+    public static Guid DepartmentManager = Guid.Parse("ac011a30-6b0e-496c-a8ef-ba8132bd1808");
 }
 public class ApplicationRole : IdentityRole<Guid>
 {

@@ -60,6 +60,18 @@ public sealed class ApplicationRoleConfiguration
             },
             new ApplicationRole
             {
+                Id = SystemRoleIds.DepartmentManager,
+                Name = nameof(SystemRoleIds.DepartmentManager),
+                NormalizedName = nameof(SystemRoleIds.DepartmentManager).ToUpper(),
+                NameAr = "مدير القسم",
+                NameEn = "Department Manager",
+                DescriptionAr = "مدير القسم",
+                DescriptionEn = "Department Manager",
+                IsSystemRole = true,
+                ConcurrencyStamp = "acfb9736-65f0-4112-8645-f989ba91eba1"
+            },
+            new ApplicationRole
+            {
                 Id = SystemRoleIds.EmployeeSuperAdmin,
                 Name = nameof(SystemRoleIds.EmployeeSuperAdmin),
                 NormalizedName = nameof(SystemRoleIds.EmployeeSuperAdmin).ToUpper(),
