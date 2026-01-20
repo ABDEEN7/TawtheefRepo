@@ -1,0 +1,4 @@
+namespace Application.Operation.Templates.ChangeJobStatusNeedUpdateNotification;
+
+public sealed record ChangeJobStatusNeedUpdateNotification;
+public sealed record ChangeJobStatusNeedUpdateNotificationModel(string JobTitle);

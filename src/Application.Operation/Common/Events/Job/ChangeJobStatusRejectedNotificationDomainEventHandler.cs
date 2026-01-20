@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Operation.Templates.JobDeletedNotification;
+using Application.Operation.Templates.ChangeJobStatusRejectedNotification;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -9,21 +9,22 @@ using Tawtheef.Domain.Events.Operation.Employee.Job;
 
 namespace Application.Operation.Common.Events.Job;
 
-public sealed class JobDeletedDomainEventHandler(
+public sealed class ChangeJobStatusRejectedNotificationDomainEventHandler(
     UserManager<User> userManager,
     ILocalizationService localizationService,
     IUnitOfWork unitOfWork)
-    : INotificationHandler<JobDeletedDomainEvent>
+    : INotificationHandler<ChangeJobStatusRejectedNotificationDomainEvent>
 {
-    public async Task Handle(JobDeletedDomainEvent notification, CancellationToken ct)
+    public async Task Handle(ChangeJobStatusRejectedNotificationDomainEvent notification, CancellationToken ct)
     {
         var jobTitle = localizationService.GetLocalizedValue(notification.Job.TitleAr, notification.Job.TitleEn);
-        var payload = JsonSerializer.Serialize(new JobDeletedNotificationModel(jobTitle));
-        await JobNotificationEmailHelper.QueueForHrAdminsAsync(
+        var payload = JsonSerializer.Serialize(new ChangeJobStatusRejectedNotificationModel(jobTitle));
+        await JobNotificationEmailHelper.QueueForEmployeeAsync(
             unitOfWork,
             userManager,
-            nameof(JobDeletedNotification),
-            "Job Posting Removed",
+            notification.Job.CreatedById.ToString()!,
+            nameof(ChangeJobStatusRejectedNotification),
+            "Job Request Rejected",
             payload,
             ct);
     }

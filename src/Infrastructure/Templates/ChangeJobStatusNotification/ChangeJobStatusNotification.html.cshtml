@@ -1,6 +1,4 @@
-﻿@using Application.Operation.Templates.ChangeJobStatusNotification
-@using Tawtheef.Infrastructure.Services.NotificationServices
-@model TemplateContext<ChangeJobStatusNotificationModel>
+@model Tawtheef.Infrastructure.Services.NotificationServices.TemplateContext<Application.Operation.Templates.ChangeJobStatusNotification.ChangeJobStatusNotificationModel>
 
 @{
     var b = Model.Branding;
@@ -12,24 +10,28 @@
     var website = b.WebsiteUrl;
     var logo = b.LogoUrl;
 
-    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job" : m.JobTitle;
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job posting" : m.JobTitle;
 }
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@product - Job Requires Review</title>
+  <title>@product - Job Status Review Required</title>
   <style>
-    body { margin:0; padding:0; background:#f7f4f6; font-family: Arial, sans-serif; }
-    .container { max-width:600px; margin:20px auto; background:#ffffff; border:1px solid #efe7eb; border-radius:12px; overflow:hidden; }
-    .brand-bar { height:6px; background:@primary; }
-    .content { padding:24px; color:#111827; }
-    .title { font-size:20px; font-weight:700; margin:0 0 12px 0; }
-    .text { font-size:15px; line-height:22px; margin:0 0 16px 0; }
-    .footer { font-size:12px; color:#6B7280; padding:16px 24px 24px; }
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
     .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
   </style>
 </head>
 <body>
@@ -42,17 +44,25 @@
           <img class="logo" src="@logo" alt="@product">
         </a>
       }
-      <h1 class="title">Job requires review</h1>
+      <p class="badge">Review required</p>
+      <h1 class="title">Job status change requires review</h1>
+      <p class="text">Dear Colleague,</p>
       <p class="text">
-        The job (@jobTitle) requires review.
+        A request has been submitted to change the status of <strong>@jobTitle</strong>.
       </p>
       <p class="text">
-        Please log in to the Tawtheef system to review the job status.
+        Please sign in to @product to review the request and proceed with the appropriate action.
+      </p>
+      <a class="cta" href="@website">Review request in @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
       </p>
     </div>
     <div class="footer">
-      -- @product<br>
-      Support: @support
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;">@support</a></p>
+      <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
     </div>
   </div>
 </body>
