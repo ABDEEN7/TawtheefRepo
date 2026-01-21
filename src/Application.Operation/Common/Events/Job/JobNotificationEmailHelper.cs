@@ -7,7 +7,7 @@ namespace Application.Operation.Common.Events.Job;
 
 internal static class JobNotificationEmailHelper
 {
-    internal static async Task QueueForHrAdminsAsync(
+    internal static async Task QueueForDepartmentManagerAsync(
         IUnitOfWork unitOfWork,
         UserManager<User> userManager,
         string templateKey,
@@ -15,8 +15,7 @@ internal static class JobNotificationEmailHelper
         string payloadJson,
         CancellationToken ct)
     {
-        //TODO :: Must Only Get Departments Managers not employee 
-        var users = await userManager.GetUsersInRoleAsync(nameof(SystemRoleIds.Employee));
+        var users = await userManager.GetUsersInRoleAsync(nameof(SystemRoleIds.DepartmentManager));
         if (users.Count == 0)
             return;
 
