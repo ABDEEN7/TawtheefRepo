@@ -1,4 +1,6 @@
+
 using System.Globalization;
+using System.Net.Mail;
 using System.Reflection;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
@@ -9,13 +11,14 @@ using Tawtheef.Notifications.Attributes;
 using Tawtheef.Notifications.Context;
 using Tawtheef.Notifications.Interfaces;
 using Tawtheef.Notifications.Services;
+using Tawtheef.Notifications.Utils;
 
 NotificationTemplateRegistry.AutoRegisterFrom(typeof(NotificationAssemblyMarker).Assembly);
 
 var templates = typeof(NotificationAssemblyMarker).Assembly
     .GetTypes()
     .Where(type => type is { IsAbstract: false, IsInterface: false })
-    .Select(type => new TemplateEntry(type, type.GetCustomAttribute<NotificationTemplateAttribute>()))
+    .Select(type => new TemplateEntry(type, type.GetCustomAttribute<NotificationTemplateAttribute>()!))
     .Where(entry => entry.Attribute is not null)
     .Select(entry => entry with { Attribute = entry.Attribute! })
     .OrderBy(entry => entry.Attribute.TemplateKey)
@@ -27,9 +30,29 @@ if (templates.Count == 0)
     return;
 }
 
-var branding = BuildBranding();
+var emailSettings = new EmailSettings
+{
+    SmtpHost = "smtp.edu.gov.qa",
+    SmtpPort = 25,
+    EmailUser = "tawtheef@edu.gov.qa",
+    EmailPass = "Taw@Theef",
+    ManagerEmails = "manager@tawtheef.local",
+    ContactUsEmail = "contact@tawtheef.local",
+    ProductName = "Tawtheef"
+};
+
+var appConfig = new AppConfigSettings
+{
+    FrontendUrl = "https://localhost",
+    BackendUrl = "https://localhost",
+    BlobSignKey = "dev",
+    AdminEmail = "admin@tawtheef.local",
+    AdminEmails = ["admin@tawtheef.local"],
+    DefaultSignedUrlMinutes = 3
+};
+var branding = new DefaultBranding(Options.Create(emailSettings), Options.Create(appConfig));
 var renderer = new RazorTemplateRenderer(branding);
-var transport = new FileEmailTransport(Path.Combine(AppContext.BaseDirectory, "sent-emails"));
+var transport = new FileEmailTransport(emailSettings);
 
 Console.WriteLine("Notification Template Tester");
 Console.WriteLine("============================");
@@ -67,31 +90,6 @@ while (true)
     Console.WriteLine("Invalid option. Try again.");
 }
 
-static IEmailBranding BuildBranding()
-{
-    var emailSettings = new EmailSettings
-    {
-        SmtpHost = "localhost",
-        EmailUser = "noreply@tawtheef.local",
-        EmailPass = "password",
-        ManagerEmails = "manager@tawtheef.local",
-        ContactUsEmail = "contact@tawtheef.local",
-        ProductName = "Tawtheef"
-    };
-
-    var appConfig = new AppConfigSettings
-    {
-        FrontendUrl = "https://localhost",
-        BackendUrl = "https://localhost",
-        BlobSignKey = "dev",
-        AdminEmail = "admin@tawtheef.local",
-        AdminEmails = ["admin@tawtheef.local"],
-        DefaultSignedUrlMinutes = 3
-    };
-
-    return new DefaultBranding(Options.Create(emailSettings), Options.Create(appConfig));
-}
-
 static async Task SendTemplateAsync(
     TemplateEntry templateEntry,
     IEmailTemplateRenderer renderer,
@@ -110,8 +108,8 @@ static async Task SendTemplateAsync(
     var model = BuildModel(modelType);
 
     Console.WriteLine("Rendering template...");
-    var html = await renderer.RenderHtmlAsync(templateKey, model);
-    var text = await renderer.RenderTextAsync(templateKey, model);
+    var html = await renderer.RenderHtmlAsync(templateKey, (dynamic)model);
+    var text = await renderer.RenderTextAsync(templateKey, (dynamic)model);
 
     var envelope = new EmailEnvelope(to, cc, subject, html, text);
     await transport.SendAsync(envelope);
@@ -218,29 +216,32 @@ static object? ConvertInput(string value, Type targetType)
     return Convert.ChangeType(value, nonNullable, CultureInfo.InvariantCulture);
 }
 
-sealed class FileEmailTransport(string outputDirectory) : IEmailTransport
+sealed class FileEmailTransport(EmailSettings emailSettings) : IEmailTransport
 {
     public Task SendAsync(EmailEnvelope envelope, CancellationToken ct = default)
     {
-        Directory.CreateDirectory(outputDirectory);
+        using var message = new MailMessage
+        {
+            From = new MailAddress(emailSettings.EmailUser),
+            Subject = envelope.Subject,
+            Body = envelope.HtmlBody,
+            IsBodyHtml = true,
+        };
 
-        var stamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff", CultureInfo.InvariantCulture);
-        var safeSubject = string.Concat(envelope.Subject.Split(Path.GetInvalidFileNameChars()));
-        var baseName = string.IsNullOrWhiteSpace(safeSubject)
-            ? stamp
-            : $"{stamp}-{safeSubject}";
+        foreach(var to in envelope.To)
+            message.To.Add(to);
 
-        var htmlPath = Path.Combine(outputDirectory, $"{baseName}.html");
-        var textPath = Path.Combine(outputDirectory, $"{baseName}.txt");
+        foreach(var cc in envelope.Cc ?? [])
+            message.To.Add(cc);
 
-        File.WriteAllText(htmlPath, envelope.HtmlBody ?? string.Empty);
-        File.WriteAllText(textPath, envelope.PlainTextBody ?? string.Empty);
+        using var smtp = new SmtpClient(emailSettings.SmtpHost, emailSettings.SmtpPort)
+        {
+            EnableSsl = true,
+            //UseDefaultCredentials = false
+            // IMPORTANT: no Credentials set
+        };
 
-        Console.WriteLine($"Saved HTML: {htmlPath}");
-        Console.WriteLine($"Saved Text: {textPath}");
-        Console.WriteLine($"Recipients: {string.Join(", ", envelope.To)}");
-        Console.WriteLine($"Subject: {envelope.Subject}");
-
+        smtp.Send(message);
         return Task.CompletedTask;
     }
 }
