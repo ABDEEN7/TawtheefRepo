@@ -128,7 +128,7 @@ export class OfficeUsersManagementPage implements OnInit {
       width: '420px'
     });
 
-    ref.onClose.subscribe(result => {
+    ref?.onClose.subscribe(result => {
       if (result) {
         this.loadUsers();
       }
@@ -143,7 +143,7 @@ export class OfficeUsersManagementPage implements OnInit {
       data: { user }
     });
 
-    ref.onClose.subscribe(result => {
+    ref?.onClose.subscribe(result => {
       if (result) {
         this.loadUsers();
       }
