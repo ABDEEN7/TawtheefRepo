@@ -54,8 +54,6 @@ using Tawtheef.Infrastructure.Services.Validations;
 using Tawtheef.Notifications;
 using Tawtheef.Notifications.Context;
 using Tawtheef.Notifications.Interfaces;
-using Tawtheef.Notifications.Templates.Recruitment.ContactVerificationSent;
-using Tawtheef.Notifications.Utils;
 
 namespace Tawtheef.Infrastructure
 {
@@ -285,11 +283,6 @@ namespace Tawtheef.Infrastructure
                             UseDefaultCredentials = false
                         };
                     });
-            }
-            
-            private void AddRecruitmentNotification()
-            {
-                NotificationTemplateRegistry.RegisterFromAssembly(typeof(ContactVerificationSentModel).Assembly);
             }
         }
 
