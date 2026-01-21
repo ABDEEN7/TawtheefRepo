@@ -1,4 +1,4 @@
-﻿namespace Tawtheef.Application.Common.Interfaces.NotificationServices;
+﻿namespace Tawtheef.Notifications.Interfaces;
 
 public interface IEmailTemplateRenderer
 {
