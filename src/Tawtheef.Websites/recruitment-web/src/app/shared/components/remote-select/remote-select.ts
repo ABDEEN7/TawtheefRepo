@@ -157,7 +157,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   get computedPlaceholder(): string {
     if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-      return this.placeholder || 'Select parent first';
+      return this.placeholder;
     }
     return this.placeholder;
   }
@@ -209,7 +209,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
       return;
     }
 
-    const params = this.buildParams(searchTerm);  
+    const params = this.buildParams(searchTerm);
 
     this.isLoading = true;
     this.http
