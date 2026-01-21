@@ -11,6 +11,7 @@ import {OfficeUserUpsertDto} from '../../models/office-user-upsert.dto';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
 import {Lang, LanguageService} from '../../../../../../core/services/language.service';
+import {AuthService} from '../../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-office-user-dialog',
@@ -33,14 +34,21 @@ export class OfficeUserDialogComponent implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private auth = inject(AuthService);
 
   user = signal<OfficeUserDto | null>(null);
+  currentUserId = signal<string | null>(this.auth.getCurrentUser()?.userId ?? null);
   nameAr = '';
   nameEn = '';
   email = '';
   isSaving = signal(false);
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
+  isEditingSelf = computed(() => {
+    const currentUserId = this.currentUserId();
+    const selectedUser = this.user();
+    return !!currentUserId && !!selectedUser && selectedUser.id === currentUserId;
+  });
 
   ngOnInit(): void {
     const user = this.config.data?.user as OfficeUserDto | undefined;
@@ -52,6 +60,9 @@ export class OfficeUserDialogComponent implements OnInit {
     }
 
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    this.auth.currentUser$.subscribe(currentUser =>
+      this.currentUserId.set(currentUser?.userId ?? null)
+    );
   }
 
   save(): void {

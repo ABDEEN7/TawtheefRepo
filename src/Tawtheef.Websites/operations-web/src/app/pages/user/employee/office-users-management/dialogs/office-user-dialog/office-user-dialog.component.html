@@ -30,6 +30,7 @@
       type="email"
       class="form-control"
       [(ngModel)]="email"
+      [disabled]="isEditingSelf()"
       [placeholder]="'OFFICE_USERS.EMAIL_PLACEHOLDER' | translate" />
   </div>
 

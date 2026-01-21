@@ -18,6 +18,7 @@ import {Lang, LanguageService} from '../../../../core/services/language.service'
 import {Permissions} from '../../../../core/constants/permissions';
 import {OfficeSummaryDto} from './models/office-summary.dto';
 import {OfficeUserDialogComponent} from './dialogs/office-user-dialog/office-user-dialog.component';
+import {AuthService} from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-office-users-management',
@@ -42,14 +43,17 @@ export class OfficeUsersManagementPage implements OnInit {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
   private dialogService = inject(DialogService);
+  private auth = inject(AuthService);
 
   private _users = signal<OfficeUserDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
   private _officeSummary = signal<OfficeSummaryDto | null>(null);
+  private _currentUserId = signal<string | null>(this.auth.getCurrentUser()?.userId ?? null);
 
   users = this._users.asReadonly();
   paginationMetadata = this._paginationMetadata.asReadonly();
   officeSummary = this._officeSummary.asReadonly();
+  currentUserId = this._currentUserId.asReadonly();
 
   filters = signal<OfficeUserFilters>({
     pageNumber: 1,
@@ -87,6 +91,7 @@ export class OfficeUsersManagementPage implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    this.auth.currentUser$.subscribe(user => this._currentUserId.set(user?.userId ?? null));
   }
 
   loadUsers(): void {
@@ -151,6 +156,7 @@ export class OfficeUsersManagementPage implements OnInit {
   }
 
   toggleBlock(user: OfficeUserDto): void {
+    if (this.isCurrentUser(user)) return;
     const desiredState = !user.isBlocked;
     this.officeUsersService.updateBlockStatus(user.id, desiredState).subscribe({
       next: () => {
@@ -164,5 +170,10 @@ export class OfficeUsersManagementPage implements OnInit {
         );
       }
     });
+  }
+
+  isCurrentUser(user: OfficeUserDto): boolean {
+    const currentUserId = this.currentUserId();
+    return !!currentUserId && user.id === currentUserId;
   }
 }
