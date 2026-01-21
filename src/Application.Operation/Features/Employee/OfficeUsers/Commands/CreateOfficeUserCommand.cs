@@ -5,7 +5,7 @@ namespace Application.Operation.Features.Employee.OfficeUsers.Commands;
 
 public sealed record CreateOfficeUserCommand : ICommand<IResult<Guid>>
 {
-    public string NameAr { get; init; } = string.Empty;
-    public string NameEn { get; init; } = string.Empty;
-    public string Email { get; init; } = string.Empty;
+    public required string NameAr { get; init; }
+    public required string NameEn { get; init; }
+    public required string Email { get; init; }
 }

@@ -3,6 +3,8 @@
   "server-error.INVALID_RECAPTCHA": "فشل التحقق من رمز الأمان.",
   "server-error.INVALID_DEVICE_ID": "معرّف الجهاز غير صالح.",
   "server-error.EMAIL_REQUIRED": "البريد الإلكتروني مطلوب.",
+  "server-error.NAME_AR_REQUIRED": "الاسم باللغة العربية مطلوب.",
+  "server-error.NAME_EN_REQUIRED": "الاسم باللغة الإنجليزية مطلوب.",
   "server-error.USER_NAME_REQUIRED": "اسم المستخدم مطلوب.",
   "server-error.PHONE_NUMBER_REQUIRED": "رقم الهاتف مطلوب.",
   "server-error.CONCURRENCY_FAILURE": "حدث تعارض أثناء تنفيذ العملية، يرجى المحاولة مرة أخرى.",

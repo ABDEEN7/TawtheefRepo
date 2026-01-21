@@ -2,6 +2,7 @@ using Application.Operation.Features.Employee.OfficeUsers.DTOs;
 using Application.Operation.Features.Employee.OfficeUsers.Queries;
 using Cortex.Mediator.Queries;
 using FluentResults;
+using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
@@ -14,7 +15,8 @@ namespace Application.Operation.Features.Employee.OfficeUsers.Handlers.Queries;
 
 public sealed class GetOfficeUsersQueryHandler(
     UserManager<User> userManager,
-    ICurrentUserService currentUserService)
+    ICurrentUserService currentUserService,
+    IMapper mapper)
     : IQueryHandler<GetOfficeUsersQuery, IResult<PaginatedResult<OfficeUserListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<OfficeUserListItemDto>>> Handle(
@@ -55,15 +57,7 @@ public sealed class GetOfficeUsersQueryHandler(
 
         var result = await queryable
             .OrderBy(user => user.FullNameEn)
-            .Select(user => new OfficeUserListItemDto
-            {
-                Id = user.Id,
-                FullNameAr = user.FullNameAr,
-                FullNameEn = user.FullNameEn,
-                Email = user.Email ?? string.Empty,
-                IsBlocked = user.IsBlocked
-            })
-            .ToPaginatedListAsync(request, cancellationToken);
+            .ToPaginatedListAsync<OfficeUserListItemDto>(mapper, request, cancellationToken);
 
         result.AdditionalData = officeSummary;
 
