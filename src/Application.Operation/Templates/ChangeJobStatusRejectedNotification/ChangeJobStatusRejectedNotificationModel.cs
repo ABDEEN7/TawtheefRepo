@@ -1,4 +1,0 @@
-namespace Application.Operation.Templates.ChangeJobStatusRejectedNotification;
-
-public sealed record ChangeJobStatusRejectedNotification;
-public sealed record ChangeJobStatusRejectedNotificationModel(string JobTitle);
