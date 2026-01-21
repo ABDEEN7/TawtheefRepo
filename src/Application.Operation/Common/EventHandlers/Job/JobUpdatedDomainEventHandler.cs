@@ -5,7 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
-using Tawtheef.Notifications.Templates.Operation.JobUpdatedNotification;
+using Tawtheef.Notifications.Templates.JobUpdatedNotification;
 
 namespace Application.Operation.Common.EventHandlers.Job;
 

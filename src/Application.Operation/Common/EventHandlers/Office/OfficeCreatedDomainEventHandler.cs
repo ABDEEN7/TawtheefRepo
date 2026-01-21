@@ -7,7 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Office;
-using Tawtheef.Notifications.Templates.Operation.OfficeCreatedNotification;
+using Tawtheef.Notifications.Templates.OfficeCreatedNotification;
 
 namespace Application.Operation.Common.EventHandlers.Office;
 

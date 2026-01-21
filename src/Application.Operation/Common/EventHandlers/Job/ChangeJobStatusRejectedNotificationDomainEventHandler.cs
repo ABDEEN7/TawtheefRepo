@@ -5,7 +5,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
-using Tawtheef.Notifications.Templates.Operation.ChangeJobStatusRejectedNotification;
+using Tawtheef.Notifications.Templates.ChangeJobStatusRejectedNotification;
 
 namespace Application.Operation.Common.EventHandlers.Job;
 

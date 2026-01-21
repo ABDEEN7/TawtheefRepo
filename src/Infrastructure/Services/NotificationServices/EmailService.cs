@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Models.Notification;
+using Tawtheef.Notifications.Interfaces;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
