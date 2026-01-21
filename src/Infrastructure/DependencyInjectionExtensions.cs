@@ -6,17 +6,7 @@ using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
-using Application.Operation.Templates.ChangeJobStatusApprovedNotification;
-using Application.Operation.Templates.ChangeJobStatusNeedUpdateNotification;
-using Application.Operation.Templates.ChangeJobStatusNotification;
-using Application.Operation.Templates.ChangeJobStatusRejectedNotification;
-using Application.Operation.Templates.JobCandidateInvitationSent;
-using Application.Operation.Templates.JobCreatedNotification;
-using Application.Operation.Templates.JobDeletedNotification;
-using Application.Operation.Templates.JobUpdatedNotification;
-using Application.Operation.Templates.OfficeCreatedNotification;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
-using Application.Recruitment.Templates.ContactVerificationSent;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
@@ -61,7 +51,9 @@ using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.Office;
 using Tawtheef.Infrastructure.Services.StorageServices;
 using Tawtheef.Infrastructure.Services.Validations;
-using Tawtheef.Infrastructure.Utils;
+using Tawtheef.Notifications;
+using Tawtheef.Notifications.Context;
+using Tawtheef.Notifications.Interfaces;
 
 namespace Tawtheef.Infrastructure
 {
@@ -109,6 +101,8 @@ namespace Tawtheef.Infrastructure
             // ===== Operation-only =====
             if (runtime.Module is AppModule.Operation)
                 services.AddInfrastructureOperation(configuration);
+            
+            services.AddNotificationLayer(configuration);
         }
 
         #region Common
@@ -240,8 +234,6 @@ namespace Tawtheef.Infrastructure
             {
                 // Recruitment-only options + http clients
                 services.AddRecruitmentHttpClients(configuration);
-                services.AddRecruitmentNotification();
-                services.AddOperationNotification();
 
                 // Recruitment-only domain services
                 services.AddScoped<IVerificationService, VerificationService>();
@@ -292,11 +284,6 @@ namespace Tawtheef.Infrastructure
                         };
                     });
             }
-            
-            private void AddRecruitmentNotification()
-            {
-                NotificationTemplateRegistry.Register<ContactVerificationSentModel>(nameof(ContactVerificationSent));
-            }
         }
 
         #endregion
@@ -309,7 +296,6 @@ namespace Tawtheef.Infrastructure
             {
                 // Operation-only settings + http clients
                 services.AddOperationHttpClients();
-                services.AddOperationNotification();
 
                 AddValidatedOptions<AzureAuthenticationSettings>(services, configuration, AzureAuthenticationSettings.SectionName);
                 
@@ -348,19 +334,6 @@ namespace Tawtheef.Infrastructure
                     client.BaseAddress = new Uri(opt.BaseUrl);
                     client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
                 });
-            }
-
-            private void AddOperationNotification()
-            {
-                NotificationTemplateRegistry.Register<JobCandidateInvitationSentModel>(nameof(JobCandidateInvitationSent));
-                NotificationTemplateRegistry.Register<JobCreatedNotificationModel>(nameof(JobCreatedNotification));
-                NotificationTemplateRegistry.Register<JobUpdatedNotificationModel>(nameof(JobUpdatedNotification));
-                NotificationTemplateRegistry.Register<JobDeletedNotificationModel>(nameof(JobDeletedNotification));
-                NotificationTemplateRegistry.Register<ChangeJobStatusNotificationModel>(nameof(ChangeJobStatusNotification));
-                NotificationTemplateRegistry.Register<ChangeJobStatusApprovedNotificationModel>(nameof(ChangeJobStatusApprovedNotification));
-                NotificationTemplateRegistry.Register<ChangeJobStatusRejectedNotificationModel>(nameof(ChangeJobStatusRejectedNotification));
-                NotificationTemplateRegistry.Register<ChangeJobStatusNeedUpdateNotificationModel>(nameof(ChangeJobStatusNeedUpdateNotification));
-                NotificationTemplateRegistry.Register<OfficeCreatedNotificationModel>(nameof(OfficeCreatedNotification));
             }
         }
 

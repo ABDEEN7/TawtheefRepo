@@ -21,11 +21,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{F97FCCC7-153
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Website", "Website", "{43A9B289-C267-4098-AF70-3B1123039CF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migration", "src\Migration\Migration.csproj", "{F4F8FA34-66A0-449C-B0A8-FAC17F1A5DF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seeds", "src\Seeds\Seeds.csproj", "{F4F8FA34-66A0-449C-B0A8-FAC17F1A5DF4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Operation", "src\Application.Operation\Application.Operation.csproj", "{E6C21EBE-D7BC-4C9D-9395-670E2D099636}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Recruitment", "src\Application.Recruitment\Application.Recruitment.csproj", "{83CFDDF4-471D-4E51-8036-DBBD566329AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications", "src\Notifications\Notifications.csproj", "{73F626EB-23CD-4A2A-9C0B-D90D0B9A02A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{83CFDDF4-471D-4E51-8036-DBBD566329AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83CFDDF4-471D-4E51-8036-DBBD566329AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83CFDDF4-471D-4E51-8036-DBBD566329AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73F626EB-23CD-4A2A-9C0B-D90D0B9A02A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73F626EB-23CD-4A2A-9C0B-D90D0B9A02A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73F626EB-23CD-4A2A-9C0B-D90D0B9A02A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73F626EB-23CD-4A2A-9C0B-D90D0B9A02A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
