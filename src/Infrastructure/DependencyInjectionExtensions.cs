@@ -6,9 +6,7 @@ using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
-using Tawtheef.Notifications.Templates.Operation.JobCreatedNotification;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
-using Tawtheef.Notifications.Templates.Recruitment.ContactVerificationSent;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
@@ -53,7 +51,11 @@ using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.Office;
 using Tawtheef.Infrastructure.Services.StorageServices;
 using Tawtheef.Infrastructure.Services.Validations;
-using Tawtheef.Infrastructure.Utils;
+using Tawtheef.Notifications;
+using Tawtheef.Notifications.Context;
+using Tawtheef.Notifications.Interfaces;
+using Tawtheef.Notifications.Templates.Recruitment.ContactVerificationSent;
+using Tawtheef.Notifications.Utils;
 
 namespace Tawtheef.Infrastructure
 {
@@ -101,6 +103,8 @@ namespace Tawtheef.Infrastructure
             // ===== Operation-only =====
             if (runtime.Module is AppModule.Operation)
                 services.AddInfrastructureOperation(configuration);
+            
+            services.AddNotificationLayer(configuration);
         }
 
         #region Common
@@ -232,8 +236,6 @@ namespace Tawtheef.Infrastructure
             {
                 // Recruitment-only options + http clients
                 services.AddRecruitmentHttpClients(configuration);
-                services.AddRecruitmentNotification();
-                services.AddOperationNotification();
 
                 // Recruitment-only domain services
                 services.AddScoped<IVerificationService, VerificationService>();
@@ -301,7 +303,6 @@ namespace Tawtheef.Infrastructure
             {
                 // Operation-only settings + http clients
                 services.AddOperationHttpClients();
-                services.AddOperationNotification();
 
                 AddValidatedOptions<AzureAuthenticationSettings>(services, configuration, AzureAuthenticationSettings.SectionName);
                 
@@ -340,11 +341,6 @@ namespace Tawtheef.Infrastructure
                     client.BaseAddress = new Uri(opt.BaseUrl);
                     client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
                 });
-            }
-
-            private void AddOperationNotification()
-            {
-                NotificationTemplateRegistry.RegisterFromAssembly(typeof(JobCreatedNotificationModel).Assembly);
             }
         }
 

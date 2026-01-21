@@ -1,5 +1,3 @@
-using System;
-
 namespace Tawtheef.Notifications.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]

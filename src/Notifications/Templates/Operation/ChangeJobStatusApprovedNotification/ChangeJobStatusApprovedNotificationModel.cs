@@ -2,7 +2,10 @@ using Tawtheef.Notifications.Attributes;
 
 namespace Tawtheef.Notifications.Templates.Operation.ChangeJobStatusApprovedNotification;
 
-public sealed record ChangeJobStatusApprovedNotification;
+public static class ChangeJobStatusApprovedNotification
+{
+    public const string TemplateKey = nameof(ChangeJobStatusApprovedNotification);
+}
 
-[NotificationTemplate(nameof(ChangeJobStatusApprovedNotification))]
+[NotificationTemplate(ChangeJobStatusApprovedNotification.TemplateKey)]
 public sealed record ChangeJobStatusApprovedNotificationModel(string JobTitle);
