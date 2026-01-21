@@ -8,4 +8,4 @@ public static class OfficeCreatedNotification
 }
 
 [NotificationTemplate(OfficeCreatedNotification.TemplateKey)]
-public sealed record OfficeCreatedNotificationModel(string OfficeName, string OrganizationName, string PortalUrl);
+public sealed record OfficeCreatedNotificationModel(string OfficeName, string OfficeCode, string AdminEmail);
