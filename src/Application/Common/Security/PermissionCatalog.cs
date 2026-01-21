@@ -4,8 +4,7 @@ namespace Tawtheef.Application.Common.Security;
 
 public static class PermissionCatalog
 {
-    public static readonly ReadOnlyCollection<PermissionDefinition> All = new(
-    [
+    public static readonly ReadOnlyCollection<PermissionDefinition> All = new([
         Permissions.Dashboard.View,
 
         Permissions.Roles.View,

@@ -7,10 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Common\Events\" />
       <Folder Include="Extensions\" />
       <Folder Include="Features\Employee\JobManagement\" />
-      <Folder Include="Templates\" />
     </ItemGroup>
 
     <ItemGroup>

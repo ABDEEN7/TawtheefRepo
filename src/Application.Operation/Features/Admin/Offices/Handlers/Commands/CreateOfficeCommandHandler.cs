@@ -1,19 +1,17 @@
+using Application.Operation.Common.Interfaces.Services.HttpClients;
+using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Features.Admin.Offices.Commands;
 using Cortex.Mediator.Commands;
 using FluentResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Admin.Offices.Handlers.Commands;
 
-public sealed class CreateOfficeCommandHandler(
-    IUnitOfWork unitOfWork,
-    UserManager<User> userManager)
+public sealed class CreateOfficeCommandHandler(IUnitOfWork unitOfWork, 
+    IOfficeUniquenessChecker uniquenessChecker,
+    IOfficeAdminProvisioner adminProvisioner)
     : ICommandHandler<CreateOfficeCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
@@ -25,112 +23,50 @@ public sealed class CreateOfficeCommandHandler(
             cancellationToken);
     }
 
-    private async Task<IResult<Guid>> HandleInternal(
-        CreateOfficeCommand request,
-        CancellationToken ct)
+    private async Task<IResult<Guid>> HandleInternal(CreateOfficeCommand request, CancellationToken ct)
     {
-        var emailValidation = await ValidateAdminEmailAsync(request.AdminEmail, ct);
-        if (emailValidation.IsFailed)
-            return Result.Fail<Guid>(emailValidation.Errors);
+        // 1) Email validation (application policy)
+        var email = request.AdminEmail.Trim();
+        if (string.IsNullOrWhiteSpace(email))
+            return Result.Fail<Guid>(ErrorsCodes.OfficeAdminEmailInvalid);
 
-        var adminEmail = emailValidation.Value;
+        if (await uniquenessChecker.OfficeAdminEmailExistsAsync(email, ct))
+            return Result.Fail<Guid>(ErrorsCodes.OfficeAdminEmailExists);
 
-        var supportedCountries = CreateSupportedCountries(request.SupportedCountryIds);
-        if (supportedCountries.Count == 0)
-        {
-            supportedCountries = CreateSupportedCountries(new[] {request.CountryId});
-        }
-        if (supportedCountries.Count == 0)
-            return Result.Fail<Guid>(ErrorsCodes.OfficeSupportedCountriesRequired);
+        // 2) Create admin user (infrastructure hidden behind port)
+        var adminResult = await adminProvisioner.CreateOfficeAdminAsync(
+            email, request.AdminNameAr, request.AdminNameEn, ct);
 
-        var adminResult = await CreateOfficeAdminAsync(adminEmail, request.AdminNameAr, request.AdminNameEn);
         if (adminResult.IsFailed)
             return Result.Fail<Guid>(adminResult.Errors);
-        var user = adminResult.Value;
-        var office = CreateOfficeEntity(request, user.Id, supportedCountries);
 
+        var adminUser = adminResult.Value;
+
+        // 3) Supported countries fallback policy (application)
+        var supportedIds = new [] {request.CountryId};
+
+        // 4) Create Office aggregate (domain invariants)
+        var officeResult = Office.Create(OfficeCode.New(), request.NameAr, request.NameEn,
+            request.CountryId, adminUser.Id, request.PhoneCountryCode,
+            request.PhoneNumber, supportedIds);
+
+        if (officeResult.IsFailed)
+            return Result.Fail<Guid>(officeResult.Errors);
+
+        var office = officeResult.Value;
+
+        // 5) Persist aggregate
         var officeRepo = unitOfWork.GetEntityRepository<Office>();
-        var addOfficeResult = await officeRepo.AddAsync(office);
+        var addOfficeResult = await officeRepo.AddAsync(office, ct);
         if (addOfficeResult.IsFailed)
             return Result.Fail<Guid>(addOfficeResult.Errors);
-        
-        var officeAdmin = await userManager.Users.OfType<OfficeUser>().FirstOrDefaultAsync(u => u.Id == office.OfficeAdminId, ct);
-        if (officeAdmin is not null)
-        {
-            officeAdmin.OfficeId = office.Id;
-            await userManager.UpdateAsync(officeAdmin);
-        }
+
+        // 6) Link admin to office
+        var linkResult = await adminProvisioner.AssignOfficeAsync(adminUser.Id, office.Id, ct);
+        if (linkResult.IsFailed)
+            return Result.Fail<Guid>(linkResult.Errors);
 
         await unitOfWork.SaveChangesAsync(ct);
         return Result.Ok(office.Id);
-    }
-    
-    private async Task<Result<string>> ValidateAdminEmailAsync(
-        string? adminEmail, CancellationToken ct)
-    {
-        if (string.IsNullOrWhiteSpace(adminEmail))
-            return Result.Fail<string>(ErrorsCodes.OfficeAdminEmailInvalid);
-
-        var email = adminEmail.Trim();
-
-        var exists = await userManager.Users
-            .IgnoreQueryFilters()
-            .AnyAsync(u => u.Email == email, ct);
-
-        if (exists)
-            return Result.Fail<string>(ErrorsCodes.OfficeAdminEmailExists);
-
-        return Result.Ok(email);
-    }
-
-    private static List<OfficeSupportedCountry> CreateSupportedCountries(
-        IEnumerable<Guid> countryIds)
-    {
-        return countryIds
-            .Distinct()
-            .Select(id => new OfficeSupportedCountry { CountryId = id })
-            .ToList();
-    }
-
-    private async Task<Result<User>> CreateOfficeAdminAsync(string email, string adminNameAr, string adminNameEn)
-    {
-        var registerResult = OfficeUser.Register(email, adminNameAr, adminNameEn);
-        if (registerResult.IsFailed)
-            return Result.Fail<User>(registerResult.Errors);
-
-        var user = registerResult.Value;
-
-        var createResult = await userManager.CreateAsync(user);
-        if (!createResult.Succeeded)
-            return Result.Fail<User>(ErrorsCodes.OfficeAdminCreationFailed);
-
-        var roleResult = await userManager.AddToRoleAsync(
-            user,
-            nameof(SystemRoleIds.OfficeAdmin));
-
-        if (!roleResult.Succeeded)
-            return Result.Fail<User>(ErrorsCodes.OfficeRoleAssignmentFailed);
-
-        return Result.Ok(user);
-    }
-
-    private static Office CreateOfficeEntity(
-        CreateOfficeCommand request, Guid adminId,
-        List<OfficeSupportedCountry> supportedCountries)
-    {
-        var code = $"OFF-{Guid.NewGuid():N}";
-
-        return new Office
-        {
-            BackendName = code,
-            Code = code,
-            NameAr = request.NameAr,
-            NameEn = request.NameEn,
-            CountryId = request.CountryId,
-            OfficeAdminId = adminId,
-            PhoneCountryCode = request.PhoneCountryCode,
-            PhoneNumber = request.PhoneNumber,
-            SupportedCountries = supportedCountries
-        };
     }
 }

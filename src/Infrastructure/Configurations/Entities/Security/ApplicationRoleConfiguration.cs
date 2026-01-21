@@ -72,6 +72,18 @@ public sealed class ApplicationRoleConfiguration
             },
             new ApplicationRole
             {
+                Id = SystemRoleIds.HrManager,
+                Name = nameof(SystemRoleIds.HrManager),
+                NormalizedName = nameof(SystemRoleIds.HrManager).ToUpper(),
+                NameAr = "مدير الموارد البشرية",
+                NameEn = "HR Manager",
+                DescriptionAr = "مدير الموارد البشرية",
+                DescriptionEn = "HR Manager",
+                IsSystemRole = true,
+                ConcurrencyStamp = "af759613-b36e-4acc-ab65-3e35abeb3e69"
+            },
+            new ApplicationRole
+            {
                 Id = SystemRoleIds.EmployeeSuperAdmin,
                 Name = nameof(SystemRoleIds.EmployeeSuperAdmin),
                 NormalizedName = nameof(SystemRoleIds.EmployeeSuperAdmin).ToUpper(),

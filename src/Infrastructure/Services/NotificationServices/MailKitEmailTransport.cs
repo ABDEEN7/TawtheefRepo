@@ -16,6 +16,7 @@ namespace Tawtheef.Infrastructure.Services.NotificationServices;
 public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
 {
     private readonly EmailSettings _settings;
+    private readonly AppConfigSettings _appConfiguration;
     private readonly AsyncPolicy _resiliencePolicy;
     private readonly ConcurrentBag<SmtpClient> _clientPool = new();
     private readonly int _poolSize;
@@ -27,9 +28,11 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
     private static readonly TimeSpan CircuitBreakerDuration = TimeSpan.FromSeconds(60);
     private static readonly TimeSpan OperationTimeout = TimeSpan.FromSeconds(60);
 
-    public MailKitEmailTransport(IOptions<EmailSettings> settings, ILogger log)
+    public MailKitEmailTransport(IOptions<AppConfigSettings> appConfiguration,
+        IOptions<EmailSettings> settings, ILogger log)
     {
         _settings = settings.Value;
+        _appConfiguration = appConfiguration.Value;
         _poolSize = Math.Max(1, _settings.MaxSmtpClients);
         _log = log.ForContext<MailKitEmailTransport>();
 
@@ -233,7 +236,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
             HtmlBody = envelope.HtmlBody
         };
 
-        AttachInlineLogoIfConfigured(bodyBuilder);
+        AttachLogoSmart(bodyBuilder);
 
         message.Headers.Add("X-Mailer", "Tawtheef");
         message.Headers.Add("X-Priority", "3");
@@ -241,31 +244,41 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         message.Body = bodyBuilder.ToMessageBody();
         return message;
     }
-
-    private void AttachInlineLogoIfConfigured(BodyBuilder bodyBuilder)
+    private void AttachLogoSmart(BodyBuilder bodyBuilder)
     {
-        if (string.IsNullOrEmpty(_settings.LogoPath))
+        if (string.IsNullOrEmpty(bodyBuilder.HtmlBody))
             return;
 
-        var logoCid = MimeUtils.GenerateMessageId("Tawtheef");
-
-        var logo = new MimePart("image", "png")
+        // Try CID first
+        if (!string.IsNullOrWhiteSpace(_settings.LogoPath) && File.Exists(_settings.LogoPath))
         {
-            Content = new MimeContent(File.OpenRead(_settings.LogoPath)),
-            ContentId = logoCid,
-            ContentTransferEncoding = ContentEncoding.Base64,
-            ContentDisposition = new ContentDisposition(ContentDisposition.Inline)
-        };
+            var logoCid = MimeUtils.GenerateMessageId("Tawtheef");
 
-        logo.ContentType.Name = null;
-        logo.ContentDisposition.FileName = null;
+            var logo = new MimePart("image", "png")
+            {
+                Content = new MimeContent(File.OpenRead(_settings.LogoPath)),
+                ContentId = logoCid,
+                ContentTransferEncoding = ContentEncoding.Base64,
+                ContentDisposition = new ContentDisposition(ContentDisposition.Inline)
+            };
 
-        bodyBuilder.LinkedResources.Add(logo);
+            logo.ContentType.Name = null;
+            logo.ContentDisposition.FileName = null;
 
-        if (!string.IsNullOrEmpty(bodyBuilder.HtmlBody))
+            bodyBuilder.LinkedResources.Add(logo);
+
             bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@tawtheef", $"cid:{logoCid}");
-    }
+            return;
+        }
 
+        // fallback to URL
+        if (!string.IsNullOrWhiteSpace(_settings.LogoUrl))
+        {
+            var logoUrl = CombineUrl(_appConfiguration.FrontendUrl, _settings.LogoUrl);
+            bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@tawtheef", logoUrl);
+        }
+    }
+    
     private static bool IsTransient(Exception ex) =>
         ex is IOException or SocketException or SmtpProtocolException or TaskCanceledException;
 
@@ -284,5 +297,16 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
     {
         while (_clientPool.TryTake(out var client))
             TryDisposeClient(client);
+    }
+    
+    public static string CombineUrl(string baseUrl, string relativePath)
+    {
+        if (string.IsNullOrWhiteSpace(baseUrl))
+            throw new ArgumentException("BaseUrl is required", nameof(baseUrl));
+
+        if (string.IsNullOrWhiteSpace(relativePath))
+            return baseUrl;
+
+        return new Uri(new Uri(baseUrl.TrimEnd('/') + "/"), relativePath.TrimStart('/')).ToString();
     }
 }
