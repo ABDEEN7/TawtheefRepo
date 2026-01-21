@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import {Component, Input, OnDestroy, OnInit, forwardRef, OnChanges, SimpleChanges, inject} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, forwardRef, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Subject, Subscription, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, finalize } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-remote-select',
@@ -21,36 +21,30 @@ import {TranslateService} from '@ngx-translate/core';
     },
   ],
 })
-export class RemoteSelectComponent
-  implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
+export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
   translate = inject(TranslateService);
   emptyMessage = '';
   lastQuery = '';
-  // ====== API / search config ======
   @Input() searchUrl!: string;
   @Input() minChars = 3;
   @Input() debounceMs = 400;
+  @Input() searchParamName = 'search';
+  @Input() idParamName = 'id';
 
   @Input() optionLabel = 'name';
   @Input() optionValue?: string;
   @Input() placeholder = '';
-  @Input() size: "small" | "large" | undefined = undefined;
+  @Input() size: 'small' | 'large' | undefined = undefined;
   @Input() appendTo: any = 'body';
   @Input() panelStyle: any;
 
   @Input() disableWhileLoading = true;
-  /**
-   * Preload a list of options so the component can display existing values (e.g. in edit mode)
-   * without requiring the user to search again.
-   */
+  @Input() showClear = false;
   @Input() preloadedOptions: any[] = [];
 
   // ====== Parent dependency (cascading) ======
-  /** ID from previous select (e.g. degreeId, countryId, etc.) */
   @Input() parentId: string | number | null | undefined;
-  /** Query-string name to use for parentId, e.g. degreeId, countryId */
   @Input() parentParamName = 'parentId';
-  /** If true, component won’t search until parentId is set */
   @Input() requireParent = false;
 
   // ====== Validation styling from parent ======
@@ -66,13 +60,16 @@ export class RemoteSelectComponent
 
   constructor(private http: HttpClient) {}
 
-  // ====== CVA ======
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
 
   writeValue(val: any): void {
     this.value = val;
-    this.options = this.mergeWithSelected(this.options);
+    this.options = this.mergeWithSelected(this.preloadedOptions);
+
+    if (this.value !== null && this.value !== undefined && this.value !== '') {
+      this.loadOptions(undefined);
+    }
   }
 
   registerOnChange(fn: any): void {
@@ -87,7 +84,6 @@ export class RemoteSelectComponent
     this.disabled = isDisabled;
   }
 
-  // ====== Lifecycle ======
   ngOnInit(): void {
     this.options = this.mergeWithSelected(this.preloadedOptions);
 
@@ -112,10 +108,7 @@ export class RemoteSelectComponent
 
           this.isLoading = true;
 
-          let params = new HttpParams().set('search', query);
-          if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
-            params = params.set(this.parentParamName, String(this.parentId));
-          }
+          const params = this.buildParams(query);
 
           return this.http
             .get<any[]>(this.searchUrl, { params })
@@ -129,7 +122,6 @@ export class RemoteSelectComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // If parentId changed, reset value and options
     if (changes['parentId'] && !changes['parentId'].firstChange) {
       this.options = [];
       this.value = null;
@@ -138,14 +130,17 @@ export class RemoteSelectComponent
 
     if (changes['preloadedOptions']) {
       this.options = this.mergeWithSelected(this.preloadedOptions);
+
+      if (this.value !== null && this.value !== undefined && this.value !== '') {
+        this.loadOptions(undefined);
+      }
     }
   }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
   }
-  onOpen() {
-    // Before typing anything
+  onOpen(): void {
     if (!this.lastQuery || this.lastQuery.length < this.minChars) {
       this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
     }
@@ -174,7 +169,7 @@ export class RemoteSelectComponent
 
     if (query.length < this.minChars) {
       this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
-      this.options = [];
+      this.options = this.mergeWithSelected([]);
       return;
     }
     this.emptyMessage = '';
@@ -188,8 +183,46 @@ export class RemoteSelectComponent
     this.onTouched();
   }
 
+  private buildParams(searchTerm?: string): HttpParams {
+    let params = new HttpParams();
+
+    if (this.value !== null && this.value !== undefined && this.value !== '') {
+      params = params.set(this.idParamName, String(this.value));
+    }
+
+    const q = (searchTerm ?? '').trim();
+    if (q) {
+      params = params.set(this.searchParamName, q);
+    }
+
+    if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
+      params = params.set(this.parentParamName, String(this.parentId));
+    }
+
+    return params;
+  }
+
+  private loadOptions(searchTerm?: string): void {
+    if (!this.searchUrl) return;
+
+    if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
+      return;
+    }
+
+    const params = this.buildParams(searchTerm);  
+
+    this.isLoading = true;
+    this.http
+      .get<any[]>(this.searchUrl, { params })
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: res => (this.options = this.mergeWithSelected(res || [])),
+        error: () => (this.options = this.mergeWithSelected([])),
+      });
+  }
+
   private mergeWithSelected(nextOptions: any[]): any[] {
-    const merged = [...nextOptions];
+    const merged = [...(nextOptions || [])];
 
     const selectedOption = this.findSelectedOption();
     if (selectedOption && !this.containsOption(merged, selectedOption)) {
@@ -206,10 +239,11 @@ export class RemoteSelectComponent
       return this.value;
     }
 
-    const fromPreloaded = this.preloadedOptions.find(
-      opt => this.getOptionValue(opt) === this.value
-    );
-    return fromPreloaded ?? null;
+    const fromPreloaded = this.preloadedOptions?.find(opt => this.getOptionValue(opt) === this.value);
+    if (fromPreloaded) return fromPreloaded;
+
+    const fromOptions = this.options?.find(opt => this.getOptionValue(opt) === this.value);
+    return fromOptions ?? null;
   }
 
   private containsOption(options: any[], option: any): boolean {

@@ -14,9 +14,12 @@
     [size]="size"
     [appendTo]="appendTo"
     [panelStyle]="panelStyle"
-    [ngClass]="{ 'p-invalid': invalid }">
+    [showClear]="showClear"
+    [class]="invalid ? 'p-invalid' : ''">
   </p-select>
-  <div class="select-loading-overlay" *ngIf="isLoading">
+  @if(isLoading) {
+  <div class="select-loading-overlay">
     <i class="fa-solid fa-spinner fa-spin"></i>
   </div>
+}
 </div>
