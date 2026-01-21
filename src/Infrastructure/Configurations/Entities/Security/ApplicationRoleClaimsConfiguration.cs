@@ -12,6 +12,7 @@ public sealed class ApplicationRoleClaimsConfiguration
     public void Configure(EntityTypeBuilder<IdentityRoleClaim<Guid>> builder)
     {
         var id = -1;
+
         foreach ((Guid roleId, IReadOnlyCollection<PermissionKey> permissions) in RolePermissionCatalog.ByRoleId)
         {
             foreach (var perm in permissions.DistinctBy(x => x.Value, StringComparer.OrdinalIgnoreCase))
