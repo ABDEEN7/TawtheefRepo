@@ -23,15 +23,15 @@ export class IndexComponent implements AfterViewInit {
     }
   ];
   whyItems = [
-    { key: 'fair',      icon: 'fa-scale-balanced' },
+    { key: 'fair',      icon: 'hgi-star-award-02' },
     { key: 'digital',   icon: 'fa-laptop-code'    },
-    { key: 'transparent', icon: 'fa-shield-check' },
-    { key: 'support',   icon: 'fa-headset'       }
+    { key: 'transparent', icon: 'hgi-justice-scale-01' },
+    { key: 'support',   icon: 'hgi-laptop-programming'       }
   ];
   successStats = [
-    { value: '95%',  label: 'home.success.placementRate' },
-    { value: '48h',  label: 'home.success.avgReviewTime' },
-    { value: '120+', label: 'home.success.partners'      }
+    { profile: 'home.success.profile1', desc: 'home.success.desc1', value: 'home.success.label1', label: 'home.success.placementRate',  img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop'},
+    { profile: 'home.success.profile2', desc: 'home.success.desc2', value: 'home.success.label2',  label: 'home.success.avgReviewTime', img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop' },
+    { profile: 'home.success.profile3', desc: 'home.success.desc3', value: 'home.success.label3', label: 'home.success.partners', img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop'      }
   ];
   faqItems = [
     { q: 'home.faq.q1', a: 'home.faq.a1' },

@@ -65,4 +65,7 @@ export const employeeRoutes = {
   get candidateUsersManagement(){
     return this.employee + '/candidate-users-management';
   },
+  get officeUsersManagement(){
+    return this.employee + '/office-users-management';
+  },
 }

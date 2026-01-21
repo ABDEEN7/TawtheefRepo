@@ -1,0 +1,49 @@
+<div class="office-user-dialog" i18nNamespace="pages/employee/office-users-management" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <h4 class="mb-3">
+    {{ user() ? ('OFFICE_USERS.EDIT_TITLE' | translate) : ('OFFICE_USERS.ADD_TITLE' | translate) }}
+  </h4>
+
+  <div class="mb-3">
+    <label class="form-label">{{ 'OFFICE_USERS.NAME_AR' | translate }}</label>
+    <input
+      pInputText
+      type="text"
+      class="form-control"
+      [(ngModel)]="nameAr"
+      [placeholder]="'OFFICE_USERS.NAME_AR_PLACEHOLDER' | translate" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">{{ 'OFFICE_USERS.NAME_EN' | translate }}</label>
+    <input
+      pInputText
+      type="text"
+      class="form-control"
+      [(ngModel)]="nameEn"
+      [placeholder]="'OFFICE_USERS.NAME_EN_PLACEHOLDER' | translate" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">{{ 'OFFICE_USERS.EMAIL' | translate }}</label>
+    <input
+      pInputText
+      type="email"
+      class="form-control"
+      [(ngModel)]="email"
+      [disabled]="isEditingSelf()"
+      [placeholder]="'OFFICE_USERS.EMAIL_PLACEHOLDER' | translate" />
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="!isFormValid() || isSaving()"
+      (click)="save()">
+      {{ user() ? ('common.save' | translate) : ('OFFICE_USERS.ADD_USER' | translate) }}
+    </button>
+  </div>
+</div>
