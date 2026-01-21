@@ -51,7 +51,6 @@
         <ProjectReference Include="..\Application.Operation\Application.Operation.csproj" />
         <ProjectReference Include="..\Application.Recruitment\Application.Recruitment.csproj" />
         <ProjectReference Include="..\Application\Application.csproj" />
-        <ProjectReference Include="..\Notifications\Notifications.csproj" />
     </ItemGroup>
 
     <ItemGroup>
