@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Operation.Templates.ChangeJobStatusRejectedNotification;
+using Tawtheef.Notifications.Templates.Operation.ChangeJobStatusRejectedNotification;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;

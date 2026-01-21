@@ -10,12 +10,12 @@
       <Folder Include="Common\Repositories\" />
       <Folder Include="Extensions\" />
       <Folder Include="Features\Website\" />
-      <Folder Include="Templates\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Application\Application.csproj" />
       <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\Notifications\Notifications.csproj" />
     </ItemGroup>
 
 </Project>

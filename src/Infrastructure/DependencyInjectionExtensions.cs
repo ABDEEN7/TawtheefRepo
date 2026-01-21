@@ -6,17 +6,9 @@ using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
-using Application.Operation.Templates.ChangeJobStatusApprovedNotification;
-using Application.Operation.Templates.ChangeJobStatusNeedUpdateNotification;
-using Application.Operation.Templates.ChangeJobStatusNotification;
-using Application.Operation.Templates.ChangeJobStatusRejectedNotification;
-using Application.Operation.Templates.JobCandidateInvitationSent;
-using Application.Operation.Templates.JobCreatedNotification;
-using Application.Operation.Templates.JobDeletedNotification;
-using Application.Operation.Templates.JobUpdatedNotification;
-using Application.Operation.Templates.OfficeCreatedNotification;
+using Tawtheef.Notifications.Templates.Operation.JobCreatedNotification;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
-using Application.Recruitment.Templates.ContactVerificationSent;
+using Tawtheef.Notifications.Templates.Recruitment.ContactVerificationSent;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
@@ -295,7 +287,7 @@ namespace Tawtheef.Infrastructure
             
             private void AddRecruitmentNotification()
             {
-                NotificationTemplateRegistry.Register<ContactVerificationSentModel>(nameof(ContactVerificationSent));
+                NotificationTemplateRegistry.RegisterFromAssembly(typeof(ContactVerificationSentModel).Assembly);
             }
         }
 
@@ -352,15 +344,7 @@ namespace Tawtheef.Infrastructure
 
             private void AddOperationNotification()
             {
-                NotificationTemplateRegistry.Register<JobCandidateInvitationSentModel>(nameof(JobCandidateInvitationSent));
-                NotificationTemplateRegistry.Register<JobCreatedNotificationModel>(nameof(JobCreatedNotification));
-                NotificationTemplateRegistry.Register<JobUpdatedNotificationModel>(nameof(JobUpdatedNotification));
-                NotificationTemplateRegistry.Register<JobDeletedNotificationModel>(nameof(JobDeletedNotification));
-                NotificationTemplateRegistry.Register<ChangeJobStatusNotificationModel>(nameof(ChangeJobStatusNotification));
-                NotificationTemplateRegistry.Register<ChangeJobStatusApprovedNotificationModel>(nameof(ChangeJobStatusApprovedNotification));
-                NotificationTemplateRegistry.Register<ChangeJobStatusRejectedNotificationModel>(nameof(ChangeJobStatusRejectedNotification));
-                NotificationTemplateRegistry.Register<ChangeJobStatusNeedUpdateNotificationModel>(nameof(ChangeJobStatusNeedUpdateNotification));
-                NotificationTemplateRegistry.Register<OfficeCreatedNotificationModel>(nameof(OfficeCreatedNotification));
+                NotificationTemplateRegistry.RegisterFromAssembly(typeof(JobCreatedNotificationModel).Assembly);
             }
         }
 

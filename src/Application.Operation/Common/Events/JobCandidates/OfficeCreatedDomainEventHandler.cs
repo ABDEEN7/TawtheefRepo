@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Operation.Templates.OfficeCreatedNotification;
+using Tawtheef.Notifications.Templates.Operation.OfficeCreatedNotification;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

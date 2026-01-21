@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Operation.Templates.JobCreatedNotification;
+using Tawtheef.Notifications.Templates.Operation.JobCreatedNotification;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
