@@ -32,15 +32,20 @@ public sealed class CreateOfficeUserCommandHandler(
         if (string.IsNullOrWhiteSpace(email))
             return Result.Fail<Guid>(ErrorsCodes.EmailRequired);
 
+        var nameAr = request.NameAr?.Trim();
+        if (string.IsNullOrWhiteSpace(nameAr))
+            return Result.Fail<Guid>(ErrorsCodes.NameArRequired);
+
+        var nameEn = request.NameEn?.Trim();
+        if (string.IsNullOrWhiteSpace(nameEn))
+            return Result.Fail<Guid>(ErrorsCodes.NameEnRequired);
+
         var emailExists = await userManager.Users
             .IgnoreQueryFilters()
             .AnyAsync(user => user.Email == email, cancellationToken);
 
         if (emailExists)
             return Result.Fail<Guid>(ErrorsCodes.EmailAlreadyInUse);
-
-        var nameAr = request.NameAr?.Trim() ?? string.Empty;
-        var nameEn = request.NameEn?.Trim() ?? string.Empty;
 
         var registerResult = OfficeUser.Register(email, nameAr, nameEn);
         if (registerResult.IsFailed)

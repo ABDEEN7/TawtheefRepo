@@ -42,6 +42,14 @@ public sealed class UpdateOfficeUserCommandHandler(
         if (string.IsNullOrWhiteSpace(email))
             return Result.Fail<Unit>(ErrorsCodes.EmailRequired);
 
+        var nameAr = request.NameAr?.Trim();
+        if (string.IsNullOrWhiteSpace(nameAr))
+            return Result.Fail<Unit>(ErrorsCodes.NameArRequired);
+
+        var nameEn = request.NameEn?.Trim();
+        if (string.IsNullOrWhiteSpace(nameEn))
+            return Result.Fail<Unit>(ErrorsCodes.NameEnRequired);
+
         if (officeUser.Id == currentUserId
             && !string.Equals(officeUser.Email, email, StringComparison.OrdinalIgnoreCase))
             return Result.Fail<Unit>(ErrorsCodes.OfficeAdminEmailChangeNotAllowed);
@@ -59,8 +67,8 @@ public sealed class UpdateOfficeUserCommandHandler(
             officeUser.UserName = email;
         }
 
-        officeUser.FullNameAr = request.NameAr?.Trim() ?? string.Empty;
-        officeUser.FullNameEn = request.NameEn?.Trim() ?? string.Empty;
+        officeUser.FullNameAr = nameAr;
+        officeUser.FullNameEn = nameEn;
 
         var updateResult = await userManager.UpdateAsync(officeUser);
         if (!updateResult.Succeeded)

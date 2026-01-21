@@ -3,6 +3,8 @@
   "server-error.INVALID_RECAPTCHA": "Recaptcha verification failed.",
   "server-error.INVALID_DEVICE_ID": "Invalid device identifier.",
   "server-error.EMAIL_REQUIRED": "Email is required.",
+  "server-error.NAME_AR_REQUIRED": "Arabic name is required.",
+  "server-error.NAME_EN_REQUIRED": "English name is required.",
   "server-error.USER_NAME_REQUIRED": "Username is required.",
   "server-error.PHONE_NUMBER_REQUIRED": "Phone number is required.",
   "server-error.CONCURRENCY_FAILURE": "A concurrency conflict occurred. Please try again.",

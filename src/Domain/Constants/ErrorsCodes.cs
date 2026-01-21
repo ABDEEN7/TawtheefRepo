@@ -8,6 +8,8 @@ public class ErrorsCodes
     #region Common Errors
     public const string UnauthorizedAction = "UNAUTHORIZED_ACTION";
     public const string EmailRequired = "EMAIL_REQUIRED";
+    public const string NameArRequired = "NAME_AR_REQUIRED";
+    public const string NameEnRequired = "NAME_EN_REQUIRED";
     public const string UserNameRequired = "USER_NAME_REQUIRED";
     public const string PhoneNumberRequired = "PHONE_NUMBER_REQUIRED";
     public const string UploadFailed = "UPLOAD_FAILED";
