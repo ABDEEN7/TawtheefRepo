@@ -19,14 +19,9 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
         if (!string.IsNullOrWhiteSpace(notification.Email))
         {
             var payload = JsonSerializer.Serialize(new JobCandidateInvitationSentModel(jobTitle));
-            var emailNotification = Notification.Create(
-                NotificationChannel.Email,
-                nameof(JobCandidateInvitationSent),
-                notification.ApplicantId,
-                notification.Email,
-                "Tawtheef Job Invitation",
-                null,
-                payload);
+            var emailNotification = Notification.Create( NotificationChannel.Email, 
+                nameof(JobCandidateInvitationSent), notification.ApplicantId, 
+                notification.Email, "Tawtheef Job Invitation", null, payload);
             await repo.AddAsync(emailNotification, ct);
         }
 
@@ -34,19 +29,11 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
         {
             var body = string.IsNullOrWhiteSpace(jobTitle)
                 ? JobCandidatesMessages.JobInvitationWithoutTitle
-                : string.Format(
-                    JobCandidatesMessages.JobInvitationWithTitle,
-                    jobTitle);
+                : string.Format(JobCandidatesMessages.JobInvitationWithTitle, jobTitle);
 
-            var smsNotification = Notification.Create(
-                NotificationChannel.Sms,
-                nameof(JobCandidateInvitationSent),
-                notification.ApplicantId,
-                notification.PhoneNumber,
-                "Tawtheef Job Invitation",
-                body,
-                null);
-
+            var smsNotification = Notification.Create( NotificationChannel.Sms, 
+                nameof(JobCandidateInvitationSent), notification.ApplicantId, 
+                notification.PhoneNumber, "Tawtheef Job Invitation", body, null);
             await repo.AddAsync(smsNotification, ct);
         }
 

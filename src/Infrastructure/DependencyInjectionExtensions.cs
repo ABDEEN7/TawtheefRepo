@@ -14,6 +14,7 @@ using Application.Operation.Templates.JobCandidateInvitationSent;
 using Application.Operation.Templates.JobCreatedNotification;
 using Application.Operation.Templates.JobDeletedNotification;
 using Application.Operation.Templates.JobUpdatedNotification;
+using Application.Operation.Templates.OfficeCreatedNotification;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Templates.ContactVerificationSent;
 using Azure.Storage.Blobs;
@@ -359,6 +360,7 @@ namespace Tawtheef.Infrastructure
                 NotificationTemplateRegistry.Register<ChangeJobStatusApprovedNotificationModel>(nameof(ChangeJobStatusApprovedNotification));
                 NotificationTemplateRegistry.Register<ChangeJobStatusRejectedNotificationModel>(nameof(ChangeJobStatusRejectedNotification));
                 NotificationTemplateRegistry.Register<ChangeJobStatusNeedUpdateNotificationModel>(nameof(ChangeJobStatusNeedUpdateNotification));
+                NotificationTemplateRegistry.Register<OfficeCreatedNotificationModel>(nameof(OfficeCreatedNotification));
             }
         }
 
@@ -366,9 +368,7 @@ namespace Tawtheef.Infrastructure
 
         #region DbContext & Identity
 
-        private static void AddTawtheefDbContext(
-            this IServiceCollection services,
-            IConfiguration configuration,
+        private static void AddTawtheefDbContext(this IServiceCollection services, IConfiguration configuration, 
             IHostEnvironment env)
         {
             services.AddScoped<AuditableEntityInterceptor>();
@@ -407,7 +407,6 @@ namespace Tawtheef.Infrastructure
 
         extension(IServiceCollection services)
         {
-            
             //TODO: should be operated in Recruitment module and Operation module
             private void AddAuthorizationAndAuthenticationCommon(IConfiguration configuration)
             {
