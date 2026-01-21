@@ -4,46 +4,65 @@ using Tawtheef.Notifications.Attributes;
 
 namespace Tawtheef.Notifications.Utils;
 
+
 public static class NotificationTemplateRegistry
 {
-    private static readonly ConcurrentDictionary<string, Type> _map = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<Type, string> ModelToTemplateKey = new();
+    private static readonly ConcurrentDictionary<string, Type> TemplateKeyToModel = new(StringComparer.Ordinal);
 
-    public static void Register<TModel>(string templateKey) where TModel : class
-        => _map[templateKey] = typeof(TModel);
+    public static void Register<TModel>(string templateKey)
+        => Register(typeof(TModel), templateKey);
 
-    public static void RegisterFromAssemblies(params Assembly[] assemblies)
+    public static void Register(Type modelType, string templateKey)
     {
-        foreach (var assembly in assemblies)
-        {
-            RegisterFromAssembly(assembly);
-        }
+        if (modelType is null) throw new ArgumentNullException(nameof(modelType));
+        if (string.IsNullOrWhiteSpace(templateKey)) throw new ArgumentException("Template key is required.", nameof(templateKey));
+
+        // Enforce one-to-one mapping.
+        if (ModelToTemplateKey.TryGetValue(modelType, out var existingKey) && existingKey != templateKey)
+            throw new InvalidOperationException($"Model '{modelType.FullName}' is already registered with key '{existingKey}'.");
+
+        if (TemplateKeyToModel.TryGetValue(templateKey, out var existingType) && existingType != modelType)
+            throw new InvalidOperationException($"Template key '{templateKey}' is already registered for model '{existingType.FullName}'.");
+
+        ModelToTemplateKey[modelType] = templateKey;
+        TemplateKeyToModel[templateKey] = modelType;
     }
 
-    public static void RegisterFromAssembly(Assembly assembly)
+    public static string GetTemplateKeyFor<TModel>()
+        => GetTemplateKeyFor(typeof(TModel));
+
+    public static string GetTemplateKeyFor(Type modelType)
     {
-        foreach (var type in assembly.GetTypes())
-        {
-            if (!type.IsClass || type.IsAbstract)
-            {
-                continue;
-            }
+        if (ModelToTemplateKey.TryGetValue(modelType, out var key))
+            return key;
 
-            var templateAttribute = type.GetCustomAttribute<NotificationTemplateAttribute>();
-            if (templateAttribute is null)
-            {
-                continue;
-            }
-
-            if (string.IsNullOrWhiteSpace(templateAttribute.TemplateKey))
-            {
-                throw new InvalidOperationException(
-                    $"Notification template key is missing for model '{type.FullName}'.");
-            }
-
-            _map[templateAttribute.TemplateKey] = type;
-        }
+        throw new KeyNotFoundException($"No template registered for model '{modelType.FullName}'.");
     }
 
-    public static bool TryGetModelType(string templateKey, out Type modelType)
-        => _map.TryGetValue(templateKey, out modelType!);
+    public static Type GetModelTypeFor(string templateKey)
+    {
+        if (TemplateKeyToModel.TryGetValue(templateKey, out var modelType))
+            return modelType;
+
+        throw new KeyNotFoundException($"No model registered for template key '{templateKey}'.");
+    }
+
+    public static void AutoRegisterFrom(params Assembly[] assemblies)
+    {
+        if (assemblies is null || assemblies.Length == 0)
+            throw new ArgumentException("At least one assembly is required.", nameof(assemblies));
+
+        foreach (var assembly in assemblies.Distinct())
+        {
+            var candidates = assembly
+                .GetTypes()
+                .Where(t => t is { IsAbstract: false, IsInterface: false })
+                .Select(t => new { Type = t, Attr = t.GetCustomAttribute<NotificationTemplateAttribute>() })
+                .Where(x => x.Attr is not null);
+
+            foreach (var item in candidates)
+                Register(item.Type, item.Attr!.TemplateKey);
+        }
+    }
 }

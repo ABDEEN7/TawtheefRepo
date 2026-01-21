@@ -1,10 +1,7 @@
 namespace Tawtheef.Notifications.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-public sealed class NotificationTemplateAttribute : Attribute
+public sealed class NotificationTemplateAttribute(string templateKey) : Attribute
 {
-    public string TemplateKey { get; }
-
-    public NotificationTemplateAttribute(string templateKey)
-        => TemplateKey = templateKey;
+    public string TemplateKey { get; } = templateKey;
 }

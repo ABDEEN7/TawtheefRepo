@@ -4,7 +4,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Events.User;
-using Tawtheef.Notifications.Templates.Recruitment.ContactVerificationSent;
+using Tawtheef.Notifications.Templates.ContactVerificationSent;
 
 namespace Application.Recruitment.Common.EventHandlers;
 

@@ -9,7 +9,102 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Templates\ChangeJobStatusApprovedNotification\ChangeJobStatusApprovedNotification.html.cshtml" />
+      <None Remove="Templates\ChangeJobStatusApprovedNotification\ChangeJobStatusApprovedNotification.txt.cshtml" />
+      <None Remove="Templates\ChangeJobStatusNeedUpdateNotification\ChangeJobStatusNeedUpdateNotification.html.cshtml" />
+      <None Remove="Templates\ChangeJobStatusNeedUpdateNotification\ChangeJobStatusNeedUpdateNotification.txt.cshtml" />
+      <None Remove="Templates\ChangeJobStatusNotification\ChangeJobStatusNotification.html.cshtml" />
+      <None Remove="Templates\ChangeJobStatusNotification\ChangeJobStatusNotification.txt.cshtml" />
+      <None Remove="Templates\ChangeJobStatusRejectedNotification\ChangeJobStatusRejectedNotification.html.cshtml" />
+      <None Remove="Templates\ChangeJobStatusRejectedNotification\ChangeJobStatusRejectedNotification.txt.cshtml" />
+      <None Remove="Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.html.cshtml" />
+      <None Remove="Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.txt.cshtml" />
+      <None Remove="Templates\JobCreatedNotification\JobCreatedNotification.html.cshtml" />
+      <None Remove="Templates\JobCreatedNotification\JobCreatedNotification.txt.cshtml" />
+      <None Remove="Templates\JobDeletedNotification\JobDeletedNotification.html.cshtml" />
+      <None Remove="Templates\JobDeletedNotification\JobDeletedNotification.txt.cshtml" />
+      <None Remove="Templates\JobUpdatedNotification\JobUpdatedNotification.html.cshtml" />
+      <None Remove="Templates\JobUpdatedNotification\JobUpdatedNotification.txt.cshtml" />
+      <None Remove="Templates\OfficeCreatedNotification\OfficeCreatedNotification.html.cshtml" />
+      <None Remove="Templates\OfficeCreatedNotification\OfficeCreatedNotification.txt.cshtml" />
+      <None Remove="Templates\ContactVerificationSent\ContactVerificationSent.html.cshtml" />
+      <None Remove="Templates\ContactVerificationSent\ContactVerificationSent.txt.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="RazorLight" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Templates\ChangeJobStatusApprovedNotification\ChangeJobStatusApprovedNotification.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ChangeJobStatusApprovedNotification\ChangeJobStatusApprovedNotification.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ChangeJobStatusNeedUpdateNotification\ChangeJobStatusNeedUpdateNotification.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ChangeJobStatusNeedUpdateNotification\ChangeJobStatusNeedUpdateNotification.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ChangeJobStatusNotification\ChangeJobStatusNotification.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ChangeJobStatusNotification\ChangeJobStatusNotification.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ChangeJobStatusRejectedNotification\ChangeJobStatusRejectedNotification.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ChangeJobStatusRejectedNotification\ChangeJobStatusRejectedNotification.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\JobCreatedNotification\JobCreatedNotification.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\JobCreatedNotification\JobCreatedNotification.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\JobDeletedNotification\JobDeletedNotification.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\JobDeletedNotification\JobDeletedNotification.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\JobUpdatedNotification\JobUpdatedNotification.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\JobUpdatedNotification\JobUpdatedNotification.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\OfficeCreatedNotification\OfficeCreatedNotification.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\OfficeCreatedNotification\OfficeCreatedNotification.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ContactVerificationSent\ContactVerificationSent.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\ContactVerificationSent\ContactVerificationSent.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Templates\Operation\" />
+      <Folder Include="Templates\Recruitment\" />
     </ItemGroup>
 
 </Project>

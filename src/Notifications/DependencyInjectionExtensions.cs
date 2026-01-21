@@ -8,6 +8,6 @@ public static class DependencyInjectionExtensions
 {
     public static void AddNotificationLayer(this IServiceCollection _,IConfiguration __)
     {
-        NotificationTemplateRegistry.RegisterFromAssembly(typeof(NotificationAssemblyMarker).Assembly);
+        NotificationTemplateRegistry.AutoRegisterFrom(typeof(NotificationAssemblyMarker).Assembly);
     }
 }

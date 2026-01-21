@@ -54,6 +54,7 @@ using Tawtheef.Infrastructure.Services.Validations;
 using Tawtheef.Notifications;
 using Tawtheef.Notifications.Context;
 using Tawtheef.Notifications.Interfaces;
+using Tawtheef.Notifications.Services;
 
 namespace Tawtheef.Infrastructure
 {
@@ -73,7 +74,7 @@ namespace Tawtheef.Infrastructure
     public static class DependencyInjectionExtensions
     {
         /// <summary>
-        /// Registers all infrastructure services (DB, repos, auth, notifications, storage, etc).
+        /// Registers all infrastructure services (DB, repos, auth, notifications, storage, etc.).
         /// Split by App:Module (Recruitment / Operation / Both).
         /// </summary>
         public static void AddInfrastructureLayer(
@@ -112,7 +113,7 @@ namespace Tawtheef.Infrastructure
             private void AddInfrastructureCommon(IConfiguration configuration,
                 IHostEnvironment env)
             {
-                // Feature flags (keep consistent with your json; using FeatureFlags here)
+                // Feature flags (keep consistent with your JSON; using FeatureFlags here)
                 services.AddFeatureManagement(configuration.GetSection("FeatureFlags"));
 
                 // Options (Common)
@@ -299,7 +300,7 @@ namespace Tawtheef.Infrastructure
 
                 AddValidatedOptions<AzureAuthenticationSettings>(services, configuration, AzureAuthenticationSettings.SectionName);
                 
-                // Operation-only options (do not ValidateOnStart unless always present in Operation appsettings)
+                // Operation-only options (do not ValidateOnStart unless always present in Operation app settings)
                 services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
 
                 // Operation-only services

@@ -8,6 +8,8 @@ public class ErrorsCodes
     #region Common Errors
     public const string UnauthorizedAction = "UNAUTHORIZED_ACTION";
     public const string EmailRequired = "EMAIL_REQUIRED";
+    public const string NameArRequired = "NAME_AR_REQUIRED";
+    public const string NameEnRequired = "NAME_EN_REQUIRED";
     public const string UserNameRequired = "USER_NAME_REQUIRED";
     public const string PhoneNumberRequired = "PHONE_NUMBER_REQUIRED";
     public const string UploadFailed = "UPLOAD_FAILED";
@@ -301,6 +303,8 @@ public class ErrorsCodes
     public const string OfficeNameRequired = "OFFICE_NAME_REQUIRED";
     public const string OfficeCountryRequired = "OFFICE_COUNTRY_REQUIRED";
     public const string OfficeAdminAssignFailed = "OFFICE_ADMIN_ASSIGN_FAILED";
+    public const string OfficeAdminBlockNotAllowed = "OFFICE_ADMIN_BLOCK_NOT_ALLOWED";
+    public const string OfficeAdminEmailChangeNotAllowed = "OFFICE_ADMIN_EMAIL_CHANGE_NOT_ALLOWED";
     #endregion
 
     #region Major Managements

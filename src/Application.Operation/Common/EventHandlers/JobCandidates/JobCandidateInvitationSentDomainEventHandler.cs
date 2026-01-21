@@ -4,7 +4,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
-using Tawtheef.Notifications.Templates.Operation.JobCandidateInvitationSent;
+using Tawtheef.Notifications.Templates.JobCandidateInvitationSent;
 
 namespace Application.Operation.Common.EventHandlers.JobCandidates;
 
