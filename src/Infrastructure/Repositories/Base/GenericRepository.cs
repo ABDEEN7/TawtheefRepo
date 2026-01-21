@@ -11,11 +11,11 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
 {
     public DbSet<T> DbSet => dbContext.Set<T>();
  
-    public async Task<IResult<T>> AddAsync(T entity)
+    public async Task<IResult<T>> AddAsync(T entity, CancellationToken ct)
     {
         try
         {
-            await dbContext.Set<T>().AddAsync(entity);
+            await dbContext.Set<T>().AddAsync(entity, ct);
             return Result.Ok(entity);
         }
         catch(Exception e)
@@ -23,11 +23,11 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
             return Result.Fail<T>($"An error occurred while adding the entity: {e.Message}");
         }
     }
-    public async Task<IResult<IList<T>>> AddRangeAsync(IList<T> entity)
+    public async Task<IResult<IList<T>>> AddRangeAsync(IList<T> entity, CancellationToken ct)
     {
         try
         {
-            await dbContext.Set<T>().AddRangeAsync(entity);
+            await dbContext.Set<T>().AddRangeAsync(entity, ct);
             return Result.Ok(entity);
         }
         catch(Exception e)
@@ -36,12 +36,12 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
         }
     }
  
-    public async Task<IResult<T>> UpdateAsync(T entity)
+    public async Task<IResult<T>> UpdateAsync(T entity, CancellationToken ct)
     {
         try
         {
 
-            var exist = await dbContext.Set<T>().FindAsync(entity.Id);
+            var exist = await dbContext.Set<T>().FindAsync([entity.Id], cancellationToken: ct);
             if(exist is null) 
                 return Result.Fail<T>($"Entity with ID {entity.Id} does not exist.");
             dbContext.Entry(exist).CurrentValues.SetValues(entity);
@@ -53,13 +53,13 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
         }
     }
     
-    public async Task<IResult<IList<T>>> UpdateRangeAsync(IList<T> entity)
+    public async Task<IResult<IList<T>>> UpdateRangeAsync(IList<T> entity, CancellationToken ct)
     {
         try
         {
             foreach (var item in entity)
             {
-                var exist = await dbContext.Set<T>().FindAsync(item.Id);
+                var exist = await dbContext.Set<T>().FindAsync([item.Id], cancellationToken: ct);
                 if (exist is null) 
                     return Result.Fail<IList<T>>($"Entity with ID {item.Id} does not exist.");
                 dbContext.Entry(exist).CurrentValues.SetValues(item);
@@ -97,11 +97,11 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
         }
     }
 
-    public async Task<Result> DeleteAsync(Guid id)
+    public async Task<Result> DeleteAsync(Guid id, CancellationToken ct)
     {
         try
         {
-            var entity = await dbContext.Set<T>().FindAsync(id);
+            var entity = await dbContext.Set<T>().FindAsync([id], cancellationToken: ct);
             if (entity == null)
                 return Result.Fail($"Entity with ID {id} does not exist.");
             
@@ -116,11 +116,11 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
     
     
  
-    public async Task<IResult<List<T>>> GetAllAsync()
+    public async Task<IResult<List<T>>> GetAllAsync(CancellationToken ct)
     {
         try
         {
-            return Result.Ok(await dbContext.Set<T>().AsNoTracking().ToListAsync());
+            return Result.Ok(await dbContext.Set<T>().AsNoTracking().ToListAsync(ct));
         }
         catch (Exception ex)
         {
@@ -128,11 +128,11 @@ public class GenericRepository<T>(TawtheefDbContext dbContext) : IGenericReposit
         }
     }
  
-    public async Task<IResult<T?>> GetByIdAsync(Guid id)
+    public async Task<IResult<T?>> GetByIdAsync(Guid id, CancellationToken ct)
     {
         try
         {
-            return Result.Ok(await dbContext.Set<T>().FindAsync(id));
+            return Result.Ok(await dbContext.Set<T>().FindAsync([id], cancellationToken: ct));
         }
         catch (Exception ex)
         {

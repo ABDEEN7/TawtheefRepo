@@ -3,5 +3,6 @@ export const SystemRoles = {
   Employee: 'Employee',
   OfficeAdmin: 'OfficeAdmin',
   OfficeUser: 'OfficeUser',
-  DepartmentManager: 'DepartmentManager'
+  DepartmentManager: 'DepartmentManager',
+  HrManager: 'HrManager',
 } as const;

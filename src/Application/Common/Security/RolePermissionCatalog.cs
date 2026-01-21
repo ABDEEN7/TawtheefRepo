@@ -8,28 +8,27 @@ public static class RolePermissionCatalog
     public static readonly IReadOnlyDictionary<Guid, IReadOnlyCollection<PermissionKey>> ByRoleId =
         new Dictionary<Guid, IReadOnlyCollection<PermissionKey>>
         {
-            // If SystemAdmin should have everything:
             [SystemRoleIds.SystemAdmin] = PermissionCatalog.All.Select(x => x.Key).ToArray(),
-
-            [SystemRoleIds.Employee] =
-            [
+            [SystemRoleIds.HrManager] = [
+                Permissions.Dashboard.View.Key
+            ],
+            [SystemRoleIds.DepartmentManager] = [
+                Permissions.Dashboard.View.Key
+            ],
+            [SystemRoleIds.Employee] = [
                 Permissions.Dashboard.View.Key
             ],
 
-            [SystemRoleIds.OfficeAdmin] =
-            [
+            [SystemRoleIds.OfficeAdmin] = [
                 Permissions.Dashboard.View.Key,
                 Permissions.OfficeUsers.View.Key,
                 Permissions.OfficeUsers.Manage.Key
             ],
-
-            [SystemRoleIds.OfficeUser] =
-            [
+            [SystemRoleIds.OfficeUser] = [
                 Permissions.Dashboard.View.Key
             ],
 
-            [SystemRoleIds.EmployeeSuperAdmin] =
-            [
+            [SystemRoleIds.EmployeeSuperAdmin] = [
                 Permissions.Dashboard.View.Key,
                 Permissions.Profile.View.Key,
                 Permissions.Profile.Manage.Key,

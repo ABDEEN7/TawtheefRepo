@@ -21,6 +21,7 @@ export let routes = {
       case SystemRoles.OfficeAdmin:
       case SystemRoles.OfficeUser:
       case SystemRoles.DepartmentManager:
+      case SystemRoles.HrManager:
         return this.employee.dashboard;
       default:
         return '/';
@@ -34,6 +35,7 @@ export let routes = {
       case SystemRoles.OfficeAdmin:
       case SystemRoles.OfficeUser:
       case SystemRoles.DepartmentManager:
+      case SystemRoles.HrManager:
         return this.employee.settings;
       default:
         return '/';
