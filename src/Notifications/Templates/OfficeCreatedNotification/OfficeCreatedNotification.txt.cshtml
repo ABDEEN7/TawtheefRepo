@@ -1,0 +1,38 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.OfficeCreatedNotification.OfficeCreatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+
+    // Model fields (adjust names to match your model)
+    var officeName = string.IsNullOrWhiteSpace(m.OfficeName) ? "New Office" : m.OfficeName;
+    var officeCode = string.IsNullOrWhiteSpace(m.OfficeCode) ? "-" : m.OfficeCode;
+    var adminEmail = string.IsNullOrWhiteSpace(m.AdminEmail) ? "your Google account" : m.AdminEmail;
+}
+
+@($"{product} - Office Created")
+
+Dear Admin,
+
+The office "@{officeName}" has been successfully created in @{product}.
+
+Office Details:
+- Office Name: @{officeName}
+- Office Code: @{officeCode}
+- Admin Login Email: @{adminEmail}
+
+Access Instructions:
+1) Connect using VPN in Qatar
+2) Open the portal: @{website}
+3) Login using your Google account with this email: @{adminEmail}
+
+If you need help, please contact support:
+@{support}
+
+Regards,
+@{product} Team
+© @{DateTime.UtcNow.Year} @{product}. All rights reserved.

@@ -14,7 +14,7 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
     {
         _branding = branding;
 
-        var asm = typeof(RazorTemplateRenderer).Assembly;
+        var asm = typeof(NotificationAssemblyMarker).Assembly;
 
         _keyMap = asm.GetManifestResourceNames()
             .ToDictionary(Normalize, k => k, StringComparer.OrdinalIgnoreCase);
@@ -31,14 +31,14 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
         _engine = builder.Build();
     }
 
-    private static string Normalize(string k) => k.Replace('\\', '/');
+    private static string Normalize(string k) => k.Replace('/', '.');
 
     private Task<string> RenderAsync<T>(string templateKey, string kind, T model)
     {
         if (string.IsNullOrWhiteSpace(templateKey))
             throw new ArgumentException("Template key is required.", nameof(templateKey));
 
-        var logical = Normalize($"Templates/{templateKey}/{templateKey}.{kind}.cshtml");
+        var logical = Normalize($"Tawtheef/Notifications/Templates/{templateKey}/{templateKey}.{kind}.cshtml");
 
         if (!_keyMap.TryGetValue(logical, out var actual))
         {
