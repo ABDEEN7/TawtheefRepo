@@ -1,4 +1,4 @@
-namespace Application.Operation.Common.Interfaces.Services.HttpClients;
+namespace Application.Operation.Common.Interfaces.Services.Office;
 
 public interface IOfficeUniquenessChecker
 {

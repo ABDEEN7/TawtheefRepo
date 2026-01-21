@@ -156,6 +156,7 @@ file sealed record PrereqSectionSnapshot
         return snapshot;
     }
 
+    // ReSharper disable once UnusedMember.Local
     public static bool RequiresSponsor(Guid? candidateTypeId) =>
         candidateTypeId == CandidateTypeIds.ResidentQatar;
 

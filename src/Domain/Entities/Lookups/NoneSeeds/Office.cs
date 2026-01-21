@@ -39,7 +39,7 @@ public class Office : LookupBase
         if (adminId == Guid.Empty)
             return Result.Fail<Office>(ErrorsCodes.OfficeAdminEmailInvalid);
 
-        var ids = supportedCountryIds.Where(x => x != Guid.Empty).Distinct().ToList() ?? [];
+        var ids = supportedCountryIds.Where(x => x != Guid.Empty).Distinct().ToList();
 
         if (ids.Count == 0)
             return Result.Fail<Office>(ErrorsCodes.OfficeSupportedCountriesRequired);

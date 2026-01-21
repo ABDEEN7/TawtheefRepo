@@ -14,6 +14,10 @@ export const Permissions = {
     View: 'candidate.users.view',
     Manage: 'candidate.users.manage',
   },
+  OfficeUsers: {
+    View: 'office.users.view',
+    Manage: 'office.users.manage',
+  },
   Languages: {
     View: 'languages.view',
     Manage: 'languages.manage',
