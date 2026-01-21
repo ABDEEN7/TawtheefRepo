@@ -151,6 +151,13 @@ export class EndpointsService {
     blockStatus: (id: string) => this.getFullUrl(`/candidateUsers/${id}/block-status`)
   };
 
+  officeUsers = {
+    list: this.getFullUrl('/officeUsers'),
+    create: this.getFullUrl('/officeUsers'),
+    update: (id: string) => this.getFullUrl(`/officeUsers/${id}`),
+    blockStatus: (id: string) => this.getFullUrl(`/officeUsers/${id}/block-status`)
+  };
+
   offices = {
     listOffices: this.getFullUrl('/offices/list-offices'),
     officeDetails: (id: string) => this.getFullUrl(`/offices/office-details/${id}`),
