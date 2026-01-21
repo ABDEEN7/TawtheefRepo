@@ -54,10 +54,11 @@ public sealed class GetOfficeUsersQueryHandler(
             .WhereIf(!string.IsNullOrWhiteSpace(name),
                 user => EF.Functions.Like(user.FullNameEn, $"%{name}%") ||
                         EF.Functions.Like(user.FullNameAr, $"%{name}%"));
+        
 
         var result = await queryable
-            .OrderBy(user => user.FullNameEn)
-            .ToPaginatedListAsync<OfficeUserListItemDto>(mapper, request, cancellationToken);
+            .OrderByDescending(user => user.CreatedDate)
+            .ToPaginatedListAsync<OfficeUser,OfficeUserListItemDto>(mapper, request, cancellationToken);
 
         result.AdditionalData = officeSummary;
 
