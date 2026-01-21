@@ -1,6 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
 import AOS from 'aos';
 import {routes} from '../../../routes/routes';
+import { Carousel, CarouselResponsiveOptions } from 'primeng/carousel';
 
 @Component({
   selector: 'app-home',
@@ -28,11 +29,24 @@ export class IndexComponent implements AfterViewInit {
     { key: 'transparent', icon: 'hgi-justice-scale-01' },
     { key: 'support',   icon: 'hgi-laptop-programming'       }
   ];
+responsiveOptions: CarouselResponsiveOptions[] = [
+  {
+    breakpoint: '1024px',
+    numVisible: 2,
+    numScroll: 1
+  },
+  {
+    breakpoint: '768px',
+    numVisible: 1,
+    numScroll: 1
+  }
+];
   successStats = [
     { profile: 'home.success.profile1', desc: 'home.success.desc1', value: 'home.success.label1', label: 'home.success.placementRate',  img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop'},
     { profile: 'home.success.profile2', desc: 'home.success.desc2', value: 'home.success.label2',  label: 'home.success.avgReviewTime', img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop' },
      { profile: 'home.success.profile3', desc: 'home.success.desc3', value: 'home.success.label3', label: 'home.success.partners', img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop'      }
   ];
+
 //   reviews = [
 //   {
 //     name: 'John Doe',
