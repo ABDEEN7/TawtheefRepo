@@ -19,7 +19,7 @@ public sealed class ChangeJobStatusNotificationDomainEventHandler(
     {
         var jobTitle = localizationService.GetLocalizedValue(notification.Job.TitleAr, notification.Job.TitleEn);
         var payload = JsonSerializer.Serialize(new ChangeJobStatusNotificationModel(jobTitle));
-        await JobNotificationEmailHelper.QueueForHrAdminsAsync(
+        await JobNotificationEmailHelper.QueueForDepartmentManagerAsync(
             unitOfWork,
             userManager,
             nameof(ChangeJobStatusNotification),
