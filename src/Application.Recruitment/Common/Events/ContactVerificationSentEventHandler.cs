@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Recruitment.Templates.ContactVerificationSent;
+using Tawtheef.Notifications.Templates.Recruitment.ContactVerificationSent;
 using Cortex.Mediator.Notifications;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Auth;

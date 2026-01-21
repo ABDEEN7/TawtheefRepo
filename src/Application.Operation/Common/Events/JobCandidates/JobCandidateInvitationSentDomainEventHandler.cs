@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Operation.Templates.JobCandidateInvitationSent;
+using Tawtheef.Notifications.Templates.Operation.JobCandidateInvitationSent;
 using Cortex.Mediator.Notifications;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
