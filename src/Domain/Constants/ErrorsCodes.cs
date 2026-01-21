@@ -301,6 +301,8 @@ public class ErrorsCodes
     public const string OfficeNameRequired = "OFFICE_NAME_REQUIRED";
     public const string OfficeCountryRequired = "OFFICE_COUNTRY_REQUIRED";
     public const string OfficeAdminAssignFailed = "OFFICE_ADMIN_ASSIGN_FAILED";
+    public const string OfficeAdminBlockNotAllowed = "OFFICE_ADMIN_BLOCK_NOT_ALLOWED";
+    public const string OfficeAdminEmailChangeNotAllowed = "OFFICE_ADMIN_EMAIL_CHANGE_NOT_ALLOWED";
     #endregion
 
     #region Major Managements

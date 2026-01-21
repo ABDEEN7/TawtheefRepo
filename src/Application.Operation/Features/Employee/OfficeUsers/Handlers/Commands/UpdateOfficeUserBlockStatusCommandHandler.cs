@@ -22,6 +22,9 @@ public sealed class UpdateOfficeUserBlockStatusCommandHandler(
         if (!Guid.TryParse(currentUserService.UserId, out var currentUserId))
             return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
 
+        if (request.UserId == currentUserId)
+            return Result.Fail<Unit>(ErrorsCodes.OfficeAdminBlockNotAllowed);
+
         var officeAdmin = await userManager.Users
             .OfType<OfficeUser>()
             .FirstOrDefaultAsync(user => user.Id == currentUserId && !user.IsDeleted, cancellationToken);

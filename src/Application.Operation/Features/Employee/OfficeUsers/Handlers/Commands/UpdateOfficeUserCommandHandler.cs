@@ -42,6 +42,10 @@ public sealed class UpdateOfficeUserCommandHandler(
         if (string.IsNullOrWhiteSpace(email))
             return Result.Fail<Unit>(ErrorsCodes.EmailRequired);
 
+        if (officeUser.Id == currentUserId
+            && !string.Equals(officeUser.Email, email, StringComparison.OrdinalIgnoreCase))
+            return Result.Fail<Unit>(ErrorsCodes.OfficeAdminEmailChangeNotAllowed);
+
         if (!string.Equals(officeUser.Email, email, StringComparison.OrdinalIgnoreCase))
         {
             var emailExists = await userManager.Users

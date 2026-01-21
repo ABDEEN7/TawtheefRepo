@@ -74,20 +74,22 @@
                 <i class="fa fa-edit"></i>
                 <span class="ms-1">{{ 'OFFICE_USERS.EDIT' | translate }}</span>
               </button>
-              <button
-                type="button"
-                class="btn btn-sm"
-                [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
-                (click)="toggleBlock(user)">
-                <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
-                <span class="ms-1">
-                  {{
-                    user.isBlocked
-                      ? ('OFFICE_USERS.UNBLOCK_USER' | translate)
-                      : ('OFFICE_USERS.BLOCK_USER' | translate)
-                  }}
-                </span>
-              </button>
+              @if (!isCurrentUser(user)) {
+                <button
+                  type="button"
+                  class="btn btn-sm"
+                  [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
+                  (click)="toggleBlock(user)">
+                  <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
+                  <span class="ms-1">
+                    {{
+                      user.isBlocked
+                        ? ('OFFICE_USERS.UNBLOCK_USER' | translate)
+                        : ('OFFICE_USERS.BLOCK_USER' | translate)
+                    }}
+                  </span>
+                </button>
+              }
             </div>
           </ng-container>
         </td>
