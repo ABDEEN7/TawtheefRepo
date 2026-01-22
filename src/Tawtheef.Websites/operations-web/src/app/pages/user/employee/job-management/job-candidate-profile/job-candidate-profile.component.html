@@ -1,16 +1,22 @@
-<section i18nNamespace="pages/job-candidates">
+<section i18nNamespace="pages/job-candidates" class="candidate-profile-page">
   <div class="card card-table">
     <div class="card-body">
+
+      <!-- Header -->
       <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div>
           <h3 class="fw-bold m-0">{{ 'JOB_CANDIDATE_PROFILE_TITLE' | translate }}</h3>
-          <p class="fs-16 m-0">{{ 'JOB_CANDIDATE_PROFILE_SUBTITLE' | translate }}</p>
+          <p class="fs-16 m-0 text-muted">{{ 'JOB_CANDIDATE_PROFILE_SUBTITLE' | translate }}</p>
+
           @if (jobInfo) {
           <div class="text-muted small mt-2">
-            {{ jobInfo?.titleAr }}/{{ jobInfo?.titleEn }}
+            <span class="badge bg-light text-dark border">
+              {{ jobInfo.titleAr }}/{{ jobInfo.titleEn }}
+            </span>
           </div>
           }
         </div>
+
         <button class="btn btn-outline-primary d-flex align-items-center gap-2" type="button" (click)="backToList()">
           <i class="hgi hgi-stroke hgi-arrow-left"></i>
           <span>{{ 'JOB_CANDIDATE_PROFILE_BACK_TO_LIST' | translate }}</span>
@@ -19,98 +25,120 @@
 
       @if (candidateProfile()) {
       <div class="row g-4">
+
+        <!-- LEFT: Applicant summary (sticky on large screens) -->
         <div class="col-lg-4">
-          <div class="card shadow-sm h-100">
+          <div class="card shadow-sm h-100 profile-card">
             <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between mb-3">
-                <div>
-                  <div class="text-muted small">{{ 'JOB_CANDIDATE_PROFILE_POINTS_TOTAL' | translate }}</div>
-                  <div class="display-6 fw-bold">
-                    {{ candidateProfile()?.points?.totalPoints ?? 0 }}
+
+              <!-- Candidate identity -->
+              <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="avatar-circle">
+                  <span class="avatar-initials">
+                    {{ (candidateProfile()?.candidateName || '—').slice(0, 1) }}
+                  </span>
+                </div>
+
+                <div class="flex-grow-1">
+                  <div class="fw-bold fs-5 candidate-name">
+                    {{ candidateProfile()?.candidateName || '-' }}
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 mt-1">
+                    <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
+                      {{ candidateProfile()?.candidateType || '-' }}
+                    </span>
+                    <span class="badge rounded-pill bg-light text-dark border">
+                      {{ candidateProfile()?.nationality || '-' }}
+                    </span>
+                    <span class="badge rounded-pill bg-light text-dark border">
+                      {{ candidateProfile()?.gender || '-' }}
+                    </span>
                   </div>
                 </div>
-                <span class="badge bg-primary fs-14">
-                  {{ candidateProfile()?.candidateName }}
-                </span>
               </div>
-              <div class="candidate-meta d-flex flex-column gap-2">
-                <div class="d-flex justify-content-between">
-                  <span class="text-muted">{{ 'JOB_CANDIDATE_PROFILE_INFO_CANDIDATE_TYPE' | translate }}</span>
-                  <span>{{ candidateProfile()?.candidateType || '-' }}</span>
+
+              <!-- Applicant info FIRST -->
+              <h6 class="section-title mb-3">
+                {{ 'JOB_CANDIDATE_PROFILE_INFO_TITLE' | translate }}
+              </h6>
+
+              <div class="info-grid">
+                <div class="info-tile">
+                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_EMAIL' | translate }}</div>
+                  <div class="value text-truncate">{{ candidateProfile()?.email || '-' }}</div>
                 </div>
-                <div class="d-flex justify-content-between">
-                  <span class="text-muted">{{ 'JOB_CANDIDATE_PROFILE_INFO_GENDER' | translate }}</span>
-                  <span>{{ candidateProfile()?.gender || '-' }}</span>
+
+                <div class="info-tile">
+                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_PHONE' | translate }}</div>
+                  <div class="value">{{ candidateProfile()?.phoneNumber || '-' }}</div>
                 </div>
-                <div class="d-flex justify-content-between">
-                  <span class="text-muted">{{ 'JOB_CANDIDATE_PROFILE_INFO_NATIONALITY' | translate }}</span>
-                  <span>{{ candidateProfile()?.nationality || '-' }}</span>
+
+                <div class="info-tile">
+                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_NATIONAL_ID' | translate }}</div>
+                  <div class="value">{{ candidateProfile()?.nationalNumber || '-' }}</div>
+                </div>
+
+                <div class="info-tile">
+                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_AGE' | translate }}</div>
+                  <div class="value">{{ candidateProfile()?.age || '-' }}</div>
+                </div>
+
+                <div class="info-tile">
+                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_EXPERIENCE' | translate }}</div>
+                  <div class="value">
+                    {{ candidateProfile()?.experienceYears ?? 0 }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- RIGHT: Points breakdown -->
         <div class="col-lg-8">
-          <div class="card shadow-sm mb-4">
+          <div class="card shadow-sm">
             <div class="card-body">
-              <h5 class="fw-bold mb-3">{{ 'JOB_CANDIDATE_PROFILE_POINTS_TITLE' | translate }}</h5>
+              <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                <div>
+                  <h5 class="fw-bold mb-1">{{ 'JOB_CANDIDATE_PROFILE_POINTS_TITLE' | translate }}</h5>
+                  <div class="text-muted small">
+                    {{ 'JOB_CANDIDATE_PROFILE_POINTS_OF_TOTAL' | translate:{ total: candidateProfile()?.points?.totalPoints ?? 0 } }}
+                  </div>
+                </div>
+              </div>
+
               <div class="d-flex flex-column gap-3">
                 @for (item of pointsBreakdown(); track item.labelKey) {
                 <div class="points-item">
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="fw-semibold">{{ item.labelKey | translate }}</span>
-                    <span class="text-muted">
-                      {{ item.points }} {{ 'JOB_CANDIDATE_PROFILE_POINTS_OF_TOTAL' | translate:{ total: candidateProfile()?.points?.totalPoints ?? 0 } }}
+                    <span class="chip">
+                      <span class="fw-semibold">{{ item.points }}</span>
+                      <span class="text-muted ms-1">/ {{ candidateProfile()?.points?.totalPoints ?? 0 }}</span>
                     </span>
                   </div>
-                  <p-progressBar [value]="item.percentage" [showValue]="false"></p-progressBar>
+
+                  <p-progressBar
+                    [value]="item.percentage"
+                    [showValue]="false"
+                    class="rounded-progress"
+                  ></p-progressBar>
+
+                  <div class="d-flex justify-content-between mt-2 small text-muted">
+                    <span>{{ item.percentage | number:'1.0-0' }}%</span>
+                    <span>{{ 'JOB_CANDIDATE_PROFILE_POINTS_TOTAL' | translate }}: {{ candidateProfile()?.points?.totalPoints ?? 0 }}</span>
+                  </div>
                 </div>
                 }
               </div>
             </div>
           </div>
-
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="fw-bold mb-3">{{ 'JOB_CANDIDATE_PROFILE_INFO_TITLE' | translate }}</h5>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="info-row">
-                    <span class="text-muted">{{ 'JOB_CANDIDATE_PROFILE_INFO_EMAIL' | translate }}</span>
-                    <span>{{ candidateProfile()?.email || '-' }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-row">
-                    <span class="text-muted">{{ 'JOB_CANDIDATE_PROFILE_INFO_PHONE' | translate }}</span>
-                    <span>{{ candidateProfile()?.phoneNumber || '-' }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-row">
-                    <span class="text-muted">{{ 'JOB_CANDIDATE_PROFILE_INFO_NATIONAL_ID' | translate }}</span>
-                    <span>{{ candidateProfile()?.nationalNumber || '-' }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-row">
-                    <span class="text-muted">{{ 'JOB_CANDIDATE_PROFILE_INFO_AGE' | translate }}</span>
-                    <span>{{ candidateProfile()?.age || '-' }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-row">
-                    <span class="text-muted">{{ 'JOB_CANDIDATE_PROFILE_INFO_EXPERIENCE' | translate }}</span>
-                    <span>{{ candidateProfile()?.experienceYears ?? 0 }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
+
       </div>
       }
+
     </div>
   </div>
 </section>
