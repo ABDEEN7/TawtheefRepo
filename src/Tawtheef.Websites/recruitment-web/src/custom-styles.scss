@@ -135,7 +135,12 @@ p{
   line-height: 1.5;
 }
 
-
+:dir(rtl) [type=email], 
+:dir(rtl) [type=number], 
+:dir(rtl) [type=tel], 
+:dir(rtl) [type=url]{    
+  direction: rtl;
+}
 
 
 /*--------------------------------------------------------------
