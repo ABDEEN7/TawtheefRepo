@@ -52,6 +52,7 @@
   "JOB_CANDIDATE_PROFILE_TITLE": "ملف المرشح",
   "JOB_CANDIDATE_PROFILE_SUBTITLE": "مراجعة بيانات المرشح وتفاصيل توزيع النقاط",
   "JOB_CANDIDATE_PROFILE_BACK_TO_LIST": "العودة للمرشحين",
+  "JOB_CANDIDATE_PROFILE_CLOSE": "إغلاق",
   "JOB_CANDIDATE_PROFILE_POINTS_TITLE": "تفاصيل النقاط",
   "JOB_CANDIDATE_PROFILE_POINTS_TOTAL": "إجمالي النقاط",
   "JOB_CANDIDATE_PROFILE_POINTS_OF_TOTAL": "من أصل {{ total }}",

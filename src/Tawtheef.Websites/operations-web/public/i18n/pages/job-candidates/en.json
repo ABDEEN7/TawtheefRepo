@@ -50,6 +50,7 @@
   "JOB_CANDIDATE_PROFILE_TITLE": "Candidate Profile",
   "JOB_CANDIDATE_PROFILE_SUBTITLE": "Review profile details and points breakdown",
   "JOB_CANDIDATE_PROFILE_BACK_TO_LIST": "Back to candidates",
+  "JOB_CANDIDATE_PROFILE_CLOSE": "Close",
   "JOB_CANDIDATE_PROFILE_POINTS_TITLE": "Points Breakdown",
   "JOB_CANDIDATE_PROFILE_POINTS_TOTAL": "Total Points",
   "JOB_CANDIDATE_PROFILE_POINTS_OF_TOTAL": "of {{ total }}",

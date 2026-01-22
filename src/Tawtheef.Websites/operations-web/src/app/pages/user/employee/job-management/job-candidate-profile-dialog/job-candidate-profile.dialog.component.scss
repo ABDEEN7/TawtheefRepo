@@ -1,4 +1,4 @@
-.candidate-profile-page .card {
+.candidate-profile-dialog .card {
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 16px;
 }
@@ -81,7 +81,6 @@
   border-radius: 999px;
 }
 
-/* Responsive refinement */
 @media (min-width: 768px) {
   .info-grid {
     grid-template-columns: 1fr 1fr;
