@@ -79,18 +79,16 @@
               <td>{{ user.email }}</td>
               <td>{{ user.lastLoginDate ? (user.lastLoginDate | date:'short') : ('USERS.NEVER' | translate) }}</td>
               <td>
-                <span class="badge" [class.bg-danger-subtle]="user.isBlocked" [class.text-danger]="user.isBlocked" [class.bg-success-subtle]="!user.isBlocked" [class.text-success]="!user.isBlocked">
+                <span class="pill" [class.soft]="user.isBlocked" [class.success]="!user.isBlocked">
                   {{ user.isBlocked ? ('USERS.BLOCKED' | translate) : ('USERS.ACTIVE' | translate) }}
                 </span>
               </td>
               <td>
                 @if (user.roles && user.roles!.length > 0) {
                   @for (role of user.roles; track role) {
-                    <span class="badge me-1 mb-1 role-chip"
-                          [class.bg-secondary-subtle]="!role.isSystemRole"
-                          [class.text-secondary]="!role.isSystemRole"
-                          [class.bg-info-subtle]="role.isSystemRole"
-                          [class.text-info]="role.isSystemRole">
+                    <span class="pill m-1"
+                          [class.neutral]="!role.isSystemRole"
+                          [class.info]="role.isSystemRole">
                       {{ this.currentLang() === 'ar' ? (role.nameAr || role.nameEn) : (role.nameEn || role.nameAr) }}
                     </span>
                   }
