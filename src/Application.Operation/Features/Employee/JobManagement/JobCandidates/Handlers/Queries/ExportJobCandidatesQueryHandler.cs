@@ -53,7 +53,7 @@ public sealed class ExportJobCandidatesQueryHandler(
             return Result.Ok(EmptyXlsxResult(request.JobId));
 
         var ids = window.Select(x => x.ApplicantId).Distinct().ToList();
-        var profiles = await userProfileRepository.LoadForScoringAsync(ids);
+        var profiles = await userProfileRepository.LoadForScoringAsync(ids,cancellationToken);
         var profileMap = profiles.ToDictionary(p => p.UserId);
 
         var scored = new List<JobCandidateRecord>(window.Count);

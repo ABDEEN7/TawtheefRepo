@@ -21,6 +21,7 @@ import {
   JobCandidatesFilterSettings,
   JobCandidateTypePercentage,
 } from '../models/job-candidates-filter-settings.model';
+import { JobCandidateProfileDialogComponent } from '../modals/job-candidate-profile-dialog/job-candidate-profile.dialog.component';
 import { Permissions } from '../../../../../core/constants/permissions';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
@@ -149,7 +150,17 @@ export class JobCandidatesComponent implements OnInit {
 
   viewDetails(candidateId: GUID) {
     if (!this.canViewJobs()) return;
-    void candidateId;
+    this.dialogService.open(JobCandidateProfileDialogComponent, {
+      data: {
+        jobId: this.jobId,
+        candidateId,
+      },
+      header: this.translationService.instant('JOB_CANDIDATE_PROFILE_TITLE'),
+      modal: true,
+      dismissableMask: true,
+      width: 'min(960px, 95vw)',
+      contentStyle: { 'max-height': '85vh', overflow: 'auto' },
+    });
   }
 
   exportToExcel() {
