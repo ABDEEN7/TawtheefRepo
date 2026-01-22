@@ -13,6 +13,7 @@
   "wizard.courses.table.period": "Period",
   "wizard.courses.table.file": "File",
   "wizard.courses.add": "Add Course",
+  "wizard.courses.table.description": "Description",
   "wizard.buttons.cancel": "Cancel",
   "wizard.buttons.delete": "Delete"
 }
