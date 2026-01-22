@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
 import { NotificationService } from '../../../../../core/services/notification.service';
@@ -21,10 +21,10 @@ import {
   JobCandidatesFilterSettings,
   JobCandidateTypePercentage,
 } from '../models/job-candidates-filter-settings.model';
+import { JobCandidateProfileDialogComponent } from '../job-candidate-profile-dialog/job-candidate-profile.dialog.component';
 import { Permissions } from '../../../../../core/constants/permissions';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
-import { routes } from '../../../../../routes/routes';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -34,7 +34,6 @@ import { routes } from '../../../../../routes/routes';
 })
 export class JobCandidatesComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private jobCandidatesService = inject(JobCandidatesService);
   private jobService = inject(JobService);
   private notificationService = inject(NotificationService);
@@ -151,7 +150,17 @@ export class JobCandidatesComponent implements OnInit {
 
   viewDetails(candidateId: GUID) {
     if (!this.canViewJobs()) return;
-    void this.router.navigate([routes.employee.jobCandidateProfile(this.jobId, candidateId)]);
+    this.dialogService.open(JobCandidateProfileDialogComponent, {
+      data: {
+        jobId: this.jobId,
+        candidateId,
+      },
+      header: this.translationService.instant('JOB_CANDIDATE_PROFILE_TITLE'),
+      modal: true,
+      dismissableMask: true,
+      width: 'min(960px, 95vw)',
+      contentStyle: { 'max-height': '85vh', overflow: 'auto' },
+    });
   }
 
   exportToExcel() {

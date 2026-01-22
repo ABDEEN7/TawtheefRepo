@@ -1,8 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { NotificationService } from '../../../../../core/services/notification.service';
-import { routes } from '../../../../../routes/routes';
 import { GUID } from '../../../../../shared/types/guid.type';
 import { JobCandidateProfile } from '../models/job-candidate-profile.model';
 import { JobResponse } from '../models/job-response-model';
@@ -15,19 +14,24 @@ interface PointsBreakdownItem {
   percentage: number;
 }
 
+interface JobCandidateProfileDialogData {
+  jobId: GUID;
+  candidateId: GUID;
+}
+
 @Component({
-  selector: 'app-job-candidate-profile',
+  selector: 'app-job-candidate-profile-dialog',
   standalone: false,
-  templateUrl: './job-candidate-profile.component.html',
-  styleUrl: './job-candidate-profile.component.scss',
+  templateUrl: './job-candidate-profile.dialog.component.html',
+  styleUrl: './job-candidate-profile.dialog.component.scss',
 })
-export class JobCandidateProfileComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+export class JobCandidateProfileDialogComponent implements OnInit {
   private jobService = inject(JobService);
   private jobCandidatesService = inject(JobCandidatesService);
   private notificationService = inject(NotificationService);
   private translateService = inject(TranslateService);
+  private dialogRef = inject(DynamicDialogRef);
+  private dialogConfig = inject(DynamicDialogConfig);
 
   jobId!: GUID;
   candidateId!: GUID;
@@ -37,15 +41,16 @@ export class JobCandidateProfileComponent implements OnInit {
   pointsBreakdown = signal<PointsBreakdownItem[]>([]);
 
   ngOnInit(): void {
-    this.jobId = this.route.snapshot.paramMap.get('id') as GUID;
-    this.candidateId = this.route.snapshot.paramMap.get('candidateId') as GUID;
+    const dialogData = this.dialogConfig.data as JobCandidateProfileDialogData;
+    this.jobId = dialogData.jobId;
+    this.candidateId = dialogData.candidateId;
 
     this.loadJobInfo();
     this.loadCandidateProfile();
   }
 
-  backToList(): void {
-    void this.router.navigate([routes.employee.jobCandidates(this.jobId)]);
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 
   private loadJobInfo(): void {
