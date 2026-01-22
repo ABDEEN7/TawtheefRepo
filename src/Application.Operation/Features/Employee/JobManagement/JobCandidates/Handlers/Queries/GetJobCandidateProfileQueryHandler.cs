@@ -30,8 +30,7 @@ public sealed class GetJobCandidateProfileQueryHandler(
         if (job.JobPoints is null)
             return Result.Fail<JobCandidateProfileDto>(JobMessages.JobPointsNotFound);
 
-        var profiles = await userProfileRepository.LoadForScoringAsync([request.CandidateId]);
-        var profile = profiles.FirstOrDefault();
+        var profile = await userProfileRepository.LoadForScoringSingleAsync(request.CandidateId);
         if (profile is null)
             return Result.Fail<JobCandidateProfileDto>(ErrorsCodes.UserProfileNotFound);
 

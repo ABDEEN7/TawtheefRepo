@@ -61,15 +61,18 @@
             <ng-template pTemplate="body" let-r let-i="rowIndex">
               <tr>
                 <td>{{ r.lang.name }}</td>
-                <td><span class="badge rounded-pill bg-soft">{{ r.speakingLevel.name }}</span></td>
-                <td><span class="badge rounded-pill bg-soft">{{ r.writingLevel.name }}</span></td>
-                <td><span class="badge rounded-pill bg-soft">{{ r.readingLevel.name }}</span></td>
+                <td><span class="pill soft">{{ r.speakingLevel.name }}</span></td>
+                <td><span class="pill soft">{{ r.writingLevel.name }}</span></td>
+                <td><span class="pill soft">{{ r.readingLevel.name }}</span></td>
                 <td >
-                  <button class="btn btn-sm btn-outline-danger rounded-pill"
+                  <div class="action-buttons">
+                       <button class="btn"
                           (click)="removeLang(i)"
                           pTooltip="{{ 'wizard.buttons.delete' | translate }}">
-                    <i class="fa-solid fa-trash"></i>
+                    <i class="hgi hgi-stroke hgi-delete-02"></i>
                   </button>
+                  </div>
+                 
                 </td>
               </tr>
             </ng-template>

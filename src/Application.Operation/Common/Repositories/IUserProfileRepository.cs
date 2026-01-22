@@ -6,4 +6,6 @@ namespace Application.Operation.Common.Repositories;
 public interface IUserProfileRepository : IBaseRepository<UserProfile>
 {
     Task<List<UserProfile>> LoadForScoringAsync(IReadOnlyCollection<Guid> userIds);
+    Task<UserProfile?> LoadForScoringSingleAsync(Guid userId);
+
 }

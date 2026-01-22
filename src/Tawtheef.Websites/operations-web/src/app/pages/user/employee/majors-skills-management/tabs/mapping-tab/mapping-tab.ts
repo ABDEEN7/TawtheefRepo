@@ -28,7 +28,7 @@ import {Checkbox} from 'primeng/checkbox';
     TooltipModule,
     RemoteSelectComponent,
     PaginationComponent
-]
+  ]
 })
 export class MappingTabComponent {
   store = inject(MajorsSkillsManagementStore);

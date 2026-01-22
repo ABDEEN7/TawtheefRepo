@@ -18,6 +18,7 @@
   "wizard.placeholders.select": "اختر...",
   "wizard.accountFieldNote": "هذا الحقل مستمد من حسابك ولا يمكن تغييره.",
   "wizard.steps.firstInfo": "المعلومات الأساسية",
+  "wizard.courses.table.description": "الوصف",
   "wizard.steps.personal": "البيانات الشخصية",
   "wizard.steps.contact": "الاتصال والسكن",
   "wizard.steps.degrees": "المؤهلات",

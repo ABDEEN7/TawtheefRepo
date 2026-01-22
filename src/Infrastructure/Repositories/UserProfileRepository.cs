@@ -31,4 +31,24 @@ public class UserProfileRepository(IGenericRepository<UserProfile> repository)
             .Include(p => p.Languages)
             .ToListAsync();
     }
+    
+    public async Task<UserProfile?> LoadForScoringSingleAsync(Guid userId)
+    {
+        return await Repository.DbSet   
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(p => p.User)
+            .Include(p => p.CandidateType)
+            .Include(p => p.Gender)
+            .Include(p => p.Nationality)
+            .Include(p => p.Qualifications!).ThenInclude(q => q.Major)
+            .Include(p => p.Qualifications!).ThenInclude(q => q.Degree)
+            .Include(p => p.Qualifications!).ThenInclude(q => q.University)
+            .Include(p => p.Experiences)
+            .Include(p => p.TrainingCourses)
+            .Include(p => p.Achievements)
+            .Include(p => p.Skills)
+            .Include(p => p.Languages)
+            .SingleOrDefaultAsync(p => p.UserId == userId);
+    }
 }

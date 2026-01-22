@@ -5,6 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:dev": "ng build --configuration development",
+    "build:stage": "ng build --configuration stage",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "doc": "npx compodoc -p tsconfig.json"
@@ -54,6 +57,7 @@
     "@compodoc/compodoc": "^1.1.32",
     "@types/google-libphonenumber": "^7.4.30",
     "@types/jasmine": "~5.1.0",
+    "baseline-browser-mapping": "^2.9.17",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
