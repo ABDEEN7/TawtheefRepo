@@ -13,6 +13,7 @@ import {
 } from '../models/job-candidates-invitations.model';
 import { JobCandidatesFilterSettings } from '../models/job-candidates-filter-settings.model';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
+import { JobCandidateProfile } from '../models/job-candidate-profile.model';
 
 @Injectable({ providedIn: 'root' })
 export class JobCandidatesService {
@@ -63,5 +64,12 @@ export class JobCandidatesService {
       this.endpoints.jobCandidates.sendInvitations,
       request
     );
+  }
+
+  getCandidateProfile(jobId: GUID, candidateId: GUID): Observable<JobCandidateProfile> {
+    return this.http.get<JobCandidateProfile>(this.endpoints.jobCandidates.profile, {
+      jobId,
+      candidateId,
+    });
   }
 }

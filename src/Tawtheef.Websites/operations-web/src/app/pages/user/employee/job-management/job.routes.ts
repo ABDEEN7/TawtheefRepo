@@ -8,6 +8,7 @@ import { JobsReadyApplicationComponent } from "./jobs-ready-application/jobs-rea
 import { permissionGuard } from "../../../../core/guards/route-guard/permission-guards";
 import { Permissions } from "../../../../core/constants/permissions";
 import { JobCandidatesComponent } from "./job-candidates/job-candidates.component";
+import { JobCandidateProfileComponent } from "./job-candidate-profile/job-candidate-profile.component";
 
 export const jobRoutes: Routes = [
   {
@@ -49,6 +50,12 @@ export const jobRoutes: Routes = [
   {
     path: "view/:id/candidates",
     component: JobCandidatesComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Jobs.Manage, Permissions.Jobs.View] },
+  },
+  {
+    path: "view/:id/candidates/:candidateId",
+    component: JobCandidateProfileComponent,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Jobs.Manage, Permissions.Jobs.View] },
   },

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
 import { NotificationService } from '../../../../../core/services/notification.service';
@@ -24,6 +24,7 @@ import {
 import { Permissions } from '../../../../../core/constants/permissions';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
+import { routes } from '../../../../../routes/routes';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -33,6 +34,7 @@ import { JobCandidatesResponse } from '../models/job-candidates-response';
 })
 export class JobCandidatesComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private jobCandidatesService = inject(JobCandidatesService);
   private jobService = inject(JobService);
   private notificationService = inject(NotificationService);
@@ -149,7 +151,7 @@ export class JobCandidatesComponent implements OnInit {
 
   viewDetails(candidateId: GUID) {
     if (!this.canViewJobs()) return;
-    void candidateId;
+    void this.router.navigate([routes.employee.jobCandidateProfile(this.jobId, candidateId)]);
   }
 
   exportToExcel() {

@@ -75,6 +75,14 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("profile")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> GetCandidateProfile([FromQuery] GetJobCandidateProfileQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
     [HttpPost("export")]
     [AuthorizePermission(PermissionKeys.Jobs.View,PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> Export([FromBody] ExportJobCandidatesQuery query)
