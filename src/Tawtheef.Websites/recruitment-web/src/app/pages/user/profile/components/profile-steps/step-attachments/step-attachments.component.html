@@ -3,7 +3,7 @@
         <h5 class=" text-primary">{{ 'wizard.attachments.title' | translate }}</h5>
 
         <button type="button" class="btn btn-primary rounded-pill px-3" (click)="addRow()">
-          <i class="fa-solid fa-plus ms-1"></i> {{ 'wizard.attachments.add' | translate }}
+          <i class="hgi hgi-stroke hgi-add-01 ms-1"></i> {{ 'wizard.attachments.add' | translate }}
         </button>
     </div>
   <div class="table-card rounded overflow-hidden">
@@ -13,7 +13,7 @@
         <tr>
           <th class="text-start" style="width:42%">{{ 'wizard.attachments.attachment' | translate }}</th>
           <th class="text-start" style="width:42%">{{ 'wizard.attachments.file' | translate }}</th>
-          <th class="text-center" style="width:16%">{{ 'wizard.table.actions' | translate }}</th>
+          <th style="width:16%">{{ 'wizard.table.actions' | translate }}</th>
         </tr>
         </thead>
 
@@ -48,7 +48,7 @@
                 <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none"
                         *ngIf="canPreview(i)"
                         (click)="previewFile(i, $event)">
-                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
 
                 <button type="button"
@@ -60,20 +60,21 @@
               </div>
             </td>
 
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button type="button" class="btn btn-outline-dark btn-sm" (click)="removeRow(i)">
+            <td>
+               
+              <div class="action-buttons">
+                <button type="button" class="btn" (click)="removeRow(i)">
                   <i class="hgi hgi-stroke hgi-delete-02"></i>
                 </button>
 
-                <button type="button" class="btn btn-sm btn-success"
+                <button type="button" class="btn"
                         (click)="confirmRow(i)" *ngIf="!g.disabled">
-                  <i class="fa-solid fa-check"></i>
+                  <i class="hgi hgi-stroke hgi-tick-02"></i>
                 </button>
 
-                <button type="button" class="btn btn-sm btn-outline-secondary"
+                <button type="button" class="btn"
                         (click)="editRow(i)" *ngIf="g.disabled">
-                  <i class="fa-solid fa-pen"></i>
+                  <i class="hgi hgi-stroke hgi-pencil-edit-01"></i>
                 </button>
               </div>
             </td>
