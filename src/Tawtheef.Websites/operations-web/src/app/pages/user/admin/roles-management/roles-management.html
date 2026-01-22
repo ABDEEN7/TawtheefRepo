@@ -1,12 +1,12 @@
 <div
-  class="roles-container card shadow-sm p-4"
+  class="roles-container card card-table"
   i18nNamespace="pages/admin/roles-management"
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
-
-  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="card-body">
+           <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="page-title">{{ 'ROLES.TITLE' | translate }}</h3>
-    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="this.openAdd()">
+    <button type="button" class="btn btn-primary" (click)="this.openAdd()">
       <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
       {{ 'ROLES.ADD_ROLE' | translate }}
     </button>
@@ -29,7 +29,7 @@
           <td>{{ this.localizedDescription(role) }}</td>
           <td>
             @for (perm of role.permissionNames?.length ? role.permissionNames : role.permissions; track perm) {
-              <span class="badge bg-secondary-subtle text-secondary me-1 mb-1 perm-pill">
+              <span class="pill neutral m-1">
                 {{ perm }}
               </span>
             }
@@ -88,5 +88,8 @@
     (pageSizeChanged)="onPageSizeChange($event)">
   </app-pagination>
 </div>
+    </div>
+
+ 
 
 <p-confirmDialog></p-confirmDialog>

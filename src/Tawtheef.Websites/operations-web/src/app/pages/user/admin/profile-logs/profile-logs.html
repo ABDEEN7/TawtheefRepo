@@ -141,7 +141,7 @@
             <td class="text-break">{{ log.section || '-' }}</td>
             <td>
               @if (log.reviewStatus !== undefined && log.reviewStatus !== null) {
-                <span class="badge bg-info-subtle text-info">
+                <span class="pill info">
                   {{ reviewStatusLabel(log.reviewStatus) }}
                 </span>
               } @else {

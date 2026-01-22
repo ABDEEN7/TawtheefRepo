@@ -6,7 +6,7 @@
 
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="page-title mb-0">{{ 'UNIVERSITIES.TITLE' | translate }}</h3>
-    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
+    <button type="button" class="btn btn-primary" (click)="openAdd()">
       <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
       {{ 'UNIVERSITIES.ADD_UNIVERSITY' | translate }}
     </button>
@@ -81,7 +81,7 @@
               <td>{{ university.phone || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
               <td>{{ university.webSite || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
               <td>
-                <span class="badge" [class.bg-success-subtle]="university.isActive" [class.text-success]="university.isActive" [class.bg-danger-subtle]="!university.isActive" [class.text-danger]="!university.isActive">
+                <span class="pill" [class.success]="university.isActive" [class.soft]="!university.isActive">
                   {{ university.isActive ? ('UNIVERSITIES.ACTIVE' | translate) : ('UNIVERSITIES.INACTIVE' | translate) }}
                 </span>
               </td>

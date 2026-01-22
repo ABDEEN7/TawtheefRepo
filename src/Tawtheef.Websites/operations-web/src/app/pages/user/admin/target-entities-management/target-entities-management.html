@@ -6,7 +6,7 @@
 
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="page-title mb-0">{{ 'TARGET_ENTITIES.TITLE' | translate }}</h3>
-    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
+    <button type="button" class="btn btn-primary" (click)="openAdd()">
       <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
       {{ 'TARGET_ENTITIES.ADD_TARGET_ENTITY' | translate }}
     </button>
@@ -49,7 +49,7 @@
           <td>{{ targetEntity.descriptionAr || ('TARGET_ENTITIES.NO_DESCRIPTION' | translate) }}</td>
           <td>{{ targetEntity.descriptionEn || ('TARGET_ENTITIES.NO_DESCRIPTION' | translate) }}</td>
           <td>
-            <span class="badge" [class.bg-success-subtle]="targetEntity.isActive" [class.text-success]="targetEntity.isActive" [class.bg-danger-subtle]="!targetEntity.isActive" [class.text-danger]="!targetEntity.isActive">
+            <span class="pill" [class.success]="targetEntity.isActive"  [class.soft]="!targetEntity.isActive">
               {{ targetEntity.isActive ? ('TARGET_ENTITIES.ACTIVE' | translate) : ('TARGET_ENTITIES.INACTIVE' | translate) }}
             </span>
           </td>

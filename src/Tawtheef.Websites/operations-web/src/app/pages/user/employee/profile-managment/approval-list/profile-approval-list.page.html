@@ -138,7 +138,7 @@
                       </td>
                       <td>
                           <div class="d-flex gap-2">
-                                 <span class="pill neutral" [ngClass]="statusClass(row.overallStatus)">{{ statusLabel(row.overallStatus) | translate }}</span>
+                                 <span class="pill neutral m-1" [ngClass]="statusClass(row.overallStatus)">{{ statusLabel(row.overallStatus) | translate }}</span>
                                  <span class="pill warning" *ngIf="row.pendingCount > 0"> {{ row.pendingCount }} {{ 'profileApproval.list.pending' | translate }} </span>
                           </div>
                  
