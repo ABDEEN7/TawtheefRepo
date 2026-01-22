@@ -1,0 +1,19 @@
+.candidate-meta {
+  font-size: 0.95rem;
+}
+
+.points-item ::ng-deep .p-progressbar {
+  height: 0.5rem;
+  border-radius: 999px;
+}
+
+.points-item ::ng-deep .p-progressbar-value {
+  border-radius: 999px;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.95rem;
+}
