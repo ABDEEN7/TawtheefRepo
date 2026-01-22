@@ -4,7 +4,6 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
-using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -15,20 +14,43 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(GetUniversitiesQuery request, CancellationToken cancellationToken)
     {
-        var entities = await unitOfWork.GetEntityRepository<University>().DbSet
+        var baseQuery = unitOfWork.GetEntityRepository<University>().DbSet
             .AsNoTracking()
-            .Where(s => s.IsActive)
-            .Where(u => u.City!.CountryId == request.CountryId)
-            .WhereIf(!string.IsNullOrEmpty(request.Search),
-                university =>
-                    EF.Functions.Like(university.NameAr, $"%{request.Search}%") ||
-                    EF.Functions.Like(university.NameEn, $"%{request.Search}%") ||
-                    EF.Functions.Like(university.DescriptionAr ?? "", $"%{request.Search}%") ||
-                    EF.Functions.Like(university.DescriptionEn ?? "", $"%{request.Search}%"))
-            .OrderBy(university => university.DisplayOrder)
-            .ToListAsync(cancellationToken);
+            .Where(u => u.IsActive)
+            .Where(u => u.City!.CountryId == request.CountryId);
 
-        return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));
+        List<University> byId = [];
+        if (request.Id.HasValue)
+        {
+            byId = await baseQuery
+                .Where(u => u.Id == request.Id.Value)
+                .ToListAsync(cancellationToken);
+        }
+
+        List<University> bySearch = [];
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var s = request.Search.Trim();
+
+            bySearch = await baseQuery
+                .Where(university =>
+                    EF.Functions.Like(university.NameAr, $"%{s}%") ||
+                    EF.Functions.Like(university.NameEn, $"%{s}%") ||
+                    EF.Functions.Like(university.DescriptionAr ?? "", $"%{s}%") ||
+                    EF.Functions.Like(university.DescriptionEn ?? "", $"%{s}%"))
+                .OrderBy(university => university.DisplayOrder)
+                .Take(10)
+                .ToListAsync(cancellationToken);
+        }
+
+        var merged = byId
+            .Concat(bySearch)
+            .GroupBy(u => u.Id)
+            .Select(g => g.First())
+            .OrderBy(u => u.DisplayOrder)
+            .ToList();
+
+        return Result.Ok(mapper.Map<List<DropdownOptions>>(merged));
     }
 }
 

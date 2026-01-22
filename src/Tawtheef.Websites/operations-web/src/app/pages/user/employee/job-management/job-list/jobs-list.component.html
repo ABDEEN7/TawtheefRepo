@@ -34,8 +34,8 @@
               <div class="shadow-sm card card-table bg-success-light border-0">
                 <div class="card-body d-flex justify-content-between align-items-center p-3">
                   <div class="d-flex flex-column">
-                    <div class="h2 fw-bold">{{ pendingApprovalCount }}</div>
-                    <p class="m-0">{{ 'JOB_LIST_STATS_PENDING_APPROVAL' | translate }}</p>
+                    <div class="h2 fw-bold">{{ approvedCount }}</div>
+                    <p class="m-0">{{ 'JOB_LIST_STATS_APPROVED' | translate }}</p>
                   </div>
                   <div><i class="hgi hgi-stroke hgi-checkmark-circle-02 text-success h2"></i></div>
                 </div>
@@ -45,21 +45,21 @@
               <div class="shadow-sm card card-table bg-alert-light border-0">
                 <div class="card-body d-flex justify-content-between align-items-center p-3">
                   <div class="d-flex flex-column">
-                    <div class="h2 fw-bold">{{ approvedCount }}</div>
-                    <p class="m-0">{{ 'JOB_LIST_STATS_APPROVED' | translate }}</p>
+                    <div class="h2 fw-bold">{{ pendingApprovalCount }}</div>
+                    <p class="m-0">{{ 'JOB_LIST_STATS_PENDING_APPROVAL' | translate }}</p>
                   </div>
                   <div><i class="hgi hgi-stroke hgi-comment-01 text-warning h2"></i></div>
                 </div>
               </div>
             </div>
             <div class="col-md-3">
-              <div class="shadow-sm card card-table bg-warning-light border-0">
+              <div class="shadow-sm card card-table bg-secondary bg-opacity-10 border-0">
                 <div class="card-body d-flex justify-content-between align-items-center p-3">
                   <div class="d-flex flex-column">
                     <div class="h2 fw-bold">{{ draftCount }}</div>
                     <p class="m-0">{{ 'JOB_LIST_STATS_DRAFTED' | translate }}</p>
                   </div>
-                  <div><i class="hgi hgi-stroke hgi-cancel-circle text-danger h2"></i></div>
+                  <div><i class="hgi hgi-stroke hgi-edit-02 text-secondary h2"></i></div>
                 </div>
               </div>
             </div>

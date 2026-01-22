@@ -133,7 +133,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(majorId => {
         if (majorId) {
-          this.lookupsService.loadSubMajorsByMajor(majorId as GUID);
           this.form.controls.subMajorId.setValue('');
         } else {
           this.lookupsService.resetSubMajors();
@@ -450,18 +449,6 @@ private applyTemplateToForm(template: JobCopyTemplate): void {
       minimumAge: template.minimumAge || 18,
       maximumAge: template.maximumAge || 60
     });
-
-    if (template.sectorId) {
-      this.lookupsService.loadManagementsBySector(template.sectorId);
-    }
-
-    if (template.managementId) {
-      this.lookupsService.loadDepartmentsByManagement(template.managementId);
-    }
-
-    if (template.majorId) {
-      this.lookupsService.loadSubMajorsByMajor(template.majorId);
-    }
   }
 
   touchGender(): void {

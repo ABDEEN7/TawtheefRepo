@@ -87,24 +87,14 @@
                 [placeholder]="'MAJORS_SKILLS.SKILL_TYPE_PLACEHOLDER' | translate">
               </p-select>
             </div>
-
-            <div class="col-lg-1 col-md-3">
-              <label class="form-label">{{ 'MAJORS_SKILLS.ACTIVE_FILTER' | translate }}</label>
-              <div class="form-control">
-                <p-check-box
-                  [binary]="true"
-                  [ngModel]="store.majorSkillFilters().isActive === true"
-                  (ngModelChange)="setMajorSkillActiveOnly($event)">
-                </p-check-box>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="table-card rounded overflow-hidden">
-    <div class=><p-table
+    <div class=>
+      <p-table
       [value]="store.majorSkillsItems()"
       [rowHover]="true"
       responsiveLayout="scroll">
@@ -112,7 +102,7 @@
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'MAJORS_SKILLS.MAJOR_COLUMN' | translate }}</th>
-          <th>{{ 'MAJORS_SKILLS.SUB_MAJOR_COLUMN' | translate }}</th>
+          <th>{{ 'MAJORS_SKILLS.SKILL_COLUMN' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.SKILL_REQUIRED' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
@@ -121,7 +111,25 @@
 
       <ng-template pTemplate="body" let-item>
         <tr>
-          <td>{{ item.major?.name ?? '-' }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <!-- Major Name -->
+              <span class="fw-semibold">{{ item.major?.name ?? '-' }}</span>
+
+              <!-- Parent / Sub tag -->
+              @if (item.major?.parentId) {
+                <!-- Parent info tooltip for sub-major -->
+                <button
+                  type="button"
+                  class="btn btn-link p-0 major-parent-info-btn"
+                  pTooltip="{{ ('MAJORS_SKILLS.SUB_MAJOR_OF' | translate) + ': ' + (item.major?.parent?.name ?? '-') }}"
+                  tooltipPosition="top"
+                  [appendTo]="'body'">
+                  <i class="pi pi-info-circle"></i>
+                </button>
+              }
+            </div>
+          </td>
           <td>{{ item.skill?.name ?? '-' }}</td>
 
           <td>
