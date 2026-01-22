@@ -22,6 +22,7 @@
   "wizard.steps.contact": "Contact & residence",
   "wizard.steps.degrees": "Degrees",
   "wizard.steps.experience": "Experience & courses",
+  "wizard.courses.table.description": "Description",
   "wizard.steps.achievements": "Achievements",
   "wizard.steps.skills": "Skills",
   "wizard.steps.skill": "Skill",

@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.dev.example.com'
+  apiBaseUrl: 'https://careers-admin-api.edu.gov.qa/api'
 };

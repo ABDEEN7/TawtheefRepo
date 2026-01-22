@@ -13,6 +13,7 @@
   "wizard.courses.table.period": "الفترة",
   "wizard.courses.table.file": "الملف",
   "wizard.courses.add": "إضافة دورة",
+  "wizard.courses.table.description": "الوصف",
   "wizard.buttons.cancel": "إلغاء",
   "wizard.buttons.delete": "حذف"
 }
