@@ -9,7 +9,7 @@ namespace Tawtheef.Infrastructure.Repositories;
 public class UserProfileRepository(IGenericRepository<UserProfile> repository)
     : BaseRepository<UserProfile>(repository), IUserProfileRepository
 {
-    public async Task<List<UserProfile>> LoadForScoringAsync(IReadOnlyCollection<Guid> userIds)
+    public async Task<List<UserProfile>> LoadForScoringAsync(IReadOnlyCollection<Guid> userIds,CancellationToken cancellationToken)
     {
         if (userIds.Count == 0) return [];
 
@@ -29,10 +29,10 @@ public class UserProfileRepository(IGenericRepository<UserProfile> repository)
             .Include(p => p.Achievements)
             .Include(p => p.Skills)
             .Include(p => p.Languages)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
     
-    public async Task<UserProfile?> LoadForScoringSingleAsync(Guid userId)
+    public async Task<UserProfile?> LoadForScoringSingleAsync(Guid userId,CancellationToken cancellationToken)
     {
         return await Repository.DbSet   
             .AsNoTracking()
@@ -49,6 +49,6 @@ public class UserProfileRepository(IGenericRepository<UserProfile> repository)
             .Include(p => p.Achievements)
             .Include(p => p.Skills)
             .Include(p => p.Languages)
-            .SingleOrDefaultAsync(p => p.UserId == userId);
+            .SingleOrDefaultAsync(p => p.UserId == userId,cancellationToken);
     }
 }

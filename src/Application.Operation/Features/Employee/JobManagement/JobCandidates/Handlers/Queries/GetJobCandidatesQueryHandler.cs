@@ -69,7 +69,7 @@ public sealed class GetJobCandidatesQueryHandler(
 
         // Load heavy profiles once
         var ids = window.Select(x => x.ApplicantId).Distinct().ToList();
-        var profiles = await userProfileRepository.LoadForScoringAsync(ids);
+        var profiles = await userProfileRepository.LoadForScoringAsync(ids,ct);
 
         // Score once
         if (job.JobPoints == null) 
