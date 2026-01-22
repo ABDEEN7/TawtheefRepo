@@ -48,7 +48,7 @@ import { JobCandidatesComponent } from './job-candidates/job-candidates.componen
 import {Tooltip} from 'primeng/tooltip';
 import { JobCandidatesNationalityFilterModalComponent } from './modals/job-candidates-nationality-filter-modal/job-candidates-nationality-filter-modal.component';
 import { JobCandidatesNationalityBreakdownDialogComponent } from './modals/job-candidates-nationality-breakdown/job-candidates-nationality-breakdown.dialog.component';
-import { JobCandidateProfileDialogComponent } from './job-candidate-profile-dialog/job-candidate-profile.dialog.component';
+import { JobCandidateProfileDialogComponent } from './modals/job-candidate-profile-dialog/job-candidate-profile.dialog.component';
 import { ProgressBarModule } from 'primeng/progressbar';
 @NgModule({
   declarations: [

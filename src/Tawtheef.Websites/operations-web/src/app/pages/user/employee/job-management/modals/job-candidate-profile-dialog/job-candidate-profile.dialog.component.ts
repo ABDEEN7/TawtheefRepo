@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { NotificationService } from '../../../../../core/services/notification.service';
-import { GUID } from '../../../../../shared/types/guid.type';
-import { JobCandidateProfile } from '../models/job-candidate-profile.model';
-import { JobResponse } from '../models/job-response-model';
-import { JobCandidatesService } from '../services/job-candidates.service';
-import { JobService } from '../services/job.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { GUID } from '../../../../../../shared/types/guid.type';
+import { JobCandidateProfile } from '../../models/job-candidate-profile.model';
+import { JobResponse } from '../../models/job-response-model';
+import { JobCandidatesService } from '../../services/job-candidates.service';
+import { JobService } from '../../services/job.service';
 
 interface PointsBreakdownItem {
   labelKey: string;

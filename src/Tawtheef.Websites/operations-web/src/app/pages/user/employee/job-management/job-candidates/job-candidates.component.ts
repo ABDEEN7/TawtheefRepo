@@ -21,7 +21,7 @@ import {
   JobCandidatesFilterSettings,
   JobCandidateTypePercentage,
 } from '../models/job-candidates-filter-settings.model';
-import { JobCandidateProfileDialogComponent } from '../job-candidate-profile-dialog/job-candidate-profile.dialog.component';
+import { JobCandidateProfileDialogComponent } from '../modals/job-candidate-profile-dialog/job-candidate-profile.dialog.component';
 import { Permissions } from '../../../../../core/constants/permissions';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
