@@ -175,7 +175,7 @@
               <div class="d-flex align-items-center gap-2">
                 <span>{{ r.certificate?.resourceName || r.file?.name }}</span>
                 <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.certificate, r.file, r.certificate?.resourceName || r.file?.name, $event)">
-                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
               </div>
             </ng-container>
@@ -217,7 +217,7 @@
               <div class="d-flex align-items-center gap-2">
                 <span>{{ r.certificate?.resourceName || r.fileName || r.file?.name }}</span>
                 <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.attachment ?? r.certificate, r.file, r.fileName || r.certificate?.resourceName, $event)">
-                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
               </div>
             </ng-container>
@@ -259,7 +259,7 @@
               <div class="d-flex align-items-center gap-2">
                 <span>{{ r.certificate?.resourceName || r.fileName || r.file?.name }}</span>
                 <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.attachment ?? r.certificate, r.file, r.fileName || r.certificate?.resourceName, $event)">
-                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
               </div>
             </ng-container>
@@ -303,7 +303,7 @@
               <div class="d-flex align-items-center gap-2">
                 <span>{{ r.fileName || r.file?.name }}</span>
                 <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.attachment, r.file, r.fileName, $event)">
-                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
               </div>
             </ng-container>
@@ -386,7 +386,7 @@
               <div class="d-flex align-items-center gap-2">
                 <span>{{ r.fileName }}</span>
                 <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r.fileRef, r.file, r.fileName, $event)">
-                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
               </div>
             </ng-container>
@@ -405,7 +405,7 @@
   <button class="btn btn-outline-secondary" (click)="back.emit()">
     <i class="fa-solid me-1" faDirArrow="start"></i> {{ 'wizard.buttons.prev' | translate }}
   </button>
-  <button class="btn btn-brand ms-2"
+  <button class="btn btn-primary ms-2"
           [disabled]="!canSubmit() || submitting() || submitted()"
           (click)="submit()">
     <span *ngIf="!submitting(); else savingTpl">
