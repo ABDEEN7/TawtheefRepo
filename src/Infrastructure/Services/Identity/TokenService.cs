@@ -22,7 +22,9 @@ using User = Tawtheef.Domain.Entities.Users.User;
 
 namespace Tawtheef.Infrastructure.Services.Identity;
 
-public class TokenService(IOptions<JwtSettings> jwtSettings,
+public class TokenService(
+    IOptions<JwtSettings> jwtSettings,
+    IOptions<AppConfigSettings> appSettings,
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager,
     IProfileCompletenessService pcs,
@@ -109,8 +111,8 @@ public class TokenService(IOptions<JwtSettings> jwtSettings,
             jwtSettings.Value.ExpiryMinutes ?? 15);
 
         var token = new JwtSecurityToken(
-            issuer: jwtSettings.Value.Issuer,
-            audience: jwtSettings.Value.Audience,
+            issuer: appSettings.Value.BackendUrl,
+            audience: appSettings.Value.FrontendUrl,
             claims: claims,
             expires: expires,
             signingCredentials: credentials

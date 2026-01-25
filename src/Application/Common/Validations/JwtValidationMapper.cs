@@ -7,7 +7,7 @@ namespace Tawtheef.Application.Common.Validations;
 public static class JwtValidationMapper
 {
     public static TokenValidationParameters ToTokenValidationParameters(
-        this JwtSettings settings)
+        this JwtSettings settings, string issuer, string audience)
     {
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(settings.SigningKey));
@@ -20,8 +20,8 @@ public static class JwtValidationMapper
             RequireExpirationTime = true,
 
             // ===== Identity =====
-            ValidIssuer = settings.Issuer,
-            ValidAudience = settings.Audience,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
 
             // ===== Controlled flags from config =====
             ValidateIssuer = settings.TokenValidationParameters.ValidateIssuer,

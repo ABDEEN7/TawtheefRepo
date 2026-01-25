@@ -96,6 +96,9 @@
             "production": {
               "buildTarget": "operations-web:build:production"
             },
+            "stage": {
+              "buildTarget": "operations-web:build:stage"
+            },
             "development": {
               "buildTarget": "operations-web:build:development"
             }

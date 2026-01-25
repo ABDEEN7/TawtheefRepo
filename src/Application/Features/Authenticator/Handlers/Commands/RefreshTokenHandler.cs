@@ -22,7 +22,8 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
         UserManager<User> userManager,
         ITokenService tokenService,
         ISessionService sessions,
-        IOptions<JwtSettings> jwtSettings)
+        IOptions<JwtSettings> jwtSettings,
+        IOptions<AppConfigSettings> appSettings)
         : ICommandHandler<RefreshTokenCommand, IResult<TokenResponse>>
     {
         public async Task<IResult<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
@@ -80,7 +81,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
         private Result<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
         {
             var settings = jwtSettings.Value;
-            var parameters = settings.ToTokenValidationParameters();
+            var parameters = settings.ToTokenValidationParameters(appSettings.Value.BackendUrl, appSettings.Value.FrontendUrl);
             parameters.ValidateLifetime = false; // allow expired
             parameters.ClockSkew = TimeSpan.FromMinutes(1);
             
