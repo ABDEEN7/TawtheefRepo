@@ -1,67 +1,70 @@
 <div
-  class="users-container card shadow-sm p-4"
+  class="card card-table"
   i18nNamespace="pages/admin/users-management"
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <h3 class="page-title mb-0">{{ 'USERS.TITLE' | translate }}</h3>
-  </div>
+     <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+            <h3 class="fw-bold">{{ 'USERS.TITLE' | translate }}</h3>
+          </div>
 
-  <div class="filters card p-3 mb-3">
-    <div class="row g-3">
-      <div class="col-md-4">
-        <label class="form-label">{{ 'USERS.SEARCH_NAME' | translate }}</label>
-        <input type="text"
-               class="form-control form-control-sm"
-               [(ngModel)]="nameFilter"
-               (input)="this.onSearchChange()"
-               [placeholder]="'USERS.SEARCH_NAME_PLACEHOLDER' | translate"/>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">{{ 'USERS.SEARCH_EMAIL' | translate }}</label>
-        <input type="text"
-               class="form-control form-control-sm"
-               [(ngModel)]="emailFilter"
-               (input)="this.onSearchChange()"
-               [placeholder]="'USERS.SEARCH_EMAIL_PLACEHOLDER' | translate"/>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">{{ 'USERS.FILTER_BLOCKED' | translate }}</label>
-        <p-select
-          [options]="blockedStatusOptions"
-          [showClear]="true"
-          [placeholder]="'USERS.BLOCKED_ANY' | translate"
-          name="blockedStatuses"
-          (onChange)="onBlockedFilterChange($event.value)"
-          (onClear)="onBlockedFilterChange(null)"
-          [filter]="true"
-          [ngModel]="filters().isBlocked"
-          optionLabel="name"
-          optionValue="id"
-          size="small"
-          class="form-select form-select-sm"
-        >
-          <ng-template #selectedItem let-option>
-            {{ option.name | translate }}
-          </ng-template>
-          <ng-template #item let-option>
-            {{ option.name | translate }}
-          </ng-template>
-        </p-select>
-      </div>
-    </div>
+  <div class="card card-table bg-light mb-3">
+       <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">{{ 'USERS.SEARCH_NAME' | translate }}</label>
+                  <input type="text"
+                        class="form-control"
+                        [(ngModel)]="nameFilter"
+                        (input)="this.onSearchChange()"
+                        [placeholder]="'USERS.SEARCH_NAME_PLACEHOLDER' | translate"/>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">{{ 'USERS.SEARCH_EMAIL' | translate }}</label>
+                  <input type="text"
+                        class="form-control"
+                        [(ngModel)]="emailFilter"
+                        (input)="this.onSearchChange()"
+                        [placeholder]="'USERS.SEARCH_EMAIL_PLACEHOLDER' | translate"/>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">{{ 'USERS.FILTER_BLOCKED' | translate }}</label>
+                  <p-select
+                    [options]="blockedStatusOptions"
+                    [showClear]="true"
+                    [placeholder]="'USERS.BLOCKED_ANY' | translate"
+                    name="blockedStatuses"
+                    (onChange)="onBlockedFilterChange($event.value)"
+                    (onClear)="onBlockedFilterChange(null)"
+                    [filter]="true"
+                    [ngModel]="filters().isBlocked"
+                    optionLabel="name"
+                    optionValue="id"
+                    class="form-select"
+                  >
+                    <ng-template #selectedItem let-option>
+                      {{ option.name | translate }}
+                    </ng-template>
+                    <ng-template #item let-option>
+                      {{ option.name | translate }}
+                    </ng-template>
+                  </p-select>
+                </div>
+            </div>
+          </div>
+    
   </div>
-
-  <div class="table-responsive table-wrapper">
-    <table class="table custom-table align-middle mb-0">
-      <thead>
+<div class="table-card rounded overflow-hidden">
+     <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100">
+           <thead class="table-light">
       <tr>
         <th>{{ 'USERS.NAME' | translate }}</th>
         <th>{{ 'USERS.EMAIL' | translate }}</th>
         <th>{{ 'USERS.LAST_LOGIN' | translate }}</th>
         <th>{{ 'USERS.IS_BLOCKED' | translate }}</th>
         <th>{{ 'USERS.ROLES' | translate }}</th>
-        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'USERS.ACTIONS' | translate }}</th>
+        <th>{{ 'USERS.ACTIONS' | translate }}</th>
       </tr>
       </thead>
 
@@ -96,10 +99,11 @@
                   <span class="text-muted small">{{ 'NO_RECORDS' | translate }}</span>
                 }
               </td>
-              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-                <button
+              <td class="text-nowrap">
+                  <div class="action-buttons">
+                        <button
                   type="button"
-                  class="icon-btn"
+                  class="btn"
                   (click)="toggleBlock(user)"
                   [pTooltip]="hasSystemAdminRole(user) ? ('USERS.SYSTEM_ADMIN_BLOCK_DISABLED' | translate) : (user.isBlocked ? ('USERS.UNBLOCK_USER' | translate) : ('USERS.BLOCK_USER' | translate))"
                   tooltipPosition="top"
@@ -109,7 +113,7 @@
                 </button>
                 <button
                   type="button"
-                  class="icon-btn"
+                  class="btn"
                   (click)="openManageRoles(user)"
                   [pTooltip]="hasSystemAdminRole(user) ? ('USERS.SYSTEM_ADMIN_MANAGE_DISABLED' | translate) : ('USERS.MANAGE_ROLES' | translate)"
                   tooltipPosition="top"
@@ -117,6 +121,8 @@
                   aria-label="{{ 'USERS.MANAGE_ROLES' | translate }}">
                   <i class="bi bi-shield-check"></i>
                 </button>
+                  </div>
+                
               </td>
             </tr>
           }
@@ -124,6 +130,10 @@
       </tbody>
     </table>
   </div>
+</div>
+     </div>
+
+ 
 </div>
 
 <app-pagination

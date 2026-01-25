@@ -88,12 +88,12 @@
             <input
               type="text"
               maxlength="6"
-              class="form-control form-control-sm"
+              class="form-control"
               [(ngModel)]="phone.otp"
               [placeholder]="'wizard.contact.phoneOtpPlaceholder' | translate" />
             <button
               type="button"
-              class="btn btn-brand btn-sm"
+              class="btn btn-primary"
               (click)="verifyPhoneCode()"
               [disabled]="!phone.otp">
               {{ 'wizard.contact.phoneVerify' | translate }}
@@ -154,11 +154,11 @@
           <div
             *ngIf="email.useCode && email.status === 'linkSent'"
             class="d-flex align-items-center gap-2 flex-grow-1">
-            <input type="text" maxlength="6" class="form-control form-control-sm"
+            <input type="text" maxlength="6" class="form-control"
               [(ngModel)]="email.otp" [placeholder]="'wizard.contact.emailOtpPlaceholder' | translate" />
             <button
               type="button"
-              class="btn btn-brand btn-sm"
+              class="btn btn-primary"
               (click)="verifyEmailCode()"
               [disabled]="!email.otp">
               {{ 'wizard.contact.emailVerify' | translate }}
