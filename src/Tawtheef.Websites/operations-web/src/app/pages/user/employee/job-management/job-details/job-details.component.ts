@@ -23,13 +23,14 @@ export class JobDetailsComponent implements OnInit {
   isFavorite: boolean = false;
   tabType = JobTabType;
 
-  private tabsContent: { id: string, title: string, icon: string}[] = [
-    { id: 'Overview', title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
-    { id: 'Skills', title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
-    { id: 'Conditions', title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-graduation-cap' },
-    { id: 'Benefits', title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
-    { id: 'Responsibilities', title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-info-circle' },
-    { id: 'RequiredAttachments', title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa fa-paperclip' }
+  private tabsContent = [
+    { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
+    { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks' },
+    { id: JobTabType.Qualifications, title: 'JOB_DETAILS.QUALIFICATIONS', icon: 'fa-graduation-cap' },
+    { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-clipboard-list' },
+    { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
+    { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
+    { id: JobTabType.Attachments, title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-paperclip' }
   ];
 
   private cdr = inject(ChangeDetectorRef);
