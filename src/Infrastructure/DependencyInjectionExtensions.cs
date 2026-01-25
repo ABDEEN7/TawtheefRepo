@@ -404,6 +404,7 @@ namespace Tawtheef.Infrastructure
                 });
 
                 var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;
+                var appSettings = configuration.GetSection(AppConfigSettings.SectionName).Get<AppConfigSettings>()!;
                 services.AddAuthentication(options =>
                     {
                         options.DefaultScheme = AuthSchemes.Smart;
@@ -429,7 +430,8 @@ namespace Tawtheef.Infrastructure
                     {
                         options.RequireHttpsMetadata = true;
                         options.SaveToken = true;
-                        options.TokenValidationParameters = jwtSettings.ToTokenValidationParameters();
+                        options.TokenValidationParameters = jwtSettings
+                            .ToTokenValidationParameters(appSettings.BackendUrl, appSettings.FrontendUrl);
 
                         options.Events = new JwtBearerEvents
                         {
