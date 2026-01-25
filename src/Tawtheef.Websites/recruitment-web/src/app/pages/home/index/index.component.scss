@@ -81,8 +81,76 @@
   .card-ghost{
   background-color: #F6EDF0;
   border: 0;
-  .icon-circle{
-    border-radius: 50%;
+    .icon-circle{
+      border-radius: 50%;
+    }
+  }
+} 
+
+.tracks {
+  .image-wrapper {
+    position: relative;
+    @media (max-width: 992px) {
+      padding-left: 0;
+      margin-top: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .images{
+        @media (max-width: 992px) {
+           display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    .main-image{
+      @media (max-width: 992px) {margin-left: 0; max-width: 50%;}
+    }
+    .small-image{
+      position: absolute;
+      top: 20%;
+      left: 10%;
+      border: 0;
+      @media (max-width: 992px) {
+          width:50%;
+          border: 0;
+      }
+    }
   }
 }
-} 
+
+
+
+.tracks ::ng-deep .p-tablist-nav-button {
+  display: none !important;
+}
+:host ::ng-deep .p-carousel-indicator-list {
+  display: none !important;
+}
+
+:host ::ng-deep .p-carousel{
+  position: relative;
+}
+:host ::ng-deep .p-carousel-prev-button,
+:host ::ng-deep .p-carousel-next-button {
+  position: absolute;
+  bottom: -35%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border: 1px solid rgba(203, 203, 203, 1);
+  z-index: 9999;
+}
+
+:host ::ng-deep .p-carousel-prev-button {
+  left: 50%;
+}
+
+:host ::ng-deep .p-carousel-next-button {
+  left: 55%;
+}

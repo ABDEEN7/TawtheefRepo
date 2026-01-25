@@ -27,8 +27,7 @@ import {Checkbox} from 'primeng/checkbox';
     ToggleSwitch,
     TooltipModule,
     RemoteSelectComponent,
-    PaginationComponent,
-    Checkbox
+    PaginationComponent
   ]
 })
 export class MappingTabComponent {

@@ -3,7 +3,7 @@
       <h5 class="text-primary">{{ 'wizard.achievements.title' | translate }}</h5>
       <div class="d-flex gap-2">
         <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addAchievement()">
-          <i class="fa-solid fa-plus"></i> {{ 'wizard.achievements.add' | translate }}
+          <i class="hgi hgi-stroke hgi-add-01"></i> {{ 'wizard.achievements.add' | translate }}
         </button>
       </div>
   </div>
@@ -20,7 +20,7 @@
           <th>{{ 'wizard.achievements.table.relatedToSpecialization' | translate }}</th>
           <th>{{ 'wizard.achievements.table.description' | translate }}</th>
           <th>{{ 'wizard.achievements.table.file' | translate }}</th>
-          <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+          <th>{{ 'wizard.table.actions' | translate }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r let-i="rowIndex">
@@ -41,20 +41,22 @@
             <ng-container *ngIf="r.fileName || r.file?.name; else noAchievementFile">
               <div class="d-flex align-items-center gap-2">
                 <span>{{ r.fileName || r.file?.name }}</span>
-                <button class="btn btn-link p-0 text-decoration-none" (click)="preview(r, $event)">
-                  <i class="fa-solid fa-eye me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                <div class="action-buttons">
+                      <button class="btn-text" (click)="preview(r, $event)">
+                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
+                </div>
+                
               </div>
             </ng-container>
             <ng-template #noAchievementFile>—</ng-template>
           </td>
-          <td class="text-end d-flex gap-2 justify-content-end">
-            <button class="btn btn-sm btn-outline-primary" (click)="editAchievement(i)">
-              <i class="fa-solid fa-pen"></i>
-            </button>
-            <button class="btn btn-outline-dark btn-sm" (click)="removeAchievement(i)">
-              <i class="hgi hgi-stroke hgi-delete-02"></i>
-            </button>
+          <td class="d-flex gap-2 justify-content-end">
+              <div class="action-buttons">
+                   <button class="btn" (click)="editAchievement(i)"><i class="hgi hgi-stroke hgi-pencil-edit-02"></i></button>
+                   <button class="btn" (click)="removeAchievement(i)"><i class="hgi hgi-stroke hgi-delete-02"></i></button>
+              </div>
+            
           </td>
         </tr>
       </ng-template>

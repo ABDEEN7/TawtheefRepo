@@ -7,6 +7,9 @@ import {IndexComponent} from './index/index.component';
 import {Navbar} from '../../layouts/public/navbar/navbar';
 import {Footer} from '../../layouts/public/footer/footer';
 import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.directive';
+import { TabsModule } from 'primeng/tabs';
+import { CarouselModule } from 'primeng/carousel';
+
 
 @NgModule({
   declarations: [
@@ -19,7 +22,9 @@ import {I18nNamespaceDirective} from '../../shared/directives/i18n-namespace.dir
     HomeRoutingModule,
     Navbar,
     Footer,
-    I18nNamespaceDirective
+    I18nNamespaceDirective,
+    TabsModule,
+    CarouselModule
   ]
 })
 export class HomeModule {}

@@ -190,6 +190,7 @@
             form.controls.majorId.invalid &&
             (form.controls.majorId.dirty || form.controls.majorId.touched)
           "
+          [showClear]="true"
         ></app-remote-select>
 
         @if (form.controls.majorId.touched && form.controls.majorId.invalid) {
@@ -222,6 +223,7 @@
             form.controls.subMajorId.invalid &&
             (form.controls.subMajorId.dirty || form.controls.subMajorId.touched)
           "
+          [showClear]="true"
         ></app-remote-select>
         }
       </div>

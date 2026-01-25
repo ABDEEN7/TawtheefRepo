@@ -52,7 +52,7 @@
         class="btn-add"
         (click)="addAttachment()"
       >
-        <i class="fa-solid fa-plus"></i>
+        <i class="hgi hgi-stroke hgi-add-01"></i>
         {{ 'JOB_APPROVAL.ADD_ATTACHMENT' | translate }}
       </button>
     </form>
@@ -80,7 +80,7 @@
                   [disabled]="!attachment.file"
                   title="{{ 'COMMON.PREVIEW' | translate }}"
                 >
-                  <i class="fa-solid fa-eye"></i>
+                  <i class="hgi hgi-stroke hgi-view"></i>
                 </button>
                 <button
                   type="button"
@@ -88,7 +88,7 @@
                   (click)="removeAttachment(i)"
                   title="{{ 'COMMON.DELETE' | translate }}"
                 >
-                  <i class="fa-solid fa-trash"></i>
+                  <i class="hgi hgi-stroke hgi-delete-02"></i>
                 </button>
               </div>
             </div>

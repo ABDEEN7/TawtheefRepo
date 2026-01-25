@@ -15,10 +15,29 @@ internal static class JobCandidatePointsCalculator
         ILogger logger
         )
     {
+        var breakdown = CalculateBreakdown(
+            candidate,
+            jobPointsMain,
+            jobDegrees,
+            jobMajorId,
+            jobSubMajorId,
+            logger);
+
+        return breakdown.TotalPoints;
+    }
+
+    public static JobCandidatePointsBreakdown CalculateBreakdown(
+        JobCandidateRecord candidate,
+        JobPointsMain jobPointsMain,
+        List<JobDegree> jobDegrees,
+        Guid jobMajorId,
+        Guid? jobSubMajorId,
+        ILogger logger)
+    {
         if (candidate.Profile == null)
         {
             logger.Warning("Candidate {CandidateId} has no profile.", candidate.ApplicantId);
-            return 0;
+            return new JobCandidatePointsBreakdown(0, 0, 0, 0, 0, 0, 0);
         }
 
         var profile = candidate.Profile;
@@ -69,12 +88,13 @@ internal static class JobCandidatePointsCalculator
             languagePoints,
             certificatePoints);
 
-        return categoryPoints
-               + educationPoints
-               + experiencePoints
-               + trainingPoints
-               + skillPoints
-               + languagePoints
-               + certificatePoints;
+        return new JobCandidatePointsBreakdown(
+            categoryPoints,
+            educationPoints,
+            experiencePoints,
+            trainingPoints,
+            skillPoints,
+            languagePoints,
+            certificatePoints);
     }
 }

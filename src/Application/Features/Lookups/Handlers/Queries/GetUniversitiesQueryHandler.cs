@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
-using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 

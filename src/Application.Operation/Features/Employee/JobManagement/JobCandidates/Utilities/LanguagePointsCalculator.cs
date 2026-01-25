@@ -60,8 +60,13 @@ internal static class LanguagePointsCalculator
         string maxCode)
     {
         var maxPoints = JobPointsHelpers.GetDetailPoints(details, maxCode);
-        var sum = languages.Select(language => MapLanguageLevel(levelSelector(language))).OfType<string>().Sum(levelCode => JobPointsHelpers.GetDetailPoints(details, $"{abilityKey}.{levelCode}"));
-
+        var sum = languages.Sum(language =>
+        {
+            var levelCode = MapLanguageLevel(levelSelector(language));
+            return levelCode == null
+                ? 0
+                : JobPointsHelpers.GetDetailPoints(details, $"{abilityKey}.{levelCode}");
+        });
         return maxPoints > 0 ? Math.Min(sum, maxPoints) : sum;
     }
 
@@ -70,15 +75,12 @@ internal static class LanguagePointsCalculator
         if (levelId == LanguageLevelIds.Native)
             return null;
 
-        if (levelId == LanguageLevelIds.Expert)
+        if (levelId == LanguageLevelIds.Expert || levelId == LanguageLevelIds.Advanced)
             return Excellent;
 
-        if (levelId == LanguageLevelIds.Advanced)
+        if (levelId == LanguageLevelIds.Intermediate)
             return VeryGood;
-
-        if (levelId == LanguageLevelIds.Intermediate || levelId == LanguageLevelIds.Basic)
-            return Good;
-
-        return null;
+        
+        return levelId == LanguageLevelIds.Basic ? Good : null;
     }
 }

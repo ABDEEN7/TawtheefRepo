@@ -94,18 +94,19 @@ export class JobDetails implements OnInit {
     this.activeTab = tab;
   }
 
-  getTabContent(): { id: string; title: string; icon: string } {
-    const tabsContent = [
-      { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
-      { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks' },
-      { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS_RESPONSIBILITIES', icon: 'fa-graduation-cap' },
-      { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
-      { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
-      { id: JobTabType.Attachments, title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-paperclip' }
-    ];
+ getTabContent(): { id: string; title: string; icon: string } {
+  const tabsContent = [
+    { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
+    { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks' },
+    { id: JobTabType.Qualifications, title: 'JOB_DETAILS.QUALIFICATIONS', icon: 'fa-graduation-cap' },
+    { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-clipboard-list' },
+    { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
+    { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
+    { id: JobTabType.Attachments, title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-paperclip' }
+  ];
 
-    return tabsContent.find(tab => tab.id === this.activeTab) || tabsContent[0];
-  }
+  return tabsContent.find(tab => tab.id === this.activeTab) || tabsContent[0];
+}
 
   canApply(): boolean {
     const status = this.invitation()?.invitationStatus?.backendName?.toLowerCase() ?? '';
