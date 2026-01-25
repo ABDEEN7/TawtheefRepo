@@ -53,8 +53,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations\Development\" />
-      <Folder Include="Migrations\Stage\" />
       <Folder Include="Services\Environment\" />
     </ItemGroup>
 
