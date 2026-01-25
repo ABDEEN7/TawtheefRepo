@@ -97,6 +97,9 @@
             "production": {
               "buildTarget": "recruitment-web:build:production"
             },
+            "stage": {
+              "buildTarget": "recruitment-web:build:stage"
+            },
             "development": {
               "buildTarget": "recruitment-web:build:development"
             }
