@@ -98,6 +98,7 @@
                       <i class="fa fa-gift"></i>
                       <span>{{ 'JOB_DETAILS.BENEFITS' | translate }}</span>
                     </button>
+                    @if(job()!.requiredAttachments?.length){
                     <button
                       class="nav-link"
                       [class.active]="activeTab === tabType.Attachments"
@@ -106,6 +107,7 @@
                       <i class="fa fa-paperclip"></i>
                       <span>{{ 'JOB_DETAILS.REQUIRED_ATTACHMENTS' | translate }}</span>
                     </button>
+                  }
                   </div>
                 </div>
               </div>
