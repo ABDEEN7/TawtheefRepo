@@ -1,6 +1,7 @@
 using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
@@ -9,48 +10,41 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
-public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache cache)
     : IQueryHandler<GetUniversitiesQuery, IResult<List<DropdownOptions>>>
 {
+    private const string CacheKeyPrefix = "lookups:universities";
+
     public async Task<IResult<List<DropdownOptions>>> Handle(GetUniversitiesQuery request, CancellationToken cancellationToken)
     {
-        var baseQuery = unitOfWork.GetEntityRepository<University>().DbSet
+        var normalizedSearch = request.Search?.Trim();
+        var query = unitOfWork.GetEntityRepository<University>().DbSet
             .AsNoTracking()
-            .Where(u => u.IsActive)
-            .Where(u => u.City!.CountryId == request.CountryId);
+            .Where(s => s.IsActive)
+            .Where(u => u.City!.CountryId == request.CountryId)
+            .WhereIf(!string.IsNullOrEmpty(normalizedSearch),
+                university =>
+                    EF.Functions.Like(university.NameAr, $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(university.NameEn, $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(university.DescriptionAr ?? "", $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(university.DescriptionEn ?? "", $"%{normalizedSearch}%"));
 
-        List<University> byId = [];
-        if (request.Id.HasValue)
+        var searchToken = string.IsNullOrEmpty(normalizedSearch)
+            ? "all"
+            : normalizedSearch.ToLowerInvariant();
+        var cacheKeyPrefix = $"{CacheKeyPrefix}:{request.CountryId}:{searchToken}";
+        var cacheKey = await LookupCacheKeyBuilder.BuildAsync(query, cacheKeyPrefix, cancellationToken);
+
+        var universities = await cache.GetOrCreateAsync(cacheKey, async entry =>
         {
-            byId = await baseQuery
-                .Where(u => u.Id == request.Id.Value)
-                .ToListAsync(cancellationToken);
-        }
+            entry.SetSlidingExpiration(TimeSpan.FromMinutes(30));
 
-        List<University> bySearch = [];
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var s = request.Search.Trim();
-
-            bySearch = await baseQuery
-                .Where(university =>
-                    EF.Functions.Like(university.NameAr, $"%{s}%") ||
-                    EF.Functions.Like(university.NameEn, $"%{s}%") ||
-                    EF.Functions.Like(university.DescriptionAr ?? "", $"%{s}%") ||
-                    EF.Functions.Like(university.DescriptionEn ?? "", $"%{s}%"))
+            var entities = await query
                 .OrderBy(university => university.DisplayOrder)
-                .Take(10)
                 .ToListAsync(cancellationToken);
-        }
+            return mapper.Map<List<DropdownOptions>>(entities);
+        });
 
-        var merged = byId
-            .Concat(bySearch)
-            .GroupBy(u => u.Id)
-            .Select(g => g.First())
-            .OrderBy(u => u.DisplayOrder)
-            .ToList();
-
-        return Result.Ok(mapper.Map<List<DropdownOptions>>(merged));
+        return Result.Ok(universities ?? new List<DropdownOptions>());
     }
 }
-
